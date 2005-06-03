@@ -50,8 +50,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.ui.PlatformUI;
 
 public class PreferencePageContainerDialog extends Dialog implements IPreferencePageContainer {
 
@@ -88,6 +87,7 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	 */
 	protected static final String PREF_DLG_TITLE_IMG = "preference_page_container_image";//$NON-NLS-1$
 	protected static final String PREF_DLG_IMG_TITLE_ERROR = "preference_page_container_title_error_image";//$NON-NLS-1$
+    private String helpId;
 	static {
 		ImageRegistry reg = TeamUIPlugin.getPlugin().getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));//$NON-NLS-1$
@@ -147,6 +147,9 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	
 		setTitle(TeamUIMessages.PreferencePageContainerDialog_6); //$NON-NLS-1$
 		applyDialogFont(parent);
+        if (helpId != null) {
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, helpId);
+        }
 		return composite;
 	}
 	
@@ -463,4 +466,8 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 			}
         }
 	}
+
+    public void setHelpContextId(String helpId) {
+        this.helpId = helpId;    
+    }
 }

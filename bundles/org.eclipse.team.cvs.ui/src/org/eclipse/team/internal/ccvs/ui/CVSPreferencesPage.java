@@ -361,6 +361,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		Dialog.applyDialogFont(parent);
 		
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.GENERAL_PREFERENCE_PAGE);
 		return tabFolder;
 	}
 

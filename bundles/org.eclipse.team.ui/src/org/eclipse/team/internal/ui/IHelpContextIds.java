@@ -13,6 +13,9 @@ package org.eclipse.team.internal.ui;
 public interface IHelpContextIds {
 	public static final String PREFIX = TeamUIPlugin.ID + "."; //$NON-NLS-1$
 
+    // Dialogs
+    public static final String SYNC_VIEW_PREFERENCE_DIALOG = PREFIX + "sync_view_preference_dialog_context"; //$NON-NLS-1$
+    
 	// Preference Pages
 	public static final String IGNORE_PREFERENCE_PAGE = PREFIX + "ignore_preference_page_context"; //$NON-NLS-1$
 	public static final String FILE_TYPE_PREFERENCE_PAGE = PREFIX + "file_type_preference_page_context"; //$NON-NLS-1$

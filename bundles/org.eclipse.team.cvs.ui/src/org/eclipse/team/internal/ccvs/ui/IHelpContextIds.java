@@ -94,8 +94,10 @@ public interface IHelpContextIds {
 	public static final String PREF_CONFIRM_MOVE_TAG = PREFIX + "confirm_move_tag"; //$NON-NLS-1$
 	public static final String PREF_AUTOREFRESH_TAG = PREFIX + "auto_refresh_tag"; //$NON-NLS-1$
 
+    public static final String GENERAL_PREFERENCE_PAGE = PREFIX + "general_preference_page_context"; //$NON-NLS-1$
 	public static final String CONSOLE_PREFERENCE_PAGE = PREFIX + "console_preference_page_context"; //$NON-NLS-1$
 	public static final String EXT_PREFERENCE_PAGE = PREFIX + "ext_preference_page_context"; //$NON-NLS-1$
+    public static final String SSH2_PREFERENCE_PAGE = PREFIX + "ssh2_preference_page_context"; //$NON-NLS-1$
 	public static final String EXT_PREFERENCE_RSH = PREFIX + "ext_preference_rsh_context"; //$NON-NLS-1$
 	public static final String EXT_PREFERENCE_PARAM = PREFIX + "ext_preference_param_context"; //$NON-NLS-1$
 	public static final String EXT_PREFERENCE_SERVER = PREFIX + "ext_preference_server_context"; //$NON-NLS-1$

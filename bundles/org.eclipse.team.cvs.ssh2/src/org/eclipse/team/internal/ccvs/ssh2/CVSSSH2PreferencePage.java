@@ -16,19 +16,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -39,8 +33,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.util.Util;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.*;
+
 import com.jcraft.jsch.*;
 
 public class CVSSSH2PreferencePage extends PreferencePage
@@ -48,6 +42,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 //  private DirectoryFieldEditor ssh2homeEditor;
 
+  private static final String SSH2_PREFERENCE_PAGE_CONTEXT = "org.eclipse.team.cvs.ui.ssh2_preference_page_context"; //$NON-NLS-1$
+  
   private Label ssh2HomeLabel;
   private Label proxyTypeLabel;
   private Label proxyHostLabel;
@@ -133,6 +129,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     initControls();
 
     Dialog.applyDialogFont(parent);
+    PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), SSH2_PREFERENCE_PAGE_CONTEXT);
     return container;
   }
 
