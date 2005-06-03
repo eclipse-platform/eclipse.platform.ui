@@ -379,7 +379,8 @@ public class ExpandableComposite extends Composite {
 				if (cwHint != SWT.DEFAULT) {
 					cwHint -= marginWidth + marginWidth + thmargin + thmargin;
 					if ((expansionStyle & CLIENT_INDENT) != 0)
-						cwHint = innerwHint - marginWidth - marginWidth;
+						if (tcsize.x>0)
+							cwHint -= twidth;
 				}
 				Point dsize = null;
 				Point csize = clientCache.computeSize(FormUtil.getWidthHint(
@@ -394,15 +395,15 @@ public class ExpandableComposite extends Composite {
 					dsize = descriptionCache.computeSize(dwHint, SWT.DEFAULT);
 				}
 				if (dsize != null) {
-					if ((expansionStyle & CLIENT_INDENT) != 0)
-						dsize.x -= twidth;
+					//if ((expansionStyle & CLIENT_INDENT) != 0)
+						//dsize.x -= twidth;
 					width = Math.max(width, dsize.x);
 					if (expanded)
 						height += dsize.y + clientVerticalSpacing;
 				} else
 					height += clientVerticalSpacing - VSPACE;
-				if ((expansionStyle & CLIENT_INDENT) != 0)
-					csize.x -= twidth;
+				//if ((expansionStyle & CLIENT_INDENT) != 0)
+				//	csize.x -= twidth;
 				width = Math.max(width, csize.x);
 				if (expanded)
 					height += csize.y;

@@ -430,7 +430,7 @@ public class FormToolkit {
 	public void adapt(Composite composite) {
 		composite.setBackground(colors.getBackground());
 		composite.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
+			public void mouseDown(MouseEvent e) {
 				((Control) e.widget).setFocus();
 			}
 		});
