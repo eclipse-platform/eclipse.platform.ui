@@ -7,5 +7,6 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.help.ui,
- org.eclipse.help.base
+ org.eclipse.help.base,
+ org.eclipse.ui.cheatsheets
 Eclipse-AutoStart: true
