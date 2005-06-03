@@ -162,7 +162,7 @@ public class BrowserManager extends Observable {
 		ignorePreferenceChanges = false;
 	}
 
-	private void setupDefaultBrowsers() {
+	protected void setupDefaultBrowsers() {
 		browsers = new ArrayList();
 
 		// add system browser

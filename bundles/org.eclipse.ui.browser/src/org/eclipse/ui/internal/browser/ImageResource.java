@@ -14,9 +14,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.HashMap;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.program.Program;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -164,56 +161,6 @@ public class ImageResource {
 			registerImage("busy" + i, URL_OBJ + "busy/" + (i+1) + ".gif"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			busyImages[i] = getImage("busy" + i); //$NON-NLS-1$
 		}
-		
-		registerBrowserImages();
-	}
-	
-	private static String getIcon(String id) {
-		if (id == null)
-			return null;
-		if (id.endsWith(".firefox")) //$NON-NLS-1$
-			return "icons/obj16/firefox.gif"; //$NON-NLS-1$
-		if (id.endsWith(".mozilla")) //$NON-NLS-1$
-			return "icons/obj16/mozilla.gif"; //$NON-NLS-1$
-		if (id.endsWith(".ie")) //$NON-NLS-1$
-			return "icons/obj16/ie.gif"; //$NON-NLS-1$
-		if (id.endsWith(".safari")) //$NON-NLS-1$
-			return "icons/obj16/safari.gif"; //$NON-NLS-1$
-		if (id.endsWith(".netscape") || id.endsWith(".netscape4") //$NON-NLS-1$ //$NON-NLS-2$
-				|| id.endsWith(".netscape7")) //$NON-NLS-1$
-			return "icons/obj16/netscape.gif"; //$NON-NLS-1$
-		return null;
-	}
-
-	protected static void registerBrowserImages() {
-		IBrowserExt[] browsers = WebBrowserUIPlugin.getBrowsers();
-		int size = browsers.length;
-		for (int i = 0; i < size; i++) {
-			BrowserExt ext = (BrowserExt) browsers[i];
-			String id = ext.getId();
-			String icon = getIcon(id);
-			if (icon != null) {
-				String pluginId = ext.getNamespace();
-				ImageDescriptor imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(pluginId, icon);
-				if (imageDescriptor != null) {
-					imageRegistry.put(id, imageDescriptor);		
-					imageDescriptors.put(id, imageDescriptor);
-				}
-			}
-		}
-		
-		Program program = Program.findProgram("html"); //$NON-NLS-1$
-		if (program != null)
-			try {
-				ImageData imageData = program.getImageData();
-				if (imageData != null) {
-					ImageDescriptor id = ImageDescriptor.createFromImageData(imageData);
-					imageRegistry.put(IMG_SYSTEM_BROWSER, id);		
-					imageDescriptors.put(IMG_SYSTEM_BROWSER, id);
-				}
-			} catch (Exception e) {
-				// ignore
-			}
 	}
 
 	/**

@@ -106,21 +106,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 	class BrowserTableLabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
-			IBrowserDescriptor browser = (IBrowserDescriptor) element;
-			if (browser instanceof SystemBrowserDescriptor) {
-				Image image = ImageResource.getImage(ImageResource.IMG_SYSTEM_BROWSER);
-				if (image != null)
-					return image;
-				return ImageResource.getImage(ImageResource.IMG_EXTERNAL_BROWSER);
-			}
-			
-			IBrowserExt ext = WebBrowserUIPlugin.findBrowsers(browser.getLocation());
-			if (ext != null) {
-				Image image = ((BrowserExt)ext).getImage();
-				if (image != null)
-					return image;
-			}
-			return ImageResource.getImage(ImageResource.IMG_EXTERNAL_BROWSER);
+			return null;
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
@@ -156,7 +142,6 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	 */
 	public WebBrowserPreferencePage() {
 		super();
-		noDefaultAndApplyButton();
 	}
 
 	/**
@@ -168,6 +153,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	 */
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				ContextIds.PREF_BROWSER);
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -180,8 +167,6 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		GridData data = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.VERTICAL_ALIGN_FILL);
 		composite.setLayoutData(data);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
-				ContextIds.PREF_BROWSER);
 
 		Label label = new Label(composite, SWT.WRAP);
 		label.setText(Messages.preferenceWebBrowserDescription);
@@ -612,7 +597,15 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 				.isDefaultUseInternalBrowser());
 		external.setSelection(!WebBrowserPreference.
 				isDefaultUseInternalBrowser());
-
+		
+		BrowserManager.getInstance().currentBrowser = null;
+		BrowserManager.getInstance().setupDefaultBrowsers();
+		tableViewer.refresh();
+		
+		IBrowserDescriptor wb = BrowserManager.getInstance().getCurrentWebBrowser();
+		if (wb != null)
+			tableViewer.setChecked(wb, true);
+		
 		super.performDefaults();
 	}
 
