@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -118,15 +119,19 @@ public class AntNewJavaProjectPage extends WizardPage {
 	public void createControl(Composite parent) {
 		
 		initializeDialogUnits(parent);
-		
-		Composite composite = new Composite(parent, SWT.NULL);
-
+		Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.marginHeight= IDialogConstants.VERTICAL_MARGIN;
+        layout.marginWidth= IDialogConstants.HORIZONTAL_MARGIN;
+        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+        layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+        layout.numColumns= 3;
+        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setFont(parent.getFont());
+        
 		// TODO: help context
 		//WorkbenchHelp.setHelp(composite, IIDEHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
-
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
 
 		createProjectNameGroup(composite);
 		createProjectLocationGroup(composite);
@@ -144,21 +149,12 @@ public class AntNewJavaProjectPage extends WizardPage {
 	 * @param parent the parent composite
 	 */
 	private final void createProjectLocationGroup(Composite parent) {
-
-		// project specification group
-		Composite projectGroup = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		projectGroup.setLayout(layout);
-		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		projectGroup.setFont(parent.getFont());
-
 		// new project label
-		Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
+		Label projectContentsLabel = new Label(parent, SWT.NONE);
 		projectContentsLabel.setText(DataTransferMessages.AntNewJavaProjectPage_11); //$NON-NLS-1$
 		projectContentsLabel.setFont(parent.getFont());
 
-		createUserSpecifiedProjectLocationGroup(projectGroup);
+		createUserSpecifiedProjectLocationGroup(parent);
 	}
 	/**
 	 * Creates the project name specification controls.
@@ -168,25 +164,21 @@ public class AntNewJavaProjectPage extends WizardPage {
 	private final void createProjectNameGroup(Composite parent) {
 		
 		Font dialogFont = parent.getFont();
-		
-		// project specification group
-		Composite projectGroup = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		projectGroup.setFont(dialogFont);
-		projectGroup.setLayout(layout);
-		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// new project label
-		Label projectLabel = new Label(projectGroup, SWT.NONE);
+		Label projectLabel = new Label(parent, SWT.NONE);
 		projectLabel.setText(DataTransferMessages.AntNewJavaProjectPage_12); //$NON-NLS-1$
 		projectLabel.setFont(dialogFont);
+        GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        projectLabel.setLayoutData(gd);
 
 		// new project name entry field
-		fProjectNameField = new Text(projectGroup, SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
-		fProjectNameField.setLayoutData(data);
+		fProjectNameField = new Text(parent, SWT.BORDER);
+        gd= new GridData();
+        gd.horizontalAlignment= GridData.FILL;
+        gd.grabExcessHorizontalSpace= false;
+        gd.horizontalSpan= 2;
+		fProjectNameField.setLayoutData(gd);
 		fProjectNameField.setFont(dialogFont);
 		
 		fProjectNameField.addModifyListener(fNameModifyListener);
@@ -491,13 +483,17 @@ public class AntNewJavaProjectPage extends WizardPage {
         Label label = new Label(parent, SWT.NONE);
         label.setFont(font);
         label.setText(DataTransferMessages.AntNewJavaProjectPage_3);
-                
+        GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        gd.horizontalSpan= 3;
+        label.setLayoutData(gd);
+        
         Table table= new Table(parent, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.RESIZE);
         
         GridData data= new GridData(GridData.FILL_BOTH);
         int availableRows= availableRows(parent);
         data.heightHint = table.getItemHeight() * (availableRows / 20);
         data.widthHint= 250;
+        data.horizontalSpan= 3;
         table.setLayoutData(data);
         table.setFont(font);
         
