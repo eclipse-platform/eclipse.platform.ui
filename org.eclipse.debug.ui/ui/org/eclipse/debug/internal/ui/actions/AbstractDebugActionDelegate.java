@@ -173,7 +173,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 */
 	private void runInBackground(IAction action, IStructuredSelection selection) {
 	    if (fBackgroundJob == null) {
-			fBackgroundJob = new DebugRequestJob(action.getText());
+			fBackgroundJob = new DebugRequestJob(DebugUIPlugin.removeAccelerators(action.getText()));
 	    }
 	    fBackgroundJob.setTargets(selection.toArray());
 		fBackgroundJob.schedule();
@@ -209,7 +209,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		if (!ms.isOK()) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), getErrorDialogTitle(), getErrorDialogMessage(), ms);
+				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.AbstractDebugActionDelegate_0, getErrorDialogMessage(), ms);
 			} else {
 				DebugUIPlugin.log(ms);
 			}
@@ -268,13 +268,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 */
 	protected abstract void doAction(Object element) throws DebugException;
 
-	/**
-	 * Returns the String to use as an error dialog title for
-	 * a failed action. Default is to return null.
-	 */
-	protected String getErrorDialogTitle(){
-		return null;
-	}
 	/**
 	 * Returns the String to use as an error dialog message for
 	 * a failed action. This message appears as the "Message:" in

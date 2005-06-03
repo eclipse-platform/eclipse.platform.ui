@@ -46,12 +46,6 @@ public class StepIntoActionDelegate extends StepActionDelegate {
 	}
 
 	/**
-	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
-	 */
-	protected String getErrorDialogTitle() {
-		return ActionMessages.StepIntoActionDelegate_Step_Into_3; //$NON-NLS-1$
-	}
-	/**
 	 * @see org.eclipse.debug.internal.ui.actions.StepActionDelegate#getActionDefinitionId()
 	 */
 	protected String getActionDefinitionId() {

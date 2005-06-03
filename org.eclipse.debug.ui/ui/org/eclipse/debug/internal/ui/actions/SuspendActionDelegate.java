@@ -53,10 +53,4 @@ public class SuspendActionDelegate extends AbstractListenerActionDelegate {
 		return ActionMessages.SuspendActionDelegate_Suspend_failed_1; //$NON-NLS-1$
 	}
 
-	/**
-	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
-	 */
-	protected String getErrorDialogTitle() {
-		return ActionMessages.SuspendActionDelegate_Suspend_3; //$NON-NLS-1$
-	}
 }

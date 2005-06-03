@@ -53,13 +53,6 @@ public class TerminateActionDelegate extends AbstractListenerActionDelegate {
 	protected String getErrorDialogMessage() {
 		return ActionMessages.TerminateActionDelegate_Terminate_failed__1; //$NON-NLS-1$
 	}
-
-	/**
-	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
-	 */
-	protected String getErrorDialogTitle() {
-		return ActionMessages.TerminateActionDelegate_Terminate_3; //$NON-NLS-1$
-	}
 	
 	/**
 	 * @see ListenerActionDelegate#doHandleDebugEvent(DebugEvent)

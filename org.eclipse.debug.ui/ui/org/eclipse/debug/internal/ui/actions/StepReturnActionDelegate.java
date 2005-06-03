@@ -45,13 +45,6 @@ public class StepReturnActionDelegate extends StepActionDelegate {
 	}
 
 	/**
-	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
-	 */
-	protected String getErrorDialogTitle() {
-		return ActionMessages.StepReturnActionDelegate_Run_to_Return_3; //$NON-NLS-1$
-	}
-	
-	/**
 	 * @see org.eclipse.debug.internal.ui.actions.
 	 * StepActionDelegate#getActionDefinitionId()
 	 */

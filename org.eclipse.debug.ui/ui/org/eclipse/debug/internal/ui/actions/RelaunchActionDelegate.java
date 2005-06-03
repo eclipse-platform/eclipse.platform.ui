@@ -73,13 +73,6 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	}
 	
 	/**
-	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
-	 */
-	protected String getErrorDialogTitle() {
-		return ActionMessages.RelaunchActionDelegate_Launch_1; //$NON-NLS-1$
-	}
-	
-	/**
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {

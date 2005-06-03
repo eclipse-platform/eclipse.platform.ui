@@ -33,7 +33,6 @@ public class ActionMessages extends NLS {
 	public static String CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1;
 	public static String CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2;
 
-	public static String DisconnectActionDelegate_Disconnect_3;
 	public static String DisconnectActionDelegate_Disconnect_failed_1;
 	public static String DisconnectActionDelegate_Exceptions_occurred_attempting_to_disconnect__2;
 
@@ -50,7 +49,6 @@ public class ActionMessages extends NLS {
 
 	public static String RelaunchActionDelegate_An_exception_occurred_while_launching_2;
 	public static String RelaunchActionDelegate_Launch_Failed_1;
-	public static String RelaunchActionDelegate_Launch_1;
 
 	public static String RemoveAllBreakpointsAction_0;
 	public static String RemoveAllBreakpointsAction_1;
@@ -63,7 +61,6 @@ public class ActionMessages extends NLS {
 	public static String RemoveBreakpointAction_Removing_a_breakpoint_4;
 
 	public static String ResumeActionDelegate_Exceptions_occurred_attempting_to_resume__2;
-	public static String ResumeActionDelegate_Resume_3;
 	public static String ResumeActionDelegate_Resume_failed__1;
 
 	public static String ShowSupportedBreakpointsAction_Show_For_Selected;
@@ -73,28 +70,22 @@ public class ActionMessages extends NLS {
 	public static String ShowTypesAction_Show_Type_Names;
 
 	public static String StepIntoActionDelegate_Exceptions_occurred_attempting_to_step_into_the_frame_2;
-	public static String StepIntoActionDelegate_Step_Into_3;
 	public static String StepIntoActionDelegate_Step_into_failed_1;
 
 	public static String StepOverActionDelegate_Exceptions_occurred_attempting_to_step_over_the_frame_2;
-	public static String StepOverActionDelegate_Step_over_3;
 	public static String StepOverActionDelegate_Step_over_failed_1;
 
 	public static String StepReturnActionDelegate_Exceptions_occurred_attempting_to_run_to_return_of_the_frame__2;
-	public static String StepReturnActionDelegate_Run_to_Return_3;
 	public static String StepReturnActionDelegate_Run_to_return_failed__1;
 
 	public static String SuspendActionDelegate_Exceptions_occurred_attempting_to_suspend__2;
-	public static String SuspendActionDelegate_Suspend_3;
 	public static String SuspendActionDelegate_Suspend_failed_1;
 
 	public static String TerminateActionDelegate_Exceptions_occurred_attempting_to_terminate__2;
-	public static String TerminateActionDelegate_Terminate_3;
 
 	public static String TerminateActionDelegate_Terminate_failed__1;
 
 	public static String TerminateAndRemoveActionDelegate_Exceptions_occurred_attempting_to_terminate_and_remove_2;
-	public static String TerminateAndRemoveActionDelegate_Terminate_and_Remove__3;
 	public static String TerminateAndRemoveActionDelegate_Terminate_and_remove_failed_1;
 
 	public static String RelaunchLastAction_Cannot_relaunch_1;
@@ -160,4 +151,6 @@ public class ActionMessages extends NLS {
     public static String AssignValueAction_0;
 
     public static String AssignValueAction_5;
+
+	public static String AbstractDebugActionDelegate_0;
 }

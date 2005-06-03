@@ -54,12 +54,6 @@ public class DisconnectActionDelegate extends AbstractListenerActionDelegate {
 	protected String getErrorDialogMessage() {
 		return ActionMessages.DisconnectActionDelegate_Disconnect_failed_1; //$NON-NLS-1$
 	}
-	/**
-	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
-	 */
-	protected String getErrorDialogTitle() {
-		return ActionMessages.DisconnectActionDelegate_Disconnect_3; //$NON-NLS-1$
-	}
 	
 	/**
 	 * @see ListenerActionDelegate#doHandleDebugEvent(DebugEvent)

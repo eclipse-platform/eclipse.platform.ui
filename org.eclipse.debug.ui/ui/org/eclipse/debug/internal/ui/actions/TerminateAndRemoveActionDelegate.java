@@ -58,10 +58,4 @@ public class TerminateAndRemoveActionDelegate extends AbstractDebugActionDelegat
 		return ActionMessages.TerminateAndRemoveActionDelegate_Terminate_and_remove_failed_1; //$NON-NLS-1$
 	}
 
-	/**
-	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
-	 */
-	protected String getErrorDialogTitle() {
-		return ActionMessages.TerminateAndRemoveActionDelegate_Terminate_and_Remove__3; //$NON-NLS-1$
-	}
 }

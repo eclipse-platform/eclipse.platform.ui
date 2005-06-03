@@ -115,10 +115,4 @@ public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 		return ActionMessages.ResumeActionDelegate_Resume_failed__1; //$NON-NLS-1$
 	}
 
-	/**
-	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
-	 */
-	protected String getErrorDialogTitle() {
-		return ActionMessages.ResumeActionDelegate_Resume_3; //$NON-NLS-1$
-	}
 }
