@@ -84,10 +84,19 @@ public final class TriggeredOperations extends AbstractOperation implements
 	 */
 	public void remove(IUndoableOperation operation) {
 		if (operation == triggeringOperation) {
+			// the triggering operation is being removed, so we must replace this composite
+			// with its individual triggers.
 			triggeringOperation = null;
+			// save the children before replacing the operation, since this
+			// operation will be disposed as part of replacing it.  We don't want the
+			// children to be disposed since they are to replace this operation.
+			List childrenToRestore = new ArrayList(children);
+			children = new ArrayList(0);
+			recomputeContexts();
 			operation.dispose();
-			history.replaceOperation(this, (IUndoableOperation[]) children
-					.toArray(new IUndoableOperation[children.size()]));
+			// now replace the triggering operation
+			history.replaceOperation(this, (IUndoableOperation[]) childrenToRestore
+					.toArray(new IUndoableOperation[childrenToRestore.size()]));
 		} else {
 			children.remove(operation);
 			operation.dispose();
