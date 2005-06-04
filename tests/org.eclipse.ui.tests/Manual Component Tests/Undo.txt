@@ -48,6 +48,23 @@ Integrated Scenarios
   	h.  Select "Undo Typing" to undo the local text change triggered originally by the refactoring
   	i.  Go to B.Java and undo associated text changes
   	j.  Close editors
+  <prompt on non-local undo, do not proceed, with undo/redo in between (bug 97939)
+    a.  Open A.Java and B.java
+  	b.  In A, click in the method name for "foo" and choose Refactor>Rename
+  	c.  Rename "foo" to "foo2"
+  	d.  Verify that "Undo Rename method foo to foo2" appears in Edit>Undo in pulldown menu of editor, editor popup, Package Explorer, and Navigator.
+  	e.  Select "Undo Rename method foo to foo2" from A's edit menu.
+  	f.  Operation prompts as to whether you want to proceed since the refactoring affects other files.
+	g.  Select "yes" and operation is undone.
+  	h.  Select "Redo Rename method foo to foo2" from package explorer.
+  	i.  Operation prompts as to whether you want to proceed since the refactoring affects other files.
+        j.  Select "yes" and operation is redone.
+  	k.  Select "Undo Rename method foo to foo2" from A's edit menu.
+  	l.  Operation prompts as to whether you want to proceed since the refactoring affects other files.
+  	m.  Select "no" and operation is cancelled.
+  	n.  Select "Undo Typing" to undo the local text change triggered originally by the refactoring
+  	o.  Go to B.Java and undo associated text changes
+  	j.  Close editors
   <detection of changed file>
     a.  Open A.Java and B.java
   	b.  In A, click in the method name for "foo" and choose Refactor>Rename
@@ -58,6 +75,24 @@ Integrated Scenarios
   	g.  Select OK
   	h.  Choose "Undo Typing" from A to revert the text part of the refactoring
   	i.  Go to B and choose "Undo Typing" to revert the typed changes followed by the text part of the refactoring change.
+  <detection of changed file with undo/redo in between (bug 97939)>
+    a.  Open A.Java and B.java
+  	b.  In A, click in the method name for "foo" and choose Refactor>Rename
+  	c.  Rename "foo" to "foo2"
+  	d.  Verify that "Undo Rename method foo to foo2" appears in Edit>Undo in pulldown menu of editor, editor popup, Package Explorer, and Navigator.
+  	e.  Select "Undo Rename method foo to foo2" from A's edit menu.
+  	f.  Operation prompts as to whether you want to proceed since the refactoring affects other files.
+	g.  Select "yes" and operation is undone.
+  	h.  Select "Redo Rename method foo to foo2" from package explorer.
+  	i.  Operation prompts as to whether you want to proceed since the refactoring affects other files.
+        j.  Select "yes" and operation is redone.
+  	k.  In B, type some text anywhere.
+  	l.  Go back to A and Select "Undo Rename method foo to foo2" from A's edit menu.
+  	m.  Operation informs you that it cannot be completed since B has changed.
+  	n.  Select OK
+  	o.  Choose "Undo Typing" from A to revert the text part of the refactoring
+  	p.  Go to B and choose "Undo Typing" to revert the typed changes followed by the text part of the refactoring change.
+  
   
 
 Manual Testing of Examples
