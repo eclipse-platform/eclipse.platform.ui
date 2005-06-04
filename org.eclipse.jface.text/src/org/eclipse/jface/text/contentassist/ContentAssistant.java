@@ -805,9 +805,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.1
 	 */
 	private String computeAllAutoActivationTriggers() {
+		if (fProcessors == null)
+			return ""; //$NON-NLS-1$
+		
 		StringBuffer buf= new StringBuffer(5);
-		for (Iterator it= fProcessors.entrySet().iterator(); it.hasNext();) {
-			Entry entry= (Entry) it.next();
+		Iterator iter= fProcessors.entrySet().iterator();
+		while (iter.hasNext()) {
+			Entry entry= (Entry)iter.next();
 			IContentAssistProcessor processor= (IContentAssistProcessor) entry.getValue();
 			char[] triggers= processor.getCompletionProposalAutoActivationCharacters();
 			if (triggers != null)
