@@ -231,7 +231,7 @@ public class ProjectionSupport {
 	 * painter uses to draw the indication of collapsed regions onto the
 	 * projection viewer's text widget. When <code>null</code> is passed in,
 	 * the drawing strategy is reset to the default. In order to avoid any
-	 * representation use {@link AnnotationPainter.NullStrategy}.
+	 * representation use {@link org.eclipse.jface.text.source.AnnotationPainter.NullStrategy}.
 	 *
 	 * @param strategy the drawing strategy or <code>null</code> to reset the
 	 *            strategy to the default

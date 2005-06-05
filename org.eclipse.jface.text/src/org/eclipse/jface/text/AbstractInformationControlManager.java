@@ -402,7 +402,7 @@ abstract public class AbstractInformationControlManager {
 	 * </p>
 	 *
 	 * @param fallbackAnchors the array with the anchor fallback sequence
-	 * @see #setAnchor(Anchor)
+	 * @see #setAnchor(AbstractInformationControlManager.Anchor)
 	 */
 	public void setFallbackAnchors(Anchor[] fallbackAnchors) {
 		if (fallbackAnchors != null) {

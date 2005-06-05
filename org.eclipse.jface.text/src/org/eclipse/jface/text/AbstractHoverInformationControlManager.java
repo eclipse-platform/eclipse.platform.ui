@@ -502,7 +502,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 * @deprecated visibility will be changed to protected
 	 */
 	public void setEnabled(boolean enabled) {

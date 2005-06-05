@@ -1668,7 +1668,7 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 * @deprecated since 3.1, use
 	 *             {@link ITextViewerExtension2#prependAutoEditStrategy(IAutoEditStrategy, String)} and
 	 *             {@link ITextViewerExtension2#removeAutoEditStrategy(IAutoEditStrategy, String)} instead
