@@ -75,6 +75,10 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
 				IElementCollector collector = null;
 				IDeferredWorkbenchAdapter adapter = null;
 				synchronized (fElementQueue) {
+					// could have been cancelled after entering the while loop
+					if (fElementQueue.isEmpty()) {
+						return Status.CANCEL_STATUS;
+					}
 					element = fElementQueue.remove(0);
 					collector = (IElementCollector) fCollectors.remove(0);
 					adapter = (IDeferredWorkbenchAdapter) fAdapaters.remove(0);
