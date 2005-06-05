@@ -538,7 +538,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 			return -1;
 
 		int end= fRememberedPosition == null ? -1 : fRememberedPosition.getOffset() + fRememberedPosition.getLength();
-		if (endOffset < end)
+		if (endOffset < end && end < d.getLength())
 			partition= getPartition(d, end);
 
 		IPresentationDamager damager= getDamager(partition.getType());
