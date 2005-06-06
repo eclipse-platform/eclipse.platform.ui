@@ -111,7 +111,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 						if (parent != null) {
 							refresh(parent);
 						}
-						if (source instanceof IDebugTarget) {
+						if (source instanceof IDebugTarget | source instanceof IProcess) {
 							getLaunchView().autoExpand(source, true);
 						}
 					}
