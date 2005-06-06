@@ -180,7 +180,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getFastViewWidthRatio()
      */
     public float getFastViewWidthRatio() {
-    	configElement.getAttribute(IWorkbenchRegistryConstants.ATT_RATIO); // check to ensure the element is still valid - exception thrown if it isn't
+    	configElement.getAttribute(IWorkbenchRegistryConstants.ATT_FAST_VIEW_WIDTH_RATIO); // check to ensure the element is still valid - exception thrown if it isn't
         return fastViewWidthRatio;
     }
 
@@ -211,7 +211,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
             }
         }
         
-        String ratio = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_RATIO);
+        String ratio = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_FAST_VIEW_WIDTH_RATIO);
         if (ratio != null) {
             try {
                 fastViewWidthRatio = new Float(ratio).floatValue();

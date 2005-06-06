@@ -147,9 +147,14 @@ public interface IWorkbenchRegistryConstants {
     public static final String ATT_MOVEABLE = "moveable"; //$NON-NLS-1$
 
     /**
+     * View ratio attribute.  Value <code>ratio</code>.
+     */
+    public static final String ATT_RATIO = "ratio"; //$NON-NLS-1$
+
+    /**
      * View ratio attribute.  Value <code>fastViewWidthRatio</code>.
      */
-    public static final String ATT_RATIO = "fastViewWidthRatio"; //$NON-NLS-1$
+    public static final String ATT_FAST_VIEW_WIDTH_RATIO = "fastViewWidthRatio"; //$NON-NLS-1$
 
     /**
      * View multiple attribute.  Value <code>allowMultiple</code>.
