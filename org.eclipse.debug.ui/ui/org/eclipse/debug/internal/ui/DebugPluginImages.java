@@ -22,7 +22,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.osgi.framework.Bundle;
 
 /**
  * The images provided by the debug plugin.
@@ -202,22 +201,16 @@ public class DebugPluginImages {
 		IConfigurationElement[] configElements= extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configElements.length; i++) {
 			IConfigurationElement configElement = configElements[i];
-			Bundle bundle = Platform.getBundle(configElement.getNamespace());
-			URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
-			String iconPath = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ICON);
-			ImageDescriptor imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
-			try {
-				iconURL = new URL(iconURL, iconPath);
-				imageDescriptor = ImageDescriptor.createFromURL(iconURL);
-			} catch (MalformedURLException mue) {
-				DebugUIPlugin.log(mue);
+			ImageDescriptor descriptor = DebugUIPlugin.getImageDescriptor(configElement, ATTR_LAUNCH_CONFIG_TYPE_ICON);
+			if (descriptor == null) {
+				descriptor = ImageDescriptor.getMissingImageDescriptor();
 			}
 			String configTypeID = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ID);
 			if (configTypeID == null) {
 				// bug 12652
 				configTypeID = configElement.getAttribute("type"); //$NON-NLS-1$
 			}			
-			imageRegistry.put(configTypeID, imageDescriptor);				
+			imageRegistry.put(configTypeID, descriptor);				
 		}
 	}
 

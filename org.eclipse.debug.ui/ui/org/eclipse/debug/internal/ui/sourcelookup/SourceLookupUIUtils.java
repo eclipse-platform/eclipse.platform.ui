@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
@@ -24,7 +22,6 @@ import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.osgi.framework.Bundle;
 
 /**
  * Utility methods for the UI portion of the source lookup solution.
@@ -102,24 +99,13 @@ public class SourceLookupUIUtils {
 	}
 	
 	private void registerContainerImages(IConfigurationElement configElement){
-		Bundle bundle = Platform.getBundle(configElement.getNamespace());
-		URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
-		String iconPath = configElement.getAttribute(ICON_ATTRIBUTE);
-		ImageDescriptor imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
+		ImageDescriptor imageDescriptor = DebugUIPlugin.getImageDescriptor(configElement, ICON_ATTRIBUTE);
+		if (imageDescriptor == null) {
+			imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
+		}
 		String configTypeID = configElement.getAttribute(CONTAINER_ID_ATTRIBUTE);
 		ImageRegistry imageRegistry = DebugPluginImages.getImageRegistry();
-		DebugPluginImages.getImageRegistry();
-		if(iconPath != null)
-		{
-			try {
-				iconURL = new URL(iconURL, iconPath);
-				imageDescriptor = ImageDescriptor.createFromURL(iconURL);
-			} catch (MalformedURLException mue) {
-				DebugUIPlugin.log(mue);
-			}	
-			
-			imageRegistry.put(configTypeID, imageDescriptor);			
-		}		
+		imageRegistry.put(configTypeID, imageDescriptor);		
 	}
 	
 }

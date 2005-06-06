@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.expressions.EvaluationContext;
@@ -20,6 +19,7 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
@@ -95,17 +95,13 @@ public class ConsoleFactoryExtension implements IPluginContribution {
      */
     public ImageDescriptor getImageDescriptor() {
         if (fImageDescriptor == null) {
-            try {
-                String path = fConfig.getAttributeAsIs("icon"); //$NON-NLS-1$
-                if (path != null) {
-                    Bundle bundle = Platform.getBundle(getPluginId());
-                    URL url = bundle.getEntry("/"); //$NON-NLS-1$
-                    url = new URL(url, path); //$NON-NLS-1$
-                    fImageDescriptor =  ImageDescriptor.createFromURL(url);    
+            String path = fConfig.getAttributeAsIs("icon"); //$NON-NLS-1$
+            if (path != null) {
+                Bundle bundle = Platform.getBundle(getPluginId());
+                URL url = Platform.find(bundle, new Path(path));
+                if (url != null) {
+                	fImageDescriptor =  ImageDescriptor.createFromURL(url);
                 }
-                
-            } catch (MalformedURLException e) {
-                ConsolePlugin.log(e);
             }
         }
         return fImageDescriptor;

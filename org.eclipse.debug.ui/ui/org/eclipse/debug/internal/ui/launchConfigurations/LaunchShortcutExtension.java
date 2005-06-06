@@ -11,8 +11,6 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
  
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,7 +26,6 @@ import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.Pair;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
@@ -45,7 +42,6 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
-import org.osgi.framework.Bundle;
 
 
 /**
@@ -289,17 +285,6 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	}
 	
 	/**
-	 * Returns the path of the icon for this shortcut, or <code>null</code>
-	 * if none.
-	 * 
-	 * @return the path of the icon for this shortcut, or <code>null</code>
-	 * if none
-	 */
-	protected String getIconPath() {
-		return getConfigurationElement().getAttribute("icon"); //$NON-NLS-1$
-	}	
-	
-	/**
 	 * Returns the identifier of the help context associated with this launch
 	 * shortcut, or <code>null</code> if one was not specified.
 	 * 
@@ -328,17 +313,9 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		if (fImageDescriptor == null) {
-			String iconPath = getIconPath();
-			// iconPath may be null because imageIcon is optional
-			if (iconPath != null) {
-				try {
-					Bundle bundle = Platform.getBundle(getConfigurationElement().getNamespace());
-					URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
-					iconURL = new URL(iconURL, iconPath);
-					fImageDescriptor = ImageDescriptor.createFromURL(iconURL);
-				} catch (MalformedURLException e) {
-					DebugUIPlugin.log(e);
-				}
+			fImageDescriptor = DebugUIPlugin.getImageDescriptor(getConfigurationElement(), "icon"); //$NON-NLS-1$
+			if (fImageDescriptor == null) {
+				fImageDescriptor = ImageDescriptor.getMissingImageDescriptor();
 			}
 		}
 		return fImageDescriptor;

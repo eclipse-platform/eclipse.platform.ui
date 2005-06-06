@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -33,6 +34,7 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -77,6 +79,7 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -998,6 +1001,26 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
             getDefault().fImageDescriptorRegistry = new ImageDescriptorRegistry();
         }
         return getDefault().fImageDescriptorRegistry;
+    }
+    
+    /**
+     * Returns an image descriptor for the icon referenced by the given attribute
+     * and configuration element, or <code>null</code> if none.
+     * 
+     * @param element
+     * @param attr
+     * @return image descriptor or <code>null</code>
+     */
+    public static ImageDescriptor getImageDescriptor(IConfigurationElement element, String attr) {
+		Bundle bundle = Platform.getBundle(element.getNamespace());
+		String iconPath = element.getAttribute(attr);
+		if (iconPath != null) {
+			URL iconURL = Platform.find(bundle , new Path(iconPath));
+			if (iconURL != null) {
+				return ImageDescriptor.createFromURL(iconURL);
+			}
+		}    	
+		return null;
     }
 }
 

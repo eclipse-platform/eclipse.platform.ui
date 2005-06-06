@@ -10,20 +10,15 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IBreakpointOrganizerDelegate;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.osgi.framework.Bundle;
 
 /**
  * A contributed breakpoint organizer.
@@ -52,17 +47,9 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer {
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		if (fDescriptor == null) {
-			String iconPath = fElement.getAttribute(ATTR_ICON);
-			// iconPath may be null because icon is optional
-			if (iconPath != null) {
-				try {
-					Bundle bundle = Platform.getBundle(fElement.getNamespace());
-					URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
-					iconURL = new URL(iconURL, iconPath);
-					fDescriptor = ImageDescriptor.createFromURL(iconURL);
-				} catch (MalformedURLException e) {
-					DebugUIPlugin.log(e);
-				}
+			fDescriptor = DebugUIPlugin.getImageDescriptor(fElement, ATTR_ICON);
+			if (fDescriptor == null) {
+				fDescriptor = ImageDescriptor.getMissingImageDescriptor();
 			}
 		}
 		return fDescriptor;		
