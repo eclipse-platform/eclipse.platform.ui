@@ -16,6 +16,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.session.ProcessController.TimeOutException;
 
 /*
@@ -121,10 +122,13 @@ public class Setup implements Cloneable {
 			defaultSetup.setEclipseArgument(DATA, Setup.getDefaultInstanceLocation());
 		if (Setup.getDefaultArchOption() != null)
 			defaultSetup.setEclipseArgument(ARCH, Setup.getDefaultArchOption());
-		if (Setup.getDefaultOSOption() != null)
-			defaultSetup.setEclipseArgument(OS, Setup.getDefaultOSOption());
-		if (Setup.getDefaultWSOption() != null)
-			defaultSetup.setEclipseArgument(WS, Setup.getDefaultWSOption());
+		String defaultOS = Setup.getDefaultOSOption();
+		if (defaultOS != null) {
+			defaultSetup.setEclipseArgument(OS, defaultOS);
+			if (Platform.OS_MACOSX.equals(defaultOS))
+				// see bug 98508 
+				defaultSetup.setVMArgument("XstartOnFirstThread", "");
+		}
 		if (Setup.getDefaultNLOption() != null)
 			defaultSetup.setEclipseArgument(NL, Setup.getDefaultNLOption());
 		defaultSetup.setTimeout(DEFAULT_TIMEOUT);
