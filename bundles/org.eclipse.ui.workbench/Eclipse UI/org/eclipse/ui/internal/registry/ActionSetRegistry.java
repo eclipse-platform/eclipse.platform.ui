@@ -221,7 +221,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
         IConfigurationElement [] elements = extension.getConfigurationElements();
         for (int i = 0; i < elements.length; i++) {
             IConfigurationElement element = elements[i];
-            if (element.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION_SET_ASSOCIATION)) {
+            if (element.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION_SET_PART_ASSOCIATION)) {
                 String actionSetId = element.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
                 IConfigurationElement[] children = element.getChildren();
                 for (int j = 0; j < children.length; j++) {

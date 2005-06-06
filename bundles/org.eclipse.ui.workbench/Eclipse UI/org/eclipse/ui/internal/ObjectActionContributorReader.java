@@ -48,7 +48,7 @@ public class ObjectActionContributorReader extends RegistryReader {
             processObjectContribution(element);
             return true;
         }
-        if (tagName.equals(IWorkbenchRegistryConstants.TAG_CONTRIBUTION_TYPE)) {
+        if (tagName.equals(IWorkbenchRegistryConstants.TAG_VIEWER_CONTRIBUTION)) {
             return true;
         }
 

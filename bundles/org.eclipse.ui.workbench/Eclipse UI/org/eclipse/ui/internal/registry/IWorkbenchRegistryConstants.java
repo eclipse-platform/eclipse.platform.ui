@@ -159,12 +159,12 @@ public interface IWorkbenchRegistryConstants {
     /**
      * View multiple attribute.  Value <code>allowMultiple</code>.
      */
-    public static final String ATT_MULTIPLE = "allowMultiple"; //$NON-NLS-1$
+    public static final String ATT_ALLOW_MULTIPLE = "allowMultiple"; //$NON-NLS-1$
 
     /**
      * View parent category attribute.  Value <code>parentCategory</code>.
      */
-    public static final String ATT_PARENT = "parentCategory"; //$NON-NLS-1$
+    public static final String ATT_PARENT_CATEGORY = "parentCategory"; //$NON-NLS-1$
     
 /* ***** org.eclipse.ui.perspectives constants ***** */
 
@@ -193,7 +193,7 @@ public interface IWorkbenchRegistryConstants {
     /**
      * Editor contributor class attribute.  Value <code>contributorClass</code>.
      */
-    public static final String ATT_EDITOR_CONTRIBUTOR = "contributorClass"; //$NON-NLS-1$
+    public static final String ATT_CONTRIBUTOR_CLASS = "contributorClass"; //$NON-NLS-1$
 
     /**
      * Editor command attribute.  Value <code>command</code>.
@@ -288,7 +288,7 @@ public interface IWorkbenchRegistryConstants {
     /**
      * Part association tag.  Value <code>actionSetPartAssociation</code>.
      */
-    public static final String TAG_ACTION_SET_ASSOCIATION = "actionSetPartAssociation";//$NON-NLS-1$
+    public static final String TAG_ACTION_SET_PART_ASSOCIATION = "actionSetPartAssociation";//$NON-NLS-1$
 
     /**
      * Part tag.  Value <code>part</code>.
@@ -324,19 +324,19 @@ public interface IWorkbenchRegistryConstants {
     /**
      * Viewer contribution tag.  Value <code>viewerContribution</code>.
      */
-    public static final String TAG_CONTRIBUTION_TYPE = "viewerContribution"; //$NON-NLS-1$
+    public static final String TAG_VIEWER_CONTRIBUTION = "viewerContribution"; //$NON-NLS-1$
 
 /* ***** org.eclipse.ui.perspectiveExtensions ***** */
     
     /**
      * Perspective extension tag.  Value <code>perspectiveExtension</code>.
      */
-    public static final String TAG_EXTENSION = "perspectiveExtension";//$NON-NLS-1$
+    public static final String TAG_PERSPECTIVE_EXTENSION = "perspectiveExtension";//$NON-NLS-1$
 
     /**
      * Wizard shortcut tag.  Value <code>newWizardShortcut</code>.
      */
-    public static final String TAG_WIZARD_SHORTCUT = "newWizardShortcut";//$NON-NLS-1$
+    public static final String TAG_NEW_WIZARD_SHORTCUT = "newWizardShortcut";//$NON-NLS-1$
 
     /**
      * View shortcut tag.  Value <code>viewShortcut</code>.

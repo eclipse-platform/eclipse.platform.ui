@@ -354,7 +354,7 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
 				IConfigurationElement [] elements = delta.getExtension().getConfigurationElements();
 				for (int j = 0; j < elements.length; j++) {
 					IConfigurationElement element = elements[j];
-					if (element.getName().equals(IWorkbenchRegistryConstants.TAG_CONTRIBUTION_TYPE)) {
+					if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEWER_CONTRIBUTION)) {
 						clearPopups = true;
 						break;
 					}					

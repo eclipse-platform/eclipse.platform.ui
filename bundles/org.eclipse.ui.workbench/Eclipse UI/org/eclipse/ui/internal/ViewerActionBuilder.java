@@ -102,7 +102,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 		Assert.isTrue(part instanceof IViewPart || part instanceof IEditorPart);
         provider = prov;
         this.part = part;
-        readContributions(id, IWorkbenchRegistryConstants.TAG_CONTRIBUTION_TYPE,
+        readContributions(id, IWorkbenchRegistryConstants.TAG_VIEWER_CONTRIBUTION,
                 IWorkbenchConstants.PL_POPUP_MENU);
         return (cache != null);
     }

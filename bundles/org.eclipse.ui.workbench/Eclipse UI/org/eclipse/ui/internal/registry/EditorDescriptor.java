@@ -203,7 +203,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
         // Get the contributor class name.
         String className = configurationElement
-                .getAttribute(IWorkbenchRegistryConstants.ATT_EDITOR_CONTRIBUTOR);
+                .getAttribute(IWorkbenchRegistryConstants.ATT_CONTRIBUTOR_CLASS);
         if (className == null)
             return null;
 
@@ -212,7 +212,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         try {
             contributor = (IEditorActionBarContributor) WorkbenchPlugin
                     .createExtension(configurationElement,
-                            IWorkbenchRegistryConstants.ATT_EDITOR_CONTRIBUTOR);
+                            IWorkbenchRegistryConstants.ATT_CONTRIBUTOR_CLASS);
         } catch (CoreException e) {
             WorkbenchPlugin.log("Unable to create editor contributor: " + //$NON-NLS-1$
                     id, e.getStatus());

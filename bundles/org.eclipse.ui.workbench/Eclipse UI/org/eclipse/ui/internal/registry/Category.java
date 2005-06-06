@@ -185,7 +185,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
      */
     public String getRawParentPath() {
         return configurationElement == null ? null
-                : configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_PARENT);
+                : configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_PARENT_CATEGORY);
     }
 
     /**

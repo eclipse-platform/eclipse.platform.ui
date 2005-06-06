@@ -258,7 +258,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getAllowMultiple()
      */
     public boolean getAllowMultiple() {
-    	String string = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_MULTIPLE);    	
+    	String string = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE);    	
         return string == null ? false : Boolean.valueOf(string).booleanValue();
     }
 

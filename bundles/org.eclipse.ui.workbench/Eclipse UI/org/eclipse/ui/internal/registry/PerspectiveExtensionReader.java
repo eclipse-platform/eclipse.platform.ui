@@ -115,7 +115,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
                     result = processView(child);
                 else if (type.equals(IWorkbenchRegistryConstants.TAG_VIEW_SHORTCUT))
                     result = processViewShortcut(child);
-                else if (type.equals(IWorkbenchRegistryConstants.TAG_WIZARD_SHORTCUT))
+                else if (type.equals(IWorkbenchRegistryConstants.TAG_NEW_WIZARD_SHORTCUT))
                     result = processWizardShortcut(child);
                 else if (type.equals(IWorkbenchRegistryConstants.TAG_PERSP_SHORTCUT))
                     result = processPerspectiveShortcut(child);
@@ -293,7 +293,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
     protected boolean readElement(IConfigurationElement element) {
         String type = element.getName();
-        if (type.equals(IWorkbenchRegistryConstants.TAG_EXTENSION)) {
+        if (type.equals(IWorkbenchRegistryConstants.TAG_PERSPECTIVE_EXTENSION)) {
             String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
             if (targetID.equals(id)) {
             	if (tracker != null)
