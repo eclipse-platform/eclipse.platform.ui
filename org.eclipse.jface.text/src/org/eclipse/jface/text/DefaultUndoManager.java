@@ -639,7 +639,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	class HistoryListener implements IOperationHistoryListener {
 		private IUndoableOperation fOperation;
 
-		public void historyNotification(OperationHistoryEvent event) {
+		public void historyNotification(final OperationHistoryEvent event) {
 			final int type= event.getEventType();
 			switch (type) {
 			case OperationHistoryEvent.ABOUT_TO_UNDO:
@@ -648,17 +648,27 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				if (event.getOperation().hasContext(fUndoContext)) {
 					fTextViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
 						public void run() {
-							if (fTextViewer instanceof TextViewer)
-								((TextViewer)fTextViewer).ignoreAutoEditStrategies(true);
-							listenToTextChanges(false);
-
-							// in the undo case only, make sure compounds are closed
-							if (type == OperationHistoryEvent.ABOUT_TO_UNDO) {
-								if (fFoldingIntoCompoundChange) {
-									endCompoundChange();
+							// if we are undoing/redoing a command we generated, then ignore
+							// the document changes associated with this undo or redo.
+							if (event.getOperation() instanceof TextCommand) {
+								if (fTextViewer instanceof TextViewer)
+									((TextViewer)fTextViewer).ignoreAutoEditStrategies(true);
+								listenToTextChanges(false);
+	
+								// in the undo case only, make sure compounds are closed
+								if (type == OperationHistoryEvent.ABOUT_TO_UNDO) {
+									if (fFoldingIntoCompoundChange) {
+										endCompoundChange();
+									}
 								}
+							} else {
+								// the undo or redo has our context, but it is not one of 
+								// our commands.  We will listen to the changes, but will
+								// reset the state that tracks the undo/redo history. 
+								commit();
+								fLastAddedCommand = null;
 							}
-				         }
+						}
 				    });
 					fOperation= event.getOperation();
 				}
