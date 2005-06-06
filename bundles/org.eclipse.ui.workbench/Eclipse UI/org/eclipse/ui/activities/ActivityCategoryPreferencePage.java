@@ -59,6 +59,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.OverlayIcon;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
@@ -346,6 +347,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         createCategoryArea(composite);
         createDetailsArea(composite);
         createButtons(composite);
+        
+        workbench.getHelpSystem().setHelp(parent,
+				IWorkbenchHelpContextIds.CAPABILITY_PREFERENCE_PAGE);
         return composite;
     }
 

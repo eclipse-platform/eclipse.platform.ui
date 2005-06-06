@@ -307,5 +307,8 @@ public interface IWorkbenchHelpContextIds {
             + "working_set_new_wizard_context"; //$NON-NLS-1$	
 
     public static final String WORKING_SET_EDIT_WIZARD = PREFIX
-            + "working_set_edit_wizard_context"; //$NON-NLS-1$		
+            + "working_set_edit_wizard_context"; //$NON-NLS-1$	
+    
+    public static final String CAPABILITY_PREFERENCE_PAGE = PREFIX
+    	        + "capabilities_preference_page_context"; //$NON-NLS-1$
 }
