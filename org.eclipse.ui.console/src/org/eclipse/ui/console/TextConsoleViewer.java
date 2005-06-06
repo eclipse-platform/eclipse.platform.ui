@@ -183,7 +183,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
             try {
                 Position[] positions = getDocument().getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
                 Position[] overlap = findPosition(offset, length, positions);
-                Color color = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
+                Color color = JFaceColors.getHyperlinkText(Display.getCurrent());
                 if (overlap != null) {
                     for (int i = 0; i < overlap.length; i++) {
                         Position position = overlap[i];
