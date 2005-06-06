@@ -136,19 +136,27 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
 		if (file != null) {
-
-			try {
-				IContentDescription description= file.getContentDescription();
-				if (description != null) {
-					IContentType type= description.getContentType();
-					if (type != null)
-						return type.isKindOf(text);
+			if (file.exists()) {
+				try {
+					IContentDescription description= file.getContentDescription();
+					if (description != null) {
+						IContentType type= description.getContentType();
+						if (type != null)
+							return type.isKindOf(text);
+					}
+				} catch (CoreException x) {
+					// ignore: API specification tells return true if content type can't be determined
 				}
-			} catch (CoreException x) {
+			} else {
+				IContentType[] contentTypes= manager.findContentTypesFor(file.getName());
+				if (contentTypes != null && contentTypes.length > 0) {
+					for (int i= 0; i < contentTypes.length; i++)
+						if (contentTypes[i].isKindOf(text))
+							return true;
+					return false;
+				}
 			}
-
 			return true;
-
 		}
 
 		File externalFile= FileBuffers.getSystemFileAtLocation(location);
@@ -184,6 +192,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				for (int i= 0; i < contentTypes.length; i++)
 					if (contentTypes[i].isKindOf(text))
 						return true;
+				return false;
 			}
 			return true;
 		}
