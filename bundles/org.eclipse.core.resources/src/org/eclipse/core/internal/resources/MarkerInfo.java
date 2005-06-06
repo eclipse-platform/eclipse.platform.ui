@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import org.eclipse.core.internal.utils.*;
 
@@ -18,28 +19,47 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	//
 	protected static final long UNDEFINED_ID = -1;
 
-	/** Marker identifier. */
-	protected long id = UNDEFINED_ID;
-
-	/** The type of this marker. */
-	protected String type = null;
-
 	/** The store of attributes for this marker. */
 	protected Map attributes = null;
 
 	/** The creation time for this marker. */
 	protected long creationTime = 0;
 
+	/** Marker identifier. */
+	protected long id = UNDEFINED_ID;
+
+	/** The type of this marker. */
+	protected String type = null;
+
+	/**
+	 * Returns whether the given object is a valid attribute value.
+	 */
+	protected static void checkValidAttribute(Object value) {
+		boolean isString = value instanceof String;
+		Assert.isTrue(value == null || isString|| value instanceof Integer || value instanceof Boolean);
+		
+		if (!isString)
+			return;
+		//we cannot write attributes whose UTF encoding exceeds 65535 bytes.
+		String valueString = (String)value;
+		//optimized test based on maximum 3 bytes per character
+		if (valueString.length() < 21000)
+			return;
+		byte[] bytes;
+		try {
+			bytes = valueString.getBytes(("UTF-8"));//$NON-NLS-1$
+		} catch (UnsupportedEncodingException uee) {
+			//cannot validate further
+			return;
+		}
+		if (bytes.length > 65535) { 
+			String msg = "Marker property value is too long: " + valueString.substring(0, 10000); //$NON-NLS-1$
+			Assert.isTrue(false, msg);
+		}
+	}
+
 	public MarkerInfo() {
 		super();
-	}
-
-	public Object getAttribute(String attributeName) {
-		return attributes == null ? null : attributes.get(attributeName);
-	}
-
-	public Map getAttributes() {
-		return getAttributes(true);
 	}
 
 	/**
@@ -57,17 +77,25 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		}
 	}
 
-	public Object[] getAttributes(String[] attributeNames) {
-		Object[] result = new Object[attributeNames.length];
-		for (int i = 0; i < attributeNames.length; i++)
-			result[i] = getAttribute(attributeNames[i]);
-		return result;
+	public Object getAttribute(String attributeName) {
+		return attributes == null ? null : attributes.get(attributeName);
+	}
+
+	public Map getAttributes() {
+		return getAttributes(true);
 	}
 
 	public Map getAttributes(boolean makeCopy) {
 		if (attributes == null)
 			return null;
 		return makeCopy ? new MarkerAttributeMap(attributes) : attributes;
+	}
+
+	public Object[] getAttributes(String[] attributeNames) {
+		Object[] result = new Object[attributeNames.length];
+		for (int i = 0; i < attributeNames.length; i++)
+			result[i] = getAttribute(attributeNames[i]);
+		return result;
 	}
 
 	public long getCreationTime() {
@@ -88,15 +116,8 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		attributes = (MarkerAttributeMap) map;
 	}
 
-	/**
-	 * Returns whether the given object is a valid attribute value.
-	 */
-	protected static boolean isValidAttributeValue(Object value) {
-		return value == null || value instanceof String || value instanceof Integer || value instanceof Boolean;
-	}
-
 	public void setAttribute(String attributeName, Object value) {
-		Assert.isTrue(isValidAttributeValue(value));
+		checkValidAttribute(value);
 		if (attributes == null) {
 			if (value == null)
 				return;
@@ -113,17 +134,17 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		}
 	}
 
-	public void setAttributes(String[] attributeNames, Object[] values) {
-		Assert.isTrue(attributeNames.length == values.length);
-		for (int i = 0; i < attributeNames.length; i++)
-			setAttribute(attributeNames[i], values[i]);
-	}
-
 	public void setAttributes(Map map) {
 		if (map == null)
 			attributes = null;
 		else
 			attributes = new MarkerAttributeMap(map);
+	}
+
+	public void setAttributes(String[] attributeNames, Object[] values) {
+		Assert.isTrue(attributeNames.length == values.length);
+		for (int i = 0; i < attributeNames.length; i++)
+			setAttribute(attributeNames[i], values[i]);
 	}
 
 	public void setCreationTime(long value) {
