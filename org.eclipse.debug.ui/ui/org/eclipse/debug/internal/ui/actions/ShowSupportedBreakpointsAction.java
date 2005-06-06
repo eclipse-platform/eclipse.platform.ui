@@ -171,6 +171,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	protected void reapplyFilters(List debugTargets) {
 		fDebugTargets= debugTargets;		
 		getViewer().refresh();
+		fView.initializeCheckedState();
 	}
 	
 	protected IViewPart getView() {
