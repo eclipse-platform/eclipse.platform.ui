@@ -11,16 +11,14 @@
 package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
+import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.core.filebuffers.FileBuffers;
 
 /**
  * FileBuffersForWorkspaceFiles
@@ -92,39 +90,15 @@ public class FileBuffersForNonAccessibleWorkspaceFiles extends FileBufferFunctio
 	}
 	
 	public void test7() throws Exception {
-		try {
-			super.test7();
-			fail();
-		} catch (CoreException e) {
-			ensureFileNotFoundError(e);
-		}
+		// disable because it might create a file outside the closed project
 	}
 	
 	public void test11_1() throws Exception {
-		try {
-			super.test11_1();
-			fail();
-		} catch (CoreException e) {
-			ensureFileNotFoundError(e);
-		}
+		// disable because it might create a file outside the closed project
 	}
 
 	public void test17_3() throws Exception {
-		try {
-			super.test17_3();
-			fail();
-		} catch (CoreException e) {
-			ensureFileNotFoundError(e);
-		}
+		// disable because it might create a file outside the closed project
 	}
 
-	private void ensureFileNotFoundError(CoreException e) {
-		IStatus status= e.getStatus();
-		assertEquals(FileBuffersPlugin.PLUGIN_ID, status.getPlugin());
-		assertEquals(IStatus.ERROR, status.getSeverity());
-		assertEquals(IStatus.OK, status.getCode());
-		Throwable cause= status.getException();
-		assertNotNull(cause);
-		assertTrue(cause instanceof FileNotFoundException);
-	}
 }
