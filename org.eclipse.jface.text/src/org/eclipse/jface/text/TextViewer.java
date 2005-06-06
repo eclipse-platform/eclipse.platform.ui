@@ -1127,7 +1127,7 @@ public class TextViewer extends Viewer implements
 		 */
 		public void keyReleased(KeyEvent e) {
 			if (fTextWidget.getSelectionCount() == 0)
-				queuePostSelectionChanged();
+				queuePostSelectionChanged(false);
 		}
 
 		/*
@@ -1147,7 +1147,7 @@ public class TextViewer extends Viewer implements
 		 */
 		public void mouseUp(MouseEvent event) {
 			if (fTextWidget.getSelectionCount() == 0)
-				queuePostSelectionChanged();
+				queuePostSelectionChanged(false);
 		}
 	}
 
@@ -2208,9 +2208,10 @@ public class TextViewer extends Viewer implements
 	/**
 	 * Starts a timer to send out a post selection changed event.
 	 *
+	 * @param fireEqualSelection <code>true</code> iff the event must be fired if the selection does not change 
 	 * @since 3.0
 	 */
-	private void queuePostSelectionChanged() {
+	private void queuePostSelectionChanged(final boolean fireEqualSelection) {
 		Display display= getDisplay();
 		if (display == null)
 			return;
@@ -2223,8 +2224,13 @@ public class TextViewer extends Viewer implements
 					// Check again because this is executed after the delay
 					if (getDisplay() != null)  {
 						Point selection= fTextWidget.getSelectionRange();
-						if (selection != null)
-							firePostSelectionChanged(selection.x, selection.y);
+						if (selection != null) {
+							IRegion r= widgetRange2ModelRange(new Region(selection.x, selection.y));
+							if (fireEqualSelection || (r != null && !r.equals(fLastSentPostSelectionChange)) || r == null)  {
+								fLastSentPostSelectionChange= r;
+								firePostSelectionChanged(selection.x, selection.y);
+							}
+						}
 					}
 				}
 			}
@@ -2241,25 +2247,22 @@ public class TextViewer extends Viewer implements
 	protected void firePostSelectionChanged(int offset, int length) {
 		if (redraws()) {
 			IRegion r= widgetRange2ModelRange(new Region(offset, length));
-			if ((r != null && !r.equals(fLastSentPostSelectionChange)) || r == null)  {
-				fLastSentPostSelectionChange= r;
-				ISelection selection= r != null ? new TextSelection(getDocument(), r.getOffset(), r.getLength()) : TextSelection.emptySelection();
-				SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
-				firePostSelectionChanged(event);
-			}
+			ISelection selection= r != null ? new TextSelection(getDocument(), r.getOffset(), r.getLength()) : TextSelection.emptySelection();
+			SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
+			firePostSelectionChanged(event);
 		}
 	}
 
 	/**
 	 * Sends out a text selection changed event to all registered listeners and
-	 * registers the selection changed event to be send out to all post selection
+	 * registers the selection changed event to be sent out to all post selection
 	 * listeners.
 	 *
 	 * @param offset the offset of the newly selected range in the visible document
 	 * @param length the length of the newly selected range in the visible document
 	 */
 	protected void selectionChanged(int offset, int length) {
-		queuePostSelectionChanged();
+		queuePostSelectionChanged(true);
 		fireSelectionChanged(offset, length);
 	}
 

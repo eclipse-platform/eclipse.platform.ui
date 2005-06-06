@@ -667,7 +667,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 			try {
 				document.removePosition(fSelectionCategory, position);
-				setSelectedRange(position.getOffset(), position.getLength());
+				Point currentSelection= getSelectedRange();
+				if (currentSelection == null || currentSelection.x != position.getOffset() || currentSelection.y != position.getLength())
+					setSelectedRange(position.getOffset(), position.getLength());
 
 				if (fSelections.isEmpty())
 					clearRememberedSelection();
