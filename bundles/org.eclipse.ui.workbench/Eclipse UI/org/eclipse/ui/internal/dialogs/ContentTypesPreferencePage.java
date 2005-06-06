@@ -276,7 +276,6 @@ public class ContentTypesPreferencePage extends PreferencePage implements
      */
     protected Control createContents(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setFont(parent.getFont());
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = layout.marginWidth = 0;
         composite.setLayout(layout);
@@ -297,6 +296,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         workbench.getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.CONTENT_TYPES_PREFERENCE_PAGE);
 
+        applyDialogFont(composite);
         return composite;
     }
 

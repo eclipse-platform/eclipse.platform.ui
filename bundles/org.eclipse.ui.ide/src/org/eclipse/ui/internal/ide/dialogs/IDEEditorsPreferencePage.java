@@ -119,6 +119,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		//		WorkbenchHelp.setHelp(parent,
 		// IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
 
+		applyDialogFont(composite);
 		return composite;
 	}
 

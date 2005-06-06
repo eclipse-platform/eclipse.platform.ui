@@ -24,7 +24,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -152,7 +151,6 @@ public class FileEditorsPreferencePage extends PreferencePage implements
     protected Control createContents(Composite parent) {
         imagesToDispose = new ArrayList();
         editorsToImages = new HashMap(50);
-        Font font = parent.getFont();
 
         // define container & its gridding
         Composite pageComponent = new Composite(parent, SWT.NULL);
@@ -165,7 +163,6 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         data.verticalAlignment = GridData.FILL;
         data.horizontalAlignment = GridData.FILL;
         pageComponent.setLayoutData(data);
-        pageComponent.setFont(font);
 
         //layout the contents
 
@@ -183,7 +180,6 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         data.horizontalAlignment = GridData.FILL;
         data.horizontalSpan = 2;
         label.setLayoutData(data);
-        label.setFont(font);
 
         resourceTypeTable = new Table(pageComponent, SWT.SINGLE | SWT.BORDER
                 | SWT.FULL_SELECTION);
@@ -196,7 +192,6 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         data.heightHint = resourceTypeTable.getItemHeight()
                 * (availableRows / 8);
         resourceTypeTable.setLayoutData(data);
-        resourceTypeTable.setFont(font);
 
         Composite groupComponent = new Composite(pageComponent, SWT.NULL);
         GridLayout groupLayout = new GridLayout();
@@ -207,19 +202,16 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         data.verticalAlignment = GridData.FILL;
         data.horizontalAlignment = GridData.FILL;
         groupComponent.setLayoutData(data);
-        groupComponent.setFont(font);
 
         addResourceTypeButton = new Button(groupComponent, SWT.PUSH);
         addResourceTypeButton.setText(WorkbenchMessages.FileEditorPreference_add); 
         addResourceTypeButton.addListener(SWT.Selection, this);
         addResourceTypeButton.setLayoutData(data);
-        addResourceTypeButton.setFont(font);
         setButtonLayoutData(addResourceTypeButton);
 
         removeResourceTypeButton = new Button(groupComponent, SWT.PUSH);
         removeResourceTypeButton.setText(WorkbenchMessages.FileEditorPreference_remove);
         removeResourceTypeButton.addListener(SWT.Selection, this);
-        removeResourceTypeButton.setFont(font);
         setButtonLayoutData(removeResourceTypeButton);
 
         //Spacer
@@ -236,7 +228,6 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         data.horizontalAlignment = GridData.FILL;
         data.horizontalSpan = 2;
         editorLabel.setLayoutData(data);
-        editorLabel.setFont(font);
 
         editorTable = new Table(pageComponent, SWT.SINGLE | SWT.BORDER);
         editorTable.addListener(SWT.Selection, this);
@@ -244,7 +235,6 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         data = new GridData(GridData.FILL_BOTH);
         data.heightHint = editorTable.getItemHeight() * 7;
         editorTable.setLayoutData(data);
-        editorTable.setFont(font);
 
         groupComponent = new Composite(pageComponent, SWT.NULL);
         groupLayout = new GridLayout();
@@ -255,25 +245,21 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         data.verticalAlignment = GridData.FILL;
         data.horizontalAlignment = GridData.FILL;
         groupComponent.setLayoutData(data);
-        groupComponent.setFont(font);
 
         addEditorButton = new Button(groupComponent, SWT.PUSH);
         addEditorButton.setText(WorkbenchMessages.FileEditorPreference_addEditor);
         addEditorButton.addListener(SWT.Selection, this);
         addEditorButton.setLayoutData(data);
-        addEditorButton.setFont(font);
         setButtonLayoutData(addEditorButton);
 
         removeEditorButton = new Button(groupComponent, SWT.PUSH);
         removeEditorButton.setText(WorkbenchMessages.FileEditorPreference_removeEditor); 
         removeEditorButton.addListener(SWT.Selection, this);
-        removeEditorButton.setFont(font);
         setButtonLayoutData(removeEditorButton);
 
         defaultEditorButton = new Button(groupComponent, SWT.PUSH);
         defaultEditorButton.setText(WorkbenchMessages.FileEditorPreference_default);
         defaultEditorButton.addListener(SWT.Selection, this);
-        defaultEditorButton.setFont(font);
         setButtonLayoutData(defaultEditorButton);
 
         fillResourceTypeTable();
@@ -285,6 +271,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
 
         workbench.getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.FILE_EDITORS_PREFERENCE_PAGE);
+        applyDialogFont(pageComponent);
 
         return pageComponent;
     }
