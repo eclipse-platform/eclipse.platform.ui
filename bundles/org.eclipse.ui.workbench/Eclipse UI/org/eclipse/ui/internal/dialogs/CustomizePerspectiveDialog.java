@@ -63,7 +63,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -152,9 +151,9 @@ public class CustomizePerspectiveDialog extends Dialog {
 
     private static int cursorSize = 15;
 
-    private final static int TABLES_WIDTH = 600;
+    private final static int TAB_WIDTH_IN_DLUS = 490;
 
-    private final static int TABLE_HEIGHT = 300;
+    private final static int TAB_HEIGHT_IN_DLUS = 230;
 
     private final String shortcutMenuColumnHeaders[] = {
             WorkbenchMessages.ActionSetSelection_menuColumnHeader,
@@ -834,15 +833,6 @@ public class CustomizePerspectiveDialog extends Dialog {
             }
             return ""; //$NON-NLS-1$
         }
-
-        public int getIndent(Object element) {
-            if (element instanceof ActionSetDisplayItem) {
-                int depth = ((ActionSetDisplayItem) element).getDepth();
-                depth = depth - 1;
-                return depth;
-            }
-            return 0;
-        }
     }
 
     /**
@@ -1030,33 +1020,26 @@ public class CustomizePerspectiveDialog extends Dialog {
     }
 
     private Composite createActionSetsPage(Composite parent) {
-        GridData data;
-        Font font = parent.getFont();
-
+    	GridData data;
+    	
         Composite actionSetsComposite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         actionSetsComposite.setLayout(layout);
-        data = new GridData(GridData.FILL_BOTH);
-        actionSetsComposite.setLayoutData(data);
 
         // Select... label
         Label label = new Label(actionSetsComposite, SWT.WRAP);
         label
                 .setText(NLS.bind(WorkbenchMessages.ActionSetSelection_selectActionSetsLabel,perspective.getDesc().getLabel() ));
-        data = new GridData(GridData.FILL_BOTH);
-        data.widthHint = TABLES_WIDTH;
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         label.setLayoutData(data);
 
         Label sep = new Label(actionSetsComposite, SWT.HORIZONTAL
                 | SWT.SEPARATOR);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        sep.setLayoutData(data);
+        sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         SashForm sashComposite = new SashForm(actionSetsComposite,
                 SWT.HORIZONTAL);
-        data = new GridData(GridData.FILL_BOTH);
-        data.heightHint = TABLE_HEIGHT;
-        data.widthHint = TABLES_WIDTH;
+        data = new GridData(SWT.FILL, SWT.FILL, true, true);
         sashComposite.setLayoutData(data);
 
         // Action Set List Composite
@@ -1065,32 +1048,21 @@ public class CustomizePerspectiveDialog extends Dialog {
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         actionSetGroup.setLayout(layout);
-        data = new GridData(GridData.FILL_BOTH);
-        actionSetGroup.setLayoutData(data);
+        actionSetGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        label = new Label(actionSetGroup, SWT.NONE);
+        label = new Label(actionSetGroup, SWT.WRAP);
         label.setText(WorkbenchMessages.ActionSetSelection_availableActionSets);
-
+        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        
         actionSetsViewer = CheckboxTableViewer.newCheckList(actionSetGroup,
                 SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        data = new GridData(GridData.FILL_BOTH);
-        actionSetsViewer.getTable().setLayoutData(data);
-        actionSetsViewer.getTable().setFont(font);
+        actionSetsViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         actionSetsViewer.setLabelProvider(new WorkbenchLabelProvider());
         actionSetsViewer.setContentProvider(new ArrayContentProvider());
         actionSetsViewer.setSorter(new ActionSetSorter());
 
-        // Action list Group
-        Composite actionItemGroup = new Composite(sashComposite, SWT.NONE);
-        layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        layout.horizontalSpacing = 5;
-        actionItemGroup.setLayout(layout);
-        data = new GridData(GridData.FILL_BOTH);
-        actionItemGroup.setLayoutData(data);
-
-        Composite actionGroup = new Composite(actionItemGroup, SWT.NULL);
+        // Menu and toolbar composite
+        Composite actionGroup = new Composite(sashComposite, SWT.NONE);
         layout = new GridLayout();
         layout.numColumns = 2;
         layout.makeColumnsEqualWidth = true;
@@ -1098,28 +1070,37 @@ public class CustomizePerspectiveDialog extends Dialog {
         layout.marginWidth = 0;
         layout.horizontalSpacing = 0;
         actionGroup.setLayout(layout);
-        data = new GridData(GridData.FILL_BOTH);
-        actionGroup.setLayoutData(data);
+        actionGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        label = new Label(actionGroup, SWT.NONE);
+        Composite menubarGroup = new Composite(actionGroup, SWT.NONE);
+        layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        menubarGroup.setLayout(layout);
+        menubarGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        
+        label = new Label(menubarGroup, SWT.NONE);
         label.setText(WorkbenchMessages.ActionSetSelection_menubarActions); 
-        label.setFont(font);
 
-        label = new Label(actionGroup, SWT.NONE);
-        label.setText(WorkbenchMessages.ActionSetSelection_toolbarActions);
-        label.setFont(font);
-
-        actionSetMenuViewer = new TreeViewer(actionGroup);
+        actionSetMenuViewer = new TreeViewer(menubarGroup);
         actionSetMenuViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-        data = new GridData(GridData.FILL_BOTH);
-        actionSetMenuViewer.getControl().setLayoutData(data);
+        actionSetMenuViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         actionSetMenuViewer.setLabelProvider(new ActionSetLabelProvider());
         actionSetMenuViewer.setContentProvider(new TreeContentProvider());
 
-        actionSetToolbarViewer = new TreeViewer(actionGroup);
+        Composite toolbarGroup = new Composite(actionGroup, SWT.NONE);
+        layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        toolbarGroup.setLayout(layout);
+        toolbarGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        
+        label = new Label(toolbarGroup, SWT.NONE);
+        label.setText(WorkbenchMessages.ActionSetSelection_toolbarActions);
+
+        actionSetToolbarViewer = new TreeViewer(toolbarGroup);
         actionSetToolbarViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-        data = new GridData(GridData.FILL_BOTH);
-        actionSetToolbarViewer.getControl().setLayoutData(data);
+        actionSetToolbarViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         actionSetToolbarViewer
                 .setLabelProvider(new ActionSetLabelProvider());
         actionSetToolbarViewer.setContentProvider(new TreeContentProvider());
@@ -1129,10 +1110,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         // Use F2... label
         label = new Label(actionSetsComposite, SWT.WRAP);
         label.setText(WorkbenchMessages.ActionSetSelection_selectActionSetsHelp);
-        label.setFont(font);
-        data = new GridData();
-        data.widthHint = TABLES_WIDTH;
-        label.setLayoutData(data);
+        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         return actionSetsComposite;
     }
@@ -1156,7 +1134,10 @@ public class CustomizePerspectiveDialog extends Dialog {
 
         // tab folder
         tabFolder = new TabFolder(composite, SWT.NONE);
-        GridData gd = new GridData(GridData.FILL_BOTH);
+        
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+        gd.widthHint = convertHorizontalDLUsToPixels(TAB_WIDTH_IN_DLUS);
+        gd.heightHint = convertVerticalDLUsToPixels(TAB_HEIGHT_IN_DLUS);
         tabFolder.setLayoutData(gd);
 
         // Shortcuts tab
@@ -1177,6 +1158,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         TabItem item = new TabItem(tabFolder, SWT.NONE);
         item.setText(WorkbenchMessages.ActionSetSelection_actionSetsTab); 
         item.setControl(createActionSetsPage(tabFolder));
+        applyDialogFont(tabFolder);
         addActionSetsListeners();
         actionSetsViewer.setInput(actionSets);
         checkInitialActionSetSelections();
@@ -1188,32 +1170,23 @@ public class CustomizePerspectiveDialog extends Dialog {
     }
 
     private Composite createMenusPage(Composite parent) {
-        GridData data;
-        Font font = parent.getFont();
+    	GridData data;
 
         Composite menusComposite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         menusComposite.setLayout(layout);
-        data = new GridData(GridData.FILL_BOTH);
-        menusComposite.setLayoutData(data);
 
         // Select... label
         Label label = new Label(menusComposite, SWT.WRAP);
-        label
-                .setText(NLS.bind(WorkbenchMessages.ActionSetSelection_selectMenusLabel,  perspective.getDesc().getLabel() )); 
-        label.setFont(font);
-        data = new GridData();
-        data.widthHint = TABLES_WIDTH;
+        label.setText(NLS.bind(WorkbenchMessages.ActionSetSelection_selectMenusLabel,  perspective.getDesc().getLabel() )); 
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         label.setLayoutData(data);
 
         Label sep = new Label(menusComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        sep.setLayoutData(data);
+        sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         SashForm sashComposite = new SashForm(menusComposite, SWT.HORIZONTAL);
-        data = new GridData(GridData.FILL_BOTH);
-        data.heightHint = TABLE_HEIGHT;
-        data.widthHint = TABLES_WIDTH;
+        data = new GridData(SWT.FILL, SWT.FILL, true, true);
         sashComposite.setLayoutData(data);
 
         // Menus List
@@ -1222,27 +1195,22 @@ public class CustomizePerspectiveDialog extends Dialog {
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         menusGroup.setLayout(layout);
-        data = new GridData(GridData.FILL_BOTH);
-        menusGroup.setLayoutData(data);
-        menusGroup.setFont(font);
+        menusGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        label = new Label(menusGroup, SWT.NONE);
+        label = new Label(menusGroup, SWT.WRAP);
         label.setText(WorkbenchMessages.ActionSetSelection_availableMenus); 
-        label.setFont(font);
+        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         menusCombo = new Combo(menusGroup, SWT.READ_ONLY);
-        menusCombo.setFont(font);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        menusCombo.setLayoutData(gridData);
+        menusCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         // Categories Tree
-        label = new Label(menusGroup, SWT.NONE);
+        label = new Label(menusGroup, SWT.WRAP);
         label.setText(WorkbenchMessages.ActionSetSelection_availableCategories);
-        label.setFont(font);
+        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         menuCategoriesViewer = new CheckboxTreeViewer(menusGroup);
-        data = new GridData(GridData.FILL_BOTH);
-        menuCategoriesViewer.getControl().setLayoutData(data);
+        menuCategoriesViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         menuCategoriesViewer.setLabelProvider(new LabelProvider());
         menuCategoriesViewer.setContentProvider(new TreeContentProvider());
         menuCategoriesViewer.setSorter(new WorkbenchViewerSorter());
@@ -1253,20 +1221,16 @@ public class CustomizePerspectiveDialog extends Dialog {
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         menuItemsGroup.setLayout(layout);
-        data = new GridData(GridData.FILL_BOTH);
-        menuItemsGroup.setLayoutData(data);
-        menuItemsGroup.setFont(font);
+        menuItemsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        label = new Label(menuItemsGroup, SWT.NONE);
+        label = new Label(menuItemsGroup, SWT.WRAP);
         label.setText(WorkbenchMessages.ActionSetSelection_menuItems);
-        label.setFont(font);
+        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         menuItemsViewer = CheckboxTableViewer.newCheckList(menuItemsGroup,
                 SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        data = new GridData(GridData.FILL_BOTH);
         Table menuTable = menuItemsViewer.getTable();
-        menuTable.setLayoutData(data);
-        menuTable.setFont(font);
+        menuTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         menuItemsViewer.setLabelProvider(new ShortcutMenuItemLabelProvider());
         menuItemsViewer
                 .setContentProvider(new ShortcutMenuItemContentProvider());
