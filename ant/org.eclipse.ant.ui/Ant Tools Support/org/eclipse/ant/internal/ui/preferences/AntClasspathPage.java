@@ -11,9 +11,17 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.internal.core.AntClasspathEntry;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -95,19 +103,69 @@ public class AntClasspathPage implements IAntBlockContainer {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		fModel= new ClasspathModel();
 		fModel.setAntHomeEntries(prefs.getDefaultAntHomeEntries());
-		IAntClasspathEntry toolsEntry= prefs.getToolsJarEntry();
-		IAntClasspathEntry[] additionalEntries;
-		if (toolsEntry == null) {
-			additionalEntries= new IAntClasspathEntry[0];
+		List additionalEntries= getDefaultAdditionalEntries();
+		if (additionalEntries != null) {
+			fModel.setGlobalEntries((IAntClasspathEntry[]) additionalEntries.toArray(new IAntClasspathEntry[additionalEntries.size()]));
 		} else {
-			additionalEntries= new IAntClasspathEntry[] {toolsEntry};
+			fModel.setGlobalEntries(new IAntClasspathEntry[0]);
 		}
-		fModel.setGlobalEntries(additionalEntries);
         fModel.setContributedEntries(prefs.getContributedClasspathEntries());
 		fAntClasspathBlock.initializeAntHome(prefs.getDefaultAntHome());
 		fAntClasspathBlock.setInput(fModel);
 		update();
 	}
+	
+	private List getDefaultAdditionalEntries() {
+		IAntClasspathEntry toolsJarEntry= AntCorePlugin.getPlugin().getPreferences().getToolsJarEntry();
+		//TODO should use AntCorePreferences.getUserLibraries when promoted to API post 3.1
+		File libDir= new File(System.getProperty("user.home"), ".ant" + File.separatorChar + "lib"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		URL[] urls= null;
+		try {
+			urls= getLocationURLs(libDir);
+		} catch (MalformedURLException e) {
+		}
+		
+		List entries= new ArrayList(urls.length);
+		for (int i = 0; i < urls.length; i++) {
+			AntClasspathEntry entry= new AntClasspathEntry(urls[i]);
+			entries.add(entry);
+		}
+		if (toolsJarEntry != null) {
+			entries.add(toolsJarEntry);
+		}
+		return entries;
+	}
+	
+	private URL[] getLocationURLs(File location) throws MalformedURLException {
+		 final String extension= ".jar"; //$NON-NLS-1$
+		 URL[] urls = new URL[0];
+		 
+		 if (!location.exists()) {
+			 return urls;
+		 }
+		 
+		 if (!location.isDirectory()) {
+			 urls = new URL[1];
+			 String path = location.getPath();
+			 if (path.toLowerCase().endsWith(extension)) {
+				 urls[0] = location.toURL();
+			 }
+			 return urls;
+		 }
+		 
+		 File[] matches = location.listFiles(
+			 new FilenameFilter() {
+				 public boolean accept(File dir, String name) {
+					return name.toLowerCase().endsWith(extension);
+				 }
+			 });
+		 
+		 urls = new URL[matches.length];
+		 for (int i = 0; i < matches.length; ++i) {
+			 urls[i] = matches[i].toURL();
+		 }
+		 return urls;
+	 }
 	
 	/**
 	 * Creates the tab item that contains this sub-page.

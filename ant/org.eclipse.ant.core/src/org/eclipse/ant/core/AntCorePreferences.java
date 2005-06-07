@@ -12,6 +12,7 @@
 package org.eclipse.ant.core;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -240,10 +241,18 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 		if (entries.equals("")) {//$NON-NLS-1$
 			IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
+			List userLibs= getUserLibraries();
 			if (toolsJarEntry == null) {
-				additionalEntries= new IAntClasspathEntry[0];
+				if (userLibs == null) {
+					additionalEntries= new IAntClasspathEntry[0];
+				}
 			} else {
-				additionalEntries= new IAntClasspathEntry[] { toolsJarEntry };
+				if (userLibs == null) {
+					additionalEntries= new IAntClasspathEntry[] {toolsJarEntry};
+				} else {
+					userLibs.add(toolsJarEntry);
+					additionalEntries= (IAntClasspathEntry[]) userLibs.toArray(new IAntClasspathEntry[userLibs.size()]);
+				}
 			}
 		} else {
 			additionalEntries= extractEntries(getArrayFromString(entries));
@@ -720,6 +729,63 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 		return entry;
 	}
+	
+	/**
+	 * Returns the <code>IAntClasspathEntry</code>s for the jars from ${user.home}/.ant/lib
+	 * May return <code>null</code> if jars are found.
+	 * 
+	 * TODO Should be promoted to API post 3.1
+	 * 
+	 * @return the collection of <code>IAntClasspathEntry</code> found at ${user.home}/.ant/lib or
+	 * <code>null</code> if none found of location does not exist
+	 */
+	private List getUserLibraries() {
+		File libDir= new File(System.getProperty("user.home"), ".ant" + File.separatorChar + "lib"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		URL[] urls= null;
+		try {
+			urls = getLocationURLs(libDir);
+		} catch (MalformedURLException e) {
+		}
+		if (urls == null) {
+			return null;
+		}
+		
+		List entries= new ArrayList(urls.length);
+		for (int i = 0; i < urls.length; i++) {
+			AntClasspathEntry entry= new AntClasspathEntry(urls[i]);
+			entries.add(entry);
+		}
+		return entries;
+	}
+	
+	 private URL[] getLocationURLs(File location) throws MalformedURLException {
+		 URL[] urls= null;
+		 if (!location.exists()) {
+			 return urls;
+		 }
+		 final String extension= ".jar"; //$NON-NLS-1$
+		 if (!location.isDirectory()) {
+			 urls = new URL[1];
+			 String path= location.getPath();
+			 if (path.toLowerCase().endsWith(extension)) {
+				 urls[0]= location.toURL();
+			 }
+			 return urls;
+		 }
+		 
+		 File[] matches= location.listFiles(
+			 new FilenameFilter() {
+				 public boolean accept(File dir, String name) {
+					 return name.toLowerCase().endsWith(extension);
+				 }
+			 });
+		 
+		 urls= new URL[matches.length];
+		 for (int i = 0; i < matches.length; ++i) {
+			 urls[i] = matches[i].toURL();
+		 }
+		 return urls;
+	 }
 
 	/*
 	 * Add the libraries contributed by the Ant plug-in, to the classpath.
@@ -1442,11 +1508,26 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 
 	protected void updateAdditionalEntries(Preferences prefs) {
 		prefs.setValue("urls", ""); //old constant removed  //$NON-NLS-1$//$NON-NLS-2$
-		String serialized= null;
+		String serialized= ""; //$NON-NLS-1$
 		IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
-		if (additionalEntries.length == 1 && toolsJarEntry != null && additionalEntries[0].getLabel().equals(toolsJarEntry.getLabel())) {
-			serialized= ""; //$NON-NLS-1$
-		} else {
+		List userLibs= getUserLibraries();
+		if (userLibs == null) {
+			userLibs= new ArrayList();
+		} 
+		if (toolsJarEntry != null) {
+			userLibs.add(toolsJarEntry);
+		}
+		boolean changed= true;
+		if (additionalEntries.length == userLibs.size()) {
+			changed= false;
+			for (int i = 0; i < additionalEntries.length; i++) {
+				if (!additionalEntries[i].equals(userLibs.get(i))) {
+					changed= true;
+					break;
+				}
+			}
+		}
+		if (changed) {
 			StringBuffer entries = new StringBuffer();
 			for (int i = 0; i < additionalEntries.length; i++) {
 				entries.append(additionalEntries[i].getLabel());
