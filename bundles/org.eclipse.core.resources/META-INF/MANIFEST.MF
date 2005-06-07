@@ -20,7 +20,6 @@ Export-Package: org.eclipse.core.internal.dtree;x-internal:=true,
  org.eclipse.core.resources.refresh,
  org.eclipse.core.resources.team
 Require-Bundle: org.eclipse.core.runtime.compatibility,
- org.eclipse.ant.core;resolution:=optional,
- org.apache.ant;resolution:=optional
+ org.eclipse.ant.core;resolution:=optional
 Plugin-Class: org.eclipse.core.resources.ResourcesPlugin
 Eclipse-AutoStart: true
