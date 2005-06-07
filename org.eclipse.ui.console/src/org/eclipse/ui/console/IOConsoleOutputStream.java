@@ -62,6 +62,8 @@ public class IOConsoleOutputStream extends OutputStream {
     private String fDefaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
 
     private boolean fNeedsEncoding = false;
+
+    private boolean prependCR;
     
     /**
      * Constructs a new output stream on the given console.
@@ -157,6 +159,10 @@ public class IOConsoleOutputStream extends OutputStream {
         if(closed) {
             throw new IOException("Output Stream is closed"); //$NON-NLS-1$
         }
+        if (prependCR) { // force writing of last /r
+            prependCR = false;
+            notifyParitioner("\r"); //$NON-NLS-1$
+        }
         console.streamClosed(this);
         closed = true;
         partitioner = null;
@@ -216,6 +222,18 @@ public class IOConsoleOutputStream extends OutputStream {
         if(closed) {
             throw new IOException("Output Stream is closed"); //$NON-NLS-1$
         }
+        if (prependCR){
+            encodedString="\r"+encodedString; //$NON-NLS-1$
+            prependCR=false;
+        }
+        if (encodedString.endsWith("\r")) { //$NON-NLS-1$
+            prependCR = true;
+            encodedString = new String(encodedString.substring(0, encodedString.length()-2));
+        }
+        notifyParitioner(encodedString);
+    }
+
+    private void notifyParitioner(String encodedString) throws IOException {
         try {
             partitioner.streamAppended(this, encodedString);
 
