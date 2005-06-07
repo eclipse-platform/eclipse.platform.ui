@@ -75,7 +75,6 @@ public class CVSSSH2Messages extends NLS {
 	public static String CVSSSH2PreferencePage_134;
 	public static String CVSSSH2PreferencePage_135;
 	public static String CVSSSH2PreferencePage_136;
-	public static String CVSSSH2PreferencePage_137;
 	public static String CVSSSH2PreferencePage_138;
 	public static String CVSSSH2PreferencePage_139;
 	static {

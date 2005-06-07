@@ -807,7 +807,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
   }
 
 	private TableViewer viewer;
-	private Button addHostKeyButton;
 	private Button removeHostKeyButton;
 	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object element, int columnIndex) {
@@ -829,7 +828,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	};
 	
   private Control createHostKeyManagementPage(Composite parent) {
-    int columnSpan=3;
     Composite group=new Composite(parent, SWT.NULL);
     GridLayout layout=new GridLayout();
 	layout.marginWidth = 0;
@@ -891,8 +889,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 		}
 	});
 	TableLayout tl = new TableLayout();
+	tl.addColumnData(new ColumnWeightData(30));
 	tl.addColumnData(new ColumnWeightData(20));
-	tl.addColumnData(new ColumnWeightData(10));
 	tl.addColumnData(new ColumnWeightData(70));
 	table.setLayout(tl);
 	
@@ -903,17 +901,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	layout.marginWidth = 0;
 	buttons.setLayout(layout);
 
-	addHostKeyButton = new Button(buttons, SWT.PUSH);
-	addHostKeyButton.setText(CVSSSH2Messages.CVSSSH2PreferencePage_137);  //$NON-NLS-1$
-	gd = new GridData();
-	gd.horizontalAlignment = GridData.FILL;
-	addHostKeyButton.setLayoutData(gd);
-	addHostKeyButton.setEnabled(false);
-	addHostKeyButton.addListener(SWT.Selection, new Listener() {
-		public void handleEvent(Event e) {
-			//addHostKey();
-		}
-	});
 	removeHostKeyButton = new Button(buttons, SWT.PUSH);
 	removeHostKeyButton.setText(CVSSSH2Messages.CVSSSH2PreferencePage_138);  //$NON-NLS-1$
 	gd = new GridData();
@@ -1163,13 +1150,15 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
   protected void performDefaults(){
     super.performDefaults();
-    enableProxy.setSelection(false);
-    proxyHostText.setText(""); //$NON-NLS-1$
-    proxyPortText.setText(ISSHContants.HTTP_DEFAULT_PORT);
-    proxyTypeCombo.select(0);
-    enableAuth.setSelection(false);
-    proxyUserText.setText(""); //$NON-NLS-1$
-    proxyPassText.setText(""); //$NON-NLS-1$
+    IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
+    store.setToDefault(ISSHContants.KEY_SSH2HOME);
+    store.setToDefault(ISSHContants.KEY_PRIVATEKEY);
+    store.setToDefault(ISSHContants.KEY_PROXY);
+    store.setToDefault(ISSHContants.KEY_PROXY_TYPE);
+    store.setToDefault(ISSHContants.KEY_PROXY_HOST);
+    store.setToDefault(ISSHContants.KEY_PROXY_PORT);
+    store.setToDefault(ISSHContants.KEY_PROXY_AUTH);
+    initControls();
     updateControls();
   }
 
