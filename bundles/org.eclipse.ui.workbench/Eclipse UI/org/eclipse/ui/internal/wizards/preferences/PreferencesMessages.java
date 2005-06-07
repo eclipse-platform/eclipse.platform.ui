@@ -22,7 +22,8 @@ public class PreferencesMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.wizards.preferences.messages";//$NON-NLS-1$
 
 	public static String WizardPreferences_description;
-
+	public static String WizardPreferencesPage_noOptionsSelected;
+	
 	public static String PreferencesExportWizard_export;
 	public static String WizardPreferencesExportPage1_exportTitle;
 	public static String WizardPreferencesExportPage1_exportDescription;

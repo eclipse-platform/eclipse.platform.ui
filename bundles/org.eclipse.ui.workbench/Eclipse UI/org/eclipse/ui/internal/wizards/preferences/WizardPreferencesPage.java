@@ -92,6 +92,8 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 	private PreferenceTransferElement[] transfers;
 
+	private String currentMessage;
+
 	private static final String STORE_DESTINATION_ID = null;
 
     protected static final int COMBO_HISTORY_LENGTH = 5;
@@ -199,7 +201,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 */
 	protected boolean validateDestinationGroup() {
 		if (!validDestination()) {
-			setErrorMessage(getInvalidDestinationMessage());
+			currentMessage = getInvalidDestinationMessage();
 			return false;
 		}
 
@@ -212,6 +214,10 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 */
 	abstract protected String getInvalidDestinationMessage();
 
+	private String getNoOptionsMessage() {
+		return PreferencesMessages.WizardPreferencesPage_noOptionsSelected;
+	}
+	
 	protected boolean validDestination() {
 		File file = new File(getDestinationValue());
 		return !(file.getPath().length() <= 0 || file.isDirectory());
@@ -308,11 +314,16 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 		text.setFont(parentFont);
 		
-		transfersTable.addSelectionListener(new SelectionListener() {
+		SelectionListener selection = new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				updateState(e);
-				updateDescription();
+				// Selecting an item in the list forces 
+				// the radio buttons to get selected 
+				if (e.widget == transfersTable) {
+					updateState(e);
+					updateDescription();
+				}
+				updatePageCompletion();
 			}
 
 			private void updateState(SelectionEvent e) {
@@ -320,12 +331,10 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 					allButton.setSelection(false);
 					chooseImportsButton.setSelection(true);
 				}
-				updatePageCompletion();
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				updateState(e);
-				updateDescription();
+				widgetSelected(e);
 			}
 
 			private void updateDescription() {
@@ -336,8 +345,12 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 				} else
 					text.setText(""); //$NON-NLS-1$
 			}
-		});
+		};
 
+		transfersTable.addSelectionListener(selection);
+		chooseImportsButton.addSelectionListener(selection);
+		allButton.addSelectionListener(selection);
+		
 		addSelectionButtons(group);
 
 	}
@@ -678,6 +691,8 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		// message unless all is valid.
 		if (complete)
 			setErrorMessage(null);
+		else
+			setErrorMessage(currentMessage);
 
 		return complete;
 	}
@@ -703,6 +718,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 				if (item.getChecked())
 					return true;
 			}
+			currentMessage = getNoOptionsMessage();
 			return false;
 		}
 		return true;
