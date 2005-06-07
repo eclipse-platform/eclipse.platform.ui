@@ -164,6 +164,7 @@ public class AntBuildfileExportPage extends WizardPage {
      */
     public boolean generateBuildfiles() 
     {
+        setErrorMessage(""); //$NON-NLS-1$
         // collect all projects to create build files for
         Set projects = new TreeSet(ExportUtil.getJavaProjectComparator());
         Iterator javaProjects = fSelectedJavaProjects.iterator();
@@ -194,30 +195,31 @@ public class AntBuildfileExportPage extends WizardPage {
         
         // create build files for all projects
         javaProjects = projects.iterator();
+        Exception problem= null;
         while (javaProjects.hasNext()) {
             IJavaProject javaProject = (IJavaProject) javaProjects.next();       
             try {
                 BuildFileCreator.create(javaProject);
             } catch (JavaModelException e) {
-                AntUIPlugin.log(e);
-                return false;
+                problem= e;
             } catch (TransformerConfigurationException e) {
-                AntUIPlugin.log(e);
-                return false;
+                problem= e;
             } catch (ParserConfigurationException e) {
-                AntUIPlugin.log(e);
-                return false;
+                problem= e;
             } catch (TransformerException e) {
-                AntUIPlugin.log(e);
-                return false;
+                problem= e;
             } catch (IOException e) {
-                AntUIPlugin.log(e);
-                return false;
+                problem= e;
             } catch (CoreException e) {
-                AntUIPlugin.log(e);
-                return false;
+                problem= e;
             }
 
+            if (problem != null) {
+                AntUIPlugin.log(problem);
+                setErrorMessage(MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_10, new String[] {problem.toString()}));
+                return false;
+            }
+           
             try {
                 if (ExportUtil.hasCyclicDependency(javaProject))
                 {
@@ -225,6 +227,7 @@ public class AntBuildfileExportPage extends WizardPage {
                 }
             } catch (CoreException e) {
                 AntUIPlugin.log(e);
+                setErrorMessage(MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_10, new String[] {e.toString()}));
                 return false;
             }
         }
