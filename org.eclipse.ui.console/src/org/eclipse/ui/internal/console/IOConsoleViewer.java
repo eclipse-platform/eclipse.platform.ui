@@ -84,11 +84,8 @@ public class IOConsoleViewer extends TextConsoleViewer {
                 e.doit = false;
             }
         } finally {
-            int len = eventString.length();
-            if (len > 0) {
-                StyledText text = (StyledText) e.widget;
-                text.setCaretOffset(text.getCharCount());
-            }
+            StyledText text = (StyledText) e.widget;
+            text.setCaretOffset(text.getCharCount());
         }
     }
 
