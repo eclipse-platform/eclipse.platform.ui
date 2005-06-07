@@ -33,9 +33,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * </ul>
  * </p>
  * <p>
- * Within a page the user can switch between any of the perspectives known
+ * Within a page the user can open any of the perspectives known
  * to the workbench's perspective registry, typically by selecting one from the
- * workbench's <code>Switch Perspective</code> menu. When selected, the views,
+ * workbench's <code>Open Perspective</code> menu. When selected, the views
  * and actions within the active page rearrange to reflect the perspective.
  * </p>
  * <p>
