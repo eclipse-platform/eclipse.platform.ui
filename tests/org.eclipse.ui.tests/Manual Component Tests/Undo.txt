@@ -27,7 +27,7 @@ Integrated Scenarios
   	i.  Operation is redone without prompting or warning
   	j.  Undo again to revert files to original state and close editors.
   <prompt on non-local undo, proceed>
-    a.  Open A.Java and B.java
+    	a.  Open A.Java and B.java
   	b.  In A, click in the method name for "foo" and choose Refactor>Rename
   	c.  Rename "foo" to "foo2"
   	d.  Verify that "Undo Rename method foo to foo2" appears in Edit>Undo in pulldown menu of editor, editor popup, Package Explorer, and Navigator.
@@ -38,7 +38,7 @@ Integrated Scenarios
   	i.  Operation prompts as to whether you want to proceed since the refactoring affects other files.
   	j.  Undo again to revert files to original state and close editors.
   <prompt on non-local undo, do not proceed>
-    a.  Open A.Java and B.java
+    	a.  Open A.Java and B.java
   	b.  In A, click in the method name for "foo" and choose Refactor>Rename
   	c.  Rename "foo" to "foo2"
   	d.  Verify that "Undo Rename method foo to foo2" appears in Edit>Undo in pulldown menu of editor, editor popup, Package Explorer, and Navigator.
@@ -49,7 +49,7 @@ Integrated Scenarios
   	i.  Go to B.Java and undo associated text changes
   	j.  Close editors
   <prompt on non-local undo, do not proceed, with undo/redo in between (bug 97939)
-    a.  Open A.Java and B.java
+    	a.  Open A.Java and B.java
   	b.  In A, click in the method name for "foo" and choose Refactor>Rename
   	c.  Rename "foo" to "foo2"
   	d.  Verify that "Undo Rename method foo to foo2" appears in Edit>Undo in pulldown menu of editor, editor popup, Package Explorer, and Navigator.
@@ -66,7 +66,7 @@ Integrated Scenarios
   	o.  Go to B.Java and undo associated text changes
   	j.  Close editors
   <detection of changed file>
-    a.  Open A.Java and B.java
+    	a.  Open A.Java and B.java
   	b.  In A, click in the method name for "foo" and choose Refactor>Rename
   	c.  Rename "foo" to "foo2"
   	d.  In B, type some text anywhere.
@@ -76,7 +76,7 @@ Integrated Scenarios
   	h.  Choose "Undo Typing" from A to revert the text part of the refactoring
   	i.  Go to B and choose "Undo Typing" to revert the typed changes followed by the text part of the refactoring change.
   <detection of changed file with undo/redo in between (bug 97939)>
-    a.  Open A.Java and B.java
+    	a.  Open A.Java and B.java
   	b.  In A, click in the method name for "foo" and choose Refactor>Rename
   	c.  Rename "foo" to "foo2"
   	d.  Verify that "Undo Rename method foo to foo2" appears in Edit>Undo in pulldown menu of editor, editor popup, Package Explorer, and Navigator.
@@ -113,65 +113,65 @@ statuses - INFO, WARNING, ERROR.
   	has ellipsis (...) in the middle of it
   	
   2 - <correct handling of undo and progress monitor>
-    e.  Undo the operation from the package explorer
-    f.  Verify that an hour glass appears
-    g.  After a short wait, a progress monitor should appear
-    h.  A message box appears confirming the undo.
+    	e.  Undo the operation from the package explorer
+    	f.  Verify that an hour glass appears
+    	g.  After a short wait, a progress monitor should appear
+    	h.  A message box appears confirming the undo.
     
   3 - <verify anything missed above and add redo>
-    i.  repeat steps (a) through (h) above to double check hour glass, etc.
-    j.  Check that the redo menu for the package explorer shows the operation
-    k.  Redo the operation
-    l.  A message box appears confirming the redo
+    	i.  repeat steps (a) through (h) above to double check hour glass, etc.
+    	j.  Check that the redo menu for the package explorer shows the operation
+   	k.  Redo the operation
+    	l.  A message box appears confirming the redo
     
   4 - <proper handling of operation exceptions>
-    m.  repeat steps (a) through (g) above.
+    	m.  repeat steps (a) through (g) above.
 	n.  After the progress dialog disappears, you should get a message informing
 	you of an error/Abnormal Workbench Condition
 	o.  Verify that undo/redo are disabled after this error.
      
   5 - <correct handling of INFO, WARNING status from AdvancedValidatingOperationApprover>
-    a.  Select a *.xml file in the navigator or package explorer.
+    	a.  Select a *.xml file in the navigator or package explorer.
   	b.  Popup the menu and choose Operations>Advanced Example Operation. 
   	c.  A message box appears confirming the execution of the operation.
   	d.  Check the undo menu for the package explorer and verify that the long name 
   	has ellipsis (...) in the middle of it
-    e.  Undo the operation from the package explorer
-    f.  Select "Undo A very long str...
-    g.  You should immediately see a dialog titled "Undo Information" and be asked whether to proceed.
-    h.  Choose yes.
-    i.  You should see a progress dialog and then a message box when the operation is complete
-    j.  At this point you should see the Redo Action available
-    k.  Repeat steps (a) through (j).  The only difference should be that the
+    	e.  Undo the operation from the package explorer
+    	f.  Select "Undo A very long str...
+    	g.  You should immediately see a dialog titled "Undo Information" and be asked whether to proceed.
+    	h.  Choose yes.
+    	i.  You should see a progress dialog and then a message box when the operation is complete
+    	j.  At this point you should see the Redo Action available
+    	k.  Repeat steps (a) through (j).  The only difference should be that the
         dialog in (e) is titled "Undo Warning" with a slightly different message.
         If you are fast enough, cancel the progress dialog to verify it stops the operation
         (no prompt at the end).
   6 - <correct handling of ERROR status from AdvancedValidatingOperationApprover>
-    a.  Select a *.xml file in the navigator or package explorer.
+    	a.  Select a *.xml file in the navigator or package explorer.
   	b.  Popup the menu and choose Operations>Advanced Example Operation. 
   	c.  A message box appears confirming the execution of the operation.
-    d.  Select "Undo A very long str...
+    	d.  Select "Undo A very long str...
 	e.  You should first see a progress dialog while the operation computes validity
 	f.  You should then see a dialog titled "Undo Problem" informing you the operation cannot undo
 	g.  Undo and Redo should no longer be available in the menu.
 	
   7 - <correct handling of cancel/flush inside LinearUndoViolationUserApprover>
-    a.  Select a *.xml file in the navigator or package explorer.
+    	a.  Select a *.xml file in the navigator or package explorer.
   	b.  Popup the menu and choose Operations>Invalid Example Operation. 
   	c.  A message box appears confirming the execution of the operation.
   	d.  Select "Undo A very long str...
-  	e.  A message box appears informing you of a linear undo violation and asks if you want
-  	to rollback the changes.
+  	e.  A message box appears informing you of more recent changes to the package explorer and
+	asks if you wish to undo those local changes first.
   	f.  Answer no.
   	g.  Verify that the undo menu item becomes disabled (due to a flush)
   	
   8 - <correct handling of rollback failure inside LinearUndoViolationUserApprover>
-    a.  Select a *.xml file in the navigator or package explorer.
+    	a.  Select a *.xml file in the navigator or package explorer.
   	b.  Popup the menu and choose Operations>Invalid Example Operation. 
   	c.  A message box appears confirming the execution of the operation.
   	d.  Select "Undo A very long str...
-  	e.  A message box appears informing you of a linear undo violation and asks if you want
-  	to rollback the changes.
+  	e.  A message box appears informing you of more recent changes to the package explorer and
+	asks if you wish to undo those local changes first.
   	f.  Answer yes.
   	g.  Verify that the undo menu item becomes disabled (due to failure of rollback)
   	
