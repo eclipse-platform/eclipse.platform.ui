@@ -29,6 +29,9 @@ public class Worker extends Thread {
 	public Worker(WorkerPool pool) {
 		super("Worker-" + nextWorkerNumber++); //$NON-NLS-1$
 		this.pool = pool;
+		//set the context loader to avoid leaking the current context loader
+		//for the thread that spawns this worker (bug 98376)
+		setContextClassLoader(pool.defaultContextLoader);
 	}
 
 	/**

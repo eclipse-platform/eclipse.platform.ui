@@ -38,6 +38,11 @@ class WorkerPool {
 	 * thread is just doing house cleaning (notifying listeners, etc).
 	 */
 	private int busyThreads = 0;
+	
+	/**
+	 * The default context class loader to use when creating worker threads.
+	 */
+	protected final ClassLoader defaultContextLoader;
 
 	private JobManager manager;
 	/**
@@ -55,6 +60,7 @@ class WorkerPool {
 
 	protected WorkerPool(JobManager manager) {
 		this.manager = manager;
+		this.defaultContextLoader = Thread.currentThread().getContextClassLoader();
 	}
 
 	/**
