@@ -100,7 +100,16 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 	
 	public void setInput(IEditorInput input) {
 		try {
-			doSetInput(input);			
+	        doSetInput(input);
+	        // Need to refresh the contributor (see #67888)
+	        IEditorSite editorSite= getEditorSite();
+	        if (editorSite != null) {
+		        IEditorActionBarContributor actionBarContributor= editorSite.getActionBarContributor();
+		        if (actionBarContributor != null) {
+		        		actionBarContributor.setActiveEditor(null);
+		        		actionBarContributor.setActiveEditor(this);
+		        }
+	        }
 		} catch (CoreException x) {
 			String title= Utilities.getString("CompareEditor.error.setinput.title"); //$NON-NLS-1$
 			String msg= Utilities.getString("CompareEditor.error.setinput.message"); //$NON-NLS-1$
