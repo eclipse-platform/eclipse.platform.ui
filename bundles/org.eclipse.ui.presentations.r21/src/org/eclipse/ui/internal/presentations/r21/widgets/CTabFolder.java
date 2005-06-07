@@ -2050,9 +2050,8 @@ public class CTabFolder extends Composite {
 
     private void updateArrowBar() {
         //Temporary code - need a better way to determine toolBar trim
-        int toolbarTrim = 4;
+        int toolbarTrim = 6; // Windows needs 6, photon needs 6, gtk needs 8
         String platform = SWT.getPlatform();
-        if ("photon".equals(platform))toolbarTrim = 6; //$NON-NLS-1$
         if ("gtk".equals(platform))toolbarTrim = 8; //$NON-NLS-1$
 
         int maxHeight = tabHeight - toolbarTrim;
