@@ -17,6 +17,7 @@ public class DataTransferMessages extends NLS {
 	public static String AntNewJavaProjectWizard_0;
 	public static String AntBuildfileExportWizard_0;
 	public static String AntBuildfileExportPage_0;
+    public static String AntBuildfileExportPage_10;
 	public static String AntBuildfileExportPage_1;
 	public static String AntBuildfileExportPage_2;
 	public static String AntBuildfileExportPage_3;
@@ -46,6 +47,7 @@ public class DataTransferMessages extends NLS {
     public static String AntNewJavaProjectPage_3;
 	public static String ProjectCreator_0;
     public static String JavacTableLabelProvider_0;
+    public static String BuildFileCreator_0;
 
 	static {
 		// load message values from bundle file

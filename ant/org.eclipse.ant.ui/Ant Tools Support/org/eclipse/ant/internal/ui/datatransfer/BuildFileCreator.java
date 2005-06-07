@@ -29,9 +29,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.Commandline;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -271,7 +275,7 @@ public class BuildFileCreator
      * @param variable2valueMap    adds subproject properties to this map
      * @param subProjects          subprojects
      */
-    public void addSubClasspaths(Map variable2valueMap, Set subProjects) throws JavaModelException
+    private void addSubClasspaths(Map variable2valueMap, Set subProjects) throws JavaModelException
     {
         for (Iterator iterator = subProjects.iterator(); iterator.hasNext();)
         {
@@ -639,20 +643,22 @@ public class BuildFileCreator
      *                             if command line makes use of this feature
      */
     private static void addElements(String cmdLineArgs, Document doc, Element element, String elementName,
-                                    String attributeName, Map variable2valueMap)
+                                    String attributeName, Map variable2valueMap) throws CoreException
     {
-        // surround variables ${var} with double quotes if not already quoted
-        String quotedArgs = cmdLineArgs.replaceAll("\"*(\\$\\{.*?\\})\"*", "\"$1\""); //$NON-NLS-1$ //$NON-NLS-2$
         // need to add dummyexecutable to make use of class Commandline
-        Commandline commandline = new Commandline("dummyexecutable " + quotedArgs); //$NON-NLS-1$
-        String[] args = commandline.getArguments();
-        for (int i = 0; i < args.length; i++)
-        {
-            String arg = args[i];
-            addVariable(variable2valueMap, arg);
-            Element itemElement = doc.createElement(elementName);
-            itemElement.setAttribute(attributeName, arg);
-            element.appendChild(itemElement);            
+        try {
+            Commandline commandline = new Commandline("dummyexecutable " + cmdLineArgs); //$NON-NLS-1$
+            String[] args = commandline.getArguments();
+            for (int i = 0; i < args.length; i++)
+            {
+                String arg = args[i];
+                addVariable(variable2valueMap, arg);
+                Element itemElement = doc.createElement(elementName);
+                itemElement.setAttribute(attributeName, arg);
+                element.appendChild(itemElement);            
+            }
+        } catch (BuildException be) {
+            throw new CoreException(new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, 0, DataTransferMessages.BuildFileCreator_0, be));
         }
     }
     

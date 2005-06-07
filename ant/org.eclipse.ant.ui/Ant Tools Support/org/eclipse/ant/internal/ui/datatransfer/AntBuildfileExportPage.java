@@ -164,7 +164,7 @@ public class AntBuildfileExportPage extends WizardPage {
      */
     public boolean generateBuildfiles() 
     {
-        setErrorMessage(""); //$NON-NLS-1$
+        setErrorMessage(null);
         // collect all projects to create build files for
         Set projects = new TreeSet(ExportUtil.getJavaProjectComparator());
         Iterator javaProjects = fSelectedJavaProjects.iterator();
