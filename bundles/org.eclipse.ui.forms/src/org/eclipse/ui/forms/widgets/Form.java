@@ -81,6 +81,7 @@ public class Form extends Composite {
 	private SizeCache bodyCache = new SizeCache();
 	private SizeCache toolbarCache = new SizeCache();
 	private FormText selectionText;
+	private Rectangle titleRect;
 	
 	private class GradientInfo {
 		Color [] gradientColors;
@@ -105,30 +106,33 @@ public class Form extends Composite {
 		    
 			int width = 0;
 			int height = 0;
-			if (text != null) {
-				GC gc = new GC(composite);
-				gc.setFont(getFont());
-				if (wHint != SWT.DEFAULT) {
-					Point wsize = FormUtil.computeWrapSize(gc, text, wHint);
-					width = wsize.x;
-					height = wsize.y;
-				} else {
-					Point extent = gc.textExtent(text);
-					width = extent.x;
-					height = extent.y;
-				}
-				gc.dispose();
-				if (toolBarManager != null) {
+			if (toolBarManager != null) {
 				ToolBar toolBar = toolBarManager.getControl();
 				if (toolBar != null) {
 					toolbarCache.setControl(toolBar);
-					Point tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					if (width != 0)
+					Point tbsize = toolbarCache.computeSize(SWT.DEFAULT,
+							SWT.DEFAULT);
+					if (text != null)
 						width += TITLE_GAP;
 					width += tbsize.x;
-					height = Math.max(height, tbsize.y);
+					height = tbsize.y;
 				}
+			}
+			if (text != null) {
+				GC gc = new GC(composite);
+				gc.setFont(getFont());
+	
+				if (wHint != SWT.DEFAULT) {
+					int twHint = wHint - width;
+					Point wsize = FormUtil.computeWrapSize(gc, text, twHint);
+					width += wsize.x;
+					height = Math.max(wsize.y, height);
+				} else {
+					Point extent = gc.textExtent(text);
+					width += extent.x;
+					height = Math.max(extent.y, height);
 				}
+				gc.dispose();
 			}
 			if (backgroundImage!=null && !backgroundImageClipped) {
 				Rectangle ibounds = backgroundImage.getBounds();
@@ -172,7 +176,7 @@ public class Form extends Composite {
 				}
 			}
 			if (tbsize != null) {
-				twidth -= tbsize.x - TITLE_GAP;
+				twidth -= tbsize.x + TITLE_GAP;
 			}
 			if (text != null) {
 				GC gc = new GC(composite);
@@ -181,6 +185,7 @@ public class Form extends Composite {
 				gc.dispose();
 				if (tbsize != null)
 					height = Math.max(tbsize.y, height);
+				titleRect = new Rectangle(TITLE_HMARGIN, TITLE_VMARGIN, twidth, height);
 			}
 			if (backgroundImage!=null && !backgroundImageClipped) {
 				Rectangle ibounds = backgroundImage.getBounds();
@@ -346,20 +351,16 @@ public class Form extends Composite {
 		if (text==null) return;
 		Rectangle carea = getClientArea();
 		gc.setFont(getFont());
-		int textWidth = carea.width-TITLE_HMARGIN-TITLE_HMARGIN;
 		int theight=0;
+		
+		theight = TITLE_VMARGIN + titleRect.height + TITLE_VMARGIN;
 		if (toolBarManager!=null) {
 			ToolBar toolBar = toolBarManager.getControl();
 			if (toolBar != null) {
-				toolbarCache.setControl(toolBar);
-				Point tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				textWidth -= TITLE_GAP-tbsize.x;
-				theight = tbsize.y;
+				Point tbsize = toolBar.getSize();
+				theight = Math.max(theight, tbsize.y);
 			}
 		}
-		Point textSize = FormUtil.computeWrapSize(gc, text, textWidth);
-		theight = Math.max(textSize.y, theight);
-		theight += TITLE_HMARGIN + TITLE_HMARGIN + TITLE_GAP;
 		if (backgroundImage!=null && !backgroundImageClipped) {
 			theight = Math.max(theight, backgroundImage.getBounds().height);
 		}
@@ -368,18 +369,14 @@ public class Form extends Composite {
 		bufferGC.setBackground(getBackground());
 		bufferGC.setForeground(getForeground());
 		bufferGC.setFont(getFont());
-		Rectangle tbounds = new Rectangle(TITLE_HMARGIN, 
-				TITLE_VMARGIN,
-				carea.width-TITLE_HMARGIN-TITLE_HMARGIN, 
-				textSize.y);
 		bufferGC.fillRectangle(0, 0, carea.width, theight);
 		if (backgroundImage != null) {
-			drawBackgroundImage(bufferGC, carea.width, TITLE_VMARGIN+textSize.y+TITLE_VMARGIN);
+			drawBackgroundImage(bufferGC, carea.width, TITLE_VMARGIN+titleRect.height+TITLE_VMARGIN);
 		}
 		else if (gradientInfo != null) {
-			drawTextGradient(bufferGC, carea.width, TITLE_VMARGIN+textSize.y+TITLE_VMARGIN);
+			drawTextGradient(bufferGC, carea.width, TITLE_VMARGIN+titleRect.height+TITLE_VMARGIN);
 		}
-		FormUtil.paintWrapText(bufferGC, text, tbounds);
+		FormUtil.paintWrapText(bufferGC, text, titleRect);
 		gc.drawImage(buffer, 0, 0);
 		bufferGC.dispose();
 		buffer.dispose();
