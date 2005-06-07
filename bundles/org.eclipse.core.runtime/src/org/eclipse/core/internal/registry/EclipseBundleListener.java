@@ -13,8 +13,7 @@ package org.eclipse.core.internal.registry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.internal.runtime.*;
@@ -112,7 +111,8 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	}
 
 	private boolean isSingleton(Bundle bundle) {
-		String symbolicNameHeader = (String) bundle.getHeaders("").get(Constants.BUNDLE_SYMBOLICNAME); //$NON-NLS-1$
+		Dictionary allHeaders = bundle.getHeaders(""); //$NON-NLS-1$
+		String symbolicNameHeader = (String) allHeaders.get(Constants.BUNDLE_SYMBOLICNAME); //$NON-NLS-1$
 		try {
 			if (symbolicNameHeader != null) {
 				ManifestElement[] symbolicNameElements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicNameHeader);
@@ -122,9 +122,18 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 						singleton = symbolicNameElements[0].getAttribute(Constants.SINGLETON_DIRECTIVE);
 
 					if (!"true".equalsIgnoreCase(singleton)) { //$NON-NLS-1$
-						if (InternalPlatform.DEBUG_REGISTRY) {
+						int status = IStatus.INFO;
+						String manifestVersion = (String) allHeaders.get(org.osgi.framework.Constants.BUNDLE_MANIFESTVERSION);
+						if (manifestVersion == null) {//the header was not defined for previous versions of the bundle
+							//3.0 bundles without a singleton attributes are still being accepted
+							if (InternalPlatform.getDefault().getBundle(symbolicNameElements[0].getValue()) == bundle) {
+								return true;
+							}
+							status = IStatus.ERROR;
+						}
+						if (InternalPlatform.DEBUG_REGISTRY || status == IStatus.ERROR) {
 							String message = NLS.bind(Messages.parse_nonSingleton, bundle.getLocation());
-							InternalPlatform.getDefault().log(new Status(IStatus.INFO, Platform.PI_RUNTIME, 0, message, null));
+							InternalPlatform.getDefault().log(new Status(status, Platform.PI_RUNTIME, 0, message, null));
 						}
 						return false;
 					}
