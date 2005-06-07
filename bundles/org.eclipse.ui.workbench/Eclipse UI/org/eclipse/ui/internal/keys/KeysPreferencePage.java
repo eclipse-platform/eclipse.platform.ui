@@ -93,6 +93,7 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
@@ -520,6 +521,10 @@ public final class KeysPreferencePage extends PreferencePage implements
 			editBinding((Binding) data);
 	}
 	protected final Control createContents(final Composite parent) {
+		
+		PlatformUI.getWorkbench().getHelpSystem()
+			.setHelp(parent, IWorkbenchHelpContextIds.KEYS_PREFERENCE_PAGE);
+		
 		tabFolder = new TabFolder(parent, SWT.NULL);
 
 		// View tab
@@ -541,12 +546,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		if ((tabFolder.getItemCount() > selectedTab) && (selectedTab > 0)) {
 			tabFolder.setSelection(selectedTab);
 		}
-
-		// TODO Add a help context
-		// Link a help context to this preference page.
-		// helpSystem.setHelp(parent,
-		// IWorkbenchHelpContextIds.KEYS_PREFERENCE_PAGE);
-
+		
 		return tabFolder;
 	}
 
@@ -1224,9 +1224,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 				.getAdapter(ICommandService.class);
 		contextService = (IContextService) workbench
 				.getAdapter(IContextService.class);
-
-		// TODO Add a help context.
-		// helpSystem = workbench.getHelpSystem();
 	}
 
 	/**

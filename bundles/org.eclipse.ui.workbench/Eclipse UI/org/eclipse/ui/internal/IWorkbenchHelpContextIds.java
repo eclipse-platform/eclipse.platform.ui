@@ -250,6 +250,12 @@ public interface IWorkbenchHelpContextIds {
     public static final String VIEWS_PREFERENCE_PAGE = PREFIX
             + "views_preference_page_context"; //$NON-NLS-1$
 
+    public static final String FONTS_PREFERENCE_PAGE = PREFIX
+    		+ "font_preference_page_context"; //$NON-NLS-1$
+       
+    public static final String KEYS_PREFERENCE_PAGE = PREFIX
+			+ "keys_preference_page_context"; //$NON-NLS-1$
+
     public static final String WORKBENCH_EDITOR_PREFERENCE_PAGE = PREFIX
             + "workbench_editor_preference_page_context"; //$NON-NLS-1$
     
