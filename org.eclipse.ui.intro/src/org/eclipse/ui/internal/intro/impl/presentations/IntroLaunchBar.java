@@ -437,6 +437,7 @@ public class IntroLaunchBar implements IWindowTrim {
         gc.setBackground(bg);
         if (isPlain()) {
             Point size = container.getSize();
+            gc.fillRectangle(0, 0, size.x, size.y);
             gc.drawRectangle(0, 0, size.x - 1, size.y - 1);
         } else {
             switch (location) {
