@@ -56,32 +56,39 @@ public class IOConsoleViewer extends TextConsoleViewer {
         IDocument doc = getDocument();
         String[] legalLineDelimiters = doc.getLegalLineDelimiters();
         String eventString = e.text;
+        try {
+            IConsoleDocumentPartitioner partitioner = (IConsoleDocumentPartitioner) doc.getDocumentPartitioner();
+            if (!partitioner.isReadOnly(e.start)) {
+                boolean isCarriageReturn = false;
+                for (int i = 0; i < legalLineDelimiters.length; i++) {
+                    if (e.text.equals(legalLineDelimiters[i])) {
+                        isCarriageReturn = true;
+                        break;
+                    }
+                }
 
-        IConsoleDocumentPartitioner partitioner = (IConsoleDocumentPartitioner) doc.getDocumentPartitioner();
-        if (!partitioner.isReadOnly(e.start)) {
-            boolean isCarriageReturn = false;
-            for (int i = 0; i < legalLineDelimiters.length; i++) {
-                if (e.text.equals(legalLineDelimiters[i])) {
-                    isCarriageReturn = true;
-                    break;
+                if (!isCarriageReturn) {
+                    super.handleVerifyEvent(e);
+                    return;
                 }
             }
 
-            if (!isCarriageReturn) {
+            int length = doc.getLength();
+            if (e.start == length) {
                 super.handleVerifyEvent(e);
-                return;
+            } else {
+                try {
+                    doc.replace(length, 0, eventString);
+                } catch (BadLocationException e1) {
+                }
+                e.doit = false;
             }
-        }
-
-        int length = doc.getLength();
-        if (e.start == length) {
-            super.handleVerifyEvent(e);
-        } else {
-            try {
-                doc.replace(length, 0, eventString);
-            } catch (BadLocationException e1) {
+        } finally {
+            int len = eventString.length();
+            if (len > 0) {
+                StyledText text = (StyledText) e.widget;
+                text.setCaretOffset(text.getCharCount());
             }
-            e.doit = false;
         }
     }
 
