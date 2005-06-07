@@ -332,6 +332,12 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	}
 	
 	protected void buttonPressed(int buttonId) {
+		if (buttonId == IDialogConstants.CANCEL_ID) {
+			super.buttonPressed(buttonId);
+			return;
+		}
+		
+		
 		final String replaceText= fTextField.getText();
 		statusMessage(false, ""); //$NON-NLS-1$
 		try {
@@ -367,8 +373,6 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 					gotoCurrentMarker();
 					break;
 				default : {
-					super.buttonPressed(buttonId);
-					return;
 				}
 			}
 		} catch (InvocationTargetException e) {
@@ -383,11 +387,12 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 			}
 		} catch (InterruptedException e) {
 			// means operation canceled
-		}
-		if (!hasNextMarker() && !hasNextFile() && !canReplace())
-			close();
-		else {
-			enableButtons();
+		} finally {
+			if (!canReplace())
+				close();
+			else {
+				enableButtons();
+			}
 		}
 	}
 	
@@ -466,9 +471,10 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 				IDocument doc= fb.getDocument();
 				for (int i= 0; i < markers.length; i++) {
 					PositionTracker tracker= InternalSearchUI.getInstance().getPositionTracker();
-					int offset= markers[i].getOffset();
-					int length= markers[i].getLength();
-					Position currentPosition= tracker.getCurrentPosition(markers[i]);
+					Match match= markers[i];
+					int offset= match.getOffset();
+					int length= match.getLength();
+					Position currentPosition= tracker.getCurrentPosition(match);
 					if (currentPosition != null) {
 						offset= currentPosition.offset;
 						length= currentPosition.length;
@@ -476,8 +482,8 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 					String originalText= doc.get(offset, length);
 					String replacementString= computeReplacementString(pattern, originalText, replacementText);
 					doc.replace(offset, length, replacementString);
-					fMarkers.remove(0);
-					fPage.getInput().removeMatch(markers[i]);
+					fMarkers.remove(match);
+					fPage.getInput().removeMatch(match);
 				}
 				if (!wasDirty) {
 					fb.commit(new SubProgressMonitor(pm, 1), true);
