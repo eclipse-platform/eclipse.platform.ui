@@ -46,13 +46,15 @@ public class FilterTest extends TestCase {
 	
 	public void testMultiFilter() {
 		CompareFilter f= new CompareFilter();
-		f.setFilters("*.class, .cvsignore, bin/"); //$NON-NLS-1$
+		f.setFilters("*.class, .cvsignore, bin/, src/"); //$NON-NLS-1$
 		Assert.assertTrue("file foo.class should be filtered", f.filter("foo.class", false, false)); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.assertFalse("file foo.java shouldn't be filtered", f.filter("foo.java", false, false)); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.assertTrue("file .cvsignore should be filtered", f.filter(".cvsignore", false, false)); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.assertFalse("file foo.cvsignore shouldn't be filtered", f.filter("foo.cvsignore", false, false)); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.assertTrue("folder bin should be filtered", f.filter("bin", true, false)); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.assertFalse("file bin shouldn't be filtered", f.filter("bin", false, false)); //$NON-NLS-1$ //$NON-NLS-2$
+		Assert.assertTrue("folder src should be filtered", f.filter("src", true, false)); //$NON-NLS-1$ //$NON-NLS-2$
+		Assert.assertFalse("file src shouldn't be filtered", f.filter("src", false, false)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public void testVerify() {
