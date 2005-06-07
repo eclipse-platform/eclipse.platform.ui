@@ -177,13 +177,13 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 		label = createLabel(composite, CVSUIMessages.CVSProjectPropertiesPage_user, 1); //$NON-NLS-1$
 		userText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
 		
-		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_host, 1); //$NON-NLS-1$
+		label = createLabel(composite, CVSUIMessages.CVSRepositoryLocationPropertySource_host, 1); //$NON-NLS-1$
 		hostText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
 		
 		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_port, 1); //$NON-NLS-1$
 		portText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
 		
-		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_path, 1); //$NON-NLS-1$
+		label = createLabel(composite, CVSUIMessages.CVSRepositoryLocationPropertySource_root, 1); //$NON-NLS-1$
 		pathText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
 		
 		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_module, 1); //$NON-NLS-1$
