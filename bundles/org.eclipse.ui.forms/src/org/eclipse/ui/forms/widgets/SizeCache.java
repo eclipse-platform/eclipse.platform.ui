@@ -362,7 +362,7 @@ public class SizeCache {
 
         return false;
     }
-
+    
     /**
      * Try to figure out how much we need to subtract from the hints that we
      * pass into the given control's computeSize(...) method. This tries to
@@ -373,13 +373,20 @@ public class SizeCache {
      * @param control
      */
     private void computeHintOffset(Control control) {
-        Point minimumSize = computeMinimumSize();
-        Point actualSize = controlComputeSize(minimumSize.x, minimumSize.y);
-        
-        widthAdjustment = actualSize.x - minimumSize.x;
-        heightAdjustment = actualSize.y - minimumSize.y;
+        if (control instanceof Composite) {
+            // For composites, subtract off the trim size
+            Composite composite = (Composite) control;
+            Rectangle trim = composite.computeTrim(0, 0, 0, 0);
+
+            widthAdjustment = trim.width;
+            heightAdjustment = trim.height;
+        } else {
+            // For non-composites, subtract off 2 * the border size
+            widthAdjustment = control.getBorderWidth() * 2;
+            heightAdjustment = widthAdjustment;
+        }
     }
-    
+
     private Point controlComputeSize(int widthHint, int heightHint) {
         Point result = control.computeSize(widthHint, heightHint, flushChildren);
         flushChildren = false;
