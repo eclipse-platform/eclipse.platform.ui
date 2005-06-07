@@ -11,24 +11,28 @@
 package org.eclipse.search.internal.ui;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.TableViewer;
 
 import org.eclipse.ui.PlatformUI;
  
 /**
  * This action selects all entries currently showing in view.
  */
-class SelectAllAction extends Action {
+public class SelectAllAction extends Action {
 
-	private SearchResultViewer fViewer;
-
+	private TableViewer fViewer;
+	
 	/**
 	 * Creates the action.
 	 */
-	SelectAllAction(SearchResultViewer viewer) {
+	public SelectAllAction() {
 		super("selectAll"); //$NON-NLS-1$
 		setText(SearchMessages.SelectAllAction_label); 
 		setToolTipText(SearchMessages.SelectAllAction_tooltip); 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ISearchHelpContextIds.SELECT_ALL_ACTION);
+	}
+	
+	public void setViewer(TableViewer viewer) {
 		fViewer= viewer;
 	}
 
@@ -36,8 +40,10 @@ class SelectAllAction extends Action {
 	 * Selects all resources in the view.
 	 */
 	public void run() {
-		fViewer.getTable().selectAll();
-		// force viewer selection change
-		fViewer.setSelection(fViewer.getSelection());
+		if (fViewer != null && !fViewer.getTable().isDisposed() && fViewer.getTable().isFocusControl()) {
+			fViewer.getTable().selectAll();
+			// force viewer selection change
+			fViewer.setSelection(fViewer.getSelection());
+		}
 	}
 }

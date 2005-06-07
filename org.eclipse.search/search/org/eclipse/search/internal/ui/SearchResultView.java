@@ -97,7 +97,8 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 
 		// Add selectAll action handlers.
 		fCellEditorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
-		fSelectAllAction= new SelectAllAction(fViewer);
+		fSelectAllAction= new SelectAllAction();
+		fSelectAllAction.setViewer(fViewer);
 		fCellEditorActionHandler.setSelectAllAction(fSelectAllAction);
 
 		fillActionBars(getViewSite().getActionBars());

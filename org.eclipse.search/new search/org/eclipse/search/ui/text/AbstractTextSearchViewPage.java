@@ -82,6 +82,7 @@ import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.internal.ui.CopyToClipboardAction;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.internal.ui.SelectAllAction;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
@@ -210,6 +211,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private int fCurrentMatchIndex = 0;
 	private String fId;
 	private int fSupportedLayouts;
+	private SelectionProviderAdapter fViewerAdapter;
+	private SelectAllAction fSelectAllAction;
 	
 	/**
 	 * Flag (<code>value 1</code>) denoting flat list layout.
@@ -219,7 +222,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Flag (<code>value 2</code>) denoting tree layout.
 	 */
 	public static final int FLAG_LAYOUT_TREE = 2;
-	private SelectionProviderAdapter fViewerAdapter;
+
 	
 	/**
 	 * This constructor must be passed a combination of layout flags combined
@@ -241,6 +244,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fShowNextAction = new ShowNextResultAction(this);
 		fShowPreviousAction = new ShowPreviousResultAction(this);
 		fCopyToClipboardAction = new CopyToClipboardAction();
+		fSelectAllAction= new SelectAllAction();
 		createLayoutActions();
 		fBatchedUpdates = new HashSet();
 		fListener = new ISearchResultListener() {
@@ -618,6 +622,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			TableViewer viewer = createTableViewer(parent);
 			fViewer = viewer;
 			configureTableViewer(viewer);
+			fSelectAllAction.setViewer(viewer);
 		} else if ((layout & FLAG_LAYOUT_TREE) != 0) {
 			TreeViewer viewer = createTreeViewer(parent);
 			fViewer = viewer;
@@ -650,6 +655,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		
 		Menu menu = fMenu.createContextMenu(fViewer.getControl());
 		fViewer.getControl().setMenu(menu);
+		
 		updateLayoutActions();
 		getViewPart().updateLabel();
 	}
@@ -919,6 +925,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fRemoveSelectedMatches.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.DELETE));
 		fShowNextAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.NEXT));
 		fShowPreviousAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.PREVIOUS));
+		fSelectAllAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.SELECT_ALL));
 	}
 
 	private String getActionDefinitionId(IWorkbenchWindow window, ActionFactory factory) {
@@ -946,6 +953,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fShowPreviousAction);
 			actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), fRemoveSelectedMatches);
 			actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyToClipboardAction);
+			actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), fSelectAllAction);
 		}
 		if (getLayout() == FLAG_LAYOUT_TREE) {
 			addTreeActions(tbm);
