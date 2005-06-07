@@ -50,6 +50,7 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	private static boolean fgCaseSensitive = Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private IPath fRootPath = null;
+	private String[] fRootSegments = null;
 	private File fRootFile = null;
 	private IWorkspaceRoot fRoot = null;
 
@@ -66,6 +67,7 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 		if (!fgCaseSensitive) {
 			fRootPath = fContainer.getLocation();
 			if (fRootPath != null) {
+				fRootSegments = fRootPath.segments();
 				fRootFile = fRootPath.toFile();
 				fRoot = ResourcesPlugin.getWorkspace().getRoot();
 			}
@@ -101,9 +103,24 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 					try {
 						// See bug 82627 and bug 95679 - we have to append the container path in the case
 						// that Eclipse thinks it is, with the file system case of the file in order to
-						// be successful when finding the IFile for a location
-						IPath canonicalPath = new Path(osFile.getCanonicalPath());
-						IPath workspacePath = fRootPath.append(canonicalPath.removeFirstSegments(fRootPath.segmentCount())); 
+						// be successful when finding the IFile for a location.
+						// See bug 98090 - we need to handle relative path names
+						Path canonicalPath = new Path(osFile.getCanonicalPath());
+						String[] canonicalSegments = canonicalPath.segments();
+						IPath workspacePath = new Path(""); //$NON-NLS-1$
+						workspacePath = workspacePath.setDevice(canonicalPath.getDevice());
+						for (int i = 0; i < canonicalSegments.length; i++) {
+							String segment = canonicalSegments[i];
+							if (i < fRootSegments.length) {
+								if (fRootSegments[i].equalsIgnoreCase(segment)) {
+									workspacePath = workspacePath.append(fRootSegments[i]);
+								} else {
+									workspacePath = workspacePath.append(segment);
+								}
+							} else {
+								workspacePath = workspacePath.append(segment);
+							}
+						}
 						IFile[] files = fRoot.findFilesForLocation(workspacePath);
 						if (isFindDuplicates() && files.length > 1) {
 							for (int i = 0; i < files.length; i++) {
