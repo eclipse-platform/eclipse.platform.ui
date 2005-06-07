@@ -14,6 +14,9 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class TerminateActionDelegate extends AbstractListenerActionDelegate {
 
@@ -62,4 +65,16 @@ public class TerminateActionDelegate extends AbstractListenerActionDelegate {
 			update(getAction(), getSelection());
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#update(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
+	protected void update(IAction action, ISelection s) {
+		// ignore non-structured selections (for example, text selection in console)
+		if (s instanceof IStructuredSelection) {
+			super.update(action, s);
+		}
+	}
+	
+	
 }
