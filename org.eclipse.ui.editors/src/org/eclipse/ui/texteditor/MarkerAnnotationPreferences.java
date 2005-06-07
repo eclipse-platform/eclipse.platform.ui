@@ -243,11 +243,26 @@ public class MarkerAnnotationPreferences {
 		return fFragments;
 	}
 
+	private void initialize() {
+		MarkerAnnotationPreferences prefs= null;
+		synchronized (getClass()) {
+			prefs= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
+			if (prefs == null) {
+				prefs= new MarkerAnnotationPreferences();
+				prefs.initializeSharedMakerAnnotationPreferences();
+				EditorsPlugin.getDefault().setMarkerAnnotationPreferences(prefs);
+			}
+		}
+		
+		fFragments= cloneAnnotationPreferences(prefs.fFragments);
+		fPreferences= cloneAnnotationPreferences(prefs.fPreferences);
+	}
+			
 	/**
 	 * Reads all extensions provided for the <code>markerAnnotationSpecification</code> extension point and
 	 * translates them into <code>AnnotationPreference</code> objects.
 	 */
-	private void initialize() {
+	private void initializeSharedMakerAnnotationPreferences() {
 
 		// initialize lists - indicates that the initialization happened
 		fFragments= new ArrayList(2);
@@ -293,6 +308,43 @@ public class MarkerAnnotationPreferences {
 				return collator.compare(label1, label2);
 			}
 		});
+	}
+	
+	/**
+	 * Deeply clones the given list of <code>AnnotationPreference</code>.
+	 * 
+	 * @param annotationPreferences a list of <code>AnnotationPreference</code>
+	 * @return the cloned list of cloned annotation preferences
+	 * @since 3.1
+	 */
+	private List cloneAnnotationPreferences(List annotationPreferences) {
+		if (annotationPreferences == null)
+			return null;
+		List clone= new ArrayList(annotationPreferences.size());
+		Iterator iter= annotationPreferences.iterator();
+		while (iter.hasNext())
+			clone.add(clone(((AnnotationPreference)iter.next())));
+		return clone;
+	}
+	
+	/**
+	 * Clones the given annotation preference.
+	 * 
+	 * @param annotationPreference the annotation preference to clone
+	 * @return the cloned annotation preference
+	 * @since 3.1
+	 */
+	private AnnotationPreference clone(AnnotationPreference annotationPreference) {
+		if (annotationPreference == null)
+			return null;
+		
+		AnnotationPreference clone= new AnnotationPreference();
+		if (annotationPreference.getAnnotationType() != null) {
+			clone.setAnnotationType(annotationPreference.getAnnotationType());
+			clone.merge(annotationPreference);
+		}
+		
+		return clone;
 	}
 
 	/**

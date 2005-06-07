@@ -25,6 +25,7 @@ import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 /**
@@ -69,6 +70,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	private AnnotationTypeLookup fAnnotationTypeLookup;
 	private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
 	private AnnotationTypeHierarchy fAnnotationTypeHierarchy;
+	private MarkerAnnotationPreferences fMarkerAnnotationPreferences;
 
 	/**
 	 * Spelling service.
@@ -128,6 +130,30 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			fAnnotationTypeHierarchy= new AnnotationTypeHierarchy();
 		return fAnnotationTypeHierarchy;
 	}
+	
+	/**
+	 * Sets the marker annotation preferences.
+	 * <p>
+	 * Note: This method must only be called once.
+	 * </p>
+	 *
+	 * @param markerAnnotationPreferences the marker annotation preferences
+	 * @since 3.1
+	 */
+	public void setMarkerAnnotationPreferences(MarkerAnnotationPreferences markerAnnotationPreferences) {
+		Assert.isTrue(fMarkerAnnotationPreferences == null);
+		fMarkerAnnotationPreferences= markerAnnotationPreferences;
+	}
+	
+	/**
+	 * Returns the marker annotation preferences.
+	 *
+	 * @return the marker annotation preferences
+	 * @since 3.1
+	 */
+	public MarkerAnnotationPreferences getMarkerAnnotationPreferences() {
+		return fMarkerAnnotationPreferences;
+	}
 
 	/*
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
@@ -142,6 +168,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		fAnnotationTypeLookup= null;
 		fAnnotationPreferenceLookup= null;
 		fAnnotationTypeHierarchy= null;
+		fMarkerAnnotationPreferences= null;
 
 		super.stop(context);
 	}
