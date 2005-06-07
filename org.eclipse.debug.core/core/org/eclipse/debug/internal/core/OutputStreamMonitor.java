@@ -66,6 +66,8 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 */
 	private boolean fKilled= false;
 	
+    private long lastSleep;
+    
 	/**
 	 * Creates an output stream monitor on the
 	 * given stream (connected to system out or err).
@@ -123,6 +125,8 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * exposing a <code>run</code> method.
 	 */
 	private void read() {
+        lastSleep = System.currentTimeMillis();
+        long currentTime = lastSleep;
 		byte[] bytes= new byte[BUFFER_SIZE];
 		int read = 0;
 		while (read >= 0) {
@@ -151,6 +155,15 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				}
 				return;
 			}
+            
+            currentTime = System.currentTimeMillis();
+            if (currentTime - lastSleep > 1000) {
+                lastSleep = currentTime;
+                try {
+                    Thread.sleep(1); // just give up CPU to maintain UI responsiveness.
+                } catch (InterruptedException e) {
+                } 
+            }
 		}
 		try {
 			fStream.close();
