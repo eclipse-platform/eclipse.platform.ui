@@ -500,7 +500,9 @@ public class DialogSettings implements IDialogSettings {
 
     	private static String getReplacement(char c) {
     		// Encode special XML characters into the equivalent character references.
-    		// These five are defined by default for all XML documents.
+    		// The first five are defined by default for all XML documents.
+    		// The next three (#xD, #xA, #x9) are encoded to avoid them
+			// being converted to spaces on deserialization
     		switch (c) {
     			case '<' :
     				return "lt"; //$NON-NLS-1$
@@ -512,6 +514,12 @@ public class DialogSettings implements IDialogSettings {
     				return "apos"; //$NON-NLS-1$
     			case '&' :
     				return "amp"; //$NON-NLS-1$
+    			case '\r':
+					return "#x0D"; //$NON-NLS-1$
+				case '\n':
+					return "#x0A"; //$NON-NLS-1$
+				case '\u0009':
+					return "#x09"; //$NON-NLS-1$
     		}
     		return null;
     	}
