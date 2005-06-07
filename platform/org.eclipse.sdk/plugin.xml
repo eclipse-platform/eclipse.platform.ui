@@ -178,6 +178,9 @@
       <primaryWizard
             id="org.eclipse.pde.ui.NewProductConfigurationWizard">
       </primaryWizard>
+      <primaryWizard
+            id="org.eclipse.ant.ui.wizards.JavaProjectWizard">
+      </primaryWizard>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
