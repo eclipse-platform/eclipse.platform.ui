@@ -41,7 +41,7 @@ public class CompareFilter {
 		}
 		if (folder && fExtraResourceFolderFilters != null) {
 			for (int i= 0, l= fExtraResourceFolderFilters.length; i < l; i++)
-				if (fExtraResourceFolderFilters[0].equals(path0))
+				if (fExtraResourceFolderFilters[i].equals(path0))
 					return true;
 		}
 		return false;
