@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -50,6 +51,7 @@ import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.configurator.ConfigurationActivator;
 import org.eclipse.update.internal.configurator.FeatureEntry;
 import org.eclipse.update.internal.configurator.IConfigurationConstants;
+import org.eclipse.update.internal.configurator.PlatformConfiguration;
 import org.eclipse.update.internal.configurator.SiteEntry;
 import org.eclipse.update.internal.model.ConfigurationActivityModel;
 import org.eclipse.update.internal.model.ConfiguredSiteModel;
@@ -832,16 +834,30 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	private boolean isRestartNeeded(IPlatformConfiguration runtimeConfig) {
 
 		// First, create a map for faster lookups
-		URL[] newBundlePaths = runtimeConfig.getPluginPath();
-		HashSet newPluginsSet = new HashSet(newBundlePaths.length);
-		for (int i=0; i<newBundlePaths.length; i++) {
-			
-			String pluginLocation = newBundlePaths[i].getFile();
-			newPluginsSet.add(pluginLocation);
+		Set newPluginsSet = null;
+		if (runtimeConfig instanceof PlatformConfiguration) {
+			newPluginsSet = ((PlatformConfiguration)runtimeConfig).getPluginPaths();
 			// On windows, we will be doing case insensitive search as well, so lower it now
-			if (isWindows)
-				newPluginsSet.add(pluginLocation.toLowerCase());
+			if (isWindows) {
+				String[] newPluginsSetArray = (String[])newPluginsSet.toArray( new String[newPluginsSet.size()]);
+				for (int i = 0; i < newPluginsSetArray.length; i++) {
+					newPluginsSet.add(newPluginsSetArray[i].toLowerCase());
+				}
+			}
+		} else {
+			URL[] newBundlePaths = runtimeConfig.getPluginPath();
+			newPluginsSet = new HashSet(newBundlePaths.length);
+			for (int i=0; i<newBundlePaths.length; i++) {
+				
+				String pluginLocation = newBundlePaths[i].getFile();
+				newPluginsSet.add(pluginLocation);
+				// On windows, we will be doing case insensitive search as well, so lower it now
+				if (isWindows)
+					newPluginsSet.add(pluginLocation.toLowerCase());
+			}
 		}
+		
+		
 		
 		Bundle[] oldBundles = UpdateCore.getPlugin().getBundleContext().getBundles();
 

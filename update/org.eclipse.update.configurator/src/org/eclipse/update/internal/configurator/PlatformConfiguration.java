@@ -414,6 +414,21 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return (URL[]) path.toArray(new URL[0]);
 	}
 	
+	public Set getPluginPaths() {
+		
+		HashSet paths = new HashSet();
+		ISiteEntry[] sites = getConfiguredSites();
+
+		for (int i = 0; i < sites.length; i++) {
+			String[] plugins = sites[i].getPlugins();
+			for (int j = 0; j < plugins.length; j++) {
+					paths.add(plugins[j]);
+			}
+		}
+		
+		return paths;
+	}
+	
 
 	/*
 	 * A variation of the getPluginPath, but it returns the actual plugin entries
