@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.ui.internal.util.ErrorUtil;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IWorkbench;
@@ -81,7 +82,8 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		//bundleContext = null;
+		//Make sure we cancel indexer if it is currently running
+		Platform.getJobManager().cancel(IndexerJob.FAMILY);
 		super.stop(context);
 	}
 	/*
