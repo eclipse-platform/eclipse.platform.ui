@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
+import java.text.MessageFormat;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -65,11 +67,11 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 		ISearchQuery[] searches= InternalSearchUI.getInstance().getSearchManager().getQueries();
 		for (int i= 0; i < searches.length; i++) {
 			ISearchResult search= searches[i].getSearchResult();
-			String label= search.getLabel();
+			String label= escapeAmp(search.getLabel());
 			String tooltip= search.getTooltip();
 			ImageDescriptor image= search.getImageDescriptor();
 			if (InternalSearchUI.getInstance().isQueryRunning(search.getQuery()))
-				label= label+ SearchMessages.SearchDropDownAction_running_message; 
+				label= MessageFormat.format(SearchMessages.SearchDropDownAction_running_message, new String[] { label }); 
 			ShowSearchAction action= new ShowSearchAction(fSearchView, search, label, image, tooltip );
 			if (searches[i].equals(currentQuery))
 				action.setChecked(true);
@@ -80,6 +82,18 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 			addActionToMenu(fMenu, new RemoveAllSearchesAction());
 		}
 		return fMenu;
+	}
+
+	private String escapeAmp(String label) {
+		StringBuffer buf= new StringBuffer();
+		for (int i= 0; i < label.length(); i++) {
+			char ch= label.charAt(i);
+			buf.append(ch);
+			if (ch == '&') {
+				buf.append('&');
+			}
+		}
+		return buf.toString();
 	}
 
 	protected void addActionToMenu(Menu parent, Action action) {
