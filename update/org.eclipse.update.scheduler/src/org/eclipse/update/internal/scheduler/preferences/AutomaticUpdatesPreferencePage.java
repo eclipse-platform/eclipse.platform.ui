@@ -153,8 +153,8 @@ public class AutomaticUpdatesPreferencePage
 		enabledCheck.setSelection(pref.getBoolean(UpdateSchedulerPlugin.P_ENABLED));
 		setSchedule(pref.getString(UpdateSchedulerPlugin.P_SCHEDULE));
 
-		dayCombo.setText(SchedulerStartup.DAYS[getDay(pref)]);
-		hourCombo.setText(SchedulerStartup.HOURS[getHour(pref)]);
+		dayCombo.setText(SchedulerStartup.DAYS[getDay(pref, false)]);
+		hourCombo.setText(SchedulerStartup.HOURS[getHour(pref, false)]);
 		
 		searchOnlyRadio.setSelection(!pref.getBoolean(UpdateSchedulerPlugin.P_DOWNLOAD));
 		searchAndDownloadRadio.setSelection(pref.getBoolean(UpdateSchedulerPlugin.P_DOWNLOAD));
@@ -184,8 +184,17 @@ public class AutomaticUpdatesPreferencePage
 	protected void performDefaults() {
 		super.performDefaults();
 		Preferences pref = UpdateSchedulerPlugin.getDefault().getPluginPreferences();
-		enabledCheck.setSelection(
-			pref.getDefaultBoolean(UpdateSchedulerPlugin.P_ENABLED));
+		enabledCheck.setSelection(pref.getDefaultBoolean(UpdateSchedulerPlugin.P_ENABLED));		
+		
+		setSchedule(pref.getDefaultString(UpdateSchedulerPlugin.P_SCHEDULE));
+		onScheduleRadio.setSelection(pref.getDefaultBoolean(UpdateSchedulerPlugin.P_SCHEDULE));
+		
+		dayCombo.setText(SchedulerStartup.DAYS[getDay(pref, true)]);
+		hourCombo.setText(SchedulerStartup.HOURS[getHour(pref, true)]);
+		
+		searchOnlyRadio.setSelection(!pref.getDefaultBoolean(UpdateSchedulerPlugin.P_DOWNLOAD));
+		searchAndDownloadRadio.setSelection(pref.getDefaultBoolean(UpdateSchedulerPlugin.P_DOWNLOAD));
+		pageChanged();
 	}
 
 	/** 
@@ -211,16 +220,16 @@ public class AutomaticUpdatesPreferencePage
 		return true;
 	}
 	
-	private int getDay(Preferences pref) {
-		String day = pref.getString(SchedulerStartup.P_DAY);
+	private int getDay(Preferences pref, boolean useDefault) {
+		String day = useDefault? pref.getDefaultString(SchedulerStartup.P_DAY): pref.getString(SchedulerStartup.P_DAY);
 		for (int i=0; i<SchedulerStartup.DAYS.length; i++)
 			if (SchedulerStartup.DAYS[i].equals(day))
 				return i;
 		return 0;
 	}
 	
-	private int getHour(Preferences pref) {
-		String hour = pref.getString(SchedulerStartup.P_HOUR);
+	private int getHour(Preferences pref, boolean useDefault) {
+		String hour = useDefault? pref.getDefaultString(SchedulerStartup.P_HOUR): pref.getString(SchedulerStartup.P_HOUR);
 		for (int i=0; i<SchedulerStartup.HOURS.length; i++)
 			if (SchedulerStartup.HOURS[i].equals(hour))
 				return i;
