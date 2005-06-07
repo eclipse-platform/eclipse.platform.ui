@@ -133,9 +133,10 @@ public final class FormText extends Canvas {
 	public int marginHeight = 1;
 
 	// private fields
-	private static final boolean DEBUG_TEXT = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT)); //$NON-NLS-1$//$NON-NLS-2$
+	private static final boolean DEBUG_TEXT = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT)); //$NON-NLS-1$
+	private static final boolean DEBUG_TEXTSIZE = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXTSIZE)); //$NON-NLS-1$
 
-	private static final boolean DEBUG_FOCUS = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_FOCUS)); //$NON-NLS-1$//$NON-NLS-2$		
+	private static final boolean DEBUG_FOCUS = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_FOCUS)); //$NON-NLS-1$		
 
 	private boolean hasFocus;
 
@@ -193,6 +194,9 @@ public final class FormText extends Canvas {
 				long stop = System.currentTimeMillis();
 				System.out.println("FormText computeSize: " + (stop - start) //$NON-NLS-1$
 						+ "ms"); //$NON-NLS-1$
+			}
+			if (DEBUG_TEXTSIZE) {
+				System.out.println("FormText ("+model.getAccessibleText()+"), computeSize: wHint="+wHint+", result="+result); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			return result;
 		}
@@ -252,6 +256,9 @@ public final class FormText extends Canvas {
 			}
 			selData = null;
 			Rectangle carea = composite.getClientArea();
+			if (DEBUG_TEXTSIZE) {
+				System.out.println("FormText layout ("+model.getAccessibleText()+"), carea="+carea); //$NON-NLS-1$ //$NON-NLS-2$
+			}			
 			GC gc = new GC(composite);
 			gc.setFont(getFont());
 			ensureBoldFontPresent(getFont());
@@ -1571,6 +1578,8 @@ public final class FormText extends Canvas {
 			size = new Point(wHint, hHint);
 		}
 		Rectangle trim = computeTrim(0, 0, size.x, size.y);
+		if (DEBUG_TEXTSIZE)
+			System.out.println("FormText Computed size: "+trim); //$NON-NLS-1$
 		return new Point(trim.width, trim.height);
 	}
 

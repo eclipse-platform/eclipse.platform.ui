@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Locator implements Cloneable { 
 	public int indent;
 	public int x, y;
-	public int width, height;
+	public int width;
 	public int leading;
 	public int rowHeight;
 	public int marginWidth;

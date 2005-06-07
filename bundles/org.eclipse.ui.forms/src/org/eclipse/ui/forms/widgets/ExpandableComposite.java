@@ -211,7 +211,6 @@ public class ExpandableComposite extends Composite {
 				tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			int twidth = clientArea.width - marginWidth - marginWidth
 					- thmargin - thmargin;
-			//System.out.println(getText()+", Inner width: "+twidth); //$NON-NLS-1$
 			if (tsize.x > 0)
 				twidth -= tsize.x + GAP;
 			if (textClient != null)
@@ -255,21 +254,13 @@ public class ExpandableComposite extends Composite {
 								+ tvmargin;
 				}
 				textLabelCache.setBounds(x, ty, size.x, size.y);
-				//System.out
-				//		.println(getText()
-				//				+ ", Actual text size: " + size + ", cwidth=" + clientArea.width); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (textClient != null) {
 				int tcx;
 				if ((expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0) {
 					tcx = x + size.x + GAP;
-					/*
-					 * if (tsize.y > tcsize.y) tcy = tsize.y + marginHeight +
-					 * tvmargin - tcsize.y; else tcy = y;
-					 */
 				} else {
 					tcx = clientArea.width - tcsize.x - marginWidth - thmargin;
-					// tcy = y;
 				}
 				textClientCache.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}
@@ -306,8 +297,11 @@ public class ExpandableComposite extends Composite {
 								SWT.DEFAULT);
 						descriptionCache.setBounds(cx, y, dsize.x, dsize.y);
 						y += dsize.y + clientVerticalSpacing;
-					} else
-						y += clientVerticalSpacing - VSPACE;
+					} else {
+						y += clientVerticalSpacing;
+						if (getSeparatorControl()!=null)
+							y -= VSPACE;
+					}
 					int cwidth = areaWidth;
 					int cheight = clientArea.height - marginHeight
 							- marginHeight - y;
@@ -318,7 +312,6 @@ public class ExpandableComposite extends Composite {
 
 		protected Point computeSize(Composite parent, int wHint, int hHint,
 				boolean changed) {
-
 			initCache(changed);
 
 			int width = 0, height = 0;
@@ -359,8 +352,6 @@ public class ExpandableComposite extends Composite {
 					size.x = Math.min(defSize.x, size.x);
 				}
 			}
-			//System.out.println(getText()
-			//		+ ", Computed text size: " + size + ", wHint=" + wHint); //$NON-NLS-1$ //$NON-NLS-2$
 			if (size.x > 0)
 				width = size.x;
 			if (tcsize.x>0)
@@ -395,15 +386,14 @@ public class ExpandableComposite extends Composite {
 					dsize = descriptionCache.computeSize(dwHint, SWT.DEFAULT);
 				}
 				if (dsize != null) {
-					//if ((expansionStyle & CLIENT_INDENT) != 0)
-						//dsize.x -= twidth;
 					width = Math.max(width, dsize.x);
 					if (expanded)
 						height += dsize.y + clientVerticalSpacing;
-				} else
-					height += clientVerticalSpacing - VSPACE;
-				//if ((expansionStyle & CLIENT_INDENT) != 0)
-				//	csize.x -= twidth;
+				} else {
+					height += clientVerticalSpacing;
+					if (getSeparatorControl()!=null)
+						height -= VSPACE;
+				}
 				width = Math.max(width, csize.x);
 				if (expanded)
 					height += csize.y;
@@ -413,20 +403,14 @@ public class ExpandableComposite extends Composite {
 				width += twidth;
 			}
 			
-			/*
-			 * return new Point(width + marginWidth + marginWidth + thmargin +
-			 * thmargin, height + marginHeight + marginHeight + tvmargin +
-			 * tvmargin);
-			 */
 			Point result = new Point(width + marginWidth + marginWidth
 					+ thmargin + thmargin, height + marginHeight + marginHeight
 					+ tvmargin + tvmargin);
-			//System.out.println(getText()
-			//		+ ", Computed total size: " + result + ", wHint=" + wHint + ", innerWidth="+width); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return result;
 		}
 
 		public int computeMinimumWidth(Composite parent, boolean changed) {
+			/*
 			initCache(changed);
 
 			int width = 0;
@@ -461,6 +445,8 @@ public class ExpandableComposite extends Composite {
 				width += tsize.x + GAP;
 			}
 			return width + marginWidth + marginWidth + thmargin + thmargin;
+			*/
+			return computeSize(parent, 0, SWT.DEFAULT, changed).x;
 		}
 
 		/*
@@ -470,6 +456,7 @@ public class ExpandableComposite extends Composite {
 		 *      boolean)
 		 */
 		public int computeMaximumWidth(Composite parent, boolean changed) {
+			/*
 
 			initCache(changed);
 
@@ -505,6 +492,8 @@ public class ExpandableComposite extends Composite {
 				width += tsize.x + GAP;
 			}
 			return width + marginWidth + marginWidth + thmargin + thmargin;
+			*/
+			return computeSize(parent, SWT.DEFAULT, SWT.DEFAULT, changed).x;
 		}
 	}
 

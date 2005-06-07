@@ -64,7 +64,7 @@ public abstract class ObjectSegment extends ParagraphSegment {
 			loc.x = loc.indent;
 			loc.x += iwidth + (isSelectable()?1:0);
 			loc.y += loc.rowHeight;
-			loc.width = iwidth;			
+			loc.width = loc.indent + iwidth;
 			loc.rowHeight = iheight;
 			loc.leading = 0;
 			newLine = true;
@@ -124,7 +124,6 @@ public abstract class ObjectSegment extends ParagraphSegment {
 		} else
 			return;
 		loc.width = objWidth;
-		loc.height = objHeight;
 
 		if (!nowrap && loc.x + objWidth > width) {
 			// new row

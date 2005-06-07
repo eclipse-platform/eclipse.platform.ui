@@ -120,49 +120,15 @@ public class Paragraph {
 		ArrayList heights = new ArrayList();
 		hloc.heights = heights;
 		hloc.rowCounter = 0;
+		int innerWidth = width - loc.marginWidth*2;
 		for (int j = 0; j < segments.length; j++) {
 			ParagraphSegment segment = segments[j];
-			segment.advanceLocator(gc, width, hloc, resourceTable, true);
+			segment.advanceLocator(gc, innerWidth, hloc, resourceTable, true);
 		}
 		hloc.collectHeights();
 		loc.heights = heights;
 		loc.rowCounter = 0;
 	}
-
-	/*
-	public void paint(GC gc, int width, Locator loc, int lineHeight,
-			Hashtable resourceTable, IHyperlinkSegment selectedLink,
-			SelectionData selData) {
-		ParagraphSegment[] segments = getSegments();
-		int height;
-		if (segments.length > 0) {
-			if (segments[0] instanceof TextSegment
-					&& ((TextSegment) segments[0]).isSelectable())
-				loc.x += 1;
-			// compute heights
-			if (loc.heights == null)
-				computeRowHeights(gc, width, loc, lineHeight, resourceTable);
-			for (int j = 0; j < segments.length; j++) {
-				ParagraphSegment segment = segments[j];
-				boolean doSelect = false;
-				if (selectedLink != null && segment.equals(selectedLink))
-					doSelect = true;
-				segment.paint(gc, width, loc, resourceTable, doSelect, selData);
-			}
-			loc.heights = null;
-			loc.y += loc.rowHeight;
-			height = loc.rowHeight;
-		} else {
-			loc.y += lineHeight;
-			height = lineHeight;
-		}
-		if (selData != null && selData.isEnclosed()) {
-			if (selData.isSelectedRow(loc.y, height)) {
-				selData.addNewLine();
-			}
-		}
-	}
-	*/
 
 	public void layout(GC gc, int width, Locator loc, int lineHeight,
 			Hashtable resourceTable, IHyperlinkSegment selectedLink) {
@@ -184,10 +150,8 @@ public class Paragraph {
 			}
 			loc.heights = null;
 			loc.y += loc.rowHeight;
-			//height = loc.rowHeight;
 		} else {
 			loc.y += lineHeight;
-			//height = lineHeight;
 		}
 	}
 

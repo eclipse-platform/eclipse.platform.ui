@@ -239,33 +239,25 @@ public class TextSegment extends ParagraphSegment {
 			if (isSelectable())
 				width += 2;
 			locator.x += width;
-			locator.width = width;
-			locator.height = extent.y;
+			locator.width = locator.indent + width;
 			locator.rowHeight = Math.max(locator.rowHeight, extent.y);
 			locator.leading = Math.max(locator.leading, fm.getLeading());
 			return newLine;
 		}
 
-		// BreakIterator wb = BreakIterator.getLineInstance();
-		// wb.setText(text);
-
 		computeTextFragments(gc);
 
-		//int lineStart = 0;
-		//int cursor = 0;
 		int width = 0;
 		Point lineExtent = new Point(0, 0);
 
 		for (int i = 0; i < textFragments.length; i++) {
 			TextFragment textFragment = textFragments[i];
-
+			
 			if (locator.x + lineExtent.x + textFragment.length > wHint) {
 				// overflow
-				//String line = text.substring(lineStart, cursor);
 				int lineWidth = locator.x + lineExtent.x;
 				if (isSelectable())
 					lineWidth += 2;
-				//lineStart = cursor;
 				locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
 				locator.leading = Math.max(locator.leading, fm.getLeading());
 				if (computeHeightOnly)
@@ -280,18 +272,15 @@ public class TextSegment extends ParagraphSegment {
 				width = Math.max(width, lineWidth);
 				newLine = true;
 			}
-			//cursor = textFragment.index;
 			lineExtent.x += textFragment.length;
 			lineExtent.y = Math.max(lineHeight, lineExtent.y);
 		}
 
-		//String lastString = text.substring(lineStart, cursor);
 		int lineWidth = lineExtent.x;
 		if (isSelectable())
 			lineWidth += 2;
 		locator.x += lineWidth;
 		locator.width = width;
-		locator.height = lineHeight;
 		locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
 		locator.leading = Math.max(locator.leading, fm.getLeading());
 		if (oldFont != null) {
@@ -317,7 +306,7 @@ public class TextSegment extends ParagraphSegment {
 		int ewidth = extent.x;
 		if (isSelectable())
 			ewidth += 2;
-		if (locator.x + ewidth > width) {
+		if (locator.x + ewidth > width-locator.marginWidth) {
 			// new line
 			locator.resetCaret();
 			if (isSelectable())
@@ -333,7 +322,6 @@ public class TextSegment extends ParagraphSegment {
 		areaRectangles.add(new AreaRectangle(br, 0, -1));
 		locator.x += ewidth;
 		locator.width = ewidth;
-		locator.height = lineHeight;
 		locator.rowHeight = Math.max(locator.rowHeight, extent.y);
 	}
 
@@ -633,36 +621,24 @@ public class TextSegment extends ParagraphSegment {
 			layoutWithoutWrapping(gc, width, locator, selected, fm, lineHeight,
 					descent);
 		} else {
-			// BreakIterator wb = BreakIterator.getLineInstance();
-			// wb.setText(text);
-
 			int lineStart = 0;
 			int lastLoc = 0;
 			Point lineExtent = new Point(0, 0);
-			// System.out.println("Nbreaks: "+breaks.size());
-
-			// for (int breakLoc = wb.first(); breakLoc != BreakIterator.DONE;
-			// breakLoc = wb
-			// .next()) {
 			computeTextFragments(gc);
+			int rightEdge = width-locator.marginWidth;
 			for (int i = 0; i < textFragments.length; i++) {
 				TextFragment fragment = textFragments[i];
 				int breakLoc = fragment.index;
 				if (breakLoc == 0)
 					continue;
-				int ewidth = fragment.length;
-				if (isSelectable())
-					ewidth += 2;
-				if (locator.x + lineExtent.x + ewidth > width) {
+				if (locator.x + lineExtent.x + fragment.length > rightEdge) {
 					// overflow
-					//String prevLine = text.substring(lineStart, lastLoc);
+					int lineWidth = locator.x + lineExtent.x;
+					if (isSelectable())
+						lineWidth += 2;
 					int ly = locator.getBaseline(lineHeight - fm.getLeading());
 					Rectangle br = new Rectangle(locator.x - 1, ly,
 							lineExtent.x + 2, lineHeight - descent + 3);
-					//int lineY = ly + lineHeight - descent + 1;
-					int prevWidth = lineExtent.x;
-					if (isSelectable())
-						prevWidth += 2;
 					areaRectangles
 							.add(new AreaRectangle(br, lineStart, lastLoc));
 

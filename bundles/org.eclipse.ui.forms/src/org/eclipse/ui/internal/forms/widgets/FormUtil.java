@@ -49,6 +49,7 @@ public class FormUtil {
 	public static final String DEBUG = PLUGIN_ID + "/debug"; //$NON-NLS-1$
 
 	public static final String DEBUG_TEXT = DEBUG + "/text"; //$NON-NLS-1$
+	public static final String DEBUG_TEXTSIZE = DEBUG + "/textsize"; //$NON-NLS-1$
 
 	public static final String DEBUG_FOCUS = DEBUG + "/focus"; //$NON-NLS-1$
 
