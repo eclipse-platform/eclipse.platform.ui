@@ -45,7 +45,10 @@ public class IViewPartTest extends IWorkbenchPartTest {
     
     /**
      * Tests that the view is closed without saving if isSaveOnCloseNeeded()
-     * returns false.
+     * returns false. This also tests some disposal behaviors specific to 
+     * views: namely, that the contribution items are disposed in the correct
+     * order with respect to the disposal of the view. 
+     * 
      * @see ISaveable#isSaveOnCloseNeeded()
      */
     public void testOpenAndCloseSaveNotNeeded() throws Throwable {
@@ -56,10 +59,17 @@ public class IViewPartTest extends IWorkbenchPartTest {
         closePart(fPage, part);
         
         CallHistory history = part.getCallHistory();
+        
+        // TODO: This verifies the 3.0 disposal order. However, there may be a bug here.
+        // That is, it may be necessary to change this and dispose the contribution items 
+        // after the view's dispose method in order to ensure that the site is never returning
+        // a disposed contribution item. See bug 94457 for details.
         assertTrue(history.verifyOrder(new String[] { "setInitializationData", "init",
-                "createPartControl", "setFocus", "isSaveOnCloseNeeded", "widgetDisposed", "dispose" }));
+                "createPartControl", "setFocus", "isSaveOnCloseNeeded", 
+                "widgetDisposed", "toolbarContributionItemWidgetDisposed", 
+                "toolbarContributionItemDisposed", "dispose" }));
         assertFalse(history.contains("doSave"));
     }
-
+    
 }
 

@@ -554,5 +554,16 @@ public abstract class PartPane extends LayoutPart implements Listener {
         
         return super.allowsAutoFocus();
     }
+
+    /**
+     * Clears all contribution items from the contribution managers (this is done separately
+     * from dispose() since it is done after the part is disposed). This is a bit of a hack.
+     * Really, the contribution managers should be part of the site, not the PartPane. If these
+     * were moved elsewhere, then disposal of the PartPane would be atomic and this method could
+     * be removed.
+     */
+	public void removeContributions() {
+
+	}
     
 }

@@ -183,11 +183,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
          */
         if (isvMenuMgr != null) {
             isvMenuMgr.dispose();
-            isvMenuMgr.removeAll();
         }
         if (isvToolBarMgr != null) {
             isvToolBarMgr.dispose();
-            isvToolBarMgr.removeAll();
         }
     }
 
@@ -601,5 +599,16 @@ public class ViewPane extends PartPane implements IPropertyListener {
             return true;
         }
         return perspective.isCloseable(getViewReference());
+    }
+    
+    public void removeContributions() {
+    	super.removeContributions();
+    	
+        if (isvMenuMgr != null) {
+            isvMenuMgr.removeAll();
+        }
+        if (isvToolBarMgr != null) {
+            isvToolBarMgr.removeAll();
+        }
     }
 }

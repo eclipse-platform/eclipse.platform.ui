@@ -626,6 +626,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         
         doDisposePart();
    
+        if (pane != null) {
+        	pane.removeContributions();
+        }
+        
         internalPropChangeListeners.clear();
         if (image != null) {
             JFaceResources.getResources().destroy(imageDescriptor);
