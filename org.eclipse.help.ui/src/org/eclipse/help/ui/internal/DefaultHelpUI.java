@@ -151,7 +151,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			if (page != null) {
 				IWorkbenchPart activePart = page.getActivePart();
 				try {
-					IViewPart part = page.showView(HELP_VIEW_ID);
+					IViewPart part = page.showView(HELP_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 					if (part!=null) {
 						HelpView view = (HelpView)part;
 						view.showDynamicHelp(activePart, c);
@@ -268,7 +268,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				try {
 					IWorkbenchPart activePart = page.getActivePart();
 					Control c = window.getShell().getDisplay().getFocusControl();
-					IViewPart part = page.showView(HELP_VIEW_ID);
+					IViewPart part = page.showView(HELP_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 					if (part!=null) {
 						HelpView view = (HelpView)part;
 						view.displayContext(context, activePart, c);
