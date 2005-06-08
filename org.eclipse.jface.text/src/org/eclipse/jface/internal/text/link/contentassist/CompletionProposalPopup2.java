@@ -100,7 +100,19 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	private String fLineDelimiter;
 	/** The most recently selected proposal. */
 	private ICompletionProposal fLastProposal;
-	private IEditingSupport fEditorHelper= new IEditingSupport() {
+	private final IEditingSupport fFocusEditingSupport= new IEditingSupport() {
+
+		public boolean isOriginator(DocumentEvent event, IRegion focus) {
+			return false;
+		}
+
+		public boolean ownsFocusShell() {
+			return Helper2.okToUse(fProposalShell) && fProposalShell.isFocusControl()
+					|| Helper2.okToUse(fProposalTable) && fProposalTable.isFocusControl();
+		}
+
+	};
+	private final IEditingSupport fModificationEditingSupport= new IEditingSupport() {
 
 		public boolean isOriginator(DocumentEvent event, IRegion focus) {
 			if (fViewer != null) {
@@ -111,7 +123,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		}
 
 		public boolean ownsFocusShell() {
-			return Helper2.okToUse(fProposalShell) && fProposalShell.isFocusControl();
+			return false;
 		}
 
 	};
@@ -347,6 +359,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		fInserting= true;
 		IRewriteTarget target= null;
+		IEditingSupportRegistry registry= null;
 
 		try {
 
@@ -361,8 +374,8 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				target.beginCompoundChange();
 
 			if (fViewer instanceof IEditingSupportRegistry) {
-				IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
-				registry.register(fEditorHelper);
+				registry= (IEditingSupportRegistry) fViewer;
+				registry.register(fModificationEditingSupport);
 			}
 
 			if (p instanceof ICompletionProposalExtension2) {
@@ -403,10 +416,8 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			if (target != null)
 				target.endCompoundChange();
 
-			if (fViewer instanceof IEditingSupportRegistry) {
-				IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
-				registry.unregister(fEditorHelper);
-			}
+			if (registry != null)
+				registry.unregister(fModificationEditingSupport);
 
 			fInserting= false;
 		}
@@ -433,7 +444,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		if (fViewer instanceof IEditingSupportRegistry) {
 			IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
-			registry.unregister(fEditorHelper);
+			registry.unregister(fFocusEditingSupport);
 		}
 
 		if (Helper2.okToUse(fProposalShell)) {
@@ -634,7 +645,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 			if (fViewer instanceof IEditingSupportRegistry) {
 				IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
-				registry.register(fEditorHelper);
+				registry.register(fFocusEditingSupport);
 			}
 
 			fProposalShell.setVisible(true);
