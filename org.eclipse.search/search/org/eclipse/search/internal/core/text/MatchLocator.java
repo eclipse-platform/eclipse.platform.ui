@@ -42,16 +42,14 @@ public class MatchLocator {
 		return fMatcher.pattern().pattern().length() == 0;
 	}
 	
-
 	public void locateMatches(IProgressMonitor progressMonitor, CharSequence searchInput, ITextSearchResultCollector collector, IResourceProxy proxy) throws CoreException {
 		fMatcher.reset(searchInput);
 		int k= 0;
 		while (fMatcher.find()) {
 			int start= fMatcher.start();
 			int end= fMatcher.end();
-			collector.accept(proxy, start, end - start);
-			if (end == start) {
-				end++;
+			if (end != start) { // don't report 0-length matches
+				collector.accept(proxy, start, end - start);
 			}
 			if (k++ == 20) {
 				if (progressMonitor.isCanceled()) {
@@ -61,7 +59,4 @@ public class MatchLocator {
 			}
 		}
 	}
-
-
-
 }
