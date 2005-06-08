@@ -61,7 +61,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import org.eclipse.search.ui.IReplacePage;
 import org.eclipse.search.ui.ISearchPage;
@@ -333,8 +332,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				// Set item and text here to prevent page from resizing
 				fPattern.setItems(getPreviousSearchPatterns());
 				fExtensions.setItems(getPreviousExtensions());
-				initializePatternControl();
-				if (fPattern.getText().length() == 0) {
+				if (!initializePatternControl()) {
 					fPattern.select(0);
 					handleWidgetSelected();
 				}
@@ -481,53 +479,22 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			getContainer().setSelectedScope(patternData.scope);
 	}
 
-	private void initializePatternControl() {
+	private boolean initializePatternControl() {
 		ISelection selection= getSelection();
-		String text= "";	 //$NON-NLS-1$
-		String extension= null;
-		if (selection instanceof ITextSelection) {
-			ITextSelection textSelection= (ITextSelection)getSelection();
-			text= textSelection.getText();
-		} else {
-			IResource resource= null;
-			Object item= null;
-			if (selection instanceof IStructuredSelection)
-				item= ((IStructuredSelection)selection).getFirstElement();
-			if (item instanceof IResource) {
-				resource= (IResource)item;
-				text= resource.getName();
-			} else if (item instanceof IAdaptable) {
-				Object adapter= ((IAdaptable)item).getAdapter(IWorkbenchAdapter.class);
-				if (adapter instanceof IWorkbenchAdapter)
-					text= ((IWorkbenchAdapter)adapter).getLabel(item);
-
-				adapter= ((IAdaptable)item).getAdapter(IResource.class);
-				if (adapter instanceof IResource) {
-					resource= (IResource)adapter;
-					if (text == null)	// keep text, if provided by workbench adapter
-						text= resource.getName();
-				}
+		if (selection instanceof ITextSelection && !selection.isEmpty()) {
+			String text= ((ITextSelection) selection).getText();
+			fPattern.setText(insertEscapeChars(text));
+			
+			if (getPreviousExtensions().length > 0) {
+				fExtensions.setText(getPreviousExtensions()[0]);
+			} else {
+				String extension= getExtensionFromEditor();
+				if (extension != null)
+					fExtensions.setText(extension);
 			}
-			if (resource instanceof IFile ) {
-				extension= resource.getFileExtension();
-				if (extension == null)
-					extension= resource.getName();
-				else
-					extension= "*." + extension; //$NON-NLS-1$
-			}
-			else
-				extension= "*"; //$NON-NLS-1$
-		}		
-		fPattern.setText(insertEscapeChars(text));
-		
-		if (getPreviousExtensions().length > 0)
-			fExtensions.setText(getPreviousExtensions()[0]);
-		else {
-			if (extension == null)
-				extension= getExtensionFromEditor();
-			if (extension != null)
-				fExtensions.setText(extension);
+			return true;
 		}
+		return false;
 	}
 	
 	private String insertEscapeChars(String text) {
