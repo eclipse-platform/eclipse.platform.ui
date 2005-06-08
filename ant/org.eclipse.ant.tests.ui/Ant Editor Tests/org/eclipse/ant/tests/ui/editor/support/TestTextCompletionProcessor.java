@@ -37,6 +37,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	
 	private File fEditedFile;
 	private ISourceViewer fViewer;
+    private boolean fNeedsToDispose= true;
 
 	public TestTextCompletionProcessor(AntModel model) {
 		super(model);
@@ -45,6 +46,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	public TestTextCompletionProcessor(AntEditor editor) {
 		super(editor.getAntModel());
 		fViewer= editor.getViewer();
+        fNeedsToDispose= false;
 	}
 	
 	public TestTextCompletionProcessor() {
@@ -178,4 +180,11 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	public ICompletionProposal[] computeCompletionProposals(int documentOffset) {
 		return super.computeCompletionProposals(fViewer, documentOffset);
 	}
+    
+    public void dispose() {
+        if (fNeedsToDispose && antModel != null) {
+            //not working with an editor
+            antModel.dispose();
+        }
+    }
 }
