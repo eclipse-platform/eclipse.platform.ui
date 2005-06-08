@@ -37,6 +37,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.help.HelpSystem;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -141,6 +144,34 @@ public abstract class MarkerView extends TableView {
             }
         }
     };
+    
+    private class ContextProvider implements IContextProvider {
+		public int getContextChangeMask() {
+			return SELECTION;
+		}
+
+		public IContext getContext(Object target) {
+            String contextId = null;
+            // See if there is a context registered for the current selection
+            ConcreteMarker marker = (ConcreteMarker) ((IStructuredSelection) getViewer()
+                    .getSelection()).getFirstElement();
+            if (marker != null) {
+                contextId = IDE.getMarkerHelpRegistry().getHelp(
+                        marker.getMarker());
+            }
+
+            if (contextId == null) {
+                contextId = getStaticContextId();
+            }
+            return HelpSystem.getContext(contextId);
+        }
+
+		public String getSearchExpression(Object target) {
+			return null;
+		}
+    }
+    
+    private ContextProvider contextProvider = new ContextProvider();
 
     protected ActionCopyMarker copyAction;
 
@@ -325,24 +356,17 @@ public abstract class MarkerView extends TableView {
              * @see org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse.swt.events.HelpEvent)
              */
             public void helpRequested(HelpEvent e) {
-                String contextId = null;
-                // See if there is a context registered for the current selection
-                ConcreteMarker marker = (ConcreteMarker) ((IStructuredSelection) getViewer()
-                        .getSelection()).getFirstElement();
-                if (marker != null) {
-                    contextId = IDE.getMarkerHelpRegistry().getHelp(
-                            marker.getMarker());
-                }
-
-                if (contextId == null) {
-                    contextId = PlatformUI.PLUGIN_ID
-                            + ".task_list_view_context"; //$NON-NLS-1$
-                }
-
+            	IContext context = contextProvider.getContext(getViewer().getControl());
                 PlatformUI.getWorkbench().getHelpSystem()
-						.displayHelp(contextId);
+						.displayHelp(context);
             }
         });
+    }
+    
+    public Object getAdapter(Class adaptable) {
+    	if (adaptable.equals(IContextProvider.class))
+    		return contextProvider;
+    	return super.getAdapter(adaptable);
     }
 
     protected void viewerSelectionChanged(IStructuredSelection selection) {
@@ -620,6 +644,8 @@ public abstract class MarkerView extends TableView {
      * @param resources
      */
     protected abstract void updateFilterSelection(IResource[] resources);
+    
+    protected abstract String getStaticContextId();
 
     void updateFocusResource(IResource[] resources) {
         boolean updateNeeded = updateNeeded(focusResources, resources);

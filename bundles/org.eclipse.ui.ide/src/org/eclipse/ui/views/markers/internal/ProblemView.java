@@ -252,4 +252,8 @@ public class ProblemView extends MarkerView {
         problemFilter.setFocusResource(resources);
     }
 
+	protected String getStaticContextId() {
+		// TODO this context is missing - add it
+        return PlatformUI.PLUGIN_ID + ".problem_view_context"; //$NON-NLS-1$
+	}
 }

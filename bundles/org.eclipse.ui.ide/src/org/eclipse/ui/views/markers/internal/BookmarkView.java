@@ -216,4 +216,7 @@ public class BookmarkView extends MarkerView {
         bookmarkFilter.setFocusResource(resources);
     }
 
+	protected String getStaticContextId() {
+        return PlatformUI.PLUGIN_ID + ".bookmark_view_context"; //$NON-NLS-1$
+	}
 }

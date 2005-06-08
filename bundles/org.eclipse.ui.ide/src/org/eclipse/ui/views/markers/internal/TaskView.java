@@ -317,4 +317,8 @@ public class TaskView extends MarkerView {
     protected void updateFilterSelection(IResource[] resources) {
         taskFilter.setFocusResource(resources);
     }
+
+	protected String getStaticContextId() {
+        return PlatformUI.PLUGIN_ID + ".task_list_view_context"; //$NON-NLS-1$
+	}
 }
