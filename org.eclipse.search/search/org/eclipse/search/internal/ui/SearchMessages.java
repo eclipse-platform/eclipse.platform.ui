@@ -196,4 +196,6 @@ public final class SearchMessages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);
 	}
+
+	public static String ReplaceDialog2_nomatches_error;
 }

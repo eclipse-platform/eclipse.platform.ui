@@ -178,6 +178,11 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		shell.setText(getDialogTitle());
 		gotoCurrentMarker();
 		enableButtons();
+		
+		if (!canReplace()) {
+			statusMessage(true, MessageFormat.format(SearchMessages.ReplaceDialog2_nomatches_error, new String[] { getQuery().getSearchString() }));
+		}
+		
 	}
 		
 	public int open() {
