@@ -52,6 +52,41 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 		this(PREFERENCESEXPORTPAGE1);//$NON-NLS-1$
 	}
 
+	protected String getOutputSuffix() {
+    	return ".epf"; //$NON-NLS-1$
+    }
+	
+	/**
+	 * Answer the contents of self's destination specification widget
+	 * 
+	 * @return java.lang.String
+	 */
+	protected String getDestinationValue() {
+		String idealSuffix = getOutputSuffix();
+        String destinationText = super.getDestinationValue();
+
+        // only append a suffix if the destination doesn't already have a . in 
+        // its last path segment.  
+        // Also prevent the user from selecting a directory.  Allowing this will 
+        // create a ".epf" file in the directory
+        if (destinationText.length() != 0
+                && !destinationText.endsWith(File.separator)) {
+            int dotIndex = destinationText.lastIndexOf('.');
+            if (dotIndex != -1) {
+                // the last path seperator index
+                int pathSepIndex = destinationText.lastIndexOf(File.separator);
+                if (pathSepIndex != -1 && dotIndex < pathSepIndex) {
+                    destinationText += idealSuffix;
+                }
+            } else {
+                destinationText += idealSuffix;
+            }
+        }
+
+        return destinationText;
+    }
+
+		
 	protected String getAllButtonText() {
 		return PreferencesMessages.WizardPreferencesExportPage1_all;
 	}
