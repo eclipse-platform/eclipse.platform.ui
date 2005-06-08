@@ -71,13 +71,15 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 	private Button overwriteExistingFilesCheckbox;
 
-	private Table transfersTable;
+	protected Table transfersTable;
+	
+	protected Text text;
 
 	private Composite buttonComposite;
 
 	private Button allButton;
 
-	private Button chooseImportsButton;
+	protected Button chooseImportsButton;
 
 	private Group group;
 
@@ -309,7 +311,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		description.setText(PreferencesMessages.WizardPreferences_description);
 		description.setFont(parentFont);
 		
-		final Text text = new Text(group, SWT.V_SCROLL | SWT.READ_ONLY
+		text = new Text(group, SWT.V_SCROLL | SWT.READ_ONLY
 				| SWT.BORDER | SWT.WRAP);
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 		text.setFont(parentFont);
@@ -383,6 +385,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setAllChecked(true);
+				updatePageCompletion();
 			}
 		};
 		selectButton.addSelectionListener(listener);
@@ -395,7 +398,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setAllChecked(false);
-
+				updatePageCompletion();
 			}
 		};
 		deselectButton.addSelectionListener(listener);
@@ -684,6 +687,8 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * @see #validateOptionsGroup
 	 */
 	protected boolean determinePageCompletion() {
+		
+		// validate groups in order of priority so error message is the most important one
 		boolean complete = validateSourceGroup() && validateDestinationGroup()
 				&& validateOptionsGroup();
 

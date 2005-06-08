@@ -129,6 +129,17 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
         return fromFile.exists() && !fromFile.isDirectory();
     }
 
+    protected void setPreferenceTransfers() {
+    	
+    	super.setPreferenceTransfers();	
+    	
+		if(validFromFile()&&(transfersTable.getItemCount()== 0)){
+			text.setText(PreferencesMessages.WizardPreferences_noSpecificPreferenceDescription);
+		}
+		else
+			text.setText(""); //$NON-NLS-1$
+					
+	}
   
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#createTransferArea(org.eclipse.swt.widgets.Composite)
