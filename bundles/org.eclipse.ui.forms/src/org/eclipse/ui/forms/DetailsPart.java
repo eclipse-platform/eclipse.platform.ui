@@ -95,8 +95,9 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 /**
  * Registers the details page to be used for all the objects of
  * the provided object class.
- * @param objectClass
- * @param page
+ * @param objectClass an object of type 'java.lang.Class' to be used 
+ * as a key for the provided page
+ * @param page the page to show for objects of the provided object class
  */
 	public void registerPage(Object objectClass, IDetailsPage page) {
 		registerPage(objectClass, page, true);
