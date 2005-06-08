@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.IntrospectionHelper;
@@ -980,7 +981,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		ICompletionProposal proposal;
 		String key;
 		while (keys.hasNext()) {
-			key= (String) keys.next();
+			key= antModel.getUserNamespaceCorrectName((String) keys.next());
 			if (prefix.length() == 0 || key.toLowerCase().startsWith(prefix)) {
 				proposal = newCompletionProposal(document, prefix, key);
 				proposals.add(proposal);
@@ -1382,9 +1383,13 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		AntProjectNode node= antModel.getProjectNode();
     	if (node != null) {
     		Project antProject= node.getProject();
-    		if (ComponentHelper.getComponentHelper(antProject).getDefinition(elementName) != null) {
+            ComponentHelper helper= ComponentHelper.getComponentHelper(antProject);
+    		if (helper.getDefinition(elementName) != null) {
     			return true;
     		}
+            if (helper.getDefinition(antModel.getNamespaceCorrectName(elementName)) != null) {
+                return true;
+            }
     		//not everything is a task or type (nested elements)
     		if (getDtd().getElement(elementName) != null) {
     			return true;
@@ -1399,13 +1404,17 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     }
 
     private Class getTaskClass(String taskName) {
+        Class clss= null;
     	AntProjectNode node= antModel.getProjectNode();
     	if (node != null) {
     		Project antProject= node.getProject();
     		Map tasksAndTypes= ComponentHelper.getComponentHelper(antProject).getAntTypeTable();
-    		return (Class)tasksAndTypes.get(taskName);
+    		clss= (Class)tasksAndTypes.get(taskName);
+            if (clss == null) {
+                clss= (Class)tasksAndTypes.get(antModel.getNamespaceCorrectName(taskName));
+            }
     	}
-    	return null;
+    	return clss;
     }
 
     /**

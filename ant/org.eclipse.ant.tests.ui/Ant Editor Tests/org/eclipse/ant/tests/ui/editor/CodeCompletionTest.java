@@ -200,6 +200,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertContains("basedir", proposals);
         assertContains("ant.home", proposals);
         assertContains("ant.library.dir", proposals);
+        processor.dispose();
     }
     
     /**
@@ -352,6 +353,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		assertContains("do_not_compile", proposals);
 		assertContains("adit_prop", proposals);
 		assertContains("compile_prop", proposals);
+        processor.dispose();
     }
     
     /**
@@ -364,6 +366,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		assertEquals(1, proposals.length);
 		ICompletionProposal proposal = proposals[0];
 		assertEquals("mine", proposal.getDisplayString());
+        processor.dispose();
 	}
     
     /**
@@ -375,6 +378,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		ICompletionProposal[] proposals = processor.getTaskProposals(getCurrentDocument(), "target", "cool");
 		assertEquals(4, proposals.length);
 		assertContains("coolUITask", proposals);
+        processor.dispose();
 	}
     
     /**
@@ -389,6 +393,19 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		assertEquals("eclipseMacro", proposal.getDisplayString());
         
 	}
+    
+     /**
+     * Tests the code completion for tasks that have been defined via macrodef with uri in the buildfile
+     */
+    public void testNamespacedMacrodefProposals() {
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("98853.xml"));
+
+        ICompletionProposal[] proposals = processor.getTaskProposals(getCurrentDocument(), "target", "xyz");
+        assertEquals(2, proposals.length);
+        ICompletionProposal proposal= proposals[0];
+        assertEquals("xyz:echo-macro", proposal.getDisplayString());
+        processor.dispose();
+    }
 	
 	/**
      * Tests the code completion for nested element attributes
@@ -402,10 +419,11 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	processor.setColumnNumber(columnNumber);
     	processor.setCursorPosition(lineOffset + columnNumber);
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
-    	assertTrue(proposals.length == 5);
+        assertEquals(proposals.length, 5);
     	assertContains("description", proposals);
     	assertContains("implicit - (true | false | on | off | yes | no)", proposals);
     	assertContains("name", proposals);
+        processor.dispose();
 	}
 	
 	/**
@@ -424,7 +442,25 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertContains("v", proposals);
     	assertContains("eclipse", proposals);
     	assertTrue("Additional proposal information not correct", proposals[1].getAdditionalProposalInfo().startsWith("Testing Eclipse"));
+        processor.dispose();
 	}
+    
+    /**
+     * Tests the code completion for tasks that have been defined via macrodef in the buildfile
+     */
+    public void testNamespacedMacrodefAttributeProposals() throws BadLocationException {
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("98853.xml"));
+        int lineNumber= 16;
+        int columnNumber= 18;
+        int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+        processor.setLineNumber(lineNumber);
+        processor.setColumnNumber(columnNumber);
+        processor.setCursorPosition(lineOffset + columnNumber);
+        ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+        assertEquals(proposals.length, 1);
+        assertContains("str", proposals);
+        processor.dispose();
+    }
 	
 	/**
      * Tests the code completion for elements that have been defined via macrodef in the buildfile
@@ -441,6 +477,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertTrue(proposals.length == 1);
     	assertTrue("Proposal not correct", proposals[0].getDisplayString().equals("some-tasks"));
     	assertTrue("Additional proposal information not correct", proposals[0].getAdditionalProposalInfo().endsWith("Not required"));
+        processor.dispose();
 	}
 
     /**
@@ -468,7 +505,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals(1, proposals.length);
         proposal = proposals[0];
         assertEquals("mkdir", proposal.getDisplayString());
-        
+        processor.dispose();
     }
     
     /**
@@ -484,6 +521,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertContains("message", proposals);
         assertContains("if", proposals);
         assertContains("unless", proposals);
+        processor.dispose();
     }
     
 	/**
@@ -502,6 +540,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		assertEquals(6, proposals.length);
 		proposal = proposals[0];
 		assertEquals("filelist", proposal.getDisplayString());
+        processor.dispose();
 	}
 	
     /**
@@ -685,6 +724,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
         
         proposals = processor.getBuildFileProposals("    \n<project></project>", "");
         assertEquals(1, proposals.length);
+        processor.dispose();
     }
     
     /**
@@ -705,6 +745,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertTrue(proposals.length >= 2);
     	assertContains("project.class.path", proposals);
     	assertDoesNotContain("project.class.path2", proposals);
+        processor.dispose();
     }
     
     /**
@@ -724,6 +765,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertTrue(proposals.length == 6);
     	assertContains("true", proposals);
     	assertContains("no", proposals);
+        processor.dispose();
     }
     
      /**
@@ -742,6 +784,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertContains("cool", proposals);
     	assertContains("chillin", proposals);
     	assertDoesNotContain("awesome", proposals);
+        processor.dispose();
     }
     
     /**
@@ -759,6 +802,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertEquals("Incorrect number of proposals", 1, proposals.length);
     	//the reference to the project by name
     	assertContains("Extension Point Task", proposals);
+        processor.dispose();
     }
     
     /**
@@ -775,6 +819,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
     	assertTrue(proposals.length == 1);
     	assertContains("works", proposals);
+        processor.dispose();
 	}
 	
 	/**
@@ -791,6 +836,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
     	assertTrue(proposals.length == 1);
     	assertContains("nestedelement", proposals);
+        processor.dispose();
 	}
 	
 	/**
@@ -829,6 +875,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
     	assertTrue(proposals.length == 6); //the boolean proposals
     	assertContains("true", proposals);
+        processor.dispose();
 	}
 	
 	/**
@@ -846,6 +893,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "n");
     	assertTrue(proposals.length == 1); 
     	assertContains("name", proposals);
+        processor.dispose();
 	}
 	
 	/**
@@ -882,6 +930,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
     	assertTrue(proposals.length == 6); //boolean proposals 
     	assertContains("no", proposals);
+        processor.dispose();
 	}
 	
 	/**
@@ -899,6 +948,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	    	assertTrue("Two proposals are relevant at the current position. Found: " + proposals.length, proposals.length == 2);
 	    	assertContains("project", proposals);
 	    	assertContains("Buildfile template - simple buildfile with two targets", proposals);
+            processor.dispose();
 		} finally {
 			EditorTestHelper.closeAllEditors();
 		}
@@ -945,6 +995,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertTrue(proposals.length >= 2);
     	assertContains("project.class.path", proposals);
     	assertContains("project.class.path2", proposals);
+        processor.dispose();
     }
     
 	 /**
@@ -964,6 +1015,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertTrue(proposals.length == 8);
     	assertContains("main", proposals);
     	assertContains("testUnless", proposals);
+        processor.dispose();
     }
     
     /**
@@ -993,5 +1045,6 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	proposals = processor.getProposalsFromDocument(getCurrentDocument(), "n");
     	assertTrue(proposals.length == 1);
     	assertContains("name", proposals);
+        processor.dispose();
     }
 }

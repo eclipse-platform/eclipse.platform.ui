@@ -412,6 +412,15 @@ public class ProjectHelper extends ProjectHelper2 {
 			}
 			return source;
 		}
+        
+        /* (non-Javadoc)
+         * @see org.xml.sax.ContentHandler#startPrefixMapping(java.lang.String, java.lang.String)
+         */
+        public void startPrefixMapping(String prefix, String uri) {
+       
+            super.startPrefixMapping(prefix, uri);
+            getAntModel().addPrefixMapping(prefix, uri);
+        }
 	 }
 	 
 	 private static class ErrorHelper {

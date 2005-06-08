@@ -225,4 +225,11 @@ public interface IAntModel {
      * @param node the defining task node to cache the associated text
      */
     void setDefiningTaskNodeText(AntDefiningTaskNode node);
+
+    /**
+     * Record the prefix-URI Namespace mapping.
+     * @param prefix The Namespace prefix being declared.
+     * @param uri The Namespace URI the prefix is mapped to.
+     */
+    void addPrefixMapping(String prefix, String uri);
 }

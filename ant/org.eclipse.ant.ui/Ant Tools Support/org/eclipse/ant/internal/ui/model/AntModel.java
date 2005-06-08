@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Stack;
 
 import org.apache.tools.ant.AntTypeDefinition;
@@ -126,6 +127,7 @@ public class AntModel implements IAntModel {
     private boolean fReportingProblemsCurrent= false;
     private boolean fDoNotReportProblems= false;
 	private boolean fShouldReconcile= true;
+    private HashMap fNamespacePrefixMappings;
     
     public AntModel(IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
         init(document, problemRequestor, locationProvider);
@@ -271,6 +273,7 @@ public class AntModel implements IAntModel {
         fNodeBeingResolvedIndex= -1;
         fLastNode= null;
         fCurrentNodeIdentifiers= null;
+        fNamespacePrefixMappings= null;
 		
         fNonStructuralNodes= new ArrayList(1);
         if (fDefinersToText != null) {
@@ -1696,9 +1699,30 @@ public class AntModel implements IAntModel {
     
     public AntDefiningTaskNode getDefininingTaskNode(String nodeName) {
         if (fTaskNameToDefiningNode != null) {
-            return (AntDefiningTaskNode)fTaskNameToDefiningNode.get(nodeName);
+            AntDefiningTaskNode node= (AntDefiningTaskNode)fTaskNameToDefiningNode.get(nodeName);
+            if (node == null) {
+                nodeName = getNamespaceCorrectName(nodeName);
+                node= (AntDefiningTaskNode)fTaskNameToDefiningNode.get(nodeName);
+            }
+            return node;
         }
         return null;
+    }
+
+    public String getNamespaceCorrectName(String nodeName) {
+        String prefix= org.apache.tools.ant.ProjectHelper.extractUriFromComponentName(nodeName);
+        String uri= getPrefixMapping(prefix);
+        nodeName= org.apache.tools.ant.ProjectHelper.genComponentName(uri, org.apache.tools.ant.ProjectHelper.extractNameFromComponentName(nodeName));
+        return nodeName;
+    }
+    
+    public String getUserNamespaceCorrectName(String nodeName) {
+        String prefix= org.apache.tools.ant.ProjectHelper.extractUriFromComponentName(nodeName);
+        if (prefix.length() > 0) {
+            String uri= getUserPrefixMapping(prefix);
+            nodeName= org.apache.tools.ant.ProjectHelper.genComponentName(uri, org.apache.tools.ant.ProjectHelper.extractNameFromComponentName(nodeName));
+        }
+        return nodeName;
     }
     
     public AntTaskNode getMacroDefAttributeNode(String macroDefAttributeName) {
@@ -1733,4 +1757,35 @@ public class AntModel implements IAntModel {
 			reconcile();
 		}		
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ant.internal.ui.model.IAntModel#addPrefixMapping(java.lang.String, java.lang.String)
+     */
+    public void addPrefixMapping(String prefix, String uri) {
+        if (fNamespacePrefixMappings == null) {
+            fNamespacePrefixMappings= new HashMap();
+        }
+        fNamespacePrefixMappings.put(prefix, uri);
+    }
+    
+    private String getPrefixMapping(String prefix) {
+        if (fNamespacePrefixMappings != null) {
+            return (String) fNamespacePrefixMappings.get(prefix);
+        }
+        return null;
+    }
+    
+    private String getUserPrefixMapping(String prefix) {
+        if (fNamespacePrefixMappings != null) {
+            Set entrySet= fNamespacePrefixMappings.entrySet();
+            Iterator entries= entrySet.iterator();
+            while (entries.hasNext()) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                if (entry.getValue().equals(prefix)) {
+                    return (String) entry.getKey();
+                }
+            }
+        }
+        return null;
+    }
 }
