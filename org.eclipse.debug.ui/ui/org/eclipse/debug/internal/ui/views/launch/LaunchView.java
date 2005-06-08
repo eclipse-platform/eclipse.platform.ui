@@ -364,10 +364,24 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * Terminates and removes the given element from the launch manager
 	 */
 	public static void terminateAndRemove(Object element) throws DebugException {
-		if (!(element instanceof ITerminate)) {
+		ILaunch launch= null;
+		ITerminate terminable = null;
+		if (element instanceof ILaunch) {
+			launch= (ILaunch) element;
+		} else if (element instanceof IDebugElement) {
+			launch= ((IDebugElement) element).getLaunch();
+		} else if (element instanceof IProcess) {
+			launch= ((IProcess) element).getLaunch();
+		}		
+		terminable = launch;
+		if (terminable == null) {
+			if (element instanceof ITerminate) {
+				terminable = (ITerminate) element;
+			}
+		}
+		if (terminable == null) {
 			return;
 		}
-		ITerminate terminable= (ITerminate) element;
 		if (!(terminable.canTerminate() || terminable.isTerminated())) {
 			// Don't try to terminate or remove attached launches
 			return;
@@ -377,27 +391,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				terminable.terminate();
 			}
 		} finally {
-			remove(element);
+			if (launch != null) {
+				ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
+				lManager.removeLaunch(launch);		
+			}
 		}
-	}
-	
-	/**
-	 * Removes the given element from the launch manager. Has no effect if the
-	 * given element is not of type ILaunch, IDebugElement, or IProcess
-	 */
-	private static void remove(Object element) {
-		ILaunch launch= null;
-		if (element instanceof ILaunch) {
-			launch= (ILaunch) element;
-		} else if (element instanceof IDebugElement) {
-			launch= ((IDebugElement) element).getLaunch();
-		} else if (element instanceof IProcess) {
-			launch= ((IProcess) element).getLaunch();
-		} else {
-			return;
-		}
-		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-		lManager.removeLaunch(launch);
 	}
 	
 	/**
