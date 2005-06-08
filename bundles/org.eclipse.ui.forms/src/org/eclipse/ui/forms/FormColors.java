@@ -90,9 +90,9 @@ public class FormColors {
 
 	protected Color border;
 
-	private static final RGB white = new RGB(255, 255, 255);
+	private static final RGB WHITE = new RGB(255, 255, 255);
 
-	private static final RGB black = new RGB(0, 0, 0);
+	private static final RGB BLACK = new RGB(0, 0, 0);
 
 	/**
 	 * Creates form colors using the provided display.
@@ -137,9 +137,8 @@ public class FormColors {
 		createTitleColor();
 		createTwistieColors();
 		createColor(SEPARATOR, getColor(TITLE).getRGB());
-		RGB border = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
-		RGB black = new RGB(0, 0, 0);
-		createColor(BORDER, blend(border, black, 80));
+		RGB borderRGB = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
+		createColor(BORDER, blend(borderRGB, BLACK, 80));
 	}
 
 	/**
@@ -451,13 +450,11 @@ public class FormColors {
 
 	private void createTitleColor() {
 		RGB rgb = getSystemColor(SWT.COLOR_LIST_SELECTION);
-		// RGB white = new RGB(255, 255, 255);
-		RGB black = new RGB(0, 0, 0);
 		// test too light
 		if (testTwoPrimaryColors(rgb, 120, 151))
-			rgb = blend(rgb, black, 80);
+			rgb = blend(rgb, BLACK, 80);
 		else if (testTwoPrimaryColors(rgb, 150, 256))
-			rgb = blend(rgb, black, 50);
+			rgb = blend(rgb, BLACK, 50);
 		createColor(TITLE, rgb);
 	}
 
@@ -466,12 +463,12 @@ public class FormColors {
 		createColor(TB_TOGGLE, rgb);
 
 		// hover twistie
-		rgb = blend(rgb, white, 70);
+		rgb = blend(rgb, WHITE, 70);
 		// bounds
 		if (testTwoPrimaryColors(rgb, 215, 226))
-			rgb = blend(rgb, black, 90);
+			rgb = blend(rgb, BLACK, 90);
 		else if (testTwoPrimaryColors(rgb, 225, 256))
-			rgb = blend(rgb, black, 95);
+			rgb = blend(rgb, BLACK, 95);
 		createColor(TB_TOGGLE_HOVER, rgb);
 	}
 
@@ -487,21 +484,21 @@ public class FormColors {
 			// corrections
 			if (testTwoPrimaryColors(tbBg, 241, 256)) {
 				// too light
-				tbBg = blend(tbBg, black, 90);
+				tbBg = blend(tbBg, BLACK, 90);
 			} else if (testTwoPrimaryColors(tbBg, 0, 231)) {
 				// too dark
 				if (testAnyPrimaryColor(tbBg, 214, 231))
-					tbBg = blend(tbBg, white, 95);
+					tbBg = blend(tbBg, WHITE, 95);
 				else if (testAnyPrimaryColor(tbBg, 199, 215))
-					tbBg = blend(tbBg, white, 90);
+					tbBg = blend(tbBg, WHITE, 90);
 			}
 		} else {
 			if (testTwoPrimaryColors(tbBg, 209, 256)) {
 				// too light
 				if (testAnyPrimaryColor(tbBg, 210, 236))
-					tbBg = blend(tbBg, black, 60);
+					tbBg = blend(tbBg, BLACK, 60);
 				else if (testAnyPrimaryColor(tbBg, 235, 256))
-					tbBg = blend(tbBg, black, 20);
+					tbBg = blend(tbBg, BLACK, 20);
 			}
 		}
 		createColor(FormColors.TB_BG, tbBg);
@@ -520,26 +517,26 @@ public class FormColors {
 				// too bright
 				if (testAnyPrimaryColor(tbBorder, 215, 226))
 					// decrease white by 10%
-					tbBorder = blend(tbBorder, black, 90);
+					tbBorder = blend(tbBorder, BLACK, 90);
 				else if (testAnyPrimaryColor(tbBorder, 225, 256))
 					// decrease white by 20%
-					tbBorder = blend(tbBorder, black, 70);
+					tbBorder = blend(tbBorder, BLACK, 70);
 			} else if (testTwoPrimaryColors(tbBorder, 0, 186)) {
 				// too dark
 				if (testAnyPrimaryColor(tbBorder, 175, 186))
 					// add 5% white
-					tbBorder = blend(tbBorder, white, 95);
+					tbBorder = blend(tbBorder, WHITE, 95);
 				else if (testTwoPrimaryColors(tbBorder, 154, 176))
 					// add 10% white
-					tbBorder = blend(tbBorder, white, 90);
+					tbBorder = blend(tbBorder, WHITE, 90);
 				else if (testTwoPrimaryColors(tbBorder, 124, 155))
 					// add 20% white
-					tbBorder = blend(tbBorder, white, 80);
+					tbBorder = blend(tbBorder, WHITE, 80);
 			}
 		} else {
 			if (testTwoPrimaryColors(tbBorder, 200, 256))
 				// too bright - decrease white by 50%
-				tbBorder = blend(tbBorder, black, 50);
+				tbBorder = blend(tbBorder, BLACK, 50);
 		}
 		createColor(FormColors.TB_BORDER, tbBorder);
 	}
