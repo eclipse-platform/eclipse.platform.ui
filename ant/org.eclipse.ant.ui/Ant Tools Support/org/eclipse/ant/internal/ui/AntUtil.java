@@ -72,6 +72,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
@@ -89,6 +92,9 @@ public final class AntUtil {
 	public static final char ANT_CLASSPATH_DELIMITER= '*';
 	public static final String ANT_HOME_CLASSPATH_PLACEHOLDER= "G"; //$NON-NLS-1$
 	public static final String ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER= "UG"; //$NON-NLS-1$
+	
+	private static String fgBrowserId;
+	
 	/**
 	 * No instances allowed
 	 */
@@ -686,6 +692,18 @@ public final class AntUtil {
     public static void openBrowser(final String urlString, final Shell shell, final String errorDialogTitle) {
     	shell.getDisplay().syncExec(new Runnable() {
     		public void run() {
+    			IWorkbenchBrowserSupport support= PlatformUI.getWorkbench().getBrowserSupport();
+    			try {
+    				IWebBrowser browser= support.createBrowser(fgBrowserId);
+    				fgBrowserId= browser.getId();
+    				browser.openURL(new URL(urlString));
+    				return;
+    			} catch (PartInitException e) {
+    				AntUIPlugin.log(e.getStatus());
+    			} catch (MalformedURLException e) {
+    				AntUIPlugin.log(e);
+				}
+    			
     			String platform= SWT.getPlatform();
     			boolean succeeded= true;
     			if ("motif".equals(platform) || "gtk".equals(platform)) { //$NON-NLS-1$ //$NON-NLS-2$
