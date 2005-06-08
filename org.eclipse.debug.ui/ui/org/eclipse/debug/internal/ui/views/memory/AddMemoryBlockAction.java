@@ -163,11 +163,19 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 			// get expression entered in dialog
 			String input = dialog.getExpression();
 			ArrayList expressions = new ArrayList();
-			StringTokenizer tokenizer = new StringTokenizer(input, ","); //$NON-NLS-1$
-			while (tokenizer.hasMoreTokens())
+			
+			if (input.length() == 0)
 			{
-				expressions.add(tokenizer.nextToken());
+				expressions.add(""); //$NON-NLS-1$
 			}
+			else
+			{
+				StringTokenizer tokenizer = new StringTokenizer(input, ","); //$NON-NLS-1$
+				while (tokenizer.hasMoreTokens())
+				{
+					expressions.add(tokenizer.nextToken());
+				}
+			}	
 			String[] expressionsArray = (String[])expressions.toArray(new String[expressions.size()]);
 			for (int i=0; i<expressionsArray.length; i++)
 			{
@@ -252,8 +260,8 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				}
 				catch(NumberFormatException e2)
 				{
-					String message = DebugUIMessages.AddMemoryBlockAction_failed + "\n" + DebugUIMessages.AddMemoryBlockAction_expressionEvalFailed; //$NON-NLS-1$
-					MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, message + " " + expression, null); //$NON-NLS-1$
+					String message = DebugUIMessages.AddMemoryBlockAction_failed + "\n" + DebugUIMessages.AddMemoryBlockAction_input_invalid; //$NON-NLS-1$
+					MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, message, null); //$NON-NLS-1$
 				}
 			}
 		} finally {

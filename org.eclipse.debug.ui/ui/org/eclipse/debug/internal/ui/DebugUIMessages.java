@@ -54,6 +54,7 @@ public class DebugUIMessages extends NLS {
 	public static String AddMemoryBlockAction_tooltip;
 	public static String AddMemoryBlockAction_failed;
 	public static String AddMemoryBlockAction_expressionEvalFailed;
+	public static String AddMemoryBlockAction_input_invalid;
 	public static String AddMemoryRenderingDialog_Memory_Monitor;
 	public static String AddMemoryRenderingAction_Add_renderings;
 	public static String AddMemoryRenderingDialog_Memory_renderings;

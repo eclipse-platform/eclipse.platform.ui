@@ -165,19 +165,6 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 				getButton(IDialogConstants.OK_ID).setEnabled(true);
 			}			
 		}
-		else
-		{
-			String input = expressionInput.getText();
-		
-			if (input == null || input.equals("")) //$NON-NLS-1$
-			{
-				getButton(IDialogConstants.OK_ID).setEnabled(false);	
-			}
-			else
-			{
-				getButton(IDialogConstants.OK_ID).setEnabled(true);
-			}			
-		}
 	}
 
 	/* (non-Javadoc)
@@ -186,7 +173,12 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 	protected Control createButtonBar(Composite parent) {
 		
 		Control ret =  super.createButtonBar(parent);
-		getButton(IDialogConstants.OK_ID).setEnabled(false);
+		
+		if (needLength)
+			getButton(IDialogConstants.OK_ID).setEnabled(false);
+		else
+			// always enable the OK button if we only need the expression
+			getButton(IDialogConstants.OK_ID).setEnabled(true);
 		
 		return ret;
 	}
