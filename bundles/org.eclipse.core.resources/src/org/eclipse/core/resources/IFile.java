@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
  * file system.
  * <p>
  * Files, like folders, may exist in the workspace but
- * not be local; non-local file resources serve as placeholders for
+ * not be local; non-local file resources serve as place-holders for
  * files whose content and properties have not yet been fetched from
  * a repository.
  * </p>

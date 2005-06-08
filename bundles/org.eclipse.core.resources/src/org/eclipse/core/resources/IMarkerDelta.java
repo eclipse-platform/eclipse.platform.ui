@@ -17,7 +17,7 @@ import java.util.Map;
  * A marker can either be added, removed or changed.
  * Marker deltas give access to the state of the marker as it
  * was (in the case of deletions and changes) before the modifying
- * operation occured.
+ * operation occurred.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -166,7 +166,7 @@ public interface IMarkerDelta {
 	public String getType();
 
 	/**
-	 * Returns whether the type of this marker is considered to be a subtype of
+	 * Returns whether the type of this marker is considered to be a sub-type of
 	 * the given marker type. 
 	 * <p>
 	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
@@ -174,7 +174,7 @@ public interface IMarkerDelta {
 	 * </p>
 	 *
 	 * @return boolean <code>true</code>if the marker's type
-	 *		is the same as (or a subtype of) the given type.
+	 *		is the same as (or a sub-type of) the given type.
 	 */
 	public boolean isSubtypeOf(String superType);
 }

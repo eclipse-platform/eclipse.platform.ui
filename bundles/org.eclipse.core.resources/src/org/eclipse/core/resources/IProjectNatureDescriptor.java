@@ -29,12 +29,12 @@ package org.eclipse.core.resources;
  */
 public interface IProjectNatureDescriptor {
 	/**
-	 * Returns the unique identifer of this nature.
+	 * Returns the unique identifier of this nature.
 	 * <p>
 	 * The nature identifier is composed of the nature's plug-in id and the simple
 	 * id of the nature extension.  For example, if plug-in <code>"com.xyz"</code>
 	 * defines a nature extension with id <code>"myNature"</code>, the unique 
-	 * nature identifer will be <code>"com.xyz.myNature"</code>.
+	 * nature identifier will be <code>"com.xyz.myNature"</code>.
 	 * </p>
 	 * @return the unique nature identifier
 	 */

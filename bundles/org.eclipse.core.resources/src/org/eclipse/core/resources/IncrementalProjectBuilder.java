@@ -111,7 +111,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <li><code>INCREMENTAL_BUILD</code>- indicates an incremental build.
 	 * </li>
 	 * <li><code>AUTO_BUILD</code>- indicates an automatically triggered
-	 * incremental build (auto-building on).</li>
+	 * incremental build (autobuilding on).</li>
 	 * </ul>
 	 * @param args a table of builder-specific arguments keyed by argument name
 	 * (key type: <code>String</code>, value type: <code>String</code>);
@@ -238,7 +238,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <p>
 	 * When the entire workspace is being built, the projects are built in
 	 * linear sequence. This method can be used to determine if another project
-	 * preceeds this builder's project in that build sequence. If only a single
+	 * precedes this builder's project in that build sequence. If only a single
 	 * project is being built, then there is no build order and this method will
 	 * always return <code>false</code>.
 	 * </p>
@@ -273,7 +273,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 
 	/**
 	 * Indicates that this builder made changes that affect a project that
-	 * preceeds this project in the currently executing build order, and thus a
+	 * precedes this project in the currently executing build order, and thus a
 	 * rebuild will be necessary.
 	 * <p>
 	 * This is an advanced feature that builders should use with caution. This

@@ -207,7 +207,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/**
 	 * Update flag constant (bit mask value 64) indicating that setting the
-	 * project description should not attempt to configure and deconfigure
+	 * project description should not attempt to configure and de-configure
 	 * natures.
 	 *
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
@@ -430,7 +430,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public void accept(IResourceVisitor visitor, int depth, int memberFlags) throws CoreException;
 
 	/**
-	 * Removes the local history of this resource and its descendants.
+	 * Removes the local history of this resource and its descendents.
 	 * <p>
 	 * This operation is long-running; progress and cancellation are provided
 	 * by the given progress monitor. 
@@ -1450,7 +1450,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isReadOnly();
 
 	/**
-	 * Returns whether this resource and its descendants to the given depth 
+	 * Returns whether this resource and its descendents to the given depth 
 	 * are considered to be in sync with the local file system.  
 	 * <p>
 	 * A resource is considered to be in sync if all of the following 
@@ -1474,7 +1474,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * 
 	 * @param depth the depth (one of <code>IResource.DEPTH_ZERO</code>,
 	 *   <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>)
-	 * @return <code>true</code> if this resource and its descendants to the 
+	 * @return <code>true</code> if this resource and its descendents to the 
 	 *    specified depth are synchronized, and <code>false</code> in all other
 	 *    cases
 	 * @see IResource#DEPTH_ZERO
@@ -1937,7 +1937,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This operation does <b>not</b> result in a resource change event, and does not
-	 * trigger auto-builds.
+	 * trigger autobuilds.
 	 * </p>
 	 * 
 	 * @param isDerived <code>true</code> if this resource is to be marked
@@ -2130,7 +2130,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This operation does <b>not</b> result in a resource change event, and does not
-	 * trigger auto-builds.
+	 * trigger autobuilds.
 	 * </p>
 	 * 
 	 * @param isTeamPrivate <code>true</code> if this resource is to be marked

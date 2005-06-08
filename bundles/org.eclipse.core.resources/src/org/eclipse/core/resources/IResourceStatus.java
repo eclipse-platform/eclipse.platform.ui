@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 
 /**
  * Represents status related to resources in the Resources plug-in and
@@ -264,8 +263,8 @@ public interface IResourceStatus extends IStatus {
 	/** Status code constant (value 382) indicating that a problem occurred while
 	 * setting the charset for a resource.
 	 * Severity: error. Category: workspace.
-	 * @see IContainer#setDefaultCharset
-	 * @see IFile#setCharset
+	 * @see IContainer#setDefaultCharset(String, IProgressMonitor)
+	 * @see IFile#setCharset(String, IProgressMonitor)
 	 * @since 3.0 
 	 */
 	public static final int FAILED_SETTING_CHARSET = 382;

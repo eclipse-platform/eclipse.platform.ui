@@ -69,10 +69,10 @@ public interface IWorkspaceDescription {
 	public int getMaxFileStates();
 
 	/**
-	 * Returns the maximum permited size of a file, in bytes, to be stored in the
+	 * Returns the maximum permitted size of a file, in bytes, to be stored in the
 	 * local history.
 	 *
-	 * @return the maximum permited size of a file to be stored in the local history
+	 * @return the maximum permitted size of a file to be stored in the local history
 	 * @see #setMaxFileStateSize(long)
 	 * @see ResourcesPlugin#PREF_MAX_FILE_STATE_SIZE
 	 */
@@ -89,9 +89,9 @@ public interface IWorkspaceDescription {
 	public long getSnapshotInterval();
 
 	/**
-	 * Returns whether this workspace performs auto-builds.
+	 * Returns whether this workspace performs autobuilds.
 	 *
-	 * @return <code>true</code> if auto-building is on, otherwise
+	 * @return <code>true</code> if autobuilding is on, otherwise
 	 *		<code>false</code>
 	 * @see #setAutoBuilding(boolean)
 	 * @see ResourcesPlugin#PREF_AUTO_BUILDING
@@ -99,9 +99,9 @@ public interface IWorkspaceDescription {
 	public boolean isAutoBuilding();
 
 	/**
-	 * Records whether this workspace performs auto-builds.
+	 * Records whether this workspace performs autobuilds.
 	 * <p>
-	 * When auto-build is on, any changes made to a project and its
+	 * When autobuild is on, any changes made to a project and its
 	 * resources automatically triggers an incremental build of that
 	 * project. If resources in several projects are changed within the
 	 * scope of a workspace runnable, the affected projects are auto-built
@@ -112,7 +112,7 @@ public interface IWorkspaceDescription {
 	 * made to this description take effect.
 	 * </p>
 	 *
-	 * @param value <code>true</code> to turn on auto-building,
+	 * @param value <code>true</code> to turn on autobuilding,
 	 *  and <code>false</code> to turn it off
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #isAutoBuilding()
@@ -189,14 +189,14 @@ public interface IWorkspaceDescription {
 	public void setMaxFileStates(int number);
 
 	/**
-	 * Sets the maximum permited size of a file, in bytes,  to be stored in the
+	 * Sets the maximum permitted size of a file, in bytes,  to be stored in the
 	 * local history.
 	 * <p>
 	 * Users must call <code>IWorkspace.setDescription</code> before changes 
 	 * made to this description take effect.
 	 * </p>
 	 *
-	 * @param size the maximum permited size of a file to be stored in the local history
+	 * @param size the maximum permitted size of a file to be stored in the local history
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #getMaxFileStateSize()
 	 * @see ResourcesPlugin#PREF_MAX_FILE_STATE_SIZE

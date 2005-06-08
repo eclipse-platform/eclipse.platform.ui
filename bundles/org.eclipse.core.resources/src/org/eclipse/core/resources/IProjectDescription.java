@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * A project description contains the metadata required to define
+ * A project description contains the meta-data required to define
  * a project.  In effect, a project description is a project's "content".
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -54,7 +54,7 @@ public interface IProjectDescription {
 	 * These references are persisted by the workspace in a private location outside
 	 * the project description file, and as such will not be shared when a project is
 	 * exported or persisted in a repository.  A client using project references
-	 * is always reponsible for setting these references when a project is created
+	 * is always responsible for setting these references when a project is created
 	 * or recreated.
 	 * <p>
 	 * The returned projects need not exist in the workspace. The result will not 

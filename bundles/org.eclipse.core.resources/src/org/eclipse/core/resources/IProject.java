@@ -690,7 +690,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * nature object is retained, and will be returned on subsequent calls to
 	 * <code>getNature</code> for the specified nature id. Similarly, any natures
 	 * the project had which are no longer required will be automatically 
-	 * deconfigured by calling <code>IProjectNature.deconfigure</code>
+	 * de-configured by calling <code>IProjectNature.deconfigure</code>
 	 * on the nature object and letting go of the internal reference to it.
 	 * </p>
 	 * <p>
@@ -715,10 +715,10 @@ public interface IProject extends IContainer, IAdaptable {
 	 * </p>
 	 * <p>
 	 * The <code>AVOID_NATURE_CONFIG</code> update flag controls whether or 
-	 * not added and removed natures should be configured or deconfigured. If this
-	 * flag is not specified, then added natures will be configurd and removed natures
-	 * will be deconfigured. If this flag is specified, natures can still be added or
-	 * removed, but they will not be configured or deconfigured.
+	 * not added and removed natures should be configured or de-configured. If this
+	 * flag is not specified, then added natures will be configured and removed natures
+	 * will be de-configured. If this flag is specified, natures can still be added or
+	 * removed, but they will not be configured or de-configured.
 	 * </p>
 	 * <p>
 	 * Update flags other than <code>FORCE</code>, <code>KEEP_HISTORY</code>,

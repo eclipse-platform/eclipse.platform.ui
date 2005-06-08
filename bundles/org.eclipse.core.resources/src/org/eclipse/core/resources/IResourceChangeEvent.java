@@ -58,7 +58,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *    <code>POST_CHANGE</code>, and <code>getDelta</code> returns
  *    the hierarchical delta. The resource delta is rooted at the 
  *    workspace root.  These events are broadcast to interested parties after
- *    a set of resource changes and happen whether or not auto-building is enabled.  
+ *    a set of resource changes and happen whether or not autobuilding is enabled.  
  *    The workspace is closed for change during notification of these events.
  *    The delta reported in this event cycle is identical across all listeners registered for 
  *    this type of event.
@@ -171,7 +171,7 @@ public interface IResourceChangeEvent {
 	 * markers, regardless of the size of the resource delta tree.
 	 * </p>
 	 * @param type the type of marker to consider, or <code>null</code> to indicate all types
-	 * @param includeSubtypes whether or not to consider subtypes of the given type
+	 * @param includeSubtypes whether or not to consider sub-types of the given type
 	 * @return an array of marker deltas
 	 * @since 2.0
 	 */

@@ -16,7 +16,7 @@ import java.util.EventListener;
  * A resource change listener is notified of changes to resources
  * in the workspace. 
  * These changes arise from direct manipulation of resources, or 
- * indirectly through resynchronization with the local file system.
+ * indirectly through re-synchronization with the local file system.
  * <p>
  * Clients may implement this interface.
  * </p>

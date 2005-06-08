@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Interface for project nature runtime classes.
- * It can configure a project with the project nature, or deconfigure it.
+ * It can configure a project with the project nature, or de-configure it.
  * When a project is configured with a project nature, this is
  * recorded in the list of project natures on the project.
  * Individual project natures may expose a more specific runtime type,
@@ -47,7 +47,7 @@ public interface IProjectNature {
 	public void configure() throws CoreException;
 
 	/** 
-	 * Deconfigures this nature for its project.  This is called by the workspace 
+	 * De-configures this nature for its project.  This is called by the workspace 
 	 * when natures are removed from the project using 
 	 * <code>IProject.setDescription</code> and should not be called directly by 
 	 * clients.  The nature extension id is removed from the list of natures before 

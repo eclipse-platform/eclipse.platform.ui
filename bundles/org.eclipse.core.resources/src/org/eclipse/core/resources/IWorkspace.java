@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * A workspace corresponds closely to discreet areas in the local file system.
  * Each project in a workspace maps onto a specific area of the file system. The
  * folders and files within a project map directly onto the corresponding
- * directories and files in the file system. One subdirectory, the workspace
+ * directories and files in the file system. One sub-directory, the workspace
  * metadata area, contains internal information about the workspace and its
  * resources. This metadata area should be accessed only by the Platform or via
  * Platform API calls.
@@ -102,7 +102,7 @@ public interface IWorkspace extends IAdaptable {
 	 * workspace. Has no effect if an identical listener is already registered
 	 * for these events. After completion of this method, the given listener
 	 * will be registered for exactly the specified events. If they were
-	 * previously registered for other events, they will be deregistered.
+	 * previously registered for other events, they will be de-registered.
 	 * <p>
 	 * Once registered, a listener starts receiving notification of changes to
 	 * resources in the workspace. The resource deltas in the resource change
@@ -196,7 +196,7 @@ public interface IWorkspace extends IAdaptable {
 
 	/**
 	 * Checkpoints the operation currently in progress. This method is used in
-	 * the middle of a group of operations to force a background auto-build (if
+	 * the middle of a group of operations to force a background autobuild (if
 	 * the build argument is true) and send an interim notification of resource
 	 * change events.
 	 * <p>
@@ -205,7 +205,7 @@ public interface IWorkspace extends IAdaptable {
 	 * resource change event describing the net effect of all changes done to
 	 * resources since the last round of notifications. When the outermost
 	 * <code>run</code> method eventually completes, it will do another
-	 * auto-build (if enabled) and report the resource changes made after this
+	 * autobuild (if enabled) and report the resource changes made after this
 	 * call.
 	 * </p>
 	 * <p>
@@ -595,7 +595,7 @@ public interface IWorkspace extends IAdaptable {
 	 * Returns the nature descriptor with the given unique identifier, or
 	 * <code>null</code> if there is no such nature.
 	 * 
-	 * @param natureId the nature extension identifer (e.g.
+	 * @param natureId the nature extension identifier (e.g.
 	 * <code>"com.example.coolNature"</code>).
 	 * @return the nature descriptor, or <code>null</code>
 	 * @since 2.0
@@ -654,9 +654,9 @@ public interface IWorkspace extends IAdaptable {
 	public ISynchronizer getSynchronizer();
 
 	/**
-	 * Returns whether this workspace performs auto-builds.
+	 * Returns whether this workspace performs autobuilds.
 	 * 
-	 * @return <code>true</code> if auto-building is on, <code>false</code>
+	 * @return <code>true</code> if autobuilding is on, <code>false</code>
 	 * otherwise
 	 */
 	public boolean isAutoBuilding();
@@ -992,14 +992,14 @@ public interface IWorkspace extends IAdaptable {
 	 * snapshot is being requested. Snapshots save the workspace information
 	 * that is considered hard to be recomputed in the unlikely event of a
 	 * crash. It includes parts of the workspace tree, workspace and projects
-	 * descriptions, markers and sync infos. Full saves are heavy weight
+	 * descriptions, markers and sync information. Full saves are heavy weight
 	 * operations which save the complete workspace state.
 	 * </p>
 	 * <p>
 	 * To ensure that all outstanding changes to the workspace have been
 	 * reported to interested parties prior to saving, a full save cannot be
 	 * used within the dynamic scope of an <code>IWorkspace.run</code>
-	 * invocation. Snapshots can be called anytime and are interpreted by the
+	 * invocation. Snapshots can be called any time and are interpreted by the
 	 * workspace as a hint that a snapshot is required. The workspace will
 	 * perform the snapshot when possible. Even as a hint, snapshots should only
 	 * be called when necessary as they impact system performance. Although
@@ -1213,7 +1213,7 @@ public interface IWorkspace extends IAdaptable {
 	/**
 	 * Returns a copy of the given set of natures sorted in prerequisite order.
 	 * For each nature, it is guaranteed that all of its prerequisites will
-	 * preceed it in the resulting array.
+	 * precede it in the resulting array.
 	 * 
 	 * <p>
 	 * Natures that are missing from the install or are involved in a
@@ -1339,7 +1339,7 @@ public interface IWorkspace extends IAdaptable {
 	 * </p>
 	 * <p>
 	 * Note: this method does not consider whether files or directories exist in
-	 * the filesystem at the specified path.
+	 * the file system at the specified path.
 	 * 
 	 * @param resource the resource to validate the location for
 	 * @param location the location of the linked resource contents on disk
@@ -1359,7 +1359,7 @@ public interface IWorkspace extends IAdaptable {
 	 * <p>
 	 * In addition to the basic restrictions on paths in general (see
 	 * <code>IPath.isValidSegment</code>), a resource name must also not 
-	 * contain any characters or substrings that are not valid on the filesystem 
+	 * contain any characters or substrings that are not valid on the file system 
 	 * on which workspace root is located. In addition, the names "." and ".."
 	 * are reserved due to their special meaning in file system paths.
 	 * </p>
@@ -1469,7 +1469,7 @@ public interface IWorkspace extends IAdaptable {
 	 * </p>
 	 * <p>
 	 * Note: this method does not consider whether files or directories exist in
-	 * the filesystem at the specified path.
+	 * the file system at the specified path.
 	 * 
 	 * @param project the project to validate the location for
 	 * @param location the location of the project contents on disk

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
- * Markers are a general mechanism for associating notes and metadata with
+ * Markers are a general mechanism for associating notes and meta-data with
  * resources.
  * <p>
  * Markers themselves are handles in the same way as <code>IResources</code>
@@ -55,7 +55,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * the extension point DTD:
  * <ul>
  * <li><i>type</i> - the unique name of the marker type</li>
- * <li><i>supers</i> - the list of marker types of which this marker is to be considered a subtype</li>
+ * <li><i>super</i> - the list of marker types of which this marker is to be considered a sub-type</li>
  * <li><i>attributes</i> - the list of standard attributes which may be present on this type of marker</li>
  * <li><i>persistent</i> - whether markers of this type should be persisted by the platform</li>
  * </li>
@@ -152,7 +152,7 @@ public interface IMarker extends IAdaptable {
 
 	/** 
 	 * Priority marker attribute.  A number from the set of high, normal and low 
-	 * priorities defined by the plaform.
+	 * priorities defined by the platform.
 	 * 
 	 * @see #PRIORITY_HIGH
 	 * @see #PRIORITY_NORMAL
@@ -415,11 +415,11 @@ public interface IMarker extends IAdaptable {
 	public String getType() throws CoreException;
 
 	/**
-	 * Returns whether the type of this marker is considered to be a subtype of
+	 * Returns whether the type of this marker is considered to be a sub-type of
 	 * the given marker type. 
 	 *
 	 * @return boolean <code>true</code>if the marker's type
-	 *		is the same as (or a subtype of) the given type.
+	 *		is the same as (or a sub-type of) the given type.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This marker does not exist.</li>

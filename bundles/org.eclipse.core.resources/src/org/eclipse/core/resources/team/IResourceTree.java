@@ -48,7 +48,7 @@ public interface IResourceTree {
 	public void addToLocalHistory(IFile file);
 
 	/**
-	 * Returns whether the given resource and its descendants to the given depth 
+	 * Returns whether the given resource and its descendents to the given depth 
 	 * are considered to be in sync with the local file system. Returns 
 	 * <code>false</code> if the given resource does not exist in the workspace
 	 * resource tree, but exists in the local file system; and conversely.

@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
  * A folder resource is stored as a directory in the local file system.
  * <p>
  * Folders, like other resource types, may exist in the workspace but
- * not be local; non-local folder resources serve as placeholders for
+ * not be local; non-local folder resources serve as place-holders for
  * folders whose properties have not yet been fetched from a repository.
  * </p>
  * <p>
@@ -148,7 +148,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * The <code>ALLOW_MISSING_LOCAL</code> update flag controls how this 
 	 * method deals with cases where the local file system directory to be linked does
 	 * not exist, or is relative to a workspace path variable that is not defined.
-	 * If <code>ALLOW_MISSING_LOCAL</code> is specified, the operation will suceed
+	 * If <code>ALLOW_MISSING_LOCAL</code> is specified, the operation will succeed
 	 * even if the local directory is missing, or the path is relative to an
 	 * undefined variable. If <code>ALLOW_MISSING_LOCAL</code> is not specified, the
 	 * operation will fail in the case where the local file system directory does

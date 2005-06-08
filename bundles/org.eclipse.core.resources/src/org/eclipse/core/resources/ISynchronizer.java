@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * A synchronizer which maintains a list of registered partners and, on behalf of
- * each partner, it keeps resource level synchonization information 
+ * each partner, it keeps resource level synchronization information 
  * (a byte array). Sync info is saved only when the workspace is saved.
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -101,7 +101,7 @@ public interface ISynchronizer {
 	 * Removes the named synchronization partner from this synchronizer's
 	 * registry.  Does nothing if the partner is not registered.
 	 * This discards all sync information for the defunct partner.
-	 * After a partner has been unregistered, sync infomation for it can no 
+	 * After a partner has been unregistered, sync information for it can no 
 	 * longer be stored on resources.
 	 *
 	 * @param partner the partner name to remove from the registry
