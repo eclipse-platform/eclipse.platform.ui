@@ -48,7 +48,8 @@ public interface ISearchResult {
 	 */
 	void removeListener(ISearchResultListener l);
 	/**
-	 * Returns a user readable label for this search result.
+	 * Returns a user readable label for this search result. The label is typically used in the result
+	 * view and should contain the search query string and number of matches.
 	 * 
 	 * @return the label for this search result
 	 */
