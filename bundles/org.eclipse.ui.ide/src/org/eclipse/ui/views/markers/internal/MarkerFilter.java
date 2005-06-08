@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public class MarkerFilter {
 
-    private static final String TAG_DIALOG_SECTION = "filter"; //$NON-NLS-1$
+	private static final String TAG_DIALOG_SECTION = "filter"; //$NON-NLS-1$
 
     private static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
 
@@ -50,6 +50,21 @@ public class MarkerFilter {
     private static final String TAG_WORKING_SET = "workingSet"; //$NON-NLS-1$
 
     private static final String TAG_TYPES_DELIMITER = ":"; //$NON-NLS-1$
+    
+    /**
+     * New attribute to handle the selection status of marker types.
+     */
+    private static final String TAG_SELECTION_STATUS = "selectionStatus"; //$NON-NLS-1$
+
+    /**
+     * Attribute status true.
+     */
+    private static final String SELECTED_FALSE = "false"; //$NON-NLS-1$
+
+    /**
+     * Attribute status false.
+     */
+	private static final String SELECTED_TRUE = "true"; //$NON-NLS-1$
 
     static final int ON_ANY_RESOURCE = 0;
 
@@ -72,7 +87,7 @@ public class MarkerFilter {
     protected List rootTypes = new ArrayList();
 
     protected List selectedTypes = new ArrayList();
-
+    
     protected IWorkingSet workingSet;
 
     protected int onResource;
@@ -100,24 +115,29 @@ public class MarkerFilter {
         }
     }
 
-    private void addAllSubTypes() {
+    /**
+     * List all types known to this MarkerFilter.
+     * 
+     * @param types list to be filled in with types
+     */
+    public void addAllSubTypes(List types) {
         for (int i = 0; i < rootTypes.size(); i++) {
             MarkerType rootType = (MarkerType) rootTypes.get(i);
-            addAllSubTypes(rootType);
+            addAllSubTypes(types, rootType);
         }
     }
 
-    private void addAllSubTypes(MarkerType type) {
+    private void addAllSubTypes(List types, MarkerType type) {
         if (type == null)
             return;
 
-        if (!selectedTypes.contains(type))
-            selectedTypes.add(type);
+        if (!types.contains(type))
+        	types.add(type);
 
         MarkerType[] subTypes = type.getSubtypes();
 
         for (int i = 0; i < subTypes.length; i++)
-            addAllSubTypes(subTypes[i]);
+            addAllSubTypes(types, subTypes[i]);
     }
 
     /**
@@ -589,17 +609,34 @@ public class MarkerFilter {
     }
 
     /**
+     * <b>Warning:</b> for internal package use only.  Return the root
+     * marker types.
+     * 
      * @return the root marker types.
      */
-    List getRootTypes() {
+    public List getRootTypes() {
         return rootTypes;
     }
 
     /**
+     * <b>Warning:</b> for internal package use only.  Return the
+     * selected types.
+     * 
      * @return the selected marker types to be displayed.
      */
-    List getSelectedTypes() {
+    public List getSelectedTypes() {
         return selectedTypes;
+    }
+        
+    /**
+     * <b>Warning:</b> for internal private use only. Test based on the
+     * types model.
+     *  
+     * @param id the ID for a marker type
+     * @return the type for this id
+     */
+    public MarkerType getMarkerType(String id) {
+    	return typesModel.getType(id);
     }
 
     /**
@@ -645,7 +682,7 @@ public class MarkerFilter {
         markerLimit = DEFAULT_MARKER_LIMIT;
         onResource = DEFAULT_ON_RESOURCE;
         selectedTypes.clear();
-        addAllSubTypes();
+        addAllSubTypes(selectedTypes);
         setWorkingSet(null);
     }
 
@@ -675,27 +712,74 @@ public class MarkerFilter {
 
             setting = settings.get(TAG_ON_RESOURCE);
 
-            if (setting != null)
+            if (setting != null) {
                 try {
                     onResource = Integer.parseInt(setting);
                 } catch (NumberFormatException eNumberFormat) {
                 }
-
-            setting = settings.get(TAG_SELECTED_TYPES);
+            }
+            
+            // new selection list attribute
+            // format is "id:(true|false):"
+            setting = settings.get(TAG_SELECTION_STATUS);
 
             if (setting != null) {
-                selectedTypes.clear();
-                StringTokenizer stringTokenizer = new StringTokenizer(setting);
+				selectedTypes.clear();
 
-                while (stringTokenizer.hasMoreTokens()) {
-                    MarkerType markerType = typesModel.getType(stringTokenizer
-                            .nextToken(TAG_TYPES_DELIMITER));
+				// get the complete list of types
+				List newTypes = new ArrayList();
+				addAllSubTypes(newTypes);
 
-                    if (markerType != null
-                            && !selectedTypes.contains(markerType))
-                        selectedTypes.add(markerType);
-                }
-            }
+				StringTokenizer stringTokenizer = new StringTokenizer(setting);
+
+				while (stringTokenizer.hasMoreTokens()) {
+					String id = stringTokenizer.nextToken(TAG_TYPES_DELIMITER);
+					String status = null;
+					if (stringTokenizer.hasMoreTokens()) {
+						status = stringTokenizer.nextToken(TAG_TYPES_DELIMITER);
+					}
+
+					MarkerType markerType = typesModel.getType(id);
+					if (markerType != null) {
+						newTypes.remove(markerType);
+
+						// add the type to the selected list
+						if (!SELECTED_FALSE.equals(status)
+								&& !selectedTypes.contains(markerType)) {
+							selectedTypes.add(markerType);
+						}
+					}
+				}
+				
+				// any types we know about that weren't either true or
+				// false in the selection attribute are new. By default,
+				// new marker types will be selected=true
+				for (int i = 0; i < newTypes.size(); ++i) {
+					selectedTypes.add(newTypes.get(i));
+				}
+			} else {
+				// the settings didn't contain the new selection attribute
+				// so check for the old selection attribute.
+				// format is just "id:"
+				setting = settings.get(TAG_SELECTED_TYPES);
+
+				if (setting != null) {
+					selectedTypes.clear();
+					StringTokenizer stringTokenizer = new StringTokenizer(
+							setting);
+
+					while (stringTokenizer.hasMoreTokens()) {
+						MarkerType markerType = typesModel
+								.getType(stringTokenizer
+										.nextToken(TAG_TYPES_DELIMITER));
+
+						if (markerType != null
+								&& !selectedTypes.contains(markerType))
+							selectedTypes.add(markerType);
+					}
+				}
+
+			}
 
             setting = settings.get(TAG_WORKING_SET);
 
@@ -720,12 +804,19 @@ public class MarkerFilter {
 
             String markerTypeIds = ""; //$NON-NLS-1$
 
-            for (int i = 0; i < selectedTypes.size(); i++) {
-                MarkerType markerType = (MarkerType) selectedTypes.get(i);
-                markerTypeIds += markerType.getId() + TAG_TYPES_DELIMITER;
-            }
+            List includedTypes = new ArrayList();
+            addAllSubTypes(includedTypes);
+            for (int i = 0; i < includedTypes.size(); i++) {
+				MarkerType markerType = (MarkerType) includedTypes.get(i);
+				markerTypeIds += markerType.getId() + TAG_TYPES_DELIMITER;
+				if (selectedTypes.contains(markerType)) {
+						markerTypeIds += SELECTED_TRUE + TAG_TYPES_DELIMITER; 
+				} else {
+					markerTypeIds += SELECTED_FALSE + TAG_TYPES_DELIMITER; 
+				}
+			}
 
-            settings.put(TAG_SELECTED_TYPES, markerTypeIds);
+            settings.put(TAG_SELECTION_STATUS, markerTypeIds);
 
             if (workingSet != null)
                 settings.put(TAG_WORKING_SET, workingSet.getName());

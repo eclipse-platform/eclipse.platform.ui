@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Represents a marker type.
  */
-class MarkerType {
+public class MarkerType {
     private MarkerTypesModel model;
 
     private String id;

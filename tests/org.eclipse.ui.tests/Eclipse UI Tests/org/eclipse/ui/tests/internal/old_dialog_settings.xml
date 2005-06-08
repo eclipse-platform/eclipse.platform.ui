@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="filter">
+		<item key="selectBySeverity" value="false"/>
+		<item key="contains" value="true"/>
+		<item key="enabled" value="true"/>
+		<item key="severity" value="0"/>
+		<item key="description" value=""/>
+		<item key="filterOnMarkerLimit" value="true"/>
+		<item key="markerLimit" value="100"/>
+		<item key="selectedType" value="org.eclipse.core.resources.problemmarker:org.eclipse.jdt.core.buildpath_problem:org.eclipse.ant.ui.buildFileProblem:org.eclipse.jdt.core.problem:"/>
+		<item key="onResource" value="0"/>
+	</section>
+</section>
