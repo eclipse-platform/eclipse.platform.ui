@@ -47,16 +47,6 @@ import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class BrowserPart extends AbstractFormPart implements IHelpPart {
-	private final static int START = 1;
-
-	private final static int OPEN_BRACKET = 2;
-
-	private final static int OPEN_QUOTE = 3;
-
-	private final static int CLOSE_QUOTE = 4;
-
-	private final static int CLOSE_BRACKET = 5;
-
 	private final static String QUERY = "BrowserPartQuery:"; //$NON-NLS-1$
 
 	private ReusableHelpPart parent;
