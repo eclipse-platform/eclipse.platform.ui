@@ -305,7 +305,7 @@ public class Preferences {
 	 * <p>
 	 * The file that is written can be read later using the importPreferences method.
 	 * </p>
-	 * @param path The absolute filesystem path of the file to export preferences to.
+	 * @param path The absolute file system path of the file to export preferences to.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> The file could not be written.</li>
@@ -355,7 +355,7 @@ public class Preferences {
 	 * <p>
 	 * The file must have been written by the exportPreferences method.
 	 * </p>
-	 * @param path The absolute filesystem path of the file to import preferences from.
+	 * @param path The absolute file system path of the file to import preferences from.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> The file does not exist.</li>
@@ -405,7 +405,7 @@ public class Preferences {
 	 * <p>
 	 * The file must have been written by the exportPreferences method.
 	 * </p>
-	 * @param file The absolute filesystem path of the preference file to validate.
+	 * @param file The absolute file system path of the preference file to validate.
 	 * @see #exportPreferences(IPath)
 	 * @see #importPreferences(IPath)
 	 */
@@ -838,7 +838,7 @@ public class Preferences {
 	 * given name.
 	 * Returns the default-default value (<code>0</code>) if there
 	 * is no property with the given name, or if the current value 
-	 * cannot be treated as an integter.
+	 * cannot be treated as an integer.
 	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property

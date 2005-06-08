@@ -40,7 +40,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * plug-in descriptor).
  * </p>
  * <p>
- * In the case of more complex plug-ins, it may be desireable
+ * In the case of more complex plug-ins, it may be desirable
  * to define a concrete subclass of <code>Plugin</code>.
  * However, just subclassing <code>Plugin</code> is not
  * sufficient. The name of the class must be explicitly configured

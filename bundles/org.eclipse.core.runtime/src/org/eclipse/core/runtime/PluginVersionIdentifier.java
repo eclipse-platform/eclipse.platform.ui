@@ -104,7 +104,7 @@ public final class PluginVersionIdentifier {
 
 	/**
 	 * Creates a plug-in version identifier from the given string.
-	 * The string represenation consists of up to 4 tokens 
+	 * The string representation consists of up to 4 tokens 
 	 * separated by decimal point.
 	 * For example, the following are valid version identifiers 
 	 * (as strings):
@@ -224,7 +224,7 @@ public final class PluginVersionIdentifier {
 	 * equal if all of their components are equal.
 	 *
 	 * @param object an object to compare
-	 * @return whehter or not the two objects are equal
+	 * @return whether or not the two objects are equal
 	 */
 	public boolean equals(Object object) {
 		if (!(object instanceof PluginVersionIdentifier))
@@ -297,7 +297,7 @@ public final class PluginVersionIdentifier {
 	 * major and minor components are equal and its service component is
 	 * greater than the argument service component, or the major, minor and
 	 * service components are equal and the qualifier component is
-	 * greated than the argument qualifier component (using lexicographic
+	 * greater than the argument qualifier component (using lexicographic
 	 * string comparison), or all components are equal.
 	 * </p>
 	 *
@@ -332,7 +332,7 @@ public final class PluginVersionIdentifier {
 	 * version identifier must be greater than or equal to the service level
 	 * of the argument identifier. If the service levels are equal, the two 
 	 * version identifiers are considered to be equivalent if this qualifier is 
-	 * greated or equal to the qualifier of the argument (using lexicographic
+	 * greater or equal to the qualifier of the argument (using lexicographic
 	 * string comparison).
 	 * </p>
 	 *
@@ -367,7 +367,7 @@ public final class PluginVersionIdentifier {
 	 * and minor component equal and are at least at the same service level 
 	 * as the argument. If the service levels are equal, the two version
 	 * identifiers are considered to be equivalent if this qualifier is 
-	 * greated or equal to the qualifier of the argument (using lexicographic
+	 * greater or equal to the qualifier of the argument (using lexicographic
 	 * string comparison).
 	 * 
 	 * </p>

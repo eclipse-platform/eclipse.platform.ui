@@ -30,7 +30,7 @@ package org.eclipse.core.runtime;
  * would not be modified while it is active. However, code in a plug-in that
  * declares that it is dynamic aware must be careful when accessing the extension
  * and configuration element objects because they become invalid if the contributing
- * plug-in is removed. Similiarly, tools that analyze or display the extension registry
+ * plug-in is removed. Similarly, tools that analyze or display the extension registry
  * are vulnerable. Client code can pre-test for invalid objects by calling {@link #isValid()},
  * which never throws this exception. However, pre-tests are usually not sufficient
  * because of the possibility of the extension or configuration element object becoming

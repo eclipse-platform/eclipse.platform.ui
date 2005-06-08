@@ -318,7 +318,7 @@ public interface IPluginDescriptor {
 	 * corresponding to the key is not found in the resource bundle
 	 * the key value, or any default text following the key in the
 	 * argument value is returned as the resource string.
-	 * A key is identified as a string begining with the "%" character.
+	 * A key is identified as a string beginning with the "%" character.
 	 * Note, that the "%" character is stripped off prior to lookup
 	 * in the resource bundle.
 	 * <p>
@@ -349,7 +349,7 @@ public interface IPluginDescriptor {
 	 * corresponding to the key is not found in the resource bundle
 	 * the key value, or any default text following the key in the
 	 * argument value is returned as the resource string.
-	 * A key is identified as a string begining with the "%" character.
+	 * A key is identified as a string beginning with the "%" character.
 	 * Note that the "%" character is stripped off prior to lookup
 	 * in the resource bundle.
 	 * <p>

@@ -28,7 +28,7 @@ package org.eclipse.core.runtime;
  * anything) can safely ignore this issue, since the registry would not be
  * modified while it is active. However, code in a plug-in that declares that it
  * is dynamic aware must be careful if it accesses extension registry objects,
- * because it's at risk if plug-in are removed. Similiarly, tools that analyze
+ * because it's at risk if plug-in are removed. Similarly, tools that analyze
  * or display the extension registry are vulnerable. Client code can pre-test for
  * invalid objects by calling <code>isValid()</code>, which never throws this exception.
  * However, pre-tests are usually not sufficient because of the possibility of the

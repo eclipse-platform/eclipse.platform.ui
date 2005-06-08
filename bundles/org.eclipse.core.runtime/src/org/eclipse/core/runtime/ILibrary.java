@@ -79,7 +79,7 @@ public interface ILibrary {
 	 * if the library is not exported, or it is fully exported
 	 * (no filtering).
 	 *
-	 * @return the content filters, or <code>null</codel> if none
+	 * @return the content filters, or <code>null</code> if none
 	 * @deprecated As of Eclipse 3.0 content filters are obsolete.  
 	 * There is no replacement.
 	 */

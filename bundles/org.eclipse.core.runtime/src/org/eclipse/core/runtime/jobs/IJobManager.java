@@ -49,7 +49,7 @@ public interface IJobManager {
 	public void addJobChangeListener(IJobChangeListener listener);
 
 	/**
-	 * Begins applying this rule in the calling thread.  If the rule conficts with another
+	 * Begins applying this rule in the calling thread.  If the rule conflicts with another
 	 * rule currently running in another thread, this method blocks until there are
 	 * no conflicting rules.  Calls to <tt>beginRule</tt> must eventually be followed
 	 * by a matching call to <tt>endRule</tt> in the same thread and with the identical
@@ -105,7 +105,7 @@ public interface IJobManager {
 	 * Returns a progress monitor that can be used to provide
 	 * aggregated progress feedback on a set of running jobs. A user
 	 * interface will typically group all jobs in a progress group together,
-	 * providing progress feedback for individual jobs as well as aggregrated
+	 * providing progress feedback for individual jobs as well as aggregated
 	 * progress for the entire group.  Jobs in the group may be run sequentially,
 	 * in parallel, or some combination of the two.
 	 * <p>
@@ -224,7 +224,7 @@ public interface IJobManager {
 	/**
 	 * Resumes execution of jobs after a previous <code>suspend</code>.  All
 	 * jobs that were sleeping or waiting prior to the suspension, or that were
-	 * scheduled while the job manager was suspended, will now be elligible
+	 * scheduled while the job manager was suspended, will now be eligible
 	 * for execution.
 	 * <p>
 	 * Calling this method on a rule that is not suspended  has no effect.  If another 
@@ -242,7 +242,7 @@ public interface IJobManager {
 	/**
 	 * Resumes execution of jobs after a previous <code>suspend</code>.  All
 	 * jobs that were sleeping or waiting prior to the suspension, or that were
-	 * scheduled while the job manager was suspended, will now be elligible
+	 * scheduled while the job manager was suspended, will now be eligible
 	 * for execution.
 	 * <p>
 	 * Calling <code>resume</code> when the job manager is not suspended

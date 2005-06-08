@@ -35,7 +35,7 @@ import org.osgi.framework.Bundle;
  */
 public interface IProduct {
 	/**
-	 * Returns the applicatoin associated with this product.  This information is used 
+	 * Returns the application associated with this product.  This information is used 
 	 * to guide the runtime as to what application extension to create and execute.
 	 * 
 	 * @return this product's application or <code>null</code> if none
@@ -43,7 +43,7 @@ public interface IProduct {
 	public String getApplication();
 
 	/**
-	 * Returns the name of this product.  The name is typcially used in the title
+	 * Returns the name of this product.  The name is typically used in the title
 	 * bar of UI windows.
 	 * 
 	 * @return the name of this product or <code>null</code> if none
@@ -51,7 +51,7 @@ public interface IProduct {
 	public String getName();
 
 	/**
-	 * Returns the text desciption of this product
+	 * Returns the text description of this product
 	 * 
 	 * @return the description of this product or <code>null</code> if none
 	 */

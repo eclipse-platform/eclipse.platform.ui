@@ -56,7 +56,7 @@ public interface IProgressMonitor {
 	 * @param name the name (or description) of the main task
 	 * @param totalWork the total number of work units into which
 	 *  the main task is been subdivided. If the value is <code>UNKNOWN</code> 
-	 *  the implemenation is free to indicate progress in a way which 
+	 *  the implementation is free to indicate progress in a way which 
 	 *  doesn't require the total number of work units in advance.
 	 */
 	public void beginTask(String name, int totalWork);
@@ -73,7 +73,7 @@ public interface IProgressMonitor {
 	 * must not be called by a client. Clients should 
 	 * always use the method </code>worked(int)</code>.
 	 * 
-	 * @param work the amound of work done
+	 * @param work the amount of work done
 	 */
 	public void internalWorked(double work);
 

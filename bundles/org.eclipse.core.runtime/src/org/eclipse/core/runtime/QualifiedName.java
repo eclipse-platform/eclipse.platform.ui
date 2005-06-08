@@ -68,7 +68,7 @@ public final class QualifiedName {
 			return false;
 		}
 		QualifiedName qName = (QualifiedName) obj;
-		/* There may or may not be a quailfier */
+		/* There may or may not be a qualifier */
 		if (qualifier == null && qName.getQualifier() != null) {
 			return false;
 		}
@@ -88,7 +88,7 @@ public final class QualifiedName {
 	}
 
 	/**
-	 * Returns the qualifier part for this qualifed name, or <code>null</code>
+	 * Returns the qualifier part for this qualified name, or <code>null</code>
 	 * if none.
 	 *
 	 * @return the qualifier string, or <code>null</code>

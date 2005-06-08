@@ -31,7 +31,7 @@ public class MultiRule implements ISchedulingRule {
 	private ISchedulingRule[] rules;
 
 	/**
-	 * Returns a scheduling rule that encompases all provided rules.  The resulting
+	 * Returns a scheduling rule that encompasses all provided rules.  The resulting
 	 * rule may or may not be an instance of <code>MultiRule</code>.  If all
 	 * provided rules are <code>null</code> then the result will be
 	 * <code>null</code>.
@@ -54,7 +54,7 @@ public class MultiRule implements ISchedulingRule {
 		return result;
 	}
 	/**
-	 * Returns a scheduling rule that encompases both provided rules.  The resulting
+	 * Returns a scheduling rule that encompasses both provided rules.  The resulting
 	 * rule may or may not be an instance of <code>MultiRule</code>.  If both
 	 * provided rules are <code>null</code> then the result will be
 	 * <code>null</code>.
@@ -76,7 +76,7 @@ public class MultiRule implements ISchedulingRule {
 			return rule2;
 		MultiRule result = new MultiRule();
 		result.rules = new ISchedulingRule[] {rule1, rule2};
-		//make sure we don't end up with nested multi rules
+		//make sure we don't end up with nested multi-rules
 		if (rule1 instanceof MultiRule || rule2 instanceof MultiRule)
 			result.rules = flatten(result.rules);
 		return result;

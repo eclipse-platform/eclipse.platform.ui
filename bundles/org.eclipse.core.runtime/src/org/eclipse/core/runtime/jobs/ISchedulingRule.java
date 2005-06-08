@@ -17,7 +17,7 @@ package org.eclipse.core.runtime.jobs;
  * <tt>IJobManager.endRule(ISchedulingRule)</tt>.  The job manager guarantees that 
  * no two jobs with conflicting scheduling rules will run concurrently. 
  * Multiple rules can be applied to a given thread only if the outer rule explicitly 
- * allows the nesting as specifed by the <code>contains</code> method.  
+ * allows the nesting as specified by the <code>contains</code> method.  
  * <p>
  * Clients may implement this interface.
  * 

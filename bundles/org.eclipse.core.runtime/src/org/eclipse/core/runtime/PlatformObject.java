@@ -21,7 +21,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
  * class, the same affect can be achieved simply by implementing
  * the <code>IAdaptable</code> interface and explicitly forwarding
  * the <code>getAdapter</code> request to the platform's 
- * adapater manager. The method would look like:
+ * adapter manager. The method would look like:
  * <pre>
  *     public Object getAdapter(Class adapter) {
  *         return Platform.getAdapterManager().getAdapter(this, adapter);

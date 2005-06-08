@@ -27,7 +27,7 @@ package org.eclipse.core.runtime;
  * ignore this issue, since the registry would not be modified while it is
  * active. However, code in a plug-in that declares that it is dynamic aware
  * must be careful if it access the extension point object of a different plug-in,
- * because it's at risk if that other plug-in is removed. Similiarly,
+ * because it's at risk if that other plug-in is removed. Similarly,
  * tools that analyze or display the extension registry are vulnerable.
  * Client code can pre-test for invalid objects by calling {@link #isValid()},
  * which never throws this exception. However, pre-tests are usually not sufficient
@@ -63,7 +63,7 @@ public interface IExtensionPoint {
 	 * has been split over several parts of the new runtime.  This method
 	 * is not available (returns null) if the compatibility layer is not installed.  Use getNamespace()
 	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
-	 * update your usecases.
+	 * update your use-cases.
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor() throws InvalidRegistryObjectException;
 

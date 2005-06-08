@@ -138,7 +138,7 @@ public class Path implements IPath, Cloneable {
 	 * on the local file system. 
 	 * The path is canonicalized and double slashes are removed
 	 * except at the beginning. (to handle UNC paths). All forward
-	 * slahes ('/') are treated as segment delimiters, and any
+	 * slashes ('/') are treated as segment delimiters, and any
 	 * segment and device delimiters for the local file system are
 	 * also respected (such as colon (':') and backslash ('\') on some file systems).
 	 *
@@ -167,7 +167,7 @@ public class Path implements IPath, Cloneable {
 	 * The given string path must be valid.
 	 * The path is canonicalized and double slashes are removed except
 	 * at the beginning (to handle UNC paths). All forward
-	 * slahes ('/') are treated as segment delimiters, and any
+	 * slashes ('/') are treated as segment delimiters, and any
 	 * segment delimiters for the local file system are
 	 * also respected (such as backslash ('\') on some file systems).
 	 *
@@ -363,11 +363,11 @@ public class Path implements IPath, Cloneable {
 		// duplicate slashes.
 		if (length < 3)
 			return path;
-		// check for an occurence of // in the path.  Start at index 1 to ensure we skip leading UNC //
+		// check for an occurrence of // in the path.  Start at index 1 to ensure we skip leading UNC //
 		// If there are no // then there is nothing to collapse so just return.
 		if (path.indexOf("//", 1) == -1) //$NON-NLS-1$
 			return path;
-		// We found an occurence of // in the path so do the slow collapse.
+		// We found an occurrence of // in the path so do the slow collapse.
 		char[] result = new char[path.length()];
 		int count = 0;
 		boolean hasPrevious = false;
@@ -854,7 +854,7 @@ public class Path implements IPath, Cloneable {
 		if (value != null) {
 			Assert.isTrue(value.indexOf(IPath.DEVICE_SEPARATOR) == (value.length() - 1), "Last character should be the device separator"); //$NON-NLS-1$
 		}
-		//return the reciever if the device is the same
+		//return the receiver if the device is the same
 		if (value == device || (value != null && value.equals(device)))
 			return this;
 

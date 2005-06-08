@@ -409,14 +409,14 @@ public final class Platform {
 	}
 
 	/**
-	 * Adds the given authorization information to the keyring. The
+	 * Adds the given authorization information to the key ring. The
 	 * information is relevant for the specified protection space and the
 	 * given authorization scheme. The protection space is defined by the
 	 * combination of the given server URL and realm. The authorization 
 	 * scheme determines what the authorization information contains and how 
 	 * it should be used. The authorization information is a <code>Map</code> 
 	 * of <code>String</code> to <code>String</code> and typically
-	 * contains information such as usernames and passwords.
+	 * contains information such as user names and passwords.
 	 *
 	 * @param serverUrl the URL identifying the server for this authorization
 	 *		information. For example, "http://www.example.com/".
@@ -426,7 +426,7 @@ public final class Platform {
 	 * @param authScheme the scheme for which this authorization information
 	 *		applies. For example, "Basic" or "" for no authorization scheme
 	 * @param info a <code>Map</code> containing authorization information 
-	 *		such as usernames and passwords (key type : <code>String</code>, 
+	 *		such as user names and passwords (key type : <code>String</code>, 
 	 *		value type : <code>String</code>)
 	 * @exception CoreException if there are problems setting the
 	 *		authorization information. Reasons include:
@@ -468,7 +468,7 @@ public final class Platform {
 	 * @exception CoreException if there are problems setting the
 	 *		authorization information. Reasons include:
 	 * <ul>
-	 * <li>The keyring could not be saved.</li>
+	 * <li>The key ring could not be saved.</li>
 	 * </ul>
 	 */
 	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
@@ -481,8 +481,8 @@ public final class Platform {
 	 * plug-in-relative URLs returned by IPluginDescriptor, Bundle.getEntry()
 	 * and Platform.find().
 	 * If the specified URL is not a plug-in-relative URL, it 
-	 * is returned asis. If the specified URL is a plug-in-relative
-	 * URL of a file (incl. .jar archive), it is returned as 
+	 * is returned as is. If the specified URL is a plug-in-relative
+	 * URL of a file (including .jar archive), it is returned as 
 	 * a locally-accessible URL using "file:" or "jar:file:" protocol
 	 * (caching the file locally, if required). If the specified URL
 	 * is a plug-in-relative URL of a directory,
@@ -603,7 +603,7 @@ public final class Platform {
 	 * <p>
 	 * Callers of this method should consider using <code>getInstanceLocation</code>
 	 * instead.  In various, typically non IDE-related configurations of Eclipse, the platform
-	 * working directory may not be on the local filesystem.  As such, the more general
+	 * working directory may not be on the local file system.  As such, the more general
 	 * form of this location is as a URL.
 	 * </p>
 	 *
@@ -730,7 +730,7 @@ public final class Platform {
 	 * Removes the indicated (identical) log listener from the notification list
 	 * of the platform.  If no such listener exists, no action is taken.
 	 *
-	 * @param listener the listener to deregister
+	 * @param listener the listener to de-register
 	 * @see ILog#removeLogListener(ILogListener)
 	 * @see #addLogListener(ILogListener)
 	 */
@@ -946,7 +946,7 @@ public final class Platform {
 	 * corresponding to the key is not found in the resource bundle
 	 * the key value, or any default text following the key in the
 	 * argument value is returned as the resource string.
-	 * A key is identified as a string begining with the "%" character.
+	 * A key is identified as a string beginning with the "%" character.
 	 * Note, that the "%" character is stripped off prior to lookup
 	 * in the resource bundle.
 	 * <p>
@@ -974,7 +974,7 @@ public final class Platform {
 	 * corresponding to the key is not found in the resource bundle
 	 * the key value, or any default text following the key in the
 	 * argument value is returned as the resource string.
-	 * A key is identified as a string begining with the "%" character.
+	 * A key is identified as a string beginning with the "%" character.
 	 * Note that the "%" character is stripped off prior to lookup
 	 * in the resource bundle.
 	 * <p>
@@ -1138,8 +1138,8 @@ public final class Platform {
 	}
 
 	/**
-	 * Deregisters the given bundle group provider with the platform
-	 * @param provider a provider to deregister
+	 * De-registers the given bundle group provider with the platform
+	 * @param provider a provider to de-register
 	 * @since 3.0
 	 */
 	public static void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
@@ -1149,7 +1149,7 @@ public final class Platform {
 	/**
 	 * Returns the location of the configuration information 
 	 * used to run this instance of Eclipse.  The configuration area typically
-	 * contains the list of plug-ins available for use, various setttings
+	 * contains the list of plug-ins available for use, various settings
 	 * (those shared across different instances of the same configuration)
 	 * and any other such data needed by plug-ins.
 	 * <code>null</code> is returned if the platform is running without a configuration location.

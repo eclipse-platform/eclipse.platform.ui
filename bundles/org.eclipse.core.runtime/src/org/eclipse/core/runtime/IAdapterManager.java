@@ -20,7 +20,7 @@ package org.eclipse.core.runtime;
  * adapter manager then forwards this request unmodified to the <code>IAdapterFactory.getAdapter</code>
  * method on one of the registered adapter factories.
  * <p>
- * Adapter factories can be registered programatically using the <code>registerAdapters</code>
+ * Adapter factories can be registered programmatically using the <code>registerAdapters</code>
  * method.  Alternatively, they can be registered declaratively using the 
  * <code>org.eclipse.core.runtime.adapters</code> extension point.  Factories registered
  * with this extension point will not be able to provide adapters until their

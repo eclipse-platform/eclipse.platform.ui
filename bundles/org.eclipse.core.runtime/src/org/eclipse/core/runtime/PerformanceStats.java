@@ -138,7 +138,7 @@ public class PerformanceStats {
 	private String context;
 
 	/**
-	 * The starting time of the current occurence of this event.
+	 * The starting time of the current occurrence of this event.
 	 */
 	private long currentStart = NOT_STARTED;
 
@@ -314,7 +314,7 @@ public class PerformanceStats {
 	}
 
 	/**
-	 * Adds an occurence of this event to the cumulative counters. This method
+	 * Adds an occurrence of this event to the cumulative counters. This method
 	 * can be used as an alternative to <code>startRun</code> and <code>endRun</code>
 	 * for clients that want to track the context and execution time separately.
 	 * 
@@ -355,7 +355,7 @@ public class PerformanceStats {
 	}
 
 	/**
-	 * Stops timing the occurence of this event that was started by the previous
+	 * Stops timing the occurrence of this event that was started by the previous
 	 * call to <code>startRun</code>.  The event is automatically added to
 	 * the cumulative counters for this event and listeners are notified.
 	 * <p>
@@ -493,7 +493,7 @@ public class PerformanceStats {
 	}
 
 	/**
-	 * Starts timing an occurence of this event. This is a convenience method,
+	 * Starts timing an occurrence of this event. This is a convenience method,
 	 * fully equivalent to <code>startRun(null)</code>.
 	 */
 	public void startRun() {
@@ -502,7 +502,7 @@ public class PerformanceStats {
 	}
 
 	/**
-	 * Starts timing an occurence of this event.  The event should be stopped
+	 * Starts timing an occurrence of this event.  The event should be stopped
 	 * by a subsequent call to <code>endRun</code>.
 	 * 
 	 * @param contextName The context for the event to return, or <code>null</code>.

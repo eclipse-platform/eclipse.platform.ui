@@ -42,7 +42,7 @@ package org.eclipse.core.runtime.jobs;
  * </pre>
  * Note: although <tt>lock.acquire</tt> should never fail, it is good practice to place 
  * it inside the try block anyway.  Releasing without acquiring is far less catastrophic 
- * than acqiring without releasing.
+ * than acquiring without releasing.
  * </p><p>
  * This interface is not intended to be implemented by clients.
  * </p>

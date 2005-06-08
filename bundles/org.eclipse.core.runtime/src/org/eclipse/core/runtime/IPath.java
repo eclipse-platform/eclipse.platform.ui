@@ -239,7 +239,7 @@ public interface IPath extends Cloneable {
 	 * a path.  The device id is the prefix up to and including the device
 	 * separator for the local file system; the path proper is everything to 
 	 * the right of it, or the entire string if there is no device separator. 
-	 * When the platform location is a file system with no meaningful defice
+	 * When the platform location is a file system with no meaningful device
 	 * separator, the entire string is treated as the path proper.
 	 * The device id is not checked for validity; the path proper is correct 
 	* if each of the segments in its canonicalized form is valid.
@@ -302,7 +302,7 @@ public interface IPath extends Cloneable {
 	 * 	first 2 characters of the returned path string will not be <code>Path.SEPARATOR</code>.
 	 * 
 	 * @param toUNC true if converting to UNC, false otherwise
-	 * @return the new path, either in UNC form or not depending on the boolean parm
+	 * @return the new path, either in UNC form or not depending on the boolean parameter
 	 */
 	public IPath makeUNC(boolean toUNC);
 
