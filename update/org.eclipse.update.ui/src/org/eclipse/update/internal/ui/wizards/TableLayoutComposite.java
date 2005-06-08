@@ -35,6 +35,15 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 public class TableLayoutComposite extends Composite {
 
 	private List columns= new ArrayList();
+	
+	/**
+	 * The number of extra pixels taken as horizontal trim by the table column. 
+	 * To ensure there are N pixels available for the content of the column,
+	 * assign N+COLUMN_TRIM for the column width.
+	 * 
+	 * @since 3.1
+	 */
+	private static int COLUMN_TRIM = "carbon".equals(SWT.getPlatform()) ? 24 : 3;
 
 	/**
 	 * Creates a new <code>TableLayoutComposite</code>.
@@ -79,6 +88,9 @@ public class TableLayoutComposite extends Composite {
 			if (layoutData instanceof ColumnPixelData) {
 				ColumnPixelData col= (ColumnPixelData) layoutData;
 				width += col.width;
+				if (col.addTrim) {
+					width += COLUMN_TRIM;
+				}
 			} else if (layoutData instanceof ColumnWeightData) {
 				ColumnWeightData col= (ColumnWeightData) layoutData;
 				width += col.minimumWidth;
@@ -110,7 +122,11 @@ public class TableLayoutComposite extends Composite {
 		for (int i= 0; i < size; i++) {
 			ColumnLayoutData col= (ColumnLayoutData) columns.get(i);
 			if (col instanceof ColumnPixelData) {
-				int pixels= ((ColumnPixelData) col).width;
+				ColumnPixelData cpd = (ColumnPixelData) col;
+				int pixels = cpd.width;
+				if (cpd.addTrim) {
+					pixels += COLUMN_TRIM;
+				}
 				widths[i]= pixels;
 				fixedWidth += pixels;
 			} else if (col instanceof ColumnWeightData) {

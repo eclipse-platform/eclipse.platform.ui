@@ -158,7 +158,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		tlComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		activitiesViewer = ActivitiesTableViewer.createViewer(tlComposite, false);
 
-		tlComposite.addColumnData(new ColumnPixelData(20, true));
+		tlComposite.addColumnData(new ColumnPixelData(16, true, true));
 		tlComposite.addColumnData(new ColumnWeightData(2, 150, true));
 		tlComposite.addColumnData(new ColumnWeightData(5, 200, true));
 		tlComposite.addColumnData(new ColumnWeightData(4, 100, true));
