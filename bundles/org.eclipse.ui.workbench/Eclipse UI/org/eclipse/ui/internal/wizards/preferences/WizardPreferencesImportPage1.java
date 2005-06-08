@@ -105,8 +105,9 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                 PreferenceTransferElement[] destTransfers = new PreferenceTransferElement[index];
                 System.arraycopy(returnTransfers, 0, destTransfers, 0, index);
                 return destTransfers;
-            } catch (Exception e) {
-                WorkbenchPlugin.log(e.getMessage(), e);
+            } catch (CoreException e) {
+            	//Do not log core exceptions, they indicate the chosen file is not valid
+                //WorkbenchPlugin.log(e.getMessage(), e);
             } finally {
                 try {
                     fis.close();
@@ -130,15 +131,12 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
     }
 
     protected void setPreferenceTransfers() {
-    	
     	super.setPreferenceTransfers();	
     	
-		if(validFromFile()&&(transfersTable.getItemCount()== 0)){
+		if(validFromFile() && (transfersTable.getItemCount() == 0))
 			text.setText(PreferencesMessages.WizardPreferences_noSpecificPreferenceDescription);
-		}
 		else
 			text.setText(""); //$NON-NLS-1$
-					
 	}
   
     /* (non-Javadoc)

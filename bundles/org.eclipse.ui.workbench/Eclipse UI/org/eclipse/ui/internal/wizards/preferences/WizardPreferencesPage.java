@@ -182,7 +182,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 		// can not finish initially, but don't want to start with an error
 		// message either
-		if (!validDestination())
+		if (!(validDestination() && validateOptionsGroup() && validateSourceGroup()))
 			setPageComplete(false);
 
 		setPreferenceTransfers();
