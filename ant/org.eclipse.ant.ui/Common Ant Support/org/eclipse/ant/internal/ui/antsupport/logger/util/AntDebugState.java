@@ -41,8 +41,8 @@ public class AntDebugState {
     private Map fInitialProperties= null;
 	private Map fProperties= null;
     
-    private Map fTargetToBuildSequence= null;
     private Map fProjectToTargetNames= null;
+    private Map fProjectToMapOfTargetToBuildSequence= null;
     private Stack fTargetsToExecute= new Stack();
     private Stack fTargetsExecuting= new Stack();
 	
@@ -111,12 +111,8 @@ public class AntDebugState {
 		return fShouldSuspend;
 	}
 
-	private Map getTargetToBuildSequence() {
-		return fTargetToBuildSequence;
-	}
-
-	private void setTargetToBuildSequence(Map sequence) {
-		fTargetToBuildSequence= sequence;
+	private Map getTargetToBuildSequence(Project project) {
+		return (Map) fProjectToMapOfTargetToBuildSequence.get(project);
 	}
 
 	public void setTargetToExecute(Target target) {
@@ -250,7 +246,9 @@ public class AntDebugState {
             Object ref= eventProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
             if (ref != null) {
                 fProjectToTargetNames.put(eventProject, ref);
-                setTargetToExecute(initializeBuildSequenceInformation(event, getTargetToBuildSequence()));
+                Map targetToBuildSequence= new HashMap();
+                setTargetToExecute(initializeBuildSequenceInformation(event, targetToBuildSequence));
+                fProjectToMapOfTargetToBuildSequence.put(eventProject, targetToBuildSequence);
             }
         }
         
@@ -357,7 +355,7 @@ public class AntDebugState {
         
 		if (!isAfterTaskEvent()) {
 			appendToStack(stackRepresentation, targetExecuting.getName(), "", getLocation(targetExecuting)); //$NON-NLS-1$
-		} 
+		}
 		for (int i = tasks.size() - 1; i >= 0 ; i--) {
 			Task task= (Task) tasks.get(i);
             if (task.getProject() == projectExecuting) {
@@ -368,8 +366,9 @@ public class AntDebugState {
                 if (targetName != null && targetName.length() != 0) { //skip for implicit target
                     Iterator itr= fTargetsToExecute.iterator();
                     while (itr.hasNext()) {
-                        Target target = (Target) itr.next();
+                        Target target= (Target) itr.next();
                         if (target.getProject() != projectExecuting) {
+                        	targetToExecute= target;
                             continue;
                         }
                         marshalTargetDependancyStack(stackRepresentation, target, targetExecuting);
@@ -381,13 +380,13 @@ public class AntDebugState {
             }
 		}
 
-	    //target dependancy stack 
-	    marshalTargetDependancyStack(stackRepresentation, targetToExecute, targetExecuting);
+		//target dependancy stack 
+		marshalTargetDependancyStack(stackRepresentation, targetToExecute, targetExecuting);
 	}
 
     private void marshalTargetDependancyStack(StringBuffer stackRepresentation, Target targetToExecute, Target targetExecuting) {
         if (targetToExecute != null) {
-	     	Vector buildSequence= (Vector) getTargetToBuildSequence().get(targetToExecute);
+	     	Vector buildSequence= (Vector) getTargetToBuildSequence(targetToExecute.getProject()).get(targetToExecute);
 	     	int startIndex= buildSequence.indexOf(targetExecuting) + 1;
 	     	int dependancyStackDepth= buildSequence.indexOf(targetToExecute);
 	     	
@@ -513,7 +512,7 @@ public class AntDebugState {
 	}
     
     public void buildStarted() {
-        setTargetToBuildSequence(new HashMap());
         fProjectToTargetNames= new HashMap();
+        fProjectToMapOfTargetToBuildSequence= new HashMap();
     }
 }
