@@ -631,16 +631,19 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         }
         
         internalPropChangeListeners.clear();
-        if (image != null) {
-            JFaceResources.getResources().destroy(imageDescriptor);
-            image = null;
-        }
+        Image oldImage = image;
+        image = null;
         
         state = STATE_DISPOSED;
         imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
         defaultImageDescriptor = ImageDescriptor.getMissingImageDescriptor();
         immediateFirePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
         propChangeListeners.clear();
+        
+        if (oldImage != null) {
+            JFaceResources.getResources().destroy(imageDescriptor);
+            oldImage = null;
+        }
     }
 
     /**

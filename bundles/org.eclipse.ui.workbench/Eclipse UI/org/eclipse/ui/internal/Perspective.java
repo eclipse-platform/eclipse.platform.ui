@@ -242,13 +242,13 @@ public class Perspective {
         presentation.deactivate();
         presentation.disposeSashes();
 
+        fastViewPane.dispose();
+        
         // Release each view.
         IViewReference refs[] = getViewReferences();
         for (int i = 0, length = refs.length; i < length; i++) {
             getViewFactory().releaseView(refs[i]);
         }
-
-        fastViewPane.dispose();
 
         mapIDtoViewLayoutRec.clear();
     }

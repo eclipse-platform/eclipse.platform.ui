@@ -79,10 +79,7 @@ public class ZoomTestCase extends UITestCase {
         super.doSetUp();
         window = (WorkbenchWindow) openTestWindow(ZoomPerspectiveFactory.PERSP_ID);
         page = (WorkbenchPage) window.getActivePage();
-        IPreferenceStore store = WorkbenchPlugin.getDefault()
-                .getPreferenceStore();
-        store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE,
-                IPreferenceConstants.OVM_FAST);
+
         // Disable animations since they occur concurrently and can interferre
         // with locating drop targets
         IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
@@ -158,10 +155,16 @@ public class ZoomTestCase extends UITestCase {
     // show the given view
     protected IViewPart showFastView(String id) {
         try {
+            IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+        	
+            int oldMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
+			store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_FAST);
+			
             IViewPart view = page.showView(id);
             IViewReference ref = (IViewReference) page.getReference(view);
             page.addFastView(ref);
             Assert.assertTrue(page.isFastView(ref));
+            store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, oldMode);
             return view;
         } catch (PartInitException e) {
         }
