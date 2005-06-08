@@ -116,7 +116,7 @@ public class Match {
 	}
 
 	/**
-	 * Returns the element that contains this match.
+	 * Returns the element that contains this match. The element is used to group the match.
 	 * 
 	 * @return the element that contains this match
 	 */
