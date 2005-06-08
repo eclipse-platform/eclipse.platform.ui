@@ -943,6 +943,8 @@ public class PerspectiveSwitcher {
     private void addCloseItems(Menu menu) {
         MenuItem menuItem = new MenuItem(menu, SWT.NONE);
         menuItem.setText(WorkbenchMessages.WorkbenchWindow_close); 
+        window.getWorkbench().getHelpSystem().setHelp(menuItem,
+        		IWorkbenchHelpContextIds.CLOSE_PAGE_ACTION);
         menuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ToolItem perspectiveToolItem = (ToolItem) popupMenu
@@ -958,6 +960,8 @@ public class PerspectiveSwitcher {
         });
         menuItem = new MenuItem(menu, SWT.NONE);
         menuItem.setText(WorkbenchMessages.WorkbenchWindow_closeAll); 
+        window.getWorkbench().getHelpSystem().setHelp(menuItem,
+        		IWorkbenchHelpContextIds.CLOSE_ALL_PAGES_ACTION);
         menuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ToolItem perspectiveToolItem = (ToolItem) popupMenu
@@ -1026,12 +1030,21 @@ public class PerspectiveSwitcher {
 
         final MenuItem menuItemTopRight = new MenuItem(subMenu, SWT.RADIO);
         menuItemTopRight.setText(WorkbenchMessages.PerspectiveSwitcher_topRight); 
+        
+        window.getWorkbench().getHelpSystem().setHelp(menuItemTopRight,
+        		IWorkbenchHelpContextIds.DOCK_ON_PERSPECTIVE_ACTION);
 
         final MenuItem menuItemTopLeft = new MenuItem(subMenu, SWT.RADIO);
         menuItemTopLeft.setText(WorkbenchMessages.PerspectiveSwitcher_topLeft); 
+        
+        window.getWorkbench().getHelpSystem().setHelp(menuItemTopLeft,
+        		IWorkbenchHelpContextIds.DOCK_ON_PERSPECTIVE_ACTION);
 
         final MenuItem menuItemLeft = new MenuItem(subMenu, SWT.RADIO);
         menuItemLeft.setText(WorkbenchMessages.PerspectiveSwitcher_left); 
+        
+        window.getWorkbench().getHelpSystem().setHelp(menuItemLeft,
+        		IWorkbenchHelpContextIds.DOCK_ON_PERSPECTIVE_ACTION);
 
         SelectionListener listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -1063,6 +1076,9 @@ public class PerspectiveSwitcher {
     private void addShowTextItem(Menu menu) {
         final MenuItem showtextMenuItem = new MenuItem(menu, SWT.CHECK);
         showtextMenuItem.setText(WorkbenchMessages.PerspectiveBar_showText);
+        window.getWorkbench().getHelpSystem().setHelp(showtextMenuItem,
+        		IWorkbenchHelpContextIds.SHOW_TEXT_PERSPECTIVE_ACTION);
+
         showtextMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (perspectiveBar == null)
@@ -1081,6 +1097,8 @@ public class PerspectiveSwitcher {
     private void addCustomizeItem(Menu menu) {
         final MenuItem customizeMenuItem = new MenuItem(menu, SWT.Activate);
         customizeMenuItem.setText(WorkbenchMessages.PerspectiveBar_customize);
+        window.getWorkbench().getHelpSystem().setHelp(customizeMenuItem,
+        		IWorkbenchHelpContextIds.EDIT_ACTION_SETS_ACTION);
         customizeMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (perspectiveBar == null)
@@ -1095,6 +1113,8 @@ public class PerspectiveSwitcher {
     private void addSaveAsItem(Menu menu) {
         final MenuItem saveasMenuItem = new MenuItem(menu, SWT.Activate);
         saveasMenuItem.setText(WorkbenchMessages.PerspectiveBar_saveAs); 
+        window.getWorkbench().getHelpSystem().setHelp(saveasMenuItem,
+        		IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
         saveasMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (perspectiveBar == null)
@@ -1109,6 +1129,8 @@ public class PerspectiveSwitcher {
     private void addResetItem(Menu menu) {
         final MenuItem resetMenuItem = new MenuItem(menu, SWT.Activate);
         resetMenuItem.setText(WorkbenchMessages.PerspectiveBar_reset);
+        window.getWorkbench().getHelpSystem().setHelp(resetMenuItem,
+        		IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
         resetMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (perspectiveBar == null)

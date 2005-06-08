@@ -26,6 +26,12 @@ public interface IWorkbenchHelpContextIds {
     public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
 
     // Actions
+    
+    public static final String DOCK_ON_PERSPECTIVE_ACTION = PREFIX
+    		+ "dock_on_perspective_action_context"; //$NON-NLS-1$
+    
+    public static final String SHOW_TEXT_PERSPECTIVE_ACTION = PREFIX
+	+ "show_text_perspective_action_context"; //$NON-NLS-1$
 
     public static final String PROPERTY_DIALOG_ACTION = PREFIX
             + "property_dialog_action_context"; //$NON-NLS-1$
