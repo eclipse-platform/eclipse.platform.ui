@@ -70,7 +70,7 @@
                 value="org.eclipse.ui.parts.tests.PartsReferencesTestSuite"/>
     </ant>
     
-    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="session_data_folder"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname"
