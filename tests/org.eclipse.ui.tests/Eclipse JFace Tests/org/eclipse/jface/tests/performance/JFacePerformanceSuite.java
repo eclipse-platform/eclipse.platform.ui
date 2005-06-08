@@ -21,7 +21,7 @@ public class JFacePerformanceSuite extends TestSuite {
 
 	public JFacePerformanceSuite() {
 		super();
-		addTest(new ListViewerRefreshTest("testRefresh",BasicPerformanceTest.GLOBAL));
+		addTest(new ListViewerRefreshTest("testRefresh"));
 		addTest(new ComboViewerRefreshTest("testRefresh",BasicPerformanceTest.LOCAL));
 		addTest(new TableViewerRefreshTest("testRefresh"));
 		addTest(new TableViewerRefreshTest("testUpdate"));
