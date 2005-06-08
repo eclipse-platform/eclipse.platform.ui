@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.base.ant;
+package org.eclipse.help.internal.base.ant;
 
 import java.io.File;
 

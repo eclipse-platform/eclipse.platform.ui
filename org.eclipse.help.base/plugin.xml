@@ -144,7 +144,7 @@
    <extension
          point="org.eclipse.ant.core.antTasks">
       <antTask
-            class="org.eclipse.help.base.ant.BuildHelpIndex"
+            class="org.eclipse.help.internal.base.ant.BuildHelpIndex"
             eclipseRuntime="true"
             headless="true"
             library="ant_tasks/helpbase-ant.jar"
