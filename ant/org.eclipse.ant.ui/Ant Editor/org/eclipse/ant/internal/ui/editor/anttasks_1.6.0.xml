@@ -1254,13 +1254,8 @@
 
 
   <task name="cccheckin">
-
-  
-    
-  
     <description>
-    Performs ClearCase checkin.
-
+   Task to perform a &quot;cleartool checkin&quot; command to ClearCase. 
   </description>
 
   
@@ -1371,7 +1366,7 @@
     
   
     <description>
-    Performs ClearCase checkout.
+    Task to perform a &quot;cleartool checkout&quot; command to ClearCase.
   </description>
 
   
@@ -1497,12 +1492,8 @@
 
 
   <task name="ccmcheckin">
-
-  
-    
-  
     <description>
-    Performs Continuus checkin command.
+    Task to &quot;checkin&quot; a file 
   </description>
 
   
@@ -1568,12 +1559,8 @@
 
 
   <task name="ccmcheckintask">
-
-  
-    
-  
     <description>
-    Performs Continuus Checkin Default task command.
+    Task to perform a &quot;checkin&quot; default task command to Continuus.
   </description>
 
   
@@ -1639,12 +1626,8 @@
 
 
   <task name="ccmcheckout">
-
-  
-    
-  
     <description>
-    Performs Continuus checkout command.
+    Task to perform a &quot;Checkout&quot; command to Continuus.
   </description>
 
   
@@ -1710,12 +1693,8 @@
 
 
   <task name="ccmcreatetask">
-
-  
-    
-  
     <description>
-    Creates new Continuus ccm task and sets it as the default.
+   Create a Continuus task.
   </description>
 
   
@@ -1808,15 +1787,9 @@
 
   </task>
 
-
-
   <task name="ccmreconfigure">
-
-  
-    
-  
-    <description>
-    Task allows to reconfigure a project, recurcively or not
+ <description>
+    Task to perform a reconfigure command to Continuus.
   </description>
 
   
@@ -1885,27 +1858,7 @@
     
   
     <description>
-    Performs ClearCase UnCheckout command.
-
- &lt;p&gt;
- The following attributes are interpretted:
- &lt;table border="1"&gt;
-   &lt;tr&gt;
-     &lt;th&gt;Attribute&lt;/th&gt;
-     &lt;th&gt;Values&lt;/th&gt;
-     &lt;th&gt;Required&lt;/th&gt;
-   &lt;/tr&gt;
-   &lt;tr&gt;
-      &lt;td&gt;viewpath&lt;/td&gt;
-      &lt;td&gt;Path to the ClearCase view file or directory that the command will operate on&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-   &lt;tr&gt;
-   &lt;tr&gt;
-      &lt;td&gt;keepcopy&lt;/td&gt;
-      &lt;td&gt;Specifies whether to keep a copy of the file with a .keep extension or not&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-   &lt;tr&gt;
- &lt;/table&gt;
+    Task to perform a &quot;UnCheckout&quot; command to ClearCase.
   </description>
 
   
@@ -1964,7 +1917,7 @@
     
   
     <description>
-    Performs a ClearCase Update command.
+    Task to perform an &quot;cleartool update&quot; command to ClearCase.
   </description>
 
   
