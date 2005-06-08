@@ -184,9 +184,9 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 		try {
 			fChangeExecuted= false;
 			if (createChange()) {
-				pm.beginTask("", 2); //$NON-NLS-1$
+				pm.beginTask("", 4); //$NON-NLS-1$
 				pm.subTask(""); //$NON-NLS-1$
-				fCreateChangeOperation.run(new SubProgressMonitor(pm, 1));
+				fCreateChangeOperation.run(new SubProgressMonitor(pm, 3));
 				fChange= fCreateChangeOperation.getChange();
 				if (fChange != null) {
 					executeChange(new SubProgressMonitor(pm, 1));
