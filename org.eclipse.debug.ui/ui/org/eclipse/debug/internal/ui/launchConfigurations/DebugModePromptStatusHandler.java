@@ -37,22 +37,21 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 			}	
 		}
 		
+		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+        ILaunchConfiguration configuration = (ILaunchConfiguration)source;
+        String pref = store.getString(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); 
+        if (pref != null) {
+            if (pref.equals(MessageDialogWithToggle.NEVER)) {
+                return new Boolean(false);
+            } else if (pref.equals(MessageDialogWithToggle.ALWAYS)) { 
+                relaunchInDebugMode(configuration);
+                return new Boolean(true);
+            }
+        }
+        
 		Shell activeShell = DebugUIPlugin.getShell();
 		String title = LaunchConfigurationsMessages.DebugModePromptStatusHandler_0; //$NON-NLS-1$
 		String message = LaunchConfigurationsMessages.DebugModePromptStatusHandler_1; //$NON-NLS-1$
-		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-		
-		ILaunchConfiguration configuration = (ILaunchConfiguration)source;
-		
-		String pref = store.getString(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); 
-		if (pref != null) {
-			if (pref.equals(MessageDialogWithToggle.NEVER)) {
-				return new Boolean(false);
-			} else if (pref.equals(MessageDialogWithToggle.ALWAYS)) { 
-				relaunchInDebugMode(configuration);
-				return new Boolean(true);
-			}
-		}
 		
 		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(activeShell, title, message, null, false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); //$NON-NLS-1$
 		int buttonId = dialog.getReturnCode();
