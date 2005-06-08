@@ -25,7 +25,7 @@ public class RefreshTestContentProvider implements IStructuredContentProvider {
 
 	static int seed = 1;
 	static TestElement[] allElements;
-	public static int ELEMENT_COUNT = 10000;
+	public static int ELEMENT_COUNT = 100;
 	TestElement[] currentElements;
 	
 	static{

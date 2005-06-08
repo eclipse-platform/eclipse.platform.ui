@@ -49,6 +49,14 @@ public class ListPopulationTest extends BasicPerformanceTest {
 		// processEvents();
 	}
 	
+	public void testSmallAdd() throws Throwable {
+		addBench(100);
+	}
+	
+	public void testSmallSetItems() throws Throwable {
+		setItemsBench(100);
+	}
+	
 	public void testMediumAdd() throws Throwable {
 		addBench(5000);
 	}

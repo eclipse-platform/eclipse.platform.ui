@@ -57,14 +57,17 @@ public class ListViewerRefreshTest extends ViewerTest {
 	 */
 	public void testRefresh() throws Throwable {
 
-		tagIfNecessary("JFace - Refresh 10000 item ListViewer", Dimension.ELAPSED_PROCESS);
+		tagIfNecessary("JFace - Refresh 100 item ListViewer 10 times", Dimension.ELAPSED_PROCESS);
 
 		openBrowser();
 
 		for (int i = 0; i < ITERATIONS; i++) {
 			startMeasuring();
-			viewer.refresh();
-			processEvents();
+			for (int j = 0; j < 10; j++) {
+				viewer.refresh();
+				processEvents();
+				
+			}			
 			stopMeasuring();
 		}
 
