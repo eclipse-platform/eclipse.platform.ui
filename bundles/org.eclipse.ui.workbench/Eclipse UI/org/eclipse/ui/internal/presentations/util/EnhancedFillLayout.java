@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.util;
 
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
@@ -20,6 +22,9 @@ import org.eclipse.swt.widgets.Layout;
  */
 public class EnhancedFillLayout extends Layout {
 
+	public int xmargin = 0;
+	public int ymargin = 0;
+	
     protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
         int resultX = 1;
         int resultY = 1;
@@ -31,8 +36,8 @@ public class EnhancedFillLayout extends Layout {
             
             Point sz = control.computeSize(wHint, hHint, flushCache);
             
-            resultX = Math.max(resultX, sz.x);
-            resultY = Math.max(resultY, sz.y);
+            resultX = Math.max(resultX, sz.x + 2 * xmargin);
+            resultY = Math.max(resultY, sz.y + 2 * ymargin);
         }
         
         return new Point(resultX, resultY);
@@ -43,8 +48,9 @@ public class EnhancedFillLayout extends Layout {
         
         for (int i = 0; i < children.length; i++) {
             Control control = children[i];
-
-            control.setBounds(composite.getClientArea());
+            Rectangle area = composite.getClientArea();
+            Geometry.expand(area, -xmargin, -xmargin, -ymargin, -ymargin );
+            control.setBounds(area);
         }                
     }
 }

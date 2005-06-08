@@ -127,7 +127,7 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
         if (showTitle) {
             return createViewPresentation(parent, site);
         } else {
-            EmptyTabFolder folder = new EmptyTabFolder(parent);
+            EmptyTabFolder folder = new EmptyTabFolder(parent, true);
             TabbedStackPresentation presentation = new TabbedStackPresentation(site, folder, new StandardViewSystemMenu(site));
             
             return presentation;
