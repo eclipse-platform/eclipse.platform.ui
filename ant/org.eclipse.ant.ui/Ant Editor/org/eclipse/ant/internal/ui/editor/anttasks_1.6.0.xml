@@ -3346,13 +3346,10 @@
         </attribute>
       
         <attribute name="noconfig" required="NOTDEFINED">
-        
-          
 
-        
           <description>
           A flag that tells the compiler not to read in the compiler 
- settings files 'csc.rsp' in its bin directory and then the local directory
+ settings files 'csc.rsp' in its bin directory and its local directory
         </description>
       
         </attribute>
@@ -3712,29 +3709,9 @@
     
   
     <description>
-    Examines the output of cvs log and group related changes together.
+    Generates an XML-formatted report file of the change logs recorded in a CVS repository. 
 
- It produces an XML output representing the list of changes.
- &lt;PRE&gt;
- &lt;FONT color=#0000ff&gt;&amp;lt;!-- Root element --&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#6a5acd&gt;&amp;lt;!ELEMENT&lt;/FONT&gt; changelog &lt;FONT color=#ff00ff&gt;(entry&lt;/FONT&gt;&lt;FONT color=#ff00ff&gt;+&lt;/FONT&gt;&lt;FONT color=#ff00ff&gt;)&lt;/FONT&gt;&lt;FONT color=#6a5acd&gt;&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#0000ff&gt;&amp;lt;!-- CVS Entry --&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#6a5acd&gt;&amp;lt;!ELEMENT&lt;/FONT&gt; entry &lt;FONT color=#ff00ff&gt;(date,author,file&lt;/FONT&gt;&lt;FONT color=#ff00ff&gt;+&lt;/FONT&gt;&lt;FONT color=#ff00ff&gt;,msg)&lt;/FONT&gt;&lt;FONT color=#6a5acd&gt;&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#0000ff&gt;&amp;lt;!-- Date of cvs entry --&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#6a5acd&gt;&amp;lt;!ELEMENT&lt;/FONT&gt; date &lt;FONT color=#ff00ff&gt;(#PCDATA)&lt;/FONT&gt;&lt;FONT color=#6a5acd&gt;&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#0000ff&gt;&amp;lt;!-- Author of change --&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#6a5acd&gt;&amp;lt;!ELEMENT&lt;/FONT&gt; author &lt;FONT color=#ff00ff&gt;(#PCDATA)&lt;/FONT&gt;&lt;FONT color=#6a5acd&gt;&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#0000ff&gt;&amp;lt;!-- List of files affected --&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#6a5acd&gt;&amp;lt;!ELEMENT&lt;/FONT&gt; msg &lt;FONT color=#ff00ff&gt;(#PCDATA)&lt;/FONT&gt;&lt;FONT color=#6a5acd&gt;&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#0000ff&gt;&amp;lt;!-- File changed --&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#6a5acd&gt;&amp;lt;!ELEMENT&lt;/FONT&gt; file &lt;FONT color=#ff00ff&gt;(name,revision,prevrevision&lt;/FONT&gt;&lt;FONT color=#ff00ff&gt;?&lt;/FONT&gt;&lt;FONT color=#ff00ff&gt;)&lt;/FONT&gt;&lt;FONT color=#6a5acd&gt;&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#0000ff&gt;&amp;lt;!-- Name of the file --&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#6a5acd&gt;&amp;lt;!ELEMENT&lt;/FONT&gt; name &lt;FONT color=#ff00ff&gt;(#PCDATA)&lt;/FONT&gt;&lt;FONT color=#6a5acd&gt;&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#0000ff&gt;&amp;lt;!-- Revision number --&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#6a5acd&gt;&amp;lt;!ELEMENT&lt;/FONT&gt; revision &lt;FONT color=#ff00ff&gt;(#PCDATA)&lt;/FONT&gt;&lt;FONT color=#6a5acd&gt;&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#0000ff&gt;&amp;lt;!-- Previous revision number --&amp;gt;&lt;/FONT&gt;
- &lt;FONT color=#6a5acd&gt;&amp;lt;!ELEMENT&lt;/FONT&gt; prevrevision &lt;FONT color=#ff00ff&gt;(#PCDATA)&lt;/FONT&gt;&lt;FONT color=#6a5acd&gt;&amp;gt;&lt;/FONT&gt;
- &lt;/PRE&gt;
+Important: This task needs &quot;cvs&quot; on the path. If it isn't, you will get an error (such as error 2 on windows). If the cvs task does not work, try to execute cvs.exe from the command line in the target directory in which you are working. 
   </description>
 
   
@@ -3748,7 +3725,7 @@
           
         
           <description>
-          Set the number of days worth of log entries to process.
+          Sets the number of days into the past for which the change log information should be retrieved.
         </description>
       
         </attribute>
@@ -3778,25 +3755,20 @@
           
         
           <description>
-          Set the date at which the changelog should stop.
+          The latest date to which change logs are to be included in the report.
         </description>
       
         </attribute>
       
         <attribute name="start" required="NOTDEFINED">
-        
-          
-        
+
           <description>
-          Set the date at which the changelog should start.
+          The earliest date from which change logs are to be included in the report.
         </description>
       
         </attribute>
       
-        <attribute name="usersfile" required="NOTDEFINED">
-        
-          
-        
+        <attribute name="usersfile" required="NOTDEFINED">        
           <description>
           Set a lookup list of user names &amp; addresses
         </description>
@@ -3900,37 +3872,10 @@
 
 
   <task name="cvstagdiff">
-
-  
-    
-  
     <description>
-    Examines the output of cvs rdiff between two tags.
+    Generates an XML-formatted report file of the changes between two tags or dates recorded in a CVS repository. 
 
- It produces an XML output representing the list of changes.
- &lt;PRE&gt;
- &amp;lt;!-- Root element --&amp;gt;
- &amp;lt;!ELEMENT tagdiff ( entry+ ) &amp;gt;
- &amp;lt;!-- Start tag of the report --&amp;gt;
- &amp;lt;!ATTLIST tagdiff startTag NMTOKEN #IMPLIED &amp;gt;
- &amp;lt;!-- End tag of the report --&amp;gt;
- &amp;lt;!ATTLIST tagdiff endTag NMTOKEN #IMPLIED &amp;gt;
- &amp;lt;!-- Start date of the report --&amp;gt;
- &amp;lt;!ATTLIST tagdiff startDate NMTOKEN #IMPLIED &amp;gt;
- &amp;lt;!-- End date of the report --&amp;gt;
- &amp;lt;!ATTLIST tagdiff endDate NMTOKEN #IMPLIED &amp;gt;
-
- &amp;lt;!-- CVS tag entry --&amp;gt;
- &amp;lt;!ELEMENT entry ( file ) &amp;gt;
- &amp;lt;!-- File added, changed or removed --&amp;gt;
- &amp;lt;!ELEMENT file ( name, revision?, prevrevision? ) &amp;gt;
- &amp;lt;!-- Name of the file --&amp;gt;
- &amp;lt;!ELEMENT name ( #PCDATA ) &amp;gt;
- &amp;lt;!-- Revision number --&amp;gt;
- &amp;lt;!ELEMENT revision ( #PCDATA ) &amp;gt;
- &amp;lt;!-- Previous revision number --&amp;gt;
- &amp;lt;!ELEMENT prevrevision ( #PCDATA ) &amp;gt;
- &lt;/PRE&gt;
+Important: This task needs &quot;cvs&quot; on the path. If it isn't, you will get an error (such as error 2 on windows). If the cvs task does not work, try to execute cvs.exe from the command line in the target directory in which you are working. 
   </description>
 
   
@@ -3986,7 +3931,7 @@
           
         
           <description>
-          Set the output file for the diff.
+          The file in which to write the diff report.
         </description>
       
         </attribute>
@@ -3996,17 +3941,15 @@
           
         
           <description>
-          Set the end date.
+          The latest date from which diffs are to be included in the report.
+accepts all formats accepted by the cvs command for -D date_spec arguments
         </description>
       
         </attribute>
       
         <attribute name="endtag" required="exactly one of the two.">
-        
-          
-        
           <description>
-          Set the end tag.
+          The latest tag from which diffs are to be included in the report.
         </description>
       
         </attribute>
@@ -4069,7 +4012,8 @@
           
         
           <description>
-          Set the start date.
+          The earliest date from which diffs are to be included in the report.
+accepts all formats accepted by the cvs command for -D date_spec arguments
         </description>
       
         </attribute>
@@ -4079,7 +4023,7 @@
           
         
           <description>
-          Set the start tag.
+          The earliest tag from which diffs are to be included in the report.
         </description>
       
         </attribute>
@@ -9636,11 +9580,8 @@ When this task executes, it will generate the C header and source files that are
         </attribute>
       
         <attribute name="seedname" required="NOTDEFINED">
-        
-          
-        
           <description>
-          seed name for snapshot file. Can be null, default to snap
+          Seed name for the temporary snapshot files (files will be named seed.jpc, seed1.jpc, seed2.jpc, ...). Defaults to &quot;snapshot&quot;.
         </description>
       
         </attribute>
