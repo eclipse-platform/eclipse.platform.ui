@@ -1238,8 +1238,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     private void handleDeferredEvents() {
-        updateActivePart();
         editorPresentation.getLayoutPart().deferUpdates(false);
+        updateActivePart();
         WorkbenchPartReference[] disposals = (WorkbenchPartReference[]) pendingDisposals.toArray(new WorkbenchPartReference[pendingDisposals.size()]);
         pendingDisposals.clear();
         for (int i = 0; i < disposals.length; i++) {
