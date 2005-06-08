@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Display;
 public class UILockListener extends LockListener {
 
     /**
-     * The Queue is the construct that keeps track of Sempahores.
+     * The Queue is the construct that keeps track of Semaphores.
      */
     public class Queue {
         private static final int BASE_SIZE = 8;
