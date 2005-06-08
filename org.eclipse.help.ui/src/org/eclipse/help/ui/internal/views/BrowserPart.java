@@ -12,10 +12,13 @@ package org.eclipse.help.ui.internal.views;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
@@ -319,57 +322,40 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				// String newURL = url + sep + "noframes=true"; //$NON-NLS-1$
 				return true;
 			}
-		} else if (url.startsWith("javascript:liveAction(")) { //$NON-NLS-1$
-			return processLiveAction(url);
+		} else if (url.indexOf("livehelp/?pluginID=")>0) { //$NON-NLS-1$
+			processLiveAction(url);
+			return true;
 		}
 		return false;
 	}
 
-	private boolean processLiveAction(String url) {
-		int size = "javascript:liveAction".length(); //$NON-NLS-1$
-		String args = url.substring(size);
-		ArrayList arglist = new ArrayList();
-		StringBuffer buff = new StringBuffer();
-		int state = START;
-		for (int i = 0; i < args.length(); i++) {
-			char c = args.charAt(i);
-			switch (state) {
-			case START:
-				if (c == '(')
-					state = OPEN_BRACKET;
-				break;
-			case OPEN_BRACKET:
-				if (c == '\"')
-					state = OPEN_QUOTE;
-				break;
-			case OPEN_QUOTE:
-				if (c == '\"') {
-					state = CLOSE_QUOTE;
-					arglist.add(buff.toString());
-					buff.delete(0, buff.length());
-				} else
-					buff.append(c);
-				break;
-			case CLOSE_QUOTE:
-				if (c == ',') {
-					state = OPEN_BRACKET;
-				} else if (c == ')') {
-					state = CLOSE_BRACKET;
-				}
-				break;
-			}
-			if (state == CLOSE_BRACKET)
-				break;
+	private void processLiveAction(String url) {
+		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+		if (!"true".equalsIgnoreCase(prefs.getString("activeHelp"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			return;
 		}
-		if (arglist.size() < 2)
-			return false;
-		String pluginId = (String) arglist.get(0);
-		String className = (String) arglist.get(1);
-		String arg = null;
-		if (arglist.size() == 3)
-			arg = (String) arglist.get(2);
+
+		String query = null;
+		try {
+			URL u = new URL(url);
+			query = u.getQuery();
+		} catch (MalformedURLException mue) {
+		}
+		if (query == null)
+			return;
+		StringTokenizer st = new StringTokenizer(query, "=&"); //$NON-NLS-1$
+		if (st.countTokens() < 6) {
+			return;
+		}
+		st.nextToken();
+		String pluginId = URLCoder.decode(st.nextToken());
+		st.nextToken();
+		String className = URLCoder.decode(st.nextToken());
+		st.nextToken();
+		String arg = URLCoder.decode(st.nextToken());
+		if (pluginId == null || className == null || arg == null)
+			return;
 		BaseHelpSystem.runLiveHelp(pluginId, className, arg);
-		return true;
 	}
 
 	/*

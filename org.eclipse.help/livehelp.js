@@ -40,6 +40,24 @@ function liveAction(pluginId, className, argument)
 	var helpTop=findHelpTop();
 	if (helpTop != null && helpTop.liveActionInternal){
 		return helpTop.liveActionInternal(helpTop, pluginId, className, argument);
+	} else if (helpTop == self){
+		// no frames, possibly help view
+		var url= window.location.href;
+		
+		var i = url.indexOf("?");
+		if(i>0)
+			url=url.substring(0, i);
+		
+		i = url.indexOf("/ntopic/");
+		if(i < 0) {
+			// not help view
+			return;
+		}
+	
+		url=url.substring(0, i+1);
+		var encodedArg=encodeURIComponent(argument);
+		url=url+"livehelp/?pluginID="+pluginId+"&class="+className+"&arg="+encodedArg+"&nocaching="+Math.random();
+		window.location.href = url;
 	}
 }
 
