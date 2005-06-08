@@ -301,7 +301,7 @@ public class LinkedModeUI {
 		}
 
 		public void shellDeactivated(ShellEvent e) {
-// 			T ODO reenable after debugging
+// 			TODO re-enable after debugging
 //			if (true) return;
 
 			// from LinkedPositionUI:
