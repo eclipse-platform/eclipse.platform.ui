@@ -1662,18 +1662,15 @@ public class Perspective {
         IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
         int openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
-        if (presentation.hasPlaceholder(viewId, secondaryId)) {
-            presentation.addPart(pane);
-        } else if (openViewMode == IPreferenceConstants.OVM_EMBED) {
-            presentation.addPart(pane);
 
+        if (openViewMode == IPreferenceConstants.OVM_FAST) {
+            showFastView(ref);
+            addFastView(ref);
         } else if (openViewMode == IPreferenceConstants.OVM_FLOAT
                 && presentation.canDetach()) {
             presentation.addDetachedPart(pane);
         } else {
-            showFastView(ref);
-            addFastView(ref);
-            //Refresh the part as there might have been an error when showing
+        	presentation.addPart(pane);
         }
         return part;
     }
