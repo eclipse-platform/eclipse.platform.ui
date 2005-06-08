@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -24,7 +25,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
@@ -46,9 +46,6 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	private IContainer fContainer = null;
 	private boolean fSubfolders = false;
 	
-	// whether the platform is case insensitive
-	private static boolean fgCaseSensitive = Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
-
 	private IPath fRootPath = null;
 	private String[] fRootSegments = null;
 	private File fRootFile = null;
@@ -64,13 +61,11 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	public ContainerSourceContainer(IContainer container, boolean subfolders) {
 		fContainer = container;
 		fSubfolders = subfolders;
-		if (!fgCaseSensitive) {
-			fRootPath = fContainer.getLocation();
-			if (fRootPath != null) {
-				fRootSegments = fRootPath.segments();
-				fRootFile = fRootPath.toFile();
-				fRoot = ResourcesPlugin.getWorkspace().getRoot();
-			}
+		fRootPath = fContainer.getLocation();
+		if (fRootPath != null) {
+			fRootSegments = fRootPath.segments();
+			fRootFile = fRootPath.toFile();
+			fRoot = ResourcesPlugin.getWorkspace().getRoot();
 		}
 	}
 	
@@ -89,54 +84,49 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
+		if (fRootPath == null) {
+			return EMPTY;
+		}
 		ArrayList sources = new ArrayList();
 
 		// An IllegalArgumentException is thrown from the "getFile" method 
 		// if the path created by appending the file name to the container 
 		// path doesn't conform with Eclipse resource restrictions.
 		// To prevent the interruption of the search procedure we check 
-		// if the path is valid before passing it to "getFile".
+		// if the path is valid before passing it to "getFile".		
 		if ( validateFile(name) ) {
-			if (!fgCaseSensitive && fRootFile != null) {
-				File osFile = new File(fRootFile, name);
-				if (osFile.exists()) {
-					try {
-						// See bug 82627 and bug 95679 - we have to append the container path in the case
-						// that Eclipse thinks it is, with the file system case of the file in order to
-						// be successful when finding the IFile for a location.
-						// See bug 98090 - we need to handle relative path names
-						Path canonicalPath = new Path(osFile.getCanonicalPath());
-						String[] canonicalSegments = canonicalPath.segments();
-						IPath workspacePath = new Path(""); //$NON-NLS-1$
-						workspacePath = workspacePath.setDevice(canonicalPath.getDevice());
-						for (int i = 0; i < canonicalSegments.length; i++) {
-							String segment = canonicalSegments[i];
-							if (i < fRootSegments.length) {
-								if (fRootSegments[i].equalsIgnoreCase(segment)) {
-									workspacePath = workspacePath.append(fRootSegments[i]);
-								} else {
-									workspacePath = workspacePath.append(segment);
-								}
+			File osFile = new File(fRootFile, name);
+			if (osFile.exists()) {
+				try {
+					// See bug 82627 and bug 95679 - we have to append the container path in the case
+					// that Eclipse thinks it is, with the file system case of the file in order to
+					// be successful when finding the IFile for a location.
+					// See bug 98090 - we need to handle relative path names
+					Path canonicalPath = new Path(osFile.getCanonicalPath());
+					String[] canonicalSegments = canonicalPath.segments();
+					IPath workspacePath = new Path(""); //$NON-NLS-1$
+					workspacePath = workspacePath.setDevice(canonicalPath.getDevice());
+					for (int i = 0; i < canonicalSegments.length; i++) {
+						String segment = canonicalSegments[i];
+						if (i < fRootSegments.length) {
+							if (fRootSegments[i].equalsIgnoreCase(segment)) {
+								workspacePath = workspacePath.append(fRootSegments[i]);
 							} else {
 								workspacePath = workspacePath.append(segment);
 							}
+						} else {
+							workspacePath = workspacePath.append(segment);
 						}
-						IFile[] files = fRoot.findFilesForLocation(workspacePath);
-						if (isFindDuplicates() && files.length > 1) {
-							for (int i = 0; i < files.length; i++) {
-								sources.add(files[i]);
-							}
-						} else if (files.length > 0) {
-							sources.add(files[0]);
-						}
-					} catch (IOException e) {
 					}
-				}
-			} else {
-				IPath path = new Path(name);
-				IFile file = getContainer().getFile(path);
-				if (file.exists()) {
-					sources.add(file);
+					IFile[] files = fRoot.findFilesForLocation(workspacePath);
+					if (isFindDuplicates() && files.length > 1) {
+						for (int i = 0; i < files.length; i++) {
+							sources.add(files[i]);
+						}
+					} else if (files.length > 0) {
+						sources.add(files[0]);
+					}					
+				} catch (IOException e) {
 				}
 			}
 		}
