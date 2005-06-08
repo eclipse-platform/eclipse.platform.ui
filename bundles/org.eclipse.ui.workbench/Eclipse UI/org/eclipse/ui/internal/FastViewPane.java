@@ -203,6 +203,7 @@ public class FastViewPane {
             return new IPresentablePart[] {getSelectedPart()};
         }
 
+        
     };
 
     private SystemMenuFastView fastViewAction = new SystemMenuFastView(site);
@@ -558,5 +559,12 @@ public class FastViewPane {
     
     public int getState() {
     	return site.getState();
+    }
+    
+    /**
+     * 
+     */
+    public void showSystemMenu() {
+        getPresentation().showSystemMenu();
     }
 }

@@ -601,6 +601,16 @@ public class ViewPane extends PartPane implements IPropertyListener {
         return perspective.isCloseable(getViewReference());
     }
     
+    public void showPaneMenu() {
+		if (isFastView()) {
+	        Perspective perspective = page.getActivePerspective();
+	        
+	        perspective.getFastViewPane().showSystemMenu();
+		} else {
+			super.showPaneMenu();	
+		}
+    } 
+    
     public void removeContributions() {
     	super.removeContributions();
     	

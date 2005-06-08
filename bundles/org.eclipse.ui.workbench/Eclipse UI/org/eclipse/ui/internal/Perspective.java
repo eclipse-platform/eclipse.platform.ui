@@ -1857,4 +1857,8 @@ public class Perspective {
         return (IActionSetDescriptor[]) alwaysOffActionSets.toArray(new IActionSetDescriptor[alwaysOffActionSets.size()]);
     }
 
+	/* package */ FastViewPane getFastViewPane() {
+		return fastViewPane;
+	}
+
 }
