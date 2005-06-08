@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -160,6 +161,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                     fis = new FileInputStream(importFile);
                 } catch (FileNotFoundException e) {
                     WorkbenchPlugin.log(e.getMessage(), e);
+                    MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
                     return false;
                 }
                 IPreferencesService service = Platform.getPreferencesService();
@@ -169,6 +171,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                     service.applyPreferences(prefs, filters);
                 } catch (CoreException e) {
                     WorkbenchPlugin.log(e.getMessage(), e);
+                    MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
                     return false;
                 }
             }
@@ -177,7 +180,8 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                 try {
                     fis.close();
                 } catch (IOException e) {
-                    WorkbenchPlugin.log(e.getMessage(), e);
+                	WorkbenchPlugin.log(e.getMessage(), e);
+                	MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
                 }
         }
         return true;

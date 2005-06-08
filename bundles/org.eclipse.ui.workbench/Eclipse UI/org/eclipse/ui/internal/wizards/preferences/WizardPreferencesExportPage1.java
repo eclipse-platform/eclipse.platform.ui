@@ -132,6 +132,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 							fos);
 				} catch (CoreException e) {
 					WorkbenchPlugin.log(e.getMessage(), e);
+					MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
 					return false;
 				}
 			}
@@ -141,6 +142,8 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 					fos.close();
 				} catch (IOException e) {
 					WorkbenchPlugin.log(e.getMessage(), e);
+					MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
+					return false;
 				}
 		}
 		return true;
