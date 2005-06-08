@@ -27,10 +27,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
@@ -368,29 +366,6 @@ public class DetachedWindow implements IDragOverListener {
         return folder.getControl();
     }
     
-    /**
-     * 
-     * Returns true iff the given rectangle is located in the client area of any
-     * monitor.
-     * 
-     * @param someRectangle a rectangle in display coordinates (not null)
-     * @return true iff the given point can be seen on any monitor
-     */
-    private static boolean intersectsAnyMonitor(Display display,
-            Rectangle someRectangle) {
-        Monitor[] monitors = display.getMonitors();
-
-        for (int idx = 0; idx < monitors.length; idx++) {
-            Monitor mon = monitors[idx];
-
-            if (mon.getClientArea().intersects(someRectangle)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /**
      * Opens the detached window.
      */

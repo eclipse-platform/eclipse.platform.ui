@@ -60,6 +60,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
@@ -96,6 +97,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.CacheWrapper;
 import org.eclipse.ui.internal.layout.LayoutUtil;
@@ -2792,8 +2794,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * and persisted across sessions. If the user wants to put the window
      * offscreen or spanning multiple monitors, let them (bug 74762)
      */
-    protected Rectangle getConstrainedShellBounds(Rectangle preferredSize) {
-        return preferredSize;
+    protected void constrainShellSize() {
+        // As long as the shell is visible on some monitor, don't change it.
+        Rectangle bounds = getShell().getBounds();
+        if (!SwtUtil.intersectsAnyMonitor(Display.getCurrent(), bounds)) {
+            super.constrainShellSize();
+        }
     }
     
     /*
