@@ -129,7 +129,8 @@ public class FindUpdatesAction extends Action {
 		job.setUser(true);
 		job.setPriority(Job.INTERACTIVE);
 
-		window.trackUpdateJob(job, feature.getLabel());
+		String name = feature!=null?feature.getLabel():UpdateUIMessages.FindUpdatesAction_allFeaturesSearch;
+		window.trackUpdateJob(job, name);
 		InstallWizardOperation operation = new InstallWizardOperation();
 
 		operation.run(window.getShell(), job);
