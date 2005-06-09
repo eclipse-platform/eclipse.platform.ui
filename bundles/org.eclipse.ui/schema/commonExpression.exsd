@@ -164,7 +164,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
             <meta.element labelAttribute="id"/>
          </appInfo>
          <documentation>
-            This element is used to evaluate the state of a plug-in. The state of the plug-in may be one of the following: &lt;samp&gt;installed&lt;/samp&gt; or &lt;samp&gt;activated&lt;/samp&gt;.
+            This element is used to evaluate the state of a plug-in. The state of the plug-in may be one of the following: &lt;samp&gt;installed&lt;/samp&gt; (equivalent to the OSGi concept of &quot;resolved&quot;)or &lt;samp&gt;activated&lt;/samp&gt; (equivalent to the OSGi concept of &quot;active&quot;).
          </documentation>
       </annotation>
       <complexType>
@@ -178,7 +178,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
          <attribute name="value" use="default" value="installed">
             <annotation>
                <documentation>
-                  the required state of the plug-in. The state of the plug-in may be one of the following: &lt;samp&gt;installed&lt;/samp&gt; or &lt;samp&gt;activated&lt;/samp&gt;.
+                  the required state of the plug-in. The state of the plug-in may be one of the following: &lt;samp&gt;installed&lt;/samp&gt; (equivalent to the OSGi concept of &quot;resolved&quot;) or &lt;samp&gt;activated&lt;/samp&gt; (equivalent to the OSGi concept of &quot;active&quot;).
                </documentation>
             </annotation>
             <simpleType>

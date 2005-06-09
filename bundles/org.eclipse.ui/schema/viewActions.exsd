@@ -164,7 +164,7 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
          <attribute name="helpContextId" type="string">
             <annotation>
                <documentation>
-                  a unique identifier indicating the help context for this action. If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help.
+                  a unique identifier indicating the help context for this action. On some platforms, if the action appears as a menu item, then pressing the appropriate help key while the menu item is highlighted will display help. Not all platforms support this behaviour.
                </documentation>
             </annotation>
          </attribute>
