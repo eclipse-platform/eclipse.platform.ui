@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -134,12 +133,12 @@ public class ZipLeveledStructureProvider implements
 	private String stripPath(String path) {
 		String pathOrig = new String(path);
 		for (int i = 0; i < stripLevel; i++) {
-			int firstSep = path.indexOf(File.separatorChar);
+			int firstSep = path.indexOf('/');
 			// If the first character was a seperator we must strip to the next
 			// seperator as well
 			if (firstSep == 0) {
 				path = path.substring(1);
-				firstSep = path.indexOf(File.separatorChar);
+				firstSep = path.indexOf('/');
 			}
 			// No seperator wasw present so we're in a higher directory right
 			// now
