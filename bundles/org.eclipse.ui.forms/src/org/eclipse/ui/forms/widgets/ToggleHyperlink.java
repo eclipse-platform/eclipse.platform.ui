@@ -215,12 +215,14 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 			if (!isExpanded()) {
 				handleActivate(e);
 			}
+			e.doit=false;
 		}
 		else if (e.keyCode==SWT.ARROW_LEFT) {
 			// collapse if expanded
 			if (isExpanded()) {
 				handleActivate(e);
 			}
+			e.doit=false;
 		}
 	}
 }

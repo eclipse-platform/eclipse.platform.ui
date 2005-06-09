@@ -328,7 +328,8 @@ public class ExpandableComposite extends Composite {
 				thmargin = GAP;
 				tvmargin = GAP;
 			}
-			int innerwHint = wHint;
+			int innerwHint = wHint - marginWidth - marginWidth
+												- thmargin - thmargin;
 			if (innerwHint != SWT.DEFAULT)
 				innerwHint -= twidth;
 
@@ -556,10 +557,14 @@ public class ExpandableComposite extends Composite {
 			});
 			toggle.addKeyListener(new KeyAdapter() {
 				public void keyPressed(KeyEvent e) {
-					if (e.keyCode == SWT.ARROW_UP)
+					if (e.keyCode == SWT.ARROW_UP) {
 						verticalMove(false);
-					else if (e.keyCode == SWT.ARROW_DOWN)
+						e.doit=false;
+					}
+					else if (e.keyCode == SWT.ARROW_DOWN) {
 						verticalMove(true);
+						e.doit=false;
+					}
 				}
 			});
 		}
