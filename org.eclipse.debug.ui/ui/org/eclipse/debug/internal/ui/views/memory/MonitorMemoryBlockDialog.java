@@ -42,15 +42,20 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 	private String expression;
 	private String length;
 	private boolean needLength = true;
+	private String fPrefillExp = null;
+	private String fPrefillLength = null;
 	
 	/**
 	 * @param parentShell
 	 */
-	public MonitorMemoryBlockDialog(Shell parentShell, IMemoryBlockRetrieval memRetrieval) {
+	public MonitorMemoryBlockDialog(Shell parentShell, IMemoryBlockRetrieval memRetrieval, String prefillExp, String prefillLength) {
 		super(parentShell);
 		
 		if (memRetrieval instanceof IMemoryBlockRetrievalExtension)
 			needLength = false;
+		
+		fPrefillExp = prefillExp;
+		fPrefillLength = prefillLength;
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell, IDebugUIConstants.PLUGIN_ID + ".MonitorMemoryBlockDialog_context"); //$NON-NLS-1$
 	}
@@ -90,6 +95,13 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 			expressionInput.add(historyExpression[i]);
 		}
 		
+		// must be done before the listener is added
+		// otherwise, will get into exception when trying to validate
+		// input
+		// This will be validated when the OK & Cancel button is added.
+		if (fPrefillExp != null)
+			expressionInput.setText(fPrefillExp);
+		
 		expressionInput.addModifyListener(this);
 		
 		if (needLength)
@@ -106,6 +118,10 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 			lengthSpec.grabExcessHorizontalSpace= true;
 			lengthSpec.horizontalAlignment= GridData.FILL;
 			lengthInput.setLayoutData(lengthSpec);
+			
+			if (fPrefillLength != null)
+				lengthInput.setText(fPrefillLength);
+			
 			lengthInput.addModifyListener(this);
 		}
 		return parent;
@@ -150,7 +166,10 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
 	public void modifyText(ModifyEvent e) {
+		updateOKButtonState();
+	}
 
+	private void updateOKButtonState() {
 		if (needLength)
 		{
 			String lengthText = lengthInput.getText();
@@ -175,12 +194,11 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 		Control ret =  super.createButtonBar(parent);
 		
 		if (needLength)
-			getButton(IDialogConstants.OK_ID).setEnabled(false);
+			updateOKButtonState();
 		else
 			// always enable the OK button if we only need the expression
 			getButton(IDialogConstants.OK_ID).setEnabled(true);
 		
 		return ret;
 	}
-
 }
