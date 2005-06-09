@@ -190,7 +190,7 @@ Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; 
          <attribute name="colorFactory" type="string">
             <annotation>
                <documentation>
-                  a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  This may be used instead of &lt;code&gt;value&lt;/code&gt; to specify the default value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation.
+                  a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  This may be used instead of &lt;code&gt;value&lt;/code&gt; to specify the default value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation on workbench startup.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.themes.IColorFactory"/>
@@ -285,7 +285,7 @@ Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsT
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique id that can be used to identify this color definition override.  This should match an existing font identifier.  Strictly speaking, you may ovverride colors that do not exist in the base theme although this practice is not recommended.  In effect, such overrides will have behaviour similar to &lt;code&gt;colorDefinition&lt;/code&gt;s that have &lt;code&gt;isEditable&lt;/code&gt; set to &lt;code&gt;false&lt;/code&gt;.
+                  a unique id that can be used to identify this color definition override.  This should match an existing font identifier.  Strictly speaking, you may override colors that do not exist in the base theme although this practice is not recommended.  In effect, such overrides will have behaviour similar to &lt;code&gt;colorDefinition&lt;/code&gt;s that have &lt;code&gt;isEditable&lt;/code&gt; set to &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -305,7 +305,7 @@ Unlike a &lt;code&gt;colorDefinition&lt;/code&gt;, you may not supply a &lt;code
          <attribute name="colorFactory" type="string">
             <annotation>
                <documentation>
-                  a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  This may be used instead of &lt;code&gt;value&lt;/code&gt; to specify the default value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation.
+                  a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  This may be used instead of &lt;code&gt;value&lt;/code&gt; to specify the default value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation on workbench startup.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -328,7 +328,7 @@ Unlike a &lt;code&gt;colorDefinition&lt;/code&gt;, you may not supply a &lt;code
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique id that can be used to identify this font definition override.  This should match an existing font identifier.  Strictly speaking, you may ovverride fonts that do not exist in the base theme although this practice is not recommended.  In effect, such overrides will have behaviour similar to &lt;code&gt;fontDefinition&lt;/code&gt;s that have &lt;code&gt;isEditable&lt;/code&gt; set to &lt;code&gt;false&lt;/code&gt;.
+                  a unique id that can be used to identify this font definition override.  This should match an existing font identifier.  Strictly speaking, you may override fonts that do not exist in the base theme although this practice is not recommended.  In effect, such overrides will have behaviour similar to &lt;code&gt;fontDefinition&lt;/code&gt;s that have &lt;code&gt;isEditable&lt;/code&gt; set to &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -474,7 +474,7 @@ Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&
          <attribute name="colorFactory" type="string">
             <annotation>
                <documentation>
-                  a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  This may be used instead of &lt;code&gt;value&lt;/code&gt; to specify the value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation.
+                  a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  This may be used instead of &lt;code&gt;value&lt;/code&gt; to specify the value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation on workbench startup.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.themes.IColorFactory"/>
@@ -526,14 +526,14 @@ Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&
          <attribute name="categoryId" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the id of the category to bind
                </documentation>
             </annotation>
          </attribute>
          <attribute name="presentationId" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the id of the presentation to bind to
                </documentation>
             </annotation>
          </attribute>
@@ -567,7 +567,7 @@ href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The &lt;code&gt;org.eclipse.ui.IWorkbench.getThemeManager()&lt;/code&gt; provides &lt;code&gt;org.eclipse.ui.themes.IThemeManager&lt;/code&gt;.  This class may be used to obtain a named theme (by id, including the default theme which has an id of &lt;code&gt;IThemeManager.DEFAULT_THEME&lt;/code&gt;) or the current theme.  From an &lt;code&gt;org.eclipse.ui.themes.ITheme&lt;/code&gt; you may obtain a &lt;code&gt;org.eclipse.jface.resources.ColorRegistry&lt;/code&gt;, an &lt;code&gt;org.eclipse.jface.resources.FontRegistry&lt;/code&gt; and the arbitrary data associated with a theme.
+         The &lt;code&gt;org.eclipse.ui.IWorkbench.getThemeManager()&lt;/code&gt; provides an instance of &lt;code&gt;org.eclipse.ui.themes.IThemeManager&lt;/code&gt; that may be used to obtain a named theme (by id, including the default theme which has an id of &lt;code&gt;IThemeManager.DEFAULT_THEME&lt;/code&gt;) or the current theme.  From an &lt;code&gt;org.eclipse.ui.themes.ITheme&lt;/code&gt; you may obtain a &lt;code&gt;org.eclipse.jface.resources.ColorRegistry&lt;/code&gt;, an &lt;code&gt;org.eclipse.jface.resources.FontRegistry&lt;/code&gt; and the arbitrary data associated with a theme.
       </documentation>
    </annotation>
 
