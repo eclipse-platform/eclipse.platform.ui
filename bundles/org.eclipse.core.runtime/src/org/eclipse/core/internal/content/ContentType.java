@@ -142,7 +142,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		String newValue = Util.toListString(userSet);
 		// we are adding stuff, newValue must be non-null
 		Assert.isNotNull(newValue);
-		contentTypeNode.put(getPreferenceKey(type), newValue);
+		setPreference(contentTypeNode, getPreferenceKey(type), newValue);
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
@@ -551,10 +551,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		final String[] userSet = getFileSpecs(type | IGNORE_PRE_DEFINED);
 		String preferenceKey = getPreferenceKey(type);
 		String newValue = Util.toListString(userSet);
-		if (newValue == null)
-			contentTypeNode.remove(preferenceKey);
-		else
-			contentTypeNode.put(preferenceKey, newValue);
+		setPreference(contentTypeNode, preferenceKey, newValue);
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
@@ -598,7 +595,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		manager.fireContentTypeChangeEvent(this);
 	}
 
-	private void setPreference(Preferences node, String key, String value) {
+	static void setPreference(Preferences node, String key, String value) {
 		if (value == null)
 			node.remove(key);
 		else
