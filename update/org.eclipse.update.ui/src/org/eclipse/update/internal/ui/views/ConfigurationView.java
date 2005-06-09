@@ -523,7 +523,7 @@ public class ConfigurationView
 		swapVersionAction = new ReplaceVersionAction(getConfigurationWindow().getShell(), UpdateUIMessages.ConfigurationView_anotherVersion); 
 
 		findUpdatesAction =
-			new FindUpdatesAction(getControl().getShell(), UpdateUIMessages.ConfigurationView_findUpdates); 
+			new FindUpdatesAction(configurationWindow, UpdateUIMessages.ConfigurationView_findUpdates); 
 
 		showActivitiesAction = new ShowActivitiesAction(getControl().getShell(), UpdateUIMessages.ConfigurationView_showActivitiesLabel); 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(
@@ -960,6 +960,15 @@ public class ConfigurationView
 
 	protected void handleSelectionChanged(IStructuredSelection ssel) {
 		Object obj = ssel.getFirstElement();
+		if (obj!=null) {
+			ILabelProvider labelProvider = (ILabelProvider)treeViewer.getLabelProvider();
+			String text = labelProvider.getText(obj);
+			//Image img = labelProvider.getImage(obj);
+			Image img = null;
+			configurationWindow.updateStatusLine(text, img);
+		}
+		else
+			configurationWindow.updateStatusLine(null, null);
 		if (obj instanceof IFeatureAdapter) {
 			try {
 				propertiesAction.setEnabled(true);

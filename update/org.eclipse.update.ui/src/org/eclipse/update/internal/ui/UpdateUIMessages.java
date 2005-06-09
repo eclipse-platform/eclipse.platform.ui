@@ -401,4 +401,7 @@ public final class UpdateUIMessages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, UpdateUIMessages.class);
 	}
+
+	public static String ConfigurationManagerWindow_searchTaskName;
+	public static String FindUpdatesAction_trackedProgress;
 }
