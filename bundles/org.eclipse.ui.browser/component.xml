@@ -1,1 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><component  xmlns="http://eclipse.org/wtp/releng/tools/component-model" name="Web Browser Support"><description url=""></description><component-depends unrestricted="true"></component-depends><plugin id="org.eclipse.ui.browser" fragment="false"/><package name="org.eclipse.ui.browser"><type name="BrowserFactory" implement="false" instantiate="false"/></package></component>
+<?xml version="1.0" encoding="UTF-8"?>
+<component xmlns="http://eclipse.org/wtp/releng/tools/component-model" name="Web Browser Support">
+  <description url=""></description>
+  <component-depends unrestricted="true"></component-depends>
+  <plugin id="org.eclipse.ui.browser" fragment="false"/>
+  <package name="org.eclipse.ui.browser">
+    <type name="BrowserFactory" implement="false" instantiate="false"/>
+  </package>
+</component>
