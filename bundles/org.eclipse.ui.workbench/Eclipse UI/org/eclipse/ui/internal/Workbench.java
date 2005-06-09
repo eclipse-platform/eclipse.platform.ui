@@ -1244,7 +1244,7 @@ public final class Workbench implements IWorkbench {
 		progressCount = 0;
 		final double cutoff = 0.95;
 
-        Shell shell = new Shell(Display.getCurrent(), SWT.ON_TOP);
+        Shell shell = new Shell(Display.getCurrent(), SWT.NONE);
         try {
 
 			final ProgressMonitorDialog progressMonitorDialog = new StartupProgressMonitorDialog(shell);
