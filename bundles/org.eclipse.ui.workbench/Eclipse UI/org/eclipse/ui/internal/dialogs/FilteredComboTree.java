@@ -86,7 +86,7 @@ public class FilteredComboTree extends FilteredTree {
 				String [] textValues = filterCombo.getItems();
 				String newText = filterCombo.getText();
 				
-				if((newText.equals(""))&&(newText .equals(initialText)))//$NON-NLS-1$
+				if((newText.equals(""))||(newText .equals(initialText)))//$NON-NLS-1$
 					return;
 			
 				for (int i = 0; i < textValues.length; i++) {
