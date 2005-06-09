@@ -107,16 +107,17 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 				throw new PartInitException(Messages.errorNoBrowser);
 			
 			if (ewb instanceof SystemBrowserDescriptor)
-				return new SystemBrowserInstance(browserId);
-
-			IBrowserExt ext = null;
-			if (ewb != null)
-				ext = WebBrowserUIPlugin.findBrowsers(ewb.getLocation());
-			if (ext != null)
-				webBrowser = ext.createBrowser(browserId,
-						ewb.getLocation(), ewb.getParameters());
-			if (webBrowser == null)
-				webBrowser = new ExternalBrowserInstance(browserId, ewb);
+				webBrowser = new SystemBrowserInstance(browserId);
+			else {
+				IBrowserExt ext = null;
+				if (ewb != null)
+					ext = WebBrowserUIPlugin.findBrowsers(ewb.getLocation());
+				if (ext != null)
+					webBrowser = ext.createBrowser(browserId,
+							ewb.getLocation(), ewb.getParameters());
+				if (webBrowser == null)
+					webBrowser = new ExternalBrowserInstance(browserId, ewb);
+			}
 		} else {
 			if ((style & IWorkbenchBrowserSupport.AS_VIEW) != 0)
 				webBrowser = new InternalBrowserViewInstance(browserId, style,
