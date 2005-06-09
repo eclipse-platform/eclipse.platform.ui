@@ -182,7 +182,7 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
     }
 
     /**
-     * The base implementation of this {@link IIntroPart}method ignores the
+     * The base implementation of this {@link org.eclipse.ui.intro.IIntroPart}method ignores the
      * memento and initializes the part in a fresh state. Subclasses may extend
      * to perform any state restoration, but must call the super method.
      * 
@@ -219,7 +219,7 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
     }
 
     /**
-     * The base implementation of this {@link IIntroPart} method does nothing.
+     * The base implementation of this {@link org.eclipse.ui.intro.IIntroPart} method does nothing.
      * Subclasses may override.
      * 
      * @param memento
