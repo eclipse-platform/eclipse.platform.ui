@@ -45,11 +45,13 @@ public class UndoManagerTest extends TestCase {
 	
 	//--- Static data sets for comparing scenarios - obtained from capturing random data ---
 	/** Original document */
-	private static final String staticOriginal= "y/D!=m}@#i4|;=/^::du]3_5g6JnYA>b*%hv#OKZUNkm&5Ujs:";
+	private static final String INITIAL_DOCUMENT_CONTENT= "+7cyg:/F!T4KnW;0+au$t1G%(`Z|u'7'_!-k?<c\"2Y.]CwsO.r";
 	/** Replacement string */
-	private static final String [] staticStrings= {"0G6", "8o", "+>$", "+P+", "> 5Z", "%+", "\n", "WzVa", "wv", "a", "sDn", "+p;", ")L5", "]aR", "3w0", "%=tVt", "-<p", "{-v", "yM", "(*SD&"};
+	private static final String [] REPLACEMENTS= { ">", "F", "M/r-*", "-", "bl", "", "}%/#", "", "k&", "f", "\\g", "c!x", "TLG-", "NPO", "Rp9u", "", "X", "W(", ")z", "oe", "", "h*", "t", "I", "X=N>", "2yt", "&Z", "2)W=", ":K", "P9S", "s8t8o", "", "", "5{7", "%", "", "v3", "Wz", "sH", "3c", "8", "ol", ",6$", "94[#", ".~", "n", ">", "9", "W", ",(FW", "Q", "^", "Bq", "$", "re", "", "9", "8[", "Mx", "4b", "$6", "F", "8s]", "o", "-", "E&6", "S\\", "/", "z.a", "4ai", "b", ")", "", "l", "VU", "7M+Ql", "xZ?x", "xx", "lc", "b", "A", "!", "4pSU", "", "{J", "H", "l>_", "n&9", "", "&`", ";igQxq", "", ">", ";\"", "k\\`]G", "o{?", "", "K", "_6", "="};
 	/** Position/offset pairs */
-	private static final int [] staticPositions= {21, 0, 22, 4, 5, 2, 1, 1, 29, 2, 44, 2, 19, 2, 37, 1, 26, 2, 17, 2, 32, 2, 34, 2, 7, 1, 12, 1, 37, 4, 12, 4, 24, 2, 38, 2, 2, 3, 0, 2, 22, 2, 5, 2, 27, 2, 43, 2, 0, 1, 39, 3, 30, 3, 28, 0, 26, 1, 37, 1, 29, 1, 35, 4, 43, 1, 45, 1, 12, 1, 8, 4, 11, 0, 35, 0, 11, 4, 46, 4};
+	private static final int [] POSITIONS= { 18, 2, 43, 1, 3, 2, 28, 3, 35, 1, 23, 5, 32, 2, 30, 1, 22, 1, 37, 0, 23, 3, 43, 2, 46, 1, 17, 1, 36, 6, 17, 5, 30, 4, 25, 1, 2, 2, 30, 0, 37, 3, 28, 1, 30, 2, 20, 5, 33, 1, 29, 1, 15, 2, 21, 2, 24, 4, 38, 3, 8, 0, 33, 2, 15, 2, 25, 0, 8, 2, 20, 3, 43, 2, 44, 1, 44, 2, 32, 2, 40, 2, 32, 3, 12, 2, 38, 3, 33, 2, 46, 0, 13, 3, 45, 0, 16, 2, 3, 2, 44, 0, 48, 0, 18, 5, 7, 6, 7, 3, 40, 0, 9, 1, 16, 3, 28, 3, 36, 1, 35, 2, 0, 3, 6, 1, 10, 4, 14, 2, 15, 3, 33, 1, 36, 0, 37, 0, 4, 3, 31, 3, 33, 3, 11, 3, 20, 2, 25, 3, 4, 3, 7, 3, 17, 0, 3, 1, 31, 3, 34, 1, 21, 0, 33, 1, 17, 4, 9, 1, 26, 3, 2, 3, 12, 1, 26, 3, 9, 5, 5, 0, 31, 3, 0, 3, 12, 1, 1, 1, 3, 0, 39, 0, 9, 2, 2, 0, 28, 2};
+
+	private static final boolean DEBUG= false;
 
 	public static Test suite() {
 		return new TestSuite(UndoManagerTest.class);
@@ -73,6 +75,13 @@ public class UndoManagerTest extends TestCase {
 		fUndoManager.connect(fTextViewer);
 	}
 	
+	/*
+	 *  @see TestCase#tearDown()
+	 */
+	protected void tearDown() {
+		fUndoManager.disconnect();
+	}
+
 	/**
 	 * Test for line delimiter conversion.
 	 */	
@@ -119,16 +128,42 @@ public class UndoManagerTest extends TestCase {
 			fUndoManager.undo();
 			
 		final String reverted= document.get();
-
 		assertEquals(original, reverted);
 	}
 	
 	private void doChange(IDocument document, int count) {
 		try {
+			String before = document.get();
+			
+			if (DEBUG)
+				System.out.println(before);
+			
+			Position [] positions = new Position[count];
+			String [] strings = new String[count];
 			for (int i= 0; i < count; i++) {
 				final Position position= createRandomPositionPoisson(document.getLength());
 				final String string= createRandomStringPoisson(4);
 				document.replace(position.getOffset(), position.getLength(), string);
+				positions[i]= position;
+				strings[i]= string;
+			}
+			
+			if (DEBUG) {
+				System.out.print("{ ");
+				for (int i=0; i<count; i++) {
+					System.out.print(positions[i].getOffset());
+					System.out.print(", ");
+					System.out.print(positions[i].getLength());
+					System.out.print(", ");
+				}
+				System.out.println(" }");
+				System.out.print("{ ");
+				for (int i=0; i<count; i++) {
+					System.out.print("\"");
+					System.out.print(strings[i]);
+					System.out.print("\", ");
+				}
+				System.out.println(" }");
 			}
 		} catch (BadLocationException e) {
 			assertTrue(false);
@@ -137,10 +172,15 @@ public class UndoManagerTest extends TestCase {
 	
 	// repeatable test case for comparing success/failure among different tests
 	private void doRepeatableChange(IDocument document) {
-		assertTrue(staticPositions.length >= (2 * staticStrings.length));
+		assertTrue(POSITIONS.length >= (2 * REPLACEMENTS.length));
 		try {
-			for (int i= 0; i < staticStrings.length; i++) {
-				document.replace(staticPositions[i*2], staticPositions[i*2+1], staticStrings[i]);
+			for (int i= 0; i < REPLACEMENTS.length; i++) {
+				int offset= POSITIONS[i*2];
+				int length= POSITIONS[i*2+1];
+				if (document.getLength() > offset + length)
+					document.replace(offset, length, REPLACEMENTS[i]);
+				else
+					document.replace(0,0, REPLACEMENTS[i]);
 			}
 		} catch (BadLocationException e) {
 			assertTrue(false);
@@ -266,8 +306,10 @@ public class UndoManagerTest extends TestCase {
 			doChange(document, RANDOM_REPLACE_COUNT);
 			fUndoManager.endCompoundChange();
 			assertTrue(fUndoManager.undoable());
-			for (int j= 0; j < NUMBER_ATOMIC_PER_COMPOUND; j++)
+			for (int j= 0; j < NUMBER_ATOMIC_PER_COMPOUND; j++) {
 				doChange(document, RANDOM_REPLACE_COUNT);
+				assertTrue(fUndoManager.undoable());
+			}
 		}
 
 		assertTrue(fUndoManager.undoable());
@@ -281,8 +323,9 @@ public class UndoManagerTest extends TestCase {
 	}
 
 	public void testRepeatableAccess() {
+		assertTrue(REPLACEMENTS.length <= MAX_UNDO_LEVEL);
 		
-		final IDocument document= new Document(staticOriginal);
+		final IDocument document= new Document(INITIAL_DOCUMENT_CONTENT);
 		fTextViewer.setDocument(document);
 	
 		doRepeatableChange(document);
@@ -293,12 +336,13 @@ public class UndoManagerTest extends TestCase {
 			
 		final String reverted= document.get();
 
-		assertEquals(staticOriginal, reverted);
+		assertEquals(INITIAL_DOCUMENT_CONTENT, reverted);
 	}
 	
 	public void testRepeatableAccessAsCompound() {
-		
-		final IDocument document= new Document(staticOriginal);
+		assertTrue(REPLACEMENTS.length <= MAX_UNDO_LEVEL);
+
+		final IDocument document= new Document(INITIAL_DOCUMENT_CONTENT);
 		fTextViewer.setDocument(document);
 	
 		fUndoManager.beginCompoundChange();
@@ -312,12 +356,13 @@ public class UndoManagerTest extends TestCase {
 			
 		final String reverted= document.get();
 
-		assertEquals(staticOriginal, reverted);
+		assertEquals(INITIAL_DOCUMENT_CONTENT, reverted);
 	}
 	
 	public void testRepeatableAccessAsUnclosedCompound() {
+		assertTrue(REPLACEMENTS.length <= MAX_UNDO_LEVEL);
 		
-		final IDocument document= new Document(staticOriginal);
+		final IDocument document= new Document(INITIAL_DOCUMENT_CONTENT);
 		fTextViewer.setDocument(document);
 	
 		fUndoManager.beginCompoundChange();
@@ -329,14 +374,13 @@ public class UndoManagerTest extends TestCase {
 			
 		final String reverted= document.get();
 
-		assertEquals(staticOriginal, reverted);
+		assertEquals(INITIAL_DOCUMENT_CONTENT, reverted);
 	}
 	
 	public void testRepeatableAccessWithMixedAndEmptyCompound() {
-		
-		final int NUMBER_ATOMIC_PER_COMPOUND= 3;
+		assertTrue(REPLACEMENTS.length + 2 <= MAX_UNDO_LEVEL);
 
-		final IDocument document= new Document(staticOriginal);
+		final IDocument document= new Document(INITIAL_DOCUMENT_CONTENT);
 		fTextViewer.setDocument(document);
 
 		fUndoManager.beginCompoundChange();		
@@ -349,8 +393,7 @@ public class UndoManagerTest extends TestCase {
 		fUndoManager.endCompoundChange();
 			
 	    // insert the atomic changes
-		for (int j=0; j<NUMBER_ATOMIC_PER_COMPOUND; j++)
-				doRepeatableChange(document);
+		doRepeatableChange(document);
 
 		assertTrue(fUndoManager.undoable());
 		while (fUndoManager.undoable())
@@ -359,11 +402,11 @@ public class UndoManagerTest extends TestCase {
 			
 		final String reverted= document.get();
 
-		assertEquals(staticOriginal, reverted);		
+		assertEquals(INITIAL_DOCUMENT_CONTENT, reverted);		
 	}
 	
 	public void testDocumentStamp() {
-		final Document document= new Document(staticOriginal);
+		final Document document= new Document(INITIAL_DOCUMENT_CONTENT);
 		fTextViewer.setDocument(document);
 		long stamp= document.getModificationStamp();
 		doChange(document, 1);
