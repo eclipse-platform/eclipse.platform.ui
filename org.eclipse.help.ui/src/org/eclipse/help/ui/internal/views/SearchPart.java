@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -19,6 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.help.HelpSystem;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.federated.FederatedSearchEntry;
 import org.eclipse.help.internal.search.federated.FederatedSearchJob;
@@ -67,6 +70,22 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	private static final String HREF_TOGGLE = "__toggle__"; //$NON-NLS-1$
 
 	private static final String HREF_SEARCH_HELP = "/org.eclipse.platform.doc.user/tasks/tsearch.htm"; //$NON-NLS-1$
+	
+	private static boolean SEARCH_HELP_AVAILABLE=false;
+
+	static {
+		InputStream is = HelpSystem.getHelpContent(HREF_SEARCH_HELP);
+		if (is!=null) {
+			//don't leak the input stream
+			try {
+				is.close();
+				SEARCH_HELP_AVAILABLE = true;
+			}
+			catch (IOException e) {
+				//ignore
+			}
+		}
+	}
 
 	private String id;
 
@@ -289,15 +308,18 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 			buff.append("\"/>"); //$NON-NLS-1$
 			buff.append("</p><p>"); //$NON-NLS-1$
 			buff.append(Messages.expression_label);
-			buff.append("</p><p>"); //$NON-NLS-1$
-			buff.append("<img href=\""); //$NON-NLS-1$
-			buff.append(IHelpUIConstants.IMAGE_HELP);
-			buff.append("\"/> "); //$NON-NLS-1$
-			buff.append("<a href=\""); //$NON-NLS-1$
-			buff.append(HREF_SEARCH_HELP);
-			buff.append("\">"); //$NON-NLS-1$
-			buff.append(Messages.SearchPart_learnMore);
-			buff.append("</a>"); //$NON-NLS-1$
+			//Only add the link if available
+			if (SEARCH_HELP_AVAILABLE) {
+				buff.append("</p><p>"); //$NON-NLS-1$
+				buff.append("<img href=\""); //$NON-NLS-1$
+				buff.append(IHelpUIConstants.IMAGE_HELP);
+				buff.append("\"/> "); //$NON-NLS-1$
+				buff.append("<a href=\""); //$NON-NLS-1$
+				buff.append(HREF_SEARCH_HELP);
+				buff.append("\">"); //$NON-NLS-1$
+				buff.append(Messages.SearchPart_learnMore);
+				buff.append("</a>"); //$NON-NLS-1$
+			}
 		} else {
 			searchWordChevron.setToolTipText(Messages.SearchPart_expand);
 			buff.append("<control href=\""); //$NON-NLS-1$
