@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.views.variables;
 import java.util.ArrayList;
 
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ISuspendResume;
@@ -160,7 +161,10 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 		for (int i=0; i<events.length; i++) {
 			// filter out change events 
 			if (events[i].getKind() == DebugEvent.CHANGE) {
-				if (!(events[i].getSource() instanceof IStackFrame || events[i].getSource() instanceof IVariable)) {
+				Object source = events[i].getSource();
+				if (!(source instanceof IStackFrame ||
+					  source instanceof IVariable ||
+					  source instanceof IDebugTarget)) {
 					if (events.length == 1) {
 						return EMPTY_EVENT_SET;
 					}

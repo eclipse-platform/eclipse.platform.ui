@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.views.registers;
 import java.util.ArrayList;
 
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
@@ -32,9 +33,11 @@ public class RegistersViewEventHandler extends VariablesViewEventHandler {
 			// filter out change events 
 			if (events[i].getKind() == DebugEvent.CHANGE) {
 				// IRegister is a subclass to IVariable, no need to check for that
-				if (!(events[i].getSource() instanceof IStackFrame ||
-					  events[i].getSource() instanceof IVariable ||
-					  events[i].getSource() instanceof IRegisterGroup)) {
+				Object source = events[i].getSource();
+				if (!(source instanceof IStackFrame ||
+					  source instanceof IVariable ||
+					  source instanceof IRegisterGroup ||
+					  source instanceof IDebugTarget)) {
 					if (events.length == 1) {
 						return EMPTY_EVENT_SET;
 					}
