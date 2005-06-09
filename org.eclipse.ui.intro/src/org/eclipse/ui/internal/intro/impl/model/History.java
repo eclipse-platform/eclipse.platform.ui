@@ -162,6 +162,12 @@ public class History {
         // point the nav location to the end of the vector.
         navigationLocation = getHistoryEndPosition();
     }
+    
+     public void removeLastHistory() {
+        history.remove(getHistoryEndPosition());
+        // point the nav location to the end of the vector.
+        navigationLocation = getHistoryEndPosition();
+    }
 
     private void trimHistory(Object location) {
         List newHistory = history.subList(0, navigationLocation + 1);

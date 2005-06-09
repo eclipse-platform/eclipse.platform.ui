@@ -43,6 +43,13 @@ public class BrowserIntroPartLocationListener implements LocationListener {
         String url = event.location;
         if (url == null)
             return;
+
+        // guard against unnecessary History updates.
+        Browser browser = (Browser) event.getSource();
+        if (browser.getData("navigation") != null
+                && browser.getData("navigation").equals("true"))
+            return;
+
         IntroModelRoot model = implementation.getModel();
         IntroURLParser parser = new IntroURLParser(url);
         if (!parser.hasProtocol() || parser.getHost() == null
@@ -60,27 +67,45 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             // cleared by a progress listener, when all the frame navigation is
             // completed. We need to update history only in dynamic case. In
             // static case, the browser keeps the history.
-            Browser browser = (Browser) event.getSource();
-            if (browser.getData("frameNavigation") == null && event.top == true) { //$NON-NLS-1$
+            if (browser.getData("frameNavigation") != null) {
+                // this is at least the second frame navigation, remove last
+                // history since it was added just as a filler.
+                if (event.top == false && browser.getData("tempUrl") != null
+                        && browser.getData("tempUrl").equals("true")) {
+                    implementation.getHistory().removeLastHistory();
+                    flagRemovedTempUrl();
+                }
+            }
+
+            if (event.top == true) {
                 // we are navigating to a regular fully qualified URL. Event.top
                 // is true.
-                browser.setData("frameNavigation", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+                flagStartOfFrameNavigation();
                 implementation.updateHistory(url);
             }
 
             if (browser.getData("frameNavigation") == null //$NON-NLS-1$
                     && event.top == false) {
-                // a new url navigation that is not in a top frame, assume that
-                // it is an embedded Help System topic navigation. we are
-                // navigating to an injected iframe since event.top is false.
-                // Set the iframe url of the current iframe page, and add it to
-                // history.
+                // a new url navigation that is not in a top frame. It can
+                // be a navigation url due to frames, it can be due to a true
+                // single Frame navigation (when you click on a link inside a
+                // Frame) or it is an embedded Help System topic navigation.
                 AbstractIntroPage currentPage = model.getCurrentPage();
                 if (currentPage.isIFramePage()) {
+                    // it is an embedded Help System topic navigation. we are
+                    // navigating to an injected iframe since event.top is
+                    // false. Set the iframe url of the current iframe page, and
+                    // add it
+                    // to history.
                     currentPage.setIFrameURL(url);
                     implementation.updateHistory(currentPage);
+                } else {
+                    flagStartOfFrameNavigation();
+                    flagStoredTempUrl();
+                    implementation.updateHistory(url);
                 }
             }
+
         }
         return;
     }
@@ -111,8 +136,8 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             // supported here, only Help system injected iframes.
             if (model.isDynamic()) {
                 if ((introURL.getParameter(IntroURL.KEY_EMBED_TARGET) != null)
-                        || introURL.getAction().equals(IntroURL.SHOW_PAGE))
-                    implementation.flagStartOfNavigation();
+                        && introURL.getAction().equals(IntroURL.SHOW_PAGE))
+                    flagStartOfNavigation();
             }
             return;
         }
@@ -120,6 +145,37 @@ public class BrowserIntroPartLocationListener implements LocationListener {
 
     }
 
+
+
+
+    public void flagStartOfFrameNavigation() {
+        if (implementation.getBrowser().getData("frameNavigation") == null) //$NON-NLS-1$
+            implementation.getBrowser().setData("frameNavigation", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public void flagEndOfFrameNavigation() {
+        implementation.getBrowser().setData("frameNavigation", null); //$NON-NLS-1$
+    }
+
+
+    public void flagStartOfNavigation() {
+        if (implementation.getBrowser().getData("navigation") == null) //$NON-NLS-1$
+            implementation.getBrowser().setData("navigation", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public void flagEndOfNavigation() {
+        implementation.getBrowser().setData("navigation", null); //$NON-NLS-1$
+    }
+
+
+    public void flagStoredTempUrl() {
+        if (implementation.getBrowser().getData("tempUrl") == null) //$NON-NLS-1$
+            implementation.getBrowser().setData("tempUrl", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public void flagRemovedTempUrl() {
+        implementation.getBrowser().setData("tempUrl", null); //$NON-NLS-1$
+    }
 
 
 }

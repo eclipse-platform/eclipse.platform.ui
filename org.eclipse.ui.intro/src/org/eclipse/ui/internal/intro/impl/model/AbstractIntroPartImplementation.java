@@ -377,4 +377,9 @@ public abstract class AbstractIntroPartImplementation {
     protected abstract void handleRegistryChanged(IRegistryChangeEvent event);
 
 
+    public History getHistory() {
+        return history;
+    }
+
+
 }

@@ -52,15 +52,15 @@ import org.w3c.dom.NodeList;
 public class BrowserIntroPartImplementation extends
         AbstractIntroPartImplementation implements IPropertyListener,
         IIntroContentProviderSite {
+ 
 
-
-    // the browser widget that will display the intro content
+    // the browser widget that will display the intro content 
     protected Browser browser = null;
 
     // the HTML generator used to generate dynamic content
     private IntroHTMLGenerator htmlGenerator = null;
 
-    private BrowserIntroPartLocationListener urlListener = new BrowserIntroPartLocationListener(
+    protected BrowserIntroPartLocationListener urlListener = new BrowserIntroPartLocationListener(
         this);
 
 
@@ -102,7 +102,9 @@ public class BrowserIntroPartImplementation extends
             }
 
             public void completed(ProgressEvent event) {
-                flagEndOfNavigation();
+                urlListener.flagEndOfNavigation();
+                urlListener.flagEndOfFrameNavigation();
+                urlListener.flagRemovedTempUrl();
                 if (!getModel().isDynamic())
                     updateNavigationActionsState();
             }
@@ -476,6 +478,8 @@ public class BrowserIntroPartImplementation extends
             // dynamic case. Uses navigation history.
             if (history.canNavigateBackward()) {
                 history.navigateHistoryBackward();
+                // guard against unnecessary History updates.
+                urlListener.flagStartOfNavigation();
                 if (history.currentLocationIsUrl()) {
                     success = browser.setUrl(history.getCurrentLocationAsUrl());
                 } else {
@@ -484,12 +488,6 @@ public class BrowserIntroPartImplementation extends
                     // a url will not trigger regen since current page would be
                     // the same.
                     AbstractIntroPage page = history.getCurrentLocationAsPage();
-                    if (page.isIFramePage())
-                        // if page is a cloned IFrame page, guard against Iframe
-                        // navigations. The returned page has the correct Iframe
-                        // set.
-                        flagStartOfNavigation();
-
                     success = generateDynamicContentForPage(page);
                     getModel().setCurrentPageId(page.getId(), false);
                 }
@@ -516,12 +514,12 @@ public class BrowserIntroPartImplementation extends
             // dynamic case. Uses navigation history.
             if (history.canNavigateForward()) {
                 history.navigateHistoryForward();
+                // guard against unnecessary History updates.
+                urlListener.flagStartOfNavigation();
                 if (history.currentLocationIsUrl()) {
                     success = browser.setUrl(history.getCurrentLocationAsUrl());
                 } else {
                     AbstractIntroPage page = history.getCurrentLocationAsPage();
-                    if (page.isIFramePage())
-                        flagStartOfNavigation();
                     success = generateDynamicContentForPage(page);
                     getModel().setCurrentPageId(page.getId(), false);
                 }
@@ -647,15 +645,6 @@ public class BrowserIntroPartImplementation extends
 
     public Browser getBrowser() {
         return browser;
-    }
-
-    public void flagStartOfNavigation() {
-        if (browser.getData("frameNavigation") == null) //$NON-NLS-1$
-            browser.setData("frameNavigation", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-
-    public void flagEndOfNavigation() {
-        browser.setData("frameNavigation", null); //$NON-NLS-1$
     }
 
 
