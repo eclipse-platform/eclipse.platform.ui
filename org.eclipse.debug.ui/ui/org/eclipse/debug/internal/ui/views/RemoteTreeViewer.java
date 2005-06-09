@@ -20,14 +20,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
@@ -395,76 +391,48 @@ public class RemoteTreeViewer extends TreeViewer {
                 Widget widget = findItem(parent);
                 if (widget == null) {
                     add(parent, children);
-                    return;
-                }
-                Item[] currentChildren = getChildren(widget);
-                int pos = offset;
-                if (pos >= currentChildren.length) {
-                    // append
-                    add(parent, children);
                 } else {
-                    // replace
-                    for (int i = 0; i < children.length; i++) {
-                        Object child = children[i];
-                        if (pos < currentChildren.length) {
-                            // replace
-                            Item item = currentChildren[pos];
-                            Object data = item.getData();
-                            if (!child.equals(data)) {
-                                // no need to cancel pending updates here, the child may have shifted up/down
-                                internalRefresh(item, child, true, true);
-                            } else {
-                            	// If it's the same child, the label/content may still have changed
-                                doUpdateItem(item, child);
-                            	updatePlus(item, child);
-                            }
-                        } else {
-                            // add
-                        	int numLeft = children.length - i;
-                        	if (numLeft > 1) {
-                        		Object[] others = new Object[numLeft];
-                        		System.arraycopy(children, i, others, 0, numLeft);
-                        		add(parent, others);
-                        	} else {
-                        		add(parent, child);
-                        	}
-                        	return;
-                        }
-                        pos++;
-                    }
+	                Item[] currentChildren = getChildren(widget);
+	                int pos = offset;
+	                if (pos >= currentChildren.length) {
+	                    // append
+	                    add(parent, children);
+	                } else {
+	                    // replace
+	                    for (int i = 0; i < children.length; i++) {
+	                        Object child = children[i];
+	                        if (pos < currentChildren.length) {
+	                            // replace
+	                            Item item = currentChildren[pos];
+	                            Object data = item.getData();
+	                            if (!child.equals(data)) {
+	                                // no need to cancel pending updates here, the child may have shifted up/down
+	                                internalRefresh(item, child, true, true);
+	                            } else {
+	                            	// If it's the same child, the label/content may still have changed
+	                                doUpdateItem(item, child);
+	                            	updatePlus(item, child);
+	                            }
+	                        } else {
+	                            // add
+	                        	int numLeft = children.length - i;
+	                        	if (numLeft > 1) {
+	                        		Object[] others = new Object[numLeft];
+	                        		System.arraycopy(children, i, others, 0, numLeft);
+	                        		add(parent, others);
+	                        	} else {
+	                        		add(parent, child);
+	                        	}
+	                        	break;
+	                        }
+	                        pos++;
+	                    }
+	                }
                 }
                 runDeferredUpdates();
             }
         });
     }
-
-	protected void doUpdateItem(Item item, Object element) {
-		// update icon and label
-		ILabelProvider provider= (ILabelProvider) getLabelProvider();
-		String text= provider.getText(element);
-		if ("".equals(item.getText()) || !DebugViewInterimLabelProvider.PENDING_LABEL.equals(text)) { //$NON-NLS-1$
-			// If an element already has a label, don't set the label to
-			// the pending label. This avoids labels flashing when they're
-			// updated.
-			item.setText(text);
-		}
-		Image image = provider.getImage(element);
-		if (item.getImage() != image) {
-			item.setImage(image);
-		}
-		if (provider instanceof IColorProvider) {
-			IColorProvider cp = (IColorProvider) provider;
-			TreeItem treeItem = (TreeItem) item;
-			treeItem.setForeground(cp.getForeground(element));
-			treeItem.setBackground(cp.getBackground(element));
-		}
-		if (provider instanceof IFontProvider) {
-			IFontProvider fontProvider= (IFontProvider) provider;
-			TreeItem treeItem = (TreeItem) item;
-			treeItem.setFont(fontProvider.getFont(element));
-		}
-	    
-	}
     
 }
 

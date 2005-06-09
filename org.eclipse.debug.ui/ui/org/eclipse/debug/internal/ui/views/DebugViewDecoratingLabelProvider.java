@@ -13,8 +13,12 @@ package org.eclipse.debug.internal.ui.views;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.IDelayedLabelDecorator;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.ViewerLabel;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * A label provider which receives notification of labels computed in
@@ -94,4 +98,37 @@ public class DebugViewDecoratingLabelProvider extends DecoratingLabelProvider {
 		disposed= true;
 		super.dispose();
 	}
+	
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, java.lang.Object)
+     */
+    public void updateLabel(ViewerLabel settings, Object element) {
+
+        ILabelDecorator currentDecorator = getLabelDecorator();
+        String oldText = settings.getText();
+        String text= getText(element);
+        boolean decorationReady = !DebugViewInterimLabelProvider.PENDING_LABEL.equals(text);
+        if (currentDecorator instanceof IDelayedLabelDecorator) {
+            IDelayedLabelDecorator delayedDecorator = (IDelayedLabelDecorator) currentDecorator;
+            if (!delayedDecorator.prepareDecoration(element, oldText)) {
+                // The decoration is not ready but has been queued for processing
+                decorationReady = false;
+            }
+        }
+        // update icon and label
+
+        if (decorationReady || oldText == null
+                || settings.getText().length() == 0)
+            settings.setText(getText(element));
+
+        Image oldImage = settings.getImage();
+        if (decorationReady || oldImage == null) {
+            settings.setImage(getImage(element));
+        }
+ 
+        if(decorationReady)
+        	updateForDecorationReady(settings,element);
+
+    }
 }
