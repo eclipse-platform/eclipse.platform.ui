@@ -178,9 +178,11 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 		}	
 	}
 
-	protected DebugEvent[] filterEvents(DebugEvent[] events) {
-		// no filtering of events for Expression View
-		return events;
+	protected boolean isFiltered(DebugEvent event) {
+		// TODO Auto-generated method stub
+		return false;
 	}
+	
+	
 	
 }

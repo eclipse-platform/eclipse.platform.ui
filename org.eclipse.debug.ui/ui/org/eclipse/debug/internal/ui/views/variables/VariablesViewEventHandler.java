@@ -18,6 +18,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.RemoteTreeContentManager;
@@ -159,20 +160,14 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	protected DebugEvent[] filterEvents(DebugEvent[] events) {
 		ArrayList filtered = null;
 		for (int i=0; i<events.length; i++) {
-			// filter out change events 
-			if (events[i].getKind() == DebugEvent.CHANGE) {
-				Object source = events[i].getSource();
-				if (!(source instanceof IStackFrame ||
-					  source instanceof IVariable ||
-					  source instanceof IDebugTarget)) {
-					if (events.length == 1) {
-						return EMPTY_EVENT_SET;
-					}
-					if (filtered == null) {
-						filtered = new ArrayList();
-					}
-					filtered.add(events[i]);
+			if (isFiltered(events[i])) {
+				if (events.length == 1) {
+					return EMPTY_EVENT_SET;
 				}
+				if (filtered == null) {
+					filtered = new ArrayList();
+				}
+				filtered.add(events[i]);
 			}
 		}
 		if (filtered == null) {
@@ -193,5 +188,28 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 		fContentManager = manager;
 	}
 
+	protected boolean isFiltered(DebugEvent event) {
+		if (event.getKind() == DebugEvent.CHANGE) {
+			Object source = event.getSource();
+			switch (event.getDetail()) {
+				case DebugEvent.CONTENT:
+					if (source instanceof IVariable ||
+						source instanceof IStackFrame ||
+						source instanceof IThread ||
+						source instanceof IDebugTarget) {
+						return false;
+					}
+					return true;
+				case DebugEvent.STATE:
+					if (source instanceof IVariable) {
+						return false;
+					}
+					return true;
+				default: // UNSPECIFIED
+					return true;
+			}
+		}
+		return false;
+	}
 }
 
