@@ -223,9 +223,9 @@ public class IntroPartPresentation extends AbstractIntroElement {
                                 implementationElement, "kind")); //$NON-NLS-1$
                 break;
             } catch (SWTError e) {
-                Log.error("Failed to create Intro UI implementation from: " //$NON-NLS-1$
+                Log.warning("Failed to create Intro UI implementation from: " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(implementationElement,
-                            "kind"), e); //$NON-NLS-1$
+                            "kind") + e.getMessage()); //$NON-NLS-1$
                 implementation = null;
                 implementationElement = null;
             } catch (Exception e) {
@@ -242,6 +242,9 @@ public class IntroPartPresentation extends AbstractIntroElement {
             implementation = new FormIntroPartImplementation();
             try {
                 implementation.init(introPart, memento);
+                // simply set the presentation kind since all other attributes
+                // will be null.
+                implementationKind = FORMS_IMPL_KIND;
             } catch (Exception e) {
                 // should never be here.
                 Log.error(e.getMessage(), e);
