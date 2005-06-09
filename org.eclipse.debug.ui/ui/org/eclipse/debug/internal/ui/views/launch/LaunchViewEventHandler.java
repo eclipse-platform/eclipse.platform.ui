@@ -532,8 +532,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				}
 			}
 		};
-
-		getView().syncExec(r);				
+		
+		getView().asyncExec(r);				
 	}
 
 	/**
