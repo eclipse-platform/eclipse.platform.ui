@@ -205,12 +205,12 @@ public class DebugUIMessages extends NLS {
 	public static String TableRenderingPreferencePage_2;
 	public static String TableRenderingPreferencePage_3;
 	public static String TableRenderingPreferencePage_4;
+	public static String TableRenderingContentProvider_0;
+	public static String TableRenderingContentProvider_1;
+	public static String TableRenderingContentProvider_2;
 	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIMessages.class);
 	}
-
-
-
 }

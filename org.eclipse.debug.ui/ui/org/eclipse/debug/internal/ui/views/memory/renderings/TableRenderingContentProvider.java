@@ -161,6 +161,20 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		BigInteger mbStart = fInput.getStartAddress();
 		BigInteger mbEnd = fInput.getEndAddress();
 		
+		// check that the load address is within range
+		if (loadAddress.compareTo(mbStart) < 0 || loadAddress.compareTo(mbEnd) > 0)
+		{
+			// default load address to memory block base address
+			loadAddress = ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress();
+			fInput.setLoadAddress(loadAddress);
+		}
+		
+		// if address is still out of range, throw an exception
+		if (loadAddress.compareTo(mbStart) < 0 || loadAddress.compareTo(mbEnd) > 0)
+		{
+			throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_0 + loadAddress.toString(16), null));
+		}
+		
 		int addressableUnitsPerLine = fInput.getMemoryRendering().getAddressableUnitPerLine();
 		BigInteger bufferStart = loadAddress.subtract(BigInteger.valueOf(fInput.getPreBuffer()*addressableUnitsPerLine));
 		BigInteger bufferEnd = loadAddress.add(BigInteger.valueOf(fInput.getPostBuffer()*addressableUnitsPerLine));
@@ -173,6 +187,10 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			
 			if (bufferEnd.compareTo(mbEnd) > 0)
 				bufferEnd = mbEnd;
+			
+			// buffer end must be greater than buffer start
+			if (bufferEnd.compareTo(bufferStart) <= 0)
+				throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_1, null));
 			
 			int numLines = bufferEnd.subtract(bufferStart).divide(BigInteger.valueOf(addressableUnitsPerLine)).intValue()+1;		
 			// get stoarage to fit the memory view tab size
@@ -187,6 +205,10 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			{
 				bufferStart = mbEnd.subtract(BigInteger.valueOf((fInput.getNumLines()-1)*addressableUnitsPerLine));
 			}
+			
+			// buffer end must be greater than buffer start
+			if (bufferEnd.compareTo(bufferStart) <= 0)
+				throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_2, null));
 			
 			int numLines = fInput.getNumLines();	
 			// get stoarage to fit the memory view tab size
