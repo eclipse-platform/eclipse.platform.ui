@@ -133,7 +133,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         // XHTML cases. Default is to include shared style.
         this.sharedStyle = getAttribute(element, ATT_SHARED_STYLE);
         if(sharedStyle==null)
-            sharedStyle = "true";
+            sharedStyle = "true"; //$NON-NLS-1$
 
     }
 
@@ -491,7 +491,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
                     AbstractBaseIntroElement.ATT_FILTERED_FROM);
                 sharedStyle = getAttribute(element, ATT_SHARED_STYLE);
                 if(sharedStyle==null)
-                    sharedStyle = "true";
+                    sharedStyle = "true"; //$NON-NLS-1$
                 foundMatchingPage = true;
             }
         }
@@ -839,7 +839,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * @param url
      */
     public boolean injectSharedStyle() {
-        return this.sharedStyle.equals("true") ? true : false;
+        return this.sharedStyle.equals("true") ? true : false; //$NON-NLS-1$
     }
 
 }

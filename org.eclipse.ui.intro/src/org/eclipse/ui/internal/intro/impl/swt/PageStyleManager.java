@@ -51,7 +51,12 @@ public class PageStyleManager extends SharedStyleManager {
     public PageStyleManager(AbstractIntroPage page, Properties sharedProperties) {
         this.page = page;
         bundle = page.getBundle();
-        properties = new Properties(sharedProperties);
+        
+        // honor shared-style.
+        if (page.injectSharedStyle())
+            properties = new Properties(sharedProperties);
+        else
+            properties = new Properties();
         String altStyle = page.getAltStyle();
         if (altStyle != null)
             load(properties, altStyle);
