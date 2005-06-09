@@ -44,6 +44,10 @@ import org.eclipse.ui.part.PageBook;
  */
 public class TagSelectionArea extends DialogArea {
 	
+    private static int COLUMN_TRIM = "carbon".equals(SWT.getPlatform()) ? 24 : 3; //$NON-NLS-1$
+    
+    private static int ICON_WIDTH = 40; //$NON-NLS-1$
+    
     /*
      * Property constant which identifies the selected tag or
      * null if no tag is selected
@@ -216,7 +220,7 @@ public class TagSelectionArea extends DialogArea {
 	            tagTable.refresh();
                 int maxWidth = getMaxWidth(list.getChildren(null));
                 if (maxWidth > 0) {
-                    maxWidth = maxWidth + 40; /* space for the tag icon */
+                    maxWidth = maxWidth + ICON_WIDTH + COLUMN_TRIM; /* space for the tag icon */
                     tagTable.getTable().getColumn(0).setWidth(maxWidth);
                 }
 	            if (filterText == null || filter == null || filter.length() == 0) {
