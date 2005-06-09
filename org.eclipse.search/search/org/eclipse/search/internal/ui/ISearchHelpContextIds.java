@@ -22,6 +22,7 @@ public interface ISearchHelpContextIds {
 	public static final String TYPE_FILTERING_DIALOG= PREFIX + "type_filtering_dialog_context"; //$NON-NLS-1$
 
 	public static final String SEARCH_VIEW= PREFIX + "search_view_context"; //$NON-NLS-1$
+	public static final String New_SEARCH_VIEW= PREFIX + "new_search_view_context"; //$NON-NLS-1$
 	
 	public static final String REPLACE_DIALOG= PREFIX + "replace_dialog_context"; //$NON-NLS-1$
 
