@@ -61,11 +61,6 @@ public class TagRefreshButtonArea extends DialogArea {
 	 	buttonComp.setLayout(SWTUtils.createGridLayout(4, converter, SWTUtils.MARGINS_NONE));
 	 	
 		fMessageLabel= SWTUtils.createLabel(buttonComp, null);
-        try {
-            fMessageLabel.setLayoutData(SWTUtils.createGridData(converter.convertWidthInCharsToPixels(CVSUIMessages.TagRefreshButtonArea_6.length()), SWT.DEFAULT, SWT.FILL, SWT.CENTER, true, false));
-        } catch (NullPointerException e) {
-            // The message may be missing so just continue
-        }
 		refreshButton = new Button(buttonComp, SWT.PUSH);
 		refreshButton.setText (CVSUIMessages.TagConfigurationDialog_20);
 		
