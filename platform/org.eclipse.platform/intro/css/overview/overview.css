@@ -18,6 +18,10 @@ iframe {
 	padding-left:10px;
 	}
 	
+/* mozilla scrollbar appearing off page fix */
+#page-content > iframe {
+	width: 98%;
+}	
 
 
 /* 
