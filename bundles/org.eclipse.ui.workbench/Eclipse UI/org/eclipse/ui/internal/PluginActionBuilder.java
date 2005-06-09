@@ -282,16 +282,15 @@ public abstract class PluginActionBuilder extends RegistryReader {
 
             // If the menu does not exist create it.
             IMenuManager newMenu = parent.findMenuUsingPath(id);
-            if (newMenu == null) {
+            if (newMenu == null)
                 newMenu = new MenuManager(label, id);
 
-                // Add the menu
-                try {
-                    insertAfter(parent, group, newMenu);
-                } catch (IllegalArgumentException e) {
-                    WorkbenchPlugin
-                            .log("Invalid Menu Extension (Group is missing): " + id); //$NON-NLS-1$
-                }
+            // Add the menu
+            try {
+                insertAfter(parent, group, newMenu);
+            } catch (IllegalArgumentException e) {
+                WorkbenchPlugin
+                        .log("Invalid Menu Extension (Group is missing): " + id); //$NON-NLS-1$
             }
 
             // Get the menu again as it may be wrapped, otherwise adding
