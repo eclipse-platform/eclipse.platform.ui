@@ -95,7 +95,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 		ResourceInfo info = getResourceInfo(includePhantoms, false);
 		int flags = getFlags(info);
-		checkExists(flags, true);
+		checkAccessible(flags);
 		//use the fast visitor if visiting to infinite depth
 		if (depth == IResource.DEPTH_INFINITE) {
 			accept(new IResourceProxyVisitor() {
