@@ -371,6 +371,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 				
 		GridLayout parentLayout = (GridLayout) parent.getLayout();
 		parentLayout.numColumns = 2;
+		parentLayout.marginHeight = 0;
+		parentLayout.marginTop = IDialogConstants.VERTICAL_MARGIN;		
 		parent.setLayout(parentLayout);
 		
 		Composite titleComposite = super.createTitleArea(parent);

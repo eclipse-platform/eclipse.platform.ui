@@ -521,8 +521,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 
 		
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
-		layoutData.heightHint = JFaceResources.getImage(PREF_DLG_TITLE_IMG).getBounds().height
-				+ (margins * 3);
+		layoutData.verticalAlignment = SWT.TOP;
 		titleArea.setLayoutData(layoutData);
 
 		// Message label
