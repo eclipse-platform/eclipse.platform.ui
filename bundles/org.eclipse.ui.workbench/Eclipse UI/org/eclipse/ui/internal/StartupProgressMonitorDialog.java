@@ -32,8 +32,17 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 
+	// make the dialog itself at least 500 pixels wide
+	private static final int MINIMUM_WIDTH = 500;
+
+	// how many pixels should the dialog be shown below the center of the
+	// display area
+	private static int VERTICAL_OFFSET = 85;
+
+	
 	/**
 	 * Construct an instance of this dialog.
+	 * 
 	 * @param parent
 	 */
 	public StartupProgressMonitorDialog(Shell parent) {
@@ -57,6 +66,10 @@ public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 		Composite progressArea = new Composite(container, SWT.NONE);
 		super.createContents(progressArea);
 
+		// making the margins the same in each direction
+		gridLayout = (GridLayout) progressArea.getLayout();
+		gridLayout.marginHeight = gridLayout.marginWidth;
+
 		return container;
 	}
 	
@@ -67,14 +80,23 @@ public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 		return null;
 	}
 
+	protected Control createMessageArea(Composite composite) {
+		// setting message to null to avoid extra spacing in the layout.
+		// If message is null, messageLabel is not created.
+		message = null;
+		return super.createMessageArea(composite);
+	}
+
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
+
 		GridData gridData = (GridData) composite.getLayoutData();
 		gridData.verticalAlignment = SWT.CENTER;
 
 		// make the subTaskLabel height be just one line
 		gridData = (GridData) subTaskLabel.getLayoutData();
 		gridData.heightHint = SWT.DEFAULT;
+
 		return composite;
 	}
 
@@ -88,15 +110,32 @@ public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 			return super.getInitialLocation(initialSize);
 
 		Monitor monitor = parent.getMonitor();
-		Rectangle monitorBounds = monitor.getClientArea();
-		Point centerPoint = Geometry.centerPoint(monitorBounds);
-
-		return new Point(centerPoint.x - (initialSize.x / 2), Math.max(
-				monitorBounds.y, Math.min(centerPoint.y
-						- (initialSize.y * 2 / 3), monitorBounds.y
+		Point referencePoint;
+		Rectangle monitorBounds;
+		if (SWT.getPlatform().equals("carbon")) {//$NON-NLS-1$
+			monitorBounds = monitor.getClientArea();
+			referencePoint = Geometry.centerPoint(monitorBounds);
+			referencePoint.y = monitorBounds.height / 3 + monitorBounds.y;		
+		} else {
+			monitorBounds = monitor.getBounds();
+			referencePoint = Geometry.centerPoint(monitorBounds);
+		}
+		
+		return new Point(referencePoint.x - (initialSize.x / 2),
+				Math.max(monitorBounds.y, Math.min(referencePoint.y
+						+ VERTICAL_OFFSET, monitorBounds.y
 						+ monitorBounds.height - initialSize.y)));
 	}
-	
+
+	protected Point getInitialSize() {
+		Point calculatedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT,
+				true);
+		//ensure the initial width is no less than the minimum
+		if (calculatedSize.x < MINIMUM_WIDTH)
+			calculatedSize.x = MINIMUM_WIDTH;
+		return calculatedSize;
+	}
+
 	/*
 	 * Do not call super as we do not want any buttons in the button bar.
 	 */
