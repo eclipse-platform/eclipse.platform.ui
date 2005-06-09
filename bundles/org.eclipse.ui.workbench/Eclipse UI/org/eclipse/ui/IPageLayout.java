@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,35 @@
 package org.eclipse.ui;
 
 /**
- * A page layout defines the initial layout for a page in a workbench window.
+ * A page layout defines the initial layout for a perspective within a page 
+ * in a workbench window.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * <p>
- * When the workbench needs to create a new page, it uses a perspective to
- * creates a new page layout with a single editor area. This layout is then
- * passed to client code (implementation of
- * <code>IPerspectiveFactory.createInitialLayout</code>) where 
- * additional views can be added, using the existing editor area as the initial
- * point of reference.
+ * When a perspective is opened, it creates a new page layout with a single editor area. 
+ * This layout is then passed to the perspective factory (implementation of
+ * {@link org.eclipse.ui.IPerspectiveFactory#createInitialLayout(IPageLayout)}) where 
+ * additional views and other content can be added, using the existing editor area as 
+ * the initial point of reference.
+ * </p>
+ * <p>
+ * In some cases, multiple instances of a particular view may need to be added
+ * to the same layout.  These are disambiguated using a secondary id.  
+ * In layout methods taking a view id, the id can have the compound form: 
+ * <strong>primaryId [':' secondaryId]</strong>.
+ * If a secondary id is given, the view must allow multiple instances by
+ * having specified <code>allowMultiple="true"</code> in its extension.
+ * View placeholders may also have a secondary id.
+ * </p>
+ * <p>
+ * Wildcards are permitted in placeholder ids (but not regular view ids).  
+ * '*' matches any substring, '?' matches any single character. 
+ * Wildcards can be specified for the primary id, the secondary id, or both.  
+ * For example, the placeholder "someView:*" will match any occurrence of the view 
+ * that has primary id "someView" and that also has some non-null secondary id.
+ * Note that this placeholder will not match the view if it has no secondary id,
+ * since the compound id in this case is simply "someView".
  * </p>
  * <p>
  * Example of populating a layout with standard workbench views:
@@ -163,25 +181,28 @@ public interface IPageLayout {
     public void addActionSet(String actionSetId);
 
     /**
-     * Adds the view with the given id to the page layout as a fast view.  
-     * The id must name a view contributed to the workbench's view extension
+     * Adds the view with the given compound id to the page layout as a fast view.  
+     * See the {@link IPageLayout} type documentation for more details about compound ids.
+     * The primary id must name a view contributed to the workbench's view extension
      * point (named <code>"org.eclipse.ui.views"</code>).
      * 
-     * @param id the id of the view to be added
+     * @param viewId the compound id of the view to be added
      * @since 2.0
      */
-    public void addFastView(String id);
+    public void addFastView(String viewId);
 
     /**
-     * Adds the view with the given id to the page layout as a fast view
-     * with the given width ratio. The id must name a view contributed to
-     * the workbench's view extension point (named <code>"org.eclipse.ui.views"</code>).
+     * Adds the view with the given compound id to the page layout as a fast view
+     * with the given width ratio. 
+     * See the {@link IPageLayout} type documentation for more details about compound ids.
+     * The primary id must name a view contributed to the workbench's view extension 
+     * point (named <code>"org.eclipse.ui.views"</code>).
      * 
-     * @param id the id of the view to be added
+     * @param viewId the compound id of the view to be added
      * @param ratio the percentage of the workbench the fast view will cover
      * @since 2.0
      */
-    public void addFastView(String id, float ratio);
+    public void addFastView(String viewId, float ratio);
 
     /**
      * Adds a new wizard shortcut to the page layout.
@@ -206,15 +227,19 @@ public interface IPageLayout {
     public void addPerspectiveShortcut(String id);
 
     /**
-     * Adds a placeholder for a view with the given id to this page layout.
+     * Adds a view placeholder to this page layout.
      * A view placeholder is used to define the position of a view before the view
      * appears.  Initially, it is invisible; however, if the user ever opens a view
-     * with the same id as a placeholder, the view will replace the placeholder
-     * as it is being made visible.
-     * The id must name a view contributed to the workbench's view extension point 
+     * whose compound id matches the placeholder, the view will appear at the same
+     * location as the placeholder.  
+     * See the {@link IPageLayout} type documentation for more details about compound ids.
+     * If the placeholder contains wildcards, it remains in the layout, otherwise 
+     * it is replaced by the view.
+     * If the primary id of the placeholder has no wildcards, it must refer to a view 
+     * contributed to the workbench's view extension point 
      * (named <code>"org.eclipse.ui.views"</code>).
      *
-     * @param viewId the view id
+     * @param viewId the compound view id (wildcards allowed)
      * @param relationship the position relative to the reference part;
      *  one of <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
      *  or <code>RIGHT</code>
@@ -254,11 +279,12 @@ public interface IPageLayout {
     public void addShowViewShortcut(String id);
 
     /**
-     * Adds a view with the given id to this page layout.
-     * The id must name a view contributed to the workbench's view extension point 
+     * Adds a view with the given compound id to this page layout.
+     * See the {@link IPageLayout} type documentation for more details about compound ids.
+     * The primary id must name a view contributed to the workbench's view extension point 
      * (named <code>"org.eclipse.ui.views"</code>).
      *
-     * @param viewId the view id
+     * @param viewId the compound view id
      * @param relationship the position relative to the reference part;
      *  one of <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
      *  or <code>RIGHT</code>
@@ -395,28 +421,31 @@ public interface IPageLayout {
     public boolean isFixed();
 
     /**
-     * Returns the layout for the view or placeholder with the given id in
+     * Returns the layout for the view or placeholder with the given compound id in
      * this page layout.
+     * See the {@link IPageLayout} type documentation for more details about compound ids.
      * Returns <code>null</code> if the specified view or placeholder is unknown to the layout.
      * 
-     * @param viewId the view id
+     * @param id the compound view id or placeholder
      * @return the view layout, or <code>null</code>
      * @since 3.0
      */
-    public IViewLayout getViewLayout(String viewId);
+    public IViewLayout getViewLayout(String id);
 
     /**
-     * Adds a standalone view with the given id to this page layout.
+     * Adds a standalone view with the given compound id to this page layout.
+     * See the {@link IPageLayout} type documentation for more details about compound ids.
      * A standalone view cannot be docked together with other views.
      * A standalone view's title can optionally be hidden.  If hidden,
      * then any controls typically shown with the title (such as the close button) 
-     * are also hidden.
+     * are also hidden.  Any contributions or other content from the view itself
+     * are always shown (e.g. toolbar or view menu contributions, content description).
      * <p>
      * The id must name a view contributed to the workbench's view extension point 
      * (named <code>"org.eclipse.ui.views"</code>).
      * </p>
      *
-     * @param viewId the view id
+     * @param viewId the compound view id
      * @param showTitle <code>true</code> to show the title and related controls,
      *  <code>false</code> to hide them
      * @param relationship the position relative to the reference part;
@@ -433,7 +462,6 @@ public interface IPageLayout {
      *   or the special editor area id returned by <code>getEditorArea</code>
      * 
      * @since 3.0
-     * Note: should we allow regular views' titles to be hidden?
      */
     public void addStandaloneView(String viewId, boolean showTitle,
             int relationship, float ratio, String refId);
