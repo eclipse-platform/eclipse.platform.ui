@@ -288,8 +288,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 // if the active part is an editor and the new editor
                 // is the same kind of editor, then we don't have to do
                 // anything
-                if (activePart == topEditor && newId.equals(oldId))
+                if (activePart == topEditor && newId.equals(oldId)) {
+                	activePart = newPart;
+                	topEditor = (IEditorPart) newPart;
                     return;
+                }
 
                 // remove the contributions of the old editor
                 // if it is a different kind of editor
@@ -353,6 +356,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             if (topEditor == newEditor)
                 return;
 
+            if (activePart == topEditor) {
+            	updateActivePart(newEditor);
+            	return;
+            }
+            
             String oldId = null;
             if (topEditor != null)
                 oldId = topEditor.getSite().getId();
