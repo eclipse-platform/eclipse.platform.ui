@@ -54,7 +54,7 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 	private boolean recurse = true;
 	
 	// constants
-	private static final int SIZING_DIALOG_WIDTH = 80;
+	private static final int SIZING_DIALOG_WIDTH = 90;
 	private static final int SIZING_DIALOG_HEIGHT = 25;
 
     private CVSTag selection;

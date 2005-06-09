@@ -53,7 +53,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 	 */
 	protected void createMainDialogArea(Composite parent) {
 		
-		final int width= convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
+		final int width= convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH + 50);
 		
 		final Label label = SWTUtils.createLabel(parent, CVSUIMessages.TagAction_enterTag); //$NON-NLS-1$
 		label.setLayoutData(SWTUtils.createGridData(width, SWT.DEFAULT, true, false));
