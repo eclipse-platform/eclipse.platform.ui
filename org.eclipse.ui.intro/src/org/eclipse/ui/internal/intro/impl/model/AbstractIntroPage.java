@@ -51,11 +51,13 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     private static final String ATT_STYLE = "style"; //$NON-NLS-1$
     private static final String ATT_ALT_STYLE = "alt-style"; //$NON-NLS-1$
     private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
+    private static final String ATT_SHARED_STYLE = "shared-style"; //$NON-NLS-1$
     private static final String INVALID_CONTENT = "invalidPage/invalidPage.xhtml"; //$NON-NLS-1$
     private static final String INVALID_CONTENT_BASE = "invalidPage"; //$NON-NLS-1$
 
     private String style;
     private String altStyle;
+    private String sharedStyle;
     private IntroPageTitle title;
     private String content;
 
@@ -127,6 +129,12 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             content = BundleUtil.getResolvedResourceLocation(base, content,
                 bundle);
         }
+        // load shared-style attribure. This is needed in the XML and in the
+        // XHTML cases. Default is to include shared style.
+        this.sharedStyle = getAttribute(element, ATT_SHARED_STYLE);
+        if(sharedStyle==null)
+            sharedStyle = "true";
+
     }
 
     /**
@@ -477,10 +485,13 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
                 init(pageElement, getBundle(), base);
                 // INTRO: revisit. Special processing here should be made more
                 // general. we know id is correct.
-                style_id = element
-                    .getAttribute(AbstractBaseIntroElement.ATT_STYLE_ID);
-                filteredFrom = element
-                    .getAttribute(AbstractBaseIntroElement.ATT_FILTERED_FROM);
+                style_id = getAttribute(element,
+                    AbstractBaseIntroElement.ATT_STYLE_ID);
+                filteredFrom = getAttribute(element,
+                    AbstractBaseIntroElement.ATT_FILTERED_FROM);
+                sharedStyle = getAttribute(element, ATT_SHARED_STYLE);
+                if(sharedStyle==null)
+                    sharedStyle = "true";
                 foundMatchingPage = true;
             }
         }
@@ -607,7 +618,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         // now add shared style.
         String style = IntroPlugin.getDefault().getIntroModelRoot()
             .getPresentation().getImplementationStyle();
-        if (style != null) {
+        if (style != null && injectSharedStyle()) {
             ModelUtil.insertStyle(dom, style);
         }
 
@@ -820,6 +831,15 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         if (!isIFramePage())
             return null;
         return this.iframe.getIFrameURL();
+    }
+
+    /**
+     * Return the url of the embedded IFrame, if this page is an IFrame page.
+     * 
+     * @param url
+     */
+    public boolean injectSharedStyle() {
+        return this.sharedStyle.equals("true") ? true : false;
     }
 
 }

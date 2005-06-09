@@ -141,10 +141,8 @@ public class IntroHTMLGenerator {
         // add the presentation style
         String style = IntroPlugin.getDefault().getIntroModelRoot()
             .getPresentation().getImplementationStyle();
-        if (style != null)
+        if (style != null && introPage.injectSharedStyle())
             head.addContent(generateLinkElement(style, indentLevel + 1));
-        // TODO: Should introPage.getStyles() return the main page style as
-        // well?
         style = introPage.getStyle();
         if (style != null)
             head.addContent(generateLinkElement(style, indentLevel + 1));
