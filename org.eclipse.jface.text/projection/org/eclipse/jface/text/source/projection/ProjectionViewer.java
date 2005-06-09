@@ -556,8 +556,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				}
 			}
 
-			if (bestMatch != null)
+			if (bestMatch != null) {
 				fProjectionAnnotationModel.expand(bestMatch);
+				revealRange(selection.x, selection.y);
+			}
 		}
 	}
 
@@ -583,8 +585,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				}
 			}
 
-			if (bestMatch != null)
+			if (bestMatch != null) {
 				fProjectionAnnotationModel.collapse(bestMatch);
+				revealRange(selection.x, selection.y);
+			}
 		}
 	}
 
@@ -921,13 +925,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			fCommandQueue= new ProjectionCommandQueue();
 			
 			boolean isRedrawing= redraws();
-			int topIndex;
-			if (isRedrawing) {
-				rememberSelection();
-				topIndex= computeTopIndex(addedAnnotations, changedAnnotation, removedAnnotations);
-			} else {
-				topIndex= -1;
-			}
+			int topIndex= isRedrawing ? getTopIndex() : -1;
 			
 			processDeletions(event, removedAnnotations, true);
 			List coverage= new ArrayList();
@@ -944,8 +942,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				} catch (IllegalArgumentException x) {
 					reinitializeProjection();
 				} finally {
-					if (isRedrawing)
-						restoreSelection();
 					setRedraw(true, topIndex);
 				}
 				
@@ -964,37 +960,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				} catch (IllegalArgumentException x) {
 					reinitializeProjection();
 				} finally {
-					if (isRedrawing) {
-						restoreSelection();
-						restoreViewport(topIndex);
-					}
+					if (isRedrawing && textWidget != null && !textWidget.isDisposed())
+						textWidget.setRedraw(true);
 				}
 			}
-		}
-	}
-
-	private int computeTopIndex(Annotation[] addedAnnotations, Annotation[] changedAnnotation, Annotation[] removedAnnotations) throws BadLocationException {
-		if (addedAnnotations.length == 0 && removedAnnotations.length == 0 && changedAnnotation.length == 1) {
-			ProjectionAnnotation pa= (ProjectionAnnotation) changedAnnotation[0];
-			if (pa.isCollapsed()) {
-				// single annotation gets collapsed -> ensure caption line is visible
-				Position pos= fProjectionAnnotationModel.getPosition(pa);
-				Position anchor= computeCollapsedRegionAnchor(pos);
-				IDocument model= getDocument();
-				int anchorLine= model.getLineOfOffset(anchor.getOffset());
-				if (anchorLine < getTopIndex())
-					return anchorLine;
-			}
-		}
-		return -1;
-	}
-
-	private void restoreViewport(int topIndex) {
-		StyledText textWidget= getTextWidget();
-		if (textWidget != null && !textWidget.isDisposed()) {
-			if (topIndex != -1)
-				setTopIndex(topIndex);
-			textWidget.setRedraw(true);
 		}
 	}
 
