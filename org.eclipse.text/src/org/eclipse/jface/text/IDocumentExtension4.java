@@ -120,9 +120,9 @@ public interface IDocumentExtension4 {
 
 	/**
 	 * Returns the modification stamp of this document. The modification stamp
-	 * is updated each time the document content changes. If two modification stamps
-	 * of for the same document are identical then the document content is too,
-	 * however, same content does not imply same modification stamp.
+	 * is updated each time a modifying operation is called on this document. If
+	 * two modification stamps of the same document are identical then the document
+	 * content is too, however, same content does not imply same modification stamp.
 	 * <p>
 	 * The magnitude or sign of the numerical difference between two modification stamps
 	 * is not significant.
