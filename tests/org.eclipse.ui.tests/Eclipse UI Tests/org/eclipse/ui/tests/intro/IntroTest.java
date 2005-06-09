@@ -11,12 +11,14 @@
 package org.eclipse.ui.tests.intro;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
@@ -131,6 +133,21 @@ public class IntroTest extends UITestCase {
         assertTrue(workbench.getIntroManager().closeIntro(part));
         assertNull(workbench.getIntroManager().getIntro());
     }
+    
+    /**
+	 * Test to ensure that the part is properly nulled out when the intro is
+	 * closed via the view close mechanism.
+	 */
+	public void testViewClosure() {
+		IWorkbench workbench = window.getWorkbench();
+		IIntroPart part = workbench.getIntroManager().showIntro(window, false);
+		assertNotNull(part);
+		IViewPart viewPart = window.getActivePage().findView(
+				IIntroConstants.INTRO_VIEW_ID);
+		assertNotNull(viewPart);
+		window.getActivePage().hideView(viewPart);
+		assertNull(workbench.getIntroManager().getIntro());
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()

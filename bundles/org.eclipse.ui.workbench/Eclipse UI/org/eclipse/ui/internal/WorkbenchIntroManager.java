@@ -93,6 +93,10 @@ public class WorkbenchIntroManager implements IIntroManager {
             }
             return false;
         }
+        
+		// if there is no part then null our reference
+		introPart = null;
+        
         return true;
     }
 
