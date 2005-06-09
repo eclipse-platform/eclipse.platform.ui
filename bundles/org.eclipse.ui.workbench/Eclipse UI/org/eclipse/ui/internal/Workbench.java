@@ -53,7 +53,6 @@ import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -1247,7 +1246,7 @@ public final class Workbench implements IWorkbench {
         Shell shell = new Shell(Display.getCurrent(), SWT.NONE);
         try {
 
-			final ProgressMonitorDialog progressMonitorDialog = new StartupProgressMonitorDialog(shell);
+			final StartupProgressMonitorDialog progressMonitorDialog = new StartupProgressMonitorDialog(shell);
 			
 			SynchronousBundleListener bundleListener = new StartupProgressBundleListener(progressMonitorDialog.getProgressMonitor(), (int) (expectedProgressCount * cutoff));
 			WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
@@ -1256,7 +1255,7 @@ public final class Workbench implements IWorkbench {
 				progressMonitorDialog.run(false, false, new IRunnableWithProgress() {
 	
 					public void run(IProgressMonitor monitor) {
-						monitor.beginTask(getProductProgressTitle(), expectedProgressCount);
+						monitor.beginTask((progressMonitorDialog.hasMessage() ? getProductProgressTitle() : ""), expectedProgressCount); //$NON-NLS-1$
 			
 						runnable.run();
 						

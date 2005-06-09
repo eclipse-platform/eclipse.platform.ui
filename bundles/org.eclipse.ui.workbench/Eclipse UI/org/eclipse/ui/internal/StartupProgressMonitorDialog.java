@@ -39,6 +39,9 @@ public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 	// display area
 	private static int VERTICAL_OFFSET = 85;
 
+	// by default we do not show the product name in the dialog
+	private boolean hasMessage = false;
+
 	
 	/**
 	 * Construct an instance of this dialog.
@@ -48,6 +51,11 @@ public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 	public StartupProgressMonitorDialog(Shell parent) {
 		super(parent);
 		setShellStyle(SWT.NONE);
+		
+		// show the message label if we do not have a splash to identify the product 
+		String commandLine = System.getProperty("eclipse.commands"); //$NON-NLS-1$
+		if (commandLine != null)
+			hasMessage = commandLine.toLowerCase().indexOf("-nosplash") != -1; //$NON-NLS-1$
 	}
 
 	protected Control createContents(Composite parent) {
@@ -80,10 +88,21 @@ public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 		return null;
 	}
 
+
+	/*
+	 * Answer whether we are showing the message label which identifies the product 
+	 */
+	boolean hasMessage() {
+		return hasMessage;
+	}
+
 	protected Control createMessageArea(Composite composite) {
-		// setting message to null to avoid extra spacing in the layout.
-		// If message is null, messageLabel is not created.
-		message = null;
+		if (!hasMessage) {
+			// because the splash screen is showing, hide the message
+			// saying 'Starting <xyz>...'
+			// If message is null, messageLabel is not created.
+			message = null;
+		}
 		return super.createMessageArea(composite);
 	}
 
