@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.browser.browsers;
 import java.io.*;
 import java.net.URL;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.browser.AbstractWebBrowser;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
 /**
@@ -141,12 +142,13 @@ public class MozillaBrowser extends AbstractWebBrowser {
 			waitForBrowser();
 			if (exitRequested)
 				return;
-			if (firstLaunch) {
+			if (firstLaunch && Platform.OS_WIN32.equals(Platform.getOS())) {
 				if (openBrowser(executable + " " + url) == 0) //$NON-NLS-1$
 					return;
 				browserFullyOpenedAt = System.currentTimeMillis() + DELAY;
 				return;
-			} else if (openBrowser(executable + " -remote openURL(" + url + ")") //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if (openBrowser(executable + " -remote openURL(" + url + ")") //$NON-NLS-1$ //$NON-NLS-2$
 					== 0)
 				return;
 			
