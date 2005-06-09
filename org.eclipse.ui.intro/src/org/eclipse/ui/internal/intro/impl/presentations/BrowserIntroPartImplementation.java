@@ -102,7 +102,6 @@ public class BrowserIntroPartImplementation extends
             }
 
             public void completed(ProgressEvent event) {
-                // ((Browser) event.getSource()).redraw();
                 flagEndOfNavigation();
                 if (!getModel().isDynamic())
                     updateNavigationActionsState();

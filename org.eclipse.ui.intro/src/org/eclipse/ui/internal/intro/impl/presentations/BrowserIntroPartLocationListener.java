@@ -40,41 +40,11 @@ public class BrowserIntroPartLocationListener implements LocationListener {
      * @see org.eclipse.swt.browser.LocationListener#changed(org.eclipse.swt.browser.LocationEvent)
      */
     public void changed(LocationEvent event) {
-        // no-op
-    }
-
-    /**
-     * Intercept any LocationEvents on the browser. If the event location is a
-     * valid IntroURL, cancel the event and execute the intro action that is
-     * embedded in the URL
-     */
-    public void changing(LocationEvent event) {
         String url = event.location;
         if (url == null)
             return;
-
         IntroModelRoot model = implementation.getModel();
         IntroURLParser parser = new IntroURLParser(url);
-        if (parser.hasIntroUrl()) {
-            // stop URL first.
-            event.doit = false;
-            // execute the action embedded in the IntroURL
-            IntroURL introURL = parser.getIntroURL();
-            introURL.execute();
-
-            // In the case of dynamic Intro, guard against extra Frame
-            // navigations. This can happen in the case of intro injected
-            // IFrames or Frames included through intro xml content.
-            // INTRO: user defined iframes in Intro pages are not properly
-            // supported here, only Help system injected iframes.
-            if (model.isDynamic()) {
-                if ((introURL.getParameter(IntroURL.KEY_EMBED_TARGET) != null)
-                        || introURL.getAction().equals(IntroURL.SHOW_PAGE))
-                    implementation.flagStartOfNavigation();
-            }
-            return;
-        }
-
         if (!parser.hasProtocol() || parser.getHost() == null
                 || parser.getHost().equals("")) //$NON-NLS-1$
             // This will filter out two navigation events fired by the browser
@@ -113,6 +83,41 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             }
         }
         return;
+    }
+
+    /**
+     * Intercept any LocationEvents on the browser. If the event location is a
+     * valid IntroURL, cancel the event and execute the intro action that is
+     * embedded in the URL
+     */
+    public void changing(LocationEvent event) {
+        String url = event.location;
+        if (url == null)
+            return;
+
+        IntroModelRoot model = implementation.getModel();
+        IntroURLParser parser = new IntroURLParser(url);
+        if (parser.hasIntroUrl()) {
+            // stop URL first.
+            event.doit = false;
+            // execute the action embedded in the IntroURL
+            IntroURL introURL = parser.getIntroURL();
+            introURL.execute();
+
+            // In the case of dynamic Intro, guard against extra Frame
+            // navigations. This can happen in the case of intro injected
+            // IFrames or Frames included through intro xml content.
+            // INTRO: user defined iframes in Intro pages are not properly
+            // supported here, only Help system injected iframes.
+            if (model.isDynamic()) {
+                if ((introURL.getParameter(IntroURL.KEY_EMBED_TARGET) != null)
+                        || introURL.getAction().equals(IntroURL.SHOW_PAGE))
+                    implementation.flagStartOfNavigation();
+            }
+            return;
+        }
+
+
     }
 
 
