@@ -6,15 +6,15 @@
          <meta.schema plugin="org.eclipse.ui" id="popupMenus" name="Pop-up Menus"/>
       </appInfo>
       <documentation>
-         This extension point is used to add new actions to context menus owned by other plug-ins.  Action contribution may be made against a specific object type (&lt;samp&gt;objectContribution&lt;/samp&gt;) or against a specific context menu of a view or editor part (&lt;samp&gt;viewerContribution&lt;/samp&gt;). When using &lt;samp&gt;objectContribution&lt;/samp&gt;, the contribution will appear in all view or editor part context menus where objects of the specified type are selected. In contrast, using &lt;samp&gt;viewerContribution&lt;/samp&gt;, the contribution will only appear in the specified view or editor part context menu, regardless of the selection.
+         This extension point is used to add new actions to context menus owned by other plug-ins.  Action contributions may be made against a specific object type (&lt;samp&gt;objectContribution&lt;/samp&gt;) or against a specific context menu of a view or editor part (&lt;samp&gt;viewerContribution&lt;/samp&gt;). When using &lt;samp&gt;objectContribution&lt;/samp&gt;, the contribution will appear in all view or editor part context menus where objects of the specified type are selected. In contrast, using &lt;samp&gt;viewerContribution&lt;/samp&gt;, the contribution will only appear in the specified view or editor part context menu, regardless of the selection.
 &lt;p&gt;
-When selection is heterogeneous, contribution will be applied if registered against a common type of the selection, if possible. If a direct match is not possible, matching against superclasses and superinterfaces will be attempted. 
+When the selection is heterogeneous, the contribution will be applied if registered against a common type of the selection, if possible. If a direct match is not possible, matching against superclasses and superinterfaces will be attempted. 
 &lt;p&gt;
 Selection can be further constrained through the use of a name filter. If used, all the objects in the selection must match the filter in order to apply the contribution. 
 &lt;p&gt;
-Individual actions in an object contribution can use attribute enablesFor to specify if it should only apply for a single, multiple, or any other selection type. 
+Individual actions in an object contribution can use the attribute &lt;code&gt;enablesFor&lt;/code&gt; to specify if it should only apply for a single, multiple, or any other selection type. 
 &lt;p&gt;
-If these filtering mechanisms are inadequate an action contribution may use the &lt;samp&gt;filter&lt;/samp&gt; mechanism.  In this case the attributes of the target object are described in a series of name value pairs.  The attributes which apply to the selection are type specific and beyond the domain of the workbench itself, so the workbench will delegate filtering at this level to the actual selection.
+If these filtering mechanisms are inadequate an action contribution may use the &lt;samp&gt;filter&lt;/samp&gt; mechanism.  In this case the attributes of the target object are described in a series of name-value pairs.  The attributes which apply to the selection are type-specific and beyond the domain of the workbench itself, so the workbench will delegate filtering at this level to the actual selection.
       </documentation>
    </annotation>
 
@@ -194,7 +194,7 @@ The path is relative to the location of the plugin.xml file of the contributing 
          <attribute name="helpContextId" type="string">
             <annotation>
                <documentation>
-                  a unique identifier indicating the help context for this action. If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help.
+                  a unique identifier indicating the help context for this action. On some platforms, if the action appears as a menu item, then pressing the appropriate help key while the menu item is highlighted will display help. Not all platforms support this behaviour.
                </documentation>
             </annotation>
          </attribute>
@@ -380,8 +380,7 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
             icon=&quot;icons/runXYZ.gif&quot; 
             helpContextId=&quot;com.xyz.run_action_context&quot; 
             class=&quot;com.xyz.actions.XYZToolActionDelegate&quot; 
-            enablesFor=&quot;1&quot;&gt; 
-         &lt;/action&gt; 
+            enablesFor=&quot;1&quot; /&gt; 
       &lt;/objectContribution&gt; 
       &lt;viewerContribution 
          id=&quot;com.xyz.C2&quot; 
@@ -394,8 +393,7 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
             menubarPath=&quot;additions&quot; 
             icon=&quot;icons/showXYZ.gif&quot; 
             helpContextId=&quot;com.xyz.show_action_context&quot; 
-            class=&quot;com.xyz.actions.XYZShowActionDelegate&quot;&gt; 
-         &lt;/action&gt; 
+            class=&quot;com.xyz.actions.XYZShowActionDelegate&quot; /&gt; 
       &lt;/viewerContribution&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;

@@ -64,7 +64,7 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of the menu separator. This name can later be referenced as the last token in a menu path. Therefore, a separator also serve as named group into which actions and menus can be added.
+                  the name of the menu separator. This name can later be referenced as the last token in a menu path. Therefore, a separator also serves as named group into which actions and menus can be added.
                </documentation>
             </annotation>
          </attribute>
