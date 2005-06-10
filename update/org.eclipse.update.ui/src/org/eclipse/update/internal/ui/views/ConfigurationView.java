@@ -348,8 +348,8 @@ public class ConfigurationView
 
 	public ConfigurationView(ConfigurationManagerWindow window) {
 		UpdateUI.getDefault().getLabelProvider().connect(this);
-		initializeImages();
 		configurationWindow=window;
+		initializeImages();
 	}
 
 	private void initializeImages() {
@@ -385,8 +385,16 @@ public class ConfigurationView
 				}
 				if (edesc!=null) {
 					Image image = UpdateUI.getDefault().getLabelProvider().get(edesc);
-					if (image.getBounds().width==16)
-						return image;
+					if (image.getBounds().width!=16) {
+						//TODO this is just a fix to handle *.ico image.
+						//The correct approach would be to somehow get access to
+						//16x16 image in the icon.
+						ImageData scaled = image.getImageData().scaledTo(16, 16);
+						Image scaledImage = new Image(configurationWindow.getShell().getDisplay(), scaled);
+						UpdateUI.getDefault().getLabelProvider().get(scaledImage, 0);
+						return scaledImage;
+					}
+					return image;
 				}
 			}
 		}
