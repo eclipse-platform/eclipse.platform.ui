@@ -1079,8 +1079,9 @@ public class CustomizePerspectiveDialog extends Dialog {
         menubarGroup.setLayout(layout);
         menubarGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
-        label = new Label(menubarGroup, SWT.NONE);
+        label = new Label(menubarGroup, SWT.WRAP);
         label.setText(WorkbenchMessages.ActionSetSelection_menubarActions); 
+        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         actionSetMenuViewer = new TreeViewer(menubarGroup);
         actionSetMenuViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
@@ -1095,8 +1096,9 @@ public class CustomizePerspectiveDialog extends Dialog {
         toolbarGroup.setLayout(layout);
         toolbarGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
-        label = new Label(toolbarGroup, SWT.NONE);
+        label = new Label(toolbarGroup, SWT.WRAP);
         label.setText(WorkbenchMessages.ActionSetSelection_toolbarActions);
+        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         actionSetToolbarViewer = new TreeViewer(toolbarGroup);
         actionSetToolbarViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
