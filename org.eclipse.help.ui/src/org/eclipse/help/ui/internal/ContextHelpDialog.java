@@ -11,10 +11,8 @@
 
 package org.eclipse.help.ui.internal;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.osgi.service.environment.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -355,8 +353,9 @@ public class ContextHelpDialog {
 				context,
 				selectedTopic,
 				DefaultHelpUI.isDisplayModal(parentShell)
-						&& !Constants.OS_WIN32.equalsIgnoreCase(Platform
-								.getOS()));
+//Commented out for bug 95478
+				/* && !Constants.OS_WIN32.equalsIgnoreCase(Platform
+								.getOS())*/);
 	}
 	
 	private void openDynamicHelp() {

@@ -26,7 +26,6 @@ import org.eclipse.help.ui.internal.views.ContextHelpWindow;
 import org.eclipse.help.ui.internal.views.HelpView;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -370,13 +369,15 @@ public class DefaultHelpUI extends AbstractHelpUI {
 
 	private boolean useExternalBrowser(String url) {
 		// On non Windows platforms, use external when modal window is displayed
-		if (!Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
+//		 Commented out for bug 95478
+//		if (!Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
 			Display display = Display.getCurrent();
 			if (display != null) {
 				if (insideModalParent(display))
 					return true;
 			}
-		}
+//		}
+		
 		// Use external when no help frames are to be displayed, otherwise no
 		// navigation buttons.
 		if (url != null) {
