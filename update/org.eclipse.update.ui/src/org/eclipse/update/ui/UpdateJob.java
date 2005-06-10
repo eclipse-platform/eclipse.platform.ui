@@ -287,7 +287,8 @@ public class UpdateJob extends Job {
 		 */
 		public IURLEntry getMirror(final ISiteWithMirrors site,
 				final String siteName) {
-			// return null;
+			if (isUpdate && isAutomatic)
+				return null;
 			if (mirrors.containsKey(site))
 				return (IURLEntry) mirrors.get(site);
 			try {
