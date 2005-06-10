@@ -84,6 +84,7 @@ public class StandaloneInfocenter extends EclipseController {
 				|| CMD_ENABLE.equalsIgnoreCase(command)
 				|| CMD_DISABLE.equalsIgnoreCase(command)
 				|| CMD_UNINSTALL.equalsIgnoreCase(command)
+				|| CMD_UPDATE.equalsIgnoreCase(command)
 				|| CMD_SEARCH.equalsIgnoreCase(command)
 				|| CMD_LIST.equalsIgnoreCase(command)
 				|| CMD_ADDSITE.equalsIgnoreCase(command)
