@@ -49,7 +49,7 @@ public class SyncInfoTree extends SyncInfoSet {
 	}
 
 	/**
-	 * Return wether the given resource has any children in the sync set. The children
+	 * Return whether the given resource has any children in the sync set. The children
 	 * could be either out-of-sync resources that are contained by the set or containers
 	 * that are ancestors of out-of-sync resources contained by the set.
 	 * 
@@ -195,7 +195,7 @@ public class SyncInfoTree extends SyncInfoSet {
 		if (parent.getType() == IResource.ROOT) {
 			return false;
 		}
-		// this flag is used to indicate if the parent was previosuly in the set
+		// this flag is used to indicate if the parent was previously in the set
 		boolean addedParent = false;
 		if (parent.getType() == IResource.FILE) {
 			// the file is new
@@ -290,7 +290,7 @@ public class SyncInfoTree extends SyncInfoSet {
 
 	/**
 	 * This is an internal method and is not intended to be invoked or
-	 * overriden by clients.
+	 * overridden by clients.
 	 */
 	protected synchronized IResource[] internalGetOutOfSyncDescendants(IContainer resource) {
 		// The parent map contains a set of all out-of-sync children

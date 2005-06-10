@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IResource;
  * a description of the changes which include added, changed and removed resources.
  * In some cases, (e.g. when the change is too complicated to be efficiently described
  * using the mechanisms provided by this interface) the event will be a reset. In these
- * cases, the client should ignore any other contents of the event and reclaculate
+ * cases, the client should ignore any other contents of the event and recalculate
  * from scratch any state that is derived from the <code>SyncInfoSet</code> from
  * which the event originated. 
  * <p>

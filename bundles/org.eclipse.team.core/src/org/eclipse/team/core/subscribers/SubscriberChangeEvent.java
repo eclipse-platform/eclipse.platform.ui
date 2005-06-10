@@ -28,7 +28,7 @@ public class SubscriberChangeEvent implements ISubscriberChangeEvent {
 	private IResource resource; 
 	
 	/**
-	 * Create a cahnge event with the given flags for the given subscriber and resource.
+	 * Create a change event with the given flags for the given subscriber and resource.
 	 * @param subscriber the subscriber to which the state change applies
 	 * @param flags the flags that describe the change
 	 * @param resource the resource whose state has change

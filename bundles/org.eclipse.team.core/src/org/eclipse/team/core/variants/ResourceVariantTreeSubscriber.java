@@ -62,7 +62,7 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 	/**
 	 * Method that creates an instance of SyncInfo for the provided local, base and remote
 	 * resource variants.
-	 * Can be overiden by subclasses.
+	 * Can be overridden by subclasses.
 	 * @param local the local resource
 	 * @param base the base resource variant or <code>null</code>
 	 * @param remote the remote resource variant or <code>null</code>

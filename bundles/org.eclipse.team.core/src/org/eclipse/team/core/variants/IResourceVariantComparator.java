@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IResource;
  * and used by a <code>SyncInfo</code> to calculate the sync
  * state of the workspace resources. Subscribers should provide a criteria
  * best suited for their environment. For example, an FTP subscriber could choose to use file
- * size or file timestamps as comparison criterias whereas a CVS workspace subscriber would
+ * size or file timestamps as comparison criteria whereas a CVS workspace subscriber would
  * use file revision numbers.
  * 
  * @see org.eclipse.team.core.synchronize.SyncInfo

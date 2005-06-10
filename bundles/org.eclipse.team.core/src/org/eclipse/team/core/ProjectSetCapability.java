@@ -166,7 +166,7 @@ public abstract class ProjectSetCapability {
 	 * @since 3.0
 	 * 
 	 * @param referenceStrings
-	 * 		an array of referene strings uniquely identifying the projects
+	 * 		an array of reference strings uniquely identifying the projects
 	 * 		(not <code>null</code> and contains no <code>null</code>s)
 	 * @param context
 	 * 		the context in which the projects are loaded

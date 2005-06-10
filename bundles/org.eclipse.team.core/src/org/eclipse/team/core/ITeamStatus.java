@@ -34,8 +34,8 @@ public interface ITeamStatus extends IStatus {
 	public static final int SYNC_INFO_SET_ERROR = 2;
 
 	/**
-	 * The collection of sync info for a sync info set has been cancelled so the
-	 * contents fdo not reflect the state of the system.
+	 * The collection of sync info for a sync info set has been canceled so the
+	 * contents do not reflect the state of the system.
 	 * The error will be cleared when the set is reset. 
 	 */
 	public static final int SYNC_INFO_SET_CANCELLATION = 3;

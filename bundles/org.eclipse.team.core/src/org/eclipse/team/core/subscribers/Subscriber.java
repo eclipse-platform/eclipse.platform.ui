@@ -57,7 +57,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * or removed. For example, a subscriber for a repository provider would fire a root added event when a project 
  * was shared
  * with a repository. No event is required when a root is deleted as this is available through the 
- * <code>IResource</code> delta mechanism. It is up to clients to requery the subscriber
+ * <code>IResource</code> delta mechanism. It is up to clients to re-query the subscriber
  * when the state of a resource changes locally by listening to IResource deltas.
  * </p><p>
  * The remote and base states can also include the state for resources that do not exist locally (i.e outgoing deletions 

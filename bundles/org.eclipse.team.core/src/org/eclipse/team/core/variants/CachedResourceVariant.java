@@ -190,7 +190,7 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 
 	/**
 	 * Get the path that uniquely identifies the remote resource
-	 * variant. This path descibes the remote location where
+	 * variant. This path describes the remote location where
 	 * the remote resource is stored and also uniquely identifies
 	 * each resource variant. It is used to uniquely identify this
 	 * resource variant when it is stored in the resource variant cache.

@@ -58,10 +58,10 @@ public class ThreeWaySynchronizer implements IFlushOperation {
 	private Set listeners = new HashSet();
 	
 	/**
-	 * Create a three-way synchronizer that uses a persistant
+	 * Create a three-way synchronizer that uses a persistent
 	 * byte store with the given qualified name as its unique 
 	 * identifier.
-	 * @param name the unique identifier for the persistant store
+	 * @param name the unique identifier for the persistent store
 	 */
 	public ThreeWaySynchronizer(QualifiedName name) {
 		this(new PersistantResourceVariantByteStore(name));
@@ -306,7 +306,7 @@ public class ThreeWaySynchronizer implements IFlushOperation {
 	 * Mark the resource as being ignored. Ignored resources
 	 * are not returned by the <code>members</code> method,
 	 * are never dirty (see <code>isLocallyModified</code>) and
-	 * do not have base or remote bytes cahced for them.
+	 * do not have base or remote bytes cached for them.
 	 * @param resource the resource to be ignored
 	 * @throws TeamException
 	 */
@@ -484,7 +484,7 @@ public class ThreeWaySynchronizer implements IFlushOperation {
 		// Do not try to acquire the lock if the resources tree is locked
 		// The reason for this is that during the resource delta phase (i.e. when the tree is locked)
 		// the workspace lock is held. If we obtain our lock, there is 
-		// a chance of dealock. It is OK if we don't as we are still protected
+		// a chance of deadlock. It is OK if we don't as we are still protected
 		// by scheduling rules and the workspace lock.
 		if (ResourcesPlugin.getWorkspace().isTreeLocked()) return;
 		lock.acquire();

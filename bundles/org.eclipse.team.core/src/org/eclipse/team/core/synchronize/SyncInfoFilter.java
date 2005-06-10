@@ -47,7 +47,7 @@ public abstract class SyncInfoFilter {
 			this(false);
 		}
 		/**
-		 * Create a filter and configure how whitspace is handled.
+		 * Create a filter and configure how whitespace is handled.
 		 * @param ignoreWhitespace whether whitespace should be ignored
 		 */
 		public ContentComparisonSyncInfoFilter(boolean ignoreWhitespace) {

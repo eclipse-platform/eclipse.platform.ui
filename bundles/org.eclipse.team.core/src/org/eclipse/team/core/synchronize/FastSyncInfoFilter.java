@@ -45,11 +45,11 @@ public class FastSyncInfoFilter extends SyncInfoFilter {
 	 */
 	public static abstract class CompoundSyncInfoFilter extends FastSyncInfoFilter {
 		/**
-		 * Instance variable which contains all the child filters for ths compound filter.
+		 * Instance variable which contains all the child filters for this compound filter.
 		 */
 		protected FastSyncInfoFilter[] filters;
 		/**
-		 * Create a compund filter that contains the provided filters.
+		 * Create a compound filter that contains the provided filters.
 		 * @param filters the child filters
 		 */
 		protected CompoundSyncInfoFilter(FastSyncInfoFilter[] filters) {

@@ -42,7 +42,7 @@ public abstract class ThreeWaySubscriber extends ResourceVariantTreeSubscriber i
 	
 	/**
 	 * Create a three-way subscriber that uses the given synchronizer
-	 * to manage the synchronization state of local resoures
+	 * to manage the synchronization state of local resources
 	 * and their variants
 	 * @param synchronizer the three-way synchronizer for this subscriber
 	 */
@@ -101,8 +101,8 @@ public abstract class ThreeWaySubscriber extends ResourceVariantTreeSubscriber i
 	}
 	
 	/**
-	 * Return the three-way sychronizer of this subscriber.
-	 * @return the three-way sychronizer of this subscriber.
+	 * Return the three-way synchronizer of this subscriber.
+	 * @return the three-way synchronizer of this subscriber.
 	 */
 	public ThreeWaySynchronizer getSynchronizer() {
 		return synchronizer;
@@ -114,7 +114,7 @@ public abstract class ThreeWaySubscriber extends ResourceVariantTreeSubscriber i
 	 * from a call to <code>IResourceVariant#asBytes()</code>.
 	 * @param resource the local resource
 	 * @param bytes the bytes that identify a variant of the resource
-	 * @return the resouce variant handle recreated from the bytes
+	 * @return the resource variant handle recreated from the bytes
 	 * @throws TeamException
 	 */
 	public abstract IResourceVariant getResourceVariant(IResource resource, byte[] bytes) throws TeamException;

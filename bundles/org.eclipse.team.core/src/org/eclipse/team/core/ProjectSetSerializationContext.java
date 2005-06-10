@@ -71,7 +71,7 @@ public class ProjectSetSerializationContext {
 	}
 	
 	/**
-	 * Return the name of the file to or from which teh project set is being loaded or saved. 
+	 * Return the name of the file to or from which the project set is being loaded or saved. 
 	 * This may be <code>null</code>.
 	 * @return the filename or <code>null</code>
 	 */

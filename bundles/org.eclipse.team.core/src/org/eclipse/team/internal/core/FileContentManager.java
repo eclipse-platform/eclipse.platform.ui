@@ -195,6 +195,7 @@ public class FileContentManager implements IFileContentManager {
     }
     
     public IStringMapping[] getDefaultNameMappings() {
+        // TODO: There is currently no extension point for this
         return new IStringMapping[0];//getStringMappings(fPluginNameMappings.referenceMap());
     }
 

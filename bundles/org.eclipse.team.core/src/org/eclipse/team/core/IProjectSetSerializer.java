@@ -56,7 +56,7 @@ public interface IProjectSetSerializer {
 	 * produced by IProjectSetSerializer.asReference().
 	 * @see IProjectSetSerializer#asReference(IProject[] providerProjects, Object context, IProgressMonitor monitor)
 	 * 
-	 * @param referenceStrings  an array of referene strings uniquely identifying the projects
+	 * @param referenceStrings  an array of reference strings uniquely identifying the projects
 	 * @param filename  the name of the file that the references were read from. This is included
 	 *   in case the provider needs to deduce relative paths
 	 * @param context  a UI context object. This object will either be a 

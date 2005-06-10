@@ -60,7 +60,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	// lock to ensure that map/unmap and getProvider support concurrency
 	private static final ILock mappingLock = Platform.getJobManager().newLock();
     
-    // Session property used to indentify projects that are not mapped
+    // Session property used to identify projects that are not mapped
     private static final Object NOT_MAPPED = new Object();
 	
 	/**
@@ -103,7 +103,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 						unmap(project);
 				}
 				
-				// Create the provider as a session property before adding the persistant
+				// Create the provider as a session property before adding the persistent
 				// property to ensure that the provider can be instantiated
 				RepositoryProvider provider = mapNewProvider(project, id);
 	
@@ -111,7 +111,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				try {
 					project.setPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY, id);
 				} catch (CoreException outer) {
-					// couldn't set the persistant property so clear the session property
+					// couldn't set the persistent property so clear the session property
 					try {
 						project.setSessionProperty(TeamPlugin.PROVIDER_PROP_KEY, null);
 					} catch (CoreException inner) {
@@ -121,13 +121,13 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 					throw outer;
 				}	
 				
-				provider.configure();	//xxx not sure if needed since they control with wiz page and can configure all they want
+				provider.configure();
 				
 				//adding the nature would've caused project description delta, so trigger one
 				project.touch(null);
 				
 				// Set the rule factory for the provider after the touch
-				// so the touch does not fail due to incomptible modify rules
+				// so the touch does not fail due to incompatible modify rules
 				TeamHookDispatcher.setProviderRuleFactory(project, provider.getRuleFactory());
 			} finally {
 				mappingLock.release();
@@ -187,7 +187,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 			// that a disconnect is not happening at the same time
 			mappingLock.acquire();
 			try {
-				// Ensure that the persistant property is still set
+				// Ensure that the persistent property is still set
 				// (i.e. an unmap may have come in since we checked it last
 				String currentId = project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY);
 				if (currentId == null) {
@@ -209,7 +209,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 		}
 	}
 	/**
-	 * Disassoociates project with the repository provider its currently mapped to.
+	 * Disassociates project with the repository provider its currently mapped to.
 	 * @param project
 	 * @throws TeamException The project isn't associated with any repository provider.
 	 */
@@ -231,7 +231,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				//which is ok since we need to call deconfigure() on it for proper lifecycle
 				RepositoryProvider provider = getProvider(project);
 				if (provider == null) {
-					// There is a persistant property but the provider cannot be obtained.
+					// There is a persistent property but the provider cannot be obtained.
 					// The reason could be that the provider's plugin is no longer available.
 					// Better log it just in case this is unexpected.
 					TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.RepositoryProvider_couldNotInstantiateProvider, new String[] { project.getName(), id }), null);  //$NON-NLS-1$
@@ -341,7 +341,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	
 	/**
 	 * Returns an <code>IMoveDeleteHook</code> for handling moves and deletes
-	 * that occur withing projects managed by the provider. This allows providers 
+	 * that occur within projects managed by the provider. This allows providers 
 	 * to control how moves and deletes occur and includes the ability to prevent them. 
 	 * <p>
 	 * Returning <code>null</code> signals that the default move and delete behavior is desired.
@@ -406,8 +406,8 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				RepositoryProvider provider = lookupProviderProp(project);
 				if(provider != null)
 					return provider;
-                // Do a quick check to see it the poroject is known to be unshared.
-                // This is done to avoid accessing the persistant property store
+                // Do a quick check to see it the project is known to be unshared.
+                // This is done to avoid accessing the persistent property store
                 if (isMarkedAsUnshared(project))
                     return null;
 				
@@ -467,7 +467,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	final public static RepositoryProvider getProvider(IProject project, String id) {
 		try {
 			if(project.isAccessible()) {
-				// Look for an existing provider first to avoid accessing persistant properties
+				// Look for an existing provider first to avoid accessing persistent properties
 				RepositoryProvider provider = lookupProviderProp(project);  //throws core, we will reuse the catching already here
 				if(provider != null) {
 					if (provider.getID().equals(id)) {
@@ -476,12 +476,12 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 						return null;
 					}
 				}
-                // Do a quick check to see it the poroject is known to be unshared.
-                // This is done to avoid accessing the persistant property store
+                // Do a quick check to see it the project is known to be unshared.
+                // This is done to avoid accessing the persistent property store
                 if (isMarkedAsUnshared(project))
                     return null;
                 
-				// There isn't one so check the persistant property
+				// There isn't one so check the persistent property
 				String existingID = project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY);
 				if(id.equals(existingID)) {
 					// The ids are equal so instantiate and return					
@@ -500,7 +500,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				// if the nature id given is not in the team set then return
 				// null.
 				IProjectNatureDescriptor desc = ResourcesPlugin.getWorkspace().getNatureDescriptor(id);
-				if(desc == null) //for backwards compat., may not have any nature by that ID
+				if(desc == null) //for backwards compatibility, may not have any nature by that ID
 					return null;
 					
 				String[] setIds = desc.getNatureSetIds();
@@ -539,7 +539,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 		try {
 			if (lookupProviderProp(project) != null) return true;
             // Do a quick check to see it the poroject is known to be unshared.
-            // This is done to avoid accessing the persistant property store
+            // This is done to avoid accessing the persistent property store
             if (isMarkedAsUnshared(project))
                 return false;
 			boolean shared = project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY) != null;
@@ -635,7 +635,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * linked resource is about to be added to the provider's project. It should
 	 * not be called by other clients and it should not need to be overridden by
 	 * subclasses (although it is possible to do so in special cases).
-	 * Subclasses can indicate that they support linked resources by overridding
+	 * Subclasses can indicate that they support linked resources by overriding
 	 * the <code>canHandleLinkedResources()</code> method.
 	 * 
 	 * @param resource see <code>org.eclipse.core.resources.team.TeamHook</code>

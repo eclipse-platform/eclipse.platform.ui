@@ -20,7 +20,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
 /**
  * This exception is thrown by the team provider API.  It represents a failure in an API call.
  * Since some API calls take multiple arguments, the exception is capable of returning multiple
- * statuses.  The API definition determinies if the exception represents a single or multiple status
+ * statuses.  The API definition determines if the exception represents a single or multiple status
  * response; this can also be tested on the exception instance itself.
  * <p>
  * To determine the exact cause of the failure the caller should look at each status in detail.

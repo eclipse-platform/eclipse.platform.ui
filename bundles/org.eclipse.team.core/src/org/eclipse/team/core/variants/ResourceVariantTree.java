@@ -32,7 +32,7 @@ public abstract class ResourceVariantTree extends AbstractResourceVariantTree {
 	/**
 	 * Create a resource variant tree that uses the provided byte store to
 	 * cache the resource variant bytes.
-	 * @param store the resource variant byte store used to cahe resource variants
+	 * @param store the resource variant byte store used to cache resource variants
 	 */
 	protected ResourceVariantTree(ResourceVariantByteStore store) {
 		this.store = store;
@@ -79,7 +79,7 @@ public abstract class ResourceVariantTree extends AbstractResourceVariantTree {
 	 * for the resource variants of this tree. A byte store is used
 	 * to reduce the memory footprint of the tree.
 	 * <p>
-	 * This method is not intended to be overriden by subclasses.
+	 * This method is not intended to be overridden by subclasses.
 	 * 
 	 * @return the resource variant tree that is being refreshed.
 	 */

@@ -17,7 +17,7 @@ package org.eclipse.team.core;
  * and a content type (typically <code>Team.TEXT</code>, <code>Team.BINARY</code> or
  * <code>Team.UNKNOWN</code>.
  * <p>
- * This interface is not intented to be implemented by clients.
+ * This interface is not intended to be implemented by clients.
  * 
  * @since 3.1
  */

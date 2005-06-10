@@ -20,7 +20,7 @@ import org.eclipse.team.core.TeamException;
  * the synchronization bytes for the resource variants that represent
  * a resource line-up of interest such as a version, baseline or branch. The
  * cache stores bytes in order to minimize the memory footprint of the tree. It is the
- * reponsibility of the client of this API to cache enough bytes to meaningfully identify
+ * responsibility of the client of this API to cache enough bytes to meaningfully identify
  * a resource variant (and possibly create an {@link IResourceVariant} handle from them).
  * <p>
  * The bytes for a resource variant are accessed using the local <code>IResource</code> handle 
@@ -97,7 +97,7 @@ public abstract class ResourceVariantByteStore {
 	 * Helper method to compare two byte arrays for equality
 	 * @param syncBytes1 the first byte array or <code>null</code>
 	 * @param syncBytes2 the second byte array or <code>null</code>
-	 * @return whetehr the two arrays are equal (i.e. same content)
+	 * @return whether the two arrays are equal (i.e. same content)
 	 */
 	protected boolean equals(byte[] syncBytes1, byte[] syncBytes2) {
 		if (syncBytes1 == null) {
@@ -113,7 +113,7 @@ public abstract class ResourceVariantByteStore {
 	}
 
 	/**
-	 * Run the given action which may contain multiple modfications
+	 * Run the given action which may contain multiple modifications
 	 * to the byte store. By default, the action is run. Subclasses
 	 * may override to obtain scheduling rules or batch deltas (if
 	 * the byte store modifies workspace resources).

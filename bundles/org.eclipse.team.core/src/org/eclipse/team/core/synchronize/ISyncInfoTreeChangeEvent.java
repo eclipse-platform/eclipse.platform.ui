@@ -25,10 +25,10 @@ public interface ISyncInfoTreeChangeEvent extends ISyncInfoSetChangeEvent {
 	 * Returns the highest parent resources of all newly added elements available in this event
 	 * by calling <code>getAddedResources()</code>. In other words, it returns the set of all
 	 * parent containers that did not previously have descendants in the sync set but are direct
-	 * children of containers that did previously have descescendants in the set. 
+	 * children of containers that did previously have descendants in the set. 
 	 * <p>
 	 * These roots are provided in order
-	 * to allow listeners to optimize the reconciliation of hierachical views of 
+	 * to allow listeners to optimize the reconciliation of hierarchical views of 
 	 * the <code>SyncInfoSet</code> contents. 
 	 * 
 	 * @return parents of all newly added elements  or an empty list if this event 
@@ -40,10 +40,10 @@ public interface ISyncInfoTreeChangeEvent extends ISyncInfoSetChangeEvent {
 	 * Returns the highest parent resources of all newly removed elements available in this event
 	 * by calling <code>getRemovedResources()</code>. In other words, it returns the set of all
 	 * parent containers that previously had descendants in the sync set but are direct
-	 * children of containers that still have descescendants in the set. 
+	 * children of containers that still have descendants in the set. 
 	 * <p>
 	 * These roots are provided in order
-	 * to allow listeners to optimize the reconciliation of hierachical views of 
+	 * to allow listeners to optimize the reconciliation of hierarchical views of 
 	 * the <code>SyncInfoSet</code> contents. 
 	 * 
 	 * @return parents of all newly removed elements.  or an empty list if this event 

@@ -23,7 +23,7 @@ import org.eclipse.team.internal.core.Assert;
 /**
  * A <code>ResourceVariantByteStore</code> that caches the variant bytes using 
  * the <code>org.eclipse.core.resources.ISynchronizer</code> so that
- * the tree is cached accross workbench invocations.
+ * the tree is cached across workbench invocations.
  * <p>
  * This class is not intended to be subclassed by clients.
  * 
@@ -36,7 +36,7 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 	private QualifiedName syncName;
 	
 	/**
-	 * Create a persistant tree that uses the given qualified name
+	 * Create a persistent tree that uses the given qualified name
 	 * as the key in the <code>org.eclipse.core.resources.ISynchronizer</code>.
 	 * It must be unique and should use the plugin as the local name
 	 * and a unique id within the plugin as the qualifier name.
@@ -56,7 +56,7 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 
 	/**
 	 * Return the qualified name that uniquely identifies this tree.
-	 * @return the qwualified name that uniquely identifies this tree.
+	 * @return the qualified name that uniquely identifies this tree.
 	 */
 	public QualifiedName getSyncName() {
 		return syncName;

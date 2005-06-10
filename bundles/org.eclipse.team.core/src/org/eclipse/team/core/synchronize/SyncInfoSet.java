@@ -198,10 +198,10 @@ public class SyncInfoSet {
 	}
 
 	/**
-	 * Deregisters the given listener for participant notifications. Has
+	 * Removes the given listener from participant notifications. Has
 	 * no effect if listener is not already registered.
 	 * 
-	 * @param listener listener to deregister
+	 * @param listener listener to remove
 	 */
 	public void removeSyncSetChangedListener(ISyncInfoSetChangeListener listener) {
 		synchronized(listeners) {
@@ -232,7 +232,7 @@ public class SyncInfoSet {
 	 * <p>
 	 * The given runnable may be run in the same thread as the caller or
 	 * more be run asynchronously in another thread at the discretion of the
-	 * subclass implementation. However, it is gaurenteed that two invocations
+	 * subclass implementation. However, it is guaranteed that two invocations
 	 * of <code>run</code> performed in the same thread will be executed in the 
 	 * same order even if run in different threads.
 	 * </p>
@@ -320,7 +320,7 @@ public class SyncInfoSet {
 	}
 
 	/**
-	 * Add all the syncinfo from the given set to this set.
+	 * Add all the sync info from the given set to this set.
 	 * 
 	 * @param set the set whose sync info should be added to this set
 	 */
@@ -508,8 +508,8 @@ public class SyncInfoSet {
 	}
 
 	/**
-	 * This method is used to release the lock on this set. The prgress monitor is needed to allow
-	 * listeners to perform long-running operations is reponse to the set change. The lock is held
+	 * This method is used to release the lock on this set. The progress monitor is needed to allow
+	 * listeners to perform long-running operations is response to the set change. The lock is held
 	 * while the listeners are notified so listeners must be cautious in order to avoid deadlock.
 	 */
 	public void endInput(IProgressMonitor monitor) {
@@ -595,7 +595,7 @@ public class SyncInfoSet {
 
 	/**
 	 * Return the change event that is accumulating the changes to the set.
-	 * This can be called by sublasses to access the event.
+	 * This can be called by subclasses to access the event.
 	 * @return Returns the changes.
 	 */
 	protected SyncSetChangedEvent getChangeEvent() {
@@ -611,7 +611,7 @@ public class SyncInfoSet {
 	 * Only one error can be associated with a resource (which is obtained from
 	 * the <code>ITeamStatus</code>). It is up to the
 	 * client populating the set to ensure that the error associated with a
-	 * resource contains all relevent information.
+	 * resource contains all relevant information.
 	 * The error will remain in the set until the set is reset.
 	 * </p>
 	 * @param status the status that describes the error that occurred.
@@ -637,9 +637,9 @@ public class SyncInfoSet {
 	}
 
     /**
-     * Return an interator over all <code>SyncInfo</code>
+     * Return an iterator over all <code>SyncInfo</code>
      * contained in this set.
-     * @return an interator over all <code>SyncInfo</code>
+     * @return an iterator over all <code>SyncInfo</code>
      * contained in this set.
      * @since 3.1
      */

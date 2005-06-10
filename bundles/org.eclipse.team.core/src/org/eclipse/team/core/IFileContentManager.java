@@ -36,7 +36,7 @@ import org.eclipse.core.resources.IStorage;
  * If a mapping is added for a name or an extension that already has a mapping 
  * which has been contributed by a plugin, it overrides the one contributed by the plugin.
  * If the user-defined mapping is deleted, the plugin-contributed mapping is valid again.
- * This interface is not intented to be implemented by clients.
+ * This interface is not intended to be implemented by clients.
  * 
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -173,7 +173,6 @@ public interface IFileContentManager {
 
     /**
      * Get all the plugin-contributed mappings from file names to content types.
-     * TODO: the extension point for names is still missing.
      * 
      * @return the mappings
      * 

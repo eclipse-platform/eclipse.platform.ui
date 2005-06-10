@@ -25,7 +25,7 @@ import org.eclipse.team.core.ITeamStatus;
  * The originating sync set holds modification locks on the sync info set to ensure 
  * that no more changes occur until after the current change event is processed.
  * The implementors of this interface must not modify the set within the scope of
- * the listener's methods. If modiciations are attempted a runtime exception will occur.
+ * the listener's methods. If modifications are attempted a runtime exception will occur.
  * </p>
  * @see ISyncInfoSetChangeEvent
  * @since 3.0

@@ -28,7 +28,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * is in the absence of a project, as opposed to RepositoryProvider which
  * requires a concrete project in order to be instantiated.
  * <p>
- * A repository provider type class is asscoaited with it's provider ID along with it's 
+ * A repository provider type class is associated with it's provider ID along with it's 
  * corresponding repository provider class. To add a
  * repository provider type and have it registered with the platform, a client
  * must minimally:
@@ -170,12 +170,12 @@ public abstract class RepositoryProviderType {
 	
 	/**
 	 * Callback from team when the meta-files for a repository type are detected in an
-	 * unshared project. The meta-file paths ae provided as part of the <code>repository</code>
-	 * entry in the plugin manifets file.
+	 * unshared project. The meta-file paths are provided as part of the <code>repository</code>
+	 * entry in the plugin manifest file.
 	 * <p>
 	 * By default, nothing is done (except that the repository type's
 	 * plugin will have been loaded. Subclass may wish to mark the met-data as team-private.
-	 * This method is called from a resource delta so sublcasses may not obtain scheduling rules
+	 * This method is called from a resource delta so subclasses may not obtain scheduling rules
 	 * or in any way modify workspace resources (including auto-sharing the project). However,
 	 * auto-sharing (or other modification) could be performed by a background job scheduled from
 	 * this callback.

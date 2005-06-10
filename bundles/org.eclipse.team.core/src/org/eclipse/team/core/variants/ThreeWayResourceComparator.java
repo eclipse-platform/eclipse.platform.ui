@@ -49,7 +49,7 @@ public class ThreeWayResourceComparator implements IResourceVariantComparator {
 			if (local.getType() == IResource.FILE && getSynchronizer().isLocallyModified(local)) {
 				return false;
 			}
-			// If there is no base, the local cannopt match the remote
+			// If there is no base, the local cannot match the remote
 			if (getSynchronizer().getBaseBytes(local) == null) return false;
 			// Otherwise, assume they are the same if the remote equals the base
 			return equals(getSynchronizer().getBaseBytes(local), getBytes(remote));

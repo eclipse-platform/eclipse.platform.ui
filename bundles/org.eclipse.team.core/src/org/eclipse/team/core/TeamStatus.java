@@ -34,7 +34,7 @@ public class TeamStatus extends Status implements ITeamStatus {
 	 *    current locale
 	 * @param exception a low-level exception, or <code>null</code> if not
 	 *    applicable 
-	 * @param resource the resource asociated with the exception
+	 * @param resource the resource associated with the exception
 	 */
 	public TeamStatus(int severity, String pluginId, int code, String message, Throwable exception, IResource resource) {
 		super(severity, pluginId, code, message, exception);

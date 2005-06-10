@@ -348,7 +348,7 @@ public class SyncInfo implements IAdaptable {
 	 * string describing the provided sync kind.
 	 * 
 	 * @param kind the sync kind obtained from a <code>SyncInfo</code>
-	 * @return a displayable string that descibes the kind
+	 * @return a displayable string that describes the kind
 	 */
 	public static String kindToString(int kind) {
 		String label = ""; //$NON-NLS-1$
