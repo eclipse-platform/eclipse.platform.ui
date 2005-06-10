@@ -75,7 +75,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 			try {
 				provider = (RefreshProvider) configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
-				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, Messages.refresh_installError, e);
+				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
 			if (provider != null)
 				providerList.add(provider);
@@ -312,11 +313,14 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 	}
 
 	private void unmonitorLinkedContents(IProject project) {
+		if (!project.isAccessible())
+			return;
 		IResource[] children = null;
 		try {
 			children = project.members();
 		} catch (CoreException e) {
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, Messages.refresh_refreshErr, e);
+			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
 		if (children != null && children.length > 0)
 			for (int i = 0; i < children.length; i++)
