@@ -80,7 +80,7 @@ public class Main {
     private boolean initialize = false;
     private Process showProcess = null;
     private boolean splashDown = false;
-    private final Runnable endSplashHandler = new Runnable() {
+    private final Thread endSplashHandler = new Thread() {
         public void run() {
             takeDownSplash();
         }
@@ -1496,11 +1496,11 @@ public class Main {
      * In both scenarios we pass a handler (Runnable) to the platform.
      * The handler is called as a result of the launched application calling
      * Platform.endSplash(). In the first scenario this results in the
-     * -endsplash command being executed. In the second scenarios this
+     * -endsplash command being executed. In the second scenario this
      * results in the process created as a result of the -showsplash command
      * being destroyed.
      * 
-     * @param bootPath search path for the boot plugin
+     * @param defaultPath search path for the boot plugin
      */
     private void handleSplash(URL[] defaultPath) {
         // run without splash if we are initializing or nosplash 
@@ -1509,6 +1509,16 @@ public class Main {
             showSplash = null;
             endSplash = null;
             return;
+        }
+        
+        if (showSplash != null || endSplash != null) {
+        	// Register the endSplashHandler to be run at VM shutdown. This hook will be 
+        	// removed once the splash screen has been taken down.
+        	try {
+        		Runtime.getRuntime().addShutdownHook(endSplashHandler);
+        	} catch(Exception ex) {
+        		// Best effort to register the handler
+        	}
         }
 
         // if -endsplash is specified, use it and ignore any -showsplash command
@@ -1563,7 +1573,7 @@ public class Main {
     }
 
     /*
-     * take down the splash screen. Try both take-down methods just in case
+     * Take down the splash screen. Try both take-down methods just in case
      * (only one should ever be set)
      */
     protected void takeDownSplash() {
@@ -1585,6 +1595,12 @@ public class Main {
             showProcess = null;
         }
         splashDown = true;
+        
+        try {
+        	Runtime.getRuntime().removeShutdownHook(endSplashHandler);
+        } catch (IllegalStateException e) {
+        	// OK to ignore this, happens when the VM is already shutting down
+        }
     }
 
     /*
