@@ -18,6 +18,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.ui.ConfigurationManagerWindow;
 import org.eclipse.update.internal.ui.UpdateUIMessages;
@@ -65,11 +66,13 @@ public class FindUpdatesAction extends Action {
 		}
 
 		private void updateStatus() {
-			if (window.getShell().isDisposed())
+			if (window.getShell()==null || window.getShell().isDisposed())
 				return;
 			String perc = ((int) (workSoFar * 100.0) / totalWork) + ""; //$NON-NLS-1$
 			final String message = NLS.bind(UpdateUIMessages.FindUpdatesAction_trackedProgress, new String[] {
 					name, subname, perc });
+			Shell shell = window.getShell();
+			if (shell==null || shell.isDisposed()) return;
 			window.getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					window.updateStatusLine(message, null);
