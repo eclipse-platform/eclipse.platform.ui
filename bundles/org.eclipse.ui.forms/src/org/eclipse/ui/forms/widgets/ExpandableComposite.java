@@ -328,10 +328,10 @@ public class ExpandableComposite extends Composite {
 				thmargin = GAP;
 				tvmargin = GAP;
 			}
-			int innerwHint = wHint - marginWidth - marginWidth
-												- thmargin - thmargin;
+			int innerwHint = wHint; 
 			if (innerwHint != SWT.DEFAULT)
-				innerwHint -= twidth;
+				innerwHint -= twidth + marginWidth + marginWidth
+				+ thmargin + thmargin;
 
 			int innertHint = innerwHint;
 
