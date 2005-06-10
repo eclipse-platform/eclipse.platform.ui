@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.*;
  */
 class MonitorManager implements ILifecycleListener, IPathVariableChangeListener {
 	/**
-	 * The PollingMonitor in charge of doing filesystem polls.
+	 * The PollingMonitor in charge of doing file-system polls.
 	 */
 	protected final PollingMonitor pollMonitor;
 	/**
@@ -37,7 +37,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 	 */
 	private RefreshProvider[] providers;
 	/**
-	 * Reference to the refresh manager
+	 * Reference to the refresh manager.
 	 */
 	protected final RefreshManager refreshManager;
 	/**
@@ -45,7 +45,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 	 */
 	protected final Map registeredMonitors;
 	/**
-	 * Reference to the worskpace
+	 * Reference to the workspace.
 	 */
 	protected IWorkspace workspace;
 
@@ -92,6 +92,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 		final List resourcesToMonitor = new ArrayList(10);
 		IProject[] projects = workspace.getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
+			if (!projects[i].isAccessible())
+				continue;
 			resourcesToMonitor.add(projects[i]);
 			try {
 				IResource[] members = projects[i].members();
@@ -99,7 +101,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 					if (members[j].isLinked())
 						resourcesToMonitor.add(members[j]);
 			} catch (CoreException e) {
-				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, Messages.refresh_refreshErr, e);
+				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
 		}
 		return resourcesToMonitor;
