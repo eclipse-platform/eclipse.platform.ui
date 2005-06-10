@@ -353,19 +353,25 @@ public class ConfigurationView
 	}
 
 	private void initializeImages() {
-		ImageDescriptor edesc = UpdateUIImages.DESC_APP_OBJ;
 		IProduct product = Platform.getProduct();
 		if (product != null) {
-			String windowImageURL = product.getProperty(IProductConstants.WINDOW_IMAGE);
-			if (windowImageURL == null) {
-				String windowImagesUrls = product.getProperty(IProductConstants.WINDOW_IMAGES);
-				if (windowImagesUrls != null ) {
-					StringTokenizer st = new StringTokenizer(windowImagesUrls, ","); //$NON-NLS-1$
-					if (st.hasMoreTokens())
-						windowImageURL = st.nextToken();
-				}
-			}
-			if (windowImageURL != null)
+			eclipseImage = getProductImage16(product);
+		}
+		if (eclipseImage==null) {
+			ImageDescriptor edesc = UpdateUIImages.DESC_APP_OBJ;
+			eclipseImage = UpdateUI.getDefault().getLabelProvider().get(edesc);
+		}
+	}
+	
+	private Image getProductImage16(IProduct product) {
+		// We must be careful and poof up the image to test
+		// the bounds to ensure we are picking 16x16 one.
+		String windowImagesUrls = product.getProperty(IProductConstants.WINDOW_IMAGES);
+		if (windowImagesUrls != null ) {
+			StringTokenizer st = new StringTokenizer(windowImagesUrls, ","); //$NON-NLS-1$
+			while (st.hasMoreTokens()) {
+				String windowImageURL = st.nextToken();
+				ImageDescriptor edesc=null;
 				try {
 					edesc = ImageDescriptor.createFromURL(new URL(windowImageURL));
 				} catch (MalformedURLException e) {
@@ -377,8 +383,14 @@ public class ConfigurationView
 							edesc = ImageDescriptor.createFromURL(url);
 					}
 				}
+				if (edesc!=null) {
+					Image image = UpdateUI.getDefault().getLabelProvider().get(edesc);
+					if (image.getBounds().width==16)
+						return image;
+				}
+			}
 		}
-		eclipseImage = UpdateUI.getDefault().getLabelProvider().get(edesc);
+		return null;
 	}
 
 	public void initProviders() {
