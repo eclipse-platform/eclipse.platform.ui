@@ -52,15 +52,15 @@ public interface ISynchronizeScope {
 	public IResource[] getRoots();
 	
 	/**
-	 * Add a propety change listener that will get invoked when a
-	 * property of the reciever cnahges.
+	 * Add a property change listener that will get invoked when a
+	 * property of the receiver changes.
 	 * 
 	 * @param listener
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
 	
 	/**
-	 * Remove a propety change listener. Removing an unregistered listener
+	 * Remove a property change listener. Removing an unregistered listener
 	 * has no effect.
 	 * 
 	 * @param listener

@@ -23,7 +23,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
  * provided descriptors are managed the caller and must be disposed appropriately. 
  * </p>
  * <p>
- * This class is not intended to be sublcassed or instantiated by clients
+ * This class is not intended to be subclassed or instantiated by clients
  * @since 2.0
  */
 public class TeamImages {

@@ -11,13 +11,13 @@
 package org.eclipse.team.ui.synchronize;
 
 /**
- * Manages synchronization view participants. Clients can programatically add 
+ * Manages synchronization view participants. Clients can programmatically add 
  * or remove participant instances from this manager. Managed participants are available to
  * clients whereas un-managed participants can still exist but won't be available 
  * generally available to clients until explicitly added to the manager.
  * <p>
  * Participants added to the manager will benefit from the manager's lifecycle
- * support. The participants will automatically have their #init method and #dispose
+ * support. The participants will automatically have their <code>init</code> method and <code>dispose</code>
  * called when the manager starts and is shutdown and if persistable will 
  * be allowed to save their state on shutdown.
  * </p><p>
@@ -48,10 +48,10 @@ public interface ISynchronizeManager {
 	public void addSynchronizeParticipantListener(ISynchronizeParticipantListener listener);
 	
 	/**
-	 * Deregisters the given listener for participant notifications. Has
+	 * Removes the given listener for participant notifications. Has
 	 * no effect if an identical listener is not already registered.
 	 * 
-	 * @param listener listener to deregister
+	 * @param listener listener to remove
 	 */
 	public void removeSynchronizeParticipantListener(ISynchronizeParticipantListener listener);
 
@@ -83,7 +83,7 @@ public interface ISynchronizeManager {
 	 * Returns the registered synchronize participants with the given type id. It is
 	 * possible to have multiple instances of the same participant type.
 	 * 
-	 * @param id the type indentifier for the participant
+	 * @param id the type identifier for the participant
 	 * @return the registered synchronize participants with the given id, or 
 	 * an empty list if there are none with that id registered.
 	 */
@@ -92,7 +92,7 @@ public interface ISynchronizeManager {
 	/**
 	 * Returns the registered synchronize participants with the given type id and instance id.
 	 * 
-	 * @param id the type indentifier for the participant
+	 * @param id the type identifier for the participant
 	 * @param secondaryId the instance identifier for this participant type or <code>null</code>
 	 * if this participant doesn't support multiple instances.
 	 * @return the registered synchronize participants with the given id, or 
@@ -102,7 +102,7 @@ public interface ISynchronizeManager {
 	
 	/**
 	 * Opens the synchronize view in the perspective defined by the user in the team synchronize
-	 * perferences.
+	 * preferences.
 	 * 
 	 * @return the opened synchronize view or <code>null</code> if it can't be opened.
 	 */

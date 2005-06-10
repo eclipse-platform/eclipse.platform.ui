@@ -39,7 +39,7 @@ import org.eclipse.ui.progress.UIJob;
  * A {@link SyncInfo} editor input used as input to a two-way or three-way 
  * compare viewer. It defines methods for accessing the three sides for the 
  * compare, and a name and image which is used when displaying the three way input
- * in an editor. This input can alternatly be used to show compare results in 
+ * in an editor. This input can alternately be used to show compare results in 
  * a dialog by calling {@link CompareUI#openCompareDialog(org.eclipse.compare.CompareEditorInput)}.
  * <p>
  * The editor will not update when the elements in the sync info are changed.
@@ -96,10 +96,10 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	
 	/**
 	 * Creates a compare editor input based on an existing <code>SyncInfo</code>
-	 * from the given particpant.
+	 * from the given participant.
 	 * 
 	 * @param participant the participant from which the sync info was obtained. The
-	 * name of the particpant is used as the description which is displayed to the user.
+	 * name of the participant is used as the description which is displayed to the user.
 	 * @param sync the <code>SyncInfo</code> used as the base for the compare input.
      * 
      * @since 3.1

@@ -43,7 +43,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
- * Displays a synchronize participant page combined with the compare/merge infrastructured. This only works if the
+ * Displays a synchronize participant page combined with the compare/merge infrastructure. This only works if the
  * synchronize page viewer provides selections that are of the following types: ITypedElement and ICompareInput. 
  * 
  * @since 3.0
@@ -390,7 +390,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	 * Initialize the diff viewer created for this compare input. If a subclass
 	 * overrides the <code>createDiffViewer(Composite)</code> method, it should
 	 * invoke this method on the created viewer in order to get the proper
-	 * labelling in the compare input's contents viewers.
+	 * labeling in the compare input's contents viewers.
 	 * @param viewer the diff viewer created by the compare input
 	 */
 	private void initializeDiffViewer(Viewer viewer) {
@@ -524,7 +524,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	}
 	
 	/**
-	 * Return the synchronize page configiration for this part
+	 * Return the synchronize page configuration for this part
 	 * 
 	 * @return Returns the pageConfiguration.
 	 */

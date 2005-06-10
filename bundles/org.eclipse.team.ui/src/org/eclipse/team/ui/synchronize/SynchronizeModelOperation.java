@@ -38,7 +38,7 @@ public abstract class SynchronizeModelOperation extends TeamOperation {
 	private IDiffElement[] elements;
 	
 	/*
-	 * Helper method for extacting the part safely from a configuration
+	 * Helper method for extracting the part safely from a configuration
 	 */
 	private static IWorkbenchPart getPart(ISynchronizePageConfiguration configuration) {
 		if (configuration != null) {
@@ -51,7 +51,7 @@ public abstract class SynchronizeModelOperation extends TeamOperation {
 	}
 	
 	/*
-	 * Helper method for extacting the runnable context safely from a configuration
+	 * Helper method for extracting the runnable context safely from a configuration
 	 */
 	private static IRunnableContext getRunnableContext(ISynchronizePageConfiguration configuration) {
 		if (configuration != null) {

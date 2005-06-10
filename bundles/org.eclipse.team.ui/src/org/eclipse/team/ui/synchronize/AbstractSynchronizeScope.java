@@ -81,13 +81,13 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	}
 	
 	/**
-	 * Constuctor a scope from scratch
+	 * Constructor a scope from scratch
 	 */
 	protected AbstractSynchronizeScope() {
 	}
 	
 	/**
-	 * Constuctor a scope from a previously saved state
+	 * Constructor a scope from a previously saved state
 	 */
 	protected AbstractSynchronizeScope(IMemento memento) {
 		init(memento);
@@ -119,7 +119,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	}
 	
 	/**
-	 * Fires the given property change event to all registered listsners.
+	 * Fires the given property change event to all registered listeners.
 	 * 
 	 * @param event the property change event to be fired
 	 */
@@ -138,7 +138,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 		}
 	}
 	/**
-	 * Firs a change event for property <code>ISynchronizeScope.ROOTS</code> 
+	 * Fires a change event for property <code>ISynchronizeScope.ROOTS</code> 
 	 * containing the new roots. The old roots are not provided in the event.
 	 */
 	protected void fireRootsChanges() {
@@ -156,7 +156,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	}
 	
 	/**
-	 * Method invoked from the contructor which repopulats the fields of this scope
+	 * Method invoked from the constructor which repopulates the fields of this scope
 	 * 
 	 * @param memento the memento into which the scope was previously saved
 	 */

@@ -102,7 +102,7 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	}
 
     /**
-     * Create aand run the operation for this action. By default, the operation is created
+     * Create and run the operation for this action. By default, the operation is created
      * by calling <code>getSubscriberOperation</code> and then run. Subclasses may
      * override.
      * 
@@ -184,7 +184,7 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	/**
 	 * Filter uses to filter the user selection to contain only those elements
 	 * for which this action is enabled. Default filter includes all out-of-sync
-	 * elements in the current selection. Subsclasses may override.
+	 * elements in the current selection. Subclasses may override.
 	 * 
 	 * @return a sync info filter which selects all out-of-sync resources.
 	 */
@@ -239,10 +239,10 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	 * Save all dirty editors in the workbench that are open on files that may
 	 * be affected by this operation. Opens a dialog to prompt the user if
 	 * <code>confirm</code> is true. Return true if successful. Return false
-	 * if the user has cancelled the command. Must be called from the UI thread.
+	 * if the user has canceled the command. Must be called from the UI thread.
 	 * 
 	 * @param confirm prompt the user if true
-	 * @return boolean false if the operation was cancelled.
+	 * @return boolean false if the operation was canceled.
 	 */
 	public final boolean saveAllEditors(boolean confirm) {
 		return IDE.saveAllEditors(Utils.getResources(getFilteredDiffElements()), confirm);

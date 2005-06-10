@@ -18,7 +18,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizeManager;
 /**
  * TeamUI contains public API for generic UI-based Team functionality.
  * <p>
- * This class is not intended to be sublcassed or instantiated by clients
+ * This class is not intended to be subclassed or instantiated by clients
  */
 public class TeamUI {
 
@@ -59,7 +59,7 @@ public class TeamUI {
 	}
 
 	/**
-	 * Deregister as a Team property changes.
+	 * Remove the listener from Team property change listener list.
 	 * 
 	 * @param listener the listener to remove
 	 */

@@ -194,7 +194,7 @@ public interface ISynchronizePageConfiguration {
 	public static final String[] DEFAULT_VIEW_MENU = new String[] { LAYOUT_GROUP, MODE_GROUP, SYNCHRONIZE_GROUP, PREFERENCES_GROUP };
 
 	/**
-	 * Comparison type contstants
+	 * Comparison type constants
 	 */
 	public final static String TWO_WAY = "two-way"; //$NON-NLS-1$
 	public final static String THREE_WAY = "three-way"; //$NON-NLS-1$
@@ -209,14 +209,13 @@ public interface ISynchronizePageConfiguration {
 	public final static int ALL_MODES = INCOMING_MODE | OUTGOING_MODE | CONFLICTING_MODE | BOTH_MODE;
 
 	/**
-	 * Return the particpant associated with the page to shich this configuration
-	 * is associated.
-	 * @return the particpant
+	 * Return the participant associated with this configuration.
+	 * @return the participant
 	 */
 	public abstract ISynchronizeParticipant getParticipant();
 	
 	/**
-	 * Return the site which provieds access to certain workbench
+	 * Return the site which provides access to certain workbench
 	 * services.
 	 * @return the page site
 	 */
@@ -230,7 +229,7 @@ public interface ISynchronizePageConfiguration {
 	public ISynchronizePage getPage();
 	
 	/**
-	 * Set the page for this configuration. This methpd should only
+	 * Set the page for this configuration. This method should only
 	 * be called once by the {@link ISynchronizeParticipant} that created
 	 * the page.
 	 * @param page the configuration's page
@@ -273,7 +272,7 @@ public interface ISynchronizePageConfiguration {
 
 	/**
 	 * Register the action group with the configuration. The
-	 * registered action groups will have the oportunity to add
+	 * registered action groups will have the opportunity to add
 	 * actions to the action bars and context menu of the synchronize
 	 * page created using the configuration.
 	 * @param group a synchronize page action group
@@ -303,7 +302,7 @@ public interface ISynchronizePageConfiguration {
 	public void setMenuGroups(String menuPropertyId, String[] groups);
 	
 	/**
-	 * Adds a menu group of the gievn id to the end of the menu groups list
+	 * Adds a menu group of the given id to the end of the menu groups list
 	 * for the given menu property id.
 	 * @param menuPropertyId the menu property id (one of <code>P_CONTEXT_MENU</code>,
 	 * <code>P_VIEW_MENU</code> or <code>P_TOOLBAR_MENU</code>)
@@ -364,7 +363,7 @@ public interface ISynchronizePageConfiguration {
 	 * Return the comparison type used by the page's <code>SyncInfo</code>
 	 * modes.
 	 * @return comparison type (could be <code>TWO_WAY</code>, <code>THREE_WAY</code>
-	 * or a cusom type).
+	 * or a custom type).
 	 */
 	String getComparisonType();
 	
@@ -372,7 +371,7 @@ public interface ISynchronizePageConfiguration {
 	 * Set the comparison type used by the page's <code>SyncInfo</code>
 	 * modes. The default type is <code>THREE_WAY</code>.
 	 * @param type the comparison type (could be <code>TWO_WAY</code>, <code>THREE_WAY</code>
-	 * or a cusom type).
+	 * or a custom type).
 	 */
 	void setComparisonType(String type);
 	

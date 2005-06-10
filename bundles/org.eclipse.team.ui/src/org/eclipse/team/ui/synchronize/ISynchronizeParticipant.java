@@ -21,7 +21,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * A synchronize participant is a visual compoment that can be displayed within any
+ * A synchronize participant is a visual component that can be displayed within any
  * control (e.g. view, editor, dialog).  Typically a participant is used to show changes between 
  * local resources and variant states of those resources and allows the user to perform actions
  * to manipulate the changes. 
@@ -58,7 +58,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * with a handle to the state that was saved. The dispose method is called when the participant is
  * removed from the manager and at shutdown.
  * </p><p>
- * Clients are not intended to implement this interface. Instead, sublcass {@link AbstractSynchronizeParticipant}.
+ * Clients are not intended to implement this interface. Instead, subclass {@link AbstractSynchronizeParticipant}.
  * </p>
  * @see ISynchronizeView
  * @see ISynchronizeManager
@@ -176,7 +176,7 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * manager is shutdown or the participant is removed from the manager.
 	 * </p><p>
 	 * Within this method a participant may release any resources, fonts, images, etc. 
-	 * held by this part.  It is also very important to deregister all listeners.
+	 * held by this part.  It is also very important to remove all listeners.
 	 * </p><p>
 	 * Clients should not call this method (the synchronize manager calls this 
 	 * method at appropriate times).
@@ -216,7 +216,7 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	
 	/**
 	 * Removes the given property listener from this synchronize participant.
-	 * Has no effect if an identical listener is not alread registered.
+	 * Has no effect if an identical listener is not already registered.
 	 * 
 	 * @param listener a property listener
 	 */
@@ -229,7 +229,7 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * 		in a compare editor or compare dialog
 	 * @param configuration the compare configuration that will be used to configure the compare editor or dialog
 	 * @param monitor a progress monitor that can be used if contacting a server to prepare the element and configuration
-	 * @throws TeamException if an error occurred that shoudl rpevent the display of the compare editor containing
+	 * @throws TeamException if an error occurred that should prevent the display of the compare editor containing
 	 * 		the element
 	 * 
 	 * @since 3.1
@@ -241,8 +241,8 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 				throws TeamException;
 
     /**
-     * Return the list of prefernece pages that are associated with this participant
-     * @return the list of prefernece pages that are associated with this participant
+     * Return the list of preference pages that are associated with this participant
+     * @return the list of preference pages that are associated with this participant
      * @since 3.1
      */
     public PreferencePage[] getPreferencePages();

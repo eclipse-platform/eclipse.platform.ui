@@ -136,8 +136,8 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	 * once before any calls are made to <code>filleContextMenu</code> or
 	 * <code>setActionBars</code> but after the control for the page has been
 	 * created. As a result of this, the site of the configuration can be
-	 * accessed. Sublcasses may override this method but must invoke the
-	 * overriden method.
+	 * accessed. Subclasses may override this method but must invoke the
+	 * overridden method.
 	 * 
 	 * @param configuration the configuration for the part to which the
 	 * contribution is associated
@@ -163,7 +163,7 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	
 	/** 
 	 * Dispose of the action group. Subclasses may override but must
-	 * invoke the overriden method.
+	 * invoke the overridden method.
 	 */
 	public void dispose() {
 		super.dispose();
@@ -176,7 +176,7 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	 * Helper method to find the group of the given id for the page associated
 	 * with the configuration of this action group. The id of the returned group
 	 * will not match that of the provided id since the group must be modified
-	 * to ensure that groups are unique accross pages.
+	 * to ensure that groups are unique across pages.
 	 * 
 	 * @param menu the menu
 	 * @param groupId the id of the group being searched for
@@ -287,7 +287,7 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	 * elements visible in the page. Selection change events are fired when the
 	 * elements visible in the view change.
 	 * 
-	 * @return a selection provider whgose selection is the roots of all
+	 * @return a selection provider whose selection is the roots of all
 	 * elements visible in the page
 	 */
 	protected ISelectionProvider getVisibleRootsSelectionProvider() {

@@ -57,7 +57,7 @@ public interface ISynchronizeParticipantReference {
 	 * participant and and a result may be long running. The method may return <code>null</code>
 	 * if the participant cannot be de-referenced.
 	 * 
-	 * @return the participant referencesd by this handle.
+	 * @return the participant referenced by this handle.
 	 */
 	public ISynchronizeParticipant getParticipant() throws TeamException;
 	

@@ -32,14 +32,14 @@ import org.eclipse.ui.progress.IProgressConstants;
  * An operation that can be configured to run in the foreground using
  * the {@link org.eclipse.ui.progress.IProgressService} or the background
  * as a {@link org.eclipse.core.runtime.jobs.Job}. The execution context is determined
- * by what is returned by the {@link #canRunAsJob()} hint which may be overriden by subclasses. 
- * Subsclass must override the <code>run(IProgressMonitor)</code> method to perform 
+ * by what is returned by the {@link #canRunAsJob()} hint which may be overridden by subclasses. 
+ * Subclass must override the <code>run(IProgressMonitor)</code> method to perform 
  * the behavior of the operation in the desired execution context.
  * <p>
  * If this operation is run as a job, it is registered with the job as a 
  * {@link org.eclipse.core.runtime.jobs.IJobChangeListener} and is scheduled with
  * the part of this operation if it is not <code>null</code>. 
- * Subsclasses can override the methods of this interface to receive job change notifications.
+ * Subclasses can override the methods of this interface to receive job change notifications.
  * </p>
  * @see org.eclipse.ui.progress.IProgressService
  * @see org.eclipse.core.runtime.jobs.Job
@@ -163,7 +163,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	/**
 	 * This method is invoked from the <code>run()</code> method before
 	 * the operation is run in the operation's context. Subclasses may
-	 * override in order to perform prechecks to determine if the operation
+	 * override in order to perform pre-checks to determine if the operation
 	 * should run. This may include prompting the user for information, etc.
 	 * 
 	 * @return whether the operation should be run.
@@ -181,11 +181,11 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 * occurs.
 	 * <p>
 	 * By default, no scheduling
-	 * rule is obtained. Sublcasses can override in order to obtain a
-	 * scheduling rule or can obtain schduling rules within their operation
+	 * rule is obtained. Subclasses can override in order to obtain a
+	 * scheduling rule or can obtain scheduling rules within their operation
 	 * if finer grained scheduling is desired.
 	 * 
-	 * @return the schduling rule to be obtained by this operation
+	 * @return the scheduling rule to be obtained by this operation
 	 * or <code>null</code>.
 	 */
 	protected ISchedulingRule getSchedulingRule() {
@@ -207,7 +207,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 * If this operation can safely be run in the background, then subclasses can
 	 * override this method and return <code>true</code>. This will make their
 	 * action run in a {@link  org.eclipse.core.runtime.jobs.Job}. 
-	 * Subsclass that override this method should 
+	 * Subclass that override this method should 
 	 * also override the <code>getJobName()</code> method.
 	 * 
 	 * @return <code>true</code> if this action can be run in the background and
@@ -293,7 +293,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
     /**
      * Return whether the job that is running this operation should be considered
      * a member member of the given family. Subclasses can override this method in
-     * order to support the family based funtionality provided by the {@link IJobManager}.
+     * order to support the family based functionality provided by the {@link IJobManager}.
      * By default, <code>false</code> is always returned. Subclasses that override the
      * <code>isKeepOneProgressServiceEntry</code> method do not need to override
      * this method, but instead should override <code>isSameFamilyAs</code>.

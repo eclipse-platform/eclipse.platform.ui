@@ -83,7 +83,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	}
 	
 	/**
-	 * Constructor which should be called when creating a particpant whose resources
+	 * Constructor which should be called when creating a participant whose resources
 	 * are to be scoped.
 	 * 
 	 * @param scope a synchronize scope
@@ -140,8 +140,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * Refresh a participant in the background the result of the refresh are shown in the progress view. Refreshing 
 	 * can also be considered synchronizing, or refreshing the synchronization state. Basically this is a long
 	 * running operation that will update the participants sync info sets with new changes detected on the
-	 * server. Eother or both of the <code>shortTaskName</code> and <code>longTaskName</code> can be <code>null</code>
-	 * in whihc case, the default values for these are returned by the methods <code>getShortTaskName()</code> and
+	 * server. Either or both of the <code>shortTaskName</code> and <code>longTaskName</code> can be <code>null</code>
+	 * in which case, the default values for these are returned by the methods <code>getShortTaskName()</code> and
 	 * <code>getLongTaskName(IResource[])</code> will be used.
 	 * 
 	 * @param resources the resources to be refreshed.
@@ -292,7 +292,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	}
 
 	/**
-	 * Reset the sync set of the particpant by repopulating it from scratch.
+	 * Reset the sync set of the participant by repopulating it from scratch.
 	 */
 	public void reset() {
 		getSubscriberSyncInfoCollector().reset();
@@ -342,8 +342,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	
 	/**
 	 * Returns the short task name (e.g. no more than 25 characters) to describe the behavior of the
-	 * refresh operation to the user. This is typically shown in the status line when this subcriber is refreshed
-	 * in the backgroud. When refreshed in the foreground, only the long task name is shown.
+	 * refresh operation to the user. This is typically shown in the status line when this subscriber is refreshed
+	 * in the background. When refreshed in the foreground, only the long task name is shown.
 	 * 
 	 * @return the short task name to show in the status line.
 	 */
@@ -353,7 +353,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	
 	/**
 	 * Returns the long task name to describe the behavior of the
-	 * refresh operation to the user. This is typically shown in the status line when this subcriber is refreshed
+	 * refresh operation to the user. This is typically shown in the status line when this subscriber is refreshed
 	 * in the background.
 	 * 
 	 * @return the long task name
@@ -365,8 +365,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	
 	/**
 	 * Returns the long task name to describe the behavior of the
-	 * refresh operation to the user. This is typically shown in the status line when this subcriber is refreshed
-	 * in the backgroud.
+	 * refresh operation to the user. This is typically shown in the status line when this subscriber is refreshed
+	 * in the background.
      * @param resources
      * @return the long task name
      * @since 3.1
@@ -397,7 +397,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * create the page (see <code>createPage(ISynchronizePageConfiguration)</code>).
 	 * The configuration would have been initialized by 
 	 * <code>initializeConfiguration(ISynchronizePageConfiguration)</code>
-	 * but may have also been tailored further. This method gives the particpant 
+	 * but may have also been tailored further. This method gives the participant 
 	 * a chance to validate those changes before the page is created.
 	 * 
 	 * @param configuration the page configuration that is about to be used to create a page.
@@ -437,7 +437,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * resources from the subscriber will be included in the participant's set. However, a filter can be used to exclude
 	 * some of these out-of-sync resources, if desired.
 	 * <p>
-	 * Subsclasses can invoke this method any time after <code>setSubscriber</code> has been invoked.
+	 * Subclasses can invoke this method any time after <code>setSubscriber</code> has been invoked.
 	 * </p>
 	 * @param filter a sync info filter
 	 */
