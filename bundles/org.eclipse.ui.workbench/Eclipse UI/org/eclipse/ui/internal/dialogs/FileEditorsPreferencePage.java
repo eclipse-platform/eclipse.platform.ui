@@ -356,7 +356,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
 						item.setImage(getImage(editor));
 					} else { // update the item to reflect its origin
 						foundItem.setData(DATA_FROM_CONTENT_TYPE, contentTypes[i]);
-						setLockedItemText(foundItem, editor.getLabel());
+						setLockedItemText(foundItem, foundItem.getText());
 					}
 				}
 			}
