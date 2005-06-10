@@ -645,7 +645,8 @@ public class UpdateManagerUtils {
 		siteValues = siteValues.toUpperCase();		
 		StringTokenizer stok = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
-			if (siteValues.equalsIgnoreCase(stok.nextToken())) return true;
+			String token = stok.nextToken().toUpperCase();
+			if (siteValues.indexOf(token)!=-1) return true;
 		}
 		return false;
 	}
