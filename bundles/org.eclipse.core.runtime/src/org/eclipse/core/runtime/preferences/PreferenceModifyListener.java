@@ -16,7 +16,7 @@ package org.eclipse.core.runtime.preferences;
  * the preference service via XML and the <code>org.eclipse.core.runtime.preferences</code>
  * extension point.
  * <p>
- * Clients may implement this interface.
+ * Clients may subclass this type.
  * </p>
  * 
  * @since 3.1
