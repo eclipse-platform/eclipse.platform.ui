@@ -191,10 +191,10 @@
             enabled="true"
             pattern="*.log"/>
       <ignore
-            enabled="true"
+            enabled="false"
             pattern="*.zip"/>
       <ignore
-            enabled="true"
+            enabled="false"
             pattern="*.gz"/>
    </extension>
 
