@@ -50,7 +50,13 @@ public final class InternalPlatform {
 	private static String[] appArgs = new String[0];
 	private static final String APPLICATION = "-application"; //$NON-NLS-1$	
 
-	private static final String[] ARCH_LIST = {Platform.ARCH_PA_RISC, Platform.ARCH_PPC, Platform.ARCH_SPARC, Platform.ARCH_X86, Platform.ARCH_AMD64, Platform.ARCH_IA64};
+	private static final String[] ARCH_LIST = {Platform.ARCH_PA_RISC, //
+		Platform.ARCH_PPC, //
+		Platform.ARCH_SPARC, //
+		Platform.ARCH_X86, //
+		Platform.ARCH_AMD64, // 
+		Platform.ARCH_IA64, //
+		Platform.ARCH_IA64_32};
 	private static final String BOOT = "-boot"; //$NON-NLS-1$
 	private static final String CLASSLOADER_PROPERTIES = "-classloaderProperties"; //$NON-NLS-1$	
 
