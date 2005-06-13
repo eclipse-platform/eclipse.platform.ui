@@ -449,6 +449,25 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		return (IAnnotationModel) model;
 	}
 
+	/**
+	 * Disposes the visual annotation model.
+	 *
+	 * XXX: make protected after 3.1
+	 * 		https://bugs.eclipse.org/bugs/show_bug.cgi?id=99682
+	 * @since 3.1
+	 */
+	private void disposeVisualAnnotationModel() {
+		if (fVisualAnnotationModel != null) {
+			if (getDocument() != null)
+				fVisualAnnotationModel.disconnect(getDocument());
+		
+			if ( fVisualAnnotationModel instanceof IAnnotationModelExtension)
+				((IAnnotationModelExtension)fVisualAnnotationModel).removeAnnotationModel(MODEL_ANNOTATION_MODEL);
+			
+			fVisualAnnotationModel= null;
+		}
+	}
+
 	/*
 	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel, int, int)
 	 */
@@ -462,14 +481,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		} else {
 
-			if (fVisualAnnotationModel != null && getDocument() != null)
-				fVisualAnnotationModel.disconnect(getDocument());
+			disposeVisualAnnotationModel();
 
 			if (annotationModel != null && document != null) {
 				fVisualAnnotationModel= createVisualAnnotationModel(annotationModel);
 				fVisualAnnotationModel.connect(document);
-			} else {
-				fVisualAnnotationModel= null;
 			}
 
 			if (modelRangeOffset == -1 && modelRangeLength == -1)
@@ -564,10 +580,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	protected void handleDispose() {
 		unconfigure();
 
-		if (fVisualAnnotationModel != null && getDocument() != null) {
-			fVisualAnnotationModel.disconnect(getDocument());
-			fVisualAnnotationModel= null;
-		}
+		disposeVisualAnnotationModel();
 
 		fVerticalRuler= null;
 
