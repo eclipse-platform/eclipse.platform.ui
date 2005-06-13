@@ -222,9 +222,9 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 			} else {
 				addProposal("$", RegExMessages.displayString_dollar, RegExMessages.additionalInfo_dollar); //$NON-NLS-1$
 				addBsProposal("\\", RegExMessages.displayString_replace_bs, RegExMessages.additionalInfo_replace_bs); //$NON-NLS-1$
-				addProposal("\t", RegExMessages.displayString_tab, RegExMessages.additionalInfo_tab); //$NON-NLS-1$
-				addProposal("\n", RegExMessages.displayString_nl, RegExMessages.additionalInfo_nl); //$NON-NLS-1$
-				addProposal("\r", RegExMessages.displayString_cr, RegExMessages.additionalInfo_cr); //$NON-NLS-1$
+				addProposal("\\t", RegExMessages.displayString_tab, RegExMessages.additionalInfo_tab); //$NON-NLS-1$
+				addProposal("\\n", RegExMessages.displayString_nl, RegExMessages.additionalInfo_nl); //$NON-NLS-1$
+				addProposal("\\r", RegExMessages.displayString_cr, RegExMessages.additionalInfo_cr); //$NON-NLS-1$
 			}
 			return (ICompletionProposal[]) fProposals.toArray(new ICompletionProposal[fProposals.size()]);
 		}
