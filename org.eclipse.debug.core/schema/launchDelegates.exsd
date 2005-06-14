@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.debug.core" id="launchDelegates" name="Launch Delegates"/>
       </appInfo>
       <documentation>
-         This extension point provides a mechanism for contributing a launch delegate to an existing launch configuration type for one or more launch modes. Since launch modes are extensisble, it may be neccessary to contribute additional launch delegates to an existing launch configuration type. Each launch delegate is contributed for a specific launch configuration type. A launch delegate supports one or more launch modes, and specifies a delegate responsible for the implementation of launching.
+         This extension point provides a mechanism for contributing a launch delegate to an existing launch configuration type for one or more launch modes. Since launch modes are extensible, it may be neccessary to contribute additional launch delegates to an existing launch configuration type. Each launch delegate is contributed for a specific launch configuration type. A launch delegate supports one or more launch modes, and specifies a delegate responsible for the implementation of launching.
       </documentation>
    </annotation>
 
@@ -90,7 +90,7 @@ Launch configuration instances of this delegate&apos;s type will delegate to ins
          <attribute name="sourceLocatorId" type="string">
             <annotation>
                <documentation>
-                  The unique identifier of a sourceLocator extension that is used to create the source locator for sessions launched using launch configurations of this type. Since 3.1, this attribute cab be specified in a launchDelegate extension when unspecified in the assocaited launchConfigurationType extension. Only one source locater can be specified per launch configuration type.
+                  The unique identifier of a sourceLocator extension that is used to create the source locator for sessions launched using launch configurations of this type. Since 3.1, this attribute can be specified in a launchDelegate extension when unspecified in the assocaited launchConfigurationType extension. Only one source locater can be specified per launch configuration type.
                </documentation>
             </annotation>
          </attribute>
