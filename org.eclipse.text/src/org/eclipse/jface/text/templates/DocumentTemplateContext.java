@@ -69,6 +69,7 @@ public class DocumentTemplateContext extends TemplateContext {
 	 * @param document the document this context applies to
 	 * @param position the position describing the area of the document which
 	 *        forms the template context
+	 * @since 3.1
 	 */
 	public DocumentTemplateContext(TemplateContextType type, IDocument document, Position position) {
 		super(type);

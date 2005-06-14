@@ -22,6 +22,9 @@ import java.util.Set;
 
 /**
  * A collection of text functions.
+ * <p>
+ * This class is neither intended to be instantiated nor instantiated.
+ * </p>
  */
 public class TextUtilities {
 

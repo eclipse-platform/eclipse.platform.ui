@@ -17,10 +17,10 @@ package org.eclipse.jface.text;
  * <p>
  * In order to reduce the probability of dead locks clients should synchronize
  * their access to these objects by using the provided lock object rather than
- * the object itself.
+ * the object itself.</p>
  * <p>
  * Managing objects can use the <code>setLockObject</code> method in order to
- * synchronize whole sets of objects.
+ * synchronize whole sets of objects.</p>
  *
  * @since 3.0
  */

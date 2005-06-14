@@ -21,6 +21,7 @@ package org.eclipse.jface.text;
  * longest line delimiter is given precedence of the shorter ones.
  * <p>
  * This class is not intended to be subclassed.
+ * </p>
  */
 public class ConfigurableLineTracker extends AbstractLineTracker {
 

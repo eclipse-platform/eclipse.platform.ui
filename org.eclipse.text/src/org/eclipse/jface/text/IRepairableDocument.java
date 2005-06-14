@@ -12,7 +12,7 @@ package org.eclipse.jface.text;
 
 /**
  * Tagging interface to be implemented by
- * {@link org.eclipse.jface.text.IDocument}implementers that offer a line
+ * {@link org.eclipse.jface.text.IDocument} implementers that offer a line
  * repair method on the documents.
  *
  * @see org.eclipse.jface.text.IDocument

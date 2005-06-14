@@ -43,7 +43,7 @@ package org.eclipse.text.edits;
  * </ul>
  * </p>
  * <p>
- * For edits with chldren, the child nodes are visited in increasing order.
+ * For edits with children, the child nodes are visited in increasing order.
  * </p>
  *
  * @see TextEdit#accept(TextEditVisitor)

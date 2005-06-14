@@ -40,7 +40,7 @@ import org.eclipse.jface.text.ISlaveDocumentManagerExtension;
  * such as position categories and position updaters.
  * <p>
  * Clients can instantiate this class. This class is not intended to be
- * subclassed.
+ * subclassed.</p>
  *
  * @since 3.0
  */

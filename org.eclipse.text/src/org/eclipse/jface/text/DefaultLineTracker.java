@@ -18,6 +18,7 @@ package org.eclipse.jface.text;
  * '\r', '\r\n'.
  * <p>
  * This class is not intended to be subclassed.
+ * </p>
  */
 public class DefaultLineTracker extends AbstractLineTracker {
 

@@ -39,7 +39,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	/**
 	 * A single iterator builds its behavior based on a sequence of iterators.
 	 *
-	 * @since 3.0
+	 * @since 3.1
 	 */
 	private static class MetaIterator implements Iterator {
 

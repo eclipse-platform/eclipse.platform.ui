@@ -22,7 +22,7 @@ import org.eclipse.jface.text.IDocument;
  * A <code>TextEditProcessor</code> manages a set of edits and applies
  * them as a whole to an <code>IDocument</code>.
  * <p>
- * This class isn't intended to be subclassed.
+ * This class isn't intended to be subclassed.</p>
  *
  * @see org.eclipse.text.edits.TextEdit#apply(IDocument)
  *

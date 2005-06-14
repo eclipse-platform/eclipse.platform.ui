@@ -22,6 +22,7 @@ package org.eclipse.jface.text;
  * <p>
  * Clients may implement this interface or use the standard implementation
  * {@link org.eclipse.jface.text.DefaultPositionUpdater}.
+ * </p>
  *
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.Position

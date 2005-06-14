@@ -449,6 +449,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 
 	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension2#toClosestImageRegion(org.eclipse.jface.text.IRegion)
+	 * @since 3.1
 	 */
 	public IRegion toClosestImageRegion(IRegion originRegion) throws BadLocationException {
 		return toImageRegion(originRegion, false, true);

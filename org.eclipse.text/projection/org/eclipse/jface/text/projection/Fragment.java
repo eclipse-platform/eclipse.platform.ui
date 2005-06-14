@@ -18,7 +18,7 @@ import org.eclipse.jface.text.Position;
  * Internal class. Do not use. Only public for testing purposes.
  * <p>
  * A fragment is a range of the master document that has an image, the so called
- * segment, in a projection document.
+ * segment, in a projection document.</p>
  *
  * @since 3.0
  */

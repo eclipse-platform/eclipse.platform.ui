@@ -346,6 +346,7 @@ public class LinkedModeModel {
 	 * is called, or after the next document change.
 	 *
 	 * @param flags the exit flags as defined in {@link ILinkedModeListener}
+	 * @since 3.1
 	 */
 	public void stopForwarding(int flags) {
 		fDocumentListener.fExit= true;
@@ -415,6 +416,7 @@ public class LinkedModeModel {
 
 	/**
 	 * Creates a new model.
+	 * @since 3.1
 	 */
 	public LinkedModeModel() {
 	}

@@ -19,7 +19,7 @@ import org.eclipse.jface.text.IDocument;
  * {@link org.eclipse.jface.text.projection.ProjectionDocumentManager}. This
  * class exists for compatibility reasons.
  * <p>
- * Internal class. This class is not intended to be used by clients.
+ * Internal class. This class is not intended to be used by clients.</p>
  *
  * @since 3.0
  */

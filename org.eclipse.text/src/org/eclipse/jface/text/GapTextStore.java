@@ -16,8 +16,10 @@ package org.eclipse.jface.text;
  * Implements a gap managing text store. The gap text store
  * relies on the assumption that subsequent changes of a document are co-located.
  * The start of the gap is always moved to the location of the last change. The
- * size of the gap varies between the low water mark and the high water mark. <p>
+ * size of the gap varies between the low water mark and the high water mark.
+ * <p>
  * This class is not intended to be subclassed.
+ * </p>
  */
 public class GapTextStore implements ITextStore {
 

@@ -15,13 +15,13 @@ package org.eclipse.jface.text;
  * Slave documents are documents whose contents is defined in terms of a master
  * document. Thus, slave documents usually reflect a projection of the master document.
  * Slave documents are causally connected to the master document. This means, changes
- * of the master document have immediate effect on the slave document and vice versa.<p>
- *
+ * of the master document have immediate effect on the slave document and vice versa.
+ * <p>
  * A slave document manager creates slave documents for given master documents, manages the
  * life cycle of the slave documents, and keeps track of the information flow between
  * master and slave documents. The slave document manager defines the construction rules of the
- * slave documents in terms of the master document.<p>
- *
+ * slave documents in terms of the master document.</p>
+ * <p>
 * In order to provided backward compatibility for clients of <code>ISlaveDocumentManager</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces
  * exist:
@@ -29,7 +29,7 @@ package org.eclipse.jface.text;
  * <li> {@link org.eclipse.jface.text.ISlaveDocumentManagerExtension} since version 3.0 extending the protocol
  *      with an access to all managed slave document for a given master document. </li>
  * </ul>
- *
+ * </p>
  *
  * @see org.eclipse.jface.text.IDocument
  * @since 2.1

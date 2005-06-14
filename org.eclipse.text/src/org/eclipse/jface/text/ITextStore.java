@@ -14,9 +14,11 @@ package org.eclipse.jface.text;
 /**
  * Interface for storing and managing text.
  * <p>
- * Provides access to the stored text and allows to manipulate it. Clients may
+ * Provides access to the stored text and allows to manipulate it.</p>
+ * <p>
+ * Clients may
  * implement this interface or use {@link org.eclipse.jface.text.GapTextStore} and
- * {@link org.eclipse.jface.text.SequentialRewriteTextStore}.
+ * {@link org.eclipse.jface.text.SequentialRewriteTextStore}.</p>
  */
 public interface ITextStore {
 

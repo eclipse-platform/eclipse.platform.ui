@@ -20,7 +20,7 @@ import org.eclipse.jface.text.Position;
  * {@link org.eclipse.jface.text.projection.ProjectionDocument}. This class
  * exists for compatibility reasons.
  * <p>
- * Internal class. This class is not intended to be used by clients.
+ * Internal class. This class is not intended to be used by clients.</p>
  *
  * @since 3.0
  */

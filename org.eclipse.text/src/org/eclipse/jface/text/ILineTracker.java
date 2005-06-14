@@ -29,6 +29,7 @@ package org.eclipse.jface.text;
  * </ul>
  * <p>
  * Clients may implement this interface or use the standard implementation
+ * </p>
  * {@link org.eclipse.jface.text.DefaultLineTracker}or
  * {@link org.eclipse.jface.text.ConfigurableLineTracker}.
  */

@@ -27,7 +27,7 @@ import org.eclipse.jface.text.SlaveDocumentEvent;
  * <p>
  * Clients are not supposed to create instances of this class. Instances are
  * created by {@link org.eclipse.jface.text.projection.ProjectionDocument}
- * instances. This class is not intended to be subclassed.
+ * instances. This class is not intended to be subclassed.</p>
  *
  * @since 3.0
  */

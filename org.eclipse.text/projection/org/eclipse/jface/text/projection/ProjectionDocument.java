@@ -54,7 +54,7 @@ import org.eclipse.jface.text.TextUtilities;
  * obtain a projection document, a
  * {@link org.eclipse.jface.text.projection.ProjectionDocumentManager}should be
  * used. This class is not intended to be subclassed outside of its origin
- * package.
+ * package.</p>
  *
  * @since 3.0
  */
@@ -485,6 +485,7 @@ public class ProjectionDocument extends AbstractDocument {
 	 * @return the first region that is not yet part of the projection document
 	 * @throws BadLocationException in case the given range is invalid in the
 	 *         master document
+	 * @since 3.1
 	 */
 	private IRegion computeFirstUnprojectedMasterRegion(int offsetInMaster, int lengthInMaster) throws BadLocationException {
 

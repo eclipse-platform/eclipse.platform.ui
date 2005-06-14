@@ -195,6 +195,7 @@ public class LinkedPositionGroup {
 	 * @param event the event
 	 * @return <code>true</code> if <code>position</code> and
 	 *         <code>event</code> are not absolutely disjoint
+	 * @since 3.1
 	 */
 	private boolean overlapsOrTouches(LinkedPosition position, DocumentEvent event) {
 		return position.getDocument().equals(event.getDocument()) && position.getOffset() <= event.getOffset() + event.getLength() && position.getOffset() + position.getLength() >= event.getOffset();

@@ -18,7 +18,9 @@ package org.eclipse.jface.text;
  * they are applied and after they have been applied. It is ensured that
  * the document event passed into the listener is the same for the two
  * notifications, i.e. the two document events can be checked using object identity.
+ * <p>
  * Clients may implement this interface.
+ * </p>
  *
  * @see org.eclipse.jface.text.IDocument
  */

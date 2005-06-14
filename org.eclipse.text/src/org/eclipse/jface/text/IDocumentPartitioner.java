@@ -35,9 +35,10 @@ package org.eclipse.jface.text;
  *      rewrite session. It also replaces the existing {@link #connect(IDocument)} method with
  *      a new one: {@link org.eclipse.jface.text.IDocumentPartitionerExtension3#connect(IDocument, boolean)}.
  * </ul>
- *
+ * <p>
  * Clients may implement this interface and its extension interfaces or use the standard
  * implementation <code>DefaultPartitioner</code>.
+ * </p>
  *
  * @see org.eclipse.jface.text.IDocumentPartitionerExtension
  * @see org.eclipse.jface.text.IDocumentPartitionerExtension2

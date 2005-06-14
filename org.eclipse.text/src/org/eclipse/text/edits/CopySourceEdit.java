@@ -20,12 +20,12 @@ import org.eclipse.jface.text.IDocument;
 /**
  * A copy source edit denotes the source of a copy operation. Copy
  * source edits are only valid inside an edit tree if they have a
- * corresponding traget edit. Furthermore the corresponding
+ * corresponding target edit. Furthermore the corresponding
  * target edit can't be a direct or indirect child of the source
  * edit. Violating one of two requirements will result in a <code>
  * MalformedTreeException</code> when executing the edit tree.
  * <p>
- * A copy source edit can manange an optional source modifier. A
+ * A copy source edit can manage an optional source modifier. A
  * source modifier can provide a set of replace edits which will
  * to applied to the source before it gets inserted at the target
  * position.
