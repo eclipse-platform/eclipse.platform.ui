@@ -731,7 +731,8 @@ public class HelpIndexBuilder {
 				parser = documentBuilderFactory.newDocumentBuilder();
 			d = parser.parse(inputSource);
 		} catch (Exception e) {
-			throwCoreException(HelpBaseResources.HelpIndexBuilder_errorParsing, e);
+			String message = NLS.bind(HelpBaseResources.HelpIndexBuilder_errorParsing, file.getName());
+			throwCoreException(message, e);
 		} finally {
 			if (stream != null) {
 				try {
