@@ -364,8 +364,9 @@ public class ConfigurationView
 	}
 	
 	private Image getProductImage16(IProduct product) {
-		// We must be careful and poof up the image to test
-		// the bounds to ensure we are picking 16x16 one.
+		// Loop through the product window images and
+		// pick the first whose size is 16x16 and does not
+		// alpha transparency type.
 		String windowImagesUrls = product.getProperty(IProductConstants.WINDOW_IMAGES);
 		if (windowImagesUrls != null ) {
 			StringTokenizer st = new StringTokenizer(windowImagesUrls, ","); //$NON-NLS-1$
@@ -385,16 +386,12 @@ public class ConfigurationView
 				}
 				if (edesc!=null) {
 					Image image = UpdateUI.getDefault().getLabelProvider().get(edesc);
-					if (image.getBounds().width!=16) {
-						//TODO this is just a fix to handle *.ico image.
-						//The correct approach would be to somehow get access to
-						//16x16 image in the icon.
-						ImageData scaled = image.getImageData().scaledTo(16, 16);
-						Image scaledImage = new Image(configurationWindow.getShell().getDisplay(), scaled);
-						UpdateUI.getDefault().getLabelProvider().get(scaledImage, 0);
-						return scaledImage;
+					Rectangle bounds = image.getBounds();
+					if (bounds.width==16 && bounds.height==16) {
+						// avoid images with TRANSPARENCY_ALPHA
+						if (image.getImageData().getTransparencyType()!=SWT.TRANSPARENCY_ALPHA)
+							return image;
 					}
-					return image;
 				}
 			}
 		}
