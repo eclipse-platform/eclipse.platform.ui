@@ -24,7 +24,7 @@ import org.eclipse.jface.text.IDocument;
  * they should always setup a document in a way that does not interfere with
  * others. E.g., when a participant wants to install partitioning on the
  * document, it should use the
- * {@link org.eclipse.jface.text.IDocumentExtension3}API and choose a unique
+ * {@link org.eclipse.jface.text.IDocumentExtension3} API and choose a unique
  * partitioning id.
  *
  * @since 3.0
