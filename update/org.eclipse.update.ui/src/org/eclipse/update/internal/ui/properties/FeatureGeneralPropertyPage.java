@@ -12,6 +12,7 @@ package org.eclipse.update.internal.ui.properties;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -20,6 +21,8 @@ import org.eclipse.ui.dialogs.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIImages;
 import org.eclipse.update.internal.ui.UpdateUIMessages;
 
 public class FeatureGeneralPropertyPage
@@ -42,7 +45,7 @@ public class FeatureGeneralPropertyPage
 			layout.verticalSpacing = 15;
 			composite.setLayout(layout);
 			
-			addGeneralSection(feature, composite);	
+			addGeneralSection(feature, composite);
 			addSupportedPlatformsSection(feature, composite);
 			addDescription(feature, composite);
 			
@@ -60,22 +63,39 @@ public class FeatureGeneralPropertyPage
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Composite fieldComposite = new Composite(composite, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		fieldComposite.setLayout(layout);
+		
+		Label imageLabel = new Label(composite, SWT.RIGHT);
+		imageLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		if (feature.getImage()!=null) {
+			ImageDescriptor desc = ImageDescriptor.createFromURL(feature.getImage());
+			imageLabel.setImage(UpdateUI.getDefault().getLabelProvider().get(desc));
+		}
+		else {
+			imageLabel.setImage(UpdateUI.getDefault().getLabelProvider().get(UpdateUIImages.DESC_PROVIDER));
+		}
+		addField(fieldComposite, UpdateUIMessages.FeatureGeneralPropertyPage_name, feature.getLabel());
 
-		addField(composite, UpdateUIMessages.FeatureGeneralPropertyPage_name, feature.getLabel()); 
 		addField(
-			composite,
+				fieldComposite,
 			UpdateUIMessages.FeatureGeneralPropertyPage_id, 
 			feature.getVersionedIdentifier().getIdentifier());
 		addField(
-			composite,
+				fieldComposite,
 			UpdateUIMessages.FeatureGeneralPropertyPage_version, 
 			feature.getVersionedIdentifier().getVersion().toString());
-		addField(composite, UpdateUIMessages.FeatureGeneralPropertyPage_provider, feature.getProvider()); 
+		addField(fieldComposite, UpdateUIMessages.FeatureGeneralPropertyPage_provider, feature.getProvider()); 
 		long size = feature.getInstallSize();
-		if (size != ContentEntryModel.UNKNOWN_SIZE)
-			addField(composite, UpdateUIMessages.FeatureGeneralPropertyPage_size, new Long(size).toString() + " " + UpdateUIMessages.FeatureGeneralPropertyPage_Kilobytes);  //$NON-NLS-1$
-
+		if (size != ContentEntryModel.UNKNOWN_SIZE) {
+			addField(fieldComposite, UpdateUIMessages.FeatureGeneralPropertyPage_size, new Long(size).toString() + " " + UpdateUIMessages.FeatureGeneralPropertyPage_Kilobytes);  //$NON-NLS-1$
+		}
 	}
 	
 	private void addSupportedPlatformsSection(IFeature feature, Composite parent) {
@@ -110,8 +130,8 @@ public class FeatureGeneralPropertyPage
 			label = new Label(parent, SWT.NONE);
 			label.setText(getEscapedString(value));
 		}
-
 	}
+	
 	private String extractValue(String value) {
 		if (value == null || value.equals("*")) //$NON-NLS-1$
 			return UpdateUIMessages.FeatureGeneralPropertyPage_all; 
