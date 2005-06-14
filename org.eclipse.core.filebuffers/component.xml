@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component xmlns="http://eclipse.org/component"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
+   name="Eclipse File Buffers">
+ <plugin id="org.eclipse.core.filebuffers"/>
+
+ <package name="org.eclipse.core.filebuffers">
+   <type name="FileBuffers" subclass="false" instantiate="false"/>
+   <type name="IFileBuffer" implement="false"/>
+   <type name="IFileBufferManager" implement="false"/>
+   <type name="IFileBufferStatusCodes implement="false"/>
+   <type name="ITextFileBuffer" implement="false"/>
+ </package>
+
+ <package name="org.eclipse.core.filebuffers.manipulation">
+   <type name="FileBufferOperationRunner" subclass="false"/>
+   <type name="FileBuffersMessages" subclass="false" instantiate="false"/>
+   <type name="TextFileBufferOperation" instantiate="false"/>
+ </package>
+
+ <component-depends unrestricted="true"/>
+</component>

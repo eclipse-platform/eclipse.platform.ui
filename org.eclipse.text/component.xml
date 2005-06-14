@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component xmlns="http://eclipse.org/component"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
+   name="Eclipse Text">
+ <plugin id="org.eclipse.text"/>
+
+ <package name="org.eclipse.jface.text">
+   <type name="AbstractDocument" instantiate="false"/>
+   <type name="AbstractLineTracker instantiate="false"/>
+   <type name="Assert" subclass="false" instantiate="false"/>
+   <type name="ConfigurableLineTracker" subclass="false"/>
+   <type name="DefaultLineTracker" subclass="false"/>
+   <type name="GapTextStore" subclass="false"/>
+   <type name="Line" subclass="false" instantiate="false"/>
+   <type name="TextUtilities" subclass="false" instantiate="false"/>
+ </package>
+
+ <package name="org.eclipse.jface.text.link">
+   <type name="InclusivePositionUpdater" instantiate="false"/>
+   <type name="LinkedModeManager" subclass="false" instantiate="false"/>
+   <type name="LinkedModeModel" subclass="false"/>
+   <type name="LinkedPositionGroup" subclass="false"/>
+ </package>
+
+ <package name="org.eclipse.jface.text.projection">
+   <type name="ChildDocument" subclass="false" instantiate="false"/>
+   <type name="ChildDocumentManager" subclass="false" instantiate="false"/>
+   <type name="Fragment" subclass="false" instantiate="false"/>
+   <type name="FragmentUpdater" subclass="false" instantiate="false"/>
+   <type name="IMinimalMapping" implement="false"/>
+   <type name="ProjectionDocument" subclass="false" instantiate="false"/>
+   <type name="ProjectionDocumentEvent" subclass="false" instantiate="false"/>
+   <type name="ProjectionDocumentManager" subclass="false"/>
+   <type name="ProjectionMapping" subclass="false" instantiate="false"/>
+   <type name="ProjectionTextStore" subclass="false" instantiate="false"/>
+   <type name="Segment" subclass="false" instantiate="false"/>
+   <type name="SegmentUpdater" subclass="false" instantiate="false"/>
+ </package>
+
+ <package name="org.eclipse.jface.text.source">
+   <type name="AnnotationMap" subclass="false" instantiate="false"/>
+ </package>
+
+ <package name="org.eclipse.jface.text.templates">
+   <type name="Template" subclass="false"/>
+   <type name="TemplateBuffer" subclass="false"/>
+   <type name="TemplateContext" instantiate="false"/>
+   <type name="TemplateException" subclass="false"/>
+   <type name="TextTemplateMessages" subclass="false" instantiate="false"/>
+ </package>
+
+ <package name="org.eclipse.text.edits">
+   <type name="CopyingRangeMarker" subclass="false"/>
+   <type name="CopySourceEdit" subclass="false"/>
+   <type name="CopyTargetEdit" subclass="false"/>
+   <type name="DeleteEdit" subclass="false"/>
+   <type name="EditDocument" subclass="false" instantiate="false"/>
+   <type name="InsertEdit" subclass="false"/>
+   <type name="MoveSourceEdit" subclass="false"/>
+   <type name="MoveTargetEdit" subclass="false"/>
+   <type name="RangeMarker" subclass="false"/>
+   <type name="ReplaceEdit" subclass="false"/>
+   <type name="TextEdit" subclass="false" instantiate="false"/>
+   <type name="TextEditCopier" subclass="false"/>
+   <type name="TextEditMessages" subclass="false" instantiate="false"/>
+   <type name="TextEditProcessor" subclass="false"/>
+   <type name="TreeIterationInfo" subclass="false" instantiate="false"/>
+   <type name="UndoCollector" subclass="false" instantiate="false"/>
+   <type name="UndoEdit" subclass="false" instantiate="false"/>
+ </package>
+
+ <component-depends unrestricted="true"/>
+</component>
