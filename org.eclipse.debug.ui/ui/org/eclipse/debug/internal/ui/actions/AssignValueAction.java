@@ -17,6 +17,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValueModification;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.VariableValueEditorManager;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
@@ -27,6 +28,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
 
 /**
@@ -39,6 +41,7 @@ public class AssignValueAction extends SelectionProviderAction {
 
 	public AssignValueAction(VariablesView varView, ISourceViewer detailViewer) {
 		super(varView.getViewer(), ActionMessages.AssignValueAction_1); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.ASSIGN_VALUE_ACTION);
 		variablesView = varView;
 		detailsViewer = detailViewer;
 		setEnabled(false);

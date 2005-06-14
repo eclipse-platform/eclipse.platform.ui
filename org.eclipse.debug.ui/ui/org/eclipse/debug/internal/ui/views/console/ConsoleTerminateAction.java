@@ -13,8 +13,10 @@ package org.eclipse.debug.internal.ui.views.console;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -29,6 +31,7 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 	 */
 	public ConsoleTerminateAction(ProcessConsole console) {
 		super(ConsoleMessages.ConsoleTerminateAction_0); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONSOLE_TERMINATE_ACTION);
 		fConsole = console;
 		setToolTipText(ConsoleMessages.ConsoleTerminateAction_1); //$NON-NLS-1$
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_TERMINATE));

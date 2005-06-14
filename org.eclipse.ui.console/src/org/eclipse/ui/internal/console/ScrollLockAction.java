@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.console;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleView;
 
 /**
@@ -31,6 +32,7 @@ public class ScrollLockAction extends Action {
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_LOCK));
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_LOCK));
 
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CONSOLE_SCROLL_LOCK_ACTION);
 		boolean checked = fConsoleView.getScrollLock();  
 		setChecked(checked);
 	}

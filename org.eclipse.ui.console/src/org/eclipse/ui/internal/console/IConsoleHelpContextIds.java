@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.console;
 import org.eclipse.ui.console.IConsoleConstants;
 
 /**
- * Help context ids for the debug ui.
+ * Help context ids for the console plugin.
  * <p>
  * This interface contains constants only; it is not intended to be implemented
  * or extended.

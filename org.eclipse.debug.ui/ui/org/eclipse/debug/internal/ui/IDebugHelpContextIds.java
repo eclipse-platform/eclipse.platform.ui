@@ -27,8 +27,7 @@ public interface IDebugHelpContextIds {
 	public static final String PREFIX = IDebugUIConstants.PLUGIN_ID + "."; //$NON-NLS-1$
 	
 	// Actions
-	public static final String CHANGE_VALUE_ACTION = PREFIX + "change_value_action_context"; //$NON-NLS-1$
-	public static final String CONSOLE_SCROLL_LOCK_ACTION = PREFIX + "console_scroll_lock_action_context"; //$NON-NLS-1$	
+	public static final String CHANGE_VALUE_ACTION = PREFIX + "change_value_action_context"; //$NON-NLS-1$	
 	public static final String OPEN_BREAKPOINT_ACTION = PREFIX + "open_breakpoint_action_context"; //$NON-NLS-1$
 	public static final String RELAUNCH_HISTORY_ACTION = PREFIX + "relaunch_history_action_context"; //$NON-NLS-1$	
 	public static final String SHOW_DETAIL_PANE_ACTION = PREFIX + "show_detail_pane_action_context"; //$NON-NLS-1$
@@ -39,7 +38,6 @@ public interface IDebugHelpContextIds {
 	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_context"; //$NON-NLS-1$			
 
 	public static final String CLEAR_WORKING_SET_ACTION = PREFIX + "clear_working_set_context"; //$NON-NLS-1$
-	public static final String FOLLOW_CONSOLE_HYPERLINK_ACTION = PREFIX + "follow_console_hyperlink_context"; //$NON-NLS-1$
 	public static final String EDIT_LAUNCH_CONFIGURATION_ACTION = PREFIX + "edit_launch_configuration_action_context"; //$NON-NLS-1$
 	public static final String OPEN_LAUNCH_CONFIGURATION_ACTION = PREFIX + "open_launch_configuration_action_context"; //$NON-NLS-1$
 	public static final String ADD_WATCH_EXPRESSION_DIALOG= PREFIX + "add_watch_expression_dialog_context"; //$NON-NLS-1$
@@ -50,6 +48,10 @@ public interface IDebugHelpContextIds {
 	public static final String SKIP_ALL_BREAKPOINT_ACTION = PREFIX + "skip_all_breakpoints_context"; //$NON-NLS-1$
 	public static final String AUTO_MANAGE_VIEWS_ACTION = PREFIX + "auto_manage_views_context"; //$NON-NLS-1$
 	public static final String FIND_VARIABLE_ACTION = PREFIX + "find_variable_context"; //$NON-NLS-1$
+    public static final String ASSIGN_VALUE_ACTION = PREFIX + "assign_value_context"; //$NON-NLS-1$
+    public static final String CONSOLE_TERMINATE_ACTION = PREFIX + "console_terminate_action_context"; //$NON-NLS-1$
+    public static final String CONSOLE_REMOVE_ALL_TERMINATED = PREFIX + "console_remove_all_terminated_context"; //$NON-NLS-1$
+    
 	// Views
 	public static final String DEBUG_VIEW = PREFIX + "debug_view_context"; //$NON-NLS-1$
 	public static final String VARIABLE_VIEW = PREFIX + "variable_view_context"; //$NON-NLS-1$
@@ -94,6 +96,8 @@ public interface IDebugHelpContextIds {
 	
 	//Editor	
 	public static final String NO_SOURCE_EDITOR = PREFIX + "debugger_editor_no_source_common";//$NON-NLS-1$
+
+    
 	
 }
 
