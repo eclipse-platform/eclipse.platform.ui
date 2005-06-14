@@ -35,7 +35,6 @@ public final class Messages extends NLS {
 	public static String AppserverPreferencePage_description;
 	public static String AppserverPreferencePage_hostDescription;
 	public static String AppserverPreferencePage_portDescription;
-	public static String AppserverPreferencePage_Note;
 	public static String AppserverPreferencePage_requireRestart;
 	public static String AppserverPreferencePage_invalidPort;
 	public static String WW002;

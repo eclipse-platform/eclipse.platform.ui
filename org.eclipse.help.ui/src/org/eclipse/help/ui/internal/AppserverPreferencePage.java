@@ -18,6 +18,8 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.forms.HyperlinkSettings;
+import org.eclipse.ui.forms.widgets.FormText;
 
 /**
  * Preference page for Tomcat network interface and port.
@@ -38,23 +40,25 @@ public class AppserverPreferencePage extends PreferencePage
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpUIConstants.PREF_PAGE_APPSERVER);
 
-		Composite mainComposite = new Composite(parent, SWT.NULL);
+		final Composite mainComposite = new Composite(parent, SWT.NULL);
 		mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridLayout layout = new GridLayout();
+		final GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.numColumns = 2;
 		mainComposite.setLayout(layout);
 
-		Label label = new Label(mainComposite, SWT.NONE);
-		label.setText(Messages.AppserverPreferencePage_description); //$NON-NLS-1$
+		final Label descLabel = new Label(mainComposite, SWT.WRAP);
+		descLabel.setText(Messages.AppserverPreferencePage_description); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
-		label.setLayoutData(data);
-		label.setFont(font);
+		data.widthHint = 100;
+		data.heightHint = 20;
+		descLabel.setLayoutData(data);
+		descLabel.setFont(font);
 
 		// Spacer
-		label = new Label(mainComposite, SWT.NONE);
+		Label label = new Label(mainComposite, SWT.NONE);
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -63,55 +67,22 @@ public class AppserverPreferencePage extends PreferencePage
 		label = new Label(mainComposite, SWT.NONE);
 		label.setFont(font);
 		label.setText(Messages.AppserverPreferencePage_hostDescription); //$NON-NLS-1$
-		data = new GridData();
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
-
-		//Label labelHost = new Label(mainComposite, SWT.LEFT);
-		//labelHost.setText(
-		//	WorkbenchResources.getString("AppserverPreferencePage.host"));
-		//data = new GridData();
-		//labelHost.setLayoutData(data);
-		//labelHost.setFont(font);
 
 		textServerAddr = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
 		//text.addListener(SWT.Modify, this);
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
-		data.horizontalSpan = 2;
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = convertWidthInCharsToPixels(8);
 		textServerAddr.setLayoutData(data);
 		textServerAddr.setFont(font);
-
-		// Spacer
-		label = new Label(mainComposite, SWT.NONE);
-		data = new GridData();
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
-		label.setFont(font);
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setFont(font);
 		label.setText(Messages.AppserverPreferencePage_portDescription); //$NON-NLS-1$
-		data = new GridData();
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
-		label.setFont(font);
-
-		//Label labelPort = new Label(mainComposite, SWT.LEFT);
-		//labelPort.setText(
-		//	WorkbenchResources.getString("AppserverPreferencePage.port"));
-		//data = new GridData();
-		//labelPort.setLayoutData(data);
-		//labelPort.setFont(font);
 
 		textServerPort = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
 		textServerPort.setTextLimit(5);
-		data = new GridData();
+		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = convertWidthInCharsToPixels(8);
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
-		data.horizontalSpan = 2;
 		textServerPort.setLayoutData(data);
 		textServerPort.setFont(font);
 
@@ -147,33 +118,28 @@ public class AppserverPreferencePage extends PreferencePage
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 		label.setFont(font);
-
-		label = new Label(mainComposite, SWT.NONE);
-		label
-				.setText(Messages.AppserverPreferencePage_Note); //$NON-NLS-1$
-		// Make this bold
-		FontData[] fontData = font.getFontData();
-		for (int i = 0; i < fontData.length; i++) {
-			fontData[i].setStyle(fontData[i].getStyle() | SWT.BOLD);
-		}
-		final Font boldFont = new Font(label.getDisplay(), fontData);
-		label.setFont(boldFont);
-		label.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				boldFont.dispose();
+	
+		FormText ftext = new FormText(mainComposite, SWT.WRAP);
+		ftext.setText(Messages.AppserverPreferencePage_requireRestart, true, false);
+		data = new GridData(GridData.GRAB_HORIZONTAL);
+		ftext.setHyperlinkSettings(new HyperlinkSettings(mainComposite.getDisplay()));
+		data.horizontalSpan = 2;
+		data.widthHint = 100;
+		data.heightHint = 20;
+		ftext.setLayoutData(data);
+		ftext.setFont(font);
+		final GridData fdata = data;
+		mainComposite.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				GridData ddata = (GridData)descLabel.getLayoutData();
+				int width = mainComposite.getSize().x-layout.marginWidth*2;
+				fdata.widthHint = width;
+				fdata.heightHint = SWT.DEFAULT;
+				ddata.widthHint = width;
+				ddata.heightHint = SWT.DEFAULT;
+				mainComposite.layout();
 			}
 		});
-		//
-		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		//data.horizontalSpan = 2;
-		label.setLayoutData(data);
-
-		label = new Label(mainComposite, SWT.NONE);
-		label.setText(Messages.AppserverPreferencePage_requireRestart); //$NON-NLS-1$
-		data = new GridData();
-		//data.horizontalSpan = 2;
-		label.setLayoutData(data);
-		label.setFont(font);
 
 		Preferences pref = AppserverPlugin.getDefault().getPluginPreferences();
 		textServerAddr.setText(pref.getString(AppserverPlugin.HOST_KEY));
