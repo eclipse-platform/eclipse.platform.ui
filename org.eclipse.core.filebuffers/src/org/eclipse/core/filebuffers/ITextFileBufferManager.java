@@ -22,6 +22,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * is considered text.
  * <p>
  * Clients are not supposed to implement that interface.
+ * </p>
  *
  * @since 3.0
  */

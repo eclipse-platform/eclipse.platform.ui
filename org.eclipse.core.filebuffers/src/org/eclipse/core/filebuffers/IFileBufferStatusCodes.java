@@ -13,6 +13,9 @@ package org.eclipse.core.filebuffers;
 /**
  * This interface provides the list of status codes that are used by the file
  * buffer plug-in when it throws {@link org.eclipse.core.runtime.CoreException}.
+ * <p>
+ * Clients are not supposed to implement that interface.
+ * </p>
  *
  * @since 3.1
  */
