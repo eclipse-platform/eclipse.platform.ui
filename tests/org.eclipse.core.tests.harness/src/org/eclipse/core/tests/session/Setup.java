@@ -129,6 +129,8 @@ public class Setup implements Cloneable {
 				// see bug 98508 
 				defaultSetup.setVMArgument("XstartOnFirstThread", "");
 		}
+		if (Setup.getDefaultWSOption() != null)
+			defaultSetup.setEclipseArgument(WS, Setup.getDefaultWSOption());
 		if (Setup.getDefaultNLOption() != null)
 			defaultSetup.setEclipseArgument(NL, Setup.getDefaultNLOption());
 		defaultSetup.setTimeout(DEFAULT_TIMEOUT);
