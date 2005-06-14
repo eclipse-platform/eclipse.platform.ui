@@ -69,13 +69,6 @@ public interface IExtension {
 	/**
 	 * Returns the namespace for this extension. This value can be used
 	 * in various global facilities to discover this extension's provider.
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @return the namespace for this extension
 	 * @throws InvalidRegistryObjectException if this extension is no longer valid

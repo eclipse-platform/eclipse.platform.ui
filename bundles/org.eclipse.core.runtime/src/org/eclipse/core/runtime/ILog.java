@@ -33,13 +33,6 @@ public interface ILog {
 
 	/**
 	 * Returns the plug-in with which this log is associated.
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @return the plug-in with which this log is associated
 	 * @since 3.0
