@@ -63,6 +63,11 @@ public class FileBufferOperationHandler extends AbstractHandler {
 	private IResource[] fResources;
 	private IPath fLocation;
 
+	/**
+	 * Creates a new file buffer operation handler.
+	 * 
+	 * @param fileBufferOperation the file buffer operation
+	 */
 	public FileBufferOperationHandler(IFileBufferOperation fileBufferOperation) {
 		fFileBufferOperation= fileBufferOperation;
 	}
@@ -84,6 +89,9 @@ public class FileBufferOperationHandler extends AbstractHandler {
 		fLocation= location;
 	}
 
+	/**
+	 * Computes the selected resources.
+	 */
 	protected final void computeSelectedResources() {
 
 		if (fResources != null || fLocation != null)
@@ -132,6 +140,11 @@ public class FileBufferOperationHandler extends AbstractHandler {
 		}
 	}
 
+	/**
+	 * Returns the selection of the active workbench window.
+	 * 
+	 * @return the current selection in the active workbench window or <code>null</code>
+	 */
 	protected final ISelection getSelection() {
 		IWorkbenchWindow window= getWorkbenchWindow();
 		if (window != null)
@@ -139,12 +152,23 @@ public class FileBufferOperationHandler extends AbstractHandler {
 		return null;
 	}
 
+	/**
+	 * Returns the active workbench window.
+	 * 
+	 * @return the active workbench window or <code>null</code> if not available
+	 */
 	protected final IWorkbenchWindow getWorkbenchWindow() {
 		if (fWindow == null)
 			fWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		return fWindow;
 	}
 
+	/**
+	 * Collects the files out of the given resources.
+	 * 
+	 * @param resources the resources from which to get the files
+	 * @return an array of files
+	 */
 	protected IFile[] collectFiles(IResource[] resources) {
 		Set files= new HashSet();
 		for (int i= 0; i < resources.length; i++) {
@@ -155,6 +179,13 @@ public class FileBufferOperationHandler extends AbstractHandler {
 		return (IFile[]) files.toArray(new IFile[files.size()]);
 	}
 
+	/**
+	 * Runs the given operation.
+	 * 
+	 * @param files the file on which to run this operation
+	 * @param location the file buffer location
+	 * @param fileBufferOperation the operation to run
+	 */
 	protected final void doRun(final IFile[] files, final IPath location, final IFileBufferOperation fileBufferOperation) {
 		Job job= new Job(fileBufferOperation.getOperationName()) {
 			protected IStatus run(IProgressMonitor monitor) {
@@ -194,11 +225,23 @@ public class FileBufferOperationHandler extends AbstractHandler {
 		job.schedule();
 	}
 
+	/**
+	 * Returns the shell of the active workbench window.
+	 * 
+	 * @return the shell
+	 */
 	protected final Shell getShell() {
 		IWorkbenchWindow window= getWorkbenchWindow();
 		return window == null ? null : window.getShell();
 	}
 
+	/**
+	 * Generates the file buffer locations out of the given files.
+	 * 
+	 * @param files an array of files
+	 * @param progressMonitor the progress monitor
+	 * @return an array with the generated locations
+	 */
 	protected final IPath[] generateLocations(IFile[] files, IProgressMonitor progressMonitor) {
 		progressMonitor.beginTask(TextEditorMessages.FileBufferOperationHandler_collectionFiles_label, files.length);
 		try {
@@ -216,6 +259,12 @@ public class FileBufferOperationHandler extends AbstractHandler {
 		}
 	}
 
+	/**
+	 * Tells whether the given location is accepted by this handler.
+	 * 
+	 * @param location a file buffer location
+	 * @return <code>true</code> if the given location is acceptable
+	 */
 	protected boolean isAcceptableLocation(IPath location) {
 		return true;
 	}
