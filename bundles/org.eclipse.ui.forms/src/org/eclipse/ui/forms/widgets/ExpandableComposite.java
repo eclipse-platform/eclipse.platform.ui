@@ -602,7 +602,7 @@ public class ExpandableComposite extends Composite {
 							break;
 						case SWT.MouseExit:
 							if (toggle != null) {
-								label.setForeground(null);
+								label.setForeground(getForeground());
 								toggle.hover = false;
 								toggle.redraw();
 							}
