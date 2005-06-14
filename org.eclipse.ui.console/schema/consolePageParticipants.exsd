@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.console" id="consolePageParticipants" name="Console Page Participants"/>
       </appInfo>
       <documentation>
-         This extension point provides a mechanism for contributing a console page participant. The page participant will be able to modify the console&apos;s context menu and tool bar.
+         This extension point provides a mechanism for contributing a console page participant.  A console page participant is notified of page lifecycle events such as creation, activation, deactivation and disposal. A page participant can also provide adapters for a page.
       </documentation>
    </annotation>
 
