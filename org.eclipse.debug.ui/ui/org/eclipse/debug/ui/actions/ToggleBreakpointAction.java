@@ -81,6 +81,18 @@ public class ToggleBreakpointAction extends Action {
 			return;
 		}
 		int line = fRulerInfo.getLineOfLastMouseButtonActivity();
+		
+		// Test if line is valid 
+		if (line == -1)
+			return;
+
+		/*
+		 * XXX: remove once the following bug is fixed:
+		 * 		https://bugs.eclipse.org/bugs/show_bug.cgi?id=99234
+		 */ 
+		if (line >= document.getNumberOfLines())
+			return;
+		
 		try {
 			IRegion region = document.getLineInformation(line);
 			ITextSelection selection = new TextSelection(document, region.getOffset(), 0);
@@ -127,7 +139,7 @@ public class ToggleBreakpointAction extends Action {
 	/**
 	 * Returns the document on which this action operates.
 	 * 
-	 * @return the document or <code>null</null> if none
+	 * @return the document or <code>null</code> if none
 	 */
 	private IDocument getDocument() {
 		if (fDocument != null)
