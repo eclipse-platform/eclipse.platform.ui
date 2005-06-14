@@ -100,6 +100,10 @@ public class ConfigurationManagerWindow extends ApplicationWindow {
 		addToolBar(SWT.FLAT);
 		addStatusLine();
 	}
+	
+	public boolean isProgressCanceled() {
+		return getStatusLineManager().getProgressMonitor().isCanceled();
+	}
 
 	private void addActions() {
 		IMenuManager menuBar = getMenuBarManager();
@@ -209,8 +213,10 @@ public class ConfigurationManagerWindow extends ApplicationWindow {
 					if (jobs.length == 1)
 						monitor.beginTask("", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 					updateTaskName(monitor, jobs);
+					getStatusLineManager().setCancelEnabled(true);
 				} else {
 					if (jobs.length == 0) {
+						getStatusLineManager().setCancelEnabled(false);
 						monitor.done();
 					}
 					else
