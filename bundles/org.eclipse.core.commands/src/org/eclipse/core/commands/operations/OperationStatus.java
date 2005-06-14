@@ -37,7 +37,7 @@ public final class OperationStatus extends Status {
 
 	/**
 	 * OPERATION_INVALID indicates that the operation available for undo or redo
-	 * is not in a state to perform the undo or redo.
+	 * is not in a state to successfully perform the undo or redo.
 	 * 
 	 * (value is 3).
 	 */

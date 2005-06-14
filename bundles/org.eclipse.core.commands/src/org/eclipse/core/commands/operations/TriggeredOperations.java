@@ -22,12 +22,13 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * <p>
- * Triggered operations are a special implementation for a composite that keeps
- * track of operations triggered by the execution of some primary operation. The
- * operation knows which operation was the trigger, and adds all triggered
- * operations as children. When execution, undo, or redo is performed, only the
- * triggered operation is executed, undone, or redone if it is still present. If
- * the trigger is no longer present, than the operation is invalid.
+ * Triggered operations are a specialized implementation of a composite operation
+ * that keeps track of operations triggered by the execution of some primary operation. 
+ * The composite knows which operation was the trigger for subsequent operations, and 
+ * adds all triggered operations as children. When execution, undo, or redo is performed, 
+ * only the triggered operation is executed, undone, or redone if it is still present. If
+ * the trigger is removed from the triggered operations, then the child operations will 
+ * replace the triggered operations in the history.
  * </p>
  * <p>
  * This class may be instantiated by clients.
@@ -45,14 +46,14 @@ public final class TriggeredOperations extends AbstractOperation implements
 	private List children = new ArrayList();
 
 	/**
-	 * Construct a composite of triggered operation using the specified
+	 * Construct a composite triggered operations using the specified undoable
 	 * operation as the trigger. Use the label of this trigger as the label of
 	 * the operation.
 	 * 
 	 * @param operation 
-	 *            the operation triggering other operations.
+	 *            the operation that will trigger other operations.
 	 * @param history 
-	 *            the operation history containing the triggered operations
+	 *            the operation history containing the triggered operations.
 	 */
 	public TriggeredOperations(IUndoableOperation operation,
 			IOperationHistory history) {
@@ -107,9 +108,12 @@ public final class TriggeredOperations extends AbstractOperation implements
 	/**
 	 * Remove the specified context from the receiver. This method is typically
 	 * invoked when the history is being flushed for a certain context. In the
-	 * case of triggered operations, if the context for the triggering operation
-	 * is being removed, then the triggering operation must be replaced with 
-	 * the atomic operations that it triggered.
+	 * case of triggered operations, if the only context for the triggering operation
+	 * is being removed, then the triggering operation must be replaced in the
+	 * operation history with the atomic operations that it triggered.  If the context
+	 * being removed is not the only context for the triggering operation, the
+	 * triggering operation will remain, and the children will each be similarly 
+	 * checked.
 	 * 
 	 * @param context 
 	 *            the undo context being removed from the receiver.

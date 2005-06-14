@@ -15,8 +15,8 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 
 /**
- * An instance of this interface provides support for managing undoable
- * operations and a shared operations history at the <code>IWorkbench</code>
+ * An instance of this interface provides support for managing a
+ * a shared operations history and an shared undo context at the <code>IWorkbench</code>
  * level.
  * <p>
  * This interface is not intended to be extended or implemented by clients.

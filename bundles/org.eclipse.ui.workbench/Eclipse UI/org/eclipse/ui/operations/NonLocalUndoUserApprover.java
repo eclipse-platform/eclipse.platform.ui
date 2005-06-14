@@ -32,16 +32,21 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * being undone or redone affects elements other than those described by the
  * editor itself. Clients can optionally specify a class, the preferred
  * comparison class, that should be used when comparing objects affected by the
- * editor with objects affected by an undo or redo operation. If any of the
- * compared objects are not instances of the preferred comparison class but are
- * instances of {@link org.eclipse.core.runtime.IAdaptable}, then the operation
- * approver will attempt to retrieve an adapter of the preferred comparison
- * class to be used for the comparison.
+ * editor with objects affected by an undo or redo operation. Comparisons
+ * between the affected objects inside the editor and those described by the
+ * operation will first be done by simply performing an equality check, using
+ * {@link java.lang.Object#equals(java.lang.Object)}. If an object described by
+ * an operation is not equal to one of the objects affected by the editor, and
+ * if it is not an instance of the preferred comparison class, but is an
+ * instance of {@link org.eclipse.core.runtime.IAdaptable}, then the operation
+ * approver will also attempt to retrieve an adapter on that object for the
+ * preferred comparison class and perform a second equality check using the
+ * adapter.
  * </p>
  * <p>
  * This class may be instantiated by clients.
  * </p>
-
+ * 
  * 
  * @since 3.1
  */
@@ -61,17 +66,17 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	 * Create a NonLocalUndoUserApprover associated with the specified editor
 	 * and undo context
 	 * 
-	 * @param context 
+	 * @param context
 	 *            the undo context of operations in question.
-	 * @param part 
+	 * @param part
 	 *            the editor part that is displaying the element
-	 * @param affectedObjects 
+	 * @param affectedObjects
 	 *            the objects that are affected by the editor and considered to
 	 *            be objects local to the editor. The objects are typically
-	 *            instances of the preferredComparison or else provide adapters
-	 *            for the preferredComparisonClass, although this is not
-	 *            required.
-	 * @param preferredComparisonClass 
+	 *            instances of the preferredComparisonClass or else provide
+	 *            adapters for the preferredComparisonClass, although this is
+	 *            not required.
+	 * @param preferredComparisonClass
 	 *            the preferred class to be used when comparing the editor's
 	 *            affectedObjects with those provided by the undoable operation
 	 *            using

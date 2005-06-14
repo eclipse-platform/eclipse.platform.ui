@@ -189,11 +189,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	public abstract IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object.toString()
-	 * 
+	/**
 	 * The string representation of this operation. Used for debugging purposes
 	 * only. This string should not be shown to an end user.
 	 * 

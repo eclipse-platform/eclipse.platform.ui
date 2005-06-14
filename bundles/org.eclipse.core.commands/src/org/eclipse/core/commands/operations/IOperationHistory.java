@@ -21,20 +21,23 @@ import org.eclipse.core.runtime.IStatus;
  * IOperationHistory tracks a history of operations that can be undone or
  * redone. Operations are added to the history once they have been initially
  * executed. Clients may choose whether to have the operations history perform
- * the initial execution or simply add the operation to the history.
+ * the initial execution or to simply add an already-executed operation to the
+ * history.
  * </p>
  * <p>
- * Once operations are added to the history, the methods <code>canRedo()</code>
- * and <code>canUndo()</code> are used to determine whether there is an
- * operation available for undo and redo in a given operation context. The
- * context-based protocol implies that there is only one operation that can be
- * undone or redone at a given time in a given context. This is typical of a
- * linear undo model, when only the most recently executed operation is
- * available for undo. When this protocol is used, a linear model is enforced by
- * the history. It is up to clients to determine how to maintain a history that
- * is invalid or stale. For example, when the most recent operation for a
- * context cannot be performed, clients may wish to flush the history for that
- * context.
+ * Once operations are added to the history, the methods
+ * {@link #canRedo(IUndoContext)} and {@link #canUndo(IUndoContext)} are used to
+ * determine whether there is an operation available for undo and redo in a
+ * given undo context. The context-based protocol implies that there is only one
+ * operation that can be undone or redone at a given time in a given context.
+ * This is typical of a linear undo model, when only the most recently executed
+ * operation is available for undo. When this protocol is used, a linear model
+ * is enforced by the history.
+ * </p>
+ * <p>
+ * It is up to clients to determine how to maintain a history that is invalid or
+ * stale. For example, when the most recent operation for a context cannot be
+ * performed, clients may wish to dispose the history for that context.
  * </p>
  * <p>
  * Additional protocol allows direct undo and redo of a specified operation,
@@ -45,20 +48,20 @@ import org.eclipse.core.runtime.IStatus;
  * not allowed.
  * </p>
  * <p>
- * Listeners (IOperationHistoryListener) can listen for notifications about
- * changes in the history (operations added or removed), and for notification
- * before and after any operation is executed, undone or redone. Notification of
- * operation execution only occurs when clients direct the history to execute
- * the operation. If the operation is added after it is executed, there can be
- * no notification of its execution.
+ * Listeners ({@link IOperationHistoryListener}) can listen for notifications
+ * about changes in the history (operations added or removed), and for
+ * notification before and after any operation is executed, undone or redone.
+ * Notification of operation execution only occurs when clients direct the
+ * history to execute the operation. If the operation is added after it is
+ * executed, there can be no notification of its execution.
  * </p>
  * <p>
- * IOperationApprover defines an interface for approving an undo or redo before
- * it occurs. This is useful for injecting policy-decisions into the model -
- * whether direct undo and redo are supported, or warning the user about certain
- * kinds of operations. It can also be used when objects have state related to
- * the operation and need to determine whether an undo or redo will cause any
- * conflicts with their local state.
+ * {@link IOperationApprover} defines an interface for approving an undo or redo
+ * before it occurs. This is useful for injecting policy-decisions into the undo
+ * model - whether direct undo and redo are supported, or warning the user about
+ * certain kinds of operations. It can also be used when clients maintain state
+ * related to an operation and need to determine whether an undo or redo will
+ * cause any conflicts with their local state.
  * </p>
  * 
  * @since 3.1
@@ -81,10 +84,10 @@ public interface IOperationHistory {
 	public static final int REDO = 3;
 
 	/**
-	 * An undo context that can be used to query the global undo history. This
-	 * context is not intended to be assigned to operations. Instead, it is used
-	 * for querying the history or performing an undo or redo on the global
-	 * history.
+	 * An undo context that can be used to refer to the global undo history.
+	 * This context is not intended to be assigned to operations. Instead, it is
+	 * used for querying the history or performing an undo or redo on the entire
+	 * history, regardless of each operation's undo contexts.
 	 */
 	public static final IUndoContext GLOBAL_UNDO_CONTEXT = new GlobalUndoContext();
 
@@ -136,7 +139,7 @@ public interface IOperationHistory {
 	 *            the IOperationApprover to be added as an approver.the instance
 	 *            to remove. Must not be <code>null</code>. If an attempt is
 	 *            made to register an instance which is already registered with
-	 *            this instance, no operation is performed.
+	 *            this instance, this method has no effect.
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationApprover
 	 */
@@ -152,8 +155,8 @@ public interface IOperationHistory {
 	 * @param listener
 	 *            the IOperationHistoryListener to be added as a listener. Must
 	 *            not be <code>null</code>. If an attempt is made to register
-	 *            an instance which is already registered with this instance, no
-	 *            operation is performed.
+	 *            an instance which is already registered with this instance, this
+	 *            method has no effect.
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationHistoryListener
 	 * @see org.eclipse.core.commands.operations.OperationHistoryEvent
@@ -200,7 +203,7 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Return whether there is a redoable operation available in the given
+	 * Return whether there is a valid redoable operation available in the given
 	 * context.
 	 * </p>
 	 * 
@@ -214,7 +217,7 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Return whether there is an undoable operation available in the given
+	 * Return whether there is a valid undoable operation available in the given
 	 * context
 	 * </p>
 	 * 
@@ -315,15 +318,18 @@ public interface IOperationHistory {
 	 * @param context
 	 *            the context whose limit is requested
 	 * 
-	 * @return limit the undo and redo history limit for the specified context.
+	 * @return the undo and redo history limit for the specified context.
 	 */
 	int getLimit(IUndoContext context);
 
 	/**
 	 * <p>
-	 * Get the array of operations in the redo history for a given context. The
-	 * operations are in the order that they would be redone if successive
-	 * "Redo" commands were invoked.
+	 * Get the array of operations in the redo history for a the specified undo
+	 * context. The operations are in the order that they were added to the
+	 * history, with the most recently undone operation appearing last in the
+	 * array. This history is used LIFO (last in, first out) when successive
+	 * "Redo" commands are invoked.
+	 * 
 	 * </p>
 	 * 
 	 * @param context
@@ -334,7 +340,7 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Get the operation that will next be redone in the given context.
+	 * Get the operation that will next be redone in the given undo context.
 	 * </p>
 	 * 
 	 * @param context
@@ -347,9 +353,11 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Get the array of operations that can be undone in the specified context.
-	 * The operations are in the order that they would be undone if successive
-	 * "Undo" commands were invoked.
+	 * Get the array of operations in the undo history for the specified undo
+	 * context. The operations are in the order that they were added to the
+	 * history, with the most recently added operation appearing last in the
+	 * array. This history is used LIFO (last in, first out) when successive
+	 * "Undo" commands are invoked.
 	 * </p>
 	 * 
 	 * @param context
@@ -378,8 +386,8 @@ public interface IOperationHistory {
 	 * subsequent requests to execute, add, undo, or redo another operation will
 	 * result in that operation being added to the open operation. Once the
 	 * operation is closed, the composite will be considered an atomic
-	 * operation.  Clients should not modify the composite directly (by adding and
-	 * removing children) while it is open.
+	 * operation. Clients should not modify the composite directly (by adding
+	 * and removing children) while it is open.
 	 * </p>
 	 * <p>
 	 * When a composite is open, operations that are added to the history will
@@ -418,7 +426,7 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Get the operation that will next be undone in the given context.
+	 * Get the operation that will next be undone in the given undo context.
 	 * </p>
 	 * 
 	 * @param context
@@ -452,11 +460,11 @@ public interface IOperationHistory {
 	 * succeeded and whether it remains in the history. <code>OK</code>
 	 * severity indicates that the redo operation was successful. The operation
 	 * will be placed on the undo history, provided it can be undone (answers
-	 * <code>true</code> to {@link IUndoableOperation#canUndo()}. Listeners
+	 * <code>true</code> to {@link IUndoableOperation#canUndo()}). Listeners
 	 * will receive the <code>REDONE</code> notification.
 	 * </p>
 	 * <p>
-	 * Other severity codes (<code>CANCEL</code, <code>ERROR</code>, <code>INFO</code>,
+	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>, <code>INFO</code>,
 	 * etc.) are not specifically interpreted by the history.  The operation will remain
 	 * in the history and the returned status is simply passed back to the
 	 * caller. For all severities other than <code>OK</code>, listeners
@@ -495,11 +503,11 @@ public interface IOperationHistory {
 	 * succeeded and whether it remains in the history. <code>OK</code>
 	 * severity indicates that the redo operation was successful. The operation
 	 * will be placed on the undo history, provided it can be undone (answers
-	 * <code>true</code> to {@link IUndoableOperation#canUndo()}. Listeners
+	 * <code>true</code> to {@link IUndoableOperation#canUndo()}). Listeners
 	 * will receive the <code>REDONE</code> notification.
 	 * </p>
 	 * <p>
-	 * Other severity codes (<code>CANCEL</code, <code>ERROR</code>,
+	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>,
 	 * <code>INFO</code>, etc.) are not specifically interpreted by the
 	 * history. The operation will remain in the history and the returned status
 	 * is simply passed back to the caller. For all severities other than
@@ -525,7 +533,7 @@ public interface IOperationHistory {
 	 *            the IOperationApprover to be removed. Must not be
 	 *            <code>null</code>. If an attempt is made to remove an
 	 *            instance which is not already registered with this instance,
-	 *            no operation is performed.
+	 *            this method has no effect.
 	 */
 	void removeOperationApprover(IOperationApprover approver);
 
@@ -539,7 +547,7 @@ public interface IOperationHistory {
 	 *            The IOperationHistoryListener to be removed. Must not be
 	 *            <code>null</code>. If an attempt is made to remove an
 	 *            instance which is not already registered with this instance,
-	 *            no operation is performed.
+	 *            this method has no effect.
 	 */
 	void removeOperationHistoryListener(IOperationHistoryListener listener);
 
@@ -600,11 +608,11 @@ public interface IOperationHistory {
 	 * succeeded and whether it remains in the history. <code>OK</code>
 	 * severity indicates that the undo operation was successful. The operation
 	 * will be placed on the redo history, provided it can be redone (answers
-	 * <code>true</code> to {@link IUndoableOperation#canRedo()}. Listeners
+	 * <code>true</code> to {@link IUndoableOperation#canRedo()}). Listeners
 	 * will receive the <code>UNDONE</code> notification.
 	 * </p>
 	 * <p>
-	 * Other severity codes (<code>CANCEL</code, <code>ERROR</code>, <code>INFO</code>,
+	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>, <code>INFO</code>,
 	 * etc.) are not specifically interpreted by the history.  The operation will remain
 	 * in the history and the returned status is simply passed back to the
 	 * caller. For all severities other than <code>OK</code>, listeners
@@ -643,11 +651,11 @@ public interface IOperationHistory {
 	 * succeeded and whether it remains in the history. <code>OK</code>
 	 * severity indicates that the undo operation was successful. The operation
 	 * will be placed on the redo history, provided it can be redone (answers
-	 * <code>true</code> to {@link IUndoableOperation#canRedo()}. Listeners
+	 * <code>true</code> to {@link IUndoableOperation#canRedo()}). Listeners
 	 * will receive the <code>UNDONE</code> notification.
 	 * </p>
 	 * <p>
-	 * Other severity codes (<code>CANCEL</code, <code>ERROR</code>, <code>INFO</code>,
+	 * Other severity codes (<code>CANCEL</code>, <code>ERROR</code>, <code>INFO</code>,
 	 * etc.) are not specifically interpreted by the history.  The operation will remain
 	 * in the history and the returned status is simply passed back to the
 	 * caller. For all severities other than <code>OK</code>, listeners

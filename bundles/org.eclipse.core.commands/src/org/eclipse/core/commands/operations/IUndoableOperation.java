@@ -38,7 +38,7 @@ public interface IUndoableOperation {
 	 * Add the specified context to the operation. If a context equal to the
 	 * specified context is already present, do not add it again. Note that
 	 * determining whether a context is already present is based on equality,
-	 * not whether the context matches (@see IUndoContext#matches(IUndoContext))
+	 * not whether the context matches ({@link IUndoContext#matches(IUndoContext)})
 	 * another context.
 	 * </p>
 	 * 
@@ -140,9 +140,10 @@ public interface IUndoableOperation {
 	 * Returns the array of contexts that have been assigned to the operation.
 	 * </p>
 	 * <p>
-	 * This method may be called from inside a synchronized block. To avoid
-	 * deadlock conditions, implementers of this method must avoid waiting on
-	 * locks during this method.
+	 * This method may be called by the operation history from inside a
+	 * synchronized block. To avoid deadlock conditions, implementers of this
+	 * method must avoid dispatching and waiting on threads that modify the
+	 * operation history during this method.
 	 * </p>
 	 * 
 	 * @return the array of contexts
@@ -164,9 +165,10 @@ public interface IUndoableOperation {
 	 * context.
 	 * </p>
 	 * <p>
-	 * This method may be called from inside a synchronized block. To avoid
-	 * deadlock conditions, implementers of this method must avoid waiting on
-	 * locks during this method.
+	 * This method may be called by the operation history from inside a
+	 * synchronized block. To avoid deadlock conditions, implementers of this
+	 * method must avoid dispatching and waiting on threads that modify the
+	 * operation history during this method.
 	 * </p>
 	 * 
 	 * @see IUndoContext#matches(IUndoContext)
@@ -206,8 +208,8 @@ public interface IUndoableOperation {
 	 * Remove the specified context from the operation. This method has no
 	 * effect if the context is not equal to another context in the context
 	 * list. Note that determining whether a context is present when removing it
-	 * is based on equality, not whether the context matches (@see
-	 * IUndoContext#matches(IUndoContext)) another context.
+	 * is based on equality, not whether the context matches ({@link
+	 * IUndoContext#matches(IUndoContext)}) another context.
 	 * 
 	 * @param context
 	 *            the context to be removed

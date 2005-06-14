@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.IStatus;
  * <p>
  * IAdvancedUndoableOperation defines an interface for undoable operations that
  * modify one or more elements in a model and attempt to keep model listeners up
- * to date with changes involving the elements that occur in the undo and redo
- * history. It also defines methods for computing the validity of an operation
+ * to date with changes that occur in the undo and redo history involving particular
+ * model elements.  It also defines methods for computing the validity of an operation
  * for undo or redo before attempting to perform the undo or redo.
  * </p>
  * <p>

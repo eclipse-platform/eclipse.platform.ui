@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IStatus;
  * severity if it should not. When an operation is not approved, it is expected
  * that the object not allowing the operation has already consulted the user if
  * necessary or otherwise provided any necessary information to the user about
- * the fact that operation is not approved.
+ * the fact that the operation is not approved.
  * </p>
  * <p>
  * Operation approvers must be prepared to receive the approval messages from a

@@ -13,7 +13,8 @@ package org.eclipse.core.commands.operations;
 /**
  * <p>
  * This class is used to maintain the instance of the operation history that
- * should be used by classes that create UndoableOperations. 
+ * should be used by classes that access the undo or redo history and add
+ * undoable operations to the history. 
  * 
  * <p>
  * It is intended that an application can create an operation history appropriate

@@ -8,19 +8,19 @@
 </head>
 <body>
 Classes for the creation of undoable operations which can be added to an operations
-history to be undone and redone.
+history and later be undone and redone.
 <h2>
 Package Specification</h2>
 An <b>undoable operation</b> is a unit of work that can be executed, undone, and redone.
-It can be added to an <b>operation history</b> so that clients can provide undo and
-redo of operations in the history.  Operations may be assigned one or more
-<b>undo contexts</b> which can be used to filter the available operations
-in a history.  Clients may choose to provide undo and redo support for all operations
-in a history or only a certain context in that history.  In this way, support for
-global undo or a localized/filtered undo can be provided.  Operation histories may
-be configured with an <b>operation approver</b> so that applications can enforce
-any desired undo model, such as strict linear (LIFO) undo.  This package provides
-the definition and a basic implementation for operations, contexts, histories, and
+Operations can be added to an <b>operation history</b> so that they can later be
+undone and redone according to the undo model for an application.  Operations may be 
+assigned one or more <b>undo contexts</b> which can be used to filter the available 
+operations for undo or redo in the operation history.  Clients may choose to provide
+undo and redo function for all operations in a history, or only for a particular
+undo context in that history.  Operation histories may be configured with an 
+<b>operation approver</b> so that applications can enforce any desired undo model, 
+such as strict linear (LIFO) undo.  This package provides the definition and a 
+basic implementation for operations, undo contexts, histories, and operation
 approvers.
 </body>
 </html>

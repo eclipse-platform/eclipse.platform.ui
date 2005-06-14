@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 /**
  * <p>
  * UndoActionHandler provides common behavior for performing an undo, as
- * well as enabling and labelling the undo menu item.  This class may be
+ * well as labelling and enabling the undo menu item.  This class may be
  * instantiated by clients.
  * </p>
  * 
@@ -34,12 +34,12 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 
 	/**
 	 * Construct an action handler that handles the labelling and enabling of
-	 * the undo action for a specified operation context.
+	 * the undo action for the specified undo context.
 	 * 
 	 * @param site 
 	 *            the workbench part site that created the action.
 	 * @param context 
-	 *            the context to be used for the undo
+	 *            the undo context to be used for the undo
 	 */
 	public UndoActionHandler(IWorkbenchPartSite site, IUndoContext context) {
 		super(site, context);

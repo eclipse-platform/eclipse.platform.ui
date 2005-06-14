@@ -12,9 +12,9 @@ package org.eclipse.core.commands.operations;
 
 /**
  * <p>
- * OperationHistoryEvent is used to communicate changes to a
- * DefaultOperationHistory, including operations added and removed from the
- * history, and the execution, undo, and redo of operations.
+ * OperationHistoryEvent is used to communicate changes that occur in a
+ * DefaultOperationHistory, including the addition or removal of operations,
+ * and the execution, undo, and redo of operations.
  * </p>
  * <p>
  * Operation history listeners must be prepared to receive notifications from a
@@ -68,7 +68,7 @@ public final class OperationHistoryEvent {
 	public static final int ABOUT_TO_UNDO = 3;
 
 	/**
-	 * DONE indicates that operation has been executed. Listeners can take
+	 * DONE indicates that an operation has been executed. Listeners can take
 	 * appropriate action, such as revealing any relevant state in the UI. This
 	 * notification is only received for those operations executed by the
 	 * operation history. Operations that are added to the history after
@@ -82,8 +82,8 @@ public final class OperationHistoryEvent {
 	public static final int DONE = 4;
 
 	/**
-	 * OPERATION_ADDED indicates an operation was added to the history.
-	 * Listeners typically use this to add their context to a new operation as
+	 * OPERATION_ADDED indicates that an operation was added to the history.
+	 * Listeners can use this notification to add their undo context to a new operation as
 	 * appropriate or otherwise record the operation.
 	 * 
 	 * (value is 5).

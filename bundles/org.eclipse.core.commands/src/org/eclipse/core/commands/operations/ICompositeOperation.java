@@ -13,9 +13,9 @@ package org.eclipse.core.commands.operations;
 /**
  * <p>
  * ICompositeOperation defines an undoable operation that is composed of child
- * operations. Requests to execute, undo, or redo result in the operation taking
- * place on the composite as a whole. Similarly, a request to dispose the
- * composite should result in all child operations being disposed.
+ * operations. Requests to execute, undo, or redo a composite result in the the
+ * execution, undo, or redo of the composite as a whole. Similarly, a request to 
+ * dispose the composite should result in all child operations being disposed.
  * </p>
  * 
  * @since 3.1

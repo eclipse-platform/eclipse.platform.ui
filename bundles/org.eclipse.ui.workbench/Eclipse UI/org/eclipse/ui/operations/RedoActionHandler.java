@@ -33,12 +33,12 @@ public final class RedoActionHandler extends OperationHistoryActionHandler {
 
 	/**
 	 * Construct an action handler that handles the labelling and enabling of
-	 * the redo action for a specified operation context.
+	 * the redo action for the specified undo context.
 	 * 
 	 * @param site 
 	 *            the workbench part site that created the action.
 	 * @param context 
-	 *            the context to be used for redoing.
+	 *            the undo context to be used for redoing.
 	 */
 	public RedoActionHandler(IWorkbenchPartSite site, IUndoContext context) {
 		super(site, context);

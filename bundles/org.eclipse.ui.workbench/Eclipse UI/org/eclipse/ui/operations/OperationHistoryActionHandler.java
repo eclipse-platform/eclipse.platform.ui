@@ -42,25 +42,26 @@ import org.eclipse.ui.internal.operations.TimeTriggeredProgressMonitorDialog;
 /**
  * <p>
  * OperationHistoryActionHandler implements common behavior for the undo and
- * redo actions. It supports filtering of undo or redo on a particular context.
- * (A null context will cause undo and redo to be disabled.)
+ * redo actions. It supports filtering of undo or redo on a particular undo
+ * context. (A null undo context will cause undo and redo to be disabled.)
  * </p>
  * <p>
  * OperationHistoryActionHandler provides an adapter in the info parameter of
  * the IOperationHistory undo and redo methods that is used to get UI info for
  * prompting the user during operations or operation approval. Adapters are
  * provided for org.eclipse.ui.IWorkbenchWindow, org.eclipse.swt.widgets.Shell,
- * and org.eclipse.ui.IWorkbenchPart.
+ * org.eclipse.ui.IWorkbenchPart, org.eclipse.core.commands.IUndoContext, and
+ * org.eclipse.runtime.IProgressMonitor.
  * </p>
  * <p>
  * OperationHistoryActionHandler assumes a linear undo/redo model. When the
  * handler is run, the operation history is asked to perform the most recent
- * undo for the handler's context. The handler can be configured (using
- * #setPruneHistory(true) to flush the operation undo or redo history for its
- * context when there is no valid operation on top of the history. This avoids
- * keeping a stale history of invalid operations. By default, pruning does not
- * occur and it is assumed that clients of the particular undo context are
- * pruning the history when necessary.
+ * undo/redo for the handler's undo context. The handler can be configured (using
+ * #setPruneHistory(true)) to flush the operation undo or redo history for the
+ * handler's undo context when there is no valid operation on top of the
+ * history. This avoids keeping a stale history of invalid operations. By
+ * default, pruning does not occur and it is assumed that clients of the
+ * particular undo context are pruning the history when necessary.
  * </p>
  * 
  * @since 3.1
@@ -105,6 +106,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		}
 
 	}
+
 	private class HistoryListener implements IOperationHistoryListener {
 		public void historyNotification(OperationHistoryEvent event) {
 			Display display = getWorkbenchWindow().getWorkbench().getDisplay();
@@ -113,7 +115,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			case OperationHistoryEvent.OPERATION_REMOVED:
 			case OperationHistoryEvent.UNDONE:
 			case OperationHistoryEvent.REDONE:
-				if (display != null && event.getOperation().hasContext(undoContext)) {
+				if (display != null
+						&& event.getOperation().hasContext(undoContext)) {
 					display.asyncExec(new Runnable() {
 						public void run() {
 							update();
@@ -122,15 +125,16 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				}
 				break;
 			case OperationHistoryEvent.OPERATION_NOT_OK:
-				if (display != null && event.getOperation().hasContext(undoContext)) {
+				if (display != null
+						&& event.getOperation().hasContext(undoContext)) {
 					display.asyncExec(new Runnable() {
 						public void run() {
 							if (pruning) {
 								flush();
-								// not all flushes will trigger an update so force it here
+								// not all flushes will trigger an update so
+								// force it here
 								update();
-							}
-							else
+							} else
 								update();
 						}
 					});
@@ -148,11 +152,17 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			}
 		}
 	}
+
 	private boolean pruning = false;
+
 	private IPartListener partListener = new PartListener();
+
 	private IOperationHistoryListener historyListener = new HistoryListener();
+
 	private TimeTriggeredProgressMonitorDialog progressDialog;
+
 	IUndoContext undoContext = null;
+
 	IWorkbenchPartSite site;
 
 	/**
@@ -176,10 +186,11 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		update();
 	}
 
-    /*
-     * (non-Javadoc) 
-     * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
-     */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
+	 */
 	public void dispose() {
 		getHistory().removeOperationHistoryListener(historyListener);
 		site.getPage().removePartListener(partListener);
@@ -211,15 +222,19 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 */
 	abstract IUndoableOperation getOperation();
 
-    /*
-     * (non-Javadoc) 
-     * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#run()
-     */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#run()
+	 */
 	public final void run() {
-		Shell parent= getWorkbenchWindow().getShell();
-		progressDialog = new TimeTriggeredProgressMonitorDialog(parent, getWorkbenchWindow().getWorkbench().getProgressService().getLongOperationTime());
-		IRunnableWithProgress runnable= new IRunnableWithProgress(){
-			public void run(IProgressMonitor pm) throws InvocationTargetException {
+		Shell parent = getWorkbenchWindow().getShell();
+		progressDialog = new TimeTriggeredProgressMonitorDialog(parent,
+				getWorkbenchWindow().getWorkbench().getProgressService()
+						.getLongOperationTime());
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor pm)
+					throws InvocationTargetException {
 				try {
 					runCommand(pm);
 				} catch (ExecutionException e) {
@@ -234,15 +249,16 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		} catch (InvocationTargetException e) {
 			reportException(e);
 		} catch (InterruptedException e) {
-			// Operation was cancelled and acknowledged by runnable with this exception.
+			// Operation was cancelled and acknowledged by runnable with this
+			// exception.
 			// Do nothing.
 		} catch (OperationCanceledException e) {
-			// the operation was cancelled.  Do nothing.
+			// the operation was cancelled. Do nothing.
 		} finally {
 			progressDialog = null;
 		}
 	}
-	
+
 	abstract IStatus runCommand(IProgressMonitor pm) throws ExecutionException;
 
 	/*
@@ -289,7 +305,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * the action handler is created, but the context can also be changed
 	 * dynamically.
 	 * 
-	 * @param context 
+	 * @param context
 	 *            the context to be used for the undo history
 	 */
 	public void setContext(IUndoContext context) {
@@ -302,7 +318,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * history when invalid operations are encountered. The default value is
 	 * <code>false</code>.
 	 * 
-	 * @param prune 
+	 * @param prune
 	 *            <code>true</code> if the history should be pruned by the
 	 *            handler, and <code>false</code> if it should not.
 	 * 
