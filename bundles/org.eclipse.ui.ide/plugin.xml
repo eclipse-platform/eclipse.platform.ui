@@ -344,6 +344,7 @@
             class="org.eclipse.ui.ExtensionFactory:fileAssociationsPreferencePage"
             id="org.eclipse.ui.preferencePages.FileEditors">
          <keywordReference id="org.eclipse.ui.ide.editing"/>
+         <keywordReference id="org.eclipse.ui.ide.editors"/>
       </page>
       <page
             name="%PreferencePages.Views"
