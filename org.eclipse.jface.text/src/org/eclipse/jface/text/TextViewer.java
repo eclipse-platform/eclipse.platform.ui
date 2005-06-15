@@ -2292,9 +2292,11 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	private void firePostSelectionChanged(SelectionChangedEvent event) {
-		if (fPostSelectionChangedListeners != null) {
-			for (int i= 0; i < fPostSelectionChangedListeners.size(); i++) {
-				ISelectionChangedListener l= (ISelectionChangedListener) fPostSelectionChangedListeners.get(i);
+		List listeners= fPostSelectionChangedListeners;
+		if (listeners != null) {
+			listeners= new ArrayList(listeners);
+			for (int i= 0; i < listeners.size(); i++) {
+				ISelectionChangedListener l= (ISelectionChangedListener) listeners.get(i);
 				l.selectionChanged(event);
 			}
 		}
