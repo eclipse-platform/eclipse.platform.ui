@@ -10,7 +10,7 @@
    <type name="FileBuffers" subclass="false" instantiate="false"/>
    <type name="IFileBuffer" implement="false"/>
    <type name="IFileBufferManager" implement="false"/>
-   <type name="IFileBufferStatusCodes implement="false"/>
+   <type name="IFileBufferStatusCodes" implement="false"/>
    <type name="ITextFileBuffer" implement="false"/>
  </package>
 
