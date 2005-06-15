@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="Undo Preferences"
+            class="org.eclipse.ui.examples.undo.preferences.UndoPreferencePage"
+            id="org.eclipse.ui.examples.undo.preferences.UndoPreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.ui.examples.undo.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Undo Examples"
+            id="org.eclipse.ui.examples.undo">
+      </category>
+      <view
+            name="Box View"
+            icon="icons/sample.gif"
+            category="org.eclipse.ui.examples.undo"
+            class="org.eclipse.ui.examples.undo.views.BoxView"
+            id="org.eclipse.ui.examples.undo.views.BoxView">
+      </view>
+   </extension>
+   
+         <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Undo Examples"
+            id="org.eclipse.ui.examples.undo"/>
+      <view
+            class="org.eclipse.ui.examples.undo.views.UndoHistoryView"
+            icon="icons/sample.gif"
+            category="org.eclipse.ui.examples.undo"
+            name="Undo History Viewer"
+            id="org.eclipse.ui.examples.undo.views.UndoHistoryView"/>
+   </extension>
+   
+
+</plugin>
