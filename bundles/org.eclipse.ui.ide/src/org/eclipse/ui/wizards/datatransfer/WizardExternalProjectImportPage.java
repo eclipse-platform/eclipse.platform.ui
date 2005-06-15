@@ -463,7 +463,9 @@ public class WizardExternalProjectImportPage extends WizardPage {
                             .openError(
                                     getShell(),
                                     DataTransferMessages.WizardExternalProjectImportPage_errorMessage,
-                                    DataTransferMessages.WizardExternalProjectImportPage_caseVariantExistsError
+                                    NLS.bind(
+                                    		DataTransferMessages.WizardExternalProjectImportPage_caseVariantExistsError,
+                                    		projectName)
                             );
                 } else {
                     ErrorDialog

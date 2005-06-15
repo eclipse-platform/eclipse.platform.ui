@@ -996,15 +996,18 @@ public class WizardProjectsImportPage extends WizardPage implements
 		} catch (InvocationTargetException e) {
 			// ie.- one of the steps resulted in a core exception
 			Throwable t = e.getTargetException();
-			if (t instanceof CoreException) {
-				if (((CoreException) t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-					MessageDialog.openError(getShell(), "", //$NON-NLS-1$
-							"" //$NON-NLS-1$
-					);
-				} else {
-					ErrorDialog.openError(getShell(), "", //$NON-NLS-1$
-							null, ((CoreException) t).getStatus());
-				}
+			if (((CoreException) t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
+				MessageDialog.openError(getShell(), 
+						DataTransferMessages.WizardExternalProjectImportPage_errorMessage,
+						NLS.bind(
+								DataTransferMessages.WizardExternalProjectImportPage_caseVariantExistsError,
+								record.description.getName())
+				);
+			} else {
+				ErrorDialog.openError(getShell(), 
+						DataTransferMessages.WizardExternalProjectImportPage_errorMessage,
+						((CoreException) t).getLocalizedMessage(), 
+						((CoreException) t).getStatus());
 			}
 			return false;
 		}
