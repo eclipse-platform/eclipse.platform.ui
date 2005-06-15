@@ -8,7 +8,7 @@
 
  <package name="org.eclipse.jface.text">
    <type name="AbstractDocument" instantiate="false"/>
-   <type name="AbstractLineTracker instantiate="false"/>
+   <type name="AbstractLineTracker" instantiate="false"/>
    <type name="Assert" subclass="false" instantiate="false"/>
    <type name="ConfigurableLineTracker" subclass="false"/>
    <type name="DefaultLineTracker" subclass="false"/>
