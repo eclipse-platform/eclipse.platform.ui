@@ -88,6 +88,7 @@
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
          <location>usr/bin/netscape</location>
          <location>usr/X11R6/bin/netscape</location>
+         <location>usr/dt/bin/netscape</location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.firefox"
