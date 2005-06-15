@@ -50,6 +50,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
 import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.bindings.BindingManager;
+import org.eclipse.jface.bindings.BindingManagerEvent;
+import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -987,7 +989,8 @@ public final class Workbench implements IWorkbench {
 				commandManager, contextManager, handlerService);
 		initializeCommandResolver();
 
-		addWindowListener(windowListener);
+		addWindowListener(windowListener); 
+		bindingManager.addBindingManagerListener(bindingManagerListener);
 
 		initializeImages();
 		initializeFonts();
@@ -2231,6 +2234,16 @@ public final class Workbench implements IWorkbench {
 
 		public void windowOpened(IWorkbenchWindow window) {
 			updateActiveWorkbenchWindowMenuManager(true);
+		}
+	};
+
+	private final IBindingManagerListener bindingManagerListener = new IBindingManagerListener() {
+
+		public void bindingManagerChanged(
+				BindingManagerEvent bindingManagerEvent) {
+			if (bindingManagerEvent.isActiveBindingsChanged()) {
+				updateActiveWorkbenchWindowMenuManager(true);
+			}
 		}
 	};
 
