@@ -415,10 +415,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 		IRewriteTarget target= null;
 		IEditingSupport helper= new IEditingSupport() {
 
-			public boolean isSourceOfEvent(Object event) {
-				return true;
-			}
-
 			public boolean isOriginator(DocumentEvent event, IRegion focus) {
 				return focus.getOffset() <= offset && focus.getOffset() + focus.getLength() >= offset;
 			}
@@ -704,10 +700,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			if (fFocusHelper == null) {
 				fFocusHelper= new IEditingSupport() {
-
-					public boolean isSourceOfEvent(Object event) {
-						return false;
-					}
 
 					public boolean isOriginator(DocumentEvent event, IRegion focus) {
 						return false; // this helper just covers the focus change to the proposal shell, no remote editions
@@ -1016,7 +1008,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 	
 	/**
-	 * Returns <code>true</code> if <code>proposal</code> should be autoinserted,
+	 * Returns <code>true</code> if <code>proposal</code> should be auto-inserted,
 	 * <code>false</code> otherwise.
 	 * 
 	 * @param proposal the single proposal that might be automatically inserted
