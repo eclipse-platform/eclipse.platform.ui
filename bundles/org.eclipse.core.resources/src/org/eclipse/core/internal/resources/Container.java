@@ -178,7 +178,7 @@ public abstract class Container extends Resource implements IContainer {
 		final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
 		ResourceInfo info = getResourceInfo(phantom, false);
 		final int flags = getFlags(info);
-		checkAccessible(flags);
+		checkExists(flags, true);
 		//if children are currently unknown, ask for refresh asap
 		if (info.isSet(ICoreConstants.M_CHILDREN_UNKNOWN))
 			workspace.refreshManager.refresh(this);

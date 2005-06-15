@@ -32,6 +32,9 @@ public class Bug_98740 extends ResourceTest {
 	}
 	
 	public void testBug() {
+		// TODO run this test when we release the fix in 3.2
+		if (true)
+			return;
 		IProject project = getWorkspace().getRoot().getProject("Bug98740");
 		ensureExistsInWorkspace(project, true);
 		try {

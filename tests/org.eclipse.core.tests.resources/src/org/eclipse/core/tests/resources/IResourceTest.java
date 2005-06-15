@@ -130,7 +130,7 @@ public class IResourceTest extends ResourceTest {
 		Set result = new HashSet(50);
 		if (resource.exists()) {
 			result.add(resource);
-			if (resource.getType() != IResource.FILE && resource.isAccessible()) {
+			if (resource.getType() != IResource.FILE) {
 				IContainer container = (IContainer) resource;
 				IResource[] children = container.members();
 				for (int i = 0; i < children.length; i++) {
@@ -601,7 +601,7 @@ public class IResourceTest extends ResourceTest {
 				deepVisitor.clear();
 				shallowVisitor.clear();
 				IResource resource = (IResource) args[0];
-				return nonExistingResources.contains(resource) || !resource.isAccessible();
+				return nonExistingResources.contains(resource);
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
