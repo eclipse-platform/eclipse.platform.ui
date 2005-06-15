@@ -1172,20 +1172,16 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			Point containerSize = new Point(rect.width, rect.height);
 			int hdiff = contentSize.x - containerSize.x;
 			int vdiff = contentSize.y - containerSize.y;
-			if (hdiff > 0 || vdiff > 0) {
-				if (shellSize.equals(lastShellSize)) {
+			if ((hdiff > 0 || vdiff > 0) && shellSize.equals(lastShellSize)) {
 					hdiff = Math.max(0, hdiff);
 					vdiff = Math.max(0, vdiff);
 					setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
 					lastShellSize = shell.getSize();
 					if (currentPage.getControl().getSize().x == 0)
 						currentPage.getControl().setSize(containerSize);
-				} else {
-					currentPage.setSize(containerSize);
-				}
-			} else if (hdiff < 0 || vdiff < 0) {
+				
+			} else //Set the size to be sure we use the result of computeSize
 				currentPage.setSize(containerSize);
-			}
 		}
 		// Ensure that all other pages are invisible
 		// (including ones that triggered an exception during
