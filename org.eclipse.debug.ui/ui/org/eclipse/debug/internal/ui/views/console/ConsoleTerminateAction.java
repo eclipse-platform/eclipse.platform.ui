@@ -11,6 +11,10 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -31,7 +35,7 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 	 */
 	public ConsoleTerminateAction(ProcessConsole console) {
 		super(ConsoleMessages.ConsoleTerminateAction_0); //$NON-NLS-1$
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONSOLE_TERMINATE_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONSOLE_TERMINATE_ACTION);
 		fConsole = console;
 		setToolTipText(ConsoleMessages.ConsoleTerminateAction_1); //$NON-NLS-1$
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_TERMINATE));
@@ -53,13 +57,38 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 	 */
 	public void run() {
 		try {
-			fConsole.getProcess().terminate();
+			IProcess process = fConsole.getProcess();
+            killTargets(process);
+            process.terminate();
 		} catch (DebugException e) {
 			// TODO: report exception
 		}
 	}
 	
-	public void dispose() {
+	private void killTargets(IProcess process) throws DebugException {
+        ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+        ILaunch[] launches = launchManager.getLaunches();
+
+        for (int i = 0; i < launches.length; i++) {
+            ILaunch launch = launches[i];
+            IProcess[] processes = launch.getProcesses();
+            for (int j = 0; j < processes.length; j++) {
+                IProcess process2 = processes[j];
+                if (process2.equals(process)) {
+                    IDebugTarget[] debugTargets = launch.getDebugTargets();
+                    for (int k = 0; k < debugTargets.length; k++) {
+                        IDebugTarget target = debugTargets[k];
+                        if (target.canTerminate()) {
+                            target.terminate();
+                        }
+                    }
+                    return; // all possible targets have been terminated for the launch.
+                }
+            }
+        }
+    }
+
+    public void dispose() {
 	    fConsole = null;
 	}
 

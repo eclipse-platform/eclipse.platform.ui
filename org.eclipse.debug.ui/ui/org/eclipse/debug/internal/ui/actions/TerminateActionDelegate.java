@@ -13,6 +13,11 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -25,10 +30,36 @@ public class TerminateActionDelegate extends AbstractListenerActionDelegate {
 	 */
 	protected void doAction(Object element) throws DebugException {
 		if (element instanceof ITerminate) {
+            if (element instanceof IProcess) {
+                killTargets((IProcess) element);
+            }
 			((ITerminate)element).terminate();
 		}
 	}
 	
+    private void killTargets(IProcess process) throws DebugException {
+        ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+        ILaunch[] launches = launchManager.getLaunches();
+
+        for (int i = 0; i < launches.length; i++) {
+            ILaunch launch = launches[i];
+            IProcess[] processes = launch.getProcesses();
+            for (int j = 0; j < processes.length; j++) {
+                IProcess process2 = processes[j];
+                if (process2.equals(process)) {
+                    IDebugTarget[] debugTargets = launch.getDebugTargets();
+                    for (int k = 0; k < debugTargets.length; k++) {
+                        IDebugTarget target = debugTargets[k];
+                        if (target.canTerminate()) {
+                            target.terminate();
+                        }
+                    }
+                    return; // all possible targets have been terminated for the launch.
+                }
+            }
+        }
+    }
+
 	/**
 	 * @see AbstractDebugActionDelegate#isRunInBackground()
 	 */
