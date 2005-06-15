@@ -228,7 +228,7 @@ public class IOConsoleOutputStream extends OutputStream {
         }
         if (encodedString.endsWith("\r")) { //$NON-NLS-1$
             prependCR = true;
-            encodedString = new String(encodedString.substring(0, encodedString.length()-2));
+            encodedString = new String(encodedString.substring(0, encodedString.length()-1));
         }
         notifyParitioner(encodedString);
     }
