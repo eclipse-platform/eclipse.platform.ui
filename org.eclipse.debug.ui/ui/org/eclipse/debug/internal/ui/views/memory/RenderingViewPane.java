@@ -305,18 +305,24 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			if (!(selection instanceof IStructuredSelection))
 				return;
 			
+			if (selection == AbstractMemoryViewPane.EMPTY)
+				return;
+			
 			if (selection == null || selection.isEmpty())
 			{
 				// if the event comes from Memory View
 				// pick empty tab folder as the memory view is no longer displaying anything
 				if (part.getSite().getId().equals(IInternalDebugUIConstants.ID_MEMORY_VIEW))
 				{
-					IMemoryViewTab lastViewTab = getTopMemoryTab();
-					
-					if (lastViewTab != null)
-						lastViewTab.setEnabled(false);
-					
-					emptyFolder();
+					if (part == this.getMemoryRenderingSite().getSite().getPart())
+					{
+						IMemoryViewTab lastViewTab = getTopMemoryTab();
+						
+						if (lastViewTab != null)
+							lastViewTab.setEnabled(false);
+						
+						emptyFolder();
+					}
 				}
 				
 				// do not do anything if there is no selection
@@ -810,7 +816,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		if (getTopMemoryTab() != null)
 			if (getTopMemoryTab().getRendering() != null)
 				return getTopMemoryTab().getRendering();
-		return new Object();
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -1034,7 +1040,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	protected void emptyFolder() {
 		super.emptyFolder();
 		updateToolBarActionsEnablement();
-		fSelectionProvider.setSelection(new StructuredSelection(new Object[0]));
+		fSelectionProvider.setSelection(AbstractMemoryViewPane.EMPTY);
 	}
 
 	/* (non-Javadoc)

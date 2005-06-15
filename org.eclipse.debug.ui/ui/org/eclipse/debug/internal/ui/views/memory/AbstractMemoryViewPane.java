@@ -45,6 +45,7 @@ import org.eclipse.ui.PlatformUI;
 public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, ISelectionListener, SelectionListener, IMemoryView, ISelectionChangedListener, IMemoryViewPane{
 	
 	public static final String BEGINNING_POPUP = "popUpBegin"; //$NON-NLS-1$
+	protected static final StructuredSelection EMPTY = new StructuredSelection();
 	
 	protected Composite fViewPaneCanvas;
 	protected StackLayout fStackLayout;
@@ -168,12 +169,20 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 			
 			if (selectedItem.length > 0)
 			{
-				fSelectionProvider.setSelection(new StructuredSelection(getCurrentSelection()));
+				Object selected = getCurrentSelection();
+				if (selected != null)
+				{
+					fSelectionProvider.setSelection(new StructuredSelection(selected));
+				}
+				else
+				{
+					fSelectionProvider.setSelection(AbstractMemoryViewPane.EMPTY);
+				}
 			}
 		}
 		else
 		{
-			fSelectionProvider.setSelection(new StructuredSelection());
+			fSelectionProvider.setSelection(AbstractMemoryViewPane.EMPTY);
 		}
 		
 		folder.addSelectionListener(this);

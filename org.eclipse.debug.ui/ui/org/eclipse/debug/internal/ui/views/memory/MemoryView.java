@@ -148,8 +148,15 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			{
 				Object selected = ((IStructuredSelection)viewPaneSelection).getFirstElement();
 			
+				if (selected != null)
+				{
 					StructuredSelection strucSelection = new StructuredSelection(new Object[]{selected});
 					setSelection(strucSelection);
+				}
+				else
+				{
+					setSelection(viewPaneSelection);
+				}
 			}
 		}
 	}
