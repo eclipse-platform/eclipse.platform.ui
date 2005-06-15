@@ -2,8 +2,6 @@ body {
 	background-image : url(../graphics/contentpage/whatsnew_wtr.jpg);
 }
 
-.page { min-height : 500px; }
-
 /* show the "selected" image for this page */
 #navigation-links a#news img, #navigation-links a#news:hover img { background-image : url(../graphics/icons/ctool/whatsnew48sel.gif); }
 
@@ -45,6 +43,8 @@ body {
 	left : 60px;
 }
 
+#noteworthy-links a > .link-label { left: 65px; }
+
 #noteworthy-links a p .text {
 	display : block;
 	width : 300px;
@@ -52,6 +52,8 @@ body {
 	top : -45px;
 	left : 53px;
 }
+
+#noteworthy-links a p > .text { left: 58px; }
 
 /* Special case for Mozilla, because the links are displayed
    in 1 vertical column instead of 2 centered columns */
@@ -98,6 +100,8 @@ body {
 	left : 60px;
 }
 
+#news-links a > .link-label { left: 65px; }
+
 #news-links a p .text {
 	display : block;
 	width : 300px;
@@ -105,6 +109,8 @@ body {
 	top : -45px;
 	left : 53px;
 }
+
+#news-links a p > .text { left: 58px; }
 
 /* Special case for Mozilla, because the links are displayed
    in 1 vertical column instead of 2 centered columns */

@@ -2,8 +2,6 @@ body {
 	background-image : url(../graphics/contentpage/tutorials_wtr.jpg);
 }
 
-.page { min-height : 700px; }
-
 /* show the "selected" image for this page */
 #navigation-links a#tutorials img, #navigation-links a#tutorials:hover img { background-image : url(../graphics/icons/ctool/tutorials48sel.gif); }
 

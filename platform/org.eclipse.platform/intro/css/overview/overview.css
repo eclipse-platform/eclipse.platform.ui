@@ -2,8 +2,6 @@ body {
 	background-image : url(../graphics/contentpage/overview_wtr.jpg);
 }
 
-.page { min-height : 700px; }
-
 /* show the "selected" image for this page */
 #navigation-links a#overview img, #navigation-links a#overview:hover img { 
 	background-image : url(../graphics/icons/ctool/overview48sel.gif); 
@@ -21,6 +19,7 @@ iframe {
 /* mozilla scrollbar appearing off page fix */
 #page-content > iframe {
 	width: 98%;
+	padding-left: 2%;
 }	
 
 
@@ -64,6 +63,8 @@ iframe {
 	left : 60px;
 }
 
+#overview-links a > .link-label { left: 65px; }
+
 #overview-links a p .text {
 	display : block;
 	width : 300px;
@@ -71,6 +72,8 @@ iframe {
 	top : -45px;
 	left : 53px;
 }
+
+#overview-links a p > .text { left: 58px; }
 
 /* Special case for Mozilla, because the links are displayed
    in 1 vertical column instead of 2 centered columns */
