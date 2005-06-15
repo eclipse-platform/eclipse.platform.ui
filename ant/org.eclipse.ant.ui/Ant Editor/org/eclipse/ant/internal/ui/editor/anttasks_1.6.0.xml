@@ -13037,131 +13037,61 @@ Manifests are processed according to the Jar file specification.. Specifically, 
     </structure>
   </task>
   <task name="pathconvert">
-
-  
-    
-  
     <description>
     Converts path and classpath information to a specific target OS
  format. The resulting formatted path is placed into the specified property.
   </description>
-
-  
     <structure>
-
-    
-      <attributes>
-      
+      <attributes>      
         <attribute name="dirsep" required="no, defaults to current jvm file.separator">
-        
-          
-
-        
           <description>
           Set the default directory separator string;
  defaults to current JVM {@link java.io.File#separator File.separator}
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="pathsep" required="no, defaults to current jvm file.pathseparator">
-        
-          
-
-        
           <description>
           Set the default path separator string;
  defaults to current JVM
  {@link java.io.File#pathSeparator File.pathSeparator}
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="property" required="yes">
-        
-          
-        
           <description>
           The property into which the converted path will be placed.
-        </description>
-      
+        </description>      
         </attribute>
-      
-        <attribute name="refid" required="no; if omitted, a nested          &lt;path&gt; element must be supplied.">
-        
-          
-
-        
+        <attribute name="refid" required="no; if omitted, a nested &lt;path&gt; element must be supplied.">
           <description>
-          Adds a reference to a Path, FileSet, DirSet, or FileList defined
- elsewhere.
+          Adds a reference to a Path, FileSet, DirSet, or FileList defined elsewhere.
         </description>
-      
         </attribute>
-      
         <attribute name="setonempty" required="no; default is &quot;true&quot;.    ">
-        
-          
-        
           <description>
-          Set setonempty
-
- If false, don't set the new property if the result is the empty string.
+          Should the property be set, even if the result is the empty string?
         </description>
-      
-        </attribute>
-      
-        <attribute name="targetos" required="yes, unless pathsep and/or         dirsep are specified.      ">
-        
-          
- "windows", "unix", "netware", or "os/2"; required unless
-
-        
+        </attribute>      
+        <attribute name="targetos" required="yes, unless pathsep and/or dirsep are specified.">
           <description>
-          Set targetos to a platform to one of
- "windows", "unix", "netware", or "os/2"; required unless
- unless pathsep and/or dirsep are specified.
+          The target architecture. Must be one of 'unix', 'windows', 'netware', 'tandem' or 'os/2'. This is a shorthand mechanism for specifying both pathsep and dirsep according to the specified target architecture.
         </description>
-      
-        </attribute>
-    
+        </attribute>    
       </attributes>
-
-    
-      <elements>
-      
+      <elements>      
         <element name="map" required="NOTDEFINED">
-        
-          
-        
           <description>
           Create a nested MAP element
-        </description>
-      
+        </description>      
         </element>
-
-      
         <element name="path" required="NOTDEFINED">
-        
-          
-        
           <description>
           Create a nested PATH element
-        </description>
-      
+        </description>      
         </element>
-
-    
       </elements>
-
-  
     </structure>
   </task>
   <task name="property">
-
-  
-    
-  
     <description>
     Sets a property by name, or set of properties (from file or
  resource) in the project.  &lt;/p&gt;
@@ -13189,28 +13119,14 @@ Manifests are processed according to the Jar file specification.. Specifically, 
  This also holds for properties loaded from a property file.&lt;/p&gt;
  Properties are case sensitive.
   </description>
-
-  
     <structure>
-
-    
-      <attributes>
-      
+      <attributes>      
         <attribute name="classpath" required="no">
-        
-          
-        
           <description>
           The classpath to use when looking up a resource.
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="classpathref" required="no">
-        
-          
-
-        
           <description>
           the classpath to use when looking up a resource,
  given as reference to a &amp;lt;path&amp;gt; defined elsewhere
@@ -14111,10 +14027,6 @@ Manifests are processed according to the Jar file specification.. Specifically, 
     </structure>
   </task>
   <task name="rmic">
-
-  
-    
-  
     <description>
     Runs the rmic compiler against classes.&lt;/p&gt;
  &lt;p&gt;Rmic can be run on a single class (as specified with the classname
@@ -14124,254 +14036,126 @@ Manifests are processed according to the Jar file specification.. Specifically, 
  specify the classname in the form &lt;code&gt;Outer$$Inner&lt;/code&gt; instead of
  &lt;code&gt;Outer.Inner&lt;/code&gt;.&lt;/p&gt;
   </description>
-
-  
     <structure>
-
-    
       <attributes>
-      
         <attribute name="base" required="yes">
           <description>
-          Sets the location to store the compiled files
+          Sets the location to store the compiled files.
         </description>
-      
         </attribute>
-      
         <attribute name="classname" required="no">
           <description>
           	Sets the the class to run &lt;code&gt;rmic&lt;/code&gt; against
         </description>
-      
         </attribute>
-      
         <attribute name="classpath" required="no">
-        
-          
-        
           <description>
           Set the classpath to be used for this compilation.
         </description>
-      
         </attribute>
-      
         <attribute name="classpathref" required="no">
-        
-          
-
-        
           <description>
-          Adds to the classpath a reference to 
- a &amp;lt;path&amp;gt; defined elsewhere.
+          Adds to the classpath a reference to a &amp;lt;path&amp;gt; defined elsewhere.
         </description>
-      
         </attribute>
-      
         <attribute name="compiler" required="no">
-        
           <description>
           Sets the compiler implementation to use;
  defaults to the value of the &lt;code&gt;build.rmic&lt;/code&gt; property,
- or failing that, default compiler for the current VM
+ or failing that, default compiler for the current VM.
         </description>
-      
         </attribute>
-      
         <attribute name="debug" required="no">
-        
-          
-        
           <description>
           Generate debug info (passes -g to rmic); defaults to false
         </description>
-      
         </attribute>
-      
         <attribute name="extdirs" required="no">
-        
-          
-
-        
           <description>
-          Sets the extension directories that will be used during the
- compilation.
-        </description>
-      
+          Sets the extension directories that will be used during the compilation.
+        </description>      
         </attribute>
-      
         <attribute name="filtering" required="no">
-        
-          
-        
           <description>
           indicates whether token filtering should take place; default=false
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="idl" required="no">
-        
-          
-
-        
           <description>
-          Indicates that IDL output should be 
- generated.  This defaults to false 
- if not set.
+          Indicates that IDL output should be generated.  This defaults to false if not set.
         </description>
-      
         </attribute>
-      
         <attribute name="idlopts" required="no">
-        
-          
-        
           <description>
           pass additional arguments for idl compile
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="iiop" required="no">
-        
-          
- be generated; optional, defaults to false 
-
-        
-          <description>
-          Indicates that IIOP compatible stubs should
- be generated; defaults to false if not set.
+        <description>
+          Indicates that IIOP compatible stubs should be generated; defaults to false if not set.
         </description>
-      
         </attribute>
-      
         <attribute name="iiopopts" required="no">
-        
-          
-        
           <description>
-          Set additional arguments for iiop
-        </description>
-      
+          Set additional arguments for iiop.
+        </description>      
         </attribute>
-      
         <attribute name="includeantruntime" required="no">
-        
-          
-
-        
           <description>
-          Sets whether or not to include ant's own classpath in this task's 
- classpath. Default is &lt;code&gt;true&lt;/code&gt;.
+          Sets whether or not to include ant's own classpath in this task's classpath. Default is &lt;code&gt;true&lt;/code&gt;.
         </description>
-      
-        </attribute>
-      
+        </attribute>      
         <attribute name="includejavaruntime" required="no">
-        
-          
-        
           <description>
-          Task's classpath.
- Enables or disables including the default run-time
- libraries from the executing VM; defaults to false
+        Whether to include the default run-time libraries from the executing VM; defaults to no.
         </description>
-      
         </attribute>
-      
         <attribute name="sourcebase" required="no">
-        
-          
-        
           <description>
           Optional directory to save generated source files to.
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="stubversion" required="no">
-        
-          
-        
           <description>
           Specify the JDK version for the generated stub code.
  Specify &amp;quot;1.1&amp;quot; to pass the &amp;quot;-v1.1&amp;quot; option to rmic.&lt;/td&gt;
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="verify" required="no">
-        
-          
- found by the directory match are
-
-        
           <description>
-          Flag to enable verification so that the classes 
- found by the directory match are
+          Flag to enable verification so that the classes found by the directory match are
  checked to see if they implement java.rmi.Remote. Defaults to false if not set.
-        </description>
-      
+        </description>      
         </attribute>
-    
       </attributes>
-
-    
       <elements>
-      
         <element name="classpath" required="NOTDEFINED">
-        
-          
-        
           <description>
           Creates a nested classpath element.
-        </description>
-      
+        </description>      
         </element>
-
-      
         <element name="compilerarg" required="NOTDEFINED">
-        
-          
-        
           <description>
           Adds an implementation specific command line argument.
-        </description>
-      
+        </description>      
         </element>
-
-      
         <element name="extdirs" required="NOTDEFINED">
-        
-          
-        
           <description>
           Maybe creates a nested extdirs element.
-        </description>
-      
+        </description>      
         </element>
-
-    
       </elements>
-
-  
     </structure>
   </task>
+  
   <task name="rpm">
 
     <description>
     Invokes the rpm tool to build a Linux installation file.
   </description>
-  
     <structure>
-    
-      <attributes>
-      
+      <attributes>      
         <attribute name="cleanbuilddir" required="no">
-        
-          
-
-        
           <description>
           Flag (default=false) to remove 
  the generated files in the BUILD directory
@@ -14380,9 +14164,6 @@ Manifests are processed according to the Jar file specification.. Specifically, 
         </attribute>
       
         <attribute name="command" required="no">
-        
-          
-        
           <description>
           What command to issue to the rpm tool. The default is "-bb".
         </description>
@@ -14390,9 +14171,6 @@ Manifests are processed according to the Jar file specification.. Specifically, 
         </attribute>
       
         <attribute name="error" required="NOTDEFINED">
-        
-          
-        
           <description>
           Optional file to save stderr to
         </description>
@@ -14400,9 +14178,6 @@ Manifests are processed according to the Jar file specification.. Specifically, 
         </attribute>
       
         <attribute name="output" required="NOTDEFINED">
-        
-          
-        
           <description>
           Optional file to save stdout to.
         </description>
@@ -14410,22 +14185,14 @@ Manifests are processed according to the Jar file specification.. Specifically, 
         </attribute>
       
         <attribute name="removesource" required="no">
-        
-          
-
-        
           <description>
-          Flag (default=false) 
- to remove the sources after the build.
+          Flag (default=false) to remove the sources after the build.
  See the the &lt;tt&gt;--rmsource&lt;/tt&gt;  option of rpmbuild.
         </description>
       
         </attribute>
       
         <attribute name="removespec" required="no">
-        
-          
-        
           <description>
           Flag (default=false) to remove the spec file from SPECS
         </description>
@@ -14433,9 +14200,6 @@ Manifests are processed according to the Jar file specification.. Specifically, 
         </attribute>
       
         <attribute name="specfile" required="yes">
-        
-          
-        
           <description>
           The name of the spec File to use; required.
         </description>
@@ -14443,13 +14207,8 @@ Manifests are processed according to the Jar file specification.. Specifically, 
         </attribute>
       
         <attribute name="topdir" required="no">
-        
-          
-
-        
           <description>
-          The directory which will have the expected
- subdirectories, SPECS, SOURCES, BUILD, SRPMS. 
+          The directory which will have the expected subdirectories, SPECS, SOURCES, BUILD, SRPMS. 
  If this isn't specified,
  the &lt;tt&gt;baseDir&lt;/tt&gt; value is used
         </description>
@@ -14457,33 +14216,18 @@ Manifests are processed according to the Jar file specification.. Specifically, 
         </attribute>
     
       </attributes>
-
-    
       <elements>
     </elements>
-
-  
     </structure>
   </task>
+  
   <task name="script">
-
-  
-    
-  
     <description>
     Executes a script.
   </description>
-
-  
     <structure>
-
-    
       <attributes>
-      
         <attribute name="language" required="yes">
-        
-          
-        
           <description>
           Defines the language (required).
         </description>
@@ -20757,9 +20501,7 @@ Note: The type attribute does not apply to nested dirsets - dirsets always impli
 	<task name="chown">  
     <description>
 	Changes the owner of a file or all files inside specified directories. Right now it has effect only under Unix. The owner atribute is equivalent to the coresponding argument for the chown command.
-
 FileSets, DirSets or FileLists can be specified using nested &amp;lt;fileset&amp;gt;, &amp;lt;dirset&amp;gt; and &amp;lt;filelist&amp;gt; elements.
-
 		Since Ant 1.6.
 	</description>
 	<structure>
@@ -20774,7 +20516,7 @@ FileSets, DirSets or FileLists can be specified using nested &amp;lt;fileset&amp
 				<description>Process all specified files using a single chgrp command. Defaults to true.</description>
 			</attribute>
 			<attribute name="type" required="no">
-				<description>One of file, dir or both. If set to file, only the group of plain files are going to be changed. If set to dir, only the directories are considered.
+				<description>One of file, dir or both. If set to file, only the owner of plain files are going to be changed. If set to dir, only the directories are considered.
 Note: The type attribute does not apply to nested dirsets - dirsets always implicitly assume type to be dir. Defaults to file</description>
 			</attribute>
 			<attribute name="maxparallel" required="no">
@@ -20797,7 +20539,7 @@ FileSets, DirSets or FileLists can be specified using nested &amp;lt;fileset&amp
 	<structure>
 		<attributes>
 			<attribute name="file" required="yes">
-				<description>The file or directory of which the owner must be changed. Required if nested &amp;lt;fileset/list&amp;gt; elements not provided</description>
+				<description>The file or directory of which the permissions must be changed. Required if nested &amp;lt;fileset/list&amp;gt; elements not provided</description>
 			</attribute>
 			<attribute name="readonly" required="yes">
 				<description>The readonly permission</description>
@@ -20812,8 +20554,8 @@ FileSets, DirSets or FileLists can be specified using nested &amp;lt;fileset&amp
 				<description>The hidden permission.</description>
 			</attribute>
 			<attribute name="type" required="no">
-				<description>One of file, dir or both. If set to file, only the group of plain files are going to be changed. If set to dir, only the directories are considered.
-Note: The type attribute does not apply to nested dirsets - dirsets always implicitly assume type to be dir. Defaults to file</description>
+				<description>One of file, dir or both. If set to file, only the permissions of plain files are going to be changed. If set to dir, only the directories are considered.
+Note: The type attribute does not apply to nested dirsets - dirsets always implicitly assume type to be dir.</description>
 			</attribute>
 			<attribute name="verbose" required="no">
 				<description>Whether to print a summary after execution or not. Defaults to false.</description>
