@@ -21,7 +21,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewEventHandler;
 import org.eclipse.debug.ui.AbstractDebugView;
@@ -166,16 +165,9 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 		if (event.getSource() instanceof IExpression) {
 			refresh(event.getSource());
 			getVariablesView().populateDetailPane();
-		} else if (event.getDetail() == DebugEvent.STATE) {
-			// only process variable state changes
-			if (event.getSource() instanceof IVariable) {
-				refresh(event.getSource());
-				getVariablesView().populateDetailPane();
-			}
 		} else {
-			refresh();
-			getVariablesView().populateDetailPane();
-		}	
+			super.doHandleChangeEvent(event);
+		}
 	}
 
 	protected boolean isFiltered(DebugEvent event) {
