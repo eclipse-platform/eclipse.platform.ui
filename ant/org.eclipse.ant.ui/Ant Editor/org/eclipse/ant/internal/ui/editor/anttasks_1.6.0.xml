@@ -19595,86 +19595,44 @@ the parent directory is used instead
     </structure>
   </task>
   <task name="wljspc">
-
-  
-    
-  
     <description>
     Precompiles JSP's using WebLogic's JSP compiler (weblogic.jspc).
   </description>
-
-  
     <structure>
-
-    
       <attributes>
-      
         <attribute name="classpath" required="yes">
-        
-          
-        
           <description>
           Set the classpath to be used for this compilation.
         </description>
-      
-        </attribute>
-      
-        <attribute name="dest" required="yes">
-        
-          
-        
+        </attribute>   
+        <attribute name="dest" required="yes">  
           <description>
-          Set the directory containing the source jsp's
+          Root of destination directory, what you have set as WorkingDir in the weblogic 
+properties.
         </description>
-      
         </attribute>
-      
         <attribute name="package" required="yes">
-        
-          
-        
           <description>
           Set the package under which the compiled classes go
         </description>
-      
         </attribute>
-      
         <attribute name="src" required="yes">
-        
-          
-        
           <description>
-          Set the directory containing the source jsp's
+          Root of source tree for JSP, ie, the document root for your weblogic server.
         </description>
-      
         </attribute>
-    
       </attributes>
-
-    
-      <elements>
-      
+      <elements>      
         <element name="classpath" required="NOTDEFINED">
-        
-          
-        
           <description>
           Maybe creates a nested classpath element.
         </description>
-      
         </element>
-
-    
       </elements>
-
-  
     </structure>
   </task>
+  
   <task name="wlrun">
-
-  
-    
-  
     <description>
     Starts a WebLogic server.
  A number of parameters are used to control the operation of the weblogic instance. Note that the task,
