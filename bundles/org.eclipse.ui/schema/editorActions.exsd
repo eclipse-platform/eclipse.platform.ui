@@ -116,8 +116,6 @@ The active editor is passed to the delegate by invoking
 &lt;/ul&gt;
 
 If multiple extensions contribute ruler actions to the same text editor, the extension whose plug-in is at the top of the prerequisite tree wins. If there are multiple such plug-ins, the first wins.
-
-
                </documentation>
             </annotation>
          </attribute>
@@ -482,7 +480,7 @@ can be expressed using:
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2004 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
