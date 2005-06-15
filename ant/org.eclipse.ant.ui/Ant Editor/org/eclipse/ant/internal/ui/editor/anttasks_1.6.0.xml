@@ -108,12 +108,7 @@
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="antcall">
 
     <description>
@@ -203,42 +198,24 @@
       </elements> 
     </structure>
   </task>
-
-
-
   <task name="antlr">
     <description>
     Invokes the ANTLR Translator generator on a grammar file.
   </description>
-
-  
     <structure>
-
-    
-      <attributes>
-      
+	  <attributes>
         <attribute name="debug" required="no">
-
           <description>
           Sets a flag to enable ParseView debugging
-        </description>
-      
+          </description>
         </attribute>
       
         <attribute name="diagnostic" required="no">
-        
-          
-        
           <description>
           Sets a flag to emit diagnostic text
         </description>
-      
         </attribute>
-      
         <attribute name="dir" required="no">
-        
-          
-        
           <description>
           The working directory of the process
         </description>
@@ -246,90 +223,47 @@
         </attribute>
       
         <attribute name="glib" required="no">
-        
-          
-        
           <description>
           Sets an optional super grammar file.
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="html" required="no">
-        
-          
-        
           <description>
           If true, emit html
         </description>
-      
         </attribute>
-      
         <attribute name="outputdirectory" required="no">
-        
-          
-        
           <description>
           The directory to write the generated files to.
         </description>
-      
         </attribute>
-      
         <attribute name="target" required="yes">
-        
-          
-        
           <description>
           The grammar file to process.
         </description>
-      
         </attribute>
-      
         <attribute name="trace" required="no">
-        
-          
-        
           <description>
           If true, enables all tracing.
         </description>
-      
         </attribute>
-      
         <attribute name="tracelexer" required="no">
-        
-          
-        
           <description>
           If true, enables lexer tracing.
         </description>
-      
         </attribute>
-      
         <attribute name="traceparser" required="no">
-        
-          
-        
           <description>
           If true, enables parser tracing.
         </description>
-      
         </attribute>
-      
         <attribute name="tracetreewalker" required="no">
-        
-          
-        
           <description>
-          Sets a flag to allow the user to enable tree walker tracing
+          Sets a flag to allow the user to enable tree walker tracing.
         </description>
-      
-        </attribute>
-    
+        </attribute>    
       </attributes>
-
-    
       <elements>
-      
         <element name="classpath" required="NOTDEFINED">
         
           <description>
@@ -343,7 +277,7 @@
         <element name="jvmarg" required="NOTDEFINED">
         
           
-        
+
           <description>
           Adds a new JVM argument.
         </description>
@@ -355,12 +289,7 @@
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="antstructure">
 
   
@@ -377,9 +306,9 @@
       <attributes>
       
         <attribute name="output" required="yes">
-        
-          
-        
+
+  
+
           <description>
           The output file.
         </description>
@@ -394,12 +323,7 @@
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="apply">
 
   
@@ -416,9 +340,9 @@
       <attributes>
       
         <attribute name="append" required="NOTDEFINED">
-        
-          
-        
+
+  
+
           <description>
           Whether output should be appended to or overwrite an existing file.
  Defaults to false.
@@ -652,17 +576,10 @@
 
     
       </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="available">
-
   
     
   
@@ -670,17 +587,14 @@
     Will set the given property if the requested resource is available at 
  runtime. This task may also be used as a condition by the condition task.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
         <attribute name="classname" required="yes">
         
           
-
         
           <description>
           Set a classname of a class which must be available to set the given 
@@ -712,7 +626,6 @@
         <attribute name="file" required="">
         
           
-
         
           <description>
           Set the file which must be present in the file system to set the given
@@ -734,7 +647,6 @@
         <attribute name="ignoresystemclasses" required="no">
         
           
-
         
           <description>
           Set whether the search for classes should ignore the runtime classes and
@@ -746,7 +658,6 @@
         <attribute name="property" required="yes">
         
           
-
         
           <description>
           Set the name of the property which will be set if the particular resource
@@ -778,7 +689,6 @@
         <attribute name="value" required="no">
         
           
-
         
           <description>
           Set the value to be given to the property if the desired resource is
@@ -788,7 +698,6 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
       
@@ -801,7 +710,6 @@
         </description>
       
         </element>
-
       
         <element name="filepath" required="NOTDEFINED">
         
@@ -812,27 +720,18 @@
         </description>
       
         </element>
-
     
       </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="basename">
-
   
     
   
     <description>
     Sets a property to the base name of a specified file, optionally minus a
  suffix.
-
  This task can accept the following attributes:
  &lt;ul&gt;
  &lt;li&gt;file
@@ -851,10 +750,8 @@
  If a suffix is specified, and the specified file ends in that suffix,
  the basename will be the simple file name without the suffix.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -889,35 +786,24 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="blgenclient">
-
   
     
   
     <description>
     Generates a Borland Application Server 4.5 client JAR using as
  input the EJB JAR file.
-
  Two mode are available: java mode (default) and fork mode. With the fork mode,
  it is impossible to add classpath to the commmand line.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -991,7 +877,6 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
       
@@ -1004,20 +889,12 @@
         </description>
       
         </element>
-
     
       </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="buildnumber">
-
   
     
   
@@ -1029,10 +906,8 @@
  it will increment the build number by one and write it back out into the
  file.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1048,21 +923,13 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="bunzip2">
-
   
     
   
@@ -1071,10 +938,8 @@
  algorithm. Normally used to compress non-compressed archives such
  as TAR files.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1099,21 +964,13 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="bzip2">
-
   
     
   
@@ -1121,10 +978,8 @@
     Compresses a file with the BZIP2 algorithm. Normally used to compress
  non-compressed archives such as TAR files.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1149,31 +1004,21 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="cab">
-
   
     
   
     <description>
     Create a CAB archive.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1228,7 +1073,6 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
       
@@ -1241,26 +1085,17 @@
         </description>
       
         </element>
-
     
       </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="cccheckin">
     <description>
    Task to perform a &quot;cleartool checkin&quot; command to ClearCase. 
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1297,7 +1132,6 @@
         <attribute name="identical" required="NOTDEFINED">
         
           
-
         
           <description>
           If true, allows the file to be checked in even
@@ -1347,31 +1181,21 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="cccheckout">
-
   
     
   
     <description>
     Task to perform a &quot;cleartool checkout&quot; command to ClearCase.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1418,7 +1242,6 @@
         <attribute name="nodata" required="NOTDEFINED">
         
           
-
         
           <description>
           If true, checks out the file but does not create an
@@ -1478,27 +1301,18 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ccmcheckin">
     <description>
     Task to &quot;checkin&quot; a file 
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1535,7 +1349,6 @@
         <attribute name="task" required="NOTDEFINED">
         
           
-
         
           <description>
           Specifies the task number used to check
@@ -1545,27 +1358,18 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ccmcheckintask">
     <description>
     Task to perform a &quot;checkin&quot; default task command to Continuus.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1602,7 +1406,6 @@
         <attribute name="task" required="NOTDEFINED">
         
           
-
         
           <description>
           Specifies the task number used to check
@@ -1612,27 +1415,18 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ccmcheckout">
     <description>
     Task to perform a &quot;Checkout&quot; command to Continuus.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1669,7 +1463,6 @@
         <attribute name="task" required="NOTDEFINED">
         
           
-
         
           <description>
           Specifies the task number used to check
@@ -1679,27 +1472,18 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ccmcreatetask">
     <description>
    Create a Continuus task.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1766,7 +1550,6 @@
         <attribute name="task" required="NOTDEFINED">
         
           
-
         
           <description>
           Specifies the task number used to checkin
@@ -1776,25 +1559,18 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
   <task name="ccmreconfigure">
  <description>
     Task to perform a reconfigure command to Continuus.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1839,31 +1615,21 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ccuncheckout">
-
   
     
   
     <description>
     Task to perform a &quot;UnCheckout&quot; command to ClearCase.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1898,31 +1664,21 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ccupdate">
-
   
     
   
     <description>
     Task to perform an &quot;cleartool update&quot; command to ClearCase.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -1960,7 +1716,6 @@
         <attribute name="log" required="NOTDEFINED">
         
           
-
         
           <description>
           Sets the log file where cleartool records
@@ -2011,31 +1766,21 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="checksum">
-
   
     
   
     <description>
     Used to create or verify file checksums.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -2063,7 +1808,6 @@
         <attribute name="fileext" required="no">
         
           
-
         
           <description>
           Sets the file extension that is be to used to
@@ -2076,7 +1820,6 @@
         
           
  whether it is newer than
-
         
           <description>
           Whether or not to overwrite existing file irrespective of 
@@ -2099,7 +1842,6 @@
         <attribute name="provider" required="no">
         
           
-
         
           <description>
           Sets the MessageDigest algorithm provider to be used
@@ -2130,7 +1872,6 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
       
@@ -2143,30 +1884,20 @@
         </description>
       
         </element>
-
     
       </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="chmod">
-
   
     
   
     <description>
     Chmod equivalent for unix-like environments.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -2306,7 +2037,6 @@
         <attribute name="outputproperty" required="NOTDEFINED">
         
           
-
         
           <description>
           Property name whose value should be set to the output of
@@ -2339,7 +2069,6 @@
         <attribute name="relative" required="NOTDEFINED">
         
           
-
         
           <description>
           Whether the filenames should be passed on the command line as
@@ -2353,7 +2082,6 @@
         <attribute name="resultproperty" required="NOTDEFINED">
         
           
-
         
           <description>
           The name of a property in which the return code of the
@@ -2365,7 +2093,6 @@
         <attribute name="skipemptyfilesets" required="NOTDEFINED">
         
           
-
         
           <description>
           If no source files have been found or are newer than their
@@ -2395,7 +2122,6 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
       
@@ -2408,7 +2134,6 @@
         </description>
       
         </element>
-
       
         <element name="fileset" required="NOTDEFINED">
         
@@ -2419,7 +2144,6 @@
         </description>
       
         </element>
-
       
         <element name="arg" required="NOTDEFINED">
         
@@ -2430,7 +2154,6 @@
         </description>
       
         </element>
-
       
         <element name="exclude" required="NOTDEFINED">
         
@@ -2441,7 +2164,6 @@
         </description>
       
         </element>
-
       
         <element name="include" required="NOTDEFINED">
         
@@ -2452,7 +2174,6 @@
         </description>
       
         </element>
-
       
         <element name="mapper" required="NOTDEFINED">
         
@@ -2463,7 +2184,6 @@
         </description>
       
         </element>
-
       
         <element name="patternset" required="NOTDEFINED">
         
@@ -2474,12 +2194,10 @@
         </description>
       
         </element>
-
       
         <element name="srcfile" required="NOTDEFINED">
         
           
-
         
           <description>
           Marker that indicates where the name of the source file should
@@ -2487,12 +2205,10 @@
         </description>
       
         </element>
-
       
         <element name="targetfile" required="NOTDEFINED">
         
           
-
         
           <description>
           Marker that indicates where the name of the target file should
@@ -2500,20 +2216,12 @@
         </description>
       
         </element>
-
     
       </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="concat">
-
   
     
   
@@ -2522,7 +2230,6 @@
  of files into a single stream. The destination of this stream may
  be the system console, or a file. The following is a sample
  invocation:
-
  &lt;pre&gt;
  &amp;lt;concat destfile=&amp;quot;${build.dir}/index.xml&amp;quot;
    append=&amp;quot;false&amp;quot;&amp;gt;
@@ -2533,10 +2240,8 @@
  &amp;lt;/concat&amp;gt;
  &lt;/pre&gt;
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -2566,7 +2271,6 @@
         <attribute name="encoding" required="no">
         
           
-
         
           <description>
           Sets the encoding for the input files, used when displaying the
@@ -2576,7 +2280,6 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
       
@@ -2589,7 +2292,6 @@
         </description>
       
         </element>
-
       
         <element name="fileset" required="NOTDEFINED">
         
@@ -2600,10 +2302,8 @@
         </description>
       
         </element>
-
     
       </elements>
-
       
       <body>
         
@@ -2612,17 +2312,10 @@
         </description>
       
       </body>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="condition">
-
   
     
   
@@ -2636,10 +2329,8 @@
  &lt;p&gt;This task does not extend Task to take advantage of
  ConditionBase.&lt;/p&gt;
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -2665,7 +2356,6 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
       
@@ -2678,7 +2368,6 @@
         </description>
       
         </element>
-
       
         <element name="available" required="NOTDEFINED">
         
@@ -2689,7 +2378,6 @@
         </description>
       
         </element>
-
       
         <element name="checksum" required="NOTDEFINED">
         
@@ -2700,7 +2388,6 @@
         </description>
       
         </element>
-
       
         <element name="contains" required="NOTDEFINED">
         
@@ -2711,7 +2398,6 @@
         </description>
       
         </element>
-
       
         <element name="equals" required="NOTDEFINED">
         
@@ -2722,7 +2408,6 @@
         </description>
       
         </element>
-
       
         <element name="filesmatch" required="NOTDEFINED">
         
@@ -2733,7 +2418,6 @@
         </description>
       
         </element>
-
       
         <element name="http" required="NOTDEFINED">
         
@@ -2744,7 +2428,6 @@
         </description>
       
         </element>
-
       
         <element name="isfalse" required="NOTDEFINED">
         
@@ -2755,7 +2438,6 @@
         </description>
       
         </element>
-
       
         <element name="isset" required="NOTDEFINED">
         
@@ -2766,7 +2448,6 @@
         </description>
       
         </element>
-
       
         <element name="istrue" required="NOTDEFINED">
         
@@ -2777,7 +2458,6 @@
         </description>
       
         </element>
-
       
         <element name="not" required="NOTDEFINED">
         
@@ -2788,7 +2468,6 @@
         </description>
       
         </element>
-
       
         <element name="or" required="NOTDEFINED">
         
@@ -2799,7 +2478,6 @@
         </description>
       
         </element>
-
       
         <element name="os" required="NOTDEFINED">
         
@@ -2810,7 +2488,6 @@
         </description>
       
         </element>
-
       
         <element name="socket" required="NOTDEFINED">
         
@@ -2821,7 +2498,6 @@
         </description>
       
         </element>
-
       
         <element name="uptodate" required="NOTDEFINED">
         
@@ -2832,20 +2508,12 @@
         </description>
       
         </element>
-
     
       </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="copy">
-
   
     
   
@@ -2859,10 +2527,8 @@
  document, the following mailing list discussions, and the
  copyfile/copydir tasks.&lt;/p&gt;
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -2909,7 +2575,6 @@
         <attribute name="flatten" required="no; defaults to false.">
         
           
-
         
           <description>
           When copying directory trees, the files can be "flattened"
@@ -2982,7 +2647,6 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
       
@@ -2995,7 +2659,6 @@
         </description>
       
         </element>
-
       
         <element name="filterchain" required="NOTDEFINED">
         
@@ -3006,7 +2669,6 @@
         </description>
       
         </element>
-
       
         <element name="filterset" required="NOTDEFINED">
         
@@ -3017,7 +2679,6 @@
         </description>
       
         </element>
-
       
         <element name="mapper" required="NOTDEFINED">
         
@@ -3034,12 +2695,7 @@
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="copydir">
 
   
@@ -3048,10 +2704,8 @@
     <description>
     Copies a directory.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -3101,31 +2755,21 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="copyfile">
-
   
     
   
     <description>
     Copies a file.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -3166,27 +2810,18 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="csc">
-
   
     
   
     <description>
     Compiles C# source into executables or modules.
-
   The task will only work on win2K until other platforms support
   csc.exe or an equivalent. CSC.exe must be on the execute path too. &lt;p&gt;
 
@@ -3201,10 +2836,8 @@
   as the first file in the list, which may be somewhat hard to control.
   Specifying the output file with &lt;b&gt;'outfile'&lt;/b&gt; seems prudent. &lt;p&gt;
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -3271,7 +2904,6 @@
         <attribute name="extraoptions" required="NOTDEFINED">
         
           
-
         
           <description>
           Any extra options which are not explicitly supported
@@ -3318,7 +2950,6 @@
           <description>
           If true, automatically includes the common assemblies
  in dotnet, and tells the compiler to link in mscore.dll.
-
   set the automatic reference inclusion flag on or off this flag controls
   the string of references and the /nostdlib option in CSC
         </description>
@@ -3346,7 +2977,6 @@
         </attribute>
       
         <attribute name="noconfig" required="NOTDEFINED">
-
           <description>
           A flag that tells the compiler not to read in the compiler 
  settings files 'csc.rsp' in its bin directory and its local directory
@@ -3438,7 +3068,6 @@
         <attribute name="warnlevel" required="NOTDEFINED">
         
           
-
         
           <description>
           Level of warning currently between 1 and 4
@@ -3469,36 +3098,25 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
     </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="cvs">
-
   
     
   
     <description>
     Performs operations on a CVS repository.
-
  original 1.20
 
   NOTE: This implementation has been moved to AbstractCvsTask with
   the addition of some accessors for extensibility.
   </description>
-
   
     <structure>
-
     
       <attributes>
       
@@ -3535,7 +3153,6 @@
         <attribute name="compressionlevel" required="no. defaults to no compression.">
         
           
-
         
           <description>
           If set to a value 1-9 it adds -zN to the cvs command line, else
@@ -3597,7 +3214,6 @@
         <attribute name="failonerror" required="no">
         
           
-
         
           <description>
           Stop the build process if the command exits with
@@ -3678,7 +3294,6 @@
         </attribute>
     
       </attributes>
-
     
       <elements>
       
@@ -3691,18 +3306,11 @@
         </description>
       
         </element>
-
     
       </elements>
-
   
     </structure>
-
-
   </task>
-
-
-
   <task name="cvschangelog">
 
   
@@ -3806,12 +3414,7 @@ Important: This task needs &quot;cvs&quot; on the path. If it isn't, you will ge
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="cvspass">
 
   
@@ -3865,12 +3468,7 @@ Important: This task needs &quot;cvs&quot; on the path. If it isn't, you will ge
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="cvstagdiff">
     <description>
     Generates an XML-formatted report file of the changes between two tags or dates recorded in a CVS repository. 
@@ -4036,12 +3634,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ddcreator">
 
   
@@ -4102,12 +3695,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="delete">
 
   
@@ -4323,12 +3911,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="deltree">
 
   
@@ -4362,12 +3945,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="depend">
 
   
@@ -4479,12 +4057,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="dependset">
 
   
@@ -4558,12 +4131,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="dirname">
 
   
@@ -4619,12 +4187,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ear">
 
   
@@ -4826,12 +4389,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="echo">
 
     <description>
@@ -4905,12 +4463,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="echoproperties">
 
     <description>
@@ -4996,12 +4549,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ejbc">
 
     <description>
@@ -5079,12 +4627,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ejbjar">
 
     <description>
@@ -5346,12 +4889,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="exec">
 	<description>
     Executes a given command if the os platform is appropriate.
@@ -5499,12 +5037,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="fail">
 	<description>
     Exits the active build, giving an additional message
@@ -5562,12 +5095,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="filter">
 
   
@@ -5624,12 +5152,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="fixcrlf">
 
   
@@ -5728,12 +5251,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ftp">
 
   
@@ -5956,12 +5474,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="genkey">
 
   
@@ -6108,12 +5621,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="get">
 
   
@@ -6222,12 +5730,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="gunzip">
 
   
@@ -6271,12 +5774,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="gzip">
 
   
@@ -6321,12 +5819,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="icontract">
 
     <description>
@@ -6539,12 +6032,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="ilasm">
 
   
@@ -6682,12 +6170,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="input">
 
   
@@ -6755,12 +6238,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="iplanet-ejbc">
 
   
@@ -6865,12 +6343,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="jar">
 
   
@@ -7044,12 +6517,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="jarlib-available">
   <description>
     Checks whether an extension is present in a fileset or an extensionSet.
@@ -7112,12 +6580,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="jarlib-display">
 
   
@@ -7171,12 +6634,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="jarlib-manifest">
 
   
@@ -7265,12 +6723,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="jarlib-resolve">
 
   
@@ -7361,12 +6814,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="java">
 
   
@@ -7600,12 +7048,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="javac">
   
     <description>
@@ -7975,12 +7418,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="javacc">
 
   
@@ -8236,12 +7674,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="javadoc">
 
     <description>
@@ -8999,12 +8432,7 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="javah">
 
   
@@ -9170,12 +8598,7 @@ When this task executes, it will generate the C header and source files that are
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="jdepend">
 
   
@@ -9310,12 +8733,7 @@ When this task executes, it will generate the C header and source files that are
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="jjtree">
 
   
@@ -9481,12 +8899,7 @@ When this task executes, it will generate the C header and source files that are
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="jpcoverage">
 
   
@@ -9684,7 +9097,7 @@ When this task executes, it will generate the C header and source files that are
         
           <description>
           Defines class/method filters based on pattern matching.
- The syntax is filters is similar to a fileset.
+ The syntax for filters is similar to a fileset.
         </description>
       
         </element>
@@ -9727,12 +9140,7 @@ When this task executes, it will generate the C header and source files that are
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="jpcovmerge">
 
   
@@ -9797,12 +9205,7 @@ When this task executes, it will generate the C header and source files that are
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="jpcovreport">
 
   
@@ -9916,12 +9319,7 @@ When this task executes, it will generate the C header and source files that are
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="jspc">
 
   
@@ -10143,12 +9541,7 @@ When this task executes, it will generate the C header and source files that are
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="junit">
 
   
@@ -10434,12 +9827,7 @@ When this task executes, it will generate the C header and source files that are
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="junitreport">
 
   
@@ -10518,12 +9906,7 @@ When this task executes, it will generate the C header and source files that are
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="keysubst">
 
   
@@ -10596,12 +9979,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="loadfile">
 
   
@@ -10679,12 +10057,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="loadproperties">
 
   
@@ -10730,12 +10103,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="mail">
 
   
@@ -10965,33 +10333,20 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="manifest">
-
-  
-    
-  
     <description>
-    Creates a manifest file for inclusion in a JAR, Ant task wrapper
- around {@link Manifest Manifest}.  This task can be used to write a
- Manifest file, optionally replacing or updating an existing file.
+   Creates a manifest file.
+
+This task can be used to write a Manifest file, optionally replacing or updating an existing file.
+
+Manifests are processed according to the Jar file specification.. Specifically, a manifest element consists of a set of attributes and sections. These sections in turn may contain attributes. Note in particular that this may result in manifest lines greater than 72 bytes being wrapped and continued on the next line.
   </description>
 
-  
-    <structure>
-
-    
+    <structure>    
       <attributes>
       
-        <attribute name="file" required="yes">
-        
-          
-        
+        <attribute name="file" required="yes">       
           <description>
           The name of the manifest file to create/update.
  Required if used as a task.
@@ -11000,24 +10355,27 @@ in setKeys(). By default it is "*".
         </attribute>
       
         <attribute name="mode" required="no">
-        
-          
-        
+
           <description>
           Update policy: either "update" or "replace"; default is "replace".
+        </description>
+      
+        </attribute>
+        
+         <attribute name="encoding" required="no">
+
+          <description>
+          The encoding used to read the existing manifest when updating. Defaults to UTF-8 encoding.
         </description>
       
         </attribute>
     
       </attributes>
 
-    
       <elements>
       
         <element name="attribute" required="NOTDEFINED">
-        
-          
-        
+
           <description>
           Add an attribute to the manifest - it is added to the main section.
         </description>
@@ -11026,9 +10384,7 @@ in setKeys(). By default it is "*".
 
       
         <element name="section" required="NOTDEFINED">
-        
-          
-        
+
           <description>
           Add a section to the manifest
         </description>
@@ -11040,17 +10396,10 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
 
   <task name="maudit">
 
-  
-    
-  
     <description>
     Invokes the Metamata Audit/ Webgain Quality Analyzer on a set of Java files.
  &lt;p&gt;
@@ -11215,12 +10564,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="mimemail">
 
   
@@ -11443,12 +10787,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="mkdir">
 
   
@@ -11484,12 +10823,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="mmetrics">
 
   
@@ -11627,12 +10961,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="move">
 
   
@@ -11826,12 +11155,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="mparse">
 
   
@@ -11960,12 +11284,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="native2ascii">
 
   
@@ -12051,12 +11370,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="netrexxc">
 
   
@@ -12430,12 +11744,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="p4add">
 
   
@@ -12544,12 +11853,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="p4change">
 
   
@@ -12635,12 +11939,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="p4counter">
 
   
@@ -12754,12 +12053,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="p4delete">
 
   
@@ -12841,12 +12135,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="p4edit">
 
   <description>
@@ -12948,12 +12237,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="p4have">
 
   
@@ -13048,12 +12332,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="p4label">
 
   
@@ -13181,12 +12460,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="p4reopen">
 
   
@@ -13288,12 +12562,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="p4revert">
 
   
@@ -13397,12 +12666,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="p4submit">
 
   
@@ -13511,12 +12775,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="p4sync">
 
   
@@ -13640,12 +12899,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="parallel">
 
   
@@ -13670,12 +12924,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="patch">
 
   
@@ -13786,12 +13035,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="pathconvert">
 
   
@@ -13858,8 +13102,6 @@ in setKeys(). By default it is "*".
         <attribute name="setonempty" required="no; default is &quot;true&quot;.    ">
         
           
-
-
         
           <description>
           Set setonempty
@@ -13914,12 +13156,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="property">
 
   
@@ -14107,12 +13344,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="propertyfile">
 
   
@@ -14168,12 +13400,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="pvcs">
 
   
@@ -14367,12 +13594,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="record">
 
   
@@ -14458,12 +13680,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="rename">
 
   
@@ -14517,12 +13734,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="renameextensions">
 
   
@@ -14590,12 +13802,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="replace">
 
   
@@ -14761,12 +13968,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="replaceregexp">
 
   
@@ -14907,12 +14109,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="rmic">
 
   
@@ -15159,12 +14356,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="rpm">
 
     <description>
@@ -15272,12 +14464,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="script">
 
   
@@ -15330,12 +14517,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="sequential">
 
   
@@ -15366,12 +14548,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="serverdeploy">
 
   
@@ -15461,12 +14638,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="setproxy">
 
   
@@ -15551,21 +14723,11 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
-  <task name="signjar">
-
-  
-    
-  
+  <task name="signjar">    
     <description>
-    Signs jar or zip files with the javasign command line tool. The
- tool detailed dependency checking: files are only signed if they
- are not signed. The &lt;tt&gt;signjar&lt;/tt&gt; attribute can point to the file to
+    Signs jar or zip files with the javasign command line tool. The tool's detailed dependency checking: files are only signed if they
+ are not signed. The &lt;tt&gt;signedjar&lt;/tt&gt; attribute can point to the file to
  generate; if this file exists then
  its modification date is used as a cue as to whether to resign any JAR file.
  &lt;br&gt;  
@@ -15725,12 +14887,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="sleep">
 
   
@@ -15815,12 +14972,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="soscheckin">
 
   
@@ -16020,12 +15172,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="soscheckout">
 
   
@@ -16225,12 +15372,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="sosget">
 
   
@@ -16431,12 +15573,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="soslabel">
 
   
@@ -16636,12 +15773,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="sound">
 
   
@@ -16700,12 +15832,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="splash">
 
   
@@ -16793,12 +15920,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="sql">
 
   
@@ -17106,12 +16228,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="stylebook">
 
   
@@ -17399,12 +16516,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="tar">
 
   <description>
@@ -17493,12 +16605,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="taskdef">
 
   
@@ -17628,12 +16735,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="telnet">
 
   
@@ -17751,12 +16853,7 @@ in setKeys(). By default it is "*".
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="tempfile">
 
   
@@ -17833,12 +16930,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="touch">
 
   
@@ -17913,12 +17005,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="translate">
 
   
@@ -18073,12 +17160,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="tstamp">
 
   
@@ -18126,12 +17208,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="typedef">
 
   
@@ -18266,12 +17343,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="untar">
 
   
@@ -18378,12 +17450,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="unzip">
 
   
@@ -18463,12 +17530,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="uptodate">
 
   
@@ -18564,12 +17626,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="vajexport">
 
   
@@ -18732,12 +17789,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="vajimport">
 
   
@@ -18839,12 +17891,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="vajload">
 
   
@@ -18901,12 +17948,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="vssadd">
 
   
@@ -19037,12 +18079,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="vsscheckin">
 
   
@@ -19174,12 +18211,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="vsscheckout">
 
   
@@ -19332,12 +18364,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="vsscp">
 
   
@@ -19426,12 +18453,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="vsscreate">
 
   
@@ -19553,12 +18575,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="vssget">
 
   
@@ -19748,12 +18765,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="vsshistory">
 
   
@@ -19939,12 +18951,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="vsslabel">
 
   
@@ -20076,12 +19083,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="waitfor">
 
   
@@ -20328,12 +19330,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="war">
 
   
@@ -20596,12 +19593,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="wljspc">
 
   
@@ -20677,12 +19669,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="wlrun">
 
   
@@ -20858,8 +19845,6 @@ the parent directory is used instead
         
           
  optional, and only applicable to WL4.5.1
-
-
         
           <description>
           Set the weblogic classpath used by the Weblogic Server;
@@ -20901,12 +19886,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="wlstop">
 
   
@@ -21018,12 +19998,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="wsdltodotnet">
 
   
@@ -21139,12 +20114,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="xmlproperty">
 
   
@@ -21225,12 +20195,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="xmlvalidate">
 
   
@@ -21387,12 +20352,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="xslt">
 
   
@@ -21587,12 +20547,7 @@ the parent directory is used instead
 
   
     </structure>
-
-
   </task>
-
-
-
   <task name="zip">
     
     <description>
@@ -21736,8 +20691,6 @@ the parent directory is used instead
   
     </structure>
   </task>
-
-
   <task name="target">
     
     <description>
@@ -21795,8 +20748,6 @@ the parent directory is used instead
           This is used to specify attributes of the new task. The values of the attributes get substituted into the templated task. The attributes will be required attributes unless a default value has been set. 
 
 This attribute is placed in the body of the templated task using a notation similar to the ant property notation - @{attribute name}. (May be remembered as "put the substitution AT this location"). The escape sequence @@{x} is used to allow @{x} to be placed in the text without substitution of x. This corresponds to the $${x} escape sequence for properties 
-
-
         </description>
       
         </element>
@@ -21961,8 +20912,6 @@ Note If you set this to false (the default), the host you connect to must be lis
 		</attributes>
 	</structure>
   </task>
-
-
 <task name="jjdoc">  
     <description>
 	Invokes the JJDoc preprocessor for the JavaCC compiler compiler. It takes a JavaCC parser specification and produces documentation for the BNF grammar. It can operate in three modes, determined by command line options. 
