@@ -16607,11 +16607,7 @@ Manifests are processed according to the Jar file specification.. Specifically, 
     </structure>
   </task>
   <task name="taskdef">
-
-  
-    
-  
-    <description>
+<description>
     Adds a task definition to the current project, such that this new task can be
  used in the current project. Two attributes are needed, the name that identifies
  this task uniquely, and the full name of the class (including the packages) that
@@ -16624,62 +16620,33 @@ Manifests are processed according to the Jar file specification.. Specifically, 
  taskname=fully.qualified.java.classname
  &lt;/pre&gt;
   </description>
-
-  
     <structure>
-
-    
       <attributes>
-      
-        <attribute name="classname" required="yes, unless file or resource have      been specified.">
-        
-          
-        
+        <attribute name="classname" required="yes, unless file or resource have been specified.">
           <description>
           the full class name of the object being defined.
  Required, unless file or resource have
  been specified.
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="classpath" required="no">
-        
-          
-        
           <description>
           Set the classpath to be used when searching for component being defined
         </description>
-      
-        </attribute>
-      
+        </attribute>      
         <attribute name="classpathref" required="no">
-        
-          
-        
           <description>
           reference to a classpath to use when loading the files.
  To actually share the same loader, set loaderref as well
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="file" required="no">
-        
-          
-
-        
           <description>
           Name of the property file  to load
  ant name/classname pairs from.
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="loaderref" required="no">
-        
-          
-        
           <description>
           Use the reference to locate the loader. If the loader is not
  found, taskdef will use the specified classpath and register it
@@ -16687,60 +16654,31 @@ Manifests are processed according to the Jar file specification.. Specifically, 
  This allow multiple taskdef/typedef to use the same class loader,
  so they can be used together. It eliminate the need to
  put them in the CLASSPATH.
-        </description>
-      
+        </description>      
         </attribute>
-      
-        <attribute name="name" required="yes, unless file or resource have      been specified.">
-        
-          
-
-        
+        <attribute name="name" required="yes, unless file or resource have been specified.">
           <description>
-          Name of the property resource to load
- ant name/classname pairs from.
+         The name of the data type.
         </description>
-      
         </attribute>
-      
         <attribute name="resource" required="no">
-        
-          
-
-        
           <description>
           Name of the property resource to load
  ant name/classname pairs from.
         </description>
-      
         </attribute>
-    
       </attributes>
-
-    
-      <elements>
-      
+      <elements>      
         <element name="classpath" required="NOTDEFINED">
-        
-          
-        
           <description>
           Create the classpath to be used when searching for component being defined
-        </description>
-      
+        </description>      
         </element>
-
-    
       </elements>
-
-  
     </structure>
   </task>
+  
   <task name="telnet">
-
-  
-    
-  
     <description>
     Automates the telnet protocol.
   </description>
@@ -17628,188 +17566,95 @@ the parent directory is used instead
     </structure>
   </task>
   <task name="vajexport">
-
-  
-    
-  
     <description>
-    Export packages from the Visual Age for Java workspace.
- The packages are specified similar to all other MatchingTasks.
- Since the VA Workspace is not file based, this task is simulating
- a directory hierarchy for the workspace:
- The 'root' contains all project 'dir's, and the projects contain
- their respective package 'dir's.
+    Exports Java source files, class files and/or resources from the Visual Age 
+for Java workspace to the file system. Exports can be specified by giving the 
+VAJ project name and package name(s). This works very similar to FileSets.
   </description>
-
-  
     <structure>
-
-    
-      <attributes>
-      
+      <attributes>      
         <attribute name="defaultexcludes" required="NOTDEFINED">
-        
-          
-        
           <description>
           Sets whether default exclusions should be used or not; default true.
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="destdir" required="NOTDEFINED">
-        
-          
-
-        
           <description>
           Set the destination directory into which the selected
  items should be exported; required.
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="excludes" required="NOTDEFINED">
-        
-          
-        
           <description>
           Sets the set of exclude patterns. Patterns may be separated by a comma
  or a space. Currently only patterns denoting packages are
  supported
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="exportclasses" required="NOTDEFINED">
-        
-          
-        
           <description>
           optional flag to export the class files; default false.
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="exportdebuginfo" required="NOTDEFINED">
-        
-          
-
-        
           <description>
           optional flag to export the debug info; default false.
  debug info
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="exportresources" required="NOTDEFINED">
-        
-          
-        
           <description>
           optional flag to export the resource file; default true.
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="exportsources" required="NOTDEFINED">
-        
-          
-        
           <description>
           optional flag to export the Java files; default true.
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="includes" required="NOTDEFINED">
-        
-          
-        
           <description>
           Sets the set of include patterns. Patterns may be separated by a comma
- or a space. Currently only patterns denoting packages are
- supported
+ or a space. Currently only patterns denoting packages are supported.
         </description>
-      
         </attribute>
-      
         <attribute name="overwrite" required="NOTDEFINED">
-        
-          
-        
           <description>
           if Overwrite is set, files will be overwritten during export
         </description>
-      
-        </attribute>
-      
+        </attribute>      
         <attribute name="remote" required="NOTDEFINED">
-        
-          
-        
           <description>
-          Name and port of a remote tool server, optiona.
+          Name and port of a remote tool server, optional.
  Format: &amp;lt;servername&amp;gt;:&amp;lt;port no&amp;gt;.
  If this attribute is set, the tasks will be executed on the specified tool
  server.
-        </description>
-      
+        </description>      
         </attribute>
-    
       </attributes>
-
-    
-      <elements>
-      
+      <elements>      
         <element name="exclude" required="NOTDEFINED">
-        
-          
-        
           <description>
           add a name entry on the exclude list
-        </description>
-      
+        </description>      
         </element>
-
-      
         <element name="include" required="NOTDEFINED">
-        
-          
-        
           <description>
           add a name entry on the include list
-        </description>
-      
+        </description>      
         </element>
-
-    
       </elements>
-
-  
     </structure>
   </task>
+  
   <task name="vajimport">
-
-  
-    
-  
     <description>
     Import source, class files, and resources to the Visual Age for Java
  workspace.
   </description>
-
-  
     <structure>
-
-    
       <attributes>
-      
         <attribute name="defaultexcludes" required="NOTDEFINED">
-        
-          
-        
           <description>
           Sets whether default exclusions should be used or not.
         </description>
@@ -17817,9 +17662,6 @@ the parent directory is used instead
         </attribute>
       
         <attribute name="importclasses" required="NOTDEFINED">
-        
-          
-        
           <description>
           Flag to import .class files; optional, default false.
         </description>
@@ -17827,10 +17669,6 @@ the parent directory is used instead
         </attribute>
       
         <attribute name="importresources" required="NOTDEFINED">
-        
-          
-
-        
           <description>
           Import resource files (anything that doesn't end in
  .class or .java); optional, default true.
@@ -17839,9 +17677,6 @@ the parent directory is used instead
         </attribute>
       
         <attribute name="importsources" required="NOTDEFINED">
-        
-          
-        
           <description>
           Import .java files; optional, default true.
         </description>
@@ -17849,9 +17684,6 @@ the parent directory is used instead
         </attribute>
       
         <attribute name="project" required="NOTDEFINED">
-        
-          
-        
           <description>
           The VisualAge for Java Project name to import into.
         </description>
@@ -17859,9 +17691,6 @@ the parent directory is used instead
         </attribute>
       
         <attribute name="remote" required="NOTDEFINED">
-        
-          
-        
           <description>
           Name and port of a remote tool server, optiona.
  Format: &amp;lt;servername&amp;gt;:&amp;lt;port no&amp;gt;.
@@ -17872,15 +17701,10 @@ the parent directory is used instead
         </attribute>
     
       </attributes>
-
-    
       <elements>
       
         <element name="fileset" required="NOTDEFINED">
-        
-          
-        
-          <description>
+    <description>
           Adds a set of files (nested fileset attribute).
         </description>
       
@@ -17893,10 +17717,6 @@ the parent directory is used instead
     </structure>
   </task>
   <task name="vajload">
-
-  
-    
-  
     <description>
     Load specific project versions into the Visual Age for Java workspace.
  Each project and version name has to be specified completely.
