@@ -690,7 +690,7 @@ M4 = Platform-specific fourth key -->
             class="org.eclipse.ant.internal.ui.console.EclipseJavacPatternMatcher"
             id="org.eclipse.ant.ui.eclipseJavacPatternMatcher"
             qualifier="javac"
-            regex="\[javac.*\].*ERROR in.*">
+            regex="\[javac.*\].*(ERROR|WARNING) in.*">
          <enablement>
             <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
          </enablement>
