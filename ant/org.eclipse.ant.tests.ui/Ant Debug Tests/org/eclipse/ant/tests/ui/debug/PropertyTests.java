@@ -24,7 +24,7 @@ import org.eclipse.debug.core.model.IVariable;
 
 public class PropertyTests extends AbstractAntDebugTest {
 	
-	private static final String ANT_VERSION = "Apache Ant version 1.6.4 compiled on May 19 2005";
+	private static final String ANT_VERSION = "Apache Ant version 1.6.5 compiled on June 2 2005";
 
     public PropertyTests(String name) {
 		super(name);
