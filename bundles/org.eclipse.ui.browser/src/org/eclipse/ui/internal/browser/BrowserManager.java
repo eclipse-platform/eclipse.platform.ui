@@ -95,7 +95,7 @@ public class BrowserManager extends Observable {
 				IMemento memento = XMLMemento.createReadRoot(reader);
 				
 				IMemento system = memento.getChild("system"); //$NON-NLS-1$
-				if (system != null)
+				if (system != null && WebBrowserUtil.canUseSystemBrowser())
 					browsers.add(new SystemBrowserDescriptor());
 				
 				IMemento[] children = memento.getChildren("external"); //$NON-NLS-1$

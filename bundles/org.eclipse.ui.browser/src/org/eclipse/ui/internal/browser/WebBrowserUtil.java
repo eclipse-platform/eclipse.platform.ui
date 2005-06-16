@@ -150,7 +150,7 @@ public class WebBrowserUtil {
 
 	public static boolean canUseSystemBrowser() {
 		// Disabling system browser on Solaris due to bug 94497
-		if (Platform.getOS()==Platform.OS_SOLARIS)
+		if (Platform.OS_SOLARIS.equals(Platform.getOS()))
 			return false;
 		return Program.findProgram("html") != null; //$NON-NLS-1$
 	}
