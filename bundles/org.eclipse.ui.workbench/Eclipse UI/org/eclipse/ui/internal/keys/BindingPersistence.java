@@ -1070,7 +1070,19 @@ public final class BindingPersistence {
 				}
 
 				// The key sequence is in the old-style format.
-				keySequence = convert2_1Sequence(parse2_1Sequence(keySequenceText));
+				try {
+					keySequence = convert2_1Sequence(parse2_1Sequence(keySequenceText));
+				} catch (final IllegalArgumentException e) {
+					final String message = "Could not parse key sequence '" + keySequenceText //$NON-NLS-1$
+							+ "': plug-in='" //$NON-NLS-1$
+							+ configurationElement.getNamespace()
+							+ "', commandId='" //$NON-NLS-1$
+							+ commandId + "'."; //$NON-NLS-1$
+					final IStatus status = new Status(IStatus.WARNING,
+							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+					warningsToLog.add(status);
+					continue;
+				}
 
 			} else {
 				// The key sequence is in the new-style format.
