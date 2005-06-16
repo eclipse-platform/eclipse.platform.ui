@@ -635,9 +635,8 @@ public class UpdateManagerUtils {
 		return true;
 	}
 
-	/**
-	 * 
-	 */	
+	/* Original code - commented out to provide a replacement as per bug 98387
+	
 	private static boolean isMatching(String candidateValues, String siteValues) {
 		if (siteValues==null) return false;
 		if ("*".equals(candidateValues)) return true; //$NON-NLS-1$
@@ -650,6 +649,30 @@ public class UpdateManagerUtils {
 		}
 		return false;
 	}
+	*/
+	
+	/*
+	 * Fixed bug 98387
+	 */
+	
+	private static boolean isMatching(String candidateValues, String siteValues) {
+		if (siteValues==null) return false;
+		if ("*".equals(candidateValues)) return true; //$NON-NLS-1$
+		if ("".equals(candidateValues)) return true; //$NON-NLS-1$
+		StringTokenizer siteTokens = new StringTokenizer(siteValues, ",");  //$NON-NLS-1$
+		//$NON-NLS-1$	
+		while(siteTokens.hasMoreTokens()) {
+		    StringTokenizer candidateTokens = new StringTokenizer
+	                                       (candidateValues, ","); //$NON-NLS-1$
+			String siteValue = siteTokens.nextToken();
+			while (candidateTokens.hasMoreTokens()) {
+				if (siteValue.equalsIgnoreCase
+	                             (candidateTokens.nextToken())) return true;
+			}
+		}
+		return false;
+	}
+
 	
 	/**
 	 * 
