@@ -221,7 +221,7 @@ public class MergeWizardPage extends CVSWizardPage {
     }
 
     protected void setStartTag(CVSTag selectedTag) {
-        if (selectedTag == null || startTag != null || !endTag.equals(selectedTag)) {
+        if (selectedTag == null || startTag != null || endTag == null || !endTag.equals(selectedTag)) {
 	        startTag = selectedTag;
 	        if (startTagField != null) {
 	            String name = startTagField.getText();
