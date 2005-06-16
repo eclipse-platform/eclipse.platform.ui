@@ -11,6 +11,10 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.Collator;
@@ -21,6 +25,7 @@ import java.util.Locale;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -57,6 +62,8 @@ public final class AboutSystemDialog extends ProductInfoDialog {
     private final static int BROWSE_ERROR_LOG_BUTTON = IDialogConstants.CLIENT_ID;
 
     private final static int COPY_TO_CLIPBOARD_BUTTON = IDialogConstants.CLIENT_ID + 1;
+    
+    private final static String ERROR_LOG_COPY_FILENAME = "log"; //$NON-NLS-1$
 
     /**
      * Create an instance of this dialog.
@@ -219,12 +226,67 @@ public final class AboutSystemDialog extends ProductInfoDialog {
 
         File log = new File(filename);
         if (log.exists()) {
-            openLink("file:///" + filename); //$NON-NLS-1$
-            return;
+        	// Make a copy of the file with a temporary name.
+        	// Working around an issue with windows file associations/browser malfunction
+        	// whereby the browser doesn't open on ".log" and we aren't returned an error.
+        	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=97783
+        	File logCopy = makeDisplayCopy(log);
+        	if (logCopy != null) {
+        		openLink("file:///" + logCopy.getAbsolutePath()); //$NON-NLS-1$
+        		return;
+        	}
+        	// Couldn't make copy, try to open the original log.
+        	// We try the original in this case rather than putting up an error,
+        	// because the copy could fail due to an I/O or out of space problem.
+        	// In that case we may still be able to show the original log,
+        	// depending on the platform.  The risk is that users with configurations
+        	// that have bug #97783 will still get nothing (vs. an error) but we'd rather
+        	// try again than put up an error dialog on platforms where the ability to
+        	// view the original log works just fine.
+        	openLink("file:///" + filename); //$NON-NLS-1$
+        	return;
         }
-
         MessageDialog.openInformation(getShell(), WorkbenchMessages.AboutSystemDialog_noLogTitle, 
                 NLS.bind(WorkbenchMessages.AboutSystemDialog_noLogMessage,  filename ));
+    }
+    
+    /**
+     * Returns a copy of the given file to be used for display in
+     * a browser.
+     * 
+     * @return the file, or <code>null</code>
+     */
+    private File makeDisplayCopy(File file) {
+        IPath path = WorkbenchPlugin.getDefault().getDataLocation();
+        if(path == null)
+        	return null;
+        path = path.append(ERROR_LOG_COPY_FILENAME);
+        File copy = path.toFile();
+        FileReader in = null;
+        FileWriter out = null;
+        try {
+			in = new FileReader(file);
+			// don't append data, overwrite what was there
+			out = new FileWriter(copy, false);
+			char buffer[] = new char[4096];
+		    int count;
+		    while ((count = in.read(buffer, 0, buffer.length)) > 0) {
+		        out.write(buffer, 0, count);
+		    }
+		} catch (FileNotFoundException e) {
+			return null;
+		} catch (IOException e) {
+			return null;
+		} finally {
+			try {
+				if (in != null) in.close();
+				if (out != null) out.close();
+			} catch (IOException e) {
+				return null;
+			}
+		}
+		return copy;
+
     }
 
     private void runCopyToClipboard() {
