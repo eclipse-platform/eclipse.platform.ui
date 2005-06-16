@@ -13720,10 +13720,6 @@ Manifests are processed according to the Jar file specification.. Specifically, 
     </structure>
   </task>
   <task name="replace">
-
-  
-    
-  
     <description>
     Replaces all occurrences of one or more string tokens with given
  values in the indicated files. Each value can be either a string 
@@ -13731,165 +13727,81 @@ Manifests are processed according to the Jar file specification.. Specifically, 
  If you want to replace a text that crosses line boundaries, you
  must use a nested &lt;code&gt;&amp;lt;replacetoken&amp;gt;&lt;/code&gt; element.
   </description>
-
-  
     <structure>
-
-    
-      <attributes>
-      
+      <attributes>      
         <attribute name="dir" required="">
-        
-          
-
-        
           <description>
           The base directory to use when replacing a token in multiple files;
  required if &lt;code&gt;file&lt;/code&gt; is not defined.
-        </description>
-      
-        </attribute>
-      
+        </description>      
+        </attribute>      
         <attribute name="encoding" required="no - defaults to default jvm encoding">
-        
-          
-
-        
           <description>
           Set the file encoding to use on the files read and written by the task; defaults to default JVM encoding
         </description>
-      
-        </attribute>
-      
+        </attribute>      
         <attribute name="file" required="exactly one of the two.">
-        
-          
-        
           <description>
           Set the source file; required unless &lt;code&gt;dir&lt;/code&gt; is set.
         </description>
-      
-        </attribute>
-      
+        </attribute>      
         <attribute name="propertyfile" required="yes only if property attribute of &lt;replacefilter&gt; is used.">
-        
-          
- nested &lt;code&gt;&amp;lt;replacefilter&amp;gt;&lt;/code&gt; elements are drawn;
- Required only if &lt;i&gt;property&lt;/i&gt; attribute of
-
-        
           <description>
           The name of a property file from which properties specified using
  nested &lt;code&gt;&amp;lt;replacefilter&amp;gt;&lt;/code&gt; elements are drawn;
  Required only if &lt;i&gt;property&lt;/i&gt; attribute of
  &lt;code&gt;&amp;lt;replacefilter&amp;gt;&lt;/code&gt; is used.
         </description>
-      
         </attribute>
-      
         <attribute name="replacefilterfile" required="no.">
-        
-          
-        
           <description>
           Sets the name of a property file containing filters.
  Each property will be treated as a
  replacefilter where token is the name of the property and value
  is the value of the property.
         </description>
-      
-        </attribute>
-      
+        </attribute>      
         <attribute name="summary" required="no, by default no summary is produced">
-        
-          
- produced, detailing how many token occurrences and files were
-
-        
           <description>
           Indicates whether a summary of the replace operation should be
  produced, detailing how many token occurrences and files were
  processed; default=false
         </description>
-      
-        </attribute>
-      
-        <attribute name="token" required="yes, unless a nested      replacetoken element or the replacefilterfile      attribute is used.">
-        
-          
- required unless a nested
- &lt;code&gt;replacetoken&lt;/code&gt; element or the &lt;code&gt;replacefilterfile&lt;/code&gt;
-
-        
+        </attribute>      
+        <attribute name="token" required="yes, unless a nested      replacetoken element or the replacefilterfile attribute is used.">
           <description>
-          Set the string token to replace;
- required unless a nested
+          Set the string token to replace; required unless a nested
  &lt;code&gt;replacetoken&lt;/code&gt; element or the &lt;code&gt;replacefilterfile&lt;/code&gt;
  attribute is used.
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="value" required="no">
-        
-          
-
-        
           <description>
           Set the string value to use as token replacement;
  optional, default is the empty string ""
-        </description>
-      
+        </description>      
         </attribute>
-    
       </attributes>
-
-    
-      <elements>
-      
+      <elements>      
         <element name="replacetoken" required="NOTDEFINED">
-        
-          
-        
           <description>
           the token to filter as the text of a nested element
-        </description>
-      
+        </description>      
         </element>
-
-      
         <element name="replacevalue" required="NOTDEFINED">
-        
-          
-        
           <description>
           the string to replace the token as the text of a nested element
-        </description>
-      
+        </description>      
         </element>
-
-      
         <element name="replacefilter" required="NOTDEFINED">
-        
-          
-        
           <description>
           Add a nested &amp;lt;replacefilter&amp;gt; element.
-        </description>
-      
+        </description>      
         </element>
-
-    
       </elements>
-
-  
     </structure>
   </task>
   <task name="replaceregexp">
-
-  
-    
-  
     <description>
     Performs regular expression string replacements in a text
  file.  The input file(s) must be able to be properly processed by
@@ -13902,44 +13814,24 @@ Manifests are processed according to the Jar file specification.. Specifically, 
  requires the Jakarta Oro Package).
 
   </description>
-
-  
     <structure>
-
-    
-      <attributes>
-      
+      <attributes>      
         <attribute name="byline" required="NOTDEFINED">
-        
-          
-
-        
           <description>
           Process the file(s) one line at a time, executing the replacement
  on one line at a time.  This is useful if you
  want to only replace the first occurence of a regular expression on
  each line, which is not easy to do when processing the file as a whole.
  Defaults to &lt;i&gt;false&lt;/i&gt;.&lt;/td&gt;
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="file" required="NOTDEFINED">
-        
-          
-
-        
           <description>
           file for which the regular expression should be replaced;
  required unless a nested fileset is supplied.
         </description>
-      
         </attribute>
-      
         <attribute name="flags" required="NOTDEFINED">
-        
-          
-        
           <description>
           The flags to use when matching the regular expression.  For more
  information, consult the Perl5 syntax.
@@ -13951,79 +13843,42 @@ Manifests are processed according to the Jar file specification.. Specifically, 
   &lt;li&gt; s : Singleline.  Treat the string as a single line of input, using
         "." to match any character, including a newline, which normally, it would not match.
 &lt;/ul&gt;
-        </description>
-      
+        </description>      
         </attribute>
-      
         <attribute name="match" required="NOTDEFINED">
-        
-          
-
-        
           <description>
           the regular expression pattern to match in the file(s);
  required if no nested &amp;lt;regexp&amp;gt; is used
         </description>
-      
         </attribute>
-      
         <attribute name="replace" required="NOTDEFINED">
-        
-          
-
-        
           <description>
           The substitution pattern to place in the file(s) in place
  of the regular expression.
  Required if no nested &amp;lt;substitution&amp;gt; is used
-        </description>
-      
+        </description>      
         </attribute>
-    
       </attributes>
-
-    
-      <elements>
-      
+      <elements>      
         <element name="fileset" required="NOTDEFINED">
-        
-          
-        
           <description>
           list files to apply the replacement to
-        </description>
-      
+        </description>      
         </element>
-
-      
         <element name="regexp" required="NOTDEFINED">
-        
-          
-        
           <description>
           A regular expression.
  You can use this element to refer to a previously
  defined regular expression datatype instance
-        </description>
-      
+        </description>      
         </element>
-
-      
         <element name="substitution" required="NOTDEFINED">
-        
-          
-        
           <description>
           A substitution pattern.  You can use this element to refer to a previously
  defined substitution pattern datatype instance.
-        </description>
-      
+        </description>      
         </element>
-
-    
       </elements>
-
-  
     </structure>
   </task>
   <task name="rmic">
