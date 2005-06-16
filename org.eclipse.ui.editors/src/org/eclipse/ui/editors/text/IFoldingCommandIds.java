@@ -13,7 +13,11 @@ package org.eclipse.ui.editors.text;
 
 /**
  * Command IDs for folding commands.
- *
+ * <p>
+ * This interface contains constants only; it is not intended to be
+ * implemented.
+ * </p>
+ * 
  * @since 3.0
  */
 public interface IFoldingCommandIds {
