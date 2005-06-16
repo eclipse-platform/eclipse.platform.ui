@@ -41,7 +41,8 @@ import org.eclipse.ui.IWorkbenchPage;
  *   <li><code>"dialog.invalid_input"</code> - to indicate an invalid line number format</li>
  *   <li><code>"dialog.title"</code> - the input dialog's title</li>
  *   <li><code>"dialog.message"</code> - the input dialog's message</li>
- * </ul>
+ * </ul></p>
+ * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */

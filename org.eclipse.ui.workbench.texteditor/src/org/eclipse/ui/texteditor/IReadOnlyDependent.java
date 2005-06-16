@@ -12,12 +12,12 @@
 package org.eclipse.ui.texteditor;
 
 
-
 /**
  * Extension interface for actions. Actions implementing this interface not
  * only manage an enable/disable state but also manage a "hypothetical"
  * enable state, depending on whether the target they work on is writable
  * or read-only.
+ * 
  * @since 2.0
  */
 public interface IReadOnlyDependent {

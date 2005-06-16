@@ -19,11 +19,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 
 /**
- * The protocol a reference provider for quickdiff has to implement. Quickdiff references provide
+ * The protocol a reference provider for Quick Diff has to implement. Quick Diff references provide
  * a reference document (an <code>IDocument</code>) that is used as the original against which
  * diff information is generated.
  * <p>Extensions to the extension point <code>quickdiff.referenceprovider</code> have to implement
- * this interface (plus another interface for plugin and UI management.</p>
+ * this interface (plus another interface for plug-in and UI management.</p>
  *
  * @since 3.0
  */
