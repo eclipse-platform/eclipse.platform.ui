@@ -181,7 +181,10 @@ public abstract class Container extends Resource implements IContainer {
 		checkExists(flags, true);
 		//if children are currently unknown, ask for refresh asap
 		if (info.isSet(ICoreConstants.M_CHILDREN_UNKNOWN))
-			workspace.refreshManager.refresh(this);
+			// TODO remove this call once we fix bug 98740 and
+			// change the above #checkExists to #checkAccessible.
+			if (isAccessible())
+				workspace.refreshManager.refresh(this);
 		return getChildren(memberFlags);
 	}
 
