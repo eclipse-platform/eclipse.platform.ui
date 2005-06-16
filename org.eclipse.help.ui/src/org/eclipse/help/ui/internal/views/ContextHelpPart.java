@@ -430,7 +430,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				sbuf.append("<a href=\""); //$NON-NLS-1$
 				sbuf.append(link.getHref());
 				String tcat = getTopicCategory(link.getHref(), locale);
-				if (tcat != null && Platform.getWS()!=Platform.WS_GTK) {
+				if (tcat != null && !Platform.getWS().equals(Platform.WS_GTK)) {
 					sbuf.append("\" alt=\""); //$NON-NLS-1$
 					sbuf.append(tcat);
 				}

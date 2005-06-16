@@ -166,7 +166,7 @@ public class EngineResultSection {
             buff.append("<p><a href=\""); //$NON-NLS-1$
             buff.append(HREF_PROGRESS);
             buff.append("\""); //$NON-NLS-1$
-            if (Platform.getWS()!=Platform.WS_GTK) {
+            if (!Platform.getWS().equals(Platform.WS_GTK)) {
             	buff.append(" alt=\""); //$NON-NLS-1$
             	buff.append(Messages.EngineResultSection_progressTooltip); //$NON-NLS-1$
             	buff.append("\""); //$NON-NLS-1$
