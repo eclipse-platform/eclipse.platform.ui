@@ -20,7 +20,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
@@ -96,11 +95,6 @@ public class ProxyControl {
 	 */
 	private boolean visible = true;
     
-    /**
-     * True iff the target is being clipped by an ancestor of the proxy
-     */
-    private boolean clipped = false;
-    
 	/**
 	 * Dispose listener. Breaks the link between the target and the proxy if either
 	 * control is disposed.
@@ -135,31 +129,9 @@ public class ProxyControl {
 		}
 
 		public void controlResized(ControlEvent e) {
-            // If this is the proxy, the proxy's layout will do the work
-		    if (e.widget == control) {
-                return;
-            }
-        
-            // If an ancestor is clipping the target, we always need to re-layout
-            // whenever an ancestor's bounds change
-            if (clipped) {
-		        ProxyControl.this.layout();
-		    } else {
-                // Else we only need to recompute clipping for this one ancestor (more efficient than
-                // calling layout
-                Display d = target.getDisplay();
-                Control c = (Control)e.widget;
-                
-                Rectangle originalBounds = target.getBounds();
-		        Rectangle changedBounds = d.map(c.getParent(), target.getParent(), c.getBounds());
-
-                Rectangle intersection = originalBounds.intersection(changedBounds);
-                
-                if (!intersection.equals(originalBounds)) {
-                    target.setBounds(intersection);
-                    clipped = true;
-                }
-            }
+		    //if (e.widget == control) {
+		     //   ProxyControl.this.layout();
+		    //}
 		}
 		
 	};
@@ -280,16 +252,8 @@ public class ProxyControl {
 		Rectangle displayBounds = Geometry.toDisplay(control.getParent(), control.getBounds());
 		
 		// Clip the bounds of the target so that it doesn't go outside the dummy control's parent
-        clipped = false;
-        for (Control next = control.getParent(); next != commonAncestor; next = next.getParent()) {
-            Rectangle clippingRegion = DragUtil.getDisplayBounds(next);
-            Rectangle clippedBounds = clippingRegion.intersection(displayBounds);
-            
-            if (!clippedBounds.equals(displayBounds)) {
-                clipped = true;
-                displayBounds = clippedBounds;
-            }
-        }
+		Rectangle clippingRegion = DragUtil.getDisplayBounds(control.getParent());
+		displayBounds = displayBounds.intersection(clippingRegion);
 		
 		// Compute the bounds of the target, in the local coordinate system of its parent
 		Rectangle targetBounds = Geometry.toControl(getTarget().getParent(), displayBounds);
