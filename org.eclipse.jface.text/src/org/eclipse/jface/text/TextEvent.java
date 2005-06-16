@@ -22,9 +22,9 @@ package org.eclipse.jface.text;
  * Depending on the viewer's presentation mode, the text event coordinates are
  * different from the document event's coordinates.
  * <p>
- * An empty text event usually indicates a change of the viewer's redraw state.
+ * An empty text event usually indicates a change of the viewer's redraw state.</p>
  * <p>
- * Clients other than text viewer's don't create instances of this class.
+ * Clients other than text viewer's don't create instances of this class.</p>
  *
  * @see org.eclipse.jface.text.ITextListener
  * @see org.eclipse.jface.text.ITextViewer

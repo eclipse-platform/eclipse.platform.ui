@@ -17,7 +17,7 @@ package org.eclipse.jface.text;
  * {@link org.eclipse.jface.text.ITextViewer} are informed if the document
  * serving as the text viewer's model is replaced.
  * <p>
- * Clients may implement this interface.
+ * Clients may implement this interface.</p>
  *
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.jface.text.IDocument

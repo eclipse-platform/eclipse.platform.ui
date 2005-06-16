@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Color;
  * Description of textual attributes such as color and style. Text attributes
  * are considered value objects.
  * <p>
- * Clients usually instantiate object of the class.
+ * Clients usually instantiate object of the class.</p>
  */
 public class TextAttribute {
 

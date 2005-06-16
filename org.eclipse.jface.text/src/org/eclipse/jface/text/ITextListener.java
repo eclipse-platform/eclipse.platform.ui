@@ -29,7 +29,7 @@ package org.eclipse.jface.text;
  * If a text listener receives a text event, it is guaranteed that both the
  * document and the viewer's visual representation are synchronized. If the
  * <p>
- * Clients may implement this interface.
+ * Clients may implement this interface.</p>
  *
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.jface.text.TextEvent

@@ -16,7 +16,7 @@ package org.eclipse.jface.text;
  * <p>
  * Makes advantage of the weak contract of correctness of its interface. If
  * generated from a selection provider, it only remembers its offset and length
- * and computes the remaining information on request.
+ * and computes the remaining information on request.</p>
  */
 public class TextSelection implements ITextSelection {
 

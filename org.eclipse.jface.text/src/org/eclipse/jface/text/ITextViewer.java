@@ -91,10 +91,10 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * of widget and model coordinates.</li>
  * <li>{@link org.eclipse.jface.text.ITextViewerExtension6} since version 3.1
  * extending the text viewer with the ability to detect hyperlinks and access the undo manager.</li>
- * </ul>
- *
+ * </ul></p>
+ * <p>
  * Clients may implement this interface and its extension interfaces or use the
- * standard implementation {@link org.eclipse.jface.text.TextViewer}.
+ * standard implementation {@link org.eclipse.jface.text.TextViewer}.</p>
  *
  * @see org.eclipse.jface.text.ITextViewerExtension
  * @see org.eclipse.jface.text.ITextViewerExtension2

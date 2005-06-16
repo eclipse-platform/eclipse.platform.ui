@@ -90,7 +90,7 @@ import org.eclipse.jface.text.projection.ChildDocumentManager;
  * widget token keepers.
  * <p>
  * Clients should not subclass this class as it is rather likely that subclasses
- * will be broken by future releases.
+ * will be broken by future releases.</p>
  */
 public class TextViewer extends Viewer implements
 					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, IEditingSupportRegistry,

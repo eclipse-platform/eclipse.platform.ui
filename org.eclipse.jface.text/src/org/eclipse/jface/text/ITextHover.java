@@ -27,10 +27,9 @@ package org.eclipse.jface.text;
  *     allowing a text hover to provide a creator for the hover control. This allows
  *     for sophisticated hovers in a way that information computed by the hover can
  *     be displayed in the best possible form.</li>
- * </ul>
+ * </ul></p>
  * <p>
- *
- * Clients may implement this interface.
+ * Clients may implement this interface.</p>
  *
  * @see org.eclipse.jface.text.ITextHoverExtension
  * @see org.eclipse.jface.text.ITextViewer

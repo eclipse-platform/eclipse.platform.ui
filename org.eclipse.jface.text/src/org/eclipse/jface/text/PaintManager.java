@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
  * Manages the {@link org.eclipse.jface.text.IPainter} object registered with an
  * {@link org.eclipse.jface.text.ITextViewer}.
  * <p>
- * Clients usually instantiate and configure objects of this type.
+ * Clients usually instantiate and configure objects of this type.</p>
  *
  * @since 2.1
  */

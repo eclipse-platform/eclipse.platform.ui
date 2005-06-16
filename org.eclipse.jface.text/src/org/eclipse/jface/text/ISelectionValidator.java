@@ -20,9 +20,10 @@ import org.eclipse.jface.viewers.ISelection;
  * <p>
  * For example, selection and document changes that occur between the original
  * selection and the point in time the validator is called cause the selection
- * to be invalid.
- * </p>
+ * to be invalid.</p>
+ * <p>
  * Clients may implement and use this interface.
+ * </p>
  *
  * @since 3.0
  */

@@ -24,9 +24,9 @@ import org.eclipse.swt.graphics.Rectangle;
  * Paints a vertical line (margin line) after a given column respecting the text
  * viewer's font.
  * <p>
- * Clients usually instantiate and configure objects of this class.
+ * Clients usually instantiate and configure objects of this class.</p>
  * <p>
- * This class is not intended to be subclassed.
+ * This class is not intended to be subclassed.</p>
  *
  * @since 2.1
  */

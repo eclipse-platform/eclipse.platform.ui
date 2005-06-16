@@ -17,7 +17,7 @@ package org.eclipse.jface.text;
  * of a text viewer's view port. The view port is that portion of the viewer's
  * document which is visible in the viewer.
  * <p>
- * Clients may implement this interface.
+ * Clients may implement this interface.</p>
  *
  * @see org.eclipse.jface.text.ITextViewer
  */

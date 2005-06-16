@@ -33,10 +33,10 @@ import org.eclipse.jface.viewers.ISelection;
  * selection object.
  * <p>
  * The contract of this interface is that weak in order to allow for efficient
- * implementations.
+ * implementations.</p>
  * <p>
  * Clients may implement this interface or use the default implementation
- * provided by {@link org.eclipse.jface.text.TextSelection}.
+ * provided by {@link org.eclipse.jface.text.TextSelection}.</p>
  *
  * @see org.eclipse.jface.text.TextSelection
  */
