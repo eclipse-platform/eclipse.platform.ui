@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.intro.impl.model.url;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -31,7 +30,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
-import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarElement;
@@ -99,6 +97,7 @@ public class IntroURL implements IIntroURL {
     public static final String KEY_DIRECTION = "direction"; //$NON-NLS-1$
     public static final String KEY_EMBED = "embed"; //$NON-NLS-1$
     public static final String KEY_EMBED_TARGET = "embedTarget"; //$NON-NLS-1$
+    public static final String KEY_DECODE = "decode"; //$NON-NLS-1$
 
 
     public static final String VALUE_BACKWARD = "backward"; //$NON-NLS-1$
@@ -364,15 +363,8 @@ public class IntroURL implements IIntroURL {
     private boolean showMessage(String message) {
         if (message == null)
             return false;
-        try {
-            message = URLDecoder.decode(message, "UTF-8"); //$NON-NLS-1$
-            DialogUtil.displayInfoMessage(null, message);
-            return true;
-        } catch (UnsupportedEncodingException e) {
-            DialogUtil.displayInfoMessage(null, "IntroURL.failedToDecode", //$NON-NLS-1$
-                new Object[] { message });
-            return false;
-        }
+        DialogUtil.displayInfoMessage(null, message);
+        return true;
     }
 
     /**
@@ -515,20 +507,38 @@ public class IntroURL implements IIntroURL {
 
     /**
      * Return a parameter defined in the Intro URL. Returns null if the
-     * parameter is not defined.
+     * parameter is not defined. If this intro url has a decode=true parameter,
+     * then all parameters are returned decoded using UTF-8.
      * 
      * @param parameterId
      * @return
      */
     public String getParameter(String parameterId) {
-        return parameters.getProperty(parameterId);
+        // make sure to decode only on return, since we may need to recreate the
+        // url when handling custom urls.
+        String value = parameters.getProperty(parameterId);
+        String decode = parameters.getProperty(KEY_DECODE);
+
+        if (value != null)
+            try {
+                if (decode.equalsIgnoreCase(VALUE_TRUE))
+                    // we are told to decode the parameters of the url through
+                    // the decode parameter. Assume that parameters are
+                    // UTF-8 encoded.
+                    return URLDecoder.decode(value, "UTF-8"); //$NON-NLS-1$
+                return value;
+            } catch (Exception e) {
+                // should never be here.
+                Log.error("Failed to decode URL: " + parameterId, e); //$NON-NLS-1$
+            }
+        return value;
     }
 
     private boolean handleCustomAction() {
         IntroURLAction command = ExtensionPointManager.getInst()
             .getSharedConfigExtensionsManager().getCommand(action);
         if (command == null) {
-            String message = Messages.IntroURL_badCommand;
+            String message = "";
             DialogUtil.displayInfoMessage(null, message,
                 new Object[] { action });
             return false;

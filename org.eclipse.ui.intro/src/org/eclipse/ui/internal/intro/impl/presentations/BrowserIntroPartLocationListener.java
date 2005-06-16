@@ -46,8 +46,8 @@ public class BrowserIntroPartLocationListener implements LocationListener {
 
         // guard against unnecessary History updates.
         Browser browser = (Browser) event.getSource();
-        if (browser.getData("navigation") != null
-                && browser.getData("navigation").equals("true"))
+        if (browser.getData("navigation") != null //$NON-NLS-1$
+                && browser.getData("navigation").equals("true")) //$NON-NLS-1$ //$NON-NLS-2$
             return;
 
         IntroModelRoot model = implementation.getModel();
@@ -67,11 +67,11 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             // cleared by a progress listener, when all the frame navigation is
             // completed. We need to update history only in dynamic case. In
             // static case, the browser keeps the history.
-            if (browser.getData("frameNavigation") != null) {
+            if (browser.getData("frameNavigation") != null) { //$NON-NLS-1$
                 // this is at least the second frame navigation, remove last
                 // history since it was added just as a filler.
-                if (event.top == false && browser.getData("tempUrl") != null
-                        && browser.getData("tempUrl").equals("true")) {
+                if (event.top == false && browser.getData("tempUrl") != null //$NON-NLS-1$
+                        && browser.getData("tempUrl").equals("true")) { //$NON-NLS-1$ //$NON-NLS-2$
                     implementation.getHistory().removeLastHistory();
                     flagRemovedTempUrl();
                 }
