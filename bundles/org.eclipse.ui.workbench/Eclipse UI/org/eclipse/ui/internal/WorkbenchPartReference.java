@@ -22,6 +22,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
@@ -290,7 +291,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     
     protected ImageDescriptor computeImageDescriptor() {
         if (part != null) {
-            return ImageDescriptor.createFromImage(part.getTitleImage());
+            return ImageDescriptor.createFromImage(part.getTitleImage(), Display.getCurrent());
         }
         return defaultImageDescriptor;
     }
@@ -632,6 +633,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         
         internalPropChangeListeners.clear();
         Image oldImage = image;
+        ImageDescriptor oldDescriptor = imageDescriptor;
         image = null;
         
         state = STATE_DISPOSED;
@@ -641,8 +643,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         propChangeListeners.clear();
         
         if (oldImage != null) {
-            JFaceResources.getResources().destroy(imageDescriptor);
-            oldImage = null;
+            JFaceResources.getResources().destroy(oldDescriptor);
         }
     }
 
