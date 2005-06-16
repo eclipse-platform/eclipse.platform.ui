@@ -21,6 +21,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -49,6 +50,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
@@ -547,7 +549,7 @@ public class ReviewPage	extends BannerPage {
 				trueUpdates.add(job);
 		}
 		treeViewer.setCheckedElements(trueUpdates.toArray()); 
-		validateSelection();
+		validateSelection(new NullProgressMonitor());
 	}	
 
 	/**
@@ -650,8 +652,12 @@ public class ReviewPage	extends BannerPage {
 		selectRequiredFeaturesButton
 				.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						selectRequiredFeatures();
-						updateItemCount();
+						BusyIndicator.showWhile(e.display, new Runnable() {
+							public void run() {
+								selectRequiredFeatures();
+								updateItemCount();
+							}
+						});
 					}
 				});
 
@@ -736,7 +742,7 @@ public class ReviewPage	extends BannerPage {
 		return client;
 	}
 
-    private void createTreeViewer(Composite parent) {
+    private void createTreeViewer(final Composite parent) {
         SashForm sform = new SashForm(parent, SWT.VERTICAL);
         GridData gd = new GridData(GridData.FILL_BOTH);
         gd.widthHint = 250;
@@ -759,15 +765,22 @@ public class ReviewPage	extends BannerPage {
         
         treeViewer.addCheckStateListener(new ICheckStateListener() {
             public void checkStateChanged(CheckStateChangedEvent event) {
-                validateSelection();
-                Object site = getSite(event.getElement());
-                ArrayList descendants = new ArrayList();
-                collectDescendants(site, descendants);
-                Object[] nodes = new Object[descendants.size()];
-                for (int i=0; i<nodes.length; i++)
-                    nodes[i] = descendants.get(i);
-                treeViewer.update(nodes, null);
-                updateItemCount();
+    			/*
+				 * validateSelection(); Object site =
+				 * getSite(event.getElement()); ArrayList descendants = new
+				 * ArrayList(); collectDescendants(site, descendants); Object[]
+				 * nodes = new Object[descendants.size()]; for (int i = 0; i <
+				 * nodes.length; i++) nodes[i] = descendants.get(i);
+				 * treeViewer.update(nodes, null); updateItemCount();
+				 */
+				try {
+					getContainer().run(true, true,
+							getCheckStateOperation(event, parent.getDisplay()));
+				} catch (InvocationTargetException e) {
+					UpdateUI.logException(e);
+				} catch (InterruptedException e) {
+					UpdateUI.logException(e);
+				}
             }
         });
 
@@ -794,6 +807,48 @@ public class ReviewPage	extends BannerPage {
       
       sform.setWeights(new int[] {10, 2});
     }
+    
+	private IRunnableWithProgress getCheckStateOperation(
+			final CheckStateChangedEvent event, final Display display) {
+		return new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				monitor.beginTask(UpdateUIMessages.ReviewPage_validating,
+						IProgressMonitor.UNKNOWN);
+				validateSelection(monitor);
+				if (monitor.isCanceled()) {
+					undoStateChange(event);
+					monitor.done();
+					return;
+				}
+				Object site = getSite(event.getElement());
+				ArrayList descendants = new ArrayList();
+				collectDescendants(site, descendants, monitor);
+				final Object[] nodes = new Object[descendants.size()];
+				if (monitor.isCanceled()) {
+					undoStateChange(event);
+					monitor.done();
+					return;
+				}
+				for (int i = 0; i < nodes.length; i++)
+					nodes[i] = descendants.get(i);
+				display.syncExec(new Runnable() {
+					public void run() {
+						treeViewer.update(nodes, null);
+						updateItemCount();
+					}
+				});
+				monitor.done();
+			}
+		};
+	}
+	
+	private void undoStateChange(final CheckStateChangedEvent e) {
+		treeViewer.getControl().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				treeViewer.setChecked(e.getElement(), !e.getChecked());
+			}
+		});
+	}
     
     
 //    private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
@@ -1121,28 +1176,44 @@ public class ReviewPage	extends BannerPage {
         return (IInstallFeatureOperation[])selectedJobs.toArray(new IInstallFeatureOperation[selectedJobs.size()]);
 	}
 
-	public void validateSelection() {
-		IInstallFeatureOperation[] jobs = getSelectedJobs();
-		validationStatus =
-			OperationsManager.getValidator().validatePendingChanges(jobs);
+	public void validateSelection(IProgressMonitor monitor) {
+		IInstallFeatureOperation[] jobs;
+
+		final IInstallFeatureOperation[][] bag = new IInstallFeatureOperation[1][];
+		treeViewer.getControl().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				bag[0] = getSelectedJobs();
+			}
+		});
+		if (monitor.isCanceled()) return;
+		jobs = bag[0];
+		validationStatus = OperationsManager.getValidator()
+				.validatePendingChanges(jobs);
 		problematicFeatures.clear();
+		if (monitor.isCanceled()) return;
 		if (validationStatus != null) {
 			IStatus[] status = validationStatus.getChildren();
 			for (int i = 0; i < status.length; i++) {
 				IStatus singleStatus = status[i];
-				if(isSpecificStatus(singleStatus)){
+				if (isSpecificStatus(singleStatus)) {
 					IFeature f = ((FeatureStatus) singleStatus).getFeature();
-					problematicFeatures.add(f);				
+					problematicFeatures.add(f);
 				}
 			}
 		}
+		if (monitor.isCanceled())
+				return;
+		treeViewer.getControl().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				setPageComplete(validationStatus == null
+						|| validationStatus.getCode() == IStatus.WARNING);
 
-		setPageComplete(validationStatus == null || validationStatus.getCode() == IStatus.WARNING);
-		
-		statusButton.setEnabled(validationStatus != null && validationStatus.getCode() != IStatus.OK);
-		
-		updateWizardMessage();
-		
+				statusButton.setEnabled(validationStatus != null
+						&& validationStatus.getCode() != IStatus.OK);
+
+				updateWizardMessage();
+			}
+		});
 	}
 
 	private void showStatus() {
@@ -1340,15 +1411,19 @@ public class ReviewPage	extends BannerPage {
         return object;
     }
     
-    private void collectDescendants(Object root, ArrayList list) {
-        ITreeContentProvider provider = (ITreeContentProvider)treeViewer.getContentProvider();
-        Object[] children = provider.getChildren(root);
-        if (children != null && children.length > 0)
-            for (int i=0; i<children.length; i++) {
-                list.add(children[i]);
-                collectDescendants(children[i], list);
-            }
-    }
+	private void collectDescendants(Object root, ArrayList list,
+			IProgressMonitor monitor) {
+		ITreeContentProvider provider = (ITreeContentProvider) treeViewer
+				.getContentProvider();
+		Object[] children = provider.getChildren(root);
+		if (children != null && children.length > 0)
+			for (int i = 0; i < children.length; i++) {
+				if (monitor.isCanceled())
+					return;
+				list.add(children[i]);
+				collectDescendants(children[i], list, monitor);
+			}
+	}
 
 	public boolean isFeatureGood(IImport requiredFeature,
 			IInstallFeatureOperation feature) {

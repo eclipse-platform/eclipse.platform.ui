@@ -406,4 +406,5 @@ public final class UpdateUIMessages extends NLS {
 	public static String ConfigurationManagerWindow_searchTaskName;
 	public static String FindUpdatesAction_trackedProgress;
 	public static String FindUpdatesAction_allFeaturesSearch;
+	public static String ReviewPage_validating;
 }
