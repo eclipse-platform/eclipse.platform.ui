@@ -6,17 +6,48 @@
 
 <body bgcolor="#FFFFFF" text="#000000">
 <h1>3.1 Debug Platform Change Notes</h1>
-<p>This document describes important changes in the 3.1 debug platform, relative 
-  to the 3.0 release.</p>
+<p>This document describes new features and important changes in the 3.1 debug 
+  platform, relative to the 3.0 release.</p>
   
 <h2>New Features</h2>
 
 <h3> Breakpoint Organizers</h3>
-<p>new breakpoint type attribute/IBreakpointManager.getTypeName(...), IBreakpointTypeCategory</p>
+<p>The breakpoints view allows breakpoints to be displayed in groups. The platform 
+  supports breakpoint groupings by breakpoint type, file, project, and breakpoint 
+  working sets and resource based working sets (as well, it supports nested groupings). 
+  The <code>breakpointOrganizers</code> extension point allows for other grouping 
+  strategies to be contributed to the debug platform.</p>
+<p>An new, optional, <code>name</code> attribute has been added to the breakpoints 
+  extension point to provide a type name for breakpoints. This name appears as 
+  the group label, when the user chooses to group breakpoints by type. If this 
+  attribute is not specified on a breakpoint extension, the breakpoints are considered 
+  to not have a type, and will be displayed in the &quot;Others&quot; group.</p>
 <h3>Logical Structure Providers</h3>
-<p>also includes set/get default structure type for a set of structures, ILogicalStructureTypeDelegate2</p>
-<h3>Capture Output Options</h3>
-<h3>Memory Renderings/Memory Block Manager/Listener</h3>
+<p>Logical structures have been enhanced to allow clients to more easily contribute 
+  more than one logical structure for a given value. The new extension point <code>logicalStructureProviders</code> 
+  allows clients to contribute an implementation of an <code>ILogicalStrugureProvider</code>. 
+  A logical structure provider provides a simple way to contribute a single factory 
+  of logical structures for a debug model.</p>
+<p>In addition the optional interface <code>ILogicalStructureTypeDelegate2</code> 
+  has been added to allow a logical structure delegate to provide a dynamic label 
+  for a value's logical structure type.</p>
+<h3>Process Console Enhancements</h3>
+<p>The debug console has been enhanced to allow output to be multiplexed between 
+  the console and/or a file. As well, the encoding used to translate output to 
+  characters is now specifiable. All of these options are available to the user 
+  on the &quot;Common&quot; launch configuration tab. As well, the options are 
+  available programmatically as launch configuration attributes. The following 
+  attributes have been added to <code>org.eclipse.debug.ui.IDebugUIConstants</code>.</p>
+<ul>
+  <li><code>ATTR_CONSOLE_ENCODING</code></li>
+  <li><code>ATTR_CAPTURE_IN_CONSOLE</code></li>
+  <li><code>ATTR_CAPTURE_IN_FILE</code></li>
+  <li><code>ATTR_APPEND_TO_FILE</code></li>
+</ul>
+<h3>Memory View</h3>
+<p>The Memory view, which was first released in 3.0 as internal API, has become 
+  public API in 3.1. See the new extension point <code>memoryRenderings</code>, 
+  and the new API package <code>org.eclipse.debug.ui.memory</code> for more information.</p>
 <h3>Parse Arguments</h3>
 <p>DebugPlugin.parseArguments(..)</p>
 <h3>Run To Line Handler</h3>
@@ -39,7 +70,7 @@
 <h3>Inserting elements into debug view/hierarchy</h3>
 <h3>Abstract Debug Element</h3>
 <h3>Drop to Frame Platform Action/Interface</h3>
-<h3>Launch from context menu in editor (PENDING)</h3>
+<h3>Launch from context menu in editor</h3>
 <p>Editor input must have an ILaunchable adapter for this to work.</p>
 <h3>Support for hidden launch (unregistered)</h3>
 <p>new launch method and ILaunchManager.isRegistered(..)</p>
