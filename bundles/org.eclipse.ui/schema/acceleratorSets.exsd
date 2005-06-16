@@ -100,9 +100,7 @@ An accelerator set is registered with an accelerator configuration (see the Acce
          <attribute name="key" type="string" use="required">
             <annotation>
                <documentation>
-                  an attribute representing the sequence(s) of accelerator keys used to perform the action associated with this accelerator. Sequences are separated by &apos;
-
-&apos;, and individual keys in a sequence are separated by a space. A key may be modified by the CTRL, ALT, or SHIFT keys. Depending on keyboard layout, some keys (&apos;?&apos; for example) may need the SHIFT to be accessed but the accelerator should be specified without the SHIFT so it will be independent of keyboard layout. E.g. if CTRL+? is specified as an accelerator, the user may have to press CTRL+SHIFT+? depending on the keyboard layout.
+                  an attribute representing the sequence(s) of accelerator keys used to perform the action associated with this accelerator. Sequences are separated by &apos;||&apos;, and individual keys in a sequence are separated by a space. A key may be modified by the CTRL, ALT, or SHIFT keys. Depending on keyboard layout, some keys (&apos;?&apos; for example) may need the SHIFT to be accessed but the accelerator should be specified without the SHIFT so it will be independent of keyboard layout. E.g. if CTRL+? is specified as an accelerator, the user may have to press CTRL+SHIFT+? depending on the keyboard layout.
                </documentation>
             </annotation>
          </attribute>
@@ -154,9 +152,7 @@ An accelerator set is registered with an accelerator configuration (see the Acce
           &lt;/accelerator&gt; 
           &lt;accelerator 
               id=&quot;org.eclipse.ui.ExampleActionC&quot; 
-              key=&quot;CTRL+R CTRL+C 
-
- CTRL+SHIFT+DELETE&quot;&gt; 
+              key=&quot;CTRL+R CTRL+C || CTRL+SHIFT+DELETE&quot;&gt; 
           &lt;/accelerator&gt; 
       &lt;/acceleratorSet&gt; 
    &lt;/extension&gt; 
