@@ -314,14 +314,14 @@ public abstract class FileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 			
-			public void bufferCreated(IFileBuffer buffer) {
+			public void bufferCreated(IFileBuffer buf) {
 				++count;
-				this.buffer= buffer;
+				this.buffer= buf;
 			}
 			
-			public void bufferDisposed(IFileBuffer buffer) {
+			public void bufferDisposed(IFileBuffer buf) {
 				--count;
-				this.buffer= buffer;
+				this.buffer= buf;
 			}
 		}
 		
@@ -359,10 +359,10 @@ public abstract class FileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isDirty;
 			
-			public void dirtyStateChanged(IFileBuffer buffer, boolean isDirty) {
+			public void dirtyStateChanged(IFileBuffer buf, boolean state) {
 				++count;
-				this.buffer= buffer;
-				this.isDirty= isDirty;
+				this.buffer= buf;
+				this.isDirty= state;
 			}
 		}
 		
@@ -409,10 +409,10 @@ public abstract class FileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isDirty;
 			
-			public void dirtyStateChanged(IFileBuffer buffer, boolean isDirty) {
+			public void dirtyStateChanged(IFileBuffer buf, boolean state) {
 				++count;
-				this.buffer= buffer;
-				this.isDirty= isDirty;
+				this.buffer= buf;
+				this.isDirty= state;
 			}
 		}
 		
@@ -554,10 +554,10 @@ public abstract class FileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isStateValidated;
 			
-			public void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
+			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
-				this.buffer= buffer;
-				this.isStateValidated= isStateValidated;
+				this.buffer= buf;
+				this.isStateValidated= state;
 			}
 		}
 		
@@ -598,10 +598,10 @@ public abstract class FileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isStateValidated;
 			
-			public void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
+			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
-				this.buffer= buffer;
-				this.isStateValidated= isStateValidated;
+				this.buffer= buf;
+				this.isStateValidated= state;
 			}
 		}
 		
@@ -642,10 +642,10 @@ public abstract class FileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isStateValidated;
 			
-			public void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
+			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
-				this.buffer= buffer;
-				this.isStateValidated= isStateValidated;
+				this.buffer= buf;
+				this.isStateValidated= state;
 			}
 		}
 		
@@ -687,10 +687,10 @@ public abstract class FileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isStateValidated;
 			
-			public void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
+			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
-				this.buffer= buffer;
-				this.isStateValidated= isStateValidated;
+				this.buffer= buf;
+				this.isStateValidated= state;
 			}
 		}
 		
@@ -732,9 +732,9 @@ public abstract class FileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 			
-			public void underlyingFileDeleted(IFileBuffer buffer) {
+			public void underlyingFileDeleted(IFileBuffer buf) {
 				++count;
-				this.buffer= buffer;
+				this.buffer= buf;
 			}
 		}
 		
@@ -772,10 +772,10 @@ public abstract class FileBufferFunctions extends TestCase {
 			public int count;
 			public IPath newLocation;
 			
-			public void underlyingFileMoved(IFileBuffer buffer, IPath newLocation) {
+			public void underlyingFileMoved(IFileBuffer buf, IPath location) {
 				++count;
-				this.buffer= buffer;
-				this.newLocation= newLocation;
+				this.buffer= buf;
+				this.newLocation= location;
 			}
 		}
 		
@@ -814,9 +814,9 @@ public abstract class FileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 			
-			public void stateChanging(IFileBuffer buffer) {
+			public void stateChanging(IFileBuffer buf) {
 				++count;
-				this.buffer= buffer;
+				this.buffer= buf;
 			}
 		}
 		
@@ -853,9 +853,9 @@ public abstract class FileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 			
-			public void stateChanging(IFileBuffer buffer) {
+			public void stateChanging(IFileBuffer buf) {
 				++count;
-				this.buffer= buffer;
+				this.buffer= buf;
 			}
 		}
 		
@@ -892,9 +892,9 @@ public abstract class FileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 			
-			public void stateChanging(IFileBuffer buffer) {
+			public void stateChanging(IFileBuffer buf) {
 				++count;
-				this.buffer= buffer;
+				this.buffer= buf;
 			}
 		}
 		
@@ -931,9 +931,9 @@ public abstract class FileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 			
-			public void stateChanging(IFileBuffer buffer) {
+			public void stateChanging(IFileBuffer buf) {
 				++count;
-				this.buffer= buffer;
+				this.buffer= buf;
 			}
 		}
 		
@@ -971,9 +971,9 @@ public abstract class FileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 			
-			public void stateChanging(IFileBuffer buffer) {
+			public void stateChanging(IFileBuffer buf) {
 				++count;
-				this.buffer= buffer;
+				this.buffer= buf;
 			}
 		}
 		
@@ -1012,9 +1012,9 @@ public abstract class FileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 			
-			public void stateChanging(IFileBuffer buffer) {
+			public void stateChanging(IFileBuffer buf) {
 				++count;
-				this.buffer= buffer;
+				this.buffer= buf;
 			}
 		}
 		
