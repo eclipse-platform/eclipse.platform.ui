@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -580,59 +579,23 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
 				((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
 
-			ICompletionProposal[] oldProposals= fFilteredProposals;
 			fFilteredProposals= proposals;
 			final int newLen= proposals.length;
-			if (isFilteredSubset && oldProposals != null && fProposalTable.getItemCount() == oldProposals.length) {
-				final int oldLen= oldProposals.length;
-				final int removedLen= oldLen - newLen;
-				Assert.isTrue(removedLen >= 0 && newLen > 0);
-
-				if (removedLen > 0) {
-					int maxRanges= Math.min(oldLen / 2 + 1, removedLen);
-					int[][] ranges= new int[maxRanges][2];
-					int rangeIdx= 0;
-					int[] range= null;
-					ICompletionProposal next= proposals[0];
-					int nextIdx= 0;
-					for (int oldIdx= 0; oldIdx < oldLen; oldIdx++) {
-						if (oldProposals[oldIdx] != next) {
-							if (range == null || range[1] != oldIdx - 1)
-								ranges[rangeIdx++]= range= new int[] { oldIdx, oldIdx };
-							else
-								range[1]= oldIdx;
-						} else if (++nextIdx < newLen) {
-							next= proposals[nextIdx];
-						} else {
-							if (oldIdx < oldLen - 1)
-								ranges[rangeIdx++]= new int[] {oldIdx + 1, oldLen - 1};
-							break;
-						}
-					}
-					
-					while (--rangeIdx >= 0) {
-						range= ranges[rangeIdx];
-						fProposalTable.remove(range[0], range[1]);
-					}
-
-				}
+			if (USE_VIRTUAL) {
+				fProposalTable.setItemCount(newLen);
+				fProposalTable.clearAll();
 			} else {
-				if (USE_VIRTUAL) {
-					fProposalTable.setItemCount(newLen);
-					fProposalTable.clearAll();
-				} else {
-					fProposalTable.setRedraw(false);
-					fProposalTable.setItemCount(newLen);
-					TableItem[] items= fProposalTable.getItems();
-					for (int i= 0; i < items.length; i++) {
-						TableItem item= items[i];
-						ICompletionProposal proposal= proposals[i];
-						item.setText(proposal.getDisplayString());
-						item.setImage(proposal.getImage());
-						item.setData(proposal);
-					}
-					fProposalTable.setRedraw(true);
+				fProposalTable.setRedraw(false);
+				fProposalTable.setItemCount(newLen);
+				TableItem[] items= fProposalTable.getItems();
+				for (int i= 0; i < items.length; i++) {
+					TableItem item= items[i];
+					ICompletionProposal proposal= proposals[i];
+					item.setText(proposal.getDisplayString());
+					item.setImage(proposal.getImage());
+					item.setData(proposal);
 				}
+				fProposalTable.setRedraw(true);
 			}
 
 			Point currentLocation= fProposalShell.getLocation();
