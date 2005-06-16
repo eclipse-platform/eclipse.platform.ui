@@ -16,7 +16,7 @@
    <type name="IEncodingActionsHelpContextIds" implement="false"/>
    <type name="IFoldingCommandIds" implement="false"/>
    <type name="ITextEditorHelpContextIds" implement="false"/>
-   <type name="TextEditorMessages" subclass="false" instantiate="false">
+   <type name="TextEditorMessages" subclass="false" instantiate="false"/>
    <type name="TextEditorPreferenceConstants" subclass="false" instantiate="false"/>
    <type name="TextEditorPreferencePage" subclass="false" instantiate="false"/>
  </package>
@@ -43,7 +43,7 @@
    <type name="MarkerUtilities" subclass="false" instantiate="false"/>
    <type name="MessageDialogPage" subclass="false" instantiate="false"/>
    <type name="MessageRegion" subclass="false" instantiate="false"/>
-   <type name="ResourceMarkerAnnotationModel"subclass="false" instantiate="true"/>
+   <type name="ResourceMarkerAnnotationModel" subclass="false" instantiate="true"/>
    <type name="SelectMarkerRulerAction" subclass="false" instantiate="true"/>
    <type name="SelectMarkerRulerInfoAction" subclass="false" instantiate="false"/>
    <type name="TextEditorMessages" subclass="false" instantiate="false"/>

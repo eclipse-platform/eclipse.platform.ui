@@ -46,8 +46,10 @@ import org.eclipse.jface.text.templates.Template;
 
 /**
  * Serializes templates as character or byte stream and reads the same format
- * back. Clients may instantiate this class, it is not intended to be
- * subclassed.
+ * back.
+ * <p>
+ * Clients may instantiate this class, it is not intended to be
+ * subclassed.</p>
  *
  * @since 3.0
  */
