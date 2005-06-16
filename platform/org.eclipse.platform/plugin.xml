@@ -17,7 +17,7 @@
       <intro
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
             id="org.eclipse.platform.intro"
-            icon="intro.gif">
+            icon="eclipse.gif">
       </intro>
       <introProductBinding
             introId="org.eclipse.platform.intro"
