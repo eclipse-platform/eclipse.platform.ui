@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -21,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
@@ -38,10 +42,11 @@ public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 	// how many pixels should the dialog be shown below the center of the
 	// display area
 	private static int VERTICAL_OFFSET = 85;
+	
+	// used to determine the height of the progress bar
+    private static int BAR_DLUS = 9;
 
-	// by default we do not show the product name in the dialog
-	private boolean hasMessage = false;
-
+	private String productName = null;
 	
 	/**
 	 * Construct an instance of this dialog.
@@ -51,20 +56,31 @@ public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 	public StartupProgressMonitorDialog(Shell parent) {
 		super(parent);
 		setShellStyle(SWT.NONE);
-		
-		// show the message label if we do not have a splash to identify the product 
-		String commandLine = System.getProperty("eclipse.commands"); //$NON-NLS-1$
-		if (commandLine != null)
-			hasMessage = commandLine.toLowerCase().indexOf("-nosplash") != -1; //$NON-NLS-1$
+	}
+	
+	/**
+	 * 
+	 * Answer the message that will be used in the startup progress dialog 
+	 * @return the message 
+	 */
+	private String getProductName() {
+		if(productName==null) {
+			IProduct product = Platform.getProduct();
+			if (product != null) {
+				productName = product.getName();
+			}
+			if (productName == null) {
+				productName = WorkbenchMessages.Startup_DefaultProductName;
+			}
+		}
+		return productName;
 	}
 
 	protected Control createContents(Composite parent) {
-
 		Composite container = new Composite(parent, SWT.NONE);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		container.setLayoutData(gridData);
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
 		gridLayout.horizontalSpacing = 0;
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
@@ -78,6 +94,9 @@ public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 		gridLayout = (GridLayout) progressArea.getLayout();
 		gridLayout.marginHeight = gridLayout.marginWidth;
 
+		gridData = (GridData) progressArea.getLayoutData();
+		gridData.verticalAlignment = SWT.CENTER;
+
 		return container;
 	}
 	
@@ -88,35 +107,31 @@ public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 		return null;
 	}
 
-
-	/*
-	 * Answer whether we are showing the message label which identifies the product 
-	 */
-	boolean hasMessage() {
-		return hasMessage;
-	}
-
-	protected Control createMessageArea(Composite composite) {
-		if (!hasMessage) {
-			// because the splash screen is showing, hide the message
-			// saying 'Starting <xyz>...'
-			// If message is null, messageLabel is not created.
-			message = null;
-		}
-		return super.createMessageArea(composite);
-	}
-
+	/* Overridden to not call createMessageArea and to add another label */
 	protected Control createDialogArea(Composite parent) {
-		Composite composite = (Composite) super.createDialogArea(parent);
-
-		GridData gridData = (GridData) composite.getLayoutData();
-		gridData.verticalAlignment = SWT.CENTER;
-
-		// make the subTaskLabel height be just one line
-		gridData = (GridData) subTaskLabel.getLayoutData();
-		gridData.heightHint = SWT.DEFAULT;
-
-		return composite;
+        // progress indicator
+        progressIndicator = new ProgressIndicator(parent);
+        GridData gd = new GridData();
+        gd.heightHint = convertVerticalDLUsToPixels(BAR_DLUS);
+        gd.horizontalAlignment = GridData.FILL;
+        gd.grabExcessHorizontalSpace = true;
+        gd.horizontalSpan = 2;
+        progressIndicator.setLayoutData(gd);
+        // label showing current task
+        subTaskLabel = new Label(parent, SWT.LEFT);
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.minimumWidth = MINIMUM_WIDTH / 2;
+        subTaskLabel.setLayoutData(gd);
+        subTaskLabel.setFont(parent.getFont());
+        // label showing product name
+        Label productLabel = new Label(parent, SWT.RIGHT);
+        productLabel.moveBelow(subTaskLabel);
+        
+        gd = new GridData(SWT.RIGHT);
+        productLabel.setLayoutData(gd);
+        productLabel.setFont(parent.getFont());
+        productLabel.setText(getProductName());
+        return parent;
 	}
 
 	/*

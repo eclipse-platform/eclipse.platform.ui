@@ -1258,7 +1258,7 @@ public final class Workbench implements IWorkbench {
 				progressMonitorDialog.run(false, false, new IRunnableWithProgress() {
 	
 					public void run(IProgressMonitor monitor) {
-						monitor.beginTask((progressMonitorDialog.hasMessage() ? getProductProgressTitle() : ""), expectedProgressCount); //$NON-NLS-1$
+						monitor.beginTask("", expectedProgressCount); //$NON-NLS-1$
 			
 						runnable.run();
 						
@@ -1276,26 +1276,6 @@ public final class Workbench implements IWorkbench {
             shell.dispose();
         }
 	}
-
-	/**
-	 * 
-	 * Answer the message that will be used in the startup progress dialog 
-	 * @return the message 
-	 */
-	private String getProductProgressTitle() {
-		String productName = null;
-		IProduct product = Platform.getProduct();
-		if (product != null) {
-			productName = product.getName();
-		}
-		if (productName == null) {
-			productName = WorkbenchMessages.Startup_DefaultProductName;
-		}
-		String productStarting = NLS.bind(WorkbenchMessages.Startup_Starting,
-				productName);
-		return productStarting;
-	}
-
 
 	private void doOpenFirstTimeWindow() {
 		try {
