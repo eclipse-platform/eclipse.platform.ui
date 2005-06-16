@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component xmlns="http://eclipse.org/component"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
+   name="Eclipse JFace Text">
+ <plugin id="org.eclipse.jface.text"/>
+
+ <component-depends unrestricted="true"/>
+</component>
