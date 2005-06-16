@@ -154,6 +154,7 @@ public class ConsolePatternMatcher implements IDocumentListener {
             }
             
             if (fFinalMatch) {
+                disconnect();
                 fConsole.matcherFinished();
             } else if (fScheduleFinal) {
             	fFinalMatch = true;

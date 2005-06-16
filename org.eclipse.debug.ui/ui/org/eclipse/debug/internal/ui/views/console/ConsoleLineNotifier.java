@@ -64,55 +64,42 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	 * @see org.eclipse.ui.console.IPatternMatchListener#disconnect()
 	 */
 	public synchronized void disconnect() {
-	    if (fConsole == null) {
-	        return; //already disconnected
-	    }
+        try {
+            IDocument document = fConsole.getDocument();
+            if (document != null) {
+                int lastLine = document.getNumberOfLines() - 1;
+                if (document.getLineDelimiter(lastLine) == null) {
+                    IRegion lineInformation = document.getLineInformation(lastLine);
+                    lineAppended(lineInformation);
+                }
+            }
+        } catch (BadLocationException e) {
+        }
+    }
 
+    /**
+     * Notification the console's streams have been closed
+     */
+    public synchronized void consoleClosed() {
         int size = fListeners.size();
-        for (int i=0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             IConsoleLineTracker tracker = (IConsoleLineTracker) fListeners.get(i);
+            if (tracker instanceof IConsoleLineTrackerExtension) {
+                ((IConsoleLineTrackerExtension) tracker).consoleClosed();
+            }
             tracker.dispose();
         }
-	
-	    fConsole.removePropertyChangeListener(this);
-	    
-	    fListeners = null;
-	    fConsole = null;
-	}
-		
-	/**
-	 * Notification the console's streams have been closed
-	 */
-	public synchronized void streamsClosed() {
-	    try {
-	        if (fConsole != null) {
-	            IDocument document = fConsole.getDocument();
-	            if (document != null) {
-	                int lastLine = document.getNumberOfLines()-1;	       
-	                if (document.getLineDelimiter(lastLine) == null) {
-	                    IRegion lineInformation = document.getLineInformation(lastLine);
-	                    lineAppended(lineInformation);
-	                }
-	            }
-	        }
-	    } catch (BadLocationException e) {
-	    }
-	    
-        int size = fListeners.size();
-        for (int i=0; i<size; i++) {
-            Object obj = fListeners.get(i);
-	        if (obj instanceof IConsoleLineTrackerExtension) {
-	            ((IConsoleLineTrackerExtension)obj).consoleClosed();
-	        }
-	    }
-	}
+
+        fConsole = null;
+        fListeners = null;
+    }
 	
 	/**
-	 * Adds the given listener to the list of listeners notified when a line of
-	 * text is appended to the console.
-	 * 
-	 * @param listener
-	 */
+     * Adds the given listener to the list of listeners notified when a line of
+     * text is appended to the console.
+     * 
+     * @param listener
+     */
 	public void addConsoleListener(IConsoleLineTracker listener) {
         if (!fListeners.contains(listener))
             fListeners.add(listener);
@@ -145,7 +132,8 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
      */
     public void propertyChange(PropertyChangeEvent event) {
         if(event.getProperty().equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
-            streamsClosed();
+            fConsole.removePropertyChangeListener(this);
+            consoleClosed();
         }
     }
 
