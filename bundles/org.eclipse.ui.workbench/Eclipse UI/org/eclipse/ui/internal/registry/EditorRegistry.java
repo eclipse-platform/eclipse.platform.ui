@@ -698,6 +698,9 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
     public void readResources(Map editorTable, Reader reader)
             throws WorkbenchException {
         XMLMemento memento = XMLMemento.createReadRoot(reader);
+        String versionString = memento.getString(IWorkbenchConstants.TAG_VERSION);
+        boolean versionIs31 = "3.1".equals(versionString); //$NON-NLS-1$
+        
         IMemento[] extMementos = memento
                 .getChildren(IWorkbenchConstants.TAG_INFO);
         for (int i = 0; i < extMementos.length; i++) {
@@ -745,6 +748,37 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
                     }
                 }
             }
+            
+            List defaultEditors = new ArrayList();
+            
+            if (versionIs31) { // parse the new format
+				idMementos = extMementos[i]
+						.getChildren(IWorkbenchConstants.TAG_DEFAULT_EDITOR);
+				String[] defaultEditorIds = new String[idMementos.length];
+				for (int j = 0; j < idMementos.length; j++) {
+					defaultEditorIds[j] = idMementos[j]
+							.getString(IWorkbenchConstants.TAG_ID);
+				}
+				for (int j = 0; j < defaultEditorIds.length; j++) {
+					if (defaultEditorIds[j] != null) {
+						EditorDescriptor editor = (EditorDescriptor) editorTable
+								.get(defaultEditorIds[j]);
+						if (editor != null) {
+							defaultEditors.add(editor);
+						}
+					}
+				}
+			}
+            else { // guess at pre 3.1 format defaults
+            		if (!editors.isEmpty()) {
+            			EditorDescriptor editor = (EditorDescriptor) editors.get(0);
+            			if (editor != null) {
+                			defaultEditors.add(editor);	
+                		}
+            		}
+            		defaultEditors.addAll(Arrays.asList(mapping.getDeclaredDefaultEditors()));
+            }
+            
             // Add any new editors that have already been read from the registry
             // which were not deleted.
             IEditorDescriptor[] editorsArray = mapping.getEditors();
@@ -757,6 +791,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
             // Map the editor(s) to the file type
             mapping.setEditorsList(editors);
             mapping.setDeletedEditorsList(deletedEditors);
+            mapping.setDefaultEditors(defaultEditors);
             typeEditorMappings.put(mappingKeyFor(mapping), mapping);
         }
     }
@@ -911,6 +946,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
 
         XMLMemento memento = XMLMemento
                 .createWriteRoot(IWorkbenchConstants.TAG_EDITORS);
+        memento.putString(IWorkbenchConstants.TAG_VERSION, "3.1"); //$NON-NLS-1$
         FileEditorMapping maps[] = typeEditorMappings.userMappings();
         for (int mapsIndex = 0; mapsIndex < maps.length; mapsIndex++) {
             FileEditorMapping type = maps[mapsIndex];
@@ -939,6 +975,17 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
                 }
                 IMemento idMemento = editorMemento
                         .createChild(IWorkbenchConstants.TAG_DELETED_EDITOR);
+                idMemento.putString(IWorkbenchConstants.TAG_ID, editorArray[i]
+                        .getId());
+            }
+            editorArray = type.getDeclaredDefaultEditors();
+            for (int i = 0; i < editorArray.length; i++) {
+                EditorDescriptor editor = (EditorDescriptor) editorArray[i];
+                if (!editors.contains(editor)) {
+                    editors.add(editor);
+                }
+                IMemento idMemento = editorMemento
+                        .createChild(IWorkbenchConstants.TAG_DEFAULT_EDITOR);
                 idMemento.putString(IWorkbenchConstants.TAG_ID, editorArray[i]
                         .getId());
             }

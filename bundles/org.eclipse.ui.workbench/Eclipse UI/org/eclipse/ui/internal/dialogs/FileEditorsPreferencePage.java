@@ -597,9 +597,6 @@ public class FileEditorsPreferencePage extends PreferencePage implements
             		setLockedItemText(oldDefaultItem, oldDefaultItem.getText());
             // Now set the new default
             EditorDescriptor editor = (EditorDescriptor) items[0].getData(DATA_EDITOR);
-//          explicitly unset the old editor from being default
-            getSelectedResourceType().unsetDefaultEditor(
-					(EditorDescriptor) oldDefaultItem.getData((DATA_EDITOR)));
             getSelectedResourceType().setDefaultEditor(editor);
             IContentType fromContentType = (IContentType) items[0].getData(DATA_FROM_CONTENT_TYPE);
             items[0].dispose(); //Table is single selection

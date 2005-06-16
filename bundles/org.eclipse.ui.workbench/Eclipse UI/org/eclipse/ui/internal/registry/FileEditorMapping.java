@@ -206,8 +206,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
     public void setDefaultEditor(EditorDescriptor editor) {
         editors.remove(editor);
         editors.add(0, editor);
-        if (!declaredDefaultEditors.contains(editor))
-        	declaredDefaultEditors.add(editor);
+        declaredDefaultEditors.remove(editor);
+        declaredDefaultEditors.add(0, editor);
     }
 
     /**
@@ -278,14 +278,14 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 	public boolean isDeclaredDefaultEditor (IEditorDescriptor editor) {
 		return declaredDefaultEditors.contains(editor);
 	}
-	
+
 	/**
-	 * Removes the given editor from the list of declared default editors.
+	 * Set the default editors for this mapping.
 	 * 
-	 * @param descriptor the editor to remove from the default list
+	 * @param defaultEditors the editors
 	 * @since 3.1
 	 */
-	public void unsetDefaultEditor(EditorDescriptor descriptor) {
-		declaredDefaultEditors.remove(descriptor);
+	public void setDefaultEditors(List defaultEditors) {
+		declaredDefaultEditors = defaultEditors;		
 	}
 }

@@ -144,6 +144,8 @@ public interface IWorkbenchConstants {
     public static final String TAG_FOCUS = "focus"; //$NON-NLS-1$
 
     public static final String TAG_EDITOR = "editor"; //$NON-NLS-1$
+    
+    public static final String TAG_DEFAULT_EDITOR = "defaultEditor"; //$NON-NLS-1$
 
     public static final String TAG_DELETED_EDITOR = "deletedEditor"; //$NON-NLS-1$
 
