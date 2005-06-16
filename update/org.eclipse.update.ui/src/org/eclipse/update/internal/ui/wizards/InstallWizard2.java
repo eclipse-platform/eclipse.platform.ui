@@ -9,26 +9,52 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
-import java.lang.reflect.*;
-import java.net.*;
-import java.util.*;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.progress.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.security.*;
-import org.eclipse.update.operations.*;
-import org.eclipse.update.search.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.IVerificationListener;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.internal.core.FeatureDownloadException;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.operations.DuplicateConflictsValidator;
+import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
+import org.eclipse.update.internal.ui.security.JarVerificationService;
+import org.eclipse.update.operations.IBatchOperation;
+import org.eclipse.update.operations.IFeatureOperation;
+import org.eclipse.update.operations.IInstallFeatureOperation;
+import org.eclipse.update.operations.IOperation;
+import org.eclipse.update.operations.IOperationListener;
+import org.eclipse.update.operations.OperationsManager;
+import org.eclipse.update.search.UpdateSearchRequest;
 
 
 public class InstallWizard2
@@ -387,6 +413,13 @@ public class InstallWizard2
 						}
 					} else {
 						UpdateCore.log(e);
+						Display.getDefault().syncExec( new Runnable () {
+							public void run() {
+								IStatus status = new Status( IStatus.ERROR, UpdateUI.getPluginId(), IStatus.OK, UpdateUIMessages.InstallWizard2_updateOperationHasFailed, null);
+								ErrorDialog.openError(null, null, null, status);
+								
+							}							
+						});
 					}
 					return false;
 				}

@@ -333,6 +333,7 @@ public final class UpdateUIMessages extends NLS {
 	public static String InstallWizard_TargetPage_unknownSize;
 	public static String InstallWizard_TargetPage_patchError;
 	public static String InstallWizard_TargetPage_patchError2;
+	public static String InstallWizard2_updateOperationHasFailed;
 	public static String RevertConfigurationWizard_wtitle;
 	public static String RevertConfigurationWizardPage_title;
 	public static String RevertConfigurationWizardPage_desc;
