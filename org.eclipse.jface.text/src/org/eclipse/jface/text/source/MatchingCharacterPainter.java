@@ -33,7 +33,7 @@ import org.eclipse.jface.text.Region;
  * This painter can be configured with an
  * {@link org.eclipse.jface.text.source.ICharacterPairMatcher}.
  * <p>
- * Clients instantiate and configure object of this class.
+ * Clients instantiate and configure object of this class.</p>
  *
  * @since 2.1
  */

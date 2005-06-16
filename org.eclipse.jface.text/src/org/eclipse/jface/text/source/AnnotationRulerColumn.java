@@ -55,7 +55,10 @@ import org.eclipse.jface.text.TextViewer;
 
 /**
  * A vertical ruler column showing graphical representations of annotations.
- * Will become final. Do not subclass.
+ * Will become final.
+ * <p>
+ * Do not subclass.
+ * </p>
  *
  * @since 2.0
  */

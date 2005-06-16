@@ -44,10 +44,11 @@ import org.eclipse.jface.text.ITextViewer;
  * <ul>
  * <li>{@link org.eclipse.jface.text.source.IVerticalRulerExtension} since
  *     version 2.0 introducing setters for font and mouse button activity location.</li>
- * </ul>
+ * </ul></p>
+ * <p>
  * Clients may implement this interface or use the default implementation
  * provided by {@link org.eclipse.jface.text.source.CompositeRuler} and
- * {@link org.eclipse.jface.text.source.VerticalRuler}.
+ * {@link org.eclipse.jface.text.source.VerticalRuler}.</p>
  *
  * @see org.eclipse.jface.text.source.IVerticalRulerExtension
  * @see org.eclipse.jface.text.ITextViewer

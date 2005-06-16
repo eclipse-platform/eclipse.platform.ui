@@ -29,7 +29,7 @@ import org.eclipse.swt.events.VerifyEvent;
  * document command can also be used to initialize a given
  * <code>VerifyEvent</code>.
  * <p>
- * A document command can also represent a list of related changes.
+ * A document command can also represent a list of related changes.</p>
  */
 public class DocumentCommand {
 

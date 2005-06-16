@@ -49,10 +49,10 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * should provide a particular configuration setting such as a presentation
  * reconciler. Based on its specific knowledge about the returned object, the
  * configuration might share such objects or compute them according to some
- * rules.
+ * rules.</p>
  * <p>
  * Clients should subclass and override just those methods which must be
- * specific to their needs.
+ * specific to their needs.</p>
  *
  * @see org.eclipse.jface.text.source.ISourceViewer
  */

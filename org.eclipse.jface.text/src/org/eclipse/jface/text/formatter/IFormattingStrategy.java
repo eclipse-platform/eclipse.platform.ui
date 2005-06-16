@@ -21,8 +21,9 @@ package org.eclipse.jface.text.formatter;
  * <li><code>format</code>
  * <li><code>formatterStops</code>
  * </ul>
+ * <p>
  * This interface must be implemented by clients. Implementers should be registered with
- * a content formatter in order get involved in the formatting process.
+ * a content formatter in order get involved in the formatting process.</p>
  */
 public interface IFormattingStrategy {
 

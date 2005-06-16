@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
  * <p>
  * This interface is not intended to be implemented by clients others than
  * {@link org.eclipse.jface.text.ITextViewer} implementers.
+ * </p>
  *
  * @since 2.0
  */

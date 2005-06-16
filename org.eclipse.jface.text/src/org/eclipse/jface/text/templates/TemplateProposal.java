@@ -40,7 +40,9 @@ import org.eclipse.jface.text.link.ProposalPosition;
 
 
 /**
- * A template completion proposal. Clients may subclass.
+ * A template completion proposal.
+ * <p>
+ * Clients may subclass.</p>
  *
  * @since 3.0
  */

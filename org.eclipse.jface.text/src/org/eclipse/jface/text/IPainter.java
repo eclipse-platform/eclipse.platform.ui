@@ -16,8 +16,9 @@ package org.eclipse.jface.text;
  * A painter is responsible for creating, managing, updating, and removing
  * visual decorations on an <code>ITextViewer</code>'s text widget. Examples
  * are the highlighting of the caret line, the print margin, or the highlighting
- * of matching peer characters such as pairs of brackets. Clients may implement
- * this interface.
+ * of matching peer characters such as pairs of brackets.</p>
+ * <p>
+ * Clients may implement this interface.</p>
  * <p>
  * Painters should be registered with a
  * {@link org.eclipse.jface.text.PaintManager}. The paint manager tracks

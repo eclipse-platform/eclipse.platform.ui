@@ -31,7 +31,7 @@ import org.eclipse.jface.text.ITypedRegion;
  * rule-based default implementation
  * {@link org.eclipse.jface.text.rules.DefaultDamagerRepairer}. Implementers
  * should be registered with a presentation reconciler in order get involved in
- * the reconciling process.
+ * the reconciling process.</p>
  *
  * @see IPresentationReconciler
  * @see IDocument

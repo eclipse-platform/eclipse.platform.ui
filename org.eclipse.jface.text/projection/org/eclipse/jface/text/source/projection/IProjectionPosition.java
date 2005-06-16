@@ -15,7 +15,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 
-
 /**
  * An <code>IProjectionPosition</code> is a position that is associated with a
  * <code>ProjectionAnnotation</code> and that is able to compute its collapsed

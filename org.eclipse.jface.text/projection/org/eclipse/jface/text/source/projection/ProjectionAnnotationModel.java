@@ -24,6 +24,7 @@ import org.eclipse.jface.text.source.AnnotationModel;
  * expansion state of the managed projection annotations.
  * <p>
  * Do not subclass. Use it as is.
+ * </p>
  *
  * @since 3.0
  */

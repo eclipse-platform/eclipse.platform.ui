@@ -20,6 +20,7 @@ import org.eclipse.jface.text.source.Annotation;
  * A bag of annotations.
  * <p>
  * This class is not intended to be subclassed.
+ * </p>
  *
  * @since 3.0
  */

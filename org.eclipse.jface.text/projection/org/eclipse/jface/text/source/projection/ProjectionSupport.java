@@ -33,8 +33,9 @@ import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
- * Supports the configuration of projection capabilities a {@link org.eclipse.jface.text.source.projection.ProjectionViewer}.<p>
- * This class is not intended to be subclassed. Clients are supposed to configure and use it as is.
+ * Supports the configuration of projection capabilities a {@link org.eclipse.jface.text.source.projection.ProjectionViewer}.
+ * <p>
+ * This class is not intended to be subclassed. Clients are supposed to configure and use it as is.</p>
  *
  * @since 3.0
  */

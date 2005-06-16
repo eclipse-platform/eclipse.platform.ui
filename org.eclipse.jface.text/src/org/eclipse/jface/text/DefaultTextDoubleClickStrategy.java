@@ -20,9 +20,10 @@ import java.text.CharacterIterator;
  * {@link org.eclipse.jface.text.ITextDoubleClickStrategy}.
  * <p>
  * Selects words using <code>java.text.BreakIterator</code> for the default
- * locale.
+ * locale.</p>
  * <p>
  * This class is not intended to be subclassed.
+ * </p>
  *
  * @see java.text.BreakIterator
  */

@@ -64,9 +64,9 @@ import org.eclipse.jface.text.source.SourceViewer;
  * regions which can dynamically be changed.
  * <p>
  * A projection source viewer uses a <code>ProjectionDocumentManager</code>
- * for the management of the visible document.
+ * for the management of the visible document.</p>
  * <p>
- * This class should not be subclassed.
+ * This class should not be subclassed.</p>
  *
  * @since 3.0
  */

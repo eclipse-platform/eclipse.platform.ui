@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
  * presentation of annotations is independent from the actual view port of
  * the text viewer. The annotations of the viewer's whole document are
  * visible in the overview ruler.
- *
+ * <p>
  * This interfaces embodies three contracts:
  * <ul>
  * <li>	The overview ruler retrieves the annotations it presents from an annotation model.
@@ -28,9 +28,10 @@ import org.eclipse.swt.widgets.Control;
  * 		interaction information. This covers the mapping between
  * 		coordinates of the ruler's control and line numbers based
  * 		on the connected text viewer's document (<code>IVerticalRulerInfo</code>).
- * </ul>
+ * </ul></p>
+ * <p>
  * Clients may implement this interface or use the default implementation provided
- * by <code>OverviewlRuler</code>.
+ * by <code>OverviewlRuler</code>.</p>
  *
  * @see org.eclipse.jface.text.ITextViewer
  * @since 2.1

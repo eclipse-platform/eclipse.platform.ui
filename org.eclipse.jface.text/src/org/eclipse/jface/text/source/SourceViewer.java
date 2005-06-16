@@ -63,10 +63,10 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * <p>
  * Clients are supposed to instantiate a source viewer and subsequently to
  * communicate with it exclusively using the <code>ISourceViewer</code>
- * interface.
+ * interface.</p>
  * <p>
  * Clients should not subclass this class as it is rather likely that subclasses
- * will be broken by future releases.
+ * will be broken by future releases.</p>
  */
 public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2 {
 

@@ -28,9 +28,9 @@ import org.eclipse.jface.text.Position;
 /**
  * A painter the draws the background of the caret line in a configured color.
  * <p>
- * Clients usually instantiate and configure object of this class.
+ * Clients usually instantiate and configure object of this class.</p>
  * <p>
- * This class is not intended to be subclassed.
+ * This class is not intended to be subclassed.</p>
  *
  * @since 2.1
  */

@@ -13,9 +13,9 @@ package org.eclipse.jface.text;
 /**
  * A registry for <code>IEditingSupport</code>s.
  * <p>
- * This interface is not meant to be implemented outside the jface text
- * framework.
- * </p>
+ * This interface is not meant to be implemented outside the JFace text
+ * framework.</p>
+ * 
  * @see IEditingSupport
  * @since 3.1
  */

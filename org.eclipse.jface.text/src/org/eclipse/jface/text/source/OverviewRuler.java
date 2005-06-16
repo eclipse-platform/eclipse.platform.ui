@@ -57,8 +57,9 @@ import org.eclipse.jface.text.source.projection.AnnotationBag;
 /**
  * Ruler presented next to a source viewer showing all annotations of the
  * viewer's annotation model in a compact format. The ruler has the same height
- * as the source viewer.<p>
- * Clients usually instantiate and configure objects of this class.
+ * as the source viewer.
+ * <p>
+ * Clients usually instantiate and configure objects of this class.</p>
  *
  * @since 2.1
  */

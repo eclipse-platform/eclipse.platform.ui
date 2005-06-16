@@ -22,9 +22,9 @@ package org.eclipse.jface.text.source;
  * <ul>
  * <li>{@link org.eclipse.jface.text.source.IAnnotationAccessExtension}since
  *     version 3.0 replacing all methods in that interface</li>
- * </ul>
+ * </ul></p>
  * <p>
- * Clients usually implement this interface and its extension interfaces.
+ * Clients usually implement this interface and its extension interfaces.</p>
  *
  * @see org.eclipse.jface.text.source.IAnnotationAccessExtension
  * @see org.eclipse.jface.text.source.Annotation

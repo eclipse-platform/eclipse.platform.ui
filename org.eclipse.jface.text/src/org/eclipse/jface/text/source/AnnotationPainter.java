@@ -49,10 +49,9 @@ import org.eclipse.jface.text.TextPresentation;
  * <p>
  * The annotation painter can be configured with drawing strategies. A drawing
  * strategy defines the visual presentation of a particular type of annotation
- * decoration.
+ * decoration.</p>
  * <p>
- *
- * Clients usually instantiate and configure objects of this class.
+ * Clients usually instantiate and configure objects of this class.</p>
  *
  * @since 2.1
  */

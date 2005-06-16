@@ -59,9 +59,9 @@ import org.eclipse.jface.text.ITextViewerExtension5;
  * This ruler does not have a a visual representation of its own. The
  * presentation comes from the configurable list of vertical ruler columns. Such
  * columns must implement the
- * {@link org.eclipse.jface.text.source.IVerticalRulerColumn}. interface.
+ * {@link org.eclipse.jface.text.source.IVerticalRulerColumn}. interface.</p>
  * <p>
- * Clients may instantiate and configure this class.
+ * Clients may instantiate and configure this class.</p>
  *
  * @see org.eclipse.jface.text.source.IVerticalRulerColumn
  * @see org.eclipse.jface.text.ITextViewer

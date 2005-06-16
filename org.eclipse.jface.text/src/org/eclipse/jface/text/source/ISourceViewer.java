@@ -43,11 +43,11 @@ import org.eclipse.jface.text.ITextViewer;
  * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension2} since version 3.0
  * allowing source viewers to roll back a previously performed configuration and
  * allows access to the viewer's visual annotation model.</li>
- * </ul>
+ * </ul></p>
  * <p>
  * Clients may implement this interface and its extension interfaces or use the
  * default implementation provided by
- * {@link org.eclipse.jface.text.source.SourceViewer}.
+ * {@link org.eclipse.jface.text.source.SourceViewer}.</p>
  *
  * @see org.eclipse.jface.text.source.ISourceViewerExtension
  * @see org.eclipse.jface.text.source.ISourceViewerExtension2

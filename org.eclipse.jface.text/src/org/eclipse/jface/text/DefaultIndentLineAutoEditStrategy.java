@@ -12,8 +12,9 @@ package org.eclipse.jface.text;
 
 
 /**
- * This strategy always copies the indentation of the previous line. This class
- * is not intended to be subclassed.
+ * This strategy always copies the indentation of the previous line.
+ * <p>
+ * This class is not intended to be subclassed.</p>
  *
  * @since 3.1
  */

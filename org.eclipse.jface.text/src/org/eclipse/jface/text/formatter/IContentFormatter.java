@@ -26,9 +26,10 @@ import org.eclipse.jface.text.IRegion;
  * activated in the sequence defined by the partitioning of the document range to be
  * formatted. It is assumed that a strategy must be finished before the next strategy
  * can be activated. After the last strategy has been finished, all strategies are
- * informed about the termination of the formatting process.<p>
+ * informed about the termination of the formatting process.</p>
+ * <p>
  * The interface can be implemented by clients. By default, clients use <code>ContentFormatter</code>
- * or <code>MultiPassContentFormatter</code> as the standard implementers of this interface.
+ * or <code>MultiPassContentFormatter</code> as the standard implementers of this interface.</p>
  *
  * @see IDocument
  * @see IFormattingStrategy
