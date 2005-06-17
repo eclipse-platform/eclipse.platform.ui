@@ -776,6 +776,7 @@ public class ReviewPage	extends BannerPage {
 				try {
 					getContainer().run(true, true,
 							getCheckStateOperation(event, parent.getDisplay()));
+					getContainer().updateButtons();
 				} catch (InvocationTargetException e) {
 					UpdateUI.logException(e);
 				} catch (InterruptedException e) {
