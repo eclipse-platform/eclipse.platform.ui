@@ -21,7 +21,7 @@ import org.eclipse.jface.text.IDocument;
  * edit tree. To apply an undo memento to a document use method
  * <code>apply(IDocument)</code>.
  * <p>
- * Clients can add additional children to an undo edit nor can they
+ * Clients can't add additional children to an undo edit nor can they
  * add an undo edit as a child to another edit. Doing so results in
  * both cases in a <code>MalformedTreeException<code>.
  *
