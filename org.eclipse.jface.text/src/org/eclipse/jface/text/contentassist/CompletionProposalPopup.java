@@ -13,6 +13,8 @@ package org.eclipse.jface.text.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlEvent;
@@ -61,7 +63,7 @@ import org.eclipse.jface.text.TextUtilities;
  */
 class CompletionProposalPopup implements IContentAssistListener {
 	/** Set to <code>true</code> to use a Table with SWT.VIRTUAL. */
-	private static final boolean USE_VIRTUAL= true;
+	private static final boolean USE_VIRTUAL= !Platform.WS_MOTIF.equals(Platform.getWS());
 
 	private final class ProposalSelectionListener implements KeyListener {
 		public void keyPressed(KeyEvent e) {
