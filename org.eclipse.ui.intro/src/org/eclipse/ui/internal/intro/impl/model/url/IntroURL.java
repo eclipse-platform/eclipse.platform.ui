@@ -521,7 +521,7 @@ public class IntroURL implements IIntroURL {
 
         if (value != null)
             try {
-                if (decode.equalsIgnoreCase(VALUE_TRUE))
+                if (decode!=null && decode.equalsIgnoreCase(VALUE_TRUE))
                     // we are told to decode the parameters of the url through
                     // the decode parameter. Assume that parameters are
                     // UTF-8 encoded.
