@@ -13,7 +13,6 @@ package org.eclipse.ui.tests.performance;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.jface.tests.performance.JFacePerformanceSuite;
 import org.eclipse.ui.tests.presentations.PresentationPerformanceTestSuite;
 
 /**
@@ -37,6 +36,5 @@ public class UIPerformanceTestSuite extends TestSuite {
         addTest(new WorkbenchPerformanceSuite());
         addTest(new ViewPerformanceSuite());
         addTest(new EditorPerformanceSuite());
-       addTest(new JFacePerformanceSuite());
     }
 }
