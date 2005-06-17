@@ -7,46 +7,29 @@
  <plugin id="org.eclipse.ui.editors"/>
 
  <package name="org.eclipse.ui.editors.text">
-   <type name="DocumentInputStream" subclass="false" instantiate="false"/>
-   <type name="DocumentReader" subclass="false" instantiate="false"/>
-   <type name="EditorsUI" subclass="false" instantiate="false"/>
-   <type name="EncodingActionGroup" subclass="false" instantiate="false"/>
+   <type name="EditorsUI" instantiate="false"/>
    <type name="IEncodingActionsConstants" implement="false"/>
    <type name="IEncodingActionsDefinitionIds" implement="false"/>
    <type name="IEncodingActionsHelpContextIds" implement="false"/>
    <type name="IFoldingCommandIds" implement="false"/>
    <type name="ITextEditorHelpContextIds" implement="false"/>
-   <type name="TextEditorMessages" subclass="false" instantiate="false"/>
    <type name="TextEditorPreferenceConstants" subclass="false" instantiate="false"/>
-   <type name="TextEditorPreferencePage" subclass="false" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.ui.editors.text.templates">
-   <type name="ContributionTemplateMessages" subclass="false" instantiate="false"/>
-   <type name="ContributionTemplateStore" subclass="false" instantiate="true"/>
+   <type name="ContributionTemplateStore" subclass="false"/>
  </package>
 
  <package name="org.eclipse.ui.texteditor">
-   <type name="AbstractDecoratedTextEditor" subclass="true" instantiate="false"/>
    <type name="AbstractDecoratedTextEditorPreferenceConstants" subclass="false" instantiate="false"/>
-   <type name="AbstractMarkerAnnotationModel" subclass="true" instantiate="false"/>
-   <type name="AddMarkerAction" subclass="false" instantiate="true"/>
-   <type name="AnnotationTypeLookup" subclass="false" instantiate="true"/>
-   <type name="BasicMarkerUpdater" subclass="false" instantiate="true"/>
-   <type name="ChangeEncodingAction" subclass="false" instantiate="true"/>
+   <type name="AddMarkerAction" subclass="false"/>
+   <type name="ChangeEncodingAction" subclass="false"/>
    <type name="DocumentProviderRegistry" subclass="false" instantiate="false"/>
    <type name="ImageUtilities" subclass="false" instantiate="false"/>
-   <type name="IMarkerUpdater" implement="false"/>
-   <type name="MarkerRulerAction" subclass="false" instantiate="true"/>
-   <type name="MarkerRulerInfoAction" subclass="false" instantiate="false"/>
-   <type name="MarkerUpdater" subclass="false" instantiate="false"/>
+   <type name="MarkerRulerAction" subclass="false"/>
    <type name="MarkerUtilities" subclass="false" instantiate="false"/>
-   <type name="MessageDialogPage" subclass="false" instantiate="false"/>
-   <type name="MessageRegion" subclass="false" instantiate="false"/>
-   <type name="ResourceMarkerAnnotationModel" subclass="false" instantiate="true"/>
-   <type name="SelectMarkerRulerAction" subclass="false" instantiate="true"/>
-   <type name="SelectMarkerRulerInfoAction" subclass="false" instantiate="false"/>
-   <type name="TextEditorMessages" subclass="false" instantiate="false"/>
+   <type name="ResourceMarkerAnnotationModel" subclass="false"/>
+   <type name="SelectMarkerRulerAction" subclass="false"/>
  </package>
 
  <component-depends unrestricted="true"/>
