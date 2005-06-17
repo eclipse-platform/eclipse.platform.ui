@@ -117,7 +117,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
      */
     private void addPerspectiveOpenCloseScenarios() {
         for (int i = 0; i < PERSPECTIVE_IDS.length; i++) {
-            addTest(new OpenClosePerspectiveTest(PERSPECTIVE_IDS[i], i == 0 ? BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE));
+            addTest(new OpenClosePerspectiveTest(PERSPECTIVE_IDS[i], i == 1 ? BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE));
         }
     }
     
