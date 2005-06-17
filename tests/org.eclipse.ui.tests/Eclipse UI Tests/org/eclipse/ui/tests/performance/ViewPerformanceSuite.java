@@ -11,22 +11,24 @@
 
 package org.eclipse.ui.tests.performance;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.tests.performance.layout.ResizeTest;
 import org.eclipse.ui.tests.performance.layout.ViewWidgetFactory;
 import org.eclipse.ui.views.IViewDescriptor;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  * @since 3.1
  */
 public class ViewPerformanceSuite extends TestSuite {
 
-	public static final String BASIC_VIEW = "org.eclipse.ui.tests.perf_basic";
+	public static final String RESOURCE_NAVIGATOR = "org.eclipse.ui.views.ResourceNavigator";
+
+	public static final String BASIC_PATH = "org.eclipse.ui";
 
 	// public static final String [] VIEW_IDS = {BASIC_VIEW,
 	// IPageLayout.ID_RES_NAV, MockViewPart.ID};
@@ -43,7 +45,7 @@ public class ViewPerformanceSuite extends TestSuite {
 	 */
 	public ViewPerformanceSuite() {
 		addOpenCloseTests();
-		addResizeTests();
+		// addResizeTests();
 	}
 
 	/**
@@ -59,7 +61,7 @@ public class ViewPerformanceSuite extends TestSuite {
 			// Do not change this as this is an empty view
 			// and not dependant on other components
 			addTest(new OpenCloseViewTest(id,
-					id.equals(BASIC_VIEW) ? BasicPerformanceTest.GLOBAL
+					id.equals(RESOURCE_NAVIGATOR) ? BasicPerformanceTest.GLOBAL
 							: BasicPerformanceTest.NONE));
 		}
 	}
@@ -76,20 +78,25 @@ public class ViewPerformanceSuite extends TestSuite {
 	}
 
 	public static String[] getAllTestableViewIds() {
-		ArrayList result = new ArrayList();
+		HashSet result = new HashSet();
 
 		IViewDescriptor[] descriptors = Workbench.getInstance()
 				.getViewRegistry().getViews();
 		for (int i = 0; i < descriptors.length; i++) {
 			IViewDescriptor descriptor = descriptors[i];
+			String[] categoryPath = descriptor.getCategoryPath();
 
-			// Heuristically prune out any test or example views
-			if (descriptor.getId().equals(BASIC_VIEW)
-					|| (descriptor.getId().indexOf(".test") == -1 && descriptor
-							.getId().indexOf(".examples") == -1)) {
+			if (categoryPath == null)
+				continue;
 
-				result.add(descriptor.getId());
+			for (int j = 0; j < categoryPath.length; j++) {
+				// Only test basic views
+				if (categoryPath[j].equals(BASIC_PATH)) {
+					result.add(descriptor.getId());
+					continue;
+				}
 			}
+
 		}
 
 		return (String[]) result.toArray(new String[result.size()]);
