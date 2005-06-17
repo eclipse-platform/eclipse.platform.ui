@@ -388,11 +388,12 @@ public class TargetPage extends BannerPage implements IDynamicPage {
     
     void removeAddedSites() {
         if (added != null) {
-            while (!added.isEmpty()) {
-                Iterator it = added.iterator(); 
-                if (it.hasNext())
-                    config.removeConfiguredSite((IConfiguredSite) it.next());
+        	Iterator it = added.iterator(); 
+            while (it.hasNext()) {
+                 config.removeConfiguredSite((IConfiguredSite) it.next());
+                // the config listener no longer removes the site so we need to cleanup the collection at the end
             }
+            added.clear();
         }           
     }
     
