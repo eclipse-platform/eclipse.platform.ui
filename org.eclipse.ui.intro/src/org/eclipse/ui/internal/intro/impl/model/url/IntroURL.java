@@ -16,6 +16,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.Geometry;
@@ -129,6 +130,17 @@ public class IntroURL implements IIntroURL {
     public boolean execute() {
         final boolean[] result = new boolean[1];
         Display display = Display.getCurrent();
+
+        if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+            Runnable r = new Runnable() {
+                public void run() {
+                    result[0] = doExecute();
+                }
+            };
+            display.asyncExec(r);
+            return result[0];
+        }
+        
         BusyIndicator.showWhile(display, new Runnable() {
 
             public void run() {
