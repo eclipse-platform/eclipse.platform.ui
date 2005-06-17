@@ -11,23 +11,15 @@
  </package>
 
  <package name="org.eclipse.ui.texteditor">
-   <type name="ConvertLineDelimitersAction" subclass="false" instantiate="false"/>
    <type name="DefaultRangeIndicator" subclass="false"/>
    <type name="FindNextAction" subclass="false"/>
    <type name="FindReplaceAction" subclass="false"/>
    <type name="GotoLineAction" subclass="false"/>
-   <type name="IAbstractTextEditorHelpContextIds" implement="false"/>
    <type name="IncrementalFindAction" subclass="false"/>
-   <type name="InfoForm" subclass="false" instantiate="false"/>
    <type name="ITextEditorActionConstants" implement="false"/>
-   <type name="ITextEditorActionDefinitionIds" implement="false"/>
    <type name="ITextEditorDropTargetListener" implement="false"/>
-   <type name="IWorkbenchActionDefinitionIds" implement="false"/>
-   <type name="PropagatingFontFieldEditor" subclass="false" instantiate="false"/>
    <type name="RevertToSavedAction" subclass="false"/>
    <type name="SaveAction" subclass="false"/>
-   <type name="ValidateStateException" subclass="false" instantiate="false"/>
-   <type name="WorkbenchChainedTextFontFieldEditor" subclass="false" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.ui.texteditor.link">
