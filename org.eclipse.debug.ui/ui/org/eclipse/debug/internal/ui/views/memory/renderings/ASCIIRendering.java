@@ -35,13 +35,9 @@ public class ASCIIRendering extends AbstractTextRendering{
 		super(renderingId);
 		String codepage = DebugUITools.getPreferenceStore().getString(IDebugUIConstants.PREF_DEFAULT_ASCII_CODE_PAGE);
 		setCodePage(codepage);
-		
-		// add as preference store listener
-		DebugUITools.getPreferenceStore().addPropertyChangeListener(this);
 	}
 	
 	public void dispose() {
-		DebugUITools.getPreferenceStore().removePropertyChangeListener(this);
 		super.dispose();
 	}
 	

@@ -126,8 +126,12 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 		fIsDisposed = true;
 		
 		fRendering.removePropertyChangeListener(this);
-		fControl.removeListener(SWT.Activate, this);
-		fControl.removeListener(SWT.Deactivate, this);
+		
+		if (!fControl.isDisposed())
+		{
+			fControl.removeListener(SWT.Activate, this);
+			fControl.removeListener(SWT.Deactivate, this);
+		}
 		
 		// always deactivate rendering before disposing it.
 		fRendering.deactivated();

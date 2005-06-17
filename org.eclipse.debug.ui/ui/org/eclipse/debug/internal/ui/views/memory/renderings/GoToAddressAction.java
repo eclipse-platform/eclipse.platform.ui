@@ -164,7 +164,6 @@ public class GoToAddressAction extends Action
 	{
 		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
 		Object elem = ((IStructuredSelection)selection).getFirstElement();
-		boolean pin = true;
 		
 		if (!(elem instanceof IDebugElement))
 			return;
@@ -174,16 +173,20 @@ public class GoToAddressAction extends Action
 			{
 				// save the pin setting in the parent view
 				IMemoryRenderingSite site = fRendering.getMemoryRenderingContainer().getMemoryRenderingSite();
+				MemoryView view = null;
 				if (site instanceof MemoryView)
 				{
-					MemoryView view = (MemoryView)site;
-					pin = view.isPinMBDisplay();
-					view.setPinMBDisplay(false);
+					view = (MemoryView)site;
 				}
 				
 				IMemoryBlockExtension mbext = retrieval.getExtendedMemoryBlock(expression, elem);
 				if (mbext != null)
-					DebugPlugin.getDefault().getMemoryBlockManager().addMemoryBlocks(new IMemoryBlock[]{mbext});
+				{
+					IMemoryBlock[] memArray = new IMemoryBlock[]{mbext};
+					if (view != null)
+						view.registerMemoryBlocks(memArray);
+					DebugPlugin.getDefault().getMemoryBlockManager().addMemoryBlocks(memArray);
+				}
 				
 				IMemoryRenderingType renderingType = DebugUITools.getMemoryRenderingManager().getRenderingType(fRendering.getRenderingId());
 				
@@ -205,16 +208,6 @@ public class GoToAddressAction extends Action
 		{
 			MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
 			DebugUIMessages.GoToAddressAction_Go_to_address_failed, e);
-		}
-		finally
-		{
-			// restore setting
-			IMemoryRenderingSite site = fRendering.getMemoryRenderingContainer().getMemoryRenderingSite();
-			if (site instanceof MemoryView)
-			{
-				MemoryView view = (MemoryView)site;
-				view.setPinMBDisplay(pin);
-			}
 		}
 	}
 }

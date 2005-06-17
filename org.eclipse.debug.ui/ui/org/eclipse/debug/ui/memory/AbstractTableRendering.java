@@ -2003,12 +2003,15 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				fContentProvider.dispose();
 			
 			ScrollBar scroll = ((Table)fTableViewer.getControl()).getVerticalBar();
-			if (scroll != null)
+			if (scroll != null && !scroll.isDisposed())
 				scroll.removeSelectionListener(fScrollbarSelectionListener);
 			
-			fTableCursor.removeTraverseListener(fCursorTraverseListener);
-			fTableCursor.removeKeyListener(fCursorKeyAdapter);
-			fTableCursor.removeMouseListener(fCursorMouseListener);
+			if (!fTableCursor.isDisposed())
+			{
+				fTableCursor.removeTraverseListener(fCursorTraverseListener);
+				fTableCursor.removeKeyListener(fCursorKeyAdapter);
+				fTableCursor.removeMouseListener(fCursorMouseListener);
+			}
 			
 			fCursorEditor.dispose();
 			

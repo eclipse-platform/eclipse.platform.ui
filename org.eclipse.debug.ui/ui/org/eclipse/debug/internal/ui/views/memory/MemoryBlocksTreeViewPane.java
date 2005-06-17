@@ -105,7 +105,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			{
 				Object[] selectedMemBlks = ((IStructuredSelection)selected).toArray();
 				IMemoryBlock[] memBlocks = new IMemoryBlock[selectedMemBlks.length];
-				
 				System.arraycopy(selectedMemBlks, 0, memBlocks, 0, selectedMemBlks.length);
 				DebugPlugin.getDefault().getMemoryBlockManager().removeMemoryBlocks(memBlocks);
 			}
@@ -219,41 +218,56 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
 		 */
-		public void memoryBlocksAdded(IMemoryBlock[] memory) {
+		public void memoryBlocksAdded(final IMemoryBlock[] memory) {
 
-			// if the content provider is disposed, do not handle event
-			if (fDisposed)
-				return;
-			
-			IMemoryBlock memoryBlocks[] = memory;
+			DebugUIPlugin.getDefault().getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-			for (int i=0; i<memoryBlocks.length; i++)
-			{
-				if (!fMemoryBlocks.contains(memoryBlocks[i]))
-				{
-					fMemoryBlocks.add(memoryBlocks[i]);
-				}
-			}
-			
-			fTreeViewer.refresh();
-			
-			if (fParent instanceof MemoryView)
-			{
-				MemoryView mv = (MemoryView)fParent;
-				// force a selection if there is currently only one memory block in the view
-				if (!mv.isPinMBDisplay() || fMemoryBlocks.size() == 1)
-				{
-					// switch to the memory block if there is only one memory block in the view
-					fTreeViewer.setSelection(new StructuredSelection(memory));
-					fSelectionProvider.setSelection(new StructuredSelection(memory));
-				}
-			}
-			else
-			{
-				fTreeViewer.setSelection(new StructuredSelection(memory));
-				fSelectionProvider.setSelection(new StructuredSelection(memory));
-			}
-			updateActionsEnablement();
+				public void run() {
+					// if the content provider is disposed, do not handle event
+					if (fDisposed)
+						return;
+					
+					boolean setSelection = false;
+					if (fMemoryBlocks.size() == 0)
+						setSelection = true;
+					
+					IMemoryBlock memoryBlocks[] = memory;
+		
+					for (int i=0; i<memoryBlocks.length; i++)
+					{
+						if (!fMemoryBlocks.contains(memoryBlocks[i]))
+						{
+							fMemoryBlocks.add(memoryBlocks[i]);
+							
+							if (fParent instanceof MemoryView)
+							{
+								MemoryView mv = (MemoryView)fParent;
+								if (mv.isMemoryBlockRegistered(memoryBlocks[i]))
+									setSelection = true;
+							}
+						}
+					}
+					
+					fTreeViewer.refresh();
+					
+					if (fParent instanceof MemoryView)
+					{
+						MemoryView mv = (MemoryView)fParent;
+						// force a selection if there is currently only one memory block in the view
+						if (!mv.isPinMBDisplay() || setSelection)
+						{
+							// switch to the memory block if there is only one memory block in the view
+							fTreeViewer.setSelection(new StructuredSelection(memory));
+							fSelectionProvider.setSelection(new StructuredSelection(memory));
+						}
+					}
+					else
+					{
+						fTreeViewer.setSelection(new StructuredSelection(memory));
+						fSelectionProvider.setSelection(new StructuredSelection(memory));
+					}
+					updateActionsEnablement();
+			}});
 		}
 
 		/* (non-Javadoc)
@@ -261,7 +275,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		 */
 		public void memoryBlocksRemoved(final IMemoryBlock[] memory) {
 			
-			DebugUIPlugin.getDefault().getWorkbench().getDisplay().syncExec(new Runnable() {
+			DebugUIPlugin.getDefault().getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 				public void run() {
 					for (int i=0; i<memory.length; i++)
@@ -273,10 +287,35 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 					if (!fDisposed)
 					{
 						fTreeViewer.refresh();
-						IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fDebugTarget);
-						if (memoryBlocks != null && memoryBlocks.length > 0)
+						
+						IStructuredSelection selection = (IStructuredSelection)fSelectionProvider.getSelection();
+						if (!selection.isEmpty())
 						{
-							fTreeViewer.setSelection(new StructuredSelection(memoryBlocks[0]));
+							IMemoryBlock currentSel = (IMemoryBlock)selection.getFirstElement();
+
+							IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fDebugTarget);
+							boolean selectionRemoved = true;
+							
+							for (int i=0; i<memoryBlocks.length; i++)
+							{
+								if (memoryBlocks[i] == currentSel)
+									selectionRemoved = false;
+							}
+							if (selectionRemoved)
+							{
+								if (memoryBlocks != null && memoryBlocks.length > 0)
+								{
+									fTreeViewer.setSelection(new StructuredSelection(memoryBlocks[0]));
+								}
+							}
+						}
+						else
+						{
+							IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fDebugTarget);
+							if (memoryBlocks != null && memoryBlocks.length > 0)
+							{
+								fTreeViewer.setSelection(new StructuredSelection(memoryBlocks[0]));
+							}
 						}
 					}
 					updateActionsEnablement();
@@ -673,5 +712,4 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			fRemoveAllMemoryBlocksAction.setEnabled(false);
 		}
 	}
-
 }

@@ -12,10 +12,15 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IMemoryBlockListener;
+import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -74,6 +79,18 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	
 	private boolean fPinMBDisplay = true;	// pin memory block display, on by default
 	private static int fViewCnt = 0;
+	
+	private Set fRegisteredMemoryBlocks = new HashSet();
+	private IMemoryBlockListener fMemoryBlockListener = new IMemoryBlockListener() {
+
+		public void memoryBlocksAdded(IMemoryBlock[] memory) {
+			// do nothing
+		}
+
+		public void memoryBlocksRemoved(IMemoryBlock[] memory) {
+			// clean up registered memory blocks
+			unRegisterMemoryBlocks(memory);
+		}};
 	
 	class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener
 	{
@@ -298,6 +315,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		
 		fPartListener = new MemoryViewPartListener(this);
 		getSite().getPage().addPartListener(fPartListener);
+		DebugPlugin.getDefault().getMemoryBlockManager().addListener(fMemoryBlockListener);
 		
 		// restore view pane after finishing creating all the view panes
 		restoreView();
@@ -372,6 +390,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	
 	public void dispose() {
 	    getSite().getPage().removePartListener(fPartListener);
+	    DebugPlugin.getDefault().getMemoryBlockManager().removeListener(fMemoryBlockListener);
 	    
 		Enumeration enumeration = fViewPanes.elements();
 		while (enumeration.hasMoreElements())
@@ -391,6 +410,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			MemoryViewIdRegistry.deregisterView(secondaryId);
 		
 		fSyncService.shutdown();
+		
+		fRegisteredMemoryBlocks.clear();
 		
 		super.dispose();
 	}
@@ -600,5 +621,22 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			return VISIBILITY_PREF + "." + viewId; //$NON-NLS-1$
 
 		return VISIBILITY_PREF;
+	}
+	
+	public void registerMemoryBlocks(IMemoryBlock[] memoryBlocks)
+	{
+		for (int i=0; i<memoryBlocks.length; i++)
+			fRegisteredMemoryBlocks.add(memoryBlocks[i]);
+	}
+	
+	public void unRegisterMemoryBlocks(IMemoryBlock[] memoryBlocks)
+	{
+		for (int i=0; i<memoryBlocks.length; i++)
+			fRegisteredMemoryBlocks.remove(memoryBlocks[i]);
+	}
+	
+	public boolean isMemoryBlockRegistered(IMemoryBlock memoryBlock)
+	{
+		return fRegisteredMemoryBlocks.contains(memoryBlock);
 	}
 }
