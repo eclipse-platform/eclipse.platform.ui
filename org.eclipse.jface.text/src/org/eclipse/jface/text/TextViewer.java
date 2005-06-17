@@ -89,8 +89,7 @@ import org.eclipse.jface.text.projection.ChildDocumentManager;
  * in the widget token negotiation between the text viewer and all its potential
  * widget token keepers.
  * <p>
- * Clients should not subclass this class as it is rather likely that subclasses
- * will be broken by future releases.</p>
+ * This class is not intended to be subclassed outside the JFace Text component.</p>
  */
 public class TextViewer extends Viewer implements
 					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, IEditingSupportRegistry,

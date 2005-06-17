@@ -3,7 +3,7 @@
 <component xmlns="http://eclipse.org/component"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
-   name="Eclipse JFace Text">
+   name="JFace Text">
  <plugin id="org.eclipse.jface.text"/>
 
  <package name="org.eclipse.jface.contentassist">
@@ -86,7 +86,6 @@
    <type name="LineRange" subclass="false"/>
    <type name="MatchingCharacterPainter" subclass="false"/>
    <type name="OverviewRulerHoverManager" subclass="false" instantiate="false"/>
-   <type name="SourceViewer" subclass="false"/>
    <type name="VerticalRuler" subclass="false"/>
    <type name="VerticalRulerEvent"/>
    <type name="VisualAnnotationModel" subclass="false" instantiate="false"/>

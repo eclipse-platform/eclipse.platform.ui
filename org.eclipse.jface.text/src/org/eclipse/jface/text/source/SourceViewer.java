@@ -65,8 +65,7 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * communicate with it exclusively using the <code>ISourceViewer</code>
  * interface.</p>
  * <p>
- * Clients should not subclass this class as it is rather likely that subclasses
- * will be broken by future releases.</p>
+ * Clients may subclass this class but should expect some breakage by future releases.</p>
  */
 public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2 {
 
