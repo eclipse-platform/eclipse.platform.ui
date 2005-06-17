@@ -12,42 +12,21 @@
  </package>
 
  <package name="org.eclipse.jface.text">
-   <type name="AbstractHoverInformationControlManager" instantiate="false"/>
-   <type name="AbstractInformationControlManager" instantiate="false"/>
    <type name="CursorLinePainter" subclass="false"/>
-   <type name="DefaultAutoIndentStrategy" subclass="false" instantiate="false"/>
-   <type name="DefaultDocumentAdapter" subclass="false" instantiate="false"/>
+   <type name="DefaultAutoIndentStrategy" subclass="false"/>
    <type name="DefaultIndentLineAutoEditStrategy" subclass="false"/>
    <type name="DefaultTextDoubleClickStrategy" subclass="false"/>
    <type name="DefaultUndoManager" subclass="false"/>
-   <type name="DocumentClone" subclass="false" instantiate="false"/>
-   <type name="IAutoIndentStrategy" implement="false"/>
    <type name="IEditingSupportRegistry" implement="false"/>
    <type name="IMarkSelection" implement="false"/>
-   <type name="JFaceTextMessages" subclass="false" instantiate="false"/>
    <type name="MarginPainter" subclass="false"/>
-   <type name="PaintManager" subclass="false"/>
-   <type name="PropagatingFontFieldEditor" subclass="false" instantiate="false"/>
    <type name="TextViewer" subclass="false"/>
-   <type name="TextViewerHoverManager" subclass="false" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.contentassist">
-   <type name="AdditionalInfoController" subclass="false" instantiate="false"/>
-   <type name="CompletionProposal" subclass="false"/>
-   <type name="CompletionProposalPopup" subclass="false" instantiate="false"/>
-   <type name="ContentAssistSubjectControlAdapter" subclass="false" instantiate="false"/>
-   <type name="ContextInformation" subclass="false"/>
-   <type name="ContextInformationPopup" subclass="false" instantiate="false"/>
-   <type name="ContextInformationValidator" instantiate="false"/>
-   <type name="Helper" subclass="false" instantiate="false"/>
-   <type name="IContentAssistListener" implement="false"/>
-   <type name="JFaceTextMessages" subclass="false" instantiate="false"/>
-   <type name="PopupCloser" subclass="false" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.formatter">
-   <type name="ContextBasedFormattingStrategy" subclass="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.hyperlink">
@@ -57,61 +36,34 @@
  </package>
 
  <package name="org.eclipse.jface.text.link">
-   <type name="LinkedPositionAnnotations" subclass="false" instantiate="false"/>
-   <type name="TabStopIterator" subclass="false" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.presentation">
  </package>
 
  <package name="org.eclipse.jface.text.reconciler">
-   <type name="AbstractReconciler" instantiate="false"/>
-   <type name="AbstractReconcileStep" instantiate="false"/>
-   <type name="DirtyRegionQueue" subclass="false" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.rules">
-   <type name="DefaultPartitioner" subclass="false" instantiate="false"/>
-   <type name="RuleBasedDamagerRepairer" subclass="false" instantiate="false"/>
-   <type name="RuleBasedPartitioner" subclass="false" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.source">
-   <type name="AnnotationColumn" subclass="false" instantiate="false"/>
-   <type name="AnnotationRulerColumn" subclass="false"/>
-   <type name="ChangeRulerColumn" subclass="false"/>
+   <type name="AnnotationRulerColumn" subclass="false" />
    <type name="ImageUtilities" subclass="false" instantiate="false"/>
-   <type name="JFaceTextMessages" subclass="false" instantiate="false"/>
-   <type name="LineNumberChangeRulerColumn" subclass="false"/>
-   <type name="LineRange" subclass="false"/>
-   <type name="MatchingCharacterPainter" subclass="false"/>
-   <type name="OverviewRulerHoverManager" subclass="false" instantiate="false"/>
-   <type name="VerticalRuler" subclass="false"/>
-   <type name="VerticalRulerEvent"/>
-   <type name="VisualAnnotationModel" subclass="false" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.source.projection">
-   <type name="AnnotationBag" subclass="false" instantiate="false"/>
-   <type name="ProjectionAnnotationHover" subclass="false" instantiate="false"/>
+   <type name="AnnotationBag" subclass="false"/>
    <type name="ProjectionAnnotationModel" subclass="false"/>
-   <type name="ProjectionRulerColumn" subclass="false" instantiate="false"/>
-   <type name="ProjectionSummary" subclass="false" instantiate="false"/>
    <type name="ProjectionSupport" subclass="false"/>
    <type name="ProjectionViewer" subclass="false"/>
-   <type name="SourceViewerInformationControl" subclass="false" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.templates">
-   <type name="InclusivePositionUpdater" subclass="false" instantiate="false"/>
-   <type name="JFaceTextTemplateMessages" subclass="false" instantiate="false"/>
-   <type name="PositionBasedCompletionProposal" subclass="false" instantiate="false"/>
-   <type name="TemplateCompletionProcessor" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.templates.persistence">
    <type name="TemplatePersistenceData" subclass="false"/>
-   <type name="TemplatePersistenceMessages" subclass="false" instantiate="false"/>
    <type name="TemplateReaderWriter" subclass="false"/>
  </package>
 

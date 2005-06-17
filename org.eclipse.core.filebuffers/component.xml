@@ -7,7 +7,7 @@
  <plugin id="org.eclipse.core.filebuffers"/>
 
  <package name="org.eclipse.core.filebuffers">
-   <type name="FileBuffers" subclass="false" instantiate="false"/>
+   <type name="FileBuffers" instantiate="false"/>
    <type name="IFileBuffer" implement="false"/>
    <type name="IFileBufferManager" implement="false"/>
    <type name="IFileBufferStatusCodes" implement="false"/>
@@ -16,8 +16,6 @@
 
  <package name="org.eclipse.core.filebuffers.manipulation">
    <type name="FileBufferOperationRunner" subclass="false"/>
-   <type name="FileBuffersMessages" subclass="false" instantiate="false"/>
-   <type name="TextFileBufferOperation" instantiate="false"/>
  </package>
 
  <component-depends unrestricted="true"/>
