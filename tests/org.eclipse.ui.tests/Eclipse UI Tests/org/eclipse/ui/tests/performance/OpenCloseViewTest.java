@@ -40,7 +40,9 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
         waitForBackgroundJobs();
         processEvents();
         
-       	tagIfNecessary("UI - Open/Close View", Dimension.ELAPSED_PROCESS);
+       	tagIfNecessary("UI - Open/Close " + view1.getTitle(), Dimension.ELAPSED_PROCESS);
+       	setDegradationComment("See https://bugs.eclipse.org/bugs/show_bug.cgi?id=98144");
+       	
         exercise(new TestRunnable() {
             public void run() throws Exception {
                 startMeasuring();
