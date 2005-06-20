@@ -28,10 +28,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = UndoPlugin.getDefault()
 				.getPreferenceStore();
-		store.setDefault(PreferenceConstants.P_BOOLEAN, true);
-		store.setDefault(PreferenceConstants.P_CHOICE, "choice2");
-		store.setDefault(PreferenceConstants.P_STRING,
-				"Default value");
+		store.setDefault(PreferenceConstants.PREF_CONFIRMUNDO, true);
+		store.setDefault(PreferenceConstants.PREF_UNDOLIMIT,
+				25);
+		store.setDefault(PreferenceConstants.PREF_SHOWDEBUG, false);
+		
 	}
 
 }
