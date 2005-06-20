@@ -10,6 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.undo.views;
 
+import java.util.List;
+import java.util.ArrayList;
+
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionFactory;
@@ -25,12 +36,44 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
 public class BoxView extends ViewPart {
+	/**
+	 * The canvas to paint the boxes on.
+	 */
 	private Canvas paintCanvas;
+	
+	/**
+	 * The "model," a list of boxes.
+	 */
+	private List boxes = new ArrayList();
+	
+	/**
+	 * Actions
+	 */
 	private Action action1;
 	private Action action2;
     private UndoActionHandler undoAction;
     private RedoActionHandler redoAction;
+    
+    /**
+     * Private undo context for box operations
+     */
     private IUndoContext undoContext;
+    
+	/**
+	 * True if a click-drag is in progress
+	 */
+	private boolean dragInProgress = false;
+	
+	/**
+	 * The position of the first click in a click-drag
+	 */
+	private Point anchorPosition = new Point(-1, -1);
+
+	/**
+	 * A temporary point
+	 */
+	private Point tempPosition = new Point(-1, -1);
+	
 	/**
 	 * The constructor.
 	 */
@@ -45,10 +88,66 @@ public class BoxView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		paintCanvas = new Canvas(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL |
-				SWT.NO_REDRAW_RESIZE | SWT.NO_BACKGROUND);
+				SWT.NO_REDRAW_RESIZE);
+        addListeners();
         makeActions();
         hookContextMenu();
         createGlobalActionHandlers();
+	}
+	
+	private void addListeners() {
+		paintCanvas.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent event) {
+				if (event.button != 1) return;
+				if (dragInProgress) return; // spurious event
+				dragInProgress = true;
+				
+				anchorPosition.x = event.x;
+				anchorPosition.y = event.y;
+
+			}
+			public void mouseUp(MouseEvent event) {
+				if (event.button != 1) {
+					resetDrag(); // abort if right or middle mouse button pressed
+					return;
+				}
+				if (! dragInProgress) return; // spurious event
+				dragInProgress = false;
+				if (anchorPosition.x == -1) return; // spurious event
+				
+				commitRubberBandSelection();
+				boxes.add(new Box(anchorPosition, tempPosition));
+				// change to redraw only the box
+				paintCanvas.redraw();
+			}
+			public void mouseDoubleClick(MouseEvent event) {
+			}			
+		});
+		paintCanvas.addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove(MouseEvent event) {
+				if (! dragInProgress) {
+					return;
+				}
+				clearRubberBandSelection();
+				tempPosition.x = event.x;
+				tempPosition.y = event.y;
+				addRubberBandSelection(anchorPosition, tempPosition);
+			}
+		});
+		paintCanvas.addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent event) {
+				for (int i=0; i<boxes.size(); i++) {
+					((Box)boxes.get(i)).draw(event.gc);
+				}
+			}
+		});
+		
+		paintCanvas.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				// dispose the gc
+			}
+		});
+
 	}
 
 	private void hookContextMenu() {
@@ -133,4 +232,27 @@ public class BoxView extends ViewPart {
 	public void setFocus() {
 		paintCanvas.setFocus();
 	}
+	
+	/**
+	 * Resets the drag operation.
+	 */
+	private void resetDrag() {
+		// getPaintSurface().clearRubberbandSelection();
+		anchorPosition.x = -1;
+		dragInProgress = false;
+	}
+	
+	private void clearRubberBandSelection() {
+		
+	}
+	
+	private void addRubberBandSelection(Point origin, Point corner) {
+		
+	}
+	
+	private void commitRubberBandSelection() {
+		
+	}
+
+
 }
