@@ -83,16 +83,16 @@
   and <code>displaySource(ISourceLookupResult, IWorkbenchPage)</code>. When a 
   source lookup result for a stack frame is displayed, the open editor is also 
   annotated with an appropriate instruction pointer.</p>
-<h3>Watchpoints (IWatchpoint) and images</h3>
+<h3>Watchpoints (IWatchpoint) and Images</h3>
 <p>As watchpoints are common to many debug architectures, the notion of an IWatchpoint 
   has been added to the debug model. A watch point is a breakpoint that suspends 
   execution when an associated variable is read and/or written. As well, default 
   images for rendering watchpoints have been added to the debug platform.</p>
-<h3>Colors and Fonts for debug elements</h3>
+<h3>Colors and Fonts for Debug Elements</h3>
 <p>In 3.1, debug model presentations (<code>IDebugModelPresentation</code>) may 
   optionally implement <code>IColorProvider </code>and <code>IFontProvider </code>to 
   override default fonts and colors for debug elements.</p>
-<h3>Inserting elements into debug view/hierarchy</h3>
+<h3>Inserting Elements into Debug View</h3>
 <p>The Debug view allows for debug models to insert arbitrary elements into the 
   debug model element hierarchy. For example, the Java debugger now displays lock 
   information directly in the view. To override the default presentation in the 
@@ -111,13 +111,13 @@
 <p>The debug platform provides a &quot;drop to frame&quot; action and corresponding 
   capability interface (<code>IDropToFrame</code>). Debug elements supporting 
   the capability should implement this new interface to share the global action.</p>
-<h3>Launch from context menu in editor</h3>
+<h3>Context Menu Launching in Editors</h3>
 <p>Launching from the context menu (for example, &quot;Run As &gt; Java Application&quot;), 
   is now available in editors (In 3.1, this was only available in the package 
   explorer and resource navigator). To leverage this feature, the editor input 
   associated with a executable file must have an <code>ILaunchable</code> adapter 
   registered for it.</p>
-<h3>Support for hidden launch (unregistered)</h3>
+<h3>Support for Unregistered Launch</h3>
 <p>The launch framework allows for a launch to be performed without registering 
   a launch object with the launch manager. An unregistered launch does not appear 
   in the Debug view. A new launch method has been added to <code>ILaunchConfiguration</code>, 
@@ -125,24 +125,59 @@
   (<code>launch(String mode, IProgressMonitor monitor, boolean build, boolean 
   register)</code>), and a new method has been added to <code>ILaunchManager</code> 
   to determine if a launch is registered (<code>isRegistered(ILaunch launch)</code>).</p>
-<h3>Reusable breakpoint ruler toggle actions</h3>
-<h3>Environment variables case preservation</h3>
-<h3>Memory block extensions and Memory View</h3>
-<h3>IStreamsProxy2</h3>
-<h3>LaunchConfigurationDelegate#getBreakpoints(..)</h3>
-<p>allows to check if there are relevant breakpoints in the workspace for a launch</p>
+<h3>Reusable Breakpoint Ruler Toggle Actions</h3>
+<p>Providing double-click breakpoint creation in an editor's vertical ruler is 
+  a common feature for debuggers. The debug platform provides two actions to facilitate 
+  this: <code>RulerToggleBreakpointActionDelegate </code>and <code>ToggleBreakpointAction</code>. 
+  A debugger must contribute the <code>RulerToggleBreakpointActionDelegate</code> 
+  to the appropriate editor (see javadoc for more details), and also register 
+  an <code>IToggleBreakpointsTarget </code>adapter with the editor.</p>
+<h3>Environment Variables Case Preservation</h3>
+<p>Support has been added to <code>ILaunchManager</code> to retrieve the environment 
+  variables defined in the OS preserving case. This is important on the WIN32 
+  operating system. Although WIN32 is case insensitive, depending on what you 
+  intend to do with the environment, the lack of normalization may or may not 
+  be problems. This method <code>getNativeEnvironmentCasePreserved()</code> returns 
+  mixed-case keys using the variable names recorded by the OS. Use <code>getNativeEnvironment()</code> 
+  instead to get a WIN32 system environment where all keys have been normalized 
+  to uppercase.</p>
+<h3>Closing an Input Stream</h3>
+<p>An optional extension, <code>IStreamsProxy2</code>, can be implemented by implementations 
+  of <code>IStreamsProxy</code>. When implemented, it allows the input stream 
+  associated with a process to be closed. This is used to allow the user to signal 
+  EOF when typing in the console.</p>
+<h3>Launch in Debug Mode when Workspace Contains Breakpoints</h3>
+<p>Since 3.0, The user preference &quot;Launch in debug mode when workspace contains 
+  breakpoints&quot; is used to control whether a launch should use debug mode 
+  even when &quot;run&quot; is pressed by the user, based on the presence of breakpoints 
+  in the workspace. A new method, <code>getBreakpoints(ILaunchConfiguration configuration)</code>, 
+  has been added to the abstract implementation of <code>LaunchConfigurationDelegate</code>, 
+  to determine which breakpoints should be considered as relevant for a particular 
+  launch. By default, all breakpoints in the workspace are considered, but subclasses 
+  may override. For example, the Java Application launcher only considers Java 
+  breakpoints.</p>
+<h3>Case Insensitive Source Lookup and Relative Paths</h3>
+<p>The debug platform's source lookup facilities now lookup source in folders 
+  and directories in a case insensitive manner on platforms that are case insensitive. 
+  As well, relative path names are supported in folders and directories.</p>
 <h2>Changes</h2>
 <h3>Debug Event Dispatch</h3>
-<p>Debug event set listeners are notified of fired debug events asynchronously 
-  in a different thread than the event is reported in.</p>
-<h3>Debug Actions in Background</h3>
-<h3>Background Content Providers/Workbench adapters</h3>
-<p>Note: debug elements must subclass PlatformObject for adapter mechanism to 
-  work. </p>
-<h3>Contextual launch from top level Run/Debug menus</h3>
+<p>In releases 3.0 and prior, calling <code>DebugPlugin.fireDebugEventSet(DebugEvent[])</code> 
+  resulted in debug events being fired synchronously in the calling thread. In 
+  3.1, debug event set listeners are notified of debug events asynchronously in 
+  a different thread than the event is reported in.</p>
+<h3>Debug Actions and Content in Background Jobs</h3>
+<p>In 3.1, many actions that call debug element APIs (like &quot;stepOver&quot;), 
+  now create jobs to communicate with debug elements in background threads. This 
+  avoids blocking the UI in the case that a debug element method requires communication 
+  with a debug target that can block, hang, or timeout. Similarly, many of the 
+  debug views populate their content using background jobs to avoid blocking the 
+  UI thread. The net difference is that in 3.1, more than one thread might be 
+  accessing a debug model's APIs where previously only the UI thread was.</p>
+<h3>Contextual Launch from Top Level Run/Debug Menus</h3>
 <p>The top level menus no longer support the perspective element, and launch shortcuts 
-  must specify a &quot;contextualLaunch&quot; element to appear in the Run/Debug 
-  cascade menus.</p>
+  must specify a &quot;<code>contextualLaunch</code>&quot; element to appear in 
+  the Run/Debug cascade menus.</p>
 <p>&nbsp;</p>
 </body>
 </html>
