@@ -105,12 +105,7 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 					Path canonicalPath = new Path(osFile.getCanonicalPath());
 					String[] canonicalSegments = canonicalPath.segments();
 					IPath workspacePath = new Path(""); //$NON-NLS-1$
-                    
-					String device = canonicalPath.getDevice();
-                    workspacePath = workspacePath.setDevice(device);
-                    if (device == null) {
-                        workspacePath = workspacePath.makeAbsolute();
-                    }
+					workspacePath = workspacePath.setDevice(canonicalPath.getDevice());
 					for (int i = 0; i < canonicalSegments.length; i++) {
 						String segment = canonicalSegments[i];
 						if (i < fRootSegments.length) {
