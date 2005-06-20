@@ -31,6 +31,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarElement;
@@ -550,7 +551,7 @@ public class IntroURL implements IIntroURL {
         IntroURLAction command = ExtensionPointManager.getInst()
             .getSharedConfigExtensionsManager().getCommand(action);
         if (command == null) {
-            String message = "";
+            String message = Messages.IntroURL_badCommand;
             DialogUtil.displayInfoMessage(null, message,
                 new Object[] { action });
             return false;
