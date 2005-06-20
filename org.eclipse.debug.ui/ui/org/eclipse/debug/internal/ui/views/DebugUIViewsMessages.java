@@ -20,16 +20,6 @@ public class DebugUIViewsMessages extends NLS {
 	public static String find_replace_action_image;
 	public static String find_replace_action_description;
 
-	public static String ConsoleView__Copy_Ctrl_C_6;
-	public static String ConsoleView__Paste_Ctrl_V_9;
-	public static String ConsoleView_Copy_7;
-	public static String ConsoleView_Cu_t_Ctrl_X_3;
-	public static String ConsoleView_Cut_4;
-	public static String ConsoleView_Paste_10;
-	public static String ConsoleView_Paste_Clipboard_Text_11;
-	public static String ConsoleView_Select__All_Ctrl_A_12;
-	public static String ConsoleView_Select_All;
-
 	public static String LaunchView_Error_1;
 	public static String LaunchViewer_0;
 	public static String LaunchViewer_1;
