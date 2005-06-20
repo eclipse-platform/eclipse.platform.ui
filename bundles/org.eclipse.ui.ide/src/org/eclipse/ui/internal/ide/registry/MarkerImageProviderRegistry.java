@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.registry;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -17,7 +18,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -170,7 +170,12 @@ public class MarkerImageProviderRegistry {
      * Returns the image descriptor with the given relative path.
      */
     ImageDescriptor getImageDescriptor(Descriptor desc) {
-       URL url = Platform.find(desc.pluginBundle, new Path(desc.imagePath));
-       return ImageDescriptor.createFromURL(url);
+        try {
+            URL installURL = desc.pluginBundle.getEntry("/"); //$NON-NLS-1$
+            URL url = new URL(installURL, desc.imagePath);
+            return ImageDescriptor.createFromURL(url);
+        } catch (MalformedURLException e) {
+            return null;
+        }
     }
 }
