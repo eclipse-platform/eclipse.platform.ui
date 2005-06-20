@@ -34,7 +34,7 @@
 <h3>Process Console Enhancements</h3>
 <p>The debug console has been enhanced to allow output to be multiplexed between 
   the console and/or a file. As well, the encoding used to translate output to 
-  characters is now specifiable. All of these options are available to the user 
+  characters can now be specified. All of these options are available to the user 
   on the &quot;Common&quot; launch configuration tab. As well, the options are 
   available programmatically as launch configuration attributes. The following 
   attributes have been added to <code>org.eclipse.debug.ui.IDebugUIConstants</code>.</p>
@@ -49,11 +49,24 @@
   public API in 3.1. See the new extension point <code>memoryRenderings</code>, 
   and the new API package <code>org.eclipse.debug.ui.memory</code> for more information.</p>
 <h3>Parse Arguments</h3>
-<p>DebugPlugin.parseArguments(..)</p>
+<p>An convenience API method has been added to <code>DebugPlugin</code> to separate 
+  arguments in a single string into an array of arguments that can be passed to 
+  the command line for execution. See <code>DebugPlugin.parseArguments(String)</code>.</p>
 <h3>Run To Line Handler</h3>
+<p>Many debuggers implement &quot;run to line&quot; functionality by creating 
+  a breakpoint at the line a user has chosen to &quot;run to&quot;, and then resuming 
+  execution until that breakpoint is hit. A new API class, <code>RunToLineHandler</code>, 
+  has been created to simplify the task. The handler manages the &quot;skip breakpoints 
+  while performing run to line&quot; user preference as well canceling the operation 
+  if another breakpoint is hit before the &quot;run to line&quot; operation completes.</p>
 <h3>Run To Line Action Delegate</h3>
-<p>can also be contributed to a view</p>
+<p>The <code>RunToLineActionDelegate</code> introduced in 3.0 can now also be 
+  contributed to a view (in 3.0 it could only be contributed to an editor). The 
+  action additionally implements <code>IViewActionDelegate</code>.</p>
 <h3>Variable Value Editors</h3>
+<p>A new extension point, <code>variableValueEditors</code>, allows debuggers 
+  to contribute custom editors for modifying a variable's value selected in the 
+  Variables view.</p>
 <h3>Launch Shortcut Keybindings</h3>
 <p>To register a key-binding for a launch shortcut, define a command with an <font face="Courier New, Courier, mono">id 
   </font>the same as the launch shortcut <font face="Courier New, Courier, mono">id</font>, 
@@ -65,16 +78,54 @@
   will be used as the target for the launch shortcut's launch method. The shortcut 
   is only invoked if the shortcut is enabled for the selection or editor.</p>
 <h3>Source Lookup/Display Facility</h3>
+<p>API methods have been added to <code>DebugUITools</code> to facilitate source 
+  lookup and display. See the methods <code>lookupSource(Object, ISourceLocator)</code> 
+  and <code>displaySource(ISourceLookupResult, IWorkbenchPage)</code>. When a 
+  source lookup result for a stack frame is displayed, the open editor is also 
+  annotated with an appropriate instruction pointer.</p>
 <h3>Watchpoints (IWatchpoint) and images</h3>
+<p>As watchpoints are common to many debug architectures, the notion of an IWatchpoint 
+  has been added to the debug model. A watch point is a breakpoint that suspends 
+  execution when an associated variable is read and/or written. As well, default 
+  images for rendering watchpoints have been added to the debug platform.</p>
 <h3>Colors and Fonts for debug elements</h3>
+<p>In 3.1, debug model presentations (<code>IDebugModelPresentation</code>) may 
+  optionally implement <code>IColorProvider </code>and <code>IFontProvider </code>to 
+  override default fonts and colors for debug elements.</p>
 <h3>Inserting elements into debug view/hierarchy</h3>
+<p>The Debug view allows for debug models to insert arbitrary elements into the 
+  debug model element hierarchy. For example, the Java debugger now displays lock 
+  information directly in the view. To override the default presentation in the 
+  view, a debugger must provide an <code>IWorkbenchAdapter</code> or <code>IDeferredWorkbenchAdapter 
+  </code>for the relevant element(s). The debug platform provides default adapters 
+  for the standard debug elements.</p>
+<p>Debug elements were always required to implement <code>IAdaptable</code>, and 
+  now must be subclasses of <code>PlatformObject</code> in order for workbench 
+  adapters to be properly registered and retrieved for debug elements.</p>
 <h3>Abstract Debug Element</h3>
+<p>An abstract implementation of a debug element is provided in 3.1 - <code>DebugElement</code>. 
+  Clients implementing debug models may choose to subclass this class when implementing 
+  debug models. The class provides convenience methods for firing debug events, 
+  reporting exceptions, and retrieving adapters.</p>
 <h3>Drop to Frame Platform Action/Interface</h3>
+<p>The debug platform provides a &quot;drop to frame&quot; action and corresponding 
+  capability interface (<code>IDropToFrame</code>). Debug elements supporting 
+  the capability should implement this new interface to share the global action.</p>
 <h3>Launch from context menu in editor</h3>
-<p>Editor input must have an ILaunchable adapter for this to work.</p>
+<p>Launching from the context menu (for example, &quot;Run As &gt; Java Application&quot;), 
+  is now available in editors (In 3.1, this was only available in the package 
+  explorer and resource navigator). To leverage this feature, the editor input 
+  associated with a executable file must have an <code>ILaunchable</code> adapter 
+  registered for it.</p>
 <h3>Support for hidden launch (unregistered)</h3>
-<p>new launch method and ILaunchManager.isRegistered(..)</p>
-<h3>Reuseable breakpoint ruler toggle actions</h3>
+<p>The launch framework allows for a launch to be performed without registering 
+  a launch object with the launch manager. An unregistered launch does not appear 
+  in the Debug view. A new launch method has been added to <code>ILaunchConfiguration</code>, 
+  accepting a boolean argument determining whether the launch should be registered 
+  (<code>launch(String mode, IProgressMonitor monitor, boolean build, boolean 
+  register)</code>), and a new method has been added to <code>ILaunchManager</code> 
+  to determine if a launch is registered (<code>isRegistered(ILaunch launch)</code>).</p>
+<h3>Reusable breakpoint ruler toggle actions</h3>
 <h3>Environment variables case preservation</h3>
 <h3>Memory block extensions and Memory View</h3>
 <h3>IStreamsProxy2</h3>
@@ -91,7 +142,7 @@
 <h3>Contextual launch from top level Run/Debug menus</h3>
 <p>The top level menus no longer support the perspective element, and launch shortcuts 
   must specify a &quot;contextualLaunch&quot; element to appear in the Run/Debug 
-  casecade menus.</p>
+  cascade menus.</p>
 <p>&nbsp;</p>
 </body>
 </html>
