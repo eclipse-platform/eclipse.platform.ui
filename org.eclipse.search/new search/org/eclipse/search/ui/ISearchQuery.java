@@ -34,7 +34,7 @@ public interface ISearchQuery {
 	 * @param monitor the progress monitor to be used
 	 * 
 	 * @return the status after completion of the search job. 
-	 * @throws OperationCanceledException Thrown when the search query has been cancelled.
+	 * @throws OperationCanceledException Thrown when the search query has been canceled.
 	 */
 	IStatus run(IProgressMonitor monitor) throws OperationCanceledException;
 	/**

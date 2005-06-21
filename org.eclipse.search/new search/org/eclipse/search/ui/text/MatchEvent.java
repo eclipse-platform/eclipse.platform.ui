@@ -13,7 +13,7 @@ import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.SearchResultEvent;
 /**
  * An event object describing addition and removal of matches. Events of this
- * class are sent when <code>Match</code> es are added or removed from an
+ * class are sent when <code>Match</code>es are added or removed from an
  * <code>AbstractTextSearchResult</code>.
  * <p>
  * Clients may instantiate or subclass this class.

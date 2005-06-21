@@ -34,7 +34,7 @@ public interface IEditorMatchAdapter {
 	 * 
 	 * @param match The match
 	 * @param editor The editor that possibly contains the matches element
-	 * @return wether the given match should be displayed in the editor
+	 * @return whether the given match should be displayed in the editor
 	 */
 	public abstract boolean isShownInEditor(Match match, IEditorPart editor);
 	/**

@@ -103,7 +103,7 @@ public interface ISearchResultView extends IViewPart {
 	 * @param	gotoAction			the action used by the view to go to a marker
 	 * @param	groupByKeyComputer	the computer used by the view to compute the key for a marker
 	 * @param	operation			the runnable used by the view to repeat the search
-	 * @deprecated	As of build  > 20011107, replaced by the new version with additonal parameter
+	 * @deprecated	As of build  > 20011107, replaced by the new version with additional parameter
 	 */
 	public void searchStarted(
 				String					pageId,

@@ -361,7 +361,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * locations will be tracked and the current match range will be passed into
 	 * this method.
 	 * If the <code>activate</code> parameter is <code>true</code> the opened editor
-	 * shoud have be activated. Otherwise the focus should not be changed.
+	 * should have be activated. Otherwise the focus should not be changed.
 	 * 
 	 * @param match
 	 *            the match to show
@@ -992,7 +992,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return fViewPart;
 	}
 
-	// multithreaded update handling.
+	// multi-threaded update handling.
 	private synchronized void handleSearchResultsChanged(final SearchResultEvent e) {
 		if (e instanceof MatchEvent) {
 			MatchEvent me = (MatchEvent) e;

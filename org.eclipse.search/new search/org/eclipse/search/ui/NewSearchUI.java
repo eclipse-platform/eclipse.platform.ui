@@ -105,7 +105,7 @@ public class NewSearchUI {
 	 * @param query
 	 *            the query to execute
 	 * @return a status indicating whether the query ran correctly, including {@link IStatus#CANCEL} to signal
-	 *            that the query was cancelled.
+	 *            that the query was canceled.
 	 */
 	public static IStatus runQueryInForeground(IRunnableContext context, ISearchQuery query) {
 		return InternalSearchUI.getInstance().runSearchInForeground(context, query);
