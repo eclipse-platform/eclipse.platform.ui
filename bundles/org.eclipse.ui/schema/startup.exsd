@@ -80,10 +80,11 @@ Since release 3.0.
       <documentation>
          Following is an example of a startup extension: 
 &lt;pre&gt;
-&lt;p&gt;
-   &lt;extension point=&quot;org.eclipse.ui.startup&quot;/&gt; 
-&lt;/p&gt;
+   &lt;extension point=&quot;org.eclipse.ui.startup&quot;&gt;
+     &lt;startup class=&quot;org.eclipse.example.StartupClass&quot;/&gt;
+   &lt;/extension&gt;
 &lt;/pre&gt;
+
       </documentation>
    </annotation>
 
