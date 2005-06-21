@@ -17,7 +17,7 @@
   working sets and resource based working sets (as well, it supports nested groupings). 
   The <code>breakpointOrganizers</code> extension point allows for other grouping 
   strategies to be contributed to the debug platform.</p>
-<p>An new, optional, <code>name</code> attribute has been added to the breakpoints 
+<p>A new, optional, <code>name</code> attribute has been added to the breakpoints 
   extension point to provide a type name for breakpoints. This name appears as 
   the group label, when the user chooses to group breakpoints by type. If this 
   attribute is not specified on a breakpoint extension, the breakpoints are considered 
@@ -49,7 +49,7 @@
   public API in 3.1. See the new extension point <code>memoryRenderings</code>, 
   and the new API package <code>org.eclipse.debug.ui.memory</code> for more information.</p>
 <h3>Parse Arguments</h3>
-<p>An convenience API method has been added to <code>DebugPlugin</code> to separate 
+<p>A convenience API method has been added to <code>DebugPlugin</code> to separate 
   arguments in a single string into an array of arguments that can be passed to 
   the command line for execution. See <code>DebugPlugin.parseArguments(String)</code>.</p>
 <h3>Run To Line Handler</h3>
@@ -137,7 +137,7 @@
   variables defined in the OS preserving case. This is important on the WIN32 
   operating system. Although WIN32 is case insensitive, depending on what you 
   intend to do with the environment, the lack of normalization may or may not 
-  be problems. This method <code>getNativeEnvironmentCasePreserved()</code> returns 
+  cause problems. This method <code>getNativeEnvironmentCasePreserved()</code> returns 
   mixed-case keys using the variable names recorded by the OS. Use <code>getNativeEnvironment()</code> 
   instead to get a WIN32 system environment where all keys have been normalized 
   to uppercase.</p>
