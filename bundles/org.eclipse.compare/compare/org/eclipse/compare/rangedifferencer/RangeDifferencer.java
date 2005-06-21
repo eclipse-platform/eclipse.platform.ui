@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public final class RangeDifferencer {
 	private static final RangeDifference[] EMPTY_RESULT= new RangeDifference[0];
 	
 	/* (non Javadoc)
-	 * Non instantiatiable!
+	 * Cannot be instantiated!
 	 */
 	private RangeDifferencer() {
 		// nothing to do
@@ -501,7 +501,7 @@ public final class RangeDifferencer {
 	}
 
 	/*
-	 * Tests whether <code>right</code> and <code>left</left> changed in the same way
+	 * Tests whether <code>right</code> and <code>left</code> changed in the same way
 	 */
 	private static boolean rangeSpansEqual(IRangeComparator right, int rightStart, int rightLen, IRangeComparator left, int leftStart, int leftLen) {
 		if (rightLen == leftLen) {

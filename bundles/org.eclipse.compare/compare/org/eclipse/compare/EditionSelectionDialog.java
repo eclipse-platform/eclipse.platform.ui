@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,8 +199,8 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 *	width       Integer       initial width of dialog
 	 *	height      Integer       initial height of dialog
 	 *	treeTitleFormat   MessageFormat pane title for edition tree; arg 0 is the target
-	 *	dateIcon    String        icon for node in edition tree; path relative to plugin
-	 *	timeIcon    String        icon for leaf in edition tree; path relative to plugin
+	 *	dateIcon    String        icon for node in edition tree; path relative to plug-in
+	 *	timeIcon    String        icon for leaf in edition tree; path relative to plug-in
 	 *	todayFormat MessageFormat format string if date is todays date; arg 0 is date
 	 *	yesterdayFormat MessageFormat format string if date is yesterdays date; arg 0 is date
 	 *	dayFormat   MessageFormat format string if date is any other date; arg 0 is date

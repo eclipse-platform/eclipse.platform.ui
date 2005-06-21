@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,7 +171,7 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 				sv.addOpenListener(fOpenHandler);
 			}
 			
-			if (oldEmpty != newEmpty) {	// relayout my container
+			if (oldEmpty != newEmpty) {	// re-layout my container
 				Composite parent= getParent();
 				if (parent instanceof Splitter)
 					((Splitter)parent).setVisible(this, fControlVisibility ? !newEmpty : true);

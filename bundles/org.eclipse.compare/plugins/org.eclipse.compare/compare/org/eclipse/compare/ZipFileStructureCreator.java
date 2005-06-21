@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -184,7 +184,7 @@ public class ZipFileStructureCreator implements IStructureCreator {
 	/**
 	 * Create a new ZipFileStructureCreator with the given title.
 	 * The title is returned by the method <code>getName()</code>.
-	 * @param title the title of this strcuture creator
+	 * @param title the title of this structure creator
 	 */
 	public ZipFileStructureCreator(String title) {
 		fTitle= title;
@@ -297,7 +297,7 @@ public class ZipFileStructureCreator implements IStructureCreator {
 	/**
 	 * Returns <code>false</code> since this <code>IStructureCreator</code>
 	 * cannot rewrite the diff tree in order to fold certain combinations of
-	 * additons and deletions.
+	 * additions and deletions.
 	 * <p>
 	 * Note: this method is for internal use only. Clients should not call this method. 
 	 * @return <code>false</code>
@@ -309,7 +309,7 @@ public class ZipFileStructureCreator implements IStructureCreator {
 	/**
 	 * Empty implementation since this <code>IStructureCreator</code>
 	 * cannot rewrite the diff tree in order to fold certain combinations of
-	 * additons and deletions.
+	 * additions and deletions.
 	 * <p>
 	 * Note: this method is for internal use only. Clients should not call this method. 
 	 * @param differencer

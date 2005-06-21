@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -433,7 +433,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * The <code>ContentMergeViewer</code> implementation of this 
 	 * <code>ContentViewer</code> method
 	 * checks to ensure that the content provider is an <code>IMergeViewerContentProvider</code>.
-	 * @param contentProvider the contentprovider to set. Must implement IMergeViewerContentProvider. 
+	 * @param contentProvider the content provider to set. Must implement IMergeViewerContentProvider. 
 	 */
 	public void setContentProvider(IContentProvider contentProvider) {
 		Assert.isTrue(contentProvider instanceof IMergeViewerContentProvider);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,7 +129,7 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 	}
 	
 	/**
-	 * Sends out notification that a change has occured on the <code>ICompareInput</code>.
+	 * Sends out notification that a change has occurred on the <code>ICompareInput</code>.
 	 */
 	protected void fireChange() {
 		if (fListener != null) {

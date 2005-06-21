@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 
 /**
  * A compare operation which can present its results in a special editor.
- * Running the compare operation and presentating the results in a compare editor
+ * Running the compare operation and presenting the results in a compare editor
  * are combined in one class because it allows a client to keep the implementation
  * all in one place while separating it from the innards of a specific UI implementation of compare/merge.
  * <p> 
@@ -713,7 +713,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 
 	 * Returns <code>true</code> if this input has unsaved changes,
 	 * that is if <code>setDirty(true)</code> has been called.
-	 * Subclasses don't have to override if the functionality provided by <doce>setDirty</code>
+	 * Subclasses don't have to override if the functionality provided by <code>setDirty</code>
 	 * is sufficient.
 	 *
 	 * @return <code>true</code> if there are changes that need to be saved

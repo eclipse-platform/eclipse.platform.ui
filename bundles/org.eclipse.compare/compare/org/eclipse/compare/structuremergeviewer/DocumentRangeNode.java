@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -163,7 +163,7 @@ public class DocumentRangeNode
 	 * text without breaking the syntax of the document.
 	 * <p>
 	 * E.g. when parsing a Java document the "append position" of a <code>DocumentRangeNode</code>
-	 * representating a Java class could be the character position just before the closing bracket.
+	 * representing a Java class could be the character position just before the closing bracket.
 	 * Inserting the text of a new method there would not disturb the syntax of the class.
 	 *
 	 * @param pos the character position within the underlying document where text can be legally inserted
@@ -226,7 +226,7 @@ public class DocumentRangeNode
 
 	/**
 	 * Implementation based on <code>getID</code>.
-	 * @return a hashcode for this object.
+	 * @return a hash code for this object.
 	 */
 	public int hashCode() {
 		return fID.hashCode();

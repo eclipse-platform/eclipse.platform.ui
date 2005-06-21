@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1106,7 +1106,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	/**
 	 * A workaround for bug #65205.
 	 * On MacOS X a Display.update() is required to flush pending paint requests after
-	 * programmatical scolling. 
+	 * programmatically scrolling. 
 	 */
 	private void workaround65205() {
 		if (fIsCarbon && fComposite != null && !fComposite.isDisposed())
@@ -1792,7 +1792,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	/*
-	 * Called whenver one of the documents changes.
+	 * Called whenever one of the documents changes.
 	 * Sets the dirty state of this viewer and updates the lines.
 	 * Implements IDocumentListener.
 	 */
@@ -1810,8 +1810,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 		
 	/*
-	 * This method is called if a range of text on one side is copied into an empty subdocument
-	 * on the other side. The method returns the position where the subdocument is placed into the base document.
+	 * This method is called if a range of text on one side is copied into an empty sub-document
+	 * on the other side. The method returns the position where the sub-document is placed into the base document.
 	 * This default implementation determines the position by using the text range differencer.
 	 * However this position is not always optimal for specific types of text.
 	 * So subclasses (which are aware of the type of text they are dealing with) 
@@ -2060,7 +2060,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		if (oldDoc != null) {
 			tp.rememberDocument(null);
-			// deinstall old positions
+			// de-install old positions
 			if (fPositionUpdater != null)
 				oldDoc.removePositionUpdater(fPositionUpdater);
 			try {
@@ -2330,7 +2330,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					System.gc();
 					throw new InvocationTargetException(ex);
 				}
-				if (monitor.isCanceled())	{ // cancelled
+				if (monitor.isCanceled())	{ // canceled
 					throw new InterruptedException();
 				}
 				monitor.done();
@@ -2476,7 +2476,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					System.gc();
 					throw new InvocationTargetException(ex);
 				}
-				if (monitor.isCanceled())	{ // cancelled
+				if (monitor.isCanceled())	{ // canceled
 					throw new InterruptedException();
 				}
 				monitor.done();
@@ -3270,7 +3270,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		CompareConfiguration cc= getCompareConfiguration();
 		if (cc == null)
 			return false;
-		// we only enable the new resolve ui if exactly one side is editable
+		// we only enable the new resolve UI if exactly one side is editable
 		boolean l= cc.isLeftEditable();
 		boolean r= cc.isRightEditable();
 		//return (l && !r) || (r && !l);
@@ -4022,7 +4022,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	/*
 	 * Copy the contents of the given diff from one side to the other but
 	 * doesn't reveal anything.
-	 * Returns true if copy was succesful.
+	 * Returns true if copy was successful.
 	 */
 	private boolean copy(Diff diff, boolean leftToRight) {
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -475,7 +475,7 @@ public class Differencer {
 	/*
 	 * Tries to return an InputStream for the given object.
 	 * Returns <code>null</code> if the object not an IStreamContentAccessor
-	 * or an error occured.
+	 * or an error occurred.
 	 */
 	private InputStream getStream(Object o) {
 		if (o instanceof IStreamContentAccessor) {

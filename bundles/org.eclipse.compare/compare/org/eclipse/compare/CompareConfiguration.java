@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -133,7 +133,7 @@ public class CompareConfiguration {
 	/**
 	 * Creates a new configuration with editable left and right sides,
 	 * suitable default labels, and no images.
-	 * This configuration uses the preference store of the Compare plugin
+	 * This configuration uses the preference store of the Compare plug-in
 	 * (<code>CompareUIPlugin.getDefault().getPreferenceStore()</code>).
 	 */
 	public CompareConfiguration() {

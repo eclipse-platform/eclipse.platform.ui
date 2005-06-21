@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -323,7 +323,7 @@ public final class CompareUI {
 	 * given type this method does nothing.
 	 * <p>
 	 * Note: this method is for internal use only. Clients should not call this method. 
-	 * @param type the type name for which all synonymes are removed.
+	 * @param type the type name for which all synonyms are removed.
 	 * @since 2.0
 	 */
 	public static void removeAllStructureViewerAliases(String type) {
