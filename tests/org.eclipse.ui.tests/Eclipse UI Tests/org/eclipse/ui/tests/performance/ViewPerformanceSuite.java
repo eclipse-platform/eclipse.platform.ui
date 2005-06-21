@@ -29,6 +29,8 @@ public class ViewPerformanceSuite extends TestSuite {
 	public static final String RESOURCE_NAVIGATOR = "org.eclipse.ui.views.ResourceNavigator";
 
 	public static final String BASIC_PATH = "org.eclipse.ui";
+	
+	public static final String VIEWS_PATTERN = "org.eclipse.ui.views";
 
 	// public static final String [] VIEW_IDS = {BASIC_VIEW,
 	// IPageLayout.ID_RES_NAV, MockViewPart.ID};
@@ -91,10 +93,10 @@ public class ViewPerformanceSuite extends TestSuite {
 
 			for (int j = 0; j < categoryPath.length; j++) {
 				// Only test basic views
-				if (categoryPath[j].equals(BASIC_PATH)) {
-					result.add(descriptor.getId());
-					continue;
-				}
+				if (categoryPath[j].equals(BASIC_PATH)){
+					if(descriptor.getId().indexOf(VIEWS_PATTERN) >= 0) {
+						result.add(descriptor.getId());
+				}}
 			}
 
 		}
