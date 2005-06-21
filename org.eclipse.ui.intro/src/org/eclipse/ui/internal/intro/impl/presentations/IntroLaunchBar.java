@@ -74,6 +74,9 @@ public class IntroLaunchBar implements IWindowTrim {
     protected CloseButton closeButton;
 
     protected Image handleImage;
+    
+    private static final int HANDLE_MARGIN = 2;
+    private static final int HANDLE_GAP = 5;
 
     // private CoolBar coolBar;
 
@@ -213,19 +216,26 @@ public class IntroLaunchBar implements IWindowTrim {
                     width = Math.max(width, csize.x);
                 height = tsize.y;
                 if (ibounds != null) {
-                    height += ibounds.height;
+                    height += ibounds.height + 2*HANDLE_MARGIN;
                 }
-                if (csize != null)
+                if (csize != null) {
                     height += csize.y + CLOSE_SPACING;
+                    if (ibounds!=null)
+                        height += HANDLE_GAP;
+                }
+                
             } else {
                 height = tsize.y;
                 if (csize != null)
                     height = Math.max(height, csize.y);
                 width = tsize.x;
                 if (ibounds != null)
-                    width += ibounds.width;
-                if (csize != null)
+                    width += ibounds.width + 2*HANDLE_MARGIN;
+                if (csize != null) {
                     width += csize.x + CLOSE_SPACING;
+                    if (ibounds!=null)
+                        width += HANDLE_GAP;
+                }
             }
             if (vertical) {
                 width += marginWidth;
@@ -239,8 +249,8 @@ public class IntroLaunchBar implements IWindowTrim {
 
         protected void layout(Composite composite, boolean changed) {
             boolean vertical = (orientation & SWT.VERTICAL) != 0;
-            int marginWidth = vertical | isPlain() ? 1 : simple ? 3 : 7;
-            int marginHeight = !vertical | isPlain() ? 1 : simple ? 3 : 7;
+            int marginWidth = vertical | isPlain() ? 1 : simple ? 4 : 7;
+            int marginHeight = !vertical | isPlain() ? 1 : simple ? 4 : 7;
             Point csize = null;
             Rectangle ibounds = handleImage != null ? handleImage.getBounds()
                     : null;
@@ -256,31 +266,38 @@ public class IntroLaunchBar implements IWindowTrim {
             int y = carea.y + marginHeight;
 
             if (vertical) {
-                if (csize != null) {
-                    closeButton.setBounds(carea.x + carea.width - marginWidth
-                            - CLOSE_SPACING - csize.x, y, csize.x, csize.y);
-                    y += csize.y + CLOSE_SPACING;
-                }
                 if (handle != null && ibounds != null) {
+                    y += HANDLE_MARGIN;
                     handle.setBounds(x, y, carea.width - marginWidth,
-                        ibounds.height);
+                        ibounds.height+2*HANDLE_MARGIN);
                     y += ibounds.height;
+                }
+                if (csize != null) {
+                    if (handle!=null && ibounds != null)
+                        y+= HANDLE_GAP;
+                    int cx = carea.x+ carea.width/2-csize.x/2 +1;
+                    closeButton.setBounds(cx, y, csize.x, csize.y);
+                    y += csize.y + CLOSE_SPACING;
                 }
                 toolBarManager.getControl().setBounds(x, y,
                 // coolBar.setBounds(x, y,
                     carea.width - marginWidth, tsize.y);
             } else {
+                if (handle != null && ibounds != null) {
+                    x += HANDLE_MARGIN;
+                    handle.setBounds(x, y, ibounds.width+2*HANDLE_MARGIN, 
+                            carea.height-marginHeight);
+                    x += ibounds.width;
+                }
                 if (csize != null) {
-                    closeButton.setBounds(x, y + CLOSE_SPACING, csize.x,
+                    if (handle!=null && ibounds!=null)
+                        x+= HANDLE_GAP;
+                    int cy = carea.y+carea.height/2 - csize.y/2 +1;
+                    closeButton.setBounds(x, cy, csize.x,
                         csize.y);
                     x += csize.x + CLOSE_SPACING;
                 }
-                if (handle != null && ibounds != null) {
-                    handle.setBounds(x, y, ibounds.width, carea.height
-                            - marginHeight);
-                    x += ibounds.width;
-                }
-                toolBarManager.getControl().setBounds(x, y, tsize.x,
+                 toolBarManager.getControl().setBounds(x, y, tsize.x,
                 // coolBar.setBounds(x, y, tsize.x,
                     carea.height - marginHeight);
             }
@@ -434,7 +451,8 @@ public class IntroLaunchBar implements IWindowTrim {
             color = e.display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
         }
         gc.setForeground(color);
-        gc.setBackground(bg);
+        if (bg!=null)
+            gc.setBackground(bg);
         if (isPlain()) {
             Point size = container.getSize();
             gc.fillRectangle(0, 0, size.x, size.y);
@@ -517,12 +535,12 @@ public class IntroLaunchBar implements IWindowTrim {
 
         if (handleImage != null) {
             Rectangle ibounds = handleImage.getBounds();
-            int x = location == SWT.RIGHT ? (size.x - ibounds.width)
-                    : (location == SWT.LEFT ? 1 : 0);
-            int y = location == SWT.BOTTOM ? size.y - ibounds.height : 0;
+            int x = ((size.x - 2*HANDLE_MARGIN) % ibounds.width) / 2 + HANDLE_MARGIN;
+            int y = ((size.y - 2*HANDLE_MARGIN) % ibounds.height)/ 2 + HANDLE_MARGIN;
 
             for (;;) {
                 e.gc.drawImage(handleImage, x, y);
+                /*
                 if (location == SWT.LEFT) {
                     x += ibounds.width;
                     if (x + ibounds.width >= size.x)
@@ -534,6 +552,17 @@ public class IntroLaunchBar implements IWindowTrim {
                 } else if (location == SWT.BOTTOM) {
                     y -= ibounds.height;
                     if (y <= 0)
+                        break;
+                }
+                */
+                if (orientation==SWT.VERTICAL) {
+                    x+= ibounds.width;
+                if (x+ibounds.width>size.x-HANDLE_MARGIN)
+                    break;
+                }
+                else {
+                    y+= ibounds.height;
+                    if (y + ibounds.height > size.y - HANDLE_MARGIN)
                         break;
                 }
             }
