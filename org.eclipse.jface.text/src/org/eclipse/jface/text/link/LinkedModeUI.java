@@ -371,6 +371,9 @@ public class LinkedModeUI {
 
 	}
 
+	/**
+	 * @since 3.1
+	 */
 	private class DocumentListener implements IDocumentListener {
 		/*
 		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
@@ -558,7 +561,10 @@ public class LinkedModeUI {
 
 	/** The current viewer. */
 	private LinkedModeUITarget fCurrentTarget;
-	/** The manager of the linked positions we provide a UI for. */
+	/**
+	 * The manager of the linked positions we provide a UI for.
+	 * @since 3.1
+	 */
 	private LinkedModeModel fModel;
 	/** The set of viewers we manage. */
 	private LinkedModeUITarget[] fTargets;
@@ -574,7 +580,10 @@ public class LinkedModeUI {
 	private MySelectionListener fSelectionListener= new MySelectionListener();
 	/** The content assist listener. */
 	private ProposalListener fProposalListener= new ProposalListener();
-	/** The document listener. */
+	/**
+	 * The document listener.
+	 * @since 3.1
+	 */
 	private IDocumentListener fDocumentListener= new DocumentListener();
 
 	/** The last caret position, used by fCaretListener. */
@@ -1021,6 +1030,7 @@ public class LinkedModeUI {
 	 * @param document the document
 	 * @return all possible content types of <code>document</code>
 	 * @throws BadPartitioningException
+	 * @since 3.1
 	 */
 	private String[] getContentTypes(IDocument document) throws BadPartitioningException {
 		if (document instanceof IDocumentExtension3) {

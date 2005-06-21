@@ -70,6 +70,7 @@ public final class ContextInformation implements IContextInformation {
 
 	/*
 	 * @see java.lang.Object#hashCode()
+	 * @since 3.1
 	 */
 	public int hashCode() {
 	 	int low= fContextDisplayString != null ? fContextDisplayString.hashCode() : 0;

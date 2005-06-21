@@ -63,6 +63,9 @@ public class TemplateReaderWriter {
 	private static final String CONTEXT_ATTRIBUTE= "context"; //$NON-NLS-1$
 	private static final String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
 	private static final String DELETED_ATTRIBUTE= "deleted"; //$NON-NLS-1$
+	/**
+	 * @since 3.1
+	 */
 	private static final String AUTO_INSERTABLE_ATTRIBUTE= "autoinsert"; //$NON-NLS-1$
 
 	/**

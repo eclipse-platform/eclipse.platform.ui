@@ -59,6 +59,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 */
 	class InternalListener implements IViewportListener, ITextListener {
 
+		/**
+		 * @since 3.1
+		 */
 		private boolean fCachedRedrawState= true;
 
 		/*

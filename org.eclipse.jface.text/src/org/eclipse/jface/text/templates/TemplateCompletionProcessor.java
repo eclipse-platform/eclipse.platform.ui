@@ -99,6 +99,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * @return a new <code>ICompletionProposal</code> for
 	 *         <code>template</code>
 	 * @deprecated use the version specifying <code>IRegion</code> as third parameter
+	 * @since 3.1
 	 */
 	protected ICompletionProposal createProposal(Template template, TemplateContext context, Region region, int relevance) {
 		return createProposal(template, context, (IRegion) region, relevance);

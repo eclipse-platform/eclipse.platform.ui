@@ -38,7 +38,10 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 	private ScrollBar fScrollbar;
 	/** Indicates whether the scroll bar thumb has been grabbed. */
 	private boolean fScrollbarClicked= false;
-	/** The shell on which some listeners are registered. */
+	/**
+	 * The shell on which some listeners are registered.
+	 * @since 3.1
+	 */
 	private Shell fShell;
 
 	/**

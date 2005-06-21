@@ -62,7 +62,10 @@ import org.eclipse.jface.text.TextUtilities;
  * @see org.eclipse.jface.text.contentassist.AdditionalInfoController
  */
 class CompletionProposalPopup implements IContentAssistListener {
-	/** Set to <code>true</code> to use a Table with SWT.VIRTUAL. */
+	/**
+	 * Set to <code>true</code> to use a Table with SWT.VIRTUAL.
+	 * @since 3.1
+	 */
 	private static final boolean USE_VIRTUAL= !Platform.WS_MOTIF.equals(Platform.getWS());
 
 	private final class ProposalSelectionListener implements KeyListener {
@@ -155,6 +158,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * Set to true by {@link #computeFilteredProposals(int, DocumentEvent)} if
 	 * the returned proposals are a subset of {@link #fFilteredProposals},
 	 * <code>false</code> if not.
+	 * @since 3.1
 	 */
 	private boolean fIsFilteredSubset;
 
@@ -359,6 +363,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());
 	}
 
+	/**
+	 * @since 3.1
+	 */
 	private void handleSetData(Event event) {
 		TableItem item= (TableItem) event.item;
 		int index= fProposalTable.indexOf(item);
@@ -979,6 +986,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @param proposal the single proposal that might be automatically inserted
 	 * @return <code>true</code> if <code>proposal</code> can be inserted automatically,
 	 *         <code>false</code> otherwise
+	 * @since 3.1
 	 */
 	private boolean canAutoInsert(ICompletionProposal proposal) {
 		if (fContentAssistant.isAutoInserting()) {
@@ -1178,6 +1186,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 	}
 
+	/**
+	 * @since 3.1
+	 */
 	private boolean isPrefixCompatible(CharSequence oneSequence, int oneOffset, CharSequence twoSequence, int twoOffset, IDocument document) throws BadLocationException {
 		if (oneSequence == null || twoSequence == null)
 			return true;
@@ -1221,7 +1232,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 *
 	 * @param proposal the proposal to extract the offset from
 	 * @return the proposals completion offset, or <code>fInvocationOffset</code>
-	 * @since 3.0
+	 * @since 3.1
 	 */
 	private int getPrefixCompletionOffset(ICompletionProposal proposal) {
 		if (proposal instanceof ICompletionProposalExtension3)
@@ -1237,7 +1248,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 *
 	 * @param proposal the proposal to extract the text from
 	 * @return the proposals completion text
-	 * @since 3.0
+	 * @since 3.1
 	 */
 	private CharSequence getPrefixCompletion(ICompletionProposal proposal) {
 		CharSequence insertion= null;

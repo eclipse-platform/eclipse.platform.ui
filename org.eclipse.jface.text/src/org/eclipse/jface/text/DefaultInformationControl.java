@@ -66,7 +66,10 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
 	}
 
-	/** Outer border thickness in pixels. */
+	/**
+	 * Outer border thickness in pixels.
+	 * @since 3.1
+	 */
 	private static final int OUTER_BORDER= 1;
 	/**
 	 * Inner border thickness in pixels.

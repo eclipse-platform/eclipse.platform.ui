@@ -529,6 +529,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 		/*
 		 * @see TextCommand#updateCommand
+
 		 */
 
 		protected void updateCommand() {
@@ -874,6 +875,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * Returns whether this undo manager is connected to a text viewer.
 	 *
 	 * @return <code>true</code> if connected, <code>false</code> otherwise
+	 * @since 3.1
 	 */
 	private boolean isConnected() {
 		return fTextViewer != null;

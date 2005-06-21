@@ -605,6 +605,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 
 			/**
 			 * Installs the cue and hover handlers.
+			 *
+			 * @since 3.1
 			 */
 			public void install() {
 				if (fHoverHandler == null) {
@@ -642,6 +644,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 
 			/**
 			 * Uninstalls the cue and hover handlers.
+			 *
+			 * @since 3.1
 			 */
 			public void uninstall() {
 				if (fHoverHandler != null)

@@ -159,6 +159,7 @@ public class SourceViewerConfiguration {
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @param contentType the content type for which the strategies are applicable
 	 * @return the auto edit strategies or <code>null</code> if automatic editing is not to be enabled
+	 * @since 3.1
 	 */
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		return new IAutoEditStrategy[] { getAutoIndentStrategy(sourceViewer, contentType) };

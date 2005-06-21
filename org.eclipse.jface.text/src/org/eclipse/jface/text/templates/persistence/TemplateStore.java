@@ -305,6 +305,7 @@ public class TemplateStore {
 	 *
 	 * @param id the id of the template data
 	 * @return the template data of the template with id <code>id</code> or <code>null</code>
+	 * @since 3.1
 	 */
 	public TemplatePersistenceData getTemplateData(String id) {
 		Assert.isNotNull(id);

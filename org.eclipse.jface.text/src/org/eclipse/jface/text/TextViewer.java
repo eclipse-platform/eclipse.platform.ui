@@ -716,7 +716,10 @@ public class TextViewer extends Viewer implements
 		private Color fScopeHighlightColor;
 		/** The document partitioner remembered in case of a "Replace All". */
 		private Map fRememberedPartitioners;
-		/** The active rewrite session */
+		/**
+		 * The active rewrite session.
+		 * @since 3.1
+		 */
 		private DocumentRewriteSession fRewriteSession;
 
 		/*

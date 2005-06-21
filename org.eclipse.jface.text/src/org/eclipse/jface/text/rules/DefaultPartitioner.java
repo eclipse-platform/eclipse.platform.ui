@@ -119,6 +119,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 	/*
 	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#connect(org.eclipse.jface.text.IDocument, boolean)
+	 * @since 3.1
 	 */
 	public void connect(IDocument document, boolean delayInitialization) {
 		Assert.isNotNull(document);
@@ -685,6 +686,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 	/*
 	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#startRewriteSession(org.eclipse.jface.text.DocumentRewriteSession)
+	 * @since 3.1
 	 */
 	public void startRewriteSession(DocumentRewriteSession session) throws IllegalStateException {
 		if (fActiveRewriteSession != null)
@@ -694,6 +696,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 	/*
 	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#stopRewriteSession(org.eclipse.jface.text.DocumentRewriteSession)
+	 * @since 3.1
 	 */
 	public void stopRewriteSession(DocumentRewriteSession session) {
 		if (fActiveRewriteSession == session)
@@ -702,6 +705,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 	/*
 	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#getActiveRewriteSession()
+	 * @since 3.1
 	 */
 	public DocumentRewriteSession getActiveRewriteSession() {
 		return fActiveRewriteSession;
