@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 public class MockWorkbenchWindowActionDelegate extends MockActionDelegate
-        implements IWorkbenchWindowActionDelegate {
+        implements IWorkbenchWindowActionDelegate, IActionDelegate2 {
     public static MockWorkbenchWindowActionDelegate lastDelegate;
 
     public static String SET_ID = "org.eclipse.ui.tests.api.MockActionSet";
@@ -42,5 +45,13 @@ public class MockWorkbenchWindowActionDelegate extends MockActionDelegate
     public void dispose() {
         callHistory.add("dispose");
     }
+
+	public void init(IAction action) {
+		callHistory.add("init");
+	}
+
+	public void runWithEvent(IAction action, Event event) {
+		callHistory.add("runWithEvent");
+	}
 }
 

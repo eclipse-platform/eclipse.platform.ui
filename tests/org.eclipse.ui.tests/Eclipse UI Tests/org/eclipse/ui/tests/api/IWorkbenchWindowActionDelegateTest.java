@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.ui.IActionDelegate2;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.tests.util.ActionUtil;
 
 /**
@@ -52,6 +54,30 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
     //		removeAction();
     //		assertTrue(delegate.callHistory.contains("dispose"));
     //	}
+
+    /**
+     * Regression test for bug 81422.  Tests to ensure that dispose() is only
+     * called once if the delegate implements both IWorkbenchWindowActionDelegate
+     * and IActionDelegate2.
+     */
+    public void testDisposeWorkbenchWindowActionDelegateBug81422() {
+        String id = MockWorkbenchWindowActionDelegate.SET_ID;
+        fPage.showActionSet(id);
+        MockWorkbenchWindowActionDelegate mockWWinActionDelegate = MockWorkbenchWindowActionDelegate.lastDelegate;
+        // hide (from the compiler) the fact that the interfaces are implemented
+        Object mockAsObject = mockWWinActionDelegate; 
+        // asserts that the mock object actually implements both interfaces mentioned in the PR
+        assertTrue(mockAsObject instanceof IActionDelegate2);
+        assertTrue(mockAsObject instanceof IWorkbenchWindowActionDelegate);
+        // we are only interested in the calls from now on
+        mockWWinActionDelegate.callHistory.clear();
+        // this causes the action set to be disposed
+        fPage.close();
+        // assert that dispose was called
+    	assertTrue(mockWWinActionDelegate.callHistory.contains("dispose"));
+    	// assert that dispose was not called twice
+    	assertFalse(mockWWinActionDelegate.callHistory.verifyOrder(new String[] {"dispose", "dispose"}));
+    }
 
     /**
      * @see IActionDelegateTest#createActionWidget()
