@@ -10,7 +10,10 @@ Application programming interfaces for interaction
 with and extension of the Eclipse Platform User Interface.
 <h2>
 Package Specification</h2>
-This package provides application programming interfaces for support for the
-specification of views within the workbench .
+This package provides API for querying the installed views and their properties.
+The view registry is obtained using
+<pre>
+IViewRegistry viewRegistry = IWorkbench.getViewRegistry();
+</pre>
 </body>
 </html>
