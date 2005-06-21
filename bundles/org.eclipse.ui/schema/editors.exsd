@@ -164,6 +164,8 @@ type. This is only relevant in a case where more than one editor
 is registered for the same type. If an editor is not the default
 for the type, it can still be launched using &quot;Open with...&quot;
 submenu for the selected resource.
+&lt;p&gt;
+Please note that this attribute is only honored for filename and extension associations at this time.  It will not be honored for content type bindings.  Content type-based resolution will occur on a first come, first serve basis and is not explicitly specified.&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
