@@ -1616,9 +1616,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             }
         }
         setSelection(newSelection);
-//        if (reveal && newSelection.size() > 0) {
-//            showItem((Item) newSelection.get(0));
-//        }
+        
+        // Although setting the selection in the control should reveal it,
+        // setSelection may be a no-op if the selection is unchanged,
+        // so explicitly reveal the first item in the selection here.
+        // See bug 100565 for more details.
+        if (reveal && newSelection.size() > 0) {
+            showItem((Item) newSelection.get(0));
+        }
     }
 
     /**
