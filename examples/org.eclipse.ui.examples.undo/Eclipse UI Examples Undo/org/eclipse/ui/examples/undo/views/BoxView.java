@@ -64,7 +64,7 @@ public class BoxView extends ViewPart {
 	 * The canvas to paint the boxes on.
 	 */
 	private Canvas paintCanvas;
-	
+
 	/*
 	 * The gc used for drawing the rubber band.
 	 */
@@ -79,14 +79,16 @@ public class BoxView extends ViewPart {
 	 * Undo and redo actions
 	 */
 	private UndoActionHandler undoAction;
+
 	private RedoActionHandler redoAction;
+
 	private IAction clearBoxesAction;
 
 	/*
 	 * Private undo context for box operations
 	 */
 	private IUndoContext undoContext;
-	
+
 	/*
 	 * Operation approver for approving undo and redo
 	 */
@@ -101,32 +103,32 @@ public class BoxView extends ViewPart {
 	 * True if a click-drag is in progress
 	 */
 	private boolean dragInProgress = false;
-	
+
 	/*
 	 * True if a click-move is in progress
 	 */
 	private boolean moveInProgress = false;
-	
+
 	/*
 	 * The box that is being moved.
 	 */
 	private Box movingBox;
-	
+
 	/*
 	 * The diff between a moving box and the track position.
 	 */
 	int diffX, diffY;
-	
+
 	/*
 	 * The position of the first click in a click-drag
 	 */
 	private Point anchorPosition = new Point(-1, -1);
-	
+
 	/*
 	 * A temporary point in a drag or move operation
 	 */
 	private Point tempPosition = new Point(-1, -1);
-	
+
 	/*
 	 * The rubber band position (the last recorded temp position)
 	 */
@@ -147,7 +149,7 @@ public class BoxView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		paintCanvas = new Canvas(parent, SWT.BORDER | SWT.V_SCROLL
 				| SWT.H_SCROLL | SWT.NO_REDRAW_RESIZE);
-		
+
 		// set up a GC for drawing the tracking rectangle
 		gc = new GC(paintCanvas);
 		gc.setForeground(paintCanvas.getForeground());
@@ -155,7 +157,7 @@ public class BoxView extends ViewPart {
 
 		// add listeners
 		addListeners();
-		
+
 		// create actions and hook them up to the menus and toolbar
 		makeActions();
 		hookContextMenu();
@@ -173,7 +175,9 @@ public class BoxView extends ViewPart {
 					return;
 				if (dragInProgress || moveInProgress)
 					return; // spurious event
-				
+
+				tempPosition.x = event.x;
+				tempPosition.y = event.y;
 				Box box = boxes.getBox(event.x, event.y);
 				if (box != null) {
 					moveInProgress = true;
@@ -199,22 +203,33 @@ public class BoxView extends ViewPart {
 					return; // spurious event
 
 				if (dragInProgress) {
-					Box box = new Box(anchorPosition, tempPosition);
-					try {
-						getOperationHistory().execute(new AddBoxOperation(UndoExampleMessages.BoxView_Add, undoContext, boxes, box, paintCanvas), null, null);
-					} catch (ExecutionException e) {
+					Box box = new Box(anchorPosition.x, anchorPosition.y,
+							tempPosition.x, tempPosition.y);
+					if (box.getWidth() > 0 && box.getHeight() > 0) {
+						try {
+							getOperationHistory().execute(
+									new AddBoxOperation(
+											UndoExampleMessages.BoxView_Add,
+											undoContext, boxes, box, paintCanvas),
+									null, null);
+						} catch (ExecutionException e) {
+						}
+						dragInProgress = false;
 					}
-					dragInProgress = false;
 				} else if (moveInProgress) {
 					try {
-						getOperationHistory().execute(new MoveBoxOperation(UndoExampleMessages.BoxView_Move, undoContext, movingBox, paintCanvas, anchorPosition), null, null);
+						getOperationHistory().execute(
+								new MoveBoxOperation(
+										UndoExampleMessages.BoxView_Move,
+										undoContext, movingBox, paintCanvas,
+										anchorPosition), null, null);
 					} catch (ExecutionException e) {
 					}
 					moveInProgress = false;
 					movingBox = null;
 				}
 				resetDrag(false);
-				
+
 				// redraw everything to clean up the tracking rectangle
 				paintCanvas.redraw();
 			}
@@ -340,15 +355,21 @@ public class BoxView extends ViewPart {
 		clearBoxesAction = new Action() {
 			public void run() {
 				try {
-					getOperationHistory().execute(new ClearBoxesOperation(UndoExampleMessages.BoxView_ClearBoxes, undoContext, boxes, paintCanvas),null, null);
+					getOperationHistory().execute(
+							new ClearBoxesOperation(
+									UndoExampleMessages.BoxView_ClearBoxes,
+									undoContext, boxes, paintCanvas), null,
+							null);
 				} catch (ExecutionException e) {
 				}
 			}
 		};
 		clearBoxesAction.setText(UndoExampleMessages.BoxView_ClearBoxes);
-		clearBoxesAction.setToolTipText(UndoExampleMessages.BoxView_ClearBoxesToolTipText);
-		clearBoxesAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+		clearBoxesAction
+				.setToolTipText(UndoExampleMessages.BoxView_ClearBoxesToolTipText);
+		clearBoxesAction.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(
+						ISharedImages.IMG_TOOL_DELETE));
 	}
 
 	/*
@@ -382,9 +403,7 @@ public class BoxView extends ViewPart {
 		dragInProgress = false;
 		moveInProgress = false;
 		movingBox = null;
-		anchorPosition = new Point(-1, -1);
-		tempPosition = new Point(-1, -1);
-		rubberbandPosition = new Point(-1, -1);
+		anchorPosition.x = anchorPosition.y = tempPosition.x = tempPosition.y = rubberbandPosition.x = rubberbandPosition.y = -1;
 	}
 
 	/*
@@ -392,10 +411,14 @@ public class BoxView extends ViewPart {
 	 */
 	private void clearRubberBandSelection() {
 		gc.setForeground(paintCanvas.getBackground());
-		gc.drawRectangle(anchorPosition.x, anchorPosition.y, rubberbandPosition.x-anchorPosition.x, rubberbandPosition.y-anchorPosition.y);
-		paintCanvas.redraw(anchorPosition.x, anchorPosition.y, rubberbandPosition.x-anchorPosition.x, rubberbandPosition.y-anchorPosition.y, false);
+		gc.drawRectangle(anchorPosition.x, anchorPosition.y,
+				rubberbandPosition.x - anchorPosition.x, rubberbandPosition.y
+						- anchorPosition.y);
+		paintCanvas.redraw(anchorPosition.x, anchorPosition.y,
+				rubberbandPosition.x - anchorPosition.x, rubberbandPosition.y
+						- anchorPosition.y, false);
 		paintCanvas.update();
-		rubberbandPosition = new Point(-1,-1);
+		rubberbandPosition = new Point(-1, -1);
 		gc.setForeground(paintCanvas.getForeground());
 	}
 
@@ -404,21 +427,23 @@ public class BoxView extends ViewPart {
 	 */
 	private void addRubberBandSelection() {
 		rubberbandPosition = tempPosition;
-		gc.drawRectangle(anchorPosition.x, anchorPosition.y, rubberbandPosition.x-anchorPosition.x, rubberbandPosition.y-anchorPosition.y);
+		gc.drawRectangle(anchorPosition.x, anchorPosition.y,
+				rubberbandPosition.x - anchorPosition.x, rubberbandPosition.y
+						- anchorPosition.y);
 	}
-	
+
 	/*
 	 * Initialize the workbench operation history for our undo context.
 	 */
 	private void initializeOperationHistory() {
 		// create a unique undo context to represent this view's undo history
 		undoContext = new ObjectUndoContext(this);
-		
+
 		// set the undo limit for this context based on the preference
 		int limit = UndoPlugin.getDefault().getPreferenceStore().getInt(
 				PreferenceConstants.PREF_UNDOLIMIT);
 		getOperationHistory().setLimit(undoContext, limit);
-		
+
 		// Install an operation approver for this undo context that prompts
 		// according to a user preference.
 		operationApprover = new PromptingUserApprover(undoContext);

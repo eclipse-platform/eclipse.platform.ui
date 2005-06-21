@@ -28,16 +28,16 @@ public class Box  {
 	 * Constructs a box, defined by any two diametrically 
 	 * opposing corners.
 	 */
-	public Box(Point origin, Point corner) {
+	public Box(int x1, int y1, int x2, int y2) {
 		super();
-		set(origin, corner);
+		set(x1, y1, x2, y2);
 	}
 	
 	/*
 	 * Move the box to a new origin.
 	 */
 	public void move(Point origin) {
-		set(origin, new Point(origin.x + getWidth(), origin.y + getHeight()));
+		set(origin.x, origin.y, origin.x + getWidth(), origin.y + getHeight());
 	}
 	
 	/*
@@ -50,11 +50,11 @@ public class Box  {
 	/*
 	 * Set the position of the box
 	 */
-	private void set(Point origin, Point corner) {
-		x1 = Math.min(origin.x, corner.x);
-		y1 = Math.min(origin.y, corner.y);
-		x2 = Math.max(origin.x, corner.x);
-		y2 = Math.max(origin.y, corner.y);
+	private void set(int x1, int y1, int x2, int y2) {
+		this.x1 = Math.min(x1, x2);
+		this.y1 = Math.min(y1, y2);
+		this.x2 = Math.max(x1, x2);
+		this.y2 = Math.max(y1, y2);
 	}
 	
 	/*

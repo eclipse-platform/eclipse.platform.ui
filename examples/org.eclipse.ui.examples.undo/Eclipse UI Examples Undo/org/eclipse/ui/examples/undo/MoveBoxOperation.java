@@ -28,10 +28,12 @@ public class MoveBoxOperation extends BoxOperation {
 	 * The point the box should move to/from.
 	 */
 	private Point origin;
+	private Point target;
 	
 	public MoveBoxOperation(String label, IUndoContext context, Box box, Canvas canvas, Point newOrigin) {
 		super(label, context, null, box, canvas);
-		this.origin = newOrigin;
+		origin = new Point(box.x1, box.y1);
+		target = new Point(newOrigin.x, newOrigin.y);
 	}
 
 	/*
@@ -40,11 +42,7 @@ public class MoveBoxOperation extends BoxOperation {
 	 */
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		int tempX, tempY;
-		tempX = box.x1;
-		tempY = box.y1;
-		box.move(origin);
-		origin = new Point(tempX, tempY);
+		box.move(target);
 		canvas.redraw();
 		return Status.OK_STATUS;
 	}
@@ -64,7 +62,32 @@ public class MoveBoxOperation extends BoxOperation {
 	 */
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		return execute(monitor, info);
+		box.move(origin);
+		canvas.redraw();
+		return Status.OK_STATUS;
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#getLabel()
+	 */
+	public String getLabel() {
+		final StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append(super.getLabel());
+		stringBuffer.append("["); //$NON-NLS-1$
+		stringBuffer.append("("); //$NON-NLS-1$
+		stringBuffer.append(new Integer(origin.x).toString());
+		stringBuffer.append(", "); //$NON-NLS-1$
+		stringBuffer.append(new Integer(origin.y).toString());
+		stringBuffer.append(')'); //$NON-NLS-1$
+		stringBuffer.append(", "); //$NON-NLS-1$
+		stringBuffer.append("("); //$NON-NLS-1$
+		stringBuffer.append(new Integer(target.x).toString());
+		stringBuffer.append(", "); //$NON-NLS-1$
+		stringBuffer.append(new Integer(target.y).toString());
+		stringBuffer.append(')'); //$NON-NLS-1$
+		stringBuffer.append(']'); //$NON-NLS-1$
+		return stringBuffer.toString();
 	}
 
 }
