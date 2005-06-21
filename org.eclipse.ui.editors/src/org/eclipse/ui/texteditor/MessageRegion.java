@@ -53,7 +53,7 @@ class MessageRegion {
 	 * Create a new instance of the receiver.
 	 */
 	public MessageRegion() {
-		//No initial behaviour
+		//No initial behavior
 	}
 
 	/**
