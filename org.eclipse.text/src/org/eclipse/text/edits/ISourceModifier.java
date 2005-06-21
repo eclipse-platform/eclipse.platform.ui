@@ -41,7 +41,7 @@ public interface ISourceModifier {
 	 * Creates a copy of this source modifier object. The copy will
 	 * be used in a different text edit object. So it should be
 	 * created in a way that is doesn't conflict with other text edits
-	 * refering to this source modifier.
+	 * referring to this source modifier.
 	 *
 	 * @return the copy of the source modifier
 	 */

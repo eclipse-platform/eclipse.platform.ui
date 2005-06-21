@@ -379,7 +379,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
         configureTableResizing(table);
 
 		Dialog.applyDialogFont(parent);
-		// trigger the resizer
+		// trigger the resize
 		table.getHorizontalBar().setVisible(true);
 		return parent;
 	}

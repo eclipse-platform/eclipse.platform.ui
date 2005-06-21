@@ -239,7 +239,7 @@ abstract public class AbstractInformationControlManager {
 	private boolean fIsRestoringSize;
 
 	/**
-	 * The dispose listner on the subject control.
+	 * The dispose listener on the subject control.
 	 * 
 	 * @since 3.1
 	 */

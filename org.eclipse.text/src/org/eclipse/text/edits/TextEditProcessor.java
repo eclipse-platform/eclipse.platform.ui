@@ -154,7 +154,7 @@ public class TextEditProcessor {
 	}
 
 	/* non Java-doc
-	 * Class isn't intended to be sublcassed
+	 * Class isn't intended to be sub-lcassed
 	 */
 	protected boolean considerEdit(TextEdit edit) {
 		return true;

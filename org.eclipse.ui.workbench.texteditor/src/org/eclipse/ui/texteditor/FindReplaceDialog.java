@@ -424,7 +424,7 @@ class FindReplaceDialog extends Dialog {
 
 		applyDialogFont(panel);
 
-		// Setup content assistants for find and replace combos
+		// Setup content assistants for find and replace combo boxes
 		fProposalPopupBackgroundColor= new Color(getShell().getDisplay(), new RGB(254, 241, 233));
 		fProposalPopupForegroundColor= new Color(getShell().getDisplay(), new RGB(0, 0, 0));
 

@@ -128,7 +128,7 @@ class LinkedModeManager {
 	/**
 	 * Cancels any linked mode manager for the specified document.
 	 *
-	 * @param document the document whose <code>LinkedModeManager</code> should be cancelled
+	 * @param document the document whose <code>LinkedModeManager</code> should be canceled
 	 */
 	public static void cancelManager(IDocument document) {
 		LinkedModeManager mgr= (LinkedModeManager) fManagers.get(document);

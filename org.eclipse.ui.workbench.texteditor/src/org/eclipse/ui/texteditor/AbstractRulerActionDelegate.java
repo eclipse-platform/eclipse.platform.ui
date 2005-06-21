@@ -107,7 +107,7 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	}
 
 	/**
-	 * Requests the adaptee to update itself to the current state.
+	 * Updates to the current state.
 	 */
 	private void update() {
 		if (fAction instanceof IUpdate) {

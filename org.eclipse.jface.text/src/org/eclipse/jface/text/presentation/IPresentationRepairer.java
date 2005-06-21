@@ -50,7 +50,7 @@ public interface IPresentationRepairer {
 
 	/**
 	 * Fills the given presentation with the style ranges which when applied to the
-	 * presentation reconciler's text viewer repair the  presentational damage described by
+	 * presentation reconciler's text viewer repair the  presentation damage described by
 	 * the given region.
 	 *
 	 * @param presentation the text presentation to be filled by this repairer

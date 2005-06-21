@@ -103,7 +103,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 			return;
 
 		// remove all positions which are already there
-		// algo: toRemove contains all mappings at first, but all that are in
+		// Algorithm: toRemove contains all mappings at first, but all that are in
 		// positions get removed -> toRemove contains the difference set of previous - new
 		// toAdd are the new positions, which don't exist in previous = new - previous
 		List toRemove= new ArrayList(fGroupAnnotations.values());
@@ -137,7 +137,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 			return;
 
 		// remove all positions which are already there
-		// algo: toRemove contains all mappings at first, but all that are in
+		// Algorithm: toRemove contains all mappings at first, but all that are in
 		// positions get removed -> toRemove contains the difference set of previous - new
 		// toAdd are the new positions, which don't exist in previous = new - previous
 		List toRemove= new ArrayList(fTargetAnnotations.values());

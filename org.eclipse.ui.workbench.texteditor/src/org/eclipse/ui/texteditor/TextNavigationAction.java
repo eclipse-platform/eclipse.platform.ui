@@ -26,7 +26,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 
 
 /**
- * An <code>Action</code> wrapper for text widget navigational and selection actions.
+ * An <code>Action</code> wrapper for text widget navigation and selection actions.
  * @since 2.0
  */
 public class TextNavigationAction extends Action {

@@ -18,7 +18,7 @@ import org.eclipse.ui.actions.ActionFactory;
 
 
 /**
- * Defines the names of those actions which are preregistered with the
+ * Defines the names of those actions which are pre-registered with the
  * <code>AbstractTextEditor</code>. <code>RULER_DOUBLE_CLICK</code> defines
  * the action which is registered as being executed when the editor's
  * ruler has been double clicked. This interface extends the set of names
@@ -534,7 +534,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	static final String QUICKDIFF_TOGGLE= "QuickDiff.Toggle"; //$NON-NLS-1$
 
 	/**
-	 * Name of the action for emacs style hippie completion.
+	 * Name of the action for emacs style word completion.
 	 * Value: <code>"HIPPIE_COMPLETION"</code>
 	 * @since 3.1
 	 */

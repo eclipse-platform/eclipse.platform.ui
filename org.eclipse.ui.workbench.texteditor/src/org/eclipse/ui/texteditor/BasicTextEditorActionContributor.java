@@ -127,7 +127,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 */
 	private RetargetTextEditorAction fGotoLine;
 	/**
-	 * The hippie completion action.
+	 * The word completion action.
 	 * @since 3.1
 	 */
 	private RetargetTextEditorAction fHippieCompletion;

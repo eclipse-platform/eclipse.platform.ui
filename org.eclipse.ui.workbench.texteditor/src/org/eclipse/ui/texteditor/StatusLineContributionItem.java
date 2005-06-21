@@ -60,12 +60,12 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 */
 	static final int DEFAULT_WIDTH_IN_CHARS= 14;
 	/**
-	 * Precomputed label width hint.
+	 * Pre-computed label width hint.
 	 * @since 2.1
 	 */
 	private int fFixedWidth= -1;
 	/**
-	 * Precomputed label height hint.
+	 * Pre-computed label height hint.
 	 * @since 3.0
 	 */
 	private int fFixedHeight= -1;

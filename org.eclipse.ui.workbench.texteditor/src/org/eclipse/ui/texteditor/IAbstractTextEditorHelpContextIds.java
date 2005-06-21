@@ -305,7 +305,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	public static final String TOGGLE_INSERT_MODE_ACTION= PREFIX + "toggle_insert_mode" + ACTION_POSTFIX; //$NON-NLS-1$;;
 
     /**
-     * Help context id for the hippie completion action.
+     * Help context id for the word completion action.
      * Value: <code>"org.eclipse.ui.hippie_completion_action_context"</code>
      * @since 3.1
      */

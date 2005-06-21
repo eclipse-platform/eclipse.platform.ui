@@ -74,7 +74,7 @@ public abstract class TemplateContext {
 	 * Defines the value of a variable.
 	 *
 	 * @param name the name of the variable
-	 * @param value the value of the variable, <code>null</code> to undefine a variable
+	 * @param value the value of the variable, <code>null</code> to un-define a variable
 	 */
 	public void setVariable(String name, String value) {
 		fVariables.put(name, value);

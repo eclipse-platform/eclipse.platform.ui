@@ -17,7 +17,7 @@ package org.eclipse.jface.text;
  * owner after usage. A widget token owner may request the token from the token
  * keeper. The keeper may deny the return of the token.
  * <p>
- * The widget token owner and keeper interplay is utilized by a text viewer in
+ * The widget token owner and keeper interplay is used by a text viewer in
  * order to manage the appearance and disappearance of addition, on-top popup
  * windows such as text hovers, content assist, etc.
  *

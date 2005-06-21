@@ -179,10 +179,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 					 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=98245
 					 */
 					if (!canUndo &&
-							this == fHistory.getUndoOperation(fUndoContext)  &&  // this is the latest op
-							this != fCurrent && // there is a more current op not on the stack
-							!fCurrent.isValid() &&  // the current op is not a valid document modification
-							fCurrent.fUndoModificationStamp != // the invalid current op has a doc stamp
+							this == fHistory.getUndoOperation(fUndoContext)  &&  // this is the latest operation
+							this != fCurrent && // there is a more current operation not on the stack
+							!fCurrent.isValid() &&  // the current operation is not a valid document modification
+							fCurrent.fUndoModificationStamp != // the invalid current operation has a document stamp
 								IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP) {
 						canUndo= fCurrent.fRedoModificationStamp == docStamp;							
 					}
@@ -193,10 +193,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 					 * in one place.
 					 */ 
 					if (!canUndo &&
-							this == fHistory.getUndoOperation(fUndoContext)  &&  // this is the latest op
+							this == fHistory.getUndoOperation(fUndoContext)  &&  // this is the latest operation
 							this instanceof CompoundTextCommand &&
-							this == fCurrent && // this is the current op
-							this.fStart == -1 &&  // the current op text is not valid
+							this == fCurrent && // this is the current operation
+							this.fStart == -1 &&  // the current operation text is not valid
 							fCurrent.fRedoModificationStamp != IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP) {  // but it has a redo stamp
 						canUndo= fCurrent.fRedoModificationStamp == docStamp;
 					}
@@ -999,7 +999,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		fPreviousDelete.reinitialize();
 
 		// if fCurrent has never been placed on the command stack, do so now.
-		// this can happen when there are multiple programmatic commits in a single
+		// this can happen when there are multiple programmatically commits in a single
 		// document change.
 		if (fLastAddedCommand != fCurrent) {
 			fCurrent.pretendCommit();

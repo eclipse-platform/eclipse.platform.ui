@@ -69,7 +69,7 @@ public interface IPresentationReconciler {
 	 * <p>
 	 * The <code>install</code> and <code>uninstall</code> methods must be
 	 * called in sequence; i.e. repeatedly calling <code>install</code>
-	 * without uninstalling may throw an exception.
+	 * without calling <code>uninstall</code> may throw an exception.
 	 * </p>
 	 *
 	 * @param viewer the viewer on which this presentation reconciler is

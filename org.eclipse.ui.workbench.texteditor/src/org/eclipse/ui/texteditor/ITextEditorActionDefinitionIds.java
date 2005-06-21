@@ -375,14 +375,14 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	public static final String CONVERT_LINE_DELIMITERS_TO_WINDOWS= "org.eclipse.ui.edit.text.convert.lineDelimiters.toWindows"; //$NON-NLS-1$
 
 	/**
-	 * Action definition id of the edit convert to unix line delimiter action.
+	 * Action definition id of the edit convert to Unix line delimiter action.
 	 * Value: <code>"org.eclipse.ui.edit.text.convert.lineDelimiters.toUNIX"</code>
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_UNIX= "org.eclipse.ui.edit.text.convert.lineDelimiters.toUNIX"; //$NON-NLS-1$
 
 	/**
-	 * Action definition id of the edit convert to mac line delimiter action.
+	 * Action definition id of the edit convert to Mac line delimiter action.
 	 * Value: <code>"org.eclipse.ui.edit.text.convert.lineDelimiters.toMac"</code>
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */

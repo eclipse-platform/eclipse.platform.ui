@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 
 /**
- * An action which enters the incremental find mode a la emacs.
+ * An action which enters the incremental find mode like in emacs.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>

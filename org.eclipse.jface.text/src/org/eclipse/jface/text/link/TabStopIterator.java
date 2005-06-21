@@ -33,7 +33,7 @@ import org.eclipse.jface.text.link.LinkedPosition;
  */
 class TabStopIterator {
 	/**
-	 * Comparator for <code>LinkedPosition</code>s. If the sequence nr. of two positions is equal, the
+	 * Comparator for <code>LinkedPosition</code>s. If the sequence number of two positions is equal, the
 	 * offset is used.
 	 */
 	private static class SequenceComparator implements Comparator {

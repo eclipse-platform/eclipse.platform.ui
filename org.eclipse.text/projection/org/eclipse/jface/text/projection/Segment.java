@@ -28,7 +28,7 @@ public class Segment extends Position {
 	public Fragment fragment;
 	/** A flag indicating that the segment updater should stretch this segment when a change happens at its boundaries. */
 	public boolean isMarkedForStretch;
-	/** A flag indicating that the segment updater should shift this segment when a change happends at its boundaries. */
+	/** A flag indicating that the segment updater should shift this segment when a change happens at its boundaries. */
 	public boolean isMarkedForShift;
 
 	/**
@@ -72,7 +72,7 @@ public class Segment extends Position {
 	}
 
 	/**
-	 * Clears the shifting and the streching flag.
+	 * Clears the shifting and the stretching flag.
 	 */
 	public void clearMark() {
 		isMarkedForStretch= false;

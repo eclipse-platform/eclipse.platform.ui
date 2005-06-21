@@ -76,7 +76,7 @@ class InclusivePositionUpdater implements IPositionUpdater {
 				} else if (end > eventOffset + eventOldLength) {
 					// event extends from before position into it - adjust offset
 					// and length
-					// offset becomes end of event, length ajusted acordingly
+					// offset becomes end of event, length adjusted accordingly
 					// we want to recycle the overlapping part
 					position.setOffset(eventOffset);
 					int deleted= eventOffset + eventOldLength - offset;

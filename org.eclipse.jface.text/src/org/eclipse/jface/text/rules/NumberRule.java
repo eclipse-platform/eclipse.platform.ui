@@ -19,7 +19,7 @@ import org.eclipse.jface.text.Assert;
  */
 public class NumberRule implements IRule {
 
-	/** Internal setting for the uninitialized column constraint */
+	/** Internal setting for the un-initialized column constraint */
 	protected static final int UNDEFINED= -1;
 	/** The token to be returned when this rule is successful */
 	protected IToken fToken;

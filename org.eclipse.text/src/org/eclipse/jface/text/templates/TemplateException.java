@@ -44,7 +44,7 @@ public class TemplateException extends Exception {
 	/**
 	 * Creates a new template exception.
 	 *
-	 * @param message the message describing the problem that arised
+	 * @param message the message describing the problem that arose
 	 */
 	public TemplateException(String message) {
 		super(message);
@@ -53,7 +53,7 @@ public class TemplateException extends Exception {
 	/**
 	 * Creates a new template exception.
 	 *
-	 * @param message the message describing the problem that arised
+	 * @param message the message describing the problem that arose
 	 * @param cause the original exception
 	 */
 	public TemplateException(String message, Throwable cause) {

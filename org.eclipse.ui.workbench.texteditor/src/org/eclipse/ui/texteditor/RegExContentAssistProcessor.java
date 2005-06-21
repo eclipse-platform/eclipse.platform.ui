@@ -104,7 +104,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 			addBsProposal("\\w", RegExMessages.displayString_bs_w, RegExMessages.additionalInfo_bs_w); //$NON-NLS-1$
 			addBsProposal("\\W", RegExMessages.displayString_bs_W, RegExMessages.additionalInfo_bs_W); //$NON-NLS-1$
 			
-			// backreference
+			// back reference
 			addBsProposal("\\", RegExMessages.displayString_bs_i, RegExMessages.additionalInfo_bs_i); //$NON-NLS-1$
 			
 			//quoting
@@ -170,7 +170,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 				addBracketProposal("(?)", 2, RegExMessages.displayString_flag, RegExMessages.additionalInfo_flag); //$NON-NLS-1$
 				addBracketProposal("(?:)", 3, RegExMessages.displayString_flagExpr, RegExMessages.additionalInfo_flagExpr); //$NON-NLS-1$
 			
-				//noncapturing group
+				//non-capturing group
 				addBracketProposal("(?:)", 3, RegExMessages.displayString_nonCap, RegExMessages.additionalInfo_nonCap); //$NON-NLS-1$
 				addBracketProposal("(?>)", 3, RegExMessages.displayString_atomicCap, RegExMessages.additionalInfo_atomicCap); //$NON-NLS-1$
 				

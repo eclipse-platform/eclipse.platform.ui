@@ -47,7 +47,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	protected int fTokenOffset;
 	/** The cached column of the current scanner position */
 	protected int fColumn;
-	/** Internal setting for the uninitialized column cache. */
+	/** Internal setting for the un-initialized column cache. */
 	protected static final int UNDEFINED= -1;
 
 	/**

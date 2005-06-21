@@ -95,7 +95,7 @@ public class LinkedModeModel {
 	 * model, nothing happens.
 	 *
 	 * @param document the document whose <code>LinkedModeModel</code> should
-	 * 		  be cancelled
+	 * 		  be canceled
 	 */
 	public static void closeAllModels(IDocument document) {
 		LinkedModeManager.cancelManager(document);
@@ -231,7 +231,7 @@ public class LinkedModeModel {
 						if (doc instanceof IDocumentExtension) {
 							((IDocumentExtension) doc).registerPostNotificationReplace(this, replace);
 						} else {
-							// ignore - there is no way we can log from jface text...
+							// ignore - there is no way we can log from JFace text...
 						}
 					} else {
 						replace.perform(doc, this);

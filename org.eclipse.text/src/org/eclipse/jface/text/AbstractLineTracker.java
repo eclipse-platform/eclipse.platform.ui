@@ -565,7 +565,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 //					if (l2.delimiter != null && l2.length == l2.delimiter.length()) {
 //						// line is empty
 //
-//						// append empty line to precessor
+//						// append empty line to predecessor
 //						Line l1= (Line) fLines.get(firstLine);
 //						StringBuffer buffer= new StringBuffer();
 //						buffer.append(l1.delimiter);
@@ -588,7 +588,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 //					if (l2.delimiter != null && l2.length == l2.delimiter.length()) {
 //						// line is empty
 //
-//						// append empty line to precessor
+//						// append empty line to predecessor
 //						Line l1= (Line) fLines.get(lastLine -1);
 //						StringBuffer buffer= new StringBuffer();
 //						buffer.append(l1.delimiter);

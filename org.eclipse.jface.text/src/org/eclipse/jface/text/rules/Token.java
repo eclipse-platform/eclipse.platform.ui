@@ -77,7 +77,7 @@ public class Token implements IToken {
 	}
 
 	/**
-	 * Reinitializes the data of this token. The token may not represent
+	 * Re-initializes the data of this token. The token may not represent
 	 * undefined, whitespace, or EOF.
 	 *
 	 * @param data to be attached to the token

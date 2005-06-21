@@ -132,9 +132,9 @@ public class SpellingEngineDescriptor {
 	}
 
 	/**
-	 * States whether the plugin declaring this extension has been loaded already.
+	 * States whether the plug-in declaring this extension has been loaded already.
 	 *
-	 * @return <code>true</code> if the extension point's plugin has been loaded, <code>false</code> otherwise.
+	 * @return <code>true</code> if the extension point's plug-in has been loaded, <code>false</code> otherwise.
 	 */
 	public boolean isPluginLoaded() {
 		if (fBundle == null)

@@ -249,7 +249,7 @@ public class TemplateStore {
 	 * Returns the first enabled template that matches both name and context type id.
 	 *
 	 * @param name the name of the template searched for
-	 * @param contextTypeId the context type id to clip unwanted templates, or <code>null</code> if any context type is ok
+	 * @param contextTypeId the context type id to clip unwanted templates, or <code>null</code> if any context type is OK
 	 * @return the first enabled template that matches both name and context type id, or <code>null</code> if none is found
 	 */
 	public Template findTemplate(String name, String contextTypeId) {
@@ -283,10 +283,10 @@ public class TemplateStore {
 	}
 
 	/**
-	 * Returns all template datas.
+	 * Returns all template data.
 	 *
-	 * @param includeDeleted whether to include deleted datas
-	 * @return all template datas, whether enabled or not
+	 * @param includeDeleted whether to include deleted data
+	 * @return all template data, whether enabled or not
 	 */
 	public TemplatePersistenceData[] getTemplateData(boolean includeDeleted) {
 		List datas= new ArrayList();

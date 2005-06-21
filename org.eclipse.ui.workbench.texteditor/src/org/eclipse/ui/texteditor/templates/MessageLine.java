@@ -40,7 +40,7 @@ class MessageLine extends CLabel {
 	}
 
 	/**
-	 * Creates a new message line as a child of the parent and with the given SWT stylebits.
+	 * Creates a new message line as a child of the parent and with the given SWT style bits.
 	 *
 	 * @param parent the parent composite
 	 * @param style the style

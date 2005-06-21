@@ -64,7 +64,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * <li>whether included in the "Go to Previous Annotation" navigation action
  * (and respective preference key),</li>
  * <li>whether to be shown in the "Go to Next/Previous Annotation" navigation
- * toolbar dropdown (and respective preference key).</li>
+ * toolbar drop down (and respective preference key).</li>
  * </ul>
  * <h4>Preference Page Preferences</h4>
  * <ul>
@@ -298,7 +298,7 @@ public class AnnotationPreference {
 
 
 	/**
-	 * Creates a new uninitialized annotation preference. Note that instances
+	 * Creates a new un-initialized annotation preference. Note that instances
 	 * with a <code>null</code> annotation type are invalid and should not be
 	 * used.
 	 */

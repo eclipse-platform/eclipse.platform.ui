@@ -28,7 +28,7 @@ import org.eclipse.jface.text.Assert;
  */
 public class WordRule implements IRule {
 
-	/** Internal setting for the uninitialized column constraint */
+	/** Internal setting for the un-initialized column constraint */
 	protected static final int UNDEFINED= -1;
 
 	/** The word detector used by this rule */

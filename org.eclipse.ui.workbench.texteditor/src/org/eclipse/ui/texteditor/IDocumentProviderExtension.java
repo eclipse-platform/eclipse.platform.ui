@@ -87,7 +87,7 @@ public interface IDocumentProviderExtension {
 	void updateStateCache(Object element) throws CoreException;
 
 	/**
-	 * Marks the document managed for the given element as saveable. I.e.
+	 * Marks the document managed for the given element as savable. I.e.
 	 * <code>canBeSaved(element)</code> will return <code>true</code>
 	 * afterwards.
 	 *

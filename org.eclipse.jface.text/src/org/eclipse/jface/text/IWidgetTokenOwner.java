@@ -16,7 +16,7 @@ package org.eclipse.jface.text;
  * In order to display information in a temporary window, a widget token must be
  * acquired. The intent behind this concept is that only one temporary window
  * should be presented at any moment in time and also to avoid overlapping
- * temporary windows. This concept is utilized by the
+ * temporary windows. This concept is used by the
  * {@link org.eclipse.jface.text.ITextViewer}.
  * <p>
  * In order to provide backward compatibility for clients of

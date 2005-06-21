@@ -118,7 +118,7 @@ public final class CopySourceEdit extends TextEdit {
 	}
 
 	/**
-	 * Returns the associated traget edit or <code>null</code>
+	 * Returns the associated target edit or <code>null</code>
 	 * if no target edit is associated yet.
 	 *
 	 * @return the target edit or <code>null</code>
@@ -213,7 +213,7 @@ public final class CopySourceEdit extends TextEdit {
 		int result= super.traverseConsistencyCheck(processor, document, sourceEdits);
 		// Since source computation takes place in a recursive fashion (see
 		// performSourceComputation) we only do something if we don't have a
-		// computated source already.
+		// computed source already.
 		if (fSourceContent == null) {
 			if (sourceEdits.size() <= result) {
 				List list= new ArrayList();

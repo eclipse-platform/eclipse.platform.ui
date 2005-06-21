@@ -89,7 +89,7 @@ public class ReferenceProviderDescriptor {
 	}
 
 	/**
-	 * Creates a referenceprovider as described in the extension's xml. Sets the id on the provider.
+	 * Creates a reference provider as described in the extension's xml. Sets the id on the provider.
 	 * @return a new instance of the reference provider described by this descriptor.
 	 */
 	public IQuickDiffReferenceProvider createProvider() {
@@ -103,9 +103,9 @@ public class ReferenceProviderDescriptor {
 	}
 
 	/**
-	 * States whether the plugin declaring this extension has been loaded already.
+	 * States whether the plug-in declaring this extension has been loaded already.
 	 *
-	 * @return <code>true</code> if the extension point's plugin has been loaded, <code>false</code> otherwise.
+	 * @return <code>true</code> if the extension point's plug-in has been loaded, <code>false</code> otherwise.
 	 */
 	public boolean isPluginLoaded() {
 		if (fBundle == null)

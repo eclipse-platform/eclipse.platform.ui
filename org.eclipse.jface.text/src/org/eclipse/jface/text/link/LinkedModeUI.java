@@ -429,7 +429,7 @@ public class LinkedModeUI {
 				return;
 			}
 
-			// standard behaviour:
+			// standard behavior:
 			// (Shift+)Tab:	jumps from position to position, depending on cycle mode
 			// Enter:		accepts all entries and leaves all (possibly stacked) environments, the last sets the caret
 			// Esc:			accepts all entries and leaves all (possibly stacked) environments, the caret stays
@@ -579,11 +579,11 @@ public class LinkedModeUI {
 
 	/** The last caret position, used by fCaretListener. */
 	private final Position fCaretPosition= new Position(0, 0);
-	/** The exit policy to control custom exit behaviour */
+	/** The exit policy to control custom exit behavior */
 	private IExitPolicy fExitPolicy= new NullExitPolicy();
 	/** The current frame position shown in the UI, or <code>null</code>. */
 	private LinkedPosition fFramePosition;
-	/** The last visisted position, used for undo / redo. */
+	/** The last visited position, used for undo / redo. */
 	private LinkedPosition fPreviousPosition;
 	/** The content assistant used to show proposals. */
 	private ContentAssistant2 fAssistant;
@@ -667,7 +667,7 @@ public class LinkedModeUI {
 	 * This does the actual constructor work.
 	 *
 	 * @param model the linked mode model
-	 * @param targets the non-empty array of targets upon which the linked mode ui
+	 * @param targets the non-empty array of targets upon which the linked mode UI
 	 *        should act
 	 */
 	private void constructor(LinkedModeModel model, LinkedModeUITarget[] targets) {
