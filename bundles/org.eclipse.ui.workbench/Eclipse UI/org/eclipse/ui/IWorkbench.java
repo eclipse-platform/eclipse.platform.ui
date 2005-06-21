@@ -511,9 +511,9 @@ public interface IWorkbench extends IAdaptable {
 	public IExtensionTracker getExtensionTracker();
 
 	/**
-	 * Returns the editor registry for the workbench.
+	 * Returns the view registry for the workbench.
 	 * 
-	 * @return the workbench editor registry
+	 * @return the workbench view registry
 	 * @since 3.1
 	 */
 	public IViewRegistry getViewRegistry();
