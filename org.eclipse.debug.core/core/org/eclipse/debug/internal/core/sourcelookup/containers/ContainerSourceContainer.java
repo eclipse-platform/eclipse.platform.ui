@@ -95,38 +95,43 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 		// To prevent the interruption of the search procedure we check 
 		// if the path is valid before passing it to "getFile".		
 		if ( validateFile(name) ) {
-			File osFile = new File(fRootFile, name);
-			if (osFile.exists()) {
-				try {
-					// See bug 82627 and bug 95679 - we have to append the container path in the case
-					// that Eclipse thinks it is, with the file system case of the file in order to
-					// be successful when finding the IFile for a location.
-					// See bug 98090 - we need to handle relative path names
-					Path canonicalPath = new Path(osFile.getCanonicalPath());
-					String[] canonicalSegments = canonicalPath.segments();
-					IPath workspacePath = new Path(""); //$NON-NLS-1$
-					workspacePath = workspacePath.setDevice(canonicalPath.getDevice());
-					for (int i = 0; i < canonicalSegments.length; i++) {
-						String segment = canonicalSegments[i];
-						if (i < fRootSegments.length) {
-							if (fRootSegments[i].equalsIgnoreCase(segment)) {
-								workspacePath = workspacePath.append(fRootSegments[i]);
+			IFile file = fContainer.getFile(new Path(name));
+			if (file.exists()) {
+				sources.add(file);
+			} else {
+				File osFile = new File(fRootFile, name);
+				if (osFile.exists()) {
+					try {
+						// See bug 82627 and bug 95679 - we have to append the container path in the case
+						// that Eclipse thinks it is, with the file system case of the file in order to
+						// be successful when finding the IFile for a location.
+						// See bug 98090 - we need to handle relative path names
+						Path canonicalPath = new Path(osFile.getCanonicalPath());
+						String[] canonicalSegments = canonicalPath.segments();
+						IPath workspacePath = new Path(""); //$NON-NLS-1$
+						workspacePath = workspacePath.setDevice(canonicalPath.getDevice());
+						for (int i = 0; i < canonicalSegments.length; i++) {
+							String segment = canonicalSegments[i];
+							if (i < fRootSegments.length) {
+								if (fRootSegments[i].equalsIgnoreCase(segment)) {
+									workspacePath = workspacePath.append(fRootSegments[i]);
+								} else {
+									workspacePath = workspacePath.append(segment);
+								}
 							} else {
 								workspacePath = workspacePath.append(segment);
 							}
-						} else {
-							workspacePath = workspacePath.append(segment);
 						}
+						IFile[] files = fRoot.findFilesForLocation(workspacePath);
+						if (isFindDuplicates() && files.length > 1) {
+							for (int i = 0; i < files.length; i++) {
+								sources.add(files[i]);
+							}
+						} else if (files.length > 0) {
+							sources.add(files[0]);
+						}					
+					} catch (IOException e) {
 					}
-					IFile[] files = fRoot.findFilesForLocation(workspacePath);
-					if (isFindDuplicates() && files.length > 1) {
-						for (int i = 0; i < files.length; i++) {
-							sources.add(files[i]);
-						}
-					} else if (files.length > 0) {
-						sources.add(files[0]);
-					}					
-				} catch (IOException e) {
 				}
 			}
 		}
