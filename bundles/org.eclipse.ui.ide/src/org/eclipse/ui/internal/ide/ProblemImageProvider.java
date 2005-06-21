@@ -37,7 +37,7 @@ public class ProblemImageProvider implements IMarkerImageProvider {
      * @see org.eclipse.jface.resource.FileImageDescriptor
      */
     public String getImagePath(IMarker marker) {
-        String iconPath = "$nl$/icons/full/";//$NON-NLS-1$		
+        String iconPath = "/icons/full/";//$NON-NLS-1$		
         if (isMarkerType(marker, IMarker.PROBLEM)) {
             switch (marker.getAttribute(IMarker.SEVERITY,
                     IMarker.SEVERITY_WARNING)) {
