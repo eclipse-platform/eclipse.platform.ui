@@ -108,6 +108,13 @@ public class ImageSegment extends ObjectSegment {
 				fx -= repaintRegion.x;
 				fy -= repaintRegion.y;
 			}
+			Color fg = gc.getForeground();
+			gc.setForeground(gc.getBackground());
+			// Clean up to avoid canceling out XOR if it is already
+			// selected.
+			gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1,
+					bounds.height - 1);
+			gc.setForeground(fg);
 			gc.drawFocus(fx, fy, bounds.width, bounds.height);
 		}
 	}

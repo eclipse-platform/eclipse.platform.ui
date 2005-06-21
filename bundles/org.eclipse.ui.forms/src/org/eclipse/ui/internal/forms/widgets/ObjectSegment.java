@@ -62,14 +62,14 @@ public abstract class ObjectSegment extends ParagraphSegment {
 			if (computeHeightOnly)
 				loc.collectHeights();
 			loc.x = loc.indent;
-			loc.x += iwidth + (isSelectable()?1:0);
+			loc.x += iwidth;
 			loc.y += loc.rowHeight;
 			loc.width = loc.indent + iwidth;
 			loc.rowHeight = iheight;
 			loc.leading = 0;
 			newLine = true;
 		} else {
-			loc.x += iwidth + (isSelectable()?1:0);
+			loc.x += iwidth;
 			loc.width += iwidth;
 			loc.rowHeight = Math.max(loc.rowHeight, iheight);
 		}
@@ -131,12 +131,11 @@ public abstract class ObjectSegment extends ParagraphSegment {
 			loc.rowCounter++;
 		}
 		//TODO vertical alignment is not used
-		int ix = loc.x+(isSelectable()?1:0);
-		int iy = loc.getBaseline(objHeight, false)+(isSelectable()?1:0);
-		loc.x += objWidth + (isSelectable()?1:0);
+		int ix = loc.x;
+		int iy = loc.getBaseline(objHeight, false);
+		loc.x += objWidth;
 		loc.rowHeight = Math.max(loc.rowHeight, objHeight);
-		bounds = new Rectangle(ix-(isSelectable()?1:0), 
-				iy-(isSelectable()?1:0), objWidth+1, objHeight+1);
+		bounds = new Rectangle(ix, iy, objWidth, objHeight);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#computeSelection(org.eclipse.swt.graphics.GC, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)

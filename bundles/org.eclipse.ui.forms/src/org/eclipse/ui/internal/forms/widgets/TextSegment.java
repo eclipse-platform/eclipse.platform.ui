@@ -223,11 +223,13 @@ public class TextSegment extends ParagraphSegment {
 
 		if (wHint == SWT.DEFAULT || !wrapAllowed) {
 			Point extent = gc.textExtent(text);
+			int totalExtent = locator.x+extent.x;
+			if (isSelectable())
+				totalExtent+=1;
 
-			if (wHint != SWT.DEFAULT && locator.x + extent.x > wHint) {
+			if (wHint != SWT.DEFAULT && totalExtent > wHint) {
 				// new line
-				locator.x = isSelectable() ? locator.indent + 1
-						: locator.indent;
+				locator.x = locator.indent;
 				locator.y += locator.rowHeight;
 				if (computeHeightOnly)
 					locator.collectHeights();
@@ -237,7 +239,7 @@ public class TextSegment extends ParagraphSegment {
 			}
 			int width = extent.x;
 			if (isSelectable())
-				width += 2;
+				width += 1;
 			locator.x += width;
 			locator.width = locator.indent + width;
 			locator.rowHeight = Math.max(locator.rowHeight, extent.y);
@@ -252,18 +254,19 @@ public class TextSegment extends ParagraphSegment {
 
 		for (int i = 0; i < textFragments.length; i++) {
 			TextFragment textFragment = textFragments[i];
+			int currentExtent = locator.x + lineExtent.x;
 			
-			if (locator.x + lineExtent.x + textFragment.length > wHint) {
+			if (isSelectable())
+				currentExtent += 1;
+			
+			if (currentExtent + textFragment.length > wHint) {
 				// overflow
-				int lineWidth = locator.x + lineExtent.x;
-				if (isSelectable())
-					lineWidth += 2;
+				int lineWidth = currentExtent;
 				locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
 				locator.leading = Math.max(locator.leading, fm.getLeading());
 				if (computeHeightOnly)
 					locator.collectHeights();
-				locator.x = isSelectable() ? locator.indent + 1
-						: locator.indent;
+				locator.x = locator.indent;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
 				locator.leading = 0;
@@ -275,10 +278,9 @@ public class TextSegment extends ParagraphSegment {
 			lineExtent.x += textFragment.length;
 			lineExtent.y = Math.max(lineHeight, lineExtent.y);
 		}
-
 		int lineWidth = lineExtent.x;
 		if (isSelectable())
-			lineWidth += 2;
+			lineWidth += 1;
 		locator.x += lineWidth;
 		locator.width = width;
 		locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
@@ -305,19 +307,17 @@ public class TextSegment extends ParagraphSegment {
 		Point extent = gc.textExtent(text);
 		int ewidth = extent.x;
 		if (isSelectable())
-			ewidth += 2;
+			ewidth += 1;
 		if (locator.x + ewidth > width-locator.marginWidth) {
 			// new line
 			locator.resetCaret();
-			if (isSelectable())
-				locator.x += 1;
 			locator.y += locator.rowHeight;
 			locator.rowHeight = 0;
 			locator.rowCounter++;
 		}
 		int ly = locator.getBaseline(fm.getHeight() - fm.getLeading());
 		//int lineY = ly + lineHeight - descent + 1;
-		Rectangle br = new Rectangle(locator.x - 1, ly, extent.x + 2,
+		Rectangle br = new Rectangle(locator.x, ly, ewidth,
 				lineHeight - descent + 3);
 		areaRectangles.add(new AreaRectangle(br, 0, -1));
 		locator.x += ewidth;
@@ -398,7 +398,7 @@ public class TextSegment extends ParagraphSegment {
 			Rectangle rect = areaRectangle.rect;
 			String text = areaRectangle.getText();
 			Point extent = gc.textExtent(text);
-			int textX = rect.x + 1;
+			int textX = rect.x + (isSelectable()?1:0);
 			int lineY = rect.y + lineHeight - descent + 1;
 			paintString(gc, text, extent.x, textX, rect.y, lineY, selData,
 					rect, hover, rollover, repaintRegion);
@@ -408,7 +408,13 @@ public class TextSegment extends ParagraphSegment {
 				if (repaintRegion != null) {
 					fx -= repaintRegion.x;
 					fy -= repaintRegion.y;
-				}				
+				}
+				//To avoid partially cancelling the focus by painting over
+				//X-ORed pixels, first cancel it yourself
+				Color fg = gc.getForeground();
+				gc.setForeground(oldBg);
+				gc.drawRectangle(fx, fy, rect.width - 1, rect.height - 1);
+				gc.setForeground(fg);
 				gc.drawFocus(fx, fy, rect.width, rect.height);
 			}
 		}
@@ -587,7 +593,7 @@ public class TextSegment extends ParagraphSegment {
 				saved = gc.getForeground();
 				gc.setForeground(gc.getBackground());
 			}
-			gc.drawLine(x, y, x + swidth, y);
+			gc.drawLine(x, y, x + swidth-1, y);
 			if (saved != null)
 				gc.setForeground(saved);
 		}
@@ -635,10 +641,11 @@ public class TextSegment extends ParagraphSegment {
 					// overflow
 					int lineWidth = locator.x + lineExtent.x;
 					if (isSelectable())
-						lineWidth += 2;
+						lineWidth += 1;
 					int ly = locator.getBaseline(lineHeight - fm.getLeading());
-					Rectangle br = new Rectangle(locator.x - 1, ly,
-							lineExtent.x + 2, lineHeight - descent + 3);
+					Rectangle br = new Rectangle(isSelectable()?
+							locator.x - 1:locator.x, ly,
+							isSelectable()?lineExtent.x + 1:lineExtent.x, lineHeight - descent + 3);
 					areaRectangles
 							.add(new AreaRectangle(br, lineStart, lastLoc));
 
@@ -646,7 +653,7 @@ public class TextSegment extends ParagraphSegment {
 							lineExtent.y);
 					locator.resetCaret();
 					if (isSelectable())
-						locator.x += 1;
+						locator.x += 1;					
 					locator.y += locator.rowHeight;
 					locator.rowCounter++;
 					locator.rowHeight = 0;
@@ -662,8 +669,9 @@ public class TextSegment extends ParagraphSegment {
 			int ly = locator.getBaseline(lineHeight - fm.getLeading());
 			int lastWidth = lineExtent.x;
 			if (isSelectable())
-				lastWidth += 2;
-			Rectangle br = new Rectangle(locator.x - 1, ly, lineExtent.x + 2,
+				lastWidth += 1;
+			Rectangle br = new Rectangle(isSelectable()?locator.x - 1:locator.x, ly, 
+					isSelectable()?lineExtent.x + 1:lineExtent.x,
 					lineHeight - descent + 3);
 			//int lineY = ly + lineHeight - descent + 1;
 			areaRectangles.add(new AreaRectangle(br, lineStart, lastLoc));

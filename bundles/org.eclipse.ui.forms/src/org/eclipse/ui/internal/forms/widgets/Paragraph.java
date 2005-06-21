@@ -135,9 +135,11 @@ public class Paragraph {
 		ParagraphSegment[] segments = getSegments();
 		//int height;
 		if (segments.length > 0) {
+			/*
 			if (segments[0] instanceof TextSegment
 					&& ((TextSegment) segments[0]).isSelectable())
 				loc.x += 1;
+			*/
 			// compute heights
 			if (loc.heights == null)
 				computeRowHeights(gc, width, loc, lineHeight, resourceTable);

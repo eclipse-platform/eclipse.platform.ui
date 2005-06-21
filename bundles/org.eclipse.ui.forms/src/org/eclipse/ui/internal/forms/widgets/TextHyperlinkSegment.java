@@ -75,6 +75,10 @@ public class TextHyperlinkSegment extends TextSegment implements
 	public void setTooltipText(String tooltip) {
 		this.tooltipText = tooltip;
 	}
+	
+	public boolean isSelectable() {
+		return true;
+	}
 
 	public boolean isFocusSelectable(Hashtable resourceTable) {
 		return true;

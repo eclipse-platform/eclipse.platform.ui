@@ -103,6 +103,10 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 	public void setTooltipText(String tooltipText) {
 		this.tooltipText = tooltipText;
 	}
+	
+	public boolean isSelectable() {
+		return true;
+	}
 
 	public boolean isFocusSelectable(Hashtable resourceTable) {
 		return true;
