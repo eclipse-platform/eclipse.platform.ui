@@ -25,10 +25,13 @@ public class PresentationActivePartPropertyTest extends PresentationPerformanceT
         this.type = type;
         this.number = number;
         this.factory = factory;
+       
     }
     
     protected void runTest() throws Throwable {
         
+    	setDegradationComment("See https://bugs.eclipse.org/bugs/show_bug.cgi?id=101072");
+    	 
         final PresentationTestbed testbed = createPresentation(factory, type, number);
         
         final TestPresentablePart part = (TestPresentablePart)testbed.getSelection();
