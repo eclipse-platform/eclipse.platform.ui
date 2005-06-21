@@ -19,11 +19,11 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Undo Examples"
+            name="%Views.Category"
             id="org.eclipse.ui.examples.undo">
       </category>
       <view
-            name="Box View"
+            name="%Views.boxView"
             icon="icons/sample.gif"
             category="org.eclipse.ui.examples.undo"
             class="org.eclipse.ui.examples.undo.views.BoxView"
@@ -40,7 +40,7 @@
             class="org.eclipse.ui.examples.undo.views.UndoHistoryView"
             icon="icons/sample.gif"
             category="org.eclipse.ui.examples.undo"
-            name="Undo History Viewer"
+            name="%Views.historyView"
             id="org.eclipse.ui.examples.undo.views.UndoHistoryView"/>
    </extension>
    

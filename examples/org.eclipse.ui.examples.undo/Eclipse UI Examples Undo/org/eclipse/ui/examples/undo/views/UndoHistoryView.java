@@ -309,7 +309,7 @@ public class UndoHistoryView extends ViewPart implements
 		filterAction = new Action() {
 			public void run() {
 				IUndoContext context = selectContext();
-				if (fContext != context) {
+				if (fContext != context && context != null) {
 					setContext(context);
 				}
 			}

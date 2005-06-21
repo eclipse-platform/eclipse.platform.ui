@@ -22,6 +22,7 @@ public class UndoExampleMessages extends NLS {
 	public static String UndoPreferences_HistoryLimit;
 	public static String UndoPreferences_ConfirmUndo;
 	public static String UndoPreferences_ShowDebug;
+	public static String UndoPreferences_DoNotConfirm;
 	
 	public static String UndoHistoryView_ContextFilterDialog;
 	public static String UndoHistoryView_ChooseContextMessage;
@@ -35,6 +36,15 @@ public class UndoExampleMessages extends NLS {
 	public static String UndoHistoryView_RefreshListToolTipText;
 	public static String UndoHistoryView_InfoDialogTitle;
 
+	public static String BoxView_Title;
+	public static String BoxView_ClearBoxes;
+	public static String BoxView_ClearBoxesToolTipText;
+	public static String BoxView_Move;
+	public static String BoxView_Add;
+	public static String BoxView_ConfirmUndo;
+	public static String BoxView_Undo;
+	public static String BoxView_Redo;
+	
     static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, UndoExampleMessages.class);
