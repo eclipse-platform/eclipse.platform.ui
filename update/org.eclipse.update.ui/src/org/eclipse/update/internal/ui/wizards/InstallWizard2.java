@@ -413,13 +413,15 @@ public class InstallWizard2
 						}
 					} else {
 						UpdateCore.log(e);
-						Display.getDefault().syncExec( new Runnable () {
-							public void run() {
-								IStatus status = new Status( IStatus.ERROR, UpdateUI.getPluginId(), IStatus.OK, UpdateUIMessages.InstallWizard2_updateOperationHasFailed, null);
-								ErrorDialog.openError(null, null, null, status);
+						if ( !monitor.isCanceled()) {
+							Display.getDefault().syncExec( new Runnable () {
+								public void run() {
+									IStatus status = new Status( IStatus.ERROR, UpdateUI.getPluginId(), IStatus.OK, UpdateUIMessages.InstallWizard2_updateOperationHasFailed, null);
+									ErrorDialog.openError(null, null, null, status);
 								
-							}							
-						});
+								}							
+							});
+						}
 					}
 					return false;
 				}
