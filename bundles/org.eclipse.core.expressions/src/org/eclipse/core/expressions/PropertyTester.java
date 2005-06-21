@@ -33,7 +33,7 @@ import org.osgi.framework.Bundle;
  *       class="org.eclipse.demo.MyPackageFragmentTester"&gt;
  *     &lt;/propertyTester&gt;
  * </pre>
- * the corresponding implemenation class looks like:
+ * the corresponding implementation class looks like:
  * <pre>
  *   public class MyPackageFragmentTester {
  *       public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
