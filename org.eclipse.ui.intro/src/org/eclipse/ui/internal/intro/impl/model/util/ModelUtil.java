@@ -267,7 +267,9 @@ public class ModelUtil {
     public static Element createElement(Document dom, String elementName,
             Properties attributes) {
 
-        Element element = dom.createElement(elementName);
+        // make sure to create element with any namespace uri to enable finding
+        // it again using Dom.getElementsByTagNameNS()
+        Element element = dom.createElementNS("", elementName);
         if (attributes != null) {
             Enumeration e = attributes.keys();
             while (e.hasMoreElements()) {
@@ -346,7 +348,8 @@ public class ModelUtil {
      */
     public static Element getElementById(Document dom, String id,
             String localElementName) {
-        NodeList children = dom.getElementsByTagNameNS("*", "*"); //$NON-NLS-1$ //$NON-NLS-2$
+        
+        NodeList children = dom.getElementsByTagNameNS("*", localElementName); //$NON-NLS-1$
         for (int i = 0; i < children.getLength(); i++) {
             Element element = (Element) children.item(i);
             if (element.getAttribute("id").equals(id)) //$NON-NLS-1$
