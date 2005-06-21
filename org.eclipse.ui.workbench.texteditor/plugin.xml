@@ -596,6 +596,20 @@
             contextId="org.eclipse.ui.textEditorScope"
             sequence="M3+/"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <!-- Alt+/ does not work on carbon - use Ctrl+. instead. 
+             org.eclipse.ui.navigate.next uses M1+. -->
+      <key
+            platform="carbon"
+            commandId=""
+            contextId="org.eclipse.ui.textEditorScope"
+            sequence="M3+/"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.edit.text.hippieCompletion"
+            contextId="org.eclipse.ui.textEditorScope"
+            sequence="M4+."
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             commandId="org.eclipse.ui.edit.text.cut.line.to.beginning"
             contextId="org.eclipse.ui.textEditorScope"
