@@ -10,5 +10,6 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui.intro;resolution:=optional,
  org.eclipse.ui.cheatsheets;resolution:=optional,
  org.eclipse.ui.forms;resolution:=optional,
- org.eclipse.ui;resolution:=optional
+ org.eclipse.ui;resolution:=optional,
+ org.eclipse.update.ui;resolution:=optional
 Eclipse-AutoStart: true
