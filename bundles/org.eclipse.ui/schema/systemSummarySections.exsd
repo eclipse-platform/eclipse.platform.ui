@@ -44,15 +44,11 @@
 
    <element name="section">
       <complexType>
-         <attribute name="class" type="string" use="required">
+         <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  The fully qualified name of a class the implements 
-&lt;code&gt;org.eclipse.ui.about.ISystemSummarySection&lt;/code&gt;.  The class must provide a default constructor.
+                  an optional, unique name that will be used to identify this system summary section
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="sectionTitle" type="string" use="required">
@@ -65,11 +61,15 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  an optional, unique name that will be used to identify this system summary section
+                  The fully qualified name of a class the implements 
+&lt;code&gt;org.eclipse.ui.about.ISystemSummarySection&lt;/code&gt;.  The class must provide a default constructor.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -94,12 +94,12 @@
 &lt;extension
  point=&quot;org.eclipse.ui.systemSummarySections&quot;&gt;
  &lt;section
-  sectionTitle=&quot;Cookie Manager Plugin&quot;
-  class=&quot;org.eclipse.ui.examples.rcp.browser.ConfigDetails&quot;
-  id=&quot;RCPBrowser.ConfigDetails&quot;&gt;
- &lt;/section&gt;
+  id=&quot;RCPBrowser.CookieDetails&quot;
+  sectionTitle=&quot;Browser Cookies&quot;
+  class=&quot;org.eclipse.ui.examples.rcp.browser.CookieConfigDetails&quot;/&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
+
       </documentation>
    </annotation>
 
