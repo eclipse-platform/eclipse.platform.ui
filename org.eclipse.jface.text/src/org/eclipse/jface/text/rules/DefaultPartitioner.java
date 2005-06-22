@@ -371,6 +371,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 				++ lastScannedPosition;
 			}
 			first= d.computeIndexInCategory(fPositionCategory, lastScannedPosition);
+			category= d.getPositions(fPositionCategory);
 
 			TypedPosition p;
 			while (first < category.length) {

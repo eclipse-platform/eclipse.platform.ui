@@ -395,6 +395,8 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 			}
 			first= fDocument.computeIndexInCategory(fPositionCategory, lastScannedPosition);
 
+			clearPositionCache();
+			category= getPositions();
 			TypedPosition p;
 			while (first < category.length) {
 				p= (TypedPosition) category[first++];
