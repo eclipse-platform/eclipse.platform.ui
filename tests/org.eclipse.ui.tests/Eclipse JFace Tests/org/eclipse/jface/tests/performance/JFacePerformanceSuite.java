@@ -10,14 +10,29 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.performance;
 
+import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
 
 /**
  * The JFacePerformanceSuite are the performance tests for JFace.
  */
 public class JFacePerformanceSuite extends TestSuite {
+	
+	//Some of these tests are very slow on 3.0
+	//Specify the minimum number of iterations
+	//and the time to drop down to a lower number
+	public static int MIN_ITERATIONS = 25;
+	public static int MAX_TIME = 10000;
+	
+	/**
+     * Returns the suite. This is required to use the JUnit Launcher.
+     */
+    public static Test suite() {
+    	return new UIPerformanceTestSetup(new JFacePerformanceSuite());
+    }
 
 	public JFacePerformanceSuite() {
 		super();
