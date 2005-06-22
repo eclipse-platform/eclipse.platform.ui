@@ -61,11 +61,11 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
 
    <element name="handler">
       <complexType>
-         <all>
+         <choice>
             <element ref="activeWhen" minOccurs="0" maxOccurs="1"/>
             <element ref="class" minOccurs="0" maxOccurs="1"/>
             <element ref="enabledWhen" minOccurs="0" maxOccurs="1"/>
-         </all>
+         </choice>
          <attribute name="commandId" type="string" use="required">
             <annotation>
                <documentation>
@@ -88,7 +88,7 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
 
    <element name="activeWhen">
       <complexType>
-         <all>
+         <choice>
             <element ref="not"/>
             <element ref="and"/>
             <element ref="or"/>
@@ -101,13 +101,13 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
-         </all>
+         </choice>
       </complexType>
    </element>
 
    <element name="enabledWhen">
       <complexType>
-         <all>
+         <choice>
             <element ref="not"/>
             <element ref="and"/>
             <element ref="or"/>
@@ -120,15 +120,15 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
-         </all>
+         </choice>
       </complexType>
    </element>
 
    <element name="class">
       <complexType>
-         <all>
+         <choice>
             <element ref="parameter"/>
-         </all>
+         </choice>
          <attribute name="class" type="string">
             <annotation>
                <documentation>

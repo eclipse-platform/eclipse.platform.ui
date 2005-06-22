@@ -119,9 +119,9 @@ It is possible for schemes to inherit bindings from a parent scheme.  This is in
          </documentation>
       </annotation>
       <complexType>
-         <all>
+         <choice>
             <element ref="parameter"/>
-         </all>
+         </choice>
          <attribute name="sequence" type="string" use="required">
             <annotation>
                <documentation>

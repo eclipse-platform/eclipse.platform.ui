@@ -127,10 +127,10 @@ This element has been replaced with a preference.  If your application needs to 
          </documentation>
       </annotation>
       <complexType>
-         <all>
+         <choice>
             <element ref="commandParameter"/>
             <element ref="defaultHandler" minOccurs="0" maxOccurs="1"/>
-         </all>
+         </choice>
          <attribute name="category" type="string">
             <annotation>
                <documentation>
@@ -470,9 +470,9 @@ This element has been replaced with a preference.  If your application needs to 
          </documentation>
       </annotation>
       <complexType>
-         <all>
+         <choice>
             <element ref="values"/>
-         </all>
+         </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -517,9 +517,9 @@ This element has been replaced with a preference.  If your application needs to 
          </documentation>
       </annotation>
       <complexType>
-         <all>
+         <choice>
             <element ref="parameter"/>
-         </all>
+         </choice>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -564,9 +564,9 @@ This element has been replaced with a preference.  If your application needs to 
          </documentation>
       </annotation>
       <complexType>
-         <all>
+         <choice>
             <element ref="parameter"/>
-         </all>
+         </choice>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
