@@ -92,8 +92,13 @@ public class JobErrorDialog extends ErrorDialog {
     	if(AUTOMATED_MODE)//Nothing to refresh if we never opened it
     		return;
     	
+    	//Do not refresh if we are in the process of 
+    	//opening or shutting down
+    	if(dialogArea == null || dialogArea.isDisposed())
+    		return;
+    
         if (isMultipleJobErrors()) {
-            if (jobListViewer == null && !dialogArea.isDisposed()) {
+            if (jobListViewer == null ) {
 	            // The job list doesn't exist so create it.
 	            setMessage(ProgressMessages.JobErrorDialog_MultipleErrorsMessage); 
 	            getShell().setText(ProgressMessages.JobErrorDialog_MultipleErrorsTitle); 
