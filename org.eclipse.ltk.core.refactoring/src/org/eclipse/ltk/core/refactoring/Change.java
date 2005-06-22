@@ -206,7 +206,7 @@ public abstract class Change implements IAdaptable {
 	 * @throws CoreException if an error occurred during validation check. The change
 	 *  is to be treated as invalid if an exception occurs
 	 * 
-	 * @throws OperationCanceledException if the validation check got cancelled
+	 * @throws OperationCanceledException if the validation check got canceled
 	 */
 	public abstract RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 	

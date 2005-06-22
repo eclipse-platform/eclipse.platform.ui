@@ -38,7 +38,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 	private List fParticipants;
 	private Class fParticipantClass;
 	
-	//---- debuging----------------------------------------
+	//---- debugging ----------------------------------------
 	/*
 	private static final boolean EXIST_TRACING;
 	static {

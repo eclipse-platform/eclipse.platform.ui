@@ -11,7 +11,7 @@
 package org.eclipse.ltk.ui.refactoring;
 
 /**
- * Status codes used by the refactoring ui plug-in.
+ * Status codes used by the refactoring UI plug-in.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>

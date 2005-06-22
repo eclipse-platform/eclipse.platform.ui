@@ -64,7 +64,7 @@ public class UndoRefactoringAction extends UndoManagerAction implements IWorkben
 	 * Method declared in UndoManagerAction
 	 */
 	protected String getName() {
-		// PR: 1GEWDUH: ITPJCORE:WINNT - Refactoring - Unable to undo refactor change
+		// PR: 1GEWDUH: ITPJCORE:WINNT - Refactoring - Unable to undo refactoring change
 		return RefactoringUIMessages.UndoRefactoringAction_name; 
 	}
 	

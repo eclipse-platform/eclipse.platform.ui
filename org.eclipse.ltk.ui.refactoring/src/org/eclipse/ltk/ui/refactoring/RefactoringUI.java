@@ -24,7 +24,7 @@ import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
 
 /**
  * Central access point to access resources managed by the refactoring
- * ui plug-in.
+ * UI plug-in.
  * <p> 
  * Note: this class is not intended to be extended by clients.
  * </p>

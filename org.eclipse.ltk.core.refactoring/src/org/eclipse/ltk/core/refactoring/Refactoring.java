@@ -18,11 +18,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * Abstract super class for all refactorings. Refactorings are used to perform
- * behaviour preserving work space transformations. A refactoring offers two 
+ * behavior preserving work space transformations. A refactoring offers two 
  * different kind of methods:
  * <ol> 
  *   <li>methods to check conditions to determine if the refactoring can be carried out 
- *       in general and if transformation will be behavioural persevering.
+ *       in general and if transformation will be behavioral persevering.
  *       </li>
  *   <li>a method to create a {@link org.eclipse.ltk.core.refactoring.Change} object
  *       that represents the actual work space modifications.
@@ -111,7 +111,7 @@ public abstract class Refactoring extends PlatformObject {
 	 * @throws CoreException if an exception occurred during condition checking.
 	 *  If this happens then the condition checking has to be interpreted as failed
 	 * 
-	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * @throws OperationCanceledException if the condition checking got canceled
 	 * 
 	 * @see #checkInitialConditions(IProgressMonitor)
 	 * @see #checkFinalConditions(IProgressMonitor)
@@ -152,7 +152,7 @@ public abstract class Refactoring extends PlatformObject {
 	 * @throws CoreException if an exception occurred during initial condition checking.
 	 *  If this happens then the initial condition checking has to be interpreted as failed
 	 * 
-	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * @throws OperationCanceledException if the condition checking got canceled
 	 * 
 	 * @see #checkFinalConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
@@ -179,7 +179,7 @@ public abstract class Refactoring extends PlatformObject {
 	 * @throws CoreException if an exception occurred during final condition checking
 	 *  If this happens then the final condition checking is interpreted as failed
 	 * 
-	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * @throws OperationCanceledException if the condition checking got canceled
 	 * 
 	 * @see #checkInitialConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
@@ -199,7 +199,7 @@ public abstract class Refactoring extends PlatformObject {
 	 * 
 	 * @throws CoreException if an error occurred while creating the change
 	 *  
-	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * @throws OperationCanceledException if the condition checking got canceled
 	 */
 	public abstract Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 	

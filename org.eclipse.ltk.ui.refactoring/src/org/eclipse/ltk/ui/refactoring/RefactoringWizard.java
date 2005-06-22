@@ -159,7 +159,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 * Creates a new refactoring wizard for the given refactoring. 
 	 * 
 	 * @param refactoring the refactoring the wizard is presenting
-	 * @param flags flags specifying the behaviour of the wizard. If neither 
+	 * @param flags flags specifying the behavior of the wizard. If neither 
 	 *  <code>WIZARD_BASED_USER_INTERFACE</code> nor <code>DIALOG_BASED_UESR_INTERFACE</code> 
 	 *  is specified then <code>WIZARD_BASED_USER_INTERFACE</code> will be
 	 *  taken as a default.
@@ -360,7 +360,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 * Hook method to add user input pages to this refactoring wizard. Pages
 	 * added via this call have to be instances of the type {@link UserInputWizardPage}.
 	 * Adding pages of a different kind is not permitted and will result
-	 * in unexpected behaviour.
+	 * in unexpected behavior.
 	 */
 	protected abstract void addUserInputPages();
 	
@@ -604,7 +604,7 @@ public abstract class RefactoringWizard extends Wizard {
 		return change;
 	}
 
-	//---- Reimplementation of Wizard methods --------------------------------------------
+	//---- Re-implementation of Wizard methods --------------------------------------------
 
 	public boolean performFinish() {
 		Assert.isNotNull(fRefactoring);

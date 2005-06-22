@@ -384,7 +384,7 @@ public abstract class TextChange extends Change {
 	 * return different document instances.  
 	 * <p>
 	 * The returned document must not be modified by the client. Doing 
-	 * so will result in an unexpected behaviour when the change is 
+	 * so will result in an unexpected behavior when the change is 
 	 * performed.
 	 * </p>
 	 * 

@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * method {@link RefactoringCore#getUndoManager()} to access the refactoring undo manager.
  * </p>
  * <p>
- * As of 3.1 the implementation of the refactoring undo mamager is based on the 
+ * As of 3.1 the implementation of the refactoring undo manager is based on the 
  * {@link org.eclipse.core.commands.operations.IOperationHistory} provided by the
- * <code>org.eclipse.core.commands</code> plugin.
+ * <code>org.eclipse.core.commands</code> plug-in.
  * </p>
  * 
  * @see org.eclipse.core.commands.operations.IOperationHistory

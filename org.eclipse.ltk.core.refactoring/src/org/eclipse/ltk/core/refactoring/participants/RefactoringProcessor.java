@@ -141,7 +141,7 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 *         checking. If this happens the initial condition checking is
 	 *         interpreted as failed.
 	 * 
-	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * @throws OperationCanceledException if the condition checking got canceled
 	 * 
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
@@ -168,7 +168,7 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 * @throws CoreException if an exception occurred during final condition
 	 *  checking. If this happens the final condition checking is interpreted as failed.
 	 * 
-	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * @throws OperationCanceledException if the condition checking got canceled
 	 * 
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkFinalConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
@@ -187,7 +187,7 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 * 
 	 * @throws CoreException if an error occurred while creating the change
 	 * 
-	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * @throws OperationCanceledException if the condition checking got canceled
 	 * 
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#createChange(IProgressMonitor)
 	 */
@@ -205,7 +205,7 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 * 
 	 * @throws CoreException if an error occurred while creating the post change
 	 * 
-	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * @throws OperationCanceledException if the condition checking got canceled
 	 * 
 	 * @see #createChange(IProgressMonitor)
 	 */

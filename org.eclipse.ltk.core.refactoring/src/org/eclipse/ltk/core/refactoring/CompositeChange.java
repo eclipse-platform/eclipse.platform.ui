@@ -348,7 +348,7 @@ public class CompositeChange extends Change {
 	
 	/**
 	 * Note: this is an internal method and should not be overridden outside of
-	 * the refacotring framework.
+	 * the refactoring framework.
 	 * <p>
 	 * The method gets called if one of the changes managed by this
 	 * composite change generates an exception when performed.
@@ -381,7 +381,7 @@ public class CompositeChange extends Change {
 
 	/**
 	 * Note: this is an internal method and should not be overridden outside of
-	 * the refacotring framework.
+	 * the refactoring framework.
 	 * <p>
 	 * The method gets called if the execution of this change got canceled,
 	 * but <code>internalContinueOnCancel</code> returned true. 

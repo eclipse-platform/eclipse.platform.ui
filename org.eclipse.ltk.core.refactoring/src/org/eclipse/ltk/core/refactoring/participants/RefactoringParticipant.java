@@ -136,7 +136,7 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * @return a refactoring status. If the status is <code>RefactoringStatus#FATAL</code>
 	 *  the refactoring is considered as not being executable.
 	 * 
-	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * @throws OperationCanceledException if the condition checking got canceled
 	 * 
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
@@ -176,7 +176,7 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * 
 	 * @throws CoreException if an error occurred while creating the change
 	 * 
-	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * @throws OperationCanceledException if the condition checking got canceled
 	 */
 	public abstract Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 

@@ -97,7 +97,7 @@ public class RefactoringWizardOpenOperation {
 	 *  or {@link IDialogConstants#CANCEL_ID} is returned depending on whether the user
 	 *  has pressed the OK or cancel button on the wizard dialog.
 	 * 
-	 * @throws InterruptedException if the initial condition checking got cancelled by
+	 * @throws InterruptedException if the initial condition checking got canceled by
 	 *  the user.
 	 */
 	public int run(final Shell parent, final String dialogTitle) throws InterruptedException {

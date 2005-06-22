@@ -83,7 +83,7 @@ public class RefactoringCore {
 	/**
 	 * An internal method to set the query factory.
 	 * <p>
-	 * This method is NOT offical API. It is a special method for the refactoring UI 
+	 * This method is NOT official API. It is a special method for the refactoring UI 
 	 * plug-in to set a dialog based query factory.
 	 * </p>
 	 * @param factory the factory to set or <code>null</code>
