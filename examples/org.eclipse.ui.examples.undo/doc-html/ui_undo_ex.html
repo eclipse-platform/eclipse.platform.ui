@@ -26,11 +26,11 @@ work .</li>
 and moving boxes).</li>
 <li>Using a local <tt>IUndoContext</tt> to keep undo operations local to a particular view.</li>
 <li>Using the platform undo and redo action handlers to provide undo and redo in a view.</li>
-<li>Using a user preference to set the undo limit for a particular undo context.</li>
+<li>Providing a user preference for setting the undo limit for a particular undo context.</li>
 <li>Using an <tt>IOperationApprover</tt> to install additional policy (Prompt before undo) in
 the operation history.</li>
-<li>Using <tt>IOperationHistory</tt> protocol (Undo History View) to show undo history for different
-undo contexts.</li>
+<li>Using <tt>IOperationHistory</tt> protocol to show undo history for different
+undo contexts (Undo History View).</li>
 </ul>
 <h3>Features not demonstrated</h3>
 <ul>
@@ -46,12 +46,12 @@ views or editors.</li>
 <p>
 From Eclipse's <strong>Window</strong> menu select <strong>Show View</strong> &gt; <strong>Other...</strong>.  
 In the <strong>Show View</strong> dialog, expand <strong>Undo Examples</strong> and select
-the view named <strong>Box View</strong>. A view containing the box view will appear.
+the view named <strong>Box View</strong>. The box view will appear.
 </p>
 <p>
 Likewise, from the <strong>Window</strong> menu select <strong>Show View</strong> &gt; <strong>Other...</strong>.  
 In the <strong>Show View</strong> dialog, expand <strong>Undo Examples</strong> and select
-the view named <strong>Undo History View</strong>. A view containing the undo history view will appear.
+the view named <strong>Undo History View</strong>. A view containing the undo history will appear.
 This view can be used alongside the Box View to watch the undo history as boxes are added or moved.  It
 can also be used independently of the Box View to follow the undo history for any view or editor that
 uses the workbench operations history to track undoable operations.
@@ -66,7 +66,7 @@ menu and toolbar.  This operation can also be undone.
 </p>
 <h4>Undo History View</h4>
 <p>The Undo History View shows the operations available for undo in all undo contexts.  To view the history
-in a particular undo context, select the <strong>Filter on...</strong> from the view's context menu.
+in a particular undo context, select <strong>Filter on...</strong> from the view's context menu.
 This will filter the undo history on a particular undo context.  The view can be used to view the undo history
 for the Box View, for SDK text editors, and for undoable operations that affect the workspace, such as
 refactoring operations.  Undo and redo can be performed from the Undo History View's menus.  <b>Undo selected</b>
