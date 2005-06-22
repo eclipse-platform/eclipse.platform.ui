@@ -11,7 +11,7 @@
 package org.eclipse.core.runtime;
 
 import java.io.IOException;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.*;
@@ -109,7 +109,7 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static final String PREF_PLATFORM_PERFORMANCE = "runtime.performance"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constant (value "line.separator") name of the preference used for storing 
 	 * the line separator. 
@@ -404,7 +404,7 @@ public final class Platform {
 	private static final String LINE_SEPARATOR_KEY_MAC_OS_9 = Messages.line_separator_platform_mac_os_9;
 	private static final String LINE_SEPARATOR_KEY_UNIX = Messages.line_separator_platform_unix;
 	private static final String LINE_SEPARATOR_KEY_WINDOWS = Messages.line_separator_platform_windows;
-	
+
 	private static final String LINE_SEPARATOR_VALUE_CR = "\r"; //$NON-NLS-1$
 	private static final String LINE_SEPARATOR_VALUE_LF = "\n"; //$NON-NLS-1$
 	private static final String LINE_SEPARATOR_VALUE_CRLF = "\r\n"; //$NON-NLS-1$
@@ -484,17 +484,17 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns a URL which is the local equivalent of the
+	 * Returns a URL that is the local equivalent of the
 	 * supplied URL. This method is expected to be used with the
 	 * plug-in-relative URLs returned by IPluginDescriptor, Bundle.getEntry()
 	 * and Platform.find().
 	 * If the specified URL is not a plug-in-relative URL, it 
 	 * is returned as is. If the specified URL is a plug-in-relative
 	 * URL of a file (including .jar archive), it is returned as 
-	 * a locally-accessible URL using "file:" or "jar:file:" protocol
-	 * (caching the file locally, if required). If the specified URL
-	 * is a plug-in-relative URL of a directory,
-	 * an exception is thrown.
+	 * a locally accessible URL using "file:" protocol
+	 * (extracting/caching the file locally, if required). If the specified URL
+	 * is a plug-in-relative URL of a directory, the directory and any files and directories
+	 * under it are made locally accessible likewise. If 
 	 *
 	 * @param url original plug-in-relative URL.
 	 * @return the resolved URL
@@ -897,7 +897,7 @@ public final class Platform {
 	public static IPath getStateLocation(Bundle bundle) {
 		return InternalPlatform.getDefault().getStateLocation(bundle);
 	}
-	
+
 	/**
 	 * Returns a number that changes whenever the set of installed plug-ins
 	 * changes. This can be used for invalidating caches that are based on 
@@ -909,7 +909,7 @@ public final class Platform {
 	public static long getStateStamp() {
 		return InternalPlatform.getDefault().getStateTimeStamp();
 	}
-	
+
 	/**
 	 * Returns the log for the given bundle.  If no such log exists, one is created.
 	 *
