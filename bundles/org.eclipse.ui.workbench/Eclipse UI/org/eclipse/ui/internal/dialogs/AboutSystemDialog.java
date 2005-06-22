@@ -267,7 +267,7 @@ public final class AboutSystemDialog extends ProductInfoDialog {
         try {
 			in = new FileReader(file);
 			// don't append data, overwrite what was there
-			out = new FileWriter(copy, false);
+			out = new FileWriter(copy);
 			char buffer[] = new char[4096];
 		    int count;
 		    while ((count = in.read(buffer, 0, buffer.length)) > 0) {
