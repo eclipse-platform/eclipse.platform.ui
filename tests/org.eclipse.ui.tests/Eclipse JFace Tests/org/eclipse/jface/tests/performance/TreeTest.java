@@ -12,6 +12,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.test.performance.Dimension;
+import org.eclipse.ui.tests.performance.TestRunnable;
 
 public class TreeTest extends ViewerTest {
 
@@ -168,7 +169,8 @@ public class TreeTest extends ViewerTest {
 	 */
 	public void testAddHundred() throws CoreException {
 
-		tagIfNecessary("JFace - Add 1000 items in 10 blocks to TreeViewer", Dimension.ELAPSED_PROCESS);
+		tagIfNecessary("JFace - Add 1000 items in 10 blocks to TreeViewer",
+				Dimension.ELAPSED_PROCESS);
 
 		doTestAdd(100, TEST_COUNT, false);
 	}
@@ -179,40 +181,50 @@ public class TreeTest extends ViewerTest {
 	 * @param count
 	 * @throws CoreException
 	 */
-	private void doTestAdd(final int increment, int total, boolean preSort) {
+	private void doTestAdd(final int increment, final int total,final boolean preSort)
+			throws CoreException {
 
 		openBrowser();
 
 		int iterations = ITERATIONS;
-		if (total > 100)// Cut it down for large data sets
+		int minIterations = JFacePerformanceSuite.MIN_ITERATIONS;
+
+		if (total > 100) {// Cut it down for large data sets
 			iterations = ITERATIONS / 5;
-
-		for (int i = 0; i < iterations; i++) {
-			TestTreeElement input = new TestTreeElement(0, null);
-			viewer.setInput(input);
-			input.createChildren(total);
-			if (preSort)
-				viewer.getSorter().sort(viewer, input.children);
-			Collection batches = new ArrayList();
-			int blocks = input.children.length / increment;
-			for (int j = 0; j < blocks; j = j + increment) {
-				Object[] batch = new Object[increment];
-				System.arraycopy(input.children, j * increment, batch, 0,
-						increment);
-				batches.add(batch);
-			}
-			processEvents();
-			Object[] batchArray = batches.toArray();
-			startMeasuring();
-
-			// Measure more than one for the fast cases
-			for (int k = 0; k < batchArray.length; k++) {
-				viewer.add(input, (Object[]) batchArray[k]);
-				processEvents();
-			}
-
-			stopMeasuring();
+			minIterations = minIterations / 5;
 		}
+
+		exercise(new TestRunnable() {
+			public void run() {
+
+				TestTreeElement input = new TestTreeElement(0, null);
+				viewer.setInput(input);
+				input.createChildren(total);
+				if (preSort)
+					viewer.getSorter().sort(viewer, input.children);
+				Collection batches = new ArrayList();
+				int blocks = input.children.length / increment;
+				for (int j = 0; j < blocks; j = j + increment) {
+					Object[] batch = new Object[increment];
+					System.arraycopy(input.children, j * increment, batch, 0,
+							increment);
+					batches.add(batch);
+				}
+				processEvents();
+				Object[] batchArray = batches.toArray();
+				startMeasuring();
+
+				// Measure more than one for the fast cases
+				for (int k = 0; k < batchArray.length; k++) {
+					viewer.add(input, (Object[]) batchArray[k]);
+					processEvents();
+				}
+
+				stopMeasuring();
+
+			}
+		}, minIterations, iterations, JFacePerformanceSuite.MAX_TIME);
+
 		commitMeasurements();
 		assertPerformance();
 
@@ -221,7 +233,7 @@ public class TreeTest extends ViewerTest {
 	/**
 	 * Test addition to the tree.
 	 */
-	public void testAddThousand() {
+	public void testAddThousand() throws CoreException {
 		doTestAdd(1000, 2000, false);
 	}
 
@@ -240,11 +252,10 @@ public class TreeTest extends ViewerTest {
 	 *             Test addition to the tree with the items presorted.
 	 */
 	public void testAddHundredPreSort() throws CoreException {
-	
+
 		doTestAdd(100, 1000, true);
 	}
 
-	
 	/**
 	 * @throws CoreException
 	 *             Test addition to the tree with the items presorted.

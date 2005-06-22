@@ -98,4 +98,14 @@
     </ant>
   </target>
 
+	<target name="jface-performance-suite">
+	  	<property name="performance-workspace-jface" value="${eclipse-home}/performance-workspace-platform-jface"/>
+	    <delete dir="${performance-workspace-jface}" quiet="true"/>
+	  	<ant target="jface-test" antfile="${library-file}" dir="${eclipse-home}">
+	      <property name="data-dir" value="${performance-workspace-jface}"/>
+	      <property name="plugin-name" value="${plugin-name}"/>
+	      <property name="classname" value="org.eclipse.jface.tests.performance.JFacePerformanceTestSuite"/>
+	    </ant>
+	  </target>
+	
 </project>
