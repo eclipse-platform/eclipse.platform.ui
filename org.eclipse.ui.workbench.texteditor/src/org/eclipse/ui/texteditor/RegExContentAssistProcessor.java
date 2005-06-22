@@ -32,6 +32,8 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 
 	/**
 	 * Proposal computer.
+	 *
+	 * @since 3.1
 	 */
 	private static class ProposalComputer {
 
@@ -317,9 +319,13 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	/**
 	 * <code>true</code> iff the processor is for the find field.
 	 * <code>false</code> iff the processor is for the replace field.
+	 * @since 3.1
 	 */
 	private final boolean fIsFind;
 	
+	/*
+	 * @since 3.1
+	 */
 	public RegExContentAssistProcessor(boolean isFind) {
 		fIsFind= isFind;
 	}

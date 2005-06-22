@@ -257,6 +257,9 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		return null;
 	}
 
+	/*
+	 * @since 3.1
+	 */
 	private static String getString(String key) {
 		try {
 			return EditorMessages.getBundleForConstructedKeys().getString(key);

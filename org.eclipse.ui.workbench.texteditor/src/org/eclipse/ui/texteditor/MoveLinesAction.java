@@ -47,7 +47,10 @@ public class MoveLinesAction extends TextEditorAction {
 
 	/* compound members of this action */
 
-	/** The exit strategy that will detect the ending of a compound edit */
+	/**
+	 * The exit strategy that will detect the ending of a compound edit.
+	 * @since 3.1
+	 */
 	private final CompoundEditExitStrategy fStrategy;
 
 	/* process variables - may change in every run() */
