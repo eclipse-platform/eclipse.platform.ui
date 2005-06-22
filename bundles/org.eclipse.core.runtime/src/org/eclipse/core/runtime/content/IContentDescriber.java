@@ -18,6 +18,15 @@ import org.eclipse.core.runtime.QualifiedName;
  * Content describers know how to retrieve metadata from 
  * contents.
  * <p>
+ * Note: It is expected that content describer implementations be declared in a package 
+ * that is exempt from plug-in activation (using the Eclipse-AutoStart bundle 
+ * manifest header). Since all describers are instantiated when the content type 
+ * framework is initialized, failure in complying with this requirement causes 
+ * premature activation, which must be avoided. Future implementations of the 
+ * framework might refuse to instantiate describers if doing so would trigger 
+ * activation of the corresponding plug-in.
+ * </p>
+ * <p>
  * Describers for text-based content types should implement 
  * <code>ITextContentDescriber</code> instead.
  * </p>

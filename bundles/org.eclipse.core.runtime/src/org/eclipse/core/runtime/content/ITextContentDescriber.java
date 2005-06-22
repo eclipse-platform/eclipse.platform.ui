@@ -17,7 +17,16 @@ import java.io.Reader;
  * Text content describers extend basic content describers to provide
  * the ability of scanning character streams (readers). Describers for 
  * text-based content types must implement this interface 
- * instead of <code>IContentDescription</code>. 
+ * instead of <code>IContentDescription</code>.
+ * <p>
+ * Note: It is expected that content describer implementations be declared in a package 
+ * that is exempt from plug-in activation (using the Eclipse-AutoStart bundle 
+ * manifest header). Since all describers are instantiated when the content type 
+ * framework is initialized, failure in complying with this requirement causes 
+ * premature activation, which must be avoided. Future implementations of the 
+ * framework might refuse to instantiate describers if doing so would trigger 
+ * activation of the corresponding plug-in.
+ * </p>
  * <p>
  * Clients may implement this interface.
  * </p>
