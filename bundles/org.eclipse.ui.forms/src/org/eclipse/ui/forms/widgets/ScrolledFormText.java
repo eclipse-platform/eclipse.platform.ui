@@ -97,8 +97,8 @@ public final class ScrolledFormText extends SharedScrolledComposite {
 	/**
 	 * Sets the background color of the scrolled form text.
 	 * 
-	 * @param the
-	 *            background color
+	 * @param bg
+	 *            the background color
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);

@@ -154,8 +154,8 @@ public class Hyperlink extends AbstractHyperlink {
 	/**
 	 * Paints the hyperlink text.
 	 * 
-	 * @param e
-	 *            the paint event
+	 * @param gc
+	 *            graphic context
 	 */
 	protected void paintHyperlink(GC gc) {
 		Rectangle carea = getClientArea();

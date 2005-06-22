@@ -247,8 +247,8 @@ public abstract class AbstractHyperlink extends Canvas {
 	/**
 	 * Paints the hyperlink as a reaction to the provided paint event.
 	 * 
-	 * @param e
-	 *            the paint event
+	 * @param gc
+	 *            graphic context
 	 */
 	protected abstract void paintHyperlink(GC gc);
 

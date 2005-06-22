@@ -15,7 +15,7 @@ package org.eclipse.ui.forms;
  * code that must be called, look for instructions to call 'super'
  * when overriding.
  * 
- * @see Section
+ * @see org.eclipse.ui.forms.widgets.Section
  * @since 3.0
  */
 public abstract class AbstractFormPart implements IFormPart {

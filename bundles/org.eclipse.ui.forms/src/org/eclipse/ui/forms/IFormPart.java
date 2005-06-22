@@ -54,7 +54,8 @@ public interface IFormPart {
 	/**
 	 * Returns true if the part has been modified with respect to
 	 * the data loaded from the model.
-	 * @return
+	 * @return true if the part has been modified with respect to
+	 * the data loaded from the model
 	 */
 	boolean isDirty();
 	/**

@@ -188,8 +188,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	 * Returns <code>null</code>- form page has no title image. Subclasses
 	 * may override.
 	 * 
-	 * @param Image
-	 *            the title image or <code>null</code> if not used.
+	 * @return <code>null</code>
 	 */
 	public Image getTitleImage() {
 		return null;

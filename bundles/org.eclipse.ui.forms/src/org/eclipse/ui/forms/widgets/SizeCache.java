@@ -306,10 +306,9 @@ public class SizeCache {
      * (this tries to compensate for SWT's hints, which aren't really the outer width of the
      * control).
      * 
-     * @param control
-     * @param widthHint
-     * @param heightHint
-     * @return
+     * @param widthHint the horizontal hint
+     * @param heightHint the vertical hint
+     * @return the control's size
      */
     public Point computeAdjustedSize(int widthHint, int heightHint) {
         int adjustedWidthHint = widthHint == SWT.DEFAULT ? SWT.DEFAULT : Math

@@ -13,9 +13,9 @@ package org.eclipse.ui.forms.events;
  * Classes that implement this interface will be notified when hyperlinks are
  * entered, exited and activated.
  * 
- * @see Hyperlink
- * @see ImageHyperlink
- * @see FormText
+ * @see org.eclipse.ui.forms.widgets.Hyperlink
+ * @see org.eclipse.ui.forms.widgets.ImageHyperlink
+ * @see org.eclipse.ui.forms.widgets.FormText
  * @since 3.0
  */
 public interface IHyperlinkListener {

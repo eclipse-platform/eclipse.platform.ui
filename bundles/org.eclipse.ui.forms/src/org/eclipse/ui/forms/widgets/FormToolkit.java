@@ -554,8 +554,8 @@ public class FormToolkit {
 	 *            the text parent
 	 * @param value
 	 *            the text initial value
-	 * @param the
-	 *            text style
+	 * @param style
+	 *            the text style
 	 * @return the text widget
 	 */
 	public Text createText(Composite parent, String value, int style) {
@@ -609,8 +609,8 @@ public class FormToolkit {
 	 * not scroll its content, so make sure there is a scrolled composite up the
 	 * parent chain. If you require scrolling, use 'createScrolledForm' instead.
 	 * 
-	 * @param the
-	 *            form parent
+	 * @param parent
+	 *            the form parent
 	 * @return the form that does not scroll
 	 * @see #createScrolledForm
 	 */
@@ -627,10 +627,8 @@ public class FormToolkit {
 	 * 
 	 * @param parent
 	 *            the page book parent
-	 * @param trackFocus
-	 *            if <code>true</code>, the toolkit will monitor focus
-	 *            transfers to ensure that the hyperlink in focus is visible in
-	 *            the form.
+	 * @param style
+	 *            the text style
 	 * @return the scrolled page book widget
 	 */
 	public ScrolledPageBook createPageBook(Composite parent, int style) {

@@ -23,7 +23,7 @@ public final class HyperlinkEvent extends TypedEvent {
 	/**
 	 * Creates a new hyperlink
 	 * 
-	 * @param obj
+	 * @param widget
 	 *            event source
 	 * @param href
 	 *            the hyperlink reference that will be followed upon when the
@@ -31,13 +31,15 @@ public final class HyperlinkEvent extends TypedEvent {
 	 * @param label
 	 *            the name of the hyperlink (the text that is rendered as a
 	 *            link in the source widget).
+	 * @param stateMask
+	 *            the given state mask
 	 */
-	public HyperlinkEvent(Widget widget, Object href, String label, int modifier) {
+	public HyperlinkEvent(Widget widget, Object href, String label, int stateMask) {
 		super(widget);
 		this.widget = widget;
 		this.data = href;
 		this.label = label;
-		this.stateMask = modifier;
+		this.stateMask = stateMask;
 	}
 	/**
 	 * The hyperlink reference that will be followed when the hyperlink is

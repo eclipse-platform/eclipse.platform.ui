@@ -151,7 +151,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	/**
 	 * Sets the expansion state of the twistie control
 	 * 
-	 * @param selection
+	 * @param expanded the expansion state
 	 */
 	public void setExpanded(boolean expanded) {
 		this.expanded = expanded;

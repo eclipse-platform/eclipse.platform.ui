@@ -740,7 +740,7 @@ public class ExpandableComposite extends Composite {
 	 * 
 	 * @param title
 	 *            the new title string
-	 * @see #getTitle
+	 * @see #getText()
 	 */
 	public void setText(String title) {
 		if (textLabel instanceof Label)
@@ -753,7 +753,7 @@ public class ExpandableComposite extends Composite {
 	 * Returns the title string.
 	 * 
 	 * @return the title string
-	 * @see #setTitle
+	 * @see #setText(String)
 	 */
 	public String getText() {
 		if (textLabel instanceof Label)
@@ -776,7 +776,7 @@ public class ExpandableComposite extends Composite {
 	/**
 	 * Returns the bitwise-ORed style bits for the expansion control.
 	 * 
-	 * @return
+	 * @return the bitwise-ORed style bits for the expansion control
 	 */
 	public int getExpansionStyle() {
 		return expansionStyle;
