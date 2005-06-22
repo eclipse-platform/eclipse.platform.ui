@@ -4,6 +4,80 @@
    <title>Eclipse Platform Release Notes Core</title>
 </head>
 <body>
+<h1>Eclipse Platform Build Notes<br>
+  Core</h1>
+Eclipse SDK Build 3.1 RC4 (20050624) 
+<h2>What's new in this drop</h2>
+<p><em>(Massive update in build-notes takes into account all action between 2004-06-24 
+  and 2005-06-24)</em></p>
+<h3>Summary of API and non-API changes</h3>
+<ul>
+  <li>Summary of changes in the Runtime 
+    <ul>
+      <li>Dynamic Plug-ins - We added a package with helper classes to aid clients 
+        when making their plug-ins dynamic and dynamic aware. Check out the classes 
+        in <code>org.eclipse.core.runtime.dynamichelpers</code>.</li>
+      <li>Preferences - We added filters for import/export (IPreferenceFilter) 
+        and modify listeners to aid in plug-in preference migration. Check out 
+        the <code>IPreferenceFilter</code> and <code>PreferenceModifyListener</code> 
+        types for more information.</li>
+      <li>Jobs - Minor changes were made to the jobs API to allow rule transfer 
+        and querying of the manager for idle jobs. See <code>JobManager#isIdle</code> 
+        and <code>JobManager#transferRule</code>.</li>
+      <li> Content types - The heuristics for content type matching were changed. 
+        For weak content matching, now general content types win over specific 
+        ones (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=86915">bug 
+        86915</a>). For any given level of content matching, content types matching 
+        the full file name always appear before those matching only the extension 
+        (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=90218">bug 90218</a>).</li>
+      <li>Paths - Some of the rules for IPaths were made less strict to allow 
+        for more allowable resource names. For instance, projects with a colon 
+        in the name can be created on Linux. See <code>IPath#toPortableString, 
+        Path#fromPortableString,</code> <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=24152">bug 
+        24152</a> and <a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-core-home/documents/path_changes.html">this 
+        proposal</a> for more information.</li>
+      <li>IAdaptorManager computeClassOrder, computeAdaptorTypes</li>
+      <li>Platform Line Delimiters - In order to help make a consistent line delimiter 
+        story across all components in the SDK, we created some Core preference 
+        keys to help aid in storing these values. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=3970">bug 
+        3970</a> for more information.</li>
+      <li>Message Bundles - In order to improve performance (both time and space) 
+        of resource message bundles we implemented the basis for a new message 
+        bundle mechanism in the OSGi layer that other plug-ins can take advantage 
+        of. See <a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-core-home/documents/3.1/message_bundles.html">this 
+        document</a> for more details.</li>
+      <li>Shipping Plug-ins as JARs - We made many changes in order to allow plug-in 
+        developers to be able to ship their plug-ins as single JAR files. This 
+        process is described in more detail <a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-core-home/documents/3.1/run_from_jars.html">here</a>.</li>
+    </ul>
+  </li>
+  <li>Summary of changes in the org.eclipse.core.resources plug-in 
+    <ul>
+      <li><a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-core-home/documents/3.1/large_scale_issues.html">Large-Scale 
+        Development</a> - Many changes were made as part of the effort to help 
+        users with large-scale project development. we added new API on IProject#open 
+        to allow an existing project to be opened immediately and then its contents 
+        will be brought into the workspace in the background via a background 
+        refresh.</li>
+      <li><a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-ui-home/permissions-proposal/permissions-proposal.html">Resource 
+        Attributes</a> - Eclipse has always had problems with respect to file 
+        permissions when importing existing files from the file system. We added 
+        a <code>ResourceAttributes</code> class to help with this. Clients are 
+        now able to create an attribute object, set the appropriate flags on it, 
+        and then set it on the resource.</li>
+      <li><a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-core-home/documents/history_store.html">Indexed 
+        Store</a> - The indexed store that we used for the local history and persistent 
+        properties was re-written. The old code was factored out and now lives 
+        in the <code>org.eclipse.core.resources.compatibility</code> plug-in.</li>
+    </ul>
+  </li>
+</ul>
+<h3>Resolved Bugs</h3>
+<ul>
+  <li> <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&product=Platform&component=Resources&component=Runtime&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=anywords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailtype1=substring&email1=&emailreporter2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=2004-06-24&chfieldto=2005-06-24&chfield=bug_status&chfieldvalue=&cmdtype=doit&order=Reuse%2Bsame%2Bsort%2Bas%2Blast%2Btime&field0-0-0=noop&type0-0-0=noop&value0-0-0=">Click 
+    here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED 
+    since the last integration build.</li>
+</ul>
 <hr>
 <h1>Eclipse Platform Build Notes<br>
   Core</h1>
