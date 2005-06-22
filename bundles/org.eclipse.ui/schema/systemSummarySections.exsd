@@ -99,7 +99,6 @@
   class=&quot;org.eclipse.ui.examples.rcp.browser.CookieConfigDetails&quot;/&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
-
       </documentation>
    </annotation>
 
@@ -118,16 +117,12 @@
       </appInfo>
       <documentation>
          The Workbench uses this extension point to provide the following sections in the system summary dialog:
-
-- System properties: The contents of the table returned by java.lang.System.getProperties.
-
-- Features: The id of all features found by eclipse.
-
-- Plug-in Registry: The id of all plugins found by eclipse.
-
-- User Preferences: The contents of the Eclipse PreferencesService.
-
-- Error Log: The contents of the platform&apos;s error log.
+&lt;ul&gt;
+&lt;li&gt;System properties: The properties returned by java.lang.System.getProperties().&lt;/li&gt;
+&lt;li&gt;Features: The installed features.&lt;/li&gt;
+&lt;li&gt;Plug-in Registry: The installed plug-ins and their status.&lt;/li&gt;
+&lt;li&gt;User Preferences: The preferences that have been modified from their default values.&lt;/li&gt;
+&lt;/ul&gt;
       </documentation>
    </annotation>
 
