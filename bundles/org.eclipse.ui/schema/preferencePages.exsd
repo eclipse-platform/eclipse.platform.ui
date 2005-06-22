@@ -29,8 +29,6 @@ the root level.
       <complexType>
          <sequence>
             <element ref="page" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="keyword" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
