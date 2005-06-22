@@ -49,7 +49,6 @@ public class LocalSystemInfo {
 	/**
 	 * Indicates the volume type is not known
 	 * 
-	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to

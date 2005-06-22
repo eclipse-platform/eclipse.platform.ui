@@ -342,7 +342,7 @@ public interface IConfiguredSite extends IAdaptable {
 	/**
 	 * Sets if the site is enabled
 	 * 
-	 * @param <code>true</code> if the site is enable, <code>false</code>
+	 * @param value <code>true</code> if the site is enable, <code>false</code>
 	 * otherwise
 	 * @since 2.1
 	 * <p>
