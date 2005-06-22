@@ -930,9 +930,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         view = persp.showView(viewID, secondaryID);
         if (view != null) {
             busyShowView(view, mode);
+            
+            IWorkbenchPartReference partReference = getReference(view);
+            PartPane partPane = getPane(partReference);
+            partPane.setInLayout(true);
 
             window.firePerspectiveChanged(this, getPerspective(),
-                    getReference(view), CHANGE_VIEW_SHOW);
+                    partReference, CHANGE_VIEW_SHOW);
             window.firePerspectiveChanged(this, getPerspective(),
                     CHANGE_VIEW_SHOW);
         }
