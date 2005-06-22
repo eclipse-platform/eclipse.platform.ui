@@ -100,7 +100,7 @@
             <text style-id="page-description" id="page-description">Eclipse is a kind of universal tool platform - an open extensible IDE for anything and nothing in particular. It provides a feature-rich development environment that allows the developer to efficiently create tools that integrate seamlessly into the Eclipse Platform.</text>
             <group id="overview-links">
                 <anchor id="beginAnchor"/>
-                <link label="Workbench basics" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/concepts/concepts-2.htm&amp;embedTarget=page-content" id="basics">
+                <link label="Workbench basics" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/concepts/intro/overview.htm&amp;embedTarget=page-content" id="basics">
                     <text>Learn about basic Eclipse workbench concepts</text>
                 </link>
                 <link label="Team support" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/concepts/concepts-26.htm&amp;embedTarget=page-content" id="team">
