@@ -410,11 +410,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		return true;
 	}
 
-		/**
-		 * Correctly resizes the table so no phantom columns appear
-		 * 
-		 * @param table the table
-		 */
+	/**
+	 * Correctly resizes the table so no phantom columns appear
+	 * 
+	 * @param table the table
+	 * @since 3.1
+	 */
 	private static void configureTableResizing(final Table table) {
 	        ControlAdapter resizer= new ControlAdapter() {
 	        	private boolean fIsResizing= false;
@@ -632,6 +633,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @param edit whether the dialog should be editable
 	 * @param isNameModifiable whether the template name may be modified
 	 * @return the created or modified template, or <code>null</code> if the edition failed
+	 * @since 3.1
 	 */
 	protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable) {
 		EditTemplateDialog dialog= new EditTemplateDialog(getShell(), template, edit, isNameModifiable, fContextTypeRegistry);

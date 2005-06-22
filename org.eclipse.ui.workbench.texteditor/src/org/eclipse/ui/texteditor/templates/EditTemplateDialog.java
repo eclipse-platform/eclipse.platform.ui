@@ -554,6 +554,9 @@ class EditTemplateDialog extends StatusDialog {
 		updateStatus(status);
 	}
 
+	/*
+	 * @since 3.1
+	 */
 	protected void okPressed() {
 		String name= fNameText == null ? fOriginalTemplate.getName() : fNameText.getText();
 		boolean isAutoInsertable= fAutoInsertCheckbox != null && fAutoInsertCheckbox.getSelection();

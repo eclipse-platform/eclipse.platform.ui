@@ -705,6 +705,13 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return super.createElementInfo(element);
 	}
 	
+	/**
+	 * Returns the default line delimiter preference for the given file.
+	 * 
+	 * @param file the file 
+	 * @return the default line delimiter
+	 * @since 3.1
+	 */
 	private String getLineDelimiterPreference(IFile file) {
 		IScopeContext[] scopeContext;
 		if (file != null && file.getProject() != null) {

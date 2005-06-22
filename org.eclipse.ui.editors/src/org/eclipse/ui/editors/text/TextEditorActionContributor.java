@@ -36,7 +36,10 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
  */
 public class TextEditorActionContributor extends BasicTextEditorActionContributor {
 
-	/** Change encoding action. */
+	/**
+	 * Change encoding action.
+	 * @since 3.1
+	 */
 	private RetargetTextEditorAction fChangeEncodingAction;
 
 	/**
