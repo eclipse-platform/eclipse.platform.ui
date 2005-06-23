@@ -75,6 +75,13 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     // set when the content file is loaded (ie: loadChildren is called)
     private boolean isXHTMLPage;
 
+    // Model base attribute is stored in parent class. This base attribute here
+    // is to cache the initial location of the content file. When content
+    // attribute is defined, the base in the model becomes relative to
+    // new xml file. However, in the case of XHTML content, and when
+    // presentation is UI forms, we need to reuse initial content file location.
+    private String initialBase;
+
     /**
      * The vectors to hold all inhertied styles and alt styles from included
      * elements. They are lazily created when children are resolved (ie:
@@ -110,6 +117,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     AbstractIntroPage(Element element, Bundle bundle, String base) {
         super(element, bundle, base);
+        this.initialBase = base;
         content = getAttribute(element, ATT_CONTENT);
         if (content == null)
             init(element, bundle, base);
@@ -132,7 +140,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         // load shared-style attribure. This is needed in the XML and in the
         // XHTML cases. Default is to include shared style.
         this.sharedStyle = getAttribute(element, ATT_SHARED_STYLE);
-        if(sharedStyle==null)
+        if (sharedStyle == null)
             sharedStyle = "true"; //$NON-NLS-1$
 
     }
@@ -440,18 +448,11 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
         // parse content depending on type. Make sure to set the loaded flag
         // accordingly, otherwise content file will always be parsed.
-        // IntroModelRoot model = (IntroModelRoot) getParent();
-        // String presentationStyle = model.getPresentation()
-        // .getImplementationKind();
         if (parser.hasXHTMLContent()) {
-            // INTRO: commenting out degradation to UI forms for now.
-            // Presentatoin kind flag is not yet determined at this stage.
-            // if (presentationStyle
-            // .equals(IntroPartPresentation.BROWSER_IMPL_KIND))
             loadXHTMLContent(dom);
-            // else {
-            // init(element, getBundle());
-            // super.loadChildren();}
+            // make sure to use correct base.
+            init(element, getBundle(), initialBase);
+            super.loadChildren();
         } else
             // load the first page with correct id, from content xml file.
             loadXMLContent(dom);
@@ -490,7 +491,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
                 filteredFrom = getAttribute(element,
                     AbstractBaseIntroElement.ATT_FILTERED_FROM);
                 sharedStyle = getAttribute(element, ATT_SHARED_STYLE);
-                if(sharedStyle==null)
+                if (sharedStyle == null)
                     sharedStyle = "true"; //$NON-NLS-1$
                 foundMatchingPage = true;
             }
