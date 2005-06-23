@@ -20,7 +20,8 @@ import org.eclipse.core.resources.IMarker;
  * Clients may implement this interface.
  * </p>
  * 
- * @deprecated Implement {@link org.eclipse.search.ui.text.AbstractTextSearchResult} instead.
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the page 
+ * how to group search results.
  */
 public interface IGroupByKeyComputer {
 	

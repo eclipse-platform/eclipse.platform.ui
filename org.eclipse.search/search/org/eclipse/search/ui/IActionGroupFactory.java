@@ -31,7 +31,8 @@ import org.eclipse.jface.action.IAction;
  * @see	org.eclipse.ui.actions.ActionGroup
  * @see	ISearchResultView#searchStarted(IActionGroupFactory, String, String, ImageDescriptor, String, ILabelProvider, IAction, IGroupByKeyComputer, IRunnableWithProgress)
  * @since 	2.0
- * @deprecated Subclass {@link org.eclipse.search.ui.text.AbstractTextSearchViewPage} instead.
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the page 
+ * how to create actions.
  */
 public interface IActionGroupFactory {
 

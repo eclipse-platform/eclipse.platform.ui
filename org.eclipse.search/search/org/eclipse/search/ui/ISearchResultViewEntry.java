@@ -24,8 +24,8 @@ import org.eclipse.core.resources.IResource;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @deprecated Use {@link org.eclipse.search.ui.text.AbstractTextSearchResult} and
- * {@link org.eclipse.search.ui.text.Match} instead.
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the search 
+ * how to model search results. {@link org.eclipse.search.ui.text.AbstractTextSearchResult} and {@link org.eclipse.search.ui.text.Match} can be used to port old searches to the new API design.
  */
 public interface ISearchResultViewEntry {
 

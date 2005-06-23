@@ -7,29 +7,48 @@
    <title>Package-level Javadoc</title>
 </head>
 <body>
-Provides classes and interfaces for search pages.
-New search dialog pages can be contributed via a plug-in extension point.
-This package provides the interfaces and classes to implement these dialog
-pages and offers hooks to populate the search result view.
+Classes and interface required to contribute search dialog pages and search result view pages.
+
 <h2>
 Package Specification</h2>
 
-<p>To contribute to the search dialog using the 'searchPages' extension point a
-dialog page must implement <tt>ISearchPage</tt>. A search page
+<p>The search plugin implements the <i>search dialog</i> and the <i>search result view</i>. Client can contribute search dialog pages (extension point 'org.eclipse.search.searchPages')
+and search result view pages (extension point 'org.eclipse.search.searchResultViewPages') to integrate their searches to the shared search user interface.
+
+<h3>
+Search dialog pages</h3>
+
+<p>Search dialog pages contributing to the 'searchPages' extension point must implement <tt>ISearchPage</tt>. A search page
 has access to its <tt>ISearchPageContainer</tt> to modify search
 dialog properties.
+<p>A search dialog page can additionally implement <tt>IReplacePage</tt> to allow the 'Replace' button to show up.
 
-<p>The search view that shows result has been rewritten for 3.0. It is recommended
-to use the following new API:
+<h3>
+Search result view, since 3.0</h3>
+<p>The search view that shows the search results has been redesigned for 3.0. It is recommended
+to use and to switch to the new API:
 <p>
-<p>Search queries are represented by instances of type <tt>ISearchQuery</tt>. They
-are run by API on <tt>NewSearchUI</tt> and create a <code>ISearchResult</code> as result.
+<p>On 'OK', an implementation of a search dialog page creates a <i>search query</i>, represented by an instances of type <tt>ISearchQuery</tt>. The query
+can be run using API on <tt>NewSearchUI</tt> and will create a <code>ISearchResult</code> as result.
+<tt>ISearchResultListener</tt> can be added to search results and report changes as <tt>SearchResultEvent</tt>.
+
 <p>Clients have to contribute a search result page (<tt>ISearchResultPage</tt>) that can
 visualize the matches contained in the result set.
+<p>The result page has access to the view using <tt>ISearchResultViewPart</tt>
+
+<h3>
+Search result view, before 3.0</h3>
+
+<p>For compatibility to searches written prior to 3.0, the following APIs still exist and are functional. The old search result view is called 'classic search view' in the UI.
 <p>
-<p>For compatibility to search views written prior to 3.0 the following APIs still exist:
-<p>
-<p>Old searches create markers for search matches. The search view uses <tt>IGroupByKeyComputer</tt> to group
-these markers and present these groups as elements of type <tt>ISearchResultViewEntry</tt>.
+<p>Before 3.0, the search result view was fully implemented by the search plugin. All search results had to be marked with <i>search markers</i> (<tt>org.eclipse.core.resources.IMarker</tt>, registered under 'org.eclipse.search.searchmarker')
+
+<p>The search dialog page (type <tt>ISearchResultView</tt>) could access the single search result view using <tt>SearchUI.getSearchResultView()</tt>. It showed all matches as elements of type <tt>ISearchResultViewEntry</tt>.
+
+
+<p><tt>IGroupByKeyComputer</tt>, <tt>IActionGroupFactory</tt>, <tt>IContextMenuContributor</tt> and extension point 
+'org.eclipse.search.searchResultSorters' were used to configure the search result view.
+
+
 </body>
 </html>

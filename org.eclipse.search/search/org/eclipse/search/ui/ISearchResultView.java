@@ -33,7 +33,8 @@ import org.eclipse.ui.IViewPart;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @deprecated Use {@link org.eclipse.search.ui.ISearchResultViewPart} instead.
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages. 
+ * To access the parent view, {@link org.eclipse.search.ui.ISearchResultViewPart} is used instead.
  */
 public interface ISearchResultView extends IViewPart {
 

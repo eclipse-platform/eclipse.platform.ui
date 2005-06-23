@@ -25,7 +25,8 @@ import org.eclipse.jface.action.IAction;
  * instance of itself to the search result view.
  * 
  * @see	ISearchResultView#searchStarted(IActionGroupFactory, String, String, ImageDescriptor, String, ILabelProvider, IAction, IGroupByKeyComputer, IRunnableWithProgress)
- * @deprecated Subclass {@link org.eclipse.search.ui.text.AbstractTextSearchViewPage} instead.
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the page 
+ * how to create actions in context menus.
  */
 public interface IContextMenuContributor {
 

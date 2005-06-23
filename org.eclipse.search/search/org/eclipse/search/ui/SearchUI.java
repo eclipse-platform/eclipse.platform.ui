@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * </ul>
  *
  * @see ISearchResultView
- * @deprecated Use {@link org.eclipse.search.ui.NewSearchUI} instead.
+ * @deprecated Part of the old ('classic') search. Since 3.0 clients can create their own search result view pages and use {@link org.eclipse.search.ui.NewSearchUI} instead.
  */
 public final class SearchUI {
 

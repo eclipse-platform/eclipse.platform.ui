@@ -1,14 +1,18 @@
 <!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en"><html><head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="Author" content="IBM">
-   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]"><title>Package-level Javadoc</title>
+   <title>Package-level Javadoc</title>
 </head>
 <body>
-Provides the interface for a default search result page for textual
-searches. Clients can configure a ITextSearchResult with the proper UI
-elements factories.<br>
+Provides the base classes to implement a search result view part for searches with textual matches.
 
 <h2>
 Package Specification</h2>
-Clients create a <code>ITextSearchResult </code>and must configure it with proper <code>IStructureProvider </code>and <code>ISearchElementPresentation </code>for their search elements. The clients then add <code>Matches </code>or subclasses thereof to the <code>ITextSearchResult</code>. <br>
+<tt>AbstractTextSearchResult</tt> implements a <tt>ISearchResult</tt> and holds result entries of type <tt>Match</tt>. A match represents a range of text in
+a parent resource.
+<p><tt>AbstractTextSearchViewPage</tt> implements a <tt>ISearchResultPage</tt> capable of showing an <tt>AbstractTextSearchResult</tt>.
+It uses <tt>IEditorMatchAdapter</tt>, <tt>IFileMatchAdapter</tt> to adapt matches to editor, resp. files.
+<p> Editors that don't use standard text annotation models can implement <tt>ISearchEditorAccess</tt> to allow textual searches
+to be shown.
+
 </body></html>
