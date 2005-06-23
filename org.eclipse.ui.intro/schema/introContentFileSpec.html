@@ -51,12 +51,28 @@ The subelements used in a dynamic page are as follows: A <b>group</b> subelement
 <ul class=ConfigMarkup id=attlistDesc>
 <li><b>url</b> - The optional relative path to an HTML file. When using the Web based presentation, this HTML file will be displayed instead of any content defined for this page.  This attribute is only applicable to the home page, which is identified in the presentation element of the intro config extension point. It is ignored for all other pages.</li>
 <li><b>id</b> - A unique name that can be used to identify this page.</li>
-<li><b>style</b> - A relative path to a CSS file which is applied to the page only when using the Web based presentation.</li>
-<li><b>alt-style</b> - A relative path to a SWT presentation properties file which is applied to the page only when using the SWT based presentation.</li>
+<li><b>style</b> - A relative path to a CSS file which is applied to the page only when using the Web based presentation. 
+
+
+ The path is relative to the location of this xml content file.<br/>
+ Since 3.1, styles can also be a comma separated list of styles. 
+
+
+ These styles will be injected into the HTML HEAD element in the order in which they are listed in the style attribute.</li>
+<li><b>alt-style</b> - A relative path to a SWT presentation properties file which is applied to the page only when using the SWT based presentation. 
+
+
+ The path is relative to the location of this xml content file. <br/>
+ Since 3.1, styles can also be a comma separated list of styles. 
+
+
+ These styles will be used when creating the SWT presentation of the welcome page.</li>
 <li><b>filteredFrom</b> - an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.</li>
 <li><b>content</b> - an optional attribute which can define the location of an introContent.xml file that represents the content of this page. When this attribute is defined, all children and attributes in this page element, except id, are ignored. This is because the content of this page is now assumed to reside in the xml file pointed to by the content file attribute. When resolving to the content of this file, the page with an id that matches the id defined in this page element is chosen.
-This separation of pages can be used when performance is an issue, as the content of a page is now loaded more lazily.</li>
+This separation of pages can be used when performance is an issue, as the content of a page is now loaded more lazily.Since 3.1, if the content of the external file is XHTML 1.0, then the page is rendered as is.</li>
 <li><b>style-id</b> - A means to classify the page into a given category so that a common style may be applied.</li>
+<li><strong>shared-style </strong> - a boolean flag that controls the addition of the shared style into this page's list of styles. If true (the default), the shared style is added to this page's styles. If false , the shared style defined in the Intro configuration will not be injected into the styles of this page. </li>
+<li></li>
 </ul>
 <h2><code>group</code></h2>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.group">group</a> (<a href="#e.group">group</a>* | <a href="#e.link">link</a>* | <a href="#e.text">text</a>* | <a href="#e.img">img</a>* | <a href="#e.include">include</a>* | <a href="#e.html">html</a>* | <a href="#e.anchor">anchor</a>*)&gt;</p>
@@ -107,12 +123,18 @@ no parameters required<br>
 <i>direction = ("backward" | "forward" | "home")</i> - specifies the direction to navigate<br>
 <br>
 
-<b>openBrowser</b> - open the url in an external browser. The workbench Browser support is used in this action. This means that any user preferences set for the browser will be honored. <br>
+<b>openBrowser</b> - 
+
+
+ open the url in an external browser. Since 3.1, this action relies on the workbench Browser support. This means that any user preferences set for the browser will be honored.<br>
 <i>url</i> - a valid URL to an external web site or a static HTML file<br>
 <i>pluginId (optional)</i> - only required if a static HTML file is specified. This is the id of the plug-in containing the file.</p>
-<p style="margin-left:15px;"><b>openURL</b> - open the url embedded in the Welcome page. In the case of SWT presentation, the url is displayed in an external browser (similar to the openBrowser action above). <br>
-  <i>url</i> - a valid URL to an external web site or a static HTML file<br>
-  <i>pluginId (optional)</i> - only required if a static HTML file is specified. This is the id of the plug-in containing the file.<br>
+<p style="margin-left:15px;"><b>openURL</b> - open the url embedded in the Welcome page. In the case of SWT presentation, the url is displayed in an external browser (similar to the openBrowser action above). 
+
+
+ since 3.1 <br>
+  <i>url</i> - a valid URL to an external web site or to a local HTML file<br>
+  <i>pluginId (optional)</i> - if the url is relative, then this specifies the id of the plug-in containing the file.<br>
   <br>
   
   <b>runAction</b> - runs the specified action<br>
@@ -133,7 +155,9 @@ no parameters required<br>
   
 <b>showHelpTopic</b> - Open a help topic.<br>
   <i>id</i> - the URL of the help resource. (See Javadoc for <code>org.eclipse.ui.help.WorkbenchHelp.displayHelpResource</code><br>
-<i>embed </i><i>(optional) = ("true" | "false") "true"</i> - indicates that the help resource needs to be displayed embedded as part of the welcome pages. Default is false. This flag is simply ignored in the case of the SWT presentation.</p>
+<i>embed </i><i>(optional) = ("true" | "false") "true"</i> - indicates that the help resource needs to be displayed embedded as part of the welcome pages. Default is false. This flag is simply ignored in the case of the SWT presentation. since 3.1<br>
+<em>embedTarget (optional) </em> - the path to a div in the current Welcome page that will hold the content of the Help topic. If specified, then <em>embed </em> is true by default and the embedded URL is inserted inside the div with the specified path. The path is relative to the page and so it should not start with the page id. The children of the div are replaced by the content of the URL. Only one div per page can be used as an embed target. This flag is simply ignored in the case of the SWT presentation. It is also unsupported when using XHTML as intro content. since 3.1
+
 <p style="margin-left:15px;"><br>
     
   <b>showMessage</b> - Displays a message to the user using a standard information dialog.<br>
@@ -253,8 +277,16 @@ The content to be added to the target anchor. Only one extensionContent is allow
 ignored.</p>
 <br>
 <ul class=ConfigMarkup id=attlistDesc>
-<li><b>style</b> - A relative path to a CSS file which is applied to the page only when using the Web based presentation.</li>
-<li><b>alt-style</b> - A relative path to a SWT presentation properties file which is applied to the page only when using the SWT based presentation.</li>
+<li><b>style</b> - 
+
+
+ A relative path to a CSS file which is applied to the page only when using the Web based presentation. The path is relative to the location of this xml content file. <br>
+Since 3.1, styles can also be a comma separated list of styles. These styles will be injected into the HTML HEAD element in the order in which they are listed in the style attribute. </li>
+<li><b>alt-style</b> - 
+
+
+ A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation. The path is relative to the location of this xml content file. <br>
+Since 3.1, styles can also be a comma separated list of styles. These styles will be used when creating the SWT presentation of the welcome page.</li>
 <li><b>path</b> - the path that uniquely represents the path to an anchor. (e.g. page/group1/group2/anchorId) within the target configuration to be extended. It can only be an anchor which can be in any page or group, including shared groups at configuration level</li>
 </ul>
 <h2><code>anchor</code></h2>
@@ -269,7 +301,7 @@ configuration that allows for external contributions. Only anchors are valid tar
 <ul class=ConfigMarkup id=attlistDesc>
 <li><b>id</b> - unique id to identify this anchor.</li>
 </ul>
-&nbsp;<h2 id="dtd"><code>contentProvider</code></h2>
+ <h2 id="dtd"><code>contentProvider</code></h2>
 <p class="code" id="dtd">&nbsp;</p>
 <p class="code" id="dtd">&lt;!ELEMENT <a name="e.contentProvider">contentProvider</a> 
 (<a href="#e.text">text</a>)&gt;</p>

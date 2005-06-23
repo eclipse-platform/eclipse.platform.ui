@@ -66,18 +66,17 @@ The subelements used in a dynamic page are as follows: A &lt;b&gt;group&lt;/b&gt
          <attribute name="style" type="string">
             <annotation>
                <documentation>
-                  A relative path to a CSS file which is applied to the page only when using the Web based presentation. The path is relative to the location of this xml content file. 
-
-Since 3.1, Styles can also be a comma separated list of styles. In this case, they will be added to the HTML HEAD element in the order in which they are listed in the style attribute.
+                  A relative path to a CSS file which is applied to the page only when using the Web based presentation. The path is relative to the location of this xml content file. &lt;br &gt;
+Since 3.1, styles can also be a comma separated list of styles. These styles will be injected into the HTML HEAD element in the order in which they are listed in the style attribute.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="alt-style" type="string">
             <annotation>
                <documentation>
-                  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation. The path is relative to the location of this xml content file. 
+                  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation. The path is relative to the location of this xml content file. &lt;br &gt;
 
-Since 3.1, Styles can also be a comma separated list of styles. In this case, they will be added to the HTML HEAD element in the order in which they are listed in the style attribute.  
+Since 3.1, styles can also be a comma separated list of styles. These styles will be used when creating the SWT presentation of the welcome page.
                </documentation>
             </annotation>
          </attribute>
@@ -100,9 +99,9 @@ Since 3.1, Styles can also be a comma separated list of styles. In this case, th
             <annotation>
                <documentation>
                   an optional attribute which can define the location of an introContent.xml file that represents the content of this page. When this attribute is defined, all children and attributes in this page element, except id, are ignored. This is because the content of this page is now assumed to reside in the xml file pointed to by the content file attribute. When resolving to the content of this file, the page with an id that matches the id defined in this page element is chosen.
-This seperation of pages can be used when performance is an issue, as the content of a page is now loaded more lazily.
+This seperation of pages can be used when performance is an issue, as the content of a page is now loaded more lazily.&lt;br &gt;
 
-If the content of the external file is XHTML, then the page is rendered as is. TO DO (finish docs) since 3.1
+Since 3.1, if the content of the external file is XHTML 1.0, then the page is rendered as is.
                </documentation>
             </annotation>
          </attribute>
@@ -110,6 +109,13 @@ If the content of the external file is XHTML, then the page is rendered as is. T
             <annotation>
                <documentation>
                   A means to classifiy the page into a given category so that a common style may be applied.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="shared-style" type="boolean">
+            <annotation>
+               <documentation>
+                  a boolean flag that controls the addition of the shared style into this page&apos;s list of styles. If &lt;code&gt;true&lt;/code&gt; (the default), the shared style is added to this page&apos;s styles. If &lt;code&gt;false&lt;/code&gt;, the shared style defined in the Intro configuration will not be injected into the styles of this page. 
                </documentation>
             </annotation>
          </attribute>
@@ -270,7 +276,8 @@ The predefined actions will be described using this format:&lt;br&gt;
 &lt;b&gt;action name&lt;/b&gt; - descripton of action&lt;br&gt;
 &lt;i&gt;action parameter1&lt;/i&gt; - description of parameter&lt;br&gt;
 &lt;i&gt;action parameter2 (optional)&lt;/i&gt; - description of parameter&lt;br&gt;
-&lt;i&gt;action parameter3 (optional) = (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - description of parameter, choice of either true or false and &quot;false&quot; is the default&lt;br&gt;
+&lt;i&gt;action parameter3 (optional) = (&quot;true&quot; 
+ &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - description of parameter, choice of either true or false and &quot;false&quot; is the default&lt;br&gt;
 &lt;/p&gt;
 
 &lt;br&gt;
@@ -281,29 +288,33 @@ no parameters required&lt;br&gt;
 &lt;br&gt;
 
 &lt;b&gt;navigate&lt;/b&gt; - navigate through the intro pages in a given direction or return to the home page&lt;br&gt;
-&lt;i&gt;direction = (&quot;backward&quot; | &quot;forward&quot; | &quot;home&quot;)&lt;/i&gt; - specifies the direction to navigate&lt;br&gt;
+&lt;i&gt;direction = (&quot;backward&quot; 
+ &quot;forward&quot; 
+ &quot;home&quot;)&lt;/i&gt; - specifies the direction to navigate&lt;br&gt;
 &lt;br&gt;
 
-&lt;b&gt;openBrowser&lt;/b&gt; - open the url in an external browser, using the workbench Browser support. since 3.1&lt;br&gt;
+&lt;b&gt;openBrowser&lt;/b&gt; - open the url in an external browser. Since 3.1, this action relies on the workbench Browser support. This means that any user preferences set for the browser will be honored.&lt;br&gt;
 &lt;i&gt;url&lt;/i&gt; - a valid URL to an external web site or a local HTML file&lt;br&gt;
 &lt;i&gt;pluginId (optional)&lt;/i&gt; - if the url is relative, then it is relative to a plugin. Specify here the id of the plug-in containing the file.&lt;br&gt;
 &lt;br&gt;
 
-&lt;b&gt;openURL&lt;/b&gt; - open the url embedded in the current welcome page. The page pointed to by the url occupies the full size of the intro page. since 3.1&lt;br&gt;
-&lt;i&gt;url&lt;/i&gt; - a valid URL to an external web site or a local HTML file&lt;br&gt;
-&lt;i&gt;pluginId (optional)&lt;/i&gt; - if the url is relative, then it is relative to a plugin. Specify here the id of the plug-in containing the file.&lt;br&gt;
+&lt;b&gt;openURL&lt;/b&gt; - open the url embedded in the Welcome page. In the case of SWT presentation, the url is displayed in an external browser (similar to the openBrowser action above). since 3.1&lt;br&gt;
+&lt;i&gt;url&lt;/i&gt; - a valid URL to an external web site or to a local HTML file&lt;br&gt;
+&lt;i&gt;pluginId (optional)&lt;/i&gt; - if the url is relative, then this specifies the id of the plug-in containing the file.&lt;br&gt;
 &lt;br&gt;
 
 &lt;b&gt;runAction&lt;/b&gt; - runs the specified action&lt;br&gt;
 &lt;i&gt;class&lt;/i&gt; - the fully qualified class name of the class that implements one of &lt;code&gt;org.eclipse.ui.intro.config.IIntroAction&lt;/code&gt;,
                &lt;code&gt;org.eclipse.jface.actino.IAction&lt;/code&gt;, or &lt;code&gt;org.eclipse.ui.IActionDelegate&lt;/code&gt;&lt;br&gt;
 &lt;i&gt;pluginId&lt;/i&gt; - The id of the plug-in which contains the class.&lt;br&gt;
-&lt;i&gt;standby (optional) = (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - indicate whether to set the intro into standby mode after executing the action&lt;br&gt;
+&lt;i&gt;standby (optional) = (&quot;true&quot; 
+ &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - indicate whether to set the intro into standby mode after executing the action&lt;br&gt;
 additional parameters - any additional parameters are passed to actions that implement &lt;code&gt;org.eclipse.ui.intro.config.IIntroAction&lt;/code&gt;&lt;br&gt;
 &lt;br&gt;
 
 &lt;b&gt;setStandbyMode&lt;/b&gt; - sets the state of the intro part&lt;br&gt;
-&lt;i&gt;standby = (&quot;true&quot; | &quot;false&quot;)&lt;/i&gt; - true to put the intro part in its partially visible standy mode, and false to make it fully visible&lt;br&gt;
+&lt;i&gt;standby = (&quot;true&quot; 
+ &quot;false&quot;)&lt;/i&gt; - true to put the intro part in its partially visible standy mode, and false to make it fully visible&lt;br&gt;
 &lt;br&gt;
 
 &lt;b&gt;showHelp&lt;/b&gt; - Open the help system.&lt;br&gt;
@@ -311,9 +322,10 @@ no parameters required&lt;br&gt;
 &lt;br&gt;
 
 &lt;b&gt;showHelpTopic&lt;/b&gt; - Open a help topic.&lt;br&gt;
-&lt;i&gt;id&lt;/i&gt; - the URL of the help resource. (See Javadoc for &lt;code&gt;org.eclipse.ui.help.WorkbenchHelp.displayHelpResource&lt;/code&gt;&lt;br&gt;
-&lt;i&gt;embed&lt;/i&gt; - if true, indicates that the Help topic needs to be displayed embedded in the current page. This is equivalent to openURL() command, but for Help System topics. The embedded URL occupies the full real-estate of the current page. since 3.1&lt;br&gt;
-&lt;i&gt;embedTarget&lt;/i&gt; - if specified, then &lt;i&gt;embed&lt;/i&gt; is true by default and the embedded URL is inserted inside the div with the specified path. The path is relative to the page and so it should not start with the page id. The children of the div are replaced by the content of the URL. Only one div per page can be used as an embed target. since 3.1&lt;br&gt;
+&lt;i&gt;id&lt;/i&gt; - the URL of the help resource. (See Javadoc for &lt;code&gt;org.eclipse.ui.help.WorkbenchHelp.displayHelpResource)&lt;/code&gt;&lt;br&gt;
+&lt;i&gt;embed (optional) = (&quot;true&quot; 
+ &quot;false&quot;)&lt;/i&gt; &quot;true&quot; - indicates that the help resource needs to be displayed embedded as part of the Welcome pages. Default is false. This flag is simply ignored in the case of the SWT presentation. This is equivalent to openURL() command, but for Help System topics. The embedded URL occupies the full real-estate of the current page. since 3.1&lt;br&gt;
+&lt;i&gt;embedTarget (optional)&lt;/i&gt; - the path to a div in the current Welcome page that will hold the content of the Help topic. If specified, then &lt;i&gt;embed&lt;/i&gt; is true by default and the embedded URL is inserted inside the div with the specified path. The path is relative to the page and so it should not start with the page id. The children of the div are replaced by the content of the URL. Only one div per page can be used as an embed target. This flag is simply ignored in the case of the SWT presentation. It is also unsupported when using XHTML as intro content. since 3.1&lt;br&gt;
 &lt;br&gt;
 
 &lt;b&gt;showMessage&lt;/b&gt; - Displays a message to the user using a standard information dialog.&lt;br&gt;
@@ -327,9 +339,11 @@ no parameters required&lt;br&gt;
 
 &lt;b&gt;showPage&lt;/b&gt; - show the intro page with the given id&lt;br&gt;
 &lt;i&gt;id&lt;/i&gt; - the id of the intro page to show&lt;br&gt;
-&lt;i&gt;standby (optional) = (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - indicate whether to set the intro into standby mode after showing the page&lt;br&gt;
+&lt;i&gt;standby (optional) = (&quot;true&quot; 
+ &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - indicate whether to set the intro into standby mode after showing the page&lt;br&gt;
 &lt;/p&gt;
 &lt;br&gt;
+
                </documentation>
             </annotation>
          </attribute>
@@ -592,18 +606,18 @@ Inclusion allows for including an html snippet directly from a file into the dyn
          <attribute name="style" type="string">
             <annotation>
                <documentation>
-                  A relative path to a CSS file which is applied to the page only when using the Web based presentation. The path is relative to the location of this xml content file. 
+                  A relative path to a CSS file which is applied to the page only when using the Web based presentation. The path is relative to the location of this xml content file. &lt;br&gt;
 
-Since 3.1, Styles can also be a comma separated list of styles. In this case, they will be added to the HTML HEAD element in the order in which they are listed in the style attribute.  
+Since 3.1, styles can also be a comma separated list of styles. These styles will be injected into the HTML HEAD element in the order in which they are listed in the style attribute.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="alt-style" type="string">
             <annotation>
                <documentation>
-                  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation. The path is relative to the location of this xml content file. 
+                  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation. The path is relative to the location of this xml content file. &lt;br&gt;
 
-Since 3.1, Styles can also be a comma separated list of styles. In this case, they will be added to the HTML HEAD element in the order in which they are listed in the style attribute.  
+Since 3.1, styles can also be a comma separated list of styles. These styles will be used when creating the SWT presentation of the welcome page.
                </documentation>
             </annotation>
          </attribute>
