@@ -227,18 +227,20 @@ If no command identifier is specified, this is a deletion marker.  This means th
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &amp;lt;extension
- point=&quot;org.eclipse.ui.bindings&quot;&amp;gt;
- &amp;lt;key
+         &lt;pre&gt;
+&lt;extension
+ point=&quot;org.eclipse.ui.bindings&quot;&gt;
+ &lt;key
   sequence=&quot;M2+F5&quot;
   commandId=&quot;commandId&quot;
   schemeId=&quot;default&quot;
-  contextId=&quot;windows&quot; /&amp;gt;
- &amp;lt;scheme
+  contextId=&quot;windows&quot; /&gt;
+ &lt;scheme
   name=&quot;Default&quot;
   description=&quot;Default shortcuts for Eclipse&quot;
-  id=&quot;default&quot; /&amp;gt;
-&amp;lt;/extension&amp;gt;
+  id=&quot;default&quot; /&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
