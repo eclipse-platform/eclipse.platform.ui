@@ -16,7 +16,6 @@ The &lt;code&gt;org.eclipse.ui.contexts&lt;/code&gt; extension point is used to 
       <complexType>
          <sequence>
             <element ref="context"/>
-            <element ref="contextContextBinding"/>
          </sequence>
          <attribute name="id" type="string">
             <annotation>

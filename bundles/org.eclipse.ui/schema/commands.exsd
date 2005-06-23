@@ -21,7 +21,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             <element ref="keyBinding"/>
             <element ref="keyConfiguration"/>
             <element ref="context"/>
-            <element ref="handlerSubmission"/>
             <element ref="scope"/>
          </sequence>
          <attribute name="id" type="string">
