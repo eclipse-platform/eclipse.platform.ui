@@ -17,6 +17,11 @@ custom text editors.&nbsp; It also shows how&nbsp; to register an editor
 for a file extension (in this case .jav) and how to define a custom Document
 provider for use by that editor. This example is only for demonstration
 purposes. Java editing support is provided by the&nbsp; Eclipse Java Tooling.
+<p>
+The code for this example is in the <code>org.eclipse.ui.examples.javaeditor</code> plug-in.
+To explore the code it is recommended to import that plug-in into your workspace.
+</p>
+
 <h3>
 <b>Features demonstrated in the example editor</b></h3>
 
@@ -25,7 +30,7 @@ purposes. Java editing support is provided by the&nbsp; Eclipse Java Tooling.
 syntax highlighting</li>
 
 <li>
-content type sensitive content assist (JavaDoc and Java code)</li>
+content type sensitive content assist (Javadoc and Java code)</li>
 
 <li>
 communication between content outliner and editor, i.e. content outliner
@@ -62,7 +67,7 @@ dynamic reconciling of content outline page</li>
 </ul>
 
 <h3>
-Running the example editor</h3>
+Running the example Java editor</h3>
 
 <ol>
 <li>
@@ -77,19 +82,19 @@ Insert Java code. The Java code is dynamically colored. The example editor
 presents the following language elements in different colors: multi-line
 comments, single line comments, Java language reserved words, string and
 character constants, regular Java code, as well as multi-line comments
-following the JavaDoc guidelines. Inside those JavaDoc comments, JavaDoc
-keywords and tags are differently colored.</li>
+following the Javadoc guidelines. Inside those Javadoc comments, Javadoc
+keywords (green) and HTML tags (gray) are differently colored.</li>
 
 <li>
 Open a new Java multi-line comment by inserting "/*" outside a Java comment.
 All the text between the inserted "/*" and the first occurrence of "*/"
 or the end of the text changes its color to red. Append another "*". The
-red range changes color to green as the regular multi-line comment now
-is considered containing JavaDoc. Invoke code assist using CTRL-SPACE.
+red range changes color to black as the regular multi-line comment now
+is considered containing Javadoc. Invoke code assist using CTRL-SPACE.
 The function of content assist is to support the user in writing code.
 So on invocation, content assist should list all possible valid completions
-at the invocation location. Inside JavaDoc, the example editor always proposes
-all JavaDoc keywords.</li>
+at the invocation location. Inside Javadoc, the example editor always proposes
+all Javadoc keywords.</li>
 
 <li>
 Outside a Java comment invoke content tip using CTRL+SHIFT+SPACE. Five
@@ -164,20 +169,20 @@ divides a document into disjoint regions. The partitioner assigns each
 region one content type out of a set of content types predefined by the
 partitioner. On each document change the document's partitioning must be
 updated. See the class JavaPartitioner in the Java example editor. The
-JavaPartitioner determines regions of types "multi-line comments", "JavaDoc
+JavaPartitioner determines regions of types "multi-line comments", "Javadoc
 comments", and "everything else". It must be ensured that the document provider
 is set on each document produced by the document provider.</li>
 
 <li>
-Determine which of the source viewer plugins should be provided. Among
-other supported plugins are auto indent strategies, double click strategies,
+Determine which of the source viewer plug-ins should be provided. Among
+other supported plug-ins are auto indent strategies, double click strategies,
 content formatter, and text presentation reconciler. The subsequent description
 will be restricted to the text presentation reconciler (see IPresentationReconciler).
 In the Java example editor, the text presentation reconciler is utilized
 to implement syntax highlighting.</li>
 
 <li>
-Create for all source viewer plugins the appropriate extensions for each
+Create for all source viewer plug-ins the appropriate extensions for each
 supported content type. As seen above, the document partitioner defines
 the supported content types. The default implementation of IPresentationReconciler
 supports IPresentationDamagers and IPresentationRepairers as extensions.
@@ -189,7 +194,7 @@ must be implemented. See JavaDamagerRepairer and JavaDocDamagerRepairer
 in the example editor.</li>
 
 <li>
-Build a source viewer configuration using the previously created plugins
+Build a source viewer configuration using the previously created plug-ins
 and extensions. See JavaSourceViewerConfiguration in the example editor.</li>
 
 <li>
@@ -205,7 +210,7 @@ actions to the desktop's toolbar and menus. See JavaActionContributor in
 the example editor.</li>
 
 <li>
-Extend the XML configuration file of the editor's plugin, so that the editor
+Extend the XML configuration file of the editor's plug-in, so that the editor
 registers at the predefined editor extension point for a specific set of
 file extensions. Also set up the action bar contributor in the XML file.
 See plugin.xml of this example.</li>
@@ -213,23 +218,22 @@ See plugin.xml of this example.</li>
 
 <h3>
 Code organization of the example</h3>
-The example code is organized in four packages:
+The Java editor example code is organized in four packages:
 <ul>
 <li>
-<tt>org.eclipse.ui.examples.javaeditor </tt>contains all the editor specific
+<code>org.eclipse.ui.examples.javaeditor</code> contains all the editor specific
 classes.</li>
 
 <li>
-<tt>org.eclipse.ui.examples.javaeditor.java</tt> contains all Java specific
-source viewer plugins such as the JavaDamagerRepairer as well as the Java
+<code>org.eclipse.ui.examples.javaeditor.java</code> contains all Java specific
+source viewer plug-ins such as the JavaDamagerRepairer as well as the Java
 specific document partitioner.</li>
 
 <li>
-<tt>org.eclipse.ui.examples.javaeditor.javadoc </tt>contains all JavaDoc
-specific source viewer plugins such as the JavaDocDamagerRepairer.</li>
+<code>org.eclipse.ui.examples.javaeditor.javadoc </code>contains all Javadoc
+specific source viewer plug-ins such as the JavaDocDamagerRepairer.</li>
 
-<br><tt>org.eclipse.ui.examples.javaeditor.util</tt> contains convenience
+<br><code>org.eclipse.ui.examples.javaeditor.util</code> contains convenience
 classes shared by the three other packages.</ul>
-
 </body>
 </html>

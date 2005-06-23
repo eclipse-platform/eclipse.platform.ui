@@ -34,7 +34,7 @@
       <editor
             name="%javaEditorName"
             icon="icons/obj16/java.gif"
-            extensions="%javaFileExtensions"
+            extensions="jav"
             contributorClass="org.eclipse.ui.examples.javaeditor.JavaActionContributor"
             class="org.eclipse.ui.examples.javaeditor.JavaEditor"
             id="org.eclipse.ui.JavaEditor">
@@ -46,7 +46,7 @@
          name="%documentSetupParticipantName"
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
-            extensions="%javaFileExtensions"
+            extensions="jav"
             class="org.eclipse.ui.examples.javaeditor.JavaDocumentSetupParticipant">
       </participant>
    </extension>
@@ -60,7 +60,7 @@
       <editor
             name="%xml.editor.name"
             icon="icons/sample.gif"
-            extensions="%xml.editor.extensions"
+            extensions="xml"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             class="org.eclipse.ui.examples.templateeditor.editors.TemplateEditor"
             id="org.eclipse.ui.examples.templateeditor.editors.TemplateEditor">
