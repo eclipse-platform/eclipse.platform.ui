@@ -271,7 +271,13 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			archive = archiveFactory.createArchiveReferenceModel();
 			archive.setPath(pluginID);
 			try {
-				URL url = new URL(getSite().getURL(), Site.DEFAULT_PLUGIN_PATH + versionId + File.separator);
+				URL url = null;
+				if (pluginEntries[i] instanceof PluginEntryModel
+						&& !((PluginEntryModel) pluginEntries[i]).isUnpack()) {
+					url = new URL(getSite().getURL(), Site.DEFAULT_PLUGIN_PATH	+ versionId + ".jar");
+				} else {
+					url = new URL(getSite().getURL(), Site.DEFAULT_PLUGIN_PATH	+ versionId + File.separator);
+				}
 				archive.setURLString(url.toExternalForm());
 				archive.resolve(url, null);
 				((SiteFile) getSite()).addArchiveReferenceModel(archive);

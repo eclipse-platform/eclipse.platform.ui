@@ -43,7 +43,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		URL fileURL = provider.getArchiveReference(getPathID(pluginEntry));
 		String result = fileURL.getFile();
 
-		if (!result.endsWith(".jar") && !result.endsWith(File.separator)) //$NON-NLS-1$
+		if (!result.endsWith(".jar") && !result.endsWith("/") && !result.endsWith(File.separator)) //$NON-NLS-1$
 			result += File.separator;
 		File pluginPath = new File(result);
 		if (!pluginPath.exists())
