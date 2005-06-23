@@ -52,6 +52,7 @@ import org.eclipse.update.internal.configurator.ConfigurationActivator;
 import org.eclipse.update.internal.configurator.FeatureEntry;
 import org.eclipse.update.internal.configurator.IConfigurationConstants;
 import org.eclipse.update.internal.configurator.PlatformConfiguration;
+import org.eclipse.update.internal.configurator.PluginEntry;
 import org.eclipse.update.internal.configurator.SiteEntry;
 import org.eclipse.update.internal.model.ConfigurationActivityModel;
 import org.eclipse.update.internal.model.ConfiguredSiteModel;
@@ -880,10 +881,63 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				UpdateCore.debug("Bundle " + oldBundleLocation + " has been removed"); //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
+		
+		if (runtimeConfig instanceof PlatformConfiguration) {
+			return areThereNewVersionOfOldPlugins( ((PlatformConfiguration)runtimeConfig).getPlugins(), oldBundles);
+		}
 
 		return false;
 	}
 	
+	/**
+	 * The method should only be called if all old plug-ins exist in the new
+	 * configuration. Determines if a new version was added to any plugin ID, so
+	 * more versions are enabled for any given plug-in id then in old
+	 * configuration.
+	 * 
+	 * @param newConfigurationPlugins
+	 * @param oldConfigurationBundles
+	 * @return
+	 */
+	private boolean areThereNewVersionOfOldPlugins(PluginEntry[] newConfigurationPlugins, Bundle[] oldConfigurationBundles) {
+
+		
+		for ( int i = 0; i < oldConfigurationBundles.length; i++) {
+			if (oldConfigurationBundles[i].getBundleId() == 0)
+				continue; // skip the system bundle
+			if ( getNumberOfPlugins(oldConfigurationBundles[i].getSymbolicName(), oldConfigurationBundles) != getNumberOfPlugins(oldConfigurationBundles[i].getSymbolicName(), newConfigurationPlugins)) {
+				return true;
+			}
+		}
+		return false;				
+	}
+
+	private int getNumberOfPlugins(String symbolicName, PluginEntry[] newConfigurationPlugins) {
+		
+		int numberOfPlugins = 0;
+		
+		for ( int i = 0; i < newConfigurationPlugins.length; i++) {
+			if ( symbolicName.equals(newConfigurationPlugins[i].getPluginIdentifier())) {
+				numberOfPlugins++;
+			}
+		}
+		
+		return numberOfPlugins;
+	}
+
+	private int getNumberOfPlugins(String symbolicName, Bundle[] oldConfigurationBundles) {
+
+		int numberOfPlugins = 0;
+		
+		for ( int i = 0; i < oldConfigurationBundles.length; i++) {
+			if ( symbolicName.equals(oldConfigurationBundles[i].getSymbolicName())) {
+				numberOfPlugins++;
+			}
+		}
+		
+		return numberOfPlugins;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
