@@ -48,7 +48,7 @@ public final class ImageUtil {
     public static final String OPEN_ITNRO_VIEW = "introView"; //$NON-NLS-1$
 
     // Image location
-    public static final String ICONS_PATH = "icons/"; //$NON-NLS-1$
+    public static final String ICONS_PATH = "$nl$/icons/"; //$NON-NLS-1$
 
     /**
      * Convenience method to create an image descriptor from the Intro plugin.
