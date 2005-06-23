@@ -8,7 +8,7 @@
       <documentation>
          This extension point is used to register an intro configuration. This configuration provides presentation implementations and content for a given intro contribution. An intro appears when the workbench is first launched and as a choice from the &quot;Help&quot; menu. The intro is typically used to introduce a user to a product built on Eclipse.
 &lt;p&gt;
-The intros are organized into pages which usually reflect a particular category of introductory material.  For instance, a What&apos;s New page may introduce new concepts or functionality since previous versions.  The content defined by one intro configuration can be referenced and extended from other plug-ins using the &lt;a href=&quot;org.eclipse.ui.intro.configExtension.exsd&quot;&gt;org.eclipse.ui.intro.configExtension&lt;/a&gt; extension point.
+The intros are organized into pages which usually reflect a particular category of introductory material.  For instance, a What&apos;s New page may introduce new concepts or functionality since previous versions.  The content defined by one intro configuration can be referenced and extended from other plug-ins using the &lt;a href=&quot;org_eclipse_ui_intro_configExtension.html&quot;&gt;org.eclipse.ui.intro.configExtension&lt;/a&gt; extension point.
 &lt;p&gt;
       </documentation>
    </annotation>
