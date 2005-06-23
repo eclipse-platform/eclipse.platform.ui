@@ -13,10 +13,8 @@ package org.eclipse.search.ui;
 import org.eclipse.jface.dialogs.IDialogPage;
 
 /**
- * Defines a page inside the search dialog.
- * Clients can contribute their own search page to the
- * dialog by implementing this interface, typically as a subclass
- * of <code>DialogPage</code>.
+ * Interface to be implemented by contributors to the extension point <code>org.eclipse.search.searchPages</code>.
+ * Represents a page in the search dialog. Implementod typically subclass <code>DialogPage</code>.
  * <p>
  * The search dialog calls the <code>performAction</code> method when the Search
  * button is pressed.

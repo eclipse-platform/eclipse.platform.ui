@@ -12,12 +12,11 @@ package org.eclipse.search.ui;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.part.IPageBookViewPage;
 /**
- * A <code>ISearchResultPage</code> is used to render the search results for a
+ * Interface to be implemented by contributors to the extension point <code>org.eclipse.search.searchResultViewPages</code>.
+ * A <code>ISearchResultPage</code> is used to show the search results for a
  * particular class of <code>ISearchResult</code> (as specified in the
  * <code>searchResultClass</code> attribute of the extension point) in the search
- * view. <br>
- * Extensions of extension point <code>org.eclipse.search.ui.searchResultViewPages</code>
- * must implement this interface.
+ * result view. <br>
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -25,7 +24,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  */
 public interface ISearchResultPage extends IPageBookViewPage {
 	/**
-	 * Returns an Object representing the current user interface state of the
+	 * Returns an object representing the current user interface state of the
 	 * page. For example, the current selection in a viewer. The UI state will
 	 * be later passed into the <code>setInput()</code> method when the
 	 * currently shown <code>ISearchResult</code> is shown again.
@@ -90,7 +89,7 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	 * Returns a user readable label for this search result page. The label will be
 	 * used to describe the contents for the page to the user (for example it will be
 	 * displayed in the search view title bar). To take an example from file search, 
-	 * a label might read like this: '"test" 896 matches in Workspace'.
+	 * a label might read like this: 'test' - 896 matches in workspace.
 	 * 
 	 * @return the user readable label for this search result page
 	 */
