@@ -95,7 +95,7 @@ since: 3.0
          <attribute name="label" type="string">
             <annotation>
                <documentation>
-                  
+                  The label to be used in the UI.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -120,14 +120,14 @@ since: 3.0
          <attribute name="presentationLayer" type="string">
             <annotation>
                <documentation>
-                  
+                  The default value for the layer in which the marker annotation will be drawn.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="overviewRulerPreferenceValue" type="boolean">
             <annotation>
                <documentation>
-                  
+                  The default value telling whether this marker annotation is shown in the overview ruler.
                </documentation>
             </annotation>
          </attribute>
@@ -142,7 +142,7 @@ since: 3.0
          <attribute name="textPreferenceValue" type="boolean">
             <annotation>
                <documentation>
-                  
+                  The default value telling whether this marker annotation is shown in the text.
                </documentation>
             </annotation>
          </attribute>
@@ -157,7 +157,7 @@ since: 3.0
          <attribute name="contributesToHeader" type="boolean">
             <annotation>
                <documentation>
-                  
+                  The default value telling whether this marker annotation contributes to the overview ruler's header summary.
                </documentation>
             </annotation>
          </attribute>
@@ -240,7 +240,7 @@ since: 3.0
          <attribute name="annotationImageProvider" type="string">
             <annotation>
                <documentation>
-                  
+                  The optional annotation image provider. Must implement <code>IAnnotationImageProvider</code>.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
