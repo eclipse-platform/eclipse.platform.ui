@@ -115,7 +115,7 @@ Since 3.1, if the content of the external file is XHTML 1.0, then the page is re
          <attribute name="shared-style" type="boolean">
             <annotation>
                <documentation>
-                  a boolean flag that controls the addition of the shared style into this page&apos;s list of styles. If &lt;code&gt;true&lt;/code&gt; (the default), the shared style is added to this page&apos;s styles. If &lt;code&gt;false&lt;/code&gt;, the shared style defined in the Intro configuration will not be injected into the styles of this page. 
+                  a boolean flag that controls the addition of the shared style into this page&apos;s list of styles. If &lt;code&gt;true&lt;/code&gt; (the default), the shared style is added to this page&apos;s styles. If &lt;code&gt;false&lt;/code&gt;, the shared style defined in the Intro configuration will not be injected into the styles of this page.
                </documentation>
             </annotation>
          </attribute>
@@ -340,10 +340,18 @@ no parameters required&lt;br&gt;
 &lt;b&gt;showPage&lt;/b&gt; - show the intro page with the given id&lt;br&gt;
 &lt;i&gt;id&lt;/i&gt; - the id of the intro page to show&lt;br&gt;
 &lt;i&gt;standby (optional) = (&quot;true&quot; 
- &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - indicate whether to set the intro into standby mode after showing the page&lt;br&gt;
-&lt;/p&gt;
-&lt;br&gt;
+ &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - indicate whether to set the intro into standby mode after showing the page&lt;br&gt;&lt;br&gt;
 
+If any of the parameters passed to these actions have special characters (ie: characters that are illegal in a URL), then they should be encoded using UTF-8 url encoding. To recieve these parametrs in there decoded state a special parameter, &lt;i&gt;decode = (&quot;true&quot; &quot;false&quot;)&lt;/i&gt;  can be used to force a decode of these parameters when the Intro framework processes them.&lt;br&gt;
+For example, the following Intro url: &lt;br&gt;&lt;i&gt;
+http://org.eclipse.ui.intro/showMessage?message=This+is+a+message&lt;/i&gt;&lt;br&gt;
+will process the message parameter as &quot;This+is+a+message&quot;&lt;br&gt;
+whereas&lt;br&gt;&lt;i&gt;
+http://org.eclipse.ui.intro/showMessage?message=This+is+a+message&amp;amp;amp;decode=true&lt;/i&gt;&lt;br&gt;
+will process the message parameter as &quot;This is a message&quot;.&lt;br&gt;
+
+
+&lt;br&gt;
                </documentation>
             </annotation>
          </attribute>

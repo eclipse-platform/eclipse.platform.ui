@@ -171,7 +171,14 @@ no parameters required<br>
     
   <b>showPage</b> - show the intro page with the given id<br>
   <i>id</i> - the id of the intro page to show<br>
-  <i>standby (optional) = ("true" | "false") "false"</i> - indicate whether to set the intro into standby mode after showing the page<br>
+<i>standby (optional) = ("true" | "false") "false"</i> - indicate whether to set the intro into standby mode after showing the page</p>
+<p style="margin-left:15px;"> If any of the parameters passed to these actions have special characters (ie: characters that are illegal in a URL), then they should be encoded using UTF-8 url encoding. To recieve these parametrs in there decoded state a special parameter, <em>decode = ("true" "false") </em> can be used to force a decode of these parameters when the Intro framework processes them. <br>
+For example, the following Intro url: <br>
+<em>http://org.eclipse.ui.intro/showMessage?message=This+is+a+message </em><br>
+will process the message parameter as "This+is+a+message" <br>
+whereas <br>
+<em>http://org.eclipse.ui.intro/showMessage?message=This+is+a+message&amp;amp;decode=true </em><br>
+will process the message parameter as "This is a message". <br>
 </p>
 <br></li>
 <li><b>style-id</b> - A means to classify this link into a given category so that a common style may be applied.</li>
@@ -288,6 +295,8 @@ Since 3.1, styles can also be a comma separated list of styles. These styles wil
  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation. The path is relative to the location of this xml content file. <br>
 Since 3.1, styles can also be a comma separated list of styles. These styles will be used when creating the SWT presentation of the welcome page.</li>
 <li><b>path</b> - the path that uniquely represents the path to an anchor. (e.g. page/group1/group2/anchorId) within the target configuration to be extended. It can only be an anchor which can be in any page or group, including shared groups at configuration level</li>
+<li><strong>content </strong> - if content is defined, it is assumed that the extension content is defined in an external XHTML file. In that case the resource pointed to by this content attribute is loaded and the path attribute is now resolved in this external file. since 3.1 </li>
+<li></li>
 </ul>
 <h2><code>anchor</code></h2>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.anchor">anchor</a> EMPTY&gt;</p>
