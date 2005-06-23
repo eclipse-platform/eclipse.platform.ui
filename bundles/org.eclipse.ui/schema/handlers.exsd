@@ -175,42 +175,42 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &lt;pre&gt;&lt;code&gt;
-&amp;lt;extension
- point=&quot;org.eclipse.ui.handlers&quot;&amp;gt;
- &amp;lt;handler
+         &lt;pre&gt;
+&lt;extension
+ point=&quot;org.eclipse.ui.handlers&quot;&gt;
+ &lt;handler
   commandId=&quot;commandId&quot;
-  class=&quot;org.eclipse.compare.Command&quot;&amp;gt;
-  &amp;lt;activeWhen&amp;gt;
-   &amp;lt;with variable=&quot;selection&quot;&amp;gt;
-    &amp;lt;count value=&quot;1&quot; /&amp;gt;
-    &amp;lt;iterate operator=&quot;and&quot;&amp;gt;
-     &amp;lt;adapt type=&quot;IResource&quot; /&amp;gt;
-    &amp;lt;/iterate&amp;gt;
-   &amp;lt;/with&amp;gt;
-  &amp;lt;/activeWhen&amp;gt;
- &amp;lt;/handler&amp;gt;
-&amp;lt;/extension&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
+  class=&quot;org.eclipse.compare.Command&quot;&gt;
+  &lt;activeWhen&gt;
+   &lt;with variable=&quot;selection&quot;&gt;
+    &lt;count value=&quot;1&quot; /&gt;
+    &lt;iterate operator=&quot;and&quot;&gt;
+     &lt;adapt type=&quot;IResource&quot; /&gt;
+    &lt;/iterate&gt;
+   &lt;/with&gt;
+  &lt;/activeWhen&gt;
+ &lt;/handler&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
 &lt;p&gt;
 To further avoid plug-in loading, it is possible to specify when the handler is enabled.  If the proxy has not yet loaded the handler, then only the expressions syntax is used to decide if the handler is enabled.  If the proxy has loaded the handler, then the expressions syntax is consulted first.  If the expressions syntax evaluates to true, then the handler is asked if it is enabled.  (This is a short-circuit Boolean &quot;and&quot; operation between the expressions syntax and the handler&apos;s enabled state.)
 &lt;/p&gt;
-&lt;code&gt;&lt;pre&gt;
-&amp;lt;extension
- point=&quot;org.eclipse.ui.handlers&quot;&amp;gt;
- &amp;lt;handler
+&lt;pre&gt;
+&lt;extension
+ point=&quot;org.eclipse.ui.handlers&quot;&gt;
+ &lt;handler
   commandId=&quot;commandId&quot;
-  class=&quot;org.eclipse.Handler&quot;&amp;gt;
-  &amp;lt;enabledWhen&amp;gt;
-   &amp;lt;with variable=&quot;context&quot;&amp;gt;
-    &amp;lt;property
+  class=&quot;org.eclipse.Handler&quot;&gt;
+  &lt;enabledWhen&gt;
+   &lt;with variable=&quot;context&quot;&gt;
+    &lt;property
      id=&quot;id&quot;
-     value=&quot;debugging&quot; /&amp;gt;
-   &amp;lt;/with&amp;gt;
-  &amp;lt;/enabledWhen&amp;gt;
- &amp;lt;/handler&amp;gt;
-&amp;lt;/extension&amp;gt;
-&lt;/pre&gt;&lt;/code&gt;
+     value=&quot;debugging&quot; /&gt;
+   &lt;/with&gt;
+  &lt;/enabledWhen&gt;
+ &lt;/handler&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -225,14 +225,14 @@ All handlers implement &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&g
 &lt;p&gt;
 It is also possible to activate and deactive handlers using legacy code in the workbench.  This can be done through the legacy mechanism shown below.  This mechanism is useful to clients who are using actions to contribute to menus or toolbars.
 &lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
+&lt;pre&gt;
  IWorkbenchPartSite mySite;
  IAction myAction;
  
  myAction.setActionDefinitionId(commandId);
  IKeyBindingService service = mySite.getKeyBindingService();
  service.registerAction(myAction);
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
