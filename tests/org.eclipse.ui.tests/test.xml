@@ -104,7 +104,7 @@
 	  	<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
 	      <property name="data-dir" value="${performance-workspace-jface}"/>
 	      <property name="plugin-name" value="${plugin-name}"/>
-	      <property name="classname" value="org.eclipse.jface.tests.performance.JFacePerformanceTestSuite"/>
+	      <property name="classname" value="org.eclipse.jface.tests.performance.JFacePerformanceSuite"/>
 	    </ant>
 	  </target>
 	
