@@ -19,8 +19,8 @@
     as well as certain aspects of plugins (activation ordering, classes loaded, 
     relation to other plugins, ...) and classes (load order, load nesting, ...). 
     Plugin developers can use this information to ensure that their plugins/classes 
-    are be activated/loaded as expected, and that they are not taking more time/space 
-    than is warranted.</dd>
+    are being activated/loaded as expected, and that they are not taking more 
+    time/space than is warranted.</dd>
   <dt><b>Resources tools</b></dt>
   <dd>The resources tools expose the behaviour/performance of installed builders 
     and listeners as well as the structure of the workspace, resources and resource 
@@ -112,29 +112,28 @@
 </dl>
 <p>The following debug options control what data is available in Runtime Spy perspective 
   views.</p>
-<dl> 
-  <dt>org.eclipse.core.boot/monitor/classes=&lt;boolean&gt;</dt>
+<dl>
+  <dt>org.eclipse.osgi/monitor/classes=&lt;boolean&gt;</dt>
   <dd>Whether or not to monitor which classes are loaded.</dd>
-  <dt>org.eclipse.core.boot/monitor/plugins=&lt;boolean&gt;</dt>
+  <dt>org.eclipse.osgi/monitor/activation=&lt;boolean&gt;</dt>
   <dd>Whether or not to monitor which plugins are activated.</dd>
-  <dt>org.eclipse.core.boot/monitor/bundles=&lt;boolean&gt;</dt>
+  <dt>org.eclipse.osgi/monitor/resources=&lt;boolean&gt;</dt>
   <dd>Whether or not to monitor which resource bundles (i.e., *.properties files 
     ) are loaded</dd>
-  <dt>org.eclipse.core.boot/trace/classLoading=&lt;boolean&gt;</dt>
+  <dt>org.eclipse.osgi/trace/classLoading=&lt;boolean&gt;</dt>
   <dd>Whether or not to snapshot the execution stack when a class is loaded</dd>
-  <dt>org.eclipse.core.boot/trace/filename=&lt;file location&gt;</dt>
+  <dt>org.eclipse.osgi/trace/filename=&lt;file location&gt;</dt>
   <dd>The file in which execution traces are written</dd>
-  <dt>org.eclipse.core.boot/trace/filters=&lt;properties file&gt;</dt>
+  <dt>org.eclipse.osgi/trace/filters=&lt;properties file&gt;</dt>
   <dd>The location of a Java properties file identifying the classes which should 
     be traced (if trace/classLoading is true). The File format is: <br>
     plugins=&lt;comma separated list of plugins whose classes to trace&gt;<br>
     packages=&lt;comma separated list of package prefixes of classes to trace&gt;<br>
     Note that there may be many 'plugins' and 'packages' lines in one file.</dd>
-  <dt>org.eclipse.core.boot/trace/pluginActivation=&lt;boolean&gt;</dt>
+  <dt>org.eclipse.osgi/trace/activation=&lt;boolean&gt;</dt>
   <dd>Whether or not to snapshot the execution stack when a plugin is activated.<br>
   </dd>
 </dl>
-<p></p>
 <h4>Plug-In Dependency Perspective</h4>
 <p>This perspective includes 2 views: a plug-in list view listing all the plug-ins 
   available in the workspace and a plug-in dependency view. The plug-in ids in 
@@ -150,8 +149,8 @@
 <h4>Resource Spy view</h4>
 This view shows detailed public/internal information about the resource currently 
 selected in any Eclipse view (e.g. Resource Navigator, Package Explorer, etc). 
-It shows details about: flags, markers, synchronization information, and session/persistent 
-properties. 
+It shows details about: flags, markers, synchronization information, session/persistent 
+properties, content type). 
 <h4>Delta Spy View</h4>
 The Delta Spy listens for any resource changes, echoing the resource delta for 
 each change event listened. For each affected resource (and its child resources), 
@@ -172,6 +171,15 @@ it shows the following information:
   </li>
   <li>if it is a team private change, a "(team private)" tag.</li>
 </ul>
+<h4>Graphical Delta Spy View</h4>
+<p>The Graphical Delta Spy is similar to the Delta Spy describe above, but it 
+  shows the resource delta tree using a tree widget instead of indented text. 
+  This view can only show the resource delta tree for the last resource change 
+  event only. However, it is easier to visualize a resource delta tree due to 
+  its graphical nature.</p>
+<p>The Graphical Delta Spy view provides a pull-down menu that allows the user 
+  to select which types of events to listen to (PRE_BUILD, POST_BUILD, POST_CHANGE) 
+  and whether phantom resources should be taken into account..</p>
 <h4>Builders/Listeners Spy</h4>
 <p>The Builders/Listeners Spy view displays statistical information about the 
   behaviour and performance of installed builders and resource change listeners. 
@@ -196,17 +204,14 @@ it shows the following information:
   <dt>org.eclipse.core.resources/monitor/listeners=&lt;boolean&gt;</dt>
   <dd>Whether or not to monitor which listeners.</dd>
 </dl>
- 
 <h3>Metadata Tools</h3>
 <p>The metadata tooling contributes a Metadata perspective. The individual views 
   are not particularly useful on their own but are accessed via the Window-&gt;Show 
   View-&gt;Metadata Tools menu.</p>
-<h4></h4>
 <h4>The Metadata Perspective</h4>
 This perspective contains three views which allows the user to select a directory, 
 browse any metadata found in it and see contents and integrity status of supported 
 files. 
-<h4></h4>
 <dl> 
   <dt><b>Metadata Spy</b></dt>
   <dd>This view allows the user to select a given metadata directory and uses 
