@@ -23,9 +23,9 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.LabelRetargetAction;
 import org.eclipse.ui.actions.RetargetAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.BasicTextEditorActionContributor;
 
 /**
@@ -94,7 +94,7 @@ public class ReadmeEditorActionBarContributor extends
                 .setDisabledImageDescriptor(ReadmeImages.EDITOR_ACTION1_IMAGE_DISABLE);
         action1.setImageDescriptor(ReadmeImages.EDITOR_ACTION1_IMAGE_ENABLE);
         action1.setHoverImageDescriptor(ReadmeImages.EDITOR_ACTION1_IMAGE);
-        WorkbenchHelp.setHelp(action1, IReadmeConstants.EDITOR_ACTION1_CONTEXT);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(action1, IReadmeConstants.EDITOR_ACTION1_CONTEXT);
 
         action2 = new RetargetAction(IReadmeConstants.RETARGET2, MessageUtil
                 .getString("Editor_Action2")); //$NON-NLS-1$
@@ -112,11 +112,11 @@ public class ReadmeEditorActionBarContributor extends
         action3.setHoverImageDescriptor(ReadmeImages.EDITOR_ACTION3_IMAGE);
 
         handler2 = new EditorAction(MessageUtil.getString("Editor_Action2")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(action2, IReadmeConstants.EDITOR_ACTION2_CONTEXT);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(action2, IReadmeConstants.EDITOR_ACTION2_CONTEXT);
 
         handler3 = new EditorAction(MessageUtil.getString("Editor_Action3")); //$NON-NLS-1$
         handler3.setToolTipText(MessageUtil.getString("Readme_Editor_Action3")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(action3, IReadmeConstants.EDITOR_ACTION3_CONTEXT);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(action3, IReadmeConstants.EDITOR_ACTION3_CONTEXT);
 
         handler4 = new EditorAction(MessageUtil.getString("Editor_Action4")); //$NON-NLS-1$
         handler5 = new EditorAction(MessageUtil.getString("Editor_Action5")); //$NON-NLS-1$

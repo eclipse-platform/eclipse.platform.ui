@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -44,8 +44,8 @@ public class SectionsDialog extends Dialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(MessageUtil.getString("Readme_Sections")); //$NON-NLS-1$
-        WorkbenchHelp.setHelp(newShell,
-                IReadmeConstants.SECTIONS_DIALOG_CONTEXT);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
+				IReadmeConstants.SECTIONS_DIALOG_CONTEXT);
     }
 
     /* (non-Javadoc)

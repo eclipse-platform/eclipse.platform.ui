@@ -28,8 +28,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 
 /**
@@ -77,8 +77,8 @@ public class ReadmeCreationPage extends WizardNewFileCreationPage {
         super.createControl(parent);
         Composite composite = (Composite) getControl();
 
-        WorkbenchHelp.setHelp(composite,
-                IReadmeConstants.CREATION_WIZARD_PAGE_CONTEXT);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
+				IReadmeConstants.CREATION_WIZARD_PAGE_CONTEXT);
 
         this.setFileName("sample" + nameCounter + ".readme"); //$NON-NLS-1$ //$NON-NLS-2$
 

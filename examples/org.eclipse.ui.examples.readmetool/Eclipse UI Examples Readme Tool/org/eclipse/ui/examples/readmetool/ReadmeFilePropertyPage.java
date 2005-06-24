@@ -27,8 +27,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This page will be added to the property page dialog
@@ -66,8 +66,8 @@ public class ReadmeFilePropertyPage extends PropertyPage {
         noDefaultAndApplyButton();
         Composite panel = createComposite(parent, 2);
 
-        WorkbenchHelp.setHelp(getControl(),
-                IReadmeConstants.PROPERTY_PAGE_CONTEXT);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				IReadmeConstants.PROPERTY_PAGE_CONTEXT);
 
         // layout the page
 

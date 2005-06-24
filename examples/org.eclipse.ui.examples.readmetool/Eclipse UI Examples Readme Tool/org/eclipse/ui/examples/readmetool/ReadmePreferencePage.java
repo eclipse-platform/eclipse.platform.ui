@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This class implements a sample preference page that is 
@@ -93,7 +93,8 @@ public class ReadmePreferencePage extends PreferencePage implements
      * Method declared on PreferencePage
      */
     protected Control createContents(Composite parent) {
-        WorkbenchHelp.setHelp(parent, IReadmeConstants.PREFERENCE_PAGE_CONTEXT);
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				IReadmeConstants.PREFERENCE_PAGE_CONTEXT);
 
         //composite_textField << parent
         Composite composite_textField = createComposite(parent, 2);

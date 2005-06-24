@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.ViewPart;
@@ -39,8 +39,8 @@ public class ReadmeSectionsView extends ViewPart implements ISelectionListener {
     public void createPartControl(Composite parent) {
         viewer = new ListViewer(parent);
 
-        WorkbenchHelp.setHelp(viewer.getControl(),
-                IReadmeConstants.SECTIONS_VIEW_CONTEXT);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(),
+				IReadmeConstants.SECTIONS_VIEW_CONTEXT);
 
         // if the objects in the viewer implement the IDesktopElement adapter,
         // these generic content and label providers can be used.
