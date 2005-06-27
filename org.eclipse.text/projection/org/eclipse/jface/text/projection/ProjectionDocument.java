@@ -21,7 +21,6 @@ import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension;
-import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
@@ -202,9 +201,7 @@ public class ProjectionDocument extends AbstractDocument {
 	 * @since 3.1
 	 */
 	public String getDefaultLineDelimiter() {
-		if (fMasterDocument instanceof IDocumentExtension4)
-			return ((IDocumentExtension4)fMasterDocument).getDefaultLineDelimiter();
-		return TextUtilities.getDefaultLineDelimiter(this);
+		return TextUtilities.getDefaultLineDelimiter(fMasterDocument);
 	}
 	
 	/**
