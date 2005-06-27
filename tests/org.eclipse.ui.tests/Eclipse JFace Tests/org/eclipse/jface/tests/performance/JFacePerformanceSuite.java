@@ -43,8 +43,8 @@ public class JFacePerformanceSuite extends TestSuite {
 		addTest(new TreeTest("testAddTen"));
 		addTest(new TreeTest("testAddFifty"));
 		addTest(new TreeTest("testAddThousand"));
-		addTest(new TreeTest("testAddHundred", BasicPerformanceTest.GLOBAL));
-		addTest(new TreeTest("testAddThousandPreSort", BasicPerformanceTest.LOCAL));
+		addTest(new TreeTest("testAddHundred", BasicPerformanceTest.LOCAL));
+		addTest(new TreeTest("testAddThousandPreSort", BasicPerformanceTest.GLOBAL));
 
 	}
 }

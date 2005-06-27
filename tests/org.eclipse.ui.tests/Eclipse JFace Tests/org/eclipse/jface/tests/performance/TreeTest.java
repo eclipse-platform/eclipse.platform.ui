@@ -171,6 +171,7 @@ public class TreeTest extends ViewerTest {
 
 		tagIfNecessary("JFace - Add 1000 items in 10 blocks to TreeViewer",
 				Dimension.ELAPSED_PROCESS);
+		setDegradationComment("https://bugs.eclipse.org/bugs/show_bug.cgi?id=101853");
 
 		doTestAdd(100, TEST_COUNT, false);
 	}
