@@ -14,6 +14,7 @@ package org.eclipse.jface.tests.performance;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.tests.performance.TestRunnable;
 
 /**
@@ -26,7 +27,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 
 	private RefreshTestContentProvider contentProvider;
 
-	private static final int ELEMENT_COUNT = 1000;
+	private static int ELEMENT_COUNT;
 
 	public ComboViewerRefreshTest(String testName, int tagging) {
 		super(testName, tagging);
@@ -52,6 +53,8 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	 * @throws Throwable
 	 */
 	public void testRefresh() throws Throwable {
+
+		ELEMENT_COUNT = 1000;
 		openBrowser();
 
 		exercise(new TestRunnable() {
@@ -61,7 +64,36 @@ public class ComboViewerRefreshTest extends ViewerTest {
 				processEvents();
 				stopMeasuring();
 			}
-		}, JFacePerformanceSuite.MIN_ITERATIONS, ITERATIONS,
+		}, MIN_ITERATIONS, ITERATIONS,
+				JFacePerformanceSuite.MAX_TIME);
+
+		commitMeasurements();
+		assertPerformance();
+	}
+
+	/**
+	 * Test the time for doing a refresh.
+	 * 
+	 * @throws Throwable
+	 */
+	public void testRefreshSmall() throws Throwable {
+
+		tagIfNecessary("JFace - Refresh 5o item combo 1000 times",
+				Dimension.ELAPSED_PROCESS);
+
+		ELEMENT_COUNT = 50;
+		openBrowser();
+
+		exercise(new TestRunnable() {
+			public void run() {
+				startMeasuring();
+				for (int i = 0; i < 1000; i++) {
+					viewer.refresh();
+				}
+				processEvents();
+				stopMeasuring();
+			}
+		}, MIN_ITERATIONS, slowGTKIterations(),
 				JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();

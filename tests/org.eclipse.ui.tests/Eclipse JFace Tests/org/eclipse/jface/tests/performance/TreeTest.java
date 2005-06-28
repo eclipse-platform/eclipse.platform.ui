@@ -182,18 +182,10 @@ public class TreeTest extends ViewerTest {
 	 * @param count
 	 * @throws CoreException
 	 */
-	private void doTestAdd(final int increment, final int total,final boolean preSort)
+	protected void doTestAdd(final int increment, final int total,final boolean preSort)
 			throws CoreException {
 
 		openBrowser();
-
-		int iterations = ITERATIONS;
-		int minIterations = JFacePerformanceSuite.MIN_ITERATIONS;
-
-		if (total > 100) {// Cut it down for large data sets
-			iterations = ITERATIONS / 5;
-			minIterations = minIterations / 5;
-		}
 
 		exercise(new TestRunnable() {
 			public void run() {
@@ -224,7 +216,7 @@ public class TreeTest extends ViewerTest {
 				stopMeasuring();
 
 			}
-		}, minIterations, iterations, JFacePerformanceSuite.MAX_TIME);
+		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();
 		assertPerformance();

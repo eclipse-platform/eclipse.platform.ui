@@ -26,7 +26,7 @@ import org.eclipse.ui.tests.performance.TestRunnable;
  */
 public class TableViewerRefreshTest extends ViewerTest {
 
-	private class TestTableViewer extends TableViewer {
+	class TestTableViewer extends TableViewer {
 
 		public TestTableViewer(Composite parent, int style) {
 			super(parent, style);
@@ -86,7 +86,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 				processEvents();
 				stopMeasuring();
 			}
-		}, JFacePerformanceSuite.MIN_ITERATIONS, ITERATIONS,
+		}, MIN_ITERATIONS, slowGTKIterations(),
 				JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();
@@ -109,7 +109,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 				processEvents();
 				stopMeasuring();
 			}
-		}, JFacePerformanceSuite.MIN_ITERATIONS, ITERATIONS,
+		}, MIN_ITERATIONS, slowGTKIterations(),
 				JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();
@@ -136,7 +136,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 				processEvents();
 				stopMeasuring();
 			}
-		}, JFacePerformanceSuite.MIN_ITERATIONS, ITERATIONS,
+		}, MIN_ITERATIONS, ITERATIONS,
 				JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();
@@ -167,7 +167,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 				stopMeasuring();
 
 			}
-		}, JFacePerformanceSuite.MIN_ITERATIONS, ITERATIONS,
+		}, MIN_ITERATIONS, slowGTKIterations(),
 				JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();

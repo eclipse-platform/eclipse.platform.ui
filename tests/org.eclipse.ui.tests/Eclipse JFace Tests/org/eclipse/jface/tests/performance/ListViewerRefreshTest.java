@@ -71,7 +71,7 @@ public class ListViewerRefreshTest extends ViewerTest {
 				processEvents();
 				stopMeasuring();
 			}
-		}, JFacePerformanceSuite.MIN_ITERATIONS, ITERATIONS,
+		}, MIN_ITERATIONS, ITERATIONS,
 				JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();
