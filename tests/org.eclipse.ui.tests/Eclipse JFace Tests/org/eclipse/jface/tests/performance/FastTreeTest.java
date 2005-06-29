@@ -45,7 +45,7 @@ public class FastTreeTest extends TreeTest {
 
 		tagIfNecessary("JFace - Add 10000 items 100 at a time TreeViewer 10 times",
 				Dimension.ELAPSED_PROCESS);
-		setDegradationComment("<a href=\"https://bugs.eclipse.org/bugs/show_bug.cgi?id=101853\">See Bug 101853</a>");
+		setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=101853>See Bug 101853</a> ");
 
 		doTestAdd(100, TEST_COUNT, false);
 	}

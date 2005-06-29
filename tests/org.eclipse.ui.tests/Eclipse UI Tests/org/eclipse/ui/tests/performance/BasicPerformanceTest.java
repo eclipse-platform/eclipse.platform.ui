@@ -281,7 +281,9 @@ public abstract class BasicPerformanceTest extends UITestCase {
     }
     
     /**
-     * Set the comment for the receiver to string.
+     * Set the comment for the receiver to string. Note
+     * this is added to the output as is so you will
+     * need to add markup if you need a link.
      * @param string The comment to write out for the test.
      */
     public void setDegradationComment(String string) {
