@@ -506,6 +506,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, CVSUIMessages.CVSDecoratorPreferencesPage_32);  //$NON-NLS-1$
 		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, CVSUIMessages.CVSDecoratorPreferencesPage_33);  //$NON-NLS-1$
 		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, CVSUIMessages.CVSDecoratorPreferencesPage_34);  //$NON-NLS-1$
+        FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_LABEL, CVSUIMessages.CVSDecoratorPreferencesPage_38);  //$NON-NLS-1$
 		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.DIRTY_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_35); //$NON-NLS-1$
 		
 		final PreviewFile project= new PreviewFile("Project", IResource.PROJECT, false, false, false, false, true, null, "v1_0"); //$NON-NLS-1$ //$NON-NLS-2$

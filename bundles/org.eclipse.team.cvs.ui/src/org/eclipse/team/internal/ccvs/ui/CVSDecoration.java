@@ -20,6 +20,8 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -256,6 +258,15 @@ public class CVSDecoration {
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, location.getUsername());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, location.getRootDirectory());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, repository);
+
+            RepositoryManager repositoryManager = CVSUIPlugin.getPlugin().getRepositoryManager();
+            RepositoryRoot root = repositoryManager.getRepositoryRootFor(location);
+            CVSUIPlugin.getPlugin().getRepositoryManager();
+            String label = root.getName();
+            if (label == null) {
+              label = location.getLocation(true);
+            }
+            bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_LABEL, label);
 		}
 		CVSDecoratorConfiguration.decorate(this, getTextFormatter(), bindings);
 	}
