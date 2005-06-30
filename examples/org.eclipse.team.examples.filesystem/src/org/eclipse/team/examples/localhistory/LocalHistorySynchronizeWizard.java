@@ -53,7 +53,7 @@ public class LocalHistorySynchronizeWizard extends Wizard {
 	}
 
 	public boolean performFinish() {
-		LocalHistoryPartipant participant = new LocalHistoryPartipant();
+		LocalHistoryParticipant participant = new LocalHistoryParticipant();
 		ISynchronizeManager manager = TeamUI.getSynchronizeManager();
 		manager.addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 		ISynchronizeView view = manager.showSynchronizeViewInActivePage();

@@ -21,7 +21,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 
-public class LocalHistoryPartipant extends SubscriberParticipant {
+public class LocalHistoryParticipant extends SubscriberParticipant {
 	
 	public static final String ID = "org.eclipse.team.synchronize.example"; //$NON-NLS-1$
 	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP = "context_group_1"; //$NON-NLS-1$
@@ -59,7 +59,7 @@ public class LocalHistoryPartipant extends SubscriberParticipant {
 		}
 	}
 	
-	public LocalHistoryPartipant() {
+	public LocalHistoryParticipant() {
 		setSubscriber(new LocalHistorySubscriber());
 	}
 	
