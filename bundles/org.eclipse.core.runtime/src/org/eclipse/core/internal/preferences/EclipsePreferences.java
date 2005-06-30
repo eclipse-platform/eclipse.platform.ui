@@ -572,22 +572,6 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return oldValue;
 	}
 
-	private void internalRemove(String key, String oldValue) {
-		boolean wasRemoved = false;
-		//Thread safety: synchronize when modifying the properties field
-		synchronized (this) {
-			if (properties == null)
-				return;
-			wasRemoved = properties.removeKey(key) != null;
-			if (properties.size() == 0)
-				properties = null;
-			if (wasRemoved)
-				makeDirty();
-		}
-		if (wasRemoved)
-			firePreferenceEvent(key, oldValue, null);
-	}
-
 	/*
 	 * Subclasses to over-ride.
 	 */
@@ -872,9 +856,19 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#remove(java.lang.String)
 	 */
 	public void remove(String key) {
-		String oldValue = internalGet(key);
-		if (oldValue != null)
-			internalRemove(key, oldValue);
+		String oldValue = null;
+		//Thread safety: synchronize when modifying the properties field
+		synchronized (this) {
+			if (properties == null)
+				return;
+			oldValue = properties.removeKey(key);
+			if (oldValue == null)
+				return;
+			if (properties.size() == 0)
+				properties = null;
+			makeDirty();
+		}
+		firePreferenceEvent(key, oldValue, null);
 	}
 
 	/*
