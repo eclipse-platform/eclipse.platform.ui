@@ -11,17 +11,33 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
@@ -38,7 +54,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	public static final String NAME = "CheckoutAsLocationSelectionPage"; //$NON-NLS-1$
 	
 	private Button browseButton;
-	private Text locationPathField;
+	private Combo locationPathField;
 	private Label locationLabel;
 	private boolean useDefaults = true;
 	private ICVSRemoteFolder[] remoteFolders;
@@ -47,7 +63,12 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	
 	// constants
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
+    private static final int COMBO_HISTORY_LENGTH = 5;
 	
+    // store id constants
+    private static final String STORE_PREVIOUS_LOCATIONS =
+        "CheckoutAsLocationSelectionPage.STORE_PREVIOUS_LOCATIONS";//$NON-NLS-1$
+    
 	/**
 	 * @param pageName
 	 * @param title
@@ -106,6 +127,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 		useDefaultsButton.setSelection(this.useDefaults);
 
 		createUserSpecifiedProjectLocationGroup(composite, !this.useDefaults);
+        initializeValues();
 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -143,7 +165,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 		locationLabel.setEnabled(enabled);
 
 		// project location entry field
-		locationPathField = new Text(projectGroup, SWT.BORDER);
+		locationPathField = new Combo(projectGroup, SWT.DROP_DOWN);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		locationPathField.setLayoutData(data);
@@ -171,6 +193,77 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 		return projectGroup;
 	}
 	
+    /**
+     * Initializes states of the controls.
+     */
+    private void initializeValues() {
+        // Set remembered values
+        IDialogSettings settings = getDialogSettings();
+        if (settings != null) {
+            String[] previouseLocations = settings.getArray(STORE_PREVIOUS_LOCATIONS);
+            if (previouseLocations != null) {
+                for (int i = 0; i < previouseLocations.length; i++) {
+                    if(isSingleFolder())
+                        locationPathField.add(new Path(previouseLocations[i]).append(getSingleProject().getName()).toOSString());
+                    else
+                        locationPathField.add(previouseLocations[i]);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Saves the widget values
+     */
+    private void saveWidgetValues() {
+        // Update history
+        IDialogSettings settings = getDialogSettings();
+        if (settings != null) {
+            String[] previouseLocations = settings.getArray(STORE_PREVIOUS_LOCATIONS);
+            if (previouseLocations == null) previouseLocations = new String[0];
+            if(isSingleFolder())
+                previouseLocations = addToHistory(previouseLocations, new Path(locationPathField.getText()).removeLastSegments(1).toOSString());
+            else
+                previouseLocations = addToHistory(previouseLocations, locationPathField.getText());
+            settings.put(STORE_PREVIOUS_LOCATIONS, previouseLocations);
+        }
+    }
+
+    /**
+     * Adds an entry to a history, while taking care of duplicate history items
+     * and excessively long histories.  The assumption is made that all histories
+     * should be of length <code>CheckoutAsLocationSelectionPage.COMBO_HISTORY_LENGTH</code>.
+     *
+     * @param history the current history
+     * @param newEntry the entry to add to the history
+     * @return the history with the new entry appended
+     */
+    private String[] addToHistory(String[] history, String newEntry) {
+        ArrayList l = new ArrayList(Arrays.asList(history));
+        addToHistory(l, newEntry);
+        String[] r = new String[l.size()];
+        l.toArray(r);
+        return r;
+    }
+    
+    /**
+     * Adds an entry to a history, while taking care of duplicate history items
+     * and excessively long histories.  The assumption is made that all histories
+     * should be of length <code>CheckoutAsLocationSelectionPage.COMBO_HISTORY_LENGTH</code>.
+     *
+     * @param history the current history
+     * @param newEntry the entry to add to the history
+     */
+    private void addToHistory(List history, String newEntry) {
+        history.remove(newEntry);
+        history.add(0,newEntry);
+    
+        // since only one new item was added, we can be over the limit
+        // by at most one item
+        if (history.size() > COMBO_HISTORY_LENGTH)
+            history.remove(COMBO_HISTORY_LENGTH);
+    }
+    
 	/**
 	 * Check if the entry in the widget location is valid. If it is valid return null. Otherwise
 	 * return a string that indicates the problem.
@@ -301,10 +394,11 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	 * @return
 	 */
 	public String getTargetLocation() {
-		if (isCustomLocationSpecified())
-			return targetLocation;
-		else
-			return null;
+		if (isCustomLocationSpecified()) {
+            saveWidgetValues();
+            return targetLocation;
+        }
+		return null;
 	}
 
 	/**

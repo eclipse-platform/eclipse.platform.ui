@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -66,9 +67,22 @@ public class CheckoutAsWizard extends Wizard {
 		}
 	}
 	
+    /**
+     * Return the settings used for all CheckoutAsWizard pages
+     */
+    public static IDialogSettings getCheckoutAsDialogSettings() {
+        IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
+        IDialogSettings section = workbenchSettings.getSection("CheckoutAsWizard");//$NON-NLS-1$
+        if (section == null) {
+            section = workbenchSettings.addNewSection("CheckoutAsWizard");//$NON-NLS-1$
+        }
+        return section;
+    }
+    
 	public CheckoutAsWizard(IWorkbenchPart part, ICVSRemoteFolder[] remoteFolders, boolean allowProjectConfiguration) {
 		this.part = part;
 		this.remoteFolders = remoteFolders;
+        setDialogSettings(getCheckoutAsDialogSettings());
 		setWindowTitle(CVSUIMessages.CheckoutAsWizard_title); //$NON-NLS-1$
 		this.allowProjectConfiguration = allowProjectConfiguration;
 	}
