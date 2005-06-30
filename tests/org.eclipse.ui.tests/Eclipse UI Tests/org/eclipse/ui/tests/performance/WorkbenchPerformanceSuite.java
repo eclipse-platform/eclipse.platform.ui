@@ -83,7 +83,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
         addPerspectiveSwitchScenarios();
         addPerspectiveOpenCloseScenarios();
         addWindowOpenCloseScenarios();
-        //addContributionScenarios();
+        addContributionScenarios();
     }
 
     /**
