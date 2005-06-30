@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 74959
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.repo;
 
@@ -783,8 +784,12 @@ public class RepositoryManager {
 	 * @param string
 	 */
 	public void addComment(String comment) {
-		// Only add the comment if its not there already
-		if (containsComment(comment)) return;
+		// Make comment first element if it's already there
+		int index = getCommentIndex(comment);
+		if (index != -1) {
+			makeFirstElement(index);
+			return;
+		}
 		// Insert the comment as the first element
 		String[] newComments = new String[Math.min(previousComments.length + 1, MAX_COMMENTS)];
 		newComments[0] = comment;
@@ -794,12 +799,25 @@ public class RepositoryManager {
 		previousComments = newComments;
 	}
 
-	private boolean containsComment(String comment) {
+	private int getCommentIndex(String comment) {
 		for (int i = 0; i < previousComments.length; i++) {
 			if (previousComments[i].equals(comment)) {
-				return true;
+				return i;
 			}
 		}
-		return false;
+		return -1;
+	}
+	
+	private void makeFirstElement(int index) {
+		String[] newComments = new String[previousComments.length];
+		newComments[0] = previousComments[index];
+		System.arraycopy(previousComments, 0, newComments, 1, index);
+		int maxIndex = previousComments.length - 1;
+		if (index != maxIndex) {
+			int nextIndex = (index + 1);
+			System.arraycopy(previousComments, nextIndex, newComments,
+					nextIndex, (maxIndex - index));
+		}
+		previousComments = newComments;
 	}
 }
