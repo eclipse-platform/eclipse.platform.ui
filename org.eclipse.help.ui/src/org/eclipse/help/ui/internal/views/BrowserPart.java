@@ -78,6 +78,14 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			public void changing(LocationEvent event) {
 				if (redirectLink(event.location))
 					event.doit = false;
+				if (!event.doit && event.location != null
+						&& event.location.startsWith("https://")) { //$NON-NLS-1$
+					try {
+						BaseHelpSystem.getHelpBrowser(true).displayURL(
+								event.location);
+					} catch (Exception exc) {
+					}
+				}
 			}
 
 			public void changed(LocationEvent event) {

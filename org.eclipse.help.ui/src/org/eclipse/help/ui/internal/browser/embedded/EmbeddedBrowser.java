@@ -126,6 +126,14 @@ public class EmbeddedBrowser {
 						&& e.location.startsWith("javascript://needModal")) { //$NON-NLS-1$
 					modalRequestTime = System.currentTimeMillis();
 				}
+				if (!e.doit && e.location != null
+						&& e.location.startsWith("https://")) { //$NON-NLS-1$
+					try {
+						BaseHelpSystem.getHelpBrowser(true).displayURL(
+								e.location);
+					} catch (Exception exc) {
+					}
+				}
 			}
 			public void changed(LocationEvent e) {
 			}
@@ -222,6 +230,21 @@ public class EmbeddedBrowser {
 					Shell shell = browser.getShell();
 					shell.setText(event.title);
 				}
+			}
+		});
+		browser.addLocationListener(new LocationListener() {
+			public void changing(LocationEvent e) {
+				if (!e.doit && e.location != null
+						&& e.location.startsWith("https://")) { //$NON-NLS-1$
+					try {
+						BaseHelpSystem.getHelpBrowser(true).displayURL(
+								e.location);
+					} catch (Exception exc) {
+					}
+				}
+			}
+
+			public void changed(LocationEvent e) {
 			}
 		});
 	}
