@@ -163,7 +163,7 @@ public class RenameResourceAction extends WorkspaceAction {
             return false;
 
         //Do a quick read only check
-        if (currentResource.isReadOnly())
+        if (currentResource.getResourceAttributes().isReadOnly())
             return MessageDialog.openQuestion(getShell(), CHECK_RENAME_TITLE,
                     MessageFormat.format(CHECK_RENAME_MESSAGE,
                             new Object[] { currentResource.getName() }));
@@ -435,11 +435,8 @@ public class RenameResourceAction extends WorkspaceAction {
     public void run() {
 
         if (this.navigatorTree == null) {
-            List resources = getSelectedResources();
-            if (resources.size() == 0)
-                return;
-            IResource currentResource = (IResource) resources.get(0);
-            if (!currentResource.exists())
+            IResource currentResource = getCurrentResource();
+            if (currentResource == null || !currentResource.exists())
                 return;
             //Do a quick read only and null check
             if (!checkReadOnlyAndNull(currentResource))
@@ -459,13 +456,26 @@ public class RenameResourceAction extends WorkspaceAction {
      * navigator will tell the action when the path is ready to run.
      */
     private void runWithInlineEditor() {
-        IResource currentResource = (IResource) getStructuredSelection()
-                .getFirstElement();
+        IResource currentResource = getCurrentResource();
         if (!checkReadOnlyAndNull(currentResource))
             return;
 
         queryNewResourceNameInline(currentResource);
 
+    }
+    
+    /**
+     * Return the currently selected resource. Only return
+     * an IResouce if there is one and only one resource selected.
+     * @return IResource or <code>null</code> if there is zero
+     * or more than one resources selected.
+     */
+    private IResource getCurrentResource(){
+    	List resources = getSelectedResources();
+    	if(resources.size() == 1)
+    		return (IResource) resources.get(0);
+    	return null;
+    	
     }
 
     /**
@@ -540,12 +550,8 @@ public class RenameResourceAction extends WorkspaceAction {
         if (!super.updateSelection(selection))
             return false;
 
-        List resources = getSelectedResources();
-        if (resources.size() != 1)
-            return false;
-
-        IResource currentResource = (IResource) resources.get(0);
-        if (!currentResource.exists())
+        IResource currentResource = getCurrentResource();
+        if (currentResource == null || !currentResource.exists())
             return false;
 
         return true;
