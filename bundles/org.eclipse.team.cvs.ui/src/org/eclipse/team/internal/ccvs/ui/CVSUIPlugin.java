@@ -11,6 +11,8 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
@@ -18,6 +20,7 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -650,4 +653,49 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public CVSOutputConsole getConsole() {
 		return console;
 	}
+    
+    public void openEditor(ICVSRemoteFile file, IProgressMonitor monitor) throws InvocationTargetException {
+        IWorkbench workbench = getWorkbench();
+        IEditorRegistry registry = workbench.getEditorRegistry();
+        IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
+        String filename = file.getName();
+        InputStream contents = null;
+        try {
+            contents = file.getContents(monitor);
+        } catch (TeamException e) {
+            CVSUIPlugin.log(new CVSStatus(IStatus.ERROR, NLS.bind("An error occurred fetching the contents of file {0}", new String[] { file.getRepositoryRelativePath()}, e))); //$NON-NLS-1$
+
+        }
+        IContentType type = null;
+        if (contents != null) {
+            try {
+                type = Platform.getContentTypeManager().findContentTypeFor(contents, filename);
+            } catch (IOException e) {
+                CVSUIPlugin.log(new CVSStatus(IStatus.ERROR, NLS.bind("An error occurred reading the contents of file {0}", new String[] { file.getRepositoryRelativePath()}, e))); //$NON-NLS-1$
+            }
+        }
+        if (type == null) {
+            type = Platform.getContentTypeManager().findContentTypeFor(filename);
+        }
+        IEditorDescriptor descriptor = registry.getDefaultEditor(filename, type);
+        String id;
+        if (descriptor == null) {
+            id = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
+        } else {
+            id = descriptor.getId();
+        }
+        try {
+            try {
+                page.openEditor(new RemoteFileEditorInput(file, monitor), id);
+            } catch (PartInitException e) {
+                if (id.equals("org.eclipse.ui.DefaultTextEditor")) { //$NON-NLS-1$
+                    throw e;
+                } else {
+                    page.openEditor(new RemoteFileEditorInput(file, monitor), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+                }
+            }
+        } catch (PartInitException e) {
+            throw new InvocationTargetException(e);
+        }
+    }
 }

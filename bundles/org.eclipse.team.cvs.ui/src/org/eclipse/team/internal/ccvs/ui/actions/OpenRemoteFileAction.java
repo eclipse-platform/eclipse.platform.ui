@@ -22,8 +22,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
-import org.eclipse.ui.*;
 
 public class OpenRemoteFileAction extends CVSAction {
 	/**
@@ -67,33 +65,10 @@ public class OpenRemoteFileAction extends CVSAction {
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				IWorkbench workbench = CVSUIPlugin.getPlugin().getWorkbench();
-				IEditorRegistry registry = workbench.getEditorRegistry();
-				IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
 				for (int i = 0; i < files.length; i++) {
 					ICVSRemoteFile file = files[i];
-					String filename = file.getName();
-					IEditorDescriptor descriptor = registry.getDefaultEditor(filename);
-					String id;
-					if (descriptor == null) {
-						id = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
-					} else {
-						id = descriptor.getId();
-					}
-					try {
-						try {
-							page.openEditor(new RemoteFileEditorInput(files[i], monitor), id);
-						} catch (PartInitException e) {
-							if (id.equals("org.eclipse.ui.DefaultTextEditor")) { //$NON-NLS-1$
-								throw e;
-							} else {
-								page.openEditor(new RemoteFileEditorInput(files[i], monitor), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
-							}
-						}
-					} catch (PartInitException e) {
-						throw new InvocationTargetException(e);
-					}
+					CVSUIPlugin.getPlugin().openEditor(file, monitor);
 				}
 			}
 		}, false, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
