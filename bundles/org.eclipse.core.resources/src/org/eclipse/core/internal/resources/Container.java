@@ -177,14 +177,10 @@ public abstract class Container extends Resource implements IContainer {
 	public IResource[] members(int memberFlags) throws CoreException {
 		final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
 		ResourceInfo info = getResourceInfo(phantom, false);
-		final int flags = getFlags(info);
-		checkExists(flags, true);
-		//if children are currently unknown, ask for refresh asap
+		checkAccessible(getFlags(info));
+		//if children are currently unknown, ask for immediate refresh
 		if (info.isSet(ICoreConstants.M_CHILDREN_UNKNOWN))
-			// TODO remove this call once we fix bug 98740 and
-			// change the above #checkExists to #checkAccessible.
-			if (isAccessible())
-				workspace.refreshManager.refresh(this);
+			workspace.refreshManager.refresh(this);
 		return getChildren(memberFlags);
 	}
 

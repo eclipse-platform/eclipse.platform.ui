@@ -38,6 +38,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#accept(IResourceProxyVisitor, int)
 	 */
 	public void accept(final IResourceProxyVisitor visitor, final int memberFlags) throws CoreException {
+		// it is invalid to call accept on a phantom when INCLUDE_PHANTOMS is not specified
+		final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
+		checkAccessible(getFlags(getResourceInfo(includePhantoms, false)));
+
 		final ResourceProxy proxy = new ResourceProxy();
 		IElementContentVisitor elementVisitor = new IElementContentVisitor() {
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object contents) {
@@ -91,11 +95,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#accept(IResourceVisitor, int, int)
 	 */
 	public void accept(final IResourceVisitor visitor, int depth, int memberFlags) throws CoreException {
-		// it is invalid to call accept on a phantom when INCLUDE_PHANTOMS is not specified
-		final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
-		ResourceInfo info = getResourceInfo(includePhantoms, false);
-		int flags = getFlags(info);
-		checkExists(flags, true);
 		//use the fast visitor if visiting to infinite depth
 		if (depth == IResource.DEPTH_INFINITE) {
 			accept(new IResourceProxyVisitor() {
@@ -105,6 +104,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			}, memberFlags);
 			return;
 		}
+		// it is invalid to call accept on a phantom when INCLUDE_PHANTOMS is not specified
+		final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
+		ResourceInfo info = getResourceInfo(includePhantoms, false);
+		int flags = getFlags(info);
+		checkAccessible(flags);
+
 		//check that this resource matches the member flags
 		if (!isMember(flags, memberFlags))
 			return;

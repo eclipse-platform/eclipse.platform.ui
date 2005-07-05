@@ -12,7 +12,7 @@ package org.eclipse.core.tests.resources.regression;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
 
@@ -32,9 +32,6 @@ public class Bug_98740 extends ResourceTest {
 	}
 	
 	public void testBug() {
-		// TODO run this test when we release the fix in 3.2
-		if (true)
-			return;
 		IProject project = getWorkspace().getRoot().getProject("Bug98740");
 		ensureExistsInWorkspace(project, true);
 		try {
@@ -45,6 +42,17 @@ public class Bug_98740 extends ResourceTest {
 		try {
 			project.members();
 			fail("1.0");
+		} catch (CoreException e) {
+			//should fail
+		}
+		try {
+			IResourceVisitor visitor = new IResourceVisitor() {
+				public boolean visit(IResource resource) {
+					return true;
+				}
+			};
+			project.accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE);
+			fail("2.0");
 		} catch (CoreException e) {
 			//should fail
 		}

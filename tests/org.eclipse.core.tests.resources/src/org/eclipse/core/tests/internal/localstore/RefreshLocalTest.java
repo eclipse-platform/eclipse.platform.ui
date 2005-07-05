@@ -190,6 +190,23 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		assertTrue("1.3", file.exists());
 	}
 
+	public void testRefreshClosedProject() {
+		IProject project = projects[0];
+		try {
+			project.close(getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		//refreshing a closed project should not fail
+		try {
+			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			project.refreshLocal(IResource.DEPTH_ZERO, getMonitor());
+			project.refreshLocal(IResource.DEPTH_ONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+	}
+	
 	public void testRefreshFolder() throws Throwable {
 		/* initialize common objects */
 		IProject project = projects[0];
