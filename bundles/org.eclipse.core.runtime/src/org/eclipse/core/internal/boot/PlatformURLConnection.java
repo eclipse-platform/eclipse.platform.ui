@@ -15,7 +15,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Properties;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Messages;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -52,10 +54,25 @@ public abstract class PlatformURLConnection extends URLConnection {
 	private static final String CACHE_DIR = ".eclipse-" + PlatformURLHandler.PROTOCOL + File.separator; //$NON-NLS-1$
 
 	// debug tracing
-	public static boolean DEBUG = false;
-	public static boolean DEBUG_CONNECT = true;
-	public static boolean DEBUG_CACHE_LOOKUP = true;
-	public static boolean DEBUG_CACHE_COPY = true;
+	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/url/debug"; //$NON-NLS-1$;
+	private static final String OPTION_DEBUG_CONNECT = OPTION_DEBUG + "/connect"; //$NON-NLS-1$;
+	private static final String OPTION_DEBUG_CACHE_LOOKUP = OPTION_DEBUG + "/cachelookup"; //$NON-NLS-1$;
+	private static final String OPTION_DEBUG_CACHE_COPY = OPTION_DEBUG + "/cachecopy"; //$NON-NLS-1$;
+
+	public final static boolean DEBUG;
+	public final static boolean DEBUG_CONNECT;
+	public final static boolean DEBUG_CACHE_LOOKUP;
+	public final static boolean DEBUG_CACHE_COPY;
+
+	static {
+		if (InternalPlatform.DEBUG) {
+			DEBUG = InternalPlatform.getDefault().getBooleanOption(OPTION_DEBUG, false);
+			DEBUG_CONNECT = InternalPlatform.getDefault().getBooleanOption(OPTION_DEBUG_CONNECT, true);
+			DEBUG_CACHE_LOOKUP = InternalPlatform.getDefault().getBooleanOption(OPTION_DEBUG_CACHE_LOOKUP, true);
+			DEBUG_CACHE_COPY = InternalPlatform.getDefault().getBooleanOption(OPTION_DEBUG_CACHE_COPY, true);
+		} else
+			DEBUG = DEBUG_CONNECT = DEBUG_CACHE_LOOKUP = DEBUG_CACHE_COPY = false;
+	}
 
 	protected PlatformURLConnection(URL url) {
 		super(url);

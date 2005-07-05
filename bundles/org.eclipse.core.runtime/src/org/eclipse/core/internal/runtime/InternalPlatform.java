@@ -51,12 +51,12 @@ public final class InternalPlatform {
 	private static final String APPLICATION = "-application"; //$NON-NLS-1$	
 
 	private static final String[] ARCH_LIST = {Platform.ARCH_PA_RISC, //
-		Platform.ARCH_PPC, //
-		Platform.ARCH_SPARC, //
-		Platform.ARCH_X86, //
-		Platform.ARCH_AMD64, // 
-		Platform.ARCH_IA64, //
-		Platform.ARCH_IA64_32};
+			Platform.ARCH_PPC, //
+			Platform.ARCH_SPARC, //
+			Platform.ARCH_X86, //
+			Platform.ARCH_AMD64, // 
+			Platform.ARCH_IA64, //
+			Platform.ARCH_IA64_32};
 	private static final String BOOT = "-boot"; //$NON-NLS-1$
 	private static final String CLASSLOADER_PROPERTIES = "-classloaderProperties"; //$NON-NLS-1$	
 
@@ -67,7 +67,7 @@ public final class InternalPlatform {
 	public static boolean DEBUG_PREFERENCE_GET = false;
 	public static boolean DEBUG_PREFERENCE_SET = false;
 	public static boolean DEBUG_REGISTRY = false;
-	public static String DEBUG_REGISTRY_DUMP = null;
+
 	private static Runnable splashHandler = null;
 	private static final String FEATURE = "-feature"; //$NON-NLS-1$
 	private static final String FIRST_USE = "-firstUse"; //$NON-NLS-1$
@@ -243,6 +243,7 @@ public final class InternalPlatform {
 				// just continue ... the exception has already been logged by
 				// handleException(ISafeRunnable)
 			}
+
 			public void run() throws Exception {
 				handler.run();
 			}
@@ -736,7 +737,6 @@ public final class InternalPlatform {
 		if (DEBUG) {
 			DEBUG_CONTEXT = getBooleanOption(Platform.PI_RUNTIME + "/debug/context", false); //$NON-NLS-1$
 			DEBUG_REGISTRY = getBooleanOption(Platform.PI_RUNTIME + "/registry/debug", false); //$NON-NLS-1$
-			DEBUG_REGISTRY_DUMP = getOption(Platform.PI_RUNTIME + "/registry/debug/dump"); //$NON-NLS-1$
 			DEBUG_PREFERENCE_GENERAL = getBooleanOption(Platform.PI_RUNTIME + "/preferences/general", false); //$NON-NLS-1$
 			DEBUG_PREFERENCE_GET = getBooleanOption(Platform.PI_RUNTIME + "/preferences/get", false); //$NON-NLS-1$
 			DEBUG_PREFERENCE_SET = getBooleanOption(Platform.PI_RUNTIME + "/preferences/set", false); //$NON-NLS-1$

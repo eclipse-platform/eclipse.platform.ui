@@ -7,9 +7,6 @@ org.eclipse.core.runtime/debug=false
 # Prints out values of OS, WS, NL, and ARCH
 org.eclipse.core.runtime/debug/context=false
 
-# Prints time taken by Plugin constructors and startup() and shutdown() methods.
-org.eclipse.core.runtime/timing/startup=false
-
 # Captures performance event information (See org.eclipse.core.runtime.PerformanceStats)
 org.eclipse.core.runtime/perf=false
 
@@ -35,34 +32,10 @@ org.eclipse.core.runtime/jobs/errorondeadlock=false
 
 # Turn on debugging for the registry.
 org.eclipse.core.runtime/registry/debug=false
-# Specify a filename for a user-readable form of the plugin registry to be written to.
-org.eclipse.core.runtime/registry/debug/dump=
+# Legacy PluginRegistryModel resolver 
 org.eclipse.core.runtime/registry/debug/resolve=false
-org.eclipse.core.runtime/registry/debug/events/plugin=false
+# Extension registry change events
 org.eclipse.core.runtime/registry/debug/events/extension=false
-
-# Turn on debugging for the class loader.
-org.eclipse.core.runtime/loader/debug=false
-# Display when class loaders are created.
-org.eclipse.core.runtime/loader/debug/create=false
-# Display when plugins are activated
-org.eclipse.core.runtime/loader/debug/activateplugin=false
-# Debug all class loader actions (finding resource, classes, libraries)
-org.eclipse.core.runtime/loader/debug/actions=false
-# Debug success case only
-org.eclipse.core.runtime/loader/debug/success=false
-# Debug failure case only
-org.eclipse.core.runtime/loader/debug/failure=false
-# Set filters for types of resources to debug. (e.g. org.eclipse.core.*)
-org.eclipse.core.runtime/loader/debug/filter/loader=*
-org.eclipse.core.runtime/loader/debug/filter/class=*
-org.eclipse.core.runtime/loader/debug/filter/resource=*
-org.eclipse.core.runtime/loader/debug/filter/native=*
-# Debug use of the classloader package prefix enhancement
-org.eclipse.core.runtime/loader/debug/prefixes=false
-org.eclipse.core.runtime/loader/debug/prefixes/success=false
-org.eclipse.core.runtime/loader/debug/prefixes/failure=false
-org.eclipse.core.runtime/loader/debug/properties=false
 
 # Turn on debugging in the support for non-local plugins.
 org.eclipse.core.runtime/url/debug=false
@@ -70,13 +43,7 @@ org.eclipse.core.runtime/url/debug/connect=false
 org.eclipse.core.runtime/url/debug/cachelookup=false
 org.eclipse.core.runtime/url/debug/cachecopy=false
 
-# Turn on debugging for install/update.
-org.eclipse.core.runtime/config/debug=false
-
 # Turn on debugging for preferences
 org.eclipse.core.runtime/preferences/general=false
 org.eclipse.core.runtime/preferences/get=false
 org.eclipse.core.runtime/preferences/set=false
-
-# Turn on debugging for the plugin stopper
-org.eclipse.core.runtime/debug/pluginstopper=false
