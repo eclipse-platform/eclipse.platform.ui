@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -66,18 +65,24 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
      * @return
      */
     protected IStatus edit(IFile[] readOnlyFiles, Object context) {
-        synchronized(this) {
-	        if (uiValidator == null) {
-	            uiValidator = getPluggedInValidator();
-	        }
-        }
-        if (uiValidator != null) {
-            return uiValidator.validateEdit(readOnlyFiles, context);
+        IFileModificationValidator override = getUIValidator();
+        if (override != null) {
+            return override.validateEdit(readOnlyFiles, context);
         } else {
 	        performEdit(readOnlyFiles);
 	        return Status.OK_STATUS;
         }
     }
+
+    private IFileModificationValidator getUIValidator() {
+        synchronized(this) {
+	        if (uiValidator == null) {
+	            uiValidator = getPluggedInValidator();
+	        }
+        }
+        return uiValidator;
+    }
+    
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFileModificationValidator#validateMoveDelete(org.eclipse.core.resources.IFile[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -191,4 +196,41 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
 			return null;
 		}
 	}
+    
+    public ISchedulingRule validateEditRule(CVSResourceRuleFactory factory, IResource[] resources) {
+        IFileModificationValidator override = getUIValidator();
+        if (override instanceof CVSCoreFileModificationValidator) {
+            CVSCoreFileModificationValidator ui = (CVSCoreFileModificationValidator) override;
+            return ui.validateEditRule(factory, resources);
+        }
+        if (resources.length == 0)
+            return null;
+        //optimize rule for single file
+        if (resources.length == 1)
+            return isReadOnly(resources[0]) ? factory.getParent(resources[0]) : null;
+        //need a lock on the parents of all read-only files
+        HashSet rules = new HashSet();
+        for (int i = 0; i < resources.length; i++)
+            if (isReadOnly(resources[i]))
+                rules.add(factory.getParent(resources[i]));
+        return createSchedulingRule(rules);
+    }
+
+    protected ISchedulingRule createSchedulingRule(Set rules) {
+        if (rules.isEmpty())
+            return null;
+        if (rules.size() == 1)
+            return (ISchedulingRule) rules.iterator().next();
+        ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules
+                .toArray(new ISchedulingRule[rules.size()]);
+        return new MultiRule(ruleArray);
+    }
+    
+    protected final boolean isReadOnly(IResource resource) {
+        ResourceAttributes a = resource.getResourceAttributes();
+        if (a != null) {
+            return a.isReadOnly();
+        }
+        return false;
+    }
 }

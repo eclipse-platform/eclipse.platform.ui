@@ -132,6 +132,12 @@ public interface ICVSUIConstants {
 	public final String PREF_EDIT_PROMPT_NEVER = "never"; //$NON-NLS-1$
 	public final String PREF_EDIT_PROMPT_ALWAYS = "always";	 //$NON-NLS-1$
 	public final String PREF_EDIT_PROMPT_IF_EDITORS = "only";	 //$NON-NLS-1$
+    
+    // update preferences
+    public final String PREF_UPDATE_PROMPT = "pref_upate_prompt";
+    public final String PREF_UPDATE_PROMPT_NEVER = "never";    //$NON-NLS-1$
+    public final String PREF_UPDATE_PROMPT_AUTO = "auto"; //$NON-NLS-1$
+    public final String PREF_UPDATE_PROMPT_IF_OUTDATED = "only";  //$NON-NLS-1$
 	
 	// Repositories view preferences
 	public final String PREF_GROUP_VERSIONS_BY_PROJECT = "pref_group_versions_by_project"; //$NON-NLS-1$

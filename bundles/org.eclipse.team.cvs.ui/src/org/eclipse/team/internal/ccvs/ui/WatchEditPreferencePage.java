@@ -21,6 +21,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 	
 	private RadioGroupFieldEditor promptEditor;
+    private RadioGroupFieldEditor updateEditor;
 	private RadioGroupFieldEditor actionEditor;
 	private IPreferenceStore store;
 
@@ -58,7 +59,6 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 							}, 	//$NON-NLS-1$ //$NON-NLS-2$
 			getFieldEditorParent(), true);
 		addField(actionEditor);
-
 		
 		promptEditor = new RadioGroupFieldEditor(
 			ICVSUIConstants.PREF_EDIT_PROMPT,
@@ -69,8 +69,20 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 							{CVSUIMessages.WatchEditPreferencePage_neverPrompt, ICVSUIConstants.PREF_EDIT_PROMPT_NEVER}, //$NON-NLS-1$
 							},	//$NON-NLS-1$ //$NON-NLS-2$
 			getFieldEditorParent(), true);
+        
+        updateEditor = new RadioGroupFieldEditor(
+                ICVSUIConstants.PREF_UPDATE_PROMPT,
+                CVSUIMessages.WatchEditPreferencePage_updatePrompt, //$NON-NLS-1$
+                1,
+                new String[][] {{CVSUIMessages.WatchEditPreferencePage_autoUpdate, ICVSUIConstants.PREF_UPDATE_PROMPT_AUTO}, //$NON-NLS-1$
+                                {CVSUIMessages.WatchEditPreferencePage_promptUpdate, ICVSUIConstants.PREF_UPDATE_PROMPT_IF_OUTDATED}, //$NON-NLS-1$
+                                {CVSUIMessages.WatchEditPreferencePage_neverUpdate, ICVSUIConstants.PREF_UPDATE_PROMPT_NEVER}, //$NON-NLS-1$
+                                },  //$NON-NLS-1$ //$NON-NLS-2$
+                getFieldEditorParent(), true);
+        
 		store = getCVSPreferenceStore();
 		addField(promptEditor);
+        addField(updateEditor);
 	}
 
 	private boolean isEditEnabled() {
@@ -93,10 +105,10 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getSource() == actionEditor) {
-			promptEditor.setEnabled(
-				event.getNewValue().equals(ICVSUIConstants.PREF_EDIT_PROMPT_EDIT), 
-				getFieldEditorParent());
-		}
+            boolean enabled = event.getNewValue().equals(ICVSUIConstants.PREF_EDIT_PROMPT_EDIT);
+			promptEditor.setEnabled(enabled, getFieldEditorParent());
+            updateEditor.setEnabled(enabled, getFieldEditorParent());
+        }
 		super.propertyChange(event);
 	}
 
@@ -107,5 +119,6 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 	protected void initialize() {
 		super.initialize();
 		promptEditor.setEnabled(isEditEnabled(), getFieldEditorParent());
+        updateEditor.setEnabled(isEditEnabled(), getFieldEditorParent());
 	}
 }

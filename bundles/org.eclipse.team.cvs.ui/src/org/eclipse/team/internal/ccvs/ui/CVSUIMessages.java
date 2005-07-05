@@ -701,6 +701,10 @@ public class CVSUIMessages extends NLS {
 	public static String WatchEditPreferencePage_neverPrompt;
 	public static String WatchEditPreferencePage_alwaysPrompt;
 	public static String WatchEditPreferencePage_onlyPrompt;
+	public static String WatchEditPreferencePage_updatePrompt;
+	public static String WatchEditPreferencePage_autoUpdate;
+	public static String WatchEditPreferencePage_promptUpdate;
+	public static String WatchEditPreferencePage_neverUpdate;
 
 	public static String Uneditaction_confirmMessage;
 	public static String Uneditaction_confirmTitle;
@@ -872,6 +876,8 @@ public class CVSUIMessages extends NLS {
 
 	public static String FileModificationValidator_3;
 	public static String FileModificationValidator_4;
+    public static String FileModificationValidator_5;
+    public static String FileModificationValidator_6;
 	public static String CVSSynchronizeWizard_0;
 	public static String Participant_comparing;
 	public static String Participant_merging;

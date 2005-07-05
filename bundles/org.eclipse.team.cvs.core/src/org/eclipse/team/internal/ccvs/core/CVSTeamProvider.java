@@ -19,7 +19,6 @@ import org.eclipse.core.resources.team.ResourceRuleFactory;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -30,8 +29,6 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.*;
 import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
 import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
@@ -67,27 +64,7 @@ import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
  */
 public class CVSTeamProvider extends RepositoryProvider {
 
-	private static final ResourceRuleFactory RESOURCE_RULE_FACTORY = new ResourceRuleFactory() {
-		public ISchedulingRule validateEditRule(IResource[] resources) {
-			if (resources.length == 0)
-				return null;
-			//optimize rule for single file
-			if (resources.length == 1)
-				return resources[0].isReadOnly() ? parent(resources[0]) : null;
-			//need a lock on the parents of all read-only files
-			HashSet rules = new HashSet();
-			for (int i = 0; i < resources.length; i++)
-				if (resources[i].isReadOnly())
-					rules.add(parent(resources[i]));
-			if (rules.isEmpty())
-				return null;
-			if (rules.size() == 1)
-				return (ISchedulingRule) rules.iterator().next();
-			ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules
-					.toArray(new ISchedulingRule[rules.size()]);
-			return new MultiRule(ruleArray);
-		}
-	};
+	private static final ResourceRuleFactory RESOURCE_RULE_FACTORY = new CVSResourceRuleFactory();
 	
 	private static final boolean IS_CRLF_PLATFORM = Arrays.equals(
 		System.getProperty("line.separator").getBytes(), new byte[] { '\r', '\n' }); //$NON-NLS-1$
@@ -102,7 +79,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	private IProject project;
 	
 	private static MoveDeleteHook moveDeleteHook= new MoveDeleteHook();
-	private static IFileModificationValidator fileModificationValidator;
+	private static CVSCoreFileModificationValidator fileModificationValidator;
 	
 	// property used to indicate whether new directories should be discovered for the project
 	private final static QualifiedName FETCH_ABSENT_DIRECTORIES_PROP_KEY = 
@@ -110,7 +87,18 @@ public class CVSTeamProvider extends RepositoryProvider {
 	// property used to indicate whether the project is configured to use Watch/edit
 	private final static QualifiedName WATCH_EDIT_PROP_KEY = 
 		new QualifiedName("org.eclipse.team.cvs.core", "watch_edit");  //$NON-NLS-1$  //$NON-NLS-2$
-				
+			
+    /**
+     * Return the file modification validator used for all CVS repository providers.
+     * @return the file modification validator used for all CVS repository providers
+     */
+    protected static CVSCoreFileModificationValidator internalGetFileModificationValidator() {
+        if (CVSTeamProvider.fileModificationValidator == null) {
+            CVSTeamProvider.fileModificationValidator = new CVSCoreFileModificationValidator();
+        }
+        return CVSTeamProvider.fileModificationValidator;
+    }
+    
 	/**
 	 * No-arg Constructor for IProjectNature conformance
 	 */
@@ -649,10 +637,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator()
 	 */
 	public IFileModificationValidator getFileModificationValidator() {
-		if (CVSTeamProvider.fileModificationValidator == null) {
-			CVSTeamProvider.fileModificationValidator = new CVSCoreFileModificationValidator();
-		}
-		return CVSTeamProvider.fileModificationValidator;
+		return internalGetFileModificationValidator();
 	}
 	
 	/**

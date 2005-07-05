@@ -12,18 +12,24 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSCoreFileModificationValidator;
-import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.ui.actions.EditorsAction;
+import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
 import org.eclipse.ui.progress.IProgressConstants;
 
 /**
@@ -66,6 +72,28 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 					throw new InterruptedException();
 				}
 				
+                // see if the file is up to date
+                if (shell != null && promptToUpdateFiles(files, shell)) {
+                    // The user wants to update the file
+                    // Run the update in a runnable in order to get a busy cursor.
+                    // This runnable is syncExeced in order to get a busy cursor
+                    IRunnableWithProgress updateRunnable = new IRunnableWithProgress() {
+                        public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                            performUpdate(files, monitor);
+                        }
+                    };
+                    if (isRunningInUIThread()) {
+                        // Only show a busy cursor if validate edit is blocking the UI
+                        CVSUIPlugin.runWithProgress(shell, false, updateRunnable);
+                    } else {
+                        // We can't show a busy cursor (i.e., run in the UI thread)
+                        // since this thread may hold locks and
+                        // running an edit in the UI thread could try to obtain the
+                        // same locks, resulting in a deadlock.
+                        updateRunnable.run(new NullProgressMonitor());
+                    }
+                }
+                
 				// Run the edit in a runnable in order to get a busy cursor.
 				// This runnable is syncExeced in order to get a busy cursor
 				IRunnableWithProgress editRunnable = new IRunnableWithProgress() {
@@ -139,6 +167,23 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 		}
 	}
 	
+    private boolean promptToUpdateFiles(IFile[] files, Shell shell) throws InvocationTargetException, InterruptedException {
+        if (files.length == 0)
+            return false;
+        
+        if (isNeverUpdate())
+            return false;
+        
+        // Contact the server to see if the files are up-to-date
+        if (needsUpdate(files, new NullProgressMonitor())) {
+            if (isPromptUpdate())
+                return (promptUpdate(shell));
+            return true; // auto update
+        }
+        
+        return false;
+    }
+
 	private boolean promptEdit(Shell shell) {
 		// Open the dialog using a sync exec (there are no guarentees that we
 		// were called from the UI thread
@@ -151,6 +196,19 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 		}, flags);
 		return result[0];
 	}
+
+    private boolean promptUpdate(Shell shell) {
+        // Open the dialog using a sync exec (there are no guarentees that we
+        // were called from the UI thread
+        final boolean[] result = new boolean[] { false };
+        int flags = isRunningInUIThread() ? 0 : CVSUIPlugin.PERFORM_SYNC_EXEC;
+        CVSUIPlugin.openDialog(shell, new CVSUIPlugin.IOpenableInShell() {
+            public void open(Shell shell) {
+                result[0] = MessageDialog.openQuestion(shell,CVSUIMessages.FileModificationValidator_5,CVSUIMessages.FileModificationValidator_6);
+            }
+        }, flags);
+        return result[0];
+    }
 
 	private boolean isPerformEdit() {
 		return ICVSUIConstants.PREF_EDIT_PROMPT_EDIT.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_ACTION));
@@ -187,4 +245,50 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 	private boolean isAlwaysPrompt() {
 		return ICVSUIConstants.PREF_EDIT_PROMPT_ALWAYS.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_PROMPT));
 	}
+    
+    private boolean needsUpdate(IFile[] files, IProgressMonitor monitor) {
+        try {
+            CVSWorkspaceSubscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+            subscriber.refresh(files, IResource.DEPTH_ZERO, monitor);
+            for (int i = 0; i < files.length; i++) {
+                IFile file = files[i];
+                SyncInfo info = subscriber.getSyncInfo(file);
+                int direction = info.getKind() & SyncInfo.DIRECTION_MASK;
+                if (direction == SyncInfo.CONFLICTING || direction == SyncInfo.INCOMING) {
+                    return true;
+                }
+            }
+        } catch (TeamException e) {
+            // Log the exception and assume we don't need to update it
+            CVSProviderPlugin.log(e);
+        }
+        return false;
+    }
+    
+    private void performUpdate(IFile[] files, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+        // TODO: This obtains the project rule which can cause a rule violation
+        new UpdateOperation(null /* no target part */, files, Command.NO_LOCAL_OPTIONS, null /* no tag */).run(monitor);
+    }
+    
+    private boolean isPromptUpdate() {
+        return ICVSUIConstants.PREF_UPDATE_PROMPT_IF_OUTDATED.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_UPDATE_PROMPT));
+    }
+    
+    private boolean isNeverUpdate() {
+        return ICVSUIConstants.PREF_UPDATE_PROMPT_NEVER.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_UPDATE_PROMPT));
+    }
+    
+    public ISchedulingRule validateEditRule(CVSResourceRuleFactory factory, IResource[] resources) {
+        if (!isNeverUpdate()) {
+            // We may need to perform an update so we need to obtain the lock on each project
+            Set projects = new HashSet();
+            for (int i = 0; i < resources.length; i++) {
+                IResource resource = resources[i];
+                if (isReadOnly(resource))
+                    projects.add(resource.getProject());
+            }
+            return createSchedulingRule(projects);
+        }
+        return super.validateEditRule(factory, resources);
+    }
 }
