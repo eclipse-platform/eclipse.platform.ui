@@ -75,10 +75,16 @@ public class RefreshJob extends WorkspaceJob {
 	 * This method adds all members at the specified depth from the resource
 	 * to the provided list.
 	 */
-	private List collectChildrenToDepth(IResource resource, ArrayList children, int depth) throws CoreException {
+	private List collectChildrenToDepth(IResource resource, ArrayList children, int depth) {
 		if (resource.getType() == IResource.FILE)
 			return children;
-		IResource[] members = ((IContainer) resource).members();
+		IResource[] members;
+		try {
+			members = ((IContainer) resource).members();
+		} catch (CoreException e) {
+			//resource is not accessible - just return what we have
+			return children;
+		}
 		for (int i = 0; i < members.length; i++) {
 			if (members[i].getType() == IResource.FILE)
 				continue;
@@ -153,7 +159,7 @@ public class RefreshJob extends WorkspaceJob {
 					}
 					addRequests(collectChildrenToDepth(toRefresh, new ArrayList(), depth));
 				} catch (CoreException e) {
-					errors.merge(e.getStatus());
+					errors.merge(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, errors.getMessage(), e));
 				}
 			}
 		} finally {
