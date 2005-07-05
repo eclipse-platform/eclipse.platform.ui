@@ -6,8 +6,8 @@
 		<property name="destdir" value="../../plugin-export" />
 		<property name="tempdir" value="../../tmp" />
 		<property name="plugin"  value="org.eclipse.core.expressions" />
-		<property name="version"  value="_3.1.0" />
-		<property name="destjar"  value="${destdir}/${plugin}${version}.jar" />
+		<property name="plugin_version"  value="_3.1.0" />
+		<property name="destjar"  value="${destdir}/${plugin}${plugin_version}.jar" />
 	</target>
 
 	<target name="build" depends="init">
