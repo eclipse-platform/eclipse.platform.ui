@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.util;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -18,9 +20,11 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -230,17 +234,39 @@ public abstract class UITestCase extends TestCase {
      * Open a test window with the provided perspective.
      */
     public IWorkbenchWindow openTestWindow(String perspectiveId) {
-        try {
-            return fWorkbench.openWorkbenchWindow(perspectiveId, getPageInput());
-        } catch (WorkbenchException e) {
-            fail();
-            return null;
-        }
-    }
+		try {
+			IWorkbenchWindow window = fWorkbench.openWorkbenchWindow(
+					perspectiveId, getPageInput());
+			waitOnShell(window.getShell());
+			return window;
+		} catch (WorkbenchException e) {
+			fail();
+			return null;
+		}
+	}
 
     /**
-     * Close all test windows.
-     */
+	 * Try and process events until the new shell is the active shell. This may
+	 * never happen, so time out after a suitable period.
+	 * 
+	 * @param shell
+	 *            the shell to wait on
+	 * @since 3.2
+	 */
+	private void waitOnShell(Shell shell) {
+
+		processEvents();
+//		long endTime = System.currentTimeMillis() + 5000;
+//
+//		while (shell.getDisplay().getActiveShell() != shell
+//				&& System.currentTimeMillis() < endTime) {
+//			processEvents();
+//		}
+	}
+
+	/**
+	 * Close all test windows.
+	 */
     public void closeAllTestWindows() {
         Iterator iter = new ArrayList(testWindows).iterator();
         while (iter.hasNext()) {
