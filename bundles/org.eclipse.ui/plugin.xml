@@ -271,11 +271,6 @@
             sequence="M2+INSERT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
-      		commandId="org.eclipse.ui.window.showKeyAssist"
-      		contextId="org.eclipse.ui.contexts.dialogAndWindow"
-      		sequence="M1+M2+L"
-      		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-      <key
             commandId="org.eclipse.ui.file.close"
             sequence="CTRL+X K"
             schemeId="org.eclipse.ui.emacsAcceleratorConfiguration" />

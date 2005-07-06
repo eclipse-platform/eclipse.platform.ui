@@ -25,6 +25,7 @@ import org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage;
 import org.eclipse.ui.internal.dialogs.ViewsPreferencePage;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
 import org.eclipse.ui.internal.keys.KeysPreferencePage;
+import org.eclipse.ui.internal.keys.NewKeysPreferencePage;
 import org.eclipse.ui.internal.progress.JobView;
 import org.eclipse.ui.internal.themes.ColorsAndFontsPreferencePage;
 import org.eclipse.ui.internal.wizards.preferences.PreferencesExportWizard;
@@ -71,10 +72,15 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
      * Factory ID for the Keys preference page.
      */
     public static final String KEYS_PREFERENCE_PAGE = "keysPreferencePage"; //$NON-NLS-1$
+    
+    /**
+	 * Factory ID for the new (and improved) keys preference page.
+	 */
+	public static final String NEW_KEYS_PREFERENCE_PAGE = "newKeysPreferencePage"; //$NON-NLS-1$
 
     /**
-     * Factory ID for the Editors preference page.
-     */
+	 * Factory ID for the Editors preference page.
+	 */
     public static final String PERSPECTIVES_PREFERENCE_PAGE = "perspectivesPreferencePage"; //$NON-NLS-1$
 
     /**
@@ -139,6 +145,8 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
             return configure(new FileEditorsPreferencePage());
         if (KEYS_PREFERENCE_PAGE.equals(id))
             return configure(new KeysPreferencePage());
+        if (NEW_KEYS_PREFERENCE_PAGE.equals(id))
+        	return configure(new NewKeysPreferencePage());
         if (PERSPECTIVES_PREFERENCE_PAGE.equals(id))
             return configure(new PerspectivesPreferencePage());
         if (PREFERENCES_EXPORT_WIZARD.equals(id))
