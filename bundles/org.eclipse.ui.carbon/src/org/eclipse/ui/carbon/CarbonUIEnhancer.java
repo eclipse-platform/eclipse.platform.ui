@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.carbon;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.internal.Callback;
@@ -36,33 +39,37 @@ import org.eclipse.ui.PlatformUI;
  */
 public class CarbonUIEnhancer implements IStartup {
 
-    private static final int kHICommandPreferences = ('p' << 24) + ('r' << 16)
-            + ('e' << 8) + 'f';
-
-    private static final int kHICommandAbout = ('a' << 24) + ('b' << 16)
-            + ('o' << 8) + 'u';
-
-    private static final int kHICommandServices = ('s' << 24) + ('e' << 16)
-            + ('r' << 8) + 'v';
+    private static final int kHICommandPreferences = ('p' << 24) + ('r' << 16) + ('e' << 8) + 'f';
+    private static final int kHICommandAbout = ('a' << 24) + ('b' << 16) + ('o' << 8) + 'u';
+    private static final int kHICommandServices = ('s' << 24) + ('e' << 16) + ('r' << 8) + 'v';
 
     private static final String RESOURCE_BUNDLE = "org.eclipse.ui.carbon.Messages"; //$NON-NLS-1$
 
-    private static String fgAboutActionName;
+    private String fAboutActionName;
 
     /**
      * Default constructor
      */
     public CarbonUIEnhancer() {
-        if (fgAboutActionName == null) {
-            ResourceBundle resourceBundle = ResourceBundle
-                    .getBundle(RESOURCE_BUNDLE);
-            try {
-                fgAboutActionName = resourceBundle
-                        .getString("AboutAction.name"); //$NON-NLS-1$
-            } catch (MissingResourceException e) {
-                fgAboutActionName = "About"; //$NON-NLS-1$
-            }
-        }
+        IProduct product = Platform.getProduct();
+        String productName = null;
+        if (product != null)
+            productName = product.getName();
+        
+		ResourceBundle resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
+		try {
+			if (productName != null) {
+				String format = resourceBundle.getString("AboutAction.format"); //$NON-NLS-1$
+				if (format != null)
+					fAboutActionName= MessageFormat.format(format, new Object[] { productName } );
+			}
+			if (fAboutActionName == null)
+				fAboutActionName = resourceBundle.getString("AboutAction.name"); //$NON-NLS-1$
+		} catch (MissingResourceException e) {
+		}
+		
+		if (fAboutActionName == null)
+			fAboutActionName = "About"; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -88,8 +95,7 @@ public class CarbonUIEnhancer implements IStartup {
                 if (OS.GetEventKind(theEvent) == OS.kEventProcessCommand) {
                     HICommand command = new HICommand();
                     OS.GetEventParameter(theEvent, OS.kEventParamDirectObject,
-                            OS.typeHICommand, null, HICommand.sizeof, null,
-                            command);
+                            OS.typeHICommand, null, HICommand.sizeof, null, command);
                     switch (command.commandID) {
                     case kHICommandPreferences:
                         return runAction("preferences"); //$NON-NLS-1$
@@ -118,23 +124,19 @@ public class CarbonUIEnhancer implements IStartup {
         // create About Eclipse menu command
         int[] outMenu = new int[1];
         short[] outIndex = new short[1];
-        if (OS.GetIndMenuItemWithCommandID(0, kHICommandPreferences, 1,
-                outMenu, outIndex) == OS.noErr
+        if (OS.GetIndMenuItemWithCommandID(0, kHICommandPreferences, 1, outMenu, outIndex) == OS.noErr
                 && outMenu[0] != 0) {
             int menu = outMenu[0];
 
-            int l = fgAboutActionName.length();
+            int l = fAboutActionName.length();
             char buffer[] = new char[l];
-            fgAboutActionName.getChars(0, l, buffer, 0);
-            int str = OS.CFStringCreateWithCharacters(OS.kCFAllocatorDefault,
-                    buffer, l);
-            OS.InsertMenuItemTextWithCFString(menu, str, (short) 0, 0,
-                    kHICommandAbout);
+            fAboutActionName.getChars(0, l, buffer, 0);
+            int str = OS.CFStringCreateWithCharacters(OS.kCFAllocatorDefault, buffer, l);
+            OS.InsertMenuItemTextWithCFString(menu, str, (short) 0, 0, kHICommandAbout);
             OS.CFRelease(str);
 
             // add separator between About & Preferences
-            OS.InsertMenuItemTextWithCFString(menu, 0, (short) 1,
-                    OS.kMenuItemAttrSeparator, 0);
+            OS.InsertMenuItemTextWithCFString(menu, 0, (short) 1, OS.kMenuItemAttrSeparator, 0);
 
             // enable pref menu
             OS.EnableMenuCommand(menu, kHICommandPreferences);
@@ -155,8 +157,7 @@ public class CarbonUIEnhancer implements IStartup {
      * Locate an action with the given id in the current menubar and run it.
      */
     private int runAction(String actionId) {
-        IWorkbenchWindow window = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow();
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (window != null) {
             Shell shell = window.getShell();
             Menu menubar = shell.getMenuBar();

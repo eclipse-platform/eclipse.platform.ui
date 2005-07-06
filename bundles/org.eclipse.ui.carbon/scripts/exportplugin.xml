@@ -3,8 +3,10 @@
 	<target name="init">
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
-		<property name="plugin"  value="org.eclipse.ui.carbon" />
-		<property name="dest"  value="${destdir}/${plugin}_3.0.0" />
+		<property name="tempdir" value="../../tmp" />
+		<property name="plugin" value="org.eclipse.ui.carbon" />
+		<property name="dest" value="${destdir}/${plugin}_3.1.0" />
+		<property name="destjar" value="${destdir}/${plugin}_3.1.0.jar" />
 	</target>
 
 	<target name="build" depends="init">
@@ -12,20 +14,22 @@
 	</target>
 
 	<target name="export" depends="build">
+		<delete dir="${tempdir}" />
+		<mkdir dir="${tempdir}" />
 		<mkdir dir="${destdir}" />
-		<delete dir="${dest}" />
-		<mkdir dir="${dest}" />
-		<jar 
-			jarfile="${dest}/carbon.jar"
-			basedir="bin"
-		/>
-		<copy file="fragment.xml" todir="${dest}"/>
-		<copy file="fragment.properties" todir="${dest}"/>
-		<copy todir="${dest}/META-INF">
-			<fileset dir="META-INF" />
-		</copy>
-		<zip zipfile="${dest}/carbonsrc.zip">
+		<delete file="${destjar}" />
+		<zip zipfile="${tempdir}/carbonsrc.zip">
 		    <fileset dir="src" />
-  		</zip>				
+  		</zip>
+		<zip zipfile="${destjar}">
+			<fileset dir=".">
+			  <include name="fragment.xml" />
+			  <include name="fragment-carbon.properties" />
+			  <include name="META-INF/**" />
+			</fileset>
+			<fileset dir="bin" />
+			<fileset file="${tempdir}/carbonsrc.zip" />
+		</zip>
+		<delete file="${tempdir}/carbonsrc.zip" />
 	</target>
 </project>
