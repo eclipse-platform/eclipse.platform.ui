@@ -15,6 +15,8 @@ import junit.framework.Test;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.internal.dnd.TestDropLocation;
 import org.eclipse.ui.tests.TestPlugin;
@@ -31,6 +33,21 @@ public class DragTestSuite extends AutoTestSuite {
     public static Test suite() {
         return new DragTestSuite();
     }
+
+    /**
+     * Whether the platform we're running on supports the detaching of views.  
+     * This is initialized in the following static block.
+     * 
+     * @since 3.2
+     */
+	private static final boolean isDetachingSupported;
+	
+	static {
+		Shell shell = new Shell();
+		Composite c = new Composite(shell, SWT.NONE);
+		isDetachingSupported  = c.isReparentable();
+		shell.dispose();
+	}
 
     public DragTestSuite() {
         super(Platform.find(TestPlugin.getDefault().getBundle(), new Path("data/dragtests.xml")));
@@ -121,7 +138,8 @@ public class DragTestSuite extends AutoTestSuite {
         String resNav = IPageLayout.ID_RES_NAV;
         String probView = IPageLayout.ID_PROBLEM_VIEW;
         
-        return new TestDropLocation[] {
+        
+        TestDropLocation[] targets = new TestDropLocation[] {
                 // Editor area
                 new EditorAreaDropTarget(dragSource, SWT.LEFT),
                 new EditorAreaDropTarget(dragSource, SWT.RIGHT),
@@ -149,10 +167,17 @@ public class DragTestSuite extends AutoTestSuite {
 
                 // View tabs
                 new ViewTabDropTarget(dragSource, resNav), 
-                new ViewTabDropTarget(dragSource, probView), 
-                
-                // Detached windows 
-                new DetachedDropTarget()};
+                new ViewTabDropTarget(dragSource, probView) };
+        
+        // only add the detached targets on platforms that can handle it
+        if (isDetachingSupported) {
+        		TestDropLocation [] newTargets = new TestDropLocation[targets.length + 1];
+        		System.arraycopy(targets, 0, newTargets, 0, targets.length);
+        		newTargets[targets.length] = new DetachedDropTarget();
+        		targets = newTargets;
+        	}
+        	
+		return targets;
 
     }
 
