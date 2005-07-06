@@ -45,7 +45,6 @@ import org.eclipse.ui.tests.PerspectiveState;
 import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.PlatformUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 public class IWorkbenchPageTest extends UITestCase {
@@ -239,19 +238,18 @@ public class IWorkbenchPageTest extends UITestCase {
          */
         //can not be tested
         /*
-         javadoc: 3. If all else fails the file will be opened in a default text editor.        
-         */
+		 * javadoc: 3. If all else fails the file will be opened in a default
+		 * text editor.
+		 */
 
-        if (!PlatformUtil.onLinux()) {
-            file = FileUtil.createFile("a.null and void", proj);
-            editor = IDE.openEditor(fActivePage, file);
-            assertEquals(hasEditor(editor), true);
-            assertEquals(fActivePage.getActiveEditor(), editor);
-            assertEquals(editor.getSite().getId(),
-                    "org.eclipse.ui.DefaultTextEditor");
-        }
+		file = FileUtil.createFile("a.null and void", proj);
+		editor = IDE.openEditor(fActivePage, file);
+		assertEquals(hasEditor(editor), true);
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(editor.getSite().getId(),
+				"org.eclipse.ui.DefaultTextEditor");
 
-        //open another editor to take the focus away from the first editor
+        // open another editor to take the focus away from the first editor
         IDE.openEditor(fActivePage, FileUtil.createFile("test.mock2", proj));
 
         /*  

@@ -23,7 +23,6 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.util.ArrayUtil;
 import org.eclipse.ui.tests.util.EmptyPerspective;
-import org.eclipse.ui.tests.util.PlatformUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -40,10 +39,6 @@ public class IWorkbenchTest extends UITestCase {
      */
     public void testGetActiveWorkbenchWindow() throws Throwable {
         IWorkbenchWindow win1, win2;
-
-        // PR 41400
-        if (PlatformUtil.onLinux())
-            return;
 
         // Test initial window.
         win1 = fWorkbench.getActiveWorkbenchWindow();
@@ -133,9 +128,7 @@ public class IWorkbenchTest extends UITestCase {
         try {
             win = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID, getPageInput());
             assertNotNull(win);
-            if (!PlatformUtil.onLinux()) {
-                assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
-            }
+            assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
             assertEquals(EmptyPerspective.PERSP_ID, win.getActivePage()
                     .getPerspective().getId());
         } finally {
@@ -165,10 +158,7 @@ public class IWorkbenchTest extends UITestCase {
             win = fWorkbench
                     .openWorkbenchWindow(getPageInput());
             assertNotNull(win);
-
-            if (!PlatformUtil.onLinux()) {
-                assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
-            }
+			assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
             String defaultID = fWorkbench.getPerspectiveRegistry()
                     .getDefaultPerspective();
             assertEquals(win.getActivePage().getPerspective().getId(),

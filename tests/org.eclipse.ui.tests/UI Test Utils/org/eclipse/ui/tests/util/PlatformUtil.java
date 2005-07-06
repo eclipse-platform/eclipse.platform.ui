@@ -16,12 +16,6 @@ import org.eclipse.swt.SWT;
  * The Platform Util class is used to test for which platform we are in
  */
 public class PlatformUtil {
-
-    public static boolean onLinux() {
-
-        String platform = SWT.getPlatform();
-        return (platform.equals("motif") || platform.equals("gtk"));
-    }
     
     /**
      * Determine if we are running on the Mac platform.
