@@ -14,9 +14,9 @@ public class PreferenceBoldLabelProvider extends PreferenceLabelProvider
 		implements IFontProvider {
 
 	
-	private FilteredComboTree comboTree;
+	private FilteredTextTree comboTree;
 
-	PreferenceBoldLabelProvider(FilteredComboTree comboTree) {
+	PreferenceBoldLabelProvider(FilteredTextTree comboTree) {
 		this.comboTree = comboTree;
 	}
 	/**

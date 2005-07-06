@@ -57,7 +57,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public abstract class FilteredPreferenceDialog extends PreferenceDialog implements IWorkbenchPreferenceContainer{
 
-	protected FilteredComboTree filteredTree;
+	protected FilteredTextTree filteredTree;
 
 	private Object pageData;
 	
@@ -110,7 +110,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	protected TreeViewer createTreeViewer(Composite parent) {
 		PatternItemFilter filter = new PatternItemFilter(true); 
 		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
-		filteredTree = new FilteredComboTree(parent, styleBits, filter);
+		filteredTree = new FilteredTextTree(parent, styleBits, filter);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -123,8 +123,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		
 		//if the tree has only one or zero pages, make the combo area disable
 		if(hasAtMostOnePage(tree)){
-			filteredTree.getFilterCombo().setEnabled(false);
-			filteredTree.getFilterCombo().setSelection(new Point(0,0));
+			filteredTree.getFilterControl().setEnabled(false);
+			filteredTree.getFilterControl().setSelection(new Point(0,0));
 		}
 		
 		
