@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  * progress line and the animation item are shown.
  */
 public class ProgressRegion {
-    ProgressViewer viewer;
+    ProgressCanvasViewer viewer;
 
     AnimationItem item;
 
@@ -49,7 +49,7 @@ public class ProgressRegion {
      *            The parent widget of the composite.
      * @param window
      *            The WorkbenchWindow this is in.
-     * @return
+     * @return Control
      */
     public Control createContents(Composite parent, WorkbenchWindow window) {
         workbenchWindow = window;
@@ -63,7 +63,7 @@ public class ProgressRegion {
 
         new Label(region, SWT.SEPARATOR);
 
-        viewer = new ProgressViewer(region, SWT.NO_FOCUS, 1, 36);
+        viewer = new ProgressCanvasViewer(region, SWT.NO_FOCUS, 1, 36);
         viewer.setUseHashlookup(true);
         Control viewerControl = viewer.getControl();
         GridData gd = new GridData(GridData.FILL_BOTH);
@@ -124,7 +124,7 @@ public class ProgressRegion {
     /**
      * Return the animationItem for the receiver.
      * 
-     * @return
+     * @return AnimationItem
      */
     public AnimationItem getAnimationItem() {
         return item;
@@ -133,7 +133,7 @@ public class ProgressRegion {
     /**
      * Return the control for the receiver.
      * 
-     * @return
+     * @return Control
      */
     public Control getControl() {
         return region;

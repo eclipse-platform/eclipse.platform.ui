@@ -32,10 +32,10 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.misc.Assert;
 
 /**
- * The ProgressViewer is the viewer used by progress windows. It displays text
+ * The ProgressCanvasViewer is the viewer used by progress windows. It displays text
  * on the canvas.
  */
-public class ProgressViewer extends AbstractProgressViewer {
+public class ProgressCanvasViewer extends AbstractProgressViewer {
     Canvas canvas;
 
     Object[] displayedItems = new Object[0];
@@ -59,7 +59,7 @@ public class ProgressViewer extends AbstractProgressViewer {
      * @param itemsToShow the number of items this will show
      * @param numChars The number of characters for the width hint.
      */
-    ProgressViewer(Composite parent, int style, int itemsToShow, int numChars) {
+    ProgressCanvasViewer(Composite parent, int style, int itemsToShow, int numChars) {
         super();
         numShowItems = itemsToShow;
         maxCharacterWidth = numChars;
@@ -229,5 +229,21 @@ public class ProgressViewer extends AbstractProgressViewer {
         gc.dispose();
         return new Point(fontWidth, fontHeight);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.AbstractProgressViewer#add(java.lang.Object[])
+	 */
+	public void add(Object[] elements) {
+		refresh(true);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.AbstractProgressViewer#remove(java.lang.Object[])
+	 */
+	public void remove(Object[] elements) {
+		refresh(true);
+		
+	}
 
 }

@@ -38,9 +38,19 @@ abstract class JobTreeElement implements Comparable {
 
     /**
      * Return the displayString for the receiver.
-     * @return
+     * @return String
      */
     abstract String getDisplayString();
+    
+    /**
+     * Return the displayString for the receiver.
+     * @param showProgress Whether or not progress is being
+     * shown (if relevant).
+     * @return String
+     */
+    String getDisplayString(boolean showProgress){
+    	return getDisplayString();
+    }
 
     /**
      * Get the image for the reciever. By default there is no image.
@@ -52,7 +62,7 @@ abstract class JobTreeElement implements Comparable {
 
     /**
      * Return the condensed version of the display string
-     * @return
+     * @return String
      */
     String getCondensedDisplayString() {
         return getDisplayString();
@@ -74,7 +84,7 @@ abstract class JobTreeElement implements Comparable {
 
     /**
      * Return whether or not this is currently active.
-     * @return
+     * @return boolean
      */
     abstract boolean isActive();
 

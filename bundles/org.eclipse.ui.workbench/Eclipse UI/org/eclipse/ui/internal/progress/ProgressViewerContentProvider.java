@@ -20,26 +20,17 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class ProgressViewerContentProvider extends ProgressContentProvider
          {
-    AbstractProgressViewer progressViewer;
+    protected AbstractProgressViewer progressViewer;
 
     /**
      * Create a new instance of the receiver.
      * @param structured The Viewer we are providing content for
      * @param noDebug A flag to indicate if the debug flag is false.
      */
-    public ProgressViewerContentProvider(ProgressViewer structured,
+    public ProgressViewerContentProvider(AbstractProgressViewer structured,
             boolean noDebug) {
         super(noDebug);
         progressViewer = structured;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#add(org.eclipse.ui.internal.progress.JobTreeElement[])
-     */
-    public void add(Object[] elements) {
-		 progressViewer.refresh(true);
     }
 
     /**
@@ -89,15 +80,6 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#remove(org.eclipse.ui.internal.progress.JobTreeElement[])
-     */
-    public void remove(Object[] elements) {
-        progressViewer.refresh(true);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
      */
     public Object[] getElements(Object inputElement) {
@@ -135,5 +117,15 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
         }
         return roots.toArray();
     }
+
+	public void add(Object[] elements) {
+		progressViewer.add(elements);
+		
+	}
+
+	public void remove(Object[] elements) {
+		progressViewer.remove(elements);
+		
+	}
 
 }

@@ -124,6 +124,8 @@ public class ProgressManager extends ProgressProvider implements
     final Map runnableMonitors = Collections.synchronizedMap(new HashMap());
 
     final Object monitorKey = new Object();
+    
+    FinishedJobs finishedJobs;
 
     //A table that maps families to keys in the Jface image
     //table

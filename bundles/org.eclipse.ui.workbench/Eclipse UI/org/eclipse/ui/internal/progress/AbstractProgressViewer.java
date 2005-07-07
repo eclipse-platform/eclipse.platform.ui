@@ -18,4 +18,16 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * 
  */
 public abstract class AbstractProgressViewer extends StructuredViewer {
+
+	/**
+	 * Add the elements to the receiver.
+	 * @param elements
+	 */
+	public abstract void add(Object[] elements);
+
+	/**
+	 * Remove the elements from the receiver.
+	 * @param elements
+	 */
+	public abstract void remove(Object[] elements);
 }

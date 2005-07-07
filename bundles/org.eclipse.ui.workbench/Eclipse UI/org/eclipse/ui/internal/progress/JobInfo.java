@@ -206,7 +206,7 @@ class JobInfo extends JobTreeElement {
     String getCondensedDisplayString() {
     	TaskInfo info = getTaskInfo();
         if (info != null)
-            return info.getDisplayStringWithoutTask();
+            return info.getDisplayStringWithoutTask(true);
         return getJob().getName();
     }
 
@@ -231,26 +231,32 @@ class JobInfo extends JobTreeElement {
         return super.getDisplayImage();
 
     }
-
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
      */
     String getDisplayString() {
-        String name = getDisplayStringWithStatus();
+    	return getDisplayString(true);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString(boolean)
+     */
+    String getDisplayString(boolean showProgress) {
+        String name = getDisplayStringWithStatus(showProgress);
         if (job.isSystem())
-			return NLS.bind(ProgressMessages.JobInfo_System, (new Object[] { getJob().getName() }));
+			return NLS.bind(ProgressMessages.JobInfo_System, (new Object[] { name }));
         return name;
     }
 
     /**
      * Get the display string based on the current status and the name of the
      * job.
+     * @param showProgress a boolean to indicate if we should
+     * show progress or not.
      * 
      * @return String
      */
-    private String getDisplayStringWithStatus() {
+    private String getDisplayStringWithStatus(boolean showProgress) {
         if (isCanceled())
 			return NLS.bind(ProgressMessages.JobInfo_Cancelled, (new Object[] { getJob().getName() }));
         if (isBlocked())
@@ -259,7 +265,7 @@ class JobInfo extends JobTreeElement {
         if (getJob().getState() == Job.RUNNING) {
             if (taskInfo == null)
                 return getJob().getName();
-            return taskInfo.getDisplayString();
+            return taskInfo.getDisplayString(showProgress);
         }
         if (getJob().getState() == Job.SLEEPING)
 			return NLS.bind(ProgressMessages.JobInfo_Sleeping, (new Object[] { getJob().getName() }));

@@ -19,6 +19,7 @@ public class ProgressMessages extends NLS {
 	public static String ErrorNotificationDialog_ShowButtonTitle;
 	public static String PendingUpdateAdapter_PendingLabel;
 	public static String JobInfo_DoneMessage;
+	public static String JobInfo_DoneNoProgressMessage;
 	public static String JobInfo_NoTaskNameDoneMessage;
 	public static String JobsViewPreferenceDialog_Note;
 	public static String JobErrorDialog_CustomJobText;
