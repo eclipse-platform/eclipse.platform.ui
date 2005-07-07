@@ -192,6 +192,24 @@ public final class ContextManager implements IContextListener {
 	}
 
 	/**
+	 * Returns the those contexts that are defined.
+	 * 
+	 * @return The defined contexts; this value may be empty, but it is never
+	 *         <code>null</code>.
+	 * @since 3.2
+	 */
+	public final Context[] getDefinedContexts() {
+		final Context[] contexts = new Context[definedContextIds.size()];
+		final Iterator contextIdItr = definedContextIds.iterator();
+		int i = 0;
+		while (contextIdItr.hasNext()) {
+			String contextId = (String) contextIdItr.next();
+			contexts[i++] = getContext(contextId);
+		}
+		return contexts;
+	}
+
+	/**
 	 * Returns the set of identifiers for those contexts that are defined.
 	 * 
 	 * @return The set of defined context identifiers; this value may be empty,

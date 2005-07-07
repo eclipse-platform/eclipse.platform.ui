@@ -178,6 +178,14 @@ public interface IContextService {
 	public Context getContext(String contextId);
 
 	/**
+	 * Returns the collection of all of the defined contexts in the workbench.
+	 * 
+	 * @return The collection of contexts (<code>Context</code>) that are
+	 *         defined; never <code>null</code>, but may be empty.
+	 */
+	public Context[] getDefinedContexts();
+
+	/**
 	 * Returns the collection of the identifiers for all of the defined contexts
 	 * in the workbench.
 	 * 
