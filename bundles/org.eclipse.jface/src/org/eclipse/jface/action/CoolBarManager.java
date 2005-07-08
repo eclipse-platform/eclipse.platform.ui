@@ -303,9 +303,14 @@ public class CoolBarManager extends ContributionManager implements
      * @return the associated cool item, or <code>null</code> if not found
      */
     private CoolItem findCoolItem(IContributionItem item) {
-        if (coolBar == null)
+        CoolItem[] coolItems = (coolBar == null) ? null : coolBar.getItems(); 
+        return findCoolItem(coolItems, item);
+    }
+    
+    private CoolItem findCoolItem(CoolItem[] items, IContributionItem item) {
+        if (items == null)
             return null;
-        CoolItem[] items = coolBar.getItems();
+
         for (int i = 0; i < items.length; i++) {
             CoolItem coolItem = items[i];
             IContributionItem data = (IContributionItem) coolItem.getData();
@@ -988,9 +993,11 @@ public class CoolBarManager extends ContributionManager implements
         final int[] wrapIndices = new int[numRows];
         boolean foundSeparator = false;
         int j = 0;
+        CoolItem[] coolItems = (coolBar == null) ? null : coolBar.getItems();
+
         for (int i = 0; i < items.length; i++) {
             IContributionItem item = items[i];
-            CoolItem coolItem = findCoolItem(item);
+            CoolItem coolItem = findCoolItem(coolItems, item);
             if (item.isSeparator()) {
                 foundSeparator = true;
             }

@@ -2829,6 +2829,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             label = newPart != null ? newPart.getTitle() : "none"; //$NON-NLS-1$
         }
         try {
+            window.largeUpdateStart();
             IWorkbenchPartReference partref = getReference(newPart); 
             partBeingActivated = partref;
             
@@ -2861,6 +2862,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             partBeingActivated = null;
         	Object blame = newPart == null ? (Object)this : newPart;
             UIStats.end(UIStats.ACTIVATE_PART, blame, label);
+            window.largeUpdateEnd();
         }
     }
 

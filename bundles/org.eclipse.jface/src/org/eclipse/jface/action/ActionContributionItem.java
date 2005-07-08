@@ -19,6 +19,7 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
@@ -477,11 +478,16 @@ public class ActionContributionItem extends ContributionItem {
 
             // Clear the widget field.
             widget = null;
-            
-            disposeOldImages();
         }
     }
+    
+    public void dispose() {
 
+        super.dispose();
+        
+        disposeOldImages();
+    }
+    
     /**
      * Handles a widget selection event.
      */
@@ -892,10 +898,11 @@ public class ActionContributionItem extends ContributionItem {
                 }
         
                 LocalResourceManager localManager = new LocalResourceManager(parentResourceManager);
+                ToolItem item = (ToolItem)widget;
                 
                 // performance: more efficient in SWT to set disabled and hot image before regular image
-                ((ToolItem) widget).setDisabledImage(disabledImage == null ? null : localManager.createImageWithDefault(disabledImage));
-                ((ToolItem) widget).setImage(image == null ? null : localManager.createImageWithDefault(image));
+                setDisabledImage(item, disabledImage == null ? null : localManager.createImageWithDefault(disabledImage));
+                setImage(item, image == null ? null : localManager.createImageWithDefault(image));
 
                 disposeOldImages();
                 imageManager = localManager;
@@ -928,11 +935,12 @@ public class ActionContributionItem extends ContributionItem {
 
             // Create a local resource manager to remember the images we've allocated for this tool item
             LocalResourceManager localManager = new LocalResourceManager(parentResourceManager);
+            ToolItem item = (ToolItem)widget;
             
             // performance: more efficient in SWT to set disabled and hot image before regular image
-            ((ToolItem) widget).setDisabledImage(disabledImage == null? null : localManager.createImageWithDefault(disabledImage));
-            ((ToolItem) widget).setHotImage(hoverImage == null? null : localManager.createImageWithDefault(hoverImage));
-            ((ToolItem) widget).setImage(image == null? null : localManager.createImageWithDefault(image));
+            setDisabledImage(item, disabledImage == null? null : localManager.createImageWithDefault(disabledImage));
+            setHotImage(item, hoverImage == null? null : localManager.createImageWithDefault(hoverImage));
+            setImage(item, image == null? null : localManager.createImageWithDefault(image));
 
             // Now that we're no longer referencing the old images, clear them out.
             disposeOldImages();
@@ -967,6 +975,42 @@ public class ActionContributionItem extends ContributionItem {
             return image != null;
         }
         return false;
+    }
+
+    /**
+     * Sets the hot image for the given toolitem. This is a more efficient equivalent to item.setHotImage
+     * 
+     * @param item toolitem to change
+     * @param image new image
+     */
+    private static void setHotImage(ToolItem item, Image image) {
+        if (item.getHotImage() != image) {
+            item.setHotImage(image);
+        }
+    }
+
+    /**
+     * Sets the image for the given toolitem. This is a more efficient equivalent to item.setImage
+     * 
+     * @param item toolitem to change
+     * @param image new image
+     */
+    private static void setImage(ToolItem item, Image image) {
+        if (item.getImage() != image) {
+            item.setImage(image);
+        }
+    }
+
+    /**
+     * Sets the image for the given toolitem. This is a more efficient equivalent to item.setImage
+     * 
+     * @param item toolitem to change
+     * @param image new image
+     */
+    private static void setDisabledImage(ToolItem item, Image image) {
+        if (item.getDisabledImage() != image) {
+            item.setDisabledImage(image);
+        }
     }
 
     /**
