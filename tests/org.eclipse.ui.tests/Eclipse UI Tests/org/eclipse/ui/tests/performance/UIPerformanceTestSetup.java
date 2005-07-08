@@ -23,12 +23,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.TestPlugin;
 
 public class UIPerformanceTestSetup extends TestSetup {
@@ -114,7 +115,9 @@ public class UIPerformanceTestSetup extends TestSetup {
                     .getBundle().getEntry("/data/test_editor_inputs/" + "plugin.xml"));
             iFile.create(file.openStream(), true, null);
         } catch (IOException e) {
-            throw new CoreException(WorkbenchPlugin.getStatus(e));
+            throw new CoreException(new Status(IStatus.ERROR, TestPlugin.getDefault()
+                    .getBundle().getSymbolicName(), 0, e.getMessage(), 
+                    e));
         }
 
 	}
