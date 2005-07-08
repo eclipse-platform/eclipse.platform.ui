@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="iuieuoe"
+   name="Iuieuoe Plug-in"
+   version="1.0.0"
+   provider-name="">
+
+   <runtime>
+      <library name="iuieuoe.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+</plugin>
