@@ -257,4 +257,12 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
         return true;
     }
 
+    /**
+     * Get the task name for the receiver.
+     * @return String
+     */
+	String getTaskName() {
+		return taskName;
+	}
+
 }

@@ -85,9 +85,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * @return ProgressInfoItem
 	 */
 	private ProgressInfoItem createNewItem(JobTreeElement info) {
-		if (info.isJobInfo())
-			return new JobInfoItem(control, SWT.NONE, (JobInfo) info);
-		return new GroupInfoItem(control, SWT.NONE, (GroupInfo) info);
+		return new ProgressInfoItem(control, SWT.NONE, info);
 	}
 
 	/**
@@ -137,7 +135,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			unmapElement(item);
 			mapElement(element, item);
 		}
-		((JobInfoItem) item).remap((JobInfo) element);
+		((ProgressInfoItem) item).remap((JobTreeElement) element);
 	}
 
 	/*
