@@ -6,6 +6,7 @@ import java.util.Date;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
@@ -25,14 +26,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.progress.IProgressConstants;
 
 /**
- * JobInfoItem is a special composite used to display 
- * infos.
+ * JobInfoItem is a special composite used to display infos.
+ * 
  * @since 3.1
- *
+ * 
  */
-public class JobInfoItem extends Composite {
+public class JobInfoItem extends ProgressInfoItem {
 
 	private static String STOP_IMAGE_KEY = "org.eclipse.ui.internal.progress.PROGRESS_STOP_IMAGE_KEY"; //$NON-NLS-1$
 
@@ -46,6 +48,8 @@ public class JobInfoItem extends Composite {
 
 	private JobInfo info;
 
+	private IAction action;
+
 	static {
 		JFaceResources
 				.getImageRegistry()
@@ -57,7 +61,7 @@ public class JobInfoItem extends Composite {
 	}
 
 	/**
-	 * Create a new instance of the receiver for JobInfo.
+	 * Create a new instance of the receiver for a JobInfo.
 	 * 
 	 * @param parent
 	 * @param style
@@ -78,9 +82,10 @@ public class JobInfoItem extends Composite {
 	private void createChildren() {
 		FormLayout layout = new FormLayout();
 		setLayout(layout);
-	
+
 		progressLabel = new Label(this, SWT.NONE);
-		progressLabel.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
+		progressLabel.setFont(JFaceResources.getFontRegistry().getBold(
+				JFaceResources.DEFAULT_FONT));
 		progressLabel.setText(getJobNameAndStatus(false, false));
 		FormData progressData = new FormData();
 		progressData.top = new FormAttachment(0);
@@ -94,13 +99,16 @@ public class JobInfoItem extends Composite {
 		FormData buttonData = new FormData();
 		buttonData.top = new FormAttachment(progressLabel,
 				IDialogConstants.VERTICAL_SPACING);
-		buttonData.right = new FormAttachment(100,IDialogConstants.HORIZONTAL_SPACING * -1);
+		buttonData.right = new FormAttachment(100,
+				IDialogConstants.HORIZONTAL_SPACING * -1);
 
 		setButtonImage(buttonData);
-		
+
 		stopButton.setLayoutData(buttonData);
 		stopButton.addSelectionListener(new SelectionAdapter() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
@@ -108,6 +116,12 @@ public class JobInfoItem extends Composite {
 				layout(true);
 			}
 		});
+
+		// check for action property
+		Object property = info.getJob().getProperty(
+				IProgressConstants.ACTION_PROPERTY);
+		if (property instanceof IAction)
+			action = ((IAction) property);
 
 		subTaskLabel = new Link(this, SWT.NONE);
 
@@ -118,20 +132,28 @@ public class JobInfoItem extends Composite {
 		linkData.right = new FormAttachment(100);
 		subTaskLabel.setLayoutData(linkData);
 		
+		subTaskLabel.addSelectionListener(new SelectionAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				action.run();
+			}
+		});
+
 		refresh();
 	}
 
 	/**
-	 * Set the button image and update the button data to
-	 * reflect it.
+	 * Set the button image and update the button data to reflect it.
+	 * 
 	 * @param buttonData
 	 */
 	private void setButtonImage(FormData buttonData) {
-		Image stopImage = JFaceResources.getImageRegistry().get(
-				STOP_IMAGE_KEY);
+		Image stopImage = JFaceResources.getImageRegistry().get(STOP_IMAGE_KEY);
 		Rectangle imageBounds = stopImage.getBounds();
 		stopButton.setImage(stopImage);
-		
+
 		buttonData.height = imageBounds.height;
 		buttonData.width = imageBounds.width;
 	}
@@ -147,15 +169,17 @@ public class JobInfoItem extends Composite {
 		barData.top = new FormAttachment(progressLabel,
 				IDialogConstants.VERTICAL_SPACING);
 		barData.left = new FormAttachment(IDialogConstants.HORIZONTAL_SPACING);
-		barData.right = new FormAttachment(stopButton,IDialogConstants.HORIZONTAL_SPACING * -1);
+		barData.right = new FormAttachment(stopButton,
+				IDialogConstants.HORIZONTAL_SPACING * -1);
 		progressBar.setLayoutData(barData);
 
 		FormData buttonData = new FormData();
 		buttonData.top = new FormAttachment(progressLabel,
 				IDialogConstants.VERTICAL_SPACING);
-		buttonData.right = new FormAttachment(100,IDialogConstants.HORIZONTAL_SPACING * -1);
+		buttonData.right = new FormAttachment(100,
+				IDialogConstants.HORIZONTAL_SPACING * -1);
 		setButtonImage(buttonData);
-	
+
 		stopButton.setLayoutData(buttonData);
 
 		// Reattach the link label
@@ -167,14 +191,15 @@ public class JobInfoItem extends Composite {
 		subTaskLabel.setLayoutData(linkData);
 	}
 
-	/**
-	 * Refresh the receiver.
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.ProgressInfoItem#refresh()
 	 */
 	void refresh() {
-		
-		if(isDisposed())
+
+		if (isDisposed())
 			return;
-		
+
 		progressLabel.setText(getJobNameAndStatus(false, false));
 		int percentDone = info.getPercentDone();
 
@@ -205,28 +230,30 @@ public class JobInfoItem extends Composite {
 							taskString, subTaskString);
 			}
 			if (taskString != null)
-				subTaskLabel.setText(taskString);
+				setLinkText(taskString);
 		}
 	}
 
 	/**
-	 * Remap the receiver to show element.
+	 * Set the text of the link to the taskString.
 	 * 
-	 * @param element
+	 * @param taskString
 	 */
-	void remap(JobInfo element) {
-		info = element;
-		refresh();
+	private void setLinkText(String taskString) {
+		subTaskLabel.setText(action == null ? taskString : NLS.bind(
+				"<a>{0}</a>", taskString));//$NON-NLS-1$
+
 	}
+
+
 
 	JobInfo getInfo() {
 		return info;
 	}
 
-	/**
-	 * Set the color based on the index.
-	 * 
-	 * @param i
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.ProgressInfoItem#setColor(int)
 	 */
 	public void setColor(int i) {
 		if (i % 2 == 0)
@@ -321,6 +348,15 @@ public class JobInfoItem extends Composite {
 		if (date != null)
 			return DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.ProgressInfoItem#remap(org.eclipse.ui.internal.progress.JobTreeElement)
+	 */
+	void remap(JobTreeElement element) {
+		info = (JobInfo) element;
+		refresh();
+		
 	}
 
 }

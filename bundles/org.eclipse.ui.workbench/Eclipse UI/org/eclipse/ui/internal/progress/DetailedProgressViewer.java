@@ -57,7 +57,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			newItems.add(elements[i]);
 		}
 
-		JobInfo[] infos = new JobInfo[newItems.size()];
+		JobTreeElement[] infos = new JobTreeElement[newItems.size()];
 		newItems.toArray(infos);
 
 		if (sorter != null) {
@@ -66,16 +66,28 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 		// Update with the new elements to prevent flash
 		for (int i = 0; i < existingChildren.length; i++) {
-			((JobInfoItem) existingChildren[i]).remap(infos[i]);
-			((JobInfoItem) existingChildren[i]).setColor(i);
+			((ProgressInfoItem) existingChildren[i]).remap(infos[i]);
+			((ProgressInfoItem) existingChildren[i]).setColor(i);
 		}
 
 		for (int i = existingChildren.length; i < newItems.size(); i++) {
-			JobInfoItem item = new JobInfoItem(control, SWT.NONE, infos[i]);
+			ProgressInfoItem item = createNewItem(infos[i]);
 			item.setColor(i);
 		}
 
 		control.layout(true);
+	}
+
+	/**
+	 * Create a new item for info.
+	 * 
+	 * @param info
+	 * @return ProgressInfoItem
+	 */
+	private ProgressInfoItem createNewItem(JobTreeElement info) {
+		if (info.isJobInfo())
+			return new JobInfoItem(control, SWT.NONE, (JobInfo) info);
+		return new GroupInfoItem(control, SWT.NONE, (GroupInfo) info);
 	}
 
 	/**
@@ -105,10 +117,10 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	protected Widget doFindItem(Object element) {
 		Control[] existingChildren = control.getChildren();
 		for (int i = 0; i < existingChildren.length; i++) {
-			if(existingChildren[i].isDisposed() || existingChildren[i].getData() == null)
+			if (existingChildren[i].isDisposed()
+					|| existingChildren[i].getData() == null)
 				continue;
-			JobInfo info = (JobInfo) existingChildren[i].getData();
-			if (info.equals(element))
+			if (existingChildren[i].getData().equals(element))
 				return existingChildren[i];
 		}
 		return null;
@@ -156,15 +168,15 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object)
 	 */
 	protected void internalRefresh(Object element) {
-		if(element == null)
+		if (element == null)
 			return;
-		
-		if(element.equals(getRoot()))
+
+		if (element.equals(getRoot()))
 			refreshAll();
 		Widget widget = findItem(element);
 		if (widget == null)
 			return;
-		((JobInfoItem) widget).refresh();
+		((ProgressInfoItem) widget).refresh();
 	}
 
 	/*
@@ -206,7 +218,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	/**
 	 * Cancel the current selection
-	 *
+	 * 
 	 */
 	public void cancelSelection() {
 
@@ -214,40 +226,40 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	/**
 	 * Set focus on the current selection.
-	 *
+	 * 
 	 */
 	public void setFocus() {
 
 	}
 
 	/**
-	 * Refresh everything as the root is being refreshed. 
+	 * Refresh everything as the root is being refreshed.
 	 */
 	private void refreshAll() {
-		
+
 		Object[] infos = getSortedChildren(getRoot());
 		Control[] existingChildren = control.getChildren();
-		
-		int reuseLength = Math.min(infos.length,existingChildren.length);
-		
+
+		int reuseLength = Math.min(infos.length, existingChildren.length);
+
 		// Update with the new elements to prevent flash
 		for (int i = 0; i < reuseLength; i++) {
-			JobInfoItem item = (JobInfoItem) existingChildren[i].getData();
-			item.remap((JobInfo) infos[i]);
+			ProgressInfoItem item = (ProgressInfoItem) existingChildren[i];
+			item.remap((JobTreeElement) infos[i]);
 			item.setColor(i);
 		}
 
 		// Create new ones if required
 		for (int i = existingChildren.length; i < infos.length; i++) {
-			JobInfoItem item = new JobInfoItem(control, SWT.NONE, (JobInfo) infos[i]);
+			ProgressInfoItem item = createNewItem((JobTreeElement) infos[i]);
 			item.setColor(i);
 		}
-		
+
 		// Delete old ones if not
 		for (int i = infos.length; i < existingChildren.length; i++) {
 			existingChildren[i].dispose();
 		}
-		
+
 	}
-	
+
 }
