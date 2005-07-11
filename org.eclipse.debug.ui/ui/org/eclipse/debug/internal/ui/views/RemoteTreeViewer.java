@@ -20,8 +20,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
@@ -388,52 +391,218 @@ public class RemoteTreeViewer extends TreeViewer {
     public synchronized void replace(final Object parent, final Object[] children, final int offset) {
         preservingSelection(new Runnable() {
             public void run() {
-                Widget widget = findItem(parent);
-                if (widget == null) {
-                    add(parent, children);
-                } else {
-	                Item[] currentChildren = getChildren(widget);
-	                int pos = offset;
-	                if (pos >= currentChildren.length) {
-	                    // append
-	                    add(parent, children);
-	                } else {
-	                    // replace
-	                    for (int i = 0; i < children.length; i++) {
-	                        Object child = children[i];
-	                        if (pos < currentChildren.length) {
-	                            // replace
-	                            Item item = currentChildren[pos];
-	                            Object data = item.getData();
-	                            if (!child.equals(data)) {
-	                                // no need to cancel pending updates here, the child may have shifted up/down
-	                                internalRefresh(item, child, true, true);
-	                            } else {
-	                            	// If it's the same child, the label/content may still have changed
-	                                doUpdateItem(item, child);
-	                            	updatePlus(item, child);
-	                            }
-	                        } else {
-	                            // add
-	                        	int numLeft = children.length - i;
-	                        	if (numLeft > 1) {
-	                        		Object[] others = new Object[numLeft];
-	                        		System.arraycopy(children, i, others, 0, numLeft);
-	                        		add(parent, others);
-	                        	} else {
-	                        		add(parent, child);
-	                        	}
-	                        	break;
-	                        }
-	                        pos++;
-	                    }
-	                }
+                Widget[] widgets = findItems(parent);
+                for (int n = 0; n < widgets.length; n++) {
+                    Widget widget = widgets[n];
+                    if (widget == null) {
+                        add(parent, children);
+                    } else {
+                        Item[] currentChildren = getChildren(widget);
+                        int pos = offset;
+                        if (pos >= currentChildren.length) {
+                            // append
+                            add(parent, children);
+                        } else {
+                            // replace
+                            for (int i = 0; i < children.length; i++) {
+                                Object child = children[i];
+                                if (pos < currentChildren.length) {
+                                    // replace
+                                    Item item = currentChildren[pos];
+                                    Object data = item.getData();
+                                    if (!child.equals(data)) {
+                                        // no need to cancel pending updates here, the child may have shifted up/down
+                                        internalRefresh(item, child, true, true);
+                                    } else {
+                                        // If it's the same child, the label/content may still have changed
+                                        doUpdateItem(item, child);
+                                        updatePlus(item, child);
+                                    }
+                                } else {
+                                    // add
+                                    int numLeft = children.length - i;
+                                    if (numLeft > 1) {
+                                        Object[] others = new Object[numLeft];
+                                        System.arraycopy(children, i, others, 0, numLeft);
+                                        add(parent, others);
+                                    } else {
+                                        add(parent, child);
+                                    }
+                                    break;
+                                }
+                                pos++;
+                            }
+                        }
+                    }                    
                 }
+
                 runDeferredUpdates();
             }
         });
     }
+
+    protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
+        
+        // optimization!
+        // if the widget is not expanded we just invalidate the subtree
+        if (widget instanceof Item) {
+            Item ti = (Item) widget;
+            if (!getExpanded(ti)) {
+                boolean needDummy = isExpandable(parentElement);
+                boolean haveDummy = false;
+                // remove all children
+                Item[] items = getItems(ti);
+                for (int i = 0; i < items.length; i++) {
+                    if (items[i].getData() != null) {
+                        disassociate(items[i]);
+                        items[i].dispose();
+                    } else {
+                        if (needDummy && !haveDummy) {
+                            haveDummy = true;
+                        } else {
+                            items[i].dispose();
+                        }
+                    }
+                }
+                // append a dummy if necessary
+                if (needDummy && !haveDummy) 
+                    newItem(ti, SWT.NULL, -1);
+                return;
+            }
+        }
+
+        if (childElements.length > 0) {
+            Object[] filtered = filter(childElements);
+            if(getSorter() != null)
+                getSorter().sort(this,filtered);
+            createAddedElements(widget, filtered);
+        }
+    }
     
+
+    // tree viewer hacks start here. These hacks allow us to display the same Object in a tree viewer more 
+    // than once. Workbench does on support this (July 6, 2005)
+    
+    private void createAddedElements(Widget widget, Object[] elements) {
+
+        if(elements.length == 1){
+            if (equals(elements[0], widget.getData()))
+                return;
+        }
+        
+        ViewerSorter sorter = getSorter ();
+        Item[] items = getChildren(widget);
+        
+        //As the items are sorted already we optimize for a 
+        //start position
+        int lastInsertion = 0;      
+        
+        //Optimize for the empty case
+        if(items.length == 0){
+            for (int i = 0; i < elements.length; i++) {
+                createTreeItem(widget, elements[i], -1);        
+            }
+            return;
+        }
+    
+        for (int i = 0; i < elements.length; i++) {
+            boolean newItem = true;
+            Object element = elements[i];
+            int index;
+            if(sorter == null){
+                index = -1;
+            }
+            else{
+                lastInsertion = insertionPosition(items,sorter,lastInsertion, element);
+                //As we are only searching the original array we keep track of those positions only
+                if(lastInsertion == items.length)
+                    index = -1;
+                else{//See if we should just refresh
+                    while(lastInsertion < items.length && sorter.compare(this,element,items[lastInsertion].getData()) == 0){
+                        //As we cannot assume the sorter is consistent with equals() - therefore we can
+                        // just check against the item prior to this index (if any)
+                        if (items[lastInsertion].getData().equals(element)) {
+                            //refresh the element in case it has new children
+                            refresh(element);
+                            newItem = false;
+                        }
+                        lastInsertion ++;//We had an insertion so increment
+                    }
+                    //Did we get to the end?
+                    if(lastInsertion == items.length)
+                        index = -1;
+                    else
+                        index = lastInsertion + i; //Add the index as the array is growing                  
+                }
+            }
+            if(newItem)
+                createTreeItem(widget, element, index);     
+        }
+    }
+    
+    private int insertionPosition(Item[] items,  ViewerSorter sorter, int lastInsertion, Object element) {
+        int size = items.length;
+        if (sorter == null)
+            return size;
+        int min = lastInsertion, max = size - 1;
+
+        while (min <= max) {
+            int mid = (min + max) / 2;
+            Object data = items[mid].getData();
+            int compare = sorter.compare(this, data, element);
+            if (compare == 0) {
+                return mid;//Return if we already match
+            }
+            if (compare < 0)
+                min = mid + 1;
+            else
+                max = mid - 1;
+            }
+       return min;
+    }
+    
+    public void update(Object element, String[] properties) {
+        Assert.isNotNull(element);
+        Widget[] widgets = findItems(element);
+        for (int i = 0; i < widgets.length; i++) {
+            Widget widget = widgets[i];
+            if (widget != null) {
+                internalUpdate(widget, element, properties);
+            }            
+        }
+    }
+
+    protected Widget[] findItems(Object target) {
+        List widgets = new ArrayList();
+        Object root = getRoot();
+        if (root != null) {
+            if (equals(root, target)) {
+                Widget widget = findItem(root);
+                widgets.add(widget);
+            }
+        }
+        Item[] children = getChildren(getControl());
+        
+        if (children != null) {
+            for (int i = 0; i < children.length; i++) {
+                Item child = children[i];
+                internalFindItems(target, child, widgets);
+            }
+        }
+        return (Widget[]) widgets.toArray(new Widget[widgets.size()]);
+    }
+
+    private void internalFindItems(Object target, Item item, List widgets) {
+        if (equals(target, item.getData())) {
+            widgets.add(item);
+        }
+        
+        Item[] children = getChildren(item);
+        for (int i = 0; i < children.length; i++) {
+            Item child = children[i];
+            internalFindItems(target, child, widgets);
+        }
+    }
 }
 
 
