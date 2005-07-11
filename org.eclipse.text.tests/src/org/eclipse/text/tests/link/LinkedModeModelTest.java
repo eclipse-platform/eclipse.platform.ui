@@ -800,8 +800,7 @@ public class LinkedModeModelTest extends TestCase {
 			if (d1 == d2)
 				// sort by offset inside the same document
 				return p1.getOffset() - p2.getOffset();
-			else
-				return getIndex(d1) - getIndex(d2);
+			return getIndex(d1) - getIndex(d2);
 		}
 
 		private int getIndex(IDocument doc) {
