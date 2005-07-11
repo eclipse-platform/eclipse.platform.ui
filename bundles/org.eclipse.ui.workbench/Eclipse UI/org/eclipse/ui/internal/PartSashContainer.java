@@ -47,6 +47,8 @@ public abstract class PartSashContainer extends LayoutPart implements
     protected ControlListener resizeListener;
 
     protected LayoutTree root;
+    
+    private Composite parentWidget;
 
     private LayoutPart zoomedPart;
 
@@ -158,9 +160,10 @@ public abstract class PartSashContainer extends LayoutPart implements
         }
     }
 
-    public PartSashContainer(String id, final WorkbenchPage page) {
+    public PartSashContainer(String id, final WorkbenchPage page, Composite parentWidget) {
         super(id);
         this.page = page;
+        this.parentWidget = parentWidget;
         resizeListener = new ControlAdapter() {
             public void controlResized(ControlEvent e) {
                 resizeSashes();
@@ -465,36 +468,95 @@ public abstract class PartSashContainer extends LayoutPart implements
         return result;
     }
 
+    public void setActive(boolean isActive) {
+        if (isActive == active) {
+            return;
+        }
+        
+        active = isActive;
+        
+        ArrayList children = (ArrayList) this.children.clone();
+        for (int i = 0, length = children.size(); i < length; i++) {
+            LayoutPart child = (LayoutPart) children.get(i);
+            
+            if (child instanceof PartStack) {
+                PartStack stack = (PartStack) child;
+                stack.setActive(isActive);
+            }
+        }
+        
+        if (isActive) {
+            
+            createControl(parentWidget);
+            
+            parent.addControlListener(resizeListener);
+
+            DragUtil.addDragTarget(parent, this);
+            DragUtil.addDragTarget(parent.getShell(), this);
+            
+            //ArrayList children = (ArrayList) this.children.clone();
+            for (int i = 0, length = children.size(); i < length; i++) {
+                LayoutPart child = (LayoutPart) children.get(i);
+                child.setContainer(this);
+                child.setVisible(zoomedPart == null || child == zoomedPart);
+                if (!(child instanceof PartStack)) {
+                    if (root != null) {
+                        LayoutTree node = root.find(child);
+                        if (node != null) {
+                            node.flushCache();
+                        }
+                    }
+                }
+            }
+            
+            if (root != null) {
+                //root.flushChildren();
+                if (!isZoomed()) {
+                    root.createControl(parent);
+                }
+            }
+            
+            resizeSashes();
+        } else {
+            DragUtil.removeDragTarget(parent, this);
+            DragUtil.removeDragTarget(parent.getShell(), this);
+
+            // remove all Listeners
+            if (resizeListener != null && parent != null) {
+                parent.removeControlListener(resizeListener);
+            }
+
+            if (children != null) {
+                for (int i = 0, length = children.size(); i < length; i++) {
+                    LayoutPart child = (LayoutPart) children.get(i);
+                    child.setContainer(null);
+                    if (child instanceof PartStack) {
+                        child.setVisible(false);
+                    }
+                }
+            }
+            
+            disposeSashes();
+            
+            //dispose();
+        }
+    }
+    
     /**
      * @see LayoutPart#getControl
      */
     public void createControl(Composite parentWidget) {
-        if (active)
+        if (this.parent != null)
             return;
 
         parent = createParent(parentWidget);
-        parent.addControlListener(resizeListener);
-
-        DragUtil.addDragTarget(parent, this);
-        DragUtil.addDragTarget(parent.getShell(), this);
 
         ArrayList children = (ArrayList) this.children.clone();
         for (int i = 0, length = children.size(); i < length; i++) {
             LayoutPart child = (LayoutPart) children.get(i);
-            child.setContainer(this);
             child.createControl(parent);
-            child.setVisible(zoomedPart == null || child == zoomedPart);
         }
 
-        if (root != null) {
-            root.flushChildren();
-            if (!isZoomed()) {
-                root.createControl(parent);
-            }
-        }
-        
-        active = true;
-        resizeSashes();
     }
 
     /**
@@ -508,34 +570,21 @@ public abstract class PartSashContainer extends LayoutPart implements
      * @see LayoutPart#dispose
      */
     public void dispose() {
-        if (!active)
+        if (parent == null)
             return;
-
-        DragUtil.removeDragTarget(parent, this);
-        DragUtil.removeDragTarget(parent.getShell(), this);
-
-        // remove all Listeners
-        if (resizeListener != null && parent != null) {
-            parent.removeControlListener(resizeListener);
-        }
-
 
         if (children != null) {
             for (int i = 0, length = children.size(); i < length; i++) {
                 LayoutPart child = (LayoutPart) children.get(i);
-                child.setContainer(null);
+
                 // In PartSashContainer dispose really means deactivate, so we
                 // only dispose PartTabFolders.
-                if (child instanceof ViewStack)
+                if (child instanceof PartStack)
                     child.dispose();
             }
         }
-
         disposeParent();
-        disposeSashes();
         this.parent = null;
-
-        active = false;
     }
 
     /**

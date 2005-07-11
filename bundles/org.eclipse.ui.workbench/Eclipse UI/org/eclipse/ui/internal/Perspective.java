@@ -240,7 +240,7 @@ public class Perspective {
             return;
 
         presentation.deactivate();
-        presentation.disposeSashes();
+        presentation.dispose();
 
         fastViewPane.dispose();
         
@@ -639,7 +639,7 @@ public class Perspective {
 		
 		
         // Create layout factory.
-        ViewSashContainer container = new ViewSashContainer(page);
+        ViewSashContainer container = new ViewSashContainer(page, getClientComposite());
         PageLayout layout = new PageLayout(container, getViewFactory(),
                 editorArea, descriptor);
         layout.setFixed(descriptor.getFixed());
@@ -973,7 +973,7 @@ public class Perspective {
         }
 
         // Create an empty presentation..
-        ViewSashContainer mainLayout = new ViewSashContainer(page);
+        ViewSashContainer mainLayout = new ViewSashContainer(page, getClientComposite());
         PerspectiveHelper pres = new PerspectiveHelper(page, mainLayout, this);
 
         // Read the layout.

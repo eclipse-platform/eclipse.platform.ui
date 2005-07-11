@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.ViewPane;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -18,7 +20,7 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 
 public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
 
-    private ViewPane viewPane;
+    private PresentablePart viewPane;
 
     private IStackPresentationSite site;
 
@@ -28,32 +30,48 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
         update();
     }
 
-    public void setPane(ViewPane newPane) {
+    public void setPane(PresentablePart newPane) {
         viewPane = newPane;
         update();
     }
-
+    
     public void update() {
-        if (viewPane == null
-                || !site.isPartMoveable(viewPane.getPresentablePart())) {
+        IViewReference viewRef = getReference();
+        
+        if (viewRef == null
+                || !site.isPartMoveable(viewPane)) {
             setEnabled(false);
         } else {
             setEnabled(true);
-            setChecked(viewPane.getPage().getActivePerspective().isFastView(
-                    viewPane.getViewReference()));
+            
+            setChecked(viewPane.getPane().getPage().getActivePerspective().isFastView(
+                    viewRef));
         }
     }
 
+    private IViewReference getReference() {
+        IViewReference viewRef = null;
+        
+        if (viewPane != null) {
+            IWorkbenchPartReference ref = viewPane.getPane().getPartReference();
+            
+            if (ref instanceof IViewReference) {
+                viewRef = (IViewReference) ref;
+            }
+        }
+        return viewRef;
+    }
+
     public boolean shouldBeVisible() {
-        if (viewPane == null || viewPane.getPage() == null) {
+        if (viewPane == null || viewPane.getPane().getPage() == null) {
             return false;
         }
 
-        WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane.getPage()
+        WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane.getPane().getPage()
                 .getWorkbenchWindow();
 
         return workbenchWindow.getShowFastViewBars() && viewPane != null
-                && site.isPartMoveable(viewPane.getPresentablePart());
+                && site.isPartMoveable(viewPane);
     }
 
     public void dispose() {
@@ -61,10 +79,14 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
     }
 
     public void run() {
-        if (!isChecked()) {
-            viewPane.doMakeFast();
-        } else {
-            viewPane.doRemoveFast();
+        if (viewPane.getPane() instanceof ViewPane) {
+            ViewPane pane = (ViewPane) viewPane.getPane();
+            
+            if (!isChecked()) {
+                pane.doMakeFast();
+            } else {
+                pane.doRemoveFast();
+            }   
         }
     }
 }

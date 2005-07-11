@@ -16,8 +16,11 @@ import java.util.List;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.dnd.SwtUtil;
@@ -46,16 +49,39 @@ public class PresentablePart implements IPresentablePart {
 
     // Lazily initialized. Use getMenu() to access 
     private IPartMenu viewMenu;
-
+    
+    // True iff the "set" methods on this object are talking to the real part (disabled
+    // if the part is currently being managed by another presentation stack)
+    private boolean enableInputs = true;
+    
+    // True iff the "get" methods are returning up-to-date info from the real part (disabled
+    // for efficency if the presentation is invisible)
+    private boolean enableOutputs = true;
+    private Rectangle savedBounds = new Rectangle(0,0,0,0);
+    private Rectangle savedToolbarBounds = new Rectangle(0,0,0,0);
+    private boolean isVisible = false;
+    
+    // Saved state (only used when the part is inactive)
+    private String name = ""; //$NON-NLS-1$
+    private String titleStatus = ""; //$NON-NLS-1$
+    private boolean isDirty = false;
+    private boolean isBusy = false;
+    private boolean hasViewMenu = false;
+   
     /**
      * Constructor
      * 
      * @param part
      */
-    public PresentablePart(PartPane part) {
+    public PresentablePart(PartPane part, Composite parent) {
         this.part = part;
+        getPane().addPropertyListener(getPropertyListenerProxy());
     }
 
+    public PartPane getPane() {
+        return part;
+    }
+    
     private IPropertyListener getPropertyListenerProxy() {
         if (lazyPropertyListenerProxy == null) {
             lazyPropertyListenerProxy = new IPropertyListener() {
@@ -68,17 +94,13 @@ public class PresentablePart implements IPresentablePart {
         return lazyPropertyListenerProxy;
     }
 
-    private WorkbenchPartReference getPartReference() {
-        return (WorkbenchPartReference) part.getPartReference();
-    }
-
     /**
      * Detach this PresentablePart from the real part. No further methods should be invoked
      * on this object.
      */
     public void dispose() {
         // Ensure that the property listener is detached (necessary to prevent leaks)
-        getPartReference().removePropertyListener(getPropertyListenerProxy());
+        getPane().removePropertyListener(getPropertyListenerProxy());
 
         // Null out the various fields to ease garbage collection (optional)
         part = null;
@@ -88,33 +110,24 @@ public class PresentablePart implements IPresentablePart {
 
     public void firePropertyChange(int propertyId) {
         for (int i = 0; i < listeners.size(); i++) {
-            ((IPropertyListener) listeners.get(i)).propertyChanged(this,
-                    propertyId);
+            ((IPropertyListener) listeners.get(i)).propertyChanged(this, propertyId);
         }
     }
 
     public void addPropertyListener(final IPropertyListener listener) {
-        if (listeners.isEmpty()) {
-            getPartReference().addPropertyListener(getPropertyListenerProxy());
-        }
-
         listeners.add(listener);
     }
 
     public void removePropertyListener(final IPropertyListener listener) {
         listeners.remove(listener);
-
-        if (listeners.isEmpty()) {
-            getPartReference().removePropertyListener(
-                    getPropertyListenerProxy());
-        }
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.IPresentablePart#setBounds(org.eclipse.swt.graphics.Rectangle)
      */
     public void setBounds(Rectangle bounds) {
-        if (!SwtUtil.isDisposed(part.getControl())) {
+        savedBounds = bounds;
+        if (enableInputs && !SwtUtil.isDisposed(part.getControl())) {
             part.setBounds(bounds);
         }
     }
@@ -123,7 +136,10 @@ public class PresentablePart implements IPresentablePart {
      * @see org.eclipse.ui.presentations.IPresentablePart#setVisible(boolean)
      */
     public void setVisible(boolean isVisible) {
-        part.setVisible(isVisible);
+        this.isVisible = isVisible;
+        if (enableInputs) {
+            part.setVisible(isVisible);
+        }
     }
 
     /* (non-Javadoc)
@@ -139,11 +155,21 @@ public class PresentablePart implements IPresentablePart {
         }
     }
 
+    
+    private WorkbenchPartReference getPartReference() {
+        return (WorkbenchPartReference) part.getPartReference();
+    }
+
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.IPresentablePart#getName()
      */
     public String getName() {
-        return getPartReference().getPartName();
+        if (enableOutputs) {
+            return getPartReference().getPartName();
+        } else {
+            return name;
+        }
     }
 
     /* (non-Javadoc)
@@ -157,14 +183,27 @@ public class PresentablePart implements IPresentablePart {
      * @see org.eclipse.ui.presentations.IPresentablePart#getTitleStatus()
      */
     public String getTitleStatus() {
-        return getPartReference().getContentDescription();
+        if (enableOutputs) {
+            return getPartReference().getContentDescription();   
+        } else {
+            return titleStatus;
+        }
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.IPresentablePart#getTitleImage()
      */
     public Image getTitleImage() {
-        return getPartReference().getTitleImage();
+//        
+//        return PlatformUI.getWorkbench().getSharedImages().getImage(
+//                ISharedImages.IMG_DEF_VIEW); 
+//        
+        if (enableOutputs) {
+            return getPartReference().getTitleImage();
+        } else {
+            return PlatformUI.getWorkbench().getSharedImages().getImage(
+                    ISharedImages.IMG_DEF_VIEW);
+        }
     }
 
     /* (non-Javadoc)
@@ -178,28 +217,48 @@ public class PresentablePart implements IPresentablePart {
      * @see org.eclipse.ui.presentations.IPresentablePart#isDirty()
      */
     public boolean isDirty() {
-        return getPartReference().isDirty();
+        if (enableOutputs) {
+            return getPartReference().isDirty();
+        } else {
+            return isDirty;
+        }
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.IPresentablePart#isBusy()
      */
     public boolean isBusy() {
-        return part.isBusy();
+        if (enableOutputs) {
+            return part.isBusy();
+        } else {
+            return isBusy;
+        }
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.IPresentablePart#getToolBar()
      */
     public Control getToolBar() {
-        return part.getToolBar();
+        if (enableOutputs) {
+            return getPane().getToolBar();
+        } else {
+            return null;
+        }
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.IPresentablePart#getMenu()
      */
     public IPartMenu getMenu() {
-        if (!part.hasViewMenu()) {
+        boolean hasMenu;
+        
+        if (enableOutputs) {
+            hasMenu = part.hasViewMenu();
+        } else {
+            hasMenu = this.hasViewMenu;
+        }
+        
+        if (!hasMenu) {
             return null;
         }
 
@@ -226,6 +285,65 @@ public class PresentablePart implements IPresentablePart {
      */
     public Control getControl() {
         return part.getControl();
+    }
+
+    public void enableOutputs(boolean isActive) {
+        if (isActive == this.enableOutputs) {
+            return;
+        }
+        
+        this.enableOutputs = isActive;
+        
+        if (isActive) {
+            if (isBusy != getPane().isBusy()) {
+                firePropertyChange(PROP_BUSY);
+            }
+            if (isDirty != isDirty()) {
+                firePropertyChange(PROP_DIRTY);
+            }
+            if (!name.equals(getName())) {
+                firePropertyChange(PROP_PART_NAME);
+            }
+            if (!titleStatus.equals(getTitleStatus())) {
+                firePropertyChange(PROP_CONTENT_DESCRIPTION);
+            }
+            if (hasViewMenu != getPane().hasViewMenu()) {
+                firePropertyChange(PROP_PANE_MENU);
+            }
+            // Always assume that the toolbar and title has changed (keeping track of this for real
+            // would be too expensive)
+            firePropertyChange(PROP_TOOLBAR);
+            firePropertyChange(PROP_TITLE);
+            
+            getPane().addPropertyListener(getPropertyListenerProxy());
+        } else {
+            getPane().removePropertyListener(getPropertyListenerProxy());
+            
+            WorkbenchPartReference ref = getPartReference();
+            isBusy = getPane().isBusy();
+            isDirty = ref.isDirty();
+            name = ref.getPartName();
+            titleStatus = ref.getContentDescription();
+            hasViewMenu = getPane().hasViewMenu();
+            firePropertyChange(PROP_TITLE);
+            firePropertyChange(PROP_TOOLBAR);
+        }
+    }
+    
+    public void enableInputs(boolean isActive) {
+        if (isActive == this.enableInputs) {
+            return;
+        }
+        
+        this.enableInputs = isActive;
+        
+        if (isActive) {
+            if (isActive && !SwtUtil.isDisposed(part.getControl())) {
+                part.setBounds(savedBounds);
+            }
+            
+            part.setVisible(isVisible);
+        }
     }
 
 }

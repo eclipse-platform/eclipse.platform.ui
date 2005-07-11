@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -31,12 +32,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.dnd.SwtUtil;
-import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.part.MultiEditor;
-import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * Provides the common behavior for both views
@@ -49,15 +49,14 @@ import org.eclipse.ui.presentations.IPresentablePart;
  * LayoutPart and downcasting. The getPresentablePart() method only applies to PartPanes, and
  * should be removed from LayoutPart.
  */
-public abstract class PartPane extends LayoutPart implements Listener {
-
-    protected PresentablePart presentableAdapter = new PresentablePart(this);
+public abstract class PartPane extends LayoutPart implements IPropertyListener, Listener {
 
     public static final String PROP_ZOOMED = "zoomed"; //$NON-NLS-1$
 
     private boolean isZoomed = false;
 
     private MenuManager paneMenuManager;
+    private ListenerList listeners = new ListenerList();
 
     protected IWorkbenchPartReference partReference;
 
@@ -129,6 +128,7 @@ public abstract class PartPane extends LayoutPart implements Listener {
         if (getControl() != null)
             return;
 
+        partReference.addPropertyListener(this);
         // Create view form.	
         control = new Composite(parent, SWT.NONE);
         control.setLayout(new FillLayout());
@@ -136,7 +136,7 @@ public abstract class PartPane extends LayoutPart implements Listener {
         // by activation.  This allows us to have views appear in tabs without 
         // becoming active by default.
         control.setVisible(false);
-
+        control.moveAbove(null);
         // Create a title bar.
         createTitleBar();
 
@@ -168,6 +168,8 @@ public abstract class PartPane extends LayoutPart implements Listener {
             paneMenuManager.dispose();
             paneMenuManager = null;
         }
+        
+        partReference.removePropertyListener(this);
     }
 
     /**
@@ -526,13 +528,26 @@ public abstract class PartPane extends LayoutPart implements Listener {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.LayoutPart#getPresentablePart()
+    /**
+     * Writes a description of the layout to the given string buffer.
+     * This is used for drag-drop test suites to determine if two layouts are the
+     * same. Like a hash code, the description should compare as equal iff the
+     * layouts are the same. However, it should be user-readable in order to
+     * help debug failed tests. Although these are english readable strings,
+     * they do not need to be translated.
+     * 
+     * @param buf
      */
-    public IPresentablePart getPresentablePart() {
-        return presentableAdapter;
-    }
+    public void describeLayout(StringBuffer buf) {
 
+        IWorkbenchPartReference part = getPartReference();
+
+        if (part != null) {
+            buf.append(part.getPartName());
+            return;
+        }
+    }
+    
     /**
      * @return
      * @since 3.1
@@ -565,5 +580,23 @@ public abstract class PartPane extends LayoutPart implements Listener {
 	public void removeContributions() {
 
 	}
-    
+
+    public void addPropertyListener(IPropertyListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removePropertyListener(IPropertyListener listener) {
+        listeners.remove(listener);
+    }
+ 
+    public void firePropertyChange(int propertyId) {
+        Object listeners[] = this.listeners.getListeners();
+        for (int i = 0; i < listeners.length; i++) {
+            ((IPropertyListener) listeners[i]).propertyChanged(this, propertyId);
+        }
+    }
+
+    public void propertyChanged(Object source, int propId) {
+        firePropertyChange(propId);
+    }
 }

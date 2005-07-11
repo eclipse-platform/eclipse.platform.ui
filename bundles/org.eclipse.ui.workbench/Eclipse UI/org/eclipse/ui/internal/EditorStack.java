@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuPinEditor;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
@@ -113,8 +114,11 @@ public class EditorStack extends PartStack {
         }
     }
 
-    protected void updateActions(LayoutPart current) {
-        EditorPane pane = (EditorPane) current;
+    protected void updateActions(PresentablePart current) {
+        EditorPane pane = null;
+        if (current != null && current.getPane() instanceof EditorPane) {
+            pane = (EditorPane) current.getPane();
+        }
 
         sizeItem.setPane(pane);
         pinEditorItem.setPane(pane);

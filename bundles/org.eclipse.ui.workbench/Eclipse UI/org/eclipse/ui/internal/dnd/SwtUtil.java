@@ -41,6 +41,45 @@ public class SwtUtil {
     }
 
     /**
+     * Returns the control that is covering the given control, or null if none.
+     * 
+     * @param toTest control to test
+     * @return a control that obscures the test control or null if none
+     */
+    public static Control controlThatCovers(Control toTest) {
+        return controlThatCovers(toTest, DragUtil.getDisplayBounds(toTest));
+    }
+    
+    private static Control controlThatCovers(Control toTest, Rectangle testRegion) {
+        Composite parent = toTest.getParent();
+        
+        if (parent == null || toTest instanceof Shell) {
+            return null;
+        }
+       
+        Control[] children = parent.getChildren();
+        for (int i = 0; i < children.length; i++) {
+            Control control = children[i];
+            
+            if (control == toTest) {
+                break;
+            }
+            
+            if (!control.isVisible()) {
+                continue;
+            }
+            
+            Rectangle nextBounds = DragUtil.getDisplayBounds(control);
+            
+            if (nextBounds.intersects(testRegion)) {
+                return control;
+            }
+        }
+        
+        return controlThatCovers(parent, testRegion);
+    }
+    
+    /**
      * Determines if one control is a child of another. Returns true iff the second
      * argument is a child of the first (or the same object).
      * 

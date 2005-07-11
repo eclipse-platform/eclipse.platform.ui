@@ -13,6 +13,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuDetach;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
@@ -92,14 +93,14 @@ public class ViewStack extends PartStack {
         return !perspective.isFixedLayout();
     }
 
-    protected void updateActions(LayoutPart current) {
+    protected void updateActions(PresentablePart current) {
         ViewPane pane = null;
-
-        if (current instanceof ViewPane) {
-            pane = (ViewPane) current;
+        
+        if (current != null && current.getPane() instanceof ViewPane) {
+            pane = (ViewPane) current.getPane();
         }
 
-        fastViewAction.setPane(pane);
+        fastViewAction.setPane(current);
         detachViewAction.setPane(pane);
         sizeItem.setPane(pane);
     }

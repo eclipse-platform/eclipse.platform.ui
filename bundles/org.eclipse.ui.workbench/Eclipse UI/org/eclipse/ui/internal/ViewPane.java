@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -37,7 +36,7 @@ import org.eclipse.ui.presentations.StackPresentation;
  * 
  * TODO: Delete ViewPane and EditorPane, and make PartPane non-abstract.
  */
-public class ViewPane extends PartPane implements IPropertyListener {
+public class ViewPane extends PartPane {
     private boolean busy = false;
 
     // create initially toolbarless bar manager so that actions may be added in the 
@@ -83,8 +82,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
             boolean hasMenu = !isEmpty();
             if (hasMenu != hadViewMenu) {
                 hadViewMenu = hasMenu;
-                presentableAdapter
-                        .firePropertyChange(IPresentablePart.PROP_PANE_MENU);
+                firePropertyChange(IPresentablePart.PROP_PANE_MENU);
             }
         }
     }
@@ -146,7 +144,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
             toolbar.setVisible(visible);
         }
 
-        presentableAdapter.firePropertyChange(IPresentablePart.PROP_TOOLBAR);
+        firePropertyChange(IPresentablePart.PROP_TOOLBAR);
     }
 
     /**
@@ -157,19 +155,21 @@ public class ViewPane extends PartPane implements IPropertyListener {
         
         // ISV toolbar.
         //			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
-        ToolBar isvToolBar = isvToolBarMgr.createControl(parentControl.getParent());
-
-            isvToolBar.addMouseListener(new MouseAdapter() {
-                public void mouseDoubleClick(MouseEvent event) {
-                    if (event.widget instanceof ToolBar) {
-                    
-	                    if (((ToolBar)event.widget).getItem(new Point(event.x, event.y)) == null)
-	                        doZoom();
-                    }
+        final ToolBar isvToolBar = isvToolBarMgr.createControl(parentControl.getParent());
+        
+        isvToolBar.addMouseListener(new MouseAdapter() {
+            public void mouseDoubleClick(MouseEvent event) {
+                if (event.widget instanceof ToolBar) {
+                
+                    if (((ToolBar)event.widget).getItem(new Point(event.x, event.y)) == null)
+                        doZoom();
                 }
-            });
+            }
+        });
 
+        
         isvToolBar.addListener(SWT.Activate, this);
+        isvToolBar.moveAbove(control);
     }
 
     public void dispose() {
@@ -438,8 +438,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
      * Update the title attributes.
      */
     public void updateTitles() {
-        presentableAdapter.firePropertyChange(IPresentablePart.PROP_TITLE);
-
+        firePropertyChange(IPresentablePart.PROP_TITLE);
     }
 
     /* (non-Javadoc)
@@ -514,7 +513,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
         Control toolbar = internalGetToolbar();
         
         if (toolbar != null) {
-            toolbar.setVisible(makeVisible && toolbarIsVisible());
+            boolean visible = makeVisible && toolbarIsVisible();
+            toolbar.setVisible(visible);
         }
     }
 
@@ -541,7 +541,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
     public void setBusy(boolean isBusy) {
         if (isBusy != busy) {
             busy = isBusy;
-            presentableAdapter.firePropertyChange(IPresentablePart.PROP_BUSY);
+            firePropertyChange(IPresentablePart.PROP_BUSY);
         }
     }
 
@@ -557,8 +557,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
      * @see org.eclipse.ui.internal.PartPane#showHighlight()
      */
     public void showHighlight() {
-        presentableAdapter
-                .firePropertyChange(IPresentablePart.PROP_HIGHLIGHT_IF_BACK);
+        firePropertyChange(IPresentablePart.PROP_HIGHLIGHT_IF_BACK);
     }
 
     /* (non-Javadoc)

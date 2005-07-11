@@ -40,11 +40,9 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.part.services.NullActionBars;
 import org.eclipse.ui.internal.part.services.NullEditorInput;
-import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
-import org.eclipse.ui.presentations.IPresentablePart;
 
 public class EditorReference extends WorkbenchPartReference implements
         IEditorReference {
@@ -173,15 +171,7 @@ public class EditorReference extends WorkbenchPartReference implements
      * the new icon for this editor
      */
     public void pinStatusUpdated() {
-        PartPane partPane = getPane();
-        EditorPane editorPane = null;
-        if (partPane instanceof EditorPane) {
-            editorPane = (EditorPane) partPane;
-            IPresentablePart iPresPart = editorPane.getPresentablePart();
-            if (iPresPart instanceof PresentablePart)
-                ((PresentablePart) iPresPart)
-                        .firePropertyChange(IWorkbenchPart.PROP_TITLE);
-        }
+        firePropertyChange(IWorkbenchPart.PROP_TITLE);
     }
     
     public String getFactoryId() {

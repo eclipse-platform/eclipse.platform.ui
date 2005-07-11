@@ -38,6 +38,7 @@ import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.dnd.SwtUtil;
+import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.PresentationSerializer;
 import org.eclipse.ui.internal.util.Util;
@@ -58,7 +59,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public static final int PROP_SELECTION = 0x42;
     
     private List children = new ArrayList(3);
-
+    private boolean isActive = true;
+    private ArrayList presentableParts = new ArrayList();
+    
     protected int appearance = PresentationFactoryUtil.ROLE_VIEW;
     
     /**
@@ -86,7 +89,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * requestedCurrent. Once the presentation is displaying the correct part, the "current"
      * pointer on PartStack is updated.
      */
-    private LayoutPart presentationCurrent;
+    private PresentablePart presentationCurrent;
 
     private boolean ignoreSelectionChanges = false;
 
@@ -192,7 +195,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                 pane.setFocus();
             } else if (cookie != null) {
                 // Rearranging within this stack
-                stack.getPresentation().movePart(pane.getPresentablePart(), cookie);
+                stack.getPresentation().movePart(stack.getPresentablePart(pane), cookie);
             }
         }
 
@@ -287,11 +290,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * @return
      */
     protected IPresentablePart getSelectedPart() {
-        if (presentationCurrent == null) {
-            return null;
-        }
-        
-        return presentationCurrent.getPresentablePart();
+        return presentationCurrent;
     }
 
     protected IStackPresentationSite getPresentationSite() {
@@ -322,7 +321,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                     "PartStack can only contain PartPlaceholders or PartPanes"); //$NON-NLS-1$
 
             // Ensure that all the PartPanes have an associated presentable part 
-            IPresentablePart part = child.getPresentablePart();
+            IPresentablePart part = getPresentablePart(child);
             if (child instanceof PartPane) {
                 Assert.isNotNull(part,
                         "All PartPanes must have a non-null IPresentablePart"); //$NON-NLS-1$
@@ -447,7 +446,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      */
     protected void add(LayoutPart newChild, Object cookie) {
         children.add(newChild);
-
         showPart(newChild, cookie);
     }
 
@@ -526,6 +524,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                         presentationSite, serializer, savedPresentationState);
 
         createControl(parent, presentation);
+        getControl().moveBelow(null);
     }
 
     /* (non-Javadoc)
@@ -558,6 +557,23 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         return createDropTarget(pane, dropResult); 
     }
     
+    public void setActive(boolean isActive) {
+ 
+        this.isActive = isActive;
+        // Add all visible children to the presentation
+        Iterator iter = children.iterator();
+        while (iter.hasNext()) {
+            LayoutPart part = (LayoutPart) iter.next();
+            
+            part.setContainer(isActive ? this : null);
+        }
+        
+        for (Iterator iterator = presentableParts.iterator(); iterator.hasNext();) {
+            PresentablePart next = (PresentablePart) iterator.next();
+            
+            next.enableInputs(isActive);
+        }
+    }
     
     public void createControl(Composite parent, StackPresentation presentation) {
 
@@ -579,8 +595,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         Control ctrl = getPresentation().getControl();
 
         ctrl.setData(this);
-
-//        updateActions(presentationCurrent);
 
         // We should not have a placeholder selected once we've created the widgetry
         if (requestedCurrent instanceof PartPlaceholder) {
@@ -631,13 +645,13 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         savePresentationState();
 
         presentationSite.dispose();
-
-        Iterator iter = children.iterator();
-        while (iter.hasNext()) {
-            LayoutPart next = (LayoutPart) iter.next();
-
-            next.setContainer(null);
+        
+        for (Iterator iter = presentableParts.iterator(); iter.hasNext();) {
+            PresentablePart part = (PresentablePart) iter.next();
+            
+            part.dispose();
         }
+        presentableParts.clear();
         
         presentationCurrent = null;
         current = null;
@@ -698,20 +712,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * @return
      */
     protected LayoutPart getPaneFor(IPresentablePart part) {
-        if (part == null) {
+        if (part == null || !(part instanceof PresentablePart)) {
             return null;
         }
 
-        Iterator iter = children.iterator();
-        while (iter.hasNext()) {
-            LayoutPart next = (LayoutPart) iter.next();
-
-            if (next.getPresentablePart() == part) {
-                return next;
-            }
-        }
-
-        return null;
+        return ((PresentablePart)part).getPane();
     }
 
     /**
@@ -737,22 +742,21 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * @return
      */
     public List getPresentableParts() {
-        List result = new ArrayList(children.size());
-
-        Iterator iter = children.iterator();
-        while (iter.hasNext()) {
-            LayoutPart part = (LayoutPart) iter.next();
-
-            IPresentablePart presentablePart = part.getPresentablePart();
-
-            if (presentablePart != null) {
-                result.add(presentablePart);
-            }
-        }
-
-        return result;
+        return presentableParts;
     }
 
+    private PresentablePart getPresentablePart(LayoutPart pane) {
+        for (Iterator iter = presentableParts.iterator(); iter.hasNext();) {
+            PresentablePart part = (PresentablePart) iter.next();
+            
+            if (part.getPane() == pane) {
+                return part;
+            }
+        }
+        
+        return null;
+    }
+    
     protected StackPresentation getPresentation() {
         return presentationSite.getPresentation();
     }
@@ -794,7 +798,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * See IVisualContainer#remove
      */
     public void remove(LayoutPart child) {
-        IPresentablePart presentablePart = child.getPresentablePart();
+        PresentablePart presentablePart = getPresentablePart(child);
 
         // Need to remove it from the list of children before notifying the presentation
         // since it may setVisible(false) on the part, leading to a partHidden notification,
@@ -805,7 +809,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         if (presentablePart != null && presentation != null) {
             ignoreSelectionChanges = true;
+            presentableParts .remove(presentablePart);
             presentation.removePart(presentablePart);
+            presentablePart.dispose();
             ignoreSelectionChanges = false;
         }
 
@@ -948,12 +954,35 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * @see org.eclipse.ui.internal.LayoutPart#setVisible(boolean)
      */
     public void setVisible(boolean makeVisible) {
+        Control ctrl = getControl();
+        
+        if (!SwtUtil.isDisposed(ctrl)) {
+            if (makeVisible == ctrl.getVisible())
+                return;
+        }        
+        
+        if (makeVisible) {
+            for (Iterator iterator = presentableParts.iterator(); iterator.hasNext();) {
+                PresentablePart next = (PresentablePart) iterator.next();
+                
+                next.enableInputs(isActive);
+            }
+        }
+        
         super.setVisible(makeVisible);
         
         StackPresentation presentation = getPresentation();
         
         if (presentation != null) {
             presentation.setVisible(makeVisible);
+        }
+        
+        if (!makeVisible) {
+            for (Iterator iterator = presentableParts.iterator(); iterator.hasNext();) {
+                PresentablePart next = (PresentablePart) iterator.next();
+                
+                next.enableInputs(false);
+            }
         }
     }
     
@@ -974,10 +1003,14 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             IMemento childMem = memento
                     .createChild(IWorkbenchConstants.TAG_PAGE);
 
-            IPresentablePart part = next.getPresentablePart();
+            PartPane part = null;
+            if (next instanceof PartPane) {
+                part = (PartPane)next;
+            }
+
             String tabText = "LabelNotFound"; //$NON-NLS-1$ 
             if (part != null) {
-                tabText = part.getName();
+                tabText = part.getPartReference().getPartName();
             }
             childMem.putString(IWorkbenchConstants.TAG_LABEL, tabText);
             childMem.putString(IWorkbenchConstants.TAG_CONTENT, next
@@ -1055,7 +1088,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * Subclasses should override this method to update the enablement state of their
      * actions
      */
-    protected abstract void updateActions(LayoutPart current);
+    protected abstract void updateActions(PresentablePart current);
 
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.LayoutPart#handleDeferredEvents()
@@ -1081,26 +1114,22 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         StackPresentation presentation = getPresentation();
         if (presentation != null) {
         
-            presentationCurrent = requestedCurrent;
+            presentationCurrent = getPresentablePart(requestedCurrent);
             
             if (!isDisposed()) {
                 updateActions(presentationCurrent);
             }
             
-            if (presentationCurrent != null) {
-                IPresentablePart presentablePart = requestedCurrent.getPresentablePart();
-                    
-                if (presentablePart != null && presentation != null) {
-                    requestedCurrent.createControl(getParent());
-                    if (requestedCurrent.getControl().getParent() != getControl()
-                            .getParent()) {
-                        requestedCurrent.reparent(getControl().getParent());
-                    }
-    
-                    requestedCurrent.moveAbove(getPresentation().getControl());
-                    
-                    presentation.selectPart(presentationCurrent.getPresentablePart());                    
+            if (presentationCurrent != null && presentation != null) {
+                requestedCurrent.createControl(getParent());
+                if (requestedCurrent.getControl().getParent() != getControl()
+                        .getParent()) {
+                    requestedCurrent.reparent(getControl().getParent());
                 }
+
+                //requestedCurrent.moveAbove(getPresentation().getControl());
+                
+                presentation.selectPart(presentationCurrent);
             }
         
             // Update the return value of getVisiblePart
@@ -1238,18 +1267,19 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      */
     private void showPart(LayoutPart part, Object cookie) {
 
-        if (isDisposed()) {
+        if (isDisposed() || !(part instanceof PartPane)) {
             return;
         }
 
-        part.setContainer(this);
-
-        IPresentablePart presentablePart = part.getPresentablePart();
-
-        if (presentablePart == null) {
-            return;
+        PartPane pane = (PartPane)part;
+        
+        IPresentablePart presentablePart = new PresentablePart(pane, getControl().getParent());
+        presentableParts.add(presentablePart);
+        
+        if (isActive) {
+            part.setContainer(this);
         }
-
+        
         presentationSite.getPresentation().addPart(presentablePart, cookie);
 
         if (requestedCurrent == null) {
@@ -1326,7 +1356,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      */
     public Control[] getTabList(LayoutPart part) {
         if (part != null) {
-            IPresentablePart presentablePart = part.getPresentablePart();
+            IPresentablePart presentablePart = getPresentablePart(part);
             StackPresentation presentation = getPresentation();
 
             if (presentablePart != null && presentation != null) {
@@ -1343,33 +1373,43 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * @param initialLocation
      * @param keyboard
      */
-    public void dragStart(IPresentablePart beingDragged, Point initialLocation,
+    private void dragStart(IPresentablePart beingDragged, Point initialLocation,
             boolean keyboard) {
         if (beingDragged == null) {
-            if (canMoveFolder()) {
-                if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
-                    setState(IStackPresentationSite.STATE_RESTORED);
-                }
-
-                DragUtil.performDrag(PartStack.this, Geometry
-                        .toDisplay(getParent(), getPresentation().getControl()
-                                .getBounds()), initialLocation, !keyboard);
-            }
+            paneDragStart((LayoutPart)null, initialLocation, keyboard);
         } else {
             if (presentationSite.isPartMoveable(beingDragged)) {
                 LayoutPart pane = getPaneFor(beingDragged);
 
                 if (pane != null) {
-                    if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
-                        presentationSite
-                                .setState(IStackPresentationSite.STATE_RESTORED);
-                    }
-
-                    DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
-                            getPresentation().getControl().getBounds()),
-                            initialLocation, !keyboard);
+                    paneDragStart(pane, initialLocation, keyboard);
                 }
             }
+        }
+    }
+    
+    public void paneDragStart(LayoutPart pane, Point initialLocation,
+            boolean keyboard) {
+        if (pane == null) {
+            if (canMoveFolder()) {
+                if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+                    setState(IStackPresentationSite.STATE_RESTORED);
+                }
+    
+                DragUtil.performDrag(PartStack.this, Geometry
+                        .toDisplay(getParent(), getPresentation().getControl()
+                                .getBounds()), initialLocation, !keyboard);
+            }
+        } else {
+            
+            if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+                presentationSite
+                        .setState(IStackPresentationSite.STATE_RESTORED);
+            }
+    
+            DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
+                    getPresentation().getControl().getBounds()),
+                    initialLocation, !keyboard);
         }
     }
 

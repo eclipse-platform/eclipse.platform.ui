@@ -3009,7 +3009,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 WorkbenchPartReference ref = (WorkbenchPartReference)newRefs[i];
                 PartPane pane = ref.getPane();
                 if (pres.isPartVisible(ref)) {
-                    pane.setVisible(true);
                     activationList.bringToTop(ref);
                 }
 

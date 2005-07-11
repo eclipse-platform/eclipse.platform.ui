@@ -23,7 +23,6 @@ import org.eclipse.ui.ISizeProvider;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.dnd.SwtUtil;
-import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * A presentation part is used to build the presentation for the
@@ -223,7 +222,7 @@ abstract public class LayoutPart implements ISizeProvider {
 
         if (control.isReparentable()) {
             // make control small in case it is not resized with other controls
-            control.setBounds(0, 0, 0, 0);
+            //control.setBounds(0, 0, 0, 0);
             // By setting the control to disabled before moving it,
             // we ensure that the focus goes away from the control and its children
             // and moves somewhere else
@@ -231,6 +230,7 @@ abstract public class LayoutPart implements ISizeProvider {
             control.setEnabled(false);
             control.setParent(newParent);
             control.setEnabled(enabled);
+            control.moveAbove(null);
         }
     }
 
@@ -329,10 +329,6 @@ abstract public class LayoutPart implements ISizeProvider {
      */
     public LayoutPart getPart() {
         return this;
-    }
-
-    public IPresentablePart getPresentablePart() {
-        return null;
     }
 
     public void childRequestZoomIn(LayoutPart toZoom) {
@@ -449,12 +445,6 @@ abstract public class LayoutPart implements ISizeProvider {
      */
     public void describeLayout(StringBuffer buf) {
 
-        IPresentablePart part = getPresentablePart();
-
-        if (part != null) {
-            buf.append(part.getName());
-            return;
-        }
     }
 
     /**

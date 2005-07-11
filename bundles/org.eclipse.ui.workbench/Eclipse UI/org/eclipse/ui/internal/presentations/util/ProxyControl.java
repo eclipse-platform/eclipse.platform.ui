@@ -158,6 +158,9 @@ public class ProxyControl {
 			
 			protected Point computeSize (Composite composite, int wHint, int hHint, boolean flushCache) {
 				if (targetCache == null) {
+                    if (target != null) {
+                        return target.computeSize(wHint, hHint, flushCache);
+                    }
 				    // Note: If we returned (0,0), SWT would ignore the result and use a default value.
 					return new Point(1,1);
 				}
@@ -171,13 +174,18 @@ public class ProxyControl {
 		control.addListener(SWT.Show, visibilityListener);
 		control.addListener(SWT.Hide, visibilityListener);
 	}
+    
+    /**
+     * Sets the control whose position will be managed by this proxy
+     * 
+     * @param target the control, or null if none
+     */
+    public void setTargetControl(Control target) {
+        targetCache = null;
+        internalSetTargetControl(target);
+    }
 	
-	/**
-	 * Sets the control whose position will be managed by this proxy
-	 * 
-	 * @param target the control, or null if none
-	 */
-	public void setTargetControl(Control target) {
+	private void internalSetTargetControl(Control target) {
 		if (this.target != target) {
 
 		    if (this.target != null) {

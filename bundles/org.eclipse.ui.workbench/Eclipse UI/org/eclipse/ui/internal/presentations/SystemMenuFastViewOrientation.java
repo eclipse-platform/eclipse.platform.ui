@@ -14,11 +14,13 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.FastViewBar;
 import org.eclipse.ui.internal.IChangeListener;
 import org.eclipse.ui.internal.IntModel;
+import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.RadioMenu;
-import org.eclipse.ui.internal.ViewPane;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
@@ -27,11 +29,11 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  */
 public class SystemMenuFastViewOrientation extends ContributionItem {
 
-    private ViewPane viewPane;
+    private PartPane viewPane;
 
     private IntModel currentOrientation = new IntModel(SWT.VERTICAL);
 
-    public SystemMenuFastViewOrientation(ViewPane newViewPane) {
+    public SystemMenuFastViewOrientation(PartPane newViewPane) {
         this.viewPane = newViewPane;
 
         currentOrientation.addChangeListener(new IChangeListener() {
@@ -41,8 +43,12 @@ public class SystemMenuFastViewOrientation extends ContributionItem {
                             .getPage().getWorkbenchWindow();
                     FastViewBar bar = workbenchWindow.getFastViewBar();
                     if (bar != null && viewPane != null) {
-                        bar.setOrientation(viewPane.getViewReference(),
-                                currentOrientation.get());
+                        IWorkbenchPartReference ref = viewPane.getPartReference();
+                        
+                        if (ref instanceof IViewReference) {
+                            bar.setOrientation((IViewReference)ref,
+                                    currentOrientation.get());
+                        }
                     }
                 }
             }
@@ -56,26 +62,30 @@ public class SystemMenuFastViewOrientation extends ContributionItem {
     public void fill(Menu menu, int index) {
         WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane.getPage()
                 .getWorkbenchWindow();
+        
+        
         FastViewBar bar = workbenchWindow.getFastViewBar();
         if (bar != null && viewPane != null) {
-
-            currentOrientation.set(bar.getOrientation(viewPane
-                    .getViewReference()));
-            MenuItem orientationItem = new MenuItem(menu, SWT.CASCADE, index);
-            {
-                orientationItem.setText(WorkbenchMessages.FastViewBar_view_orientation);
-
-                Menu orientationSwtMenu = new Menu(orientationItem);
-                RadioMenu orientationMenu = new RadioMenu(orientationSwtMenu,
-                        currentOrientation);
-                orientationMenu
-                        .addMenuItem(
-                                WorkbenchMessages.FastViewBar_horizontal, new Integer(SWT.HORIZONTAL)); 
-                orientationMenu
-                        .addMenuItem(
-                                WorkbenchMessages.FastViewBar_vertical, new Integer(SWT.VERTICAL)); 
-
-                orientationItem.setMenu(orientationSwtMenu);
+            IWorkbenchPartReference ref = viewPane.getPartReference();
+            if (ref instanceof IViewReference) {
+                
+                currentOrientation.set(bar.getOrientation((IViewReference)ref));
+                MenuItem orientationItem = new MenuItem(menu, SWT.CASCADE, index);
+                {
+                    orientationItem.setText(WorkbenchMessages.FastViewBar_view_orientation);
+    
+                    Menu orientationSwtMenu = new Menu(orientationItem);
+                    RadioMenu orientationMenu = new RadioMenu(orientationSwtMenu,
+                            currentOrientation);
+                    orientationMenu
+                            .addMenuItem(
+                                    WorkbenchMessages.FastViewBar_horizontal, new Integer(SWT.HORIZONTAL)); 
+                    orientationMenu
+                            .addMenuItem(
+                                    WorkbenchMessages.FastViewBar_vertical, new Integer(SWT.VERTICAL)); 
+    
+                    orientationItem.setMenu(orientationSwtMenu);
+                }
             }
         }
     }

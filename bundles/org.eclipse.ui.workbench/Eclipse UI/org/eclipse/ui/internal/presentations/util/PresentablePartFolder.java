@@ -300,6 +300,7 @@ public final class PresentablePartFolder implements IPresentablePartList {
             setToolbar(null);
         }
     };
+    private boolean isVisible = true;
     
     
     private void childPropertyChanged(IPresentablePart part, int property) {
@@ -396,7 +397,19 @@ public final class PresentablePartFolder implements IPresentablePartList {
         return folder;
     }
     
+    public void setVisible(boolean isVisible) {
+        this.isVisible  = isVisible;
+        getTabFolder().getControl().setVisible(isVisible);
+        if (isVisible) {
+            layout(true);
+        }
+    }
+    
     public void layout(boolean changed) {
+        if (!isVisible) {
+            // Don't bother with layout if we're not visible
+            return;
+        }
         // Lay out the tab folder and compute the client area
         folder.layout(changed);
 

@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.internal.EditorStack;
 import org.eclipse.ui.internal.LayoutPart;
@@ -25,7 +26,6 @@ import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.TestDropLocation;
-import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * @since 3.0
@@ -46,8 +46,8 @@ public class DragOperations {
         PartPane pane = ((EditorSite) editor.getSite()).getPane();
         EditorStack parent = ((EditorStack) (pane.getContainer()));
 
-        IPresentablePart part = wholeFolder ? null : pane.getPresentablePart();
-        parent.dragStart(part, Display.getDefault().getCursorLocation(), false);
+        PartPane part = wholeFolder ? null : pane;
+        parent.paneDragStart(part, Display.getDefault().getCursorLocation(), false);
 
         DragUtil.forceDropLocation(null);
     }
@@ -60,15 +60,8 @@ public class DragOperations {
      */
     public static String getName(IEditorPart editor) {
         PartPane pane = ((EditorSite) editor.getSite()).getPane();
-        IPresentablePart part = pane.getPresentablePart();
-
-        String title = editor.getTitle();
-
-        if (part != null) {
-            title = part.getName();
-        }
-
-        return title;
+        IWorkbenchPartReference ref = pane.getPartReference();
+        return ref.getPartName();
     }
 
     public static PartPane getPane(IEditorPart editor) {

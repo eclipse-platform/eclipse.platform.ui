@@ -32,7 +32,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.ISizeProvider;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
 import org.eclipse.ui.internal.presentations.SystemMenuFastViewOrientation;
 import org.eclipse.ui.internal.presentations.SystemMenuSizeFastView;
@@ -55,10 +58,10 @@ import org.eclipse.ui.presentations.StackPresentation;
 public class FastViewPane {
     private int side = SWT.LEFT;
 
-    private ViewPane currentPane;
+    private PresentablePart currentPane;
 
     private Composite clientComposite;
-
+    
     private static final int SASH_SIZE = 3;
 
     private int minSize = 10;
@@ -72,7 +75,7 @@ public class FastViewPane {
         public void handleEvent(Event event) {
             if (event.character == SWT.ESC) {
                 if (currentPane != null) {
-                    currentPane.getPage().hideFastView();
+                    currentPane.getPane().getPage().hideFastView();
                 }
             }
         }
@@ -84,10 +87,11 @@ public class FastViewPane {
          */
         public void setState(int newState) {
             super.setState(newState);
-            ViewPane pane = currentPane;
+            PartPane pane = currentPane.getPane();
             switch (newState) {
             case IStackPresentationSite.STATE_MINIMIZED:
-                currentPane.getPage().hideFastView();
+                
+                pane.getPage().hideFastView();
                 break;
             case IStackPresentationSite.STATE_MAXIMIZED:
                 pane.setZoomed(true);
@@ -111,7 +115,10 @@ public class FastViewPane {
             if (!isCloseable(part)) {
                 return;
             }
-            currentPane.getPage().hideView(currentPane.getViewReference());
+            IWorkbenchPartReference ref = currentPane.getPane().getPartReference();
+            if (ref instanceof IViewReference) {
+                currentPane.getPane().getPage().hideView((IViewReference)currentPane);
+            }
         }
 
         public void close(IPresentablePart[] parts) {
@@ -135,14 +142,14 @@ public class FastViewPane {
             if (!isPartMoveable())
                 return;
 
-            ViewPane pane = currentPane;
+            PartPane pane = currentPane.getPane();
 
             Control control = getPresentation().getControl();
 
             Rectangle bounds = Geometry.toDisplay(clientComposite, control
                     .getBounds());
 
-            WorkbenchPage page = currentPane.getPage();
+            WorkbenchPage page = pane.getPage();
 
             Perspective persp = page.getActivePerspective();
 
@@ -155,15 +162,12 @@ public class FastViewPane {
         }
 
         public IPresentablePart getSelectedPart() {
-            if (currentPane == null) {
-                return null;
-            }
-            return currentPane.getPresentablePart();
+            return currentPane;
         }
 
         public void addSystemActions(IMenuManager menuManager) {
             appendToGroupIfPossible(menuManager,
-                    "misc", new SystemMenuFastViewOrientation(currentPane)); //$NON-NLS-1$
+                    "misc", new SystemMenuFastViewOrientation(currentPane.getPane())); //$NON-NLS-1$
             appendToGroupIfPossible(menuManager,
                     "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
             appendToGroupIfPossible(menuManager,
@@ -182,19 +186,25 @@ public class FastViewPane {
         private boolean isPartMoveable() {
             if (currentPane == null)
                 return false;
-            Perspective perspective = currentPane.getPage()
+            Perspective perspective = currentPane.getPane().getPage()
                     .getActivePerspective();
             if (perspective == null) {
                 // Shouldn't happen -- can't have a FastViewPane without a perspective
                 return false;
             }
-            return perspective.isMoveable(currentPane.getViewReference());
+            
+            IWorkbenchPartReference ref = currentPane.getPane().getPartReference();
+            
+            if (ref instanceof IViewReference) {
+                return perspective.isMoveable((IViewReference)ref);
+            }
+            return true;
         }
 
         public boolean supportsState(int newState) {
             if (currentPane == null)
                 return false;
-            if (currentPane.getPage().isFixedLayout())
+            if (currentPane.getPane().getPage().isFixedLayout())
                 return false;
             return true;
         }
@@ -377,8 +387,8 @@ public class FastViewPane {
             hideView();
         }
 
-        currentPane = pane;
-
+        currentPane = new PresentablePart(pane, newClientComposite);
+        
         fastViewAction.setPane(currentPane);
         clientComposite = newClientComposite;
 
@@ -403,8 +413,8 @@ public class FastViewPane {
 
         site.setPresentation(presentation);
         site.setPresentationState(IStackPresentationSite.STATE_RESTORED);
-        presentation.addPart(pane.getPresentablePart(), null);
-        presentation.selectPart(pane.getPresentablePart());
+        presentation.addPart(currentPane, null);
+        presentation.selectPart(currentPane);
         presentation.setActive(StackPresentation.AS_ACTIVE_FOCUS);
         presentation.setVisible(true);
 
@@ -430,7 +440,7 @@ public class FastViewPane {
         Rectangle clientArea = newClientComposite.getClientArea();
 
         getPresentation().getControl().moveAbove(null);
-        currentPane.moveAbove(null);
+        currentPane.getPane().moveAbove(null);
         sash.moveAbove(null);
 
         setSize((int) (Geometry.getDimension(clientArea, !horizontal) * sizeRatio));
@@ -521,7 +531,7 @@ public class FastViewPane {
 
         fastViewAction.setPane(null);
         //unzoom before hiding
-        currentPane.setZoomed(false);
+        currentPane.getPane().setZoomed(false);
 
         if (sash != null) {
             sash.dispose();
@@ -543,14 +553,19 @@ public class FastViewPane {
         //currentPane.setFastViewSash(null);
         ctrl.setEnabled(false); // Remove focus support.
 
+        currentPane.dispose();
         currentPane = null;
     }
 
     /**
      * @return Returns the currently visible fastview or null if none
      */
-    public ViewPane getCurrentPane() {
-        return currentPane;
+    public ViewPane getCurrentPane() { 
+        if (currentPane != null && currentPane.getPane() instanceof ViewPane) {
+            return (ViewPane)currentPane.getPane();
+        }
+        
+        return null;
     }
 
     public void setState(int newState) {

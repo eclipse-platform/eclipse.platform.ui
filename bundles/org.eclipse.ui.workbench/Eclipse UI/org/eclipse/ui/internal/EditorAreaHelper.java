@@ -36,9 +36,10 @@ public class EditorAreaHelper {
      */
     public EditorAreaHelper(WorkbenchPage page) {
         this.editorArea = new EditorSashContainer(IPageLayout.ID_EDITOR_AREA,
-                page);
+                page, page.getClientComposite());
 
         this.editorArea.createControl(page.getClientComposite());
+        this.editorArea.setActive(true);
     }
 
     /**
@@ -118,6 +119,7 @@ public class EditorAreaHelper {
      */
     public void dispose() {
         if (editorArea != null) {
+            editorArea.setActive(false);
             editorArea.dispose();
         }
     }

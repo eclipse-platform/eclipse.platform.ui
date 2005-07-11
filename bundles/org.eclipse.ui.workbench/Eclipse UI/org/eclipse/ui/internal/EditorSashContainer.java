@@ -45,8 +45,8 @@ public class EditorSashContainer extends PartSashContainer {
 
     private DropTarget dropTarget;
 
-    public EditorSashContainer(String editorId, WorkbenchPage page) {
-        super(editorId, page);
+    public EditorSashContainer(String editorId, WorkbenchPage page, Composite parent) {
+        super(editorId, page, parent);
 
         createDefaultWorkbook();
     }
@@ -110,11 +110,6 @@ public class EditorSashContainer extends PartSashContainer {
      */
     public void dispose() {
         // Free editor workbooks.
-        Iterator iter = editorWorkbooks.iterator();
-        while (iter.hasNext()) {
-            EditorStack wb = (EditorStack) iter.next();
-            wb.dispose();
-        }
         editorWorkbooks.clear();
 
         // Free rest.

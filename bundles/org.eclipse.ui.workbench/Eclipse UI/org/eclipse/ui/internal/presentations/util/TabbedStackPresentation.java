@@ -303,16 +303,12 @@ public final class TabbedStackPresentation extends StackPresentation {
      * @see org.eclipse.ui.presentations.StackPresentation#setVisible(boolean)
      */
     public void setVisible(boolean isVisible) {
-        folder.getTabFolder().getControl().setVisible(isVisible);
-
         IPresentablePart current = getSite().getSelectedPart();
         if (current != null) {
             current.setVisible(isVisible);
         }
 
-        if (isVisible) {
-            folder.layout(true);
-        }
+        folder.setVisible(isVisible);
     }
 
     /* (non-Javadoc)

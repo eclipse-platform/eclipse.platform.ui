@@ -19,7 +19,6 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.TestDropLocation;
-import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.views.IViewDescriptor;
 
 /**
@@ -83,9 +82,8 @@ public class ViewDragSource extends TestDragSource {
         DragUtil.forceDropLocation(target);
         ViewStack parent = ((ViewStack) (pane.getContainer()));
         
-        IPresentablePart presentablePart = wholeFolder ? null : pane
-                .getPresentablePart();
-        parent.dragStart(presentablePart, Display.getDefault()
+        PartPane presentablePart = wholeFolder ? null : pane;
+        parent.paneDragStart(presentablePart, Display.getDefault()
                 .getCursorLocation(), false);
 
         DragUtil.forceDropLocation(null);

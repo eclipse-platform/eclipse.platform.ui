@@ -228,6 +228,7 @@ public class PerspectiveHelper {
             part.reparent(parent);
         }
         mainLayout.createControl(parent);
+        mainLayout.setActive(true);
 
         // Open the detached windows.
         for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
@@ -569,8 +570,9 @@ public class PerspectiveHelper {
         }
         
         // Dispose main layout.
-        mainLayout.dispose();
 
+        mainLayout.setActive(false);
+        
         // Dispose the detached windows
         for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
             DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
@@ -578,6 +580,11 @@ public class PerspectiveHelper {
         }
         
         active = false;
+    }
+    
+    public void dispose() {
+        mainLayout.dispose();
+        mainLayout.disposeSashes();
     }
     
     /**
@@ -860,13 +867,6 @@ public class PerspectiveHelper {
      */
     private void disableAllDrag() {
         DragUtil.removeDragTarget(null, dragTarget);
-    }
-
-    /**
-     * Dispose all sashs used in this perspective.
-     */
-    public void disposeSashes() {
-        mainLayout.disposeSashes();
     }
 
     /**
