@@ -1187,19 +1187,17 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				Map.Entry entry= (Map.Entry)e.next();
 
 				Annotation a= (Annotation)entry.getKey();
-				if (a.isMarkedDeleted())
-					continue;
-
 				Decoration pp = (Decoration)entry.getValue();
-				if (pp.fPainter == fgNullDrawer)
+				if (a.isMarkedDeleted() || pp.fPainter == fgNullDrawer || pp.fPainter instanceof NullStrategy || skip(a)) {
+					e.remove();
 					continue;
-
-				if (skip(a))
-					continue;
+				}
 
 				maxLayer= Math.max(maxLayer, pp.fLayer + 1);	// dynamically update layer maximum
-				if (pp.fLayer != layer)	// wrong layer: skip annotation
+				if (pp.fLayer != layer)	// wrong layer: defer until later
 					continue;
+				
+				e.remove(); // handled - don't bother any longer in other layers
 
 				Position p= pp.fPosition;
 				if (p.overlapsWith(vOffset, vLength)) {
