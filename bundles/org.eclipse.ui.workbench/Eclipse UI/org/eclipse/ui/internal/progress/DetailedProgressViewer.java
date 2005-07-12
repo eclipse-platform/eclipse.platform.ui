@@ -3,8 +3,11 @@ package org.eclipse.ui.internal.progress;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -21,21 +24,39 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	Composite control;
 
+	private ScrolledComposite scrolled;
+
+	//A boolean to indicate whether or not kept jobs are displayed
+	private boolean showKept;
+
 	/**
 	 * Create a new instance of the receiver with a control that is a child of
 	 * parent with style style.
 	 * 
 	 * @param parent
 	 * @param style
+	 * @param canKeep a <code>boolean</code> to indicate if jobs that
+	 * have the property IProgressConstants#KEEP_PROPERTY or IProgressConstants#KEEP_ONE_PROPERTY
+	 * will be kept. 
 	 */
-	public DetailedProgressViewer(Composite parent, int style) {
-		control = new Composite(parent, style);
+	public DetailedProgressViewer(Composite parent, int style, boolean canKeep) {
+		scrolled = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | style);
+		int height = JFaceResources.getDefaultFont().getFontData()[0].getHeight();
+		scrolled.getVerticalBar().setIncrement(height * 2);
+		scrolled.setExpandHorizontal(true);
+		scrolled.setExpandVertical(true);
+
+		control = new Composite(scrolled, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		control.setLayout(layout);
 		control.setBackground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND));
+		
+		scrolled.setContent(control);
+		
+		showKept = canKeep;
 	}
 
 	/*
@@ -65,7 +86,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		}
 
 		// Update with the new elements to prevent flash
-		for (int i = 0; i < existingChildren.length; i++) {
+		for (int i = 0; i < existingChildren.length; i++){
 			((ProgressInfoItem) existingChildren[i]).remap(infos[i]);
 			((ProgressInfoItem) existingChildren[i]).setColor(i);
 		}
@@ -144,7 +165,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * @see org.eclipse.jface.viewers.Viewer#getControl()
 	 */
 	public Control getControl() {
-		return control;
+		return scrolled;
 	}
 
 	/*
@@ -175,6 +196,10 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		if (widget == null)
 			return;
 		((ProgressInfoItem) widget).refresh();
+		
+		Point size = control.computeSize(SWT.DEFAULT,SWT.DEFAULT);
+		control.setSize(size);
+		scrolled.setMinSize(size);
 	}
 
 	/*
@@ -257,6 +282,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		for (int i = infos.length; i < existingChildren.length; i++) {
 			existingChildren[i].dispose();
 		}
+		
 
 	}
 

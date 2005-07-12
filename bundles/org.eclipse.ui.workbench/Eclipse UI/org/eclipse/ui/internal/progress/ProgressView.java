@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
@@ -50,10 +51,11 @@ public class ProgressView extends ViewPart implements IViewPart {
      * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
     public void createPartControl(Composite parent) {
-        viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL
-                | SWT.V_SCROLL);
+        viewer = new DetailedProgressViewer(parent, SWT.MULTI ,true);
         viewer.setUseHashlookup(false);
         viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
+        
+        viewer.getControl().setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
        
         initContentProvider();
         createClearAllAction();

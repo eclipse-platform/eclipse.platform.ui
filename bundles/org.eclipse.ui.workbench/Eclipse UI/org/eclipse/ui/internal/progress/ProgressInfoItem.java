@@ -1,5 +1,6 @@
 package org.eclipse.ui.internal.progress;
 
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,6 +12,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.DeviceResourceException;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -29,6 +32,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.progress.IProgressConstants;
 
@@ -41,7 +45,11 @@ import org.eclipse.ui.progress.IProgressConstants;
  */
 class ProgressInfoItem extends Composite {
 
-	static String STOP_IMAGE_KEY = "org.eclipse.ui.internal.progress.PROGRESS_STOP_IMAGE_KEY"; //$NON-NLS-1$
+	static String STOP_IMAGE_KEY = "org.eclipse.ui.internal.progress.PROGRESS_STOP"; //$NON-NLS-1$
+
+	static String DEFAULT_JOB_KEY = "org.eclipse.ui.internal.progress.PROGRESS_DEFAULT"; //$NON-NLS-1$
+
+	static String DARK_COLOR_KEY = "org.eclipse.ui.internal.progress.PROGRESS_DARK_COLOR"; //$NON-NLS-1$
 
 	JobTreeElement info;
 
@@ -53,6 +61,10 @@ class ProgressInfoItem extends Composite {
 
 	private ProgressBar progressBar;
 
+	private Label jobImageLabel;
+
+	private Color darkColor;
+
 	static {
 		JFaceResources
 				.getImageRegistry()
@@ -61,6 +73,27 @@ class ProgressInfoItem extends Composite {
 						WorkbenchImages
 								.getWorkbenchImageDescriptor("elcl16/progress_stop.gif"));//$NON-NLS-1$
 
+		JFaceResources
+				.getImageRegistry()
+				.put(
+						DEFAULT_JOB_KEY,
+						WorkbenchImages
+								.getWorkbenchImageDescriptor("progress/progress_task.gif")); //$NON-NLS-1$
+
+		// Mac has different Gamma value
+		int shift = "carbon".equals(SWT.getPlatform()) ? -25 : -10;//$NON-NLS-1$ 
+
+		Color lightColor = PlatformUI.getWorkbench().getDisplay()
+				.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+
+		// Determine a dark color by shifting the list color
+		Color darkColor = new Color(PlatformUI.getWorkbench().getDisplay(),
+				Math.max(0, lightColor.getRed() + shift), Math.max(0,
+						lightColor.getGreen() + shift), Math.max(0, lightColor
+						.getBlue()
+						+ shift));
+		JFaceResources.getColorRegistry().put(DARK_COLOR_KEY,
+				darkColor.getRGB());
 	}
 
 	/**
@@ -75,9 +108,19 @@ class ProgressInfoItem extends Composite {
 			JobTreeElement progressInfo) {
 		super(parent, style);
 		info = progressInfo;
+		if(info.isJobInfo() && ((JobInfo)info).getJob().isSystem())
+			System.out.println("System!");
 		createChildren();
 		setData(info);
 		setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+		try {
+			darkColor = JFaceResources.getColorRegistry().getColorDescriptor(
+					DARK_COLOR_KEY).createColor(getDisplay());
+		} catch (DeviceResourceException e) {
+			// If a calculated color is not found use the system light shadow
+			darkColor = getDisplay().getSystemColor(
+					SWT.COLOR_WIDGET_LIGHT_SHADOW);
+		}
 
 	}
 
@@ -88,14 +131,21 @@ class ProgressInfoItem extends Composite {
 		FormLayout layout = new FormLayout();
 		setLayout(layout);
 
+		jobImageLabel = new Label(this, SWT.NONE);
+		jobImageLabel.setImage(getInfoImage());
+		FormData imageData = new FormData();
+		imageData.top = new FormAttachment(0);
+		imageData.left = new FormAttachment(IDialogConstants.HORIZONTAL_SPACING / 2);
+		jobImageLabel.setLayoutData(imageData);
+
 		progressLabel = new Label(this, SWT.NONE);
 		progressLabel.setFont(JFaceResources.getFontRegistry().getBold(
 				JFaceResources.DEFAULT_FONT));
 		progressLabel.setText(getMainTitle());
 		FormData progressData = new FormData();
 		progressData.top = new FormAttachment(0);
-		progressData.left = new FormAttachment(
-				IDialogConstants.HORIZONTAL_SPACING);
+		progressData.left = new FormAttachment(jobImageLabel,
+				IDialogConstants.HORIZONTAL_SPACING / 2);
 		progressData.right = new FormAttachment(100);
 		progressLabel.setLayoutData(progressData);
 
@@ -123,6 +173,40 @@ class ProgressInfoItem extends Composite {
 		});
 
 		refresh();
+	}
+
+	/**
+	 * Get the image for the info.
+	 * 
+	 * @return Image
+	 */
+	private Image getInfoImage() {
+
+		if (!info.isJobInfo())// Groups
+			return JFaceResources.getImage(DEFAULT_JOB_KEY);
+
+		JobInfo jobInfo = (JobInfo) info;
+
+		ImageDescriptor descriptor = null;
+		Object property = jobInfo.getJob().getProperty(
+				IProgressConstants.ICON_PROPERTY);
+
+		if (property instanceof ImageDescriptor) {
+			descriptor = (ImageDescriptor) property;
+		} else if (property instanceof URL) {
+			descriptor = ImageDescriptor.createFromURL((URL) property);
+		}
+
+		Image image = null;
+		if (descriptor == null)
+			image = ProgressManager.getInstance().getIconFor(jobInfo.getJob());
+		else {
+			image = JFaceResources.getResources().createImageWithDefault(
+					descriptor);
+		}
+		if (image == null)
+			image = JFaceResources.getImage(DEFAULT_JOB_KEY);
+		return image;
 	}
 
 	/**
@@ -268,7 +352,7 @@ class ProgressInfoItem extends Composite {
 								taskString, subTaskString);
 				}
 				if (taskString != null) {
-					setLinkText(infos[i].getJob(),taskString, taskCount);
+					setLinkText(infos[i].getJob(), taskString, taskCount);
 					taskCount++;
 				}
 			}
@@ -287,14 +371,15 @@ class ProgressInfoItem extends Composite {
 
 	/**
 	 * Return the job infos in the receiver.
+	 * 
 	 * @return JobInfo[]
 	 */
 	private JobInfo[] getJobInfos() {
-		if(info.isJobInfo())
-			return new JobInfo[] {(JobInfo) info};
+		if (info.isJobInfo())
+			return new JobInfo[] { (JobInfo) info };
 		Object[] children = info.getChildren();
 		JobInfo[] infos = new JobInfo[children.length];
-		System.arraycopy(children,0,infos,0,children.length);
+		System.arraycopy(children, 0, infos, 0, children.length);
 		return infos;
 	}
 
@@ -321,7 +406,7 @@ class ProgressInfoItem extends Composite {
 	}
 
 	void remap(JobTreeElement element) {
-		info =  element;
+		info = element;
 		setData(element);
 		refresh();
 
@@ -422,6 +507,7 @@ class ProgressInfoItem extends Composite {
 
 	/**
 	 * Set the color base on the index
+	 * 
 	 * @param i
 	 */
 	public void setColor(int i) {
@@ -429,9 +515,8 @@ class ProgressInfoItem extends Composite {
 			setAllBackgrounds(getDisplay().getSystemColor(
 					SWT.COLOR_LIST_BACKGROUND));
 		else
-			setAllBackgrounds(getDisplay().getSystemColor(
-					SWT.COLOR_WIDGET_LIGHT_SHADOW));
-	
+			setAllBackgrounds(darkColor);
+
 	}
 
 	/**
@@ -443,9 +528,10 @@ class ProgressInfoItem extends Composite {
 		setBackground(systemColor);
 		progressLabel.setBackground(systemColor);
 		stopButton.setBackground(systemColor);
-	
+		jobImageLabel.setBackground(systemColor);
+
 		Iterator taskEntryIterator = taskEntries.iterator();
-		while(taskEntryIterator.hasNext()){
+		while (taskEntryIterator.hasNext()) {
 			((Link) taskEntryIterator.next()).setBackground(systemColor);
 		}
 		if (progressBar != null)
