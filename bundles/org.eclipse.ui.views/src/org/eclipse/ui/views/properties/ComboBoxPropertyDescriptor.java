@@ -20,8 +20,12 @@ import org.eclipse.swt.widgets.Composite;
  * Descriptor for a property that has a value which should be edited
  * with a combo box cell editor.  This class provides a default 
  * <code>ILabelProvider</code> that will render the label of the given 
- * descriptor as the <code>String</code> found in the value array at the 
+ * descriptor as the <code>String</code> found in the labels array at the 
  * currently selected index.
+ * <p>
+ * The value of the property is a 0-based <code>Integer</code> index into
+ * the labels array. 
+ * </p>
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
@@ -36,9 +40,9 @@ import org.eclipse.swt.widgets.Composite;
 public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
 
     /**
-     * The list of possible values to display in the combo box
+     * The labels to display in the combo box
      */
-    private String[] values;
+    private String[] labels;
 
     /**
      * Creates an property descriptor with the given id, display name, and list
@@ -46,12 +50,12 @@ public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
      * 
      * @param id the id of the property
      * @param displayName the name to display for the property
-     * @param valuesArray the list of possible values to display in the combo box
+     * @param labelsArray the labels to display in the combo box
      */
     public ComboBoxPropertyDescriptor(Object id, String displayName,
-            String[] valuesArray) {
+            String[] labelsArray) {
         super(id, displayName);
-        values = valuesArray;
+        labels = labelsArray;
     }
 
     /**
@@ -63,7 +67,7 @@ public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
      * </p>
      */
     public CellEditor createPropertyEditor(Composite parent) {
-        CellEditor editor = new ComboBoxCellEditor(parent, values,
+        CellEditor editor = new ComboBoxCellEditor(parent, labels,
                 SWT.READ_ONLY);
         if (getValidator() != null)
             editor.setValidator(getValidator());
@@ -83,6 +87,6 @@ public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
         if (isLabelProviderSet())
             return super.getLabelProvider();
         else
-            return new ComboBoxLabelProvider(values);
+            return new ComboBoxLabelProvider(labels);
     }
 }
