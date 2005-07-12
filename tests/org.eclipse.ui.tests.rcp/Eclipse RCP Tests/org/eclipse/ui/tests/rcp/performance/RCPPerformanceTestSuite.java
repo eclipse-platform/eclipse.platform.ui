@@ -29,7 +29,7 @@ public class RCPPerformanceTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public RCPPerformanceTestSuite() {
-        addTest(new TestSuite(PlatformUIPerfTest.class));
-        addTest(new TestSuite(EmptyWorkbenchPerfTest.class));
+        addTestSuite(PlatformUIPerfTest.class);
+        addTestSuite(EmptyWorkbenchPerfTest.class);
     }
 }
