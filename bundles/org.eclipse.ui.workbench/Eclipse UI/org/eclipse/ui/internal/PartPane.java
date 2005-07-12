@@ -498,14 +498,6 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
     }
 
     /**
-     * Ensure that we are not in the zoomed before reparenting.
-     * TODO: I am certain this isn't correct but I'll be damned if I know what is.
-     */
-    public void reparent(Composite newParent) {
-        super.reparent(newParent);
-    }
-
-    /**
      * @return
      */
     public abstract Control getToolBar();

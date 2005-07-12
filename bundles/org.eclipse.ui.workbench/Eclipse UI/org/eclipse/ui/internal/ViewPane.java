@@ -487,6 +487,7 @@ public class ViewPane extends PartPane {
             ToolBar bar = isvToolBarMgr.getControl();
             if (bar != null) {
                 bar.setParent(newParent);
+                bar.moveAbove(control);
             }
         }
     }
