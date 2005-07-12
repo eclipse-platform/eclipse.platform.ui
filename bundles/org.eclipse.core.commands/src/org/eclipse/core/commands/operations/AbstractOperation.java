@@ -202,7 +202,9 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		IUndoContext[] contexts = getContexts();
 		for (int i = 0; i < contexts.length; i++) {
 			stringBuffer.append(contexts[i].toString());
-			stringBuffer.append(',');
+			if (i != contexts.length - 1) {
+				stringBuffer.append(',');
+			}
 		}
 		stringBuffer.append(')');
 		return stringBuffer.toString();
