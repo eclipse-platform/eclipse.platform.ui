@@ -182,6 +182,7 @@ public interface IContextService {
 	 * 
 	 * @return The collection of contexts (<code>Context</code>) that are
 	 *         defined; never <code>null</code>, but may be empty.
+	 * @since 3.2
 	 */
 	public Context[] getDefinedContexts();
 

@@ -75,6 +75,8 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
     
     /**
 	 * Factory ID for the new (and improved) keys preference page.
+	 * 
+	 * @since 3.2
 	 */
 	public static final String NEW_KEYS_PREFERENCE_PAGE = "newKeysPreferencePage"; //$NON-NLS-1$
 
