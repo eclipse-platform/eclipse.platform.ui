@@ -27,11 +27,11 @@ import org.eclipse.ui.views.IViewDescriptor;
  * 
  * @since 3.0
  */
-public class ViewTabDropTarget extends WorkbenchWindowDropTarget {
+public class ViewTitleDropTarget extends WorkbenchWindowDropTarget {
 
     String targetPart;
 
-    public ViewTabDropTarget(IWorkbenchWindowProvider provider, String part) {
+    public ViewTitleDropTarget(IWorkbenchWindowProvider provider, String part) {
         super(provider);
         targetPart = part;
     }
@@ -48,7 +48,7 @@ public class ViewTabDropTarget extends WorkbenchWindowDropTarget {
                 .find(targetPart);
         String title = desc.getLabel();
 
-        return title + " view tab area";
+        return title + " view title area";
     }
 
     /* (non-Javadoc)
@@ -58,7 +58,7 @@ public class ViewTabDropTarget extends WorkbenchWindowDropTarget {
         Rectangle bounds = DragOperations.getDisplayBounds(DragOperations
                 .getPane(getPart()));
 
-        return new Point(bounds.x + 8, bounds.y + 8);
+        return new Point( (bounds.x + bounds.width) - 8, bounds.y + 8);
     }
     
     public Shell getShell() {

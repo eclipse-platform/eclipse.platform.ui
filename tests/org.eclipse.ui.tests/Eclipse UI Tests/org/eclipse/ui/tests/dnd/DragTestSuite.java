@@ -88,6 +88,9 @@ public class DragTestSuite extends AutoTestSuite {
             
             addAllCombinations(source, getViewDropTargets(source));
             addAllCombinations(source, getCommonDropTargets(source));
+            
+            // Test dragging onto a detached window
+            addAllCombinationsDetached(source, getDetachedWindowDropTargets(source));
         }
       
         for (int i = 0; i < editorDragSources.length; i++) {
@@ -95,6 +98,9 @@ public class DragTestSuite extends AutoTestSuite {
             
             addAllCombinations(source, getEditorDropTargets(source));
             addAllCombinations(source, getCommonDropTargets(source));
+            
+            // Test dragging onto a detached window
+            addAllCombinationsDetached(source, getDetachedWindowDropTargets(source));
         }
     }
 
@@ -114,16 +120,14 @@ public class DragTestSuite extends AutoTestSuite {
     }
     
     private TestDropLocation[] getCommonDropTargets(IWorkbenchWindowProvider dragSource) {
-        
-        String resNav = IPageLayout.ID_RES_NAV;
-        String probView = IPageLayout.ID_PROBLEM_VIEW;
-        
-        return new TestDropLocation[] { 
+        TestDropLocation[] targets = { 
             // Test dragging to the edges of the workbench window
             new WindowDropTarget(dragSource, SWT.TOP),
             new WindowDropTarget(dragSource, SWT.BOTTOM),
             new WindowDropTarget(dragSource, SWT.LEFT), 
             new WindowDropTarget(dragSource, SWT.RIGHT) };
+        	
+		return targets;
     }
     
     /**
@@ -138,47 +142,58 @@ public class DragTestSuite extends AutoTestSuite {
         String resNav = IPageLayout.ID_RES_NAV;
         String probView = IPageLayout.ID_PROBLEM_VIEW;
         
-        
         TestDropLocation[] targets = new TestDropLocation[] {
-                // Editor area
-                new EditorAreaDropTarget(dragSource, SWT.LEFT),
-                new EditorAreaDropTarget(dragSource, SWT.RIGHT),
-                new EditorAreaDropTarget(dragSource, SWT.TOP),
-                new EditorAreaDropTarget(dragSource, SWT.BOTTOM),
+            // Editor area
+            new EditorAreaDropTarget(dragSource, SWT.LEFT),
+            new EditorAreaDropTarget(dragSource, SWT.RIGHT),
+            new EditorAreaDropTarget(dragSource, SWT.TOP),
+            new EditorAreaDropTarget(dragSource, SWT.BOTTOM),
 
-                // Resource navigator (a view that isn't in a stack)
-                new ViewDropTarget(dragSource, resNav, SWT.LEFT),
-                new ViewDropTarget(dragSource, resNav, SWT.RIGHT),
-                new ViewDropTarget(dragSource, resNav, SWT.BOTTOM),
-                new ViewDropTarget(dragSource, resNav, SWT.CENTER),
-                new ViewDropTarget(dragSource, resNav, SWT.TOP),
+            // Resource navigator (a view that isn't in a stack)
+            new ViewDropTarget(dragSource, resNav, SWT.LEFT),
+            new ViewDropTarget(dragSource, resNav, SWT.RIGHT),
+            new ViewDropTarget(dragSource, resNav, SWT.BOTTOM),
+            new ViewDropTarget(dragSource, resNav, SWT.CENTER),
+            new ViewDropTarget(dragSource, resNav, SWT.TOP),
 
-                // Problems view (a view that is in a stack)
-                // Omit the top from this test, since the meaning of dropping on the top border of 
-                // a stack may change in the near future
-                new ViewDropTarget(dragSource, probView, SWT.LEFT),
-                new ViewDropTarget(dragSource, probView, SWT.RIGHT),
-                new ViewDropTarget(dragSource, probView, SWT.BOTTOM),
-                new ViewDropTarget(dragSource, probView, SWT.CENTER),
-                new ViewDropTarget(dragSource, probView, SWT.TOP),
+            // Problems view (a view that is in a stack)
+            // Omit the top from this test, since the meaning of dropping on the top border of 
+            // a stack may change in the near future
+            new ViewDropTarget(dragSource, probView, SWT.LEFT),
+            new ViewDropTarget(dragSource, probView, SWT.RIGHT),
+            new ViewDropTarget(dragSource, probView, SWT.BOTTOM),
+            new ViewDropTarget(dragSource, probView, SWT.CENTER),
+            new ViewDropTarget(dragSource, probView, SWT.TOP),
 
-                // Fast view bar
-                new FastViewBarDropTarget(dragSource),
+            // Fast view bar
+            new FastViewBarDropTarget(dragSource),
 
-                // View tabs
-                new ViewTabDropTarget(dragSource, resNav), 
-                new ViewTabDropTarget(dragSource, probView) };
-        
-        // only add the detached targets on platforms that can handle it
-        if (isDetachingSupported) {
-        		TestDropLocation [] newTargets = new TestDropLocation[targets.length + 1];
-        		System.arraycopy(targets, 0, newTargets, 0, targets.length);
-        		newTargets[targets.length] = new DetachedDropTarget();
-        		targets = newTargets;
-        	}
+            // View tabs
+            new ViewTabDropTarget(dragSource, resNav), 
+            new ViewTabDropTarget(dragSource, probView),
+            new ViewTitleDropTarget(dragSource, probView),
+            };
         	
 		return targets;
-
+    }
+    
+    /**
+     * Return all drop targets that apply to detached windows, given the window being dragged from.
+     * 
+     * @param provider
+     * @return
+     * @since 3.1
+     */
+    private TestDropLocation[] getDetachedWindowDropTargets(IWorkbenchWindowProvider dragSource) {
+        TestDropLocation[] targets = new TestDropLocation[] {
+            // Editor area
+            new ViewDropTarget(dragSource, DragDropPerspectiveFactory.dropViewId1, SWT.CENTER),
+            new ViewDropTarget(dragSource, DragDropPerspectiveFactory.dropViewId3, SWT.CENTER),
+            new ViewTabDropTarget(dragSource, DragDropPerspectiveFactory.dropViewId1),
+            new DetachedDropTarget()
+        };
+        
+		return targets;
     }
 
     private TestDropLocation[] getEditorDropTargets(IWorkbenchWindowProvider originatingWindow) {
@@ -199,7 +214,10 @@ public class DragTestSuite extends AutoTestSuite {
                 new EditorDropTarget(originatingWindow, 0, SWT.LEFT),
                 new EditorDropTarget(originatingWindow, 0, SWT.RIGHT),
                 new EditorDropTarget(originatingWindow, 0, SWT.BOTTOM),
-                new EditorDropTarget(originatingWindow, 0, SWT.CENTER) };
+                new EditorDropTarget(originatingWindow, 0, SWT.CENTER),
+                new EditorTabDropTarget(originatingWindow, 0),
+                new EditorTitleDropTarget(originatingWindow, 0), 
+                };
     }
     
     private void addAllCombinations(TestDragSource dragSource,
@@ -210,104 +228,16 @@ public class DragTestSuite extends AutoTestSuite {
             addTest(newTest);
         }
     }
+    
+    private void addAllCombinationsDetached(TestDragSource dragSource,
+            TestDropLocation[] dropTargets) {
 
-//    public Map generateExpectedResults(IProgressMonitor mon) throws Exception {
-//        int count = testCount();
-//        mon.beginTask("Running tests", count);
-//        HashMap result = new HashMap(count * 3);
-//
-//        for (int idx = 0; idx < count; idx++) {
-//            DragTest next = (DragTest) testAt(idx);
-//            String name = next.getName();
-//
-//            mon.subTask(name);
-//            String testResult = next.performTest();
-//
-//            result.put(name, testResult);
-//            mon.worked(1);
-//
-//            if (mon.isCanceled()) {
-//                return result;
-//            }
-//        }
-//
-//        mon.done();
-//
-//        return result;
-//    }
-//
-//    public static void saveResults(String filename, Map toWrite)
-//            throws IOException {
-//        //toSave.createNewFile();
-//
-//        FileOutputStream output;
-//        output = new FileOutputStream(filename);
-//
-//        OutputStreamWriter writer = new OutputStreamWriter(output);
-//
-//        XMLMemento memento = XMLMemento.createWriteRoot("dragtests");
-//
-//        Iterator iter = toWrite.keySet().iterator();
-//        while (iter.hasNext()) {
-//            String next = (String) iter.next();
-//
-//            IMemento child = memento.createChild("test");
-//            child.putString("name", next);
-//            child.putString("result", (String) toWrite.get(next));
-//        }
-//
-//        memento.save(writer);
-//        output.close();
-//    }
-//
-//    /**
-//     * Loads and returns the set of expected test results from the file data/dragtests.xml
-//     * Returns a map where the test names are keys and the resulting layout are values.
-//     * 
-//     * @return the set of expected results from the drag tests
-//     * @throws Exception
-//     */
-//    public Map loadExpectedResults() {
-//        TestPlugin plugin = TestPlugin.getDefault();
-//        HashMap result = new HashMap();
-//
-//        URL fullPathString = plugin.getDescriptor().find(
-//                new Path("data/dragtests.xml"));
-//
-//        if (fullPathString != null) {
-//
-//            IPath path = new Path(fullPathString.getPath());
-//
-//            File theFile = path.toFile();
-//
-//            FileInputStream input;
-//            try {
-//                input = new FileInputStream(theFile);
-//            } catch (FileNotFoundException e) {
-//                return result;
-//            }
-//
-//            InputStreamReader reader = new InputStreamReader(input);
-//
-//            XMLMemento memento;
-//            try {
-//                memento = XMLMemento.createReadRoot(reader);
-//                IMemento[] children = memento.getChildren("test");
-//
-//                for (int idx = 0; idx < children.length; idx++) {
-//                    IMemento child = children[idx];
-//
-//                    String name = child.getString("name");
-//                    String testResult = child.getString("result");
-//
-//                    result.put(name, testResult);
-//                }
-//            } catch (WorkbenchException e1) {
-//                return result;
-//            }
-//
-//        }
-//
-//        return result;
-//    }
+    	if (isDetachingSupported) {
+	        for (int destId = 0; destId < dropTargets.length; destId++) {
+	            DragTest newTest = new DetachedWindowDragTest(dragSource, dropTargets[destId], getLog());
+	            addTest(newTest);
+	        }
+    	}
+    }
+
 }

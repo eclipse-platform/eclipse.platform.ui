@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.dnd;
 
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -51,5 +52,9 @@ public class ViewDropTarget extends WorkbenchWindowDropTarget {
     public Point getLocation() {
         return DragOperations.getLocation(DragOperations.getPane(getPart()),
                 side);
+    }
+    
+    public Shell getShell() {
+    	return getPart().getSite().getShell();
     }
 }

@@ -96,7 +96,8 @@ public class DragUtil {
 
     /**
      * Shorthand method. Returns the bounding rectangle for the given control, in
-     * display coordinates. 
+     * display coordinates. Note that all 'Shell' controls are expected to be 'top level'
+     * so DO NOT do the origin offset for them.
      * 
      * @param draggedItem
      * @param boundsControl
@@ -104,7 +105,7 @@ public class DragUtil {
      */
     public static Rectangle getDisplayBounds(Control boundsControl) {
         Control parent = boundsControl.getParent();
-        if (parent == null) {
+        if (parent == null || boundsControl instanceof Shell) {
             return boundsControl.getBounds();
         }
 

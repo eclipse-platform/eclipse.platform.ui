@@ -239,15 +239,19 @@ public class DetachedWindow implements IDragOverListener {
         if (sourcePart.getWorkbenchWindow() != page.getWorkbenchWindow()) {
             return null;
         }
-        
-        IDropTarget target = folder.getDropTarget(draggedObject, position);
-        
-        if (target == null) {
-	        Rectangle displayBounds = DragUtil.getDisplayBounds(folder.getControl());
-	        if (displayBounds.contains(position)) {
-	            target = folder.createDropTarget(sourcePart, new StackDropResult(displayBounds, null));
-	        } else {
-	            return null;
+    
+        // Only handle the event if the source part is acceptable to the particular PartStack
+        IDropTarget target = null;
+        if (folder.allowsDrop(sourcePart)) {
+	        target = folder.getDropTarget(draggedObject, position);
+	        
+	        if (target == null) {
+		        Rectangle displayBounds = DragUtil.getDisplayBounds(folder.getControl());
+		        if (displayBounds.contains(position)) {
+		            target = folder.createDropTarget(sourcePart, new StackDropResult(displayBounds, null));
+		        } else {
+		            return null;
+		        }
 	        }
         }
         

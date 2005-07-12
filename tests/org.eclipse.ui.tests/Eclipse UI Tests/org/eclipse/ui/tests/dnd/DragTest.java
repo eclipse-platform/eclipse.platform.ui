@@ -14,6 +14,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -148,12 +150,16 @@ public class DragTest extends UITestCaseWithResult {
 
     static WorkbenchPage page;
 
-    public DragTest(TestDragSource dragSource, TestDropLocation dropTarget, AbstractTestLogger log) {
-        super("drag " + dragSource.toString() + " to " + dropTarget.toString(), log);
+    public DragTest(TestDragSource dragSource, TestDropLocation dropTarget, AbstractTestLogger log, String suffix) {
+        super("drag " + dragSource.toString() + " to " + dropTarget.toString() + suffix, log);
         this.dragSource = dragSource;
         this.dropTarget = dropTarget;
     }
 
+    public DragTest(TestDragSource dragSource, TestDropLocation dropTarget, AbstractTestLogger log) {
+    	this(dragSource, dropTarget, log, "");
+    }
+    
     public void doSetUp() throws Exception {
         // don't allow UITestCase to manage the deactivation of our window
         manageWindows(false);
@@ -162,7 +168,7 @@ public class DragTest extends UITestCaseWithResult {
         //initialize the window
         if (window == null) {
             window = (WorkbenchWindow) fWorkbench.openWorkbenchWindow(
-                    "org.eclipse.ui.tests.dnd.dragdrop", getPageInput());
+            	"org.eclipse.ui.tests.dnd.dragdrop", getPageInput());
 
             page = (WorkbenchPage) window.getActivePage();
 
@@ -178,9 +184,10 @@ public class DragTest extends UITestCaseWithResult {
                     IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
                     false);
         }
-
+        
         page.resetPerspective();
         page.closeAllEditors(false);
+        
         //ensure that contentoutline is the focus part (and at the top of its stack)
         page.showView("org.eclipse.ui.views.ContentOutline");
         page.hideView(page.findView("org.eclipse.ui.internal.introview"));
@@ -198,12 +205,55 @@ public class DragTest extends UITestCaseWithResult {
                 .drag(editor3, new EditorAreaDropTarget(new ExistingWindowProvider(window), SWT.RIGHT), false);
     }
 
+    /**
+     * This method is useful in order to 'freeze' the test environment after a particular test in order to 
+     * manipulate the environment to figure out what's going on. It essentially opens a new shell and enters
+     * a modal loop on it, preventing the tests from continuing until the 'stall' shell is closed. Note that
+     * using a dialog would prevent us from manipulating the shell that the drag and drop tests are being performed in
+     */
+    public void stallTest() {
+    	// Add the explicit test names that you want to stall on here...
+    	// (It's probably easiest to cut them directly from the exected results file)
+    	String[] testNames = {
+    	};
+    	
+    	// Does the name match any of the explicit test names??
+    	boolean testNameMatches = false;
+    	for (int i = 0; i < testNames.length; i++) {
+    		if (testNames[i].equals(this.getName())) {
+    			testNameMatches = true;
+    			break;
+    		}
+    	}
+    	
+    	// Stall always if no explicit names are supplied. Otherwise only stall when there's a
+    	// match.
+    	if (testNames.length == 0 || testNameMatches) {
+	    	Display display = Display.getCurrent();
+	    	Shell loopShell = new Shell(display, SWT.SHELL_TRIM);
+	    	loopShell.setBounds(0,0,200,100);
+	    	loopShell.setText("Test Stall Shell");
+	    	loopShell.setVisible(true);
+	    	
+	    	while (loopShell != null && !loopShell.isDisposed()) {
+	    		if (!display.readAndDispatch())
+	    			display.sleep();
+	    	}
+    	}
+    }
+    
     public String performTest() throws Throwable {
-        dragSource.setPage(page);
+        // Uncomment the following line to 'stall' the tests here...
+        //stallTest();
+
+    	dragSource.setPage(page);
 
         dragSource.drag(dropTarget);
 
         page.testInvariants();
+        
+        // Uncomment the following line to 'stall' the tests here...
+        //stallTest();
         
         return DragOperations.getLayoutDescription(page);
     }

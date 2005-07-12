@@ -17,11 +17,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.EditorSite;
-import org.eclipse.ui.internal.EditorStack;
 import org.eclipse.ui.internal.LayoutPart;
 import org.eclipse.ui.internal.PartPane;
+import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.PartStack;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -33,21 +35,25 @@ import org.eclipse.ui.internal.dnd.TestDropLocation;
 public class DragOperations {
 
     /**
-     * Drags the given editor to the given location
+     * Drags the given view OR editor to the given location (i.e. it only cares that we're given
+     * a 'Part' and doesn't care whether it's a 'View' or an 'Editor'.
+     * <p>
+     * This method should eventually replace the original one once the Workbench has been updated
+     * to handle Views and Editors without distincton. 
      * 
      * @param editor
      * @param target
      * @param wholeFolder
      */
-    public static void drag(IEditorPart editor, TestDropLocation target,
+    public static void drag(IWorkbenchPart part, TestDropLocation target,
             boolean wholeFolder) {
         DragUtil.forceDropLocation(target);
 
-        PartPane pane = ((EditorSite) editor.getSite()).getPane();
-        EditorStack parent = ((EditorStack) (pane.getContainer()));
+        PartSite site = (PartSite) part.getSite();
+        PartPane pane = site.getPane();
+        PartStack parent = ((PartStack) (pane.getContainer()));
 
-        PartPane part = wholeFolder ? null : pane;
-        parent.paneDragStart(part, Display.getDefault().getCursorLocation(), false);
+        parent.paneDragStart(wholeFolder ? null : pane, Display.getDefault().getCursorLocation(), false);
 
         DragUtil.forceDropLocation(null);
     }

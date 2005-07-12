@@ -11,22 +11,20 @@
 package org.eclipse.ui.tests.dnd;
 
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 
 /**
  * @since 3.0
  */
-public class EditorDropTarget extends WorkbenchWindowDropTarget {
+public class EditorTitleDropTarget extends WorkbenchWindowDropTarget {
 
     int editorIdx;
 
-    int side;
-
-    public EditorDropTarget(IWorkbenchWindowProvider provider, int editorIdx, int side) {
+    public EditorTitleDropTarget(IWorkbenchWindowProvider provider, int editorIdx) {
         super(provider);
         this.editorIdx = editorIdx;
-        this.side = side;
     }
 
     IEditorPart getPart() {
@@ -37,18 +35,20 @@ public class EditorDropTarget extends WorkbenchWindowDropTarget {
      * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
      */
     public String toString() {
-        return DragOperations.nameForConstant(side) + " of editor " + editorIdx;
+        return "editor " + editorIdx + " title area";
+    }
+    
+    public Shell getShell() {
+    	return getPart().getSite().getShell();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
      */
     public Point getLocation() {
-        return DragOperations.getLocation(DragOperations.getPane(getPart()),
-                side);
-    }
-    
-    public Shell getShell() {
-    	return getPart().getSite().getShell();
+        Rectangle bounds = DragOperations.getDisplayBounds(DragOperations
+                .getPane(getPart()));
+
+        return new Point( (bounds.x + bounds.width) - 8, bounds.y + 8);
     }
 }
