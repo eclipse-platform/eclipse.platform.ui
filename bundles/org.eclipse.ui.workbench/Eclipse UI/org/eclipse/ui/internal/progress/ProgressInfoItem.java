@@ -108,8 +108,6 @@ class ProgressInfoItem extends Composite {
 			JobTreeElement progressInfo) {
 		super(parent, style);
 		info = progressInfo;
-		if(info.isJobInfo() && ((JobInfo)info).getJob().isSystem())
-			System.out.println("System!");
 		createChildren();
 		setData(info);
 		setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
