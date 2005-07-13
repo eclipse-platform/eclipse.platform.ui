@@ -203,6 +203,10 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
             CVSCoreFileModificationValidator ui = (CVSCoreFileModificationValidator) override;
             return ui.validateEditRule(factory, resources);
         }
+        return internalValidateEditRule(factory, resources);
+    }
+
+    protected final ISchedulingRule internalValidateEditRule(CVSResourceRuleFactory factory, IResource[] resources) {
         if (resources.length == 0)
             return null;
         //optimize rule for single file

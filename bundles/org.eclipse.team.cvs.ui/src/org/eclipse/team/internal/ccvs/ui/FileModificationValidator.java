@@ -289,6 +289,6 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
             }
             return createSchedulingRule(projects);
         }
-        return super.validateEditRule(factory, resources);
+        return internalValidateEditRule(factory, resources);
     }
 }
