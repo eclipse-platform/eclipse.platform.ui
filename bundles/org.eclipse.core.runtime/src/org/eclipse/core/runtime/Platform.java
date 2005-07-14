@@ -494,7 +494,7 @@ public final class Platform {
 	 * a locally accessible URL using "file:" protocol
 	 * (extracting/caching the file locally, if required). If the specified URL
 	 * is a plug-in-relative URL of a directory, the directory and any files and directories
-	 * under it are made locally accessible likewise. If 
+	 * under it are made locally accessible likewise. 
 	 *
 	 * @param url original plug-in-relative URL.
 	 * @return the resolved URL
