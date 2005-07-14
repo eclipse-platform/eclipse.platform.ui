@@ -185,6 +185,9 @@ public final class ContentTypeCatalog {
 			IContentDescriber describer = current.getDescriber();
 			int status = IContentDescriber.INDETERMINATE;
 			if (describer != null) {
+				if (contents.isText() && !(describer instanceof ITextContentDescriber))
+					// for text streams we skip content types that do not provide text-based content describers
+					continue;
 				status = current.describe(describer, contents, null);
 				if (status == IContentDescriber.INVALID)
 					continue;

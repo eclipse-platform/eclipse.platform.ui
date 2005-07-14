@@ -155,11 +155,8 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	}
 
 	int describe(IContentDescriber selectedDescriber, ILazySource contents, ContentDescription description) throws IOException {
-		final boolean isText = contents.isText();
-		if (isText && !(selectedDescriber instanceof ITextContentDescriber))
-			throw new UnsupportedOperationException();
 		try {
-			return isText ? ((ITextContentDescriber) selectedDescriber).describe((Reader) contents, description) : selectedDescriber.describe((InputStream) contents, description);
+			return contents.isText() ? ((ITextContentDescriber) selectedDescriber).describe((Reader) contents, description) : selectedDescriber.describe((InputStream) contents, description);
 		} catch (RuntimeException re) {
 			// describer seems to be buggy. just disable it (logging the reason)
 			invalidateDescriber(re);
@@ -444,6 +441,9 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		// no describer - return default description
 		if (tmpDescriber == null)
 			return defaultDescription;
+		if (buffer.isText() && !(tmpDescriber instanceof ITextContentDescriber))
+			// it is an error to provide a Reader to a non-text content type
+			throw new UnsupportedOperationException();
 		ContentDescription description = new ContentDescription(options, this);
 		if (describe(tmpDescriber, buffer, description) == IContentDescriber.INVALID)
 			// the contents were actually invalid for the content type
