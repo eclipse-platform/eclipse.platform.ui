@@ -114,7 +114,7 @@ public class SetModel extends AbstractConcurrentModel {
         for (int i = 0; i < toRemove.length; i++) {
             Object object = toRemove[i];
             
-            data.add(object);
+            data.remove(object);
         }        
         
         fireRemove(toRemove);
