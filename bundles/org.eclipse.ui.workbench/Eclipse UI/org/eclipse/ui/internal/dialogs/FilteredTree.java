@@ -28,6 +28,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -207,6 +209,30 @@ public class FilteredTree extends Composite {
 	protected void createFilterControl(Composite parent) {
 		filterText =  new Text(parent, SWT.SINGLE | SWT.BORDER);
 		filterText.getAccessible().addAccessibleListener(getAccessibleListener());
+	    getFilterControl().addKeyListener(getKeyListener());
+
+	}
+
+	/**
+	 * Get the key listener used for the receiver.
+	 * @return KeyListener
+	 */
+	protected KeyAdapter getKeyListener() {
+		return new KeyAdapter() {
+	    		
+	            /*
+	             * (non-Javadoc)
+	             * 
+	             * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
+	             */
+	            public void keyReleased(KeyEvent e) {
+	            	// on a CR we want to transfer focus to the list
+	            	if(e.keyCode == SWT.ARROW_DOWN)
+	                    treeViewer.getTree().setFocus();
+	            	else
+	            		textChanged();
+	            }
+	        };
 	}
 
 	protected AccessibleAdapter getAccessibleListener() {
