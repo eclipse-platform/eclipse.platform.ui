@@ -38,6 +38,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.operations.TimeTriggeredProgressMonitorDialog;
+import org.eclipse.ui.part.MultiPageEditorSite;
 
 /**
  * <p>
@@ -56,9 +57,9 @@ import org.eclipse.ui.internal.operations.TimeTriggeredProgressMonitorDialog;
  * <p>
  * OperationHistoryActionHandler assumes a linear undo/redo model. When the
  * handler is run, the operation history is asked to perform the most recent
- * undo/redo for the handler's undo context. The handler can be configured (using
- * #setPruneHistory(true)) to flush the operation undo or redo history for the
- * handler's undo context when there is no valid operation on top of the
+ * undo/redo for the handler's undo context. The handler can be configured
+ * (using #setPruneHistory(true)) to flush the operation undo or redo history
+ * for the handler's undo context when there is no valid operation on top of the
  * history. This avoids keeping a stale history of invalid operations. By
  * default, pruning does not occur and it is assumed that clients of the
  * particular undo context are pruning the history when necessary.
@@ -89,6 +90,12 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		 */
 		public void partClosed(IWorkbenchPart part) {
 			if (part.equals(site.getPart())) {
+				dispose();
+			// Special case for MultiPageEditorSite
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=103379
+			} else if ((site instanceof MultiPageEditorSite)
+					&& (part.equals(((MultiPageEditorSite) site)
+							.getMultiPageEditor()))) {
 				dispose();
 			}
 		}
@@ -194,6 +201,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	public void dispose() {
 		getHistory().removeOperationHistoryListener(historyListener);
 		site.getPage().removePartListener(partListener);
+		site = null;
 		progressDialog = null;
 		// we do not do anything to the history for our context because it may
 		// be used elsewhere.
