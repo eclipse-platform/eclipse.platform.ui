@@ -201,12 +201,46 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
     }
 
     /**
-     * Sets the input to this editor.
+     * Sets the input to this editor.  
+     * 
+     * <p>Unlike most of the other set methods on this class, this method does 
+     * not fire a property change. Clients that call this method from a subclass 
+     * must ensure that they fire an IWorkbenchPartConstants.PROP_INPUT property 
+     * change after calling this method but before leaving whatever public method
+     * they are in. Clients that expose this method as public API must fire
+     * the property change within their implementation of setInput.</p>
+     * 
+     * <p>Note that firing a property change may cause listeners to immediately 
+     * reach back and call methods on this editor. Care should be taken not to 
+     * fire the property change until the editor has fully updated its internal 
+     * state to reflect the new input.</p>
+     * 
+     * @deprecated use setInputWithNotify
      *
      * @param input the editor input
      */
     protected void setInput(IEditorInput input) {
         editorInput = input;
+    }
+    
+    /**
+     * Sets the input to this editor and fires a PROP_INPUT property change if
+     * the input has changed.
+     * 
+     * <p>Note that firing a property change may cause other objects to reach back
+     * and invoke methods on the editor. Care should be taken not to call this method
+     * until the editor has fully updated its internal state to reflect the
+     * new input.</p>
+     * 
+     * @since 3.2
+     *
+     * @param input the editor input
+     */
+    protected void setInputWithNotify(IEditorInput input) {
+        if (input != editorInput) {
+            editorInput = input;
+            firePropertyChange(PROP_INPUT);
+        }
     }
 
     /* (non-Javadoc)
