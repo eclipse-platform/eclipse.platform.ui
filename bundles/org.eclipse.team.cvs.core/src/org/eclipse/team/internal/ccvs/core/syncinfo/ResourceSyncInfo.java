@@ -53,7 +53,11 @@ public class ResourceSyncInfo {
 	// noted by prefixing the revision with this character.
 	private static final String DELETED_PREFIX = "-"; //$NON-NLS-1$
 	private static final byte DELETED_PREFIX_BYTE = '-';
-	
+
+	// revision can be locked in repository using "cvs admin -l<rev>" command
+	// entry looks like [M revision 1.2.2.3	locked by: igorf;]
+	private static final String LOCKEDBY_SUFFIX = "\tlocked by"; //$NON-NLS-1$
+
 	// a sync element with a revision of '0' is considered a new file that has
 	// not been comitted to the repo. Is visible so that clients can create sync infos
 	// for new files.
@@ -808,9 +812,13 @@ public class ResourceSyncInfo {
 		if(revision.startsWith(DELETED_PREFIX)) {
 			revision = revision.substring(DELETED_PREFIX.length());
 		}
+		int lockedIdx = revision.indexOf(LOCKEDBY_SUFFIX);
+		if (lockedIdx >= 0) {
+			revision = revision.substring(0, lockedIdx);
+		}
 		return revision;
 	}
-	
+
 	/**
 	 * Method setRevision.
 	 * @param syncBytes
