@@ -781,7 +781,10 @@ public abstract class CellEditor {
 
     /**
      * Sets or clears the current error message for this cell editor.
-     * 
+     * <p>
+     * No formatting is done here, the message to be set is expected to be fully formatted
+     * before being passed in.
+     * </p>
      * @param message the error message, or <code>null</code> to clear
      */
     protected void setErrorMessage(String message) {
