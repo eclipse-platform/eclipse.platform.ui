@@ -67,6 +67,7 @@ public class HistoryView extends ViewPart {
 	
 	private OpenLogEntryAction openAction;
 	private IAction toggleTextAction;
+	private IAction toggleTextWrapAction;
 	private IAction toggleListAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
@@ -317,7 +318,18 @@ public class HistoryView extends ViewPart {
 		};
 		toggleTextAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMMENTS));
         PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);	
-		// Toggle list visible action
+
+        // Toggle wrap comments action
+        toggleTextWrapAction = new Action(CVSUIMessages.HistoryView_wrapComment) { //$NON-NLS-1$
+          public void run() {
+            setViewerVisibility();
+            store.setValue(ICVSUIConstants.PREF_WRAP_COMMENTS, toggleTextWrapAction.isChecked());
+          }
+        };
+        toggleTextWrapAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_WRAP_COMMENTS));
+        //PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextWrapAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);   
+		
+        // Toggle list visible action
 		toggleListAction = new Action(CVSUIMessages.HistoryView_showTags) { //$NON-NLS-1$
 			public void run() {
 				setViewerVisibility();
@@ -342,6 +354,8 @@ public class HistoryView extends ViewPart {
 		// Contribute toggle text visible to the toolbar drop-down
 		IActionBars actionBars = getViewSite().getActionBars();
 		IMenuManager actionBarsMenu = actionBars.getMenuManager();
+		actionBarsMenu.add(toggleTextWrapAction);
+		actionBarsMenu.add(new Separator());
 		actionBarsMenu.add(toggleTextAction);
 		actionBarsMenu.add(toggleListAction);
 
@@ -388,6 +402,9 @@ public class HistoryView extends ViewPart {
 		} else {
 			sashForm.setMaximizedControl(tableViewer.getControl());
 		}
+        
+		boolean wrapText = toggleTextWrapAction.isChecked();
+        textViewer.getTextWidget().setWordWrap(wrapText);
 	}
 	/*
 	 * Method declared on IWorkbenchPart

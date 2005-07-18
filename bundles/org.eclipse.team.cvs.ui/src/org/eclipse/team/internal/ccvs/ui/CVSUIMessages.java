@@ -366,6 +366,7 @@ public class CVSUIMessages extends NLS {
 	public static String HistoryView_linkWithLabel;
 	public static String HistoryView_selectAll;
 	public static String HistoryView_showComment;
+	public static String HistoryView_wrapComment;
 	public static String HistoryView_showTags;
 	public static String HistoryView_overwriteTitle;
 	public static String HistoryView_overwriteMsg;

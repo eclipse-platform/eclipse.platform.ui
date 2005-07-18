@@ -64,6 +64,7 @@ public interface ICVSUIConstants {
 	
 	// preferences
 	public final String PREF_SHOW_COMMENTS = "pref_show_comments"; //$NON-NLS-1$
+	public final String PREF_WRAP_COMMENTS = "pref_wrap_comments"; //$NON-NLS-1$
 	public final String PREF_SHOW_TAGS = "pref_show_tags"; //$NON-NLS-1$
 	public final String PREF_HISTORY_VIEW_EDITOR_LINKING = "pref_history_view_linking"; //$NON-NLS-1$
 	public final String PREF_PRUNE_EMPTY_DIRECTORIES = "pref_prune_empty_directories";	 //$NON-NLS-1$
