@@ -43,6 +43,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	final static byte ASSOCIATED_BY_EXTENSION = 2;
 	final static byte ASSOCIATED_BY_NAME = 1;
 	private static final String DESCRIBER_ELEMENT = "describer"; //$NON-NLS-1$
+	private static ArrayList EMPTY_LIST = new ArrayList(0);
 	private static final Object INHERITED_DESCRIBER = "INHERITED DESCRIBER"; //$NON-NLS-1$
 
 	private static final Object NO_DESCRIBER = "NO DESCRIBER"; //$NON-NLS-1$
@@ -66,7 +67,8 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	private DefaultDescription defaultDescription;
 	private Map defaultProperties;
 	private Object describer;
-	private List fileSpecs;
+	// we need a Cloneable list
+	private ArrayList fileSpecs = EMPTY_LIST;
 	String id;
 	private ContentTypeManager manager;
 	private String name;
@@ -311,7 +313,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	 * @see IContentType
 	 */
 	public String[] getFileSpecs(int typeMask) {
-		if (fileSpecs == null)
+		if (fileSpecs.isEmpty())
 			return new String[0];
 		// invert the last two bits so it is easier to compare
 		typeMask ^= (IGNORE_PRE_DEFINED | IGNORE_USER_DEFINED);
@@ -383,7 +385,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	 * @return true if this file spec has already been added, false otherwise
 	 */
 	boolean hasFileSpec(String text, int typeMask, boolean strict) {
-		if (fileSpecs == null)
+		if (fileSpecs.isEmpty())
 			return false;
 		for (Iterator i = fileSpecs.iterator(); i.hasNext();) {
 			FileSpec spec = (FileSpec) i.next();
@@ -403,12 +405,20 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	boolean internalAddFileSpec(String fileSpec, int typeMask) {
 		if (hasFileSpec(fileSpec, typeMask, false))
 			return false;
-		if (fileSpecs == null)
-			fileSpecs = new ArrayList(3);
 		FileSpec newFileSpec = createFileSpec(fileSpec, typeMask);
-		fileSpecs.add(newFileSpec);
-		if ((typeMask & ContentType.SPEC_USER_DEFINED) != 0)
-			catalog.associate(this, newFileSpec.getText(), newFileSpec.getType());
+		if ((typeMask & ContentType.SPEC_USER_DEFINED) == 0) {
+			// plug-in defined - all that is left to be done is to add it to the list
+			if (fileSpecs.isEmpty())
+				fileSpecs = new ArrayList(3);
+			fileSpecs.add(newFileSpec);
+			return true;
+		}
+		// update file specs atomically so threads traversing the list of file specs don't have to synchronize		
+		ArrayList tmpFileSpecs = (ArrayList) fileSpecs.clone();
+		tmpFileSpecs.add(newFileSpec);
+		catalog.associate(this, newFileSpec.getText(), newFileSpec.getType());
+		// set the new file specs atomically 
+		fileSpecs = tmpFileSpecs;
 		return true;
 	}
 
@@ -469,13 +479,17 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	}
 
 	boolean internalRemoveFileSpec(String fileSpec, int typeMask) {
-		if (fileSpecs == null)
+		if (fileSpecs.isEmpty())
 			return false;
-		for (Iterator i = fileSpecs.iterator(); i.hasNext();) {
+		// we modify the list of file specs atomically so we don't interfere with threads doing traversals
+		ArrayList tmpFileSpecs = (ArrayList) fileSpecs.clone();
+		for (Iterator i = tmpFileSpecs.iterator(); i.hasNext();) {
 			FileSpec spec = (FileSpec) i.next();
 			if ((spec.getType() == typeMask) && fileSpec.equals(spec.getText())) {
 				i.remove();
 				catalog.dissociate(this, spec.getText(), spec.getType());
+				// update the list of file specs
+				fileSpecs = tmpFileSpecs;
 				return true;
 			}
 		}
