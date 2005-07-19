@@ -649,7 +649,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
         descriptor = newDescriptor;
     }
 
-    /*
+    /**
      * Set the error text.  This should be set to null when
      * the current value is valid, otherwise it should be
      * set to a error string
