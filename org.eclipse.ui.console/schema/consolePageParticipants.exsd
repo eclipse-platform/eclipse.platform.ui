@@ -83,7 +83,7 @@
          The following is an example of a console page participant extension point: 
 &lt;pre&gt;
    &lt;extension
-         point=&quot;org.eclipse.ui.console.consolePageParticipant&quot;&gt;
+         point=&quot;org.eclipse.ui.console.consolePageParticipants&quot;&gt;
       &lt;consolePageParticipant
             class=&quot;com.example.ExamplePageParticipant&quot;
             id=&quot;com.example.ExamplePageParticipant&quot;&gt;
@@ -102,7 +102,7 @@ In the above example, the contributed console page participant will be used for 
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.ui.console.IConsolePageParticipantDelegate&lt;/b&gt;.
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.ui.console.IConsolePageParticipant&lt;/b&gt;.
       </documentation>
    </annotation>
 
