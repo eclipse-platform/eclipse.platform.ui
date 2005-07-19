@@ -33,7 +33,7 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 		if (source instanceof ILaunchConfiguration) {
 			ILaunchConfiguration config = (ILaunchConfiguration)source;
 			if (DebugUITools.isPrivate(config)) {
-				return new Boolean(true);
+				return Boolean.TRUE;
 			}
 		}
 		
@@ -45,7 +45,7 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		if (pref != null) {
 			if (pref.equals(MessageDialogWithToggle.ALWAYS)) {
-				return new Boolean(true);
+				return Boolean.TRUE;
 			}
 		}
 
@@ -57,8 +57,8 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 		
 		int returnValue = dialog.getReturnCode();
 		if (returnValue == IDialogConstants.OK_ID) {
-			return new Boolean(true);
+			return Boolean.TRUE;
 		}
-		return new Boolean(false);
+		return Boolean.FALSE;
 	}
 }

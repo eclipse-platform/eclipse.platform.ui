@@ -33,7 +33,7 @@ public class WorkingDirectoryStatusHandler implements IStatusHandler {
 				result[0]= (MessageDialog.openQuestion(DebugUIPlugin.getShell(), title, message));
 			}
 		});
-		return new Boolean(result[0]);
+		return Boolean.valueOf(result[0]);
 	}
 
 }

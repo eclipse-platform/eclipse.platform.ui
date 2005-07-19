@@ -395,7 +395,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			Document doc = LaunchManager.getDocument();
 			Element node = doc.createElement("launchConfiguration"); //$NON-NLS-1$
 			doc.appendChild(node);
-			node.setAttribute("local", (new Boolean(isLocal())).toString()); //$NON-NLS-1$
+			node.setAttribute("local", (Boolean.valueOf(isLocal())).toString()); //$NON-NLS-1$
 			node.setAttribute("path", relativePath.toString()); //$NON-NLS-1$
 			return LaunchManager.serializeDocument(doc);
 		} catch (IOException ioe) {

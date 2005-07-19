@@ -433,7 +433,7 @@ public class LaunchConfigurationInfo {
 	protected void setBooleanAttribute(Element element) throws CoreException {
 		String key = getKeyAttribute(element);
 		String value = getValueAttribute(element);
-		setAttribute(key, new Boolean(value));
+		setAttribute(key, Boolean.valueOf(value));
 	}
 	
 	protected void setListAttribute(Element element) throws CoreException {

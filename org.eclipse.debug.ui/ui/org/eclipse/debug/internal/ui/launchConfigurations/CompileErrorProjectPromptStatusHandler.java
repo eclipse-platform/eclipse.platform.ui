@@ -47,7 +47,7 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 				if (arg instanceof ILaunchConfiguration) {
 					config = (ILaunchConfiguration) arg;
 					if (DebugUITools.isPrivate(config)) {
-						return new Boolean(true);
+						return Boolean.TRUE;
 					}
 				} else if (arg instanceof IProject) {
 					projects.add(arg);
@@ -70,7 +70,7 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		if (pref != null) {
 			if (pref.equals(MessageDialogWithToggle.ALWAYS)) {
-				return new Boolean(true);
+				return Boolean.TRUE;
 			}
 		}
 
@@ -82,8 +82,8 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 		
 		int returnValue = dialog.getReturnCode();
 		if (returnValue == IDialogConstants.YES_ID) {
-			return new Boolean(true);
+			return Boolean.TRUE;
 		}
-		return new Boolean(false);
+		return Boolean.FALSE;
 	}
 }

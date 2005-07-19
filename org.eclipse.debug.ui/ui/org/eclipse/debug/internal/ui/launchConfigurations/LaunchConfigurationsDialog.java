@@ -1217,7 +1217,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private void saveEnableStateAndSet(Control w, Map h, String key, boolean enabled) {
 		if (w != null) {
-			h.put(key, new Boolean(w.isEnabled()));
+			h.put(key, Boolean.valueOf(w.isEnabled()));
 			w.setEnabled(enabled);
 		}
 	}

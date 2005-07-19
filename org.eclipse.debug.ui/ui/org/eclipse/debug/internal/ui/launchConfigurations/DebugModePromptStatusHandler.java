@@ -33,7 +33,7 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 		if (source instanceof ILaunchConfiguration) {
 			ILaunchConfiguration config = (ILaunchConfiguration)source;
 			if (DebugUITools.isPrivate(config)) {
-				return new Boolean(false);
+				return Boolean.FALSE;
 			}	
 		}
 		
@@ -42,10 +42,10 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
         String pref = store.getString(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); 
         if (pref != null) {
             if (pref.equals(MessageDialogWithToggle.NEVER)) {
-                return new Boolean(false);
+                return Boolean.FALSE;
             } else if (pref.equals(MessageDialogWithToggle.ALWAYS)) { 
                 relaunchInDebugMode(configuration);
-                return new Boolean(true);
+                return Boolean.TRUE;
             }
         }
         
@@ -57,11 +57,11 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 		int buttonId = dialog.getReturnCode();
 		if (buttonId == IDialogConstants.YES_ID) { 
 			relaunchInDebugMode(configuration);
-			return new Boolean(true); // stops launch
+			return Boolean.TRUE; // stops launch
 		} else if (buttonId == IDialogConstants.NO_ID) {
-			return new Boolean(false); // continue launch
+			return Boolean.FALSE; // continue launch
 		} else { //CANCEL 
-			return new Boolean(true); // stops the launch
+			return Boolean.TRUE; // stops the launch
 		}
 	}
 	/**

@@ -344,7 +344,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @see ILaunchConfigurationWorkingCopy#setAttribute(String, boolean)
 	 */
 	public void setAttribute(String attributeName, boolean value) {
-		getInfo().setAttribute(attributeName, new Boolean(value));
+		getInfo().setAttribute(attributeName, Boolean.valueOf(value));
 		setDirty();	
 	}
 
