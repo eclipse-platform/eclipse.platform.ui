@@ -246,7 +246,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 						};
 					}
 
-					if (runnable != null && (IResourceDelta.CONTENT & delta.getFlags()) != 0 && !isSynchronized) {
+					if (runnable == null && (IResourceDelta.CONTENT & delta.getFlags()) != 0 && !isSynchronized) {
 						runnable= new SafeChange(fFileEditorInput) {
 							protected void execute(IFileEditorInput input) throws Exception {
 								handleElementContentChanged(input);
