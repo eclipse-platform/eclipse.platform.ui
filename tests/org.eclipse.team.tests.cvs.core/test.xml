@@ -52,14 +52,14 @@
               value="${eclipse-home}/cvs_performance_folder"/>
     <delete dir="${cvs-performance-folder}" quiet="true"/>
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.loopCount=5  -Declipse.cvs.recordProtocolTraffic=false"/>
+      <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.loopCount=20  -Declipse.cvs.recordProtocolTraffic=false"/>
       <property name="data-dir" value="${cvs-performance-folder}"/>
       <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
       <property name="classname" 
                 value="org.eclipse.team.tests.ccvs.ui.benchmark.SyncTests"/>
     </ant>
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.loopCount=5  -Declipse.cvs.recordProtocolTraffic=false"/>
+      <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.loopCount=20  -Declipse.cvs.recordProtocolTraffic=false"/>
       <property name="data-dir" value="${cvs-performance-folder}"/>
       <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
       <property name="classname" 
