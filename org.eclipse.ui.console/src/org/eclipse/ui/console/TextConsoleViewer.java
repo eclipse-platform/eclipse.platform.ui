@@ -27,7 +27,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -59,7 +59,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * </p>
  * @since 3.1
  */
-public class TextConsoleViewer extends TextViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener {
+public class TextConsoleViewer extends SourceViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener {
     /**
      * Adapts document to the text widget.
      */
@@ -103,7 +103,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      * @param console text console
      */
     public TextConsoleViewer(Composite parent, TextConsole console) {
-        super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+        super(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
         this.console = console;
         
         IDocument document = console.getDocument();
