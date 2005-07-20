@@ -267,12 +267,12 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
         if (viewer != null) {
 			try {
                 viewer.add(configuration.getType(), configuration);
-                viewer.setSelection(new StructuredSelection(configuration));
                 // if moved, remove original now
                 ILaunchConfiguration from = getLaunchManager().getMovedFrom(configuration);
                 if (from != null) {
                     viewer.remove(from);
                 }
+                viewer.setSelection(new StructuredSelection(configuration));
 			} catch (CoreException e) {
 			}
             
