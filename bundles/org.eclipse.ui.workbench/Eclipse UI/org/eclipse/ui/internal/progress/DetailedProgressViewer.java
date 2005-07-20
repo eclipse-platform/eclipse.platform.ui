@@ -26,22 +26,18 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	private ScrolledComposite scrolled;
 
-	//A boolean to indicate whether or not kept jobs are displayed
-	private boolean showKept;
-
 	/**
 	 * Create a new instance of the receiver with a control that is a child of
 	 * parent with style style.
 	 * 
 	 * @param parent
 	 * @param style
-	 * @param canKeep a <code>boolean</code> to indicate if jobs that
-	 * have the property IProgressConstants#KEEP_PROPERTY or IProgressConstants#KEEP_ONE_PROPERTY
-	 * will be kept. 
 	 */
-	public DetailedProgressViewer(Composite parent, int style, boolean canKeep) {
-		scrolled = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | style);
-		int height = JFaceResources.getDefaultFont().getFontData()[0].getHeight();
+	public DetailedProgressViewer(Composite parent, int style) {
+		scrolled = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL
+				| style);
+		int height = JFaceResources.getDefaultFont().getFontData()[0]
+				.getHeight();
 		scrolled.getVerticalBar().setIncrement(height * 2);
 		scrolled.setExpandHorizontal(true);
 		scrolled.setExpandVertical(true);
@@ -53,10 +49,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		control.setLayout(layout);
 		control.setBackground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND));
-		
+
 		scrolled.setContent(control);
-		
-		showKept = canKeep;
+
 	}
 
 	/*
@@ -86,7 +81,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		}
 
 		// Update with the new elements to prevent flash
-		for (int i = 0; i < existingChildren.length; i++){
+		for (int i = 0; i < existingChildren.length; i++) {
 			((ProgressInfoItem) existingChildren[i]).remap(infos[i]);
 			((ProgressInfoItem) existingChildren[i]).setColor(i);
 		}
@@ -196,8 +191,8 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		if (widget == null)
 			return;
 		((ProgressInfoItem) widget).refresh();
-		
-		Point size = control.computeSize(SWT.DEFAULT,SWT.DEFAULT);
+
+		Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		control.setSize(size);
 		scrolled.setMinSize(size);
 	}
@@ -210,10 +205,21 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	public void remove(Object[] elements) {
 
 		for (int i = 0; i < elements.length; i++) {
-			Widget item = doFindItem(elements[i]);
-			if (item != null) {
-				unmapElement(elements[i]);
-				item.dispose();
+
+			// Make sure we are not keeping this one
+			if (((JobTreeElement) elements[i]).isJobInfo()
+					&& FinishedJobs.getInstance().isFinished(
+							(JobInfo) elements[i])) {
+				Widget item = doFindItem(elements[i]);
+				if (item != null)
+					((ProgressInfoItem) item).refresh();
+
+			} else {
+				Widget item = doFindItem(elements[i]);
+				if (item != null) {
+					unmapElement(elements[i]);
+					item.dispose();
+				}
 			}
 		}
 
@@ -282,7 +288,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		for (int i = infos.length; i < existingChildren.length; i++) {
 			existingChildren[i].dispose();
 		}
-		
 
 	}
 

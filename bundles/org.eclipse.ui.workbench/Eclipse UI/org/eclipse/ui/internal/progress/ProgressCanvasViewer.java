@@ -246,4 +246,5 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 		
 	}
 
+
 }
