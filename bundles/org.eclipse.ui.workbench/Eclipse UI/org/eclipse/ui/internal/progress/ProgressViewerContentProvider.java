@@ -14,16 +14,22 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.internal.progress.FinishedJobs.KeptJobsListener;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * The ProgressViewerContentProvider is the content provider progress viewers.
  */
 public class ProgressViewerContentProvider extends ProgressContentProvider {
 	protected AbstractProgressViewer progressViewer;
-	private KeptJobsListener keptJobListener;
-	private Set keptJobs = new HashSet();
 
+	private KeptJobsListener keptJobListener;
+
+	private Set keptJobs = new HashSet();
 
 	/**
 	 * Create a new instance of the receiver.
@@ -40,39 +46,65 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 			boolean noDebug, boolean showFinished) {
 		super(noDebug);
 		progressViewer = structured;
-		if(showFinished)
+		if (showFinished)
 			FinishedJobs.getInstance().addListener(getKeptJobListener());
 	}
 
-
 	/**
 	 * Return a listener for kept jobs.
+	 * 
 	 * @return KeptJobsListener
 	 */
 	private KeptJobsListener getKeptJobListener() {
-		keptJobListener = new KeptJobsListener(){
+		keptJobListener = new KeptJobsListener() {
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.internal.progress.FinishedJobs.KeptJobsListener#finished(org.eclipse.ui.internal.progress.JobTreeElement)
 			 */
 			public void finished(JobTreeElement jte) {
-				keptJobs.add(jte);	
-				refresh(new JobTreeElement[] {jte});
+				keptJobs.add(jte);
+				final JobTreeElement element = jte;
+				Job updateJob = new WorkbenchJob("Refresh finished") {//$NON-NLS-1$
+					/* (non-Javadoc)
+					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+					 */
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						refresh(new Object[] { element });
+						return Status.OK_STATUS;
+					}
+				};
+				updateJob.setSystem(true);
+				updateJob.schedule();
+
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.internal.progress.FinishedJobs.KeptJobsListener#removed(org.eclipse.ui.internal.progress.JobTreeElement)
 			 */
 			public void removed(JobTreeElement jte) {
 				keptJobs.remove(jte);
-				remove(new Object[] {jte});
-				
+				final JobTreeElement element = jte;
+				Job updateJob = new WorkbenchJob("Remove finished") {//$NON-NLS-1$
+					/* (non-Javadoc)
+					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+					 */
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						ProgressViewerContentProvider.this.remove(new Object[] { element });
+						return Status.OK_STATUS;
+					}
+				};
+				updateJob.setSystem(true);
+				updateJob.schedule();
+
 			}
-			
+
 		};
 		return keptJobListener;
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -103,21 +135,20 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	public Object[] getElements(Object inputElement) {
 		JobTreeElement[] elements = ProgressManager.getInstance()
 				.getRootElements(debug());
-	
-		if(keptJobs.size() == 0)
+
+		if (keptJobs.size() == 0)
 			return elements;
-		if(elements.length == 0)
+		if (elements.length == 0)
 			return keptJobs.toArray();
-		
+
 		ArrayList all = new ArrayList();
 		all.addAll(keptJobs);
 		for (int i = 0; i < elements.length; i++) {
 			all.add(elements[i]);
-			
+
 		}
 		return all.toArray();
 	}
-
 
 	/**
 	 * Get the root elements of the passed elements as we only show roots.
@@ -159,13 +190,14 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
-	public void dispose(){
+	public void dispose() {
 		super.dispose();
-		if(keptJobListener != null)
+		if (keptJobListener != null)
 			FinishedJobs.getInstance().removeListener(keptJobListener);
 	}
 }

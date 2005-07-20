@@ -113,7 +113,7 @@ public class ProgressRegion {
 
         //Never show debug info
         IContentProvider provider = new ProgressViewerContentProvider(viewer,
-                false,true);
+                false,false);
         viewer.setContentProvider(provider);
         viewer.setInput(provider);
         viewer.setLabelProvider(new ProgressViewerLabelProvider(viewerControl));

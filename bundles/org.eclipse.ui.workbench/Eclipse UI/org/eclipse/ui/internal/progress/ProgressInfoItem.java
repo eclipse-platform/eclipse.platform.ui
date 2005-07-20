@@ -50,6 +50,10 @@ class ProgressInfoItem extends Composite {
 
 	static String DISABLED_STOP_IMAGE_KEY = "org.eclipse.ui.internal.progress.DISABLED_PROGRESS_STOP"; //$NON-NLS-1$
 
+	static String CLEAR_FINISHED_JOB_KEY = "org.eclipse.ui.internal.progress.CLEAR_FINISHED_JOB"; //$NON-NLS-1$
+
+	static String DISABLED_CLEAR_FINISHED_JOB_KEY = "org.eclipse.ui.internal.progress.DISABLED_CLEAR_FINISHED_JOB"; //$NON-NLS-1$
+
 	static String DEFAULT_JOB_KEY = "org.eclipse.ui.internal.progress.PROGRESS_DEFAULT"; //$NON-NLS-1$
 
 	static String DARK_COLOR_KEY = "org.eclipse.ui.internal.progress.PROGRESS_DARK_COLOR"; //$NON-NLS-1$
@@ -97,6 +101,20 @@ class ProgressInfoItem extends Composite {
 						DEFAULT_JOB_KEY,
 						WorkbenchImages
 								.getWorkbenchImageDescriptor("progress/progress_task.gif")); //$NON-NLS-1$
+
+		JFaceResources
+				.getImageRegistry()
+				.put(
+						CLEAR_FINISHED_JOB_KEY,
+						WorkbenchImages
+								.getWorkbenchImageDescriptor("elcl16/progress_rem.gif")); //$NON-NLS-1$
+
+		JFaceResources
+				.getImageRegistry()
+				.put(
+						DISABLED_CLEAR_FINISHED_JOB_KEY,
+						WorkbenchImages
+								.getWorkbenchImageDescriptor("dlcl16/progress_rem.gif")); //$NON-NLS-1$
 
 		// Mac has different Gamma value
 		int shift = "carbon".equals(SWT.getPlatform()) ? -25 : -10;//$NON-NLS-1$ 
@@ -162,12 +180,6 @@ class ProgressInfoItem extends Composite {
 		progressLabel.setFont(JFaceResources.getFontRegistry().getBold(
 				JFaceResources.DEFAULT_FONT));
 		progressLabel.setText(getMainTitle());
-		FormData progressData = new FormData();
-		progressData.top = new FormAttachment(IDialogConstants.VERTICAL_SPACING);
-		progressData.left = new FormAttachment(jobImageLabel,
-				IDialogConstants.HORIZONTAL_SPACING / 2);
-		progressData.right = new FormAttachment(100);
-		progressLabel.setLayoutData(progressData);
 
 		actionBar = new ToolBar(this, SWT.FLAT);
 		actionBar.setCursor(normalCursor); // set cursor to overwrite any busy
@@ -184,15 +196,39 @@ class ProgressInfoItem extends Composite {
 
 		});
 
+		setLayoutsForNoProgress();
+
+		refresh();
+	}
+
+	/**
+	 * Set the layout of the widgets for the no progress case.
+	 * 
+	 */
+	private void setLayoutsForNoProgress() {
 		FormData buttonData = new FormData();
-		buttonData.top = new FormAttachment(progressLabel,
-				IDialogConstants.VERTICAL_SPACING);
+		buttonData.top = new FormAttachment(progressLabel, 0, SWT.TOP);
 		buttonData.right = new FormAttachment(100,
 				IDialogConstants.HORIZONTAL_SPACING * -1);
 
 		actionBar.setLayoutData(buttonData);
 
-		refresh();
+		FormData progressData = new FormData();
+		progressData.top = new FormAttachment(IDialogConstants.VERTICAL_SPACING);
+		progressData.left = new FormAttachment(jobImageLabel,
+				IDialogConstants.HORIZONTAL_SPACING / 2);
+		progressData.right = new FormAttachment(actionBar,
+				IDialogConstants.HORIZONTAL_SPACING);
+		progressLabel.setLayoutData(progressData);
+		
+		if(taskEntries.size() > 0){
+			FormData linkData = new FormData();
+			linkData.top = new FormAttachment(progressLabel,
+					IDialogConstants.VERTICAL_SPACING);
+			linkData.left = new FormAttachment(progressLabel, 0, SWT.LEFT);
+			((Link) taskEntries.get(0)).setLayoutData(linkData);
+			
+		}
 	}
 
 	/**
@@ -214,7 +250,6 @@ class ProgressInfoItem extends Composite {
 			FinishedJobs.getInstance().remove(info);
 		} else
 			info.cancel();
-		
 
 	}
 
@@ -352,6 +387,18 @@ class ProgressInfoItem extends Composite {
 				progressBar.setSelection(percentDone);
 		}
 
+		if (isCompleted()) {
+			if (progressBar != null){
+				progressBar.dispose();
+				progressBar = null;
+			}
+			setLayoutsForNoProgress();
+			actionButton.setImage(JFaceResources
+					.getImage(CLEAR_FINISHED_JOB_KEY));
+			actionButton.setDisabledImage(JFaceResources
+					.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
+		}
+
 		JobInfo[] infos = getJobInfos();
 		int taskCount = 0;
 		for (int i = 0; i < infos.length; i++) {
@@ -377,6 +424,12 @@ class ProgressInfoItem extends Composite {
 					setLinkText(infos[i].getJob(), taskString, taskCount);
 					taskCount++;
 				}
+			} else {// Check for the finished job state
+				Job job = jobInfo.getJob();
+				if (job.getState() == Job.NONE) {
+					setLinkText(job, job.getResult().getMessage(), i);
+					taskCount++;
+				}
 			}
 		}
 
@@ -389,6 +442,17 @@ class ProgressInfoItem extends Composite {
 			taskEntries = taskEntries.subList(0, taskCount);
 		}
 
+	}
+
+	/**
+	 * Return whether or not the receiver is a completed job.
+	 * 
+	 * @return boolean <code>true</code> if the state is Job#NONE.
+	 */
+	private boolean isCompleted() {
+		if (info.isJobInfo())
+			return ((JobInfo) info).getJob().getState() == Job.NONE;
+		return false;
 	}
 
 	/**
