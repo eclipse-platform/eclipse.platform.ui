@@ -137,7 +137,10 @@ public final class HandlerService implements IHandlerService {
      *            <code>null</code>.
      */
     public final void updateShellKludge(final Shell shell) {
-        handlerAuthority.sourceChanged(ISources.ACTIVE_SHELL,
-                ISources.ACTIVE_SHELL_NAME, shell);
+    	final Shell currentActiveShell = handlerAuthority.getActiveShell();
+		if (currentActiveShell != shell) {
+			handlerAuthority.sourceChanged(ISources.ACTIVE_SHELL,
+					ISources.ACTIVE_SHELL_NAME, shell);
+		}
     }
 }

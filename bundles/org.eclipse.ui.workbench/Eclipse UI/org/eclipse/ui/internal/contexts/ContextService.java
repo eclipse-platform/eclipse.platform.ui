@@ -157,7 +157,10 @@ public final class ContextService implements IContextService {
      *            <code>null</code>.
      */
     public final void updateShellKludge(final Shell shell) {
-        contextAuthority.sourceChanged(ISources.ACTIVE_SHELL,
-                ISources.ACTIVE_SHELL_NAME, shell);
+    	final Shell currentActiveShell = contextAuthority.getActiveShell();
+    	if (currentActiveShell != shell) {
+			contextAuthority.sourceChanged(ISources.ACTIVE_SHELL,
+					ISources.ACTIVE_SHELL_NAME, shell);
+		}
     }
 }

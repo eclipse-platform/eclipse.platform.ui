@@ -396,6 +396,15 @@ final class ContextAuthority implements ISourceProviderListener {
 			}
 		}
 	}
+	
+	/**
+	 * Returns the currently active shell.
+	 * 
+	 * @return The currently active shell; may be <code>null</code>.
+	 */
+	final Shell getActiveShell() {
+		return (Shell) context.getVariable(ISources.ACTIVE_SHELL_NAME);
+	}
 
 	/**
 	 * Returns the shell type for the given shell.
