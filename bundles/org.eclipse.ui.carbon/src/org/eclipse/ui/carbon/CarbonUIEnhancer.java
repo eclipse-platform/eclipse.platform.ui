@@ -25,9 +25,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IStartup;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * The CarbonUIEnhancer provides the standard "About" and "Preference" menu items
@@ -44,6 +47,7 @@ public class CarbonUIEnhancer implements IStartup {
     private static final int kHICommandServices = ('s' << 24) + ('e' << 16) + ('r' << 8) + 'v';
 
     private static final String RESOURCE_BUNDLE = "org.eclipse.ui.carbon.Messages"; //$NON-NLS-1$
+	private static final String TOOLBAR_BUTTON_TOGGLE_FLAGS = "toolbarButtonToggleFlags"; //$NON-NLS-1$
 
     private String fAboutActionName;
 
@@ -79,12 +83,145 @@ public class CarbonUIEnhancer implements IStartup {
         final Display display = Display.getDefault();
         display.syncExec(new Runnable() {
             public void run() {
-                hookApplicationMenu(display);
-            }
+				hookApplicationMenu(display);
+				hookToolbarButtonCallback();
+				hookWorkbenchListener();
+				// modify all shells opened on startup
+				IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+						.getWorkbenchWindows();
+				for (int i = 0; i < windows.length; i++) {
+					modifyWindowShell(windows[i]);
+				}
+			}
         });
     }
 
     /**
+	 * Hooks a listener that tweaks newly opened workbench window shells with
+	 * the proper OS flags.
+	 * 
+	 * @since 3.2
+	 */
+    protected void hookWorkbenchListener() {
+		PlatformUI.getWorkbench().addWindowListener(new IWindowListener() {
+
+			public void windowActivated(IWorkbenchWindow window) {
+				// no-op
+			}
+
+			public void windowDeactivated(IWorkbenchWindow window) {
+				// no-op
+			}
+
+			public void windowClosed(IWorkbenchWindow window) {
+				// no-op
+			}
+
+			public void windowOpened(IWorkbenchWindow window) {
+				modifyWindowShell(window);
+			}});
+	}
+
+    /**
+	 * Modify the given workbench window shell bits to show the toolbar toggle
+	 * button.
+	 * 
+	 * @param window
+	 *            the window to modify
+	 * @since 3.2
+	 */
+	protected void modifyWindowShell(IWorkbenchWindow window) {
+		// only add the button when either the coolbar or perspectivebar
+		// is initially visible. This is so that RCP apps can choose to use
+		// this fragment without fear that their explicitly invisble bars
+		// can't be shown.
+		boolean coolBarInitiallyVsible = ((WorkbenchWindow) window)
+				.getCoolBarVisible();
+		boolean perspectiveBarInitiallyVsible = ((WorkbenchWindow) window)
+				.getPerspectiveBarVisible();
+
+		if (coolBarInitiallyVsible || perspectiveBarInitiallyVsible) {
+			// modify the newly opened window with the correct OS X
+			// style bits such that it possesses the toolbar button
+			Shell shell = window.getShell();
+			boolean[] switchArray = new boolean[] { coolBarInitiallyVsible,
+					perspectiveBarInitiallyVsible };
+			shell.setData(TOOLBAR_BUTTON_TOGGLE_FLAGS, switchArray);
+			int windowHandle = OS.GetControlOwner(shell.handle);
+			OS.ChangeWindowAttributes(windowHandle,
+					OS.kWindowToolbarButtonAttribute, 0);
+		}
+	}
+	
+	/**
+	 * Hook the window toolbar button to toggle the visibility of the coolbar
+	 * and perspective bar.
+	 * 
+	 * @since 3.2
+	 */
+    protected void hookToolbarButtonCallback() {
+		Object target = new Object() {
+			int toolbarProc (int nextHandler, int theEvent, int userData) {
+				int eventKind = OS.GetEventKind (theEvent);
+				if (eventKind != OS.kEventWindowToolbarSwitchMode)
+					return OS.eventNotHandledErr;
+				
+				int [] theWindow = new int [1];
+				OS.GetEventParameter (theEvent, OS.kEventParamDirectObject, OS.typeWindowRef, null, 4, null, theWindow);
+				
+				int [] theRoot = new int [1];
+				OS.GetRootControl (theWindow [0], theRoot);
+				Widget widget = Display.getCurrent().findWidget(theRoot [0]);
+				
+				if (!(widget instanceof Shell)) {
+					return OS.eventNotHandledErr;
+				}
+				Shell shell = (Shell) widget;
+				IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+						.getWorkbenchWindows();
+				for (int i = 0; i < windows.length; i++) {
+					if (windows[i].getShell() == shell) {
+						WorkbenchWindow castedWindow = (WorkbenchWindow) windows[i];
+						// get the switch flags that were set on the shell by
+						// the window listener
+						boolean[] switchFlags = (boolean[]) shell
+								.getData(TOOLBAR_BUTTON_TOGGLE_FLAGS);
+						if (switchFlags == null)
+							return OS.eventNotHandledErr;
+						boolean coolbarVisible = castedWindow
+								.getCoolBarVisible();
+						boolean perspectivebarVisible = castedWindow
+								.getPerspectiveBarVisible();
+						// only toggle the visibility of the components that
+						// were on initially
+						if (switchFlags[0])
+							castedWindow.setCoolBarVisible(!coolbarVisible);
+						if (switchFlags[1])
+							castedWindow
+									.setPerspectiveBarVisible(!perspectivebarVisible);
+						shell.layout();
+						return OS.noErr;
+					}
+				}
+				return OS.eventNotHandledErr;
+			}
+
+		};
+		
+	    final Callback commandCallback = new Callback(target, "toolbarProc", 3); //$NON-NLS-1$
+        int commandProc = commandCallback.getAddress();
+        if (commandProc == 0) {
+            commandCallback.dispose();
+            return; // give up
+        }
+        
+        int[] mask = new int[] { OS.kEventClassWindow, OS.kEventWindowToolbarSwitchMode };
+        OS.InstallEventHandler(OS.GetApplicationEventTarget(), commandProc,
+                mask.length / 2, mask, 0, null);
+		
+	}
+
+	/**
      * See Apple Technical Q&A 1079 (http://developer.apple.com/qa/qa2001/qa1079.html)
      */
     private void hookApplicationMenu(Display display) {
