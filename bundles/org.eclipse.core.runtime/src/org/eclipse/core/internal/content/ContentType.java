@@ -466,15 +466,15 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		return description;
 	}
 
-	byte internalIsAssociatedWith(String fileName) {
-		if (hasFileSpec(fileName, FILE_NAME_SPEC, false))
+	byte internalIsAssociatedWith(String fileName, IScopeContext context) {
+		if (hasFileSpec(context, fileName, FILE_NAME_SPEC))
 			return ASSOCIATED_BY_NAME;
 		String fileExtension = ContentTypeManager.getFileExtension(fileName);
-		if (hasFileSpec(fileExtension, FILE_EXTENSION_SPEC, false))
+		if (hasFileSpec(context, fileExtension, FILE_EXTENSION_SPEC))
 			return ASSOCIATED_BY_EXTENSION;
 		// if does not have built-in file specs, delegate to parent (if any)
 		if (!hasBuiltInAssociations() && baseType != null)
-			return baseType.internalIsAssociatedWith(fileName);
+			return baseType.internalIsAssociatedWith(fileName, context);
 		return NOT_ASSOCIATED;
 	}
 
@@ -510,15 +510,14 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	 * @see IContentType
 	 */
 	public boolean isAssociatedWith(String fileName) {
-		return internalIsAssociatedWith(fileName) != NOT_ASSOCIATED;
+		return isAssociatedWith(fileName, manager.getContext());
 	}
 
 	/**
 	 * @see IContentType
 	 */
 	public boolean isAssociatedWith(String fileName, IScopeContext context) {
-		//TODO should honor context parameter
-		return isAssociatedWith(fileName);
+		return internalIsAssociatedWith(fileName, context) != NOT_ASSOCIATED;
 	}
 
 	/**
