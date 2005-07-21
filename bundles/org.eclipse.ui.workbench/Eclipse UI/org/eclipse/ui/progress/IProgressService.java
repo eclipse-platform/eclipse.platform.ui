@@ -114,6 +114,13 @@ public interface IProgressService extends IRunnableContext {
             throws InvocationTargetException, InterruptedException;
 
     /**
+     * This specialization of IRunnableContext#run(boolean, boolean,
+     * IRunnableWithProgress) might run the runnable asynchronously
+     * if <code>fork</code> is <code>true</code>.
+     */
+    public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
+    
+    /**
      * Open a dialog on job when it starts to run and close it 
      * when the job is finished. Wait for LONG_OPERATION_MILLISECONDS
      * before opening the dialog. Do not open if it is already done or

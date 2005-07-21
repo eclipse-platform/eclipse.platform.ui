@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -158,6 +161,18 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext {
      * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
      */
     public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException;
+
+    /**
+     * This specialization of IRunnableContext#run(boolean, boolean,
+     * IRunnableWithProgress) blocks until the runnable has been run,
+     * regardless of the value of <code>fork</code>.
+     * It is recommended that <code>fork</code> is set to
+     * true in most cases. If <code>fork</code> is set to <code>false</code>,
+     * the runnable will run in the UI thread and it is the runnable's
+     * responsibility to call <code>Display.readAndDispatch()</code>
+     * to ensure UI responsiveness.
+     */
+    public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
 
     /**
      * Sets or clears the currently active page for this workbench window.

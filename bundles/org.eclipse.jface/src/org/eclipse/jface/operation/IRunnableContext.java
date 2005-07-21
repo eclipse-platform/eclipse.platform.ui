@@ -32,9 +32,19 @@ import java.lang.reflect.InvocationTargetException;
  */
 public interface IRunnableContext {
     /**
+     * <p>
      * Runs the given <code>IRunnableWithProgress</code> in this context.
      * For example, if this is a <code>ProgressMonitorDialog</code> then the runnable
      * is run using this dialog's progress monitor.
+     * </p>
+     * <p>
+     * If <code>fork</code> is <code>false</code>, the current thread is used
+     * to run the runnable. Note that if <code>fork</code> is <code>true</code>,
+     * it is unspecified whether or not this method blocks until the runnable
+     * has been run. Implementers should document whether the runnable is run
+     * synchronously (blocking) or asynchronously (non-blocking), or if no
+     * assumption can be made about the blocking behaviour.
+     * </p>
      *
      * @param fork <code>true</code> if the runnable should be run in a separate thread,
      *  and <code>false</code> to run in the same thread

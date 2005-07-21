@@ -430,11 +430,17 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
         return progressMonitor;
     }
 
-    /*
-     * (non-Javadoc) Method declared on IRunnableContext. Runs the given <code>
-     * IRunnableWithProgress </code> with the progress monitor for this progress
-     * dialog. The dialog is opened before it is run, and closed after it
-     * completes.
+    /**
+     * This implementation of IRunnableContext#run(boolean, boolean,
+     * IRunnableWithProgress) runs the given <code>IRunnableWithProgress</code>
+     * using the progress monitor for this progress dialog and blocks until
+     * the runnable has been run, regardless of the value of <code>fork</code>.
+     * The dialog is opened before the runnable is run, and closed after
+     * it completes. It is recommended that <code>fork</code> is set to
+     * true in most cases. If <code>fork</code> is set to <code>false</code>,
+     * the runnable will run in the UI thread and it is the runnable's
+     * responsibility to call <code>Display.readAndDispatch()</code>
+     * to ensure UI responsiveness.
      */
     public void run(boolean fork, boolean cancelable,
             IRunnableWithProgress runnable) throws InvocationTargetException,
