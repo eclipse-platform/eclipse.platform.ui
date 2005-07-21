@@ -117,7 +117,7 @@ public class FastViewPane {
             }
             IWorkbenchPartReference ref = currentPane.getPane().getPartReference();
             if (ref instanceof IViewReference) {
-                currentPane.getPane().getPage().hideView((IViewReference)currentPane);
+                currentPane.getPane().getPage().hideView((IViewReference)ref);
             }
         }
 
