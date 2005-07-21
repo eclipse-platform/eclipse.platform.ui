@@ -104,16 +104,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		return new ProgressInfoItem(control, SWT.NONE, info);
 	}
 
-	/**
-	 * Clear all the children.
-	 */
-	public void clearAll() {
-		Control[] children = control.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			children[i].dispose();
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -288,6 +278,8 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		for (int i = infos.length; i < existingChildren.length; i++) {
 			existingChildren[i].dispose();
 		}
+
+		control.layout(true);
 
 	}
 

@@ -197,7 +197,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				viewer.clearAll();
+				FinishedJobs.getInstance().clearAll();
 			}
 		};
 		clearAllAction

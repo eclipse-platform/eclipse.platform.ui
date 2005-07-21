@@ -196,6 +196,14 @@ class ProgressInfoItem extends Composite {
 
 		});
 
+		FormData progressData = new FormData();
+		progressData.top = new FormAttachment(IDialogConstants.VERTICAL_SPACING);
+		progressData.left = new FormAttachment(jobImageLabel,
+				IDialogConstants.HORIZONTAL_SPACING / 2);
+		progressData.right = new FormAttachment(actionBar,
+				IDialogConstants.HORIZONTAL_SPACING);
+		progressLabel.setLayoutData(progressData);
+
 		setLayoutsForNoProgress();
 
 		refresh();
@@ -206,28 +214,20 @@ class ProgressInfoItem extends Composite {
 	 * 
 	 */
 	private void setLayoutsForNoProgress() {
+
 		FormData buttonData = new FormData();
 		buttonData.top = new FormAttachment(progressLabel, 0, SWT.TOP);
 		buttonData.right = new FormAttachment(100,
 				IDialogConstants.HORIZONTAL_SPACING * -1);
 
 		actionBar.setLayoutData(buttonData);
-
-		FormData progressData = new FormData();
-		progressData.top = new FormAttachment(IDialogConstants.VERTICAL_SPACING);
-		progressData.left = new FormAttachment(jobImageLabel,
-				IDialogConstants.HORIZONTAL_SPACING / 2);
-		progressData.right = new FormAttachment(actionBar,
-				IDialogConstants.HORIZONTAL_SPACING);
-		progressLabel.setLayoutData(progressData);
-		
-		if(taskEntries.size() > 0){
+		if (taskEntries.size() > 0) {
 			FormData linkData = new FormData();
 			linkData.top = new FormAttachment(progressLabel,
 					IDialogConstants.VERTICAL_SPACING);
 			linkData.left = new FormAttachment(progressLabel, 0, SWT.LEFT);
 			((Link) taskEntries.get(0)).setLayoutData(linkData);
-			
+
 		}
 	}
 
@@ -388,7 +388,8 @@ class ProgressInfoItem extends Composite {
 		}
 
 		if (isCompleted()) {
-			if (progressBar != null){
+			
+			if (progressBar != null) {
 				progressBar.dispose();
 				progressBar = null;
 			}
@@ -397,6 +398,7 @@ class ProgressInfoItem extends Composite {
 					.getImage(CLEAR_FINISHED_JOB_KEY));
 			actionButton.setDisabledImage(JFaceResources
 					.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
+			
 		}
 
 		JobInfo[] infos = getJobInfos();
@@ -407,7 +409,7 @@ class ProgressInfoItem extends Composite {
 
 				String taskString = jobInfo.getTaskInfo().getTaskName();
 				String subTaskString = null;
-				Object[] jobChildren = info.getChildren();
+				Object[] jobChildren = jobInfo.getChildren();
 				if (jobChildren.length > 0)
 					subTaskString = ((JobTreeElement) jobChildren[0])
 							.getDisplayString();
@@ -441,7 +443,7 @@ class ProgressInfoItem extends Composite {
 			}
 			taskEntries = taskEntries.subList(0, taskCount);
 		}
-
+		layout(true);
 	}
 
 	/**
@@ -450,9 +452,15 @@ class ProgressInfoItem extends Composite {
 	 * @return boolean <code>true</code> if the state is Job#NONE.
 	 */
 	private boolean isCompleted() {
-		if (info.isJobInfo())
-			return ((JobInfo) info).getJob().getState() == Job.NONE;
-		return false;
+
+		JobInfo[] infos = getJobInfos();
+		for (int i = 0; i < infos.length; i++) {
+			if (infos[i].getJob().getState() != Job.NONE)
+				return false;
+
+		}
+		// Only completed if there are any jobs
+		return infos.length > 0;
 	}
 
 	/**
@@ -488,6 +496,13 @@ class ProgressInfoItem extends Composite {
 	private int getPercentDone() {
 		if (info.isJobInfo())
 			return ((JobInfo) info).getPercentDone();
+
+		Object[] roots = ((GroupInfo) info).getChildren();
+		if (roots.length == 1 && roots[0] instanceof JobTreeElement) {
+			TaskInfo ti = ((JobInfo) roots[0]).getTaskInfo();
+			if (ti != null)
+				return ti.getPercentDone();
+		}
 		return ((GroupInfo) info).getPercentDone();
 	}
 
@@ -599,10 +614,10 @@ class ProgressInfoItem extends Composite {
 	 */
 	public void setColor(int i) {
 		if (i % 2 == 0)
+			setAllBackgrounds(darkColor);
+		else
 			setAllBackgrounds(getDisplay().getSystemColor(
 					SWT.COLOR_LIST_BACKGROUND));
-		else
-			setAllBackgrounds(darkColor);
 
 	}
 

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -86,14 +86,21 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 			 * @see org.eclipse.ui.internal.progress.FinishedJobs.KeptJobsListener#removed(org.eclipse.ui.internal.progress.JobTreeElement)
 			 */
 			public void removed(JobTreeElement jte) {
-				keptJobs.remove(jte);
+				//null indicates they are all removed
+				if(jte == null)
+					keptJobs.clear();
+				else
+					keptJobs.remove(jte);
 				final JobTreeElement element = jte;
 				Job updateJob = new WorkbenchJob("Remove finished") {//$NON-NLS-1$
 					/* (non-Javadoc)
 					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 					 */
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						ProgressViewerContentProvider.this.remove(new Object[] { element });
+						if(element == null)
+							refresh();
+						else
+							ProgressViewerContentProvider.this.remove(new Object[] { element });
 						return Status.OK_STATUS;
 					}
 				};
@@ -133,19 +140,27 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		JobTreeElement[] elements = ProgressManager.getInstance()
-				.getRootElements(debug());
+		Object[] elements = super.getElements(inputElement);
 
 		if (keptJobs.size() == 0)
 			return elements;
 		if (elements.length == 0)
 			return keptJobs.toArray();
 
-		ArrayList all = new ArrayList();
-		all.addAll(keptJobs);
+		Set all = new HashSet();
+		
 		for (int i = 0; i < elements.length; i++) {
 			all.add(elements[i]);
 
+		}
+		
+		Iterator keptIterator = keptJobs.iterator();
+		while(keptIterator.hasNext()){
+			JobInfo next = (JobInfo) keptIterator.next();
+			if(next.getGroupInfo() == null)
+				all.add(next);
+			else
+				all.add(next.getGroupInfo());
 		}
 		return all.toArray();
 	}

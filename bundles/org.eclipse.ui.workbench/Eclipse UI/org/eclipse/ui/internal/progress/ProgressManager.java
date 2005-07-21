@@ -757,7 +757,7 @@ public class ProgressManager extends ProgressProvider implements
     public JobTreeElement[] getRootElements(boolean debug) {
         synchronized (jobs) {
             Iterator iterator = jobs.keySet().iterator();
-            Collection result = new ArrayList();
+            Collection result = new HashSet();
             while (iterator.hasNext()) {
                 Job next = (Job) iterator.next();
                 if (!isNonDisplayableJob(next, debug)) {
