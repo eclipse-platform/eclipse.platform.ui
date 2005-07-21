@@ -23,6 +23,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.ISources;
@@ -272,6 +273,15 @@ final class HandlerAuthority implements ISourceProviderListener {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Returns the currently active shell.
+	 * 
+	 * @return The currently active shell; may be <code>null</code>.
+	 */
+	final Shell getActiveShell() {
+		return (Shell) context.getVariable(ISources.ACTIVE_SHELL_NAME);
 	}
 
 	final IEvaluationContext getCurrentState() {
