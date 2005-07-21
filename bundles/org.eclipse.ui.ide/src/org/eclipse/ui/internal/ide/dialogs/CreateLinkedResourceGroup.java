@@ -173,8 +173,7 @@ public class CreateLinkedResourceGroup {
             }
         });
         // browse button
-        browseButton = new Button(linkTargetGroup, SWT.PUSH);
-        setButtonLayoutData(browseButton);
+        browseButton = new Button(linkTargetGroup, SWT.PUSH);      
         browseButton.setFont(font);
         browseButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_browseButton);
         browseButton.addSelectionListener(new SelectionAdapter() {
@@ -183,10 +182,10 @@ public class CreateLinkedResourceGroup {
             }
         });
         browseButton.setEnabled(enabled);
+        setButtonLayoutData(browseButton);
 
         // variables button
         variablesButton = new Button(linkTargetGroup, SWT.PUSH);
-        setButtonLayoutData(variablesButton);
         variablesButton.setFont(font);
         variablesButton.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_variablesButton);
         variablesButton.addSelectionListener(new SelectionAdapter() {
@@ -195,7 +194,8 @@ public class CreateLinkedResourceGroup {
             }
         });
         variablesButton.setEnabled(enabled);
-
+        setButtonLayoutData(variablesButton);
+        
         Composite resolvedPathGroup = new Composite(locationGroup, SWT.NONE);
         layout = new GridLayout();
         layout.numColumns = 2;
@@ -229,7 +229,7 @@ public class CreateLinkedResourceGroup {
      */
     private IStatus createStatus(int severity, String message) {
         return new Status(severity, IDEWorkbenchPlugin.getDefault()
-                .getDescriptor().getUniqueIdentifier(), severity, message, null);
+                .getBundle().getSymbolicName(), severity, message, null);
     }
 
     /**
@@ -401,6 +401,7 @@ public class CreateLinkedResourceGroup {
 
     /**
      * Validates this page's controls.
+     * @param linkHandle The target to check
      *
      * @return IStatus indicating the validation result. IStatus.OK if the 
      * 	specified link target is valid given the linkHandle.
