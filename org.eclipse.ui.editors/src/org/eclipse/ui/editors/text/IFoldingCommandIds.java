@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alex Weirig <alex.weirig@telewalfer.lu> - Collapse All (https://bugs.eclipse.org/bugs/show_bug.cgi?id=65268)
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
@@ -49,5 +50,14 @@ public interface IFoldingCommandIds {
 	 * Value: {@value}.</p>
 	 */
 	String FOLDING_TOGGLE= "org.eclipse.ui.edit.text.folding.toggle"; //$NON-NLS-1$
+
+	/**
+	 * Identifier of the "collapse all folded regions" command.
+	 * <p>
+	 * Value: {@value}.</p>
+	 * 
+	 * @since 3.2
+	 */
+	String FOLDING_COLLAPSE_ALL = "org.eclipse.ui.edit.text.folding.collapse_all"; //$NON-NLS-1$
 
 }

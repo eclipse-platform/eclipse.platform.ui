@@ -89,6 +89,12 @@
             id="org.eclipse.ui.edit.text.folding.expand_all">
       </command>
       <command
+            name="%command.folding.collapseAll.name"
+            description="%command.folding.collapseAll.description"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.edit.text.folding.collapse_all">
+      </command>
+      <command
             name="%command.folding.expand.name"
             description="%command.folding.expand.description"
             categoryId="org.eclipse.ui.category.textEditor"
@@ -132,6 +138,11 @@
             commandId="org.eclipse.ui.edit.text.folding.expand_all"
             contextId="org.eclipse.ui.textEditorScope"
             sequence="M1+NUMPAD_MULTIPLY"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            commandId="org.eclipse.ui.edit.text.folding.collapse_all"
+            contextId="org.eclipse.ui.textEditorScope"
+            sequence="M1+M2+NUMPAD_MULTIPLY"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             commandId="org.eclipse.ui.edit.text.folding.expand"
