@@ -160,12 +160,45 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private boolean fIsFilteredSubset;
 	/**
-	 * The most recently posted filter runnable that has not yet run, or
-	 * <code>null</code> if there is none.
+	 * The filter runnable.
 	 * 
 	 * @since 3.2
 	 */
-	private Runnable fLastRunnable;
+	private final Runnable fFilterRunnable= new Runnable() {
+		public void run() {
+
+			fIsFilterPending= false;
+
+			Control control= fContentAssistSubjectControlAdapter.getControl();
+			if (control.isDisposed())
+				return;
+
+			int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
+			ICompletionProposal[] proposals= null;
+			try  {
+				if (offset > -1) {
+					DocumentEvent event= TextUtilities.mergeProcessedDocumentEvents(fDocumentEvents);
+					proposals= computeFilteredProposals(offset, event);
+				}
+			} catch (BadLocationException x)  {
+			} finally  {
+				fDocumentEvents.clear();
+			}
+			fFilterOffset= offset;
+
+			if (proposals != null && proposals.length > 0)
+				setProposals(proposals, fIsFilteredSubset);
+			else
+				hide();
+		}
+	};
+	/**
+	 * <code>true</code> if <code>fFilterRunnable</code> has been
+	 * posted, <code>false</code> if not.
+	 * 
+	 * @since 3.2
+	 */
+	private boolean fIsFilterPending= false;
 
 
 	/**
@@ -396,8 +429,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		/* Make sure that there is no filter runnable pending.
 		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=31427
 		 */
-		if (fLastRunnable != null)
-			fLastRunnable.run();
+		if (fIsFilterPending)
+			fFilterRunnable.run();
 		
 		int i= fProposalTable.getSelectionIndex();
 		if (fFilteredProposals == null || i < 0 || i >= fFilteredProposals.length)
@@ -880,38 +913,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * offset of the original invocation of the content assistant.
 	 */
 	private void filterProposals() {
-		final Control control= fContentAssistSubjectControlAdapter.getControl();
-		fLastRunnable= new Runnable() {
-			public void run() {
-
-				if (fLastRunnable != this)
-					return;
-				
-				fLastRunnable= null;
-
-				if (control.isDisposed())
-					return;
-
-				int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
-				ICompletionProposal[] proposals= null;
-				try  {
-					if (offset > -1) {
-						DocumentEvent event= TextUtilities.mergeProcessedDocumentEvents(fDocumentEvents);
-						proposals= computeFilteredProposals(offset, event);
-					}
-				} catch (BadLocationException x)  {
-				} finally  {
-					fDocumentEvents.clear();
-				}
-				fFilterOffset= offset;
-
-				if (proposals != null && proposals.length > 0)
-					setProposals(proposals, fIsFilteredSubset);
-				else
-					hide();
-			}
-		};
-		control.getDisplay().asyncExec(fLastRunnable);
+		if (fIsFilterPending)
+			return;
+		
+		fIsFilterPending= true;
+		Control control= fContentAssistSubjectControlAdapter.getControl();
+		control.getDisplay().asyncExec(fFilterRunnable);
 	}
 
 	/**
