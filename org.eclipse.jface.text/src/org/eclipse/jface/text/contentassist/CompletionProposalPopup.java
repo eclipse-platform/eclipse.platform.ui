@@ -913,12 +913,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * offset of the original invocation of the content assistant.
 	 */
 	private void filterProposals() {
-		if (fIsFilterPending)
-			return;
-		
-		fIsFilterPending= true;
-		Control control= fContentAssistSubjectControlAdapter.getControl();
-		control.getDisplay().asyncExec(fFilterRunnable);
+		if (!fIsFilterPending) {
+			fIsFilterPending= true;
+			Control control= fContentAssistSubjectControlAdapter.getControl();
+			control.getDisplay().asyncExec(fFilterRunnable);
+		}
 	}
 
 	/**
