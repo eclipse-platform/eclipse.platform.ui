@@ -114,8 +114,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private List fDocumentEvents= new ArrayList();
 	/** Listener filling the document event queue. */
 	private IDocumentListener fDocumentListener;
-	/** Reentrance count for filtered proposals. */
-	private long fInvocationCounter= 0;
 	/** The filter list of proposals. */
 	private ICompletionProposal[] fFilteredProposals;
 	/** The computed list of proposals. */
@@ -161,6 +159,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.1
 	 */
 	private boolean fIsFilteredSubset;
+	/**
+	 * The most recently posted filter runnable that has not yet run, or
+	 * <code>null</code> if there is none.
+	 * 
+	 * @since 3.2
+	 */
+	private Runnable fLastRunnable;
 
 
 	/**
@@ -347,7 +352,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			public void widgetSelected(SelectionEvent e) {}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				selectProposalWithMask(e.stateMask);
+				insertSelectedProposalWithMask(e.stateMask);
 			}
 		});
 
@@ -363,7 +368,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());
 	}
 
-	/**
+	/*
 	 * @since 3.1
 	 */
 	private void handleSetData(Event event) {
@@ -388,6 +393,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 2.0
 	 */
 	private ICompletionProposal getSelectedProposal() {
+		/* Make sure that there is no filter runnable pending.
+		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=31427
+		 */
+		if (fLastRunnable != null)
+			fLastRunnable.run();
+		
 		int i= fProposalTable.getSelectionIndex();
 		if (fFilteredProposals == null || i < 0 || i >= fFilteredProposals.length)
 			return null;
@@ -400,7 +411,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @param stateMask the state mask
 	 * @since 2.1
 	 */
-	private void selectProposalWithMask(int stateMask) {
+	private void insertSelectedProposalWithMask(int stateMask) {
 		ICompletionProposal p= getSelectedProposal();
 		hide();
 		if (p != null)
@@ -783,7 +794,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			case '\n': // Ctrl-Enter on w2k
 			case '\r': // Enter
 				e.doit= false;
-				selectProposalWithMask(e.stateMask);
+				insertSelectedProposalWithMask(e.stateMask);
 				break;
 
 			case '\t':
@@ -869,14 +880,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * offset of the original invocation of the content assistant.
 	 */
 	private void filterProposals() {
-		++ fInvocationCounter;
 		final Control control= fContentAssistSubjectControlAdapter.getControl();
-		control.getDisplay().asyncExec(new Runnable() {
-			final long fCounter= fInvocationCounter;
+		fLastRunnable= new Runnable() {
 			public void run() {
 
-				if (fCounter != fInvocationCounter)
+				if (fLastRunnable != this)
 					return;
+				
+				fLastRunnable= null;
 
 				if (control.isDisposed())
 					return;
@@ -899,7 +910,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 				else
 					hide();
 			}
-		});
+		};
+		control.getDisplay().asyncExec(fLastRunnable);
 	}
 
 	/**
@@ -1186,7 +1198,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 	}
 
-	/**
+	/*
 	 * @since 3.1
 	 */
 	private boolean isPrefixCompatible(CharSequence oneSequence, int oneOffset, CharSequence twoSequence, int twoOffset, IDocument document) throws BadLocationException {
