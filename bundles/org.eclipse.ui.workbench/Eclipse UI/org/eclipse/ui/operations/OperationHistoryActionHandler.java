@@ -239,6 +239,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#run()
 	 */
 	public final void run() {
+		if (undoContext == null || site == null) return;
+		
 		Shell parent = getWorkbenchWindow().getShell();
 		progressDialog = new TimeTriggeredProgressMonitorDialog(parent,
 				getWorkbenchWindow().getWorkbench().getProgressService()
