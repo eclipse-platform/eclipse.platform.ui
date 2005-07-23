@@ -203,8 +203,11 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		site.getPage().removePartListener(partListener);
 		site = null;
 		progressDialog = null;
-		// we do not do anything to the history for our context because it may
-		// be used elsewhere.
+		// We do not flush the history for our undo context because it may be
+		// used elsewhere.  It is up to clients to clean up the history appropriately.
+		// We do null out the context to signify that this handler is no longer
+		// accessing the history.
+		undoContext = null;
 	}
 
 	/*
@@ -275,14 +278,16 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		if (adapter.equals(Shell.class)) {
-			return getWorkbenchWindow().getShell();
-		}
-		if (adapter.equals(IWorkbenchWindow.class)) {
-			return getWorkbenchWindow();
-		}
-		if (adapter.equals(IWorkbenchPart.class)) {
-			return site.getPart();
+		if (site != null) {
+			if (adapter.equals(Shell.class)) {
+				return getWorkbenchWindow().getShell();
+			}
+			if (adapter.equals(IWorkbenchWindow.class)) {
+				return getWorkbenchWindow();
+			}
+			if (adapter.equals(IWorkbenchPart.class)) {
+				return site.getPart();
+			}
 		}
 		if (adapter.equals(IUndoContext.class)) {
 			return undoContext;
@@ -298,7 +303,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Return the workbench window for this action handler
 	 */
 	private IWorkbenchWindow getWorkbenchWindow() {
-		return site.getWorkbenchWindow();
+		if (site != null)
+			return site.getWorkbenchWindow();
+		return null;
 	}
 
 	/**
