@@ -283,11 +283,6 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
             title = ""; //$NON-NLS-1$
         }
 
-        String workspaceLocation = wbAdvisor.getWorkspaceLocation();
-        if (workspaceLocation != null) {
-            title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, workspaceLocation, title);
-        }
-
         if (currentPage != null) {
             if (activeEditor != null) {
                 lastEditorTitle = activeEditor.getTitle();
@@ -304,6 +299,11 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
             if (label != null && !label.equals("")) { //$NON-NLS-1$ 
                 title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, label, title);
             }
+        }
+
+        String workspaceLocation = wbAdvisor.getWorkspaceLocation();
+        if (workspaceLocation != null) {
+            title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, title, workspaceLocation);
         }
         
         return title;        

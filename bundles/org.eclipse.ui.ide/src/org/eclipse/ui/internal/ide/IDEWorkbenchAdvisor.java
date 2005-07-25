@@ -138,7 +138,13 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         // if the command line option -showlocation is specified
         for (int i = 0; i < cmdLineArgs.length; i++) {
             if ("-showlocation".equalsIgnoreCase(cmdLineArgs[i])) { //$NON-NLS-1$
-                workspaceLocation = Platform.getLocation().toOSString();
+            	String name = null;
+            	if (cmdLineArgs.length > i + 1)
+            		name = cmdLineArgs[i+1];
+            	if (name != null && name.indexOf("-") == -1)		//$NON-NLS-1$
+            		workspaceLocation = name;
+            	else
+            		workspaceLocation = Platform.getLocation().toOSString();
                 break;
             }
         }
