@@ -413,13 +413,6 @@
             id="org.eclipse.ui.preferencePages.Keys">
          <keywordReference id="org.eclipse.ui.ide.keys"/>
       </page>
-      <page
-            name="%PreferencePages.NewKeys"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.ExtensionFactory:newKeysPreferencePage"
-            id="org.eclipse.ui.preferencePages.NewKeys">
-         <keywordReference id="org.eclipse.ui.ide.keys"/>
-      </page>
     
       <page
             class="org.eclipse.ui.ExtensionFactory:contentTypesPreferencePage"
@@ -615,11 +608,6 @@
    
    <extension
    		 point="org.eclipse.ui.bindings">
-      <key
-      		commandId="org.eclipse.ui.window.showKeyAssist"
-      		contextId="org.eclipse.ui.contexts.dialogAndWindow"
-      		sequence="M1+M2+L"
-      		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
             sequence="M1+1"

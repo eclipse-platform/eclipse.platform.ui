@@ -243,8 +243,6 @@ public class ContainerSelectionGroup extends Composite {
                 if (selection instanceof IStructuredSelection) {
                     Object item = ((IStructuredSelection) selection)
                             .getFirstElement();
-                    if(item == null)
-                    	return;
                     if (treeViewer.getExpandedState(item))
                         treeViewer.collapseToLevel(item, 1);
                     else
