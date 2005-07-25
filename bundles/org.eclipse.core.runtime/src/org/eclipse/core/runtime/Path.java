@@ -37,7 +37,6 @@ public class Path implements IPath, Cloneable {
 
 	/** Constant empty string value. */
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private static final String[] EMPTY_STRING_ARRAY = new String[] {};
 
 	/** Constant value indicating no segments */
 	private static final String[] NO_SEGMENTS = new String[0];
@@ -45,7 +44,7 @@ public class Path implements IPath, Cloneable {
 	/** Constant value containing the empty path with no device. */
 	public static final Path EMPTY = new Path(EMPTY_STRING);
 
-	/** Mask for all bits that are involved in the hashcode */
+	/** Mask for all bits that are involved in the hash code */
 	private static final int HASH_MASK = ~HAS_TRAILING;
 
 
@@ -77,7 +76,7 @@ public class Path implements IPath, Cloneable {
 	 * on the local file system. 
 	 * The path is canonicalized and double slashes are removed
 	 * except at the beginning. (to handle UNC paths). All forward
-	 * slahes ('/') are treated as segment delimiters, and any
+	 * slashes ('/') are treated as segment delimiters, and any
 	 * segment and device delimiters for the local file system are
 	 * also respected.
 	 *
@@ -191,7 +190,7 @@ public class Path implements IPath, Cloneable {
 		// no segment validations are done for performance reasons	
 		this.segments = segments;
 		this.device = device;
-		//hashcode is cached in all but the bottom three bits of the separators field
+		//hash code is cached in all but the bottom three bits of the separators field
 		this.separators = (computeHashCode() << 3) | (_separators & ALL_SEPARATORS);
 	}
 
@@ -512,7 +511,7 @@ public class Path implements IPath, Cloneable {
 		if (!(obj instanceof Path))
 			return false;
 		Path target = (Path) obj;
-		//check leading separators and hashcode
+		//check leading separators and hash code
 		if ((separators & HASH_MASK) != (target.separators & HASH_MASK))
 			return false;
 		String[] targetSegments = target.segments;
@@ -977,7 +976,7 @@ public class Path implements IPath, Cloneable {
 	 */
 	public IPath uptoSegment(int count) {
 		if (count == 0)
-			return new Path(device, EMPTY_STRING_ARRAY, separators & (HAS_LEADING | IS_UNC));
+			return new Path(device, NO_SEGMENTS, separators & (HAS_LEADING | IS_UNC));
 		if (count >= segments.length)
 			return this;
 		Assert.isTrue(count > 0, "Invalid parameter to Path.uptoSegment"); //$NON-NLS-1$
