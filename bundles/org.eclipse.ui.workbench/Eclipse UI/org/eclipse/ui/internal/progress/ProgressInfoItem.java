@@ -17,6 +17,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -28,8 +30,10 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -79,6 +83,31 @@ class ProgressInfoItem extends Composite {
 	static final int MAX_PROGRESS_HEIGHT = 12;
 
 	static final int MIN_ICON_SIZE = 16;
+
+	interface IndexListener {
+		/**
+		 * Select the item previous to the receiver.
+		 */
+		public void selectPrevious();
+
+		/**
+		 * Select the next previous to the receiver.
+		 */
+		public void selectNext();
+		
+		/**
+		 * Select the receiver.
+		 */
+		public void select();
+	}
+
+	IndexListener indexListener;
+
+	private int currentIndex;
+
+	private boolean selected;
+
+	private MouseAdapter mouseListener;
 
 	static {
 		JFaceResources
@@ -155,11 +184,13 @@ class ProgressInfoItem extends Composite {
 			darkColor = getDisplay().getSystemColor(
 					SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		}
-
 	}
 
 	/**
 	 * Create the child widgets of the receiver.
+	 */
+	/**
+	 * 
 	 */
 	protected void createChildren() {
 
@@ -195,6 +226,23 @@ class ProgressInfoItem extends Composite {
 			}
 
 		});
+		actionBar.addListener(SWT.Traverse, new Listener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 */
+			public void handleEvent(Event event) {
+				if (indexListener == null)
+					return;
+				int detail = event.detail;
+				if (detail == SWT.TRAVERSE_ARROW_NEXT)
+					indexListener.selectNext();
+				if (detail == SWT.TRAVERSE_ARROW_PREVIOUS)
+					indexListener.selectPrevious();
+
+			}
+		});
 
 		FormData progressData = new FormData();
 		progressData.top = new FormAttachment(IDialogConstants.VERTICAL_SPACING);
@@ -203,6 +251,20 @@ class ProgressInfoItem extends Composite {
 		progressData.right = new FormAttachment(actionBar,
 				IDialogConstants.HORIZONTAL_SPACING);
 		progressLabel.setLayoutData(progressData);
+		
+		mouseListener = new MouseAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseDown(MouseEvent e){
+				if(indexListener != null)
+					indexListener.select();
+			}
+		};
+		addMouseListener(mouseListener);
+		jobImageLabel.addMouseListener(mouseListener);
+		progressLabel.addMouseListener(mouseListener);
+		
 
 		setLayoutsForNoProgress();
 
@@ -388,7 +450,7 @@ class ProgressInfoItem extends Composite {
 		}
 
 		if (isCompleted()) {
-			
+
 			if (progressBar != null) {
 				progressBar.dispose();
 				progressBar = null;
@@ -398,7 +460,7 @@ class ProgressInfoItem extends Composite {
 					.getImage(CLEAR_FINISHED_JOB_KEY));
 			actionButton.setDisabledImage(JFaceResources
 					.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
-			
+
 		}
 
 		JobInfo[] infos = getJobInfos();
@@ -536,6 +598,7 @@ class ProgressInfoItem extends Composite {
 				IDialogConstants.HORIZONTAL_SPACING * -1);
 		barData.height = MAX_PROGRESS_HEIGHT;
 		progressBar.setLayoutData(barData);
+//		progressBar.addMouseListener(mouseListener);
 
 		if (taskEntries.size() > 0) {
 			// Reattach the link label if there is one
@@ -560,6 +623,7 @@ class ProgressInfoItem extends Composite {
 		Link link;
 		if (index >= taskEntries.size()) {// Is it new?
 			link = new Link(this, SWT.NONE);
+//			link.addMouseListener(mouseListener);
 
 			FormData linkData = new FormData();
 			if (index == 0) {
@@ -613,31 +677,95 @@ class ProgressInfoItem extends Composite {
 	 * @param i
 	 */
 	public void setColor(int i) {
+		currentIndex = i;
+
+		if (selected) {
+			setAllBackgrounds(getDisplay().getSystemColor(
+					SWT.COLOR_LIST_SELECTION));
+			setAllForegrounds(getDisplay().getSystemColor(
+					SWT.COLOR_LIST_SELECTION_TEXT));
+			return;
+		}
+
 		if (i % 2 == 0)
 			setAllBackgrounds(darkColor);
 		else
 			setAllBackgrounds(getDisplay().getSystemColor(
 					SWT.COLOR_LIST_BACKGROUND));
+		setAllForegrounds(getDisplay()
+				.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+	}
+
+	/**
+	 * Set the foreground of all widgets to the supplied color.
+	 * 
+	 * @param color
+	 */
+	private void setAllForegrounds(Color color) {
+		setForeground(color);
+		progressLabel.setForeground(color);
+
+		Iterator taskEntryIterator = taskEntries.iterator();
+		while (taskEntryIterator.hasNext()) {
+			((Link) taskEntryIterator.next()).setForeground(color);
+		}
 
 	}
 
 	/**
-	 * Set the background of all widgets to the supplied systemCOlour
+	 * Set the background of all widgets to the supplied color.
 	 * 
-	 * @param systemColor
+	 * @param color
 	 */
-	private void setAllBackgrounds(Color systemColor) {
-		setBackground(systemColor);
-		progressLabel.setBackground(systemColor);
-		actionBar.setBackground(systemColor);
-		jobImageLabel.setBackground(systemColor);
+	private void setAllBackgrounds(Color color) {
+		setBackground(color);
+		progressLabel.setBackground(color);
+		actionBar.setBackground(color);
+		jobImageLabel.setBackground(color);
 
 		Iterator taskEntryIterator = taskEntries.iterator();
 		while (taskEntryIterator.hasNext()) {
-			((Link) taskEntryIterator.next()).setBackground(systemColor);
+			((Link) taskEntryIterator.next()).setBackground(color);
 		}
-		if (progressBar != null)
-			progressBar.setBackground(systemColor);
+
+	}	
+
+	/**
+	 * Set the focus to the button.
+	 *
+	 */
+	void setButtonFocus(){
+		actionBar.setFocus();
+	}
+	
+	/**
+	 * Set the selection colors.
+	 * 
+	 * @param select
+	 *            boolean that indicates whether or not to show selection.
+	 */
+	void selectWidgets(boolean select) {
+		if(select)
+			setButtonFocus();
+		selected = select;
+		setColor(currentIndex);
+	}
+
+	/**
+	 * Set the listener for index changes.
+	 * 
+	 * @param indexListener
+	 */
+	void setIndexListener(IndexListener indexListener) {
+		this.indexListener = indexListener;
+	}
+
+	/**
+	 * Return whether or not the receiver is selected.
+	 * @return boolean
+	 */
+	boolean isSelected() {
+		return selected;
 	}
 
 }

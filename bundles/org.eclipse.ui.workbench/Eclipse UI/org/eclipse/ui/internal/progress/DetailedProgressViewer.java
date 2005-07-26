@@ -51,7 +51,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 				SWT.COLOR_LIST_BACKGROUND));
 
 		scrolled.setContent(control);
-
 	}
 
 	/*
@@ -101,7 +100,88 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * @return ProgressInfoItem
 	 */
 	private ProgressInfoItem createNewItem(JobTreeElement info) {
-		return new ProgressInfoItem(control, SWT.NONE, info);
+		final ProgressInfoItem item = new ProgressInfoItem(control, SWT.NONE, info);
+
+		
+		item.setIndexListener(new ProgressInfoItem.IndexListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.ProgressInfoItem.IndexListener#selectNext()
+			 */
+			public void selectNext() {
+				DetailedProgressViewer.this.selectNext(item);
+				
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.ProgressInfoItem.IndexListener#selectPrevious()
+			 */
+			public void selectPrevious() {
+				DetailedProgressViewer.this.selectPrevious(item);
+				
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.ProgressInfoItem.IndexListener#select()
+			 */
+			public void select() {
+				
+				Control[] children = control.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					ProgressInfoItem child = (ProgressInfoItem) children[i];
+					if(!item.equals(child))//Deselect the others
+						child.selectWidgets(false);					
+				}	
+				item.selectWidgets(true);
+				
+			}
+		});
+		
+		return item;
+	}
+
+	/**
+	 * Select the previous item in the receiver.
+	 * @param item
+	 */
+	protected void selectPrevious(ProgressInfoItem item) {
+		Control[] children = control.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			ProgressInfoItem child = (ProgressInfoItem) children[i];
+			if(item.equals(child)){
+				ProgressInfoItem previous;
+				if(i == 0)
+					previous = (ProgressInfoItem) children[children.length - 1];
+				else
+					previous = (ProgressInfoItem) children[i - 1];
+				
+				item.selectWidgets(false);
+				previous.selectWidgets(true);
+				return;
+			}			
+		}		
+	}
+
+	/**
+	 * Select the next item in the receiver.
+	 * @param item
+	 */
+	protected void selectNext(ProgressInfoItem item) {
+		Control[] children = control.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			ProgressInfoItem child = (ProgressInfoItem) children[i];
+			if(item.equals(child)){
+				ProgressInfoItem next;
+				if(i == children.length - 1)
+					next = (ProgressInfoItem) children[0];
+				else
+					next = (ProgressInfoItem) children[i + 1];
+				item.selectWidgets(false);
+				next.selectWidgets(true);
+				
+				return;
+			}			
+		}	
+		
 	}
 
 	/*
@@ -248,7 +328,12 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * 
 	 */
 	public void setFocus() {
-
+		Control [] children = control.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			ProgressInfoItem item = (ProgressInfoItem) children[i];
+			item.setButtonFocus();
+			return;			
+		}
 	}
 
 	/**
