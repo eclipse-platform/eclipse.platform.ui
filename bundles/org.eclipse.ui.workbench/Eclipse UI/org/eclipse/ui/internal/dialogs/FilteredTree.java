@@ -241,7 +241,7 @@ public class FilteredTree extends Composite {
 			 * @see org.eclipse.swt.accessibility.AccessibleListener#getName(org.eclipse.swt.accessibility.AccessibleEvent)
 			 */
 			public void getName(AccessibleEvent e) {
-				String filterTextString = getFilterText();
+				String filterTextString = getFilterControlText();
 				if(filterTextString.length() == 0){
 					e.result = initialText;
 				}
@@ -252,13 +252,6 @@ public class FilteredTree extends Composite {
 		};
 	}
 
-	/**
-	 * Get the text from the filter widget.
-	 * @return String
-	 */
-    protected String getFilterText() {
-		return filterText.getText();
-	}
 	/**
      * update the receiver after the text has changed
      */
@@ -376,7 +369,6 @@ public class FilteredTree extends Composite {
              * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
              */
             public void focusLost(FocusEvent e) {
-            	filterFocusLost();
             }
         };
         getFilterControl().addFocusListener(listener);
