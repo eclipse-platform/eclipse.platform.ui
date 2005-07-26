@@ -1267,8 +1267,13 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      */
     private void showPart(LayoutPart part, Object cookie) {
 
-        if (isDisposed() || !(part instanceof PartPane)) {
+        if (isDisposed()) {
             return;
+        }
+        
+        if ((part instanceof PartPlaceholder)) {
+        	part.setContainer(this);
+        	return;
         }
 
         PartPane pane = (PartPane)part;
