@@ -56,7 +56,7 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 		dialog.open();
 		
 		int returnValue = dialog.getReturnCode();
-		if (returnValue == IDialogConstants.OK_ID) {
+		if (returnValue == IDialogConstants.YES_ID) {
 			return Boolean.TRUE;
 		}
 		return Boolean.FALSE;
