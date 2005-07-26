@@ -27,9 +27,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.preferences.ViewPreferencesAction;
 
@@ -83,9 +81,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * Sets the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
-		provider = new ProgressViewerContentProvider(viewer, PrefUtil
-				.getAPIPreferenceStore().getBoolean(
-						IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS),true);
+		provider = new ProgressViewerContentProvider(viewer, true ,true);
 		viewer.setContentProvider(provider);
 		viewer.setInput(ProgressManager.getInstance());
 	}

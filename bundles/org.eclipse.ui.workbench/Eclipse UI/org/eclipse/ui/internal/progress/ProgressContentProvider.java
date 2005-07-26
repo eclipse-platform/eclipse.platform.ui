@@ -20,11 +20,10 @@ import org.eclipse.jface.viewers.Viewer;
 public abstract class ProgressContentProvider implements
         IProgressUpdateCollector, IStructuredContentProvider {
 
-	private boolean overrideValue;
 	/**
 	 * Return whether or not we check the preferences or overide.
 	 */
-    private boolean override = false;
+    private boolean canShowDebug = false;
 
     /**
      * Create a new instance of the receiver with all of the
@@ -42,8 +41,7 @@ public abstract class ProgressContentProvider implements
      */
     public ProgressContentProvider(boolean debug) {
     	this();
-    	override = true;
-        overrideValue = debug;
+    	canShowDebug = debug;
     }
 
     /*
@@ -82,8 +80,8 @@ public abstract class ProgressContentProvider implements
      * (system) jobs are being shown.
      */
     public boolean debug(){
-    	if(override)
-    		return overrideValue;
+    	if(!canShowDebug)
+    		return false;
     	return ProgressViewUpdater.getSingleton().debug;
     	
     }

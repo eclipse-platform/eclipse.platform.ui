@@ -76,7 +76,7 @@ public class JobView extends ViewPart implements IViewPart {
      * Sets the content provider for the viewer.
      */
     protected void initContentProvider() {
-        IContentProvider provider = new ProgressTreeContentProvider(viewer);
+        IContentProvider provider = new ProgressTreeContentProvider(viewer,true);
         viewer.setContentProvider(provider);
         viewer.setInput(provider);
     }

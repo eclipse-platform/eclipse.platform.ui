@@ -128,7 +128,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
             });
 
             ProgressTreeContentProvider provider = new ProgressTreeContentProvider(
-                    viewer, Policy.DEBUG_SHOW_SYSTEM_JOBS);
+                    viewer, true);
             viewer.setContentProvider(provider);
             viewer.setInput(provider);
             viewer.setLabelProvider(new ProgressLabelProvider());

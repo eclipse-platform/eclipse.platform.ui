@@ -36,15 +36,16 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	 * 
 	 * @param structured
 	 *            The Viewer we are providing content for
-	 * @param noDebug
-	 *            A flag to indicate if the debug flag is false.
+	 * @param debug
+	 *           If true debug information will be shown
+     * 			 if the debug flag in the ProgressManager is true.
 	 * @param showFinished
 	 *            A boolean that indicates whether or not the finished jobs
 	 *            should be shown.
 	 */
 	public ProgressViewerContentProvider(AbstractProgressViewer structured,
-			boolean noDebug, boolean showFinished) {
-		super(noDebug);
+			boolean debug, boolean showFinished) {
+		super(debug);
 		progressViewer = structured;
 		if (showFinished)
 			FinishedJobs.getInstance().addListener(getKeptJobListener());

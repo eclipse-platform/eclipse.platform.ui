@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.JFaceResources;
@@ -305,15 +306,18 @@ class JobInfo extends JobTreeElement {
 
     /**
      * Return the amount of progress we have had as a percentage. If there is no
-     * progress return -1.
+     * progress or it is indeterminate return IProgressMonitor.UNKNOWN.
      * 
      * @return int
      */
     int getPercentDone() {
     	TaskInfo info = getTaskInfo();
-        if (info != null)
+        if (info != null){
+        	if(info.totalWork == IProgressMonitor.UNKNOWN)
+        		return IProgressMonitor.UNKNOWN;
             return (int) info.preWork * 100 / info.totalWork;
-        return -1;
+        }
+        return IProgressMonitor.UNKNOWN;
     }
 
     /**

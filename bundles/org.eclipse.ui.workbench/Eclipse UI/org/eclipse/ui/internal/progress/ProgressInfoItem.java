@@ -598,7 +598,6 @@ class ProgressInfoItem extends Composite {
 				IDialogConstants.HORIZONTAL_SPACING * -1);
 		barData.height = MAX_PROGRESS_HEIGHT;
 		progressBar.setLayoutData(barData);
-//		progressBar.addMouseListener(mouseListener);
 
 		if (taskEntries.size() > 0) {
 			// Reattach the link label if there is one
