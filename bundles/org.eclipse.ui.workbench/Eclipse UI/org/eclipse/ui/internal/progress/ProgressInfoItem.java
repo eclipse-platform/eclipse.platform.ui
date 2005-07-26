@@ -445,7 +445,7 @@ class ProgressInfoItem extends Composite {
 						: SWT.NONE);
 
 			// Protect against bad counters
-			if (percentDone >= 0 && percentDone <= 100)
+			if (percentDone >= 0 && percentDone <= 100 && percentDone != progressBar.getSelection())
 				progressBar.setSelection(percentDone);
 		}
 
@@ -505,7 +505,6 @@ class ProgressInfoItem extends Composite {
 			}
 			taskEntries = taskEntries.subList(0, taskCount);
 		}
-		layout(true);
 	}
 
 	/**
@@ -766,5 +765,4 @@ class ProgressInfoItem extends Composite {
 	boolean isSelected() {
 		return selected;
 	}
-
 }
