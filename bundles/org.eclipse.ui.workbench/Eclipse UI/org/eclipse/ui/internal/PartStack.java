@@ -524,7 +524,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                         presentationSite, serializer, savedPresentationState);
 
         createControl(parent, presentation);
-        getControl().moveBelow(null);
     }
 
     /* (non-Javadoc)
@@ -603,6 +602,8 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
 
         refreshPresentationSelection();
+        
+        //getControl().moveBelow(null);
     }
 
     public IDropTarget createDropTarget(PartPane pane, StackDropResult result) {
@@ -1127,9 +1128,12 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                     requestedCurrent.reparent(getControl().getParent());
                 }
 
-                //requestedCurrent.moveAbove(getPresentation().getControl());
+               
+                //requestedCurrent.moveAbove(null);
                 
                 presentation.selectPart(presentationCurrent);
+                
+                requestedCurrent.moveAbove(getPresentation().getControl());
             }
         
             // Update the return value of getVisiblePart
