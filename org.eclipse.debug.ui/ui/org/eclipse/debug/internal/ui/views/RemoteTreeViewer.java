@@ -421,12 +421,10 @@ public class RemoteTreeViewer extends TreeViewer {
                                 } else {
                                     // add
                                     int numLeft = children.length - i;
-                                    if (numLeft > 1) {
+                                    if (numLeft >= 1) {
                                         Object[] others = new Object[numLeft];
                                         System.arraycopy(children, i, others, 0, numLeft);
-                                        add(parent, others);
-                                    } else {
-                                        add(parent, child);
+                                        internalAdd(widget, parent, others);
                                     }
                                     break;
                                 }
@@ -479,9 +477,11 @@ public class RemoteTreeViewer extends TreeViewer {
         }
     }
     
+    
 
     // tree viewer hacks start here. These hacks allow us to display the same Object in a tree viewer more 
     // than once. Workbench does on support this (July 6, 2005)
+    
     
     private void createAddedElements(Widget widget, Object[] elements) {
 
@@ -540,6 +540,7 @@ public class RemoteTreeViewer extends TreeViewer {
         }
     }
     
+    //copied from super class
     private int insertionPosition(Item[] items,  ViewerSorter sorter, int lastInsertion, Object element) {
         int size = items.length;
         if (sorter == null)
