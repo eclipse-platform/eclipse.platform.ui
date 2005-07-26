@@ -433,7 +433,7 @@
       </view>
       <view
             name="%Views.ResourceNavigator"
-            icon="icons/full/eview16/filenav_nav.gif"
+            icon="$nl$/icons/full/eview16/filenav_nav.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.navigator.ResourceNavigator"
             id="org.eclipse.ui.views.ResourceNavigator">

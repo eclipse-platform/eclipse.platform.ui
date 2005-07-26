@@ -13,7 +13,7 @@
       </view>
       <view
             name="%Views.ContentOutline"
-            icon="icons/full/eview16/outline_co.gif"
+            icon="$nl$/icons/full/eview16/outline_co.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.contentoutline.ContentOutline"
             id="org.eclipse.ui.views.ContentOutline">
