@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.TreeItem;
@@ -106,15 +107,22 @@ public abstract class AbstractViewerState {
 	        for (int i = 0; i < fSavedExpansion.size(); i++) {
 	            IPath path = (IPath) fSavedExpansion.get(i);
 	            if (path != null) {
-	                Object obj;
-	                try {
-	                    obj = decodePath(path, viewer);
-	                    if (obj != null) {
-	                        viewer.expandToLevel(obj, 1);
-	                    } else {
-	                        expansionComplete = false;                  
+	                if (viewer instanceof VariablesViewer) {
+                        VariablesViewer variablesViewer = (VariablesViewer) viewer;
+                        boolean complete = variablesViewer.expandPath(path);
+                        if (!complete)
+                            expansionComplete = false; 
+	                } else {
+	                    Object obj;
+	                    try {
+	                        obj = decodePath(path, viewer);
+	                        if (obj != null) {
+	                            viewer.expandToLevel(obj, 1);
+	                        } else {
+	                            expansionComplete = false;                  
+	                        }
+	                    } catch (DebugException e) {
 	                    }
-	                } catch (DebugException e) {
 	                }
 	            }
 	        }

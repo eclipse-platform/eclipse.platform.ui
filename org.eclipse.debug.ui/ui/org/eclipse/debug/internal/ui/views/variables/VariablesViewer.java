@@ -14,13 +14,16 @@ package org.eclipse.debug.internal.ui.views.variables;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.IRemoteTreeViewerUpdateListener;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
@@ -141,4 +144,36 @@ public class VariablesViewer extends RemoteTreeViewer {
 	}
     
     
+    public boolean expandPath(IPath path) {
+        String[] strings = path.segments();
+        Item[] children = getChildren(getControl());
+        return internalExpandPath(strings, 0, children);
+
+    }
+    private boolean internalExpandPath(String[] segments, int index, Item[] children) {
+        try {
+            String pathSegment = segments[index];
+            for (int j = 0; j < children.length; j++) {
+                Item child = children[j];
+                Object data = child.getData();
+                if (data instanceof IVariable) {
+                    IVariable var = (IVariable) data;
+                    if (pathSegment.equals(var.getName())) {
+                        ITreeContentProvider provider = (ITreeContentProvider) getContentProvider();
+                        provider.getChildren(child.getData());
+                        setExpanded(child, true);
+                        index++;
+                        if (index < segments.length) {
+                            Item[] newChildren = getChildren(child);
+                            return internalExpandPath(segments, index, newChildren);
+                        }
+                        return true;
+                    }
+                }
+            }
+        } catch (DebugException e) {
+            
+        }
+        return false;
+    }
 }
