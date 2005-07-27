@@ -169,7 +169,8 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 				} catch (IOException e) {
 					CoreTest.fail("0.1", e);
 				}
-			if (!shouldSort) {
+			if (!shouldSort || isSharedSession()) {
+				// for shared sessions, we don't control the execution of test cases
 				super.run(result);
 				return;
 			}

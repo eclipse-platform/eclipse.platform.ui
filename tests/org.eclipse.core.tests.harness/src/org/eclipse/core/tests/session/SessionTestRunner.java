@@ -12,19 +12,32 @@ package org.eclipse.core.tests.session;
 
 import java.io.*;
 import java.net.*;
-import junit.framework.TestResult;
+import java.util.*;
+import junit.framework.*;
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.CoreTest;
 
+/**
+ * This class is responsible for launching JUnit tests on a separate Eclipse session and collect
+ * the tests results sent back through a socket . 
+ */
 public class SessionTestRunner {
 
 	class Result {
 		final static int ERROR = 2;
 		final static int FAILURE = 1;
 		final static int SUCCESS = 0;
+
 		String message;
+
 		String stackTrace;
+		Test test;
 		int type;
+
+		public Result(Test test) {
+			this.test = test;
+		}
 	}
 
 	/**
@@ -32,23 +45,36 @@ public class SessionTestRunner {
 	 */
 	class ResultCollector implements Runnable {
 		private boolean finished;
-		private Result newResult = new Result();
-		private Result result;
+		private Result newResult;
+		private Map results = new HashMap();
 		ServerSocket serverSocket;
 		private boolean shouldRun = true;
 		private StringBuffer stack;
+		private TestResult testResult;
+		// tests completed during this session
+		private int testsRun;
 
-		ResultCollector() throws IOException {
+		ResultCollector(Test test, TestResult testResult) throws IOException {
 			serverSocket = new ServerSocket(0);
+			this.testResult = testResult;
+			initResults(test);
 		}
 
 		public int getPort() {
-
 			return serverSocket.getLocalPort();
 		}
 
-		public Result getResult() {
-			return result;
+		public int getTestsRun() {
+			return testsRun;
+		}
+
+		private void initResults(Test test) {
+			if (test instanceof TestSuite) {
+				for (Enumeration e = ((TestSuite) test).tests(); e.hasMoreElements();)
+					initResults((Test) e.nextElement());
+				return;
+			}
+			results.put(test.toString(), new Result(test));
 		}
 
 		public synchronized boolean isFinished() {
@@ -60,6 +86,18 @@ public class SessionTestRunner {
 			notifyAll();
 		}
 
+		private String parseTestId(String message) {
+			if (message.length() == 0 || message.charAt(0) != '%')
+				return null;
+			int firstComma = message.indexOf(',');
+			if (firstComma == -1)
+				return null;
+			int secondComma = message.indexOf(',', firstComma + 1);
+			if (secondComma == -1)
+				secondComma = message.length();
+			return message.substring(firstComma + 1, secondComma);
+		}
+
 		private void processAvailableMessages(BufferedReader messageReader) throws IOException {
 			while (messageReader.ready()) {
 				String message = messageReader.readLine();
@@ -68,6 +106,24 @@ public class SessionTestRunner {
 		}
 
 		private void processMessage(String message) {
+			if (message.startsWith("%TESTS")) {
+				String testId = parseTestId(message);
+				if (!results.containsKey(testId))
+					throw new IllegalStateException("Unknown test id: " + testId);
+				newResult = (Result) results.get(testId);
+				testResult.startTest(newResult.test);
+				return;
+			}
+			if (message.startsWith("%TESTE")) {
+				if (newResult.type == Result.FAILURE)
+					testResult.addFailure(newResult.test, new RemoteAssertionFailedError(newResult.message, newResult.stackTrace));
+				else if (newResult.type == Result.ERROR)
+					testResult.addError(newResult.test, new RemoteTestException(newResult.message, newResult.stackTrace));
+				testResult.endTest(newResult.test);
+				testsRun++;
+				newResult = null;
+				return;
+			}
 			if (message.startsWith("%ERROR")) {
 				newResult.type = Result.ERROR;
 				newResult.message = "";
@@ -79,23 +135,26 @@ public class SessionTestRunner {
 				return;
 			}
 			if (message.startsWith("%TRACES")) {
+				// just create the string buffer that will hold all the frames of the stack trace
 				stack = new StringBuffer();
 				return;
 			}
 			if (message.startsWith("%TRACEE")) {
+				// stack trace fully read - fill the slot in the result object and reset the string buffer
 				newResult.stackTrace = stack.toString();
 				stack = null;
 				return;
 			}
+			if (message.startsWith("%"))
+				// ignore any other messages
+				return;
 			if (stack != null) {
+				// build the stack trace line by line
 				stack.append(message);
 				stack.append(System.getProperty("line.separator"));
 				return;
 			}
-			if (message.startsWith("%RUNTIME")) {
-				result = newResult;
-				return;
-			}
+			Assert.isTrue(false, "Unexpected message: " + message);
 		}
 
 		public void run() {
@@ -183,28 +242,14 @@ public class SessionTestRunner {
 	}
 
 	/**
-	 * 	Creates a brand new setup object to be used for this session only, based 
-	 * on the setup provided by the test descriptor.
-	 * 
-	 * @param descriptor a test descriptor for the session test to run
-	 * @param port the port used by the result collector 
-	 * @return a brand new setup
-	 */
-	private Setup createSetup(TestDescriptor descriptor, int port) {
-		Setup setup = (Setup) descriptor.getSetup().clone();
-		setup.setEclipseArgument(Setup.APPLICATION, descriptor.getApplicationId());
-		setup.setEclipseArgument("testpluginname", descriptor.getPluginId());
-		setup.setEclipseArgument("test", descriptor.getTestClass() + ':' + descriptor.getTestMethod());
-		setup.setEclipseArgument("port", Integer.toString(port));
-		return setup;
-	}
-
-	/**
 	 * Runs the setup. Returns a status object indicating the outcome of the operation.
 	 *   
 	 * @return a status object indicating the outcome 
 	 */
 	private IStatus launch(Setup setup) {
+		Assert.isNotNull(setup.getEclipseArgument(Setup.APPLICATION), "test application is not defined");
+		Assert.isNotNull(setup.getEclipseArgument("testpluginname"), "test plug-in id not defined");
+		Assert.isTrue(setup.getEclipseArgument("classname") != null ^ setup.getEclipseArgument("test") != null, "either a test suite or a test case must be provided");
 		// to prevent changes in the protocol from breaking us, 
 		// force the version we know we can work with 
 		setup.setEclipseArgument("version", "3");
@@ -221,44 +266,34 @@ public class SessionTestRunner {
 
 	/**
 	 * Runs the test described  in a separate session.
-	 *  
-	 * @param descriptor
-	 * @param result
 	 */
-	public final void run(TestDescriptor descriptor, TestResult result) {
-		result.startTest(descriptor.getTest());
+	public final void run(Test test, TestResult result, Setup setup, boolean crashTest) {
+		ResultCollector collector = null;
 		try {
-			ResultCollector collector = null;
-			try {
-				collector = new ResultCollector();
-			} catch (IOException e) {
-				result.addError(descriptor.getTest(), e);
+			collector = new ResultCollector(test, result);
+		} catch (IOException e) {
+			result.addError(test, e);
+			return;
+		}
+		setup.setEclipseArgument("port", Integer.toString(collector.getPort()));
+		new Thread(collector, "Test result collector").start();
+		IStatus status = launch(setup);
+		collector.shutdown();
+		// ensure the session ran without any errors
+		if (!status.isOK()) {
+			CoreTest.log(CoreTest.PI_HARNESS, status);
+			if (status.getSeverity() == IStatus.ERROR) {
+				result.addError(test, new CoreException(status));
 				return;
 			}
-			Setup setup = createSetup(descriptor, collector.getPort());
-			new Thread(collector, "Test result collector").start();
-			IStatus status = launch(setup);
-			collector.shutdown();
-			// ensure the session ran without any errors
-			if (!status.isOK()) {
-				CoreTest.log(CoreTest.PI_HARNESS, status);
-				if (status.getSeverity() == IStatus.ERROR) {
-					result.addError(descriptor.getTest(), new CoreException(status));
-					return;
-				}
-			}
-			Result collected = collector.getResult();
-			if (collected == null) {
-				if (!descriptor.isCrashTest())
-					result.addError(descriptor.getTest(), new Exception("Test did not run"));
-			} else if (collected.type == Result.FAILURE)
-				result.addFailure(descriptor.getTest(), new RemoteAssertionFailedError(collected.message, collected.stackTrace));
-			else if (collected.type == Result.ERROR)
-				result.addError(descriptor.getTest(), new RemoteTestException(collected.message, collected.stackTrace));
-			else if (descriptor.isCrashTest())
-				result.addError(descriptor.getTest(), new Exception("Crash test failed to cause crash"));
-		} finally {
-			result.endTest(descriptor.getTest());
 		}
+		if (collector.getTestsRun() == 0) {
+			if (crashTest)
+				// explicitly end test since process crashed before test could finish
+				result.endTest(test);
+			else
+				result.addError(test, new Exception("Test did not run: " + test.toString()));
+		} else if (crashTest)
+			result.addError(test, new Exception("Should have caused crash"));
 	}
 }

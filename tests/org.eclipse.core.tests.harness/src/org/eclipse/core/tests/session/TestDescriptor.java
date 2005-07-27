@@ -80,7 +80,11 @@ public class TestDescriptor extends TestCase {
 	}
 
 	public void run(TestResult result) {
-		getTestRunner().run(this, result);
+		Setup localSetup = (Setup) setup.clone();
+		localSetup.setEclipseArgument(Setup.APPLICATION, applicationId);
+		localSetup.setEclipseArgument("testpluginname", pluginId);
+		localSetup.setEclipseArgument("test", testClass + ':' + method);
+		getTestRunner().run(getTest(), result, localSetup, crashTest);
 	}
 
 	public void setApplicationId(String applicationId) {

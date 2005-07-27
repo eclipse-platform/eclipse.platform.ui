@@ -173,24 +173,31 @@ public class SetupManager {
 	}
 
 	private void loadSetups() throws ParserConfigurationException, FactoryConfigurationError, SAXException, IOException, SetupException {
-		String setupFilesProperty = System.getProperty(SETUP_FILES, "default-setup.xml");
+		String setupFilesProperty = System.getProperty(SETUP_FILES);
+		boolean defaultLocation = false;
+		if (setupFilesProperty == null) {
+			setupFilesProperty = "default-setup.xml";
+			defaultLocation = true;
+		}
 		String[] setupFileNames = parseItems(setupFilesProperty);
 		File[] setupFiles = new File[setupFileNames.length];
 		int found = 0;
 		for (int i = 0; i < setupFiles.length; i++) {
 			setupFiles[found] = new File(setupFileNames[i]);
 			if (!setupFiles[found].isFile()) {
-				System.out.println("No setup files found at '" + setupFiles[i].getAbsolutePath() + "'. ");
+				if (!defaultLocation)
+					// warn if user-provided location does not exist
+					System.out.println("No setup files found at '" + setupFiles[i].getAbsolutePath() + "'. ");
 				continue;
 			}
 			found++;
 		}
 		if (found == 0) {
-			if (Platform.isRunning() && Platform.inDevelopmentMode()) {
-				System.out.println("No setup descriptions found, only the default setup will be available");
+			if (Platform.isRunning()) {
+				// No setup descriptions found, only the default setup will be available
 				return;
 			}
-			// no setup files found, and we are not in dev mode... sorry 
+			// no setup files found, and we are not running in Eclipse...  
 			throw new SetupException("No setup descriptions found. Ensure you are specifying the path for an existing setup file (e.g. -Dsetup.files=<setup-file-location1>[...,<setup-file-locationN>])");
 		}
 		DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
