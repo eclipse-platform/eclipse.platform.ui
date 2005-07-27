@@ -145,7 +145,6 @@ public final class DocLineComparator implements IRangeComparator {
 	private final int fLineOffset;
 	private final int fLineCount;
 	private final int fLength;
-	private final boolean fIgnoreWhiteSpace;
 	private final int fMaxOffset;
 
 
@@ -165,12 +164,10 @@ public final class DocLineComparator implements IRangeComparator {
 	 *
 	 * @param document the document from which the lines are taken
 	 * @param region if non-<code>null</code> only lines within this range are taken
-	 * @param ignoreWhiteSpace if <code>true</code> white space is ignored when comparing lines
 	 */
-	public DocLineComparator(IDocument document, IRegion region, boolean ignoreWhiteSpace) {
+	public DocLineComparator(IDocument document, IRegion region) {
 
 		fDocument= document;
-		fIgnoreWhiteSpace= ignoreWhiteSpace;
 
 		if (region != null) {
 			fLength= region.getLength();
@@ -255,12 +252,6 @@ public final class DocLineComparator implements IRangeComparator {
 		if (other != null && other.getClass() == getClass()) {
 			DocLineComparator dlc= (DocLineComparator) other;
 
-			if (fIgnoreWhiteSpace) {
-				extract(thisIndex, fThisBuffer);
-				dlc.extract(otherIndex, fOtherBuffer);
-				return compare(fThisBuffer, fOtherBuffer);
-			}
-
 			int tlen= getLineLength(thisIndex);
 			int olen= dlc.getLineLength(otherIndex);
 			if (tlen == olen) {
@@ -312,38 +303,6 @@ public final class DocLineComparator implements IRangeComparator {
 		buffer.setDocument(fDocument);
 		buffer.setOffset(0);
 		buffer.setLength(0);
-	}
-
-	private boolean compare(CharSequence s1, CharSequence s2) {
-		int l1= s1.length();
-		int l2= s2.length();
-		int c1= 0, c2= 0;
-		int i1= 0, i2= 0;
-
-		while (c1 != -1) {
-
-			c1= -1;
-			while (i1 < l1) {
-				char c= s1.charAt(i1++);
-				if (! Character.isWhitespace(c)) {
-					c1= c;
-					break;
-				}
-			}
-
-			c2= -1;
-			while (i2 < l2) {
-				char c= s2.charAt(i2++);
-				if (! Character.isWhitespace(c)) {
-					c2= c;
-					break;
-				}
-			}
-
-			if (c1 != c2)
-				return false;
-		}
-		return true;
 	}
 
 }

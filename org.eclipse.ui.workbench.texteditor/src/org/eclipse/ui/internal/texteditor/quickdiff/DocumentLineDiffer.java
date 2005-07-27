@@ -545,8 +545,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 
 				// 6:	Do Da Diffing
-				DocLineComparator ref= new DocLineComparator(reference, null, false);
-				DocLineComparator act= new DocLineComparator(actual, null, false);
+				DocLineComparator ref= new DocLineComparator(reference, null);
+				DocLineComparator act= new DocLineComparator(actual, null);
 				List diffs= RangeDifferencer.findRanges(monitor, ref, act);
 				// 7:	Reset the model to the just gotten differences
 				// 		re-inject stored events to get up to date.
@@ -859,7 +859,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		IRegion leftLastLine= left.getLineInformation(leftLine - shiftAfter);
 		int leftEndOffset= leftLastLine.getOffset() + leftLastLine.getLength();
 		IRegion leftRegion= new Region(leftOffset, leftEndOffset - leftOffset);
-		DocLineComparator reference= new DocLineComparator(left, leftRegion, false);
+		DocLineComparator reference= new DocLineComparator(left, leftRegion);
 
 		// right (actual) document
 		int rightOffset= right.getLineOffset(consistentBefore.rightStart() + shiftBefore);
@@ -869,7 +869,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		IRegion rightLastLine= right.getLineInformation(rightLine - shiftAfter);
 		int rightEndOffset= rightLastLine.getOffset() + rightLastLine.getLength();
 		IRegion rightRegion= new Region(rightOffset, rightEndOffset - rightOffset);
-		DocLineComparator change= new DocLineComparator(right, rightRegion, false);
+		DocLineComparator change= new DocLineComparator(right, rightRegion);
 
 		// put an upper bound to the delay we can afford
 		if (leftLine - shiftAfter - (consistentBefore.leftStart() + shiftBefore) > 50 || rightLine - shiftAfter - (consistentBefore.rightStart() + shiftBefore) > 50) {
