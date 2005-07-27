@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -24,6 +22,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IFile;
@@ -141,14 +140,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 		if (imageName == null)
 			return null;
 		Bundle bundle = Platform.getBundle(getPluginId());
-		URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
-		try {
-			iconURL = new URL(iconURL, imageName);
-			return ImageDescriptor.createFromURL(iconURL);
-		} catch (MalformedURLException e) {
-			ExceptionHandler.log(e, SearchMessages.Search_Error_createSearchPage_message); 
-		}
-		return null;
+		return SearchPluginImages.createImageDescriptor(bundle, new Path(imageName));
 	}
 
 	/**

@@ -14,11 +14,15 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
+
+import org.osgi.framework.Bundle;
 
 /**
  * Proxy that represents a sorter.
@@ -73,14 +77,8 @@ class SorterDescriptor {
 		String imageName= fElement.getAttribute(ICON_ATTRIBUTE);
 		if (imageName == null)
 			return null;
-		URL url;
-		try {
-			url= new URL(fElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL(), imageName);
-		} catch (java.net.MalformedURLException ex) {
-			ExceptionHandler.log(ex, SearchMessages.Search_Error_createSorter_message); 
-			return null;
-		}
-		return ImageDescriptor.createFromURL(url);
+		Bundle bundle = Platform.getBundle(fElement.getNamespace());
+		return SearchPluginImages.createImageDescriptor(bundle, new Path(imageName));
 	}
 
 	/**
