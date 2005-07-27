@@ -12,16 +12,17 @@
 package org.eclipse.debug.internal.ui;
 
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Bundle;
 
 /**
  * The images provided by the debug plugin.
@@ -36,22 +37,16 @@ public class DebugPluginImages {
 	private static final String ATTR_LAUNCH_CONFIG_TYPE_ICON = "icon"; //$NON-NLS-1$
 	private static final String ATTR_LAUNCH_CONFIG_TYPE_ID = "configTypeID"; //$NON-NLS-1$
 	
-	/* Declare Common paths */
-	private static URL ICON_BASE_URL= null;
-
-	static {
-		String pathSuffix = "icons/full/"; //$NON-NLS-1$
-		ICON_BASE_URL= DebugUIPlugin.getDefault().getBundle().getEntry(pathSuffix);
-	}
+	private static String ICONS_PATH = "$nl$/icons/full/"; //$NON-NLS-1$
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct
-	private final static String CTOOL= "etool16/"; //basic colors - size 16x16 //$NON-NLS-1$
-	private final static String DLCL= "dlcl16/"; //disabled - size 16x16 //$NON-NLS-1$
-	private final static String ELCL= "elcl16/"; //enabled - size 16x16 //$NON-NLS-1$
-	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
-	private final static String WIZBAN= "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
-	private final static String OVR= "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
-	private final static String VIEW= "eview16/"; // views //$NON-NLS-1$
+	private final static String CTOOL= ICONS_PATH + "etool16/"; //basic colors - size 16x16 //$NON-NLS-1$
+	private final static String DLCL= ICONS_PATH + "dlcl16/"; //disabled - size 16x16 //$NON-NLS-1$
+	private final static String ELCL= ICONS_PATH + "elcl16/"; //enabled - size 16x16 //$NON-NLS-1$
+	private final static String OBJECT= ICONS_PATH + "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
+	private final static String WIZBAN= ICONS_PATH + "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
+	private final static String OVR= ICONS_PATH + "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
+	private final static String VIEW= ICONS_PATH + "eview16/"; // views //$NON-NLS-1$
 	
 	/**
 	 * Declare all images
@@ -221,11 +216,12 @@ public class DebugPluginImages {
 	 *				this plugin class is found (i.e. typically the packages directory)
 	 */
 	private final static void declareRegistryImage(String key, String path) {
-		ImageDescriptor desc= ImageDescriptor.getMissingImageDescriptor();
-		try {
-			desc= ImageDescriptor.createFromURL(makeIconFileURL(path));
-		} catch (MalformedURLException me) {
-			DebugUIPlugin.log(me);
+		ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
+		Bundle bundle = Platform.getBundle(DebugUIPlugin.getUniqueIdentifier());
+		URL url = null;
+		if (bundle != null){
+			url = Platform.find(bundle, new Path(path));
+			desc = ImageDescriptor.createFromURL(url);
 		}
 		imageRegistry.put(key, desc);
 	}
@@ -288,14 +284,6 @@ public class DebugPluginImages {
 	 */
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return getImageRegistry().getDescriptor(key);
-	}
-	
-	private static URL makeIconFileURL(String iconPath) throws MalformedURLException {
-		if (ICON_BASE_URL == null) {
-			throw new MalformedURLException();
-		}
-			
-		return new URL(ICON_BASE_URL, iconPath);
 	}
 }
 
