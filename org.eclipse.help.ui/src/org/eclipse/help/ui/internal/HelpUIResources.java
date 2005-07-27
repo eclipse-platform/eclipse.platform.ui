@@ -33,7 +33,7 @@ public class HelpUIResources {
 	 * Returns a string from a property file
 	 */
 	public static URL getImagePath(String name) {
-		IPath path = new Path("icons/").append(name); //$NON-NLS-1$
+		IPath path = new Path("$nl$/icons/").append(name); //$NON-NLS-1$
 		return Platform.find(HelpUIPlugin.getDefault().getBundle(), path);
 	}
 	
