@@ -95,7 +95,7 @@ public class TemporaryObjectManager implements IObjectManager {
 			}
 		}
 		if (result == null)
-			throw new InvalidRegistryObjectException(); //$NON-NLS-1$
+			throw new InvalidRegistryObjectException();
 		return result;
 	}
 

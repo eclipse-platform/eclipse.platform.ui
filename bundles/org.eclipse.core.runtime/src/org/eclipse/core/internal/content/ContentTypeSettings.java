@@ -63,12 +63,12 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 			Preferences contentTypeNode = contentTypePrefs.node(id);
 			String propertyValue = contentTypeNode.get(key.getLocalName(), null);
 			if (propertyValue != null)
-				return propertyValue; //$NON-NLS-1$
+				return propertyValue;
 		}
 		// try built-in settings
 		String propertyValue = current.basicGetDefaultProperty(key);
 		if (propertyValue != null)
-			return propertyValue; //$NON-NLS-1$
+			return propertyValue;
 		// try ancestor
 		ContentType baseType = (ContentType) current.getBaseType();
 		return baseType == null ? null : internalGetDefaultProperty(baseType, contentTypePrefs, key);

@@ -112,7 +112,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 
 	private boolean isSingleton(Bundle bundle) {
 		Dictionary allHeaders = bundle.getHeaders(""); //$NON-NLS-1$
-		String symbolicNameHeader = (String) allHeaders.get(Constants.BUNDLE_SYMBOLICNAME); //$NON-NLS-1$
+		String symbolicNameHeader = (String) allHeaders.get(Constants.BUNDLE_SYMBOLICNAME);
 		try {
 			if (symbolicNameHeader != null) {
 				ManifestElement[] symbolicNameElements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicNameHeader);
@@ -185,7 +185,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 			return null;
 		try {
 			String message = NLS.bind(Messages.parse_problems, bundle.getLocation());
-			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, message, null); //$NON-NLS-1$
+			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, message, null); 
 			ResourceBundle b = null;
 			try {
 				b = ResourceTranslator.getResourceBundle(bundle);

@@ -419,12 +419,12 @@ public class ExtensionsParser extends DefaultHandler {
 				String targetName;
 				if (attrValue.lastIndexOf('.') == -1) {
 					String baseId = namespace.getNamespace();
-					targetName = baseId + "." + attrValue; //$NON-NLS-1$
+					targetName = baseId + '.' + attrValue;
 				} else
 					targetName = attrValue;
 				currentExtension.setExtensionPointIdentifier(targetName);
 			} else
-				unknownAttribute(EXTENSION, attrName); //$NON-NLS-1$
+				unknownAttribute(EXTENSION, attrName);
 		}
 		if (currentExtension.getExtensionPointIdentifier() == null) {
 			missingAttribute(EXTENSION_TARGET, EXTENSION);
@@ -475,7 +475,7 @@ public class ExtensionsParser extends DefaultHandler {
 			} else if (attrName.equals(EXTENSION_POINT_SCHEMA))
 				currentExtPoint.setSchema(attrValue);
 			else
-				unknownAttribute(EXTENSION_POINT, attrName); //$NON-NLS-1$
+				unknownAttribute(EXTENSION_POINT, attrName);
 		}
 		if (currentExtPoint.getSimpleIdentifier() == null || currentExtPoint.getLabel() == null) {
 			String attribute = currentExtPoint.getSimpleIdentifier() == null ? EXTENSION_POINT_ID : EXTENSION_POINT_NAME;

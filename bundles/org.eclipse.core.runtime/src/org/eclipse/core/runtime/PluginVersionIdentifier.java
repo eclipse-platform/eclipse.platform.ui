@@ -143,7 +143,7 @@ public final class PluginVersionIdentifier {
 		} catch (RuntimeException e) {
 			return new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, e.getMessage(), e);
 		}
-		return Status.OK_STATUS; //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 	private static Object[] parseVersion(String versionId) {
@@ -429,7 +429,7 @@ public final class PluginVersionIdentifier {
 
 		if (id == null) {
 			if (major == 0 && minor == 0 && service == 0 && qualifier.equals("")) //$NON-NLS-1$
-				return false; //$NON-NLS-1$
+				return false;
 			else
 				return true;
 		}

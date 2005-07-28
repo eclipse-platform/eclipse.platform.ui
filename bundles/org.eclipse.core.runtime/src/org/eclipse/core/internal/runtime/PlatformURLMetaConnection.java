@@ -46,7 +46,7 @@ public class PlatformURLMetaConnection extends PlatformURLConnection {
 		IPath path = Platform.getStateLocation(target);
 		if (ix != -1 || (ix + 1) <= spec.length())
 			path = path.append(spec.substring(ix + 1));
-		return path.toFile().toURL(); //$NON-NLS-1$
+		return path.toFile().toURL();
 	}
 
 	public static void startup() {

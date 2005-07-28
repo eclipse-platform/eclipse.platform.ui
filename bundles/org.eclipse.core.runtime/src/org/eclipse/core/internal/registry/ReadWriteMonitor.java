@@ -57,7 +57,7 @@ public class ReadWriteMonitor {
 					// ignore
 				}
 			}
-//			System.out.println(this + "lockowner:" + Thread.currentThread()); //$NON-NLS-1$
+//			System.out.println(this + "lockowner:" + Thread.currentThread());
 			writeLockowner = Thread.currentThread();
 		}
 		status--;

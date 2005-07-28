@@ -62,6 +62,6 @@ public final class DefaultDescription extends BasicDescription {
 	}
 
 	public String toString() {
-		return "{default} : " + contentTypeInfo.getContentType(); //$NON-NLS-1$ //$NON-NLS-2$
+		return "{default} : " + contentTypeInfo.getContentType(); //$NON-NLS-1$
 	}
 }

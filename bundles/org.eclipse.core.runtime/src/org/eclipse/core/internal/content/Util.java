@@ -20,7 +20,7 @@ public class Util {
 	public static String[] parseItems(String string, String separator) {
 		if (string == null)
 			return new String[0];
-		StringTokenizer tokenizer = new StringTokenizer(string, separator, true); //$NON-NLS-1$
+		StringTokenizer tokenizer = new StringTokenizer(string, separator, true); 
 		if (!tokenizer.hasMoreTokens())
 			return new String[] {string.trim()};
 		String first = tokenizer.nextToken().trim();
@@ -60,7 +60,7 @@ public class Util {
 		List items = new ArrayList(5);
 		if (string == null)
 			return items;
-		StringTokenizer tokenizer = new StringTokenizer(string, separator, true); //$NON-NLS-1$
+		StringTokenizer tokenizer = new StringTokenizer(string, separator, true);
 		if (!tokenizer.hasMoreTokens()) {
 			items.add(string.trim());
 			return items;
@@ -98,7 +98,7 @@ public class Util {
 
 	public static String toListString(Object[] list, String separator) {
 		if (list == null || list.length == 0)
-			return null; //$NON-NLS-1$
+			return null; 
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < list.length; i++) {
 			result.append(list[i]);

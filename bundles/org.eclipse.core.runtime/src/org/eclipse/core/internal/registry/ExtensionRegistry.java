@@ -630,7 +630,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 				Location parentLocation = null;
 				if (currentLocation != null && (parentLocation = currentLocation.getParentLocation()) != null) {
 					try {
-						currentFileManager = new FileManager(new File(parentLocation.getURL().getFile() + '/' + Platform.PI_RUNTIME), null, true); //$NON-NLS-1$
+						currentFileManager = new FileManager(new File(parentLocation.getURL().getFile() + '/' + Platform.PI_RUNTIME), null, true);
 						currentFileManager.open(false);
 						cacheFile = currentFileManager.lookup(TableReader.TABLE, false);
 					} catch (IOException e) {
@@ -686,7 +686,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 		if (!fromCache)
 			pluginBundleListener.processBundles(InternalPlatform.getDefault().getBundleContext().getBundles());
 
-		InternalPlatform.getDefault().getBundleContext().registerService(IExtensionRegistry.class.getName(), this, new Hashtable()); //$NON-NLS-1$
+		InternalPlatform.getDefault().getBundleContext().registerService(IExtensionRegistry.class.getName(), this, new Hashtable());
 
 	}
 

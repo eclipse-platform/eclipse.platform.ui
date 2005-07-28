@@ -71,12 +71,12 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	 * @return the content type manager
 	 */
 	public static ContentTypeManager getInstance() {
-		Assert.isNotNull(instance); //$NON-NLS-1$
+		Assert.isNotNull(instance); 
 		return instance;
 	}
 
 	/*
-	 * Returns the extension for a file name (omiting the leading '.').
+	 * Returns the extension for a file name (omitting the leading '.').
 	 */
 	static String getFileExtension(String fileName) {
 		int dotPosition = fileName.lastIndexOf('.');
