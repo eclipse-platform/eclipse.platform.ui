@@ -84,6 +84,8 @@ class ProgressInfoItem extends Composite {
 
 	static final int MIN_ICON_SIZE = 16;
 
+	private static final String EMPTY_STRING = "";//$NON-NLS-1$
+
 	interface IndexListener {
 		/**
 		 * Select the item previous to the receiver.
@@ -440,7 +442,7 @@ class ProgressInfoItem extends Composite {
 				progressBar.setSelection(percentDone);
 		}
 
-		if (progressBar != null && isCompleted()) {
+		else if (isCompleted()) {
 
 			if (progressBar != null) {
 				progressBar.dispose();
@@ -453,6 +455,7 @@ class ProgressInfoItem extends Composite {
 					.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
 
 		}
+		
 
 		JobInfo[] infos = getJobInfos();
 		int taskCount = 0;
@@ -482,7 +485,11 @@ class ProgressInfoItem extends Composite {
 			} else {// Check for the finished job state
 				Job job = jobInfo.getJob();
 				if (job.getState() == Job.NONE) {
-					setLinkText(job, job.getResult().getMessage(), i);
+					IStatus result = job.getResult();
+					String message = EMPTY_STRING;
+					if(result != null)
+						message = result.getMessage();
+					setLinkText(job,message, i);
 					taskCount++;
 				}
 			}
@@ -507,9 +514,10 @@ class ProgressInfoItem extends Composite {
 
 		JobInfo[] infos = getJobInfos();
 		for (int i = 0; i < infos.length; i++) {
-			if (infos[i].getJob().getState() != Job.NONE)
-				return false;
-
+			int state = infos[i].getJob().getState();
+			if (state == Job.NONE || state == Job.SLEEPING)//may be a rescheduled job
+				continue;
+			return false;
 		}
 		// Only completed if there are any jobs
 		return infos.length > 0;
@@ -535,9 +543,15 @@ class ProgressInfoItem extends Composite {
 	 * @return boolean
 	 */
 	private boolean isRunning() {
-		if (info.isJobInfo())
-			return ((JobInfo) info).getJob().getState() == Job.RUNNING;
-		return true;
+		JobInfo[] infos = getJobInfos();
+		for (int i = 0; i < infos.length; i++) {
+			int state = infos[i].getJob().getState();
+			if (state == Job.RUNNING)
+				continue;
+			return false;
+		}
+		// Only completed if there are any jobs
+		return infos.length > 0;
 	}
 
 	/**
