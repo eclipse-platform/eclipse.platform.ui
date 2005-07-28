@@ -12,8 +12,14 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
+/**
+ * The FieldSeverity is the field for setting severities.
+ *
+ */
 public class FieldSeverity implements IField {
 
     private static final String IMAGE_ERROR_PATH = "obj16/error_tsk.gif"; //$NON-NLS-1$
@@ -24,11 +30,11 @@ public class FieldSeverity implements IField {
 
     private String description;
 
-    private Image image;
-
+    /**
+     * Create a new instance of the receiver.
+     */
     public FieldSeverity() {
         description = Messages.getString("problemSeverity.description"); //$NON-NLS-1$
-        image = null;
     }
 
     /*
@@ -44,7 +50,7 @@ public class FieldSeverity implements IField {
      * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
      */
     public Image getDescriptionImage() {
-        return image;
+        return null;
     }
 
     /*
@@ -82,16 +88,27 @@ public class FieldSeverity implements IField {
 
         int severity = ((ProblemMarker) obj).getSeverity();
         if (severity == IMarker.SEVERITY_ERROR) {
-            return ImageFactory.getImage(IMAGE_ERROR_PATH);
+            return getIDEImage(IMAGE_ERROR_PATH);
         }
         if (severity == IMarker.SEVERITY_WARNING) {
-            return ImageFactory.getImage(IMAGE_WARNING_PATH);
+            return getIDEImage(IMAGE_WARNING_PATH);
         }
         if (severity == IMarker.SEVERITY_INFO) {
-            return ImageFactory.getImage(IMAGE_INFO_PATH);
+            return getIDEImage(IMAGE_INFO_PATH);
         }
         return null;
     }
+    /**
+	 * Get the IDE image at path.
+	 * @param path
+	 * @return Image
+	 */
+	private Image getIDEImage(String path){
+		return JFaceResources.getResources().createImageWithDefault(
+				IDEWorkbenchPlugin
+						.getIDEImageDescriptor(path));
+		
+	}
 
     /*
      *  (non-Javadoc)

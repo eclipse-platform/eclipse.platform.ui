@@ -12,6 +12,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * This action opens a Filters Dialog and notifies the Marker View if the user has
@@ -26,8 +27,7 @@ class FiltersAction extends Action {
      */
     public FiltersAction(MarkerView view) {
         super(Messages.getString("filtersAction.title")); //$NON-NLS-1$
-        setImageDescriptor(ImageFactory
-                .getImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
+        setImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
         setToolTipText(Messages.getString("filtersAction.tooltip")); //$NON-NLS-1$
         this.view = view;
         setEnabled(true);

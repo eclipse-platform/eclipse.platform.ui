@@ -13,16 +13,25 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
+/**
+ * The ActionAddGlobalTask is the action for adding a global task.
+ *
+ */
 public class ActionAddGlobalTask extends Action {
 
     private static final String ENABLED_IMAGE_PATH = "elcl16/addtsk_tsk.gif"; //$NON-NLS-1$
 
     private IWorkbenchPart part;
 
+    /**
+     * Create a new instance of the global task.
+     * @param part
+     */
     public ActionAddGlobalTask(IWorkbenchPart part) {
         setText(Messages.getString("addGlobalTaskAction.title")); //$NON-NLS-1$
-        setImageDescriptor(ImageFactory.getImageDescriptor(ENABLED_IMAGE_PATH));
+        setImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor(ENABLED_IMAGE_PATH));
         setToolTipText(Messages.getString("addGlobalTaskAction.tooltip")); //$NON-NLS-1$
         this.part = part;
     }

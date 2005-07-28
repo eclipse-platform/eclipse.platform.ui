@@ -27,6 +27,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Action to open an editor on the selected bookmarks.
@@ -42,9 +43,8 @@ public class ActionOpenMarker extends SelectionProviderAction {
     public ActionOpenMarker(IWorkbenchPart part, ISelectionProvider provider) {
         super(provider, Messages.getString("openAction.title")); //$NON-NLS-1$
         this.part = part;
-        setImageDescriptor(ImageFactory.getImageDescriptor(IMAGE_PATH));
-        setDisabledImageDescriptor(ImageFactory
-                .getImageDescriptor(DISABLED_IMAGE_PATH));
+        setImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor(IMAGE_PATH));
+        setDisabledImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor(DISABLED_IMAGE_PATH));
         setEnabled(false);
     }
 

@@ -12,8 +12,15 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
+/**
+ * The FieldPriority is the field for setting a tasks 
+ * priority.
+ *
+ */
 public class FieldPriority implements IField {
 
     static final String DESCRIPTION_IMAGE_PATH = "obj16/header_priority.gif"; //$NON-NLS-1$
@@ -24,11 +31,11 @@ public class FieldPriority implements IField {
 
     private String description;
 
-    private Image image;
-
+    /**
+     * Return a new instance of the receiver.
+     */
     public FieldPriority() {
         description = Messages.getString("priority.description"); //$NON-NLS-1$
-        image = ImageFactory.getImage(DESCRIPTION_IMAGE_PATH);
     }
 
     /*
@@ -38,13 +45,25 @@ public class FieldPriority implements IField {
     public String getDescription() {
         return description;
     }
+    
+    /**
+	 * Get the image at path.
+	 * @param path
+	 * @return Image
+	 */
+	private Image getImage(String path){
+		return JFaceResources.getResources().createImageWithDefault(
+				IDEWorkbenchPlugin
+						.getIDEImageDescriptor(path));
+		
+	}
 
     /*
      *  (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
      */
     public Image getDescriptionImage() {
-        return image;
+        return getImage(DESCRIPTION_IMAGE_PATH);
     }
 
     /*
@@ -60,7 +79,7 @@ public class FieldPriority implements IField {
      * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
      */
     public Image getColumnHeaderImage() {
-        return image;
+        return getDescriptionImage();
     }
 
     /*
@@ -82,10 +101,10 @@ public class FieldPriority implements IField {
         try {
             int priority = ((TaskMarker) obj).getPriority();
             if (priority == IMarker.PRIORITY_HIGH) {
-                return ImageFactory.getImage(HIGH_PRIORITY_IMAGE_PATH);
+                return getImage(HIGH_PRIORITY_IMAGE_PATH);
             }
             if (priority == IMarker.PRIORITY_LOW) {
-                return ImageFactory.getImage(LOW_PRIORITY_IMAGE_PATH);
+                return getImage(LOW_PRIORITY_IMAGE_PATH);
             }
         } catch (NumberFormatException e) {
             return null;
