@@ -151,7 +151,10 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 		Set all = new HashSet();
 		
 		for (int i = 0; i < elements.length; i++) {
-			all.add(elements[i]);
+			Object element = elements[i];
+			all.add(element);
+			if(keptJobs.contains(element))
+				keptJobs.remove(element);
 
 		}
 		

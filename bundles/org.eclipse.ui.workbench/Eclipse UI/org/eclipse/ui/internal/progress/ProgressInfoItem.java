@@ -380,8 +380,11 @@ class ProgressInfoItem extends Composite {
 		switch (job.getState()) {
 		case Job.RUNNING:
 			return name;
-		case Job.SLEEPING:
-			return NLS.bind(ProgressMessages.JobInfo_Sleeping, name);
+		case Job.SLEEPING:{//if it is sleeping and has a result show it
+			if(job.getResult() == null)
+				return NLS.bind(ProgressMessages.JobInfo_Sleeping, name);
+			return getJobInfoFinishedString(job, true);
+		}			
 		case Job.NONE: // Only happens for kept jobs
 			return getJobInfoFinishedString(job, true);
 		default:
@@ -514,10 +517,8 @@ class ProgressInfoItem extends Composite {
 
 		JobInfo[] infos = getJobInfos();
 		for (int i = 0; i < infos.length; i++) {
-			int state = infos[i].getJob().getState();
-			if (state == Job.NONE || state == Job.SLEEPING)//may be a rescheduled job
-				continue;
-			return false;
+			if(infos[i].getJob().getResult() == null)//No result not done
+				return false;
 		}
 		// Only completed if there are any jobs
 		return infos.length > 0;
