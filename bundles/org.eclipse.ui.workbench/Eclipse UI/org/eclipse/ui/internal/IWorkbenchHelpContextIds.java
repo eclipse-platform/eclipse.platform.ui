@@ -40,6 +40,8 @@ public interface IWorkbenchHelpContextIds {
 
     public static final String IMPORT_ACTION = PREFIX + "import_action_context"; //$NON-NLS-1$
 
+    public static final String IMPORT_EXPORT_ACTION = PREFIX + "import_export_action_context"; //$NON-NLS-1$
+
     public static final String EXPORT_ACTION = PREFIX + "export_action_context"; //$NON-NLS-1$
 
     public static final String SAVE_PERSPECTIVE_ACTION = PREFIX
@@ -312,6 +314,8 @@ public interface IWorkbenchHelpContextIds {
             + "new_wizard_shortcut_context"; //$NON-NLS-1$
 
     public static final String IMPORT_WIZARD = PREFIX + "import_wizard_context"; //$NON-NLS-1$
+
+    public static final String IMPORT_EXPORT_WIZARD = PREFIX + "import_export_wizard_context"; //$NON-NLS-1$
 
     public static final String EXPORT_WIZARD = PREFIX + "export_wizard_context"; //$NON-NLS-1$
 

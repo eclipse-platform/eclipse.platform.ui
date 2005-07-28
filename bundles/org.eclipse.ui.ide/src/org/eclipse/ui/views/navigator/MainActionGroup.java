@@ -37,8 +37,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.AddBookmarkAction;
 import org.eclipse.ui.actions.AddTaskAction;
-import org.eclipse.ui.actions.ExportResourcesAction;
-import org.eclipse.ui.actions.ImportResourcesAction;
+import org.eclipse.ui.actions.ImportExportAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -58,9 +57,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 
     protected PropertyDialogAction propertyDialogAction;
 
-    protected ImportResourcesAction importAction;
-
-    protected ExportResourcesAction exportAction;
+    protected ImportExportAction importExportAction;
 
     protected CollapseAllAction collapseAllAction;
 
@@ -154,19 +151,13 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         propertyDialogAction = new PropertyDialogAction(shell, navigator
                 .getViewer());
 
-        importAction = new ImportResourcesAction(navigator.getSite()
+        importExportAction = new ImportExportAction(navigator.getSite()
                 .getWorkbenchWindow());
-        importAction
+        // TODO get new icons
+        importExportAction
                 .setDisabledImageDescriptor(getImageDescriptor("dtool16/import_wiz.gif")); //$NON-NLS-1$
-        importAction
+        importExportAction
                 .setImageDescriptor(getImageDescriptor("etool16/import_wiz.gif")); //$NON-NLS-1$		
-
-        exportAction = new ExportResourcesAction(navigator.getSite()
-                .getWorkbenchWindow());
-        exportAction
-                .setDisabledImageDescriptor(getImageDescriptor("dtool16/export_wiz.gif")); //$NON-NLS-1$
-        exportAction
-                .setImageDescriptor(getImageDescriptor("etool16/export_wiz.gif")); //$NON-NLS-1$
 
         collapseAllAction = new CollapseAllAction(navigator,
                 ResourceNavigatorMessages.CollapseAllAction_title);
@@ -251,10 +242,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         refactorGroup.fillContextMenu(menu);
         menu.add(new Separator());
 
-        menu.add(importAction);
-        menu.add(exportAction);
-        importAction.selectionChanged(selection);
-        exportAction.selectionChanged(selection);
+        menu.add(importExportAction);
+        importExportAction.selectionChanged(selection);
         menu.add(new Separator());
 
         workspaceGroup.fillContextMenu(menu);
@@ -345,8 +334,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 
         newWizardMenu.dispose();
         collapseAllAction.dispose();
-        exportAction.dispose();
-        importAction.dispose();
+        importExportAction.dispose();
         propertyDialogAction.dispose();
         toggleLinkingAction.dispose();
 

@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.PerspectiveTracker;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.ImportWizard;
+import org.eclipse.ui.internal.dialogs.ImportExportWizard;
 
 /**
  * Action representing a generic import operation.
@@ -126,7 +126,7 @@ public class ImportResourcesAction extends BaseSelectionListenerAction
             // action has been disposed
             return;
         }
-        ImportWizard wizard = new ImportWizard();
+        ImportExportWizard wizard = new ImportExportWizard(ImportExportWizard.IMPORT);
         IStructuredSelection selectionToPass;
         // get the current workbench selection
         ISelection workbenchSelection = workbenchWindow.getSelectionService()
@@ -141,10 +141,10 @@ public class ImportResourcesAction extends BaseSelectionListenerAction
         IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
                 .getDialogSettings();
         IDialogSettings wizardSettings = workbenchSettings
-                .getSection("ImportResourcesAction"); //$NON-NLS-1$
+                .getSection("ImportExportAction"); //$NON-NLS-1$
         if (wizardSettings == null)
             wizardSettings = workbenchSettings
-                    .addNewSection("ImportResourcesAction"); //$NON-NLS-1$
+                    .addNewSection("ImportExportAction"); //$NON-NLS-1$
         wizard.setDialogSettings(wizardSettings);
         wizard.setForcePreviousAndNextButtons(true);
 

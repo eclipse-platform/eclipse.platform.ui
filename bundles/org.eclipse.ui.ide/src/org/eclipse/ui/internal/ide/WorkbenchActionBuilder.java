@@ -185,9 +185,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     private IWorkbenchAction newWizardDropDownAction;
 
-    private IWorkbenchAction importResourcesAction;
-
-    private IWorkbenchAction exportResourcesAction;
+    private IWorkbenchAction importExportResourcesAction;
 
     IWorkbenchAction buildAllAction; // Incremental workspace build
 
@@ -494,8 +492,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(openWorkspaceAction);
         menu.add(new GroupMarker(IWorkbenchActionConstants.OPEN_EXT));
         menu.add(new Separator());
-        menu.add(importResourcesAction);
-        menu.add(exportResourcesAction);
+        menu.add(importExportResourcesAction);
         menu.add(new GroupMarker(IWorkbenchActionConstants.IMPORT_EXT));
         menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
@@ -1101,8 +1098,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         projectPropertyDialogAction = null;
         newWizardAction = null;
         newWizardDropDownAction = null;
-        importResourcesAction = null;
-        exportResourcesAction = null;
+        importExportResourcesAction = null;
         buildAllAction = null;
         cleanAction = null;
         toggleAutoBuildAction = null;
@@ -1178,11 +1174,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
                 .create(window);
         register(newWizardDropDownAction);
 
-        importResourcesAction = ActionFactory.IMPORT.create(window);
-        register(importResourcesAction);
-
-        exportResourcesAction = ActionFactory.EXPORT.create(window);
-        register(exportResourcesAction);
+        importExportResourcesAction = ActionFactory.IMPORT_EXPORT.create(window);
+        register(importExportResourcesAction);
 
         buildAllAction = IDEActionFactory.BUILD.create(window);
         register(buildAllAction);

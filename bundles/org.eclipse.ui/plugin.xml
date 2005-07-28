@@ -450,6 +450,11 @@
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.import" />
       <command
+            name="%command.importexport.name"
+            description="%command.importexport.description"
+            categoryId="org.eclipse.ui.category.file"
+            id="org.eclipse.ui.file.importexport" />
+      <command
             name="%command.export.name"
             description="%command.export.description"
             categoryId="org.eclipse.ui.category.file"
