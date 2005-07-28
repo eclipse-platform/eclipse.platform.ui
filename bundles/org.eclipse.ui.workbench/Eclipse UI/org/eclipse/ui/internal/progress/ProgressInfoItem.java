@@ -487,7 +487,7 @@ class ProgressInfoItem extends Composite {
 				}
 			} else {// Check for the finished job state
 				Job job = jobInfo.getJob();
-				if (job.getState() == Job.NONE) {
+				if (job.getResult() != null) {
 					IStatus result = job.getResult();
 					String message = EMPTY_STRING;
 					if(result != null)
