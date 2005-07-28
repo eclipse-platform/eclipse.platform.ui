@@ -216,7 +216,6 @@ class ProgressInfoItem extends Composite {
 		actionBar.setCursor(normalCursor); // set cursor to overwrite any busy
 		// cursor we might have
 		actionButton = new ToolItem(actionBar, SWT.NONE);
-		actionButton.setImage(getStopImage());
 		actionButton
 				.setToolTipText(ProgressMessages.NewProgressView_CancelJobToolTip);
 		actionButton.addSelectionListener(new SelectionAdapter() {
@@ -243,6 +242,7 @@ class ProgressInfoItem extends Composite {
 
 			}
 		});
+		setToolBarImages();
 
 		FormData progressData = new FormData();
 		progressData.top = new FormAttachment(IDialogConstants.VERTICAL_SPACING);
@@ -291,15 +291,6 @@ class ProgressInfoItem extends Composite {
 			((Link) taskEntries.get(0)).setLayoutData(linkData);
 
 		}
-	}
-
-	/**
-	 * Get the image used for the stop button.
-	 * 
-	 * @return Image
-	 */
-	private Image getStopImage() {
-		return JFaceResources.getImageRegistry().get(STOP_IMAGE_KEY);
 	}
 
 	/**
@@ -449,7 +440,7 @@ class ProgressInfoItem extends Composite {
 				progressBar.setSelection(percentDone);
 		}
 
-		if (isCompleted()) {
+		if (progressBar != null && isCompleted()) {
 
 			if (progressBar != null) {
 				progressBar.dispose();
@@ -570,8 +561,41 @@ class ProgressInfoItem extends Composite {
 	void remap(JobTreeElement element) {
 		info = element;
 		setData(element);
+		
+		setToolBarImages();
+			
 		refresh();
 
+	}
+
+	/**
+	 * Set the images in the toolbar based on whether the receiver
+	 * is finished or not.
+	 *
+	 */
+	private void setToolBarImages() {
+		if (isCompleted()) {
+			actionButton.setImage(JFaceResources
+					.getImage(CLEAR_FINISHED_JOB_KEY));
+			actionButton.setDisabledImage(JFaceResources
+					.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
+		}
+		else{
+			actionButton.setImage(JFaceResources
+					.getImage(STOP_IMAGE_KEY));
+			actionButton.setDisabledImage(JFaceResources
+					.getImage(DISABLED_STOP_IMAGE_KEY));
+			
+		}
+		JobInfo[] infos = getJobInfos();
+		
+		for (int i = 0; i < infos.length; i++) {
+			if(infos[i].isCanceled()){
+				actionButton.setEnabled(false);
+				return;
+			}
+		}
+		actionButton.setEnabled(true);
 	}
 
 	/**
