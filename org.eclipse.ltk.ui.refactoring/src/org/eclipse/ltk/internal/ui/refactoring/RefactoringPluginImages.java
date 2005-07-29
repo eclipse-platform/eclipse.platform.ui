@@ -10,28 +10,27 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.osgi.framework.Bundle;
 
 public class RefactoringPluginImages {
 
 	private static final String NAME_PREFIX= "org.eclipse.ltk.ui.refactoring"; //$NON-NLS-1$
 	private static final int    NAME_PREFIX_LENGTH= NAME_PREFIX.length();
-
-	private static URL fgIconBaseURL= null;
 	
-	static {
-		fgIconBaseURL= RefactoringUIPlugin.getDefault().getBundle().getEntry("/icons/full/"); //$NON-NLS-1$
-	}
-	
+	private static final IPath ICONS_PATH= new Path("$nl$/icons/full"); //$NON-NLS-1$
 	
  	private static ImageRegistry fgImageRegistry= null;
  	private static HashMap fgAvoidSWTErrorMap= null;
@@ -39,8 +38,7 @@ public class RefactoringPluginImages {
 	private static final String T_WIZBAN= "wizban"; 	//$NON-NLS-1$
 	private static final String T_OBJ= "obj16"; 		//$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_WIZBAN_REFACTOR= create(T_WIZBAN, "refactor_wiz.gif"); 			//$NON-NLS-1$
-
+	public static final ImageDescriptor DESC_WIZBAN_REFACTOR= createUnManaged(T_WIZBAN, "refactor_wiz.gif"); 			//$NON-NLS-1$
 	
 	public static final String IMG_OBJS_REFACTORING_FATAL= NAME_PREFIX + "fatalerror_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_REFACTORING_ERROR= NAME_PREFIX + "error_obj.gif"; //$NON-NLS-1$
@@ -52,14 +50,11 @@ public class RefactoringPluginImages {
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_WARNING= createManaged(T_OBJ, IMG_OBJS_REFACTORING_WARNING);
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_INFO= createManaged(T_OBJ, IMG_OBJS_REFACTORING_INFO);
 	
-	
-	public static final ImageDescriptor DESC_OBJS_DEFAULT_CHANGE= create(T_OBJ, "change.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_COMPOSITE_CHANGE= create(T_OBJ, "composite_change.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_CU_CHANGE= create(T_OBJ, "cu_change.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE= create(T_OBJ, "file_change.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_TEXT_EDIT= create(T_OBJ, "text_edit.gif"); //$NON-NLS-1$
-
-	
+	public static final ImageDescriptor DESC_OBJS_DEFAULT_CHANGE= createUnManaged(T_OBJ, "change.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_COMPOSITE_CHANGE= createUnManaged(T_OBJ, "composite_change.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_CU_CHANGE= createUnManaged(T_OBJ, "cu_change.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE= createUnManaged(T_OBJ, "file_change.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_TEXT_EDIT= createUnManaged(T_OBJ, "text_edit.gif"); //$NON-NLS-1$
 	
 	/**
 	 * Returns the image managed under the given key in this registry.
@@ -94,7 +89,7 @@ public class RefactoringPluginImages {
 	}
 	
 	/*
-	 * Helper method to access the image registry from the JavaPlugin class.
+	 * Helper method to access the image registry from the Refactoring Plugin class.
 	 */
 	/* package */ static ImageRegistry getImageRegistry() {
 		if (fgImageRegistry == null) {
@@ -111,50 +106,54 @@ public class RefactoringPluginImages {
 	//---- Helper methods to access icons on the file system --------------------------------------
 
 	private static void setImageDescriptors(IAction action, String type, String relPath) {
-		
-		try {
-			ImageDescriptor id= ImageDescriptor.createFromURL(makeIconFileURL("d" + type, relPath)); //$NON-NLS-1$
-			if (id != null)
-				action.setDisabledImageDescriptor(id);
-		} catch (MalformedURLException e) {
-		}
+		ImageDescriptor id= create("d" + type, relPath, false); //$NON-NLS-1$
+		if (id != null)
+			action.setDisabledImageDescriptor(id);
 	
-		ImageDescriptor descriptor= create("e" + type, relPath); //$NON-NLS-1$
+		ImageDescriptor descriptor= create("e" + type, relPath, true); //$NON-NLS-1$
 		action.setHoverImageDescriptor(descriptor);
 		action.setImageDescriptor(descriptor); 
 	}
 	
 	private static ImageDescriptor createManaged(String prefix, String name) {
-		try {
-			ImageDescriptor result= ImageDescriptor.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
-			if (fgAvoidSWTErrorMap == null) {
-				fgAvoidSWTErrorMap= new HashMap();
-			}
-			fgAvoidSWTErrorMap.put(name, result);
-			if (fgImageRegistry != null) {
-				RefactoringUIPlugin.logErrorMessage("Image registry already defined"); //$NON-NLS-1$
-			}
-			return result;
-		} catch (MalformedURLException e) {
-			return ImageDescriptor.getMissingImageDescriptor();
+		ImageDescriptor result= create(prefix, name.substring(NAME_PREFIX_LENGTH), true);
+		if (fgAvoidSWTErrorMap == null) {
+			fgAvoidSWTErrorMap= new HashMap();
 		}
+		fgAvoidSWTErrorMap.put(name, result);
+		if (fgImageRegistry != null) {
+			RefactoringUIPlugin.logErrorMessage("Image registry already defined"); //$NON-NLS-1$
+		}
+		return result;
 	}
 	
-	private static ImageDescriptor create(String prefix, String name) {
-		try {
-			return ImageDescriptor.createFromURL(makeIconFileURL(prefix, name));
-		} catch (MalformedURLException e) {
-			return ImageDescriptor.getMissingImageDescriptor();
-		}
+	private static ImageDescriptor createUnManaged(String prefix, String name) {
+		return create(prefix, name, true);
 	}
 	
-	private static URL makeIconFileURL(String prefix, String name) throws MalformedURLException {
-		if (fgIconBaseURL == null)
-			throw new MalformedURLException();
-			
-		StringBuffer buffer= new StringBuffer(prefix);
-		buffer.append('/');
-		buffer.append(name);
-		return new URL(fgIconBaseURL, buffer.toString());
-	}	
+	/*
+	 * Creates an image descriptor for the given prefix and name in the Refactoring UI bundle. The path can
+	 * contain variables like $NL$.
+	 * If no image could be found, <code>useMissingImageDescriptor</code> decides if either
+	 * the 'missing image descriptor' is returned or <code>null</code>.
+	 * or <code>null</code>.
+	 */
+	private static ImageDescriptor create(String prefix, String name, boolean useMissingImageDescriptor) {
+		IPath path= ICONS_PATH.append(prefix).append(name);
+		return createImageDescriptor(RefactoringUIPlugin.getDefault().getBundle(), path, useMissingImageDescriptor);
+	}
+	
+	/*
+	 * Since 3.1.1. Load from icon paths with $NL$
+	 */
+	private static ImageDescriptor createImageDescriptor(Bundle bundle, IPath path, boolean useMissingImageDescriptor) {
+		URL url= Platform.find(bundle, path);
+		if (url != null) {
+			return ImageDescriptor.createFromURL(url);
+		}
+		if (useMissingImageDescriptor) {
+			return ImageDescriptor.getMissingImageDescriptor();
+		}
+		return null;
+	}
 }
