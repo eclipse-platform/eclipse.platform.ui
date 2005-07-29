@@ -140,7 +140,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 		if (imageName == null)
 			return null;
 		Bundle bundle = Platform.getBundle(getPluginId());
-		return SearchPluginImages.createImageDescriptor(bundle, new Path(imageName));
+		return SearchPluginImages.createImageDescriptor(bundle, new Path(imageName), true);
 	}
 
 	/**

@@ -78,7 +78,7 @@ class SorterDescriptor {
 		if (imageName == null)
 			return null;
 		Bundle bundle = Platform.getBundle(fElement.getNamespace());
-		return SearchPluginImages.createImageDescriptor(bundle, new Path(imageName));
+		return SearchPluginImages.createImageDescriptor(bundle, new Path(imageName), true);
 	}
 
 	/**
