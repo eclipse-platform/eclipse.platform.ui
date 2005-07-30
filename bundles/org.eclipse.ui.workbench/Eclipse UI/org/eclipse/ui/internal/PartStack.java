@@ -603,7 +603,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         refreshPresentationSelection();
         
-        //getControl().moveBelow(null);
+        // Workaround for bug 105213: moveBelow(null) doesn't work on GTK, so we explicitly
+        // move the control below the bottommost control.
+        Control[] peers = ctrl.getParent().getChildren();
+        
+        getControl().moveBelow(peers[peers.length - 1]);
     }
 
     public IDropTarget createDropTarget(PartPane pane, StackDropResult result) {
@@ -1133,7 +1137,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                 
                 presentation.selectPart(presentationCurrent);
                 
-                requestedCurrent.moveAbove(getPresentation().getControl());
+                //requestedCurrent.moveAbove(getPresentation().getControl());
             }
         
             // Update the return value of getVisiblePart

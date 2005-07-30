@@ -136,7 +136,7 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
         // by activation.  This allows us to have views appear in tabs without 
         // becoming active by default.
         control.setVisible(false);
-        //control.moveAbove(null);
+        control.moveAbove(null);
         // Create a title bar.
         createTitleBar();
 
