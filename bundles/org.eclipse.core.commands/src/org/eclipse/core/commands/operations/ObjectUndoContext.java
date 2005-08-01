@@ -115,6 +115,9 @@ public final class ObjectUndoContext extends UndoContext {
 		// Check first for explicit matches that have been assigned.
 		if (children.contains(context))
 			return true;
+		// Contexts for equal objects are considered matching
+		if (context instanceof ObjectUndoContext && getObject() != null)
+			return getObject().equals(((ObjectUndoContext)context).getObject());
 		// Use the normal matching implementation
 		return super.matches(context);
 	}
