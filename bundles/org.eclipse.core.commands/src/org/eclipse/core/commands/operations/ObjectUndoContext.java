@@ -61,8 +61,9 @@ public final class ObjectUndoContext extends UndoContext {
 	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
 	 */
 	public String getLabel() {
-		if (label == null)
+		if (label == null && object != null) {
 			return object.toString();
+		}
 		return label;
 	}
 
@@ -111,8 +112,10 @@ public final class ObjectUndoContext extends UndoContext {
 	 *      context)
 	 */
 	public boolean matches(IUndoContext context) {
+		// Check first for explicit matches that have been assigned.
 		if (children.contains(context))
 			return true;
+		// Use the normal matching implementation
 		return super.matches(context);
 	}
 	
