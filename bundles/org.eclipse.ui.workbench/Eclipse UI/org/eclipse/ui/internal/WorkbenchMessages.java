@@ -844,6 +844,8 @@ public class WorkbenchMessages extends NLS {
 	public static String Operations_linearRedoViolation;
 	public static String Operations_nonLocalUndoWarning;
 	public static String Operations_nonLocalRedoWarning;
+	public static String Operations_discardUndo;
+	public static String Operations_discardRedo;
 	public static String Operations_proceedWithNonOKUndoStatus;
 	public static String Operations_proceedWithNonOKRedoStatus;
 	public static String Operations_stoppedOnUndoErrorStatus;

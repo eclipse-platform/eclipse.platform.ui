@@ -91,8 +91,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		public void partClosed(IWorkbenchPart part) {
 			if (part.equals(site.getPart())) {
 				dispose();
-			// Special case for MultiPageEditorSite
-			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=103379
+				// Special case for MultiPageEditorSite
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=103379
 			} else if ((site instanceof MultiPageEditorSite)
 					&& (part.equals(((MultiPageEditorSite) site)
 							.getMultiPageEditor()))) {
@@ -115,7 +115,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	}
 
 	private class HistoryListener implements IOperationHistoryListener {
-		public void historyNotification(OperationHistoryEvent event) {
+		public void historyNotification(final OperationHistoryEvent event) {
 			Display display = getWorkbenchWindow().getWorkbench().getDisplay();
 			switch (event.getEventType()) {
 			case OperationHistoryEvent.OPERATION_ADDED:
@@ -137,7 +137,16 @@ public abstract class OperationHistoryActionHandler extends Action implements
 					display.asyncExec(new Runnable() {
 						public void run() {
 							if (pruning) {
-								flush();
+								IStatus status = event.getStatus();
+								/*
+								 * Prune the history unless we can determine
+								 * that this was a cancelled attempt. See
+								 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=101215
+								 */
+								if (status == null
+										|| status.getSeverity() != IStatus.CANCEL) {
+									flush();
+								}
 								// not all flushes will trigger an update so
 								// force it here
 								update();
@@ -204,7 +213,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		site = null;
 		progressDialog = null;
 		// We do not flush the history for our undo context because it may be
-		// used elsewhere.  It is up to clients to clean up the history appropriately.
+		// used elsewhere. It is up to clients to clean up the history
+		// appropriately.
 		// We do null out the context to signify that this handler is no longer
 		// accessing the history.
 		undoContext = null;
@@ -239,8 +249,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#run()
 	 */
 	public final void run() {
-		if (undoContext == null || site == null) return;
-		
+		if (undoContext == null || site == null)
+			return;
+
 		Shell parent = getWorkbenchWindow().getShell();
 		progressDialog = new TimeTriggeredProgressMonitorDialog(parent,
 				getWorkbenchWindow().getWorkbench().getProgressService()

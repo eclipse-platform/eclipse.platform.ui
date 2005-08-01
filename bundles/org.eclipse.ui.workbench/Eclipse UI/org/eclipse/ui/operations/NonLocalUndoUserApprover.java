@@ -20,6 +20,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorPart;
@@ -114,7 +115,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		String message = NLS.bind(
 				WorkbenchMessages.Operations_nonLocalRedoWarning, operation
 						.getLabel(), part.getEditorInput().getName());
-		return proceedWithOperation(operation, message);
+		return proceedWithOperation(operation, message, WorkbenchMessages.Operations_discardRedo);
 	}
 
 	/*
@@ -134,7 +135,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		String message = NLS.bind(
 				WorkbenchMessages.Operations_nonLocalUndoWarning, operation
 						.getLabel(), part.getEditorInput().getName());
-		return proceedWithOperation(operation, message);
+		return proceedWithOperation(operation, message, WorkbenchMessages.Operations_discardUndo);
 
 	}
 
@@ -144,7 +145,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	 * prompt the user as to whether the operation should proceed.
 	 */
 	private IStatus proceedWithOperation(IUndoableOperation operation,
-			String message) {
+			String message, String discardButton) {
 
 		// if the operation cannot tell us about its modified elements, there's
 		// nothing we can do.
@@ -196,15 +197,20 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		if (local)
 			return Status.OK_STATUS;
 
-		// Now we know the operation affects more than just our element, so warn
-		// the user.
-		boolean proceed = MessageDialog.openQuestion(part.getSite().getShell(),
-				part.getEditorInput().getName(), message);
-
-		if (proceed)
+		// The operation affects more than just our element.  Find out if
+		// we should proceed, cancel, or discard the undo.
+		MessageDialog dialog = new MessageDialog(part.getSite().getShell(), part.getEditorInput().getName(),
+				null, message, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
+                        discardButton, IDialogConstants.CANCEL_LABEL }, 0); // yes is the default
+        int answer = dialog.open();
+		switch (answer) {
+		case 1:
+			return IOperationHistory.OPERATION_INVALID_STATUS;
+		case 2:
+			return Status.CANCEL_STATUS;
+		default:
 			return Status.OK_STATUS;
-
-		return Status.CANCEL_STATUS;
+		}
 	}
 
 	/*
