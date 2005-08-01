@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.commands.operations;
 
+import org.eclipse.core.runtime.IStatus;
+
 /**
  * <p>
  * OperationHistoryEvent is used to communicate changes that occur in a
- * DefaultOperationHistory, including the addition or removal of operations,
- * and the execution, undo, and redo of operations.
+ * DefaultOperationHistory, including the addition or removal of operations, and
+ * the execution, undo, and redo of operations.
  * </p>
  * <p>
  * Operation history listeners must be prepared to receive notifications from a
@@ -83,8 +85,8 @@ public final class OperationHistoryEvent {
 
 	/**
 	 * OPERATION_ADDED indicates that an operation was added to the history.
-	 * Listeners can use this notification to add their undo context to a new operation as
-	 * appropriate or otherwise record the operation.
+	 * Listeners can use this notification to add their undo context to a new
+	 * operation as appropriate or otherwise record the operation.
 	 * 
 	 * (value is 5).
 	 */
@@ -143,18 +145,41 @@ public final class OperationHistoryEvent {
 
 	private IUndoableOperation operation;
 
+	/* @since 3.2 */
+	private IStatus status;
+
 	/**
 	 * Construct an event for the specified operation history.
 	 * 
-	 * @param code 
+	 * @param code
 	 *            the event code to be used.
-	 * @param history 
+	 * @param history
 	 *            the history triggering the event.
-	 * @param operation 
+	 * @param operation
 	 *            the operation involved in the event.
 	 */
 	public OperationHistoryEvent(int code, IOperationHistory history,
 			IUndoableOperation operation) {
+		this(code, history, operation, null);
+	}
+
+	/**
+	 * Construct an event for the specified operation history.
+	 * 
+	 * @param code
+	 *            the event code to be used.
+	 * @param history
+	 *            the history triggering the event.
+	 * @param operation
+	 *            the operation involved in the event.
+	 * @param status
+	 *            the status associated with the event, or null if no status is
+	 *            available.
+	 * 
+	 * @since 3.2
+	 */
+	public OperationHistoryEvent(int code, IOperationHistory history,
+			IUndoableOperation operation, IStatus status) {
 		if (history == null)
 			throw new NullPointerException();
 		if (operation == null)
@@ -162,6 +187,7 @@ public final class OperationHistoryEvent {
 		this.code = code;
 		this.history = history;
 		this.operation = operation;
+		this.status = status;
 	}
 
 	/**
@@ -191,6 +217,18 @@ public final class OperationHistoryEvent {
 
 	public IUndoableOperation getOperation() {
 		return operation;
+	}
+
+	/**
+	 * Return the status associated with this event.
+	 * 
+	 * @return the status associated with this event. The status may be null.
+	 * 
+	 * @since 3.2
+	 */
+
+	public IStatus getStatus() {
+		return status;
 	}
 
 }

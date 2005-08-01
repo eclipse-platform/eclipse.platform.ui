@@ -47,7 +47,7 @@ import org.eclipse.core.runtime.Status;
  * The data structures used by the DefaultOperationHistory are synchronized, and
  * entry points that modify the undo and redo history concurrently are also
  * synchronized. This means that the DefaultOperationHistory is relatively
- * "thread-friendly" in its implementation.  Outbound notifications or operation
+ * "thread-friendly" in its implementation. Outbound notifications or operation
  * approval requests will occur on the thread that initiated the request.
  * Clients may use DefaultOperationHistory API from any thread; however,
  * listeners or operation approvers that receive notifications from the
@@ -143,13 +143,12 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * 
 	 */
 	private ICompositeOperation openComposite = null;
-	
+
 	/**
 	 * a lock that is used to synchronize access to the open composite.
 	 */
 	final Object openCompositeLock = new Object();
 
-	
 	/**
 	 * Create an instance of DefaultOperationHistory.
 	 */
@@ -396,7 +395,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			// notify listeners must happen after history is updated
 			notifyRedone(operation);
 		} else {
-			notifyNotOK(operation);
+			notifyNotOK(operation, status);
 		}
 
 		return status;
@@ -453,7 +452,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				undoList.remove(operation);
 				if (addToRedoStack && checkRedoLimit(operation)) {
 					redoList.add(operation);
-				} 
+				}
 			}
 			if (!addToRedoStack) {
 				// dispose the operation since we did not add it to the stack
@@ -465,7 +464,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			// adjusted
 			notifyUndone(operation);
 		} else {
-			notifyNotOK(operation);
+			notifyNotOK(operation, status);
 		}
 		return status;
 	}
@@ -489,13 +488,14 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 		/*
 		 * If we are in the middle of an open composite, then we will add this
-		 * operation to the open operation rather than add the
-		 * operation to the history. We will still execute it.
+		 * operation to the open operation rather than add the operation to the
+		 * history. We will still execute it.
 		 */
 		boolean merging = false;
 		synchronized (openCompositeLock) {
 			if (openComposite != null) {
-				// the composite shouldn't be executed explicitly while it is still
+				// the composite shouldn't be executed explicitly while it is
+				// still
 				// open
 				if (openComposite == operation) {
 					return IOperationHistory.OPERATION_INVALID_STATUS;
@@ -530,26 +530,27 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			if (status.isOK()) {
 				notifyDone(operation);
 				// Only add the operation to the history if it can indeed be
-				// undone.  This conservatism is added to support the 
-				// integration of existing frameworks (such as Refactoring) 
+				// undone. This conservatism is added to support the
+				// integration of existing frameworks (such as Refactoring)
 				// that may be using a history to execute
 				// all operations, even those that are not undoable.
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=84444
 				if (operation.canUndo()) {
 					add(operation);
 				} else {
-					// dispose the operation since we did not add it to the stack
+					// dispose the operation since we did not add it to the
+					// stack
 					// and will no longer have a reference to it.
 					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=94400
 					operation.dispose();
 				}
 			} else {
-				notifyNotOK(operation);
+				notifyNotOK(operation, status);
 				// dispose the operation since we did not add it to the stack
 				// and will no longer have a reference to it.
 				operation.dispose();
 			}
-		} 
+		}
 		// all other severities are not interpreted. Simply return the status.
 		return status;
 	}
@@ -961,6 +962,17 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * execute, undo, or redo was made.
 	 */
 	private void notifyNotOK(IUndoableOperation operation) {
+		notifyNotOK(operation, null);
+	}
+
+	/*
+	 * Notify listeners that an operation did not succeed after an attempt to
+	 * execute, undo, or redo was made. Include the status associated with the
+	 * attempt.
+	 * 
+	 * @since 3.2
+	 */
+	private void notifyNotOK(IUndoableOperation operation, IStatus status) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
 			System.out.print("OPERATIONHISTORY >>> OPERATION_NOT_OK "); //$NON-NLS-1$ 
 			System.out.print(operation);
@@ -968,7 +980,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		}
 
 		notifyListeners(new OperationHistoryEvent(
-				OperationHistoryEvent.OPERATION_NOT_OK, this, operation));
+				OperationHistoryEvent.OPERATION_NOT_OK, this, operation, status));
 	}
 
 	/*
@@ -1152,7 +1164,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 						allContexts.add(opContexts[j]);
 					}
 					undoList.add(index, replacements[i]);
-					// notify listeners after the lock on the history is released
+					// notify listeners after the lock on the history is
+					// released
 				}
 				// recheck all the limits. We do this at the end so the index
 				// doesn't change during replacement
@@ -1162,16 +1175,16 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				}
 			}
 		}
-		if (inUndo) {		
+		if (inUndo) {
 			// notify listeners of operations added and removed
 			internalRemove(operation);
 			for (int i = 0; i < replacements.length; i++) {
 				notifyAdd(replacements[i]);
-			} 
+			}
 			return;
 		}
-		
-		// operation was not in the undo history.  Check the redo history.
+
+		// operation was not in the undo history. Check the redo history.
 
 		synchronized (undoRedoHistoryLock) {
 			int index = redoList.indexOf(operation);
@@ -1299,7 +1312,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 					System.out.print(operation);
 					System.out.println();
 				}
-	
+
 				throw new IllegalStateException(
 						"Cannot open an operation while one is already open"); //$NON-NLS-1$
 			}
@@ -1326,7 +1339,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			int mode) {
 		ICompositeOperation endedComposite = null;
 
-		synchronized(openCompositeLock) {
+		synchronized (openCompositeLock) {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
 				if (openComposite == null) {
 					System.out
@@ -1335,7 +1348,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 					return;
 				}
 			}
-		// notifications will occur outside the synchonized block
+			// notifications will occur outside the synchonized block
 			if (openComposite != null) {
 				if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
 					System.out.print("OPERATIONHISTORY >>> Closing operation "); //$NON-NLS-1$ 
