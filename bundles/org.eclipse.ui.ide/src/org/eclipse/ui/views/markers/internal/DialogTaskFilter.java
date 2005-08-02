@@ -49,11 +49,14 @@ public class DialogTaskFilter extends
         private String doesNotContain = Messages
                 .getString("filtersDialog.doesNotContain"); //$NON-NLS-1$
 
-        public DescriptionGroup(Composite parent, MnemonicAssigner mnemonics) {
+        /**
+         * Create a new DescriptionGroup.
+         * @param parent
+         */
+        public DescriptionGroup(Composite parent) {
             descriptionLabel = new Label(parent, SWT.NONE);
             descriptionLabel.setFont(parent.getFont());
-            descriptionLabel.setText(mnemonics.assign(Messages
-                    .getString("filtersDialog.descriptionLabel"))); //$NON-NLS-1$
+            descriptionLabel.setText(Messages.getString("filtersDialog.descriptionLabel")); //$NON-NLS-1$
 
             combo = new Combo(parent, SWT.READ_ONLY);
             combo.setFont(parent.getFont());
@@ -122,8 +125,15 @@ public class DialogTaskFilter extends
 
         private Button lowButton;
 
-        public PriorityGroup(Composite parent, MnemonicAssigner mnemonics) {
+        /**
+         * Create a new priority group.
+         * @param parent
+         */
+        public PriorityGroup(Composite parent) {
             SelectionListener listener = new SelectionAdapter() {
+                /* (non-Javadoc)
+                 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+                 */
                 public void widgetSelected(SelectionEvent e) {
                     updateEnablement();
                     DialogTaskFilter.this.markDirty();
@@ -135,8 +145,7 @@ public class DialogTaskFilter extends
             data.horizontalSpan = 2;
             enablementButton.setLayoutData(data);
             enablementButton.setFont(parent.getFont());
-            enablementButton.setText(mnemonics.assign(Messages
-                    .getString("filtersDialog.priorityLabel"))); //$NON-NLS-1$
+            enablementButton.setText(Messages.getString("filtersDialog.priorityLabel")); //$NON-NLS-1$
             enablementButton.addSelectionListener(listener);
 
             highButton = new Button(parent, SWT.CHECK);
@@ -208,7 +217,11 @@ public class DialogTaskFilter extends
 
         private Button incompleteButton;
 
-        public StatusGroup(Composite parent, MnemonicAssigner mnemonics) {
+        /**
+         * Create a new StatusGroup.
+         * @param parent
+         */
+        public StatusGroup(Composite parent) {
             SelectionListener enablementListener = new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
                     updateEnablement();
@@ -221,8 +234,7 @@ public class DialogTaskFilter extends
             data.horizontalSpan = 2;
             enablementButton.setLayoutData(data);
             enablementButton.setFont(parent.getFont());
-            enablementButton.setText(mnemonics.assign(Messages
-                    .getString("filtersDialog.statusLabel"))); //$NON-NLS-1$
+            enablementButton.setText(Messages.getString("filtersDialog.statusLabel")); //$NON-NLS-1$
             enablementButton.addSelectionListener(enablementListener);
 
             Composite composite = new Composite(parent, SWT.NONE);
@@ -292,10 +304,11 @@ public class DialogTaskFilter extends
         super(parentShell, filter);
     }
 
+   
     /* (non-Javadoc)
-     * @see org.eclipse.ui.views.markerview.FiltersDialog#createAttributesArea(org.eclipse.swt.widgets.Composite)
+     * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#createAttributesArea(org.eclipse.swt.widgets.Composite)
      */
-    protected void createAttributesArea(Composite parent, MnemonicAssigner mnemonics) {
+    protected void createAttributesArea(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setFont(parent.getFont());
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -303,9 +316,9 @@ public class DialogTaskFilter extends
         layout.verticalSpacing = 7;
         composite.setLayout(layout);
 
-        descriptionGroup = new DescriptionGroup(composite, mnemonics);
-        priorityGroup = new PriorityGroup(composite, mnemonics);
-        statusGroup = new StatusGroup(composite, mnemonics);
+        descriptionGroup = new DescriptionGroup(composite);
+        priorityGroup = new PriorityGroup(composite);
+        statusGroup = new StatusGroup(composite);
     }
 
     /* (non-Javadoc)

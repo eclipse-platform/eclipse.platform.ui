@@ -47,11 +47,14 @@ public class DialogProblemFilter extends
         private String doesNotContain = Messages
                 .getString("filtersDialog.doesNotContain"); //$NON-NLS-1$
 
-        public DescriptionGroup(Composite parent, MnemonicAssigner mnemonics) {
+        /**
+         * Create a descriptor group.
+         * @param parent
+         */
+        public DescriptionGroup(Composite parent) {
             descriptionLabel = new Label(parent, SWT.NONE);
             descriptionLabel.setFont(parent.getFont());
-            descriptionLabel.setText(mnemonics.assign(Messages
-                    .getString("filtersDialog.descriptionLabel"))); //$NON-NLS-1$
+            descriptionLabel.setText(Messages.getString("filtersDialog.descriptionLabel")); //$NON-NLS-1$
 
             combo = new Combo(parent, SWT.READ_ONLY);
             combo.setFont(parent.getFont());
@@ -120,8 +123,15 @@ public class DialogProblemFilter extends
 
         private Button infoButton;
 
-        public SeverityGroup(Composite parent, MnemonicAssigner mnemonics) {
+        /**
+         * Create a group for severity.
+         * @param parent
+         */
+        public SeverityGroup(Composite parent) {
             SelectionListener listener = new SelectionAdapter() {
+                /* (non-Javadoc)
+                 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+                 */
                 public void widgetSelected(SelectionEvent e) {
                     updateEnablement();
                     DialogProblemFilter.this.markDirty();
@@ -133,28 +143,26 @@ public class DialogProblemFilter extends
             data.horizontalSpan = 2;
             enablementButton.setLayoutData(data);
             enablementButton.setFont(parent.getFont());
-            enablementButton.setText(mnemonics.assign(Messages
-                    .getString("filtersDialog.severityLabel"))); //$NON-NLS-1$
+            enablementButton.setText(Messages
+                    .getString("filtersDialog.severityLabel")); //$NON-NLS-1$
             enablementButton.addSelectionListener(listener);
 
             errorButton = new Button(parent, SWT.CHECK);
             errorButton.setFont(parent.getFont());
-            errorButton.setText(mnemonics.assign(Messages
-                    .getString("filtersDialog.severityError"))); //$NON-NLS-1$
+            errorButton.setText(Messages.getString("filtersDialog.severityError")); //$NON-NLS-1$
             errorButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             errorButton.addSelectionListener(selectionListener);
 
             warningButton = new Button(parent, SWT.CHECK);
             warningButton.setFont(parent.getFont());
-            warningButton.setText(mnemonics.assign(Messages
-                    .getString("filtersDialog.severityWarning"))); //$NON-NLS-1$
+            warningButton.setText(Messages.getString("filtersDialog.severityWarning")); //$NON-NLS-1$
             warningButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             warningButton.addSelectionListener(selectionListener);
 
             infoButton = new Button(parent, SWT.CHECK);
             infoButton.setFont(parent.getFont());
             infoButton
-                    .setText(mnemonics.assign(Messages.getString("filtersDialog.severityInfo"))); //$NON-NLS-1$
+                    .setText(Messages.getString("filtersDialog.severityInfo")); //$NON-NLS-1$
             infoButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             infoButton.addSelectionListener(selectionListener);
         }
@@ -207,11 +215,11 @@ public class DialogProblemFilter extends
     public DialogProblemFilter(Shell parentShell, ProblemFilter filter) {
         super(parentShell, filter);
     }
-
+   
     /* (non-Javadoc)
-     * @see org.eclipse.ui.views.markerview.FiltersDialog#createAttributesArea(org.eclipse.swt.widgets.Composite)
+     * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#createAttributesArea(org.eclipse.swt.widgets.Composite)
      */
-    protected void createAttributesArea(Composite parent, MnemonicAssigner mnemonics) {
+    protected void createAttributesArea(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setFont(parent.getFont());
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -219,8 +227,8 @@ public class DialogProblemFilter extends
         layout.verticalSpacing = 7;
         composite.setLayout(layout);
 
-        descriptionGroup = new DescriptionGroup(composite, mnemonics);
-        severityGroup = new SeverityGroup(composite, mnemonics);
+        descriptionGroup = new DescriptionGroup(composite);
+        severityGroup = new SeverityGroup(composite);
     }
 
     /* (non-Javadoc)
