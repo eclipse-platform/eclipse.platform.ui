@@ -119,7 +119,7 @@ public class DialogMarkerFilter extends Dialog {
          * 
          * @param parent the parent composite of the working set widgets
          */
-        WorkingSetGroup(Composite parent, MnemonicAssigner mnemonics) {
+        WorkingSetGroup(Composite parent) {
             // radio button has to be part of main radio button group
             button = createRadioButton(parent, Messages
                     .getString("filtersDialog.noWorkingSet")); //$NON-NLS-1$
@@ -135,7 +135,7 @@ public class DialogMarkerFilter extends Dialog {
             radio.dispose();
             composite.setLayout(layout);
             selectButton = createButton(composite, SELECT_WORKING_SET_ID,
-                    mnemonics.assign(Messages.getString("filtersDialog.workingSetSelect")), false); //$NON-NLS-1$
+                    Messages.getString("filtersDialog.workingSetSelect"), false); //$NON-NLS-1$
         }
 
         /**
@@ -292,6 +292,7 @@ public class DialogMarkerFilter extends Dialog {
     /**
      * This method is called when a button is checked or unchecked. It updates the enablement
      * state of all widgets and marks the dialog as dirty.
+     * @param event
      */
     void checkStateChanged(CheckStateChangedEvent event) {
         updateEnabledState();
@@ -306,7 +307,7 @@ public class DialogMarkerFilter extends Dialog {
         newShell.setText(Messages.getString("filtersDialog.title")); //$NON-NLS-1$
     }
 
-    protected void createResetArea(Composite parent, MnemonicAssigner mnemonics) {
+    protected void createResetArea(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setFont(parent.getFont());
         GridLayout layout = new GridLayout();
@@ -315,7 +316,7 @@ public class DialogMarkerFilter extends Dialog {
         composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
         Button reset = new Button(composite, SWT.PUSH);
-        reset.setText(mnemonics.assign(Messages.getString("restoreDefaults.text"))); //$NON-NLS-1$
+        reset.setText(Messages.getString("restoreDefaults.text")); //$NON-NLS-1$
         reset.setData(new Integer(RESET_ID));
 
         reset.addSelectionListener(new SelectionAdapter() {
@@ -373,14 +374,13 @@ public class DialogMarkerFilter extends Dialog {
      */
     protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
-        MnemonicAssigner mnemonics = new MnemonicAssigner();
         
-        createOnOffArea(composite, mnemonics);
-        createMarkerLimitArea(composite, mnemonics);
-        createTypesArea(composite, mnemonics);
-        createResourceArea(composite, mnemonics);
-        createAttributesArea(composite, mnemonics);
-        createResetArea(composite, mnemonics);
+        createOnOffArea(composite);
+        createMarkerLimitArea(composite);
+        createTypesArea(composite);
+        createResourceArea(composite);
+        createAttributesArea(composite);
+        createResetArea(composite);
         createSeparatorLine(composite);
 
         updateUIFromFilter();
@@ -421,20 +421,19 @@ public class DialogMarkerFilter extends Dialog {
      *
      * @param parent the parent composite
      */
-    protected void createResourceArea(Composite parent, MnemonicAssigner mnemonics) {
+    protected void createResourceArea(Composite parent) {
         Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         group.setLayout(new GridLayout());
         group.setFont(parent.getFont());
-        anyResourceButton = createRadioButton(group, mnemonics.assign(Messages
-                .getString("filtersDialog.anyResource"))); //$NON-NLS-1$
-        anyResourceInSameProjectButton = createRadioButton(group, mnemonics.assign(Messages
-                .getString("filtersDialog.anyResourceInSameProject"))); //$NON-NLS-1$ // added by cagatayk@acm.org
-        selectedResourceButton = createRadioButton(group, mnemonics.assign(Messages
-                .getString("filtersDialog.selectedResource"))); //$NON-NLS-1$
-        selectedResourceAndChildrenButton = createRadioButton(group, mnemonics.assign(Messages
-                .getString("filtersDialog.selectedAndChildren"))); //$NON-NLS-1$
-        workingSetGroup = new WorkingSetGroup(group, mnemonics);
+        anyResourceButton = createRadioButton(group, Messages
+                .getString("filtersDialog.anyResource")); //$NON-NLS-1$
+        anyResourceInSameProjectButton = createRadioButton(group, Messages
+                .getString("filtersDialog.anyResourceInSameProject")); //$NON-NLS-1$ // added by cagatayk@acm.org
+        selectedResourceButton = createRadioButton(group, Messages
+                .getString("filtersDialog.selectedResource")); //$NON-NLS-1$
+        selectedResourceAndChildrenButton = createRadioButton(group, Messages.getString("filtersDialog.selectedAndChildren")); //$NON-NLS-1$
+        workingSetGroup = new WorkingSetGroup(group);
     }
 
     /**
@@ -442,7 +441,7 @@ public class DialogMarkerFilter extends Dialog {
      *
      * @param parent the parent composite
      */
-    protected void createTypesArea(Composite parent, MnemonicAssigner mnemonics) {
+    protected void createTypesArea(Composite parent) {
         Font font = parent.getFont();
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -450,7 +449,7 @@ public class DialogMarkerFilter extends Dialog {
         composite.setLayout(layout);
 
         Label label = new Label(composite, SWT.NONE);
-        label.setText(mnemonics.assign(Messages.getString("filtersDialog.showItemsOfType"))); //$NON-NLS-1$
+        label.setText(Messages.getString("filtersDialog.showItemsOfType")); //$NON-NLS-1$
         label.setFont(font);
 
         Table table = new Table(composite, SWT.CHECK | SWT.H_SCROLL
@@ -481,11 +480,10 @@ public class DialogMarkerFilter extends Dialog {
         GridLayout buttonLayout = new GridLayout();
         buttonLayout.marginWidth = 0;
         buttonComposite.setLayout(buttonLayout);
-        selectAllButton = createButton(buttonComposite, SELECT_ALL_ID, mnemonics.assign(Messages
-                .getString("filtersDialog.selectAll")), //$NON-NLS-1$ 
+        selectAllButton = createButton(buttonComposite, SELECT_ALL_ID,Messages.getString("filtersDialog.selectAll"), //$NON-NLS-1$ 
                 false);
         deselectAllButton = createButton(buttonComposite, DESELECT_ALL_ID,
-                mnemonics.assign(Messages.getString("filtersDialog.deselectAll")), //$NON-NLS-1$ 
+               Messages.getString("filtersDialog.deselectAll"), //$NON-NLS-1$ 
                 false);
     }
 
@@ -525,14 +523,13 @@ public class DialogMarkerFilter extends Dialog {
      * 
      * @param parent the parent composite
      */
-    protected void createOnOffArea(Composite parent, MnemonicAssigner mnemonics) {
+    protected void createOnOffArea(Composite parent) {
         Font font = parent.getFont();
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         composite.setFont(font);
         composite.setLayout(new GridLayout());
-        filterEnabledButton = createCheckbox(composite, mnemonics.assign(Messages
-                .getString("filtersDialog.onOff")), //$NON-NLS-1$
+        filterEnabledButton = createCheckbox(composite, Messages.getString("filtersDialog.onOff"), //$NON-NLS-1$
                 false);
         filterEnabledButton.setFont(composite.getFont());
         filterEnabledButton.setLayoutData(new GridData());
@@ -545,7 +542,7 @@ public class DialogMarkerFilter extends Dialog {
      * 
      * @param parent the parent composite
      */
-    protected void createMarkerLimitArea(Composite parent, MnemonicAssigner mnemonics) {
+    protected void createMarkerLimitArea(Composite parent) {
         Font font = parent.getFont();
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -553,8 +550,7 @@ public class DialogMarkerFilter extends Dialog {
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         composite.setLayout(layout);
-        filterOnMarkerLimit = createCheckbox(composite, mnemonics.assign(Messages
-                .getString("filtersDialog.limitVisibleMarkersTo")), //$NON-NLS-1$
+        filterOnMarkerLimit = createCheckbox(composite, Messages.getString("filtersDialog.limitVisibleMarkersTo"), //$NON-NLS-1$
                 false);
         filterOnMarkerLimit.setFont(composite.getFont());
         filterOnMarkerLimit.setLayoutData(new GridData());
@@ -578,7 +574,7 @@ public class DialogMarkerFilter extends Dialog {
      * 
      * @param parent the parent Composite
      */
-    protected void createAttributesArea(Composite parent, MnemonicAssigner mnemonics) {
+    protected void createAttributesArea(Composite parent) {
     }
 
     private ILabelProvider getLabelProvider() {
@@ -756,6 +752,7 @@ public class DialogMarkerFilter extends Dialog {
 
     /**
      * Handles selection on a check box or combo box.
+     * @param e
      */
     protected void widgetSelected(SelectionEvent e) {
         updateEnabledState();
@@ -777,6 +774,10 @@ public class DialogMarkerFilter extends Dialog {
         dirty = true;
     }
 
+    /**
+     * Set the marker filter.
+     * @param newFilter
+     */
     public void setFilter(MarkerFilter newFilter) {
         filter = newFilter;
         updateUIFromFilter();

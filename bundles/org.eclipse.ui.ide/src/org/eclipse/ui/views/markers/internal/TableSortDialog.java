@@ -82,16 +82,18 @@ public class TableSortDialog extends Dialog {
         if (sorter == null)
             return composite;
 
-        MnemonicAssigner mnemonics = new MnemonicAssigner();
-        
-        createPrioritiesArea(composite, mnemonics);
-        createRestoreDefaultsButton(composite, mnemonics);
+        createPrioritiesArea(composite);
+        createRestoreDefaultsButton(composite);
         createSeparatorLine(composite);
 
         return composite;
     }
 
-    private void createPrioritiesArea(Composite parent, MnemonicAssigner mnemonics) {
+    /**
+     * Create the proirities area.
+     * @param parent
+     */
+    private void createPrioritiesArea(Composite parent) {
         Composite prioritiesArea = new Composite(parent, SWT.NULL);
         prioritiesArea.setLayout(new GridLayout(3, false));
         
@@ -113,9 +115,9 @@ public class TableSortDialog extends Dialog {
             final int index = i;
             Label numberLabel = new Label(prioritiesArea, SWT.NULL);
             numberLabel
-                    .setText(mnemonics.assign(Messages
+                    .setText(Messages
                             .format(
-                                    "sortDialog.columnLabel", new Object[] { new Integer(i + 1) }))); //$NON-NLS-1$
+                                    "sortDialog.columnLabel", new Object[] { new Integer(i + 1) })); //$NON-NLS-1$
 
             priorityCombos[i] = new Combo(prioritiesArea, SWT.READ_ONLY);
             priorityCombos[i].setLayoutData(new GridData(
@@ -124,16 +126,14 @@ public class TableSortDialog extends Dialog {
             Composite directionGroup = new Composite(prioritiesArea, SWT.NONE);
             directionGroup.setLayout(new GridLayout(2, false));
             ascendingButtons[i] = new Button(directionGroup, SWT.RADIO);
-            ascendingButtons[i].setText(mnemonics.assign(Messages
-                    .getString("sortDirectionAscending.text"))); //$NON-NLS-1$
+            ascendingButtons[i].setText(Messages.getString("sortDirectionAscending.text")); //$NON-NLS-1$
             ascendingButtons[i].addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
                     markDirty();
                 }
             });
             descendingButtons[i] = new Button(directionGroup, SWT.RADIO);
-            descendingButtons[i].setText(mnemonics.assign(Messages
-                    .getString("sortDirectionDescending.text"))); //$NON-NLS-1$
+            descendingButtons[i].setText(Messages.getString("sortDirectionDescending.text")); //$NON-NLS-1$
             descendingButtons[i].addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
                     markDirty();
@@ -219,9 +219,13 @@ public class TableSortDialog extends Dialog {
         updateUIFromSorter();
     }
 
-    private void createRestoreDefaultsButton(Composite parent, MnemonicAssigner mnemonics) {
+    /**
+     * Create the restore defaults button.
+     * @param parent
+     */
+    private void createRestoreDefaultsButton(Composite parent) {
         Button defaultsButton = new Button(parent, SWT.PUSH);
-        defaultsButton.setText(mnemonics.assign(Messages.getString("restoreDefaults.text"))); //$NON-NLS-1$
+        defaultsButton.setText(Messages.getString("restoreDefaults.text")); //$NON-NLS-1$
         setButtonSize(defaultsButton, new GridData(
                 GridData.HORIZONTAL_ALIGN_END | GridData.FILL_HORIZONTAL));
         defaultsButton.addSelectionListener(new SelectionAdapter() {
