@@ -26,7 +26,6 @@ import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -358,20 +357,6 @@ public class FilteredTree extends Composite {
     	setFilterText(initialText);
     	
         textChanged();
-        listener = new FocusListener() {
-            public void focusGained(FocusEvent event) {
-                filterFocusGained();
-            }
-
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
-             */
-            public void focusLost(FocusEvent e) {
-            }
-        };
-        getFilterControl().addFocusListener(listener);
     }
 
 	
@@ -409,22 +394,4 @@ public class FilteredTree extends Composite {
 				cachedTitle));
 		
 	}
-
-	/**
-	 * Focus has been gained on the filter control.
-	 *
-	 */
-	protected void filterFocusGained() {
-		selectAll();
-		getFilterControl().removeFocusListener(listener);
-	}
-
-	/**
-	 * Focus has been lost on the filter control.
-	 *
-	 */
-	protected void filterFocusLost() {
-		
-	}
-	
 }

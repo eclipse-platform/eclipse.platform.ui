@@ -65,8 +65,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	
 	private Collection updateJobs = new ArrayList();
 	
-	//Composite toolBarComposite;
-
+	//A key which is paired with a search history string as part of dialog settings
+	private static final String SEARCHHISTORY = "SearchHistory"; //$NON-NLS-1$
 	
 	/**
 	 * The preference page history.
@@ -110,7 +110,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	protected TreeViewer createTreeViewer(Composite parent) {
 		PatternItemFilter filter = new PatternItemFilter(true); 
 		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
-		filteredTree = new FilteredTextTree(parent, styleBits, filter);
+		filteredTree = new FilteredTextTree(parent, styleBits, filter,SEARCHHISTORY);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -354,13 +354,23 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 					null));
 		}
 		return success;
-	}
+	}	
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#open()
+	 */
+	public int open() {
+		int code = super.open();
+		filteredTree.setPreferenceSearchHistory(filteredTree.getDialogSettings(),SEARCHHISTORY);
+		return code;
+	}
+	 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
 		history.dispose();
+		filteredTree.saveDialogSettings(filteredTree.getDialogSettings(),SEARCHHISTORY);
 		return super.close();
 	}
 	

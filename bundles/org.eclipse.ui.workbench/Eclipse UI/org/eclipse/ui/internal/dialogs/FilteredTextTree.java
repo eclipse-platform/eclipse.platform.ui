@@ -17,8 +17,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -52,12 +50,15 @@ public class FilteredTextTree extends FilteredTree {
 	//A popup shell to hold the currentSeachTable 
 	private Shell popupShell;
 
-	//A key which is paired with a search history string as part of dialog settings
-	private static final String SEARCHHISTORY = "search"; //$NON-NLS-1$
-
 	// A table which contains only strings begin with typed strings
 	private Table currentSeachTable;
-
+	
+	//The minimum width for popupShell to make sure to show all
+	//text in the horizonal space 
+    private int minPopupShellWidth;
+    
+    //Identify whether or not the text area was resized.
+    private boolean resizedFlag = false;
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -74,11 +75,13 @@ public class FilteredTextTree extends FilteredTree {
 	 * @param parent
 	 * @param treeStyle
 	 * @param filter
+	 * @param searchKey 
 	 */
 	public FilteredTextTree(Composite parent, int treeStyle,
-			PatternItemFilter filter) {
+			PatternItemFilter filter, String searchKey) {
 		super(parent, treeStyle, filter);
-		treeViewer.getControl().addFocusListener(new FocusAdapter(){
+		searchHistory = getPreferenceSearchHistory(searchKey);
+        treeViewer.getControl().addFocusListener(new FocusAdapter(){
 			/* Each time the tree gains focus, the current text in text area is saved as search history
 			 * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
 			 */
@@ -105,10 +108,9 @@ public class FilteredTextTree extends FilteredTree {
 	 * @see org.eclipse.ui.internal.dialogs.FilteredTree#createFilterControl(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createFilterControl(final Composite parent) {
-		filterText = new Text(parent, SWT.DROP_DOWN | SWT.BORDER);
-		filterText.setFont(parent.getFont());
-		searchHistory = getPreferenceSearchHistory();
-
+		filterText = new Text(parent, SWT.BORDER | SWT.MULTI);
+		filterText.setFont(parent.getFont());		
+		
 		popupShell = new Shell(parent.getShell(), SWT.NO_TRIM);
 		popupShell
 				.setBackground(parent.getDisplay().getSystemColor(
@@ -123,14 +125,17 @@ public class FilteredTextTree extends FilteredTree {
 		currentSeachTable = new Table(popupShell, SWT.SINGLE | SWT.BORDER);
 		currentSeachTable.setLayoutData(new GridData(
 				(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL)));
-		Font font = parent.getFont();	
 		
 		//Make sure the popup shell show whole words without scrollable horizontally
+		Font font = parent.getFont();	
 		currentSeachTable.setFont(new Font
 						(parent.getDisplay(),font.getFontData()[0].getName(),
 						 font.getFontData()[0].getHeight()-1,font.getFontData()[0].getStyle()));
 		
 		filterText.addTraverseListener(new TraverseListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse.swt.events.TraverseEvent)
+			 */
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_RETURN) {
 					e.doit = false;
@@ -144,7 +149,45 @@ public class FilteredTextTree extends FilteredTree {
 				}
 			}
 		});
+		
+				
+		filterText.addFocusListener(new FocusAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
+			 */
+			public void focusGained(FocusEvent e) {
+				filterText.selectAll();
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+			 */
+			public void focusLost(FocusEvent e) {
+				filterText.setSelection(0,0);
+			}
+		});
+		
+		
+		popupShell.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if ((e.detail == SWT.TRAVERSE_RETURN)||(e.detail == SWT.TRAVERSE_ESCAPE)) {
+					e.doit = false;
+					if(e.detail == SWT.TRAVERSE_RETURN){
+						setFilterText(currentSeachTable.getSelection()[0].getText());
+						textChanged();
+					}
+					popupShell.setVisible(false);
+					getViewer().getTree().setFocus();
+				}
+			}
+		});
 
+		currentSeachTable.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				setFilterText(currentSeachTable.getSelection()[0].getText()); //$NON-NLS-1$
+				textChanged();
+			}
+		});
 		filterText.addKeyListener(new KeyAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -156,20 +199,16 @@ public class FilteredTextTree extends FilteredTree {
 				if (e.keyCode == SWT.ARROW_DOWN) {
 					if (currentSeachTable.isVisible()) {
 						// Make selection at popup table
-						if (currentSeachTable.getSelectionCount() < 1)
+						if (currentSeachTable.getSelectionCount() < 1){
 							currentSeachTable.setSelection(0);
+							setFilterText(currentSeachTable.getSelection()[0].getText()); //$NON-NLS-1$
+							textChanged();
+						}
 						currentSeachTable.setFocus();
-					} else
-						// Make selection be on the left tree
-						treeViewer.getTree().setFocus();
+					} else if(getViewer().getTree().getItemCount() > 0)						 	
+							//Make selection be on the left tree
+							treeViewer.getTree().setFocus();
 				} else {
-					if (e.character == SWT.CR){						
-						int index =currentSeachTable.getSelectionIndex();
-						setFilterText(currentSeachTable.getItem(index).getText());
-						textChanged();						
-						popupShell.setVisible(false);
-						return;
-					}						
 					textChanged();
 					List result = new ArrayList();
 					result = reduceSearch(searchHistory, filterText.getText());
@@ -217,35 +256,22 @@ public class FilteredTextTree extends FilteredTree {
 				popupShell.setVisible(false);
 			}
 		});
-
-		currentSeachTable.addSelectionListener(new SelectionAdapter() {
+		
+		filterText.addControlListener(new ControlAdapter() {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
 			 */
-			public void widgetSelected(SelectionEvent e) {
-
-				setFilterText(currentSeachTable.getSelection()[0].getText());
-				textChanged();
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				popupShell.setVisible(false);
+			public void controlResized(ControlEvent e) {
+				int initialTextWidth = filterText.getBounds().width;
+				if((initialTextWidth >0)&& (resizedFlag ==false)){
+					minPopupShellWidth=initialTextWidth;
+					resizedFlag = true;
+				}
 			}
 		});
-
-		filterText.addDisposeListener(new DisposeListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-			 */
-			public void widgetDisposed(DisposeEvent e) {
-				saveDialogSettings();
-			}
-		});
-
+		
 		filterText.getAccessible().addAccessibleListener(
 				getAccessibleListener());
 
@@ -288,8 +314,13 @@ public class FilteredTextTree extends FilteredTree {
 		int tableHeight = currentSeachTable
 			    .getItemHeight()* currentSeachTable.getItemCount() + space;
 		int tableWidth = textBounds.width;	
-		popupShell.setSize(tableWidth,tableHeight);
 		
+		//Make sure the width of popupShell be at least minPopupShellWidth
+		if(tableWidth <= minPopupShellWidth)
+			popupShell.setSize(minPopupShellWidth,tableHeight);
+		else
+		    popupShell.setSize(tableWidth,tableHeight);
+	   	    	
 		//Caculate x,y coordinator of the popup shell
 		Point point = getDisplay().map(parent, null,
 				textBounds.x, textBounds.y);	
@@ -301,12 +332,13 @@ public class FilteredTextTree extends FilteredTree {
 		//Try to show whole popup shell through relocating its x and y coordinator
 		final Display display = popupShell.getDisplay();		
 		final Rectangle displayBounds = display.getClientArea();
+		Rectangle popupShellBounds = popupShell.getBounds();
 		final int displayRightEdge = displayBounds.x + displayBounds.width;
 		
 		if (location.x <0) 
 			location.x = 0;
-		if ((location.x + tableWidth) > displayRightEdge) 
-			location.x = displayRightEdge - tableWidth;
+		if ((location.x + popupShellBounds.width) > displayRightEdge) 
+			location.x = displayRightEdge - popupShellBounds.width;
 		
 		final int displayBottomEdge = displayBounds.y + displayBounds.height;	
 		if ((location.y + tableHeight) > displayBottomEdge)
@@ -340,7 +372,7 @@ public class FilteredTextTree extends FilteredTree {
 	 * 
 	 * @return IDialogSettings
 	 */
-	private IDialogSettings getDialogSettings(){
+	IDialogSettings getDialogSettings(){
 		IDialogSettings settings = WorkbenchPlugin.getDefault()
 				.getDialogSettings();
 		IDialogSettings thisSettings = settings
@@ -357,11 +389,11 @@ public class FilteredTextTree extends FilteredTree {
 	 * 
 	 * @return a list
 	 */
-	private List getPreferenceSearchHistory() {
+	private List getPreferenceSearchHistory(String key) {
 
 		List searchList = new ArrayList();
 		IDialogSettings settings = getDialogSettings();
-		String[] search = settings.getArray(SEARCHHISTORY);
+		String[] search = settings.getArray(key);
 
 		if (search != null) {
 			for (int i = 0; i < search.length; i++)
@@ -370,18 +402,31 @@ public class FilteredTextTree extends FilteredTree {
 		return searchList;
 
 	}
+	
+	/**Set the preference value matching searchkey
+	 * @param settings
+	 * @param searchKey
+	 */
+	public void setPreferenceSearchHistory(IDialogSettings settings, String searchKey) { 		
+		String[] search = settings.getArray(searchKey); //$NON-NLS-1$ 
+ 		if (search != null) {
+ 			for (int i = 0; i < search.length; i++)
+ 				searchHistory.add(search[i]);
+ 		}
+	}
 
 	/**
 	 * Saves the search history.
+	 * @param settings 
+	 * @param key 
 	 */
-	private void saveDialogSettings(){
-		IDialogSettings settings = getDialogSettings();
-
+	public void saveDialogSettings(IDialogSettings settings,String key){
+		 
 		// If the settings contains the same key, the previous value will be
 		// replaced by new one
 		String[] result = new String[searchHistory.size()];
 		listToArray(searchHistory, result);
-		settings.put(SEARCHHISTORY, result);
+		settings.put(key, result);
 
 	}
 
