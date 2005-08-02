@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.Assert;
@@ -27,6 +29,8 @@ import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -71,6 +75,11 @@ public class MultiPageEditorSite implements IEditorSite {
     private IKeyBindingService service = null;
 
     /**
+     * The list of popup menu extenders; <code>null</code> if none registered.
+     */
+    private ArrayList menuExtenders;
+
+    /**
      * Creates a site for the given editor nested within the given multi-page editor.
      *
      * @param multiPageEditor the multi-page editor
@@ -88,6 +97,13 @@ public class MultiPageEditorSite implements IEditorSite {
      * Dispose the contributions.
      */
     public void dispose() {
+        if (menuExtenders != null) {
+            for (int i = 0; i < menuExtenders.size(); i++) {
+                ((PopupMenuExtender) menuExtenders.get(i)).dispose();
+            }
+            menuExtenders = null;
+        }
+
         // Remove myself from the list of nested key binding services.
         if (service != null) {
             IKeyBindingService parentService = getEditor().getSite()
@@ -305,7 +321,11 @@ public class MultiPageEditorSite implements IEditorSite {
      */
     public void registerContextMenu(String menuID, MenuManager menuMgr,
             ISelectionProvider selProvider) {
-        getMultiPageEditor().getSite().registerContextMenu(menuID, menuMgr, selProvider);
+        if (menuExtenders == null) {
+            menuExtenders = new ArrayList(1);
+        }
+        PartSite.registerContextMenu(menuID, menuMgr, selProvider, true,
+                editor, menuExtenders);
     }
 
     /**
@@ -373,17 +393,20 @@ public class MultiPageEditorSite implements IEditorSite {
     }
     
     public final void registerContextMenu(final String menuId,
-			final MenuManager menuManager,
-			final ISelectionProvider selectionProvider,
-			final boolean includeEditorInput) {
-		getMultiPageEditor().getEditorSite().registerContextMenu(menuId,
-				menuManager, selectionProvider, includeEditorInput);
-	}
-
-	public final void registerContextMenu(final MenuManager menuManager,
-			final ISelectionProvider selectionProvider,
-			final boolean includeEditorInput) {
-		getMultiPageEditor().getEditorSite().registerContextMenu(menuManager,
-				selectionProvider, includeEditorInput);
-	}
+            final MenuManager menuManager,
+            final ISelectionProvider selectionProvider,
+            final boolean includeEditorInput) {
+        if (menuExtenders == null) {
+            menuExtenders = new ArrayList(1);
+        }
+        PartSite.registerContextMenu(menuId, menuManager, selectionProvider,
+                includeEditorInput, editor, menuExtenders);
+    }
+    
+    public final void registerContextMenu(final MenuManager menuManager,
+            final ISelectionProvider selectionProvider,
+            final boolean includeEditorInput) {
+        registerContextMenu(getId(), menuManager, selectionProvider,
+                includeEditorInput);
+    }
 }
