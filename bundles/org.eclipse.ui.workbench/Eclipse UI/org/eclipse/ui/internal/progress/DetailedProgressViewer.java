@@ -255,11 +255,15 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		if (element == null)
 			return;
 
-		if (element.equals(getRoot()))
+		if (element.equals(getRoot())){
 			refreshAll();
-		Widget widget = findItem(element);
-		if (widget == null)
 			return;
+		}
+		Widget widget = findItem(element);
+		if (widget == null){
+			add(new Object[] {element});
+			return;
+		}
 		((ProgressInfoItem) widget).refresh();
 
 		Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -367,5 +371,5 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		control.layout(true);
 
 	}
-
+	
 }
