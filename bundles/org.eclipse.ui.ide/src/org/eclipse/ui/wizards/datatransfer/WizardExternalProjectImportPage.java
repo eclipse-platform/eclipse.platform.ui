@@ -292,7 +292,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
         if (dirName.length() == 0)
             dirName = previouslyBrowsedDirectory;
 
-        if (dirName.length() == 0) //$NON-NLS-1$
+        if (dirName.length() == 0)
             dialog.setFilterPath(getWorkspace().getRoot().getLocation()
                     .toOSString());
         else {

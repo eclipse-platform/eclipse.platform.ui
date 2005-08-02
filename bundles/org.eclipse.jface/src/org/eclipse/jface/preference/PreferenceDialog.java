@@ -128,7 +128,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	/**
 	 * Indentifier for the error image
 	 */
-	public static final String PREF_DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR; //$NON-NLS-1$
+	public static final String PREF_DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR;
 
 	/**
 	 * Title area fields

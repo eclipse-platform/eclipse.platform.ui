@@ -87,7 +87,7 @@ public interface IPreferenceConstants {
     public static final String PLUGINS_NOT_ACTIVATED_ON_STARTUP = "PLUGINS_NOT_ACTIVATED_ON_STARTUP"; //$NON-NLS-1$
 
     //Separator for PLUGINS_NOT_ACTIVATED_ON_STARTUP
-    public static char SEPARATOR = ';'; //$NON-NLS-1$
+    public static char SEPARATOR = ';';
 
     //Preference key for default editors
     public final static String DEFAULT_EDITORS = "defaultEditors"; //$NON-NLS-1$

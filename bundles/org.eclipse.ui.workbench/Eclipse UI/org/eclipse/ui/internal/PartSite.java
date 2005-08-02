@@ -482,7 +482,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
                     }
                     
                     throw new ComponentException(Composite.class, 
-                            WorkbenchMessages.PartSite_needsWidgetsError, null); //$NON-NLS-1$
+                            WorkbenchMessages.PartSite_needsWidgetsError, null);
                 } 
             });
         serviceContainer = new SiteServices(context);

@@ -49,7 +49,7 @@ public class EditorStack extends PartStack {
     private SystemMenuPinEditor pinEditorItem = new SystemMenuPinEditor(null);
 
     public EditorStack(EditorSashContainer editorArea, WorkbenchPage page) {
-        super(PresentationFactoryUtil.ROLE_EDITOR); //$NON-NLS-1$
+        super(PresentationFactoryUtil.ROLE_EDITOR);
         this.editorArea = editorArea;
         setID(this.toString());
         // Each folder has a unique ID so relative positioning is unambiguous.

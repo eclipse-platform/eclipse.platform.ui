@@ -271,7 +271,7 @@ public class DecorationScheduler {
 
 					DecorationBuilder cacheResult = new DecorationBuilder();
 
-					monitor.subTask(reference.getSubTask()); //$NON-NLS-1$
+					monitor.subTask(reference.getSubTask());
 					// Don't decorate if there is already a pending result
 					Object element = reference.getElement();
 					Object adapted = reference.getAdaptedElement();

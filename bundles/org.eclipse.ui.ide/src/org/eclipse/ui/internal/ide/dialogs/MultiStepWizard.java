@@ -59,14 +59,14 @@ public abstract class MultiStepWizard extends Wizard {
 
         reviewPage = new MultiStepReviewWizardPage(
                 "multiStepReviewWizardPage", this);//$NON-NLS-1$
-        reviewPage.setTitle(getReviewPageTitle()); //$NON-NLS-1$
-        reviewPage.setDescription(getReviewPageDescription()); //$NON-NLS-1$
+        reviewPage.setTitle(getReviewPageTitle());
+        reviewPage.setDescription(getReviewPageDescription());
         this.addPage(reviewPage);
 
         configPage = new MultiStepConfigureWizardPage(
                 "multiStepConfigureWizardPage");//$NON-NLS-1$
-        configPage.setTitle(getConfigurePageTitle()); //$NON-NLS-1$
-        configPage.setDescription(getConfigurePageDescription()); //$NON-NLS-1$
+        configPage.setTitle(getConfigurePageTitle());
+        configPage.setDescription(getConfigurePageDescription());
         configPage.setWizardDialog(wizardDialog);
         this.addPage(configPage);
     }

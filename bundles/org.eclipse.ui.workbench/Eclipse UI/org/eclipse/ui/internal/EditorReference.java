@@ -521,7 +521,7 @@ public class EditorReference extends WorkbenchPartReference implements
             EditorDescriptor desc = getDescriptor();
             
             if (desc == null) {
-                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_missing_editor_descriptor, editorID)); //$NON-NLS-1$
+                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_missing_editor_descriptor, editorID));
             }
             
             IEditorPart part;
@@ -541,10 +541,10 @@ public class EditorReference extends WorkbenchPartReference implements
                 part = ComponentSupport.getSystemInPlaceEditor();
                 
                 if (part == null) {
-                    throw new PartInitException(WorkbenchMessages.EditorManager_no_in_place_support); //$NON-NLS-1$
+                    throw new PartInitException(WorkbenchMessages.EditorManager_no_in_place_support);
                 }
             } else {
-                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_invalid_editor_descriptor, editorID)); //$NON-NLS-1$
+                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_invalid_editor_descriptor, editorID));
             }
             // Create a pane for this part
             PartPane pane = getPane();

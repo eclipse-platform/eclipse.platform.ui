@@ -612,7 +612,7 @@ public class PerspectiveHelper {
 	                if(children.length != 0){
 	                    buf.append("dWindow ("); //$NON-NLS-1$
 	                    for(int j = 0; j < children.length; j++){
-	                        buf.append(((ViewPane)children[j]).getViewReference().getPartName()); //$NON-NLS-1$
+	                        buf.append(((ViewPane)children[j]).getViewReference().getPartName());
 	                        if(j < (children.length - 1))
 	                            buf.append(", "); //$NON-NLS-1$
 	                    }

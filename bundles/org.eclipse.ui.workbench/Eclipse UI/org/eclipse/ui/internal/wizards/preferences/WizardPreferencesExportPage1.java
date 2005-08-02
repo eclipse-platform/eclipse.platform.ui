@@ -49,7 +49,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 	 * Create an instance of this class
 	 */
 	public WizardPreferencesExportPage1() {
-		this(PREFERENCESEXPORTPAGE1);//$NON-NLS-1$
+		this(PREFERENCESEXPORTPAGE1);
 	}
 
 	protected String getOutputSuffix() {

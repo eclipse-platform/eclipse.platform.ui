@@ -70,7 +70,7 @@ public class UIListenerLogging {
     public static final String PLE_PERSP_SAVED_AS = "perspectiveSavedAs"; //$NON-NLS-1$
 
     private static String getSourceId(Object source) {
-        return Util.safeString(Integer.toString(source.hashCode() % 1000)); //$NON-NLS-1$
+        return Util.safeString(Integer.toString(source.hashCode() % 1000));
     }
 
     private static String getWindowId(IWorkbenchWindow source) {
@@ -153,7 +153,7 @@ public class UIListenerLogging {
     public static final void logPartListenerEvent(String sourceType, Object source, IWorkbenchPart part, String eventId) {
         if (isEnabled(sourceType)) {
             System.out.println(sourceType + " " + getSourceId(source) //$NON-NLS-1$
-                    + ", " + eventId + "(" + getPartId(part) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    + ", " + eventId + "(" + getPartId(part) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
 
@@ -166,7 +166,7 @@ public class UIListenerLogging {
     public static final void logPartListener2Event(String sourceType, Object source, IWorkbenchPartReference part, String eventId) {
         if (isEnabled(sourceType)) {
             System.out.println(sourceType + " " + getSourceId(source) //$NON-NLS-1$
-                    + ", " + eventId + "(" + getPartId(part) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    + ", " + eventId + "(" + getPartId(part) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
     
@@ -180,7 +180,7 @@ public class UIListenerLogging {
         if (isEnabled(PAGE_PARTLISTENER_EVENTS)) {
             System.out.println(PAGE_PARTLISTENER_EVENTS + " page "  //$NON-NLS-1$
                     + Util.safeString(page.getLabel()) 
-                    + ", " + eventId + "(" + getPartId(part) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    + ", " + eventId + "(" + getPartId(part) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
 

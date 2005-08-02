@@ -918,7 +918,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         }
 
         if (sourceConflictsWithDestination(new Path(sourceDirectory.getPath()))) {
-            setErrorMessage(getSourceConflictMessage()); //$NON-NLS-1$
+            setErrorMessage(getSourceConflictMessage());
             enableButtonGroup(false);
             return false;
         }

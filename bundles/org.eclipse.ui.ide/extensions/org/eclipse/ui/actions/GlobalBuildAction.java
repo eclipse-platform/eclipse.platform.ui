@@ -177,7 +177,7 @@ public class GlobalBuildAction extends Action implements
                 final MultiStatus status = new MultiStatus(
                         PlatformUI.PLUGIN_ID, 0, IDEWorkbenchMessages.GlobalBuildAction_buildProblems,
                         null);
-                monitor.beginTask(getOperationMessage(), 100); //$NON-NLS-1$
+                monitor.beginTask(getOperationMessage(), 100);
                 try {
                     ResourcesPlugin.getWorkspace().build(buildType,
                             new SubProgressMonitor(monitor, 100));

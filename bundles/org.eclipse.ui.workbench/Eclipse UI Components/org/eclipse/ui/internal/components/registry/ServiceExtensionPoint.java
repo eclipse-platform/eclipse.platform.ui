@@ -72,14 +72,14 @@ public class ServiceExtensionPoint {
             IConfigurationElement element = elements[i];
             
             if (element.getName().equals(ATT_COMPONENT)) {
-            	ClassIdentifier className = getType(element, ATT_IMPLEMENTATION); //$NON-NLS-1$
+            	ClassIdentifier className = getType(element, ATT_IMPLEMENTATION);
             	ClassIdentifier interfaceName = getType(element, ATT_INTERFACE);
                 String scopeId = element.getAttribute("scope"); //$NON-NLS-1$
                 ComponentFactory serviceFactory = null;
                 IPath scopePath = new Path(scopeId);
                                 
                 if (added) {
-                    ExecutableExtensionFactory factory = new ExecutableExtensionFactory(element, ATT_IMPLEMENTATION); //$NON-NLS-1$
+                    ExecutableExtensionFactory factory = new ExecutableExtensionFactory(element, ATT_IMPLEMENTATION);
                     registry.addType(scopeId, interfaceName, factory);
                 } else {
                     registry.removeType(scopeId, interfaceName);

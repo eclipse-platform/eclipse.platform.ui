@@ -206,7 +206,7 @@ public final class IDEEncoding {
 		if (encodings == null || encodings.length() == 0)
 			return new ArrayList();
 
-		String[] preferenceEncodings = encodings.split(PREFERENCE_SEPARATOR);//$NON-NLS-1$
+		String[] preferenceEncodings = encodings.split(PREFERENCE_SEPARATOR);
 		ArrayList result = new ArrayList();
 
 		//Drop any encodings that are not valid

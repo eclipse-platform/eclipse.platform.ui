@@ -406,7 +406,7 @@ public abstract class WizardDataTransferPage extends WizardPage implements
      */
     protected void displayErrorDialog(String message) {
         MessageDialog.openError(getContainer().getShell(),
-                getErrorDialogTitle(), message); //$NON-NLS-1$
+                getErrorDialogTitle(), message);
     }
 
     /**

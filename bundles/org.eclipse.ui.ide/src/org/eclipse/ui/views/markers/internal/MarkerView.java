@@ -781,7 +781,7 @@ public abstract class MarkerView extends TableView {
             // Use the Message attribute of the marker
             ConcreteMarker marker = (ConcreteMarker) selection
                     .getFirstElement();
-            message = marker.getDescription(); //$NON-NLS-1$
+            message = marker.getDescription();
         } else if (selection.size() > 1) {
             // Show stats on only those items in the selection
             message = updateSummarySelected(selection);

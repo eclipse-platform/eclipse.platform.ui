@@ -429,7 +429,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                     dialog.open(); // logic for updating the working copy is in the dialog class.                    
                 }
             });
-            advancedButton.setText(ActivityMessages.ActivitiesPreferencePage_advancedButton); //$NON-NLS-1$
+            advancedButton.setText(ActivityMessages.ActivitiesPreferencePage_advancedButton);
             int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
             Point minSize = advancedButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
             data.widthHint = Math.max(widthHint, minSize.x);
@@ -488,7 +488,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         composite.setLayoutData(data);
         Label label = new Label(composite, SWT.NONE);
         label.setFont(parent.getFont());
-        label.setText(strings.getProperty(CATEGORY_NAME, ActivityMessages.ActivityEnabler_categories) + ':'); //$NON-NLS-1$
+        label.setText(strings.getProperty(CATEGORY_NAME, ActivityMessages.ActivityEnabler_categories) + ':');
         Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
         table.setFont(parent.getFont());
         table.addSelectionListener(new SelectionAdapter() {

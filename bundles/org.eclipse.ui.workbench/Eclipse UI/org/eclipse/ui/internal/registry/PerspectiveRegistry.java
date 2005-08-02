@@ -68,7 +68,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
     private static final String PERSP = "_persp"; //$NON-NLS-1$
 
-    private static final char SPACE_DELIMITER = ' '; //$NON-NLS-1$
+    private static final char SPACE_DELIMITER = ' ';
 
     private List perspectives = new ArrayList(10);
     

@@ -56,7 +56,7 @@ public final class OpenPerspectiveAction extends Action implements
     public OpenPerspectiveAction(final IWorkbenchWindow window,
             final IPerspectiveDescriptor descriptor,
             final PerspectiveMenu callback) {
-        super(Util.ZERO_LENGTH_STRING); //$NON-NLS-1$
+        super(Util.ZERO_LENGTH_STRING);
 
         this.descriptor = descriptor;
         this.callback = callback;

@@ -46,7 +46,7 @@ public class ProgressManagerUtil {
      */
     public static long SHORT_OPERATION_TIME = 250;
 
-    private static String ellipsis = ProgressMessages.ProgressFloatingWindow_EllipsisValue; //$NON-NLS-1$
+    private static String ellipsis = ProgressMessages.ProgressFloatingWindow_EllipsisValue;
 
     /**
      * Return a status for the exception.

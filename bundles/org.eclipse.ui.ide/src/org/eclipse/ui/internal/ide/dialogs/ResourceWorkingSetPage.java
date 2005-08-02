@@ -493,7 +493,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
      * resource tree.
      */
     private void validateInput() {
-        String errorMessage = null; //$NON-NLS-1$
+        String errorMessage = null;
         String newText = text.getText();
 
         if (newText.equals(newText.trim()) == false) {

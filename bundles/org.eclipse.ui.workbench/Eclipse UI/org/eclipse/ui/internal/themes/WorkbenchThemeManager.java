@@ -232,7 +232,7 @@ public class WorkbenchThemeManager implements IThemeManager {
             if (!PrefUtil.getAPIPreferenceStore().getString(
                     IWorkbenchPreferenceConstants.CURRENT_THEME_ID).equals(id)) {
 				PrefUtil.getAPIPreferenceStore().setValue(
-                        IWorkbenchPreferenceConstants.CURRENT_THEME_ID, id); //$NON-NLS-1$
+                        IWorkbenchPreferenceConstants.CURRENT_THEME_ID, id);
 				PrefUtil.saveAPIPrefs();
             }
 

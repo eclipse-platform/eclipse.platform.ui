@@ -52,7 +52,6 @@ public class FileExtensionDialog extends TitleAreaDialog {
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(WorkbenchMessages.FileExtension_shellTitle);
-        //$NON-NLS-1$
         PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG);
     }

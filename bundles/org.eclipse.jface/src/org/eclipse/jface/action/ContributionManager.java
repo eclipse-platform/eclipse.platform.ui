@@ -468,7 +468,7 @@ public abstract class ContributionManager implements IContributionManager {
         for (int i = contributions.size() - 1; i > index; i--) {
             IContributionItem item = (IContributionItem) contributions.get(i);
             if ((item != null) && (identifier.equals(item.getId()))) {
-                if (Policy.TRACE_TOOLBAR) { //$NON-NLS-1$
+                if (Policy.TRACE_TOOLBAR) {
                     System.out
                             .println("Removing duplicate on replace: " + identifier); //$NON-NLS-1$
                 }

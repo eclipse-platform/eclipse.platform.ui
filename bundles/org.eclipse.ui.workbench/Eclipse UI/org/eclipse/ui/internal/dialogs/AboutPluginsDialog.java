@@ -317,7 +317,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
             return;
 
         if (!openBrowser(getMoreInfoURL(bundleInfo, true)))
-            MessageDialog.openError(getShell(), WorkbenchMessages.AboutPluginsDialog_errorTitle, //$NON-NLS-1$
+            MessageDialog.openError(getShell(), WorkbenchMessages.AboutPluginsDialog_errorTitle,
                     NLS.bind(WorkbenchMessages.AboutPluginsDialog_unableToOpenFile,PLUGININFO, bundleInfo.getId()));
     }
 

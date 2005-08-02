@@ -137,7 +137,7 @@ public final class SelectionEnabler {
         }
 
         try {
-            Class c = bundle.loadClass(TEXT_SELECTION_CLASS); //$NON-NLS-1$
+            Class c = bundle.loadClass(TEXT_SELECTION_CLASS);
             // remember for next time
             iTextSelectionClass = c;
             return iTextSelectionClass;

@@ -64,11 +64,11 @@ public final class LegacyHandlerListenerWrapper implements IHandlerListener {
 		final boolean enabledChanged = ((Boolean) event
 				.getPreviousAttributeValuesByName().get(
 						ILegacyAttributeNames.ENABLED)).booleanValue() != handler
-				.isEnabled(); //$NON-NLS-1$
+				.isEnabled();
 		final boolean handledChanged = ((Boolean) event
 				.getPreviousAttributeValuesByName().get(
 						ILegacyAttributeNames.HANDLED)).booleanValue() != handler
-				.isHandled(); //$NON-NLS-1$
+				.isHandled();
 		listener.handlerChanged(new org.eclipse.core.commands.HandlerEvent(
 				handler, enabledChanged, handledChanged));
 	}

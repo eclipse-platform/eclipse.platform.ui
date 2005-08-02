@@ -332,7 +332,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
             shell.setMenuBar(menuBarManager.createMenuBar((Decorations) shell));
         }
 
-        if (showTopSeperator()) //$NON-NLS-1$
+        if (showTopSeperator())
             seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 
         // will create either a cool bar or a tool bar

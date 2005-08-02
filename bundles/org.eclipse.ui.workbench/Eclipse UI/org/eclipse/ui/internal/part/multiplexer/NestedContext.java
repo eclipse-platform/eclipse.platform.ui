@@ -76,7 +76,7 @@ public class NestedContext extends ServiceFactory {
         Object component = handle.getInstance();
         
         if (!(component instanceof INestedComponent)) {
-        	throw new ComponentException(NLS.bind(WorkbenchMessages.NestedContext_0, new String[] { //$NON-NLS-1$
+        	throw new ComponentException(NLS.bind(WorkbenchMessages.NestedContext_0, new String[] {
         			INestedComponent.class.getName(), component.getClass().getName()}
         	), null);
         }

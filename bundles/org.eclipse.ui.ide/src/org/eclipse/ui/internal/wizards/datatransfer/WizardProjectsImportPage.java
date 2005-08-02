@@ -778,7 +778,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 */
 	protected void displayErrorDialog(String message) {
 		MessageDialog.openError(getContainer().getShell(),
-				getErrorDialogTitle(), message); //$NON-NLS-1$
+				getErrorDialogTitle(), message);
 	}
 
 	/**
@@ -842,7 +842,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		monitor.subTask(NLS.bind(
 				DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
 				provider.getLabel(entry)));
-		List children = provider.getChildren(entry); //$NON-NLS-1$
+		List children = provider.getChildren(entry);
 		if (children == null) {
 			children = new ArrayList(1);
 		}

@@ -545,7 +545,7 @@ public class CopyFilesAndFoldersOperation {
 
         // If errors occurred, open an Error dialog
         if (errorStatus != null) {
-            ErrorDialog.openError(parentShell, getProblemsTitle(), //$NON-NLS-1$
+            ErrorDialog.openError(parentShell, getProblemsTitle(),
                     null, // no special message
                     errorStatus);
             errorStatus = null;
@@ -1014,7 +1014,7 @@ public class CopyFilesAndFoldersOperation {
         if (!status.isOK()) {
             if (errorStatus == null)
                 errorStatus = new MultiStatus(PlatformUI.PLUGIN_ID,
-                        IStatus.ERROR, getProblemsMessage(), null); //$NON-NLS-1$
+                        IStatus.ERROR, getProblemsMessage(), null);
             errorStatus.merge(status);
         }
     }
@@ -1028,7 +1028,7 @@ public class CopyFilesAndFoldersOperation {
     private void recordError(CoreException error) {
         if (errorStatus == null)
             errorStatus = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.ERROR,
-                    getProblemsMessage(), error); //$NON-NLS-1$
+                    getProblemsMessage(), error);
 
         errorStatus.merge(error.getStatus());
     }

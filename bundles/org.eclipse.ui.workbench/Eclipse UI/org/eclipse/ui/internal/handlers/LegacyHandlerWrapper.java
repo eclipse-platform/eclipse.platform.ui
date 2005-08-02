@@ -98,7 +98,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 			if (handler == null) {
 				System.out.println("no handler"); //$NON-NLS-1$
 			} else {
-				System.out.print('\''); //$NON-NLS-1$
+				System.out.print('\'');
 				System.out.print(handler.getClass().getName());
 				System.out.println('\'');
 			}

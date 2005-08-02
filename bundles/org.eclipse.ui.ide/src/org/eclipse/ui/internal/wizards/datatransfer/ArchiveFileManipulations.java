@@ -123,7 +123,7 @@ public class ArchiveFileManipulations {
 			file.close();
 		} catch (IOException e) {
 			displayErrorDialog(DataTransferMessages.ZipImport_couldNotClose,
-					shell); //$NON-NLS-1$
+					shell);
 			return false;
 		}
 
@@ -160,7 +160,7 @@ public class ArchiveFileManipulations {
 	 *            the error message
 	 */
 	protected static void displayErrorDialog(String message, Shell shell) {
-		MessageDialog.openError(shell, getErrorDialogTitle(), message); //$NON-NLS-1$
+		MessageDialog.openError(shell, getErrorDialogTitle(), message);
 	}
 
 	/**

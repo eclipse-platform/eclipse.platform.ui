@@ -84,7 +84,7 @@ public class ImportExportAction extends BaseSelectionListenerAction
      * @param window the window
      */
     public ImportExportAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.ImportExportAction_text);	//$NON-NLS-1$
+        super(WorkbenchMessages.ImportExportAction_text);
         if (window == null) {
             throw new IllegalArgumentException();
         }

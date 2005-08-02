@@ -988,7 +988,7 @@ public class EditorManager implements IExtensionChangeHandler {
         }
 
         // If confirmation is required ..
-        return saveAll(dirtyParts, confirm, window); //$NON-NLS-1$
+        return saveAll(dirtyParts, confirm, window);
     }
 
     /**
@@ -1297,7 +1297,7 @@ public class EditorManager implements IExtensionChangeHandler {
                 editorMem.putString(IWorkbenchConstants.TAG_ID, editorRef
                         .getId());
                 editorMem.putString(IWorkbenchConstants.TAG_TOOLTIP, editorRef
-                        .getTitleToolTip()); //$NON-NLS-1$
+                        .getTitleToolTip());
 
                 editorMem.putString(IWorkbenchConstants.TAG_PART_NAME,
                         editorRef.getPartName());

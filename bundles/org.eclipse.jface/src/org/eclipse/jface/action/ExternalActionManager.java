@@ -77,7 +77,7 @@ public final class ExternalActionManager {
 		 * The internationalization bundle for text produced by this class.
 		 */
 		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-				.getBundle(ExternalActionManager.class.getName()); //$NON-NLS-1$
+				.getBundle(ExternalActionManager.class.getName());
 
 		/**
 		 * The callback capable of responding to whether a command is active.

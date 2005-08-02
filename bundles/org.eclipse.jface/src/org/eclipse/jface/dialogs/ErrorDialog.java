@@ -373,7 +373,7 @@ public class ErrorDialog extends IconAndMessageDialog {
        	if (includeStatus) {
 	        StringBuffer sb = new StringBuffer();
 	        for (int i = 0; i < nesting; i++) {
-	            sb.append(NESTING_INDENT); //$NON-NLS-1$
+	            sb.append(NESTING_INDENT);
 	        }
 	        String message = buildingStatus.getMessage();
             sb.append(message);
@@ -385,7 +385,7 @@ public class ErrorDialog extends IconAndMessageDialog {
         	// Include low-level exception message
 	        StringBuffer sb = new StringBuffer();
 	        for (int i = 0; i < nesting; i++) {
-	            sb.append(NESTING_INDENT); //$NON-NLS-1$
+	            sb.append(NESTING_INDENT);
 	        }
 	        String message = t.getLocalizedMessage();
 	        if (message == null)
@@ -475,7 +475,7 @@ public class ErrorDialog extends IconAndMessageDialog {
             return;
         }
         for (int i = 0; i < nesting; i++) {
-            buffer.append(NESTING_INDENT); //$NON-NLS-1$
+            buffer.append(NESTING_INDENT);
         }
         buffer.append(buildingStatus.getMessage());
         buffer.append("\n"); //$NON-NLS-1$

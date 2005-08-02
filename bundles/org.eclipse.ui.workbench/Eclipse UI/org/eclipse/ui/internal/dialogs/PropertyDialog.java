@@ -63,7 +63,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 			MessageDialog
 					.openInformation(
 							shell,
-							WorkbenchMessages.PropertyDialog_messageTitle, //$NON-NLS-1$
+							WorkbenchMessages.PropertyDialog_messageTitle,
 							NLS.bind(WorkbenchMessages.PropertyDialog_noPropertyMessage,  name)); 
 			return null;
 		}

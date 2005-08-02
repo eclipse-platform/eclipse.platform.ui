@@ -575,7 +575,7 @@ public class ViewsPreferencePage extends PreferencePage implements
         if (currentTheme.getId().equals(IThemeManager.DEFAULT_THEME)) {
             themeString = MessageFormat
                     .format(
-                            WorkbenchMessages.ViewsPreference_currentThemeFormat, new Object[] { themeString }); //$NON-NLS-1$
+                            WorkbenchMessages.ViewsPreference_currentThemeFormat, new Object[] { themeString });
         }
         themeCombo.add(themeString);
 
@@ -584,7 +584,7 @@ public class ViewsPreferencePage extends PreferencePage implements
             if (descs[i].getId().equals(currentTheme.getId())) {
                 themeString = MessageFormat
                         .format(
-                                WorkbenchMessages.ViewsPreference_currentThemeFormat, new Object[] { themeString }); //$NON-NLS-1$
+                                WorkbenchMessages.ViewsPreference_currentThemeFormat, new Object[] { themeString });
                 selection = i + 1;
             }
             themeCombo.add(themeString);

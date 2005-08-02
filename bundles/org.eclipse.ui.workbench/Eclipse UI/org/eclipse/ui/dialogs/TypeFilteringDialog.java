@@ -244,7 +244,7 @@ public class TypeFilteringDialog extends SelectionDialog {
                 GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
         Label fTitle = new Label(userDefinedGroup, SWT.NONE);
         fTitle.setFont(font);
-        fTitle.setText(filterTitle); //$NON-NLS-1$
+        fTitle.setText(filterTitle);
         // user defined entry field
         userDefinedText = new Text(userDefinedGroup, SWT.SINGLE | SWT.BORDER);
         userDefinedText.setFont(font);

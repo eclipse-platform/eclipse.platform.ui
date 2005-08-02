@@ -330,7 +330,7 @@ public abstract class ProductInfoDialog extends Dialog {
 		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
 		try {
 			IWebBrowser browser = support.getExternalBrowser();
-			browser.openURL(new URL(urlEncodeForSpaces(href.toCharArray()))); //$NON-NLS-1$
+			browser.openURL(new URL(urlEncodeForSpaces(href.toCharArray())));
 		}
 		catch (MalformedURLException e) {
 			openWebBrowserError(href, e);

@@ -137,7 +137,7 @@ public class ToolBarContributionItem extends ContributionItem {
      */
     private final boolean checkDisposed() {
         if (disposed) {
-            if (Policy.TRACE_TOOLBAR) { //$NON-NLS-1$
+            if (Policy.TRACE_TOOLBAR) {
                 System.out
                         .println("Method invocation on a disposed tool bar contribution item."); //$NON-NLS-1$
                 new Exception().printStackTrace(System.out);

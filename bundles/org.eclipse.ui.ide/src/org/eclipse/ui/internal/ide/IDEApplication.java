@@ -211,7 +211,7 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
                 .openError(
                         shell,
                         IDEWorkbenchMessages.InternalError,
-                        e.getMessage()); //$NON-NLS-1$                
+                        e.getMessage());                
             }            
             return false;
         }

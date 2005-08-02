@@ -27,7 +27,7 @@ public class CycleEditorAction extends CyclePartAction {
      * @param forward whether the editors will be cycled forward
      */
     public CycleEditorAction(IWorkbenchWindow window, boolean forward) {
-        super(window, forward); //$NON-NLS-1$
+        super(window, forward);
         updateState();
     }
 

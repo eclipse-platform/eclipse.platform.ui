@@ -148,7 +148,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	}
 
 	private void updateDefaultEncoding() {
-		defaultEncodingButton.setText(defaultButtonText()); //$NON-NLS-1$
+		defaultEncodingButton.setText(defaultButtonText());
 	}
 
 	private Composite getContainer() {

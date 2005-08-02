@@ -626,7 +626,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         if (element instanceof IResource) {
             IPath path = ((IResource) element).getFullPath();
             if (path.isRoot()) 
-                return ResourceNavigatorMessages.ResourceManager_toolTip; //$NON-NLS-1$
+                return ResourceNavigatorMessages.ResourceManager_toolTip;
             return path.makeRelative().toString();
         } 
         

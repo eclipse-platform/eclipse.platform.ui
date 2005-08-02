@@ -298,7 +298,7 @@ public class ActivityEnabler {
 		}
 
 		Label label = new Label(c, SWT.NONE);
-		label.setText(strings.getProperty(ActivitiesPreferencePage.ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities) + ':'); //$NON-NLS-1$
+		label.setText(strings.getProperty(ActivitiesPreferencePage.ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities) + ':');
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label.setFont(parent.getFont());
 

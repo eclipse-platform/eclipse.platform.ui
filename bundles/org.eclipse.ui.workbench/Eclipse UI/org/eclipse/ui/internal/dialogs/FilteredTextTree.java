@@ -361,7 +361,7 @@ public class FilteredTextTree extends FilteredTree {
 
 		List searchList = new ArrayList();
 		IDialogSettings settings = getDialogSettings();
-		String[] search = settings.getArray(SEARCHHISTORY); //$NON-NLS-1$
+		String[] search = settings.getArray(SEARCHHISTORY);
 
 		if (search != null) {
 			for (int i = 0; i < search.length; i++)

@@ -172,7 +172,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
         fStatusLine = new MessageLine(composite);
         fStatusLine.setAlignment(SWT.LEFT);
         fStatusLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        fStatusLine.setErrorStatus(null); //$NON-NLS-1$
+        fStatusLine.setErrorStatus(null);
         fStatusLine.setFont(font);
 
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);

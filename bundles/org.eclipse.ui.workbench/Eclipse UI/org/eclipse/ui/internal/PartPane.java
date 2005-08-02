@@ -443,7 +443,7 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
     protected void addSizeItem(Menu sizeMenu, String labelMessage,
             final Sash sash) {
         MenuItem item = new MenuItem(sizeMenu, SWT.NONE);
-        item.setText(labelMessage); //$NON-NLS-1$
+        item.setText(labelMessage);
         item.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 moveSash(sash);

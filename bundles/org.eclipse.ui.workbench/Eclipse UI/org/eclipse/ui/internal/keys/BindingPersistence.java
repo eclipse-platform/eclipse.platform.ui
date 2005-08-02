@@ -193,7 +193,7 @@ public final class BindingPersistence {
 	 * The name of the element storing the active scheme. This is called a
 	 * 'keyConfiguration' for legacy reasons.
 	 */
-	private static final String ELEMENT_ACTIVE_SCHEME = ELEMENT_ACTIVE_KEY_CONFIGURATION; //$NON-NLS-1$
+	private static final String ELEMENT_ACTIVE_SCHEME = ELEMENT_ACTIVE_KEY_CONFIGURATION;
 
 	/**
 	 * The name of the element storing the binding. This is called a

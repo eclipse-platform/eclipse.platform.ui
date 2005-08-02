@@ -167,7 +167,7 @@ public class DefaultTabItem extends WidgetTabItem {
         String text = info.name;
         
         if (info.dirty) {
-            text = DIRTY_PREFIX + text; //$NON-NLS-1$
+            text = DIRTY_PREFIX + text;
         }
         
         return text;
@@ -204,7 +204,7 @@ public class DefaultTabItem extends WidgetTabItem {
         }
 
         if (info.dirty) {
-            text = DIRTY_PREFIX + text; //$NON-NLS-1$
+            text = DIRTY_PREFIX + text;
         }
         
         return text;

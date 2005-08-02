@@ -359,7 +359,7 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
 	                    String fmt = "Category {0} not found for view {1}.  This view added to ''{2}'' category."; //$NON-NLS-1$
 	                    WorkbenchPlugin.log(MessageFormat
 	                            .format(fmt, new Object[] { catPath[0],
-	                                    desc.getId(), miscCategory.getLabel() })); //$NON-NLS-1$
+	                                    desc.getId(), miscCategory.getLabel() }));
 	                }
 	                miscCategory.addElement(desc);
 	            }

@@ -102,7 +102,7 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 
 		try {
 			workbench.showPerspective(perspectiveId, activeWorkbenchWindow,
-					input); //$NON-NLS-1$
+					input);
 		} catch (WorkbenchException e) {
 			throw new ExecutionException("Perspective could not be opened.", e); //$NON-NLS-1$
 		}

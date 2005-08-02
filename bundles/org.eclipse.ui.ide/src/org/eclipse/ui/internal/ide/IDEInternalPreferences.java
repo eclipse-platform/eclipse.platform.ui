@@ -38,11 +38,11 @@ public interface IDEInternalPreferences {
     // (String) Whether to open the preferred perspective when creating a new project
     public static final String PROJECT_SWITCH_PERSP_MODE = "SWITCH_PERSPECTIVE_ON_PROJECT_CREATION"; //$NON-NLS-1$
 
-    public static final String PSPM_PROMPT = MessageDialogWithToggle.PROMPT; //$NON-NLS-1$
+    public static final String PSPM_PROMPT = MessageDialogWithToggle.PROMPT;
 
-    public static final String PSPM_ALWAYS = MessageDialogWithToggle.ALWAYS; //$NON-NLS-1$
+    public static final String PSPM_ALWAYS = MessageDialogWithToggle.ALWAYS;
 
-    public static final String PSPM_NEVER = MessageDialogWithToggle.NEVER; //$NON-NLS-1$
+    public static final String PSPM_NEVER = MessageDialogWithToggle.NEVER;
 
     // (boolean) Whether or not to display the Welcome dialog on startup.
     public static final String WELCOME_DIALOG = "WELCOME_DIALOG"; //$NON-NLS-1$

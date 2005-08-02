@@ -993,7 +993,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         String title=perspective.getDesc().getLabel();
         
         title = NLS.bind(WorkbenchMessages.ActionSetSelection_customize,title);
-        shell.setText(title); //$NON-NLS-1$
+        shell.setText(title);
         window.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.ACTION_SET_SELECTION_DIALOG);
     }

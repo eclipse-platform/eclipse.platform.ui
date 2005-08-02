@@ -296,11 +296,11 @@ public final class Command extends NamedHandleObject implements Comparable {
 			if (handler == null) {
 				System.out.print("no handler"); //$NON-NLS-1$
 			} else {
-				System.out.print('\''); //$NON-NLS-1$
+				System.out.print('\'');
 				System.out.print(handler.getClass().getName());
 				System.out.print("'("); //$NON-NLS-1$" +
 				System.out.print(handler.hashCode());
-				System.out.print(')'); //$NON-NLS-1$
+				System.out.print(')');
 			}
 			System.out.println();
 		}

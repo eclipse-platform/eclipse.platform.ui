@@ -1336,7 +1336,7 @@ public final class Workbench implements IWorkbench {
 					reader.close();
 					String msg = WorkbenchMessages.Invalid_workbench_state_ve;
 					MessageDialog.openError((Shell) null,
-							WorkbenchMessages.Restoring_Problems, msg); //$NON-NLS-1$
+							WorkbenchMessages.Restoring_Problems, msg);
 					stateFile.delete();
 					result[0] = new Status(IStatus.ERROR,
 							WorkbenchPlugin.PI_WORKBENCH,
@@ -1733,7 +1733,7 @@ public final class Workbench implements IWorkbench {
 			result.merge(window.saveState(childMem));
 		}
 		result.add(getEditorHistory().saveState(
-				memento.createChild(IWorkbenchConstants.TAG_MRU_LIST))); //$NON-NLS-1$
+				memento.createChild(IWorkbenchConstants.TAG_MRU_LIST)));
 		return result;
 	}
 
@@ -2517,7 +2517,7 @@ public final class Workbench implements IWorkbench {
 		try {
 			UIStats.start(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
 			IMemento mruMemento = memento
-			.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
+			.getChild(IWorkbenchConstants.TAG_MRU_LIST);
 			if (mruMemento != null) {
 				status.add(getEditorHistory().restoreState(mruMemento));
 			}

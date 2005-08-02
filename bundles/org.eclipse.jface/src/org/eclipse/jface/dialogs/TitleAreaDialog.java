@@ -45,7 +45,7 @@ public class TitleAreaDialog extends Dialog {
     /**
      * Image registry key for error message image.
      */
-    public static final String DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR;//$NON-NLS-1$
+    public static final String DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR;
 
     /**
      * Image registry key for banner image (value

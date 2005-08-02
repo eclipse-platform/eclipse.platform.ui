@@ -32,7 +32,7 @@ public final class ColorUtils {
      */
     private static RGB process(String value) {
         try {
-            Class clazz = SWT.class; //$NON-NLS-1$
+            Class clazz = SWT.class;
             Field[] fields = clazz.getDeclaredFields();
             for (int i = 0; i < fields.length; i++) {
                 Field field = fields[i];

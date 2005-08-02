@@ -67,7 +67,7 @@ public class RectangleAnimation extends Job {
         return result;
     }
 
-    private Runnable paintJob = new Runnable() { //$NON-NLS-1$
+    private Runnable paintJob = new Runnable() {
 
         public void run() {
 

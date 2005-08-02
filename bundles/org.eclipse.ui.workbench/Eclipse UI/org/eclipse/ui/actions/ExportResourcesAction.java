@@ -98,7 +98,7 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
      * @param label the label 
      */
     public ExportResourcesAction(IWorkbenchWindow window, String label) {
-        super(label); //$NON-NLS-1$
+        super(label);
         if (window == null) {
             throw new IllegalArgumentException();
         }
