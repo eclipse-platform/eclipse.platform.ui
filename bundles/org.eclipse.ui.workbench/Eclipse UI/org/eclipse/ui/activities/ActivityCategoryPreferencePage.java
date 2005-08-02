@@ -392,7 +392,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                         .getDefinedActivityIds());
             }
         });
-        enableAll.setText("&Enable All"); //$NON-NLS-1$
+        enableAll.setText(ActivityMessages.ActivityEnabler_selectAll); 
         setButtonLayoutData(enableAll);
 
         Button disableAll = new Button(composite, SWT.PUSH);
@@ -407,7 +407,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 workingCopy.setEnabledActivityIds(Collections.EMPTY_SET);
             }
         });
-        disableAll.setText("D&isable All"); //$NON-NLS-1$
+        disableAll.setText(ActivityMessages.ActivityEnabler_deselectAll); 
         setButtonLayoutData(disableAll);
         
         if (allowAdvanced) {
