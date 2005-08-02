@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -19,23 +18,19 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.osgi.framework.Bundle;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.swt.graphics.RGB;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.StringConverter;
-
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.editors.text.EditorsUI;
-
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.osgi.framework.Bundle;
 
 
 /**
@@ -537,11 +532,10 @@ public class MarkerAnnotationPreferences {
 		if (bundle == null)
 			return null;
 
-		try {
-			return ImageDescriptor.createFromURL(new URL(bundle.getEntry("/"), iconPath)); //$NON-NLS-1$
-		} catch (MalformedURLException x) {
-			EditorsPlugin.log(x);
-		}
-		return null;
+		URL url= Platform.find(bundle, new Path(iconPath));
+		if (url != null)
+			return ImageDescriptor.createFromURL(url);
+		
+		return ImageDescriptor.getMissingImageDescriptor();
 	}
 }
