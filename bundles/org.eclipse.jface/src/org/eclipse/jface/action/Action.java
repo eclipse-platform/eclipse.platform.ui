@@ -520,13 +520,13 @@ public abstract class Action implements IAction {
             initLocalizedModifiers();
 
         token = token.toUpperCase();
-        if (token.equals(LOCALIZED_CTRL)) //$NON-NLS-1$
+        if (token.equals(LOCALIZED_CTRL)) 
             return SWT.CTRL;
-        if (token.equals(LOCALIZED_SHIFT)) //$NON-NLS-1$
+        if (token.equals(LOCALIZED_SHIFT)) 
             return SWT.SHIFT;
-        if (token.equals(LOCALIZED_ALT)) //$NON-NLS-1$
+        if (token.equals(LOCALIZED_ALT)) 
             return SWT.ALT;
-        if (token.equals(LOCALIZED_COMMAND)) //$NON-NLS-1$
+        if (token.equals(LOCALIZED_COMMAND))
             return SWT.COMMAND;
         return 0;
     }
