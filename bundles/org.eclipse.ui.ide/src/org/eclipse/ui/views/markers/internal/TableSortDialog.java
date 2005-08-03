@@ -30,6 +30,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * The TableSortDialog is the dialog that allows sort order to
+ * be selected.
+ */
 public class TableSortDialog extends Dialog {
 
     private TableSorter sorter;
@@ -60,6 +64,11 @@ public class TableSortDialog extends Dialog {
         }
     };
 
+    /**
+     * Create a new instance of the receiver.
+     * @param parentShell
+     * @param sorter
+     */
     public TableSortDialog(IShellProvider parentShell, TableSorter sorter) {
         super(parentShell);
         this.sorter = sorter;
@@ -125,15 +134,16 @@ public class TableSortDialog extends Dialog {
 
             Composite directionGroup = new Composite(prioritiesArea, SWT.NONE);
             directionGroup.setLayout(new GridLayout(2, false));
+            
             ascendingButtons[i] = new Button(directionGroup, SWT.RADIO);
-            ascendingButtons[i].setText(Messages.getString("sortDirectionAscending.text")); //$NON-NLS-1$
+            ascendingButtons[i].setText(getAscendingText(i));
             ascendingButtons[i].addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
                     markDirty();
                 }
             });
             descendingButtons[i] = new Button(directionGroup, SWT.RADIO);
-            descendingButtons[i].setText(Messages.getString("sortDirectionDescending.text")); //$NON-NLS-1$
+            descendingButtons[i].setText(getDescendingText(i));
             descendingButtons[i].addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
                     markDirty();
@@ -218,6 +228,46 @@ public class TableSortDialog extends Dialog {
         }
         updateUIFromSorter();
     }
+
+    /**
+     * Get the descending label for the Descending field
+     * at i. Use the index to determine the mnemonic.
+     * @param index
+     * @return String
+     */
+	private String getDescendingText(int index) {
+		switch (index) {
+		case 1:
+			return Messages.getString("sortDirectionDescending.text2");//$NON-NLS-1$
+		case 2:
+			return Messages.getString("sortDirectionDescending.text3");//$NON-NLS-1$
+		case 3:
+			return Messages.getString("sortDirectionDescending.text4");//$NON-NLS-1$
+		default:
+			return Messages.getString("sortDirectionDescending.text");//$NON-NLS-1$
+	}
+	
+}
+
+    /**
+     * Get the ascending label for the Ascending field
+     * at i. Use the index to determine the mnemonic.
+     * @param index
+     * @return String
+     */
+	private String getAscendingText(int index) {
+		switch (index) {
+			case 1:
+				return Messages.getString("sortDirectionAscending.text2");//$NON-NLS-1$
+			case 2:
+				return Messages.getString("sortDirectionAscending.text3");//$NON-NLS-1$
+			case 3:
+				return Messages.getString("sortDirectionAscending.text4");//$NON-NLS-1$
+			default:
+				return Messages.getString("sortDirectionAscending.text");//$NON-NLS-1$
+		}
+		
+	}
 
     /**
      * Create the restore defaults button.
@@ -332,6 +382,10 @@ public class TableSortDialog extends Dialog {
         }
     }
 
+    /**
+     * Return the sorter for the receiver.
+     * @return TableSorter
+     */
     public TableSorter getSorter() {
         return sorter;
     }
