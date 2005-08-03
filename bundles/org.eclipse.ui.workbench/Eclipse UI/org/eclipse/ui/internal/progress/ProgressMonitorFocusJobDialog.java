@@ -244,7 +244,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			 * 
 			 * @param runnable
 			 */
-			private void runAsync(Runnable runnable) {
+			private void runAsync(final Runnable runnable) {
 
 				if (alreadyClosed)
 					return;
@@ -256,7 +256,16 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				else
 					display = currentShell.getDisplay();
 
-				display.asyncExec(runnable);
+				display.asyncExec(new Runnable(){
+					/* (non-Javadoc)
+					 * @see java.lang.Runnable#run()
+					 */
+					public void run() {
+						if (alreadyClosed)
+							return;//Check again as the async  may come too late
+						runnable.run();
+					}
+				});
 			}
 
 			/*
