@@ -274,7 +274,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 				URL url = null;
 				if (pluginEntries[i] instanceof PluginEntryModel
 						&& !((PluginEntryModel) pluginEntries[i]).isUnpack()) {
-					url = new URL(getSite().getURL(), Site.DEFAULT_PLUGIN_PATH	+ versionId + ".jar");
+					url = new URL(getSite().getURL(), Site.DEFAULT_PLUGIN_PATH	+ versionId + ".jar"); //$NON-NLS-1$
 				} else {
 					url = new URL(getSite().getURL(), Site.DEFAULT_PLUGIN_PATH	+ versionId + File.separator);
 				}
