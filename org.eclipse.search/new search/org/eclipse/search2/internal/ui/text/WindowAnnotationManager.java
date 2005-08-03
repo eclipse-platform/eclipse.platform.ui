@@ -60,6 +60,7 @@ public class WindowAnnotationManager {
 			}
 
 			public void partInputChanged(IWorkbenchPartReference partRef) {
+				updateHighlighting(getEditor(partRef));
 			}
 		};
 		fWindow.getPartService().addPartListener(fPartListener);
@@ -76,6 +77,16 @@ public class WindowAnnotationManager {
 			mgr.setSearchResult(fSearchResult);
 		}
 	}
+	
+	private void updateHighlighting(IEditorPart editor) {
+		if (editor == null)
+			return;
+		EditorAnnotationManager mgr= (EditorAnnotationManager) fAnnotationManagers.get(editor);
+		if (mgr != null) {
+			mgr.doEditorInputChanged();
+		}
+	}
+	
 
 	private void initEditors() {
 		IWorkbenchPage[] pages= fWindow.getPages();

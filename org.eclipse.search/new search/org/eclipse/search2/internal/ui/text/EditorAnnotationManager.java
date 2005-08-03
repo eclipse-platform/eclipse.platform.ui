@@ -68,7 +68,16 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		if (fResult != null)
 			fResult.removeListener(this);
 	}
-
+	
+	public synchronized void doEditorInputChanged() {
+		removeAnnotations();
+		
+		if (fHighlighter != null) {
+			fHighlighter.dispose();
+			fHighlighter= null;
+		}
+		addAnnotations();
+	}
 
 	public synchronized void setSearchResult(AbstractTextSearchResult result) {
 		if (result == fResult)
