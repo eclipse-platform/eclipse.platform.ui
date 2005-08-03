@@ -47,6 +47,7 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -492,6 +493,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 .getEditorRegistry(); // cast to allow save to be called
         registry.setFileEditorMappings(resourceTypes);
         registry.saveAssociations();
+        
+        PrefUtil.savePrefs();
         return true;
     }
 

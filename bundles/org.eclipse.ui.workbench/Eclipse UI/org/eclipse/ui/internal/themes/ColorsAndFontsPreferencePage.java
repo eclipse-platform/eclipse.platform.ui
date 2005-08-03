@@ -79,6 +79,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.FilteredTree;
 import org.eclipse.ui.internal.dialogs.PatternFilter;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
@@ -1435,6 +1436,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
         colorValuesToSet.clear();
         colorPreferencesToSet.clear();
+        
         return true;
     }
 
@@ -1496,7 +1498,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     public boolean performOk() {
     	saveTreeExpansion();
     	saveTreeSelection();
-        return performColorOk() && performFontOk();
+        boolean result =  performColorOk() && performFontOk();
+        if(result)//Save all of the ones the platform defines
+        	 PrefUtil.savePrefs();
+        return result;
     }
 
     /**

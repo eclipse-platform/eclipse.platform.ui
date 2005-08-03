@@ -50,6 +50,7 @@ import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -605,6 +606,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
         WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
                 IPreferenceConstants.ENABLED_DECORATORS, enabledIds.toString());
+        PrefUtil.savePrefs();
     }
 
     private void writeDecoratorsPreference(StringBuffer enabledIds,

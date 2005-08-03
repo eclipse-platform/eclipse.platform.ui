@@ -19,7 +19,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Prefence dialog for the workbench including the ability to load/save
@@ -148,8 +147,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		//Save the preference stores first
-		PrefUtil.savePrefs();
 		super.okPressed();
 	}
 

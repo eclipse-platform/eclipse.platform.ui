@@ -753,7 +753,8 @@ public class ViewsPreferencePage extends PreferencePage implements
         }
 
         refreshThemeCombo();
-
+        PrefUtil.savePrefs();
+        
         return true;
     }
 }

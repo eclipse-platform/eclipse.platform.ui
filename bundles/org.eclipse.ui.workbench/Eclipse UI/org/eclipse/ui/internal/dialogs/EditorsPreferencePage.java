@@ -37,6 +37,7 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * The Editors preference page of the workbench.
@@ -155,6 +156,8 @@ public class EditorsPreferencePage extends PreferencePage implements
 
         // store the recent files setting
         recentFilesEditor.store();
+        
+        PrefUtil.savePrefs();
         return super.performOk();
     }
 
