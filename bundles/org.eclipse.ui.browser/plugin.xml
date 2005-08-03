@@ -31,7 +31,7 @@
          allowMultiple="true"
          category="org.eclipse.ui"
          class="org.eclipse.ui.internal.browser.WebBrowserView"
-         icon="icons/obj16/internal_browser.gif"
+         icon="$nl$/icons/obj16/internal_browser.gif"
          id="org.eclipse.ui.browser.view"
          name="%viewWebBrowserTitle"/>
    </extension>
@@ -40,12 +40,12 @@
       <editor
          class="org.eclipse.ui.internal.browser.WebBrowserEditor"
          contributorClass="org.eclipse.ui.internal.browser.WebBrowserEditorActionBarContributor"
-         icon="icons/obj16/internal_browser.gif"
+         icon="$nl$/icons/obj16/internal_browser.gif"
          id="org.eclipse.ui.browser.editor"
          name="%viewWebBrowserTitle"/>
       <editor
          extensions="htm,html,shtml"
-         icon="icons/obj16/internal_browser.gif"
+         icon="$nl$/icons/obj16/internal_browser.gif"
          id="org.eclipse.ui.browser.editorSupport"
          launcher="org.eclipse.ui.internal.browser.BrowserLauncher"
          name="%viewWebBrowserSupportTitle"/>
