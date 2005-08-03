@@ -16,10 +16,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -551,26 +553,45 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					
 					getLaunchView().cleanupLaunches(launches);
 					
-					ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
-					IDebugTarget[] targets= lm.getDebugTargets();
-					if (targets.length > 0) {
-						IDebugTarget target= targets[targets.length - 1];
-						try {
-							IThread[] threads= target.getThreads();
-							for (int i=0; i < threads.length; i++) {
-								if (threads[i].isSuspended()) {
-									IStackFrame topStackFrame = threads[i].getTopStackFrame();
-									if (topStackFrame != null) {
-									    getLaunchView().autoExpand(topStackFrame, true);
-									}
-									return;
+					// auto select the next suspended thread if no current selection
+					if (getLaunchViewer().getSelection().isEmpty()) {
+						// only change selection if the thing removed is of the same type as the things still there
+						Set types = new HashSet();
+						for (int i = 0; i < launches.length; i++) {
+							ILaunch launch = launches[i];
+							ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+							if (configuration != null) {
+								try {
+									types.add(configuration.getType());
+								} catch (CoreException e) {
 								}
-							}						
-						} catch (DebugException de) {
-							DebugUIPlugin.log(de);
+							}
 						}
-						
-						getLaunchView().autoExpand(target.getLaunch(), true);
+						ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
+						IDebugTarget[] targets= lm.getDebugTargets();
+						if (targets.length > 0) {
+							IDebugTarget target= targets[targets.length - 1];
+							ILaunchConfiguration configuration = target.getLaunch().getLaunchConfiguration();
+							if (configuration != null) {
+								try {
+									if (types.contains(configuration.getType())) {
+										IThread[] threads= target.getThreads();
+										for (int i=0; i < threads.length; i++) {
+											if (threads[i].isSuspended()) {
+												IStackFrame topStackFrame = threads[i].getTopStackFrame();
+												if (topStackFrame != null) {
+												    getLaunchView().autoExpand(topStackFrame, true);
+												}
+												return;
+											}
+										}
+									}
+								} catch (CoreException e) {
+									DebugUIPlugin.log(e);
+								}
+								getLaunchView().autoExpand(target.getLaunch(), true);
+							}
+						}
 					}
 				}
 			}
