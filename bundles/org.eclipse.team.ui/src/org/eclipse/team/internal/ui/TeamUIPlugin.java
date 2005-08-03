@@ -12,9 +12,9 @@ package org.eclipse.team.internal.ui;
 
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -245,17 +245,13 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 * @param id  the identifier for the image
 	 * @param baseURL  the base URL for the image
 	 */
-	protected static void createImageDescriptor(TeamUIPlugin plugin, String id, URL baseUrl) {
+	private static void createImageDescriptor(TeamUIPlugin plugin, String id) {
 		// Delegate to the plugin instance to avoid concurrent class loading problems
-		plugin.privateCreateImageDescriptor(id, baseUrl);
+		plugin.privateCreateImageDescriptor(id);
 	}
-	private void privateCreateImageDescriptor(String id, URL baseUrl) {
-		try {
-            ImageDescriptor desc = ImageDescriptor.createFromURL(new URL(baseUrl, id));
-            imageDescriptors.put(id, desc);
-        } catch (MalformedURLException e) {
-            // Ignore
-        }
+	private void privateCreateImageDescriptor(String id) {
+        ImageDescriptor desc = ImageDescriptor.createFromURL(getImageUrl(id));
+        imageDescriptors.put(id, desc);
 	}
 	
 	/**
@@ -271,8 +267,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	}
 	private ImageDescriptor privateGetImageDescriptor(String id) {
 		if(! imageDescriptors.containsKey(id)) {
-            URL baseUrl = getImageBaseUrl();
-			createImageDescriptor(getPlugin(), id, baseUrl);
+			createImageDescriptor(getPlugin(), id);
 		}
 		return (ImageDescriptor)imageDescriptors.get(id);
 	}	
@@ -295,61 +290,59 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 * for a description of why this is required. 
 	 */
 	private void initializeImages(TeamUIPlugin plugin) {
-        URL baseURL = getImageBaseUrl();
-       
 		// Overlays
-		createImageDescriptor(plugin, ISharedImages.IMG_DIRTY_OVR, baseURL);
-		createImageDescriptor(plugin, ISharedImages.IMG_CONFLICT_OVR, baseURL);
-		createImageDescriptor(plugin, ISharedImages.IMG_CHECKEDIN_OVR, baseURL);
-		createImageDescriptor(plugin, ISharedImages.IMG_CHECKEDOUT_OVR, baseURL);
-		createImageDescriptor(plugin, ISharedImages.IMG_ERROR_OVR, baseURL);
-		createImageDescriptor(plugin, ISharedImages.IMG_WARNING_OVR, baseURL);
-		createImageDescriptor(plugin, ISharedImages.IMG_HOURGLASS_OVR, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_DIRTY_OVR);
+		createImageDescriptor(plugin, ISharedImages.IMG_CONFLICT_OVR);
+		createImageDescriptor(plugin, ISharedImages.IMG_CHECKEDIN_OVR);
+		createImageDescriptor(plugin, ISharedImages.IMG_CHECKEDOUT_OVR);
+		createImageDescriptor(plugin, ISharedImages.IMG_ERROR_OVR);
+		createImageDescriptor(plugin, ISharedImages.IMG_WARNING_OVR);
+		createImageDescriptor(plugin, ISharedImages.IMG_HOURGLASS_OVR);
 		
 		// Target Management Icons
-		createImageDescriptor(plugin, ITeamUIImages.IMG_SITE_ELEMENT, baseURL);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_SITE_ELEMENT);
 		
 		// Sync View Icons
-		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_INCOMING, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_OUTGOING, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_CONFLICTING, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_REFRESH, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_CHANGE_FILTER, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_IGNORE_WHITESPACE, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_COLLAPSE_ALL, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_COLLAPSE_ALL_ENABLED, baseURL);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_INCOMING);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_OUTGOING);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_CONFLICTING);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_REFRESH);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_CHANGE_FILTER);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_IGNORE_WHITESPACE);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_COLLAPSE_ALL);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_COLLAPSE_ALL_ENABLED);
 
-		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_INCOMING_DISABLED, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_OUTGOING_DISABLED, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_CONFLICTING_DISABLED, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_REFRESH_DISABLED, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_IGNORE_WHITESPACE_DISABLED, baseURL);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_INCOMING_DISABLED);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_OUTGOING_DISABLED);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_DLG_SYNC_CONFLICTING_DISABLED);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_REFRESH_DISABLED);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_IGNORE_WHITESPACE_DISABLED);
 
-		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_CATCHUP, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_RELEASE, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_FREE, baseURL);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_CATCHUP);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_RELEASE);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_FREE);
 
-		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_CATCHUP_DISABLED, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_RELEASE_DISABLED, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_FREE_DISABLED, baseURL);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_CATCHUP_DISABLED);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_RELEASE_DISABLED);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_FREE_DISABLED);
 
-		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_CATCHUP_ENABLED, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_RELEASE_ENABLED, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_FREE_ENABLED, baseURL);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_CATCHUP_ENABLED);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_RELEASE_ENABLED);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_MODE_FREE_ENABLED);
 
 		// Wizard banners
-		createImageDescriptor(plugin, ITeamUIImages.IMG_PROJECTSET_IMPORT_BANNER, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_PROJECTSET_EXPORT_BANNER, baseURL);	
-		createImageDescriptor(plugin, ITeamUIImages.IMG_WIZBAN_SHARE, baseURL);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_PROJECTSET_IMPORT_BANNER);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_PROJECTSET_EXPORT_BANNER);	
+		createImageDescriptor(plugin, ITeamUIImages.IMG_WIZBAN_SHARE);
 		
 		// Live Sync View icons
-		createImageDescriptor(plugin, ITeamUIImages.IMG_COMPRESSED_FOLDER, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_VIEW, baseURL);
-		createImageDescriptor(plugin, ITeamUIImages.IMG_HIERARCHICAL, baseURL);		
+		createImageDescriptor(plugin, ITeamUIImages.IMG_COMPRESSED_FOLDER);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_VIEW);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_HIERARCHICAL);		
 	}
 
-    private URL getImageBaseUrl() {
-        return Platform.find(Platform.getBundle(PLUGIN_ID), new Path(ICON_PATH));
+    private URL getImageUrl(String relative) {
+        return Platform.find(Platform.getBundle(PLUGIN_ID), new Path(ICON_PATH + relative));
     }
 
 	/**
