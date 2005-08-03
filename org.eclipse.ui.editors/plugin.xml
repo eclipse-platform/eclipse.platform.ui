@@ -160,7 +160,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%Editors.DefaultTextEditor"
-            icon="icons/full/obj16/file_obj.gif"
+            icon="$nl$/icons/full/obj16/file_obj.gif"
             class="org.eclipse.ui.editors.text.TextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             id="org.eclipse.ui.DefaultTextEditor">
@@ -327,7 +327,7 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             name="%NewUntitledTextFile.label"
-            icon="icons/full/etool16/new_untitled_text_file.gif"
+            icon="$nl$/icons/full/etool16/new_untitled_text_file.gif"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.internal.editors.text.UntitledTextFileWizard"
             canFinishEarly="true"
@@ -373,11 +373,11 @@
                style="pulldown"
                id="org.eclipse.ui.edit.text.gotoPreviousAnnotation"
                toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
-               hoverIcon="icons/full/ctool16/prev_nav.gif"
+               hoverIcon="$nl$/icons/full/ctool16/prev_nav.gif"
                class="org.eclipse.ui.internal.editors.text.PreviousPulldownActionDelegate"
                definitionId="org.eclipse.ui.navigate.previous"
-               disabledIcon="icons/full/dtool16/prev_nav.gif"
-               icon="icons/full/etool16/prev_nav.gif"
+               disabledIcon="$nl$//full/dtool16/prev_nav.gif"
+               icon="$nl$/icons/full/etool16/prev_nav.gif"
                label="%goToPreviousAnnotation.label"
                retarget="true"
                tooltip="%goToPreviousAnnotation.tooltip">
@@ -387,11 +387,11 @@
                style="pulldown"
                id="org.eclipse.ui.edit.text.gotoNextAnnotation"
                toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
-               hoverIcon="icons/full/ctool16/next_nav.gif"
+               hoverIcon="$nl$/icons/full/ctool16/next_nav.gif"
                class="org.eclipse.ui.internal.editors.text.NextPulldownActionDelegate"
                definitionId="org.eclipse.ui.navigate.next"
-               disabledIcon="icons/full/dtool16/next_nav.gif"
-               icon="icons/full/etool16/next_nav.gif"
+               disabledIcon="$nl$/icons/full/dtool16/next_nav.gif"
+               icon="$nl$/icons/full/etool16/next_nav.gif"
                label="%goToNextAnnotation.label"
                retarget="true"
                tooltip="%goToNextAnnotation.tooltip">
@@ -404,11 +404,11 @@
          <action
                toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
                id="org.eclipse.ui.edit.text.gotoLastEditPosition"
-               hoverIcon="icons/full/ctool16/last_edit_pos.gif"
+               hoverIcon="$nl$/icons/full/ctool16/last_edit_pos.gif"
                class="org.eclipse.ui.internal.texteditor.GotoLastEditPositionAction"
                definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
-               disabledIcon="icons/full/dtool16/last_edit_pos.gif"
-               icon="icons/full/etool16/last_edit_pos.gif"
+               disabledIcon="$nl$/icons/full/dtool16/last_edit_pos.gif"
+               icon="$nl$/icons/full/etool16/last_edit_pos.gif"
                helpContextId="goto_last_edit_position_action_context"
                label="%goToLastEditPosition.label"
                menubarPath="navigate/"

@@ -30,7 +30,7 @@ import org.eclipse.ui.examples.templateeditor.editors.TemplateEditorUI;
  * A completion processor for XML templates.
  */
 public class XMLCompletionProcessor extends TemplateCompletionProcessor {
-	private static final String DEFAULT_IMAGE= "icons/template.gif"; //$NON-NLS-1$
+	private static final String DEFAULT_IMAGE= "$nl$/icons/template.gif"; //$NON-NLS-1$
 
 	/**
 	 * We watch for angular brackets since those are often part of XML
@@ -100,7 +100,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 	 * Always return the default image.
 	 * 
 	 * @param template the template, ignored in this implementation
-	 * @return the defaul template image
+	 * @return the default template image
 	 */
 	protected Image getImage(Template template) {
 		ImageRegistry registry= TemplateEditorUI.getDefault().getImageRegistry();
