@@ -46,7 +46,7 @@ public class HelpDisplay {
 			// There is no documentation
 			BaseHelpSystem.getDefaultErrorUtil()
 					.displayError(
-							HelpBaseResources.HelpDisplay_docsNotInstalled); //$NON-NLS-1$
+							HelpBaseResources.HelpDisplay_docsNotInstalled);
 			//Documentation is not installed.
 			return;
 		}

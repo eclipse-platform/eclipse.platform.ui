@@ -48,7 +48,7 @@ public class AnalyzerDescriptor {
 			this.id = HelpBasePlugin.PLUGIN_ID
 					+ "#" //$NON-NLS-1$
 					+ HelpBasePlugin.getDefault().getBundle().getHeaders().get(
-							Constants.BUNDLE_VERSION) + "?locale=" + locale; //$NON-NLS-1$ //$NON-NLS-2$;
+							Constants.BUNDLE_VERSION) + "?locale=" + locale; //$NON-NLS-1$
 			this.luceneAnalyzer = new DefaultAnalyzer(locale);
 			this.lang = locale;
 		}

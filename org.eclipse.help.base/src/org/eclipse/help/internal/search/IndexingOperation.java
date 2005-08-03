@@ -88,7 +88,7 @@ class IndexingOperation {
 			return;
 		}
 		pm.beginTask(HelpBaseResources.UpdatingIndex, numRemoved + 10
-				* numAdded); //$NON-NLS-1$
+				* numAdded);
 
 		// 1. remove all documents for plugins changed (including change in a
 		// fragment)
@@ -284,7 +284,7 @@ class IndexingOperation {
 
 		if (numRemoved > 0) {
 			if (HelpBasePlugin.DEBUG_SEARCH) {
-				System.out.println("SearchIndex.removeStaleDocuments"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("SearchIndex.removeStaleDocuments"); //$NON-NLS-1$
 			}
 
 			if (!index.beginDeleteBatch())

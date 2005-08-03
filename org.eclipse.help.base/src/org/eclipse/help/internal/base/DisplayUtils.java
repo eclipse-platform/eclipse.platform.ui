@@ -41,7 +41,7 @@ public class DisplayUtils {
 				return;
 			}
 			Class c = bundle.loadClass(LOOP_CLASS_NAME);
-			Method m = c.getMethod(method, new Class[]{}); //$NON-NLS-1$
+			Method m = c.getMethod(method, new Class[]{});
 			m.invoke(null, new Object[]{});
 		} catch (Exception e) {
 		}

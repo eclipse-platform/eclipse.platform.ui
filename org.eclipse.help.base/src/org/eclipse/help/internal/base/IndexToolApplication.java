@@ -45,11 +45,11 @@ public class IndexToolApplication implements IPlatformRunnable,
 		try {
 			String directory = System.getProperty("indexOutput"); //$NON-NLS-1$
 			if (directory == null || directory.length() == 0) {
-				throw new Exception(NLS.bind(HelpBaseResources.IndexToolApplication_propertyNotSet, "indexOutput")); //$NON-NLS-1$ //$NON-NLS-2$
+				throw new Exception(NLS.bind(HelpBaseResources.IndexToolApplication_propertyNotSet, "indexOutput")); //$NON-NLS-1$
 			}
 			String localeStr = System.getProperty("indexLocale"); //$NON-NLS-1$
 			if (localeStr == null || localeStr.length() < 2) {
-				throw new Exception(NLS.bind(HelpBaseResources.IndexToolApplication_propertyNotSet, "indexLocale")); //$NON-NLS-1$ //$NON-NLS-2$
+				throw new Exception(NLS.bind(HelpBaseResources.IndexToolApplication_propertyNotSet, "indexLocale")); //$NON-NLS-1$
 			}
 			Locale locale;
 			if (localeStr.length() >= 5) {
