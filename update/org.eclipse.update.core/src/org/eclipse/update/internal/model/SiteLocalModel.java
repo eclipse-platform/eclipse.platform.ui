@@ -271,7 +271,7 @@ public class SiteLocalModel extends ModelObject {
 		} catch (MissingResourceException e) {
 			UpdateCore.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			UpdateCore.warn(e.getLocalizedMessage()); //$NON-NLS-1$
+			UpdateCore.warn(e.getLocalizedMessage()); 
 		}
 		return url;
 	}

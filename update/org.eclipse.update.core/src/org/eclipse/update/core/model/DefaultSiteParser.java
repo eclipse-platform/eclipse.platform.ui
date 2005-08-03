@@ -511,7 +511,7 @@ public class DefaultSiteParser extends DefaultHandler {
             if (noId || noVersion)
                 internalError(NLS.bind(Messages.DefaultSiteParser_Missing, (new String[] { "url", getState(currentState) })));	//$NON-NLS-1$
             else // default url
-                urlInfo = FEATURES + id + '_' + ver; //$NON-NLS-1$ 
+                urlInfo = FEATURES + id + '_' + ver; // 
         }
         
 		feature.setURLString(urlInfo);
@@ -755,7 +755,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		    Document document = builder.parse(mirrorsURL);
 		    if (document == null)
 		    	return null;
-		    NodeList mirrorNodes = document.getElementsByTagName(MIRROR); //$NON-NLS-1$
+		    NodeList mirrorNodes = document.getElementsByTagName(MIRROR); 
 		    URLEntryModel[] mirrors = new URLEntryModel[mirrorNodes.getLength()];
 		    for (int i=0; i<mirrorNodes.getLength(); i++) {
 		    	Element mirrorNode = (Element)mirrorNodes.item(i);

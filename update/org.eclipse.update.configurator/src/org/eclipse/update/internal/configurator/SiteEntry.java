@@ -420,8 +420,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			} else {
 				// no bundle manifest, check for plugin.xml or fragment.xml
 				pluginFile = new File(file, PLUGIN_XML);
-				if (!pluginFile.exists()) { //$NON-NLS-1$
-					pluginFile = new File(file, FRAGMENT_XML); //$NON-NLS-1$
+				if (!pluginFile.exists()) { 
+					pluginFile = new File(file, FRAGMENT_XML); 
 				}
 				if (pluginFile.exists() && !pluginFile.isDirectory()) {
 					// TODO in the future, assume that the timestamps are not
@@ -501,7 +501,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		featuresChangeStamp = Math.max(dirStamp, computeStamp(features));
 		if (ConfigurationActivator.DEBUG) {
 			long end = (new Date()).getTime();
-			Utils.debug(resolvedURL.toString() + " feature stamp: " + featuresChangeStamp + " in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			Utils.debug(resolvedURL.toString() + " feature stamp: " + featuresChangeStamp + " in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$   
 		}
 		return featuresChangeStamp;
 	}

@@ -136,7 +136,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		// reset current site
 		currentSiteURL = null;
 		
-		String urlString = attributes.getValue(CFG_URL); //$NON-NLS-1$
+		String urlString = attributes.getValue(CFG_URL); 
 		if (urlString == null)
 			return;
 
@@ -160,7 +160,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 
 		int policyType;
 		String[] policyList = null;
-		String typeString = attributes.getValue(CFG_POLICY); //$NON-NLS-1$
+		String typeString = attributes.getValue(CFG_POLICY); 
 		if (typeString == null) {
 			policyType = DEFAULT_POLICY_TYPE;
 			policyList = DEFAULT_POLICY_LIST;
@@ -189,7 +189,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		SitePolicy sp = new SitePolicy(policyType, policyList);
 		SiteEntry site = new SiteEntry(url, sp);
 
-		String flag = attributes.getValue(CFG_UPDATEABLE); //$NON-NLS-1$
+		String flag = attributes.getValue(CFG_UPDATEABLE); 
 		if (flag != null) {
 			if (flag.equals("true")) //$NON-NLS-1$
 				site.setUpdateable(true);
@@ -197,13 +197,13 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 				site.setUpdateable(false);
 		}
 		
-		flag = attributes.getValue(CFG_ENABLED); //$NON-NLS-1$
+		flag = attributes.getValue(CFG_ENABLED); 
 		if (flag != null && flag.equals("false")) //$NON-NLS-1$
 			site.setEnabled(false);
 		else
 			site.setEnabled(true);
 
-		String linkname = attributes.getValue(CFG_LINK_FILE); //$NON-NLS-1$
+		String linkname = attributes.getValue(CFG_LINK_FILE); 
 		if (linkname != null && !linkname.equals("")) { //$NON-NLS-1$
 			site.setLinkFileName(linkname.replace('/', File.separatorChar));
 		}
@@ -223,17 +223,17 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		if (currentSiteURL == null)
 			return; // the site was not correct
 			
-		String id = attributes.getValue(CFG_FEATURE_ENTRY_ID); //$NON-NLS-1$
+		String id = attributes.getValue(CFG_FEATURE_ENTRY_ID); 
 		if (id == null)
 			return;
-		String version = attributes.getValue(CFG_FEATURE_ENTRY_VERSION); //$NON-NLS-1$
-		String pluginVersion = attributes.getValue(CFG_FEATURE_ENTRY_PLUGIN_VERSION); //$NON-NLS-1$
+		String version = attributes.getValue(CFG_FEATURE_ENTRY_VERSION); 
+		String pluginVersion = attributes.getValue(CFG_FEATURE_ENTRY_PLUGIN_VERSION); 
 		if (pluginVersion == null || pluginVersion.trim().length() == 0)
 			pluginVersion = version;
-		String pluginIdentifier = attributes.getValue(CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER); //$NON-NLS-1$
+		String pluginIdentifier = attributes.getValue(CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER); 
 		if (pluginIdentifier != null && pluginIdentifier.trim().length() == 0)
 			pluginIdentifier = null;
-		String application = attributes.getValue(CFG_FEATURE_ENTRY_APPLICATION); //$NON-NLS-1$
+		String application = attributes.getValue(CFG_FEATURE_ENTRY_APPLICATION); 
 		
 		// get install locations
 		String locations = attributes.getValue(CFG_FEATURE_ENTRY_ROOT);
@@ -251,7 +251,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 
 		// get primary flag
 		boolean primary = false;
-		String flag = attributes.getValue(CFG_FEATURE_ENTRY_PRIMARY); //$NON-NLS-1$
+		String flag = attributes.getValue(CFG_FEATURE_ENTRY_PRIMARY); 
 		if (flag != null) {
 			if (flag.equals("true")) //$NON-NLS-1$
 				primary = true;
@@ -260,7 +260,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		FeatureEntry featureEntry =  new FeatureEntry(id, version, pluginIdentifier, pluginVersion, primary, application, roots);
 
 		// set the url
-		String url = attributes.getValue(CFG_URL); //$NON-NLS-1$
+		String url = attributes.getValue(CFG_URL); 
 		if (url != null && url.trim().length() > 0)
 			featureEntry.setURL(url);
 		

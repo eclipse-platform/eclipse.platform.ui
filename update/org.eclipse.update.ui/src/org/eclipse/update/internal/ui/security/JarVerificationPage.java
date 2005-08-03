@@ -140,7 +140,7 @@ public class JarVerificationPage extends BannerPage {
 								UpdateUIMessages.JarVerificationDialog_CorruptedContent_File;
 				setMessage(msg, ERROR);
 				strb.append(
-					UpdateUIMessages.JarVerificationDialog_ComponentNotInstalled); //$NON-NLS-1$
+					UpdateUIMessages.JarVerificationDialog_ComponentNotInstalled); 
 				labelInformation.setText(strb.toString());
 				break;
 

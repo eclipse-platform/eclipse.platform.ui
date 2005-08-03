@@ -68,7 +68,7 @@ public class Utils {
 			}
 			status = newStatus(completeString.toString(), e);
 		}
-		return new CoreException(status); //$NON-NLS-1$
+		return new CoreException(status); 
 	}
 
 	public static IStatus newStatus(String message, Throwable e) {

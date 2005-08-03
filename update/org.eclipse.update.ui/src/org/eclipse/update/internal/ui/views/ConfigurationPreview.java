@@ -89,7 +89,7 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 		desc.setLayoutData(td);
 		taskList = toolkit.createFormText(form.getBody(), false);
 		taskList.setHyperlinkSettings(toolkit.getHyperlinkGroup());
-		taskList.addHyperlinkListener(taskAction); //$NON-NLS-1$
+		taskList.addHyperlinkListener(taskAction); 
 		taskList.setText("", false, false); //$NON-NLS-1$
 		//factory.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_ROLLOVER);
 		td = new TableWrapData(TableWrapData.FILL_GRAB);
@@ -123,7 +123,7 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 			return UpdateUIMessages.ConfigurationPreviewForm_install; 
 		}
 		if (object instanceof ILocalSite) {
-			return UpdateUIMessages.ConfigurationPreviewForm_configDescription; //$NON-NLS-1$
+			return UpdateUIMessages.ConfigurationPreviewForm_configDescription; 
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -141,7 +141,7 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 						String link = " <a href=\"" + url //$NON-NLS-1$
 								+ "\">"+UpdateUIMessages.MoreInfoGenerator_moreInfo+"</a>";   //$NON-NLS-1$//$NON-NLS-2$
 						String fullText = "<form><p>" + text + link //$NON-NLS-1$
-								+ "</p></form>"; //$NON-NLS-1$ //$NON-NLS-2$
+								+ "</p></form>"; //$NON-NLS-1$ 
 						return fullText;
 					}
 				}
@@ -171,9 +171,9 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 			if (task.isEnabled() == false)
 				continue;
 			buf.append("<li style=\"text\" indent=\"0\"><a href=\"" + i + "\">" //$NON-NLS-1$ //$NON-NLS-2$
-					+ task.getName() + "</a></li>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					+ task.getName() + "</a></li>"); //$NON-NLS-1$  
 			buf.append("<li style=\"text\" indent=\"10\" vspace=\"false\">" //$NON-NLS-1$
-					+ task.getDescription() + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
+					+ task.getDescription() + "</li>"); //$NON-NLS-1$ 
 		}
 		buf.append("</form>"); //$NON-NLS-1$
 		return buf.toString();

@@ -1313,7 +1313,7 @@ public class ReviewPage	extends BannerPage {
 	class StatusDialog extends ErrorDialog {
 //		Button detailsButton;
 		public StatusDialog() {
-			super(getContainer().getShell(), UpdateUIMessages.InstallWizard_ReviewPage_invalid_short, null, //$NON-NLS-1$
+			super(getContainer().getShell(), UpdateUIMessages.InstallWizard_ReviewPage_invalid_short, null, 
 					validationStatus, IStatus.OK | IStatus.INFO
 							| IStatus.WARNING | IStatus.ERROR);
 		}

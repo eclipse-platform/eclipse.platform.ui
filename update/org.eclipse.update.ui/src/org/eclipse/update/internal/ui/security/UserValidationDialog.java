@@ -60,7 +60,7 @@ public class UserValidationDialog extends Dialog {
 	 */
 	protected static Authentication askForAuthentication(String host,
 			String message) {
-		UserValidationDialog ui = new UserValidationDialog(null, host, message); //$NON-NLS-1$
+		UserValidationDialog ui = new UserValidationDialog(null, host, message); 
 		ui.open();
 		return ui.getAuthentication();
 	}
@@ -81,7 +81,7 @@ public class UserValidationDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(UpdateUIMessages.UserVerificationDialog_PasswordRequired); //$NON-NLS-1$
+		newShell.setText(UpdateUIMessages.UserVerificationDialog_PasswordRequired); 
 	}
 	/**
 	 */
@@ -102,7 +102,7 @@ public class UserValidationDialog extends Dialog {
 
 		Label label = new Label(main, SWT.WRAP);
 		String text = UpdateUIMessages.UserVerificationDialog_ConnectTo + host; 
-		text += "\n\n" + message; //$NON-NLS-1$ //$NON-NLS-2$
+		text += "\n\n" + message; //$NON-NLS-1$ 
 		label.setText(text);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
@@ -118,7 +118,7 @@ public class UserValidationDialog extends Dialog {
 	 * Creates the three widgets that represent the user name entry area.
 	 */
 	protected void createPasswordFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(UpdateUIMessages.UserVerificationDialog_Password); //$NON-NLS-1$
+		new Label(parent, SWT.NONE).setText(UpdateUIMessages.UserVerificationDialog_Password); 
 
 		passwordField = new Text(parent, SWT.BORDER | SWT.PASSWORD);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -131,7 +131,7 @@ public class UserValidationDialog extends Dialog {
 	 * Creates the three widgets that represent the user name entry area.
 	 */
 	protected void createUsernameFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(UpdateUIMessages.UserVerificationDialog_UserName); //$NON-NLS-1$
+		new Label(parent, SWT.NONE).setText(UpdateUIMessages.UserVerificationDialog_UserName); 
 
 		usernameField = new Text(parent, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);

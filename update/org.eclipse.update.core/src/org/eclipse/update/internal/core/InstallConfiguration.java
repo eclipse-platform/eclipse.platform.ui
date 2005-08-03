@@ -561,7 +561,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			// if the URL doesn't exits log it
 			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.findConfiguredSite(urlToCheck);
 			if (siteEntry == null) {
-				UpdateCore.warn(NLS.bind(Messages.InstallConfiguration_unableToFindSite, (new String[] { urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm() }))); //$NON-NLS-1$
+				UpdateCore.warn(NLS.bind(Messages.InstallConfiguration_unableToFindSite, (new String[] { urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm() }))); 
 			}
 		}
 	}

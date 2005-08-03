@@ -240,7 +240,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 					addParsedPlugin(entry, dirs[i]);
 				} else {
 					if (!(pluginFile = new File(dirs[i], "plugin.xml")) //$NON-NLS-1$
-							.exists()) { //$NON-NLS-1$
+							.exists()) { 
 						pluginFile = new File(dirs[i], "fragment.xml"); //$NON-NLS-1$
 					}
 					if (pluginFile != null && pluginFile.exists()

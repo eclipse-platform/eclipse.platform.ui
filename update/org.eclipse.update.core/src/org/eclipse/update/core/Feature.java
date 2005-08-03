@@ -957,7 +957,7 @@ public class Feature extends FeatureModel implements IFeature {
 					if (result == IVerificationListener.CHOICE_ERROR) {
 						throw Utilities
 							.newCoreException(
-								Messages.JarVerificationService_UnsucessfulVerification,	//$NON-NLS-1$
+								Messages.JarVerificationService_UnsucessfulVerification,	
 						vr.getVerificationException());
 					}
 				}

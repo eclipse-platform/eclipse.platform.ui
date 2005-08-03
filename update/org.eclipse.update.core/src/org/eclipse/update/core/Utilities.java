@@ -217,7 +217,7 @@ public class Utilities {
 			}
 			status = new Status(IStatus.ERROR, id, code, completeString.toString(), e);
 		}
-		return new CoreException(status); //$NON-NLS-1$
+		return new CoreException(status); 
 	}
 
 	/**
@@ -263,7 +263,7 @@ public class Utilities {
 		multi.add(childStatus2);
 		multi.addAll(childStatus2);
 
-		return new CoreException(multi); //$NON-NLS-1$
+		return new CoreException(multi); 
 	}
 
 	/**

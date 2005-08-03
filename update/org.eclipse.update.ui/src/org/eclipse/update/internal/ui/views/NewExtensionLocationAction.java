@@ -57,8 +57,8 @@ public class NewExtensionLocationAction extends Action {
 			} else {
 				MessageDialog.openInformation(
 					shell,
-					UpdateUIMessages.NewExtensionLocationAction_extInfoTitle, //$NON-NLS-1$
-					UpdateUIMessages.NewExtensionLocationAction_extInfoMessage); //$NON-NLS-1$
+					UpdateUIMessages.NewExtensionLocationAction_extInfoTitle, 
+					UpdateUIMessages.NewExtensionLocationAction_extInfoMessage); 
 				// re-open the directory dialog
 				dialog.setFilterPath(dir);
 				dir = dialog.open();

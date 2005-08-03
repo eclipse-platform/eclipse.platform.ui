@@ -176,7 +176,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		File nonPluginData = new File(fileString);
 		if (!nonPluginData.exists())
 			throw Utilities.newCoreException(
-				NLS.bind(Messages.FeatureExecutableContentProvider_FileDoesNotExist, (new String[] { fileString })), //$NON-NLS-1$
+				NLS.bind(Messages.FeatureExecutableContentProvider_FileDoesNotExist, (new String[] { fileString })), 
 				null); 
 
 		try {

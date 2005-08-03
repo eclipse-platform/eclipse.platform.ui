@@ -241,7 +241,7 @@ public class UpdateJob extends Job {
 					.toArray(new IStatus[statusList.size()]);
 			return new MultiStatus("org.eclipse.update.ui", //$NON-NLS-1$
 					ISite.SITE_ACCESS_EXCEPTION, children,
-					Messages.Search_networkProblems, //$NON-NLS-1$
+					Messages.Search_networkProblems, 
 					null);
 		}
 	}

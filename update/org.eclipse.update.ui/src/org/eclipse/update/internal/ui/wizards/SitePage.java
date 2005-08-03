@@ -381,7 +381,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				boolean answer = MessageDialog
 								.openQuestion(
 										getShell(),
-										UpdateUIMessages.SitePage_remove_location_conf_title, //$NON-NLS-1$
+										UpdateUIMessages.SitePage_remove_location_conf_title, 
 										UpdateUIMessages.SitePage_remove_location_conf
 												+ " " + selName); //$NON-NLS-1$
 

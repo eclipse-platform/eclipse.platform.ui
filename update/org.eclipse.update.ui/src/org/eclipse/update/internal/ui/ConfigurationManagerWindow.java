@@ -239,7 +239,7 @@ public class ConfigurationManagerWindow extends ApplicationWindow {
 		}
 		monitor.subTask(NLS.bind(
 				UpdateUIMessages.ConfigurationManagerWindow_searchTaskName,
-				buf.toString())); //$NON-NLS-1$
+				buf.toString())); 
 	}
 
 	private void addSeparator(Composite parent) {

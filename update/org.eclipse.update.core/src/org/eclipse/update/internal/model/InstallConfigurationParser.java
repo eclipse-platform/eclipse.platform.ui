@@ -118,7 +118,7 @@ public class InstallConfigurationParser {
 	private void processFeature(FeatureEntry feature) throws CoreException, IOException {
 
 		// url
-		String path = feature.getURL(); //$NON-NLS-1$
+		String path = feature.getURL(); 
 		URL url = UpdateManagerUtils.getURL(siteURL, path, null);
 
 		if (url != null) {

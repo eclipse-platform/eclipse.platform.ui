@@ -717,7 +717,7 @@ public static class Writer {
 	public void init(File file, String encoding) throws FileNotFoundException, UnsupportedEncodingException{
 		this.encoding = encoding;
 		out = new FileOutputStream(file);
-		outWriter = new OutputStreamWriter(out, encoding); //$NON-NLS-1$
+		outWriter = new OutputStreamWriter(out, encoding); 
 		buffWriter = new BufferedWriter(outWriter);
 		w = new PrintWriter(buffWriter);
 	}

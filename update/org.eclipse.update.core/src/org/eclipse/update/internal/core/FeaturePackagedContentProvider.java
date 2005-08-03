@@ -76,7 +76,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			// we need to unpack archive locally for UI browser references to be resolved correctly
 			localFeatureFiles = featureJarReference.unpack(getWorkingDirectory(), null, monitor);
 		} catch (IOException e) {
-			throw errorRetrieving(Feature.FEATURE_XML, featureJarReference, e); //$NON-NLS-1$ 
+			throw errorRetrieving(Feature.FEATURE_XML, featureJarReference, e); // 
 		}
 
 		// find the manifest in the unpacked feature files
@@ -143,7 +143,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			currentReference = asLocalReference(currentReference, monitor);
 			references[0] = currentReference;
 		} catch (IOException e) {
-			throw errorRetrieving(archiveID, currentReference, e); //$NON-NLS-1$
+			throw errorRetrieving(archiveID, currentReference, e); 
 		}
 		return references;
 	}

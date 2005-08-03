@@ -69,7 +69,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
 	private static final String LINKS = "links"; //$NON-NLS-1$
-	private static final String[] BOOTSTRAP_PLUGINS = {}; //$NON-NLS-1$
+	private static final String[] BOOTSTRAP_PLUGINS = {}; 
 
 	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 

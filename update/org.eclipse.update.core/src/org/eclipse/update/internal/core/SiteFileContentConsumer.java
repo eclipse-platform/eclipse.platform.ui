@@ -223,7 +223,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		}
 
 		if (!sucess) {
-			String msg = NLS.bind(Messages.SiteFileContentConsumer_unableToDelete, (new String[] { oldPath })); //$NON-NLS-1$
+			String msg = NLS.bind(Messages.SiteFileContentConsumer_unableToDelete, (new String[] { oldPath })); 
 			UpdateCore.log(msg, null);
 		} else {
 			// remove the feature files;

@@ -221,7 +221,7 @@ public class SchedulerStartup implements IStartup {
 				return;
 		}
 		Platform.getJobManager().addJobChangeListener(jobListener);
-		String jobName = UpdateSchedulerMessages.AutomaticUpdatesJob_AutomaticUpdateSearch; //$NON-NLS-1$);
+		String jobName = UpdateSchedulerMessages.AutomaticUpdatesJob_AutomaticUpdateSearch; //);
 		boolean download = UpdateSchedulerPlugin.getDefault()
 				.getPluginPreferences().getBoolean(
 						UpdateSchedulerPlugin.P_DOWNLOAD);
