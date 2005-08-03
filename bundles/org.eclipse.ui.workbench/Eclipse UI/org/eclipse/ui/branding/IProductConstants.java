@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,4 +123,53 @@ public interface IProductConstants {
      * </p>
      */
     public static final String WELCOME_PAGE = "welcomePage"; //$NON-NLS-1$
+
+    /**
+     * The rectangle relative to the splash image's top left corner where
+     * the progress bar for reporting progress at startup should be shown.  
+     * Products designed to run "headless" typically would not define this
+     * property.
+     * <p>
+     * The value is a comma-separated list of four integer values, specifying
+     * x, y, width, and height of the rectangle in pixel coordinates.
+     * </p>
+	 * <p>This property is still experimental and may be renamed or removed
+	 * during the development of Eclipse 3.2.
+	 * </p>
+     * @since 3.2 <b>EXPERIMENTAL</b>
+     */
+    public static final String STARTUP_PROGRESS_RECT = "startupProgressRect"; //$NON-NLS-1$
+
+    /**
+     * The rectangle relative to the splash image's top left corner where
+     * messages for reporting progress at startup should be shown.  
+     * Products designed to run "headless" typically would not define this
+     * property.
+     * <p>
+     * The value is a comma-separated list of four integer values, specifying
+     * x, y, width, and height of the rectangle in pixel coordinates.
+     * </p> 
+	 * <p>This property is still experimental and may be renamed or removed
+	 * during the development of Eclipse 3.2.
+	 * </p>
+     * @since 3.2 <b>EXPERIMENTAL</b>
+     */
+    public static final String STARTUP_MESSAGE_RECT = "startupMessageRect"; //$NON-NLS-1$
+
+    /**
+     * The foreground color to be used when reporting progress at startup.  
+     * Products designed to run "headless" typically would not define this
+     * property.
+     * <p>
+     * The value is a six-digit hexadecimal number. The first two digits
+     * specify the red component of the color, the next two digits the
+     * green component, and the last two digits the blue component.
+     * </p> 
+	 * <p>This property is still experimental and may be renamed or removed
+	 * during the development of Eclipse 3.2.
+	 * </p>
+     * @since 3.2 <b>EXPERIMENTAL</b>
+     */
+    public static final String STARTUP_FOREGROUND_COLOR = "startupForegroundColor"; //$NON-NLS-1$
+
 }

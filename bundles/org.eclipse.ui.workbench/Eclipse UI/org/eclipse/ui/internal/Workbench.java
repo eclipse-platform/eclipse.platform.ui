@@ -1242,39 +1242,74 @@ public final class Workbench implements IWorkbench {
 		}
 	}
 
-	private void runStartupWithProgress(final int expectedProgressCount, final Runnable runnable) throws InvocationTargetException, InterruptedException {
+	private void runStartupWithProgress(final int expectedProgressCount,
+			final Runnable runnable) throws InvocationTargetException,
+			InterruptedException {
 		progressCount = 0;
 		final double cutoff = 0.95;
 
-        Shell shell = new Shell(Display.getCurrent(), SWT.NONE);
-        try {
-
-			final StartupProgressMonitorDialog progressMonitorDialog = new StartupProgressMonitorDialog(shell);
-			
-			SynchronousBundleListener bundleListener = new StartupProgressBundleListener(progressMonitorDialog.getProgressMonitor(), (int) (expectedProgressCount * cutoff));
+		IProgressMonitor progressMonitor = StartupProgressMonitor.getInstance();
+		if (progressMonitor != null) {
+			progressMonitor.beginTask("", expectedProgressCount); //$NON-NLS-1$
+			SynchronousBundleListener bundleListener = new StartupProgressBundleListener(
+					progressMonitor, (int) (expectedProgressCount * cutoff));
 			WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
-				
 			try {
-				progressMonitorDialog.run(false, false, new IRunnableWithProgress() {
-	
-					public void run(IProgressMonitor monitor) {
-						monitor.beginTask("", expectedProgressCount); //$NON-NLS-1$
-			
-						runnable.run();
-						
-						monitor.subTask(WorkbenchMessages.Startup_Done);
-						int remainingWork = expectedProgressCount - Math.min(progressCount, (int)(expectedProgressCount * cutoff));
-						monitor.worked(remainingWork);
-						Display.getCurrent().update();
-						monitor.done();
-					}});
+				runnable.run();
+				progressMonitor.subTask(WorkbenchMessages.Startup_Done);
+				int remainingWork = expectedProgressCount
+						- Math.min(progressCount,
+								(int) (expectedProgressCount * cutoff));
+				progressMonitor.worked(remainingWork);
+				progressMonitor.done();
 			} finally {
-				WorkbenchPlugin.getDefault().removeBundleListener(bundleListener);
+				WorkbenchPlugin.getDefault().removeBundleListener(
+						bundleListener);
 			}
-		
-        } finally {
-            shell.dispose();
-        }
+		} else {
+			Shell shell = new Shell(Display.getCurrent(), SWT.NONE);
+			try {
+
+				final StartupProgressMonitorDialog progressMonitorDialog = new StartupProgressMonitorDialog(
+						shell);
+
+				SynchronousBundleListener bundleListener = new StartupProgressBundleListener(
+						progressMonitorDialog.getProgressMonitor(),
+						(int) (expectedProgressCount * cutoff));
+				WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
+
+				try {
+					progressMonitorDialog.run(false, false,
+							new IRunnableWithProgress() {
+
+								public void run(IProgressMonitor monitor) {
+									monitor
+											.beginTask(
+													"", expectedProgressCount); //$NON-NLS-1$
+
+									runnable.run();
+
+									monitor
+											.subTask(WorkbenchMessages.Startup_Done);
+									int remainingWork = expectedProgressCount
+											- Math
+													.min(
+															progressCount,
+															(int) (expectedProgressCount * cutoff));
+									monitor.worked(remainingWork);
+									Display.getCurrent().update();
+									monitor.done();
+								}
+							});
+				} finally {
+					WorkbenchPlugin.getDefault().removeBundleListener(
+							bundleListener);
+				}
+
+			} finally {
+				shell.dispose();
+			}
+		}
 	}
 
 	private void doOpenFirstTimeWindow() {
