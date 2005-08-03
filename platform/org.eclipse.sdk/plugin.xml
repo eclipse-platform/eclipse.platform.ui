@@ -11,7 +11,7 @@
           <property name="preferenceCustomization" value="plugin_customization.ini"/>
           <property
                 name="startupForegroundColor"
-                value="D2D7FF"/>
+                value="FFFFFF"/>
           <property
                 name="startupMessageRect"
                 value="7,240,441,20"/>
