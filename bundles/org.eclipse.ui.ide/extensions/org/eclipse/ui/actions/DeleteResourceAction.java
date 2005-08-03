@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -60,6 +61,12 @@ public class DeleteResourceAction extends SelectionListenerAction {
         private IResource[] projects;
 
         private boolean deleteContent = false;
+        
+        /**
+         * Control testing mode.  In testing mode, it returns true to
+         * delete contents and does not pop up the dialog.
+         */
+        private boolean fIsTesting = false;
 
         private Button radio1;
 
@@ -139,6 +146,28 @@ public class DeleteResourceAction extends SelectionListenerAction {
         boolean getDeleteContent() {
             return deleteContent;
         }
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.window.Window#open()
+		 */
+		public int open() {
+			//Override Window#open() to allow for non-interactive testing.
+			if (fIsTesting) {
+				deleteContent = true;
+				return Window.OK;
+			}
+			return super.open();
+		}
+        
+		/**
+		 * Set this delete dialog into testing mode.  It won't pop up, 
+		 * and it returns true for deleteContent.
+		 * 
+		 * @param t the testing mode
+		 */
+        void setTestingMode(boolean t) {
+        	fIsTesting = t;
+        }
     }
 
     /**
@@ -161,6 +190,12 @@ public class DeleteResourceAction extends SelectionListenerAction {
      * Whether or not to automatically delete out of sync resources
      */
     private boolean forceOutOfSyncDelete = false;
+    
+    /**
+     * Flag that allows testing mode ... it won't pop up the project
+     * delete dialog, and will return "delete all content".
+     */
+    protected boolean fTestingMode = false;
 
     /**
      * Creates a new delete resource action.
@@ -338,6 +373,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
      */
     private boolean confirmDeleteProjects(IResource[] resources) {
         DeleteProjectDialog dialog = new DeleteProjectDialog(shell, resources);
+        dialog.setTestingMode(fTestingMode);
         int code = dialog.open();
         deleteContent = dialog.getDeleteContent();
         return code == 0; // YES

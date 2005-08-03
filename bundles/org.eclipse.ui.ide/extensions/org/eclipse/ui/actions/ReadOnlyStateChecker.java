@@ -70,26 +70,35 @@ public class ReadOnlyStateChecker {
             selectedChildren.add(resourceToCheck);
         }
         else {
-            //Now check below
-            int childCheck = checkReadOnlyResources(
-                    ((IContainer) resourceToCheck).members(), selectedChildren);
-            //Add in the resource only if nothing was left out
-            if (childCheck == IDialogConstants.YES_TO_ALL_ID)
-                selectedChildren.add(resourceToCheck);
-            else
-                //Something was left out - return false
-                return false;
+        	IContainer container = (IContainer) resourceToCheck;
+        	// if the project is closed, there's no point in checking
+        	// it's children.  bug 99858
+			if (container.isAccessible()) {
+				// Now check below
+				int childCheck = checkReadOnlyResources(container.members(),
+						selectedChildren);
+				// Add in the resource only if nothing was left out
+				if (childCheck == IDialogConstants.YES_TO_ALL_ID)
+					selectedChildren.add(resourceToCheck);
+				else
+					// Something was left out - return false
+					return false;
+			} else {
+				selectedChildren.add(resourceToCheck);
+			}
         }
         return true;
 
     }
 
     /**
-     * Check the supplied resources to see if they are read only. If so then prompt
-     * the user to see if they can be deleted.Return those that were accepted.
+     * Check the supplied resources to see if they are read only. If so then
+	 * prompt the user to see if they can be deleted.Return those that were
+	 * accepted.
+	 * 
+     * @param itemsToCheck
      * @return the resulting selected resources
      */
-    /*package*/
     public IResource[] checkReadOnlyResources(IResource[] itemsToCheck) {
 
         List selections = new ArrayList();
@@ -170,10 +179,8 @@ public class ReadOnlyStateChecker {
 
         if (noneSkipped)
             return IDialogConstants.YES_TO_ALL_ID;
-        else {
-            allSelected.addAll(selectedChildren);
-            return IDialogConstants.NO_ID;
-        }
+       allSelected.addAll(selectedChildren);
+       return IDialogConstants.NO_ID;
 
     }
 
