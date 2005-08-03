@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -148,7 +149,9 @@ public class ReadOnlyStateChecker {
 
         for (int i = 0; i < itemsToCheck.length; i++) {
             IResource resourceToCheck = itemsToCheck[i];
-            if (!yesToAllSelected && shouldCheck(resourceToCheck) && resourceToCheck.isReadOnly()) {
+            ResourceAttributes checkAttributes = resourceToCheck.getResourceAttributes();
+            if (!yesToAllSelected && shouldCheck(resourceToCheck) 
+            		&& checkAttributes.isReadOnly()) {
                 int action = queryYesToAllNoCancel(resourceToCheck);
                 if (action == IDialogConstants.YES_ID) {
                     boolean childResult = checkAcceptedResource(
