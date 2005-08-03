@@ -16,7 +16,7 @@ package org.eclipse.ant.internal.ui.editor.text;
 
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.SingleLineRule;
+import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -37,7 +37,7 @@ public class AntEditorProcInstrScanner extends AbstractAntEditorScanner {
 					IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX));
 
         //Add rule for processing instructions
-        rules[0]= new SingleLineRule("<?", "?>", fProcInstructionToken); //$NON-NLS-1$ //$NON-NLS-2$
+        rules[0]= new MultiLineRule("<?", "?>", fProcInstructionToken); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Add generic whitespace rule.
         rules[1]= new WhitespaceRule(new AntEditorWhitespaceDetector());
