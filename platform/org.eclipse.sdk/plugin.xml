@@ -8,7 +8,16 @@
           <property name="aboutImage" value="eclipse_lg.gif"/> 
           <property name="aboutText" value="%productBlurb"/> 
           <property name="appName" value="Eclipse"/> 
-          <property name="preferenceCustomization" value="plugin_customization.ini"/> 
+          <property name="preferenceCustomization" value="plugin_customization.ini"/>
+          <property
+                name="startupForegroundColor"
+                value="D2D7FF"/>
+          <property
+                name="startupMessageRect"
+                value="7,240,441,20"/>
+          <property
+                name="startupProgressRect"
+                value="7,220,441,15"/> 
       </product> 
     </extension> 
 
