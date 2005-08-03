@@ -654,7 +654,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		// all topics page
 		page = new HelpPartPage(HV_ALL_TOPICS_PAGE,
 				Messages.ReusableHelpPart_allTopicsPage_name,
-				IHelpUIConstants.IMAGE_ALL_TOPICS); //$NON-NLS-1$
+				IHelpUIConstants.IMAGE_ALL_TOPICS); 
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
 		page.addPart(HV_TOPIC_TREE, true);
@@ -663,8 +663,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		// bookmarks page
 		page = new HelpPartPage(HV_BOOKMARKS_PAGE,
-				Messages.ReusableHelpPart_bookmarksPage_name, //$NON-NLS-1$
-				IHelpUIConstants.IMAGE_BOOKMARKS); //$NON-NLS-1$
+				Messages.ReusableHelpPart_bookmarksPage_name, 
+				IHelpUIConstants.IMAGE_BOOKMARKS); 
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
 		page.addPart(HV_BOOKMARKS_TREE, true);
@@ -680,7 +680,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		// context help page
 		page = new HelpPartPage(HV_CONTEXT_HELP_PAGE,
 				Messages.ReusableHelpPart_contextHelpPage_name,
-				IHelpUIConstants.IMAGE_RELATED_TOPICS); //$NON-NLS-1$
+				IHelpUIConstants.IMAGE_RELATED_TOPICS); 
 		// page.addPart(HV_CONTEXT_HELP, false);
 		// page.addPart(HV_SEARCH_RESULT, false, true);
 		page.setVerticalSpacing(0);
@@ -713,8 +713,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_BACK_DISABLED));
 		backAction.setEnabled(false);
-		backAction.setText(Messages.ReusableHelpPart_back_label); //$NON-NLS-1$
-		backAction.setToolTipText(Messages.ReusableHelpPart_back_tooltip); //$NON-NLS-1$
+		backAction.setText(Messages.ReusableHelpPart_back_label); 
+		backAction.setToolTipText(Messages.ReusableHelpPart_back_tooltip); 
 		backAction.setId("back"); //$NON-NLS-1$
 
 		nextAction = new Action("next") { //$NON-NLS-1$
@@ -722,7 +722,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				doNext();
 			}
 		};
-		nextAction.setText(Messages.ReusableHelpPart_forward_label); //$NON-NLS-1$
+		nextAction.setText(Messages.ReusableHelpPart_forward_label); 
 		nextAction.setImageDescriptor(PlatformUI.getWorkbench()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_FORWARD));
@@ -730,7 +730,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		nextAction.setEnabled(false);
-		nextAction.setToolTipText(Messages.ReusableHelpPart_forward_tooltip); //$NON-NLS-1$
+		nextAction.setToolTipText(Messages.ReusableHelpPart_forward_tooltip); 
 		nextAction.setId("next"); //$NON-NLS-1$
 		toolBarManager.add(backAction);
 		toolBarManager.add(nextAction);
@@ -741,28 +741,28 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		};
 		openInfoCenterAction
-				.setText(Messages.ReusableHelpPart_openInfoCenterAction_label); //$NON-NLS-1$
+				.setText(Messages.ReusableHelpPart_openInfoCenterAction_label); 
 		openAction = new OpenHrefAction("open") { //$NON-NLS-1$
 			protected void busyRun() {
 				doOpen(getTarget(), getShowDocumentsInPlace());
 			}
 		};
-		openAction.setText(Messages.ReusableHelpPart_openAction_label); //$NON-NLS-1$
+		openAction.setText(Messages.ReusableHelpPart_openAction_label); 
 		openInHelpAction = new OpenHrefAction("") {//$NON-NLS-1$
 			protected void busyRun() {
 				doOpenInHelp(getTarget());
 			}
 		};
 		openInHelpAction
-				.setText(Messages.ReusableHelpPart_openInHelpContentsAction_label); //$NON-NLS-1$
+				.setText(Messages.ReusableHelpPart_openInHelpContentsAction_label); 
 		copyAction = new CopyAction();
-		copyAction.setText(Messages.ReusableHelpPart_copyAction_label); //$NON-NLS-1$
+		copyAction.setText(Messages.ReusableHelpPart_copyAction_label); 
 		bookmarkAction = new OpenHrefAction("bookmark") { //$NON-NLS-1$
 			protected void busyRun() {
 				doBookmark(getTarget());
 			}
 		};
-		bookmarkAction.setText(Messages.ReusableHelpPart_bookmarkAction_label); //$NON-NLS-1$
+		bookmarkAction.setText(Messages.ReusableHelpPart_bookmarkAction_label); 
 		bookmarkAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		if (actionBars != null && actionBars.getMenuManager() != null)
@@ -782,7 +782,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			showAllAction.setImageDescriptor(HelpUIResources
 					.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_ALL));
 			showAllAction
-					.setToolTipText(Messages.AllTopicsPart_showAll_tooltip); //$NON-NLS-1$
+					.setToolTipText(Messages.AllTopicsPart_showAll_tooltip); 
 			toolBarManager.insertBefore("back", showAllAction); //$NON-NLS-1$
 			toolBarManager.insertBefore("back", new Separator()); //$NON-NLS-1$
 			showAllAction.setChecked(!HelpBasePlugin.getActivitySupport()

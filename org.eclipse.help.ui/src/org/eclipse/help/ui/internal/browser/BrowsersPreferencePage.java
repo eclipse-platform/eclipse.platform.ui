@@ -86,7 +86,7 @@ public class BrowsersPreferencePage extends PreferencePage implements
 			alwaysExternal = new Button(mainComposite, SWT.CHECK);
 			alwaysExternal
 					.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
-			alwaysExternal.setText(Messages.use_only_external_browser); //$NON-NLS-1$
+			alwaysExternal.setText(Messages.use_only_external_browser); 
 			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
 					.getPluginPreferences().getBoolean(
 							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER));

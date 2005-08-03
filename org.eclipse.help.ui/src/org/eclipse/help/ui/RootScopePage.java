@@ -85,7 +85,7 @@ public abstract class RootScopePage extends PreferencePage implements
 			layout.numColumns = 2;
 		container.setLayout(layout);
 		masterButton = new Button(container, SWT.CHECK);
-		masterButton.setText(Messages.RootScopePage_masterButton); //$NON-NLS-1$
+		masterButton.setText(Messages.RootScopePage_masterButton); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;//ed.isUserDefined() ? 2 : 1;
 		masterButton.setLayoutData(gd);

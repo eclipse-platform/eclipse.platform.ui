@@ -124,7 +124,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		showCategoriesAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_CATEGORIES));
 		showCategoriesAction.setChecked(showCategories);
-		showCategoriesAction.setToolTipText(Messages.SearchResultsPart_showCategoriesAction_tooltip); //$NON-NLS-1$
+		showCategoriesAction.setToolTipText(Messages.SearchResultsPart_showCategoriesAction_tooltip); 
 		showCategoriesAction.setId("categories"); //$NON-NLS-1$
 		tbm.insertBefore("back", showCategoriesAction); //$NON-NLS-1$
 
@@ -137,7 +137,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		showDescriptionAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_DESC));
 		showDescriptionAction.setChecked(!descOff);
-		showDescriptionAction.setToolTipText(Messages.SearchResultsPart_showDescriptionAction_tooltip); //$NON-NLS-1$
+		showDescriptionAction.setToolTipText(Messages.SearchResultsPart_showDescriptionAction_tooltip); 
 		showDescriptionAction.setId("description"); //$NON-NLS-1$
 		tbm.insertAfter("categories", showDescriptionAction); //$NON-NLS-1$
 		tbm.insertAfter("description", new Separator()); //$NON-NLS-1$

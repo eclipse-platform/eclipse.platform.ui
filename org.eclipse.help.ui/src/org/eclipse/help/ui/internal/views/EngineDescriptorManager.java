@@ -133,7 +133,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		Hashtable engineTypes = loadEngineTypes(elements);
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (element.getName().equals(TAG_ENGINE)) { //$NON-NLS-1$
+			if (element.getName().equals(TAG_ENGINE)) { 
 				EngineDescriptor desc = new EngineDescriptor(element);
 				String engineId = desc.getEngineTypeId();
 				if (engineId != null) {

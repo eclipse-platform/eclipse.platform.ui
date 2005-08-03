@@ -91,7 +91,7 @@ public class ScopeSet {
 	private String getFileName(String name) {
 		IPath location = HelpUIPlugin.getDefault().getStateLocation();
 		location = location.append(SCOPE_DIR_NAME);
-		location = location.append(encodeFileName(name)+getExtension()); //$NON-NLS-1$
+		location = location.append(encodeFileName(name)+getExtension()); 
 		return location.toOSString();
 	}
 	

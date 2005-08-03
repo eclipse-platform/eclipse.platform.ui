@@ -168,16 +168,16 @@ public class EngineResultSection {
             buff.append("\""); //$NON-NLS-1$
             if (!Platform.getWS().equals(Platform.WS_GTK)) {
             	buff.append(" alt=\""); //$NON-NLS-1$
-            	buff.append(Messages.EngineResultSection_progressTooltip); //$NON-NLS-1$
+            	buff.append(Messages.EngineResultSection_progressTooltip); 
             	buff.append("\""); //$NON-NLS-1$
             }
             buff.append(">"); //$NON-NLS-1$
-            buff.append(Messages.EngineResultSection_searchInProgress); //$NON-NLS-1$
+            buff.append(Messages.EngineResultSection_searchInProgress); 
             buff.append("</a></p></form>"); //$NON-NLS-1$
             searchResults.setText(buff.toString(), true, false);
         } else {
             searchResults.setText(Messages.EngineResultSection_progress2,
-                    false, false); //$NON-NLS-1$
+                    false, false); 
         }
     }
 
@@ -191,7 +191,7 @@ public class EngineResultSection {
                     page.showView(PROGRESS_VIEW);
                 } catch (PartInitException e) {
                     HelpUIPlugin.logError(
-                            Messages.EngineResultSection_progressError, e); //$NON-NLS-1$
+                            Messages.EngineResultSection_progressError, e); 
                 }
             }
         }
@@ -228,7 +228,7 @@ public class EngineResultSection {
             StringBuffer buff = new StringBuffer();
             buff.append("<form>"); //$NON-NLS-1$
             buff.append("<p><span color=\"summary\">");//$NON-NLS-1$
-            buff.append(Messages.EngineResultSection_canceling); //$NON-NLS-1$
+            buff.append(Messages.EngineResultSection_canceling); 
             buff.append("</span></p>"); //$NON-NLS-1$
             buff.append("</form>"); //$NON-NLS-1$
             searchResults.setText(buff.toString(), true, false);
@@ -345,7 +345,7 @@ public class EngineResultSection {
                 buff.append("\""); //$NON-NLS-1$
                 if (Platform.getWS()!=Platform.WS_GTK) {
                 	buff.append(" alt=\""); //$NON-NLS-1$
-                	buff.append(Messages.SearchResultsPart_nwtooltip);//$NON-NLS-1$ 
+                	buff.append(Messages.SearchResultsPart_nwtooltip);// 
                 	buff.append("\""); //$NON-NLS-1$
                 }
                 buff.append("/>"); //$NON-NLS-1$ 
@@ -499,7 +499,7 @@ public class EngineResultSection {
             label.setImage(PlatformUI.getWorkbench().getSharedImages()
                     .getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
             section.setTextClient(label);
-            section.setText(Messages.EngineResultSection_sectionTitle_error);//$NON-NLS-1$
+            section.setText(Messages.EngineResultSection_sectionTitle_error);
         } else {
             section.setTextClient(null);
         }

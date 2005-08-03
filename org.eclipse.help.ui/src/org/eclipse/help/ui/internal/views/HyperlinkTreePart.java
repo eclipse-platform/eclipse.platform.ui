@@ -205,7 +205,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		collapseAllAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_COLLAPSE_ALL));
 		collapseAllAction
-				.setToolTipText(Messages.AllTopicsPart_collapseAll_tooltip); //$NON-NLS-1$
+				.setToolTipText(Messages.AllTopicsPart_collapseAll_tooltip); 
 		tbm.insertBefore("back", collapseAllAction); //$NON-NLS-1$
 		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
 	}

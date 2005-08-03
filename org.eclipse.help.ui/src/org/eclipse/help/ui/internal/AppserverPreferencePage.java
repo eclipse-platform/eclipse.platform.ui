@@ -49,7 +49,7 @@ public class AppserverPreferencePage extends PreferencePage
 		mainComposite.setLayout(layout);
 
 		final Label descLabel = new Label(mainComposite, SWT.WRAP);
-		descLabel.setText(Messages.AppserverPreferencePage_description); //$NON-NLS-1$
+		descLabel.setText(Messages.AppserverPreferencePage_description); 
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		data.widthHint = 100;
@@ -66,7 +66,7 @@ public class AppserverPreferencePage extends PreferencePage
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setFont(font);
-		label.setText(Messages.AppserverPreferencePage_hostDescription); //$NON-NLS-1$
+		label.setText(Messages.AppserverPreferencePage_hostDescription); 
 
 		textServerAddr = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
 		//text.addListener(SWT.Modify, this);
@@ -77,7 +77,7 @@ public class AppserverPreferencePage extends PreferencePage
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setFont(font);
-		label.setText(Messages.AppserverPreferencePage_portDescription); //$NON-NLS-1$
+		label.setText(Messages.AppserverPreferencePage_portDescription); 
 
 		textServerPort = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
 		textServerPort.setTextLimit(5);
@@ -108,7 +108,7 @@ public class AppserverPreferencePage extends PreferencePage
 				} catch (NumberFormatException nfe) {
 				}
 				AppserverPreferencePage.this.setValid(false);
-				setErrorMessage(Messages.AppserverPreferencePage_invalidPort); //$NON-NLS-1$
+				setErrorMessage(Messages.AppserverPreferencePage_invalidPort); 
 			}
 		});
 

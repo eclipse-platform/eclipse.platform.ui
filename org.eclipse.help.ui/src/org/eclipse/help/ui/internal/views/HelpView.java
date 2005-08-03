@@ -54,7 +54,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		// toolkit.setBackground(toolkit.getColors().createNoContentBackground());
 		toolkit.getColors().initializeSectionToolBarColors();
 		reusableHelpPart.createControl(parent, toolkit);
-		reusableHelpPart.setDefaultContextHelpText(Messages.HelpView_defaultText); //$NON-NLS-1$
+		reusableHelpPart.setDefaultContextHelpText(Messages.HelpView_defaultText); 
 		reusableHelpPart.showPage(getFirstPage());
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();

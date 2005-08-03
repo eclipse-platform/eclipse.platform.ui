@@ -85,7 +85,7 @@ public class LaunchURL implements IWorkbenchWindowActionDelegate,
 		} catch (Exception e) {
 			HelpUIPlugin.logError("Exception occurred when opening URL: " + url //$NON-NLS-1$
 					+ ".", e); //$NON-NLS-1$
-			ErrorUtil.displayErrorDialog(Messages.LaunchURL_exception); //$NON-NLS-1$
+			ErrorUtil.displayErrorDialog(Messages.LaunchURL_exception); 
 		}
 	}
 

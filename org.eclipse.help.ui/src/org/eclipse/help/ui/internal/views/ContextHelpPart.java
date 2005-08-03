@@ -247,7 +247,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 
 	private void updateText(String helpText) {
 		text.setText(helpText != null ? helpText : defaultText,
-				helpText != null, //$NON-NLS-1$
+				helpText != null, 
 				false);
 		getSection().layout();
 		getManagedForm().reflow(true);

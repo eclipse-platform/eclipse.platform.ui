@@ -152,7 +152,7 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 		helpPart = new ReusableHelpPart(PlatformUI.getWorkbench()
 				.getProgressService());
 		helpPart.init(null, tbm, null, null);
-		helpPart.setDefaultContextHelpText(Messages.HelpView_defaultText); //$NON-NLS-1$		
+		helpPart.setDefaultContextHelpText(Messages.HelpView_defaultText); //		
 		helpPart.createControl(container, toolkit);
 		helpPart.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		if (!Platform.getWS().equals(Platform.WS_GTK)) 

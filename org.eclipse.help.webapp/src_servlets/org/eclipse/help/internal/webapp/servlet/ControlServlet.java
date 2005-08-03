@@ -271,11 +271,11 @@ public class ControlServlet extends HttpServlet {
 	}
 
 	private Object[] getInitArgs(String className, HttpServletRequest req) {
-		String featureId = req.getParameter(PARAM_FEATUREID); //$NON-NLS-1$
-		String version = req.getParameter(PARAM_VERSION); //$NON-NLS-1$
-		String fromSite = req.getParameter(PARAM_FROM); //$NON-NLS-1$
-		String toSite = req.getParameter(PARAM_TO); //$NON-NLS-1$
-		String verifyOnly = req.getParameter(PARAM_VERIFYONLY); //$NON-NLS-1$
+		String featureId = req.getParameter(PARAM_FEATUREID); 
+		String version = req.getParameter(PARAM_VERSION); 
+		String fromSite = req.getParameter(PARAM_FROM); 
+		String toSite = req.getParameter(PARAM_TO); 
+		String verifyOnly = req.getParameter(PARAM_VERIFYONLY); 
 		if (CLASS_INSTALL.equals(className))
 			return new Object[]{featureId, version, fromSite, toSite,
 					verifyOnly};

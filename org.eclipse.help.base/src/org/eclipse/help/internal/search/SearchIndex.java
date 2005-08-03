@@ -184,9 +184,9 @@ public class SearchIndex {
 		}
 		try {
 			Document doc = new Document();
-			doc.add(Field.Keyword(FIELD_NAME, name)); //$NON-NLS-1$
+			doc.add(Field.Keyword(FIELD_NAME, name)); 
 			if (relativePath != null)
-				doc.add(Field.Keyword(FIELD_INDEX_ID, relativePath)); //$NON-NLS-1$
+				doc.add(Field.Keyword(FIELD_INDEX_ID, relativePath)); 
 			try {
 				try {
 					parser.openDocument(url);
@@ -304,7 +304,7 @@ public class SearchIndex {
 		if (HelpBasePlugin.DEBUG_SEARCH) {
 			System.out.println("SearchIndex.removeDocument(" + name + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		Term term = new Term(FIELD_NAME, name); //$NON-NLS-1$
+		Term term = new Term(FIELD_NAME, name); 
 		try {
 			ir.delete(term);
 			indexedDocs.remove(name);
@@ -678,7 +678,7 @@ public class SearchIndex {
 
 	private boolean isLuceneCompatible() {
 		String usedLuceneVersion = getDependencies().getProperty(
-				DEPENDENCIES_KEY_LUCENE); //$NON-NLS-1$
+				DEPENDENCIES_KEY_LUCENE); 
 		return isLuceneCompatible(usedLuceneVersion);
 	}
 
@@ -696,7 +696,7 @@ public class SearchIndex {
 
 	private boolean isAnalyzerCompatible() {
 		String usedAnalyzer = getDependencies().getProperty(
-				DEPENDENCIES_KEY_ANALYZER); //$NON-NLS-1$
+				DEPENDENCIES_KEY_ANALYZER); 
 		return isAnalyzerCompatible(usedAnalyzer);
 	}
 
@@ -712,14 +712,14 @@ public class SearchIndex {
 	 */
 	private void saveDependencies() {
 		getDependencies().put(DEPENDENCIES_KEY_ANALYZER,
-				analyzerDescriptor.getId()); //$NON-NLS-1$
+				analyzerDescriptor.getId()); 
 		Bundle luceneBundle = Platform.getBundle(LUCENE_PLUGIN_ID);
 		if (luceneBundle != null) {
 			String luceneBundleVersion = "" //$NON-NLS-1$
 					+ luceneBundle.getHeaders().get(Constants.BUNDLE_VERSION);
-			getDependencies().put(DEPENDENCIES_KEY_LUCENE, luceneBundleVersion); //$NON-NLS-1$
+			getDependencies().put(DEPENDENCIES_KEY_LUCENE, luceneBundleVersion); 
 		} else {
-			getDependencies().put(DEPENDENCIES_KEY_LUCENE, ""); //$NON-NLS-1$ //$NON-NLS-2$
+			getDependencies().put(DEPENDENCIES_KEY_LUCENE, ""); //$NON-NLS-1$ 
 		}
 		getDependencies().save();
 	}

@@ -103,13 +103,13 @@ public class ScopeSetManager {
 			File[] files = dir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					return name.endsWith(ScopeSet.EXT)
-							|| name.endsWith(HistoryScopeSet.EXT); //$NON-NLS-1$
+							|| name.endsWith(HistoryScopeSet.EXT); 
 				}
 			});
 			for (int i = 0; i < files.length; i++) {
 				File file = files[i];
 				String name = file.getName();
-				int loc = name.lastIndexOf(ScopeSet.EXT); //$NON-NLS-1$
+				int loc = name.lastIndexOf(ScopeSet.EXT); 
 				if (loc != -1) {
 					ScopeSet set = new ScopeSet(name.substring(0, loc));
 					sets.add(set);
@@ -117,7 +117,7 @@ public class ScopeSetManager {
 						defSet = set;
 					continue;
 				}
-				loc = name.lastIndexOf(HistoryScopeSet.EXT); //$NON-NLS-1$
+				loc = name.lastIndexOf(HistoryScopeSet.EXT); 
 				if (loc != -1) {
 					HistoryScopeSet set = new HistoryScopeSet(name.substring(0,
 							loc), null);

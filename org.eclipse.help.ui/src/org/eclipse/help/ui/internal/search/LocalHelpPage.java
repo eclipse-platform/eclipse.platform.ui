@@ -151,7 +151,7 @@ public class LocalHelpPage extends RootScopePage {
 		capabilityFiltering = new Button(parent, SWT.CHECK);
 		String checkboxLabel = HelpBasePlugin.getActivitySupport().getLocalScopeCheckboxLabel();
 		if (checkboxLabel==null)
-			checkboxLabel = Messages.LocalHelpPage_capabilityFiltering_name;  //$NON-NLS-1$
+			checkboxLabel = Messages.LocalHelpPage_capabilityFiltering_name;  
 		capabilityFiltering.setText(checkboxLabel);
 		gd = new GridData();
 		gd.horizontalSpan = 2;

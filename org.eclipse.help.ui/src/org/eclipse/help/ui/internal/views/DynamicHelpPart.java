@@ -141,7 +141,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		searchResults.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
-				if (href.equals(CANCEL_HREF)) { //$NON-NLS-1$
+				if (href.equals(CANCEL_HREF)) { 
 					if (runningJob != null) {
 						runningJob.cancel();
 						runningJob = null;
@@ -347,7 +347,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				buff.append(" <a href=\""); //$NON-NLS-1$
 				buff.append(MORE_HREF);
 				buff.append("\">"); //$NON-NLS-1$
-				buff.append(Messages.SearchResultsPart_moreResults); //$NON-NLS-1$
+				buff.append(Messages.SearchResultsPart_moreResults); 
 				buff.append("</a></p>"); //$NON-NLS-1$
 			}
 			buff.append("</form>"); //$NON-NLS-1$

@@ -266,7 +266,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	private void createAdvancedLink(Composite parent, FormToolkit toolkit) {
 		advancedLink = toolkit.createHyperlink(parent,
-				Messages.FederatedSearchPart_advanced, SWT.NULL); //$NON-NLS-1$
+				Messages.FederatedSearchPart_advanced, SWT.NULL); 
 		advancedLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				doAdvanced();
@@ -285,7 +285,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 			}
 		});
 		scopeSetLink
-				.setToolTipText(Messages.FederatedSearchPart_changeScopeSet); //$NON-NLS-1$
+				.setToolTipText(Messages.FederatedSearchPart_changeScopeSet); 
 		section.setTextClient(scopeSetLink);
 		ScopeSet active = scopeSetManager.getActiveSet();
 		setActiveScopeSet(active);

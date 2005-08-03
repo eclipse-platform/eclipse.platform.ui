@@ -127,7 +127,7 @@ public class RenameDialog extends SelectionStatusDialog {
 						IStatus.ERROR,
 						HelpUIPlugin.PLUGIN_ID,
 						IStatus.ERROR,
-						Messages.RenameDialog_validationError, //$NON-NLS-1$
+						Messages.RenameDialog_validationError, 
 						null);
 				updateStatus(status);
 				okButton.setEnabled(false);
