@@ -70,7 +70,7 @@
       </category>
       <view
             allowMultiple="false"
-            icon="icons/view16/help_view.gif"
+            icon="$nl$/icons/view16/help_view.gif"
             class="org.eclipse.help.ui.internal.views.HelpView"
             category="org.eclipse.help.ui"
             name="%HelpViewName"
@@ -87,7 +87,7 @@
             scopeFactory="org.eclipse.help.ui.internal.search.LocalSearchScopeFactory"
             label="%LocalHelp.label"
             class="org.eclipse.help.internal.search.federated.LocalHelp"
-            icon="icons/obj16/slocalhelp_obj.gif"
+            icon="$nl$/icons/obj16/slocalhelp_obj.gif"
             pageClass="org.eclipse.help.ui.internal.search.LocalHelpPage"
             id="org.eclipse.help.ui.localSearch">
          <description>
@@ -98,7 +98,7 @@
             scopeFactory="org.eclipse.help.ui.internal.search.InfoCenterSearchScopeFactory"
             label="%InfoCenter.label"
             class="org.eclipse.help.internal.search.InfoCenter"
-            icon="icons/obj16/sinfocenter_obj.gif"
+            icon="$nl$/icons/obj16/sinfocenter_obj.gif"
             pageClass="org.eclipse.help.ui.internal.search.InfoCenterPage"
             id="org.eclipse.help.ui.infoCenter">
          <description>
@@ -109,7 +109,7 @@
             scopeFactory="org.eclipse.help.ui.internal.search.WebSearchScopeFactory"
             label="%WebSearch.label"
             class="org.eclipse.help.internal.search.WebSearch"
-            icon="icons/obj16/sweb_obj.gif"
+            icon="$nl$/icons/obj16/sweb_obj.gif"
             id="org.eclipse.help.ui.web"
             pageClass="org.eclipse.help.ui.internal.search.WebSearchPage">
          <description>
@@ -133,7 +133,7 @@
             visible="true">
          <action
                class="org.eclipse.help.ui.internal.SearchAction"
-               icon="icons/etool16/search_menu.gif"
+               icon="$nl$/icons/etool16/search_menu.gif"
                id="org.eclipse.help.ui.search"
                label="%searchAction.label"
                style="push"
@@ -141,7 +141,7 @@
                tooltip="%searchAction.tooltip"/>
          <action
                class="org.eclipse.help.ui.internal.DynamicHelpAction"
-               icon="icons/etool16/help.gif"
+               icon="$nl$/icons/etool16/help.gif"
                id="org.eclipse.help.ui.dynamicHelp"
                label="%searchAction.label"
                style="push"
