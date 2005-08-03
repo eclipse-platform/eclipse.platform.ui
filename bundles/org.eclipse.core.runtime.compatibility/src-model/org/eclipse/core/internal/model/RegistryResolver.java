@@ -666,7 +666,7 @@ public class RegistryResolver {
 			// has already been successfully converted from a string to
 			// a PluginVersionIdentifier and back to a string.  But keep
 			// this catch around in case something does go wrong.
-			return new PluginVersionIdentifier(0, 0, 0); //$NON-NLS-1$
+			return new PluginVersionIdentifier(0, 0, 0);
 		}
 	}
 
