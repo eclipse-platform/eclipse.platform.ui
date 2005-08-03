@@ -33,7 +33,7 @@
 		<imageprovider 
 			id="org.eclipse.ui.searchMarkerProvider"
 			markertype="org.eclipse.search.searchmarker"
-			icon="icons/full/obj16/searchm_obj.gif">
+			icon="$nl$/icons/full/obj16/searchm_obj.gif">
 		</imageprovider>
 	</extension>
 	
@@ -55,7 +55,7 @@
 		<imageprovider 
 			id="org.eclipse.ui.filteredSearchMarkerProvider"
 			markertype="org.eclipse.search.filteredSearchmarker"
-			icon="icons/full/obj16/searchm_obj.gif">
+			icon="$nl$/icons/full/obj16/searchm_obj.gif">
 		</imageprovider>
 	</extension>
 	
@@ -147,7 +147,7 @@
 				definitionId="org.eclipse.search.ui.openFileSearchPage"
 				menubarPath="org.eclipse.search.menu/internalDialogGroup"
 				label="%openFileSearchPageAction.label"
-				icon="icons/full/elcl16/tsearch_obj.gif"
+				icon="$nl$/icons/full/elcl16/tsearch_obj.gif"
 				helpContextId="file_search_action_context"
 				class="org.eclipse.search.internal.ui.OpenFileSearchPageAction"/>
 	
@@ -157,7 +157,7 @@
 				menubarPath="org.eclipse.search.menu/internalDialogGroup"
 				label="%openSearchDialogAction.label"
 				tooltip="%openSearchDialogAction.tooltip"
-				icon="icons/full/etool16/search.gif"
+				icon="$nl$/icons/full/etool16/search.gif"
 				helpContextId="open_search_dialog_action_context"
 				class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
 	     </actionSet>
@@ -169,11 +169,11 @@
 		   name="%searchResultViewName"
 		   category="org.eclipse.ui"
 		   class="org.eclipse.search.internal.ui.SearchResultView"
-		   icon="icons/full/eview16/searchres.gif">
+		   icon="$nl$/icons/full/eview16/searchres.gif">
 		</view>
       	<view
             name="%newSearchResultViewName"
-            icon="icons/full/eview16/searchres.gif"
+            icon="$nl$/icons/full/eview16/searchres.gif"
             category="org.eclipse.ui"
             class="org.eclipse.search2.internal.ui.SearchView"
             id="org.eclipse.search.ui.views.SearchView">
@@ -195,7 +195,7 @@
 		<page
 			id="org.eclipse.search.internal.ui.text.TextSearchPage"
 			label="%fileSearch"
-			icon="icons/full/elcl16/tsearch_obj.gif"
+			icon="$nl$/icons/full/elcl16/tsearch_obj.gif"
 			sizeHint="250,160"
 			tabPosition="1"
 			extensions="*:1"
@@ -235,7 +235,7 @@
 	     <specification
 	      		annotationType="org.eclipse.search.results"
 	            label="%SearchMarkerPreference.label"
-	            icon="icons/full/obj16/searchm_obj.gif"
+	            icon="$nl$/icons/full/obj16/searchm_obj.gif"
 	            textPreferenceKey="searchResultIndication"
 	            textPreferenceValue="false"
 	            highlightPreferenceKey="searchResultHighlighting"
@@ -257,7 +257,7 @@
 	     <specification
 	      		annotationType="org.eclipse.search.filteredResults"
 	            label="%FilteredSearchMarkerPreference.label"
-	            icon="icons/full/obj16/searchm_obj.gif"
+	            icon="$nl$/icons/full/obj16/searchm_obj.gif"
 	            textPreferenceKey="filteredSearchResultIndication"
 	            textPreferenceValue="false"
 	            highlightPreferenceKey="filteredSearchResultHighlighting"
