@@ -114,7 +114,7 @@ public class ContainerSelectionGroup extends Composite {
             boolean allowNewContainerName, String message,
             boolean showClosedProjects) {
         this(parent, listener, allowNewContainerName, message,
-                showClosedProjects, SIZING_SELECTION_PANE_HEIGHT);
+                showClosedProjects, SIZING_SELECTION_PANE_HEIGHT, SIZING_SELECTION_PANE_WIDTH);
     }
 
     /**
@@ -131,17 +131,17 @@ public class ContainerSelectionGroup extends Composite {
      */
     public ContainerSelectionGroup(Composite parent, Listener listener,
             boolean allowNewContainerName, String message,
-            boolean showClosedProjects, int heightHint) {
+            boolean showClosedProjects, int heightHint, int widthHint) {
         super(parent, SWT.NONE);
         this.listener = listener;
         this.allowNewContainerName = allowNewContainerName;
         this.showClosedProjects = showClosedProjects;
         if (message != null)
-            createContents(message, heightHint);
+            createContents(message, heightHint, widthHint);
         else if (allowNewContainerName)
-            createContents(DEFAULT_MSG_NEW_ALLOWED, heightHint);
+            createContents(DEFAULT_MSG_NEW_ALLOWED, heightHint, widthHint);
         else
-            createContents(DEFAULT_MSG_SELECT_ONLY, heightHint);
+            createContents(DEFAULT_MSG_SELECT_ONLY, heightHint, widthHint);
     }
 
     /**
@@ -155,9 +155,11 @@ public class ContainerSelectionGroup extends Composite {
         if (allowNewContainerName) {
             if (container == null)
                 containerNameField.setText("");//$NON-NLS-1$
-            else
-                containerNameField.setText(container.getFullPath()
-                        .makeRelative().toString());
+            else {
+            	   String text = container.getFullPath().makeRelative().toString();
+                containerNameField.setText(text);
+                containerNameField.setToolTipText(text);
+            }
         }
 
         // fire an event so the parent can update its controls
@@ -173,7 +175,7 @@ public class ContainerSelectionGroup extends Composite {
      * Creates the contents of the composite.
      */
     public void createContents(String message) {
-        createContents(message, SIZING_SELECTION_PANE_HEIGHT);
+        createContents(message, SIZING_SELECTION_PANE_HEIGHT, SIZING_SELECTION_PANE_WIDTH);
     }
 
     /**
@@ -181,7 +183,7 @@ public class ContainerSelectionGroup extends Composite {
      * 
      * @param heightHint height hint for the drill down composite
      */
-    public void createContents(String message, int heightHint) {
+    public void createContents(String message, int heightHint, int widthHint) {
         GridLayout layout = new GridLayout();
         layout.marginWidth = 0;
         setLayout(layout);
@@ -193,8 +195,9 @@ public class ContainerSelectionGroup extends Composite {
 
         if (allowNewContainerName) {
             containerNameField = new Text(this, SWT.SINGLE | SWT.BORDER);
-            containerNameField.setLayoutData(new GridData(
-                    GridData.FILL_HORIZONTAL));
+            GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+            gd.widthHint = widthHint;
+            containerNameField.setLayoutData(gd);
             containerNameField.addListener(SWT.Modify, listener);
             containerNameField.setFont(this.getFont());
         } else {

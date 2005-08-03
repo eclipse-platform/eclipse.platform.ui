@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.misc;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -171,7 +171,7 @@ public class ResourceAndContainerGroup implements Listener {
                     null, showClosedProjects);
         else
             containerGroup = new ContainerSelectionGroup(composite, this, true,
-                    null, showClosedProjects, heightHint);
+                    null, showClosedProjects, heightHint, SIZING_TEXT_FIELD_WIDTH);
 
         // resource name group
         Composite nameGroup = new Composite(composite, SWT.NONE);
