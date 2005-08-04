@@ -193,7 +193,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 				CVSProviderPlugin.log(e);
 			}
 			try {
-				resource.accept(new IResourceVisitor() {
+				visit(resource, new IResourceVisitor() {
 					public boolean visit(IResource innerResource) throws CoreException {
 						try {
 							Policy.checkCanceled(monitor);
@@ -213,7 +213,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 						}
 						return true;
 					}
-				}, depth, true /* include phantoms */);
+				}, depth);
 			} catch (CoreException e) {
 				set.addError(new TeamStatus(
 						IStatus.ERROR, CVSProviderPlugin.ID, ITeamStatus.SYNC_INFO_SET_ERROR,
@@ -223,6 +223,17 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		monitor.done();
 	}
 	
+	private void visit(IResource resource, IResourceVisitor visitor, int depth) throws CoreException {
+		boolean keepGoing = visitor.visit(resource);
+		if (keepGoing && depth != IResource.DEPTH_ZERO) {
+			IResource[] members = members(resource);
+			for (int i = 0; i < members.length; i++) {
+				IResource member = members[i];
+				visit(member, visitor, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE);
+			}
+		}
+	}
+
 	/* internal use only */ boolean isOutOfSync(IResource resource, IProgressMonitor monitor) throws TeamException {
 		return (hasIncomingChange(resource) || hasOutgoingChange(resource, monitor));
 	}
