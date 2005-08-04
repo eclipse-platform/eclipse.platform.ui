@@ -147,12 +147,14 @@ class JSchSession {
         }
 
         public void showMessage(String arg0) {
-            try {
-                startTimer();
-                wrappedInfo.showMessage(arg0);  
-            } finally {
-                endTimer();
-            }
+        	if(arg0.length()!=0){
+	            try {
+	                startTimer();	                
+	                wrappedInfo.showMessage(arg0);  
+	            } finally {
+	                endTimer();
+	            }
+        	}
         }
 
         public String[] promptKeyboardInteractive(String arg0, String arg1, String arg2, String[] arg3, boolean[] arg4) {
