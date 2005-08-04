@@ -252,7 +252,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 				IResource resource = members[i];
 				if (resource.getType() == IResource.FILE) {
                     ResourceAttributes attrs = resource.getResourceAttributes();
-                    if (attrs.isReadOnly()) {
+                    if (attrs != null && attrs.isReadOnly()) {
                         attrs.setReadOnly(false);
                         resource.setResourceAttributes(attrs);
                     }
