@@ -51,6 +51,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
     private Button showUserDialogButton;
 
+	private Button neverStealFocusButton;
+    
     private boolean openOnSingleClick;
 
     private boolean selectOnHover;
@@ -72,6 +74,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         Composite composite = createComposite(parent);
 
         createShowUserDialogPref(composite);
+        createNoStealFocusPref(composite);
         createStickyCyclePref(composite);
 
         createSpace(composite);
@@ -96,6 +99,20 @@ public class WorkbenchPreferencePage extends PreferencePage implements
                         IPreferenceConstants.RUN_IN_BACKGROUND));
     }
 
+    /**
+     * Create the widget for the user dialog preference.
+     * 
+     * @param composite
+     */
+    protected void createNoStealFocusPref(Composite composite) {
+        neverStealFocusButton = new Button(composite, SWT.CHECK);
+        neverStealFocusButton.setText(WorkbenchMessages.WorkbenchPreference_NeverStealFocus);
+        neverStealFocusButton.setToolTipText(WorkbenchMessages.WorkbenchPreference_NeverStealFocusTooltip);
+        neverStealFocusButton.setSelection(WorkbenchPlugin.getDefault()
+                .getPreferenceStore().getBoolean(
+                        IPreferenceConstants.NEVER_STEAL_FOCUS));
+    }
+    
     /**
      * Creates the composite which will contain all the preference controls for
      * this page.
@@ -306,7 +323,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements
                 .getDefaultBoolean(IPreferenceConstants.STICKY_CYCLE));
         showUserDialogButton.setSelection(store.getDefaultBoolean(
                 IPreferenceConstants.RUN_IN_BACKGROUND));
-		
+        neverStealFocusButton.setSelection(store.getDefaultBoolean(
+                IPreferenceConstants.NEVER_STEAL_FOCUS));
+        
         super.performDefaults();
     }
 
@@ -325,7 +344,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY, openAfterDelay);
         store.setValue(IPreferenceConstants.RUN_IN_BACKGROUND,
                 showUserDialogButton.getSelection());
-
+        store.setValue(IPreferenceConstants.NEVER_STEAL_FOCUS,
+                neverStealFocusButton.getSelection());
+        
         int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK
                 : OpenStrategy.DOUBLE_CLICK;
         if (openOnSingleClick) {

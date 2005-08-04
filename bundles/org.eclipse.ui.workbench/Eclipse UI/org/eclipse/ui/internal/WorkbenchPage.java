@@ -101,6 +101,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.presentations.IStackPresentationSite;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -539,6 +540,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (window.isClosing())
             return;
 
+    	// There is a preference to prevent background threads from activating views or bringing
+    	// them to the top. If the user has set this preference, just bold the tab whenever
+    	// a background thread tries to use VIEW_VISIBLE or VIEW_ACTIVATE
+    	
+    	if (composite != null && composite.isVisible() && isGrabFocusDisabled() && !InputMonitor.isProcessingUserInput()) {
+    		IWorkbenchSiteProgressService progressService = (IWorkbenchSiteProgressService)part.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+    		
+    		// Bold the tab if possible
+    		if (progressService != null) {
+    			progressService.warnOfContentChange();
+    		}
+    		
+    		// And exit to ensure we don't mess with activation or layout
+    		return;
+    	}
+        
         // If zoomed, unzoom.
         zoomOutIfNecessary(part);
 
@@ -743,6 +760,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (persp == null || !certifyPart(part))
             return;
 
+    	// There is a preference to prevent background threads from activating views or bringing
+    	// them to the top. If the user has set this preference, just bold the tab whenever
+    	// a background thread tries to use VIEW_VISIBLE or VIEW_ACTIVATE
+    	
+    	if (isGrabFocusDisabled() && !InputMonitor.isProcessingUserInput()) {
+    		IWorkbenchSiteProgressService progressService = (IWorkbenchSiteProgressService)part.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+    		
+    		// Bold the tab if possible
+    		if (progressService != null) {
+    			progressService.warnOfContentChange();
+    		}
+    		
+    		// And exit to ensure we don't mess with activation or layout
+    		return;
+    	}
+        
         String label = null; // debugging only
         if (UIStats.isDebugging(UIStats.BRING_PART_TO_TOP)) {
             label = part != null ? part.getTitle() : "none"; //$NON-NLS-1$
@@ -912,6 +945,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     private IViewPart busyShowView(String viewID, String secondaryID, int mode)
             throws PartInitException {
+    	
         Perspective persp = getActivePerspective();
         if (persp == null)
             return null;
@@ -947,6 +981,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Performs showing of the view in the given mode.
      */
     private void busyShowView(IViewPart part, int mode) {
+
+    	// There is a preference to prevent background threads from activating views or bringing
+    	// them to the top. If the user has set this preference, just bold the tab whenever
+    	// a background thread tries to use VIEW_VISIBLE or VIEW_ACTIVATE
+    	
+    	if (isGrabFocusDisabled() && mode != VIEW_CREATE && !InputMonitor.isProcessingUserInput()) {
+    		IWorkbenchSiteProgressService progressService = (IWorkbenchSiteProgressService)part.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+    		
+    		// Bold the tab if possible
+    		if (progressService != null) {
+    			progressService.warnOfContentChange();
+    		}
+    		
+    		// And exit to ensure we don't mess with activation or layout
+    		return;
+    	}
+    	
         if (mode == VIEW_ACTIVATE)
             activate(part);
         else if (mode == VIEW_VISIBLE) {
@@ -2045,6 +2096,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         this.window = w;
         this.input = input;
 
+        InputMonitor.init();
         // Create presentation.
         createClientComposite();
         editorPresentation = new EditorAreaHelper(this);
@@ -3124,6 +3176,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return showView(viewID, null, VIEW_ACTIVATE);
     }
 
+    private boolean isGrabFocusDisabled() {
+        return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
+                IPreferenceConstants.NEVER_STEAL_FOCUS);
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -3132,7 +3189,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public IViewPart showView(final String viewID, final String secondaryID,
             final int mode) throws PartInitException {
-
+    	
         if (secondaryID != null) {
             if (secondaryID.length() == 0
                     || secondaryID.indexOf(ViewFactory.ID_SEP) != -1)

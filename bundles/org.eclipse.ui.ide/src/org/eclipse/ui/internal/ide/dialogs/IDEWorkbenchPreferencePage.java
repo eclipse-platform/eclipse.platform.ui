@@ -41,6 +41,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         Composite composite = createComposite(parent);
 
         createShowUserDialogPref(composite);
+        createNoStealFocusPref(composite);
         createStickyCyclePref(composite);
         createOpenModeGroup(composite);
 
