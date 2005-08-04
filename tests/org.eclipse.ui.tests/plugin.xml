@@ -1553,9 +1553,10 @@
    <extension
          point="org.eclipse.ui.ide.markerImageProviders">
       <imageprovider
-            markertype="org.eclipse.ui.tests.testmarker2"
             class="org.eclipse.ui.tests.adaptable.TestMarkerImageProvider"
-            id="testmarker.imageProvider2">
+            icon="icons\dynamic.gif"
+            id="testmarker.imageProvider2"
+            markertype="org.eclipse.ui.tests.testmarker2">
       </imageprovider>
    </extension>
    <extension
