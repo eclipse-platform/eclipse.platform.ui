@@ -993,4 +993,5 @@ public class CVSUIMessages extends NLS {
 
     public static String OpenChangeSetAction_0;
     public static String OpenChangeSetAction_1;
+	public static String CVSDecoratorPreferencesPage_39;
 }
