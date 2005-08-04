@@ -80,11 +80,15 @@ public class Main {
     private boolean initialize = false;
     private Process showProcess = null;
     private boolean splashDown = false;
-    private final Thread endSplashHandler = new Thread() {
-        public void run() {
-            takeDownSplash();
-        }
-    };
+    public final class EndSplashHandler extends Thread {
+    	public void run() {
+    		takeDownSplash();
+    	}
+    	public OutputStream getOutputStream() {
+			return showProcess == null ? null : showProcess.getOutputStream();
+		}
+    }
+    private final Thread endSplashHandler = new EndSplashHandler();
 
     // command line args
     private static final String FRAMEWORK = "-framework"; //$NON-NLS-1$
