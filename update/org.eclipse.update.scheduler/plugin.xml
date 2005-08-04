@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-    	<extension id="preferences" point="org.eclipse.core.runtime.preferences" name="preferences">
+    	<extension id="preferences" point="org.eclipse.core.runtime.preferences" name="%preferences">
 		<initializer class="org.eclipse.update.internal.scheduler.preferences.PreferenceInitializer"/>
 	</extension>
    <extension
