@@ -36,7 +36,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  */
 public abstract class SynchronizeModelProvider extends AbstractSynchronizeModelProvider implements ISyncInfoSetChangeListener {
 	
-	protected Map resourceMap = Collections.synchronizedMap(new HashMap());
+	protected final Map resourceMap = Collections.synchronizedMap(new HashMap());
 
     protected static final boolean DEBUG = false;
 	
