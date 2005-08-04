@@ -96,8 +96,8 @@ if &lt;b&gt;&lt;i&gt; lightweight&lt;/i&gt;&lt;/b&gt; is false or  &lt;samp&gt;o
          <attribute name="adaptable" type="boolean">
             <annotation>
                <documentation>
-                  a flag that indicates if types that adapt to IResource should use this object contribution.
-This flag is used only if objectClass adapts to IResource.  Default value is false.
+                  a flag that indicates if types that can adapt to objects other than thier objectClass should use this object contribution.
+For non-lightweight decorators, this flag only has an effect if objectClass adapts to IResource.  For lightweight decorators, adaptability to any objectClass is supported as long as adaptability is defined through the adapter manager (see the class org.eclipse.runtime.IAdapterManager). Default value is false.
                </documentation>
             </annotation>
          </attribute>

@@ -161,21 +161,26 @@ public abstract class DecoratorDefinition {
      * Returns the enablement.
      * @return ActionExpression
      */
-    public ActionExpression getEnablement() {
+    protected ActionExpression getEnablement() {
     	if (!hasReadEnablement) {
     		hasReadEnablement = true;
-    		IConfigurationElement[] elements = definingElement.getChildren(CHILD_ENABLEMENT);
-		    if (elements.length == 0) {
-		        String className = definingElement.getAttribute(ATT_OBJECT_CLASS);
-		        if (className == null) 
-		        	return null;
-		        
-		        enablement = new ActionExpression(ATT_OBJECT_CLASS,
-		                    className);
-		    } else
-		    	enablement = new ActionExpression(elements[0]);
+    		initializeEnablement();
     	}
         return enablement;
+    }
+
+    /**
+     * Initialize the enablement expression for this decorator
+     */
+    protected void initializeEnablement() {
+        IConfigurationElement[] elements = definingElement.getChildren(CHILD_ENABLEMENT);
+        if (elements.length == 0) {
+            String className = definingElement.getAttribute(ATT_OBJECT_CLASS);
+            if (className != null)
+                enablement = new ActionExpression(ATT_OBJECT_CLASS,
+                        className);
+        } else
+        	enablement = new ActionExpression(elements[0]);
     }
 
     /**
@@ -258,4 +263,13 @@ public abstract class DecoratorDefinition {
 	public IConfigurationElement getConfigurationElement() {
 		return definingElement;
 	}
+
+    /**
+     * Return whether the decorator is applicable to the given element
+     * @param element the element to be decorated
+     * @return whether the decorator w=should be applied to the element
+     */
+    public boolean isEnabledFor(Object element) {
+        return isEnabled() && getEnablement().isEnabledFor(element);
+    }
 }

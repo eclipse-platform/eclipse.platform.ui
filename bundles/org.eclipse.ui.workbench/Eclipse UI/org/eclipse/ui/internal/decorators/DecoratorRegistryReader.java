@@ -44,33 +44,11 @@ public class DecoratorRegistryReader extends RegistryReader {
      */
     public boolean readElement(IConfigurationElement element) {
 
-        //String name = element.getAttribute(ATT_LABEL);
-
-        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-        if (ids.contains(id)) {
-            logDuplicateId(element);
-            return false;
-        }
-        ids.add(id);
-
-        boolean noClass = element.getAttribute(DecoratorDefinition.ATT_CLASS) == null;
-
-        DecoratorDefinition desc = null;
-        //Lightweight or Full? It is lightweight if it is declared lightweight or if there is no class
-        if (Boolean.valueOf(element.getAttribute(IWorkbenchRegistryConstants.ATT_LIGHTWEIGHT)).booleanValue() || noClass) {
-
-            String iconPath = element.getAttribute(LightweightDecoratorDefinition.ATT_ICON);
-
-            if (noClass && iconPath == null) {
-                logMissingElement(element, LightweightDecoratorDefinition.ATT_ICON);
-                return false;
-            }
-
-            desc = new LightweightDecoratorDefinition(id, element);
-        } else {
-            desc = new FullDecoratorDefinition(id, element);
-        }
-        
+    	DecoratorDefinition desc = getDecoratorDefinition(element);
+    	
+    	if (desc == null)
+    		return false;
+    	
         if (desc.getEnablement() == null) {
             logMissingElement(element, DecoratorDefinition.CHILD_ENABLEMENT);
         	return false;
@@ -79,6 +57,39 @@ public class DecoratorRegistryReader extends RegistryReader {
 
         return true;
 
+    }
+    
+    /**
+     * Return the DecoratorDefinition defined by element or <code>null</code>
+     * if it cannot be determined.
+     * @param element
+     * @return DecoratorDefinition
+     */
+    DecoratorDefinition getDecoratorDefinition(IConfigurationElement element){
+
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+        if (ids.contains(id)) {
+            logDuplicateId(element);
+            return null;
+        }
+        ids.add(id);
+
+        boolean noClass = element.getAttribute(DecoratorDefinition.ATT_CLASS) == null;
+
+        //Lightweight or Full? It is lightweight if it is declared lightweight or if there is no class
+        if (Boolean.valueOf(element.getAttribute(IWorkbenchRegistryConstants.ATT_LIGHTWEIGHT)).booleanValue() || noClass) {
+
+            String iconPath = element.getAttribute(LightweightDecoratorDefinition.ATT_ICON);
+
+            if (noClass && iconPath == null) {
+                logMissingElement(element, LightweightDecoratorDefinition.ATT_ICON);
+                return null;
+            }
+
+            return new LightweightDecoratorDefinition(id, element);
+        } 
+        return new FullDecoratorDefinition(id, element);
+        
     }
 
     /**

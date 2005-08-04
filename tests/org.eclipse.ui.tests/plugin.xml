@@ -1397,6 +1397,72 @@
             label="Font Decorator"
             class="org.eclipse.ui.tests.decorators.FontDecorator"
             id="org.eclipse.ui.tests.fontDecorator"/>
+            
+      <decorator
+            lightweight="true"
+            adaptable="true"
+            label="Test Decorator For General Adaptability On"
+            state="false"
+            class="org.eclipse.ui.tests.decorators.TestAdaptableDecoratorContributor"
+            id="org.eclipse.ui.tests.decorators.generalAdaptabilityOn">
+         <enablement>
+            <objectClass
+                  name="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon">
+            </objectClass>
+         </enablement>
+         <description>
+            A test decorator for successful general adaptability
+         </description>
+      </decorator>
+      <decorator
+            lightweight="true"
+            adaptable="false"
+            label="Test Decorator For General Adaptability Off"
+            state="false"
+            class="org.eclipse.ui.tests.decorators.TestUnadaptableDecoratorContributor"
+            id="org.eclipse.ui.tests.decorators.generalAdaptabilityOff">
+         <enablement>
+            <objectClass
+                  name="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon">
+            </objectClass>
+         </enablement>
+         <description>
+            A test decorator for unsuccessful general adaptability
+         </description>
+      </decorator>
+      <decorator
+            lightweight="true"
+            adaptable="true"
+            label="Test Resource Adaptation"
+            state="false"
+            class="org.eclipse.ui.tests.decorators.TestResourceDecoratorContributor"
+            id="org.eclipse.ui.tests.decorators.resourceDescorator">
+         <enablement>
+            <objectClass
+                  name="org.eclipse.core.resources.IResource">
+            </objectClass>
+         </enablement>
+         <description>
+            A test decorator for resources
+         </description>
+      </decorator>
+      <decorator
+            lightweight="true"
+            adaptable="true"
+            label="Test Resource Mapping Adaptation"
+            state="false"
+            class="org.eclipse.ui.tests.decorators.TestResourceMappingDecoratorContributor"
+            id="org.eclipse.ui.tests.decorators.resourceMappingDescorator">
+         <enablement>
+            <objectClass
+                  name="org.eclipse.core.internal.resources.mapping.ResourceMapping">
+            </objectClass>
+         </enablement>
+         <description>
+            A test decorator for resource mappings
+         </description>
+      </decorator>
+      
    </extension>
 <!-- Working set tests -->
    <extension

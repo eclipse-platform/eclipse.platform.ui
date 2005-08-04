@@ -287,35 +287,11 @@ public class DecorationScheduler {
 					if (elementIsCached) {
 						pendingUpdate.add(element);
 					}
-					if (adapted != null) {
-						adaptedResult = (DecorationResult) resultCache
-								.get(adapted);
-					}
 
 					if (!elementIsCached) {
-						// Just build for the resource first
-						if (adapted != null) {
-							if (adaptedResult == null) {
-								decoratorManager.getLightweightManager()
-										.getDecorations(adapted, cacheResult,
-												true);
-								if (cacheResult.hasValue()) {
-									adaptedResult = cacheResult.createResult();
-								}
-							} else {
-								// If we already calculated the decoration
-								// for the adapted element, reuse the result.
-								cacheResult.applyResult(adaptedResult);
-								// Set adaptedResult to null to indicate that
-								// we do not need to cache the result again.
-								adaptedResult = null;
-							}
-						}
-
-						// Now add in the results for the main object
-
+					    // Calculate the decoration
 						decoratorManager.getLightweightManager()
-								.getDecorations(element, cacheResult, false);
+								.getDecorations(element, cacheResult);
 
 						// If we should update regardless then put a result
 						// anyways
@@ -327,8 +303,6 @@ public class DecorationScheduler {
 							// label update servicing.
 							// Note: resultCache and pendingUpdate modifications
 							// must be done atomically.
-							if (adaptedResult != null)
-								resultCache.put(adapted, adaptedResult);
 
 							// Add the decoration even if it's empty in
 							// order to indicate that the decoration is

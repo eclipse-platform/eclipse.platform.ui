@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,7 +17,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -188,7 +186,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         ArrayList decorators = new ArrayList();
 
         for (int i = 0; i < enabledDefinitions.length; i++) {
-            if (enabledDefinitions[i].getEnablement().isEnabledFor(element))
+            if (enabledDefinitions[i].isEnabledFor(element))
                 decorators.add(enabledDefinitions[i]);
         }
 
@@ -307,7 +305,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         String result = scheduler.decorateWithText(text, element, adapted);
         FullDecoratorDefinition[] decorators = getDecoratorsFor(element);
         for (int i = 0; i < decorators.length; i++) {
-            if (decorators[i].getEnablement().isEnabledFor(element)) {
+            if (decorators[i].isEnabledFor(element)) {
                 String newResult = safeDecorateText(element, result,
                         decorators[i]);
                 if (newResult != null)
@@ -319,7 +317,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
             decorators = getDecoratorsFor(adapted);
             for (int i = 0; i < decorators.length; i++) {
                 if (decorators[i].isAdaptable()
-                        && decorators[i].getEnablement().isEnabledFor(adapted)) {
+                        && decorators[i].isEnabledFor(adapted)) {
                     String newResult = safeDecorateText(adapted, result,
                             decorators[i]);
                     if (newResult != null)
@@ -357,7 +355,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         FullDecoratorDefinition[] decorators = getDecoratorsFor(element);
 
         for (int i = 0; i < decorators.length; i++) {
-            if (decorators[i].getEnablement().isEnabledFor(element)) {
+            if (decorators[i].isEnabledFor(element)) {
                 Image newResult = safeDecorateImage(element, result,
                         decorators[i]);
                 if (newResult != null)
@@ -371,7 +369,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
             decorators = getDecoratorsFor(adapted);
             for (int i = 0; i < decorators.length; i++) {
                 if (decorators[i].isAdaptable()
-                        && decorators[i].getEnablement().isEnabledFor(adapted)) {
+                        && decorators[i].isEnabledFor(adapted)) {
                     Image newResult = safeDecorateImage(adapted, result,
                             decorators[i]);
                     if (newResult != null)
@@ -405,44 +403,9 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * @return Object or <code>null</code>.
      */
     private Object getResourceAdapter(Object element) {
-
-        //Get any adaptions to IResource (when resources are available)
-        if (element instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable) element;
-            Class contributorResourceAdapterClass = LegacyResourceSupport
-                    .getIContributorResourceAdapterClass();
-            if (contributorResourceAdapterClass == null) {
-                return null;
-            }
-            Object resourceAdapter = adaptable
-                    .getAdapter(contributorResourceAdapterClass);
-            if (resourceAdapter == null)
-                // reflective equivalent of
-                //    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
-                try {
-                    Class c = LegacyResourceSupport
-                            .getDefaultContributorResourceAdapterClass();
-                    Method m = c.getDeclaredMethod("getDefault", new Class[0]); //$NON-NLS-1$
-                    resourceAdapter = m.invoke(null, new Object[0]);
-                } catch (Exception e) {
-                    // shouldn't happen - but play it safe
-                    return null;
-                }
-
-            Object adapted;
-            // reflective equivalent of
-            //    adapted = ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
-            try {
-                Method m = contributorResourceAdapterClass.getDeclaredMethod(
-                        "getAdaptedResource", new Class[] { IAdaptable.class }); //$NON-NLS-1$
-                adapted = m.invoke(resourceAdapter, new Object[] { adaptable });
-            } catch (Exception e) {
-                // shouldn't happen - but play it safe
-                return null;
-            }
-            if (adapted != element) {
-                return adapted; //Avoid applying decorator twice
-            }
+        Object adapted = LegacyResourceSupport.getAdaptedContributorResource(element);
+        if (adapted != element) {
+            return adapted; //Avoid applying decorator twice
         }
         return null;
     }
@@ -499,7 +462,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     private boolean isLabelProperty(Object element, String property,
             DecoratorDefinition[] decorators) {
         for (int i = 0; i < decorators.length; i++) {
-            if (decorators[i].getEnablement().isEnabledFor(element)
+            if (decorators[i].isEnabledFor(element)
                     && decorators[i].isLabelProperty(element, property))
                 return true;
         }
@@ -824,10 +787,12 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     }
 
     /**
-     * Returns the lightweightManager.
+     * Returns the lightweightManager. This method is
+     * public for use by test cases. No other classes outside of
+     * this package should use this method.
      * @return LightweightDecoratorManager
      */
-    LightweightDecoratorManager getLightweightManager() {
+    public LightweightDecoratorManager getLightweightManager() {
     	if(lightweightManager == null)
     		initializeDecoratorDefinitions();
         return lightweightManager;

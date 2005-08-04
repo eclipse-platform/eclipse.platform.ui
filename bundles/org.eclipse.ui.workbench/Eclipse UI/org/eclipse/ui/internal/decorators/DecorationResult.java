@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Image;
 /** 
  * The Decoration Result is the result of a decoration.
  */
-class DecorationResult {
+public class DecorationResult {
 
     private List prefixes;
 
@@ -83,10 +83,12 @@ class DecorationResult {
 
     /**
      * Decorate the String supplied with the prefixes and suffixes.
+     * This method is public for use by the test suites and is not intended
+     * to be referenced by other workbench internals.
      * @param text 
      * @return String
      */
-    String decorateWithText(String text) {
+    public String decorateWithText(String text) {
 
         if (prefixes.isEmpty() && suffixes.isEmpty())
             return text;

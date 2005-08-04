@@ -213,6 +213,18 @@ public class ActionExpression {
                 String expressionType) {
             return false;
         }
+
+        /**
+         * Extract the object class test from the expression. This allows clients
+         * (e.g. the decorator manager) to handle object class testing in a
+         * more optimized way. This method removes the objectClass test from the 
+         * expression and returns the object class. The expression is not changed and a 
+         * <code>null</code> is returned if no object class is found.
+         * @return the object class or <code>null</code> if none was found.
+         */
+        public String extractObjectClass() {
+            return null;
+        }
     }
 
     private static abstract class CompositeExpression extends
@@ -259,6 +271,19 @@ public class ActionExpression {
                     return true;
             }
             return false;
+        }
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.internal.ActionExpression.AbstractExpression#extractObjectClass()
+         */
+        public String extractObjectClass() {
+            Iterator iterator = list.iterator();
+            while (iterator.hasNext()) {
+                AbstractExpression next = (AbstractExpression) iterator.next();
+                String objectClass = next.extractObjectClass();
+                if (objectClass != null)
+                    return objectClass;
+            }
+            return null;
         }
     }
 
@@ -314,6 +339,18 @@ public class ActionExpression {
         public boolean isEnabledForExpression(Object object,
                 String expressionType) {
             return child.isEnabledForExpression(object, expressionType);
+        }
+
+        /**
+         * Extract the object class test from the expression. This allows clients
+         * (e.g. the decorator manager) to handle object class testing in a
+         * more optimized way. This method removes the objectClass test from the 
+         * expression and returns the object class. The expression is not changed and a 
+         * <code>null</code> is returned if no object class is found.
+         * @return the object class or <code>null</code> if none was found.
+         */
+        public String extractObjectClass() {
+            return child.extractObjectClass();
         }
 
     }
@@ -480,6 +517,7 @@ public class ActionExpression {
 
     private static class ObjectClassExpression extends AbstractExpression {
         private String className;
+        private boolean extracted;
 
         /**
          * Creates and populates the expression from the attributes and sub-
@@ -520,6 +558,8 @@ public class ActionExpression {
         public boolean isEnabledFor(Object object) {
             if (object == null)
                 return false;
+            if (extracted)
+                return true;
 
             Class clazz = object.getClass();
             while (clazz != null) {
@@ -569,6 +609,14 @@ public class ActionExpression {
             if (expressionType.equals(EXP_TYPE_OBJECT_CLASS))
                 return isEnabledFor(object);
             return false;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.internal.ActionExpression.AbstractExpression#extractObjectClass()
+         */
+        public String extractObjectClass() {
+            extracted = true;
+            return className;
         }
     }
 
@@ -644,5 +692,17 @@ public class ActionExpression {
                 return false;
             return value.equals(str);
         }
+    }
+
+    /**
+     * Extract the object class test from the expression. This allows clients
+     * (e.g. the decorator manager) to handle object class testing in a
+     * more optimized way. This method removes the objectClass test from the 
+     * expression and returns the object class. The expression is not changed and a 
+     * <code>null</code> is returned if no object class is found.
+     * @return the object class or <code>null</code> if none was found.
+     */
+    public String extractObjectClass() {
+        return root.extractObjectClass();
     }
 }

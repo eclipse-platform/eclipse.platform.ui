@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
@@ -24,7 +23,7 @@ import org.eclipse.ui.internal.util.Util;
  * The LightweightDecoratorManager is a decorator manager
  * that encapsulates the behavior for the lightweight decorators.
  */
-class LightweightDecoratorManager {
+public class LightweightDecoratorManager extends ObjectContributorManager {
 
     /**
      * The runnable is the object used to run the decorations
@@ -88,6 +87,7 @@ class LightweightDecoratorManager {
     LightweightDecoratorManager(LightweightDecoratorDefinition[] definitions) {
         super();
         lightweightDefinitions = definitions;
+        buildContributors();
     }
 
     /**
@@ -98,6 +98,17 @@ class LightweightDecoratorManager {
         return lightweightDefinitions;
     }
 
+    /*
+     * Register the decorators as object contributions so
+     * that adaptable lookup can occur.
+     */
+    private void buildContributors() {
+        for (int i = 0; i < lightweightDefinitions.length; i++) {
+            LightweightDecoratorDefinition decorator = lightweightDefinitions[i];
+            registerContributor(decorator, getTargetType(decorator));
+        }
+    }
+    
     /**
      * For dynamic UI
      * 
@@ -113,11 +124,21 @@ class LightweightDecoratorManager {
                     oldDefs.length);
             lightweightDefinitions[oldDefs.length] = decorator;
             // no reset - handled in the DecoratorManager
+            registerContributor(decorator, getTargetType(decorator));
             return true;
         }
         return false;
     }
     
+    /**
+     * Get the name of the type that a decorator is registered for.
+     * @param decorator
+     * @return String
+     */
+    private String getTargetType(LightweightDecoratorDefinition decorator) {
+        return decorator.getObjectClass();
+    }
+
     /**
      * For dynamic-ui
      * @param decorator the definition to remove
@@ -134,6 +155,7 @@ class LightweightDecoratorManager {
 							lightweightDefinitions = new LightweightDecoratorDefinition[lightweightDefinitions.length - 1],
 							idx);
             // no reset - handled in the DecoratorManager
+            unregisterContributor(decorator, getTargetType(decorator));
             return true;
         }
         return false;    	
@@ -240,13 +262,18 @@ class LightweightDecoratorManager {
         if (element == null)
             return EMPTY_LIGHTWEIGHT_DEF;
 
-        Collection decorators = DecoratorManager.getDecoratorsFor(element,
-                enabledDefinitions());
+        List elements = new ArrayList(1);
+        elements.add(element);
 		LightweightDecoratorDefinition[] decoratorArray = EMPTY_LIGHTWEIGHT_DEF;
-        if (decorators.size() > 0) {
-            decoratorArray = new LightweightDecoratorDefinition[decorators
-                    .size()];
-            decorators.toArray(decoratorArray);
+        List contributors = getContributors(elements);
+        if (!contributors.isEmpty()) {
+            Collection decorators = DecoratorManager.getDecoratorsFor(element,
+                    (DecoratorDefinition[]) contributors.toArray(new DecoratorDefinition[contributors.size()]));
+            if (decorators.size() > 0) {
+                decoratorArray = new LightweightDecoratorDefinition[decorators
+                        .size()];
+                decorators.toArray(decoratorArray);
+            }
         }
 
         return decoratorArray;
@@ -258,21 +285,18 @@ class LightweightDecoratorManager {
      * 
      * @param element The source element
      * @param decoration The DecorationResult we are working on.
-     * @param adaptableDecoration If it is true only apply the decorators
      *  where adaptable is true.
      */
-    void getDecorations(Object element, DecorationBuilder decoration,
-            boolean adaptableDecoration) {
+    public void getDecorations(Object element, DecorationBuilder decoration) {
 
         LightweightDecoratorDefinition[] decorators = getDecoratorsFor(element);
 
         for (int i = 0; i < decorators.length; i++) {
             //If we are doing the adaptable one make sure we are
             //only applying the adaptable decorations
-            if (adaptableDecoration && !decorators[i].isAdaptable())
-                continue;
-            decoration.setCurrentDefinition(decorators[i]);
-            decorate(element, decoration, decorators[i]);
+            LightweightDecoratorDefinition dd = decorators[i];
+            decoration.setCurrentDefinition(dd);
+            decorate(element, decoration, dd);
         }
     }
 
@@ -295,6 +319,34 @@ class LightweightDecoratorManager {
      */
     OverlayCache getOverlayCache() {
         return overlayCache;
+    }
+
+    /**
+     * Method for use by test cases
+     * @param object the object to be decorated
+     * @return the decoration result
+     */
+    public DecorationResult getDecorationResult(Object object) {
+        DecorationBuilder builder = new DecorationBuilder();
+        getDecorations(object, builder);
+        return builder.createResult();
+        
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+     */
+    public void addExtension(IExtensionTracker tracker, IExtension extension) {
+    	// Do nothing as this is handled by the DecoratorManager
+    	//This is not called as canHandleExtensionTracking returns
+    	//false.
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.ObjectContributorManager#canHandleExtensionTracking()
+     */
+    protected boolean canHandleExtensionTracking() {
+    	return false;
     }
 
 }

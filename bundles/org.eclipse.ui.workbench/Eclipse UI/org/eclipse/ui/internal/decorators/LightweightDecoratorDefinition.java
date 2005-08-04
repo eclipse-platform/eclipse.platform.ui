@@ -10,14 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IDecoration;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.ui.internal.*;
 
 /**
  * The DeclarativeDecoratorDefinition is a decorator 
@@ -25,7 +20,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * will not require the activation of its defining 
  * plug-in.
  */
-class LightweightDecoratorDefinition extends DecoratorDefinition {
+class LightweightDecoratorDefinition extends DecoratorDefinition implements IObjectContributor {
 
 	private static final String ATT_LOCATION = "location"; //$NON-NLS-1$
 	
@@ -77,6 +72,8 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
     private int quadrant;
 
 	private boolean hasReadQuadrant;
+
+    private String objectClass;
 
     LightweightDecoratorDefinition(String identifier, IConfigurationElement element) {
         super(identifier, element);
@@ -216,7 +213,9 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
         try {
             //Internal decorator might be null so be prepared
             ILightweightLabelDecorator currentDecorator = internalGetDecorator();
-            if (currentDecorator != null)
+            if (isAdaptable())
+                element = LegacyResourceSupport.getAdapter(element, getObjectClass());
+            if (currentDecorator != null && element != null)
                 currentDecorator.decorate(element, decoration);
         } catch (CoreException exception) {
             handleCoreException(exception);
@@ -243,6 +242,40 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
             IBaseLabelProvider cached = decorator;
             decorator = null;
             disposeCachedDecorator(cached);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.IObjectContributor#isApplicableTo(java.lang.Object)
+     */
+    public boolean isApplicableTo(Object object) {
+        return isEnabledFor(object);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.IObjectContributor#canAdapt()
+     */
+    public boolean canAdapt() {
+        return isAdaptable();
+    }
+
+    /**
+     * Get the object class to which this decorator is registered.
+     * @return the object class to which this decorator is registered
+     */
+    public String getObjectClass() {
+        return objectClass;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#initializeEnablement()
+     */
+    protected void initializeEnablement() {
+        super.initializeEnablement();
+        ActionExpression expression = getEnablement();
+        objectClass = expression.extractObjectClass();
+        if (objectClass == null) {
+            objectClass = Object.class.getName();
         }
     }
 }
