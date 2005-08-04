@@ -211,7 +211,7 @@ public class BatchingLock {
 			return true;
 		}
 		private void handleAbortedFlush(Throwable t) {
-			TeamPlugin.log(IStatus.ERROR, Messages.BatchingLock_11, t); //$NON-NLS-1$
+			TeamPlugin.log(IStatus.ERROR, Messages.BatchingLock_11, t); 
 		}
 		private void addRule(ISchedulingRule rule) {
 			rules.add(rule);

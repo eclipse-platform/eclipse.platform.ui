@@ -131,7 +131,7 @@ public class FetchMembersOperation extends RemoteOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return NLS.bind(CVSUIMessages.FetchMembersOperation_0, new String[] { getRemoteFolder().getName() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.FetchMembersOperation_0, new String[] { getRemoteFolder().getName() }); 
 	}
 
 	private ICVSRemoteFolder getRemoteFolder() {

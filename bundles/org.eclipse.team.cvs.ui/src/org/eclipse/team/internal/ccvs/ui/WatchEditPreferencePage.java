@@ -36,7 +36,7 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 	 * @see org.eclipse.team.internal.ccvs.ui.CVSFieldEditorPreferencePage#getPageDescription()
 	 */
 	protected String getPageDescription() {
-		return CVSUIMessages.WatchEditPreferencePage_description; //$NON-NLS-1$;
+		return CVSUIMessages.WatchEditPreferencePage_description; //;
 	}
 
 	/* (non-Javadoc)
@@ -45,39 +45,39 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(
 			ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, 
-			CVSUIMessages.WatchEditPreferencePage_checkoutReadOnly,  //$NON-NLS-1$
+			CVSUIMessages.WatchEditPreferencePage_checkoutReadOnly,  
 			BooleanFieldEditor.DEFAULT, 
 			getFieldEditorParent()));
 		
 		actionEditor = new RadioGroupFieldEditor(
 			ICVSUIConstants.PREF_EDIT_ACTION,
-			CVSUIMessages.WatchEditPreferencePage_validateEditSaveAction, //$NON-NLS-1$
+			CVSUIMessages.WatchEditPreferencePage_validateEditSaveAction, 
 			1,
 			new String[][] {{CVSUIMessages.WatchEditPreferencePage_edit, ICVSUIConstants.PREF_EDIT_PROMPT_EDIT},
                             {CVSUIMessages.WatchEditPreferencePage_editInBackground, ICVSUIConstants.PREF_EDIT_IN_BACKGROUND},
 							{CVSUIMessages.WatchEditPreferencePage_highjack, ICVSUIConstants.PREF_EDIT_PROMPT_HIGHJACK},
-							}, 	//$NON-NLS-1$ //$NON-NLS-2$
+							}, 	// 
 			getFieldEditorParent(), true);
 		addField(actionEditor);
 		
 		promptEditor = new RadioGroupFieldEditor(
 			ICVSUIConstants.PREF_EDIT_PROMPT,
-			CVSUIMessages.WatchEditPreferencePage_editPrompt, //$NON-NLS-1$
+			CVSUIMessages.WatchEditPreferencePage_editPrompt, 
 			1,
-			new String[][] {{CVSUIMessages.WatchEditPreferencePage_alwaysPrompt, ICVSUIConstants.PREF_EDIT_PROMPT_ALWAYS}, //$NON-NLS-1$
-							{CVSUIMessages.WatchEditPreferencePage_onlyPrompt, ICVSUIConstants.PREF_EDIT_PROMPT_IF_EDITORS}, //$NON-NLS-1$
-							{CVSUIMessages.WatchEditPreferencePage_neverPrompt, ICVSUIConstants.PREF_EDIT_PROMPT_NEVER}, //$NON-NLS-1$
-							},	//$NON-NLS-1$ //$NON-NLS-2$
+			new String[][] {{CVSUIMessages.WatchEditPreferencePage_alwaysPrompt, ICVSUIConstants.PREF_EDIT_PROMPT_ALWAYS}, 
+							{CVSUIMessages.WatchEditPreferencePage_onlyPrompt, ICVSUIConstants.PREF_EDIT_PROMPT_IF_EDITORS}, 
+							{CVSUIMessages.WatchEditPreferencePage_neverPrompt, ICVSUIConstants.PREF_EDIT_PROMPT_NEVER}, 
+							},	// 
 			getFieldEditorParent(), true);
         
         updateEditor = new RadioGroupFieldEditor(
                 ICVSUIConstants.PREF_UPDATE_PROMPT,
-                CVSUIMessages.WatchEditPreferencePage_updatePrompt, //$NON-NLS-1$
+                CVSUIMessages.WatchEditPreferencePage_updatePrompt, 
                 1,
-                new String[][] {{CVSUIMessages.WatchEditPreferencePage_autoUpdate, ICVSUIConstants.PREF_UPDATE_PROMPT_AUTO}, //$NON-NLS-1$
-                                {CVSUIMessages.WatchEditPreferencePage_promptUpdate, ICVSUIConstants.PREF_UPDATE_PROMPT_IF_OUTDATED}, //$NON-NLS-1$
-                                {CVSUIMessages.WatchEditPreferencePage_neverUpdate, ICVSUIConstants.PREF_UPDATE_PROMPT_NEVER}, //$NON-NLS-1$
-                                },  //$NON-NLS-1$ //$NON-NLS-2$
+                new String[][] {{CVSUIMessages.WatchEditPreferencePage_autoUpdate, ICVSUIConstants.PREF_UPDATE_PROMPT_AUTO}, 
+                                {CVSUIMessages.WatchEditPreferencePage_promptUpdate, ICVSUIConstants.PREF_UPDATE_PROMPT_IF_OUTDATED}, 
+                                {CVSUIMessages.WatchEditPreferencePage_neverUpdate, ICVSUIConstants.PREF_UPDATE_PROMPT_NEVER}, 
+                                },  // 
                 getFieldEditorParent(), true);
         
 		store = getCVSPreferenceStore();

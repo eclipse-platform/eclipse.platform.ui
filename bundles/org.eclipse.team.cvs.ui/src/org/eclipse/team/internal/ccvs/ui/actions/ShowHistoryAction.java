@@ -80,7 +80,7 @@ public class ShowHistoryAction extends CVSAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return CVSUIMessages.ShowHistoryAction_showHistory; //$NON-NLS-1$
+		return CVSUIMessages.ShowHistoryAction_showHistory; 
 	}
 
 }

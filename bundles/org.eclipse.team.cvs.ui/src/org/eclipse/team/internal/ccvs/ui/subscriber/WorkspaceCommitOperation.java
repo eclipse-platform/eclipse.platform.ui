@@ -54,7 +54,7 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return CVSUIMessages.CommitAction_commitFailed; //$NON-NLS-1$
+		return CVSUIMessages.CommitAction_commitFailed; 
 	}
 	
 	/* (non-Javadoc)
@@ -62,7 +62,7 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 	 */
 	protected String getJobName() {
 		SyncInfoSet syncSet = getSyncInfoSet();
-		return NLS.bind(CVSUIMessages.CommitAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CommitAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); 
 	}
 	
 	/* (non-Javadoc)
@@ -239,11 +239,11 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 	 */
 	protected int promptForConflicts(SyncInfoSet syncSet) {
 		String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
-		String question = CVSUIMessages.CommitSyncAction_questionRelease; //$NON-NLS-1$
-		String title = CVSUIMessages.CommitSyncAction_titleRelease; //$NON-NLS-1$
+		String question = CVSUIMessages.CommitSyncAction_questionRelease; 
+		String title = CVSUIMessages.CommitSyncAction_titleRelease; 
 		String[] tips = new String[] {
-			CVSUIMessages.CommitSyncAction_releaseAll, //$NON-NLS-1$
-			CVSUIMessages.CommitSyncAction_releasePart, //$NON-NLS-1$
+			CVSUIMessages.CommitSyncAction_releaseAll, 
+			CVSUIMessages.CommitSyncAction_releasePart, 
 			CVSUIMessages.CommitSyncAction_cancelRelease
 		};
 		Shell shell = getShell();

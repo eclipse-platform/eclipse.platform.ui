@@ -124,8 +124,8 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 					fBindings.entrySet(),
 					contentsProvider,
 					labelProvider,
-					CVSUIMessages.CVSDecoratorPreferencesPage_0); //$NON-NLS-1$
-			dialog.setTitle(CVSUIMessages.CVSDecoratorPreferencesPage_1);  //$NON-NLS-1$
+					CVSUIMessages.CVSDecoratorPreferencesPage_0); 
+			dialog.setTitle(CVSUIMessages.CVSDecoratorPreferencesPage_1);  
 			if (dialog.open() != Window.OK)
 				return;
 		
@@ -167,20 +167,20 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 
 			final Composite composite= SWTUtils.createHFillComposite(parent, SWTUtils.MARGINS_DEFAULT);
 			
-			fDirty= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_2); //$NON-NLS-1$
+			fDirty= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_2); 
 			fDirty.addSelectionListener(this);
 			
-			fHasRemote= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_3); //$NON-NLS-1$
+			fHasRemote= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_3); 
 			fHasRemote.addSelectionListener(this);
 			
-			fAdded= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_4); //$NON-NLS-1$
+			fAdded= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_4); 
 			fAdded.addSelectionListener(this);
 			
-			fNewResource= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_5); //$NON-NLS-1$
+			fNewResource= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_5); 
 			fNewResource.addSelectionListener(this); 
 			
 			final TabItem item= new TabItem(parent, SWT.NONE);
-			item.setText(CVSUIMessages.CVSDecoratorPreferencesPage_6);		 //$NON-NLS-1$
+			item.setText(CVSUIMessages.CVSDecoratorPreferencesPage_6);		 
 			item.setControl(composite);	
 		}
 		
@@ -235,16 +235,16 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			final Composite composite= SWTUtils.createHFillComposite(parent, SWTUtils.MARGINS_DEFAULT, 3);
 			Dialog.applyDialogFont(composite);
 			
-			fFileDecoration= new FormatEditor(composite, CVSUIMessages.CVSDecoratorPreferencesPage_7, CVSUIMessages.CVSDecoratorPreferencesPage_8, BINDINGS, ICVSUIConstants.PREF_FILETEXT_DECORATION);   //$NON-NLS-1$ //$NON-NLS-2$
-			fFolderDecoration= new FormatEditor(composite, CVSUIMessages.CVSDecoratorPreferencesPage_9, CVSUIMessages.CVSDecoratorPreferencesPage_10, FOLDER_BINDINGS, ICVSUIConstants.PREF_FOLDERTEXT_DECORATION);   //$NON-NLS-1$ //$NON-NLS-2$
-			fProjectDecoration= new FormatEditor(composite, CVSUIMessages.CVSDecoratorPreferencesPage_11, CVSUIMessages.CVSDecoratorPreferencesPage_12, FOLDER_BINDINGS, ICVSUIConstants.PREF_PROJECTTEXT_DECORATION); //$NON-NLS-1$ //$NON-NLS-2$
+			fFileDecoration= new FormatEditor(composite, CVSUIMessages.CVSDecoratorPreferencesPage_7, CVSUIMessages.CVSDecoratorPreferencesPage_8, BINDINGS, ICVSUIConstants.PREF_FILETEXT_DECORATION);   // 
+			fFolderDecoration= new FormatEditor(composite, CVSUIMessages.CVSDecoratorPreferencesPage_9, CVSUIMessages.CVSDecoratorPreferencesPage_10, FOLDER_BINDINGS, ICVSUIConstants.PREF_FOLDERTEXT_DECORATION);   // 
+			fProjectDecoration= new FormatEditor(composite, CVSUIMessages.CVSDecoratorPreferencesPage_11, CVSUIMessages.CVSDecoratorPreferencesPage_12, FOLDER_BINDINGS, ICVSUIConstants.PREF_PROJECTTEXT_DECORATION); // 
 			
 			fFileDecoration.addModifyListener(this);
 			fFolderDecoration.addModifyListener(this);
 			fProjectDecoration.addModifyListener(this);
 
 			SWTUtils.createPlaceholder(composite, 1, 3); 
-			final Label dirtyLabel= SWTUtils.createLabel(composite, CVSUIMessages.CVSDecoratorPreferencesPage_13, 1); //$NON-NLS-1$
+			final Label dirtyLabel= SWTUtils.createLabel(composite, CVSUIMessages.CVSDecoratorPreferencesPage_13, 1); 
 			dirtyLabel.setLayoutData(new GridData());
 			
 			dirtyFlag = new Text(composite, SWT.BORDER);
@@ -253,7 +253,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			SWTUtils.createPlaceholder(composite, 1, 1);
 			
 
-			final Label addedLabel= SWTUtils.createLabel(composite, CVSUIMessages.CVSDecoratorPreferencesPage_14, 1); //$NON-NLS-1$
+			final Label addedLabel= SWTUtils.createLabel(composite, CVSUIMessages.CVSDecoratorPreferencesPage_14, 1); 
 			addedLabel.setLayoutData(new GridData());
 
 			addedFlag = new Text(composite, SWT.BORDER);
@@ -264,7 +264,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			SWTUtils.createPlaceholder(composite, 1, 3);
 
 			final TabItem item= new TabItem(parent, SWT.NONE);
-			item.setText(CVSUIMessages.CVSDecoratorPreferencesPage_15);		 //$NON-NLS-1$
+			item.setText(CVSUIMessages.CVSDecoratorPreferencesPage_15);		 
 			item.setControl(composite);	
 		}
 		
@@ -325,20 +325,20 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			final Composite composite= SWTUtils.createHFillComposite(parent, SWTUtils.MARGINS_DEFAULT);
 			Dialog.applyDialogFont(composite);
 			
-            SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSDecoratorPreferencesPage_36, CVSUIMessages.CVSDecoratorPreferencesPage_37); //$NON-NLS-1$ //$NON-NLS-2$
+            SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSDecoratorPreferencesPage_36, CVSUIMessages.CVSDecoratorPreferencesPage_37); // 
             
-			fShowDirty= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_16); //$NON-NLS-1$
-			SWTUtils.createLabel(composite, CVSUIMessages.CVSDecoratorPreferencesPage_17); //$NON-NLS-1$
+			fShowDirty= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_16); 
+			SWTUtils.createLabel(composite, CVSUIMessages.CVSDecoratorPreferencesPage_17); 
 			
-			fUseFontDecorations= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_18); //$NON-NLS-1$
+			fUseFontDecorations= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_18); 
 
-			SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSDecoratorPreferencesPage_19, CVSUIMessages.CVSDecoratorPreferencesPage_20); //$NON-NLS-1$ //$NON-NLS-2$
+			SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSDecoratorPreferencesPage_19, CVSUIMessages.CVSDecoratorPreferencesPage_20); // 
 
 			fShowDirty.addSelectionListener(this);
 			fUseFontDecorations.addSelectionListener(this);
 
 			final TabItem item= new TabItem(parent, SWT.NONE);
-			item.setText(CVSUIMessages.CVSDecoratorPreferencesPage_21);		 //$NON-NLS-1$
+			item.setText(CVSUIMessages.CVSDecoratorPreferencesPage_21);		 
 			item.setControl(composite);	
 		}
 
@@ -491,23 +491,23 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 
 	static {
 		BINDINGS= new HashMap();
-		BINDINGS.put(CVSDecoratorConfiguration.RESOURCE_NAME, CVSUIMessages.CVSDecoratorPreferencesPage_22);  //$NON-NLS-1$
-		BINDINGS.put(CVSDecoratorConfiguration.RESOURCE_TAG, CVSUIMessages.CVSDecoratorPreferencesPage_23);  //$NON-NLS-1$
-		BINDINGS.put(CVSDecoratorConfiguration.FILE_KEYWORD, CVSUIMessages.CVSDecoratorPreferencesPage_24);  //$NON-NLS-1$
-		BINDINGS.put(CVSDecoratorConfiguration.FILE_REVISION, CVSUIMessages.CVSDecoratorPreferencesPage_25);  //$NON-NLS-1$
-		BINDINGS.put(CVSDecoratorConfiguration.DIRTY_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_26);  //$NON-NLS-1$
-		BINDINGS.put(CVSDecoratorConfiguration.ADDED_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_27); //$NON-NLS-1$
+		BINDINGS.put(CVSDecoratorConfiguration.RESOURCE_NAME, CVSUIMessages.CVSDecoratorPreferencesPage_22);  
+		BINDINGS.put(CVSDecoratorConfiguration.RESOURCE_TAG, CVSUIMessages.CVSDecoratorPreferencesPage_23);  
+		BINDINGS.put(CVSDecoratorConfiguration.FILE_KEYWORD, CVSUIMessages.CVSDecoratorPreferencesPage_24);  
+		BINDINGS.put(CVSDecoratorConfiguration.FILE_REVISION, CVSUIMessages.CVSDecoratorPreferencesPage_25);  
+		BINDINGS.put(CVSDecoratorConfiguration.DIRTY_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_26);  
+		BINDINGS.put(CVSDecoratorConfiguration.ADDED_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_27); 
 		
 		FOLDER_BINDINGS= new HashMap();
-		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.RESOURCE_NAME, CVSUIMessages.CVSDecoratorPreferencesPage_28);  //$NON-NLS-1$
-		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.RESOURCE_TAG, CVSUIMessages.CVSDecoratorPreferencesPage_29);  //$NON-NLS-1$
-		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, CVSUIMessages.CVSDecoratorPreferencesPage_30);  //$NON-NLS-1$
-		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, CVSUIMessages.CVSDecoratorPreferencesPage_31);  //$NON-NLS-1$
-		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, CVSUIMessages.CVSDecoratorPreferencesPage_32);  //$NON-NLS-1$
-		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, CVSUIMessages.CVSDecoratorPreferencesPage_33);  //$NON-NLS-1$
-		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, CVSUIMessages.CVSDecoratorPreferencesPage_34);  //$NON-NLS-1$
-        FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_LABEL, CVSUIMessages.CVSDecoratorPreferencesPage_38);  //$NON-NLS-1$
-		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.DIRTY_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_35); //$NON-NLS-1$
+		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.RESOURCE_NAME, CVSUIMessages.CVSDecoratorPreferencesPage_28);  
+		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.RESOURCE_TAG, CVSUIMessages.CVSDecoratorPreferencesPage_29);  
+		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, CVSUIMessages.CVSDecoratorPreferencesPage_30);  
+		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, CVSUIMessages.CVSDecoratorPreferencesPage_31);  
+		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, CVSUIMessages.CVSDecoratorPreferencesPage_32);  
+		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, CVSUIMessages.CVSDecoratorPreferencesPage_33);  
+		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, CVSUIMessages.CVSDecoratorPreferencesPage_34);  
+        FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_LABEL, CVSUIMessages.CVSDecoratorPreferencesPage_38);  
+		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.DIRTY_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_35); 
 		
 		final PreviewFile project= new PreviewFile("Project", IResource.PROJECT, false, false, false, false, true, null, "v1_0"); //$NON-NLS-1$ //$NON-NLS-2$
 		final ArrayList children= new ArrayList();

@@ -43,7 +43,7 @@ public class EditorsDialog extends Dialog {
 
 		Composite parent = (Composite) super.createDialogArea(container);
 						
-		getShell().setText(CVSUIMessages.EditorsDialog_title); //$NON-NLS-1$
+		getShell().setText(CVSUIMessages.EditorsDialog_title); 
 		createMessageArea(parent);
 		editorsView = new EditorsView();
 		editorsView.createPartControl(container);
@@ -62,7 +62,7 @@ public class EditorsDialog extends Dialog {
 	 */
 	private void createMessageArea(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(CVSUIMessages.EditorsDialog_question); //$NON-NLS-1$		
+		label.setText(CVSUIMessages.EditorsDialog_question); //		
 	}
 	
 }

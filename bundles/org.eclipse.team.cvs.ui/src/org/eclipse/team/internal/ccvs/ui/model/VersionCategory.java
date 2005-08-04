@@ -114,7 +114,7 @@ public class VersionCategory extends CVSModelElement implements IAdaptable,
      * @param object The object to get a label for.
      */
     public String getLabel(Object o) {
-        return CVSUIMessages.VersionCategory_Versions_1; //$NON-NLS-1$
+        return CVSUIMessages.VersionCategory_Versions_1; 
     }
 
     /**
@@ -148,6 +148,6 @@ public class VersionCategory extends CVSModelElement implements IAdaptable,
     }
 
     public ISchedulingRule getRule(Object element) {
-        return new RepositoryLocationSchedulingRule(repository); //$NON-NLS-1$
+        return new RepositoryLocationSchedulingRule(repository); 
     }
 }

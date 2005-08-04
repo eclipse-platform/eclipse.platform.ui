@@ -128,7 +128,7 @@ public class ResourceMappingSelectionArea extends DialogArea {
         Composite buttons = createEmbeddedButtonComposite(composite);
         
         Button selectAll = new Button(buttons, SWT.PUSH);
-        selectAll.setText(TeamUIMessages.ResourceMappingSelectionArea_0); //$NON-NLS-1$
+        selectAll.setText(TeamUIMessages.ResourceMappingSelectionArea_0); 
         selectAll.setLayoutData(new GridData(GridData.FILL_BOTH));
         selectAll.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -137,7 +137,7 @@ public class ResourceMappingSelectionArea extends DialogArea {
         });
         
         Button deselectAll = new Button(buttons, SWT.PUSH);
-        deselectAll.setText(TeamUIMessages.ResourceMappingSelectionArea_1); //$NON-NLS-1$
+        deselectAll.setText(TeamUIMessages.ResourceMappingSelectionArea_1); 
         deselectAll.setLayoutData(new GridData(GridData.FILL_BOTH));
         deselectAll.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {

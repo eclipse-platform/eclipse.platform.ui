@@ -92,16 +92,16 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		}
 		setDialogSettings(section);
 		setNeedsProgressMonitor(true);
-		setWindowTitle(CVSUIMessages.SharingWizard_title); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.SharingWizard_title); 
 	}	
 		
 	public void addPages() {
 		ImageDescriptor sharingImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE);
 		boolean autoconnect = false;
 		if (doesCVSDirectoryExist()) {
-			autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", CVSUIMessages.SharingWizard_autoConnectTitle, sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+			autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", CVSUIMessages.SharingWizard_autoConnectTitle, sharingImage); //$NON-NLS-1$ 
 			if (autoconnectPage.setProject(project)) {
-				autoconnectPage.setDescription(CVSUIMessages.SharingWizard_autoConnectTitleDescription); //$NON-NLS-1$
+				autoconnectPage.setDescription(CVSUIMessages.SharingWizard_autoConnectTitleDescription); 
 				addPage(autoconnectPage);
 				autoconnect = true;
 			}
@@ -109,17 +109,17 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		if (!autoconnect) {
 			ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
 			if (locations.length > 0) {
-				locationPage = new RepositorySelectionPage("importPage", CVSUIMessages.SharingWizard_importTitle, sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-				locationPage.setDescription(CVSUIMessages.SharingWizard_importTitleDescription); //$NON-NLS-1$
+				locationPage = new RepositorySelectionPage("importPage", CVSUIMessages.SharingWizard_importTitle, sharingImage); //$NON-NLS-1$ 
+				locationPage.setDescription(CVSUIMessages.SharingWizard_importTitleDescription); 
 				addPage(locationPage);
 			}
-			createLocationPage = new ConfigurationWizardMainPage("createLocationPage", CVSUIMessages.SharingWizard_enterInformation, sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-			createLocationPage.setDescription(CVSUIMessages.SharingWizard_enterInformationDescription); //$NON-NLS-1$
+			createLocationPage = new ConfigurationWizardMainPage("createLocationPage", CVSUIMessages.SharingWizard_enterInformation, sharingImage); //$NON-NLS-1$ 
+			createLocationPage.setDescription(CVSUIMessages.SharingWizard_enterInformationDescription); 
 			createLocationPage.setCVSWizard(this);
 			createLocationPage.setDialogSettings(NewLocationWizard.getLocationDialogSettings());
 			addPage(createLocationPage);
-			modulePage = new ModuleSelectionPage("modulePage", CVSUIMessages.SharingWizard_enterModuleName, sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
-			modulePage.setDescription(CVSUIMessages.SharingWizard_enterModuleNameDescription); //$NON-NLS-1$
+			modulePage = new ModuleSelectionPage("modulePage", CVSUIMessages.SharingWizard_enterModuleName, sharingImage); //$NON-NLS-1$ 
+			modulePage.setDescription(CVSUIMessages.SharingWizard_enterModuleNameDescription); 
 			modulePage.setCVSWizard(this);
 			modulePage.setProject(project);
 			modulePage.setHelpContxtId(IHelpContextIds.SHARING_MODULE_PAGE);
@@ -132,11 +132,11 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	
 	private void addTagPage(ImageDescriptor sharingImage) {
 		tagPage = new TagSelectionWizardPage("tagPage",  //$NON-NLS-1$
-			CVSUIMessages.SharingWizard_selectTagTitle,  //$NON-NLS-1$
+			CVSUIMessages.SharingWizard_selectTagTitle,  
 			sharingImage,
-			CVSUIMessages.SharingWizard_selectTag, //$NON-NLS-1$
+			CVSUIMessages.SharingWizard_selectTag, 
 			TagSource.EMPTY, // start with an empty tag source
-			TagSourceWorkbenchAdapter.INCLUDE_HEAD_TAG | TagSourceWorkbenchAdapter.INCLUDE_BRANCHES); //$NON-NLS-1$
+			TagSourceWorkbenchAdapter.INCLUDE_HEAD_TAG | TagSourceWorkbenchAdapter.INCLUDE_BRANCHES); 
 		tagPage.setCVSWizard(this);
 		tagPage.setHelpContxtId(IHelpContextIds.SHARING_TAG_SELETION_PAGE);
 		addPage(tagPage);
@@ -144,9 +144,9 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	
 	private void addSyncPage(ImageDescriptor sharingImage) {
 		syncPage = new SharingWizardSyncPage("syncPagePage",  //$NON-NLS-1$
-			CVSUIMessages.SharingWizard_23,  //$NON-NLS-1$
+			CVSUIMessages.SharingWizard_23,  
 			sharingImage,
-			CVSUIMessages.SharingWizard_24); //$NON-NLS-1$
+			CVSUIMessages.SharingWizard_24); 
 		syncPage.setProject(project);
 		syncPage.setCVSWizard(this);
 		addPage(syncPage);
@@ -322,7 +322,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	}
 
 	private boolean promptToKeepMapping() {
-		return (MessageDialog.openQuestion(getShell(), CVSUIMessages.SharingWizard_26, NLS.bind(CVSUIMessages.SharingWizard_27, new String[] { project.getName() }))); //$NON-NLS-1$ //$NON-NLS-2$
+		return (MessageDialog.openQuestion(getShell(), CVSUIMessages.SharingWizard_26, NLS.bind(CVSUIMessages.SharingWizard_27, new String[] { project.getName() }))); // 
 	}
 
 	private void reconcileProject(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -451,8 +451,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 					getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {
 							keep[0] = MessageDialog.openQuestion(getContainer().getShell(),
-								CVSUIMessages.SharingWizard_validationFailedTitle, //$NON-NLS-1$
-								NLS.bind(CVSUIMessages.SharingWizard_validationFailedText, (new Object[] {e.getStatus().getMessage()}))); //$NON-NLS-1$
+								CVSUIMessages.SharingWizard_validationFailedTitle, 
+								NLS.bind(CVSUIMessages.SharingWizard_validationFailedText, (new Object[] {e.getStatus().getMessage()}))); 
 						}
 					});
 					if (!keep[0]) {
@@ -536,7 +536,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 				} else {
 					shareProject(Policy.subMonitorFor(monitor, 50));
 				}
-				getParticipant().refreshNow(new IResource[] {project}, CVSUIMessages.ShareProjectOperation_1, Policy.subMonitorFor(monitor, 50)); //$NON-NLS-1$
+				getParticipant().refreshNow(new IResource[] {project}, CVSUIMessages.ShareProjectOperation_1, Policy.subMonitorFor(monitor, 50)); 
 				if (monitor.isCanceled()) {
 					throw new InterruptedException();
 				}
@@ -558,7 +558,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	
 	private void prepareTagPage(ICVSRemoteFolder remote) {
 		tagPage.setTagSource(TagSource.create(remote));
-		tagPage.setDescription(NLS.bind(CVSUIMessages.SharingWizard_25, new String[] { remote.getRepositoryRelativePath() })); //$NON-NLS-1$
+		tagPage.setDescription(NLS.bind(CVSUIMessages.SharingWizard_25, new String[] { remote.getRepositoryRelativePath() })); 
 	}
 
 	private WorkspaceSynchronizeParticipant getParticipant() {

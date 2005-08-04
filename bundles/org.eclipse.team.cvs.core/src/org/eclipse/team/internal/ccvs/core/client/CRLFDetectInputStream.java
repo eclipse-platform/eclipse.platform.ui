@@ -91,7 +91,7 @@ public class CRLFDetectInputStream extends FilterInputStream {
 	private void testForCRLF(byte next) {
 		if (reported) return;
 		if (previousCR && next == '\n') {
-			CVSProviderPlugin.log(IStatus.WARNING, NLS.bind(CVSMessages.CRLFDetectInputStream_0, new String[] { filename }), null); //$NON-NLS-1$
+			CVSProviderPlugin.log(IStatus.WARNING, NLS.bind(CVSMessages.CRLFDetectInputStream_0, new String[] { filename }), null); 
 			reported = true;
 		}
 		previousCR = (next == '\r');

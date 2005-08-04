@@ -120,7 +120,7 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 				int kind = ((DiffNode) element).getKind();
 				if (kind != SyncInfo.IN_SYNC) {
 					String syncKindString = SyncInfo.kindToString(kind);
-					return NLS.bind(TeamUIMessages.TeamSubscriberSyncPage_labelWithSyncKind, new String[] { base, syncKindString }); //$NON-NLS-1$ 
+					return NLS.bind(TeamUIMessages.TeamSubscriberSyncPage_labelWithSyncKind, new String[] { base, syncKindString }); // 
 				}
 			}
 		}

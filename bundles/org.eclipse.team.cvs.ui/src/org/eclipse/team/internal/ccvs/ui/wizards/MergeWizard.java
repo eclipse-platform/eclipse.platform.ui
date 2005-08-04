@@ -48,9 +48,9 @@ public class MergeWizard extends Wizard {
 	public void addPages() {
 	    setNeedsProgressMonitor(true);
 	    TagSource tagSource = TagSource.create(resources);
-		setWindowTitle(CVSUIMessages.MergeWizard_title); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.MergeWizard_title); 
 		ImageDescriptor mergeImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_MERGE);
-		page = new MergeWizardPage("mergePage", CVSUIMessages.MergeWizard_0, mergeImage, CVSUIMessages.MergeWizard_1, tagSource); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		page = new MergeWizardPage("mergePage", CVSUIMessages.MergeWizard_0, mergeImage, CVSUIMessages.MergeWizard_1, tagSource); //$NON-NLS-1$  
 		addPage(page);
 	}
 

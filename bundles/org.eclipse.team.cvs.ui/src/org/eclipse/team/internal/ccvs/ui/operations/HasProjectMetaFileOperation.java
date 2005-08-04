@@ -82,7 +82,7 @@ public class HasProjectMetaFileOperation extends CVSOperation {
 	}
 
 	protected String getTaskName() {
-		return CVSUIMessages.HasProjectMetaFile_taskName; //$NON-NLS-1$
+		return CVSUIMessages.HasProjectMetaFile_taskName; 
 	}
 	
 	/* (non-Javadoc)

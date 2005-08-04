@@ -50,8 +50,8 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	
 	public SyncViewerPreferencePage() {
 		super(GRID);
-		setTitle(TeamUIMessages.SyncViewerPreferencePage_6); //$NON-NLS-1$
-		setDescription(TeamUIMessages.SyncViewerPreferencePage_7); //$NON-NLS-1$
+		setTitle(TeamUIMessages.SyncViewerPreferencePage_6); 
+		setDescription(TeamUIMessages.SyncViewerPreferencePage_7); 
 		setPreferenceStore(TeamUIPlugin.getPlugin().getPreferenceStore());
 	}
 
@@ -68,37 +68,37 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	public void createFieldEditors() {
-		showSyncInLabels = new BooleanFieldEditor(SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, TeamUIMessages.SyncViewerPreferencePage_19, SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
+		showSyncInLabels = new BooleanFieldEditor(SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, TeamUIMessages.SyncViewerPreferencePage_19, SWT.NONE, getFieldEditorParent()); 
 		addField(showSyncInLabels);
 		
 	    defaultLayout = new RadioGroupFieldEditor(SYNCVIEW_DEFAULT_LAYOUT, 
-	            TeamUIMessages.SyncViewerPreferencePage_0, 3,  //$NON-NLS-1$
+	            TeamUIMessages.SyncViewerPreferencePage_0, 3,  
 	            new String[][] {
-	            	{TeamUIMessages.SyncViewerPreferencePage_1, FLAT_LAYOUT}, //$NON-NLS-1$
-	            	{TeamUIMessages.SyncViewerPreferencePage_2, TREE_LAYOUT}, //$NON-NLS-1$
-	            	{TeamUIMessages.SyncViewerPreferencePage_3, COMPRESSED_LAYOUT} //$NON-NLS-1$
+	            	{TeamUIMessages.SyncViewerPreferencePage_1, FLAT_LAYOUT}, 
+	            	{TeamUIMessages.SyncViewerPreferencePage_2, TREE_LAYOUT}, 
+	            	{TeamUIMessages.SyncViewerPreferencePage_3, COMPRESSED_LAYOUT} 
 	    		}, 
 	    		getFieldEditorParent(), true /* use a group */);
 	    addField(defaultLayout);
 
-		synchronizePerspectiveSwitch= new RadioGroupFieldEditor(SYNCHRONIZING_COMPLETE_PERSPECTIVE, TeamUIMessages.SyncViewerPreferencePage_13, 3,  //$NON-NLS-1$
+		synchronizePerspectiveSwitch= new RadioGroupFieldEditor(SYNCHRONIZING_COMPLETE_PERSPECTIVE, TeamUIMessages.SyncViewerPreferencePage_13, 3,  
 				new String[][] {
-								{TeamUIMessages.SyncViewerPreferencePage_14, MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
-								{TeamUIMessages.SyncViewerPreferencePage_42, MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
-								{TeamUIMessages.SyncViewerPreferencePage_16, MessageDialogWithToggle.PROMPT} //$NON-NLS-1$
+								{TeamUIMessages.SyncViewerPreferencePage_14, MessageDialogWithToggle.ALWAYS}, 
+								{TeamUIMessages.SyncViewerPreferencePage_42, MessageDialogWithToggle.NEVER}, 
+								{TeamUIMessages.SyncViewerPreferencePage_16, MessageDialogWithToggle.PROMPT} 
 							},
 							getFieldEditorParent(), true);
 		addField(synchronizePerspectiveSwitch);
 		
-		Group perspectiveGroup = createGroup(getFieldEditorParent(), TeamUIMessages.SyncViewerPreferencePage_15); //$NON-NLS-1$
+		Group perspectiveGroup = createGroup(getFieldEditorParent(), TeamUIMessages.SyncViewerPreferencePage_15); 
 		
-		createLabel(perspectiveGroup, TeamUIMessages.SynchronizationViewPreference_defaultPerspectiveDescription, 1); //$NON-NLS-1$
+		createLabel(perspectiveGroup, TeamUIMessages.SynchronizationViewPreference_defaultPerspectiveDescription, 1); 
 		
 		handleDeletedPerspectives();
 		String[][] perspectiveNamesAndIds = getPerspectiveNamesAndIds();
 		ComboFieldEditor comboEditor= new ComboFieldEditor(
 			SYNCVIEW_DEFAULT_PERSPECTIVE,
-			TeamUIMessages.SynchronizationViewPreference_defaultPerspectiveLabel, //$NON-NLS-1$
+			TeamUIMessages.SynchronizationViewPreference_defaultPerspectiveLabel, 
 			perspectiveNamesAndIds,
 			perspectiveGroup);
 		addField(comboEditor);
@@ -120,7 +120,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		data.horizontalAlignment = GridData.FILL;		
 		l.setLayoutData(data);
 		if(title != null) {
-			l.setText(title); //$NON-NLS-1$
+			l.setText(title); 
 		}
 		return l;
 	}
@@ -195,7 +195,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		Arrays.sort(perspectiveDescriptors, new PerspectiveDescriptorComparator());
 	
 		String[][] table = new String[perspectiveDescriptors.length + 1][2];
-		table[0][0] = TeamUIMessages.SynchronizationViewPreference_defaultPerspectiveNone; //$NON-NLS-1$;
+		table[0][0] = TeamUIMessages.SynchronizationViewPreference_defaultPerspectiveNone; //;
 		table[0][1] = SYNCVIEW_DEFAULT_PERSPECTIVE_NONE;
 		for (int i = 0; i < perspectiveDescriptors.length; i++) {
 			table[i + 1][0] = perspectiveDescriptors[i].getLabel();

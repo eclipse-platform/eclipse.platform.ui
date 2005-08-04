@@ -53,7 +53,7 @@ class RemoveEntryHandler extends ResponseHandler {
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
 		if (mFile.exists()) {
-			CVSProviderPlugin.log(new CVSException(NLS.bind(CVSMessages.RemoveEntryHandler_2, new String[] { mFile.getRepositoryRelativePath() }))); //$NON-NLS-1$
+			CVSProviderPlugin.log(new CVSException(NLS.bind(CVSMessages.RemoveEntryHandler_2, new String[] { mFile.getRepositoryRelativePath() }))); 
 		} else {
 			mFile.unmanage(null);
 		}

@@ -50,7 +50,7 @@ public class MergeUpdateOperation extends SafeUpdateOperation {
 	 */
 	protected String getJobName() {
 		SyncInfoSet syncSet = getSyncInfoSet();
-		return NLS.bind(CVSUIMessages.MergeUpdateAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.MergeUpdateAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); 
 	}
 	
 	/* (non-Javadoc)
@@ -149,7 +149,7 @@ public class MergeUpdateOperation extends SafeUpdateOperation {
 		// Assumption that all nodes are from the same subscriber.
 		currentSubcriber = ((CVSSyncInfo)node).getSubscriber();
 		if (!(currentSubcriber instanceof CVSMergeSubscriber)) {
-			throw new CVSException(NLS.bind(CVSUIMessages.MergeUpdateAction_invalidSubscriber, new String[] { currentSubcriber.toString() })); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.MergeUpdateAction_invalidSubscriber, new String[] { currentSubcriber.toString() })); 
 		}
 	}
 

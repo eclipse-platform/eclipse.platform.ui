@@ -142,6 +142,6 @@ public class RemoteModule extends CVSModelElement implements IAdaptable,
     }
 
     public ISchedulingRule getRule(Object element) {
-        return new RepositoryLocationSchedulingRule(folder.getRepository()); //$NON-NLS-1$
+        return new RepositoryLocationSchedulingRule(folder.getRepository()); 
     }
 }

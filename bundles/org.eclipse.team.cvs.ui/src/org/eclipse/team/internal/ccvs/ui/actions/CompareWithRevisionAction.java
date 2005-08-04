@@ -69,7 +69,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		
 		if (file[0] == null) {
 			// No revisions for selected file
-			MessageDialog.openWarning(getShell(), CVSUIMessages.CompareWithRevisionAction_noRevisions, CVSUIMessages.CompareWithRevisionAction_noRevisionsLong); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openWarning(getShell(), CVSUIMessages.CompareWithRevisionAction_noRevisions, CVSUIMessages.CompareWithRevisionAction_noRevisionsLong); // 
 			return;
 		}
 		
@@ -77,7 +77,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					monitor.beginTask(CVSUIMessages.CompareWithRevisionAction_fetching, 100); //$NON-NLS-1$
+					monitor.beginTask(CVSUIMessages.CompareWithRevisionAction_fetching, 100); 
 					entries[0] = file[0].getLogEntries(Policy.subMonitorFor(monitor, 100));
 					monitor.done();
 				} catch (TeamException e) {
@@ -109,21 +109,21 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 	 * Return the compare dialog to use to show the compare input.
 	 */
 	protected SaveablePartDialog createCompareDialog(Shell shell, CVSCompareRevisionsInput input) {
-		return new SaveablePartDialog(shell, input); //$NON-NLS-1$
+		return new SaveablePartDialog(shell, input); 
 	}
 	
 	/**
 	 * Return the text describing this action
 	 */
 	protected String getActionTitle() {
-		return CVSUIMessages.CompareWithRevisionAction_4; //$NON-NLS-1$
+		return CVSUIMessages.CompareWithRevisionAction_4; 
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return CVSUIMessages.CompareWithRevisionAction_compare; //$NON-NLS-1$
+		return CVSUIMessages.CompareWithRevisionAction_compare; 
 	}
 
 	/* (non-Javadoc)

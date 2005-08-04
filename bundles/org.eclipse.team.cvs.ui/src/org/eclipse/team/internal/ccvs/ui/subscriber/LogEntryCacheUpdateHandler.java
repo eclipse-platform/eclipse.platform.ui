@@ -163,7 +163,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
     }
     
     public LogEntryCacheUpdateHandler(ISynchronizePageConfiguration configuration) {
-        super(CVSUIMessages.LogEntryCacheUpdateHandler_1, CVSUIMessages.LogEntryCacheUpdateHandler_0); //$NON-NLS-1$ //$NON-NLS-2$
+        super(CVSUIMessages.LogEntryCacheUpdateHandler_1, CVSUIMessages.LogEntryCacheUpdateHandler_0); // 
         this.configuration = configuration;
         this.subscriber = getSubscriber(configuration);
         cacheReference = new SoftReference(new LogEntryCache());
@@ -394,7 +394,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
 	            }
 	            if (job.getState() != Job.NONE) {
 	                // The job never completed in the time aloted so throw an exception
-	                throw new CVSException(CVSUIMessages.LogEntryCacheUpdateHandler_2); //$NON-NLS-1$
+	                throw new CVSException(CVSUIMessages.LogEntryCacheUpdateHandler_2); 
 	            }
 	        }
 	        // Queue the event even if the job didn't stop in the time aloted
@@ -430,8 +430,8 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
                 logEntriesCache = new LogEntryCache();
                 cacheReference = new SoftReference(logEntriesCache);
             }
-            monitor.beginTask(CVSUIMessages.CVSChangeSetCollector_4, 100 * projectMapping.size()); //$NON-NLS-1$
-            monitor.setTaskName(CVSUIMessages.CVSChangeSetCollector_4); //$NON-NLS-1$
+            monitor.beginTask(CVSUIMessages.CVSChangeSetCollector_4, 100 * projectMapping.size()); 
+            monitor.setTaskName(CVSUIMessages.CVSChangeSetCollector_4); 
             for (Iterator iter = projectMapping.values().iterator(); iter.hasNext();) {
                 SyncInfoSet set = (SyncInfoSet) iter.next();
                 Policy.checkCanceled(monitor);

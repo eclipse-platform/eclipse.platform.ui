@@ -145,7 +145,7 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
                 } catch (RuntimeException e) {
                     // Don't worry about ending every set if an error occurs.
                     // Instead, log the error and suggest a restart.
-                    TeamPlugin.log(IStatus.ERROR, Messages.SubscriberChangeSetCollector_0, e); //$NON-NLS-1$
+                    TeamPlugin.log(IStatus.ERROR, Messages.SubscriberChangeSetCollector_0, e); 
                     throw e;
                 }
             }
@@ -269,7 +269,7 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
     public SubscriberChangeSetCollector(Subscriber subscriber) {
         collector = new ResourceCollector(subscriber);
         load();
-        handler = new EventHandler(NLS.bind(Messages.SubscriberChangeSetCollector_1, new String[] { subscriber.getName() }), NLS.bind(Messages.SubscriberChangeSetCollector_2, new String[] { subscriber.getName() })); //$NON-NLS-1$ //$NON-NLS-2$
+        handler = new EventHandler(NLS.bind(Messages.SubscriberChangeSetCollector_1, new String[] { subscriber.getName() }), NLS.bind(Messages.SubscriberChangeSetCollector_2, new String[] { subscriber.getName() })); // 
     }
     
     public boolean hasMembers(IResource resource) {
@@ -445,7 +445,7 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
 		try {
             prefs.flush();
         } catch (BackingStoreException e) {
-            TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.SubscriberChangeSetCollector_3, new String[] { getSubscriber().getName() }), e); //$NON-NLS-1$
+            TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.SubscriberChangeSetCollector_3, new String[] { getSubscriber().getName() }), e); 
         }
     }
     
@@ -466,7 +466,7 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
                 }
             }
         } catch (BackingStoreException e) {
-            TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.SubscriberChangeSetCollector_4, new String[] { getSubscriber().getName() }), e); //$NON-NLS-1$
+            TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.SubscriberChangeSetCollector_4, new String[] { getSubscriber().getName() }), e); 
         }
     }
 

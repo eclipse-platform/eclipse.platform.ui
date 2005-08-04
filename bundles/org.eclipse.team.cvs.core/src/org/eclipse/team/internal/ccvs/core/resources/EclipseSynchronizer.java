@@ -110,7 +110,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			// this can occur when creating phatom folders
 			if (getFolderSync(folder.getParent()) == null) {
 				throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
-					NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingFolderSync, new String[] { folder.getFullPath().toString() })); //$NON-NLS-1$
+					NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingFolderSync, new String[] { folder.getFullPath().toString() })); 
 			}
 		}
 		ISchedulingRule rule = null;
@@ -215,7 +215,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
-				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() })); //$NON-NLS-1$
+				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() })); 
 		}
 		ISchedulingRule rule = null;
 		try {
@@ -297,7 +297,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
-				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() })); //$NON-NLS-1$
+				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() })); 
 		}
 		ISchedulingRule rule = null;
 		try {
@@ -388,7 +388,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public void addIgnored(IContainer folder, String pattern) throws CVSException {
 		if (folder.getType() == IResource.ROOT || ! folder.exists()) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
-				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingIgnorePattern, new String[] { folder.getFullPath().toString() })); //$NON-NLS-1$
+				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingIgnorePattern, new String[] { folder.getFullPath().toString() })); 
 		}
 		ISchedulingRule rule = null;
 		try {
@@ -945,9 +945,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 			int numResources = changedFolders.length + numDirty;
 			monitor.beginTask(null, numResources);
 			if(monitor.isCanceled()) {
-				monitor.subTask(CVSMessages.EclipseSynchronizer_UpdatingSyncEndOperationCancelled); //$NON-NLS-1$
+				monitor.subTask(CVSMessages.EclipseSynchronizer_UpdatingSyncEndOperationCancelled); 
 			} else {
-				monitor.subTask(CVSMessages.EclipseSynchronizer_UpdatingSyncEndOperation); //$NON-NLS-1$
+				monitor.subTask(CVSMessages.EclipseSynchronizer_UpdatingSyncEndOperation); 
 			}
 			
 			/*** write sync info to disk ***/
@@ -1028,7 +1028,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			}
 			
 			/*** broadcast events ***/
-			monitor.subTask(CVSMessages.EclipseSynchronizer_NotifyingListeners); //$NON-NLS-1$
+			monitor.subTask(CVSMessages.EclipseSynchronizer_NotifyingListeners); 
 			Set allChanges = new HashSet();
 			allChanges.addAll(Arrays.asList(changedResources));
 			allChanges.addAll(Arrays.asList(changedFolders));
@@ -1039,7 +1039,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			if ( ! errors.isEmpty()) {
 				MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, 
 											CVSStatus.COMMITTING_SYNC_INFO_FAILED, 
-											CVSMessages.EclipseSynchronizer_ErrorCommitting, //$NON-NLS-1$
+											CVSMessages.EclipseSynchronizer_ErrorCommitting, 
 											null);
 				for (int i = 0; i < errors.size(); i++) {
 					status.merge((IStatus)errors.get(i));

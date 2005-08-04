@@ -84,15 +84,15 @@ public abstract class TagAction extends WorkspaceTraversalAction {
 		    return null;
 		}
 		TagAsVersionDialog dialog = new TagAsVersionDialog(getShell(),
-											CVSUIMessages.TagAction_tagResources, //$NON-NLS-1$
+											CVSUIMessages.TagAction_tagResources, 
 											operation);
 		if (dialog.open() != Window.OK) return null;
 
 		// The user has indicated they want to force a move.  Make sure they really do.		
 		if (dialog.shouldMoveTag() && store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG))  {
 			MessageDialogWithToggle confirmDialog = MessageDialogWithToggle.openYesNoQuestion(getShell(), 
-				CVSUIMessages.TagAction_moveTagConfirmTitle,  //$NON-NLS-1$
-				NLS.bind(CVSUIMessages.TagAction_moveTagConfirmMessage, new String[] { dialog.getTagName() }), //$NON-NLS-1$
+				CVSUIMessages.TagAction_moveTagConfirmTitle,  
+				NLS.bind(CVSUIMessages.TagAction_moveTagConfirmMessage, new String[] { dialog.getTagName() }), 
 				null,
 				false,
 				null,
@@ -112,11 +112,11 @@ public abstract class TagAction extends WorkspaceTraversalAction {
 	protected abstract ITagOperation createTagOperation();
 
 	protected String getErrorTitle() {
-		return CVSUIMessages.TagAction_tagErrorTitle; //$NON-NLS-1$
+		return CVSUIMessages.TagAction_tagErrorTitle; 
 	}
 	
 	protected String getWarningTitle() {
-		return CVSUIMessages.TagAction_tagWarningTitle; //$NON-NLS-1$
+		return CVSUIMessages.TagAction_tagWarningTitle; 
 	}
 	
 	/**

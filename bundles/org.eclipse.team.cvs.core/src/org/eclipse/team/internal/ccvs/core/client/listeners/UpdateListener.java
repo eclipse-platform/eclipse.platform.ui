@@ -234,7 +234,7 @@ public class UpdateListener extends CommandOutputListener {
 								IResource resource = file.getIResource();
 								if (resource != null) {
 									return new CVSStatus(IStatus.ERROR, CVSStatus.UNMEGERED_BINARY_CONFLICT,
-										NLS.bind(CVSMessages.UpdateListener_0, (new Object[] { //$NON-NLS-1$
+										NLS.bind(CVSMessages.UpdateListener_0, (new Object[] { 
                                         resource.getFullPath().toString(), 
                                         mergedBinaryFileRevision, 
                                         resource.getFullPath().removeLastSegments(1).append(backupFile).toString()})));

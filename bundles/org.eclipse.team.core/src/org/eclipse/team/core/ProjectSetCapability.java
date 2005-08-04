@@ -141,7 +141,7 @@ public abstract class ProjectSetCapability {
 		if (serializer != null) {
 			return serializer.asReference(providerProjects, context.getShell(), monitor);
 		}
-		throw new TeamException(Messages.ProjectSetCapability_0); //$NON-NLS-1$
+		throw new TeamException(Messages.ProjectSetCapability_0); 
 	}
 
 	/**
@@ -191,7 +191,7 @@ public abstract class ProjectSetCapability {
 		if (serializer != null) {
 			return serializer.addToWorkspace(referenceStrings, context.getFilename(), context.getShell(), monitor);
 		}
-		throw new TeamException(Messages.ProjectSetCapability_1); //$NON-NLS-1$
+		throw new TeamException(Messages.ProjectSetCapability_1); 
 	}
 	
 	////////////////////////////////////////////////////////////////////////////

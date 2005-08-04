@@ -70,6 +70,6 @@ public class OverrideAndUpdateSubscriberOperation extends CVSSubscriberOperation
 	 */
 	protected String getJobName() {
 		SyncInfoSet syncSet = getSyncInfoSet();
-		return NLS.bind(CVSUIMessages.UpdateAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.UpdateAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); 
 	}
 }

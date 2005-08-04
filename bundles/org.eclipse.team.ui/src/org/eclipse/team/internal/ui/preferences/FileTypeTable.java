@@ -27,11 +27,11 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
     
     private final static int COMBO_INDEX_BINARY= 0;
     private final static int COMBO_INDEX_TEXT= 1;
-    private final static String [] MODES_TEXT= { TeamUIMessages.FileTypeTable_0, TeamUIMessages.FileTypeTable_1 }; //$NON-NLS-1$ //$NON-NLS-2$
+    private final static String [] MODES_TEXT= { TeamUIMessages.FileTypeTable_0, TeamUIMessages.FileTypeTable_1 }; // 
     
     private final static int COMBO_INDEX_SAVE= 0;
     private final static int COMBO_INDEX_DONT_SAVE= 1;
-    private static final String [] SAVE_TEXT= { TeamUIMessages.FileTypeTable_2, TeamUIMessages.FileTypeTable_3 }; //$NON-NLS-1$ //$NON-NLS-2$
+    private static final String [] SAVE_TEXT= { TeamUIMessages.FileTypeTable_2, TeamUIMessages.FileTypeTable_3 }; // 
 
     private static final class FileTypeSorter extends ViewerSorter {
     	
@@ -110,7 +110,7 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
 		 */
 		final TableColumn fileColumn = new TableColumn(table, SWT.NONE, 0);
 		fileColumn.setWidth(converter.convertWidthInCharsToPixels(TeamUIMessages.FileTypeTable_4.length() + COLUMN_PADDING));
-		fileColumn.setText(TeamUIMessages.FileTypeTable_4); //$NON-NLS-1$
+		fileColumn.setText(TeamUIMessages.FileTypeTable_4); 
 		
 		/**
 		 * The 'Mode' column
@@ -126,7 +126,7 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
             length = 15;
         }
         modeColumn.setWidth(converter.convertWidthInCharsToPixels(length + COLUMN_PADDING));
-		modeColumn.setText(TeamUIMessages.FileTypeTable_5); //$NON-NLS-1$
+		modeColumn.setText(TeamUIMessages.FileTypeTable_5); 
 
 		/**
 		 * The 'Save' column
@@ -134,7 +134,7 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
 		if (fShowSaveColumn) {
 		    final TableColumn saveColumn = new TableColumn(table, SWT.NONE, 2);
 		    saveColumn.setWidth(converter.convertWidthInCharsToPixels(TeamUIMessages.FileTypeTable_6.length() + COLUMN_PADDING));
-		    saveColumn.setText(TeamUIMessages.FileTypeTable_6); //$NON-NLS-1$
+		    saveColumn.setText(TeamUIMessages.FileTypeTable_6); 
 		}
 		
 		/**

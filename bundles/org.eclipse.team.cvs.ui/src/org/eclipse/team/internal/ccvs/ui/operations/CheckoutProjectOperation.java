@@ -189,9 +189,9 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		// changed when the checkout command is run.
 		String taskName;
 		if (targetProjects.length == 1) {
-			taskName = NLS.bind(CVSUIMessages.CheckoutProjectOperation_8, new String[] { resource.getName(), targetProjects[0].getName() }); //$NON-NLS-1$
+			taskName = NLS.bind(CVSUIMessages.CheckoutProjectOperation_8, new String[] { resource.getName(), targetProjects[0].getName() }); 
 		} else {
-			taskName = NLS.bind(CVSUIMessages.CheckoutProjectOperation_9, new String[] { resource.getName(), String.valueOf(targetProjects.length) }); //$NON-NLS-1$
+			taskName = NLS.bind(CVSUIMessages.CheckoutProjectOperation_9, new String[] { resource.getName(), String.valueOf(targetProjects.length) }); 
 		}
 		pm.beginTask(taskName, 100);
 		pm.setTaskName(taskName);
@@ -328,11 +328,11 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			Policy.checkCanceled(monitor);
 			if (needsPromptForOverwrite(project) && !promptToOverwrite(remoteFolder, project)) {
 				// User said no to this project but not no to all
-				return new CVSStatus(IStatus.INFO, CVSStatus.CANCEL, NLS.bind(CVSUIMessages.CheckoutProjectOperation_0, new String[] { remoteFolder.getRepositoryRelativePath() })); //$NON-NLS-1$
+				return new CVSStatus(IStatus.INFO, CVSStatus.CANCEL, NLS.bind(CVSUIMessages.CheckoutProjectOperation_0, new String[] { remoteFolder.getRepositoryRelativePath() })); 
 			}
 		}
 		// Create the projects and remove any previous content
-		monitor.beginTask(null, projects.length * 100); //$NON-NLS-1$
+		monitor.beginTask(null, projects.length * 100); 
 		for (int i=0;i<projects.length;i++) {
 			IProject project = projects[i];
 			createAndOpenProject(project, Policy.subMonitorFor(monitor, 10));
@@ -352,7 +352,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			IResource[] children = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 			Policy.checkCanceled(monitor);
 			monitor.beginTask(null, 100 + children.length * 100);
-			monitor.subTask(NLS.bind(CVSUIMessages.CheckoutOperation_scrubbingProject, new String[] { project.getName() })); //$NON-NLS-1$	
+			monitor.subTask(NLS.bind(CVSUIMessages.CheckoutOperation_scrubbingProject, new String[] { project.getName() })); //	
 			try {
 				for (int j = 0; j < children.length; j++) {
 					if ( ! children[j].getName().equals(".project")) {//$NON-NLS-1$
@@ -400,8 +400,8 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		// First, if the project exists in the workspace, prompt
 		if (project.exists()) {
 			if (!promptToOverwrite(
-					CVSUIMessages.CheckoutOperation_confirmOverwrite,  //$NON-NLS-1$
-					NLS.bind(CVSUIMessages.CheckoutOperation_thisResourceExists, new String[] { project.getName(), getRemoteModuleName(remoteFolder) }))) { //$NON-NLS-1$
+					CVSUIMessages.CheckoutOperation_confirmOverwrite,  
+					NLS.bind(CVSUIMessages.CheckoutOperation_thisResourceExists, new String[] { project.getName(), getRemoteModuleName(remoteFolder) }))) { 
 				return false;
 			}
 		}
@@ -425,8 +425,8 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		if (localLocation != null && localLocation.exists()) {
 			try {
 				return (promptToOverwrite(
-						CVSUIMessages.CheckoutOperation_confirmOverwrite,  //$NON-NLS-1$
-						NLS.bind(CVSUIMessages.CheckoutOperation_thisExternalFileExists, new String[] { localLocation.getCanonicalPath(), getRemoteModuleName(remoteFolder) }))); //$NON-NLS-1$
+						CVSUIMessages.CheckoutOperation_confirmOverwrite,  
+						NLS.bind(CVSUIMessages.CheckoutOperation_thisExternalFileExists, new String[] { localLocation.getCanonicalPath(), getRemoteModuleName(remoteFolder) }))); 
 			} catch (IOException e) {
 				CVSUIPlugin.log(CVSException.wrapException(e));
 			}
@@ -444,7 +444,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				IProject project = projects[i];
 				// Register the project with Team
 				try {
-					monitor.subTask(NLS.bind(CVSUIMessages.CheckoutOperation_refreshingProject, new String[] { project.getName() })); //$NON-NLS-1$
+					monitor.subTask(NLS.bind(CVSUIMessages.CheckoutOperation_refreshingProject, new String[] { project.getName() })); 
 					ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
 					if (folder.isCVSFolder()) {
 						RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
@@ -465,9 +465,9 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 	protected String getTaskName() {
 		ICVSRemoteFolder[] remoteFolders = getRemoteFolders();
 		if (remoteFolders.length == 1) {
-			return NLS.bind(CVSUIMessages.CheckoutSingleProjectOperation_taskname, new String[] { remoteFolders[0].getName() }); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.CheckoutSingleProjectOperation_taskname, new String[] { remoteFolders[0].getName() }); 
 		} else {
-			return NLS.bind(CVSUIMessages.CheckoutMultipleProjectsOperation_taskName, new String[] { new Integer(remoteFolders.length).toString() });  //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.CheckoutMultipleProjectsOperation_taskName, new String[] { new Integer(remoteFolders.length).toString() });  
 		}
 	}
 	

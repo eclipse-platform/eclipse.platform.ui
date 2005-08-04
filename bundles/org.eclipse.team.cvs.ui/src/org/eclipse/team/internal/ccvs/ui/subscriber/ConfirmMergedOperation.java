@@ -41,7 +41,7 @@ public class ConfirmMergedOperation extends CVSSubscriberOperation {
 	 */
 	protected String getJobName() {
 		SyncInfoSet syncSet = getSyncInfoSet();
-		return NLS.bind(CVSUIMessages.SubscriberConfirmMergedAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.SubscriberConfirmMergedAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); 
 	}
 	
 	/* (non-Javadoc)
@@ -69,7 +69,7 @@ public class ConfirmMergedOperation extends CVSSubscriberOperation {
 		try {
 			CVSSyncInfo cvsInfo = getCVSSyncInfo(info);
 			if (cvsInfo == null) {
-				CVSUIPlugin.log(IStatus.ERROR, NLS.bind(CVSUIMessages.SubscriberConfirmMergedAction_0, new String[] { info.getLocal().getFullPath().toString() }), null); //$NON-NLS-1$
+				CVSUIPlugin.log(IStatus.ERROR, NLS.bind(CVSUIMessages.SubscriberConfirmMergedAction_0, new String[] { info.getLocal().getFullPath().toString() }), null); 
 				return false;
 			}
 			// Make sure the parent is managed

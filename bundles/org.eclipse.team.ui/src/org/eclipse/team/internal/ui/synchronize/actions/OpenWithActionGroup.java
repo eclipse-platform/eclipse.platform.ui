@@ -101,7 +101,7 @@ public class OpenWithActionGroup extends ActionGroup {
             IWorkbenchSite ws = site.getWorkbenchSite();
             if (ws != null) {
                 MenuManager submenu =
-                    new MenuManager(TeamUIMessages.OpenWithActionGroup_0); //$NON-NLS-1$
+                    new MenuManager(TeamUIMessages.OpenWithActionGroup_0); 
                 submenu.add(new OpenWithMenu(ws.getPage(), resources[0]));
                 menu.appendToGroup(groupId, submenu);
             }

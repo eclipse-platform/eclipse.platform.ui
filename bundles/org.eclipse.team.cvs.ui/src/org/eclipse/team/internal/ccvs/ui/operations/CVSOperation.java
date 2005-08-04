@@ -42,7 +42,7 @@ public abstract class CVSOperation extends TeamOperation {
 
 	private List errors = new ArrayList(); // of IStatus
 
-	protected static final IStatus OK = Status.OK_STATUS; //$NON-NLS-1$
+	protected static final IStatus OK = Status.OK_STATUS; 
 	
 	private Shell shell;
 	
@@ -212,7 +212,7 @@ public abstract class CVSOperation extends TeamOperation {
     }
 
     protected String getErrorMessage(IStatus[] failures, int totalOperations) {
-		return NLS.bind(CVSUIMessages.CVSOperation_0, new String[] { String.valueOf(failures.length), String.valueOf(totalOperations) }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CVSOperation_0, new String[] { String.valueOf(failures.length), String.valueOf(totalOperations) }); 
 	}
 
 	/**
@@ -357,14 +357,14 @@ public abstract class CVSOperation extends TeamOperation {
      */
     protected IAction getShowConsoleAction() {
         // Show the console as the goto action
-        return new Action(CVSUIMessages.CVSOperation_1) { //$NON-NLS-1$
+        return new Action(CVSUIMessages.CVSOperation_1) { 
             public void run() {
                 CVSOutputConsole console = CVSUIPlugin.getPlugin().getConsole();
                 if (console != null)
                     console.show(true);
             }
             public String getToolTipText() {
-                return CVSUIMessages.CVSOperation_2; //$NON-NLS-1$
+                return CVSUIMessages.CVSOperation_2; 
             }
         };
     }

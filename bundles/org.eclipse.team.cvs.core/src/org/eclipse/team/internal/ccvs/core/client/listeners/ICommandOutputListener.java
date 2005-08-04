@@ -24,7 +24,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 public interface ICommandOutputListener {
 	
 	/*** Status to be returned when no error or warning occured ***/
-	public static final IStatus OK = new CVSStatus(CVSStatus.OK, CVSMessages.ok); //$NON-NLS-1$
+	public static final IStatus OK = new CVSStatus(CVSStatus.OK, CVSMessages.ok); 
 	
 	public static final String SERVER_PREFIX = "server: "; //$NON-NLS-1$
 	public static final String SERVER_ABORTED_PREFIX = "[server aborted]: "; //$NON-NLS-1$

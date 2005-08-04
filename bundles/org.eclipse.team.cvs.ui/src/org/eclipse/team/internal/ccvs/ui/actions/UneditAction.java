@@ -32,7 +32,7 @@ public class UneditAction extends WorkspaceAction {
 	 */
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		
-		if(! MessageDialog.openConfirm(getShell(), CVSUIMessages.Uneditaction_confirmTitle, CVSUIMessages.Uneditaction_confirmMessage)) { //$NON-NLS-1$ //$NON-NLS-2$
+		if(! MessageDialog.openConfirm(getShell(), CVSUIMessages.Uneditaction_confirmTitle, CVSUIMessages.Uneditaction_confirmMessage)) { // 
 			return;
 		}
 		

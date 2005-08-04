@@ -33,7 +33,7 @@ public class RestoreFromRepositoryWizard extends Wizard {
 	public RestoreFromRepositoryWizard(IContainer parent, ICVSFile[] files) {
 		this.parent = parent;
 		this.files = files;
-		setWindowTitle(CVSUIMessages.RestoreFromRepositoryWizard_fileSelectionPageTitle); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.RestoreFromRepositoryWizard_fileSelectionPageTitle); 
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class RestoreFromRepositoryWizard extends Wizard {
 		setNeedsProgressMonitor(true);
 		ImageDescriptor substImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_CHECKOUT);
 		
-		fileSelectionPage = new RestoreFromRepositoryFileSelectionPage("FileSelectionPage", CVSUIMessages.RestoreFromRepositoryWizard_fileSelectionPageTitle, substImage, CVSUIMessages.RestoreFromRepositoryWizard_fileSelectionPageDescription); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		fileSelectionPage = new RestoreFromRepositoryFileSelectionPage("FileSelectionPage", CVSUIMessages.RestoreFromRepositoryWizard_fileSelectionPageTitle, substImage, CVSUIMessages.RestoreFromRepositoryWizard_fileSelectionPageDescription); //$NON-NLS-1$  
 		fileSelectionPage.setInput(parent, files);
 		addPage(fileSelectionPage);
 	}

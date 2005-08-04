@@ -71,6 +71,6 @@ public class Diff extends Command {
 	}
 	
 	protected String getServerErrorMessage() {
-		return CVSMessages.Diff_serverError; //$NON-NLS-1$
+		return CVSMessages.Diff_serverError; 
 	}
 }

@@ -57,7 +57,7 @@ public class ConfigureProjectAction extends TeamAction implements IWorkbenchWind
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, TeamUIMessages.ConfigureProjectAction_configureProject, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, TeamUIMessages.ConfigureProjectAction_configureProject, PROGRESS_BUSYCURSOR); 
 	}
 	/**
 	 * @see TeamAction#isEnabled()

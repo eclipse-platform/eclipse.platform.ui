@@ -76,7 +76,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	 * @param description
 	 */
 	public CheckoutAsLocationSelectionPage(ImageDescriptor titleImage, ICVSRemoteFolder[] remoteFolders) {
-		super(NAME, CVSUIMessages.CheckoutAsLocationSelectionPage_title, titleImage, CVSUIMessages.CheckoutAsLocationSelectionPage_description); //$NON-NLS-1$ //$NON-NLS-2$
+		super(NAME, CVSUIMessages.CheckoutAsLocationSelectionPage_title, titleImage, CVSUIMessages.CheckoutAsLocationSelectionPage_description); // 
 		this.remoteFolders = remoteFolders;
 	}
 
@@ -123,7 +123,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 
 		final Button useDefaultsButton =
 			new Button(composite, SWT.CHECK | SWT.RIGHT);
-		useDefaultsButton.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_useDefaultLabel); //$NON-NLS-1$
+		useDefaultsButton.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_useDefaultLabel); 
 		useDefaultsButton.setSelection(this.useDefaults);
 
 		createUserSpecifiedProjectLocationGroup(composite, !this.useDefaults);
@@ -158,9 +158,9 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 		// location label
 		locationLabel = new Label(projectGroup, SWT.NONE);
 		if (isSingleFolder()) {
-			locationLabel.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_locationLabel); //$NON-NLS-1$
+			locationLabel.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_locationLabel); 
 		} else {
-			locationLabel.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_parentDirectoryLabel); //$NON-NLS-1$
+			locationLabel.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_parentDirectoryLabel); 
 		}
 		locationLabel.setEnabled(enabled);
 
@@ -173,7 +173,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 
 		// browse button
 		this.browseButton = new Button(projectGroup, SWT.PUSH);
-		this.browseButton.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_browseLabel); //$NON-NLS-1$
+		this.browseButton.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_browseLabel); 
 		this.browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleLocationBrowseButtonPressed();
@@ -276,12 +276,12 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 		} else {
 			targetLocation = locationPathField.getText();
 			if (targetLocation.equals("")) {//$NON-NLS-1$
-				return(CVSUIMessages.CheckoutAsLocationSelectionPage_locationEmpty); //$NON-NLS-1$
+				return(CVSUIMessages.CheckoutAsLocationSelectionPage_locationEmpty); 
 			}
 			else{
 				IPath path = new Path("");//$NON-NLS-1$
 				if (!path.isValidPath(targetLocation)) {
-					return CVSUIMessages.CheckoutAsLocationSelectionPage_invalidLocation; //$NON-NLS-1$
+					return CVSUIMessages.CheckoutAsLocationSelectionPage_invalidLocation; 
 				}
 			}
 
@@ -363,9 +363,9 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	private void handleLocationBrowseButtonPressed() {
 		DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
 		if (isSingleFolder()) {
-			dialog.setMessage(NLS.bind(CVSUIMessages.CheckoutAsLocationSelectionPage_messageForSingle, new String[] { getSingleProject().getName() })); //$NON-NLS-1$
+			dialog.setMessage(NLS.bind(CVSUIMessages.CheckoutAsLocationSelectionPage_messageForSingle, new String[] { getSingleProject().getName() })); 
 		} else {
-			dialog.setMessage(NLS.bind(CVSUIMessages.CheckoutAsLocationSelectionPage_messageForMulti, new String[] { new Integer(remoteFolders.length).toString() })); //$NON-NLS-1$
+			dialog.setMessage(NLS.bind(CVSUIMessages.CheckoutAsLocationSelectionPage_messageForMulti, new String[] { new Integer(remoteFolders.length).toString() })); 
 		}
 	
 		String dirName = locationPathField.getText();

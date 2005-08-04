@@ -94,7 +94,7 @@ public class PServerConnection implements IServerConnection {
 	 */
 	public void open(IProgressMonitor monitor) throws IOException, CVSAuthenticationException {
 		
-		monitor.subTask(CVSMessages.PServerConnection_authenticating);//$NON-NLS-1$
+		monitor.subTask(CVSMessages.PServerConnection_authenticating);
 		monitor.worked(1);
 		
 		fSocket = createSocket(monitor);
@@ -163,7 +163,7 @@ public class PServerConnection implements IServerConnection {
 		
 		// Otherwise, determine the type of error
 		if (line.length() == 0) {
-			throw new IOException(CVSMessages.PServerConnection_noResponse);//$NON-NLS-1$
+			throw new IOException(CVSMessages.PServerConnection_noResponse);
 		}
 		
 		// Accumulate a message from the error (E) stream
@@ -180,7 +180,7 @@ public class PServerConnection implements IServerConnection {
 		// If the last line is the login failed (I HATE YOU) message, return authentication failure
 		if (LOGIN_FAILED.equals(line)) {
 		    if (message.length() == 0) {
-		        throw new CVSAuthenticationException(CVSMessages.PServerConnection_loginRefused, CVSAuthenticationException.RETRY);//$NON-NLS-1$
+		        throw new CVSAuthenticationException(CVSMessages.PServerConnection_loginRefused, CVSAuthenticationException.RETRY);
 		    } else {
 		        throw new CVSAuthenticationException(message, CVSAuthenticationException.RETRY);
 		    }
@@ -192,8 +192,8 @@ public class PServerConnection implements IServerConnection {
 		else
 			message += separator + line;
 		if (message.indexOf(NO_SUCH_USER) != -1)
-			throw new CVSAuthenticationException(NLS.bind(CVSMessages.PServerConnection_invalidUser, (new Object[] {message})), CVSAuthenticationException.RETRY);//$NON-NLS-1$
-		throw new IOException(NLS.bind(CVSMessages.PServerConnection_connectionRefused, (new Object[] { message })));//$NON-NLS-1$
+			throw new CVSAuthenticationException(NLS.bind(CVSMessages.PServerConnection_invalidUser, (new Object[] {message})), CVSAuthenticationException.RETRY);
+		throw new IOException(NLS.bind(CVSMessages.PServerConnection_connectionRefused, (new Object[] { message })));
 	}
 	/*
 	 * Called if there are exceptions when connecting.
@@ -234,7 +234,7 @@ public class PServerConnection implements IServerConnection {
 			result.setTcpNoDelay(true);
 		} catch (InterruptedIOException e) {
 			// If we get this exception, chances are the host is not responding
-			throw new InterruptedIOException(NLS.bind(CVSMessages.PServerConnection_socket, (new Object[] {cvsroot.getHost()})));//$NON-NLS-1$
+			throw new InterruptedIOException(NLS.bind(CVSMessages.PServerConnection_socket, (new Object[] {cvsroot.getHost()})));
 		}
 		result.setSoTimeout(1000); // 1 second between timeouts
 		return result;
@@ -253,6 +253,6 @@ public class PServerConnection implements IServerConnection {
 	}
 	
 	private void throwInValidCharacter() throws CVSAuthenticationException {
-		throw new CVSAuthenticationException(CVSMessages.PServerConnection_invalidChars, CVSAuthenticationException.RETRY);//$NON-NLS-1$
+		throw new CVSAuthenticationException(CVSMessages.PServerConnection_invalidChars, CVSAuthenticationException.RETRY);
 	}
 }

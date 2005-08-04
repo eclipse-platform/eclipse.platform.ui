@@ -64,7 +64,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	}
 
 	public GlobalRefreshAction() {
-		synchronizeAction = new Action(TeamUIMessages.GlobalRefreshAction_4) { //$NON-NLS-1$
+		synchronizeAction = new Action(TeamUIMessages.GlobalRefreshAction_4) { 
 			public void run() {
 				IWizard wizard = new GlobalSynchronizeWizard();
 				WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
@@ -230,11 +230,11 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 			if (!id.equals(NO_DEFAULT_PARTICPANT)) {
 				ISynchronizeParticipantReference ref = TeamUI.getSynchronizeManager().get(id, secondaryId);
 				if (ref != null) {
-					actionProxy.setToolTipText(NLS.bind(TeamUIMessages.GlobalRefreshAction_5, new String[] { ref.getDisplayName() })); //$NON-NLS-1$
+					actionProxy.setToolTipText(NLS.bind(TeamUIMessages.GlobalRefreshAction_5, new String[] { ref.getDisplayName() })); 
 					return;
 				}
 			}
-			actionProxy.setToolTipText(TeamUIMessages.GlobalRefreshAction_4); //$NON-NLS-1$
+			actionProxy.setToolTipText(TeamUIMessages.GlobalRefreshAction_4); 
 		}
 	}
 }

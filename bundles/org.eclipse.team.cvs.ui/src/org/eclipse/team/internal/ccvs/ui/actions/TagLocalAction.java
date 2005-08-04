@@ -36,17 +36,17 @@ public class TagLocalAction extends TagAction {
         try {
             PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                    dialog[0] = new UncommittedChangesDialog(getShell(), CVSUIMessages.TagLocalAction_4, mappings, monitor) { //$NON-NLS-1$
+                    dialog[0] = new UncommittedChangesDialog(getShell(), CVSUIMessages.TagLocalAction_4, mappings, monitor) { 
                         protected String getSingleMappingMessage(ResourceMapping mapping) {
                             String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
                             if (getAllMappings().length == 1) {
-                                return NLS.bind(CVSUIMessages.TagLocalAction_2, new String[] { label }); //$NON-NLS-1$
+                                return NLS.bind(CVSUIMessages.TagLocalAction_2, new String[] { label }); 
                             }
-                            return NLS.bind(CVSUIMessages.TagLocalAction_0, new String[] { label }); //$NON-NLS-1$
+                            return NLS.bind(CVSUIMessages.TagLocalAction_0, new String[] { label }); 
                         }
             
                         protected String getMultipleMappingsMessage() {
-                            return CVSUIMessages.TagLocalAction_1; //$NON-NLS-1$
+                            return CVSUIMessages.TagLocalAction_1; 
                         }
                         protected String getHelpContextId() {
                             return IHelpContextIds.TAG_UNCOMMITED_PROMPT;

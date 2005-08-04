@@ -54,7 +54,7 @@ public class PluginStringMappings {
             
             for (int j = 0; j < configElements.length; j++) {
                 
-                final String ext = configElements[j].getAttribute(fAttributeName);//"extension"); //$NON-NLS-1$
+                final String ext = configElements[j].getAttribute(fAttributeName);//"extension"); 
                 final String type = configElements[j].getAttribute("type"); //$NON-NLS-1$
                 if (ext == null || type == null) 
                     continue;

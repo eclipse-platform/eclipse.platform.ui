@@ -59,10 +59,10 @@ public class CVSCommunicationException extends CVSException {
 	public static IStatus getStatusFor(Exception e) {
 		if (e instanceof InterruptedIOException) {
 			MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, 0, getMessageFor(e), e);
-			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_interruptCause)); //$NON-NLS-1$
-			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_interruptSolution)); //$NON-NLS-1$
-			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_alternateInterruptCause)); //$NON-NLS-1$
-			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_alternateInterruptSolution)); //$NON-NLS-1$
+			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_interruptCause)); 
+			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_interruptSolution)); 
+			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_alternateInterruptCause)); 
+			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_alternateInterruptSolution)); 
 			return status;
 		}
 		return new CVSStatus(IStatus.ERROR, getMessageFor(e), e);

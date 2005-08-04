@@ -109,11 +109,11 @@ public class CVSAnnotateBlock {
 	 */
 	public String toString() {
 		int delta = endLine - startLine + 1;
-		String line = CVSMessages.CVSAnnotateBlock_4; //$NON-NLS-1$
+		String line = CVSMessages.CVSAnnotateBlock_4; 
 		if (delta == 1) {
-			line = CVSMessages.CVSAnnotateBlock_5; //$NON-NLS-1$
+			line = CVSMessages.CVSAnnotateBlock_5; 
 		}
-		return NLS.bind(CVSMessages.CVSAnnotateBlock_6, (new Object[] { //$NON-NLS-1$
+		return NLS.bind(CVSMessages.CVSAnnotateBlock_6, (new Object[] { 
         	user,
         	revision,
         	String.valueOf(delta),

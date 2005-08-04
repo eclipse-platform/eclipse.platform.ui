@@ -145,7 +145,7 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 		gd.horizontalSpan = 2;
 		separator.setLayoutData(gd);
 	
-		setTitle(TeamUIMessages.PreferencePageContainerDialog_6); //$NON-NLS-1$
+		setTitle(TeamUIMessages.PreferencePageContainerDialog_6); 
 		applyDialogFont(parent);
         if (helpId != null) {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, helpId);
@@ -163,7 +163,7 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
             PreferencePage page = pages[i];
 			// text decoration options
 			TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-			tabItem.setText(page.getTitle());//$NON-NLS-1$		
+			tabItem.setText(page.getTitle());//		
 			tabItem.setControl(createPageArea(tabFolder, page));
 			pageMap.put(tabItem, page);
         }
@@ -386,7 +386,7 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 			// Set the message and error message	
 			if (pageMessage == null) {
 			    if (isSinglePage()) {
-			        setMessage(TeamUIMessages.PreferencePageContainerDialog_6); //$NON-NLS-1$
+			        setMessage(TeamUIMessages.PreferencePageContainerDialog_6); 
 			    } else {
 			    	//remove mnemonic see bug 75886
 			    	String title = currentPage.getTitle();

@@ -75,8 +75,8 @@ public class SaveablePartDialog extends ResizableDialog {
 	 */
 	private void saveChanges() {
 		MessageDialog dialog = new MessageDialog(
-				getShell(), TeamUIMessages.ParticipantCompareDialog_2, null,  //$NON-NLS-1$
-				TeamUIMessages.ParticipantCompareDialog_3, MessageDialog.QUESTION, new String[]{IDialogConstants.YES_LABEL, //$NON-NLS-1$
+				getShell(), TeamUIMessages.ParticipantCompareDialog_2, null,  
+				TeamUIMessages.ParticipantCompareDialog_3, MessageDialog.QUESTION, new String[]{IDialogConstants.YES_LABEL, 
 				IDialogConstants.NO_LABEL}, 0); // YES is the default
 			
 		if (input.isDirty() && dialog.open() == IDialogConstants.OK_ID) {

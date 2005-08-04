@@ -48,7 +48,7 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 	 */
 	protected void createMainDialogArea(Composite composite) {
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText(message); //$NON-NLS-1$
+		label.setText(message); 
 		GridData data = new GridData(
 			GridData.GRAB_HORIZONTAL |
 			GridData.GRAB_VERTICAL |
@@ -85,7 +85,7 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 		}
 		
 		for (int i = 0; i < projects.length; i++) {
-			detailsList.add(projects[i].getName()); //$NON-NLS-1$
+			detailsList.add(projects[i].getName()); 
 		}			
 		return composite;
 	}

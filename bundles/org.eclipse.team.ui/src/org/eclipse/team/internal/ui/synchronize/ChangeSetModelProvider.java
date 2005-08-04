@@ -101,7 +101,7 @@ public class ChangeSetModelProvider extends CompositeModelProvider {
 			return ID;
 		}		
 		public String getName() {
-			return TeamUIMessages.ChangeLogModelProvider_5; //$NON-NLS-1$
+			return TeamUIMessages.ChangeLogModelProvider_5; 
 		}		
 		public ImageDescriptor getImageDescriptor() {
 			return TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_CHANGE_SET);

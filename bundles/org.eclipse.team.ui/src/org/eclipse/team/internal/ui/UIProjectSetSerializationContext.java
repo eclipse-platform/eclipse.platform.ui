@@ -91,8 +91,8 @@ public class UIProjectSetSerializationContext extends ProjectSetSerializationCon
 			}
 			public String promptMessage(IResource resource) {
                 if (resource.exists())
-                    return NLS.bind(TeamUIMessages.UIProjectSetSerializationContext_0, new String[] { resource.getName() }); //$NON-NLS-1$
-                return NLS.bind(TeamUIMessages.UIProjectSetSerializationContext_2, new String[] { resource.getName(), getTargetFile((IProject)resource).getAbsolutePath() }); //$NON-NLS-1$
+                    return NLS.bind(TeamUIMessages.UIProjectSetSerializationContext_0, new String[] { resource.getName() }); 
+                return NLS.bind(TeamUIMessages.UIProjectSetSerializationContext_2, new String[] { resource.getName(), getTargetFile((IProject)resource).getAbsolutePath() }); 
 			}
             public File getTargetFile(IProject project) {
                 return new File(project.getParent().getLocation().toFile(), project.getName());
@@ -103,7 +103,7 @@ public class UIProjectSetSerializationContext extends ProjectSetSerializationCon
 				(Shell)getShell(),
 				projects,
 				prompt,
-				TeamUIMessages.UIProjectSetSerializationContext_1); //$NON-NLS-1$
+				TeamUIMessages.UIProjectSetSerializationContext_1); 
 		IResource[] resourcesToOverwrite;
 		try {
 			resourcesToOverwrite = dialog.promptForMultiple();

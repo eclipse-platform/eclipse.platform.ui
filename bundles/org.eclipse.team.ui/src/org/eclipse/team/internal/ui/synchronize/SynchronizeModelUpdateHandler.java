@@ -145,7 +145,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
      * Create the marker update handler.
      */
     public SynchronizeModelUpdateHandler(AbstractSynchronizeModelProvider provider) {
-        super(TeamUIMessages.SynchronizeModelProvider_0, TeamUIMessages.SynchronizeModelUpdateHandler_0); //$NON-NLS-1$ //$NON-NLS-2$
+        super(TeamUIMessages.SynchronizeModelProvider_0, TeamUIMessages.SynchronizeModelUpdateHandler_0); // 
         this.provider = provider;
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
         provider.getSyncInfoSet().addSyncSetChangedListener(this);

@@ -48,7 +48,7 @@ public class CVSWorkspaceRoot {
 		ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
 		FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
 		if ( ! info.equals(folderInfo)) {
-			throw new CVSException(new CVSStatus(CVSStatus.ERROR, NLS.bind(CVSMessages.CVSProvider_infoMismatch, new String[] { project.getName() })));//$NON-NLS-1$
+			throw new CVSException(new CVSStatus(CVSStatus.ERROR, NLS.bind(CVSMessages.CVSProvider_infoMismatch, new String[] { project.getName() })));
 		}
         
         // Ensure that the repository location format is supported
@@ -99,7 +99,7 @@ public class CVSWorkspaceRoot {
 					// parent handle. If this is the case, isManaged should return false
 					// now. If it doesn't, then we should log an error.
 					if (resource.isManaged()) {
-						CVSProviderPlugin.log(new CVSException(NLS.bind(CVSMessages.CVSWorkspaceRoot_11, new String[] { Util.getFullestPath(resource) }))); //$NON-NLS-1$
+						CVSProviderPlugin.log(new CVSException(NLS.bind(CVSMessages.CVSWorkspaceRoot_11, new String[] { Util.getFullestPath(resource) }))); 
 					}
 				} else {
 					return RemoteFile.getBase(parent, (ICVSFile)resource);
@@ -132,7 +132,7 @@ public class CVSWorkspaceRoot {
 			}
 			// The types need to match or we're in trouble
 			if (remote != null && !(remote.isContainer() == managed.isFolder()))
-				throw new CVSException(new CVSStatus(CVSStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_typesDiffer, new String[] { resource.getFullPath().toString() }), null)); //$NON-NLS-1$
+				throw new CVSException(new CVSStatus(CVSStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_typesDiffer, new String[] { resource.getFullPath().toString() }), null)); 
 		}
 		return remote;
 	}
@@ -209,7 +209,7 @@ public class CVSWorkspaceRoot {
 	public ICVSRepositoryLocation getRemoteLocation() throws CVSException {
 		FolderSyncInfo info = localRoot.getFolderSyncInfo();
 		if (info == null) {
-			throw new CVSException(NLS.bind(CVSMessages.CVSWorkspaceRoot_notCVSFolder, new String[] { localRoot.getName() }));  //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.CVSWorkspaceRoot_notCVSFolder, new String[] { localRoot.getName() }));  
 		}
 		return KnownRepositories.getInstance().getRepository(info.getRoot());
 	}

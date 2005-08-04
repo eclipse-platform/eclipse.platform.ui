@@ -271,7 +271,7 @@ public abstract class Command extends Request {
 				folder = resources[i].getParent();
 			}
 			if (!folder.isCVSFolder() && folder.exists()) {
-				throw new CVSException(NLS.bind(CVSMessages.Command_argumentNotManaged, new String[] { folder.getName() }));//$NON-NLS-1$
+				throw new CVSException(NLS.bind(CVSMessages.Command_argumentNotManaged, new String[] { folder.getName() }));
 			}
 		}
 	}
@@ -445,7 +445,7 @@ public abstract class Command extends Request {
 				completePath = completePath.append(arguments[i]);
 			}
 			commandLine.append(completePath.toString());
-			commandLine.append('"'); //$NON-NLS-1$
+			commandLine.append('"'); 
 		}
 		return commandLine.toString();
 	}	
@@ -634,7 +634,7 @@ public abstract class Command extends Request {
 		 */
 		public String getShortDisplayText() {
 			if (isUnknownMode)
-                return NLS.bind(CVSMessages.KSubstOption_unknown_short, new String[] { option }); //$NON-NLS-1$
+                return NLS.bind(CVSMessages.KSubstOption_unknown_short, new String[] { option }); 
             if (option.equals("-kb")) //$NON-NLS-1$
                 return CVSMessages.KSubstOption__kb_short;
             if (option.equals("-kkv")) //$NON-NLS-1$
@@ -647,14 +647,14 @@ public abstract class Command extends Request {
                 return CVSMessages.KSubstOption__kv_short;
             if (option.equals("-kkvl")) //$NON-NLS-1$
                 return CVSMessages.KSubstOption__kkvl_short;
-            return NLS.bind(CVSMessages.KSubstOption_unknown_short, new String[] { option }); //$NON-NLS-1$
+            return NLS.bind(CVSMessages.KSubstOption_unknown_short, new String[] { option }); 
 		}
 		/**
 		 * Returns a long localized text string describing this mode.
 		 */
 		public String getLongDisplayText() {
 			if (isUnknownMode)
-                return NLS.bind(CVSMessages.KSubstOption_unknown_long, new String[] { option }); //$NON-NLS-1$
+                return NLS.bind(CVSMessages.KSubstOption_unknown_long, new String[] { option }); 
             if (option.equals("-kb")) //$NON-NLS-1$
                 return CVSMessages.KSubstOption__kb_long;
             if (option.equals("-kkv")) //$NON-NLS-1$
@@ -667,7 +667,7 @@ public abstract class Command extends Request {
                 return CVSMessages.KSubstOption__kv_long;
             if (option.equals("-kkvl")) //$NON-NLS-1$
                 return CVSMessages.KSubstOption__kkvl_long;
-            return NLS.bind(CVSMessages.KSubstOption_unknown_long, new String[] { option }); //$NON-NLS-1$
+            return NLS.bind(CVSMessages.KSubstOption_unknown_long, new String[] { option }); 
 		}
 		/**
 		 * Return the text mode that will be used by default
@@ -685,7 +685,7 @@ public abstract class Command extends Request {
 		if(argument == null) {
 			argument = ""; //$NON-NLS-1$
 		}
-		return new LocalOption(option.getOption(), argument);  //$NON-NLS-1$
+		return new LocalOption(option.getOption(), argument);  
 	}
 	
 	/**
@@ -702,7 +702,7 @@ public abstract class Command extends Request {
 				return new LocalOption("-D", tag.getName()); //$NON-NLS-1$
 			default:
 				// tag must not be HEAD
-				throw new IllegalArgumentException(CVSMessages.Command_invalidTag); //$NON-NLS-1$
+				throw new IllegalArgumentException(CVSMessages.Command_invalidTag); 
 		}
 	}
 

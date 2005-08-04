@@ -38,7 +38,7 @@ public class FlatModelProvider extends SynchronizeModelProvider {
 			return ID;
 		}		
 		public String getName() {
-			return TeamUIMessages.FlatModelProvider_0; //$NON-NLS-1$
+			return TeamUIMessages.FlatModelProvider_0; 
 		}		
 		public ImageDescriptor getImageDescriptor() {
 			return TeamImages.getImageDescriptor(ITeamUIImages.IMG_FLAT);
@@ -164,7 +164,7 @@ public class FlatModelProvider extends SynchronizeModelProvider {
 		private MenuManager sortByResource;
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
-			sortByResource = new MenuManager(TeamUIMessages.FlatModelProvider_6);	 //$NON-NLS-1$
+			sortByResource = new MenuManager(TeamUIMessages.FlatModelProvider_6);	 
 			
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
@@ -174,9 +174,9 @@ public class FlatModelProvider extends SynchronizeModelProvider {
 			// Ensure that the sort criteria of the provider is properly initialized
 			FlatModelProvider.this.initialize(configuration);
 			
-			sortByResource.add( new ToggleSortOrderAction(TeamUIMessages.FlatModelProvider_8, FlatSorter.PATH)); //$NON-NLS-1$
-			sortByResource.add(new ToggleSortOrderAction(TeamUIMessages.FlatModelProvider_7, FlatSorter.NAME)); //$NON-NLS-1$
-			sortByResource.add(new ToggleSortOrderAction(TeamUIMessages.FlatModelProvider_9, FlatSorter.PARENT_NAME)); //$NON-NLS-1$
+			sortByResource.add( new ToggleSortOrderAction(TeamUIMessages.FlatModelProvider_8, FlatSorter.PATH)); 
+			sortByResource.add(new ToggleSortOrderAction(TeamUIMessages.FlatModelProvider_7, FlatSorter.NAME)); 
+			sortByResource.add(new ToggleSortOrderAction(TeamUIMessages.FlatModelProvider_9, FlatSorter.PARENT_NAME)); 
 		}
 
         /* (non-Javadoc)

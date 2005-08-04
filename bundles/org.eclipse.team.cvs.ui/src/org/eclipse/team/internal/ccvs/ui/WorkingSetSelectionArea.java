@@ -124,7 +124,7 @@ public class WorkingSetSelectionArea extends DialogArea {
 		data.horizontalIndent= 15;
 		mruList.setLayoutData(data);
 
-		selectButton = createButton(composite, CVSUIMessages.WorkingSetSelectionArea_workingSetOther, GridData.HORIZONTAL_ALIGN_FILL); //$NON-NLS-1$
+		selectButton = createButton(composite, CVSUIMessages.WorkingSetSelectionArea_workingSetOther, GridData.HORIZONTAL_ALIGN_FILL); 
 		selectButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleWorkingSetSelection();

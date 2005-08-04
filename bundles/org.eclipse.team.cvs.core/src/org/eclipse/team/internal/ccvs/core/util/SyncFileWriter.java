@@ -85,7 +85,7 @@ public class SyncFileWriter {
 				} catch (CVSException e) {
 					// There was a problem parsing the entry line.
 					// Log the problem and skip the entry
-					CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.SyncFileWriter_0, new String[] { parent.getFullPath().toString() }), e)); //$NON-NLS-1$
+					CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.SyncFileWriter_0, new String[] { parent.getFullPath().toString() }), e)); 
 				}			
 			}
 		}
@@ -588,7 +588,7 @@ public class SyncFileWriter {
 			IFolder baseFolder = getBaseDirectory(file);
 			IFile source = baseFolder.getFile(new Path(null, file.getName()));
 			if (!source.exists()) {
-				throw new CVSException(NLS.bind(CVSMessages.SyncFileWriter_baseNotAvailable, new String[] { file.getFullPath().toString() })); //$NON-NLS-1$
+				throw new CVSException(NLS.bind(CVSMessages.SyncFileWriter_baseNotAvailable, new String[] { file.getFullPath().toString() })); 
 			}
 			if (file.exists()) {
 				file.delete(false /* force */, true /* keep history */, Policy.subMonitorFor(monitor, 10));
@@ -659,7 +659,7 @@ public class SyncFileWriter {
 			String property = System.getProperty("line.separator"); //$NON-NLS-1$
 			if (property != null) return property.getBytes();
 		}
-		return new byte[] { 0x0A }; //$NON-NLS-1$
+		return new byte[] { 0x0A }; 
 	}
 
 }

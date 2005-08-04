@@ -39,7 +39,7 @@ public class CVSTag {
 	private static final SimpleDateFormat tagNameFormat = new SimpleDateFormat(DATE_TAG_NAME_FORMAT, Locale.US);
 	protected static synchronized String dateToTagName(Date date){
 		tagNameFormat.setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
-		return tagNameFormat.format(date); //$NON-NLS-1$
+		return tagNameFormat.format(date); 
 	}
 	protected static Date tagNameToDate(String name){
 		if (name == null) return null;		
@@ -105,18 +105,18 @@ public class CVSTag {
 	
 	public static IStatus validateTagName(String tagName) {
 		if (tagName == null)
-			return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_nullName); //$NON-NLS-1$
+			return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_nullName); 
 		if (tagName.equals(""))  //$NON-NLS-1$
-			return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_emptyName); //$NON-NLS-1$
+			return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_emptyName); 
 		if (!Character. isLetter(tagName.charAt(0)))
-			return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_beginName); //$NON-NLS-1$
+			return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_beginName); 
 		
 		for (int i = 0; i < tagName.length(); i++) {
 			char c = tagName.charAt(i);
 			if ( Character.isSpaceChar(c) || c == '$' || c == ',' || c == '.' || c == ':' || c == ';' || c == '@' || c == '|')
-				return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_badCharName); //$NON-NLS-1$
+				return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_badCharName); 
 		}
-		return new CVSStatus(CVSStatus.OK, CVSMessages.ok); //$NON-NLS-1$
+		return new CVSStatus(CVSStatus.OK, CVSMessages.ok); 
 	}
 	
 	/**

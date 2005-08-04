@@ -81,7 +81,7 @@ public class TemplateHandler extends ResponseHandler {
 							out.close();
 						}
 					} catch (IOException e) {
-						throw CVSException.wrapException(e); //$NON-NLS-1$
+						throw CVSException.wrapException(e); 
 					} finally {
 						try {
 							stream.close();

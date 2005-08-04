@@ -58,7 +58,7 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
 	 */
 	protected String getErrorMessage(IStatus[] problems, int operationCount) {
 		if(operationCount == 1) {
-			return CVSUIMessages.TagInRepositoryAction_tagProblemsMessage; //$NON-NLS-1$
+			return CVSUIMessages.TagInRepositoryAction_tagProblemsMessage; 
 		} else {
 			return NLS.bind(CVSUIMessages.TagInRepositoryAction_tagProblemsMessageMultiple, new String[] { Integer.toString(operationCount - problems.length), Integer.toString(problems.length) });
 		}
@@ -108,7 +108,7 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
 	}
 
 	protected String getTaskName() {
-		return CVSUIMessages.TagFromRepository_taskName; //$NON-NLS-1$
+		return CVSUIMessages.TagFromRepository_taskName; 
 	}
 
     /* (non-Javadoc)

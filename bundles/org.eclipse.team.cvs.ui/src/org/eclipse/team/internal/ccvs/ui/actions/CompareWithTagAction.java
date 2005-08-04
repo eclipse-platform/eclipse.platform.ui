@@ -59,7 +59,7 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
 				participant = new CompareParticipant(s);
 				TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
 			}
-			participant.refresh(resources, null, null, null); //$NON-NLS-1$
+			participant.refresh(resources, null, null, null); 
 		}
 	}
 

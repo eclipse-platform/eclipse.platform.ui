@@ -26,7 +26,7 @@ public class RemoveDateTagAction extends SelectionListenerAction {
 	private IStructuredSelection selection;
 	
 	public RemoveDateTagAction() {
-		super(CVSUIMessages.RemoveDateTagAction_0); //$NON-NLS-1$
+		super(CVSUIMessages.RemoveDateTagAction_0); 
 	}
 
 	public void run() {

@@ -57,13 +57,13 @@ public class NotifyInfo {
 	public NotifyInfo(IContainer parent, String line) throws CVSException {
 		String[] strings = Util.parseIntoSubstrings(line, ResourceSyncInfo.SEPARATOR);
 		if(strings.length != 4) {
-			throw new CVSException(NLS.bind(CVSMessages.NotifyInfo_MalformedLine, new String[] { line })); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.NotifyInfo_MalformedLine, new String[] { line })); 
 		}
 		this.filename = strings[0];
 		
 		String type = strings[1];
 		if (type.length() != 1) {
-			throw new CVSException(NLS.bind(CVSMessages.NotifyInfo_MalformedNotificationType, new String[] { line })); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.NotifyInfo_MalformedNotificationType, new String[] { line })); 
 		}
 		this.notificationType = type.charAt(0);
 		
@@ -71,7 +71,7 @@ public class NotifyInfo {
 		try {	
 			this.timeStamp = CVSDateFormatter.entryLineToDate(date);
 		} catch(ParseException e) {
-			throw new CVSException(NLS.bind(CVSMessages.NotifyInfo_MalformedNotifyDate, new String[] { line })); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.NotifyInfo_MalformedNotifyDate, new String[] { line })); 
 		}
 		
 		String watchesString = strings[3];

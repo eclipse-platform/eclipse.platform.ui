@@ -117,7 +117,7 @@ public abstract class CVSModelElement implements IWorkbenchAdapter, IAdaptable {
      * @param t the exception that occurred.
      */
     protected void handle(Throwable t) {
-        handle(CVSUIMessages.CVSModelElement_0, CVSUIMessages.CVSModelElement_1, t); //$NON-NLS-1$ //$NON-NLS-2$
+        handle(CVSUIMessages.CVSModelElement_0, CVSUIMessages.CVSModelElement_1, t); // 
     }
     
     /**

@@ -86,7 +86,7 @@ public class ShowAnnotationOperation extends CVSOperation {
      * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
      */
     protected String getTaskName() {
-        return CVSUIMessages.ShowAnnotationOperation_taskName; //$NON-NLS-1$
+        return CVSUIMessages.ShowAnnotationOperation_taskName; 
     }
 
 	protected boolean hasCharset(ICVSResource cvsResource, InputStream contents) {
@@ -114,7 +114,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 			try {
 				workbench.showPerspective(defaultPerspectiveID, window);
 			} catch (WorkbenchException e) {
-				Utils.handleError(window.getShell(), e, CVSUIMessages.ShowAnnotationOperation_0, e.getMessage()); //$NON-NLS-1$
+				Utils.handleError(window.getShell(), e, CVSUIMessages.ShowAnnotationOperation_0, e.getMessage()); 
 			}
 		}
        
@@ -210,9 +210,9 @@ public class ShowAnnotationOperation extends CVSOperation {
 		    // Ask the user whether to switch
 			final MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(
 			        Utils.getShell(null),
-			        CVSUIMessages.ShowAnnotationOperation_1, //$NON-NLS-1$
-			        NLS.bind(CVSUIMessages.ShowAnnotationOperation_2, new String[] { desired.getLabel() }), //$NON-NLS-1$
-			        CVSUIMessages.ShowAnnotationOperation_4,   //$NON-NLS-1$
+			        CVSUIMessages.ShowAnnotationOperation_1, 
+			        NLS.bind(CVSUIMessages.ShowAnnotationOperation_2, new String[] { desired.getLabel() }), 
+			        CVSUIMessages.ShowAnnotationOperation_4,   
 			        false /* toggle state */,
 			        store,
 			        ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS);

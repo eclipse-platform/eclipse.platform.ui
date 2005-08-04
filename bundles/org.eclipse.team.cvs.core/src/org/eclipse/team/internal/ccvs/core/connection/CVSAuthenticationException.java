@@ -38,7 +38,7 @@ public class CVSAuthenticationException extends CVSException {
 	 */
 	public CVSAuthenticationException(String detail, int code) {
 		this(new CVSStatus(IStatus.ERROR, code, 
-			NLS.bind(CVSMessages.CVSAuthenticationException_detail, (new Object[] { detail })))); //$NON-NLS-1$ 
+			NLS.bind(CVSMessages.CVSAuthenticationException_detail, (new Object[] { detail })))); // 
 	}
 	
 	/**
@@ -52,6 +52,6 @@ public class CVSAuthenticationException extends CVSException {
 
     public CVSAuthenticationException(String string, int code, Exception e) {
         this(new CVSStatus(IStatus.ERROR, code, 
-                NLS.bind(CVSMessages.CVSAuthenticationException_detail, (new Object[] { string })), e)); //$NON-NLS-1$ 
+                NLS.bind(CVSMessages.CVSAuthenticationException_detail, (new Object[] { string })), e)); // 
     }
 }

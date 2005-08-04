@@ -86,8 +86,8 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 				}
 			};
 			useResourceTag = true;
-			useResourceTagButton = createRadioButton(composite, CVSUIMessages.TagSelectionWizardPage_0, 1); //$NON-NLS-1$
-			selectTagButton = createRadioButton(composite, CVSUIMessages.TagSelectionWizardPage_1, 1); //$NON-NLS-1$
+			useResourceTagButton = createRadioButton(composite, CVSUIMessages.TagSelectionWizardPage_0, 1); 
+			selectTagButton = createRadioButton(composite, CVSUIMessages.TagSelectionWizardPage_1, 1); 
 			useResourceTagButton.setSelection(useResourceTag);
 			selectTagButton.setSelection(!useResourceTag);
 			useResourceTagButton.addSelectionListener(listener);

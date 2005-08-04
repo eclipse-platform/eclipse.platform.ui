@@ -28,7 +28,7 @@ public class UpdateDialog extends SyncInfoSetDetailsDialog {
 	public static final int YES = IDialogConstants.YES_ID;
 	
 	public UpdateDialog(Shell parentShell, SyncInfoSet syncSet) {
-		super(parentShell, CVSUIMessages.UpdateDialog_overwriteTitle, syncSet); //$NON-NLS-1$ //$NON-NLS-2$
+		super(parentShell, CVSUIMessages.UpdateDialog_overwriteTitle, syncSet); // 
 	}
 
 	/* (non-Javadoc)
@@ -41,7 +41,7 @@ public class UpdateDialog extends SyncInfoSetDetailsDialog {
 		// TODO: set F1 help
 		//WorkbenchHelp.setHelp(composite, IHelpContextIds.ADD_TO_VERSION_CONTROL_DIALOG);
 		
-		createWrappingLabel(composite, CVSUIMessages.UpdateDialog_overwriteMessage); //$NON-NLS-1$
+		createWrappingLabel(composite, CVSUIMessages.UpdateDialog_overwriteMessage); 
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {

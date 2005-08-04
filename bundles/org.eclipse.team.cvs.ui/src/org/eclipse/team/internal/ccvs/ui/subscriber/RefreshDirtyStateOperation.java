@@ -142,13 +142,13 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
     }
     
     protected String getErrorTitle() {
-		return CVSUIMessages.RefreshDirtyStateOperation_0; //$NON-NLS-1$
+		return CVSUIMessages.RefreshDirtyStateOperation_0; 
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName(org.eclipse.team.ui.sync.SyncInfoSet)
 	 */
 	protected String getJobName() {
-		return CVSUIMessages.RefreshDirtyStateOperation_1; //$NON-NLS-1$
+		return CVSUIMessages.RefreshDirtyStateOperation_1; 
 	}
 }

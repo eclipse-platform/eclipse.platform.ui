@@ -40,17 +40,17 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
         try {
             PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                    dialog[0] = new UncommittedChangesDialog(shell, CVSUIMessages.ReplaceWithTagAction_4, mappings, monitor) { //$NON-NLS-1$
+                    dialog[0] = new UncommittedChangesDialog(shell, CVSUIMessages.ReplaceWithTagAction_4, mappings, monitor) { 
                         protected String getSingleMappingMessage(ResourceMapping mapping) {
                             String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
                             if (getAllMappings().length == 1) {
-                                return NLS.bind(CVSUIMessages.ReplaceWithTagAction_2, new String[] { label }); //$NON-NLS-1$
+                                return NLS.bind(CVSUIMessages.ReplaceWithTagAction_2, new String[] { label }); 
                             }
-                            return NLS.bind(CVSUIMessages.ReplaceWithTagAction_0, new String[] { label }); //$NON-NLS-1$
+                            return NLS.bind(CVSUIMessages.ReplaceWithTagAction_0, new String[] { label }); 
                         }
             
                         protected String getMultipleMappingsMessage() {
-                            return CVSUIMessages.ReplaceWithTagAction_1; //$NON-NLS-1$
+                            return CVSUIMessages.ReplaceWithTagAction_1; 
                         }
                         protected String getHelpContextId() {
                             return IHelpContextIds.REPLACE_OVERWRITE_PROMPT;
@@ -99,11 +99,11 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 					return;
 				}
 				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), TagSource.create(resourceMappings[0]), 
-					CVSUIMessages.ReplaceWithTagAction_message, //$NON-NLS-1$
-					CVSUIMessages.TagSelectionDialog_Select_a_Tag_1, //$NON-NLS-1$
+					CVSUIMessages.ReplaceWithTagAction_message, 
+					CVSUIMessages.TagSelectionDialog_Select_a_Tag_1, 
 					TagSelectionDialog.INCLUDE_ALL_TAGS, 
 					false, /*show recurse*/
-					IHelpContextIds.REPLACE_TAG_SELECTION_DIALOG); //$NON-NLS-1$
+					IHelpContextIds.REPLACE_TAG_SELECTION_DIALOG); 
 				dialog.setBlockOnOpen(true);
 				if (dialog.open() == Dialog.CANCEL) {
 					return;
@@ -121,7 +121,7 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, false /* cancelable */, PROGRESS_BUSYCURSOR);			 //$NON-NLS-1$
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);			 
 		
 		if (resourceMappings[0] == null || resourceMappings[0].length == 0 || tag[0] == null) return;
 		
@@ -133,7 +133,7 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return CVSUIMessages.ReplaceWithTagAction_replace; //$NON-NLS-1$
+		return CVSUIMessages.ReplaceWithTagAction_replace; 
 	}
 
 	/* (non-Javadoc)

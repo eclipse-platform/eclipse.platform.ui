@@ -80,7 +80,7 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 		IResource[] changedResources = null;
 		monitor.beginTask(null, 100);
 		try {
-			monitor.setTaskName(NLS.bind(Messages.SynchronizationCacheRefreshOperation_0, new String[] { resource.getFullPath().makeRelative().toString() })); //$NON-NLS-1$
+			monitor.setTaskName(NLS.bind(Messages.SynchronizationCacheRefreshOperation_0, new String[] { resource.getFullPath().makeRelative().toString() })); 
 			
 			// build the remote tree only if an initial tree hasn't been provided
 			IResourceVariant tree = fetchVariant(resource, depth, Policy.subMonitorFor(monitor, 70));

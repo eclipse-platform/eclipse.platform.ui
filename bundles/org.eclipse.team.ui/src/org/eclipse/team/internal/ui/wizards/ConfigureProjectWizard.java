@@ -44,7 +44,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	
 	public ConfigureProjectWizard() {
 		setNeedsProgressMonitor(true);
-		setWindowTitle(getWizardWindowTitle()); //$NON-NLS-1$
+		setWindowTitle(getWizardWindowTitle()); 
 	}
 	
 	protected String getExtensionPoint() {
@@ -52,15 +52,15 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	}
 	
 	protected String getWizardWindowTitle() {
-		return TeamUIMessages.ConfigureProjectWizard_title; //$NON-NLS-1$
+		return TeamUIMessages.ConfigureProjectWizard_title; 
 	}
 	
 	protected String getWizardLabel() {
-		return TeamUIMessages.ConfigureProjectWizard_configureProject; //$NON-NLS-1$
+		return TeamUIMessages.ConfigureProjectWizard_configureProject; 
 	}
 	
 	protected String getWizardDescription() {
-		return TeamUIMessages.ConfigureProjectWizard_description; //$NON-NLS-1$
+		return TeamUIMessages.ConfigureProjectWizard_description; 
 	}
 	
 	/*

@@ -102,7 +102,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 			new InputElement(), 
 			new RemoteContentProvider(), 
 			new WorkbenchLabelProvider(), 
-			CVSUIMessages.RefreshRemoteProjectSelectionPage_selectRemoteProjects); //$NON-NLS-1$
+			CVSUIMessages.RefreshRemoteProjectSelectionPage_selectRemoteProjects); 
 		listArea.createArea(composite);
 
 		listArea.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -112,7 +112,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 		});
 		listArea.getViewer().setSorter(new RepositorySorter());
 		
-		workingSetArea = new WorkingSetSelectionArea(getShell(), CVSUIMessages.RefreshRemoteProjectSelectionPage_noWorkingSet, CVSUIMessages.RefreshRemoteProjectSelectionPage_workingSet, settings); //$NON-NLS-1$ //$NON-NLS-2$
+		workingSetArea = new WorkingSetSelectionArea(getShell(), CVSUIMessages.RefreshRemoteProjectSelectionPage_noWorkingSet, CVSUIMessages.RefreshRemoteProjectSelectionPage_workingSet, settings); // 
 		setWorkingSet(workingSet);
 		workingSetArea.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {

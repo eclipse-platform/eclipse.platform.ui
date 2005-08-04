@@ -85,8 +85,8 @@ public class MergeWizardPage extends CVSWizardPage {
     	composite.setLayoutData(SWTUtils.createHFillGridData());
     	composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
     	
-        previewButton = SWTUtils.createRadioButton(composite, CVSUIMessages.MergeWizardPage_0); //$NON-NLS-1$
-        noPreviewButton = SWTUtils.createRadioButton(composite, CVSUIMessages.MergeWizardPage_1); //$NON-NLS-1$
+        previewButton = SWTUtils.createRadioButton(composite, CVSUIMessages.MergeWizardPage_0); 
+        noPreviewButton = SWTUtils.createRadioButton(composite, CVSUIMessages.MergeWizardPage_1); 
         SelectionAdapter selectionAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 preview  = previewButton.getSelection();
@@ -105,7 +105,7 @@ public class MergeWizardPage extends CVSWizardPage {
     }
 
     private void createEndTagArea(Composite parent) {
-        SWTUtils.createLabel(parent, CVSUIMessages.MergeWizardPage_2, 2); //$NON-NLS-1$
+        SWTUtils.createLabel(parent, CVSUIMessages.MergeWizardPage_2, 2); 
         
         endTagField = SWTUtils.createText(parent);
         endTagField.addModifyListener(new ModifyListener() {
@@ -115,13 +115,13 @@ public class MergeWizardPage extends CVSWizardPage {
         });
         final int endTagIncludeFlags = TagSelectionArea.INCLUDE_VERSIONS | TagSelectionArea.INCLUDE_BRANCHES | TagSelectionArea.INCLUDE_HEAD_TAG;
         TagContentAssistProcessor.createContentAssistant(endTagField, tagSource, endTagIncludeFlags);
-        endTagBrowseButton = createPushButton(parent, CVSUIMessages.MergeWizardPage_3); //$NON-NLS-1$
+        endTagBrowseButton = createPushButton(parent, CVSUIMessages.MergeWizardPage_3); 
         
         endTagBrowseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 TagSelectionDialog dialog = new TagSelectionDialog(getShell(), getTagSource(), 
-                        CVSUIMessages.MergeWizardPage_4, //$NON-NLS-1$
-                        CVSUIMessages.MergeWizardPage_5, //$NON-NLS-1$
+                        CVSUIMessages.MergeWizardPage_4, 
+                        CVSUIMessages.MergeWizardPage_5, 
                         endTagIncludeFlags,
                         false, IHelpContextIds.MERGE_END_PAGE);
                 if (dialog.open() == Dialog.OK) {
@@ -134,7 +134,7 @@ public class MergeWizardPage extends CVSWizardPage {
     
     private void createStartTagArea(Composite parent) {
         
-    	SWTUtils.createLabel(parent, CVSUIMessages.MergeWizardPage_6, 2); //$NON-NLS-1$
+    	SWTUtils.createLabel(parent, CVSUIMessages.MergeWizardPage_6, 2); 
 
         startTagField = SWTUtils.createText(parent);
         startTagField.addModifyListener(new ModifyListener() {
@@ -144,12 +144,12 @@ public class MergeWizardPage extends CVSWizardPage {
         });
         TagContentAssistProcessor.createContentAssistant(startTagField, tagSource, TagSelectionArea.INCLUDE_VERSIONS);
 
-        startTagBrowseButton = createPushButton(parent, CVSUIMessages.MergeWizardPage_7); //$NON-NLS-1$
+        startTagBrowseButton = createPushButton(parent, CVSUIMessages.MergeWizardPage_7); 
         startTagBrowseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 TagSelectionDialog dialog = new TagSelectionDialog(getShell(), getTagSource(), 
-                        CVSUIMessages.MergeWizardPage_8, //$NON-NLS-1$
-                        CVSUIMessages.MergeWizardPage_9, //$NON-NLS-1$
+                        CVSUIMessages.MergeWizardPage_8, 
+                        CVSUIMessages.MergeWizardPage_9, 
                         TagSelectionDialog.INCLUDE_VERSIONS,
                         false, IHelpContextIds.MERGE_START_PAGE);
                 if (dialog.open() == Dialog.OK) {
@@ -247,13 +247,13 @@ public class MergeWizardPage extends CVSWizardPage {
 
     private void updateEnablements() {
         if (endTag == null && endTagField.getText().length() > 0) {
-            setErrorMessage(CVSUIMessages.MergeWizardPage_10); //$NON-NLS-1$
+            setErrorMessage(CVSUIMessages.MergeWizardPage_10); 
         } else if (startTag == null && startTagField.getText().length() > 0) {
-            setErrorMessage(CVSUIMessages.MergeWizardPage_11); //$NON-NLS-1$
+            setErrorMessage(CVSUIMessages.MergeWizardPage_11); 
         } else if (endTag != null && startTag != null && startTag.equals(endTag)) {
-            setErrorMessage(CVSUIMessages.MergeWizardPage_12); //$NON-NLS-1$
+            setErrorMessage(CVSUIMessages.MergeWizardPage_12); 
         } else if (startTag == null && endTag != null && preview) {
-            setErrorMessage(CVSUIMessages.MergeWizardPage_13); //$NON-NLS-1$
+            setErrorMessage(CVSUIMessages.MergeWizardPage_13); 
         } else {
             setErrorMessage(null);
         }

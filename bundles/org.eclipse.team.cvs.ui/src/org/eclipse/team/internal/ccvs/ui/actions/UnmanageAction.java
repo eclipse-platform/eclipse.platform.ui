@@ -54,18 +54,18 @@ public class UnmanageAction extends WorkspaceAction {
 		
 		static String getTitle(IProject[] projects) {
 			if (projects.length == 1)
-				return CVSUIMessages.Unmanage_title;  //$NON-NLS-1$
+				return CVSUIMessages.Unmanage_title;  
 			else
-				return CVSUIMessages.Unmanage_titleN;  //$NON-NLS-1$
+				return CVSUIMessages.Unmanage_titleN;  
 		}
 		
 		static String getMessage(IProject[] projects) {
 			if (projects.length == 1) {
 				IProject project = projects[0];
-				return NLS.bind(CVSUIMessages.Unmanage_message, new String[] { project.getName() });  //$NON-NLS-1$
+				return NLS.bind(CVSUIMessages.Unmanage_message, new String[] { project.getName() });  
 			}
 			else {
-				return NLS.bind(CVSUIMessages.Unmanage_messageN, new String[] { new Integer(projects.length).toString() });  //$NON-NLS-1$
+				return NLS.bind(CVSUIMessages.Unmanage_messageN, new String[] { new Integer(projects.length).toString() });  
 			}
 		}
 		
@@ -75,12 +75,12 @@ public class UnmanageAction extends WorkspaceAction {
 			radio1 = new Button(composite, SWT.RADIO);
 			radio1.addSelectionListener(selectionListener);
 			
-			radio1.setText(CVSUIMessages.Unmanage_option2); //$NON-NLS-1$
+			radio1.setText(CVSUIMessages.Unmanage_option2); 
 
 			radio2 = new Button(composite, SWT.RADIO);
 			radio2.addSelectionListener(selectionListener);
 
-			radio2.setText(CVSUIMessages.Unmanage_option1); //$NON-NLS-1$
+			radio2.setText(CVSUIMessages.Unmanage_option1); 
 			
 			// set initial state
 			radio1.setSelection(deleteContent);
@@ -134,7 +134,7 @@ public class UnmanageAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return CVSUIMessages.Unmanage_unmanagingError;//$NON-NLS-1$
+		return CVSUIMessages.Unmanage_unmanagingError;
 	}
 
 	/**

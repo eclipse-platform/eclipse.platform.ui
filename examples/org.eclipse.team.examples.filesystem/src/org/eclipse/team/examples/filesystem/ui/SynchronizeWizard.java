@@ -35,7 +35,7 @@ public class SynchronizeWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#getWindowTitle()
 	 */
 	public String getWindowTitle() {
-		return TeamUIMessages.GlobalRefreshSubscriberPage_0; //$NON-NLS-1$
+		return TeamUIMessages.GlobalRefreshSubscriberPage_0; 
 	}
 	
 	/* (non-Javadoc)

@@ -111,7 +111,7 @@ public class ResourceScope extends AbstractSynchronizeScope {
 			List resources = new ArrayList();
 			for (int i = 0; i < rootNodes.length; i++) {
 				IMemento rootNode = rootNodes[i];
-				IPath path = new Path(rootNode.getString(CTX_ROOT_PATH)); //$NON-NLS-1$
+				IPath path = new Path(rootNode.getString(CTX_ROOT_PATH)); 
 				IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path, true /* include phantoms */);
 				if(resource != null) {
 					resources.add(resource);

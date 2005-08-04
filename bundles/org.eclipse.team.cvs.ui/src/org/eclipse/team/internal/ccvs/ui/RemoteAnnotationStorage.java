@@ -46,7 +46,7 @@ public class RemoteAnnotationStorage extends PlatformObject implements IEncodedS
 			String charSet = TeamPlugin.getCharset(getName(), contents);
 			return charSet;
 		} catch (IOException e) {
-			throw new CVSException(new Status(IStatus.ERROR, CVSUIPlugin.ID, IResourceStatus.FAILED_DESCRIBING_CONTENTS, NLS.bind(CVSUIMessages.RemoteAnnotationStorage_1, (new String[] { getFullPath().toString() })), e)); //$NON-NLS-1$
+			throw new CVSException(new Status(IStatus.ERROR, CVSUIPlugin.ID, IResourceStatus.FAILED_DESCRIBING_CONTENTS, NLS.bind(CVSUIMessages.RemoteAnnotationStorage_1, (new String[] { getFullPath().toString() })), e)); 
 		} finally {
 			try {
 				contents.close();

@@ -202,7 +202,7 @@ public class CVSProjectSetSerializer implements IProjectSetSerializer {
 		if (yesToAll) return 2;
 		if (!project.exists()) return 0;
 		final MessageDialog dialog = 
-			new MessageDialog(shell, CVSUIMessages.CVSProjectSetSerializer_Confirm_Overwrite_Project_8, null, NLS.bind(CVSUIMessages.CVSProjectSetSerializer_The_project__0__already_exists__Do_you_wish_to_overwrite_it__9, new String[] { project.getName() }), MessageDialog.QUESTION, //$NON-NLS-1$ //$NON-NLS-2$
+			new MessageDialog(shell, CVSUIMessages.CVSProjectSetSerializer_Confirm_Overwrite_Project_8, null, NLS.bind(CVSUIMessages.CVSProjectSetSerializer_The_project__0__already_exists__Do_you_wish_to_overwrite_it__9, new String[] { project.getName() }), MessageDialog.QUESTION, // 
 				new String[] {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL,

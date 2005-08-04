@@ -65,7 +65,7 @@ public class PollingOutputStream extends FilterOutputStream {
 				return;
 			} catch (InterruptedIOException e) {
 				if (++attempts == numAttempts)
-					throw new InterruptedIOException(Messages.PollingOutputStream_writeTimeout); //$NON-NLS-1$
+					throw new InterruptedIOException(Messages.PollingOutputStream_writeTimeout); 
 				if (DEBUG) System.out.println("write retry=" + attempts); //$NON-NLS-1$
 			}
 		}
@@ -96,7 +96,7 @@ public class PollingOutputStream extends FilterOutputStream {
 					attempts = 0; // made some progress, don't time out quite yet
 				}
 				if (++attempts == numAttempts) {
-					e = new InterruptedIOException(Messages.PollingOutputStream_writeTimeout); //$NON-NLS-1$
+					e = new InterruptedIOException(Messages.PollingOutputStream_writeTimeout); 
 					e.bytesTransferred = count;
 					throw e;
 				}
@@ -127,7 +127,7 @@ public class PollingOutputStream extends FilterOutputStream {
 					attempts = 0; // made some progress, don't time out quite yet
 				}
 				if (++attempts == numAttempts) {
-					e = new InterruptedIOException(Messages.PollingOutputStream_writeTimeout); //$NON-NLS-1$
+					e = new InterruptedIOException(Messages.PollingOutputStream_writeTimeout); 
 					e.bytesTransferred = count;
 					throw e;
 				}
@@ -157,7 +157,7 @@ public class PollingOutputStream extends FilterOutputStream {
 				} catch (InterruptedIOException e) {
 					if (checkCancellation()) throw new OperationCanceledException();
 					if (++attempts == numAttempts)
-						throw new InterruptedIOException(Messages.PollingOutputStream_closeTimeout); //$NON-NLS-1$
+						throw new InterruptedIOException(Messages.PollingOutputStream_closeTimeout); 
 					if (DEBUG) System.out.println("close retry=" + attempts); //$NON-NLS-1$
 				}
 			}

@@ -140,14 +140,14 @@ public class BuildCleanupListener implements IResourceDeltaVisitor, IResourceCha
 							try {
 								delta.accept(BuildCleanupListener.this);
 							} catch (CoreException e) {
-								Util.logError(CVSMessages.ResourceDeltaVisitor_visitError, e);//$NON-NLS-1$
+								Util.logError(CVSMessages.ResourceDeltaVisitor_visitError, e);
 							}
 						}
 					}, Policy.monitorFor(null));
 				}
 			}
 		} catch (CVSException e) {
-			Util.logError(CVSMessages.ResourceDeltaVisitor_visitError, e);//$NON-NLS-1$
+			Util.logError(CVSMessages.ResourceDeltaVisitor_visitError, e);
 		}
 	}
 

@@ -81,7 +81,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		}
 			
 		if (result[0] == null) {
-			throw new OperationCanceledException(CVSUIMessages.WorkbenchUserAuthenticator_cancelled); //$NON-NLS-1$
+			throw new OperationCanceledException(CVSUIMessages.WorkbenchUserAuthenticator_cancelled); 
 		}
 		
 		if (userinfo.isUsernameMutable()) {
@@ -204,7 +204,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		}
 			
 		if (result[0] == null) {
-			throw new OperationCanceledException(CVSUIMessages.WorkbenchUserAuthenticator_The_operation_was_canceled_by_the_user_1); //$NON-NLS-1$
+			throw new OperationCanceledException(CVSUIMessages.WorkbenchUserAuthenticator_The_operation_was_canceled_by_the_user_1); 
 		}
 		
 		userinfo.setPassword(result[0]);
@@ -249,7 +249,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
         final Display display = CVSUIPlugin.getStandardDisplay();
         display.syncExec(new Runnable() {
             public void run() {
-                openConfirm[0] = MessageDialog.openConfirm(null, CVSUIMessages.WorkbenchUserAuthenticator_1, NLS.bind(CVSUIMessages.WorkbenchUserAuthenticator_2, new String[] { location.getHost() })); //$NON-NLS-1$ //$NON-NLS-2$
+                openConfirm[0] = MessageDialog.openConfirm(null, CVSUIMessages.WorkbenchUserAuthenticator_1, NLS.bind(CVSUIMessages.WorkbenchUserAuthenticator_2, new String[] { location.getHost() })); // 
             }
         });
         if (!openConfirm[0]) {

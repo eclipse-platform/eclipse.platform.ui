@@ -59,7 +59,7 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	protected String getErrorMessage(IStatus[] problems, int operationCount) {
 		// We accumulated 1 status per resource above.
 		if(operationCount == 1) {
-			return CVSUIMessages.TagAction_tagProblemsMessage; //$NON-NLS-1$
+			return CVSUIMessages.TagAction_tagProblemsMessage; 
 		} else {
 			return NLS.bind(CVSUIMessages.TagAction_tagProblemsMessageMultiple, new String[] { Integer.toString(operationCount - problems.length), Integer.toString(problems.length) });
 		}
@@ -128,14 +128,14 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	}
 
 	protected  String getTaskName() {
-		return CVSUIMessages.TagFromWorkspace_taskName; //$NON-NLS-1$
+		return CVSUIMessages.TagFromWorkspace_taskName; 
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
-		return NLS.bind(CVSUIMessages.TagOperation_0, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.TagOperation_0, new String[] { provider.getProject().getName() }); 
 	}
 	
 	/* (non-Javadoc)

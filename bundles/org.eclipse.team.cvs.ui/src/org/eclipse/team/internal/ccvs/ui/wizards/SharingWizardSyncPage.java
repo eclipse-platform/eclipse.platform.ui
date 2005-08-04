@@ -102,7 +102,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		
 		fCheckbox= new Button(composite, SWT.CHECK);
 		fCheckbox.setLayoutData(SWTUtils.createHFillGridData());
-		fCheckbox.setText(CVSUIMessages.SharingWizardSyncPage_12); //$NON-NLS-1$
+		fCheckbox.setText(CVSUIMessages.SharingWizardSyncPage_12); 
 		fCheckbox.setSelection(true);
 		
 		updatePage();
@@ -113,7 +113,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	
 	private Control createNoChangesPage(PageBook pageBook) {
 		Composite composite = createComposite(pageBook, 1, false);
-		createWrappingLabel(composite, NLS.bind(CVSUIMessages.SharingWizardSyncPage_3, new String[] { project.getName() }), 0); //$NON-NLS-1$
+		createWrappingLabel(composite, NLS.bind(CVSUIMessages.SharingWizardSyncPage_3, new String[] { project.getName() }), 0); 
 		return composite;
 	}
 	
@@ -122,10 +122,10 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
 		
-		createWrappingLabel(composite, CVSUIMessages.SharingWizardSyncPage_4, 0); //$NON-NLS-1$
+		createWrappingLabel(composite, CVSUIMessages.SharingWizardSyncPage_4, 0); 
 
 		Button showErrors = new Button(composite, SWT.PUSH);
-		showErrors.setText(CVSUIMessages.SharingWizardSyncPage_5); //$NON-NLS-1$
+		showErrors.setText(CVSUIMessages.SharingWizardSyncPage_5); 
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		showErrors.setLayoutData(data);
 		showErrors.addSelectionListener(new SelectionAdapter() {
@@ -139,7 +139,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 
 	/* private */ void showErrors() {
 		ITeamStatus[] status = infos.getErrors();
-		String title = CVSUIMessages.SharingWizardSyncPage_8; //$NON-NLS-1$
+		String title = CVSUIMessages.SharingWizardSyncPage_8; 
 		if (status.length == 1) {
 			IStatus s = status[0];
 			if (s.getException() instanceof CoreException) {
@@ -147,7 +147,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 			}
 			ErrorDialog.openError(getShell(), title, null, s);
 		} else {
-			MultiStatus multi = new MultiStatus(CVSUIPlugin.ID, 0, status, CVSUIMessages.SharingWizardSyncPage_9, null); //$NON-NLS-1$
+			MultiStatus multi = new MultiStatus(CVSUIPlugin.ID, 0, status, CVSUIMessages.SharingWizardSyncPage_9, null); 
 			ErrorDialog.openError(getShell(), title, null, multi);
 		}
 	}

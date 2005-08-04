@@ -54,6 +54,6 @@ public class BranchCategory extends TagCategory {
 	 * @param object The object to get a label for.
 	 */
 	public String getLabel(Object o) {
-		return CVSUIMessages.BranchCategory_Branches_1; //$NON-NLS-1$
+		return CVSUIMessages.BranchCategory_Branches_1; 
 	}
 }

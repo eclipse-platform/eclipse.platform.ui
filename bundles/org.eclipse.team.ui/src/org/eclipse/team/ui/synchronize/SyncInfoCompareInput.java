@@ -230,7 +230,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 * @see org.eclipse.compare.CompareEditorInput#getTitle()
 	 */
 	public String getTitle() {
-		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_title, new String[] { node.getName() }); //$NON-NLS-1$
+		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_title, new String[] { node.getName() }); 
 	}
 
 	/*
@@ -246,7 +246,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
-		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_tooltip, new String[] { Utils.shortenText(30, description), node.getResource().getFullPath().toString() }); //$NON-NLS-1$
+		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_tooltip, new String[] { Utils.shortenText(30, description), node.getResource().getFullPath().toString() }); 
 	}
 
 	/*
@@ -291,12 +291,12 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		if(newTimestamp != timestamp) {
 			final MessageDialog dialog = 
 				new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), 
-						TeamUIMessages.SyncInfoCompareInput_0,  //$NON-NLS-1$
+						TeamUIMessages.SyncInfoCompareInput_0,  
 						null, 
-						TeamUIMessages.SyncInfoCompareInput_1,  //$NON-NLS-1$
+						TeamUIMessages.SyncInfoCompareInput_1,  
 						MessageDialog.QUESTION,
 					new String[] {
-						TeamUIMessages.SyncInfoCompareInput_2, //$NON-NLS-1$
+						TeamUIMessages.SyncInfoCompareInput_2, 
 						IDialogConstants.CANCEL_LABEL}, 
 					0);
 			

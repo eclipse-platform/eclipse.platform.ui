@@ -29,7 +29,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 	private Button addButton;
 	private Button removeButton;
 	public void init(IWorkbench workbench) {
-		setDescription(TeamUIMessages.IgnorePreferencePage_description); //$NON-NLS-1$
+		setDescription(TeamUIMessages.IgnorePreferencePage_description); 
 	}
 	
 	/**
@@ -51,7 +51,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		parent.setLayoutData(data);
 		
 		Label l1 = new Label(parent, SWT.NULL);
-		l1.setText(TeamUIMessages.IgnorePreferencePage_ignorePatterns); //$NON-NLS-1$
+		l1.setText(TeamUIMessages.IgnorePreferencePage_ignorePatterns); 
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		data.horizontalSpan = 2;
 		l1.setLayoutData(data);
@@ -75,7 +75,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		buttons.setLayout(layout);
 		
 		addButton = new Button(buttons, SWT.PUSH);
-		addButton.setText(TeamUIMessages.IgnorePreferencePage_add); //$NON-NLS-1$
+		addButton.setText(TeamUIMessages.IgnorePreferencePage_add); 
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -89,7 +89,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		
 		
 		removeButton = new Button(buttons, SWT.PUSH);
-		removeButton.setText(TeamUIMessages.IgnorePreferencePage_remove); //$NON-NLS-1$
+		removeButton.setText(TeamUIMessages.IgnorePreferencePage_remove); 
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -148,7 +148,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	private void addIgnore() {
-		InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.IgnorePreferencePage_enterPatternShort, TeamUIMessages.IgnorePreferencePage_enterPatternLong, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.IgnorePreferencePage_enterPatternShort, TeamUIMessages.IgnorePreferencePage_enterPatternLong, null, null); // 
 		dialog.open();
 		if (dialog.getReturnCode() != InputDialog.OK) return;
 		String pattern = dialog.getValue();
@@ -157,7 +157,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		TableItem[] items = ignoreTable.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getText().equals(pattern)) {
-				MessageDialog.openWarning(getShell(), TeamUIMessages.IgnorePreferencePage_patternExistsShort, TeamUIMessages.IgnorePreferencePage_patternExistsLong); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openWarning(getShell(), TeamUIMessages.IgnorePreferencePage_patternExistsShort, TeamUIMessages.IgnorePreferencePage_patternExistsLong); // 
 				return;
 			}
 		}

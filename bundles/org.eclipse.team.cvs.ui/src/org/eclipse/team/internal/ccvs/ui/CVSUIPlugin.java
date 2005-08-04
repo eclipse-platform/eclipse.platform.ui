@@ -208,11 +208,11 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 				}
 				String question;
 				if (resources.length == 1) {
-					question = NLS.bind(CVSUIMessages.CVSUIPlugin_refreshQuestion, new String[] { status.getMessage(), resources[0].getFullPath().toString() }); //$NON-NLS-1$
+					question = NLS.bind(CVSUIMessages.CVSUIPlugin_refreshQuestion, new String[] { status.getMessage(), resources[0].getFullPath().toString() }); 
 				} else {
-					question = NLS.bind(CVSUIMessages.CVSUIPlugin_refreshMultipleQuestion, new String[] { status.getMessage() }); //$NON-NLS-1$
+					question = NLS.bind(CVSUIMessages.CVSUIPlugin_refreshMultipleQuestion, new String[] { status.getMessage() }); 
 				}
-				result[0] = MessageDialog.openQuestion(shellToUse, CVSUIMessages.CVSUIPlugin_refreshTitle, question); //$NON-NLS-1$
+				result[0] = MessageDialog.openQuestion(shellToUse, CVSUIMessages.CVSUIPlugin_refreshTitle, question); 
 			}
 		};
 		Display.getDefault().syncExec(runnable);
@@ -332,7 +332,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static void log(CoreException e) {
-		log(e.getStatus().getSeverity(), CVSUIMessages.simpleInternal, e); //$NON-NLS-1$
+		log(e.getStatus().getSeverity(), CVSUIMessages.simpleInternal, e); 
 	}
 	
 	/**
@@ -392,16 +392,16 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 			status = ((TeamException)exception).getStatus();
 			log = ((flags & LOG_TEAM_EXCEPTIONS) > 0);
 		} else if (exception instanceof InterruptedException) {
-			return new CVSStatus(IStatus.OK, CVSUIMessages.ok); //$NON-NLS-1$
+			return new CVSStatus(IStatus.OK, CVSUIMessages.ok); 
 		} else if (exception != null) {
-			status = new CVSStatus(IStatus.ERROR, CVSUIMessages.internal, exception); //$NON-NLS-1$
+			status = new CVSStatus(IStatus.ERROR, CVSUIMessages.internal, exception); 
 			log = ((flags & LOG_OTHER_EXCEPTIONS) > 0);
-			if (title == null) title = CVSUIMessages.internal; //$NON-NLS-1$
+			if (title == null) title = CVSUIMessages.internal; 
 		}
 		
 		// Check for a build error and report it differently
 		if (status.getCode() == IResourceStatus.BUILD_FAILED) {
-			message = CVSUIMessages.buildError; //$NON-NLS-1$
+			message = CVSUIMessages.buildError; 
 			log = true;
 		}
 		
@@ -421,7 +421,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		final IOpenableInShell openable = new IOpenableInShell() {
 			public void open(Shell shell) {
 				if (displayStatus.getSeverity() == IStatus.INFO && !displayStatus.isMultiStatus()) {
-					MessageDialog.openInformation(shell, CVSUIMessages.information, displayStatus.getMessage()); //$NON-NLS-1$
+					MessageDialog.openInformation(shell, CVSUIMessages.information, displayStatus.getMessage()); 
 				} else {
 					ErrorDialog.openError(shell, displayTitle, displayMessage, displayStatus);
 				}

@@ -220,7 +220,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 							System.out.println("[cvs] found a new CVS meta folder, marking as team-private: " + cvsDir.getFullPath()); //$NON-NLS-1$
 						}
 					} catch(CoreException e) {
-						CVSProviderPlugin.log(CVSException.wrapException(cvsDir, CVSMessages.SyncFileChangeListener_errorSettingTeamPrivateFlag, e)); //$NON-NLS-1$
+						CVSProviderPlugin.log(CVSException.wrapException(cvsDir, CVSMessages.SyncFileChangeListener_errorSettingTeamPrivateFlag, e)); 
 					}
 				}
 			}

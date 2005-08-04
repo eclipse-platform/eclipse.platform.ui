@@ -124,7 +124,7 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
 		ICVSFile[] files = fetchDeletedFiles(resource);
 		if (files == null) return;
 		if (files.length == 0) {
-			MessageDialog.openInformation(getShell(), CVSUIMessages.RestoreFromRepositoryAction_noFilesTitle, NLS.bind(CVSUIMessages.RestoreFromRepositoryAction_noFilesMessage, new String[] { resource.getName() })); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openInformation(getShell(), CVSUIMessages.RestoreFromRepositoryAction_noFilesTitle, NLS.bind(CVSUIMessages.RestoreFromRepositoryAction_noFilesMessage, new String[] { resource.getName() })); // 
 			return;
 		}
 		RestoreFromRepositoryWizard wizard = new RestoreFromRepositoryWizard(resource, files);

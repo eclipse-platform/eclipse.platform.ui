@@ -21,7 +21,7 @@ public final class Assert {
         public AssertionFailedException() {
 		}
 		public AssertionFailedException(String detail) {
-			super(NLS.bind(Messages.Assert_assertionFailed, new String[] { detail })); //$NON-NLS-1$
+			super(NLS.bind(Messages.Assert_assertionFailed, new String[] { detail })); 
 		}
 	}
 /* This class is not intended to be instantiated. */

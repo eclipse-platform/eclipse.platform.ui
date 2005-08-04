@@ -268,7 +268,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 				feedInput2(e.getSelection());
 			}
 		});
-		fEditionPane.setText(TeamUIMessages.ParticipantPageSaveablePart_0); //$NON-NLS-1$
+		fEditionPane.setText(TeamUIMessages.ParticipantPageSaveablePart_0); 
 		
 		page = participant.createPage(pageConfiguration);
 		((SynchronizePageConfiguration)pageConfiguration).setSite(new CompareViewerPaneSite());

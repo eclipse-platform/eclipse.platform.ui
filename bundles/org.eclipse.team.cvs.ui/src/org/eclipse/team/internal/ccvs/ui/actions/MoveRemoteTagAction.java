@@ -27,8 +27,8 @@ public class MoveRemoteTagAction extends TagInRepositoryAction {
 		// Allow the user to select a tag
 		ITagOperation operation = createTagOperation();
 		TagSelectionDialog dialog = new TagSelectionDialog(getShell(), operation.getTagSource(), 
-			CVSUIMessages.MoveTagAction_title, //$NON-NLS-1$
-			CVSUIMessages.MoveTagAction_message, //$NON-NLS-1$
+			CVSUIMessages.MoveTagAction_title, 
+			CVSUIMessages.MoveTagAction_message, 
 			TagSelectionDialog.INCLUDE_BRANCHES | TagSelectionDialog.INCLUDE_VERSIONS, 
 			isFolderSelected(), /* show recurse */
 			IHelpContextIds.TAG_REMOTE_WITH_EXISTING_DIALOG);

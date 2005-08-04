@@ -64,7 +64,7 @@ public class ResourceVariantCacheEntry {
 			}
 		} catch (IOException e) {
 			// We will end up here if we couldn't read or delete the cache file
-			throw new TeamException(NLS.bind(Messages.RemoteContentsCache_fileError, new String[] { ioFile.getAbsolutePath() }), e); //$NON-NLS-1$
+			throw new TeamException(NLS.bind(Messages.RemoteContentsCache_fileError, new String[] { ioFile.getAbsolutePath() }), e); 
 		}
 		// This can occur when there is no remote contents
 		return new ByteArrayInputStream(new byte[0]);
@@ -103,7 +103,7 @@ public class ResourceVariantCacheEntry {
 	private void internalSetContents(InputStream stream, IProgressMonitor monitor) throws TeamException {
 		// if the state is DISPOSED then there is a problem
 		if (state == DISPOSED) {
-			throw new TeamException(NLS.bind(Messages.RemoteContentsCacheEntry_3, new String[] { cache.getName(), id })); //$NON-NLS-1$
+			throw new TeamException(NLS.bind(Messages.RemoteContentsCacheEntry_3, new String[] { cache.getName(), id })); 
 		}
 		// Otherwise, the state is UNINITIALIZED or READY so we can proceed
 		registerHit();
@@ -121,7 +121,7 @@ public class ResourceVariantCacheEntry {
 					out = new ByteArrayOutputStream();
 				}
 			} catch (FileNotFoundException e) {
-				throw new TeamException(NLS.bind(Messages.RemoteContentsCache_fileError, new String[] { ioFile.getAbsolutePath() }), e); //$NON-NLS-1$
+				throw new TeamException(NLS.bind(Messages.RemoteContentsCache_fileError, new String[] { ioFile.getAbsolutePath() }), e); 
 			}
 			
 			// Transfer the contents
@@ -145,7 +145,7 @@ public class ResourceVariantCacheEntry {
 			// Mark the cache entry as ready
 			state = READY;
 		} catch (IOException e) {
-			throw new TeamException(NLS.bind(Messages.RemoteContentsCache_fileError, new String[] { ioFile.getAbsolutePath() }), e); //$NON-NLS-1$
+			throw new TeamException(NLS.bind(Messages.RemoteContentsCache_fileError, new String[] { ioFile.getAbsolutePath() }), e); 
 		} finally {
 			try {
 				stream.close();

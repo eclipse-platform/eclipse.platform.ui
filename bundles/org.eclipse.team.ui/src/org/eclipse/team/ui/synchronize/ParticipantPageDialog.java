@@ -51,7 +51,7 @@ public class ParticipantPageDialog extends SaveablePartDialog {
 		Composite parent = (Composite) super.createDialogArea(parent2);	
 		if (participant != null && ! particantRegisteredWithSynchronizeManager(participant)) {
 			rememberParticipantButton = new Button(parent, SWT.CHECK);
-			rememberParticipantButton.setText(TeamUIMessages.ParticipantCompareDialog_1); //$NON-NLS-1$
+			rememberParticipantButton.setText(TeamUIMessages.ParticipantCompareDialog_1); 
 		}
 		Dialog.applyDialogFont(parent2);
 		return parent;

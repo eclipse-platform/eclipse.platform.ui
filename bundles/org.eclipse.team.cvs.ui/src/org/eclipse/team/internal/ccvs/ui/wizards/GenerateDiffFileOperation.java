@@ -62,7 +62,7 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 	    
 	    final CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
 	    monitor.beginTask("", 500); //$NON-NLS-1$
-	    monitor.setTaskName(CVSUIMessages.GenerateCVSDiff_working); //$NON-NLS-1$
+	    monitor.setTaskName(CVSUIMessages.GenerateCVSDiff_working); 
 		try {
 			if (outputFile != null) {
 			    generateDiffToFile(monitor, provider, outputFile);
@@ -87,9 +87,9 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
                 os.close();
             }
         } catch (FileNotFoundException e) {
-            throw new TeamException(CVSUIMessages.GenerateDiffFileOperation_0, e); //$NON-NLS-1$
+            throw new TeamException(CVSUIMessages.GenerateDiffFileOperation_0, e); 
         } catch (IOException e) {
-            throw new TeamException(CVSUIMessages.GenerateDiffFileOperation_1, e); //$NON-NLS-1$
+            throw new TeamException(CVSUIMessages.GenerateDiffFileOperation_1, e); 
         }
         
 		if (file.length() == 0) {
@@ -107,7 +107,7 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
                 os.close();
             }
         } catch (IOException e) {
-            throw new TeamException(CVSUIMessages.GenerateDiffFileOperation_2, e); //$NON-NLS-1$
+            throw new TeamException(CVSUIMessages.GenerateDiffFileOperation_2, e); 
         }
         if (os.size() == 0) {
             reportEmptyDiff();
@@ -134,8 +134,8 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
         	public void open(Shell shell) {
         		MessageDialog.openInformation(
         			shell,
-        			CVSUIMessages.GenerateCVSDiff_noDiffsFoundTitle, //$NON-NLS-1$
-        			CVSUIMessages.GenerateCVSDiff_noDiffsFoundMsg); //$NON-NLS-1$
+        			CVSUIMessages.GenerateCVSDiff_noDiffsFoundTitle, 
+        			CVSUIMessages.GenerateCVSDiff_noDiffsFoundMsg); 
         	}
         }, CVSUIPlugin.PERFORM_SYNC_EXEC);
     }

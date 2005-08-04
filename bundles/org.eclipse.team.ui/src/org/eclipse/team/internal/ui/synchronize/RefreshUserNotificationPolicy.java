@@ -94,9 +94,9 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 			public String getToolTipText() {
 				boolean prompt = (event.getStatus().getCode() == IRefreshEvent.STATUS_NO_CHANGES);
 				if(prompt) {
-					return TeamUIMessages.RefreshSubscriberJob_2a; //$NON-NLS-1$
+					return TeamUIMessages.RefreshSubscriberJob_2a; 
 				} else {
-					return NLS.bind(TeamUIMessages.RefreshSubscriberJob_2b, new String[] { Utils.shortenText(100, participant.getName()) }); //$NON-NLS-1$
+					return NLS.bind(TeamUIMessages.RefreshSubscriberJob_2b, new String[] { Utils.shortenText(100, participant.getName()) }); 
 				}
 			}
 		};
@@ -106,8 +106,8 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
 				String title = (event.getRefreshType() == IRefreshEvent.SCHEDULED_REFRESH ?
-						NLS.bind(TeamUIMessages.RefreshCompleteDialog_4a, new String[] { Utils.getTypeName(participant) }) : //$NON-NLS-1$
-							NLS.bind(TeamUIMessages.RefreshCompleteDialog_4, new String[] { Utils.getTypeName(participant) }) //$NON-NLS-1$
+						NLS.bind(TeamUIMessages.RefreshCompleteDialog_4a, new String[] { Utils.getTypeName(participant) }) : 
+							NLS.bind(TeamUIMessages.RefreshCompleteDialog_4, new String[] { Utils.getTypeName(participant) }) 
 							);
 				MessageDialog.openInformation(Utils.getShell(null), title, event.getStatus().getMessage());
 			}

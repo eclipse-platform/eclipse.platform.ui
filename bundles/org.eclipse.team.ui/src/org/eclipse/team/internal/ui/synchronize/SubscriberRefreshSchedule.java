@@ -123,7 +123,7 @@ public class SubscriberRefreshSchedule {
 		}
 		if(job == null) {
 			SubscriberParticipant participant = getParticipant();
-			job = new RefreshSubscriberJob(participant, TeamUIMessages.RefreshSchedule_14, NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { participant.getName(), getRefreshIntervalAsString() }), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); //$NON-NLS-1$ //$NON-NLS-2$
+			job = new RefreshSubscriberJob(participant, TeamUIMessages.RefreshSchedule_14, NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { participant.getName(), getRefreshIntervalAsString() }), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); // 
 			job.setUser(false);
 		} else if(job.getState() != Job.NONE){
 			stopJob();
@@ -168,23 +168,23 @@ public class SubscriberRefreshSchedule {
 
 	public static String refreshEventAsString(IRefreshEvent event) {
 		if(event == null) {
-			return TeamUIMessages.SyncViewPreferencePage_lastRefreshRunNever; //$NON-NLS-1$
+			return TeamUIMessages.SyncViewPreferencePage_lastRefreshRunNever; 
 		}
 		long stopMills = event.getStopTime();
 		StringBuffer text = new StringBuffer();
 		if(stopMills <= 0) {
-			text.append(TeamUIMessages.SyncViewPreferencePage_lastRefreshRunNever); //$NON-NLS-1$
+			text.append(TeamUIMessages.SyncViewPreferencePage_lastRefreshRunNever); 
 		} else {
 			Date lastTimeRun = new Date(stopMills);
 			text.append(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastTimeRun));
 		}
 		SyncInfo[] changes = event.getChanges();
 		if (changes.length == 0) {
-			text.append(TeamUIMessages.RefreshSchedule_7); //$NON-NLS-1$
+			text.append(TeamUIMessages.RefreshSchedule_7); 
 		} else if (changes.length == 1) {
-			text.append(NLS.bind(TeamUIMessages.RefreshSchedule_changesSingular, new String[] { Integer.toString(changes.length) })); //$NON-NLS-1$
+			text.append(NLS.bind(TeamUIMessages.RefreshSchedule_changesSingular, new String[] { Integer.toString(changes.length) })); 
 		} else {
-			text.append(NLS.bind(TeamUIMessages.RefreshSchedule_changesPlural, new String[] { Integer.toString(changes.length) })); //$NON-NLS-1$
+			text.append(NLS.bind(TeamUIMessages.RefreshSchedule_changesPlural, new String[] { Integer.toString(changes.length) })); 
 		}
 		return text.toString();
 	} 
@@ -206,10 +206,10 @@ public class SubscriberRefreshSchedule {
 		}		
 		String unit;
 		if(minutes >= 1) {
-			unit = (hours ? TeamUIMessages.RefreshSchedule_9 : TeamUIMessages.RefreshSchedule_10); //$NON-NLS-1$ //$NON-NLS-2$
+			unit = (hours ? TeamUIMessages.RefreshSchedule_9 : TeamUIMessages.RefreshSchedule_10); // 
 		} else {
-			unit = (hours ? TeamUIMessages.RefreshSchedule_11 : TeamUIMessages.RefreshSchedule_12); //$NON-NLS-1$ //$NON-NLS-2$
+			unit = (hours ? TeamUIMessages.RefreshSchedule_11 : TeamUIMessages.RefreshSchedule_12); // 
 		}
-		return NLS.bind(TeamUIMessages.RefreshSchedule_13, new String[] { Long.toString(minutes), unit }); //$NON-NLS-1$
+		return NLS.bind(TeamUIMessages.RefreshSchedule_13, new String[] { Long.toString(minutes), unit }); 
 	}
 }

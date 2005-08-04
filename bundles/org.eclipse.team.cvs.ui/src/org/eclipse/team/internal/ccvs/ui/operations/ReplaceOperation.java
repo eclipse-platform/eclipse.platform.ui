@@ -44,7 +44,7 @@ public class ReplaceOperation extends UpdateOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return CVSUIMessages.ReplaceOperation_taskName; //$NON-NLS-1$
+		return CVSUIMessages.ReplaceOperation_taskName; 
 	}
 
 	/* (non-Javadoc)
@@ -83,9 +83,9 @@ public class ReplaceOperation extends UpdateOperation {
         	new PrepareForReplaceVisitor().visitResources(
         		provider.getProject(), 
         		resources, 
-        		CVSUIMessages.ReplaceOperation_1, //$NON-NLS-1$
+        		CVSUIMessages.ReplaceOperation_1, 
         		recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, 
-        		Policy.subMonitorFor(monitor, 30)); //$NON-NLS-1$
+        		Policy.subMonitorFor(monitor, 30)); 
         	
         	// Only perform the remote command if some of the resources being replaced were managed
         	IStatus status = OK;
@@ -141,6 +141,6 @@ public class ReplaceOperation extends UpdateOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
-		return NLS.bind(CVSUIMessages.ReplaceOperation_0, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.ReplaceOperation_0, new String[] { provider.getProject().getName() }); 
 	}
 }

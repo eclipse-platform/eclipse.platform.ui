@@ -174,7 +174,7 @@ public class LogListener extends CommandOutputListener {
     				int lastDot = tagRevision.lastIndexOf('.');
     				if (lastDot == -1) {
     					CVSProviderPlugin.log(IStatus.ERROR, 
-    						NLS.bind(CVSMessages.LogListener_invalidRevisionFormat, new String[] { tagName, tagRevision }), null); //$NON-NLS-1$
+    						NLS.bind(CVSMessages.LogListener_invalidRevisionFormat, new String[] { tagName, tagRevision }), null); 
     				} else {
     					if (tagRevision.charAt(lastDot - 1) == '0' && tagRevision.charAt(lastDot - 2) == '.') {
     						lastDot = lastDot - 2;

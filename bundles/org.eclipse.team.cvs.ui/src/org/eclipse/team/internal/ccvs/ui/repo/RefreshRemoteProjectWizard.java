@@ -79,7 +79,7 @@ public class RefreshRemoteProjectWizard extends Wizard {
 		if (settings == null) {
 			this.settings = workbenchSettings.addNewSection("RefreshRemoteProjectWizard");//$NON-NLS-1$
 		}
-		setWindowTitle(CVSUIMessages.RefreshRemoteProjectWizard_title); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.RefreshRemoteProjectWizard_title); 
 	}
 	
 	/**
@@ -90,9 +90,9 @@ public class RefreshRemoteProjectWizard extends Wizard {
 		ImageDescriptor substImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION);
 		projectSelectionPage = new RefreshRemoteProjectSelectionPage(
 			"ProjectSelectionPage", //$NON-NLS-1$
-			CVSUIMessages.RefreshRemoteProjectSelectionPage_pageTitle, //$NON-NLS-1$
+			CVSUIMessages.RefreshRemoteProjectSelectionPage_pageTitle, 
 			substImage,
-			CVSUIMessages.RefreshRemoteProjectSelectionPage_pageDescription, //$NON-NLS-1$
+			CVSUIMessages.RefreshRemoteProjectSelectionPage_pageDescription, 
 			settings, root, rootFolders);
 		addPage(projectSelectionPage);
 	}
@@ -157,11 +157,11 @@ public class RefreshRemoteProjectWizard extends Wizard {
         final boolean[] prompt = new boolean[] { false };
         getShell().getDisplay().syncExec(new Runnable() {
             public void run() {
-		        MessageDialog dialog = new MessageDialog(getShell(), CVSUIMessages.RefreshRemoteProjectWizard_0, null, //$NON-NLS-1$
+		        MessageDialog dialog = new MessageDialog(getShell(), CVSUIMessages.RefreshRemoteProjectWizard_0, null, 
 		                getNoTagsMessage(folders),
 		                MessageDialog.INFORMATION,
 		                new String[] {
-		            		CVSUIMessages.RefreshRemoteProjectWizard_1, //$NON-NLS-1$
+		            		CVSUIMessages.RefreshRemoteProjectWizard_1, 
 		            		CVSUIMessages.RefreshRemoteProjectWizard_2
 		        		}, 1);
 		        int code = dialog.open();
@@ -176,8 +176,8 @@ public class RefreshRemoteProjectWizard extends Wizard {
 
     private String getNoTagsMessage(ICVSRemoteResource[] folders) {
         if (folders.length == 1) {
-            return NLS.bind(CVSUIMessages.RefreshRemoteProjectWizard_3, new String[] { folders[0].getRepositoryRelativePath() }); //$NON-NLS-1$
+            return NLS.bind(CVSUIMessages.RefreshRemoteProjectWizard_3, new String[] { folders[0].getRepositoryRelativePath() }); 
         }
-        return NLS.bind(CVSUIMessages.RefreshRemoteProjectWizard_4, new String[] { Integer.toString(folders.length) }); //$NON-NLS-1$
+        return NLS.bind(CVSUIMessages.RefreshRemoteProjectWizard_4, new String[] { Integer.toString(folders.length) }); 
     }
 }

@@ -96,7 +96,7 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return CVSUIMessages.ConfigureTagsFromRepoViewConfigure_Tag_Error_1; //$NON-NLS-1$
+		return CVSUIMessages.ConfigureTagsFromRepoViewConfigure_Tag_Error_1; 
 	}
 
 }

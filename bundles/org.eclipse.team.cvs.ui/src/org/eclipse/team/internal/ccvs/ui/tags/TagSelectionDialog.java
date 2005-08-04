@@ -71,8 +71,8 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 		
 	public static CVSTag getTagToCompareWith(Shell shell, TagSource tagSource, int includeFlags) {
 		TagSelectionDialog dialog = new TagSelectionDialog(shell, tagSource, 
-			CVSUIMessages.CompareWithTagAction_message,  //$NON-NLS-1$
-			CVSUIMessages.TagSelectionDialog_Select_a_Tag_1, //$NON-NLS-1$
+			CVSUIMessages.CompareWithTagAction_message,  
+			CVSUIMessages.TagSelectionDialog_Select_a_Tag_1, 
 			includeFlags, 
 			false, /* show recurse*/
 			IHelpContextIds.COMPARE_TAG_SELECTION_DIALOG);
@@ -173,7 +173,7 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 			protected void createCustomArea(Composite parent) {
 				if(showRecurse) {
 					final Button recurseCheck = new Button(parent, SWT.CHECK);
-					recurseCheck.setText(CVSUIMessages.TagSelectionDialog_recurseOption); //$NON-NLS-1$
+					recurseCheck.setText(CVSUIMessages.TagSelectionDialog_recurseOption); 
 					recurseCheck.addListener(SWT.Selection, new Listener() {
 						public void handleEvent(Event event) {
 							recurse = recurseCheck.getSelection();
@@ -271,7 +271,7 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
     private IRunnableContext getRunnableContext() {
     	return new IRunnableContext() {
 			public void run(boolean fork, boolean cancelable, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-				final Job refreshJob = new Job(CVSUIMessages.TagSelectionDialog_7) { //$NON-NLS-1$
+				final Job refreshJob = new Job(CVSUIMessages.TagSelectionDialog_7) { 
 		    		protected IStatus run(IProgressMonitor monitor) {
 							if (monitor.isCanceled())
 							return Status.CANCEL_STATUS;
@@ -279,9 +279,9 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 							setBusy(true);
 							runnable.run(monitor);
 						} catch (InvocationTargetException e) {
-							return new CVSStatus(IStatus.ERROR, CVSUIMessages.TagSelectionDialog_8, e); //$NON-NLS-1$
+							return new CVSStatus(IStatus.ERROR, CVSUIMessages.TagSelectionDialog_8, e); 
 						} catch (InterruptedException e) {
-							return new CVSStatus(IStatus.ERROR, CVSUIMessages.TagSelectionDialog_8, e); //$NON-NLS-1$
+							return new CVSStatus(IStatus.ERROR, CVSUIMessages.TagSelectionDialog_8, e); 
 						} finally {
 							setBusy(false);
 						}

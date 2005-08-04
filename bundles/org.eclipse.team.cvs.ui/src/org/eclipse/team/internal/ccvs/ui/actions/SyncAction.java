@@ -130,7 +130,7 @@ public class SyncAction extends WorkspaceTraversalAction {
 			shell.getDisplay().syncExec(new Runnable() {
 				public void run() {
 					if (info.getKind() == SyncInfo.IN_SYNC) {
-						MessageDialog.openInformation(shell, CVSUIMessages.SyncAction_noChangesTitle, CVSUIMessages.SyncAction_noChangesMessage); //$NON-NLS-1$ //$NON-NLS-2$
+						MessageDialog.openInformation(shell, CVSUIMessages.SyncAction_noChangesTitle, CVSUIMessages.SyncAction_noChangesMessage); // 
 					} else {
 						SyncInfoCompareInput input = new SyncInfoCompareInput(subscriber.getName(), info);
                         OpenInCompareAction.openCompareEditor(input, page);

@@ -439,7 +439,7 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 		} else {
 			targetID = null;
 		}
-		final MenuManager menuMgr = new MenuManager(targetID); //$NON-NLS-1$
+		final MenuManager menuMgr = new MenuManager(targetID); 
 		
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {

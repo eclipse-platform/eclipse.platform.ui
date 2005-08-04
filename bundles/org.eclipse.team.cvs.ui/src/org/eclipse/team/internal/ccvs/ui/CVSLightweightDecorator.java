@@ -42,7 +42,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 	// Decorator id as defined in the decorator extension point
 	public final static String ID = "org.eclipse.team.cvs.ui.decorator"; //$NON-NLS-1$
 
-	private static ExceptionCollector exceptions = new ExceptionCollector(CVSUIMessages.CVSDecorator_exceptionMessage, CVSUIPlugin.ID, IStatus.ERROR, CVSUIPlugin.getPlugin().getLog()); //$NON-NLS-1$;
+	private static ExceptionCollector exceptions = new ExceptionCollector(CVSUIMessages.CVSDecorator_exceptionMessage, CVSUIPlugin.ID, IStatus.ERROR, CVSUIPlugin.getPlugin().getLog()); //;
 	
 	private static String DECORATOR_FORMAT = "yyyy/MM/dd HH:mm:ss"; //$NON-NLS-1$
 	private static SimpleDateFormat decorateFormatter = new SimpleDateFormat(DECORATOR_FORMAT, Locale.getDefault());

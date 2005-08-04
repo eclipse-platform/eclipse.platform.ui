@@ -126,7 +126,7 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 		String fullPath;
 		try {
 			String revision = file.getRevision();
-			fullPath = NLS.bind(CVSUIMessages.RemoteFileEditorInput_fullPathAndRevision, new String[] { path.toString(), revision }); //$NON-NLS-1$
+			fullPath = NLS.bind(CVSUIMessages.RemoteFileEditorInput_fullPathAndRevision, new String[] { path.toString(), revision }); 
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e);
 			fullPath = path.toString();
@@ -163,7 +163,7 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	public String getName() {
 		String name = file.getName();
 		try {
-			return NLS.bind(CVSUIMessages.nameAndRevision, new String[] { name, file.getRevision() }); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.nameAndRevision, new String[] { name, file.getRevision() }); 
 		} catch (TeamException e) {
 			return name;
 		}

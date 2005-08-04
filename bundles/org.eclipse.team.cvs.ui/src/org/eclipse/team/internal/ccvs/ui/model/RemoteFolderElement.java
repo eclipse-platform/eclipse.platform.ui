@@ -38,7 +38,7 @@ public class RemoteFolderElement extends RemoteResourceElement implements IDefer
         CVSTag tag = folder.getTag();
         if (tag != null && tag.getType() != CVSTag.HEAD) {
             if (folder.getRemoteParent() == null) {
-                return NLS.bind(CVSUIMessages.RemoteFolderElement_nameAndTag, new String[] { folder.getName(), tag.getName() }); //$NON-NLS-1$
+                return NLS.bind(CVSUIMessages.RemoteFolderElement_nameAndTag, new String[] { folder.getName(), tag.getName() }); 
             }
         }
         return folder.getName();
@@ -67,7 +67,7 @@ public class RemoteFolderElement extends RemoteResourceElement implements IDefer
 		}
         try {
             monitor = Policy.monitorFor(monitor);
-            monitor.beginTask(NLS.bind(CVSUIMessages.RemoteFolderElement_fetchingRemoteChildren, new String[] { getLabel(o) }), 100); //$NON-NLS-1$
+            monitor.beginTask(NLS.bind(CVSUIMessages.RemoteFolderElement_fetchingRemoteChildren, new String[] { getLabel(o) }), 100); 
 			FetchMembersOperation operation = new FetchMembersOperation(null, (ICVSRemoteFolder)o, collector);
 			operation.run(Policy.subMonitorFor(monitor, 100));
         } catch (InvocationTargetException e) {
@@ -81,7 +81,7 @@ public class RemoteFolderElement extends RemoteResourceElement implements IDefer
 
     public ISchedulingRule getRule(Object element) {
     	ICVSRepositoryLocation location = getRepositoryLocation(element);
-        return new RepositoryLocationSchedulingRule(location); //$NON-NLS-1$
+        return new RepositoryLocationSchedulingRule(location); 
     }
 
 	private ICVSRepositoryLocation getRepositoryLocation(Object o) {

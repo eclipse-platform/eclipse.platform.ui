@@ -39,7 +39,7 @@ public class CVSSynchronizeWizard extends SubscriberParticipantWizard {
 		if(desc != null) {
 			return desc.getName();
 		} else {
-			return CVSUIMessages.CVSSynchronizeWizard_0; //$NON-NLS-1$
+			return CVSUIMessages.CVSSynchronizeWizard_0; 
 		}
 	}
 	

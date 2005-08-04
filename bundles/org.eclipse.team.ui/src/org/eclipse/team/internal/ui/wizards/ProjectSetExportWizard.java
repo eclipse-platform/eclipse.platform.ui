@@ -48,11 +48,11 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 	
 	public ProjectSetExportWizard() {
 		setNeedsProgressMonitor(true);
-		setWindowTitle(TeamUIMessages.ProjectSetExportWizard_Project_Set_1); //$NON-NLS-1$
+		setWindowTitle(TeamUIMessages.ProjectSetExportWizard_Project_Set_1); 
 	}
 	
 	public void addPages() {
-		mainPage = new ExportProjectSetMainPage("projectSetMainPage", TeamUIMessages.ProjectSetExportWizard_Export_a_Project_Set_3, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_EXPORT_BANNER)); //$NON-NLS-1$ //$NON-NLS-2$
+		mainPage = new ExportProjectSetMainPage("projectSetMainPage", TeamUIMessages.ProjectSetExportWizard_Export_a_Project_Set_3, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_EXPORT_BANNER)); //$NON-NLS-1$ 
 		IProject[] projects = (IProject[])selection.toList().toArray(new IProject[0]);
 		mainPage.setSelectedProjects(projects);
 		mainPage.setFileName(ProjectSetImportWizard.lastFile);
@@ -72,20 +72,20 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 					File file = new File(filename);
 					File parentFile = file.getParentFile();
 					if (parentFile != null && !parentFile.exists()) {
-						boolean r = MessageDialog.openQuestion(getShell(), TeamUIMessages.ProjectSetExportWizard_Question_4, TeamUIMessages.ProjectSetExportWizard_Target_directory_does_not_exist__Would_you_like_to_create_it__5); //$NON-NLS-1$ //$NON-NLS-2$
+						boolean r = MessageDialog.openQuestion(getShell(), TeamUIMessages.ProjectSetExportWizard_Question_4, TeamUIMessages.ProjectSetExportWizard_Target_directory_does_not_exist__Would_you_like_to_create_it__5); // 
 						if (!r) {
 							result[0] = false;
 							return;
 						}
 						r = parentFile.mkdirs();
 						if (!r) {
-							MessageDialog.openError(getShell(), TeamUIMessages.ProjectSetExportWizard_Export_Problems_6, TeamUIMessages.ProjectSetExportWizard_An_error_occurred_creating_the_target_directory_7); //$NON-NLS-1$ //$NON-NLS-2$
+							MessageDialog.openError(getShell(), TeamUIMessages.ProjectSetExportWizard_Export_Problems_6, TeamUIMessages.ProjectSetExportWizard_An_error_occurred_creating_the_target_directory_7); // 
 							result[0] = false;
 							return;
 						}
 					}
 					if (file.exists() && file.isFile()) {
-						boolean r = MessageDialog.openQuestion(getShell(), TeamUIMessages.ProjectSetExportWizard_Question_8, TeamUIMessages.ProjectSetExportWizard_Target_already_exists__Would_you_like_to_overwrite_it__9); //$NON-NLS-1$ //$NON-NLS-2$
+						boolean r = MessageDialog.openQuestion(getShell(), TeamUIMessages.ProjectSetExportWizard_Question_8, TeamUIMessages.ProjectSetExportWizard_Target_already_exists__Would_you_like_to_overwrite_it__9); // 
 						if (!r) {
 							result[0] = false;
 							return;

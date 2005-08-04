@@ -181,7 +181,7 @@ public class RepositoryManager {
 	public ICVSRemoteResource[] getFoldersForTag(ICVSRepositoryLocation location, CVSTag tag, IProgressMonitor monitor) throws CVSException {		
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(NLS.bind(CVSUIMessages.RepositoryManager_fetchingRemoteFolders, new String[] { tag.getName() }), 100); //$NON-NLS-1$
+			monitor.beginTask(NLS.bind(CVSUIMessages.RepositoryManager_fetchingRemoteFolders, new String[] { tag.getName() }), 100); 
 			if (tag.getType() == CVSTag.HEAD) {
 				ICVSRemoteResource[] resources = location.members(tag, false, Policy.subMonitorFor(monitor, 60));
 				RepositoryRoot root = getRepositoryRootFor(location);
@@ -331,7 +331,7 @@ public class RepositoryManager {
 					is.close();
 				}
 			} catch (IOException e) {
-				CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); //$NON-NLS-1$
+				CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); 
 			} catch (TeamException e) {
 				CVSUIPlugin.log(e);
 			}
@@ -349,7 +349,7 @@ public class RepositoryManager {
 					saveState();
 					file.delete();
 				} catch (IOException e) {
-					CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); //$NON-NLS-1$
+					CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); 
 				} catch (TeamException e) {
 					CVSUIPlugin.log(e);
 				}
@@ -368,7 +368,7 @@ public class RepositoryManager {
 				is.close();
 			}
 		} catch (IOException e) {
-			CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); //$NON-NLS-1$
+			CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); 
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e);
 		}
@@ -390,10 +390,10 @@ public class RepositoryManager {
 			}
 			boolean renamed = tempFile.renameTo(stateFile);
 			if (!renamed) {
-				throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_rename, new String[] { tempFile.getAbsolutePath() }), null)); //$NON-NLS-1$
+				throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_rename, new String[] { tempFile.getAbsolutePath() }), null)); 
 			}
 		} catch (IOException e) {
-			throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_save, new String[] { stateFile.getAbsolutePath() }), e)); //$NON-NLS-1$
+			throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_save, new String[] { stateFile.getAbsolutePath() }), e)); 
 		}
 	}
 	private void writeState(XMLWriter writer) {
@@ -415,9 +415,9 @@ public class RepositoryManager {
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(new InputSource(stream), new RepositoriesViewContentHandler(this));
 		} catch (SAXException ex) {
-			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { REPOSITORIES_VIEW_FILE }), ex); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { REPOSITORIES_VIEW_FILE }), ex); 
 		} catch (ParserConfigurationException ex) {
-			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { REPOSITORIES_VIEW_FILE }), ex); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { REPOSITORIES_VIEW_FILE }), ex); 
 		}
 	}
 	private void readCommentHistory(InputStream stream) throws IOException, TeamException {
@@ -426,9 +426,9 @@ public class RepositoryManager {
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(new InputSource(stream), new CommentHistoryContentHandler());
 		} catch (SAXException ex) {
-			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { COMMENT_HIST_FILE }), ex); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { COMMENT_HIST_FILE }), ex); 
 		} catch (ParserConfigurationException ex) {
-			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { COMMENT_HIST_FILE }), ex); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { COMMENT_HIST_FILE }), ex); 
 		}
 	}
 	
@@ -507,10 +507,10 @@ public class RepositoryManager {
 		 		 }
 		 		 boolean renamed = tempFile.renameTo(histFile);
 		 		 if (!renamed) {
-		 		 		 throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_rename, new String[] { tempFile.getAbsolutePath() }), null)); //$NON-NLS-1$
+		 		 		 throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_rename, new String[] { tempFile.getAbsolutePath() }), null)); 
 		 		 }
 		 } catch (IOException e) {
-		 		 throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_save, new String[] { histFile.getAbsolutePath() }), e)); //$NON-NLS-1$
+		 		 throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_save, new String[] { histFile.getAbsolutePath() }), e)); 
 		 }
 	}
 	private void writeCommentHistory(XMLWriter writer) {

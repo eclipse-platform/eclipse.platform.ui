@@ -53,7 +53,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 	private class CreateChangeSetAction extends SynchronizeModelAction {
 	    
         public CreateChangeSetAction(ISynchronizePageConfiguration configuration) {
-            super(TeamUIMessages.ChangeLogModelProvider_0, configuration); //$NON-NLS-1$
+            super(TeamUIMessages.ChangeLogModelProvider_0, configuration); 
         }
         
 		/* (non-Javadoc)
@@ -121,7 +121,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 	private class EditChangeSetAction extends ChangeSetAction {
 
         public EditChangeSetAction(ISynchronizePageConfiguration configuration) {
-            super(TeamUIMessages.ChangeLogModelProvider_6, configuration); //$NON-NLS-1$
+            super(TeamUIMessages.ChangeLogModelProvider_6, configuration); 
         }
         
         public void run() {
@@ -140,7 +140,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
         public void run() {
             ActiveChangeSet set = getSelectedSet();
             if (set == null) return;
-            if (MessageDialog.openConfirm(getConfiguration().getSite().getShell(), TeamUIMessages.ChangeSetActionGroup_0, NLS.bind(TeamUIMessages.ChangeSetActionGroup_1, new String[] { set.getTitle() }))) { //$NON-NLS-1$ //$NON-NLS-2$
+            if (MessageDialog.openConfirm(getConfiguration().getSite().getShell(), TeamUIMessages.ChangeSetActionGroup_0, NLS.bind(TeamUIMessages.ChangeSetActionGroup_1, new String[] { set.getTitle() }))) { // 
                 getActiveChangeSetManager().remove(set);
             }
         }
@@ -149,7 +149,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 	private class MakeDefaultChangeSetAction extends ChangeSetAction {
 
         public MakeDefaultChangeSetAction(ISynchronizePageConfiguration configuration) {
-            super(TeamUIMessages.ChangeLogModelProvider_9, configuration); //$NON-NLS-1$
+            super(TeamUIMessages.ChangeLogModelProvider_9, configuration); 
         }
         
         public void run() {
@@ -165,7 +165,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
         private final ActiveChangeSet set;
 	    
         public AddToChangeSetAction(ISynchronizePageConfiguration configuration, ActiveChangeSet set, ISelection selection) {
-            super(set == null ? TeamUIMessages.ChangeSetActionGroup_2 : set.getTitle(), configuration); //$NON-NLS-1$
+            super(set == null ? TeamUIMessages.ChangeSetActionGroup_2 : set.getTitle(), configuration); 
             this.set = set;
             selectionChanged(selection);
         }
@@ -288,14 +288,14 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 		
 		if (getChangeSetCapability().supportsCheckedInChangeSets()) {
 		    sortCriteria = getSortCriteria(configuration);
-			sortByComment = new MenuManager(TeamUIMessages.ChangeLogModelProvider_0a);	 //$NON-NLS-1$
-			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_1a, ChangeSetModelSorter.COMMENT)); //$NON-NLS-1$
-			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_2a, ChangeSetModelSorter.DATE)); //$NON-NLS-1$
-			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_3a, ChangeSetModelSorter.USER)); //$NON-NLS-1$
+			sortByComment = new MenuManager(TeamUIMessages.ChangeLogModelProvider_0a);	 
+			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_1a, ChangeSetModelSorter.COMMENT)); 
+			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_2a, ChangeSetModelSorter.DATE)); 
+			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_3a, ChangeSetModelSorter.USER)); 
 		}
 		
 		if (getChangeSetCapability().supportsActiveChangeSets()) {
-			addToChangeSet = new MenuManager(TeamUIMessages.ChangeLogModelProvider_12); //$NON-NLS-1$
+			addToChangeSet = new MenuManager(TeamUIMessages.ChangeLogModelProvider_12); 
 			addToChangeSet.setRemoveAllWhenShown(true);
 			addToChangeSet.addMenuListener(new IMenuListener() {
 	            public void menuAboutToShow(IMenuManager manager) {

@@ -70,7 +70,7 @@ public class SSHServerConnection implements IServerConnection {
 	 * @see Connection.open()
 	 */
 	public void open(IProgressMonitor monitor) throws IOException, CVSAuthenticationException {
-		monitor.subTask(CVSSSHMessages.SSHServerConnection_authenticating); //$NON-NLS-1$
+		monitor.subTask(CVSSSHMessages.SSHServerConnection_authenticating); 
 		monitor.worked(1);
 		String hostname = location.getHost();
 		String username = location.getUsername();

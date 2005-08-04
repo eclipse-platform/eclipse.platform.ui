@@ -76,7 +76,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 			return ID;
 		}		
 		public String getName() {
-			return TeamUIMessages.CompressedFoldersModelProvider_0; //$NON-NLS-1$
+			return TeamUIMessages.CompressedFoldersModelProvider_0; 
 		}		
 		public ImageDescriptor getImageDescriptor() {
 			return TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER);

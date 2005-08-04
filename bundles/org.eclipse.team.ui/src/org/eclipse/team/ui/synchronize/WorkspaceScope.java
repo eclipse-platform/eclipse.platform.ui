@@ -32,7 +32,7 @@ public class WorkspaceScope extends AbstractSynchronizeScope  {
 	 * @see org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant.ISynchronizeScope#getName()
 	 */
 	public String getName() {
-		return TeamUIMessages.WorkspaceScope_0; //$NON-NLS-1$
+		return TeamUIMessages.WorkspaceScope_0; 
 	}
 	
 	/* (non-Javadoc)

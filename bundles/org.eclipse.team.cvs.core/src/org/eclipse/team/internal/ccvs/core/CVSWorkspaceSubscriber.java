@@ -198,7 +198,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 						try {
 							Policy.checkCanceled(monitor);
 							if (innerResource.getType() != IResource.FILE) {
-								monitor.subTask(NLS.bind(CVSMessages.CVSWorkspaceSubscriber_1, new String[] { innerResource.getFullPath().toString() })); //$NON-NLS-1$
+								monitor.subTask(NLS.bind(CVSMessages.CVSWorkspaceSubscriber_1, new String[] { innerResource.getFullPath().toString() })); 
 							}
 							if (isOutOfSync(innerResource, monitor)) {
 								SyncInfo info = getSyncInfo(innerResource);
@@ -209,7 +209,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 						} catch (TeamException e) {
 							set.addError(new TeamStatus(
 									IStatus.ERROR, CVSProviderPlugin.ID, ITeamStatus.RESOURCE_SYNC_INFO_ERROR,
-									NLS.bind(CVSMessages.CVSWorkspaceSubscriber_2, new String[] { innerResource.getFullPath().toString(), e.getMessage() }), e, innerResource)); //$NON-NLS-1$
+									NLS.bind(CVSMessages.CVSWorkspaceSubscriber_2, new String[] { innerResource.getFullPath().toString(), e.getMessage() }), e, innerResource)); 
 						}
 						return true;
 					}

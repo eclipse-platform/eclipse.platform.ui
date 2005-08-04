@@ -74,7 +74,7 @@ public class Commit extends Command {
 		}
 
 		// If pruning is enable, prune empty directories after a commit
-		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) { //$NON-NLS-1$
+		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) { 
 			new PruneFolderVisitor().visit(session, resources);
 		}
 		
@@ -98,10 +98,10 @@ public class Commit extends Command {
 		byte[] info = cvsFile.getSyncBytes();
 		if (info == null) {
 			// There should be sync info. Log the problem
-			return new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, NLS.bind(CVSMessages.Commit_syncInfoMissing, new String[] { cvsFile.getIResource().getFullPath().toString() }), null); //$NON-NLS-1$
+			return new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, NLS.bind(CVSMessages.Commit_syncInfoMissing, new String[] { cvsFile.getIResource().getFullPath().toString() }), null); 
 		}
 		cvsFile.checkedIn(null, true /* commit in progress */);
-		return new Status(IStatus.INFO, CVSProviderPlugin.ID, 0, NLS.bind(CVSMessages.Commit_timestampReset, new String[] { cvsFile.getIResource().getFullPath().toString() }), null); //$NON-NLS-1$;
+		return new Status(IStatus.INFO, CVSProviderPlugin.ID, 0, NLS.bind(CVSMessages.Commit_timestampReset, new String[] { cvsFile.getIResource().getFullPath().toString() }), null); //;
 	}
 	
 	/**

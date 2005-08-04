@@ -186,7 +186,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	}
 	
 	private void internalFetchContents(IProgressMonitor monitor) throws CVSException {
-		monitor.beginTask(CVSMessages.RemoteFile_getContents, 100);//$NON-NLS-1$
+		monitor.beginTask(CVSMessages.RemoteFile_getContents, 100);
         monitor.subTask(CVSMessages.RemoteFile_getContents);
 		if (getRevision().equals(ResourceSyncInfo.ADDED_REVISION)) {
 			// The revision of the remote file is not known so we need to use the tag to get the status of the file
@@ -222,7 +222,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	public ILogEntry getLogEntry(IProgressMonitor monitor) throws CVSException {
 		if (entry == null) {
 			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask(CVSMessages.RemoteFile_getLogEntries, 100); //$NON-NLS-1$
+			monitor.beginTask(CVSMessages.RemoteFile_getLogEntries, 100); 
 			Session session = new Session(getRepository(), parent, false /* output to console */);
 			session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 			try {
@@ -258,7 +258,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 */
 	public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws CVSException {
 		monitor = Policy.monitorFor(monitor);
-		monitor.beginTask(CVSMessages.RemoteFile_getLogEntries, 100); //$NON-NLS-1$
+		monitor.beginTask(CVSMessages.RemoteFile_getLogEntries, 100); 
 		Session session = new Session(getRepository(), parent, false /* output to console */);
 		session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 		try {

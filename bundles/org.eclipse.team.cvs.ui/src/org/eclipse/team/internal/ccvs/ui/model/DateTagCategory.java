@@ -44,7 +44,7 @@ public class DateTagCategory extends TagCategory {
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
 	public String getLabel(Object o) {
-		return CVSUIMessages.DateTagCategory_0; //$NON-NLS-1$
+		return CVSUIMessages.DateTagCategory_0; 
 	}
 	
 	/* (non-Javadoc)

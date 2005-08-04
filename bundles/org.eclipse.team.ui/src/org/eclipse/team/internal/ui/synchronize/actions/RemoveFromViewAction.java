@@ -94,9 +94,9 @@ public class RemoveFromViewAction extends SynchronizeModelAction {
 		} else {
 			MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(
 					getConfiguration().getSite().getShell(),
-					TeamUIMessages.RemoveFromView_warningTitle, //$NON-NLS-1$
-					TeamUIMessages.RemoveFromView_warningMessage, //$NON-NLS-1$
-					TeamUIMessages.RemoveFromView_warningDontShow, //$NON-NLS-1$
+					TeamUIMessages.RemoveFromView_warningTitle, 
+					TeamUIMessages.RemoveFromView_warningMessage, 
+					TeamUIMessages.RemoveFromView_warningDontShow, 
 					false,
 					null,
 					null);

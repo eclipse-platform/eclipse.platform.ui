@@ -109,7 +109,7 @@ public class CommitAction extends WorkspaceTraversalAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return CVSUIMessages.CommitAction_commitFailed; //$NON-NLS-1$
+		return CVSUIMessages.CommitAction_commitFailed; 
 	}
 
 	/**

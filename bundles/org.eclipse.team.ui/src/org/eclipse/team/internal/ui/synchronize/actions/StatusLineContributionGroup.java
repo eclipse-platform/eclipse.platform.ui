@@ -75,7 +75,7 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 				configuration.setMode(mode);
 			}
 		});
-		item.setText(label); //$NON-NLS-1$
+		item.setText(label); 
 		item.setImage(image);
 		return item;
 	}
@@ -110,18 +110,18 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 			TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 				public void run() {
 					if (isThreeWay()) {
-						conflicting.setText(new Integer(workspaceConflicting).toString()); //$NON-NLS-1$
-						incoming.setText(new Integer(workspaceIncoming).toString()); //$NON-NLS-1$
-						outgoing.setText(new Integer(workspaceOutgoing).toString()); //$NON-NLS-1$
+						conflicting.setText(new Integer(workspaceConflicting).toString()); 
+						incoming.setText(new Integer(workspaceIncoming).toString()); 
+						outgoing.setText(new Integer(workspaceOutgoing).toString()); 
 	
-						conflicting.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_conflicting })); //$NON-NLS-1$ //$NON-NLS-2$
-						outgoing.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_outgoing })); //$NON-NLS-1$ //$NON-NLS-2$
-						incoming.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_incoming })); //$NON-NLS-1$ //$NON-NLS-2$
+						conflicting.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_conflicting })); // 
+						outgoing.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_outgoing })); // 
+						incoming.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_incoming })); // 
 					} else {
 						if (total == 1) {
-							totalChanges.setText(NLS.bind(TeamUIMessages.StatisticsPanel_numberTotalSingular, new String[] { Integer.toString(total) })); //$NON-NLS-1$
+							totalChanges.setText(NLS.bind(TeamUIMessages.StatisticsPanel_numberTotalSingular, new String[] { Integer.toString(total) })); 
 						} else {
-							totalChanges.setText(NLS.bind(TeamUIMessages.StatisticsPanel_numberTotalPlural, new String[] { Integer.toString(total) })); //$NON-NLS-1$
+							totalChanges.setText(NLS.bind(TeamUIMessages.StatisticsPanel_numberTotalPlural, new String[] { Integer.toString(total) })); 
 						}
 					}
 				}

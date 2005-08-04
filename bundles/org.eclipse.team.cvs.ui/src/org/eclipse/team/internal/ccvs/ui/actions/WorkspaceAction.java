@@ -57,7 +57,7 @@ public abstract class WorkspaceAction extends CVSAction {
 				handleOrphanedSubtrees();
 				// Check enablement just in case the sync info wasn't loaded
 				if (!isEnabled()) {
-					MessageDialog.openInformation(getShell(), CVSUIMessages.CVSAction_disabledTitle, CVSUIMessages.CVSAction_disabledMessage); //$NON-NLS-1$ //$NON-NLS-2$
+					MessageDialog.openInformation(getShell(), CVSUIMessages.CVSAction_disabledTitle, CVSUIMessages.CVSAction_disabledMessage); // 
 					return false;
 				}
 			}
@@ -244,11 +244,11 @@ public abstract class WorkspaceAction extends CVSAction {
 				}
 				String question;
 				if (resources.length == 1) {
-					question = NLS.bind(CVSUIMessages.CVSAction_refreshQuestion, new String[] { status.getMessage(), resources[0].getFullPath().toString() }); //$NON-NLS-1$
+					question = NLS.bind(CVSUIMessages.CVSAction_refreshQuestion, new String[] { status.getMessage(), resources[0].getFullPath().toString() }); 
 				} else {
-					question = NLS.bind(CVSUIMessages.CVSAction_refreshMultipleQuestion, new String[] { status.getMessage() }); //$NON-NLS-1$
+					question = NLS.bind(CVSUIMessages.CVSAction_refreshMultipleQuestion, new String[] { status.getMessage() }); 
 				}
-				result[0] = MessageDialog.openQuestion(shellToUse, CVSUIMessages.CVSAction_refreshTitle, question); //$NON-NLS-1$
+				result[0] = MessageDialog.openQuestion(shellToUse, CVSUIMessages.CVSAction_refreshTitle, question); 
 			}
 		};
 		Display.getDefault().syncExec(runnable);
@@ -484,25 +484,25 @@ public abstract class WorkspaceAction extends CVSAction {
 			}
 			
 			// set text to default
-			String actionText = CVSUIMessages.ReplaceWithLatestAction_multipleTags; //$NON-NLS-1$
+			String actionText = CVSUIMessages.ReplaceWithLatestAction_multipleTags; 
 			if(commonTag != null) {
 				int tagType = commonTag.getType();
 				String tagName = commonTag.getName();
 				// multiple tag names but of the same type
 				if(sameTagType && !multipleSameNames) {
 					if(tagType == CVSTag.BRANCH) {
-						actionText = CVSUIMessages.ReplaceWithLatestAction_multipleBranches; //$NON-NLS-1$					
+						actionText = CVSUIMessages.ReplaceWithLatestAction_multipleBranches; //					
 					} else {
-						actionText = CVSUIMessages.ReplaceWithLatestAction_multipleVersions; //$NON-NLS-1$
+						actionText = CVSUIMessages.ReplaceWithLatestAction_multipleVersions; 
 					}
 				// same tag names and types
 				} else if(sameTagType && multipleSameNames) {
 					if(tagType == CVSTag.BRANCH) {
-						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleBranch, new String[] { tagName }); //$NON-NLS-1$					
+						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleBranch, new String[] { tagName }); //					
 					} else if(tagType == CVSTag.VERSION){
-						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleVersion, new String[] { tagName }); //$NON-NLS-1$
+						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleVersion, new String[] { tagName }); 
 					} else if(tagType == CVSTag.HEAD) {
-						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleHEAD, new String[] { tagName }); //$NON-NLS-1$
+						actionText = NLS.bind(CVSUIMessages.ReplaceWithLatestAction_singleHEAD, new String[] { tagName }); 
 					}
 				}
 			}
@@ -510,7 +510,7 @@ public abstract class WorkspaceAction extends CVSAction {
 			return actionText;
 		} catch (CVSException e) {
 			// silently ignore
-			return CVSUIMessages.ReplaceWithLatestAction_multipleTags; //$NON-NLS-1$ 
+			return CVSUIMessages.ReplaceWithLatestAction_multipleTags; // 
 		}
 	}
 
@@ -521,7 +521,7 @@ public abstract class WorkspaceAction extends CVSAction {
 		try {
 			monitor = Policy.monitorFor(monitor);
 			monitor.beginTask(null, selectedResources.length * 100);
-			monitor.setTaskName(CVSUIMessages.ReplaceWithAction_calculatingDirtyResources); //$NON-NLS-1$
+			monitor.setTaskName(CVSUIMessages.ReplaceWithAction_calculatingDirtyResources); 
 			for (int i = 0; i < selectedResources.length; i++) {
 				IResource resource = selectedResources[i];
 				ICVSResource cvsResource = getCVSResourceFor(resource);
@@ -534,7 +534,7 @@ public abstract class WorkspaceAction extends CVSAction {
 		}
 		
 		PromptingDialog dialog = new PromptingDialog(getShell(), selectedResources, 
-				getPromptCondition((IResource[]) dirtyResources.toArray(new IResource[dirtyResources.size()])), CVSUIMessages.ReplaceWithAction_confirmOverwrite);//$NON-NLS-1$
+				getPromptCondition((IResource[]) dirtyResources.toArray(new IResource[dirtyResources.size()])), CVSUIMessages.ReplaceWithAction_confirmOverwrite);
 		return dialog.promptForMultiple();
 	}
 

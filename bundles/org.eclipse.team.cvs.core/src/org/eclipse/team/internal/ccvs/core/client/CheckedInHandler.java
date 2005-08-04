@@ -48,7 +48,7 @@ class CheckedInHandler extends ResponseHandler {
 		ICVSFile mFile = mParent.getFile(fileName);
 		
 		// Marked the local file as checked-in
-		monitor.subTask(NLS.bind(CVSMessages.CheckInHandler_checkedIn, new String[] { Util.toTruncatedPath((ICVSResource)mFile, session.getLocalRoot(), 3) })); //$NON-NLS-1$
+		monitor.subTask(NLS.bind(CVSMessages.CheckInHandler_checkedIn, new String[] { Util.toTruncatedPath((ICVSResource)mFile, session.getLocalRoot(), 3) })); 
 		mFile.checkedIn(entryLine, session.getCurrentCommand() instanceof Commit);
 	}
 }

@@ -46,7 +46,7 @@ public class TagSelectionArea extends DialogArea {
 	
     private static int COLUMN_TRIM = "carbon".equals(SWT.getPlatform()) ? 24 : 3; //$NON-NLS-1$
     
-    private static int ICON_WIDTH = 40; //$NON-NLS-1$
+    private static int ICON_WIDTH = 40; 
     
     /*
      * Property constant which identifies the selected tag or
@@ -146,9 +146,9 @@ public class TagSelectionArea extends DialogArea {
         Composite inner = createGrabbingComposite(parent, 1);
         if (isIncludeFilterInputArea()) {
             createFilterInput(inner);
-            tagAreaTextLabel = createWrappingLabel(inner, CVSUIMessages.TagSelectionArea_0, 1); //$NON-NLS-1$
+            tagAreaTextLabel = createWrappingLabel(inner, CVSUIMessages.TagSelectionArea_0, 1); 
         } else {
-		    tagAreaTextLabel = createWrappingLabel(inner, NLS.bind(CVSUIMessages.TagSelectionArea_1, new String[] { getTagAreaLabel() }), 1);  //$NON-NLS-1$
+		    tagAreaTextLabel = createWrappingLabel(inner, NLS.bind(CVSUIMessages.TagSelectionArea_1, new String[] { getTagAreaLabel() }), 1);  
         }
 		switcher = new PageBook(inner, SWT.NONE);
 		GridData gridData = new GridData(GridData.FILL_BOTH);
@@ -160,7 +160,7 @@ public class TagSelectionArea extends DialogArea {
     }
 
     private void createFilterInput(Composite inner) {
-        createWrappingLabel(inner, NLS.bind(CVSUIMessages.TagSelectionArea_2, new String[] { getTagAreaLabel() }), 1); //$NON-NLS-1$
+        createWrappingLabel(inner, NLS.bind(CVSUIMessages.TagSelectionArea_2, new String[] { getTagAreaLabel() }), 1); 
         filterText = createText(inner, 1);
         filterText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -188,7 +188,7 @@ public class TagSelectionArea extends DialogArea {
      */
     public String getTagAreaLabel() {
         if (tagAreaLabel == null)
-            tagAreaLabel = CVSUIMessages.TagSelectionArea_3; //$NON-NLS-1$
+            tagAreaLabel = CVSUIMessages.TagSelectionArea_3; 
         return tagAreaLabel;
     }
 
@@ -463,14 +463,14 @@ public class TagSelectionArea extends DialogArea {
 		handleSelectionChange();
 	}
 	private void addMenuItemActions(IMenuManager manager) {
-		manager.add(new Action(CVSUIMessages.TagSelectionDialog_0) { //$NON-NLS-1$
+		manager.add(new Action(CVSUIMessages.TagSelectionDialog_0) { 
 			public void run() {
 				CVSTag dateTag = NewDateTagAction.getDateTag(getShell(), getLocation());
 				addDateTag(dateTag);
 			}
 		});
 		if(getSelectedDateTagElement().length > 0){
-			manager.add(new Action(CVSUIMessages.TagSelectionDialog_1) { //$NON-NLS-1$
+			manager.add(new Action(CVSUIMessages.TagSelectionDialog_1) { 
 				public void run() {
 					deleteDateTag();
 				}

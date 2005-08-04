@@ -226,7 +226,7 @@ public class TagConfigurationDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(NLS.bind(CVSUIMessages.TagConfigurationDialog_1, new String[] { tagSource.getShortDescription() })); //$NON-NLS-1$
+		newShell.setText(NLS.bind(CVSUIMessages.TagConfigurationDialog_1, new String[] { tagSource.getShortDescription() })); 
 	}
 
 	/**
@@ -252,7 +252,7 @@ public class TagConfigurationDialog extends Dialog {
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label cvsResourceTreeLabel = new Label(comp, SWT.NONE);
-		cvsResourceTreeLabel.setText(CVSUIMessages.TagConfigurationDialog_5); //$NON-NLS-1$
+		cvsResourceTreeLabel.setText(CVSUIMessages.TagConfigurationDialog_5); 
 		data = new GridData();
 		data.horizontalSpan = 1;
 		cvsResourceTreeLabel.setLayoutData(data);
@@ -283,7 +283,7 @@ public class TagConfigurationDialog extends Dialog {
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 	
 		Label cvsTagTreeLabel = new Label(comp, SWT.NONE);
-		cvsTagTreeLabel.setText(CVSUIMessages.TagConfigurationDialog_6); //$NON-NLS-1$
+		cvsTagTreeLabel.setText(CVSUIMessages.TagConfigurationDialog_6); 
 		data = new GridData();
 		data.horizontalSpan = 1;
 		cvsTagTreeLabel.setLayoutData(data);
@@ -309,7 +309,7 @@ public class TagConfigurationDialog extends Dialog {
 		selectComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Button selectAllButton = new Button(selectComp, SWT.PUSH);
 		selectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		selectAllButton.setText(CVSUIMessages.ReleaseCommentDialog_selectAll); //$NON-NLS-1$
+		selectAllButton.setText(CVSUIMessages.ReleaseCommentDialog_selectAll); 
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int nItems = table.getItemCount();
@@ -319,7 +319,7 @@ public class TagConfigurationDialog extends Dialog {
 		});
 		Button deselectAllButton = new Button(selectComp, SWT.PUSH);
 		deselectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		deselectAllButton.setText(CVSUIMessages.ReleaseCommentDialog_deselectAll); //$NON-NLS-1$
+		deselectAllButton.setText(CVSUIMessages.ReleaseCommentDialog_deselectAll); 
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int nItems = table.getItemCount();
@@ -354,7 +354,7 @@ public class TagConfigurationDialog extends Dialog {
 		rememberedTags.setLayout (gridLayout);
 	
 		Label rememberedTagsLabel = new Label (rememberedTags, SWT.NONE);
-		rememberedTagsLabel.setText (CVSUIMessages.TagConfigurationDialog_7); //$NON-NLS-1$
+		rememberedTagsLabel.setText (CVSUIMessages.TagConfigurationDialog_7); 
 		data = new GridData ();
 		data.horizontalSpan = 2;
 		rememberedTagsLabel.setLayoutData (data);
@@ -387,7 +387,7 @@ public class TagConfigurationDialog extends Dialog {
 		buttonComposite.setLayout (gridLayout);
 		
 		addSelectedTagsButton = new Button (buttonComposite, SWT.PUSH);
-		addSelectedTagsButton.setText (CVSUIMessages.TagConfigurationDialog_8); //$NON-NLS-1$
+		addSelectedTagsButton.setText (CVSUIMessages.TagConfigurationDialog_8); 
 		data = getStandardButtonData(addSelectedTagsButton);
 		data.horizontalAlignment = GridData.FILL;
 		addSelectedTagsButton.setLayoutData(data);
@@ -399,7 +399,7 @@ public class TagConfigurationDialog extends Dialog {
 				}
 			});			
 		Button addDatesButton = new Button(buttonComposite, SWT.PUSH);
-		addDatesButton.setText(CVSUIMessages.TagConfigurationDialog_0); //$NON-NLS-1$
+		addDatesButton.setText(CVSUIMessages.TagConfigurationDialog_0); 
 		data = getStandardButtonData(addDatesButton);
 		data.horizontalAlignment = GridData.FILL;
 		addDatesButton.setLayoutData(data);
@@ -412,7 +412,7 @@ public class TagConfigurationDialog extends Dialog {
 			}
 		});
 		removeTagButton = new Button (buttonComposite, SWT.PUSH);
-		removeTagButton.setText (CVSUIMessages.TagConfigurationDialog_9); //$NON-NLS-1$
+		removeTagButton.setText (CVSUIMessages.TagConfigurationDialog_9); 
 		data = getStandardButtonData(removeTagButton);
 		data.horizontalAlignment = GridData.FILL;		
 		removeTagButton.setLayoutData(data);
@@ -425,7 +425,7 @@ public class TagConfigurationDialog extends Dialog {
 			});
 			
 		Button removeAllTags = new Button (buttonComposite, SWT.PUSH);
-		removeAllTags.setText (CVSUIMessages.TagConfigurationDialog_10); //$NON-NLS-1$
+		removeAllTags.setText (CVSUIMessages.TagConfigurationDialog_10); 
 		data = getStandardButtonData(removeAllTags);
 		data.horizontalAlignment = GridData.FILL;		
 		removeAllTags.setLayoutData(data);
@@ -439,7 +439,7 @@ public class TagConfigurationDialog extends Dialog {
 		
 		if(allowSettingAutoRefreshFiles) {
 			Label explanation = new Label(rememberedTags, SWT.WRAP);
-			explanation.setText(CVSUIMessages.TagConfigurationDialog_11); //$NON-NLS-1$
+			explanation.setText(CVSUIMessages.TagConfigurationDialog_11); 
 			data = new GridData ();
 			data.horizontalSpan = 2;
 			//data.widthHint = 300;
@@ -476,7 +476,7 @@ public class TagConfigurationDialog extends Dialog {
 			buttonComposite2.setLayout (gridLayout);
 	
 			addSelectedFilesButton = new Button (buttonComposite2, SWT.PUSH);
-			addSelectedFilesButton.setText (CVSUIMessages.TagConfigurationDialog_12); //$NON-NLS-1$
+			addSelectedFilesButton.setText (CVSUIMessages.TagConfigurationDialog_12); 
 			data = getStandardButtonData(addSelectedFilesButton);
 			data.horizontalAlignment = GridData.FILL;
 			addSelectedFilesButton.setLayoutData(data);
@@ -487,7 +487,7 @@ public class TagConfigurationDialog extends Dialog {
 				});			
 				
 			removeFileButton = new Button (buttonComposite2, SWT.PUSH);
-			removeFileButton.setText (CVSUIMessages.TagConfigurationDialog_13); //$NON-NLS-1$
+			removeFileButton.setText (CVSUIMessages.TagConfigurationDialog_13); 
 			data = getStandardButtonData(removeFileButton);
 			data.horizontalAlignment = GridData.FILL;		
 			removeFileButton.setLayoutData(data);
@@ -522,7 +522,7 @@ public class TagConfigurationDialog extends Dialog {
 			try {
 				CVSUIPlugin.runWithProgress(getShell(), true /*cancelable*/, new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						monitor.beginTask(CVSUIMessages.TagConfigurationDialog_22, filesSelection.length); //$NON-NLS-1$
+						monitor.beginTask(CVSUIMessages.TagConfigurationDialog_22, filesSelection.length); 
 						try {
 							for (int i = 0; i < filesSelection.length; i++) {
 								ICVSFile file = filesSelection[i].getCVSFile();

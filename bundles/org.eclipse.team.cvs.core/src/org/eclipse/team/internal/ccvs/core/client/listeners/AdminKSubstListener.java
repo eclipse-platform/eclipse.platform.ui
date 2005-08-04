@@ -45,7 +45,7 @@ public class AdminKSubstListener extends CommandOutputListener {
 			String rcsFile = line.substring(10).trim();
 			if (! rcsFile.endsWith(",v")) { //$NON-NLS-1$
 				return new CVSStatus(CVSStatus.ERROR,
-					NLS.bind(CVSMessages.AdminKSubstListener_expectedRCSFile, new String[] { rcsFile })); //$NON-NLS-1$
+					NLS.bind(CVSMessages.AdminKSubstListener_expectedRCSFile, new String[] { rcsFile })); 
 			}
 			IPath rcsFilePath = new Path(null, Util.removeAtticSegment(rcsFile.substring(0, rcsFile.length() - 2)));
 			try {
@@ -70,7 +70,7 @@ public class AdminKSubstListener extends CommandOutputListener {
 		String remoteRootLocation = info.getRemoteLocation();
 		if (remoteRootLocation == null) {
 			throw new CVSException(new CVSStatus(CVSStatus.ERROR,
-				CVSMessages.AdminKSubstListener_commandRootNotManaged)); //$NON-NLS-1$
+				CVSMessages.AdminKSubstListener_commandRootNotManaged)); 
 		}
 		IPath remoteRootPath = new Path(null, remoteRootLocation);
 		if (remoteRootPath.isPrefixOf(rcsFilePath)) {

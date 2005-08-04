@@ -51,7 +51,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
 		    return;
 		boolean binary = isBinary(cvsResource);
         if (binary) {
-		    if (!MessageDialog.openQuestion(getShell(), CVSUIMessages.ShowAnnotationAction_2, NLS.bind(CVSUIMessages.ShowAnnotationAction_3, new String[] { cvsResource.getName() }))) { //$NON-NLS-1$ //$NON-NLS-2$
+		    if (!MessageDialog.openQuestion(getShell(), CVSUIMessages.ShowAnnotationAction_2, NLS.bind(CVSUIMessages.ShowAnnotationAction_3, new String[] { cvsResource.getName() }))) { // 
 		        return;
 		    }
 		}
@@ -122,7 +122,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
         try {
             info= cvsResource.getSyncInfo();
             if (info == null) 
-                throw new CVSException(NLS.bind(CVSUIMessages.ShowAnnotationAction_noSyncInfo, new String[] { cvsResource.getName() })); //$NON-NLS-1$
+                throw new CVSException(NLS.bind(CVSUIMessages.ShowAnnotationAction_noSyncInfo, new String[] { cvsResource.getName() })); 
         } catch (CVSException e) {
             throw new InvocationTargetException(e);
         }

@@ -261,21 +261,21 @@ public class ModeWizardSelectionPage extends WizardPage {
 			 */
 			final TableColumn fileColumn = new TableColumn(table, SWT.NONE, INDEX_FILE);
 			fileColumn.setWidth(converter.convertWidthInCharsToPixels(LARGE_COLUMN));
-			fileColumn.setText(CVSUIMessages.ModeWizardSelectionPage_2); //$NON-NLS-1$
+			fileColumn.setText(CVSUIMessages.ModeWizardSelectionPage_2); 
 			
 			/**
 			 * The 'Mode' column
 			 */
 			final TableColumn newModeColumn = new TableColumn(table, SWT.NONE, INDEX_MODE);
 			newModeColumn.setWidth(converter.convertWidthInCharsToPixels(COLUMN_MIN_WIDTH_IN_CHARS + 6));
-			newModeColumn.setText(CVSUIMessages.ModeWizardSelectionPage_3); //$NON-NLS-1$
+			newModeColumn.setText(CVSUIMessages.ModeWizardSelectionPage_3); 
 			
 			/**
 			 * The 'Path' column
 			 */
 			final TableColumn pathColumn= new TableColumn(table, SWT.NONE, INDEX_PATH);
 			pathColumn.setWidth(converter.convertWidthInCharsToPixels(50));
-			pathColumn.setText(CVSUIMessages.ModeWizardSelectionPage_4); //$NON-NLS-1$
+			pathColumn.setText(CVSUIMessages.ModeWizardSelectionPage_4); 
 			
 			
 			fViewer= new TableViewer(table);
@@ -454,8 +454,8 @@ public class ModeWizardSelectionPage extends WizardPage {
 			fTable= table;
 			fButton= new Button(parent, SWT.NONE);
 			fButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.CENTER, false, false));
-			fButton.setText(CVSUIMessages.ModeWizardSelectionPage_8); //$NON-NLS-1$
-			fButton.setToolTipText(CVSUIMessages.ModeWizardSelectionPage_9); //$NON-NLS-1$
+			fButton.setText(CVSUIMessages.ModeWizardSelectionPage_8); 
+			fButton.setToolTipText(CVSUIMessages.ModeWizardSelectionPage_9); 
 			fButton.addSelectionListener(this);
 			fTable.addObserver(this);
 		}
@@ -492,8 +492,8 @@ public class ModeWizardSelectionPage extends WizardPage {
 			final int buttonWidth= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 			fButton= new Button(parent, SWT.NONE);
 			fButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.CENTER, false, false));
-			fButton.setText(CVSUIMessages.ModeWizardSelectionPage_10); //$NON-NLS-1$
-			fButton.setToolTipText(CVSUIMessages.ModeWizardSelectionPage_11); //$NON-NLS-1$
+			fButton.setText(CVSUIMessages.ModeWizardSelectionPage_10); 
+			fButton.setToolTipText(CVSUIMessages.ModeWizardSelectionPage_11); 
 			fButton.addSelectionListener(this);
 			fTable.addObserver(this);
 			
@@ -523,7 +523,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 			final int buttonWidth= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 			fButton= new Button(parent, SWT.NONE);
 			fButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.CENTER, false, false));
-			fButton.setText(CVSUIMessages.ModeWizardSelectionPage_12); //$NON-NLS-1$
+			fButton.setText(CVSUIMessages.ModeWizardSelectionPage_12); 
 			fButton.addSelectionListener(this);
 		}
 		
@@ -542,7 +542,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 			final int buttonWidth= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 			fButton= new Button(parent, SWT.NONE);
 			fButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.CENTER, false, false));
-			fButton.setText(CVSUIMessages.ModeWizardSelectionPage_13); //$NON-NLS-1$
+			fButton.setText(CVSUIMessages.ModeWizardSelectionPage_13); 
 			fButton.addSelectionListener(this);
 		}
 		
@@ -559,7 +559,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 		public ShowChangesOnlyCheckbox(ModeWizardSelectionPage page, Composite parent) {
 			fPage= page;
 			fCheck= new Button(parent, SWT.CHECK);
-			fCheck.setText(CVSUIMessages.ModeWizardSelectionPage_14); //$NON-NLS-1$
+			fCheck.setText(CVSUIMessages.ModeWizardSelectionPage_14); 
 			fCheck.setLayoutData(SWTUtils.createHFillGridData());
 			fCheck.setSelection(false);
 			fCheck.addSelectionListener(this);
@@ -583,7 +583,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 			
 			final int buttonWidth= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 			final Button button= new Button(parent, SWT.PUSH);
-			button.setText(CVSUIMessages.ModeWizardSelectionPage_15); //$NON-NLS-1$
+			button.setText(CVSUIMessages.ModeWizardSelectionPage_15); 
 			button.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.CENTER, false, false));
 			button.addSelectionListener(this);
 			
@@ -626,7 +626,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 		 * @param numberOfChanges
 		 */
 		private void updateText(int numberOfChanges) {
-			fLabel.setText(NLS.bind(CVSUIMessages.ModeWizardSelectionPage_17, new String[] { Integer.toString(numberOfChanges) })); //$NON-NLS-1$
+			fLabel.setText(NLS.bind(CVSUIMessages.ModeWizardSelectionPage_17, new String[] { Integer.toString(numberOfChanges) })); 
 		}
 
 	}
@@ -651,7 +651,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 		 * @param numberOfChanges
 		 */
 		private void updateText(int selected) {
-			fLabel.setText(NLS.bind(CVSUIMessages.ModeWizardSelectionPage_25, new String[] { Integer.toString(selected) })); //$NON-NLS-1$
+			fLabel.setText(NLS.bind(CVSUIMessages.ModeWizardSelectionPage_25, new String[] { Integer.toString(selected) })); 
 		}
 	}
 	
@@ -694,8 +694,8 @@ public class ModeWizardSelectionPage extends WizardPage {
 	private CommitCommentArea fCommentArea;
 	
 	public ModeWizardSelectionPage(List modeChanges) {
-		super(CVSUIMessages.ModeWizardSelectionPage_18, CVSUIMessages.ModeWizardSelectionPage_19, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_KEYWORD)); //$NON-NLS-1$ //$NON-NLS-2$
-		setDescription(CVSUIMessages.ModeWizardSelectionPage_20); //$NON-NLS-1$
+		super(CVSUIMessages.ModeWizardSelectionPage_18, CVSUIMessages.ModeWizardSelectionPage_19, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_KEYWORD)); // 
+		setDescription(CVSUIMessages.ModeWizardSelectionPage_20); 
 		fChanges= modeChanges;
 	}
 	
@@ -722,7 +722,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 		final Composite topComposite= SWTUtils.createHVFillComposite(mainSash, SWTUtils.MARGINS_NONE);
 		((GridLayout)topComposite.getLayout()).marginBottom= verticalSpace;
 		
-		final Composite topGroup= SWTUtils.createHVFillGroup(topComposite, CVSUIMessages.ModeWizardSelectionPage_21, SWTUtils.MARGINS_DIALOG); //$NON-NLS-1$
+		final Composite topGroup= SWTUtils.createHVFillGroup(topComposite, CVSUIMessages.ModeWizardSelectionPage_21, SWTUtils.MARGINS_DIALOG); 
 		
 		final Composite filterComposite= SWTUtils.createHFillComposite(topGroup, SWTUtils.MARGINS_NONE, 2);
 		final FilterTextBox filterBox= new FilterTextBox(ModeWizardSelectionPage.this, filterComposite, converter);
@@ -754,13 +754,13 @@ public class ModeWizardSelectionPage extends WizardPage {
 		((GridLayout)leftComposite.getLayout()).marginRight= horizontalSpace;
 		((GridLayout)leftComposite.getLayout()).marginTop= verticalSpace;
 		
-		final Group leftGroup= SWTUtils.createHVFillGroup(leftComposite, CVSUIMessages.ModeWizardSelectionPage_22, SWTUtils.MARGINS_DIALOG, 3); //$NON-NLS-1$
+		final Group leftGroup= SWTUtils.createHVFillGroup(leftComposite, CVSUIMessages.ModeWizardSelectionPage_22, SWTUtils.MARGINS_DIALOG, 3); 
 		
 		new ModeCombo(fTable, leftGroup);
 		new GuessButton(fTable, leftGroup, converter);
 		new ResetButton(fTable, leftGroup, converter);
 		SWTUtils.createPlaceholder(leftGroup, 1);
-		final Label infoLabel= SWTUtils.createLabel(leftGroup, CVSUIMessages.ModeWizardSelectionPage_23, 3); //$NON-NLS-1$
+		final Label infoLabel= SWTUtils.createLabel(leftGroup, CVSUIMessages.ModeWizardSelectionPage_23, 3); 
 		
 		fTable.addObserver(new Observer() {
 			public void update(Observable o, Object arg) {
@@ -777,7 +777,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 		((GridLayout)rightComposite.getLayout()).marginLeft= horizontalSpace;
 		((GridLayout)rightComposite.getLayout()).marginTop= verticalSpace;
 		
-		final Group rightGroup= SWTUtils.createHVFillGroup(rightComposite, CVSUIMessages.ModeWizardSelectionPage_24, SWTUtils.MARGINS_DIALOG); //$NON-NLS-1$
+		final Group rightGroup= SWTUtils.createHVFillGroup(rightComposite, CVSUIMessages.ModeWizardSelectionPage_24, SWTUtils.MARGINS_DIALOG); 
 		(fCommentArea= new CommitCommentArea()).createArea(rightGroup);
 		
 		/**

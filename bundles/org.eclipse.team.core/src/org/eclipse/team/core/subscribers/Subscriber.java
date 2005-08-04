@@ -307,11 +307,11 @@ abstract public class Subscriber {
 						monitor);
 				}
 			} catch (TeamException e) {
-				set.addError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_ERROR, NLS.bind(Messages.SubscriberEventHandler_8, new String[] { resource.getFullPath().toString(), e.getMessage() }), e, resource)); //$NON-NLS-1$
+				set.addError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_ERROR, NLS.bind(Messages.SubscriberEventHandler_8, new String[] { resource.getFullPath().toString(), e.getMessage() }), e, resource)); 
 			}
 		}
 
-		monitor.subTask(NLS.bind(Messages.SubscriberEventHandler_2, new String[] { resource.getFullPath().toString() })); //$NON-NLS-1$
+		monitor.subTask(NLS.bind(Messages.SubscriberEventHandler_2, new String[] { resource.getFullPath().toString() })); 
 		try {
 			SyncInfo info = getSyncInfo(resource);
 			if (info == null || info.getKind() == SyncInfo.IN_SYNC) {
@@ -324,7 +324,7 @@ abstract public class Subscriber {
 		} catch (TeamException e) {
 			set.addError(new TeamStatus(
 					IStatus.ERROR, TeamPlugin.ID, ITeamStatus.RESOURCE_SYNC_INFO_ERROR, 
-					NLS.bind(Messages.SubscriberEventHandler_9, new String[] { resource.getFullPath().toString(), e.getMessage() }),  //$NON-NLS-1$
+					NLS.bind(Messages.SubscriberEventHandler_9, new String[] { resource.getFullPath().toString(), e.getMessage() }),  
 					e, resource));
 		}
 		// Tick the monitor to give the owner a chance to do something

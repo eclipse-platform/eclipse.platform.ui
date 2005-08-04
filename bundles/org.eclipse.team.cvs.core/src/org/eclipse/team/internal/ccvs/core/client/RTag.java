@@ -69,7 +69,7 @@ public class RTag extends RemoteCommand {
 		IProgressMonitor monitor) throws CVSException {
 		
 		if(tag.getType() != CVSTag.VERSION && tag.getType() != CVSTag.BRANCH) {
-			throw new CVSException(new CVSStatus(IStatus.ERROR, CVSMessages.Tag_notVersionOrBranchError)); //$NON-NLS-1$
+			throw new CVSException(new CVSStatus(IStatus.ERROR, CVSMessages.Tag_notVersionOrBranchError)); 
 		}
 		
 		// Add the source tag to the local options

@@ -51,7 +51,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * @param description
 	 */
 	public CheckoutAsMainPage(ImageDescriptor titleImage, ICVSRemoteFolder[] folders, boolean allowProjectConfiguration) {
-		super(NAME, CVSUIMessages.CheckoutAsMainPage_title, titleImage, CVSUIMessages.CheckoutAsMainPage_description); //$NON-NLS-1$ //$NON-NLS-2$
+		super(NAME, CVSUIMessages.CheckoutAsMainPage_title, titleImage, CVSUIMessages.CheckoutAsMainPage_description); // 
 		this.folders = folders;
 		this.allowProjectConfiguration = allowProjectConfiguration;
 	}
@@ -98,11 +98,11 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * Create the page contents for a single folder checkout
 	 */
 	private void createSingleFolderArea(Composite composite) {
-		createLabel(composite, NLS.bind(CVSUIMessages.CheckoutAsMainPage_singleFolder, new String[] { getFolderName() })); //$NON-NLS-1$
-		configuredProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_asConfiguredProject, 1); //$NON-NLS-1$
+		createLabel(composite, NLS.bind(CVSUIMessages.CheckoutAsMainPage_singleFolder, new String[] { getFolderName() })); 
+		configuredProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_asConfiguredProject, 1); 
 		if (!allowProjectConfiguration) {
 			configuredProjectButton.setEnabled(false);
-			Label configuredLabel = createWrappingLabel(composite, CVSUIMessages.CheckoutAsMainPage_10, 5); //$NON-NLS-1$
+			Label configuredLabel = createWrappingLabel(composite, CVSUIMessages.CheckoutAsMainPage_10, 5); 
 			configuredLabel.setEnabled(false);
 		}
 		createCheckoutAsProjectRadioArea(composite);
@@ -118,7 +118,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * Create the page contents for a multiple folder checkout
 	 */
 	private void createMultipleFoldersArea(Composite composite) {
-		createLabel(composite, NLS.bind(CVSUIMessages.CheckoutAsMainPage_multipleFolders, new String[] { new Integer(folders.length).toString() })); //$NON-NLS-1$
+		createLabel(composite, NLS.bind(CVSUIMessages.CheckoutAsMainPage_multipleFolders, new String[] { new Integer(folders.length).toString() })); 
 		createCheckoutAsProjectRadioArea(composite);
 		createCheckoutIntoRadioArea(composite);
 		simpleProjectButton.setSelection(true);
@@ -129,10 +129,10 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 */
 	private void createCheckoutAsProjectRadioArea(Composite composite) {
 		if (isSingleFolder()) {
-			simpleProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_asSimpleProject, 1); //$NON-NLS-1$
+			simpleProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_asSimpleProject, 1); 
 			createProjectNameGroup(composite);
 		} else {
-			simpleProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_asProjects, 1); //$NON-NLS-1$
+			simpleProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_asProjects, 1); 
 		}
 	}
 	
@@ -140,7 +140,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * @param composite
 	 */
 	private void createCheckoutIntoRadioArea(Composite composite) {
-		intoProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_intoProject, 1); //$NON-NLS-1$
+		intoProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_intoProject, 1); 
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 
 		// new project label
 		Label projectLabel = new Label(projectGroup,SWT.NONE);
-		projectLabel.setText(CVSUIMessages.CheckoutAsMainPage_projectNameLabel); //$NON-NLS-1$
+		projectLabel.setText(CVSUIMessages.CheckoutAsMainPage_projectNameLabel); 
 
 		// new project name entry field
 		projectNameField = new Text(projectGroup, SWT.BORDER);

@@ -83,7 +83,7 @@ public class CheckoutAsWizard extends Wizard {
 		this.part = part;
 		this.remoteFolders = remoteFolders;
         setDialogSettings(getCheckoutAsDialogSettings());
-		setWindowTitle(CVSUIMessages.CheckoutAsWizard_title); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.CheckoutAsWizard_title); 
 		this.allowProjectConfiguration = allowProjectConfiguration;
 	}
 	
@@ -103,7 +103,7 @@ public class CheckoutAsWizard extends Wizard {
 		locationSelectionPage = new CheckoutAsLocationSelectionPage(substImage, remoteFolders);
 		addPage(locationSelectionPage);
 		
-		tagSelectionPage = new TagSelectionWizardPage("tagPage", CVSUIMessages.CheckoutAsWizard_3, substImage, CVSUIMessages.CheckoutAsWizard_4, TagSource.create(remoteFolders), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+		tagSelectionPage = new TagSelectionWizardPage("tagPage", CVSUIMessages.CheckoutAsWizard_3, substImage, CVSUIMessages.CheckoutAsWizard_4, TagSource.create(remoteFolders), //$NON-NLS-1$    
 		        TagSelectionArea.INCLUDE_HEAD_TAG |
 		        TagSelectionArea.INCLUDE_BRANCHES |
 		        TagSelectionArea.INCLUDE_VERSIONS |
@@ -187,7 +187,7 @@ public class CheckoutAsWizard extends Wizard {
 	}
 	
 	private void handle(Throwable e) {
-		CVSUIPlugin.openError(getShell(), CVSUIMessages.CheckoutAsWizard_error, null, e); //$NON-NLS-1$
+		CVSUIPlugin.openError(getShell(), CVSUIMessages.CheckoutAsWizard_error, null, e); 
 	}
 	
 	/*

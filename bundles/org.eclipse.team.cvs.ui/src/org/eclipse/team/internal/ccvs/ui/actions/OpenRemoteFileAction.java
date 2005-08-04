@@ -71,7 +71,7 @@ public class OpenRemoteFileAction extends CVSAction {
 					CVSUIPlugin.getPlugin().openEditor(file, monitor);
 				}
 			}
-		}, false, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, false, PROGRESS_BUSYCURSOR); 
 	}
 	/*
 	 * @see TeamAction#isEnabled()

@@ -62,7 +62,7 @@ public class KeyboardInteractiveDialog extends Dialog {
     this.instruction=instruction;
     this.prompt=prompt;
     this.echo=echo;
-    this.message=NLS.bind(CVSUIMessages.KeyboradInteractiveDialog_message, new String[] { destination+(name!=null && name.length()>0 ? ": "+name : "") }); //NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    this.message=NLS.bind(CVSUIMessages.KeyboradInteractiveDialog_message, new String[] { destination+(name!=null && name.length()>0 ? ": "+name : "") }); //NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-2$ 
   }
   /**
    * @see Window#configureShell
@@ -102,7 +102,7 @@ public class KeyboardInteractiveDialog extends Dialog {
     }
     if(domain!=null){
       Label label = new Label(main, SWT.WRAP);
-      label.setText(NLS.bind(CVSUIMessages.KeyboardInteractiveDialog_labelRepository, new String[] { domain })); //$NON-NLS-1$
+      label.setText(NLS.bind(CVSUIMessages.KeyboardInteractiveDialog_labelRepository, new String[] { domain })); 
       GridData data=new GridData(GridData.FILL_HORIZONTAL);
       data.horizontalSpan=3;
       label.setLayoutData(data);

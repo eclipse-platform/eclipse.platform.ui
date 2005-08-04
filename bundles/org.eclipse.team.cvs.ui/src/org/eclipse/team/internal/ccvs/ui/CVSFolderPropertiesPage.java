@@ -52,23 +52,23 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 			ICVSFolder cvsResource = CVSWorkspaceRoot.getCVSFolderFor(folder);
 			if (!cvsResource.isManaged()) {
 				if (cvsResource.isIgnored()) {
-					createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_ignored, 2); //$NON-NLS-1$
+					createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_ignored, 2); 
 				} else {
-					createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_notManaged, 2); //$NON-NLS-1$
+					createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_notManaged, 2); 
 				}
 			} else if (!cvsResource.isCVSFolder()) {
 				// We have a managed folder which is not a cvs folder. 
 				// This is really an invalid state but it does happen once in a while
-				createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_notCVSFolder, 2); //$NON-NLS-1$
+				createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_notCVSFolder, 2); 
 			} else {
 				FolderSyncInfo syncInfo = cvsResource.getFolderSyncInfo();
-				createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_root); //$NON-NLS-1$
+				createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_root); 
 				root = createLabel(composite, syncInfo.getRoot());
-				createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_repository); //$NON-NLS-1$
+				createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_repository); 
 				repository = createLabel(composite, syncInfo.getRepository());
 			
 				// Tag
-				createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_tag); //$NON-NLS-1$
+				createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_tag); 
 				CVSTag tag = syncInfo.getTag();
 
 				if (tag != null && tag.getType() == CVSTag.BRANCH) {
@@ -79,15 +79,15 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 				
 				// Static-ness
 				if (syncInfo.getIsStatic()) {
-					createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_static); //$NON-NLS-1$
-					createLabel(composite, syncInfo.getIsStatic() ? CVSUIMessages.yes : CVSUIMessages.no); //$NON-NLS-1$ //$NON-NLS-2$
+					createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_static); 
+					createLabel(composite, syncInfo.getIsStatic() ? CVSUIMessages.yes : CVSUIMessages.no); // 
 				}
 				
 				createLabel(composite, "", 2); // spacer //$NON-NLS-1$
 				
 				// Allow the folder to be disconnected from CVS control
 				final Button disconnect = new Button(composite, SWT.NONE);
-				disconnect.setText(CVSUIMessages.CVSFolderPropertiesPage_disconnect); //$NON-NLS-1$
+				disconnect.setText(CVSUIMessages.CVSFolderPropertiesPage_disconnect); 
 				GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END);
 				int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 				data.widthHint = Math.max(widthHint, disconnect.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
@@ -96,8 +96,8 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 					public void handleEvent (Event event) {
 						// perform a disconnect
 						if (disconnectFolder()) {
-							root.setText(CVSUIMessages.CVSFilePropertiesPage_none); //$NON-NLS-1$
-							repository.setText(CVSUIMessages.CVSFilePropertiesPage_none); //$NON-NLS-1$
+							root.setText(CVSUIMessages.CVSFilePropertiesPage_none); 
+							repository.setText(CVSUIMessages.CVSFilePropertiesPage_none); 
 							disconnect.setEnabled(false);
 						}
 					}
@@ -105,7 +105,7 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 			}
 		} catch (TeamException e) {
 			// Display error text
-			createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_error, 2); //$NON-NLS-1$
+			createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_error, 2); 
 		}
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.FOLDER_PROPERTY_PAGE);
         Dialog.applyDialogFont(parent);
@@ -151,7 +151,7 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 	}
 
 	private boolean disconnectFolder() {
-		if (MessageDialog.openQuestion(getShell(), CVSUIMessages.CVSFolderPropertiesPage_disconnectTitle, CVSUIMessages.CVSFolderPropertiesPage_disconnectQuestion)) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (MessageDialog.openQuestion(getShell(), CVSUIMessages.CVSFolderPropertiesPage_disconnectTitle, CVSUIMessages.CVSFolderPropertiesPage_disconnectQuestion)) { // 
 			final ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
 			try {
 				PlatformUI.getWorkbench().getProgressService().run(true, false, new IRunnableWithProgress() {

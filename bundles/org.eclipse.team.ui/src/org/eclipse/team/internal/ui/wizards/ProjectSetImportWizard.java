@@ -37,11 +37,11 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 
 	public ProjectSetImportWizard() {
 		setNeedsProgressMonitor(true);
-		setWindowTitle(TeamUIMessages.ProjectSetImportWizard_Project_Set_1); //$NON-NLS-1$
+		setWindowTitle(TeamUIMessages.ProjectSetImportWizard_Project_Set_1); 
 	}
 	
 	public void addPages() {
-		mainPage = new ImportProjectSetMainPage("projectSetMainPage", TeamUIMessages.ProjectSetImportWizard_Import_a_Project_Set_3, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_IMPORT_BANNER)); //$NON-NLS-1$ //$NON-NLS-2$
+		mainPage = new ImportProjectSetMainPage("projectSetMainPage", TeamUIMessages.ProjectSetImportWizard_Import_a_Project_Set_3, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_IMPORT_BANNER)); //$NON-NLS-1$ 
 		mainPage.setFileName(lastFile);
 		addPage(mainPage);
 	}
@@ -52,7 +52,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 		if (workingSetName != null) {
 			IWorkingSet existingSet = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
 			if (existingSet != null && 
-				!MessageDialog.openConfirm(getShell(), TeamUIMessages.ProjectSetImportWizard_workingSetExistsTitle, NLS.bind(TeamUIMessages.ProjectSetImportWizard_workingSetExistsMessage, new String[] { workingSetName }))) //$NON-NLS-1$ //$NON-NLS-2$
+				!MessageDialog.openConfirm(getShell(), TeamUIMessages.ProjectSetImportWizard_workingSetExistsTitle, NLS.bind(TeamUIMessages.ProjectSetImportWizard_workingSetExistsMessage, new String[] { workingSetName }))) // 
 					return false;
 		}
 		
@@ -95,7 +95,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
                                         providerType = TeamPlugin.getAliasType(id);
                                     }
                                     if (providerType == null) {
-                                        throw new TeamException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, NLS.bind(TeamUIMessages.ProjectSetImportWizard_0, new String[] { id }), null)); //$NON-NLS-1$
+                                        throw new TeamException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, NLS.bind(TeamUIMessages.ProjectSetImportWizard_0, new String[] { id }), null)); 
                                     }
                                 	ProjectSetCapability serializer = providerType.getProjectSetCapability();
                                 	ProjectSetCapability.ensureBackwardsCompatible(providerType, serializer);
@@ -117,7 +117,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 							        for (int i = 0; i < exceptions.length; i++) {
                                         status[i] = exceptions[i].getStatus();
                                     }
-							        throw new TeamException(new MultiStatus(TeamUIPlugin.ID, 0, status, TeamUIMessages.ProjectSetImportWizard_1, null)); //$NON-NLS-1$
+							        throw new TeamException(new MultiStatus(TeamUIPlugin.ID, 0, status, TeamUIMessages.ProjectSetImportWizard_1, null)); 
 							    }
 							}
 						}
@@ -158,10 +158,10 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 				throw (Error)target;
 			}
 			if (target instanceof SAXException) {
-			    ErrorDialog.openError(getShell(), null, null, new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, NLS.bind(TeamUIMessages.ProjectSetImportWizard_2, new String[] { target.getMessage() }), target)); //$NON-NLS-1$
+			    ErrorDialog.openError(getShell(), null, null, new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, NLS.bind(TeamUIMessages.ProjectSetImportWizard_2, new String[] { target.getMessage() }), target)); 
 			    return false;
 			}
-			ErrorDialog.openError(getShell(), null, null, new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, NLS.bind(TeamUIMessages.ProjectSetImportWizard_3, new String[] { target.getMessage() }), target)); //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), null, null, new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, NLS.bind(TeamUIMessages.ProjectSetImportWizard_3, new String[] { target.getMessage() }), target)); 
 		}
 		return result[0];
 	}

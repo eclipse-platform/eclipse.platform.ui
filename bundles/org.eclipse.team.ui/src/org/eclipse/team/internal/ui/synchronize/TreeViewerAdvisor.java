@@ -260,7 +260,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 			}
 		}
 		if (selection.size() > 1) {
-			return selection.size() + TeamUIMessages.SynchronizeView_13; //$NON-NLS-1$
+			return selection.size() + TeamUIMessages.SynchronizeView_13; 
 		}
 		return ""; //$NON-NLS-1$
 	}

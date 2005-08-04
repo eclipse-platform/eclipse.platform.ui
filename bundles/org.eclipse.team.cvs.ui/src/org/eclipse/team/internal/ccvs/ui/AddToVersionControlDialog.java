@@ -45,7 +45,7 @@ public class AddToVersionControlDialog extends DetailsDialog {
 	 * @param parentShell
 	 */
 	public AddToVersionControlDialog(Shell parentShell, IResource[] unaddedResources) {
-		super(parentShell, CVSUIMessages.AddToVersionControlDialog_title); //$NON-NLS-1$
+		super(parentShell, CVSUIMessages.AddToVersionControlDialog_title); 
 		this.unaddedResources = unaddedResources;
 	}
 
@@ -59,9 +59,9 @@ public class AddToVersionControlDialog extends DetailsDialog {
 			 
 		// add a description label
 		if (unaddedResources.length==1) {
-			createWrappingLabel(composite, NLS.bind(CVSUIMessages.AddToVersionControlDialog_thereIsAnUnaddedResource, new String[] { new Integer(unaddedResources.length).toString() }));  //$NON-NLS-1$
+			createWrappingLabel(composite, NLS.bind(CVSUIMessages.AddToVersionControlDialog_thereIsAnUnaddedResource, new String[] { new Integer(unaddedResources.length).toString() }));  
 		} else {
-			createWrappingLabel(composite, NLS.bind(CVSUIMessages.AddToVersionControlDialog_thereAreUnaddedResources, new String[] { new Integer(unaddedResources.length).toString() }));  //$NON-NLS-1$
+			createWrappingLabel(composite, NLS.bind(CVSUIMessages.AddToVersionControlDialog_thereAreUnaddedResources, new String[] { new Integer(unaddedResources.length).toString() }));  
 		}
 	}
 
@@ -94,7 +94,7 @@ public class AddToVersionControlDialog extends DetailsDialog {
 	private void addUnaddedResourcesArea(Composite composite) {
 		
 		// add a description label
-		createWrappingLabel(composite, CVSUIMessages.ReleaseCommentDialog_unaddedResources); //$NON-NLS-1$
+		createWrappingLabel(composite, CVSUIMessages.ReleaseCommentDialog_unaddedResources); 
 	
 		// add the selectable checkbox list
 		listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
@@ -143,7 +143,7 @@ public class AddToVersionControlDialog extends DetailsDialog {
 		data.grabExcessHorizontalSpace = true;
 		composite.setData(data);
 	
-		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, CVSUIMessages.ReleaseCommentDialog_selectAll, false); //$NON-NLS-1$
+		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, CVSUIMessages.ReleaseCommentDialog_selectAll, false); 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				listViewer.setAllChecked(true);
@@ -152,7 +152,7 @@ public class AddToVersionControlDialog extends DetailsDialog {
 		};
 		selectButton.addSelectionListener(listener);
 	
-		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, CVSUIMessages.ReleaseCommentDialog_deselectAll, false); //$NON-NLS-1$
+		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, CVSUIMessages.ReleaseCommentDialog_deselectAll, false); 
 		listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				listViewer.setAllChecked(false);

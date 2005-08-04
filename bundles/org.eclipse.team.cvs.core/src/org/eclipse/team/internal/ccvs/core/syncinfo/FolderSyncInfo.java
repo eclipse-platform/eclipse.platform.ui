@@ -158,7 +158,7 @@ public class FolderSyncInfo {
 			}
 			return root.substring(index);
 		} catch (IndexOutOfBoundsException e) {
-			throw new CVSException(CVSMessages.FolderSyncInfo_Maleformed_root_4); //$NON-NLS-1$
+			throw new CVSException(CVSMessages.FolderSyncInfo_Maleformed_root_4); 
 		}
 	}
 	
@@ -212,7 +212,7 @@ public class FolderSyncInfo {
 	 * @throws a CVSException if the root or repository is malformed.
 	 */
 	public String getRemoteLocation() throws CVSException {
-		return getRootDirectory() + ResourceSyncInfo.SEPARATOR + getRepository(); //$NON-NLS-1$
+		return getRootDirectory() + ResourceSyncInfo.SEPARATOR + getRepository(); 
 	}
 	
 	/*

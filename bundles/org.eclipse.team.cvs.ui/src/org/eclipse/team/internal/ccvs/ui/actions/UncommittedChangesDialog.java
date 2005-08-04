@@ -53,13 +53,13 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
 
 	protected String getResourceListMessage(ResourceMapping mapping) {
         if (mapping == null) {
-            return CVSUIMessages.UncommittedChangesDialog_2; //$NON-NLS-1$
+            return CVSUIMessages.UncommittedChangesDialog_2; 
         } else {
             String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
             if (mapping.getModelObject() instanceof IFile) {
-                return NLS.bind(CVSUIMessages.UncommittedChangesDialog_4, new String[] { label }); //$NON-NLS-1$
+                return NLS.bind(CVSUIMessages.UncommittedChangesDialog_4, new String[] { label }); 
             }
-            return NLS.bind(CVSUIMessages.UncommittedChangesDialog_3, new String[] { label }); //$NON-NLS-1$
+            return NLS.bind(CVSUIMessages.UncommittedChangesDialog_3, new String[] { label }); 
         }
     }
 

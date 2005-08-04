@@ -99,10 +99,10 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		}
 		protected Control createDialogArea(Composite parent) {
-			parent.getShell().setText(CVSUIMessages.CVSProjectPropertiesPage_Select_a_Repository_1); //$NON-NLS-1$
+			parent.getShell().setText(CVSUIMessages.CVSProjectPropertiesPage_Select_a_Repository_1); 
 			Composite composite = (Composite) super.createDialogArea(parent);
 		
-			createLabel(composite, CVSUIMessages.CVSProjectPropertiesPage_Select_a_CVS_repository_location_to_share_the_project_with__2, 1); //$NON-NLS-1$
+			createLabel(composite, CVSUIMessages.CVSProjectPropertiesPage_Select_a_CVS_repository_location_to_share_the_project_with__2, 1); 
 			Table table = new Table(composite, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 			GridData data = new GridData(GridData.FILL_HORIZONTAL);
 			data.heightHint = TABLE_HEIGHT_HINT;
@@ -137,7 +137,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 			});
 			viewer.setInput(compatibleLocatons);
 			
-			final Button compatibleButton = createCheckBox(composite, CVSUIMessages.CVSProjectPropertiesPage_31); //$NON-NLS-1$
+			final Button compatibleButton = createCheckBox(composite, CVSUIMessages.CVSProjectPropertiesPage_31); 
 			compatibleButton.setSelection(showCompatible);
 			compatibleButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -171,31 +171,31 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		
-		Label label = createLabel(composite, CVSUIMessages.CVSProjectPropertiesPage_connectionType, 1); //$NON-NLS-1$
+		Label label = createLabel(composite, CVSUIMessages.CVSProjectPropertiesPage_connectionType, 1); 
 		methodText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
 		
-		label = createLabel(composite, CVSUIMessages.CVSProjectPropertiesPage_user, 1); //$NON-NLS-1$
+		label = createLabel(composite, CVSUIMessages.CVSProjectPropertiesPage_user, 1); 
 		userText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
 		
-		label = createLabel(composite, CVSUIMessages.CVSRepositoryLocationPropertySource_host, 1); //$NON-NLS-1$
+		label = createLabel(composite, CVSUIMessages.CVSRepositoryLocationPropertySource_host, 1); 
 		hostText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
 		
-		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_port, 1); //$NON-NLS-1$
+		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_port, 1); 
 		portText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
 		
-		label = createLabel(composite, CVSUIMessages.CVSRepositoryLocationPropertySource_root, 1); //$NON-NLS-1$
+		label = createLabel(composite, CVSUIMessages.CVSRepositoryLocationPropertySource_root, 1); 
 		pathText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
 		
-		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_module, 1); //$NON-NLS-1$
+		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_module, 1); 
 		moduleText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
 		
-		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_tag, 1); //$NON-NLS-1$
+		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_tag, 1); 
 		tagText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
 		
 		createLabel(composite, "", 1); //$NON-NLS-1$
 		
 		// Should absent directories be fetched on update
-		fetchButton = createCheckBox(composite, CVSUIMessages.CVSProjectPropertiesPage_fetchAbsentDirectoriesOnUpdate); //$NON-NLS-1$
+		fetchButton = createCheckBox(composite, CVSUIMessages.CVSProjectPropertiesPage_fetchAbsentDirectoriesOnUpdate); 
 		fetchButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				fetch = fetchButton.getSelection();
@@ -203,7 +203,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 		});
 		
 		// Should the project be configured for watch/edit
-		watchEditButton = createCheckBox(composite, CVSUIMessages.CVSProjectPropertiesPage_configureForWatchEdit); //$NON-NLS-1$
+		watchEditButton = createCheckBox(composite, CVSUIMessages.CVSProjectPropertiesPage_configureForWatchEdit); 
 		watchEditButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				watchEdit = watchEditButton.getSelection();
@@ -216,14 +216,14 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 		createLabel(composite, "", 1); //$NON-NLS-1$
 		
 		label = new Label(composite, SWT.WRAP);
-		label.setText(CVSUIMessages.CVSProjectPropertiesPage_You_can_change_the_sharing_of_this_project_to_another_repository_location__However__this_is_only_possible_if_the_new_location_is___compatible____on_the_same_host_with_the_same_repository_path___1); //$NON-NLS-1$
+		label.setText(CVSUIMessages.CVSProjectPropertiesPage_You_can_change_the_sharing_of_this_project_to_another_repository_location__However__this_is_only_possible_if_the_new_location_is___compatible____on_the_same_host_with_the_same_repository_path___1); 
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 200;
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 		
 		Button changeButton = new Button(composite, SWT.PUSH);
-		changeButton.setText(CVSUIMessages.CVSProjectPropertiesPage_Change_Sharing_5); //$NON-NLS-1$
+		changeButton.setText(CVSUIMessages.CVSProjectPropertiesPage_Change_Sharing_5); 
 		changeButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				RepositorySelectionDialog dialog = new RepositorySelectionDialog(getShell(), oldLocation);
@@ -332,7 +332,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 			hostText.setText(location.getHost());
 			int port = location.getPort();
 			if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
-                portText.setText(CVSUIMessages.CVSPropertiesPage_defaultPort); //$NON-NLS-1$
+                portText.setText(CVSUIMessages.CVSPropertiesPage_defaultPort); 
 			} else {
 				portText.setText("" + port); //$NON-NLS-1$
 			}
@@ -341,7 +341,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 			if (syncInfo == null) return;
 			String label = syncInfo.getRepository();
 			if (label.equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
-				label = NLS.bind(CVSUIMessages.CVSPropertiesPage_virtualModule, new String[] { label }); //$NON-NLS-1$
+				label = NLS.bind(CVSUIMessages.CVSPropertiesPage_virtualModule, new String[] { label }); 
 			}
 			moduleText.setText(label);
 			fetchButton.setSelection(fetch);
@@ -386,14 +386,14 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 		}
 		try {
 			if (newLocation != null && !isCompatible(newLocation, oldLocation)) {
-				if (!MessageDialog.openQuestion(getShell(), CVSUIMessages.CVSProjectPropertiesPage_32, CVSUIMessages.CVSProjectPropertiesPage_33)) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (!MessageDialog.openQuestion(getShell(), CVSUIMessages.CVSProjectPropertiesPage_32, CVSUIMessages.CVSProjectPropertiesPage_33)) { // 
 					return false;
 				}
 			}
 			new ProgressMonitorDialog(getShell()).run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						monitor.beginTask(CVSUIMessages.CVSProjectPropertiesPage_progressTaskName,  //$NON-NLS-1$
+						monitor.beginTask(CVSUIMessages.CVSProjectPropertiesPage_progressTaskName,  
 						((newLocation == null)?0:100) + (changeReadOnly[0]?100:0));
 						if (newLocation != null)
 							provider.setRemoteRoot(newLocation, Policy.subMonitorFor(monitor, 100));
@@ -422,8 +422,8 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 	protected void setReadOnly(final boolean watchEdit, final IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(null, 512);
 		String taskName = watchEdit?
-			CVSUIMessages.CVSProjectPropertiesPage_setReadOnly: //$NON-NLS-1$
-			CVSUIMessages.CVSProjectPropertiesPage_clearReadOnly; //$NON-NLS-1$
+			CVSUIMessages.CVSProjectPropertiesPage_setReadOnly: 
+			CVSUIMessages.CVSProjectPropertiesPage_clearReadOnly; 
 		monitor.subTask(taskName);
 		ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(project);
 		root.accept(new ICVSResourceVisitor() {

@@ -50,7 +50,7 @@ class RemovedHandler extends ResponseHandler {
 		ICVSFile mFile = mParent.getFile(fileName);
 		
 		if ( ! mFile.isManaged()) {
-			throw new CVSException(NLS.bind(CVSMessages.RemovedHandler_invalid, new String[] { new Path(null, localDir).append(fileName).toString() })); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.RemovedHandler_invalid, new String[] { new Path(null, localDir).append(fileName).toString() })); 
 		}
 		
 		// delete then unmanage the file
@@ -59,7 +59,7 @@ class RemovedHandler extends ResponseHandler {
 	        mFile.delete();
 	        mFile.unmanage(null);
         } catch (CVSException e) {
-            session.handleResponseError(new CVSStatus(IStatus.ERROR, CVSStatus.RESPONSE_HANDLING_FAILURE, NLS.bind(CVSMessages.RemovedHandler_0, new String[] { getPath(mFile) }), e)); //$NON-NLS-1$
+            session.handleResponseError(new CVSStatus(IStatus.ERROR, CVSStatus.RESPONSE_HANDLING_FAILURE, NLS.bind(CVSMessages.RemovedHandler_0, new String[] { getPath(mFile) }), e)); 
         }
 	}
 

@@ -53,7 +53,7 @@ public class AddToBranchAction extends CVSAction {
 				final CVSException[] exception = new CVSException[] { null };
 				shell.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						InputDialog dialog = new InputDialog(getShell(), CVSUIMessages.AddToBranchAction_enterTag, CVSUIMessages.AddToBranchAction_enterTagLong, null, validator); //$NON-NLS-1$ //$NON-NLS-2$
+						InputDialog dialog = new InputDialog(getShell(), CVSUIMessages.AddToBranchAction_enterTag, CVSUIMessages.AddToBranchAction_enterTagLong, null, validator); // 
 						if (dialog.open() == InputDialog.OK) {
 							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.BRANCH);
 							try {
@@ -67,7 +67,7 @@ public class AddToBranchAction extends CVSAction {
 				if (exception[0] != null)
 					throw new InvocationTargetException(exception[0]);
 			}
-		}, false, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, false, PROGRESS_BUSYCURSOR); 
 	}
 
 	/**

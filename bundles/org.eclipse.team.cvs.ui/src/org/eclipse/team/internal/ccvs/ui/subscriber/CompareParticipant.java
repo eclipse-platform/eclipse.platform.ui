@@ -97,7 +97,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getName()
 	 */
 	public String getName() {
-		return NLS.bind(CVSUIMessages.CompareParticipant_0, new String[] { getSubscriber().getName(), Utils.convertSelection(getSubscriber().roots()) }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CompareParticipant_0, new String[] { getSubscriber().getName(), Utils.convertSelection(getSubscriber().roots()) }); 
 	}
 	
 	/*
@@ -198,7 +198,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#getShortTaskName()
 	 */
 	protected String getShortTaskName() {
-		return CVSUIMessages.Participant_comparing; //$NON-NLS-1$
+		return CVSUIMessages.Participant_comparing; 
 	}
 	
 	/* (non-Javadoc)

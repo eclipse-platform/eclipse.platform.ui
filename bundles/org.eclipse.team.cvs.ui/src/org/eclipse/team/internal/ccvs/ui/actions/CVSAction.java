@@ -240,7 +240,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * Sunclasses should override to present a custon message.
 	 */
 	protected String getErrorTitle() {
-		return CVSUIMessages.CVSAction_errorTitle; //$NON-NLS-1$
+		return CVSUIMessages.CVSAction_errorTitle; 
 	}
 	
 	/**
@@ -248,7 +248,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * Sunclasses should override to present a custon message.
 	 */
 	protected String getWarningTitle() {
-		return CVSUIMessages.CVSAction_warningTitle; //$NON-NLS-1$
+		return CVSUIMessages.CVSAction_warningTitle; 
 	}
 
 	/**
@@ -257,7 +257,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * Sunclasses should override to present a custon message.
 	 */
 	protected String getMultiStatusMessage() {
-		return CVSUIMessages.CVSAction_multipleProblemsMessage; //$NON-NLS-1$
+		return CVSUIMessages.CVSAction_multipleProblemsMessage; 
 	}
 	
 	/**
@@ -271,7 +271,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 		if (problems.length == 1) {
 			return problems[0];
 		}
-		MultiStatus combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, getMultiStatusMessage(), null); //$NON-NLS-1$
+		MultiStatus combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, getMultiStatusMessage(), null); 
 		for (int i = 0; i < problems.length; i++) {
 			combinedStatus.merge(problems[i]);
 		}
@@ -490,7 +490,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 				return resources.contains(resource);
 			}
 			public String promptMessage(IResource resource) {
-				return NLS.bind(CVSUIMessages.ReplaceWithAction_localChanges, new String[] { resource.getName() });//$NON-NLS-1$
+				return NLS.bind(CVSUIMessages.ReplaceWithAction_localChanges, new String[] { resource.getName() });
 			}
 		};
 	}
@@ -520,9 +520,9 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 						public void run() {							
 							AvoidableMessageDialog dialog = new AvoidableMessageDialog(
 									shell,
-									CVSUIMessages.CVSAction_mixingTagsTitle,  //$NON-NLS-1$
+									CVSUIMessages.CVSAction_mixingTagsTitle,  
 									null,	// accept the default window icon
-									NLS.bind(CVSUIMessages.CVSAction_mixingTags, new String[] { tag.getName() }),  //$NON-NLS-1$
+									NLS.bind(CVSUIMessages.CVSAction_mixingTags, new String[] { tag.getName() }),  
 									MessageDialog.QUESTION, 
 									new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 
 									0);
@@ -643,17 +643,17 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 						execute((IAction)null);
 					} else {
 						MessageDialog.openInformation(activeWorkbenchWindow.getShell(), 
-								CVSUIMessages.CVSAction_handlerNotEnabledTitle, //$NON-NLS-1$
-								CVSUIMessages.CVSAction_handlerNotEnabledMessage); //$NON-NLS-1$
+								CVSUIMessages.CVSAction_handlerNotEnabledTitle, 
+								CVSUIMessages.CVSAction_handlerNotEnabledMessage); 
 					}
 				}
 			}
 		} catch (InvocationTargetException e) {
-			throw new ExecutionException(CVSUIMessages.CVSAction_errorTitle, e); //$NON-NLS-1$
+			throw new ExecutionException(CVSUIMessages.CVSAction_errorTitle, e); 
 		} catch (InterruptedException e) {
 			// Operation was cancelled. Ignore
 		} catch (TeamException e) {
-			throw new ExecutionException(CVSUIMessages.CVSAction_errorTitle, e); //$NON-NLS-1$
+			throw new ExecutionException(CVSUIMessages.CVSAction_errorTitle, e); 
 		}
 		return null;
 	}

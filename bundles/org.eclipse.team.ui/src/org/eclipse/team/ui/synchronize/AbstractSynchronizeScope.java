@@ -77,7 +77,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 		if (lastDot == -1) {
 			return name;
 		}
-		return name.substring(lastDot + 1); //$NON-NLS-1$
+		return name.substring(lastDot + 1); 
 	}
 	
 	/**

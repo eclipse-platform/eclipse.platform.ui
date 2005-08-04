@@ -63,14 +63,14 @@ public class DisconnectOperation extends RepositoryProviderOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return CVSUIMessages.DisconnectOperation_0; //$NON-NLS-1$
+		return CVSUIMessages.DisconnectOperation_0; 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
-		return NLS.bind(CVSUIMessages.DisconnectOperation_1, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.DisconnectOperation_1, new String[] { provider.getProject().getName() }); 
 	}
 	
 	/* (non-Javadoc)

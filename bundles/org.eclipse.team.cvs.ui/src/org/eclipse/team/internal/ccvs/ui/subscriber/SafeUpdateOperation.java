@@ -340,8 +340,8 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 		TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
 				MessageDialog.openInformation(getShell(), 
-								CVSUIMessages.SafeUpdateAction_warnFilesWithConflictsTitle, //$NON-NLS-1$
-								CVSUIMessages.SafeUpdateAction_warnFilesWithConflictsDescription); //$NON-NLS-1$
+								CVSUIMessages.SafeUpdateAction_warnFilesWithConflictsTitle, 
+								CVSUIMessages.SafeUpdateAction_warnFilesWithConflictsDescription); 
 			}
 		});
 	}
@@ -392,7 +392,7 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	}
 	
 	protected String getErrorTitle() {
-		return CVSUIMessages.UpdateAction_update; //$NON-NLS-1$
+		return CVSUIMessages.UpdateAction_update; 
 	}
 	
 	/* (non-Javadoc)
@@ -400,7 +400,7 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	 */
 	protected String getJobName() {
 		SyncInfoSet syncSet = getSyncInfoSet();
-		return NLS.bind(CVSUIMessages.UpdateAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.UpdateAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); 
 	}
 
 	/**
@@ -418,8 +418,8 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 			TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
 					String sizeString = Integer.toString(set.size());
-					String message = set.size() > 1 ? NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateSeveral, new String[] { sizeString }) : NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateOne, new String[] { sizeString }); //$NON-NLS-1$ //$NON-NLS-2$
-					result[0] = MessageDialog.openQuestion(getShell(), NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateTitle, new String[] { sizeString }), message); 					 //$NON-NLS-1$
+					String message = set.size() > 1 ? NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateSeveral, new String[] { sizeString }) : NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateOne, new String[] { sizeString }); // 
+					result[0] = MessageDialog.openQuestion(getShell(), NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateTitle, new String[] { sizeString }), message); 					 
 				}
 			});
 		}

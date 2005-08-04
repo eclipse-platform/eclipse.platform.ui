@@ -180,8 +180,8 @@ public class CommitCommentArea extends DialogArea {
         }
     }
     
-    private static final String EMPTY_MESSAGE= CVSUIMessages.CommitCommentArea_0; //$NON-NLS-1$
-    private static final String COMBO_MESSAGE= CVSUIMessages.CommitCommentArea_1; //$NON-NLS-1$
+    private static final String EMPTY_MESSAGE= CVSUIMessages.CommitCommentArea_0; 
+    private static final String COMBO_MESSAGE= CVSUIMessages.CommitCommentArea_1; 
     
     public static final String OK_REQUESTED = "OkRequested";//$NON-NLS-1$
     public static final String COMMENT_MODIFIED = "CommentModified";//$NON-NLS-1$
@@ -234,9 +234,9 @@ public class CommitCommentArea extends DialogArea {
             
             if (MessageDialogWithToggle.PROMPT.equals(value)) {
                 
-                final String title= CVSUIMessages.CommitCommentArea_2; //$NON-NLS-1$
-                final String message= CVSUIMessages.CommitCommentArea_3; //$NON-NLS-1$
-                final String toggleMessage= CVSUIMessages.CommitCommentArea_4; //$NON-NLS-1$
+                final String title= CVSUIMessages.CommitCommentArea_2; 
+                final String message= CVSUIMessages.CommitCommentArea_3; 
+                final String toggleMessage= CVSUIMessages.CommitCommentArea_4; 
                 
                 final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(shell, title, message, toggleMessage, false, store, ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS);
                 if (dialog.getReturnCode() != IDialogConstants.YES_ID) {

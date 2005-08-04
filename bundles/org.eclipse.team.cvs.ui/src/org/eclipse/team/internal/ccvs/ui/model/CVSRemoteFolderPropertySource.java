@@ -26,15 +26,15 @@ public class CVSRemoteFolderPropertySource implements IPropertySource {
 	static protected IPropertyDescriptor[] propertyDescriptors = new IPropertyDescriptor[2];
 	{
 		PropertyDescriptor descriptor;
-		String category = CVSUIMessages.cvs; //$NON-NLS-1$
+		String category = CVSUIMessages.cvs; 
 		
 		// resource name
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_NAME, CVSUIMessages.CVSRemoteFolderPropertySource_name); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_NAME, CVSUIMessages.CVSRemoteFolderPropertySource_name); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[0] = descriptor;
 		// tag
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_TAG, CVSUIMessages.CVSRemoteFolderPropertySource_tag); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_TAG, CVSUIMessages.CVSRemoteFolderPropertySource_tag); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[1] = descriptor;
@@ -71,7 +71,7 @@ public class CVSRemoteFolderPropertySource implements IPropertySource {
 		if (id.equals(ICVSUIConstants.PROP_TAG)) {
 			CVSTag tag = folder.getTag();
 			if (tag == null) {
-				return CVSUIMessages.CVSRemoteFolderPropertySource_none; //$NON-NLS-1$
+				return CVSUIMessages.CVSRemoteFolderPropertySource_none; 
 			}
 			return tag.getName();
 		}

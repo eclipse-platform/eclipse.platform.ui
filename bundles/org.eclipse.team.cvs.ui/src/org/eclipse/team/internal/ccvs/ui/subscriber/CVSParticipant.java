@@ -70,7 +70,7 @@ public class CVSParticipant extends SubscriberParticipant implements IChangeSetP
 	    		    try {
 	                    ILogEntry entry = ((ICVSRemoteFile)remote).getLogEntry(monitor);
 	                    remoteAuthor = entry.getAuthor();
-	                    config.setRightLabel(NLS.bind(CVSUIMessages.CVSParticipant_0, new String[] { remote.getContentIdentifier(), remoteAuthor })); //$NON-NLS-1$
+	                    config.setRightLabel(NLS.bind(CVSUIMessages.CVSParticipant_0, new String[] { remote.getContentIdentifier(), remoteAuthor })); 
 	                } catch (TeamException e) {
 	                    CVSUIPlugin.log(e);
 	                }
@@ -84,7 +84,7 @@ public class CVSParticipant extends SubscriberParticipant implements IChangeSetP
                             ILogEntry entry = ((ICVSRemoteFile)base).getLogEntry(monitor);
                             baseAuthor = entry.getAuthor();
                         }
-                        config.setAncestorLabel(NLS.bind(CVSUIMessages.CVSParticipant_1, new String[] { base.getContentIdentifier(), baseAuthor })); //$NON-NLS-1$
+                        config.setAncestorLabel(NLS.bind(CVSUIMessages.CVSParticipant_1, new String[] { base.getContentIdentifier(), baseAuthor })); 
                     } catch (TeamException e) {
                         CVSUIPlugin.log(e);
                     }
@@ -149,7 +149,7 @@ public class CVSParticipant extends SubscriberParticipant implements IChangeSetP
             pages[i] = inheritedPages[i];
         }
         pages[pages.length - 1] = new ComparePreferencePage();
-        pages[pages.length - 1].setTitle(CVSUIMessages.CVSParticipant_2); //$NON-NLS-1$
+        pages[pages.length - 1].setTitle(CVSUIMessages.CVSParticipant_2); 
         return pages;
     }
     

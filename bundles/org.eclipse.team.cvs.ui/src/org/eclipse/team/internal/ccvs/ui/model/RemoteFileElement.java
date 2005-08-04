@@ -40,7 +40,7 @@ public class RemoteFileElement extends RemoteResourceElement {
 		if (!(o instanceof ICVSRemoteFile)) return null;
 		ICVSRemoteFile file = (ICVSRemoteFile)o;
 		try {
-			return NLS.bind(CVSUIMessages.nameAndRevision, new String[] { file.getName(), file.getRevision() }); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.nameAndRevision, new String[] { file.getName(), file.getRevision() }); 
 		} catch (TeamException e) {
 		    handle(null, null, e);
 			return null;

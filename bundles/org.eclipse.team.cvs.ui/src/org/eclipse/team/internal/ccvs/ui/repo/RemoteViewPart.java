@@ -58,7 +58,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	private class ChangeWorkingSetAction extends Action {
 		String name;
 		public ChangeWorkingSetAction(String name, int index) {
-			super(NLS.bind(CVSUIMessages.RepositoriesView_workingSetMenuItem, new String[] { new Integer(index).toString(), name })); //$NON-NLS-1$
+			super(NLS.bind(CVSUIMessages.RepositoriesView_workingSetMenuItem, new String[] { new Integer(index).toString(), name })); 
 			this.name = name;
 		}
 		public void run() {
@@ -166,7 +166,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		if (workingSet == null) {
 			toolTip = null;
 		} else {
-			toolTip = NLS.bind(CVSUIMessages.RemoteViewPart_workingSetToolTip, new String[] { workingSet.getName() }); //$NON-NLS-1$
+			toolTip = NLS.bind(CVSUIMessages.RemoteViewPart_workingSetToolTip, new String[] { workingSet.getName() }); 
 		}
 		setTitleToolTip(toolTip);
 		if (refreshViewer) refreshViewer();
@@ -181,26 +181,26 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		
 		// Refresh (toolbar)
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
-		refreshAction = new Action(CVSUIMessages.RepositoriesView_refresh, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
+		refreshAction = new Action(CVSUIMessages.RepositoriesView_refresh, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH_ENABLED)) { 
 			public void run() {
 				refreshAll();
 			}
 		};
-		refreshAction.setToolTipText(CVSUIMessages.RepositoriesView_refreshTooltip); //$NON-NLS-1$
+		refreshAction.setToolTipText(CVSUIMessages.RepositoriesView_refreshTooltip); 
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
 
-		collapseAllAction = new Action(CVSUIMessages.RepositoriesView_collapseAll, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL_ENABLED)) { //$NON-NLS-1$
+		collapseAllAction = new Action(CVSUIMessages.RepositoriesView_collapseAll, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL_ENABLED)) { 
 			public void run() {
 				collapseAll();
 			}
 		};
-		collapseAllAction.setToolTipText(CVSUIMessages.RepositoriesView_collapseAllTooltip); //$NON-NLS-1$
+		collapseAllAction.setToolTipText(CVSUIMessages.RepositoriesView_collapseAllTooltip); 
 		collapseAllAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL));
 		
 		// Select Working Set (popup)
-		selectWorkingSetAction = new Action(CVSUIMessages.RepositoriesView_newWorkingSet) { //$NON-NLS-1$
+		selectWorkingSetAction = new Action(CVSUIMessages.RepositoriesView_newWorkingSet) { 
 			public void run() {
 				IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 				IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(shell, false);
@@ -222,7 +222,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
         PlatformUI.getWorkbench().getHelpSystem().setHelp(selectWorkingSetAction, IHelpContextIds.SELECT_WORKING_SET_ACTION);
 
 		// Deselect Working Set (popup)
-		deselectWorkingSetAction = new Action(CVSUIMessages.RepositoriesView_deselectWorkingSet) { //$NON-NLS-1$
+		deselectWorkingSetAction = new Action(CVSUIMessages.RepositoriesView_deselectWorkingSet) { 
 			public void run() {
 				setWorkingSet(null, true);
 			}
@@ -230,7 +230,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
         PlatformUI.getWorkbench().getHelpSystem().setHelp(deselectWorkingSetAction, IHelpContextIds.DESELECT_WORKING_SET_ACTION);
 
 		// Edit Working Set (popup)
-		editWorkingSetAction = new Action(CVSUIMessages.RepositoriesView_editWorkingSet) { //$NON-NLS-1$
+		editWorkingSetAction = new Action(CVSUIMessages.RepositoriesView_editWorkingSet) { 
 			public void run() {
 				IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 				IWorkingSet workingSet = getWorkingSet();

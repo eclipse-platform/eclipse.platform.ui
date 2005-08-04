@@ -94,7 +94,7 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 				monitor.beginTask(null, 512);
 				for (int i = 0; i < resources.length; i++) {
 					if (oneArgMessage != null) {
-						monitor.subTask(NLS.bind(oneArgMessage, new String[] { resources[i].getIResource().getFullPath().toString() })); //$NON-NLS-1$
+						monitor.subTask(NLS.bind(oneArgMessage, new String[] { resources[i].getIResource().getFullPath().toString() })); 
 					}
 					resources[i].accept(PrepareForReplaceVisitor.this);
 				}

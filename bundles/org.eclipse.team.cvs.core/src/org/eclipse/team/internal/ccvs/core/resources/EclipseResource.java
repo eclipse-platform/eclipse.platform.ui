@@ -69,7 +69,7 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 			if (result.length() == 0) return CURRENT_LOCAL_FOLDER;
 			return result;	
 		} catch (ClassCastException e) {
-			throw new CVSException(CVSMessages.EclipseResource_invalidResourceClass, e); //$NON-NLS-1$
+			throw new CVSException(CVSMessages.EclipseResource_invalidResourceClass, e); 
 		}
 	}
 

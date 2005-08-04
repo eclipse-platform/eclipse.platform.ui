@@ -62,7 +62,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	 * @param wizards  the wizards to populate the table with
 	 */
 	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards, AdaptableList disabledWizards) {
-		this(pageName,title,titleImage,wizards,disabledWizards, TeamUIMessages.ConfigureProjectWizardMainPage_selectRepository); //$NON-NLS-1$
+		this(pageName,title,titleImage,wizards,disabledWizards, TeamUIMessages.ConfigureProjectWizardMainPage_selectRepository); 
 	}
 	
 	/**
@@ -152,7 +152,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		
 		if(disabledWizards.size() > 0) {
 			showAllToggle = new Button(composite, SWT.CHECK);
-			showAllToggle.setText(TeamUIMessages.ConfigureProjectWizard_showAll); //$NON-NLS-1$
+			showAllToggle.setText(TeamUIMessages.ConfigureProjectWizard_showAll); 
 			showAllToggle.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					ArrayList all = new ArrayList(Arrays.asList(wizards.getChildren()));

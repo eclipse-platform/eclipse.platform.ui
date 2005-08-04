@@ -109,7 +109,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 
 		String localPath = mFolder.getRelativePath(session.getLocalRoot());
 		
-		monitor.subTask(NLS.bind(CVSMessages.AbstractStructureVisitor_sendingFolder, new String[] { Util.toTruncatedPath(mFolder, session.getLocalRoot(), 3) })); //$NON-NLS-1$
+		monitor.subTask(NLS.bind(CVSMessages.AbstractStructureVisitor_sendingFolder, new String[] { Util.toTruncatedPath(mFolder, session.getLocalRoot(), 3) })); 
 		
 		// Deal with questionable directories
 		boolean isQuestionable = exists && (! isCVSFolder || isOrphanedSubtree(mFolder));
@@ -125,7 +125,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		// Send the directory to the server
 		String remotePath = mFolder.getRemoteLocation(session.getLocalRoot());
 		if (remotePath == null) {
-			throw new CVSException(CVSMessages.AbstractStructureVisitor_noRemote); //$NON-NLS-1$
+			throw new CVSException(CVSMessages.AbstractStructureVisitor_noRemote); 
 		}
 		session.sendDirectory(localPath, remotePath);
 

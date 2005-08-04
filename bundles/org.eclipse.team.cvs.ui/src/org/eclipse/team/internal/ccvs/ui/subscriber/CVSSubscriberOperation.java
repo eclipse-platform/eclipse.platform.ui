@@ -125,7 +125,7 @@ public abstract class CVSSubscriberOperation extends SynchronizeModelOperation {
 					return true;
 				} else {
 					// No other ancestors should be null. Log the problem.
-					CVSUIPlugin.log(IStatus.WARNING, NLS.bind(CVSUIMessages.CVSSubscriberAction_0, new String[] { info.getLocal().getFullPath().toString() }), null); //$NON-NLS-1$
+					CVSUIPlugin.log(IStatus.WARNING, NLS.bind(CVSUIMessages.CVSSubscriberAction_0, new String[] { info.getLocal().getFullPath().toString() }), null); 
 					return false;
 				}
 			} else {
@@ -283,7 +283,7 @@ public abstract class CVSSubscriberOperation extends SynchronizeModelOperation {
 				}
 			}
 		} catch(CoreException e) {
-			throw new CVSException(CVSUIMessages.UpdateMergeActionProblems_merging_remote_resources_into_workspace_1, e); //$NON-NLS-1$
+			throw new CVSException(CVSUIMessages.UpdateMergeActionProblems_merging_remote_resources_into_workspace_1, e); 
 		}
 	}
 	

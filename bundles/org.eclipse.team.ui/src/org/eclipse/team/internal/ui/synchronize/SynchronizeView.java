@@ -129,7 +129,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			setContentDescription(""); //$NON-NLS-1$
 		} else {
 			SynchronizeViewWorkbenchPart part = (SynchronizeViewWorkbenchPart)fParticipantToPart.get(participant);
-			setContentDescription(Utils.shortenText(MAX_NAME_LENGTH, part.getParticipant().getName())); //$NON-NLS-1$
+			setContentDescription(Utils.shortenText(MAX_NAME_LENGTH, part.getParticipant().getName())); 
 		}
 	}
 	
@@ -473,7 +473,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	 */
 	private IDialogSettings getDialogSettings() {
 		IDialogSettings workbenchSettings = TeamUIPlugin.getPlugin().getDialogSettings();
-		IDialogSettings syncViewSettings = workbenchSettings.getSection(KEY_SETTINGS_SECTION); //$NON-NLS-1$
+		IDialogSettings syncViewSettings = workbenchSettings.getSection(KEY_SETTINGS_SECTION); 
 		if (syncViewSettings == null) {
 			syncViewSettings = workbenchSettings.addNewSection(KEY_SETTINGS_SECTION);
 		}

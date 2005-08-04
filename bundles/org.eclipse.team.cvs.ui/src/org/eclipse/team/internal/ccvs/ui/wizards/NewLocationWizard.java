@@ -46,7 +46,7 @@ public class NewLocationWizard extends Wizard {
 	public NewLocationWizard() {
 		IDialogSettings section = getLocationDialogSettings();
 		setDialogSettings(section);
-		setWindowTitle(CVSUIMessages.NewLocationWizard_title); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.NewLocationWizard_title); 
 	}
 	
 
@@ -59,12 +59,12 @@ public class NewLocationWizard extends Wizard {
 	 * Creates the wizard pages
 	 */
 	public void addPages() {
-		mainPage = new ConfigurationWizardMainPage("repositoryPage1", CVSUIMessages.NewLocationWizard_heading, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION)); //$NON-NLS-1$ //$NON-NLS-2$
+		mainPage = new ConfigurationWizardMainPage("repositoryPage1", CVSUIMessages.NewLocationWizard_heading, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION)); //$NON-NLS-1$ 
 		if (properties != null) {
 			mainPage.setProperties(properties);
 		}
 		mainPage.setShowValidate(true);
-		mainPage.setDescription(CVSUIMessages.NewLocationWizard_description); //$NON-NLS-1$
+		mainPage.setDescription(CVSUIMessages.NewLocationWizard_description); 
 		mainPage.setDialogSettings(getDialogSettings());
 		addPage(mainPage);
 	}
@@ -110,7 +110,7 @@ public class NewLocationWizard extends Wizard {
 		} catch (TeamException e) {
 			if (location[0] == null) {
 				// Exception creating the root, we cannot continue
-				CVSUIPlugin.openError(getContainer().getShell(), CVSUIMessages.NewLocationWizard_exception, null, e); //$NON-NLS-1$
+				CVSUIPlugin.openError(getContainer().getShell(), CVSUIMessages.NewLocationWizard_exception, null, e); 
 				return false;
 			} else {
 				// Exception validating. We can continue if the user wishes.
@@ -120,11 +120,11 @@ public class NewLocationWizard extends Wizard {
 				}
 					
 				if (error.isMultiStatus()) {
-					CVSUIPlugin.openError(getContainer().getShell(), CVSUIMessages.NewLocationWizard_validationFailedTitle, null, e); //$NON-NLS-1$
+					CVSUIPlugin.openError(getContainer().getShell(), CVSUIMessages.NewLocationWizard_validationFailedTitle, null, e); 
 				} else {
 					keepLocation = MessageDialog.openQuestion(getContainer().getShell(),
-						CVSUIMessages.NewLocationWizard_validationFailedTitle, //$NON-NLS-1$
-						NLS.bind(CVSUIMessages.NewLocationWizard_validationFailedText, (new Object[] {error.getMessage()}))); //$NON-NLS-1$
+						CVSUIMessages.NewLocationWizard_validationFailedTitle, 
+						NLS.bind(CVSUIMessages.NewLocationWizard_validationFailedText, (new Object[] {error.getMessage()}))); 
 				}
 			}
 		}

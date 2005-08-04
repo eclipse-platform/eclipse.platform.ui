@@ -50,7 +50,7 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 			public void run() {		
 					// If there are no changes
 					if (event.getStatus().getCode() == IRefreshEvent.STATUS_NO_CHANGES) {
-						MessageDialog.openInformation(shell, TeamUIMessages.OpenComparedDialog_noChangeTitle, TeamUIMessages.OpenComparedDialog_noChangesMessage); //$NON-NLS-1$ //$NON-NLS-2$
+						MessageDialog.openInformation(shell, TeamUIMessages.OpenComparedDialog_noChangeTitle, TeamUIMessages.OpenComparedDialog_noChangesMessage); // 
 						return;
 					}
 					compareAndOpenDialog(event, participant);

@@ -48,21 +48,21 @@ public class CommitOperation extends SingleCommandOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return CVSUIMessages.RepositoryManager_committing; //$NON-NLS-1$
+		return CVSUIMessages.RepositoryManager_committing; 
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
-		return NLS.bind(CVSUIMessages.CommitOperation_0, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CommitOperation_0, new String[] { provider.getProject().getName() }); 
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getErrorMessage(org.eclipse.core.runtime.IStatus[], int)
 	 */
 	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
-		return CVSUIMessages.CommitAction_commitFailed; //$NON-NLS-1$
+		return CVSUIMessages.CommitAction_commitFailed; 
 	}
 	
 	/* (non-Javadoc)

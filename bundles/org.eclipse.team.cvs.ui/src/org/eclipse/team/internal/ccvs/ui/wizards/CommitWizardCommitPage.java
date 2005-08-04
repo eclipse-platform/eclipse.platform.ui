@@ -56,9 +56,9 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
     
     public CommitWizardCommitPage(IResource [] resources, CommitWizard wizard) {
         
-        super(CVSUIMessages.CommitWizardCommitPage_0); //$NON-NLS-1$
-        setTitle(CVSUIMessages.CommitWizardCommitPage_0); //$NON-NLS-1$
-        setDescription(CVSUIMessages.CommitWizardCommitPage_2); //$NON-NLS-1$
+        super(CVSUIMessages.CommitWizardCommitPage_0); 
+        setTitle(CVSUIMessages.CommitWizardCommitPage_0); 
+        setDescription(CVSUIMessages.CommitWizardCommitPage_2); 
         
         fWizard= wizard;
         fCommentArea= new CommitCommentArea();
@@ -112,9 +112,9 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
             // Create composite for showing the reason for not showing the changes and a button to show them
             Composite changeDesc = new Composite(bottomChild, SWT.NONE);
             changeDesc.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
-            SWTUtils.createLabel(changeDesc, NLS.bind(CVSUIMessages.CommitWizardCommitPage_1, new String[] { Integer.toString(size), Integer.toString(getFileDisplayThreshold()) })); //$NON-NLS-1$
+            SWTUtils.createLabel(changeDesc, NLS.bind(CVSUIMessages.CommitWizardCommitPage_1, new String[] { Integer.toString(size), Integer.toString(getFileDisplayThreshold()) })); 
             Button showChanges = new Button(changeDesc, SWT.PUSH);
-            showChanges.setText(CVSUIMessages.CommitWizardCommitPage_5); //$NON-NLS-1$
+            showChanges.setText(CVSUIMessages.CommitWizardCommitPage_5); 
             showChanges.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
                     showChangesPane();
@@ -215,7 +215,7 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         if (fConfiguration != null) {
     		SyncInfoSet set = fConfiguration.getSyncInfoSet();
     		if (set.hasConflicts()) {
-    			setErrorMessage(CVSUIMessages.CommitWizardCommitPage_4); //$NON-NLS-1$
+    			setErrorMessage(CVSUIMessages.CommitWizardCommitPage_4); 
     			setPageComplete(false);
     			return;
     		}
@@ -237,7 +237,7 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
             if (MessageDialogWithToggle.NEVER.equals(value)) {
                 setPageComplete(false);
                 if (setMessage)
-                    setErrorMessage(CVSUIMessages.CommitWizardCommitPage_3); //$NON-NLS-1$
+                    setErrorMessage(CVSUIMessages.CommitWizardCommitPage_3); 
                 return false;
             }
         }

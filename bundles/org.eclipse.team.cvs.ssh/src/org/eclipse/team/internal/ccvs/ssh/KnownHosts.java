@@ -90,7 +90,7 @@ public class KnownHosts {
 			addHost(hostname, nbits, e, n);
 			return true;
 		} catch (IOException ex) {
-			SSHPlugin.log(IStatus.ERROR, CVSSSHMessages.KnownHosts_8, ex); //$NON-NLS-1$
+			SSHPlugin.log(IStatus.ERROR, CVSSSHMessages.KnownHosts_8, ex); 
 			return false;
 		}
 	}
@@ -105,10 +105,10 @@ public class KnownHosts {
 			w.write(Character.LINE_SEPARATOR);
 			w.write(hostname + " " + key_bits.toString(10) + " " + e.toString(10) + " " + n.toString(10)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			w.close();
-			String message = NLS.bind(CVSSSHMessages.Client_addedHostKey, (new String[] {hostname, defaultFilename()})); //$NON-NLS-1$
+			String message = NLS.bind(CVSSSHMessages.Client_addedHostKey, (new String[] {hostname, defaultFilename()})); 
 			SSHPlugin.log(IStatus.INFO, message, null);
 		} catch (IOException ex) {
-			SSHPlugin.log(IStatus.ERROR, CVSSSHMessages.KnownHosts_9, ex); //$NON-NLS-1$
+			SSHPlugin.log(IStatus.ERROR, CVSSSHMessages.KnownHosts_9, ex); 
 		}
 	}
 	
@@ -125,7 +125,7 @@ public class KnownHosts {
 			// Create the file
 			file.createNewFile();
 		} catch (IOException ee) {
-			SSHPlugin.log(IStatus.ERROR, CVSSSHMessages.KnownHosts_10, ee); //$NON-NLS-1$
+			SSHPlugin.log(IStatus.ERROR, CVSSSHMessages.KnownHosts_10, ee); 
 		}
 
 	}

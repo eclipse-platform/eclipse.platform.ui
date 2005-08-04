@@ -102,7 +102,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			ssh1.open(monitor);
 			return;
 		}
-		monitor.subTask(NLS.bind(CVSSSH2Messages.CVSSSH2ServerConnection_open, new String[] { location.getHost() })); //$NON-NLS-1$
+		monitor.subTask(NLS.bind(CVSSSH2Messages.CVSSSH2ServerConnection_open, new String[] { location.getHost() })); 
 		monitor.worked(1);
 		internalOpen(monitor);
 	}
@@ -170,7 +170,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			    String message = e.getMessage();
 			    if (JSchSession.isAuthenticationFailure(e)) {
                     // Do not retry as the Jsh library has it's own retry logic
-                    throw new CVSAuthenticationException(CVSSSH2Messages.CVSSSH2ServerConnection_0, CVSAuthenticationException.NO_RETRY, e); //$NON-NLS-1$
+                    throw new CVSAuthenticationException(CVSSSH2Messages.CVSSSH2ServerConnection_0, CVSAuthenticationException.NO_RETRY, e); 
 			    } else if (message.startsWith("Session.connect: ")) { //$NON-NLS-1$
 			        // Jsh has messages formatted like "Session.connect: java.net.NoRouteToHostException: ..."
 			        // Strip of the exception and try to convert it to a more meaningfull string
@@ -180,7 +180,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 				        if (end != -1) {
 				            String exception = message.substring(start, end).trim();
 				            if (exception.indexOf("NoRouteToHostException") != -1) { //$NON-NLS-1$
-				                message = NLS.bind(CVSSSH2Messages.CVSSSH2ServerConnection_1, new String[] { location.getHost() }); //$NON-NLS-1$
+				                message = NLS.bind(CVSSSH2Messages.CVSSSH2ServerConnection_1, new String[] { location.getHost() }); 
 				                throw new NoRouteToHostException(message);
 				            } else if (exception.indexOf("java.net.UnknownHostException") != -1) { //$NON-NLS-1$
 				                throw new UnknownHostException(location.getHost());

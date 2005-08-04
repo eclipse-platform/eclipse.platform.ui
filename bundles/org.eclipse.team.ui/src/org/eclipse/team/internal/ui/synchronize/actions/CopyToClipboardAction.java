@@ -42,11 +42,11 @@ class CopyToClipboardAction extends SelectionListenerAction {
     private final Clipboard fClipboard;
 
     protected CopyToClipboardAction(Shell shell) {
-        super(TeamUIMessages.CopyToClipboardAction_1); //$NON-NLS-1$
+        super(TeamUIMessages.CopyToClipboardAction_1); 
         Assert.isNotNull(shell);
         fShell= shell;
         fClipboard= new Clipboard(shell.getDisplay());
-        setToolTipText(TeamUIMessages.CopyToClipboardAction_2); //$NON-NLS-1$
+        setToolTipText(TeamUIMessages.CopyToClipboardAction_2); 
         setId(ID);
     }
     
@@ -123,7 +123,7 @@ class CopyToClipboardAction extends SelectionListenerAction {
         } catch (SWTError e) {
             if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
                 throw e;
-            if (MessageDialog.openQuestion(fShell, TeamUIMessages.CopyToClipboardAction_3, TeamUIMessages.CopyToClipboardAction_4))  //$NON-NLS-1$//$NON-NLS-2$
+            if (MessageDialog.openQuestion(fShell, TeamUIMessages.CopyToClipboardAction_3, TeamUIMessages.CopyToClipboardAction_4))  
                 setClipboard(resources, fileNames, names);
         }
     }

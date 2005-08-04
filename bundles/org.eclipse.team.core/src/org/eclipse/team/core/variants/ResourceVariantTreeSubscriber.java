@@ -134,7 +134,7 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 			int numSuccess = resources.length - errors.size();
 			throw new TeamException(new MultiStatus(TeamPlugin.ID, 0, 
 					(IStatus[]) errors.toArray(new IStatus[errors.size()]), 
-					NLS.bind(Messages.ResourceVariantTreeSubscriber_1, (new Object[] {getName(), Integer.toString(numSuccess), Integer.toString(resources.length)})), null)); //$NON-NLS-1$
+					NLS.bind(Messages.ResourceVariantTreeSubscriber_1, (new Object[] {getName(), Integer.toString(numSuccess), Integer.toString(resources.length)})), null)); 
 		}
 	}
 	
@@ -163,7 +163,7 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 			fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
 			return Status.OK_STATUS;
 		} catch (TeamException e) {
-			return new TeamStatus(IStatus.ERROR, TeamPlugin.ID, 0, NLS.bind(Messages.ResourceVariantTreeSubscriber_2, new String[] { resource.getFullPath().toString(), e.getMessage() }), e, resource); //$NON-NLS-1$
+			return new TeamStatus(IStatus.ERROR, TeamPlugin.ID, 0, NLS.bind(Messages.ResourceVariantTreeSubscriber_2, new String[] { resource.getFullPath().toString(), e.getMessage() }), e, resource); 
 		} finally {
 			monitor.done();
 		} 

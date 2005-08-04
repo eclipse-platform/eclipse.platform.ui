@@ -65,7 +65,7 @@ public class HistoryTableProvider {
 					String revision = entry.getRevision();
 					String currentRevision = getCurrentRevision();
 					if (currentRevision != null && currentRevision.equals(revision)) {
-						revision = NLS.bind(CVSUIMessages.currentRevision, new String[] { revision }); //$NON-NLS-1$
+						revision = NLS.bind(CVSUIMessages.currentRevision, new String[] { revision }); 
 					}
 					return revision;
 				case COL_TAGS:
@@ -80,7 +80,7 @@ public class HistoryTableProvider {
 					return result.toString();
 				case COL_DATE:
 					Date date = entry.getDate();
-					if (date == null) return CVSUIMessages.notAvailable; //$NON-NLS-1$
+					if (date == null) return CVSUIMessages.notAvailable; 
 					return DateFormat.getInstance().format(date);
 				case COL_AUTHOR:
 					return entry.getAuthor();
@@ -91,9 +91,9 @@ public class HistoryTableProvider {
 						case -1:
 							return comment;
 						case 0:
-							return CVSUIMessages.HistoryView_______4; //$NON-NLS-1$
+							return CVSUIMessages.HistoryView_______4; 
 						default:
-							return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_truncate, new String[] { comment.substring(0, index) }); //$NON-NLS-1$
+							return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_truncate, new String[] { comment.substring(0, index) }); 
 					}
 			}
 			return ""; //$NON-NLS-1$
@@ -335,35 +335,35 @@ public class HistoryTableProvider {
 		// revision
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(CVSUIMessages.HistoryView_revision); //$NON-NLS-1$
+		col.setText(CVSUIMessages.HistoryView_revision); 
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// tags
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(CVSUIMessages.HistoryView_tags); //$NON-NLS-1$
+		col.setText(CVSUIMessages.HistoryView_tags); 
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// creation date
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(CVSUIMessages.HistoryView_date); //$NON-NLS-1$
+		col.setText(CVSUIMessages.HistoryView_date); 
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// author
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(CVSUIMessages.HistoryView_author); //$NON-NLS-1$
+		col.setText(CVSUIMessages.HistoryView_author); 
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		//comment
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(CVSUIMessages.HistoryView_comment); //$NON-NLS-1$
+		col.setText(CVSUIMessages.HistoryView_comment); 
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(50, true));
 	}

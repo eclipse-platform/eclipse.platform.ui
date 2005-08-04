@@ -37,44 +37,44 @@ public class ConsolePreferencesPage extends FieldEditorPreferencePage implements
 
 	protected void createFieldEditors() {
 		final Composite composite = getFieldEditorParent();
-		createLabel(composite, CVSUIMessages.ConsolePreferencesPage_9); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConsolePreferencesPage_9); 
 		IPreferenceStore store = getPreferenceStore();
 		
 		// ** WRAP
-		wrap = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_WRAP, CVSUIMessages.ConsolePreferencesPage_6, composite); //$NON-NLS-1$
+		wrap = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_WRAP, CVSUIMessages.ConsolePreferencesPage_6, composite); 
 		addField(wrap);
 		
-		width = new IntegerFieldEditor(ICVSUIConstants.PREF_CONSOLE_WIDTH, CVSUIMessages.ConsolePreferencesPage_7, composite); //$NON-NLS-1$)
+		width = new IntegerFieldEditor(ICVSUIConstants.PREF_CONSOLE_WIDTH, CVSUIMessages.ConsolePreferencesPage_7, composite); //)
 		width.setValidRange(80, Integer.MAX_VALUE - 1);
 		addField(width);
 		width.setEnabled(store.getBoolean(ICVSUIConstants.PREF_CONSOLE_WRAP), composite);
 		
 		// ** RESTRICT OUTPUT
-		restrictOutput = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_LIMIT_OUTPUT, CVSUIMessages.ConsolePreferencesPage_5, composite); //$NON-NLS-1$
+		restrictOutput = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_LIMIT_OUTPUT, CVSUIMessages.ConsolePreferencesPage_5, composite); 
 		addField(restrictOutput);
 		
-		highWaterMark = new IntegerFieldEditor(ICVSUIConstants.PREF_CONSOLE_HIGH_WATER_MARK, CVSUIMessages.ConsolePreferencesPage_8, composite); //$NON-NLS-1$)
+		highWaterMark = new IntegerFieldEditor(ICVSUIConstants.PREF_CONSOLE_HIGH_WATER_MARK, CVSUIMessages.ConsolePreferencesPage_8, composite); //)
 		highWaterMark.setValidRange(1000, Integer.MAX_VALUE - 1);
 		addField(highWaterMark);
 		highWaterMark.setEnabled(store.getBoolean(ICVSUIConstants.PREF_CONSOLE_LIMIT_OUTPUT), composite);
 		
 		// ** SHOW AUTOMATICALLY
-		showOnMessage = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE, CVSUIMessages.ConsolePreferencesPage_4, composite); //$NON-NLS-1$
+		showOnMessage = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE, CVSUIMessages.ConsolePreferencesPage_4, composite); 
 		addField(showOnMessage);
 		
-		createLabel(composite, CVSUIMessages.ConsolePreferencePage_consoleColorSettings); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConsolePreferencePage_consoleColorSettings); 
 		
 		//	** COLORS AND FONTS
 		commandColorEditor = createColorFieldEditor(ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR,
-			CVSUIMessages.ConsolePreferencePage_commandColor, composite); //$NON-NLS-1$
+			CVSUIMessages.ConsolePreferencePage_commandColor, composite); 
 		addField(commandColorEditor);
 		
 		messageColorEditor = createColorFieldEditor(ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR,
-			CVSUIMessages.ConsolePreferencePage_messageColor, composite); //$NON-NLS-1$
+			CVSUIMessages.ConsolePreferencePage_messageColor, composite); 
 		addField(messageColorEditor);
 		
 		errorColorEditor = createColorFieldEditor(ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR,
-			CVSUIMessages.ConsolePreferencePage_errorColor, composite); //$NON-NLS-1$
+			CVSUIMessages.ConsolePreferencePage_errorColor, composite); 
 		addField(errorColorEditor);
 		
 		Dialog.applyDialogFont(composite);

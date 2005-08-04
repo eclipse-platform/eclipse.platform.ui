@@ -131,7 +131,7 @@ public class SyncInfoTree extends SyncInfoSet {
 			if(info != null) {
 				infos.add(info);
 			} else {
-				TeamPlugin.log(IStatus.INFO, Messages.SyncInfoTree_0 + child.getFullPath(), null); //$NON-NLS-1$
+				TeamPlugin.log(IStatus.INFO, Messages.SyncInfoTree_0 + child.getFullPath(), null); 
 			}
 		}
 		return (SyncInfo[]) infos.toArray(new SyncInfo[infos.size()]);

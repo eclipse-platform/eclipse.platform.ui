@@ -45,9 +45,9 @@ public class CommitWizardFileTypePage extends WizardPage {
     private final Collection fNames;
     
     public CommitWizardFileTypePage(Collection unknownExtensions, Collection unknownNames) {
-        super(CVSUIMessages.CommitWizardFileTypePage_0); //$NON-NLS-1$
-        setTitle(CVSUIMessages.CommitWizardFileTypePage_0); //$NON-NLS-1$
-        setDescription(CVSUIMessages.CommitWizardFileTypePage_2); //$NON-NLS-1$
+        super(CVSUIMessages.CommitWizardFileTypePage_0); 
+        setTitle(CVSUIMessages.CommitWizardFileTypePage_0); 
+        setDescription(CVSUIMessages.CommitWizardFileTypePage_2); 
         
         fNames= new ArrayList();
         for (final Iterator iter = unknownNames.iterator(); iter.hasNext();) {
@@ -72,7 +72,7 @@ public class CommitWizardFileTypePage extends WizardPage {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMMIT_FILE_TYPES_PAGE);
         
 	    final Label label= new Label(composite, SWT.WRAP);
-	    label.setText(CVSUIMessages.CommitWizardFileTypePage_3); //$NON-NLS-1$
+	    label.setText(CVSUIMessages.CommitWizardFileTypePage_3); 
 	    label.setLayoutData(SWTUtils.createHFillGridData());
 	    Dialog.applyDialogFont(composite);
         

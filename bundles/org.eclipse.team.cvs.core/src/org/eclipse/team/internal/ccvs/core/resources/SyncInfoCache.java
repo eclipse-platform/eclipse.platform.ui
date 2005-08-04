@@ -38,7 +38,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	/*package*/ static final String NOT_DIRTY_INDICATOR = "c"; //$NON-NLS-1$
 	/*package*/ static final String RECOMPUTE_INDICATOR = "r"; //$NON-NLS-1$
 	
-	/*package*/ static final IStatus STATUS_OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, CVSMessages.ok, null); //$NON-NLS-1$
+	/*package*/ static final IStatus STATUS_OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, CVSMessages.ok, null); 
 	
 	/**
 	 * Returns the folder sync info for the container; null if none.

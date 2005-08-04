@@ -40,7 +40,7 @@ public class ServerMessageLineMatcher {
 		List variables = new ArrayList();
 		while (matcher.find()) {
 			if (matcher.groupCount() != 2) {
-				throw new CVSException(NLS.bind(CVSMessages.ServerMessageLineMatcher_5, new String[] { template })); //$NON-NLS-1$
+				throw new CVSException(NLS.bind(CVSMessages.ServerMessageLineMatcher_5, new String[] { template })); 
 			}
 			variables.add(matcher.group(2));
 		}
@@ -62,7 +62,7 @@ public class ServerMessageLineMatcher {
 			count++;
 		}
 		if (count != variables.size()) {
-			throw new CVSException(NLS.bind(CVSMessages.ServerMessageLineMatcher_6, new String[] { template })); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.ServerMessageLineMatcher_6, new String[] { template })); 
 		}
 
 		// Create the pattern fir matching lines from the server
@@ -76,7 +76,7 @@ public class ServerMessageLineMatcher {
 		for (int i = 0; i < expectedVariables.length; i++) {
 			String expected = expectedVariables[i];
 			if (!variables.contains(expected)) {
-				throw new CVSException(NLS.bind(CVSMessages.ServerMessageLineMatcher_7, new String[] { expected, template })); //$NON-NLS-1$
+				throw new CVSException(NLS.bind(CVSMessages.ServerMessageLineMatcher_7, new String[] { expected, template })); 
 			}
 		}
 	}

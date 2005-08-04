@@ -98,7 +98,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 //    super(GRID);
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
     setPreferenceStore(store);
-    setDescription(CVSSSH2Messages.CVSSSH2PreferencePage_18); //$NON-NLS-1$
+    setDescription(CVSSSH2Messages.CVSSSH2PreferencePage_18); 
   }
   
   protected Control createContents(Composite parent) {
@@ -111,19 +111,19 @@ public class CVSSSH2PreferencePage extends PreferencePage
     tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 
     TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-    tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_19); //$NON-NLS-1$
+    tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_19); 
     tabItem.setControl(createGeneralPage(tabFolder));
 
     tabItem = new TabItem(tabFolder, SWT.NONE);
-    tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_20); //$NON-NLS-1$
+    tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_20); 
     tabItem.setControl(createProxyPage(tabFolder));
 
     tabItem = new TabItem(tabFolder, SWT.NONE);
-    tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_21); //$NON-NLS-1$
+    tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_21); 
     tabItem.setControl(createKeyManagementPage(tabFolder));
     
     tabItem = new TabItem(tabFolder, SWT.NONE);
-    tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_133); //$NON-NLS-1$
+    tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_133); 
     tabItem.setControl(createHostKeyManagementPage(tabFolder));
 
     initControls();
@@ -145,7 +145,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     createSpacer(group, 3);
 
     ssh2HomeLabel=new Label(group, SWT.NONE);
-    ssh2HomeLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_23); //$NON-NLS-1$
+    ssh2HomeLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_23); 
 
     ssh2HomeText=new Text(group, SWT.SINGLE | SWT.BORDER);
     ssh2HomeText.setFont(group.getFont());
@@ -154,7 +154,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     ssh2HomeText.setLayoutData(gd);
 
     ssh2HomeBrowse=new Button(group, SWT.NULL);
-    ssh2HomeBrowse.setText(CVSSSH2Messages.CVSSSH2PreferencePage_24); //$NON-NLS-1$
+    ssh2HomeBrowse.setText(CVSSSH2Messages.CVSSSH2PreferencePage_24); 
     gd=new GridData(GridData.HORIZONTAL_ALIGN_FILL);
     gd.horizontalSpan=1;
     ssh2HomeBrowse.setLayoutData(gd);
@@ -162,7 +162,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     createSpacer(group, 3);
 
     privateKeyLabel=new Label(group, SWT.NONE);
-    privateKeyLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_25); //$NON-NLS-1$
+    privateKeyLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_25); 
 
     privateKeyText=new Text(group, SWT.SINGLE | SWT.BORDER);
     privateKeyText.setFont(group.getFont());
@@ -171,7 +171,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     privateKeyText.setLayoutData(gd);
 
     privateKeyAdd=new Button(group, SWT.NULL);
-    privateKeyAdd.setText(CVSSSH2Messages.CVSSSH2PreferencePage_26); //$NON-NLS-1$
+    privateKeyAdd.setText(CVSSSH2Messages.CVSSSH2PreferencePage_26); 
     gd=new GridData(GridData.HORIZONTAL_ALIGN_FILL);
     gd.horizontalSpan=1;
     privateKeyAdd.setLayoutData(gd);
@@ -191,7 +191,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  DirectoryDialog dd=new DirectoryDialog(getShell());
 	  dd.setFilterPath(home);
-	  dd.setMessage(CVSSSH2Messages.CVSSSH2PreferencePage_27); //$NON-NLS-1$
+	  dd.setMessage(CVSSSH2Messages.CVSSSH2PreferencePage_27); 
 	  String dir=dd.open();
 	  if(dir==null){ // cancel
 	    return;
@@ -238,13 +238,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
     group.setLayoutData(data);
 
     enableProxy=new Button(group, SWT.CHECK);
-    enableProxy.setText(CVSSSH2Messages.CVSSSH2PreferencePage_30); //$NON-NLS-1$
+    enableProxy.setText(CVSSSH2Messages.CVSSSH2PreferencePage_30); 
     GridData gd=new GridData();
     gd.horizontalSpan=3;
     enableProxy.setLayoutData(gd);
 
     proxyTypeLabel=new Label(group, SWT.NONE);
-    proxyTypeLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_31); //$NON-NLS-1$
+    proxyTypeLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_31); 
     proxyTypeCombo=new Combo(group, SWT.READ_ONLY);
     proxyTypeCombo.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
@@ -268,7 +268,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     proxyTypeCombo.select(0);
 
     proxyHostLabel=new Label(group, SWT.NONE);
-    proxyHostLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_32); //$NON-NLS-1$
+    proxyHostLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_32); 
 
     proxyHostText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyHostText.setFont(group.getFont());
@@ -277,7 +277,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     proxyHostText.setLayoutData(gd);
 
     proxyPortLabel=new Label(group, SWT.NONE);
-    proxyPortLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_33); //$NON-NLS-1$
+    proxyPortLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_33); 
 
     proxyPortText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyPortText.setFont(group.getFont());
@@ -297,13 +297,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
     createSpacer(group, 3);
 
     enableAuth=new Button(group, SWT.CHECK);
-    enableAuth.setText(CVSSSH2Messages.CVSSSH2PreferencePage_34); //$NON-NLS-1$
+    enableAuth.setText(CVSSSH2Messages.CVSSSH2PreferencePage_34); 
     gd=new GridData();
     gd.horizontalSpan=3;
     enableAuth.setLayoutData(gd);
 
     proxyUserLabel=new Label(group, SWT.NONE);
-    proxyUserLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_35); //$NON-NLS-1$
+    proxyUserLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_35); 
 
     proxyUserText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyUserText.setFont(group.getFont());
@@ -312,7 +312,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     proxyUserText.setLayoutData(gd);
 
     proxyPassLabel=new Label(group, SWT.NONE);
-    proxyPassLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_36); //$NON-NLS-1$
+    proxyPassLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_36); 
 
     proxyPassText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyPassText.setFont(group.getFont());
@@ -350,25 +350,25 @@ public class CVSSSH2PreferencePage extends PreferencePage
     group.setLayoutData(gd);
 
     keyGenerateDSA=new Button(group, SWT.NULL);
-    keyGenerateDSA.setText(CVSSSH2Messages.CVSSSH2PreferencePage_131); //$NON-NLS-1$
+    keyGenerateDSA.setText(CVSSSH2Messages.CVSSSH2PreferencePage_131); 
     gd=new GridData();
     gd.horizontalSpan=1;
     keyGenerateDSA.setLayoutData(gd);
 
     keyGenerateRSA=new Button(group, SWT.NULL);
-    keyGenerateRSA.setText(CVSSSH2Messages.CVSSSH2PreferencePage_132); //$NON-NLS-1$
+    keyGenerateRSA.setText(CVSSSH2Messages.CVSSSH2PreferencePage_132); 
     gd=new GridData();
     gd.horizontalSpan=1;
     keyGenerateRSA.setLayoutData(gd);
 
     keyLoad=new Button(group, SWT.NULL);
-    keyLoad.setText(CVSSSH2Messages.CVSSSH2PreferencePage_128);  //$NON-NLS-1$
+    keyLoad.setText(CVSSSH2Messages.CVSSSH2PreferencePage_128);  
     gd=new GridData();
     gd.horizontalSpan=1;
     keyLoad.setLayoutData(gd);
 
     publicKeylabel=new Label(group, SWT.NONE);
-    publicKeylabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_39); //$NON-NLS-1$
+    publicKeylabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_39); 
     gd=new GridData();
     gd.horizontalSpan=columnSpan;
     publicKeylabel.setLayoutData(gd);
@@ -385,7 +385,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     publicKeyText.setLayoutData(gd);
     
     keyFingerPrintLabel=new Label(group, SWT.NONE);
-    keyFingerPrintLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_41); //$NON-NLS-1$
+    keyFingerPrintLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_41); 
     keyFingerPrintText=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyFingerPrintText.setFont(group.getFont());
     keyFingerPrintText.setEditable(false);
@@ -394,7 +394,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyFingerPrintText.setLayoutData(gd);
 
     keyCommentLabel=new Label(group, SWT.NONE);
-    keyCommentLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_42); //$NON-NLS-1$
+    keyCommentLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_42); 
     keyCommentText=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyCommentText.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
@@ -414,7 +414,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     }});
 
     keyPassphrase1Label=new Label(group, SWT.NONE);
-    keyPassphrase1Label.setText(CVSSSH2Messages.CVSSSH2PreferencePage_43); //$NON-NLS-1$
+    keyPassphrase1Label.setText(CVSSSH2Messages.CVSSSH2PreferencePage_43); 
     keyPassphrase1Text=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyPassphrase1Text.setFont(group.getFont());
     keyPassphrase1Text.setEchoChar('*');
@@ -423,7 +423,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyPassphrase1Text.setLayoutData(gd);
 
     keyPassphrase2Label=new Label(group, SWT.NONE);
-    keyPassphrase2Label.setText(CVSSSH2Messages.CVSSSH2PreferencePage_44); //$NON-NLS-1$
+    keyPassphrase2Label.setText(CVSSSH2Messages.CVSSSH2PreferencePage_44); 
     keyPassphrase2Text=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyPassphrase2Text.setFont(group.getFont());
     keyPassphrase2Text.setEchoChar('*');
@@ -449,7 +449,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     			setErrorMessage(null);
     		}
     		else{
-    			setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); //$NON-NLS-1$
+    			setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); 
     		}
     	}
     });	
@@ -469,7 +469,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     				setErrorMessage(null);
     			}
     			else{
-    				setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); //$NON-NLS-1$
+    				setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); 
     			}
     			return;
     		}
@@ -477,7 +477,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     			setErrorMessage(null);
     		}
     		else{
-    			setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); //$NON-NLS-1$
+    			setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); 
     		}
     	}
     });
@@ -491,7 +491,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     				setErrorMessage(null);
     			}
     			else{
-    				setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); //$NON-NLS-1$
+    				setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); 
     			}
     			return;
     		}
@@ -499,7 +499,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     			setErrorMessage(null);
     		}
     		else{
-    			setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); //$NON-NLS-1$
+    			setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); 
     		}   	
     	}
     	public void focusLost(FocusEvent e){
@@ -509,7 +509,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     			setErrorMessage(null);
     		}
     		else{
-    			setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); //$NON-NLS-1$
+    			setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_48); 
     		}
     	}
     });
@@ -523,12 +523,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
     buttons.setLayoutData(gd);
     
     keyExport=new Button(buttons, SWT.NULL);
-    keyExport.setText(CVSSSH2Messages.CVSSSH2PreferencePage_105); //$NON-NLS-1$
+    keyExport.setText(CVSSSH2Messages.CVSSSH2PreferencePage_105); 
     gd=new GridData(GridData.FILL_BOTH);
     keyExport.setLayoutData(gd);
     
     saveKeyPair=new Button(buttons, SWT.NULL);
-    saveKeyPair.setText(CVSSSH2Messages.CVSSSH2PreferencePage_45); //$NON-NLS-1$
+    saveKeyPair.setText(CVSSSH2Messages.CVSSSH2PreferencePage_45); 
     gd=new GridData(GridData.FILL_BOTH);
     saveKeyPair.setLayoutData(gd);
     
@@ -590,8 +590,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  }
 	  if(!ok){
  	    MessageDialog.openError(getShell(),
-				    CVSSSH2Messages.CVSSSH2PreferencePage_error,  //$NON-NLS-1$
-				    CVSSSH2Messages.CVSSSH2PreferencePage_47);  //$NON-NLS-1$
+				    CVSSSH2Messages.CVSSSH2PreferencePage_error,  
+				    CVSSSH2Messages.CVSSSH2PreferencePage_47);  
 	  }
 	}
       };
@@ -616,7 +616,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	    PassphrasePrompt prompt=null;
 	    while(_kpair.isEncrypted()){
 	      if(prompt==null){
-		prompt=new PassphrasePrompt(NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_126, new String[] { pkey }));   //$NON-NLS-1$
+		prompt=new PassphrasePrompt(NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_126, new String[] { pkey }));   
 	      }
 	      Display.getDefault().syncExec(prompt);
 	      String passphrase=prompt.getPassphrase();
@@ -625,8 +625,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	      	break;
 	      }
 	      MessageDialog.openError(getShell(),
-				      CVSSSH2Messages.CVSSSH2PreferencePage_error,  //$NON-NLS-1$
-				      NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_129, new String[] { pkey }));  //$NON-NLS-1$
+				      CVSSSH2Messages.CVSSSH2PreferencePage_error,  
+				      NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_129, new String[] { pkey }));  
 	    }
 	    if(_kpair.isEncrypted()){
 	      return;
@@ -652,8 +652,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  }
 	  if(!ok){
 	    MessageDialog.openError(getShell(),
-				    CVSSSH2Messages.CVSSSH2PreferencePage_error,  //$NON-NLS-1$
-				    CVSSSH2Messages.CVSSSH2PreferencePage_130);  //$NON-NLS-1$
+				    CVSSSH2Messages.CVSSSH2PreferencePage_error,  
+				    CVSSSH2Messages.CVSSSH2PreferencePage_130);  
 	  }
 	}
       });
@@ -665,8 +665,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
           setErrorMessage(null);
 
 	  final String[] target=new String[1];
-	  final String title=CVSSSH2Messages.CVSSSH2PreferencePage_106;  //$NON-NLS-1$
-	  final String message=CVSSSH2Messages.CVSSSH2PreferencePage_107;  //$NON-NLS-1$
+	  final String title=CVSSSH2Messages.CVSSSH2PreferencePage_106;  
+	  final String message=CVSSSH2Messages.CVSSSH2PreferencePage_107;  
 	  Display.getDefault().syncExec(new Runnable(){
 	      public void run(){
 		Display display=Display.getCurrent();
@@ -698,7 +698,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  if(user.length()==0 || 
 	     host.length()==0 ||
 	     port==-1){
-	    setErrorMessage(NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_108, new String[] { target[0] })); //$NON-NLS-1$
+	    setErrorMessage(NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_108, new String[] { target[0] })); 
 	    return;
 	  }
 
@@ -718,7 +718,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  catch(IOException ee){
 	  }
 	  catch(JSchException ee){
-	  	setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_111); //$NON-NLS-1$
+	  	setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_111); 
 	  }
 	}});
 
@@ -735,7 +735,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  */
 	  if(pass.length()==0){
 	    if(!MessageDialog.openConfirm(getShell(),
-					  CVSSSH2Messages.CVSSSH2PreferencePage_confirmation, //$NON-NLS-1$
+					  CVSSSH2Messages.CVSSSH2PreferencePage_confirmation, 
 					  CVSSSH2Messages.CVSSSH2PreferencePage_49
 					  )){
 	      return ;
@@ -751,13 +751,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  if(!_home.exists()){
 	    if(!MessageDialog.openConfirm(getShell(),
-					  CVSSSH2Messages.CVSSSH2PreferencePage_confirmation, //$NON-NLS-1$
-					  NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_50, new String[] { home }) //$NON-NLS-1$
+					  CVSSSH2Messages.CVSSSH2PreferencePage_confirmation, 
+					  NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_50, new String[] { home }) 
 					  )){
 	      return ;
 	    }
 	    if(!_home.mkdirs()){
-	      setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_100+home); //$NON-NLS-1$
+	      setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_100+home); 
 	      return;
 	    }
 	  }
@@ -773,8 +773,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  if(new File(file).exists()){
 	    if(!MessageDialog.openConfirm(getShell(),
-					  CVSSSH2Messages.CVSSSH2PreferencePage_confirmation, //$NON-NLS-1$ 
-					  NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_53, new String[] { file }) //$NON-NLS-1$
+					  CVSSSH2Messages.CVSSSH2PreferencePage_confirmation, // 
+					  NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_53, new String[] { file }) 
 					  )){
 	      return;
 	    }
@@ -791,12 +791,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  if(ok){
  	    MessageDialog.openInformation(getShell(),
-					  CVSSSH2Messages.CVSSSH2PreferencePage_information, //$NON-NLS-1$
-					  CVSSSH2Messages.CVSSSH2PreferencePage_55+ //$NON-NLS-1$
+					  CVSSSH2Messages.CVSSSH2PreferencePage_information, 
+					  CVSSSH2Messages.CVSSSH2PreferencePage_55+ 
 					  "\n"+ //$NON-NLS-1$
-					  CVSSSH2Messages.CVSSSH2PreferencePage_57+file+ //$NON-NLS-1$
+					  CVSSSH2Messages.CVSSSH2PreferencePage_57+file+ 
 					  "\n"+ //$NON-NLS-1$
-					  CVSSSH2Messages.CVSSSH2PreferencePage_59+ //$NON-NLS-1$
+					  CVSSSH2Messages.CVSSSH2PreferencePage_59+ 
 					  file+
 					  ".pub"); //$NON-NLS-1$
 	  }
@@ -840,7 +840,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     group.setLayoutData(gd);
 
     Label label=new Label(group, SWT.NONE);
-    label.setText(CVSSSH2Messages.CVSSSH2PreferencePage_139); //$NON-NLS-1$
+    label.setText(CVSSSH2Messages.CVSSSH2PreferencePage_139); 
     gd=new GridData();
     gd.horizontalSpan=2;
     label.setLayoutData(gd);
@@ -870,13 +870,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	new TableColumn(table, SWT.NULL);
 	new TableColumn(table, SWT.NULL);
 	TableColumn[] columns = table.getColumns();
-	columns[0].setText(CVSSSH2Messages.CVSSSH2PreferencePage_134);  //$NON-NLS-1$
-	columns[1].setText(CVSSSH2Messages.CVSSSH2PreferencePage_135);  //$NON-NLS-1$
-	columns[2].setText(CVSSSH2Messages.CVSSSH2PreferencePage_136);  //$NON-NLS-1$
+	columns[0].setText(CVSSSH2Messages.CVSSSH2PreferencePage_134);  
+	columns[1].setText(CVSSSH2Messages.CVSSSH2PreferencePage_135);  
+	columns[2].setText(CVSSSH2Messages.CVSSSH2PreferencePage_136);  
 	viewer.setColumnProperties(new String[] {
-				CVSSSH2Messages.CVSSSH2PreferencePage_134,  //$NON-NLS-1$ 
-				CVSSSH2Messages.CVSSSH2PreferencePage_135,  //$NON-NLS-1$ 
-				CVSSSH2Messages.CVSSSH2PreferencePage_136}); //$NON-NLS-1$
+				CVSSSH2Messages.CVSSSH2PreferencePage_134,  // 
+				CVSSSH2Messages.CVSSSH2PreferencePage_135,  // 
+				CVSSSH2Messages.CVSSSH2PreferencePage_136}); 
 	viewer.setLabelProvider(new TableLabelProvider());
 	viewer.setContentProvider(new IStructuredContentProvider() {
 		public void dispose() {
@@ -902,7 +902,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	buttons.setLayout(layout);
 
 	removeHostKeyButton = new Button(buttons, SWT.PUSH);
-	removeHostKeyButton.setText(CVSSSH2Messages.CVSSSH2PreferencePage_138);  //$NON-NLS-1$
+	removeHostKeyButton.setText(CVSSSH2Messages.CVSSSH2PreferencePage_138);  
 	gd = new GridData();
 	gd.horizontalAlignment = GridData.FILL;
 	removeHostKeyButton.setLayoutData(gd);
@@ -961,7 +961,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
       IProgressMonitor pm=new org.eclipse.core.runtime.NullProgressMonitor();
       Session session=JSchSession.getSession(null, user, "", host, port, pm).getSession(); //$NON-NLS-1$
       if(session.getServerVersion().indexOf("OpenSSH")==-1){ //$NON-NLS-1$
-      	setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_110); //$NON-NLS-1$
+      	setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_110); 
     	return;
       }
       Channel channel=session.openChannel("sftp"); //$NON-NLS-1$
@@ -1000,8 +1000,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
       }
 
       MessageDialog.openInformation(getShell(),
-				    CVSSSH2Messages.CVSSSH2PreferencePage_information,  //$NON-NLS-1$
-				    CVSSSH2Messages.CVSSSH2PreferencePage_109+ //$NON-NLS-1$
+				    CVSSSH2Messages.CVSSSH2PreferencePage_information,  
+				    CVSSSH2Messages.CVSSSH2PreferencePage_109+ 
 				    (user+"@"+host+(port==22 ? "" : ":"+port)+":~/.ssh/authorized_keys")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
       c.disconnect();
@@ -1090,11 +1090,11 @@ public class CVSSSH2PreferencePage extends PreferencePage
 			String home = ssh2HomeText.getText();
 			File _home = new File(home);
 			if (!_home.exists()) {
-				if (MessageDialog.openQuestion(getShell(), CVSSSH2Messages.CVSSSH2PreferencePage_question, //$NON-NLS-1$
-						NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_99, new String[] { home }) //$NON-NLS-1$
+				if (MessageDialog.openQuestion(getShell(), CVSSSH2Messages.CVSSSH2PreferencePage_question, 
+						NLS.bind(CVSSSH2Messages.CVSSSH2PreferencePage_99, new String[] { home }) 
 						)) {
 					if (!(_home.mkdirs())) {
-						setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_100 + home); //$NON-NLS-1$
+						setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_100 + home); 
 						return false;
 					}
 				}
@@ -1138,7 +1138,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 //  		return false;
   	}
   	if((i < 0) || (i > 65535)){
-  		setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_104); //$NON-NLS-1$
+  		setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_104); 
   		return false;
   	}
   	return true;
@@ -1220,7 +1220,7 @@ class ExportDialog extends Dialog {
   }
 
   protected void createTargetFields(Composite parent) {
-    new Label(parent, SWT.NONE).setText(CVSSSH2Messages.CVSSSH2PreferencePage_125); //$NON-NLS-1$
+    new Label(parent, SWT.NONE).setText(CVSSSH2Messages.CVSSSH2PreferencePage_125); 
 		
     field=new Text(parent, SWT.BORDER);
     GridData data=new GridData(GridData.FILL_HORIZONTAL);
@@ -1308,7 +1308,7 @@ class PassphraseDialog extends Dialog {
   }
 
   protected void createPassphraseFields(Composite parent) {
-    new Label(parent, SWT.NONE).setText(CVSSSH2Messages.CVSSSH2PreferencePage_127); //$NON-NLS-1$
+    new Label(parent, SWT.NONE).setText(CVSSSH2Messages.CVSSSH2PreferencePage_127); 
     passphraseField=new Text(parent, SWT.BORDER);
     GridData data=new GridData(GridData.FILL_HORIZONTAL);
     data.widthHint=convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);

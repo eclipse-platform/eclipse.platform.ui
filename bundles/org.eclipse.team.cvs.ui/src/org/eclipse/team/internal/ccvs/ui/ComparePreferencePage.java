@@ -35,7 +35,7 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
      * @see org.eclipse.team.internal.ccvs.ui.CVSFieldEditorPreferencePage#getPageDescription()
      */
     protected String getPageDescription() {
-        return CVSUIMessages.ComparePreferencePage_0; //$NON-NLS-1$
+        return CVSUIMessages.ComparePreferencePage_0; 
     }
 
     /* (non-Javadoc)
@@ -44,7 +44,7 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
     protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(
 		        ICVSUIConstants.PREF_CONSIDER_CONTENTS, 
-				CVSUIMessages.ComparePreferencePage_4,  //$NON-NLS-1$
+				CVSUIMessages.ComparePreferencePage_4,  
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()) {
             protected Button getChangeControl(Composite parent) {
@@ -55,17 +55,17 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
 		});
 		addField(new BooleanFieldEditor(
 		        ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, 
-		        CVSUIMessages.ComparePreferencePage_3,  //$NON-NLS-1$
+		        CVSUIMessages.ComparePreferencePage_3,  
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(
 		        ICVSUIConstants.PREF_SHOW_AUTHOR_IN_EDITOR, 
-		        CVSUIMessages.ComparePreferencePage_1, //$NON-NLS-1$
+		        CVSUIMessages.ComparePreferencePage_1, 
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(
 		        ICVSUIConstants.PREF_COMMIT_SET_DEFAULT_ENABLEMENT, 
-		        CVSUIMessages.ComparePreferencePage_2, //$NON-NLS-1$
+		        CVSUIMessages.ComparePreferencePage_2, 
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
         
@@ -73,7 +73,7 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
         if (container instanceof IWorkbenchPreferenceContainer) {
             IWorkbenchPreferenceContainer workbenchContainer = (IWorkbenchPreferenceContainer) container;
             SWTUtils.createPreferenceLink(workbenchContainer, getFieldEditorParent(),
-                    CompareUI.PREFERENCE_PAGE_ID, CVSUIMessages.ComparePreferencePage_6); //$NON-NLS-1$ //$NON-NLS-2$
+                    CompareUI.PREFERENCE_PAGE_ID, CVSUIMessages.ComparePreferencePage_6); // 
         }
     }
     

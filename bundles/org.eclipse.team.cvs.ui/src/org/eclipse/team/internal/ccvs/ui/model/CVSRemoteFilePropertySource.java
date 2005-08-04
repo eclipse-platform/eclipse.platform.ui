@@ -34,30 +34,30 @@ public class CVSRemoteFilePropertySource implements IPropertySource {
 	static protected IPropertyDescriptor[] propertyDescriptors = new IPropertyDescriptor[5];
 	{
 		PropertyDescriptor descriptor;
-		String category = CVSUIMessages.cvs; //$NON-NLS-1$
+		String category = CVSUIMessages.cvs; 
 		
 		// resource name
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_NAME, CVSUIMessages.CVSRemoteFilePropertySource_name); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_NAME, CVSUIMessages.CVSRemoteFilePropertySource_name); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[0] = descriptor;
 		// revision
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_REVISION, CVSUIMessages.CVSRemoteFilePropertySource_revision); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_REVISION, CVSUIMessages.CVSRemoteFilePropertySource_revision); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[1] = descriptor;
 		// date
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_DATE, CVSUIMessages.CVSRemoteFilePropertySource_date); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_DATE, CVSUIMessages.CVSRemoteFilePropertySource_date); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[2] = descriptor;
 		// author
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_AUTHOR, CVSUIMessages.CVSRemoteFilePropertySource_author); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_AUTHOR, CVSUIMessages.CVSRemoteFilePropertySource_author); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[3] = descriptor;
 		// comment
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_COMMENT, CVSUIMessages.CVSRemoteFilePropertySource_comment); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_COMMENT, CVSUIMessages.CVSRemoteFilePropertySource_comment); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[4] = descriptor;

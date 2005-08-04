@@ -39,7 +39,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 
 	public ImportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		setDescription(TeamUIMessages.ImportProjectSetMainPage_description); //$NON-NLS-1$
+		setDescription(TeamUIMessages.ImportProjectSetMainPage_description); 
 	}
 	
 	/*
@@ -60,7 +60,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		layout.marginWidth = 0;
 		inner.setLayout(layout);
 		
-		createLabel(inner, TeamUIMessages.ImportProjectSetMainPage_Project_Set_File_Name__2); //$NON-NLS-1$
+		createLabel(inner, TeamUIMessages.ImportProjectSetMainPage_Project_Set_File_Name__2); 
 		fileText = createTextField(inner);
 		if (file != null) fileText.setText(file);
 		fileText.addListener(SWT.Modify, new Listener() {
@@ -71,7 +71,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		});
 
 		browseButton = new Button(inner, SWT.PUSH);
-		browseButton.setText(TeamUIMessages.ImportProjectSetMainPage_Browse_3); //$NON-NLS-1$
+		browseButton.setText(TeamUIMessages.ImportProjectSetMainPage_Browse_3); 
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -81,7 +81,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 			public void handleEvent(Event event) {
 				FileDialog d = new FileDialog(getShell());
 				d.setFilterExtensions(new String[] {"*.psf", "*"}); //$NON-NLS-1$ //$NON-NLS-2$
-				d.setFilterNames(new String[] {TeamUIMessages.ImportProjectSetMainPage_Project_Set_Files_2, TeamUIMessages.ImportProjectSetMainPage_allFiles}); //$NON-NLS-1$  //$NON-NLS-2$
+				d.setFilterNames(new String[] {TeamUIMessages.ImportProjectSetMainPage_Project_Set_Files_2, TeamUIMessages.ImportProjectSetMainPage_allFiles}); //  
 				d.setFilterPath(new File(".").getAbsolutePath()); //$NON-NLS-1$
 				String f = d.open();
 				if (f != null) {
@@ -104,14 +104,14 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 	private void createWorkinSetCreationArea(Composite composite, int numColumns) {
 		
 		createWorkingSetButton = new Button(composite, SWT.CHECK | SWT.RIGHT);
-		createWorkingSetButton.setText(TeamUIMessages.ImportProjectSetMainPage_createWorkingSetLabel); //$NON-NLS-1$
+		createWorkingSetButton.setText(TeamUIMessages.ImportProjectSetMainPage_createWorkingSetLabel); 
 		createWorkingSetButton.setSelection(createWorkingSet);
 		GridData data = new GridData();
 		data.horizontalSpan = numColumns;
 		createWorkingSetButton.setLayoutData(data);
 
 		final Label label = new Label(composite, SWT.NONE);
-		label.setText(TeamUIMessages.ImportProjectSetMainPage_workingSetLabel); //$NON-NLS-1$
+		label.setText(TeamUIMessages.ImportProjectSetMainPage_workingSetLabel); 
 		data = new GridData();
 		data.horizontalSpan = 1;
 		label.setLayoutData(data);
@@ -143,13 +143,13 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		if (createWorkingSet) {
 			workingSetName =  workingSetNameField.getText();
 			if (workingSetName.length() == 0) {
-				setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameEmpty, ERROR); //$NON-NLS-1$
+				setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameEmpty, ERROR); 
 				return false;
 			} else {
 				// todo: verify name doesn't already exist
 				IWorkingSet existingSet = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
 				if (existingSet != null) {
-					setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameExists, WARNING); //$NON-NLS-1$
+					setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameExists, WARNING); 
 					return true;
 				}
 			}
@@ -167,10 +167,10 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 			// See if the file exists
 			File f = new File(file);
 			if (!f.exists()) {
-				setMessage(TeamUIMessages.ImportProjectSetMainPage_The_specified_file_does_not_exist_4, ERROR); //$NON-NLS-1$
+				setMessage(TeamUIMessages.ImportProjectSetMainPage_The_specified_file_does_not_exist_4, ERROR); 
 				complete = false;
 			} else if (f.isDirectory()) {
-				setMessage(TeamUIMessages.ImportProjectSetMainPage_You_have_specified_a_folder_5, ERROR); //$NON-NLS-1$
+				setMessage(TeamUIMessages.ImportProjectSetMainPage_You_have_specified_a_folder_5, ERROR); 
 				complete = false;
 			} else {
 				complete = validateWorkingSetName();

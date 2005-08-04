@@ -72,7 +72,7 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 	 */
 	public String getName() {
 		if (sets.length == 0) {
-			return TeamUIMessages.WorkingSetScope_0; //$NON-NLS-1$
+			return TeamUIMessages.WorkingSetScope_0; 
 		}
 		StringBuffer name = new StringBuffer();
 		for (int i = 0; i < sets.length; i++) {

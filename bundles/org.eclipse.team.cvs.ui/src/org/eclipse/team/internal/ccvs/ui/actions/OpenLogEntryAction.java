@@ -66,14 +66,14 @@ public class OpenLogEntryAction extends CVSAction {
 				final ILogEntry[] entries = getSelectedLogEntries();
 				for (int i = 0; i < entries.length; i++) {
 					if (entries[i].isDeletion()) {
-						MessageDialog.openError(getShell(), CVSUIMessages.OpenLogEntryAction_deletedTitle, CVSUIMessages.OpenLogEntryAction_deleted); //$NON-NLS-1$ //$NON-NLS-2$
+						MessageDialog.openError(getShell(), CVSUIMessages.OpenLogEntryAction_deletedTitle, CVSUIMessages.OpenLogEntryAction_deleted); // 
 					} else {
 						ICVSRemoteFile file = entries[i].getRemoteFile();
                         CVSUIPlugin.getPlugin().openEditor(file, monitor);
 					}
 				}
 			}
-		}, false, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, false, PROGRESS_BUSYCURSOR); 
 	}
 	/*
 	 * @see TeamAction#isEnabled()

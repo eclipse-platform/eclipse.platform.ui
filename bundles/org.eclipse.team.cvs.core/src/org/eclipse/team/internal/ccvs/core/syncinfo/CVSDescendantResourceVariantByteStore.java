@@ -52,7 +52,7 @@ public class CVSDescendantResourceVariantByteStore extends DescendantResourceVar
 		if (resource.getType() == IResource.FILE && getBytes(resource) != null && !parentHasSyncBytes(resource)) {
 			// Log a warning if there is no sync bytes available for the resource's
 			// parent but there is valid sync bytes for the child
-			CVSProviderPlugin.log(new TeamException(NLS.bind(CVSMessages.ResourceSynchronizer_missingParentBytesOnSet, new String[] { ((PersistantResourceVariantByteStore)getRemoteStore()).getSyncName().toString(), resource.getFullPath().toString() }))); //$NON-NLS-1$
+			CVSProviderPlugin.log(new TeamException(NLS.bind(CVSMessages.ResourceSynchronizer_missingParentBytesOnSet, new String[] { ((PersistantResourceVariantByteStore)getRemoteStore()).getSyncName().toString(), resource.getFullPath().toString() }))); 
 		}
 		return changed;
 	}

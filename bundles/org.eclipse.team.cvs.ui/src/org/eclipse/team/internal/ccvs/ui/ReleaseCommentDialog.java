@@ -44,7 +44,7 @@ public class ReleaseCommentDialog extends DetailsDialog {
 	 * @param proposedComment
 	 */
 	public ReleaseCommentDialog(Shell parentShell, IResource[] resourcesToCommit, String proposedComment, int depth) {
-		super(parentShell, CVSUIMessages.ReleaseCommentDialog_title); //$NON-NLS-1$
+		super(parentShell, CVSUIMessages.ReleaseCommentDialog_title); 
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.RESIZE | SWT.MAX);
 		commitCommentArea = new CommitCommentArea();
@@ -78,7 +78,7 @@ public class ReleaseCommentDialog extends DetailsDialog {
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected void createMainDialogArea(Composite parent) {
-		getShell().setText(CVSUIMessages.ReleaseCommentDialog_title); //$NON-NLS-1$
+		getShell().setText(CVSUIMessages.ReleaseCommentDialog_title); 
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));

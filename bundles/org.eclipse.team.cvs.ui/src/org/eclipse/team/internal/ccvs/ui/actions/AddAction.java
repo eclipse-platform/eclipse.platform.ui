@@ -57,7 +57,7 @@ public class AddAction extends WorkspaceTraversalAction {
 			}
 		}
 		if (prompt) {
-			return MessageDialog.openQuestion(getShell(), CVSUIMessages.AddAction_addIgnoredTitle, CVSUIMessages.AddAction_addIgnoredQuestion); //$NON-NLS-1$ //$NON-NLS-2$
+			return MessageDialog.openQuestion(getShell(), CVSUIMessages.AddAction_addIgnoredTitle, CVSUIMessages.AddAction_addIgnoredQuestion); // 
 		}
 		return true;
 	}

@@ -164,7 +164,7 @@ public class TimeoutOutputStream extends FilterOutputStream {
 	private void syncCommit(boolean partial) throws IOException {
 		checkError(); // check errors before allowing the addition of new bytes
 		if (partial && length != iobuffer.length || length == 0) return;
-		if (waitingForClose) throw new IOException(Messages.TimeoutOutputStream_cannotWriteToStream); //$NON-NLS-1$
+		if (waitingForClose) throw new IOException(Messages.TimeoutOutputStream_cannotWriteToStream); 
 		notify();
 		try {
 			wait(writeTimeout);

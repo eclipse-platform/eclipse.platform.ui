@@ -28,7 +28,7 @@ public class ConfigureRefreshScheduleDialog extends DetailsDialog {
 	private SubscriberRefreshSchedule schedule;
 
 	public ConfigureRefreshScheduleDialog(Shell parentShell, SubscriberRefreshSchedule schedule) {
-		super(parentShell, NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_0, new String[] { Utils.getTypeName(schedule.getParticipant()) })); //$NON-NLS-1$
+		super(parentShell, NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_0, new String[] { Utils.getTypeName(schedule.getParticipant()) })); 
 		this.schedule = schedule;
 	}
 

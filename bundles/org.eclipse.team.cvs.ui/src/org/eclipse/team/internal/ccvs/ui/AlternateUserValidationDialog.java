@@ -52,7 +52,7 @@ public class AlternateUserValidationDialog extends Dialog {
 	
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(CVSUIMessages.AlternateUserValidationDialog_Enter_Password_2); //$NON-NLS-1$
+		newShell.setText(CVSUIMessages.AlternateUserValidationDialog_Enter_Password_2); 
 	}
 	
 	protected Control createContents(Composite parent) {
@@ -78,7 +78,7 @@ public class AlternateUserValidationDialog extends Dialog {
 		middleComposite.setLayoutData(new GridData());
 		
 		Label l = new Label(middleComposite, SWT.NULL);
-		l.setText(NLS.bind(CVSUIMessages.AlternateUserValidationDialog_message, new String[] { user })); //$NON-NLS-1$
+		l.setText(NLS.bind(CVSUIMessages.AlternateUserValidationDialog_message, new String[] { user })); 
 		l.setLayoutData(new GridData());
 		l = new Label(middleComposite, SWT.NULL);
 		l.setText(""); //$NON-NLS-1$
@@ -137,7 +137,7 @@ public class AlternateUserValidationDialog extends Dialog {
 		buttonComposite.setLayout(new GridLayout());
 		buttonComposite.setLayoutData(new GridData());
 		Button b = new Button(buttonComposite, SWT.PUSH);
-		b.setText(CVSUIMessages.AlternateUserValidationDialog_OK_6); //$NON-NLS-1$
+		b.setText(CVSUIMessages.AlternateUserValidationDialog_OK_6); 
 		data = new GridData();
 		data.widthHint = 70;
 		b.setLayoutData(data);
@@ -148,7 +148,7 @@ public class AlternateUserValidationDialog extends Dialog {
 		});
 		buttonComposite.getShell().setDefaultButton(b);
 		b = new Button(buttonComposite, SWT.PUSH);
-		b.setText(CVSUIMessages.AlternateUserValidationDialog_Cancel_7); //$NON-NLS-1$
+		b.setText(CVSUIMessages.AlternateUserValidationDialog_Cancel_7); 
 		data = new GridData();
 		data.widthHint = 70;
 		b.setLayoutData(data);

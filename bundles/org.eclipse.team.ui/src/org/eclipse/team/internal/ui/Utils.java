@@ -148,7 +148,7 @@ public class Utils {
 			} else if (t instanceof InterruptedException) {
 				return;
 			} else {
-				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.TeamAction_internal, t); //$NON-NLS-1$
+				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.TeamAction_internal, t); 
 				log = true;
 				dialog = true;
 			}
@@ -259,13 +259,13 @@ public class Utils {
 				} else if (t instanceof TeamException) {
 					error = ((TeamException) t).getStatus();
 				} else {
-					error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.simpleInternal, t); //$NON-NLS-1$
+					error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.simpleInternal, t); 
 				}
 				Shell shell = new Shell(Display.getDefault());
 				if (error.getSeverity() == IStatus.INFO) {
-					MessageDialog.openInformation(shell, TeamUIMessages.information, error.getMessage()); //$NON-NLS-1$
+					MessageDialog.openInformation(shell, TeamUIMessages.information, error.getMessage()); 
 				} else {
-					ErrorDialog.openError(shell, TeamUIMessages.exception, null, error); //$NON-NLS-1$
+					ErrorDialog.openError(shell, TeamUIMessages.exception, null, error); 
 				}
 				shell.dispose();
 				// Let's log non-team exceptions
@@ -298,19 +298,19 @@ public class Utils {
 		final IResourceVariant base = sync.getBase();
 		String localContentId = sync.getLocalContentIdentifier();
 		if (localContentId != null) {
-			config.setLeftLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId })); //$NON-NLS-1$
+			config.setLeftLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId })); 
 		} else {
-			config.setLeftLabel(TeamUIMessages.SyncInfoCompareInput_localLabel); //$NON-NLS-1$
+			config.setLeftLabel(TeamUIMessages.SyncInfoCompareInput_localLabel); 
 		}
 		if (remote != null) {
-			config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { remote.getContentIdentifier() })); //$NON-NLS-1$
+			config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { remote.getContentIdentifier() })); 
 		} else {
-			config.setRightLabel(TeamUIMessages.SyncInfoCompareInput_remoteLabel); //$NON-NLS-1$
+			config.setRightLabel(TeamUIMessages.SyncInfoCompareInput_remoteLabel); 
 		}
 		if (base != null) {
-			config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { base.getContentIdentifier() })); //$NON-NLS-1$
+			config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { base.getContentIdentifier() })); 
 		} else {
-			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel); //$NON-NLS-1$
+			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel); 
 		}
 	}
 
@@ -376,15 +376,15 @@ public class Utils {
 	public static String modeToString(int mode) {
 		switch (mode) {
 			case ISynchronizePageConfiguration.INCOMING_MODE :
-				return TeamUIMessages.Utils_22; //$NON-NLS-1$
+				return TeamUIMessages.Utils_22; 
 			case ISynchronizePageConfiguration.OUTGOING_MODE :
-				return TeamUIMessages.Utils_23; //$NON-NLS-1$
+				return TeamUIMessages.Utils_23; 
 			case ISynchronizePageConfiguration.BOTH_MODE :
-				return TeamUIMessages.Utils_24; //$NON-NLS-1$
+				return TeamUIMessages.Utils_24; 
 			case ISynchronizePageConfiguration.CONFLICTING_MODE :
-				return TeamUIMessages.Utils_25; //$NON-NLS-1$
+				return TeamUIMessages.Utils_25; 
 		}
-		return TeamUIMessages.Utils_26; //$NON-NLS-1$
+		return TeamUIMessages.Utils_26; 
 	}
 
 	/**

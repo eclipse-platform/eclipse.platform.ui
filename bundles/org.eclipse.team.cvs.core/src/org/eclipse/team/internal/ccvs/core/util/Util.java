@@ -94,7 +94,7 @@ public class Util {
 		throws CVSException {
 
 		if (!resourceName.startsWith(rootName) || rootName.length() > resourceName.length()) {
-			throw new CVSException(CVSMessages.Util_Internal_error__resource_does_not_start_with_root_3); //$NON-NLS-1$
+			throw new CVSException(CVSMessages.Util_Internal_error__resource_does_not_start_with_root_3); 
 		}
 		
 		// Otherwise we would get an ArrayOutOfBoundException
@@ -160,7 +160,7 @@ public class Util {
 		if (index == -1) {
 			return stringPath;
 		} else {
-			return NLS.bind(CVSMessages.Util_truncatedPath, new String[] { stringPath.substring(index) }); //$NON-NLS-1$
+			return NLS.bind(CVSMessages.Util_truncatedPath, new String[] { stringPath.substring(index) }); 
 		}
 	}
 	
@@ -234,7 +234,7 @@ public class Util {
 				throw (IOException)exception[0];
 		}
 		if (socket[0] == null) {
-			throw new InterruptedIOException(NLS.bind(CVSMessages.Util_timeout, new String[] { host })); //$NON-NLS-1$
+			throw new InterruptedIOException(NLS.bind(CVSMessages.Util_timeout, new String[] { host })); 
 		}
 		return socket[0];
 	}
@@ -304,7 +304,7 @@ public class Util {
 			throw (IOException)exception[0];
 		}
 		if (process[0] == null) {
-			throw new InterruptedIOException(NLS.bind(CVSMessages.Util_processTimeout, new String[] { command[0] })); //$NON-NLS-1$
+			throw new InterruptedIOException(NLS.bind(CVSMessages.Util_processTimeout, new String[] { command[0] })); 
 		}
 		return process[0];
 	}

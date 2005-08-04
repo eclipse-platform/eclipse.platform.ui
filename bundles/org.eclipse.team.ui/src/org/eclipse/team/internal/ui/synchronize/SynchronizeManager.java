@@ -100,7 +100,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		private ISynchronizeParticipant[] fChanged;
 
 		public void handleException(Throwable exception) {
-			TeamUIPlugin.log(IStatus.ERROR, TeamUIMessages.SynchronizeManager_7, exception); //$NON-NLS-1$
+			TeamUIPlugin.log(IStatus.ERROR, TeamUIMessages.SynchronizeManager_7, exception); 
 		}
 
 		public void run() throws Exception {
@@ -223,7 +223,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 			} catch (TeamException e) {
 				TeamUIPlugin.log(e);
 				participantReferences.remove(key);
-				throw new TeamException(TeamUIMessages.SynchronizeManager_8, e); //$NON-NLS-1$
+				throw new TeamException(TeamUIMessages.SynchronizeManager_8, e); 
 			}
 		}
 
@@ -247,11 +247,11 @@ public class SynchronizeManager implements ISynchronizeManager {
 					savedState = null;
 					return participant;
 				} catch (PartInitException e) {				
-					throw new TeamException(NLS.bind(TeamUIMessages.SynchronizeManager_11, new String[] { descriptor.getName() }), e);  //$NON-NLS-1$
+					throw new TeamException(NLS.bind(TeamUIMessages.SynchronizeManager_11, new String[] { descriptor.getName() }), e);  
 				} catch (CoreException e) {
 					throw TeamException.asTeamException(e);
 				} catch(Exception e) {
-					throw new TeamException(NLS.bind(TeamUIMessages.SynchronizeManager_11, new String[] { descriptor.getName() }), e);  //$NON-NLS-1$
+					throw new TeamException(NLS.bind(TeamUIMessages.SynchronizeManager_11, new String[] { descriptor.getName() }), e);  
 				}
 			}
 
@@ -315,7 +315,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		SynchronizeParticipantDescriptor desc = participantRegistry.find(type);
 		// ensure that the view id is valid
 		if (desc == null)
-			throw new PartInitException(NLS.bind(TeamUIMessages.SynchronizeManager_19, new String[] { type })); //$NON-NLS-1$
+			throw new PartInitException(NLS.bind(TeamUIMessages.SynchronizeManager_19, new String[] { type })); 
 		// ensure that multiple instances are allowed if a secondary id is given
 		if (secondaryId != null) {
 //		    if (!desc.isMultipleInstances()) {
@@ -450,7 +450,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 				String pId = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE);
 				activePage = workbench.showPerspective(pId, window);
 			} catch (WorkbenchException e) {
-				Utils.handleError(window.getShell(), e, TeamUIMessages.SynchronizeView_14, e.getMessage()); //$NON-NLS-1$
+				Utils.handleError(window.getShell(), e, TeamUIMessages.SynchronizeView_14, e.getMessage()); 
 			}
 		}
 		try {
@@ -465,11 +465,11 @@ public class SynchronizeManager implements ISynchronizeManager {
 				return (ISynchronizeView) part;
 			} catch (ClassCastException e) {
 				// Strange that we cannot cast the part (see bug 53671)
-				TeamUIPlugin.log(IStatus.ERROR, NLS.bind(TeamUIMessages.SynchronizeManager_18, new String[] { part.getClass().getName() }), e); //$NON-NLS-1$
+				TeamUIPlugin.log(IStatus.ERROR, NLS.bind(TeamUIMessages.SynchronizeManager_18, new String[] { part.getClass().getName() }), e); 
 				return null;
 			}
 		} catch (PartInitException pe) {
-			Utils.handleError(window.getShell(), pe, TeamUIMessages.SynchronizeView_16, pe.getMessage()); //$NON-NLS-1$
+			Utils.handleError(window.getShell(), pe, TeamUIMessages.SynchronizeView_16, pe.getMessage()); 
 			return null;
 		}
 	}
@@ -504,9 +504,9 @@ public class SynchronizeManager implements ISynchronizeManager {
 		if(perspectiveDescriptor != null) {
 			
 			MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(Utils.getShell(null),
-						TeamUIMessages.SynchronizeManager_27,  //$NON-NLS-1$
-						NLS.bind(TeamUIMessages.SynchronizeManager_30, new String[] { perspectiveDescriptor.getLabel() }), //$NON-NLS-1$
-						TeamUIMessages.SynchronizeManager_31,  //$NON-NLS-1$
+						TeamUIMessages.SynchronizeManager_27,  
+						NLS.bind(TeamUIMessages.SynchronizeManager_30, new String[] { perspectiveDescriptor.getLabel() }), 
+						TeamUIMessages.SynchronizeManager_31,  
 						false /* toggle state */,
 						store,
 						IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE);
@@ -540,7 +540,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 			// previous session.
 			restoreSavedParticipants();
 		} catch (CoreException e) {
-			TeamUIPlugin.log(new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.SynchronizeManager_8, e)); //$NON-NLS-1$
+			TeamUIPlugin.log(new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.SynchronizeManager_8, e)); 
 		}
 	}
 
@@ -587,7 +587,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 					String key = Utils.getKey(id, secondayId);
 					participantReferences.put(key, new ParticipantInstance(desc, secondayId, displayName, memento2.getChild(CTX_PARTICIPANT_DATA)));
 				} else {
-					TeamUIPlugin.log(new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, NLS.bind(TeamUIMessages.SynchronizeManager_9, new String[] { id }), null)); //$NON-NLS-1$
+					TeamUIPlugin.log(new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, NLS.bind(TeamUIMessages.SynchronizeManager_9, new String[] { id }), null)); 
 				}
 			}
 		}
@@ -623,13 +623,13 @@ public class SynchronizeManager implements ISynchronizeManager {
 				writer.close();
 			}
 		} catch (IOException e) {
-			TeamUIPlugin.log(new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.SynchronizeManager_10, e)); //$NON-NLS-1$
+			TeamUIPlugin.log(new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.SynchronizeManager_10, e)); 
 		}
 	}
 
 	private File getStateFile() {
 		IPath pluginStateLocation = TeamUIPlugin.getPlugin().getStateLocation();
-		return pluginStateLocation.append(FILENAME).toFile(); //$NON-NLS-1$	
+		return pluginStateLocation.append(FILENAME).toFile(); //	
 	}
 	
 	/**

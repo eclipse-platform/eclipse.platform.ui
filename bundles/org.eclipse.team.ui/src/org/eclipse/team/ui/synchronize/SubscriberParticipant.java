@@ -182,7 +182,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 */
 	public String getName() {
 		String name = super.getName();
-		return NLS.bind(TeamUIMessages.SubscriberParticipant_namePattern, new String[] { name, scope.getName() }); //$NON-NLS-1$
+		return NLS.bind(TeamUIMessages.SubscriberParticipant_namePattern, new String[] { name, scope.getName() }); 
 	}
 	
 	/**
@@ -348,7 +348,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @return the short task name to show in the status line.
 	 */
 	protected String getShortTaskName() {
-		return TeamUIMessages.Participant_synchronizing; //$NON-NLS-1$
+		return TeamUIMessages.Participant_synchronizing; 
 	}
 	
 	/**
@@ -360,7 +360,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @deprecated use <code>getLongTaskName(IResource[]) instead</code>
 	 */
 	protected String getLongTaskName() {
-		return TeamUIMessages.Participant_synchronizing; //$NON-NLS-1$
+		return TeamUIMessages.Participant_synchronizing; 
 	}
 	
 	/**
@@ -384,12 +384,12 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
             resourceCount = resources.length;
         }
         if (resourceCount == 1) {
-            return NLS.bind(TeamUIMessages.Participant_synchronizingMoreDetails, new String[] { getShortName(), resources[0].getFullPath().toString() }); //$NON-NLS-1$
+            return NLS.bind(TeamUIMessages.Participant_synchronizingMoreDetails, new String[] { getShortName(), resources[0].getFullPath().toString() }); 
         } else if (resourceCount > 1) {
-            return NLS.bind(TeamUIMessages.Participant_synchronizingResources, new String[] { getShortName(), Integer.toString(resourceCount) }); //$NON-NLS-1$
+            return NLS.bind(TeamUIMessages.Participant_synchronizingResources, new String[] { getShortName(), Integer.toString(resourceCount) }); 
         }
         // A resource count of zero means that it is a non-resource scope so we can print the scope name
-        return NLS.bind(TeamUIMessages.Participant_synchronizingDetails, new String[] { getName() }); //$NON-NLS-1$
+        return NLS.bind(TeamUIMessages.Participant_synchronizingDetails, new String[] { getName() }); 
     }
 
     /**

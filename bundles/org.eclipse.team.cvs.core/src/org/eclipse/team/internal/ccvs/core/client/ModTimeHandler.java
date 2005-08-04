@@ -43,7 +43,7 @@ class ModTimeHandler extends ResponseHandler {
 		try {
 			session.setModTime(CVSDateFormatter.serverStampToDate(timeStamp));
 		} catch (ParseException e) {
-			throw new CVSException(NLS.bind(CVSMessages.ModTimeHandler_invalidFormat, new String[] { timeStamp }), e); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.ModTimeHandler_invalidFormat, new String[] { timeStamp }), e); 
 		}
 	}
 }

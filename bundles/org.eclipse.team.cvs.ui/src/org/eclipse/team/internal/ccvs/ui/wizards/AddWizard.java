@@ -97,7 +97,7 @@ public class AddWizard extends ResizableWizard {
         super("AddWizard", CVSUIPlugin.getPlugin().getDialogSettings()); //$NON-NLS-1$
         this.op = op;
         this.unknowns = unknowns;
-        setWindowTitle(CVSUIMessages.AddWizard_0); //$NON-NLS-1$
+        setWindowTitle(CVSUIMessages.AddWizard_0); 
         setDefaultPageImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION));
     }
     

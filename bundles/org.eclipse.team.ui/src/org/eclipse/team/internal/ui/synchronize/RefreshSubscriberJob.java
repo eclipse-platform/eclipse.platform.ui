@@ -114,7 +114,7 @@ public final class RefreshSubscriberJob extends Job {
         private IStatus status;
         public void run() {
             if (status != null && !status.isOK()) {
-                ErrorDialog.openError(Utils.getShell(null), null, TeamUIMessages.RefreshSubscriberJob_3, status); //$NON-NLS-1$
+                ErrorDialog.openError(Utils.getShell(null), null, TeamUIMessages.RefreshSubscriberJob_3, status); 
             } else if(gotoAction != null) {
         		gotoAction.run();
         	}
@@ -417,22 +417,22 @@ public final class RefreshSubscriberJob extends Job {
 				// New changes found
 					String numNewChanges = Integer.toString(event.getChanges().length);
 					if (event.getChanges().length == 1) {
-							text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesSingular, (new Object[]{getName(), numNewChanges}))); //$NON-NLS-1$
+							text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesSingular, (new Object[]{getName(), numNewChanges}))); 
 					} else {
-							text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesPlural, (new Object[]{getName(), numNewChanges}))); //$NON-NLS-1$
+							text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesPlural, (new Object[]{getName(), numNewChanges}))); 
 						}
 				} else {
 					// Refreshed resources contain changes
 					if (numChanges == 1) {
-						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesSingular, (new Object[]{getName(), new Integer(numChanges)}))); //$NON-NLS-1$
+						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesSingular, (new Object[]{getName(), new Integer(numChanges)}))); 
 					} else {
-						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesPlural, (new Object[]{getName(), new Integer(numChanges)}))); //$NON-NLS-1$
+						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesPlural, (new Object[]{getName(), new Integer(numChanges)}))); 
 					}
 				}
 			} else {
 				// No changes found
 				code = IRefreshEvent.STATUS_NO_CHANGES;
-				text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_6, new String[] { getName() })); //$NON-NLS-1$
+				text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_6, new String[] { getName() })); 
 			}
 			return new Status(IStatus.OK, TeamUIPlugin.ID, code, text.toString(), null);
 		}

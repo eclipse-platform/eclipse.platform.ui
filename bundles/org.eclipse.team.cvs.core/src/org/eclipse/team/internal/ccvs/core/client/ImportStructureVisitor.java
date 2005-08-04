@@ -124,7 +124,7 @@ class ImportStructureVisitor implements ICVSResourceVisitor {
 		}
 		
 		String localPath = mFolder.getRelativePath(session.getLocalRoot());
-		monitor.subTask(NLS.bind(CVSMessages.AbstractStructureVisitor_sendingFolder, new String[] { localPath })); //$NON-NLS-1$
+		monitor.subTask(NLS.bind(CVSMessages.AbstractStructureVisitor_sendingFolder, new String[] { localPath })); 
 		
 		session.sendConstructedDirectory(localPath);
 		mFolder.acceptChildren(this);

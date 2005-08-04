@@ -45,7 +45,7 @@ public class RemoveRootAction extends SelectionListenerAction {
 	private RepositoriesView view;
 	
 	public RemoveRootAction(Shell shell, RepositoriesView view) {
-		super(CVSUIMessages.RemoteRootAction_label); //$NON-NLS-1$
+		super(CVSUIMessages.RemoteRootAction_label); 
 		this.view = view;
 		this.shell = shell;
 	}
@@ -99,9 +99,9 @@ public class RemoveRootAction extends SelectionListenerAction {
 						public void run() {
 							DetailsDialogWithProjects dialog = new DetailsDialogWithProjects(
 								shell, 
-								CVSUIMessages.RemoteRootAction_Unable_to_Discard_Location_1, //$NON-NLS-1$
-								NLS.bind(CVSUIMessages.RemoteRootAction_Projects_in_the_local_workspace_are_shared_with__2, new String[] { location }), //$NON-NLS-1$
-								CVSUIMessages.RemoteRootAction_The_projects_that_are_shared_with_the_above_repository_are__4, //$NON-NLS-1$
+								CVSUIMessages.RemoteRootAction_Unable_to_Discard_Location_1, 
+								NLS.bind(CVSUIMessages.RemoteRootAction_Projects_in_the_local_workspace_are_shared_with__2, new String[] { location }), 
+								CVSUIMessages.RemoteRootAction_The_projects_that_are_shared_with_the_above_repository_are__4, 
 								(IProject[]) shared.toArray(new IProject[shared.size()]),
 								false,
 								DetailsDialogWithProjects.DLG_IMG_ERROR);

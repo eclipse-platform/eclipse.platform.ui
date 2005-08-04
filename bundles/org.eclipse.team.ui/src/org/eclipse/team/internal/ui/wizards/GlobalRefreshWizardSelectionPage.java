@@ -82,9 +82,9 @@ public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDou
 	}
 		
 	public GlobalRefreshWizardSelectionPage() {
-		super(TeamUIMessages.GlobalRefreshParticipantSelectionPage_0); //$NON-NLS-1$
-		setDescription(TeamUIMessages.GlobalRefreshParticipantSelectionPage_1); //$NON-NLS-1$
-		setTitle(TeamUIMessages.GlobalRefreshParticipantSelectionPage_2); //$NON-NLS-1$
+		super(TeamUIMessages.GlobalRefreshParticipantSelectionPage_0); 
+		setDescription(TeamUIMessages.GlobalRefreshParticipantSelectionPage_1); 
+		setTitle(TeamUIMessages.GlobalRefreshParticipantSelectionPage_2); 
 	}
 
 	/* (non-Javadoc)
@@ -123,7 +123,7 @@ public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDou
         PlatformUI.getWorkbench().getHelpSystem().setHelp(top, IHelpContextIds.REFRESH_WIZARD_SELECTION_PAGE);
 		
 		Label l = new Label(top, SWT.NULL);
-		l.setText(TeamUIMessages.GlobalRefreshParticipantSelectionPage_3); //$NON-NLS-1$
+		l.setText(TeamUIMessages.GlobalRefreshParticipantSelectionPage_3); 
 		fViewer = new TableViewer(top, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		fViewer.getControl().setLayoutData(data);

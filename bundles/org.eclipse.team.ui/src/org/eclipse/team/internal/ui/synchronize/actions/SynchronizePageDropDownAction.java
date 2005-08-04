@@ -33,7 +33,7 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 		fView= view;
 		Utils.initAction(this, "action.refreshSubscriber."); //$NON-NLS-1$
 		
-		synchronizeAction = new Action(TeamUIMessages.GlobalRefreshAction_4) { //$NON-NLS-1$
+		synchronizeAction = new Action(TeamUIMessages.GlobalRefreshAction_4) { 
 			public void run() {
 				IWizard wizard = new GlobalSynchronizeWizard();
 				WizardDialog dialog = new WizardDialog(fView.getViewSite().getShell(), wizard);
@@ -153,11 +153,11 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 		ISynchronizeParticipantReference[] refs = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 		String text = null;
 		if(current != null && refs.length > 0) {
-			text = NLS.bind(TeamUIMessages.GlobalRefreshAction_5, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, current.getName()) }); //$NON-NLS-1$
+			text = NLS.bind(TeamUIMessages.GlobalRefreshAction_5, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, current.getName()) }); 
 			setToolTipText(text);
 			setText(text);
 		} else {
-			text = TeamUIMessages.GlobalRefreshAction_4; //$NON-NLS-1$
+			text = TeamUIMessages.GlobalRefreshAction_4; 
 			setToolTipText(text);
 			setText(text);
 		}

@@ -33,8 +33,8 @@ public class ChangeSetModelManager extends HierarchicalModelManager implements I
 	
 	private class ToggleCommitSetAction extends Action {
         public ToggleCommitSetAction() {
-            super(TeamUIMessages.ChangeLogModelManager_0, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_CHANGE_SET)); //$NON-NLS-1$
-            setToolTipText(TeamUIMessages.ChangeLogModelManager_0); //$NON-NLS-1$
+            super(TeamUIMessages.ChangeLogModelManager_0, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_CHANGE_SET)); 
+            setToolTipText(TeamUIMessages.ChangeLogModelManager_0); 
             update();
         }
         public void run() {

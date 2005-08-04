@@ -36,7 +36,7 @@ public abstract class SubscriberParticipantWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#getWindowTitle()
 	 */
 	public String getWindowTitle() {
-		return TeamUIMessages.GlobalRefreshSubscriberPage_0; //$NON-NLS-1$
+		return TeamUIMessages.GlobalRefreshSubscriberPage_0; 
 	}
 	
 	/* (non-Javadoc)
@@ -49,13 +49,13 @@ public abstract class SubscriberParticipantWizard extends Wizard {
 			importWizard.addPages();
 			IWizardPage startingPage = importWizard.getStartingPage();
 			if (startingPage != null) {
-				startingPage.setTitle(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_0, new String[] { getName() })); //$NON-NLS-1$
-				startingPage.setDescription(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_1, new String[] { importWizard.getWindowTitle() })); //$NON-NLS-1$
+				startingPage.setTitle(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_0, new String[] { getName() })); 
+				startingPage.setDescription(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_1, new String[] { importWizard.getWindowTitle() })); 
 			}
 		} else {
 			selectionPage = new GlobalRefreshResourceSelectionPage(getRootResources());
-			selectionPage.setTitle(NLS.bind(TeamUIMessages.GlobalRefreshSubscriberPage_1, new String[] { getName() })); //$NON-NLS-1$
-			selectionPage.setMessage(TeamUIMessages.GlobalRefreshSubscriberPage_2); //$NON-NLS-1$
+			selectionPage.setTitle(NLS.bind(TeamUIMessages.GlobalRefreshSubscriberPage_1, new String[] { getName() })); 
+			selectionPage.setMessage(TeamUIMessages.GlobalRefreshSubscriberPage_2); 
 			addPage(selectionPage);
 		}
 	}

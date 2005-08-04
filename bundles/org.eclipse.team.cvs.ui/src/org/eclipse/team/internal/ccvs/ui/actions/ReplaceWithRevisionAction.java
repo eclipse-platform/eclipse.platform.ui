@@ -45,7 +45,7 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 		 * Add the replace button to the dialog.
 		 */
 		protected void createButtonsForButtonBar(Composite parent) {
-			replaceButton = createButton(parent, REPLACE_ID, CVSUIMessages.ReplaceWithRevisionAction_0, true); //$NON-NLS-1$
+			replaceButton = createButton(parent, REPLACE_ID, CVSUIMessages.ReplaceWithRevisionAction_0, true); 
 			replaceButton.setEnabled(false);
 			input.getViewer().addSelectionChangedListener(
 				new ISelectionChangedListener() {
@@ -55,7 +55,7 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 					}
 				}
 			);
-			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false); //$NON-NLS-1$
+			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false); 
 			// Don't call super because we don't want the OK button to appear
 		}
 		
@@ -80,13 +80,13 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 	 */
 	protected SaveablePartDialog createCompareDialog(Shell shell, CVSCompareRevisionsInput input) {
 		this.input = input;
-		return new ReplaceCompareDialog(shell, input); //$NON-NLS-1$
+		return new ReplaceCompareDialog(shell, input); 
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction#getActionTitle()
 	 */
 	protected String getActionTitle() {
-		return CVSUIMessages.ReplaceWithRevisionAction_1; //$NON-NLS-1$
+		return CVSUIMessages.ReplaceWithRevisionAction_1; 
 	}
 }

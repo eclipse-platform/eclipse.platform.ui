@@ -34,7 +34,7 @@ public class GlobalSynchronizeWizard extends Wizard {
 	protected ISynchronizeParticipantReference participant;
 
 	public GlobalSynchronizeWizard() {
-		setWindowTitle(TeamUIMessages.GlobalSynchronizeWizard_11); //$NON-NLS-1$
+		setWindowTitle(TeamUIMessages.GlobalSynchronizeWizard_11); 
 		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_WIZBAN_SHARE));
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(false);

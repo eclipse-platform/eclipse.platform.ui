@@ -99,7 +99,7 @@ public class Update extends Command {
 		// Note, the CVS spec says that Date (-D) and version (-r) updates
 		// should automatically prune but this is a problem for remote CVS handles
 		// which fetch a level at a time
-		if (PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions)) { //$NON-NLS-1$
+		if (PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions)) { 
 			// Delete empty directories
 			new PruneFolderVisitor().visit(session, resources);
 			
@@ -165,7 +165,7 @@ public class Update extends Command {
 			if (folder==null || (!folder.isCVSFolder() && folder.exists())) {
                 if (folder == null)
                     folder = (ICVSFolder)resources[i];
-				throw new CVSException(NLS.bind(CVSMessages.Command_argumentNotManaged, new String[] { folder.getName() }));//$NON-NLS-1$
+				throw new CVSException(NLS.bind(CVSMessages.Command_argumentNotManaged, new String[] { folder.getName() }));
 			}
 		}
 	}

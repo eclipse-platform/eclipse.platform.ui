@@ -53,7 +53,7 @@ public class ReplaceWithRemoteAction extends WorkspaceTraversalAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return CVSUIMessages.ReplaceWithRemoteAction_problemMessage; //$NON-NLS-1$
+		return CVSUIMessages.ReplaceWithRemoteAction_problemMessage; 
 	}
 
 	/**

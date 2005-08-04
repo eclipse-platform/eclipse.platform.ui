@@ -55,7 +55,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 		
 		final int width= convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH + 50);
 		
-		final Label label = SWTUtils.createLabel(parent, CVSUIMessages.TagAction_enterTag); //$NON-NLS-1$
+		final Label label = SWTUtils.createLabel(parent, CVSUIMessages.TagAction_enterTag); 
 		label.setLayoutData(SWTUtils.createGridData(width, SWT.DEFAULT, true, false));
 
 		tagText = new Text(parent, SWT.SINGLE | SWT.BORDER);
@@ -69,7 +69,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 			}
 		);
 		
-		moveTagButton= SWTUtils.createCheckBox(parent, CVSUIMessages.TagAction_moveTag); //$NON-NLS-1$
+		moveTagButton= SWTUtils.createCheckBox(parent, CVSUIMessages.TagAction_moveTag); 
 		moveTagButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				moveTag = moveTagButton.getSelection();
@@ -104,7 +104,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 	    composite.setLayoutData(gridData);
 		
 		tagArea = new TagSelectionArea(getShell(), tagSource, TagSelectionArea.INCLUDE_VERSIONS, null);
-		tagArea.setTagAreaLabel(CVSUIMessages.TagAction_existingVersions);  //$NON-NLS-1$
+		tagArea.setTagAreaLabel(CVSUIMessages.TagAction_existingVersions);  
 		tagArea.setIncludeFilterInputArea(false);
 		tagArea.createArea(composite);
 		tagArea.addPropertyChangeListener(new IPropertyChangeListener() {

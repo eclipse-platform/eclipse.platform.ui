@@ -121,12 +121,12 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 			String qualifier = descriptor.getId();
 			String localname = secondayId;
 			if(qualifier == null || localname == null) {
-				throw new PartInitException(CVSUIMessages.MergeSynchronizeParticipant_8); //$NON-NLS-1$
+				throw new PartInitException(CVSUIMessages.MergeSynchronizeParticipant_8); 
 			}
 			try {
 				setSubscriber(read(new QualifiedName(qualifier, localname), memento));
 			} catch (CVSException e) {
-				throw new PartInitException(CVSUIMessages.MergeSynchronizeParticipant_9, e); //$NON-NLS-1$
+				throw new PartInitException(CVSUIMessages.MergeSynchronizeParticipant_9, e); 
 			}
 		}
 	}
@@ -156,7 +156,7 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getName()
 	 */
 	public String getName() {		
-		return NLS.bind(CVSUIMessages.CompareParticipant_0, new String[] { ((CVSMergeSubscriber)getSubscriber()).getName(), Utils.convertSelection(getSubscriber().roots()) });  //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CompareParticipant_0, new String[] { ((CVSMergeSubscriber)getSubscriber()).getName(), Utils.convertSelection(getSubscriber().roots()) });  
 	}
 	
 	/*
@@ -217,28 +217,28 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 	}
 	
 	private CVSMergeSubscriber read(QualifiedName id, IMemento memento) throws CVSException {
-		CVSTag start = new CVSTag(memento.getString(CTX_START_TAG), memento.getInteger(CTX_START_TAG_TYPE).intValue()); //$NON-NLS-1$ //$NON-NLS-2$
-		CVSTag end = new CVSTag(memento.getString(CTX_END_TAG), memento.getInteger(CTX_END_TAG_TYPE).intValue()); //$NON-NLS-1$ //$NON-NLS-2$
+		CVSTag start = new CVSTag(memento.getString(CTX_START_TAG), memento.getInteger(CTX_START_TAG_TYPE).intValue()); // 
+		CVSTag end = new CVSTag(memento.getString(CTX_END_TAG), memento.getInteger(CTX_END_TAG_TYPE).intValue()); // 
 		
 		IMemento[] rootNodes = memento.getChildren(CTX_ROOT);
 		if(rootNodes == null || rootNodes.length == 0) {
-			throw new CVSException(NLS.bind(CVSUIMessages.MergeSynchronizeParticipant_10, new String[] { id.toString() })); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.MergeSynchronizeParticipant_10, new String[] { id.toString() })); 
 		}
 		
 		List resources = new ArrayList();
 		for (int i = 0; i < rootNodes.length; i++) {
 			IMemento rootNode = rootNodes[i];
-			IPath path = new Path(rootNode.getString(CTX_ROOT_PATH)); //$NON-NLS-1$
+			IPath path = new Path(rootNode.getString(CTX_ROOT_PATH)); 
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path, true /* include phantoms */);
 			if(resource != null) {
 				resources.add(resource);
 			} else {
 				// log that a resource previously in the merge set is no longer in the workspace
-				CVSProviderPlugin.log(CVSStatus.INFO, NLS.bind(CVSUIMessages.MergeSynchronizeParticipant_11, new String[] { path.toString() }), null); //$NON-NLS-1$
+				CVSProviderPlugin.log(CVSStatus.INFO, NLS.bind(CVSUIMessages.MergeSynchronizeParticipant_11, new String[] { path.toString() }), null); 
 			}
 		}
 		if(resources.isEmpty()) {
-			throw new CVSException(NLS.bind(CVSUIMessages.MergeSynchronizeParticipant_12, new String[] { id.toString() })); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.MergeSynchronizeParticipant_12, new String[] { id.toString() })); 
 		}
 		IResource[] roots = (IResource[]) resources.toArray(new IResource[resources.size()]);
 		return new CVSMergeSubscriber(id, roots, start, end);
@@ -276,7 +276,7 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#getShortTaskName()
 	 */
 	protected String getShortTaskName() {
-		return CVSUIMessages.Participant_merging; //$NON-NLS-1$
+		return CVSUIMessages.Participant_merging; 
 	}
     
     protected CVSChangeSetCapability createChangeSetCapability() {

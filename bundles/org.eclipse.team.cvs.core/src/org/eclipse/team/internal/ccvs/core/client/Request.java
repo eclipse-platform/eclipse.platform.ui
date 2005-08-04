@@ -109,8 +109,8 @@ public abstract class Request {
 		// give a false sense of speed) and smaller projects (it actually does
 		// move some rather than remaining still and then jumping to 100).
 		final int TOTAL_WORK = 300;
-		monitor.beginTask(CVSMessages.Command_receivingResponses, TOTAL_WORK); //$NON-NLS-1$
-        monitor.subTask(CVSMessages.Command_receivingResponses); //$NON-NLS-1$
+		monitor.beginTask(CVSMessages.Command_receivingResponses, TOTAL_WORK); 
+        monitor.subTask(CVSMessages.Command_receivingResponses); 
 		int halfWay = TOTAL_WORK / 2;
 		int currentIncrement = 4;
 		int nextProgress = currentIncrement;
@@ -156,7 +156,7 @@ public abstract class Request {
 				if (argument.length() == 0) {
 					argument = getServerErrorMessage();
 				} else {
-					argument = NLS.bind(CVSMessages.Command_seriousServerError, new String[] { argument }); //$NON-NLS-1$
+					argument = NLS.bind(CVSMessages.Command_seriousServerError, new String[] { argument }); 
 					if (!session.hasErrors()) {
 						session.addError(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, argument));
 					}
@@ -164,7 +164,7 @@ public abstract class Request {
 				}
 					
 				if (!session.hasErrors()) {
-				    session.addError(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, CVSMessages.Command_noMoreInfoAvailable));//$NON-NLS-1$
+				    session.addError(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, CVSMessages.Command_noMoreInfoAvailable));
 				}
 				IStatus status = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, 
 				        session.getErrors(),
@@ -191,7 +191,7 @@ public abstract class Request {
 				} else {
 					throw new CVSException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
 						CVSProviderPlugin.ID, CVSException.IO_FAILED,
-						NLS.bind(CVSMessages.Command_unsupportedResponse, new String[] { response, argument }), null)); //$NON-NLS-1$
+						NLS.bind(CVSMessages.Command_unsupportedResponse, new String[] { response, argument }), null)); 
 				}
 				// If a line is available, pass it on to the message listener 
 				// and console as if it were an M response
@@ -218,7 +218,7 @@ public abstract class Request {
 				} else {
 					throw new CVSException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
 						CVSProviderPlugin.ID, CVSException.IO_FAILED,
-						NLS.bind(CVSMessages.Command_unsupportedResponse, new String[] { response, argument }), null)); //$NON-NLS-1$
+						NLS.bind(CVSMessages.Command_unsupportedResponse, new String[] { response, argument }), null)); 
 				}
 			}
 		}
@@ -227,7 +227,7 @@ public abstract class Request {
 		} else {
 			return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.INFO,
 				session.getErrors(),
-				NLS.bind(CVSMessages.Command_warnings, new String[] { getDisplayText() }), null);  //$NON-NLS-1$  //$NON-NLS-2$
+				NLS.bind(CVSMessages.Command_warnings, new String[] { getDisplayText() }), null);  //  
 		}
 	}
 	
@@ -236,7 +236,7 @@ public abstract class Request {
 	 * reports as error.
 	 */
 	protected String getServerErrorMessage() {
-		return NLS.bind(CVSMessages.Command_serverError, new String[] { getDisplayText() }); //$NON-NLS-1$  //$NON-NLS-2$
+		return NLS.bind(CVSMessages.Command_serverError, new String[] { getDisplayText() }); //  
 	}
     protected String getDisplayText() {
         return getRequestId();

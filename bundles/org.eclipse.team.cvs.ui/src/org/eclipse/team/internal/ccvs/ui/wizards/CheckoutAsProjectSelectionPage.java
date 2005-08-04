@@ -58,7 +58,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 	 * @param titleImage
 	 */
 	public CheckoutAsProjectSelectionPage(ImageDescriptor titleImage, ICVSRemoteFolder[] remoteFolders) {
-		super(NAME, CVSUIMessages.CheckoutAsProjectSelectionPage_title, titleImage, CVSUIMessages.CheckoutAsProjectSelectionPage_description); //$NON-NLS-1$ //$NON-NLS-2$
+		super(NAME, CVSUIMessages.CheckoutAsProjectSelectionPage_title, titleImage, CVSUIMessages.CheckoutAsProjectSelectionPage_description); // 
 		this.remoteFolders = remoteFolders;
 	}
 
@@ -90,7 +90,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.CHECKOUT_PROJECT_SELECTION_PAGE);
 		
 		if (isSingleFolder()) {
-			createLabel(composite, CVSUIMessages.CheckoutAsProjectSelectionPage_name); //$NON-NLS-1$
+			createLabel(composite, CVSUIMessages.CheckoutAsProjectSelectionPage_name); 
 			nameField = createTextField(composite);
 			nameField.addListener(SWT.Modify, new Listener() {
 				public void handleEvent(Event event) {
@@ -100,7 +100,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 			});
 		}
 		
-		createWrappingLabel(composite, CVSUIMessages.CheckoutAsProjectSelectionPage_treeLabel, 0, 2); //$NON-NLS-1$
+		createWrappingLabel(composite, CVSUIMessages.CheckoutAsProjectSelectionPage_treeLabel, 0, 2); 
 		
 		tree = createResourceSelectionTree(composite, IResource.PROJECT | IResource.FOLDER, 2 /* horizontal span */);
 		tree.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -115,7 +115,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
 		filterComposite.setLayoutData(data);
-		createLabel(filterComposite, CVSUIMessages.CheckoutAsProjectSelectionPage_showLabel); //$NON-NLS-1$
+		createLabel(filterComposite, CVSUIMessages.CheckoutAsProjectSelectionPage_showLabel); 
 		filterList = createCombo(filterComposite);
 		filterList.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -126,7 +126,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 		createWrappingLabel(composite, "", 0, 2); //$NON-NLS-1$
 				
 		// Should subfolders of the folder be checked out?
-		recurseCheck = createCheckBox(composite, CVSUIMessages.CheckoutAsProjectSelectionPage_recurse); //$NON-NLS-1$
+		recurseCheck = createCheckBox(composite, CVSUIMessages.CheckoutAsProjectSelectionPage_recurse); 
 		recurseCheck.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				recurse = recurseCheck.getSelection();
@@ -152,9 +152,9 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 		recurseCheck.setSelection(recurse);
 		filter = 0;
 		updateTreeContents(filter);
-		filterList.add(CVSUIMessages.CheckoutAsProjectSelectionPage_showAll); //$NON-NLS-1$
-		filterList.add(CVSUIMessages.CheckoutAsProjectSelectionPage_showUnshared); //$NON-NLS-1$
-		filterList.add(CVSUIMessages.CheckoutAsProjectSelectionPage_showSameRepo); //$NON-NLS-1$
+		filterList.add(CVSUIMessages.CheckoutAsProjectSelectionPage_showAll); 
+		filterList.add(CVSUIMessages.CheckoutAsProjectSelectionPage_showUnshared); 
+		filterList.add(CVSUIMessages.CheckoutAsProjectSelectionPage_showSameRepo); 
 		filterList.select(filter);
 	}
 
@@ -174,7 +174,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 	private void updateWidgetEnablements() {
 		if (isSingleFolder() && !Path.EMPTY.isValidSegment(folderName)) {
 			setPageComplete(false);
-			setErrorMessage(NLS.bind(CVSUIMessages.CheckoutAsProjectSelectionPage_invalidFolderName, new String[] { folderName })); //$NON-NLS-1$
+			setErrorMessage(NLS.bind(CVSUIMessages.CheckoutAsProjectSelectionPage_invalidFolderName, new String[] { folderName })); 
 			return;
 		}
 		boolean complete = selection != null && selection.getType() != IResource.FILE;

@@ -42,7 +42,7 @@ public class DateTagDialog extends Dialog {
 		public void createArea(Composite parent) {
 			Composite composite = createComposite(parent, 4, false);
 			initializeDialogUnits(composite);
-			createLabel(composite, CVSUIMessages.DateTagDialog_0, 1); //$NON-NLS-1$
+			createLabel(composite, CVSUIMessages.DateTagDialog_0, 1); 
 			fromMonthCombo = new Combo(composite, SWT.READ_ONLY);
 			fromDayCombo = new Combo(composite, SWT.READ_ONLY);
 			fromDayCombo.setTextLimit(2);
@@ -113,8 +113,8 @@ public class DateTagDialog extends Dialog {
 		public void createArea(Composite parent) {
 			Composite composite = createComposite(parent, 2, false);
 			initializeDialogUnits(composite);
-			includeTime = createCheckbox(composite, CVSUIMessages.DateTagDialog_1, 2);  //$NON-NLS-1$
-			createLabel(composite, CVSUIMessages.DateTagDialog_2, 1); //$NON-NLS-1$
+			includeTime = createCheckbox(composite, CVSUIMessages.DateTagDialog_1, 2);  
+			createLabel(composite, CVSUIMessages.DateTagDialog_2, 1); 
 			Composite dateComposite = new Composite(composite, SWT.NONE);
 			GridLayout dateLayout = new GridLayout();
 			dateLayout.numColumns = 3;
@@ -125,8 +125,8 @@ public class DateTagDialog extends Dialog {
 			minuteCombo.setTextLimit(2);
 			secondCombo = new Combo(dateComposite, SWT.READ_ONLY);
 			secondCombo.setTextLimit(2);
-			localTime = createRadioButton(composite, CVSUIMessages.DateTagDialog_3, 2);  //$NON-NLS-1$
-			utcTime = createRadioButton(composite, CVSUIMessages.DateTagDialog_4, 2);  //$NON-NLS-1$
+			localTime = createRadioButton(composite, CVSUIMessages.DateTagDialog_3, 2);  
+			utcTime = createRadioButton(composite, CVSUIMessages.DateTagDialog_4, 2);  
 			
 			String sixty[] = new String[60];
 			for (int i = 0; i < 60; i++) {
@@ -189,7 +189,7 @@ public class DateTagDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(CVSUIMessages.DateTagDialog_5); //$NON-NLS-1$
+		newShell.setText(CVSUIMessages.DateTagDialog_5); 
 	} 
 
 	/* (non-Javadoc)

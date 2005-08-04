@@ -52,7 +52,7 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
      */
     private static final String LOG_ENTRY_HANDLER = CVSUIPlugin.ID + ".LogEntryHandler"; //$NON-NLS-1$
     
-    private static final String DEFAULT_INCOMING_SET_NAME = CVSUIMessages.CVSChangeSetCollector_0; //$NON-NLS-1$
+    private static final String DEFAULT_INCOMING_SET_NAME = CVSUIMessages.CVSChangeSetCollector_0; 
     
     boolean disposed = false;
 
@@ -115,7 +115,7 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
     			setName("["+entry.getAuthor()+ "] " + comment); //$NON-NLS-1$ //$NON-NLS-2$
     		} else {
     			String dateString = DateFormat.getDateTimeInstance().format(date);
-	    		setName("["+entry.getAuthor()+ "] (" + dateString +") " + comment); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	    		setName("["+entry.getAuthor()+ "] (" + dateString +") " + comment); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
     		}
         }
         

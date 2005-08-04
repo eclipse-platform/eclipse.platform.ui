@@ -28,7 +28,7 @@ import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryC
 
 public class RepositoryRoot extends PlatformObject {
 
-	public static final String[] DEFAULT_AUTO_REFRESH_FILES = { ".project" }; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String[] DEFAULT_AUTO_REFRESH_FILES = { ".project" }; //$NON-NLS-1$ 
 	private static final String DEFINED_MODULE_PREFIX = "module:"; //$NON-NLS-1$
 	
 	ICVSRepositoryLocation root;
@@ -155,12 +155,12 @@ public class RepositoryRoot extends PlatformObject {
 			}
 			FolderSyncInfo info = ((ICVSFolder)resource).getFolderSyncInfo();
 			if (info == null)
-				throw new CVSException(NLS.bind(CVSUIMessages.RepositoryRoot_folderInfoMissing, new String[] { resource.getName() })); //$NON-NLS-1$
+				throw new CVSException(NLS.bind(CVSUIMessages.RepositoryRoot_folderInfoMissing, new String[] { resource.getName() })); 
 			return info.getRepository();
 		} else {
 			FolderSyncInfo info = resource.getParent().getFolderSyncInfo();
 			if (info == null)
-				throw new CVSException(NLS.bind(CVSUIMessages.RepositoryRoot_folderInfoMissing, new String[] { resource.getParent().getName() })); //$NON-NLS-1$
+				throw new CVSException(NLS.bind(CVSUIMessages.RepositoryRoot_folderInfoMissing, new String[] { resource.getParent().getName() })); 
 			String path = new Path(null, info.getRepository()).append(resource.getName()).toString();
 			return path;
 		}
@@ -400,7 +400,7 @@ public class RepositoryRoot extends PlatformObject {
 	    String remotePath = getRemotePathFor(folder);
 		String[] filesToRefresh = getAutoRefreshFiles(remotePath);
 		try {
-			monitor.beginTask(null, filesToRefresh.length * 10); //$NON-NLS-1$
+			monitor.beginTask(null, filesToRefresh.length * 10); 
 			List tags = new ArrayList();
 			for (int i = 0; i < filesToRefresh.length; i++) {
 				ICVSRemoteFile file = root.getRemoteFile(filesToRefresh[i], CVSTag.DEFAULT);

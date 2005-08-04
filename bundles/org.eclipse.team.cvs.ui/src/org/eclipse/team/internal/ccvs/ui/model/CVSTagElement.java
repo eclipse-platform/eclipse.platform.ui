@@ -124,7 +124,7 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 			try {
 				monitor = Policy.monitorFor(monitor);
 				RemoteFolder folder = new RemoteFolder(null, root, ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, tag);
-				monitor.beginTask(NLS.bind(CVSUIMessages.RemoteFolderElement_fetchingRemoteChildren, new String[] { root.toString() }), 100); //$NON-NLS-1$
+				monitor.beginTask(NLS.bind(CVSUIMessages.RemoteFolderElement_fetchingRemoteChildren, new String[] { root.toString() }), 100); 
 				FetchMembersOperation operation = new FetchMembersOperation(null, folder, collector);
 				operation.setFilter(new RemoteFolderFilter() {
 					public ICVSRemoteResource[] filter(ICVSRemoteResource[] folders) {
@@ -149,7 +149,7 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 	}
 
     public ISchedulingRule getRule(Object element) {
-		return new RepositoryLocationSchedulingRule(root); //$NON-NLS-1$
+		return new RepositoryLocationSchedulingRule(root); 
 	}
 	
 	public boolean isContainer() {

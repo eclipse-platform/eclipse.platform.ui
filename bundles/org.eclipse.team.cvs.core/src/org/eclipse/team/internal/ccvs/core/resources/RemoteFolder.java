@@ -131,7 +131,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 */
 	protected boolean exists(final ICVSRemoteResource child, CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		final IProgressMonitor progress = Policy.monitorFor(monitor);
-		progress.beginTask(CVSMessages.RemoteFolder_exists, 100); //$NON-NLS-1$
+		progress.beginTask(CVSMessages.RemoteFolder_exists, 100); 
 		try {
 			// Create the listener for remote files and folders
 			final boolean[] exists = new boolean[] {true};
@@ -262,7 +262,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		ICVSResource child = getChild(name);
 		if (child.isFolder())
 			return (ICVSFolder)child;
-		throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { name, getName() })); //$NON-NLS-1$
+		throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { name, getName() })); 
 	}
 
 	/**
@@ -272,7 +272,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		ICVSResource child = getChild(name);
 		if (!child.isFolder())
 			return (ICVSFile)child;
-		throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { name, getName() })); //$NON-NLS-1$
+		throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { name, getName() })); 
 	}
 
 	public LocalOption[] getLocalOptions() {
@@ -292,7 +292,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		if (ancestor == this) return Session.CURRENT_LOCAL_FOLDER;
 		// Otherwise, we need a parent to continue
 		if (parent == null) {
-			throw new CVSException(NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { getName(), ancestor.getName() })); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { getName(), ancestor.getName() })); 
 		}
 		return super.getRelativePath(ancestor);
 	}
@@ -342,25 +342,25 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				return ((RemoteFolder)getChild(p.segment(0))).getChild(p.removeFirstSegments(1).toString());
 			} catch (CVSException e) {
 				// regenerate the exception to give as much info as possible
-				throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { path, getName() }));//$NON-NLS-1$
+				throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { path, getName() }));
 			}
 		} else {
 			ICVSRemoteResource[] children = getChildren();
 			if (children == null) 
-				throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { path, getName() }));//$NON-NLS-1$
+				throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { path, getName() }));
 			for (int i=0;i<children.length;i++) {
 				if (children[i].getName().equals(path))
 					return children[i];
 			}
 		}
-		throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { path, getName() }));//$NON-NLS-1$
+		throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_invalidChild, new String[] { path, getName() }));
 	}
 
 	/**
 	 * @see ICVSFolder#mkdir()
 	 */
 	public void mkdir() throws CVSException {
-		throw new CVSException(CVSMessages.RemoteResource_invalidOperation);//$NON-NLS-1$
+		throw new CVSException(CVSMessages.RemoteResource_invalidOperation);
 	}
 
 	/**
@@ -397,7 +397,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSFolder#acceptChildren(ICVSResourceVisitor)
 	 */
 	public void acceptChildren(ICVSResourceVisitor visitor) throws CVSException {
-		throw new CVSException(CVSMessages.RemoteResource_invalidOperation);//$NON-NLS-1$
+		throw new CVSException(CVSMessages.RemoteResource_invalidOperation);
 	}
 	
 	/*

@@ -45,7 +45,7 @@ public class Version extends RemoteCommand {
 		
 		// The server may not support the version request
 		if ( ! session.isValidRequest(getRequestId())) {
-			IStatus status = new CVSStatus(IStatus.WARNING, CVSStatus.SERVER_IS_UNKNOWN, NLS.bind(CVSMessages.Version_versionNotValidRequest, new String[] { location.getHost() }));//$NON-NLS-1$
+			IStatus status = new CVSStatus(IStatus.WARNING, CVSStatus.SERVER_IS_UNKNOWN, NLS.bind(CVSMessages.Version_versionNotValidRequest, new String[] { location.getHost() }));
 			((CVSRepositoryLocation)location).setServerPlaform(CVSRepositoryLocation.UNKNOWN_SERVER);
 			CVSProviderPlugin.log(status);
 			return status;
@@ -70,13 +70,13 @@ public class Version extends RemoteCommand {
 					String versionNumber = line.substring(knownPrefix.length(), line.indexOf(' ', knownPrefix.length() + 1));
 					if (versionNumber.startsWith("1.10") || versionNumber.equals("1.11") || versionNumber.equals("1.11.1")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					    serverType = CVSRepositoryLocation.UNSUPPORTED_SERVER;
-						status = new CVSStatus(IStatus.WARNING, CVSStatus.UNSUPPORTED_SERVER_VERSION, NLS.bind(CVSMessages.Version_unsupportedVersion, new String[] { location.getHost(), versionNumber }));//$NON-NLS-1$
+						status = new CVSStatus(IStatus.WARNING, CVSStatus.UNSUPPORTED_SERVER_VERSION, NLS.bind(CVSMessages.Version_unsupportedVersion, new String[] { location.getHost(), versionNumber }));
 					} else if (isCVSNT) {
 					    serverType = CVSRepositoryLocation.CVSNT_SERVER;
 					}
 				} else {
 				    serverType = CVSRepositoryLocation.UNKNOWN_SERVER;
-					status = new CVSStatus(IStatus.INFO, CVSStatus.SERVER_IS_UNKNOWN, NLS.bind(CVSMessages.Version_unknownVersionFormat, new String[] { location.getHost(), line }));//$NON-NLS-1$
+					status = new CVSStatus(IStatus.INFO, CVSStatus.SERVER_IS_UNKNOWN, NLS.bind(CVSMessages.Version_unknownVersionFormat, new String[] { location.getHost(), line }));
 				}
 				((CVSRepositoryLocation)location).setServerPlaform(serverType);
 				return status;

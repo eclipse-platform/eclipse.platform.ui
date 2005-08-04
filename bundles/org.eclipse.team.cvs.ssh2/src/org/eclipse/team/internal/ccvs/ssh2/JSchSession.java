@@ -211,7 +211,7 @@ class JSchSession {
 			int prompt = authenticator.prompt(
 					location, 
 					IUserAuthenticator.QUESTION, 
-					CVSSSH2Messages.JSchSession_5,  //$NON-NLS-1$
+					CVSSSH2Messages.JSchSession_5,  
 					str, 
 					new int[] {IUserAuthenticator.YES_ID, IUserAuthenticator.NO_ID}, 
 					0 //yes the default
@@ -275,7 +275,7 @@ class JSchSession {
     			authenticator.prompt(
     					location,
     					IUserAuthenticator.INFORMATION,
-    					CVSSSH2Messages.JSchSession_5, //$NON-NLS-1$
+    					CVSSSH2Messages.JSchSession_5, 
     					message,
     					new int[] {IUserAuthenticator.OK_ID},
     					IUserAuthenticator.OK_ID

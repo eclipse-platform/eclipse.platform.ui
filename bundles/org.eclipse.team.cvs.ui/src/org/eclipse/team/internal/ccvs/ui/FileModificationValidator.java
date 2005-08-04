@@ -60,7 +60,7 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 		} else if (target instanceof CoreException) {
 			return ((CoreException) target).getStatus();
 		}
-		return new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, CVSUIMessages.internal, target); //$NON-NLS-1$
+		return new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, CVSUIMessages.internal, target); 
 	}
 		
 	private IStatus edit(final IFile[] files, final Shell shell) {
@@ -119,7 +119,7 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 				return getStatus(e);
 			} catch (InterruptedException e) {
 				// Must return an error to indicate that it is not OK to edit the files
-				return new Status(IStatus.CANCEL, CVSUIPlugin.ID, 0, CVSUIMessages.FileModificationValidator_vetoMessage, null); //$NON-NLS-1$;
+				return new Status(IStatus.CANCEL, CVSUIPlugin.ID, 0, CVSUIMessages.FileModificationValidator_vetoMessage, null); //;
 			}
         } else if (isPerformEditInBackground()) {
             IStatus status = setWritable(files);
@@ -191,7 +191,7 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 		int flags = isRunningInUIThread() ? 0 : CVSUIPlugin.PERFORM_SYNC_EXEC;
 		CVSUIPlugin.openDialog(shell, new CVSUIPlugin.IOpenableInShell() {
 			public void open(Shell shell) {
-				result[0] = MessageDialog.openQuestion(shell,CVSUIMessages.FileModificationValidator_3,CVSUIMessages.FileModificationValidator_4); //$NON-NLS-1$ //$NON-NLS-2$
+				result[0] = MessageDialog.openQuestion(shell,CVSUIMessages.FileModificationValidator_3,CVSUIMessages.FileModificationValidator_4); // 
 			}
 		}, flags);
 		return result[0];

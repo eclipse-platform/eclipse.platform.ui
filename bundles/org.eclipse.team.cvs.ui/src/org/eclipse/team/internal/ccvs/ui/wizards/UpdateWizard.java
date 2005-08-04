@@ -37,7 +37,7 @@ public class UpdateWizard extends ResizableWizard {
         super("UpdateWizard", CVSUIPlugin.getPlugin().getDialogSettings()); //$NON-NLS-1$
 		this.part = part;
 		this.mappers = mappers;
-		setWindowTitle(CVSUIMessages.UpdateWizard_title); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.UpdateWizard_title); 
 	}
 	
     public static void run(IWorkbenchPart part, ResourceMapping[] mappers) {
@@ -47,7 +47,7 @@ public class UpdateWizard extends ResizableWizard {
     
 	public void addPages() {
 		ImageDescriptor substImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_CHECKOUT);
-        tagSelectionPage = new TagSelectionWizardPage("tagPage", CVSUIMessages.UpdateWizard_0, substImage, CVSUIMessages.UpdateWizard_1, TagSource.create(mappers), TagSourceWorkbenchAdapter.INCLUDE_ALL_TAGS); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        tagSelectionPage = new TagSelectionWizardPage("tagPage", CVSUIMessages.UpdateWizard_0, substImage, CVSUIMessages.UpdateWizard_1, TagSource.create(mappers), TagSourceWorkbenchAdapter.INCLUDE_ALL_TAGS); //$NON-NLS-1$  
 		tagSelectionPage.setAllowNoTag(true);
 		tagSelectionPage.setHelpContxtId(IHelpContextIds.UPDATE_TAG_SELETION_PAGE);
 		CVSTag tag = getInitialSelection();

@@ -130,29 +130,29 @@ public class GenerateDiffFileWizard extends Wizard {
         private boolean validateFilesystemLocation() {
             final String pathString= fsPathText.getText().trim();
             if (pathString.length() == 0 || !new Path("").isValidPath(pathString)) { //$NON-NLS-1$
-                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0); 
                 return false;
             }
             
             final File file= new File(pathString);
             if (!file.isAbsolute()) {
-                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0); 
                 return false;
             }
             
             if (file.isDirectory()) {
-                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_2); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_2); 
                 return false;
             }
             
             if (pathString.endsWith("/") || pathString.endsWith("\\")) {  //$NON-NLS-1$//$NON-NLS-2$
-                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_3); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_3); 
                 return false;
             }
             
             final File parent= file.getParentFile();
             if (!(parent.exists() && parent.isDirectory())) {
-                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_3); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_3); 
                 return false;
             }
             return true;
@@ -165,12 +165,12 @@ public class GenerateDiffFileWizard extends Wizard {
          */
         private boolean validateWorkspaceLocation() {
             if (wsSelectedContainer == null) {
-                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_4); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_4); 
                 return false;
             }
             final String filename= wsFilenameText.getText().trim();
             if (!new Path("").isValidSegment(filename)) { //$NON-NLS-1$
-                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_5); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_5); 
                 return false;
             }
             return true;
@@ -246,9 +246,9 @@ public class GenerateDiffFileWizard extends Wizard {
          */
         private void setupWorkspaceControls(Composite composite) {
             wsRadio= new Button(composite, SWT.RADIO);
-            wsRadio.setText(CVSUIMessages.Save_In_Workspace_7); //$NON-NLS-1$
+            wsRadio.setText(CVSUIMessages.Save_In_Workspace_7); 
  
-            new Label(composite, SWT.LEFT).setText(CVSUIMessages.Select_a_folder_then_type_in_the_file_name__8);		 //$NON-NLS-1$
+            new Label(composite, SWT.LEFT).setText(CVSUIMessages.Select_a_folder_then_type_in_the_file_name__8);		 
             
             wsTreeViewer = new TreeViewer(composite, SWT.BORDER);
             final GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -270,7 +270,7 @@ public class GenerateDiffFileWizard extends Wizard {
             
             final Label label = new Label(group, SWT.NONE);
             label.setLayoutData(new GridData());
-            label.setText(CVSUIMessages.Fi_le_name__9); //$NON-NLS-1$
+            label.setText(CVSUIMessages.Fi_le_name__9); 
             
             wsFilenameText = new Text(group,SWT.BORDER);
             wsFilenameText.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -283,7 +283,7 @@ public class GenerateDiffFileWizard extends Wizard {
             GridLayout layout;
             fsRadio= new Button(composite, SWT.RADIO);
 
-            fsRadio.setText(CVSUIMessages.Save_In_File_System_3); //$NON-NLS-1$
+            fsRadio.setText(CVSUIMessages.Save_In_File_System_3); 
             
             final Composite nameGroup = new Composite(composite,SWT.NONE);
             layout = new GridLayout();
@@ -298,7 +298,7 @@ public class GenerateDiffFileWizard extends Wizard {
             fsPathText.setLayoutData(gd);
             
             fsBrowseButton = new Button(nameGroup, SWT.NULL);
-            fsBrowseButton.setText(CVSUIMessages.Browse____4); //$NON-NLS-1$
+            fsBrowseButton.setText(CVSUIMessages.Browse____4); 
         }
         
         /**
@@ -306,7 +306,7 @@ public class GenerateDiffFileWizard extends Wizard {
          */
         private void setupClipboardControls(final Composite composite) {
             cpRadio= new Button(composite, SWT.RADIO);
-            cpRadio.setText(CVSUIMessages.Save_To_Clipboard_2); //$NON-NLS-1$
+            cpRadio.setText(CVSUIMessages.Save_To_Clipboard_2); 
         }
         
         
@@ -382,8 +382,8 @@ public class GenerateDiffFileWizard extends Wizard {
                         final File file= new File(fsPathText.getText());
                         dialog.setFilterPath(file.getParent());
                     }
-                    dialog.setText(CVSUIMessages.Save_Patch_As_5); //$NON-NLS-1$
-                    dialog.setFileName(CVSUIMessages.patch_txt_6); //$NON-NLS-1$
+                    dialog.setText(CVSUIMessages.Save_Patch_As_5); 
+                    dialog.setFileName(CVSUIMessages.patch_txt_6); 
                     final String path = dialog.open();
                     if (path != null) {
                         fsPathText.setText(new Path(path).toOSString());
@@ -468,11 +468,11 @@ public class GenerateDiffFileWizard extends Wizard {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.PATCH_OPTIONS_PAGE);
             
             recurseOption = new Button(composite, SWT.CHECK);
-            recurseOption.setText(CVSUIMessages.Do_not_recurse_into_sub_folders_10); //$NON-NLS-1$
+            recurseOption.setText(CVSUIMessages.Do_not_recurse_into_sub_folders_10); 
             recurseOption.setSelection(true);
             
             includeNewFilesOptions = new Button(composite, SWT.CHECK);
-            includeNewFilesOptions.setText(CVSUIMessages.Do_not_include_new_files_in_patch_11); //$NON-NLS-1$
+            includeNewFilesOptions.setText(CVSUIMessages.Do_not_include_new_files_in_patch_11); 
             includeNewFilesOptions.setSelection(true);
             
             Group diffTypeGroup = new Group(composite, SWT.NONE);
@@ -481,15 +481,15 @@ public class GenerateDiffFileWizard extends Wizard {
             diffTypeGroup.setLayout(layout);
             GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
             diffTypeGroup.setLayoutData(data);
-            diffTypeGroup.setText(CVSUIMessages.Diff_output_format_12); //$NON-NLS-1$
+            diffTypeGroup.setText(CVSUIMessages.Diff_output_format_12); 
             
             unifiedDiffOption = new Button(diffTypeGroup, SWT.RADIO);
-            unifiedDiffOption.setText(CVSUIMessages.Unified__format_required_by_Compare_With_Patch_feature__13); //$NON-NLS-1$
+            unifiedDiffOption.setText(CVSUIMessages.Unified__format_required_by_Compare_With_Patch_feature__13); 
             unifiedDiffOption.setSelection(true);
             contextDiffOption = new Button(diffTypeGroup, SWT.RADIO);
-            contextDiffOption.setText(CVSUIMessages.Context_14); //$NON-NLS-1$
+            contextDiffOption.setText(CVSUIMessages.Context_14); 
             regularDiffOption = new Button(diffTypeGroup, SWT.RADIO);
-            regularDiffOption.setText(CVSUIMessages.Standard_15); //$NON-NLS-1$
+            regularDiffOption.setText(CVSUIMessages.Standard_15); 
             
             Dialog.applyDialogFont(parent);
         }
@@ -603,20 +603,20 @@ public class GenerateDiffFileWizard extends Wizard {
     public GenerateDiffFileWizard(IResource resource) {
         super();
         this.resource = resource;
-        setWindowTitle(CVSUIMessages.GenerateCVSDiff_title); //$NON-NLS-1$
+        setWindowTitle(CVSUIMessages.GenerateCVSDiff_title); 
         initializeDefaultPageImageDescriptor();
         defaultValuesStore= new DefaultValuesStore();
     }
     
     public void addPages() {
-        String pageTitle = CVSUIMessages.GenerateCVSDiff_pageTitle; //$NON-NLS-1$
-        String pageDescription = CVSUIMessages.GenerateCVSDiff_pageDescription; //$NON-NLS-1$
+        String pageTitle = CVSUIMessages.GenerateCVSDiff_pageTitle; 
+        String pageDescription = CVSUIMessages.GenerateCVSDiff_pageDescription; 
         locationPage = new LocationPage(pageTitle, pageTitle, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF), defaultValuesStore);
         locationPage.setDescription(pageDescription);
         addPage(locationPage);
         
-        pageTitle = CVSUIMessages.Advanced_options_19; //$NON-NLS-1$
-        pageDescription = CVSUIMessages.Configure_the_options_used_for_the_CVS_diff_command_20; //$NON-NLS-1$
+        pageTitle = CVSUIMessages.Advanced_options_19; 
+        pageDescription = CVSUIMessages.Configure_the_options_used_for_the_CVS_diff_command_20; 
         optionsPage = new OptionsPage(pageTitle, pageTitle, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF));
         optionsPage.setDescription(pageDescription);
         addPage(optionsPage);		
@@ -683,7 +683,7 @@ public class GenerateDiffFileWizard extends Wizard {
             try {
                 workspaceResource.getParent().refreshLocal(IResource.DEPTH_ONE, null);
             } catch(CoreException e) {
-                CVSUIPlugin.openError(getShell(), CVSUIMessages.GenerateCVSDiff_error, null, e); //$NON-NLS-1$
+                CVSUIPlugin.openError(getShell(), CVSUIMessages.GenerateCVSDiff_error, null, e); 
                 return false;
             }
             break;
@@ -718,15 +718,15 @@ public class GenerateDiffFileWizard extends Wizard {
     	 * The file exists.
     	 */
     	if (!file.canWrite()) {
-    	    final String title= CVSUIMessages.GenerateCVSDiff_1; //$NON-NLS-1$
-    	    final String msg= CVSUIMessages.GenerateCVSDiff_2; //$NON-NLS-1$
+    	    final String title= CVSUIMessages.GenerateCVSDiff_1; 
+    	    final String msg= CVSUIMessages.GenerateCVSDiff_2; 
     	    final MessageDialog dialog= new MessageDialog(getShell(), title, null, msg, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
     	    dialog.open();
     	    return false;
     	}
     	
-    	final String title = CVSUIMessages.GenerateCVSDiff_overwriteTitle; //$NON-NLS-1$
-    	final String msg = CVSUIMessages.GenerateCVSDiff_overwriteMsg; //$NON-NLS-1$
+    	final String title = CVSUIMessages.GenerateCVSDiff_overwriteTitle; 
+    	final String msg = CVSUIMessages.GenerateCVSDiff_overwriteMsg; 
     	final MessageDialog dialog = new MessageDialog(getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
     	dialog.open();
     	if (dialog.getReturnCode() != 0)            

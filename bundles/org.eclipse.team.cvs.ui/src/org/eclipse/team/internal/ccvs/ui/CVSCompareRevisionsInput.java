@@ -118,7 +118,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 				try {
 					ICVSRemoteFile currentEdition = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(resource);
 					if (currentEdition != null && currentEdition.getRevision().equals(revisionName)) {
-						NLS.bind(CVSUIMessages.currentRevision, new String[] { revisionName }); //$NON-NLS-1$
+						NLS.bind(CVSUIMessages.currentRevision, new String[] { revisionName }); 
 					} else {
 						return revisionName;
 					}
@@ -187,7 +187,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 		this.shell = parent.getShell();
 		viewer = getHistoryTableProvider().createTable(parent);
 		Table table = viewer.getTable();
-		table.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle()); //$NON-NLS-1$
+		table.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle()); 
 
 		viewer.setContentProvider(new VersionCompareContentProvider());
 
@@ -226,13 +226,13 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 		cc.setLeftEditable(true);
 		cc.setRightEditable(false);
 		String resourceName = resource.getName();
-		String leftLabel = NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_workspace, (new Object[] {resourceName})); //$NON-NLS-1$
+		String leftLabel = NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_workspace, (new Object[] {resourceName})); 
 		cc.setLeftLabel(leftLabel);
-		String rightLabel = NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_repository, (new Object[] {resourceName})); //$NON-NLS-1$
+		String rightLabel = NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_repository, (new Object[] {resourceName})); 
 		cc.setRightLabel(rightLabel);
 	}
 	private void initializeActions() {		
-		getRevisionAction = new Action(CVSUIMessages.HistoryView_getRevisionAction) { //$NON-NLS-1$
+		getRevisionAction = new Action(CVSUIMessages.HistoryView_getRevisionAction) { 
 			public void run() {
 				try {
 				    final IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
@@ -280,7 +280,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
                 });
 			}
 		};
-		getContentsAction = new Action(CVSUIMessages.HistoryView_getContentsAction) { //$NON-NLS-1$
+		getContentsAction = new Action(CVSUIMessages.HistoryView_getContentsAction) { 
 			public void run() {
 				try {
 					replaceLocalWithCurrentlySelectedRevision();
@@ -347,7 +347,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 	 * @see org.eclipse.compare.CompareEditorInput#getTitle()
 	 */
 	public String getTitle() {
-		return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_compareResourceAndVersions, (new Object[] {resource.getFullPath().toString()})); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_compareResourceAndVersions, (new Object[] {resource.getFullPath().toString()})); 
 	}
 
 	/* (non-Javadoc)

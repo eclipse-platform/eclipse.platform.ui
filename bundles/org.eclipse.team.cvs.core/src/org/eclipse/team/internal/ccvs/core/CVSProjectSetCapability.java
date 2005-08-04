@@ -441,7 +441,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	 * Bring the provied projects into the workspace
 	 */
 	/* internal use only */ static void refreshProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException, TeamException {
-		monitor.beginTask(CVSMessages.CVSProvider_Creating_projects_2, projects.length * 100); //$NON-NLS-1$
+		monitor.beginTask(CVSMessages.CVSProvider_Creating_projects_2, projects.length * 100); 
 		try {
 			for (int i = 0; i < projects.length; i++) {
 				IProject project = projects[i];
@@ -464,7 +464,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 			monitor.done();
 			return;
 		}
-		monitor.beginTask(CVSMessages.CVSProvider_Scrubbing_projects_1, projects.length * 100); //$NON-NLS-1$
+		monitor.beginTask(CVSMessages.CVSProvider_Scrubbing_projects_1, projects.length * 100); 
 		try {	
 			for (int i=0;i<projects.length;i++) {
 				IProject project = projects[i];
@@ -474,7 +474,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 					}
 					// We do not want to delete the project to avoid a project deletion delta
 					// We do not want to delete the .project to avoid core exceptions
-					monitor.subTask(CVSMessages.CVSProvider_Scrubbing_local_project_1); //$NON-NLS-1$
+					monitor.subTask(CVSMessages.CVSProvider_Scrubbing_local_project_1); 
 					// unmap the project from any previous repository provider
 					if (RepositoryProvider.getProvider(project) != null)
 						RepositoryProvider.unmap(project);

@@ -34,7 +34,7 @@ public class MultiFolderTagSource extends SingleFolderTagSource {
      * @see org.eclipse.team.internal.ccvs.ui.merge.SingleFolderTagSource#getShortDescription()
      */
     public String getShortDescription() {
-        return NLS.bind(CVSUIMessages.MultiFolderTagSource_0, new String[] { Integer.toString(folders.length) }); //$NON-NLS-1$
+        return NLS.bind(CVSUIMessages.MultiFolderTagSource_0, new String[] { Integer.toString(folders.length) }); 
     }
     
     /* (non-Javadoc)

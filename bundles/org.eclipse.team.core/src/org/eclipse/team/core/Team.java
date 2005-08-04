@@ -46,7 +46,7 @@ public final class Team {
 	
 	private static final String PREF_TEAM_IGNORES = "ignore_files"; //$NON-NLS-1$
 	private static final String PREF_TEAM_SEPARATOR = "\n"; //$NON-NLS-1$
-	public static final Status OK_STATUS = new Status(Status.OK, TeamPlugin.ID, Status.OK, Messages.ok, null); //$NON-NLS-1$
+	public static final Status OK_STATUS = new Status(Status.OK, TeamPlugin.ID, Status.OK, Messages.ok, null); 
 	
 	// File type constants
 	public static final int UNKNOWN = 0;
@@ -153,7 +153,7 @@ public final class Team {
 			try {
 				readIgnoreState();
 			} catch (TeamException e) {
-				TeamPlugin.log(IStatus.ERROR, Messages.Team_Error_loading_ignore_state_from_disk_1, e); //$NON-NLS-1$
+				TeamPlugin.log(IStatus.ERROR, Messages.Team_Error_loading_ignore_state_from_disk_1, e); 
 			}
 			initializePluginIgnores(pluginIgnore, globalIgnore);
 		}
@@ -346,7 +346,7 @@ public final class Team {
 		} catch (FileNotFoundException e) {
 			// not a fatal error, there just happens not to be any state to read
 		} catch (IOException ex) {
-			throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Messages.Team_readError, ex));			 //$NON-NLS-1$
+			throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Messages.Team_readError, ex));			 
 		}
 		return true;
 	}

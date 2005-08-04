@@ -33,7 +33,7 @@ public class GenerateDiffFileAction extends WorkspaceAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void execute(IAction action) {
-		final String title = CVSUIMessages.GenerateCVSDiff_title; //$NON-NLS-1$
+		final String title = CVSUIMessages.GenerateCVSDiff_title; 
 		final IResource[] resources = getSelectedResources();
 		final GenerateDiffFileWizard wizard = new GenerateDiffFileWizard(resources[0]);
 		wizard.setWindowTitle(title);

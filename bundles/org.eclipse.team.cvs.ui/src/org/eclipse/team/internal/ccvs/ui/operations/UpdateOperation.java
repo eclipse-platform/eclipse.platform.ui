@@ -108,14 +108,14 @@ public class UpdateOperation extends SingleCommandOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return CVSUIMessages.UpdateOperation_taskName; //$NON-NLS-1$;
+		return CVSUIMessages.UpdateOperation_taskName; //;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
-		return NLS.bind(CVSUIMessages.UpdateOperation_0, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.UpdateOperation_0, new String[] { provider.getProject().getName() }); 
 	}
 	
 	/**
@@ -138,7 +138,7 @@ public class UpdateOperation extends SingleCommandOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getErrorMessage(org.eclipse.core.runtime.IStatus[], int)
 	 */
 	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
-		return CVSUIMessages.UpdateAction_update; //$NON-NLS-1$
+		return CVSUIMessages.UpdateAction_update; 
 	}
     
     /* (non-Javadoc)

@@ -49,7 +49,7 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 						// Refresh all participant resources
 						resources = participant.getResources();
 					}
-					participant.refresh(resources, null, null, site.getWorkbenchSite()); //$NON-NLS-1$ //$NON-NLS-2$
+					participant.refresh(resources, null, null, site.getWorkbenchSite()); // 
 				}
 			};
 			Utils.initAction(refreshSelectionAction, "action.refreshWithRemote."); //$NON-NLS-1$

@@ -221,7 +221,7 @@ public class ChangesSection extends Composite {
 		composite.setLayoutData(data);
 		
 		if(! isThreeWay()) {
-			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { participant.getName() }));	 //$NON-NLS-1$
+			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { participant.getName() }));	 
 			return composite;
 		}
 		
@@ -247,7 +247,7 @@ public class ChangesSection extends Composite {
 					Label warning = new Label(composite, SWT.NONE);
 					warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING_OVR));
 					
-					Hyperlink link = forms.createHyperlink(composite, NLS.bind(TeamUIMessages.ChangesSection_filterChange, new String[] { Utils.modeToString(candidateMode) }), SWT.WRAP); //$NON-NLS-1$
+					Hyperlink link = forms.createHyperlink(composite, NLS.bind(TeamUIMessages.ChangesSection_filterChange, new String[] { Utils.modeToString(candidateMode) }), SWT.WRAP); 
 					link.addHyperlinkListener(new HyperlinkAdapter() {
 						public void linkActivated(HyperlinkEvent e) {
 							configuration.setMode(candidateMode);
@@ -260,7 +260,7 @@ public class ChangesSection extends Composite {
 			}
 		}
 		// There is no other mode that can be shown so just indicate that there are no changes
-		createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { participant.getName() }));	 //$NON-NLS-1$	
+		createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { participant.getName() }));	 //	
 		return composite;
 	}
 
@@ -341,7 +341,7 @@ public class ChangesSection extends Composite {
 		composite.setLayoutData(data);	
 
 		Hyperlink link = new Hyperlink(composite, SWT.WRAP);
-		link.setText(TeamUIMessages.ChangesSection_8); //$NON-NLS-1$
+		link.setText(TeamUIMessages.ChangesSection_8); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				showErrors();
@@ -351,7 +351,7 @@ public class ChangesSection extends Composite {
 		link.setUnderlined(true);
 		
 		link = new Hyperlink(composite, SWT.WRAP);
-		link.setText(TeamUIMessages.ChangesSection_9); //$NON-NLS-1$
+		link.setText(TeamUIMessages.ChangesSection_9); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				page.reset();
@@ -360,18 +360,18 @@ public class ChangesSection extends Composite {
 		link.setBackground(getBackgroundColor());
 		link.setUnderlined(true);
 		
-		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.ChangesSection_10, new String[] { participant.getName() })); //$NON-NLS-1$
+		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.ChangesSection_10, new String[] { participant.getName() })); 
 
 		return composite;
 	}
 	
 	/* private */ void showErrors() {
 		ITeamStatus[] status = getVisibleSyncInfoSet().getErrors();
-		String title = TeamUIMessages.ChangesSection_11; //$NON-NLS-1$
+		String title = TeamUIMessages.ChangesSection_11; 
 		if (status.length == 1) {
 			ErrorDialog.openError(getShell(), title, status[0].getMessage(), status[0]);
 		} else {
-			MultiStatus multi = new MultiStatus(TeamUIPlugin.ID, 0, status, TeamUIMessages.ChangesSection_12, null); //$NON-NLS-1$
+			MultiStatus multi = new MultiStatus(TeamUIPlugin.ID, 0, status, TeamUIMessages.ChangesSection_12, null); 
 			ErrorDialog.openError(getShell(), title, null, multi);
 		}
 	}

@@ -132,7 +132,7 @@ public class ListSelectionArea extends DialogArea {
 		buttonComposite.setLayout(new GridLayout(2, false));
 		buttonComposite.setData(new GridData(SWT.END, SWT.BEGINNING, true, false));
 
-		Button selectButton = createButton(buttonComposite, CVSUIMessages.ListSelectionArea_selectAll, GridData.HORIZONTAL_ALIGN_FILL); //$NON-NLS-1$
+		Button selectButton = createButton(buttonComposite, CVSUIMessages.ListSelectionArea_selectAll, GridData.HORIZONTAL_ALIGN_FILL); 
 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -142,7 +142,7 @@ public class ListSelectionArea extends DialogArea {
 		selectButton.addSelectionListener(listener);
 
 
-		Button deselectButton = createButton(buttonComposite, CVSUIMessages.ListSelectionArea_deselectAll, GridData.HORIZONTAL_ALIGN_FILL); //$NON-NLS-1$
+		Button deselectButton = createButton(buttonComposite, CVSUIMessages.ListSelectionArea_deselectAll, GridData.HORIZONTAL_ALIGN_FILL); 
 
 		listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

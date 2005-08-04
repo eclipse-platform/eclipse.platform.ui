@@ -68,7 +68,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
     static {
         DateFormat format;
         try {
-            format = new SimpleDateFormat(CVSUIMessages.Console_resultTimeFormat); //$NON-NLS-1$
+            format = new SimpleDateFormat(CVSUIMessages.Console_resultTimeFormat); 
         } catch (RuntimeException e) {
             // This can happen if the bundle contains an invalid  format
             format = new SimpleDateFormat("'(took 'm:ss.SSS')')"); //$NON-NLS-1$
@@ -261,7 +261,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	public void commandInvoked(Session session, String line) {
 	    if (!session.isOutputToConsole()) return;
 		commandStarted = System.currentTimeMillis();
-		appendLine(ConsoleDocument.COMMAND, CVSUIMessages.Console_preExecutionDelimiter); //$NON-NLS-1$
+		appendLine(ConsoleDocument.COMMAND, CVSUIMessages.Console_preExecutionDelimiter); 
 		appendLine(ConsoleDocument.COMMAND, line);
 	}
 
@@ -293,34 +293,34 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		try {
 			time = TIME_FORMAT.format(new Date(commandRuntime));
 		} catch (RuntimeException e) {
-			CVSUIPlugin.log(IStatus.ERROR, CVSUIMessages.Console_couldNotFormatTime, e); //$NON-NLS-1$
+			CVSUIPlugin.log(IStatus.ERROR, CVSUIMessages.Console_couldNotFormatTime, e); 
 			time = ""; //$NON-NLS-1$
 		}
 		String statusText;
 		if (status != null) {
 		    boolean includeRoot = true;
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
-				statusText = NLS.bind(CVSUIMessages.Console_resultServerError, new String[] { status.getMessage(), time }); //$NON-NLS-1$
+				statusText = NLS.bind(CVSUIMessages.Console_resultServerError, new String[] { status.getMessage(), time }); 
 				includeRoot = false;
 			} else {
-				statusText = NLS.bind(CVSUIMessages.Console_resultOk, new String[] { time }); //$NON-NLS-1$
+				statusText = NLS.bind(CVSUIMessages.Console_resultOk, new String[] { time }); 
 			}
 			appendLine(ConsoleDocument.COMMAND, statusText);
 			outputStatus(status, includeRoot, includeRoot ? 0 : 1);
 		} else if (exception != null) {
 			if (exception instanceof OperationCanceledException) {
-				statusText = NLS.bind(CVSUIMessages.Console_resultAborted, new String[] { time }); //$NON-NLS-1$
+				statusText = NLS.bind(CVSUIMessages.Console_resultAborted, new String[] { time }); 
 			} else {
-				statusText = NLS.bind(CVSUIMessages.Console_resultException, new String[] { time }); //$NON-NLS-1$
+				statusText = NLS.bind(CVSUIMessages.Console_resultException, new String[] { time }); 
 			}
 			appendLine(ConsoleDocument.COMMAND, statusText);
 			if (exception instanceof CoreException) {
 			    outputStatus(((CoreException)exception).getStatus(), true, 1);
 			}
 		} else {
-			statusText = NLS.bind(CVSUIMessages.Console_resultOk, new String[] { time }); //$NON-NLS-1$
+			statusText = NLS.bind(CVSUIMessages.Console_resultOk, new String[] { time }); 
 		}
-		appendLine(ConsoleDocument.COMMAND, CVSUIMessages.Console_postExecutionDelimiter); //$NON-NLS-1$
+		appendLine(ConsoleDocument.COMMAND, CVSUIMessages.Console_postExecutionDelimiter); 
 		appendLine(ConsoleDocument.COMMAND, ""); //$NON-NLS-1$
 	}
 	
@@ -402,11 +402,11 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	 */
 	private String messageLineForStatus(IStatus status) {
 		if (status.getSeverity() == IStatus.ERROR) {
-			return NLS.bind(CVSUIMessages.Console_error, new String[] { status.getMessage() }); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.Console_error, new String[] { status.getMessage() }); 
 		} else if (status.getSeverity() == IStatus.WARNING) {
-			return NLS.bind(CVSUIMessages.Console_warning, new String[] { status.getMessage() }); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.Console_warning, new String[] { status.getMessage() }); 
 		} else if (status.getSeverity() == IStatus.INFO) {
-			return NLS.bind(CVSUIMessages.Console_info, new String[] { status.getMessage() }); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.Console_info, new String[] { status.getMessage() }); 
 		}
 		return status.getMessage();
 	}

@@ -353,26 +353,26 @@ public class SyncInfo implements IAdaptable {
 	public static String kindToString(int kind) {
 		String label = ""; //$NON-NLS-1$
 		if(kind==IN_SYNC) {
-			label = Messages.RemoteSyncElement_insync; //$NON-NLS-1$
+			label = Messages.RemoteSyncElement_insync; 
 		} else {
 			switch(kind & DIRECTION_MASK) {
-				case CONFLICTING: label = Messages.RemoteSyncElement_conflicting; break; //$NON-NLS-1$
-				case OUTGOING: label = Messages.RemoteSyncElement_outgoing; break; //$NON-NLS-1$
-				case INCOMING: label = Messages.RemoteSyncElement_incoming; break; //$NON-NLS-1$
+				case CONFLICTING: label = Messages.RemoteSyncElement_conflicting; break; 
+				case OUTGOING: label = Messages.RemoteSyncElement_outgoing; break; 
+				case INCOMING: label = Messages.RemoteSyncElement_incoming; break; 
 			}	
 			switch(kind & CHANGE_MASK) {
-				case CHANGE: label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_change }); break; //$NON-NLS-1$ //$NON-NLS-2$
-				case ADDITION: label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_addition }); break; //$NON-NLS-1$ //$NON-NLS-2$
-				case DELETION: label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_deletion }); break; //$NON-NLS-1$ //$NON-NLS-2$
+				case CHANGE: label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_change }); break; // 
+				case ADDITION: label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_addition }); break; // 
+				case DELETION: label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_deletion }); break; // 
 			}
 			if((kind & MANUAL_CONFLICT) != 0) {			
-				label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_manual }); //$NON-NLS-1$ //$NON-NLS-2$
+				label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_manual }); // 
 			}
 			if((kind & AUTOMERGE_CONFLICT) != 0) {				
-				label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_auto }); //$NON-NLS-1$ //$NON-NLS-2$
+				label = NLS.bind(Messages.concatStrings, new String[] { label, Messages.RemoteSyncElement_auto }); // 
 			}
 		}
-		return NLS.bind(Messages.RemoteSyncElement_delimit, new String[] { label }); //$NON-NLS-1$
+		return NLS.bind(Messages.RemoteSyncElement_delimit, new String[] { label }); 
 	}
 	
 	/**

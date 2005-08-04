@@ -96,7 +96,7 @@ public class LocalProjectTagSource extends TagSource {
      * @see org.eclipse.team.internal.ccvs.ui.tags.TagSource#getShortDescription()
      */
     public String getShortDescription() {
-        return NLS.bind(CVSUIMessages.LocalProjectTagSource_0, new String[] { Integer.toString(remoteFolders.length) }); //$NON-NLS-1$
+        return NLS.bind(CVSUIMessages.LocalProjectTagSource_0, new String[] { Integer.toString(remoteFolders.length) }); 
     }
 
     /* (non-Javadoc)

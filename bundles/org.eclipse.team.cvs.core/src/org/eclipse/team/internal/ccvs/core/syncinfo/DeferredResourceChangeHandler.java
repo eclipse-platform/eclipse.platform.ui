@@ -26,7 +26,7 @@ import org.eclipse.team.internal.core.BackgroundEventHandler;
 public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 
 	public DeferredResourceChangeHandler() {
-		super(CVSMessages.DeferredResourceChangeHandler_0, CVSMessages.DeferredResourceChangeHandler_1); //$NON-NLS-1$ //$NON-NLS-2$
+		super(CVSMessages.DeferredResourceChangeHandler_0, CVSMessages.DeferredResourceChangeHandler_1); // 
 	}
 
 	private static final int IGNORE_FILE_CHANGED = 1;

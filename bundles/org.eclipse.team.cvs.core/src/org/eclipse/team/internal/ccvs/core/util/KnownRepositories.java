@@ -215,7 +215,7 @@ public class KnownRepositories implements INodeChangeListener, IPreferenceChange
 				}
 			} catch (BackingStoreException e) {
 				// Log and continue (although all repos will be missing)
-				CVSProviderPlugin.log(IStatus.ERROR, CVSMessages.KnownRepositories_0, e); //$NON-NLS-1$
+				CVSProviderPlugin.log(IStatus.ERROR, CVSMessages.KnownRepositories_0, e); 
 			} catch (CVSException e) {
 				CVSProviderPlugin.log(e);
 			}

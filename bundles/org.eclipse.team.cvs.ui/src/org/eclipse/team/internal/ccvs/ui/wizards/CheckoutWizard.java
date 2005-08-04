@@ -41,7 +41,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 	private CVSWizardPage dummyPage;
 	
 	public CheckoutWizard() {
-		setWindowTitle(CVSUIMessages.CheckoutWizard_0); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.CheckoutWizard_0); 
 	}
 	
 	/* (non-Javadoc)
@@ -54,19 +54,19 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 
 		ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
 		if (locations.length > 0) {
-			locationPage = new RepositorySelectionPage("locationSelection", CVSUIMessages.CheckoutWizard_7, substImage); //$NON-NLS-1$ //$NON-NLS-2$
-			locationPage.setDescription(CVSUIMessages.SharingWizard_importTitleDescription); //$NON-NLS-1$
-			locationPage.setExtendedDescription(CVSUIMessages.CheckoutWizard_8); //$NON-NLS-1$
+			locationPage = new RepositorySelectionPage("locationSelection", CVSUIMessages.CheckoutWizard_7, substImage); //$NON-NLS-1$ 
+			locationPage.setDescription(CVSUIMessages.SharingWizard_importTitleDescription); 
+			locationPage.setExtendedDescription(CVSUIMessages.CheckoutWizard_8); 
 			addPage(locationPage);
 		}
 		
-		createLocationPage = new ConfigurationWizardMainPage("createLocationPage", CVSUIMessages.SharingWizard_enterInformation, substImage); //$NON-NLS-1$ //$NON-NLS-2$
-		createLocationPage.setDescription(CVSUIMessages.SharingWizard_enterInformationDescription); //$NON-NLS-1$
+		createLocationPage = new ConfigurationWizardMainPage("createLocationPage", CVSUIMessages.SharingWizard_enterInformation, substImage); //$NON-NLS-1$ 
+		createLocationPage.setDescription(CVSUIMessages.SharingWizard_enterInformationDescription); 
 		addPage(createLocationPage);
 		createLocationPage.setDialogSettings(NewLocationWizard.getLocationDialogSettings());
 		
-		modulePage = new ModuleSelectionPage("moduleSelection", CVSUIMessages.CheckoutWizard_10, substImage); //$NON-NLS-1$ //$NON-NLS-2$
-		modulePage.setDescription(CVSUIMessages.CheckoutWizard_11); //$NON-NLS-1$
+		modulePage = new ModuleSelectionPage("moduleSelection", CVSUIMessages.CheckoutWizard_10, substImage); //$NON-NLS-1$ 
+		modulePage.setDescription(CVSUIMessages.CheckoutWizard_11); 
 		modulePage.setHelpContxtId(IHelpContextIds.CHECKOUT_MODULE_SELECTION_PAGE);
 		modulePage.setSupportsMultiSelection(true);
 		addPage(modulePage);

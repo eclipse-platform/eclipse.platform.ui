@@ -63,7 +63,7 @@ public class Add extends Command {
 				ICVSFolder mFolder = (ICVSFolder) resources[i];
 				FolderSyncInfo info = mFolder.getParent().getFolderSyncInfo();
 				if (info == null) {
-					status = mergeStatus(status, new CVSStatus(CVSStatus.ERROR, NLS.bind(CVSMessages.Add_invalidParent, new String[] { mFolder.getRelativePath(session.getLocalRoot()) }))); //$NON-NLS-1$
+					status = mergeStatus(status, new CVSStatus(CVSStatus.ERROR, NLS.bind(CVSMessages.Add_invalidParent, new String[] { mFolder.getRelativePath(session.getLocalRoot()) }))); 
 				} else {
 					String repository = info.getRepository() + "/" + mFolder.getName();	 //$NON-NLS-1$
                     MutableFolderSyncInfo newInfo = info.cloneMutable();

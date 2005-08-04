@@ -76,16 +76,16 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		};
 		
 		if (project != null) {
-			useProjectNameButton = createRadioButton(composite, CVSUIMessages.ModuleSelectionPage_moduleIsProject, 2); //$NON-NLS-1$
+			useProjectNameButton = createRadioButton(composite, CVSUIMessages.ModuleSelectionPage_moduleIsProject, 2); 
 			useProjectNameButton.addListener(SWT.Selection, listener);
 		}
-		useSpecifiedNameButton = createRadioButton(composite, CVSUIMessages.ModuleSelectionPage_specifyModule, 1); //$NON-NLS-1$
+		useSpecifiedNameButton = createRadioButton(composite, CVSUIMessages.ModuleSelectionPage_specifyModule, 1); 
 		useSpecifiedNameButton.addListener(SWT.Selection, listener);
 
 		text = createTextField(composite);
 		text.addListener(SWT.Modify, listener);
 		
-		selectModuleButton = createRadioButton(composite, CVSUIMessages.ModuleSelectionPage_2, 2); //$NON-NLS-1$
+		selectModuleButton = createRadioButton(composite, CVSUIMessages.ModuleSelectionPage_2, 2); 
 		selectModuleButton.addListener(SWT.Selection, listener);
 		moduleList = createModuleTree(composite, 2);
 		

@@ -41,9 +41,9 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 				return ""; //$NON-NLS-1$
 			newText = strip(newText);
 			if (newText.indexOf('*') >= 0)
-				return TeamUIMessages.TextPreferencePage_2; //$NON-NLS-1$
+				return TeamUIMessages.TextPreferencePage_2; 
 			if (newText.indexOf('.') >= 0)
-				return TeamUIMessages.TextPreferencePage_3; //$NON-NLS-1$
+				return TeamUIMessages.TextPreferencePage_3; 
 			return null;
 		}
 
@@ -66,7 +66,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 			if (newText.trim().length() == 0)
 				return ""; //$NON-NLS-1$
 			if (newText.indexOf('*') >= 0)
-				return TeamUIMessages.TextPreferencePage_5; //$NON-NLS-1$
+				return TeamUIMessages.TextPreferencePage_5; 
 			return null;
 		}
 	}
@@ -161,15 +161,15 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		buttonsComposite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
 		
 		final Button addExtensionButton = new Button(buttonsComposite, SWT.PUSH);
-		addExtensionButton.setText(TeamUIMessages.TextPreferencePage_add); //$NON-NLS-1$
+		addExtensionButton.setText(TeamUIMessages.TextPreferencePage_add); 
 		final Button addNameButton = new Button(buttonsComposite, SWT.PUSH);
-		addNameButton.setText(TeamUIMessages.TextPreferencePage_0);  //$NON-NLS-1$
+		addNameButton.setText(TeamUIMessages.TextPreferencePage_0);  
 		fChangeButton = new Button(buttonsComposite, SWT.PUSH);
-		fChangeButton.setText(TeamUIMessages.TextPreferencePage_change); //$NON-NLS-1$
+		fChangeButton.setText(TeamUIMessages.TextPreferencePage_change); 
 		fRemoveButton= new Button(buttonsComposite, SWT.PUSH);
-		fRemoveButton.setText(TeamUIMessages.TextPreferencePage_remove); //$NON-NLS-1$
+		fRemoveButton.setText(TeamUIMessages.TextPreferencePage_remove); 
 		
-		SWTUtils.createLabel(composite, TeamUIMessages.TextPreferencePage_1, 2); //$NON-NLS-1$
+		SWTUtils.createLabel(composite, TeamUIMessages.TextPreferencePage_1, 2); 
 		
 		/**
 		 * Calculate and set the button size 
@@ -272,7 +272,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	void addExtension() {
 		final ExtensionValidator validator = new ExtensionValidator();
-		final InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.TextPreferencePage_enterExtensionShort, TeamUIMessages.TextPreferencePage_enterExtensionLong, null, validator); //$NON-NLS-1$ //$NON-NLS-2$
+		final InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.TextPreferencePage_enterExtensionShort, TeamUIMessages.TextPreferencePage_enterExtensionLong, null, validator); // 
 		if (dialog.open() != Window.OK) 
 			return;
 		
@@ -283,7 +283,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		while (it.hasNext()) {
 			final FileTypeTable.Item item= (FileTypeTable.Item)it.next();
 			if (item instanceof FileTypeTable.Extension && item.name.equals(extension)) {
-				MessageDialog.openWarning(getShell(), TeamUIMessages.TextPreferencePage_extensionExistsShort, TeamUIMessages.TextPreferencePage_extensionExistsLong); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openWarning(getShell(), TeamUIMessages.TextPreferencePage_extensionExistsShort, TeamUIMessages.TextPreferencePage_extensionExistsLong); // 
 				return;
 			}
 		}
@@ -296,7 +296,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	 * Add a new item to the table with the default type of Text.
 	 */
 	void addName() {
-		final InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.TextPreferencePage_6, TeamUIMessages.TextPreferencePage_7, null, new FilenameValidator()); //$NON-NLS-1$ //$NON-NLS-2$
+		final InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.TextPreferencePage_6, TeamUIMessages.TextPreferencePage_7, null, new FilenameValidator()); // 
 		if (dialog.open() != Window.OK) 
 			return;
 		
@@ -307,7 +307,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		while (it.hasNext()) {
 			final FileTypeTable.Item item= (FileTypeTable.Item)it.next();
 			if (item instanceof FileTypeTable.Name && item.name.equals(name)) {
-				MessageDialog.openWarning(getShell(), TeamUIMessages.TextPreferencePage_extensionExistsShort, TeamUIMessages.TextPreferencePage_extensionExistsLong); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openWarning(getShell(), TeamUIMessages.TextPreferencePage_extensionExistsShort, TeamUIMessages.TextPreferencePage_extensionExistsLong); // 
 				return;
 			}
 		}

@@ -71,8 +71,8 @@ public class RemoveSynchronizeParticipantAction extends Action {
 					public void run() {
 						bail[0] = !MessageDialog.openQuestion(
 								view.getSite().getShell(), 
-								TeamUIMessages.RemoveSynchronizeParticipantAction_0,  //$NON-NLS-1$
-								TeamUIMessages.RemoveSynchronizeParticipantAction_1); //$NON-NLS-1$
+								TeamUIMessages.RemoveSynchronizeParticipantAction_0,  
+								TeamUIMessages.RemoveSynchronizeParticipantAction_1); 
 
 					}
 				});

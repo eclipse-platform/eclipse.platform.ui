@@ -70,13 +70,13 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		// set F1 help
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.SHARING_SELECT_REPOSITORY_PAGE);
 		if (extendedDescription == null) {
-			extendedDescription = CVSUIMessages.RepositorySelectionPage_description; //$NON-NLS-1$
+			extendedDescription = CVSUIMessages.RepositorySelectionPage_description; 
 		}
 		createWrappingLabel(composite, extendedDescription, 0 /* indent */, 1 /* columns */); 
 		
-		useNewRepo = createRadioButton(composite, CVSUIMessages.RepositorySelectionPage_useNew, 1); //$NON-NLS-1$
+		useNewRepo = createRadioButton(composite, CVSUIMessages.RepositorySelectionPage_useNew, 1); 
 		
-		useExistingRepo = createRadioButton(composite, CVSUIMessages.RepositorySelectionPage_useExisting, 1); //$NON-NLS-1$
+		useExistingRepo = createRadioButton(composite, CVSUIMessages.RepositorySelectionPage_useExisting, 1); 
 		table = createTable(composite, 1);
 		table.setContentProvider(new WorkbenchContentProvider());
 		table.setLabelProvider(new WorkbenchLabelProvider());

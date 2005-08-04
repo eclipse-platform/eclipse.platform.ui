@@ -154,7 +154,7 @@ public abstract class ResponseHandler {
                 } else {
                     path = local.getFullPath().toString();
                 }
-                IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.INVALID_LOCAL_RESOURCE_PATH, NLS.bind(CVSMessages.ResponseHandler_0, new String[] { path, e.getMessage() }), e); //$NON-NLS-1$
+                IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.INVALID_LOCAL_RESOURCE_PATH, NLS.bind(CVSMessages.ResponseHandler_0, new String[] { path, e.getMessage() }), e); 
                 session.handleResponseError(status);
             } catch (CVSException e1) {
                 CVSProviderPlugin.log(e1);

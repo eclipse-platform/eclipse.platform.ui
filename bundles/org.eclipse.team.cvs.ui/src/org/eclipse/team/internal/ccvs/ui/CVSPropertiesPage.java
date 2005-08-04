@@ -26,18 +26,18 @@ public abstract class CVSPropertiesPage extends PropertyPage {
 	public static String getTagLabel(CVSTag tag) {
 	
 	if (tag == null) {
-		return CVSUIMessages.CVSFilePropertiesPage_none; //$NON-NLS-1$
+		return CVSUIMessages.CVSFilePropertiesPage_none; 
 	}
 	
 	switch (tag.getType()) {
 		case CVSTag.HEAD:
 			return tag.getName();
 		case CVSTag.VERSION:
-			return NLS.bind(CVSUIMessages.CVSFilePropertiesPage_version, new String[] { tag.getName() }); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.CVSFilePropertiesPage_version, new String[] { tag.getName() }); 
 		case CVSTag.BRANCH:
-			return NLS.bind(CVSUIMessages.CVSFilePropertiesPage_branch, new String[] { tag.getName() }); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.CVSFilePropertiesPage_branch, new String[] { tag.getName() }); 
 		case CVSTag.DATE:
-			return NLS.bind(CVSUIMessages.CVSFilePropertiesPage_date, new String[] { tag.getName() }); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.CVSFilePropertiesPage_date, new String[] { tag.getName() }); 
 		default :
 			return tag.getName();
 		}

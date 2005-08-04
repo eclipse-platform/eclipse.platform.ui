@@ -66,7 +66,7 @@ public class UserValidationDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(CVSUIMessages.UserValidationDialog_required); //$NON-NLS-1$
+		newShell.setText(CVSUIMessages.UserValidationDialog_required); 
 		// set F1 help
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.USER_VALIDATION_DIALOG);	
 	}
@@ -126,14 +126,14 @@ public class UserValidationDialog extends Dialog {
 		}
 		if (domain != null) {
 			Label d = new Label(main, SWT.WRAP);
-			d.setText(CVSUIMessages.UserValidationDialog_5); //$NON-NLS-1$
+			d.setText(CVSUIMessages.UserValidationDialog_5); 
 			data = new GridData();
 			d.setLayoutData(data);
 			Label label = new Label(main, SWT.WRAP);
 			if (isUsernameMutable) {
-				label.setText(NLS.bind(CVSUIMessages.UserValidationDialog_labelUser, new String[] { domain })); //$NON-NLS-1$
+				label.setText(NLS.bind(CVSUIMessages.UserValidationDialog_labelUser, new String[] { domain })); 
 			} else {
-				label.setText(NLS.bind(CVSUIMessages.UserValidationDialog_labelPassword, (new Object[]{defaultUsername, domain}))); //$NON-NLS-1$
+				label.setText(NLS.bind(CVSUIMessages.UserValidationDialog_labelPassword, (new Object[]{defaultUsername, domain}))); 
 			}
 			data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 			data.horizontalSpan = 2;
@@ -145,7 +145,7 @@ public class UserValidationDialog extends Dialog {
 		
 		if(domain != null) {
 			allowCachingButton = new Button(main, SWT.CHECK);
-			allowCachingButton.setText(CVSUIMessages.UserValidationDialog_6); //$NON-NLS-1$
+			allowCachingButton.setText(CVSUIMessages.UserValidationDialog_6); 
 			data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 			data.horizontalSpan = 3;
 			allowCachingButton.setLayoutData(data);
@@ -167,7 +167,7 @@ public class UserValidationDialog extends Dialog {
 			warningLabel.setImage(getImage(DLG_IMG_MESSAGE_WARNING));
 			warningLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING));
 			Label warningText = new Label(warningComposite, SWT.WRAP);
-			warningText.setText(CVSUIMessages.UserValidationDialog_7); //$NON-NLS-1$
+			warningText.setText(CVSUIMessages.UserValidationDialog_7); 
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			data.widthHint = 300;
 			warningText.setLayoutData(data);
@@ -184,7 +184,7 @@ public class UserValidationDialog extends Dialog {
 	 * @param parent  the parent of the widgets
 	 */
 	protected void createPasswordFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(CVSUIMessages.UserValidationDialog_password); //$NON-NLS-1$
+		new Label(parent, SWT.NONE).setText(CVSUIMessages.UserValidationDialog_password); 
 		
 		passwordField = new Text(parent, SWT.BORDER | SWT.PASSWORD);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -198,7 +198,7 @@ public class UserValidationDialog extends Dialog {
 	 * @param parent  the parent of the widgets
 	 */
 	protected void createUsernameFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(CVSUIMessages.UserValidationDialog_user); //$NON-NLS-1$
+		new Label(parent, SWT.NONE).setText(CVSUIMessages.UserValidationDialog_user); 
 		
 		usernameField = new Text(parent, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);

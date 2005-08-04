@@ -137,9 +137,9 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
          * @see org.eclipse.team.ui.synchronize.ChangeSetCapability#createChangeSet(org.eclipse.team.core.synchronize.SyncInfo[])
          */
         public ActiveChangeSet createChangeSet(ISynchronizePageConfiguration configuration, SyncInfo[] infos) {
-	        ActiveChangeSet set = getActiveChangeSetManager().createSet(CVSUIMessages.WorkspaceChangeSetCapability_1, new SyncInfo[0]); //$NON-NLS-1$
+	        ActiveChangeSet set = getActiveChangeSetManager().createSet(CVSUIMessages.WorkspaceChangeSetCapability_1, new SyncInfo[0]); 
 			CommitSetDialog dialog = new CommitSetDialog(configuration.getSite().getShell(), set, getResources(infos),
-			        CVSUIMessages.WorkspaceChangeSetCapability_2, CVSUIMessages.WorkspaceChangeSetCapability_3); //$NON-NLS-1$ //$NON-NLS-2$
+			        CVSUIMessages.WorkspaceChangeSetCapability_2, CVSUIMessages.WorkspaceChangeSetCapability_3); // 
 			dialog.open();
 			if (dialog.getReturnCode() != InputDialog.OK) return null;
 			set.add(infos);
@@ -159,7 +159,7 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
          */
         public void editChangeSet(ISynchronizePageConfiguration configuration, ActiveChangeSet set) {
 	        CommitSetDialog dialog = new CommitSetDialog(configuration.getSite().getShell(), set, set.getResources(),
-			        CVSUIMessages.WorkspaceChangeSetCapability_7, CVSUIMessages.WorkspaceChangeSetCapability_8); //$NON-NLS-1$ //$NON-NLS-2$
+			        CVSUIMessages.WorkspaceChangeSetCapability_7, CVSUIMessages.WorkspaceChangeSetCapability_8); // 
 			dialog.open();
 			if (dialog.getReturnCode() != InputDialog.OK) return;
 			// Nothing to do here as the set was updated by the dialog 

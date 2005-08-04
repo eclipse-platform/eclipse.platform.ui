@@ -91,7 +91,7 @@ public class Client {
 
 		public int available() throws IOException {
 			if (closed) {
-				throw new IOException(CVSSSHMessages.closed); //$NON-NLS-1$
+				throw new IOException(CVSSSHMessages.closed); 
 			}
 
 			int available = buffer == null ? 0 : buffer.available();
@@ -120,7 +120,7 @@ public class Client {
 
 		public int read() throws IOException {
 			if (closed) {
-				throw new IOException(CVSSSHMessages.closed);//$NON-NLS-1$
+				throw new IOException(CVSSSHMessages.closed);
 			}
 
 			if (atEnd) {
@@ -139,7 +139,7 @@ public class Client {
 
 		public int read(byte b[], int off, int len) throws IOException {
 			if (closed) {
-				throw new IOException(CVSSSHMessages.closed);//$NON-NLS-1$
+				throw new IOException(CVSSSHMessages.closed);
 			}
 
 			if (atEnd) {
@@ -185,7 +185,7 @@ public class Client {
 					handleDisconnect(packet.getInputStream());
 					break;
 				default :
-					throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));//$NON-NLS-1$
+					throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));
 			}
 		}
 		
@@ -200,11 +200,11 @@ public class Client {
 			
 			// Log the description provided by the server
 			if (description == null) {
-				description = CVSSSHMessages.Client_noDisconnectDescription; //$NON-NLS-1$
+				description = CVSSSHMessages.Client_noDisconnectDescription; 
 			}
 			
 			// Throw an IOException with the proper text
-			throw new IOException(NLS.bind(CVSSSHMessages.Client_disconnectDescription, (new Object[] {description})));//$NON-NLS-1$
+			throw new IOException(NLS.bind(CVSSSHMessages.Client_disconnectDescription, (new Object[] {description})));
 		}
 	}
 
@@ -226,7 +226,7 @@ public class Client {
 
 		public void flush() throws IOException {
 			if (closed) {
-				throw new IOException(CVSSSHMessages.closed);//$NON-NLS-1$
+				throw new IOException(CVSSSHMessages.closed);
 			}
 
 			if (bufpos > 0) {
@@ -237,7 +237,7 @@ public class Client {
 
 		public void write(int b) throws IOException {
 			if (closed) {
-				throw new IOException(CVSSSHMessages.closed);//$NON-NLS-1$
+				throw new IOException(CVSSSHMessages.closed);
 			}
 
 			buffer[bufpos++] = (byte) b;
@@ -249,7 +249,7 @@ public class Client {
 
 		public void write(byte b[], int off, int len) throws IOException {
 			if (closed) {
-				throw new IOException(CVSSSHMessages.closed); //$NON-NLS-1$
+				throw new IOException(CVSSSHMessages.closed); 
 			}
 
 			int bytesWritten = 0;
@@ -343,7 +343,7 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 				socket.setTcpNoDelay(true);
 			} catch (InterruptedIOException e) {
 				// If we get this exception, chances are the host is not responding
-				throw new InterruptedIOException(NLS.bind(CVSSSHMessages.Client_socket, (new Object[] {host})));//$NON-NLS-1$
+				throw new InterruptedIOException(NLS.bind(CVSSSHMessages.Client_socket, (new Object[] {host})));
 
 			}
 			if (timeout >= 0) {
@@ -370,7 +370,7 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 		int c;
 		while ((c = socketIn.read()) != '\n') {
 			if (c == -1)
-				throw new IOException(CVSSSHMessages.Client_socketClosed);//$NON-NLS-1$
+				throw new IOException(CVSSSHMessages.Client_socketClosed);
 			buf.append((char) c);
 		}
 		serverId = buf.toString();
@@ -382,7 +382,7 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 		
 		if (!serverId.startsWith("SSH-1.")) { //$NON-NLS-1$
 			String sshVersion = (serverId.startsWith("SSH-")? serverId:""); //$NON-NLS-1$ //$NON-NLS-2$
-			throw new IOException(NLS.bind(CVSSSHMessages.Client_sshProtocolVersion, new String[] { sshVersion }));//$NON-NLS-1$
+			throw new IOException(NLS.bind(CVSSSHMessages.Client_sshProtocolVersion, new String[] { sshVersion }));
 		} 
 		
 		// send our id.
@@ -428,14 +428,14 @@ public void disconnect() throws IOException {
 }
 public InputStream getInputStream() throws IOException {
 	if (!connected) {
-		throw new IOException(CVSSSHMessages.Client_notConnected);//$NON-NLS-1$
+		throw new IOException(CVSSSHMessages.Client_notConnected);
 	}
 
 	return is;
 }
 public OutputStream getOutputStream() throws IOException {
 	if (!connected) {
-		throw new IOException(CVSSSHMessages.Client_notConnected);//$NON-NLS-1$
+		throw new IOException(CVSSSHMessages.Client_notConnected);
 	}
 
 	return os;
@@ -452,7 +452,7 @@ private void startShell() throws IOException {
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_SUCCESS) {
-			throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));//$NON-NLS-1$
+			throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));
 		}
 	} finally {
 		if (packet != null) {
@@ -476,7 +476,7 @@ private void login() throws IOException, CVSAuthenticationException {
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_PUBLIC_KEY) {
-			throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));//$NON-NLS-1$
+			throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));
 		}
 
 		receive_SSH_SMSG_PUBLIC_KEY(packet);
@@ -491,7 +491,7 @@ private void login() throws IOException, CVSAuthenticationException {
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_SUCCESS) {
-			throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));//$NON-NLS-1$
+			throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));
 		}
 	} finally {
 		if (packet != null) {
@@ -506,7 +506,7 @@ private void login() throws IOException, CVSAuthenticationException {
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_FAILURE) {
-			throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));//$NON-NLS-1$
+			throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));
 		}
 	} finally {
 		if (packet != null) {
@@ -521,11 +521,11 @@ private void login() throws IOException, CVSAuthenticationException {
 		packetType = packet.getType();
 
 		if (packetType == SSH_SMSG_FAILURE) {
-			throw new CVSAuthenticationException(CVSSSHMessages.Client_authenticationFailed, CVSAuthenticationException.RETRY);//$NON-NLS-1$
+			throw new CVSAuthenticationException(CVSSSHMessages.Client_authenticationFailed, CVSAuthenticationException.RETRY);
 		}
 
 		if (packetType != SSH_SMSG_SUCCESS) {
-			throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));//$NON-NLS-1$
+			throw new IOException(NLS.bind(CVSSSHMessages.Client_packetType, (new Object[] {new Integer(packetType)})));
 		}
 	} finally {
 		if (packet != null) {
@@ -635,7 +635,7 @@ private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] host_
 	}
 
 	if (!foundSupportedCipher) {
-		throw new IOException(CVSSSHMessages.Client_cipher);//$NON-NLS-1$
+		throw new IOException(CVSSSHMessages.Client_cipher);
 	}
 
 	// session_key
@@ -650,7 +650,7 @@ private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] host_
 	BigInteger host_e = new BigInteger(1, host_key_public_exponent);
 	BigInteger host_n = new BigInteger(1, host_key_public_modulus);
 	if (!new KnownHosts().verifyKey(host, host_key_bits, host_e, host_n)) {
-		throw new CVSAuthenticationException(CVSSSHMessages.Client_hostIdChanged, CVSAuthenticationException.NO_RETRY); //$NON-NLS-1$
+		throw new CVSAuthenticationException(CVSSSHMessages.Client_hostIdChanged, CVSAuthenticationException.NO_RETRY); 
 	};
 	byte[] result;
 	if (new BigInteger(1,server_key_public_modulus).compareTo(host_n) == -1) {

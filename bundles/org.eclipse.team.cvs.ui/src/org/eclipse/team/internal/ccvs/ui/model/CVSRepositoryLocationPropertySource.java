@@ -25,30 +25,30 @@ public class CVSRepositoryLocationPropertySource implements IPropertySource {
 	static protected IPropertyDescriptor[] propertyDescriptors = new IPropertyDescriptor[5];
 	{
 		PropertyDescriptor descriptor;
-		String category = CVSUIMessages.cvs; //$NON-NLS-1$
+		String category = CVSUIMessages.cvs; 
 		
 		// host
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_HOST, CVSUIMessages.CVSRepositoryLocationPropertySource_host); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_HOST, CVSUIMessages.CVSRepositoryLocationPropertySource_host); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[0] = descriptor;
 		// user
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_USER, CVSUIMessages.CVSRepositoryLocationPropertySource_user); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_USER, CVSUIMessages.CVSRepositoryLocationPropertySource_user); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[1] = descriptor;
 		// port
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_PORT, CVSUIMessages.CVSRepositoryLocationPropertySource_port); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_PORT, CVSUIMessages.CVSRepositoryLocationPropertySource_port); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[2] = descriptor;
 		// root
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_ROOT, CVSUIMessages.CVSRepositoryLocationPropertySource_root); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_ROOT, CVSUIMessages.CVSRepositoryLocationPropertySource_root); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[3] = descriptor;
 		// method
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_METHOD, CVSUIMessages.CVSRepositoryLocationPropertySource_method); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_METHOD, CVSUIMessages.CVSRepositoryLocationPropertySource_method); 
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[4] = descriptor;
@@ -94,7 +94,7 @@ public class CVSRepositoryLocationPropertySource implements IPropertySource {
 		if (id.equals(ICVSUIConstants.PROP_PORT)) {
 			int port = location.getPort();
 			if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
-				return CVSUIMessages.CVSRepositoryLocationPropertySource_default; //$NON-NLS-1$
+				return CVSUIMessages.CVSRepositoryLocationPropertySource_default; 
 			}
 			return "" + port; //$NON-NLS-1$
 		}

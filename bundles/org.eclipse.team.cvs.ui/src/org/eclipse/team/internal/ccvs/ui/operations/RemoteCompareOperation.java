@@ -385,7 +385,7 @@ public class RemoteCompareOperation extends RemoteOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return NLS.bind(CVSUIMessages.RemoteCompareOperation_0, (new Object[] {left.getName(), right.getName(), getRemoteResource().getRepositoryRelativePath()})); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.RemoteCompareOperation_0, (new Object[] {left.getName(), right.getName(), getRemoteResource().getRepositoryRelativePath()})); 
 	}
 	
 	protected IWorkbenchPage getTargetPage() {

@@ -46,7 +46,7 @@ public class ReconcileProjectOperation extends ShareProjectOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return NLS.bind(CVSUIMessages.ReconcileProjectOperation_0, new String[] { getProject().getName(), folder.getRepositoryRelativePath() }); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.ReconcileProjectOperation_0, new String[] { getProject().getName(), folder.getRepositoryRelativePath() }); 
 	}
 	
 	/* (non-Javadoc)
@@ -105,7 +105,7 @@ public class ReconcileProjectOperation extends ShareProjectOperation {
 		try {
 			if (resource.getType() == IResource.FILE) {
 				if (remote.isContainer()) {
-					CVSUIPlugin.log(IStatus.ERROR, NLS.bind(CVSUIMessages.ReconcileProjectOperation_1, new String[] { resource.getFullPath().toString(), remote.getRepositoryRelativePath() }), null); //$NON-NLS-1$
+					CVSUIPlugin.log(IStatus.ERROR, NLS.bind(CVSUIMessages.ReconcileProjectOperation_1, new String[] { resource.getFullPath().toString(), remote.getRepositoryRelativePath() }), null); 
 				} else {
 					IFile file = (IFile)resource;
 					IResourceVariant variant = (IResourceVariant)remote;
@@ -123,7 +123,7 @@ public class ReconcileProjectOperation extends ShareProjectOperation {
 				}
 			} else {
 				if (!remote.isContainer()) {
-					CVSUIPlugin.log(IStatus.ERROR, NLS.bind(CVSUIMessages.ReconcileProjectOperation_2, new String[] { resource.getFullPath().toString(), remote.getRepositoryRelativePath() }), null); //$NON-NLS-1$
+					CVSUIPlugin.log(IStatus.ERROR, NLS.bind(CVSUIMessages.ReconcileProjectOperation_2, new String[] { resource.getFullPath().toString(), remote.getRepositoryRelativePath() }), null); 
 				} else {
 					// Map the local folder to the remote folder.
 					// (Note that this will make phantoms for non-exisiting local folders)

@@ -70,7 +70,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 		} catch (CVSException e) {
 			CVSUIPlugin.log(e);
 		}
-		return NLS.bind(CVSUIMessages.CheckoutIntoOperation_taskname, new String[] { new Integer(remoteFolders.length).toString(), localFolderName });  //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CheckoutIntoOperation_taskname, new String[] { new Integer(remoteFolders.length).toString(), localFolderName });  
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 				ICVSResource resource = parentFolder.getChild(childPath);
 				if (resource != null && !resource.isFolder()) {
 					// The target folder conflicts with an existing file
-					addError(new CVSStatus(IStatus.ERROR, NLS.bind(CVSUIMessages.CheckoutIntoOperation_targetIsFile, new String[] { remoteFolder.getName(), resource.getIResource().getFullPath().toString() }))); //$NON-NLS-1$
+					addError(new CVSStatus(IStatus.ERROR, NLS.bind(CVSUIMessages.CheckoutIntoOperation_targetIsFile, new String[] { remoteFolder.getName(), resource.getIResource().getFullPath().toString() }))); 
 					return null;
 				}
 				targetFolderSet.add(parentFolder.getFolder(childPath));
@@ -199,9 +199,9 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 						// then the remote cannot be loaded.
 						String message;
 						if (targetFolder.exists()) {
-							message = NLS.bind(CVSUIMessages.CheckoutIntoOperation_targetIsFolder, new String[] { remoteFolder.getName(), targetFolder.getIResource().getFullPath().toString() }); //$NON-NLS-1$
+							message = NLS.bind(CVSUIMessages.CheckoutIntoOperation_targetIsFolder, new String[] { remoteFolder.getName(), targetFolder.getIResource().getFullPath().toString() }); 
 						} else {
-							message = NLS.bind(CVSUIMessages.CheckoutIntoOperation_targetIsPrunedFolder, new String[] { remoteFolder.getName(), targetFolder.getFolderSyncInfo().getRepository() }); //$NON-NLS-1$
+							message = NLS.bind(CVSUIMessages.CheckoutIntoOperation_targetIsPrunedFolder, new String[] { remoteFolder.getName(), targetFolder.getFolderSyncInfo().getRepository() }); 
 						}
 						return new CVSStatus(IStatus.ERROR, message);
 					}
@@ -288,7 +288,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 		for (int i=0;i<targetFolders.length;i++) {
 			ICVSFolder targetFolder = targetFolders[i];
 			if (needsPromptForOverwrite(targetFolder, Policy.subMonitorFor(monitor, 50)) && !promptToOverwrite(targetFolder)) {
-				return new CVSStatus(IStatus.INFO, NLS.bind(CVSUIMessages.CheckoutIntoOperation_cancelled, new String[] { remoteFolder.getName() })); //$NON-NLS-1$
+				return new CVSStatus(IStatus.INFO, NLS.bind(CVSUIMessages.CheckoutIntoOperation_cancelled, new String[] { remoteFolder.getName() })); 
 			}
 		}
 		
@@ -306,8 +306,8 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 
 	private boolean promptToOverwrite(ICVSFolder folder) {
 		return promptToOverwrite(
-			CVSUIMessages.CheckoutOperation_confirmOverwrite,  //$NON-NLS-1$
-			NLS.bind(CVSUIMessages.CheckoutIntoOperation_overwriteMessage, new String[] { folder.getName() })); //$NON-NLS-1$
+			CVSUIMessages.CheckoutOperation_confirmOverwrite,  
+			NLS.bind(CVSUIMessages.CheckoutIntoOperation_overwriteMessage, new String[] { folder.getName() })); 
 	}
 	
 	private IStatus scrubFolder(ICVSFolder folder, IProgressMonitor monitor) throws CVSException {

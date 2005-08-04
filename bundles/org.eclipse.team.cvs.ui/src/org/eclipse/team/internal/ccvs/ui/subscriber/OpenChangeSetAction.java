@@ -34,7 +34,7 @@ import org.eclipse.team.ui.synchronize.*;
 class OpenChangeSetAction extends SynchronizeModelAction {
 
     protected OpenChangeSetAction(ISynchronizePageConfiguration configuration) {
-        super(CVSUIMessages.OpenCommitSetAction_20, configuration); //$NON-NLS-1$
+        super(CVSUIMessages.OpenCommitSetAction_20, configuration); 
     }
     
     /* (non-Javadoc)
@@ -122,7 +122,7 @@ class OpenChangeSetAction extends SynchronizeModelAction {
                 if (infos.length > 0) {
                     ICVSRepositoryLocation location = getLocation(infos[0]);
                     if (location == null) {
-                        handle(new CVSException(CVSUIMessages.OpenCommitSetAction_21)); //$NON-NLS-1$
+                        handle(new CVSException(CVSUIMessages.OpenCommitSetAction_21)); 
                         return;
                     }
                     CompareTreeBuilder builder = new CompareTreeBuilder(location, null, null);

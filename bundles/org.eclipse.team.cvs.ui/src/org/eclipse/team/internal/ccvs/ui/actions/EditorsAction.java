@@ -75,7 +75,7 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		if (f_provider == null || f_resources == null) {
-			throw new InvocationTargetException(new RuntimeException(NLS.bind(CVSUIMessages.EditorsAction_classNotInitialized, new String[] { this.getClass().getName() }))); //$NON-NLS-1$
+			throw new InvocationTargetException(new RuntimeException(NLS.bind(CVSUIMessages.EditorsAction_classNotInitialized, new String[] { this.getClass().getName() }))); 
 		}
 		try {
 			execute(f_provider,f_resources,monitor);

@@ -133,7 +133,7 @@ public class RepositoriesView extends RemoteViewPart {
 		// Create actions
 
 		// New Repository (popup)
-		newAction = new Action(CVSUIMessages.RepositoriesView_new, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
+		newAction = new Action(CVSUIMessages.RepositoriesView_new, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { 
 			public void run() {
 				NewLocationWizard wizard = new NewLocationWizard();
 				WizardDialog dialog = new WizardDialog(shell, wizard);
@@ -143,7 +143,7 @@ public class RepositoriesView extends RemoteViewPart {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newAction, IHelpContextIds.NEW_REPOSITORY_LOCATION_ACTION);
 		
 		if (includeAnonConnection()) {
-			newAnonAction = new Action(CVSUIMessages.RepositoriesView_newAnonCVS, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
+			newAnonAction = new Action(CVSUIMessages.RepositoriesView_newAnonCVS, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { 
 				public void run() {
 					Properties p = new Properties();
 					p.setProperty("connection", "pserver"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -208,7 +208,7 @@ public class RepositoriesView extends RemoteViewPart {
 	 */
 	protected void addWorkbenchActions(IMenuManager manager) {
 		// New actions go next
-		MenuManager sub = new MenuManager(CVSUIMessages.RepositoriesView_newSubmenu, IWorkbenchActionConstants.GROUP_ADD); //$NON-NLS-1$
+		MenuManager sub = new MenuManager(CVSUIMessages.RepositoriesView_newSubmenu, IWorkbenchActionConstants.GROUP_ADD); 
 		manager.add(sub);
 		super.addWorkbenchActions(manager);
 		IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
@@ -293,7 +293,7 @@ public class RepositoriesView extends RemoteViewPart {
 		IStructuredSelection s = (IStructuredSelection)selection;
 		
 		if (s.size() > 1)
-            return NLS.bind(CVSUIMessages.RepositoriesView_NItemsSelected, new String[] { String.valueOf(s.size()) }); //$NON-NLS-1$
+            return NLS.bind(CVSUIMessages.RepositoriesView_NItemsSelected, new String[] { String.valueOf(s.size()) }); 
 		Object element = CVSAction.getAdapter(s.getFirstElement(), ICVSResource.class);
 		if (element instanceof ICVSRemoteResource) {
 			ICVSRemoteResource res = (ICVSRemoteResource)element;
@@ -304,13 +304,13 @@ public class RepositoriesView extends RemoteViewPart {
 				try {
 					name = res.getRepositoryRelativePath() + " " + ((ICVSRemoteFile)res).getRevision(); //$NON-NLS-1$
 				} catch (TeamException e) {
-					TeamPlugin.log(IStatus.ERROR, CVSUIMessages.RepositoriesView_CannotGetRevision, e); //$NON-NLS-1$
+					TeamPlugin.log(IStatus.ERROR, CVSUIMessages.RepositoriesView_CannotGetRevision, e); 
 					name = res.getRepositoryRelativePath();
 				} 
 			}
-			return NLS.bind(CVSUIMessages.RepositoriesView_ResourceInRepository, new String[] { name, res.getRepository().getLocation(true) }); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.RepositoriesView_ResourceInRepository, new String[] { name, res.getRepository().getLocation(true) }); 
 		}
-		return CVSUIMessages.RepositoriesView_OneItemSelected; //$NON-NLS-1$
+		return CVSUIMessages.RepositoriesView_OneItemSelected; 
 	}
 	
 	/**

@@ -44,7 +44,7 @@ public class RefactorActionGroup extends ActionGroup {
 
 	public void fillContextMenu(IMenuManager parentMenu, String groupId) {
 
-		final MenuManager menu = new MenuManager(TeamUIMessages.RefactorActionGroup_0); //$NON-NLS-1$
+		final MenuManager menu = new MenuManager(TeamUIMessages.RefactorActionGroup_0); 
 
 		final IStructuredSelection selection= getSelection();
 		final boolean anyResourceSelected =	!selection.isEmpty() && allResourcesAreOfType(selection, IResource.PROJECT | IResource.FOLDER | IResource.FILE);

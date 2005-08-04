@@ -63,10 +63,10 @@ public class BranchPromptDialog extends DetailsDialog {
 		
         final int areaWidth= convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
         
-        final Label description= SWTUtils.createLabel(composite, allStickyResources ? CVSUIMessages.BranchWizardPage_pageDescriptionVersion : CVSUIMessages.BranchWizardPage_pageDescription);  //$NON-NLS-1$//$NON-NLS-2$
+        final Label description= SWTUtils.createLabel(composite, allStickyResources ? CVSUIMessages.BranchWizardPage_pageDescriptionVersion : CVSUIMessages.BranchWizardPage_pageDescription);  
         description.setLayoutData(SWTUtils.createGridData(areaWidth, SWT.DEFAULT, true, false));
         
-		final Label name= SWTUtils.createLabel(composite, CVSUIMessages.BranchWizardPage_branchName); //$NON-NLS-1$
+		final Label name= SWTUtils.createLabel(composite, CVSUIMessages.BranchWizardPage_branchName); 
         name.setLayoutData(SWTUtils.createGridData(areaWidth, SWT.DEFAULT, true, false));
         
 		branchText = CVSWizardPage.createTextField(composite);
@@ -79,7 +79,7 @@ public class BranchPromptDialog extends DetailsDialog {
 		});
 		addBranchContentAssist();
 
-		final Button check = SWTUtils.createCheckBox(composite, CVSUIMessages.BranchWizardPage_startWorking); //$NON-NLS-1$
+		final Button check = SWTUtils.createCheckBox(composite, CVSUIMessages.BranchWizardPage_startWorking); 
 		check.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				update = check.getSelection();
@@ -88,10 +88,10 @@ public class BranchPromptDialog extends DetailsDialog {
 		check.setSelection(true);		
 		update = true;
 		
-		final Label versionLabel1= SWTUtils.createLabel(composite, CVSUIMessages.BranchWizardPage_specifyVersion); //$NON-NLS-1$
+		final Label versionLabel1= SWTUtils.createLabel(composite, CVSUIMessages.BranchWizardPage_specifyVersion); 
         versionLabel1.setLayoutData(SWTUtils.createGridData(areaWidth, SWT.DEFAULT, true, false));
 
-		final Label versionLabel2= SWTUtils.createLabel(composite, CVSUIMessages.BranchWizardPage_versionName); //$NON-NLS-1$
+		final Label versionLabel2= SWTUtils.createLabel(composite, CVSUIMessages.BranchWizardPage_versionName); 
 		versionLabel2.setLayoutData(SWTUtils.createGridData(areaWidth, SWT.DEFAULT, true, false));
         
 		versionText = CVSWizardPage.createTextField(composite);
@@ -132,7 +132,7 @@ public class BranchPromptDialog extends DetailsDialog {
 	 */
 	protected void updateVersionName(String branchName) {
 		if(versionText!=null && !allStickyResources) {
-			versionText.setText(CVSUIMessages.BranchWizardPage_versionPrefix + branchName); //$NON-NLS-1$
+			versionText.setText(CVSUIMessages.BranchWizardPage_versionPrefix + branchName); 
 		}
 	}
 	
@@ -151,7 +151,7 @@ public class BranchPromptDialog extends DetailsDialog {
 		composite.setLayoutData(gridData);
 		
 		tagArea = new TagSelectionArea(getShell(), tagSource, TagSelectionArea.INCLUDE_VERSIONS | TagSelectionArea.INCLUDE_BRANCHES, null);
-		tagArea.setTagAreaLabel(CVSUIMessages.BranchWizardPage_existingVersionsAndBranches); //$NON-NLS-1$
+		tagArea.setTagAreaLabel(CVSUIMessages.BranchWizardPage_existingVersionsAndBranches); 
 		tagArea.setIncludeFilterInputArea(false);
 		tagArea.createArea(composite);
 
@@ -169,15 +169,15 @@ public class BranchPromptDialog extends DetailsDialog {
 		} else {
 			IStatus status = CVSTag.validateTagName(branchTag);
 			if (!status.isOK()) {
-				message = NLS.bind(CVSUIMessages.BranchWizard_branchNameWarning, new String[] { status.getMessage() }); //$NON-NLS-1$
+				message = NLS.bind(CVSUIMessages.BranchWizard_branchNameWarning, new String[] { status.getMessage() }); 
 			} else {
 				if(versionText!=null) {
 					status = CVSTag.validateTagName(versionText.getText());
 					if (!status.isOK()) {
-						message = NLS.bind(CVSUIMessages.BranchWizard_versionNameWarning, new String[] { status.getMessage() }); //$NON-NLS-1$
+						message = NLS.bind(CVSUIMessages.BranchWizard_versionNameWarning, new String[] { status.getMessage() }); 
 					} else {
 						if(versionTag.length() != 0 && versionTag.equals(branchTag)) {
-							message = CVSUIMessages.BranchWizard_branchAndVersionMustBeDifferent; //$NON-NLS-1$
+							message = CVSUIMessages.BranchWizard_branchAndVersionMustBeDifferent; 
 						}
 					}
 				}

@@ -49,7 +49,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 
 	public ExportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		setDescription(TeamUIMessages.ExportProjectSetMainPage_description); //$NON-NLS-1$
+		setDescription(TeamUIMessages.ExportProjectSetMainPage_description); 
 	}
 
 	/*
@@ -62,7 +62,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		// set F1 help
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.EXPORT_PROJECT_SET_PAGE);
 				
-		createLabel(composite, TeamUIMessages.ExportProjectSetMainPage_Select_the_projects_to_include_in_the_project_set__2); //$NON-NLS-1$
+		createLabel(composite, TeamUIMessages.ExportProjectSetMainPage_Select_the_projects_to_include_in_the_project_set__2); 
 
 		table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		tableViewer = new CheckboxTableViewer(table);
@@ -83,7 +83,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 				updateEnablement();
 			}
 		});
-		createLabel(composite, TeamUIMessages.ExportProjectSetMainPage_Project_Set_File_Name__3); //$NON-NLS-1$
+		createLabel(composite, TeamUIMessages.ExportProjectSetMainPage_Project_Set_File_Name__3); 
 
 		Composite inner = new Composite(composite, SWT.NULL);
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -93,7 +93,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		layout.marginWidth = 0;
 		inner.setLayout(layout);
 
-		createLabel(inner, TeamUIMessages.ExportProjectSetMainPage__File_name__1); //$NON-NLS-1$
+		createLabel(inner, TeamUIMessages.ExportProjectSetMainPage__File_name__1); 
 		fileText = createTextField(inner);
 		if (file != null) fileText.setText(file);
 		fileText.addListener(SWT.Modify, new Listener() {
@@ -104,7 +104,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		});
 
 		browseButton = new Button(inner, SWT.PUSH);
-		browseButton.setText(TeamUIMessages.ExportProjectSetMainPage_Browse_4); //$NON-NLS-1$
+		browseButton.setText(TeamUIMessages.ExportProjectSetMainPage_Browse_4); 
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -114,8 +114,8 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 			public void handleEvent(Event event) {
 				FileDialog d = new FileDialog(getShell(), SWT.SAVE);
 				d.setFilterExtensions(new String[] {"*.psf"}); //$NON-NLS-1$
-				d.setFilterNames(new String[] {TeamUIMessages.ExportProjectSetMainPage_Project_Set_Files_3}); //$NON-NLS-1$
-				d.setFileName(TeamUIMessages.ExportProjectSetMainPage_default); //$NON-NLS-1$
+				d.setFilterNames(new String[] {TeamUIMessages.ExportProjectSetMainPage_Project_Set_Files_3}); 
+				d.setFileName(TeamUIMessages.ExportProjectSetMainPage_default); 
 				d.setFilterPath(new File(".").getAbsolutePath()); //$NON-NLS-1$
 				String f = d.open();
 				if (f != null) {
@@ -156,7 +156,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		} else {
 			File f = new File(file);
 			if (f.isDirectory()) {
-				setMessage(TeamUIMessages.ExportProjectSetMainPage_You_have_specified_a_folder_5, ERROR); //$NON-NLS-1$
+				setMessage(TeamUIMessages.ExportProjectSetMainPage_You_have_specified_a_folder_5, ERROR); 
 				complete = false;
 			} else {
 				complete = true;

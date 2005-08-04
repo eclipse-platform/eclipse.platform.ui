@@ -75,20 +75,20 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		setLayoutData(new GridData());
 		Composite area = this;
 
-		createWrappingLabel(area, NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_1, new String[] { schedule.getParticipant().getName() }), 0, 2); //$NON-NLS-1$
+		createWrappingLabel(area, NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_1, new String[] { schedule.getParticipant().getName() }), 0, 2); 
 		{
 			final Label label = new Label(area, SWT.WRAP);
 			final GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 			gridData.horizontalSpan = 2;
 			label.setLayoutData(gridData);
-			label.setText(NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_1a, new String[] { SubscriberRefreshSchedule.refreshEventAsString(schedule.getLastRefreshEvent()) }));			 //$NON-NLS-1$
+			label.setText(NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_1a, new String[] { SubscriberRefreshSchedule.refreshEventAsString(schedule.getLastRefreshEvent()) }));			 
 		}
 		{
 			userRefreshOnly = new Button(area, SWT.RADIO);
 			final GridData gridData = new GridData();
 			gridData.horizontalSpan = 2;
 			userRefreshOnly.setLayoutData(gridData);
-			userRefreshOnly.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_2); //$NON-NLS-1$
+			userRefreshOnly.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_2); 
 			userRefreshOnly.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
 					updateEnablements();
@@ -102,7 +102,7 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 			final GridData gridData = new GridData();
 			gridData.horizontalSpan = 2;
 			enableBackgroundRefresh.setLayoutData(gridData);
-			enableBackgroundRefresh.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_3); //$NON-NLS-1$
+			enableBackgroundRefresh.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_3); 
 			enableBackgroundRefresh.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
 					updateEnablements();
@@ -121,7 +121,7 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 			composite.setLayout(gridLayout_1);
 			{
 				final Label label = new Label(composite, SWT.NONE);
-				label.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_4); //$NON-NLS-1$
+				label.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_4); 
 			}
 			{
 				time = new Text(composite, SWT.BORDER | SWT.RIGHT);
@@ -136,7 +136,7 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 			}
 			{
 				hoursOrSeconds = new Combo(composite, SWT.READ_ONLY);
-				hoursOrSeconds.setItems(new String[] { TeamUIMessages.ConfigureRefreshScheduleDialog_5, TeamUIMessages.ConfigureRefreshScheduleDialog_6 }); //$NON-NLS-1$ //$NON-NLS-2$
+				hoursOrSeconds.setItems(new String[] { TeamUIMessages.ConfigureRefreshScheduleDialog_5, TeamUIMessages.ConfigureRefreshScheduleDialog_6 }); // 
 				hoursOrSeconds.setLayoutData(new GridData());
 			}
 		}
@@ -163,8 +163,8 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		SubscriberParticipant participant = schedule.getParticipant();
 		if (!participant.isPinned() && schedule.isEnabled()) {
 			participant.setPinned(MessageDialog.openQuestion(getShell(), 
-					NLS.bind(TeamUIMessages.ConfigureSynchronizeScheduleComposite_0, new String[] { Utils.getTypeName(participant) }), //$NON-NLS-1$
-					NLS.bind(TeamUIMessages.ConfigureSynchronizeScheduleComposite_1, new String[] { Utils.getTypeName(participant) }))); //$NON-NLS-1$
+					NLS.bind(TeamUIMessages.ConfigureSynchronizeScheduleComposite_0, new String[] { Utils.getTypeName(participant) }), 
+					NLS.bind(TeamUIMessages.ConfigureSynchronizeScheduleComposite_1, new String[] { Utils.getTypeName(participant) }))); 
 		}
 		participant.setRefreshSchedule(schedule);
 	}
@@ -176,12 +176,12 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		try {
 			long number = Long.parseLong(time.getText());
 			if(number <= 0) {
-				validator.setComplete(TeamUIMessages.ConfigureRefreshScheduleDialog_7); //$NON-NLS-1$
+				validator.setComplete(TeamUIMessages.ConfigureRefreshScheduleDialog_7); 
 			} else {
 				validator.setComplete(null);
 			}
 		} catch (NumberFormatException e) {
-			validator.setComplete(TeamUIMessages.ConfigureRefreshScheduleDialog_8); //$NON-NLS-1$
+			validator.setComplete(TeamUIMessages.ConfigureRefreshScheduleDialog_8); 
 		}	
 		time.setEnabled(enableBackgroundRefresh.getSelection());
 		hoursOrSeconds.setEnabled(enableBackgroundRefresh.getSelection());

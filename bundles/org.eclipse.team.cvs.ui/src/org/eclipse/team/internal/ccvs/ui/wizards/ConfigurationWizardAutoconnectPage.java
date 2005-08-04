@@ -56,7 +56,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		data.horizontalSpan = 2;
 		data.widthHint = 350;
 		description.setLayoutData(data);
-		description.setText(CVSUIMessages.ConfigurationWizardAutoconnectPage_description); //$NON-NLS-1$
+		description.setText(CVSUIMessages.ConfigurationWizardAutoconnectPage_description); 
 		
 		if (location == null) return;
 
@@ -64,22 +64,22 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		createLabel(composite, ""); //$NON-NLS-1$
 		createLabel(composite, ""); //$NON-NLS-1$
 		
-		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_user); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_user); 
 		createLabel(composite, location.getUsername());
-		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_host); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_host); 
 		createLabel(composite, location.getHost());
-		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_port); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_port); 
 		int port = location.getPort();
 		if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
-			createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_default); //$NON-NLS-1$
+			createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_default); 
 		} else {
 			createLabel(composite, "" + port); //$NON-NLS-1$
 		}
-		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_connectionType); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_connectionType); 
 		createLabel(composite, location.getMethod().getName());
-		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_repositoryPath); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_repositoryPath); 
 		createLabel(composite, location.getRootDirectory());
-		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_module); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_module); 
 		createLabel(composite, info.getRepository());
 		
 		// Spacer
@@ -89,7 +89,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		final Button check = new Button(composite, SWT.CHECK);
 		data = new GridData();
 		data.horizontalSpan = 2;
-		check.setText(CVSUIMessages.ConfigurationWizardAutoconnectPage_validate); //$NON-NLS-1$
+		check.setText(CVSUIMessages.ConfigurationWizardAutoconnectPage_validate); 
 		check.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				validate = check.getSelection();
@@ -111,7 +111,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 			info = folder.getFolderSyncInfo();
 			if (info == null) {
 				// This should never happen
-				CVSUIPlugin.openError(null, CVSUIMessages.ConfigurationWizardAutoconnectPage_noSyncInfo, CVSUIMessages.ConfigurationWizardAutoconnectPage_noCVSDirectory, null); //$NON-NLS-1$ //$NON-NLS-2$
+				CVSUIPlugin.openError(null, CVSUIMessages.ConfigurationWizardAutoconnectPage_noSyncInfo, CVSUIMessages.ConfigurationWizardAutoconnectPage_noCVSDirectory, null); // 
 				return false;
 			}
 			location = CVSRepositoryLocation.fromString(info.getRoot());

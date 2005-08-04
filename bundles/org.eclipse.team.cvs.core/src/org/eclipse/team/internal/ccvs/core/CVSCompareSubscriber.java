@@ -39,14 +39,14 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	private CVSResourceVariantTree tree;
 	
 	public CVSCompareSubscriber(IResource[] resources, CVSTag tag) {
-		super(getUniqueId(), NLS.bind(CVSMessages.CVSCompareSubscriber_2, new String[] { tag.getName() })); //$NON-NLS-1$ //$NON-NLS-2$
+		super(getUniqueId(), NLS.bind(CVSMessages.CVSCompareSubscriber_2, new String[] { tag.getName() })); // 
 		this.resources = resources;
 		tree = new CVSResourceVariantTree(new SessionResourceVariantByteStore(), tag, getCacheFileContentsHint());
 		initialize();
 	}
 
 	public CVSCompareSubscriber(IResource[] resources, CVSTag[] tags, String name) {
-		super(getUniqueId(), NLS.bind(CVSMessages.CVSCompareSubscriber_2, new String[] { name })); //$NON-NLS-1$ //$NON-NLS-2$
+		super(getUniqueId(), NLS.bind(CVSMessages.CVSCompareSubscriber_2, new String[] { name })); // 
 		resetRoots(resources, tags);
 		initialize();
 	}
@@ -88,7 +88,7 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	
 	private static QualifiedName getUniqueId() {
 		String uniqueId = Long.toString(System.currentTimeMillis());
-		return new QualifiedName(QUALIFIED_NAME, UNIQUE_ID_PREFIX + uniqueId); //$NON-NLS-1$
+		return new QualifiedName(QUALIFIED_NAME, UNIQUE_ID_PREFIX + uniqueId); 
 	}
 
 	/* (non-Javadoc)

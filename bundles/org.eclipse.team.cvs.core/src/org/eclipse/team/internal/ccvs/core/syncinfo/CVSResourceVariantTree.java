@@ -135,7 +135,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 					IProject project = resource.getProject();
 					if (project.exists() && RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId()) != null) {
 						CVSProviderPlugin.log(new CVSException( 
-								NLS.bind(CVSMessages.ResourceSynchronizer_missingParentBytesOnGet, new String[] { getSyncName(getByteStore()).toString(), resource.getFullPath().toString() }))); //$NON-NLS-1$
+								NLS.bind(CVSMessages.ResourceSynchronizer_missingParentBytesOnGet, new String[] { getSyncName(getByteStore()).toString(), resource.getFullPath().toString() }))); 
 						// Assume there is no remote and the problem is a programming error
 					}
 					return null;
@@ -228,7 +228,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
     		if (local.getType() == IResource.FILE && getByteStore().getBytes(local) != null && !parentHasSyncBytes(local)) {
     			// Log a warning if there is no sync bytes available for the resource's
     			// parent but there is valid sync bytes for the child
-    			CVSProviderPlugin.log(new TeamException(NLS.bind(CVSMessages.ResourceSynchronizer_missingParentBytesOnSet, new String[] { getSyncName(getByteStore()), local.getFullPath().toString() }))); //$NON-NLS-1$
+    			CVSProviderPlugin.log(new TeamException(NLS.bind(CVSMessages.ResourceSynchronizer_missingParentBytesOnSet, new String[] { getSyncName(getByteStore()), local.getFullPath().toString() }))); 
     		}
     		return changed;
         }

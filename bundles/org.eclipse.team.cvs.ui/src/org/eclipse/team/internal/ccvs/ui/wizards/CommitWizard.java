@@ -91,11 +91,11 @@ public class CommitWizard extends ResizableWizard {
         }
         
         protected String getJobName() {
-            return CVSUIMessages.CommitWizard_0; //$NON-NLS-1$
+            return CVSUIMessages.CommitWizard_0; 
         }
         
         protected String getTaskName() {
-            return CVSUIMessages.CommitWizard_1; //$NON-NLS-1$
+            return CVSUIMessages.CommitWizard_1; 
         }
 
         /*
@@ -142,9 +142,9 @@ public class CommitWizard extends ResizableWizard {
     
     public CommitWizard(final IResource [] resources) throws CVSException {
         
-        super(CVSUIMessages.CommitWizard_3, CVSUIPlugin.getPlugin().getDialogSettings()); //$NON-NLS-1$
+        super(CVSUIMessages.CommitWizard_3, CVSUIPlugin.getPlugin().getDialogSettings()); 
         
-        setWindowTitle(CVSUIMessages.CommitWizard_2); //$NON-NLS-1$
+        setWindowTitle(CVSUIMessages.CommitWizard_2); 
         setDefaultPageImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION));
         
         fResources= resources;
@@ -165,7 +165,7 @@ public class CommitWizard extends ResizableWizard {
             try {
 				PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
 				    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				    	monitor.beginTask(CVSUIMessages.CommitWizard_4, IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+				    	monitor.beginTask(CVSUIMessages.CommitWizard_4, IProgressMonitor.UNKNOWN); 
 				    	syncInfoCollector.waitForCollector(monitor);
 				    	monitor.done();
 				    }
@@ -297,7 +297,7 @@ public class CommitWizard extends ResizableWizard {
     
     private static void run(Shell shell, CommitWizard wizard) {
         if (!wizard.hasOutgoingChanges()) {
-            MessageDialog.openInformation(shell, CVSUIMessages.CommitWizard_6, CVSUIMessages.CommitWizard_7); //$NON-NLS-1$ //$NON-NLS-2$
+            MessageDialog.openInformation(shell, CVSUIMessages.CommitWizard_6, CVSUIMessages.CommitWizard_7); // 
         } else {
             open(shell, wizard);
         }

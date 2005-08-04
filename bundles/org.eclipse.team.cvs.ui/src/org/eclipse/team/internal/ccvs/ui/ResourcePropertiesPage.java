@@ -51,7 +51,7 @@ public class ResourcePropertiesPage extends PropertyPage {
 			if (resource != null) {
 				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 				if (!cvsResource.isManaged()) {
-					createPair(composite, CVSUIMessages.ResourcePropertiesPage_status, CVSUIMessages.ResourcePropertiesPage_notManaged); //$NON-NLS-1$ //$NON-NLS-2$
+					createPair(composite, CVSUIMessages.ResourcePropertiesPage_status, CVSUIMessages.ResourcePropertiesPage_notManaged); // 
 				} else {
 					boolean hasRemote = false;
 					if(cvsResource.isFolder()) {
@@ -62,11 +62,11 @@ public class ResourcePropertiesPage extends PropertyPage {
 							hasRemote = true;
 						}
 					}
-					createPair(composite, CVSUIMessages.ResourcePropertiesPage_status, hasRemote ? CVSUIMessages.ResourcePropertiesPage_versioned : CVSUIMessages.ResourcePropertiesPage_notVersioned); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					createPair(composite, CVSUIMessages.ResourcePropertiesPage_status, hasRemote ? CVSUIMessages.ResourcePropertiesPage_versioned : CVSUIMessages.ResourcePropertiesPage_notVersioned); //  
 				}
 			}
 		} catch (TeamException e) {
-			createPair(composite, CVSUIMessages.ResourcePropertiesPage_error, e.getMessage()); //$NON-NLS-1$
+			createPair(composite, CVSUIMessages.ResourcePropertiesPage_error, e.getMessage()); 
 		}
         Dialog.applyDialogFont(parent);
 		return composite;

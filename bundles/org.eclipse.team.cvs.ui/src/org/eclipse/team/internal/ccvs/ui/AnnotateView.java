@@ -83,7 +83,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		
 		// Create default contents
 		Label label = new Label(top, SWT.WRAP);
-		label.setText(CVSUIMessages.CVSAnnotateView_viewInstructions); //$NON-NLS-1$
+		label.setText(CVSUIMessages.CVSAnnotateView_viewInstructions); 
 		top.layout();
         PlatformUI.getWorkbench().getHelpSystem().setHelp(label, IHelpContextIds.ANNOTATE_VIEW);
 	}
@@ -139,7 +139,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		IDocumentProvider provider = editor.getDocumentProvider();
 		document = provider.getDocument(editor.getEditorInput());
 
-		setPartName(NLS.bind(CVSUIMessages.CVSAnnotateView_showFileAnnotation, (new Object[] {cvsResource.getName()}))); //$NON-NLS-1$
+		setPartName(NLS.bind(CVSUIMessages.CVSAnnotateView_showFileAnnotation, (new Object[] {cvsResource.getName()}))); 
 		try {
 			IResource localResource = cvsResource.getIResource();
 			if (localResource != null) {
@@ -341,7 +341,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		            return (ITextEditor)part;
 		        } else {
 		            // There is something really wrong so just bail
-		            throw new PartInitException(CVSUIMessages.AnnotateView_0); //$NON-NLS-1$
+		            throw new PartInitException(CVSUIMessages.AnnotateView_0); 
 		        }
 		    }
 		}
@@ -352,7 +352,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		IEditorRegistry registry = CVSUIPlugin.getPlugin().getWorkbench().getEditorRegistry();
 		IEditorDescriptor descriptor = registry.getDefaultEditor(file.getName());
 		if (descriptor == null || !(descriptor instanceof EditorDescriptor) || !(((EditorDescriptor)descriptor).isInternal())) {
-			id = IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID; //$NON-NLS-1$
+			id = IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID; 
 		} else {
 			try {
 				Object obj = IDEWorkbenchPlugin.createExtension(((EditorDescriptor) descriptor).getConfigurationElement(), "class"); //$NON-NLS-1$
