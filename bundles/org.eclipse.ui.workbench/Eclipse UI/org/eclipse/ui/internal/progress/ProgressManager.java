@@ -250,10 +250,12 @@ public class ProgressManager extends ProgressProvider implements
         public void setCanceled(boolean value) {
             JobInfo info = getJobInfo(job);
             //Don't bother cancelling twice
-            if (value && !info.isCanceled())
+            if (value && !info.isCanceled()){
                 info.cancel();
-            if (listener != null)
-                listener.setCanceled(value);
+                //Only inform the first time
+                if (listener != null)
+                	listener.setCanceled(value);
+            }
         }
 
         /*
