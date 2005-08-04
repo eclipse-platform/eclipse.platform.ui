@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.IRemoteTreeViewerUpdateListener;
@@ -150,26 +151,32 @@ public class VariablesViewer extends RemoteTreeViewer {
         return internalExpandPath(strings, 0, children);
 
     }
-    private boolean internalExpandPath(String[] segments, int index, Item[] children) {
+    protected boolean internalExpandPath(String[] segments, int index, Item[] children) {
         try {
             String pathSegment = segments[index];
             for (int j = 0; j < children.length; j++) {
                 Item child = children[j];
                 Object data = child.getData();
+                String name = null;
                 if (data instanceof IVariable) {
                     IVariable var = (IVariable) data;
-                    if (pathSegment.equals(var.getName())) {
-                        ITreeContentProvider provider = (ITreeContentProvider) getContentProvider();
-                        provider.getChildren(child.getData());
-                        setExpanded(child, true);
-                        index++;
-                        if (index < segments.length) {
-                            Item[] newChildren = getChildren(child);
-                            return internalExpandPath(segments, index, newChildren);
-                        }
-                        return true;
-                    }
+                    name = var.getName();
+                } else if (data instanceof IRegisterGroup) {
+                    IRegisterGroup  registerGroup = (IRegisterGroup) data;
+                    name = registerGroup.getName();
                 }
+                
+                if (name != null && pathSegment.equals(name)) {
+                    ITreeContentProvider provider = (ITreeContentProvider) getContentProvider();
+                    provider.getChildren(child.getData());
+                    setExpanded(child, true);
+                    index++;
+                    if (index < segments.length) {
+                        Item[] newChildren = getChildren(child);
+                        return internalExpandPath(segments, index, newChildren);
+                    }
+                    return true;
+                } 
             }
         } catch (DebugException e) {
             

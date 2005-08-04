@@ -10,6 +10,9 @@
 ***********************************************************************/
 package org.eclipse.debug.internal.ui.views.registers;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
@@ -30,6 +33,10 @@ public class RegistersViewerState extends AbstractViewerState {
 	public RegistersViewerState( TreeViewer viewer ) {
 		super( viewer );
 	}
+    
+    public RegistersViewerState() {
+    }
+    
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState#encodeElement(org.eclipse.swt.widgets.TreeItem)
@@ -88,4 +95,23 @@ public class RegistersViewerState extends AbstractViewerState {
 		}
 		return element;
 	}
+
+    public AbstractViewerState copy() {
+        RegistersViewerState copy = new RegistersViewerState();
+        if (fSavedExpansion != null) {
+            copy.fSavedExpansion = new ArrayList();
+            for (Iterator iter = fSavedExpansion.iterator(); iter.hasNext();) {
+                copy.fSavedExpansion.add(iter.next());
+            }
+        }
+        
+        if (fSelection != null) {
+            copy.fSelection = new IPath[fSelection.length];
+            for (int i = 0; i < fSelection.length; i++) {
+                IPath sel = fSelection[i];
+                copy.fSelection[i] = sel;
+            }
+        }
+        return copy;
+    }
 }

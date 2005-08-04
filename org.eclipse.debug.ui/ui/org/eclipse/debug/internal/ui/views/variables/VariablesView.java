@@ -411,9 +411,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
         IStackFrame frame = (IStackFrame) viewer.getInput();
         if (frame != null) {
             AbstractViewerState state = (AbstractViewerState)fSelectionStates.get(frame);
-            if (state == null) {
+            if (state == null && fLastState != null) {
                 // attempt to restore selection/expansion based on last frame
-                state = fLastState;
+                state = fLastState.copy();
+                fLastState = state;
             } 
             if (state != null) {
                 state.restoreState(viewer);

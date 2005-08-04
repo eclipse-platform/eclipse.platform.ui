@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
@@ -34,6 +37,10 @@ public class ViewerState extends AbstractViewerState {
 	public ViewerState(TreeViewer viewer) {
 		super(viewer);
 	}
+    
+    public ViewerState() {
+        super();
+    }
 
 	/**
 	 * @see org.eclipse.debug.internal.ui.views.AbstractViewerState#encodeElement(org.eclipse.swt.widgets.TreeItem)
@@ -92,4 +99,23 @@ public class ViewerState extends AbstractViewerState {
 		}
 		return variable;
 	}
+    
+    public AbstractViewerState copy() {
+        ViewerState copy = new ViewerState();
+        if (fSavedExpansion != null) {
+            copy.fSavedExpansion = new ArrayList();
+            for (Iterator iter = fSavedExpansion.iterator(); iter.hasNext();) {
+                copy.fSavedExpansion.add(iter.next());
+            }
+        }
+        
+        if (fSelection != null) {
+            copy.fSelection = new IPath[fSelection.length];
+            for (int i = 0; i < fSelection.length; i++) {
+                IPath sel = fSelection[i];
+                copy.fSelection[i] = sel;
+            }
+        }
+        return copy;
+    }
 }

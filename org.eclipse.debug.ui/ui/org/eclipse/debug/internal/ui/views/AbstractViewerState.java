@@ -26,8 +26,8 @@ import org.eclipse.swt.widgets.TreeItem;
 public abstract class AbstractViewerState {
 
 	// paths to expanded elements
-	private List fSavedExpansion = null;
-	private IPath[] fSelection;
+	protected List fSavedExpansion = null;
+    protected IPath[] fSelection;
 	
 	/**
 	 * Constructs a memento for the given viewer.
@@ -35,6 +35,10 @@ public abstract class AbstractViewerState {
 	public AbstractViewerState(TreeViewer viewer) {
 		saveState(viewer);
 	}
+    
+    public AbstractViewerState() {
+        
+    }
 
 	/**
 	 * Saves the current state of the given viewer into
@@ -167,4 +171,7 @@ public abstract class AbstractViewerState {
 	 */
 	protected abstract Object decodePath(IPath path, TreeViewer viewer) throws DebugException;
 
+    public abstract AbstractViewerState copy();
+    
+    
 }
