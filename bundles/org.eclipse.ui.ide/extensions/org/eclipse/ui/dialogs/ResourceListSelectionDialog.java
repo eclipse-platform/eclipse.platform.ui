@@ -803,6 +803,11 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                     if (nextResource.getType() == currentResource.getType()
                             && next.label.equals(current.label)) {
                         current.resources.add(nextResource);
+                        // If we are merging resources with the same name, into a single descriptor,
+                        // then we must mark the descriptor unsorted so that we will sort the folder
+                        // names.  
+                        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=76496
+                        current.resourcesSorted = false;
                     } else {
                         if (current.resources.size() > 1) {
                             current.resourcesSorted = false;
