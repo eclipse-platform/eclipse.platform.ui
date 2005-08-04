@@ -65,4 +65,11 @@ public class PessimisticResourceRuleFactory extends ResourceRuleFactory {
 	public ISchedulingRule validateEditRule(IResource[] resources) {
 		return root;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.team.ResourceRuleFactory#charsetRule(org.eclipse.core.resources.IResource)
+	 */
+	public ISchedulingRule charsetRule(IResource resource) {
+		return root;
+	}
 }
