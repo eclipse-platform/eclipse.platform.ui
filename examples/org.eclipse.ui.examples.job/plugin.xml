@@ -1,29 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.ui.examples.job"
-   name="Progress Examples Plug-in"
-   version="3.0.0"
-   provider-name="IBM"
-   class="org.eclipse.ui.examples.jobs.ProgressExamplesPlugin">
+<plugin>
 
-   <runtime>
-      <library name="ProgressExamples.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.ui.editors"/>
-   </requires>
-
-
-   <extension
+     <extension
          point="org.eclipse.ui.views">
       <category
             name="Progress Examples"
