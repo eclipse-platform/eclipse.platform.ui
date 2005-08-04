@@ -227,6 +227,9 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 
             initializeMenu();
 
+            // populate the submenu, in order to enable accelerators
+            // and to set enabled state on the menuItem properly
+            update(true);
         }
     }
 
@@ -367,7 +370,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
         if (removeAllWhenShown)
             removeAll();
         fireAboutToShow(this);
-        update(false, false);
+        update(false, true);
     }
 
     /**
@@ -726,7 +729,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     private void updateMenuItem() {
         /*
          * Commented out until proper solution to enablement of
-         * menu item for a sub-menu is found. See bug 30833 and bug 30423 for
+         * menu item for a sub-menu is found. See bug 30833 for
          * more details.
          *  
          if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
@@ -742,18 +745,19 @@ public class MenuManager extends ContributionManager implements IMenuManager {
          menuItem.setEnabled(enabled);
          }
          */
-        
-        // SX: Removed some code that attempts to disable the menu item if all the sub-menumenuitems
-        // are disabled.
-        // 
-        // - The deleted code only worked if the widgets were always updated eagerly, which is not
-        //   the case.
-        // - According to the comments in bug 30423, disabling the item makes the menu inaccessable,
-        //   which would be undesirable even if the code worked.
-        // - The commented code, above, seems to be a correct implementation (it does not rely on
-        //   the existance of actual MenuItems). If this behavior is deemed desirable, something
-        //   like the above code should be used rather than the widget-based approach that was removed.
-        // - According to the checkin comment this was for bug 34969, but it appears to be related 
-        //   to bug 30423. Bug 34969 works even without the removed snippet.
+        // Partial fix for bug #34969 - diable the menu item if no
+        // items in sub-menu (for context menus).
+        if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
+            boolean enabled = menu.getItemCount() > 0;
+            // Workaround for 1GDDCN2: SWT:Linux - MenuItem.setEnabled() always causes a redraw
+            if (menuItem.getEnabled() != enabled) {
+                // We only do this for context menus (for bug #34969)
+                Menu topMenu = menu;
+                while (topMenu.getParentMenu() != null)
+                    topMenu = topMenu.getParentMenu();
+                if ((topMenu.getStyle() & SWT.BAR) == 0)
+                    menuItem.setEnabled(enabled);
+            }
+        }
     }
 }
