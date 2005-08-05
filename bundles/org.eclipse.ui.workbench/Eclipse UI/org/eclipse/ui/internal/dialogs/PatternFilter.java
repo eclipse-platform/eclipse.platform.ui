@@ -31,8 +31,14 @@ import org.eclipse.ui.internal.misc.StringMatcher;
  * @since 3.0
  */
 public class PatternFilter extends ViewerFilter {
-
+	
     private Map cache = new HashMap();
+    
+	/**
+	 * Whether to include a leading wildcard for all provided patterns.  A
+	 * trailing wildcard is always included.
+	 */
+	private boolean includeLeadingWildcard = false;
 
     private StringMatcher matcher;
 
@@ -66,6 +72,18 @@ public class PatternFilter extends ViewerFilter {
         	return false;
         return match(labelText);
     }
+    
+    /**
+	 * Sets whether a leading wildcard should be attached to each pattern
+	 * string.
+	 * 
+	 * @param includeLeadingWildcard
+	 *            Whether a leading wildcard should be added.
+	 */
+	public final void setIncludeLeadingWildcard(
+			final boolean includeLeadingWildcard) {
+		this.includeLeadingWildcard = includeLeadingWildcard;
+	}
 
     /**
      * 
@@ -75,8 +93,13 @@ public class PatternFilter extends ViewerFilter {
         cache.clear();
         if (patternString == null || patternString.equals("")) //$NON-NLS-1$
             matcher = null;
-        else
-            matcher = new StringMatcher("*" + patternString + "*", true, false); //$NON-NLS-1$ //$NON-NLS-2$
+        else {
+			String pattern = patternString + "*"; //$NON-NLS-1$
+			if (includeLeadingWildcard) {
+				pattern = "*" + pattern; //$NON-NLS-1$
+			}
+			matcher = new StringMatcher(pattern, true, false);
+		}
     }
 
     /**
