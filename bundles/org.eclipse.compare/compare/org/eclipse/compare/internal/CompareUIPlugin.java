@@ -515,20 +515,13 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static ImageDescriptor getImageDescriptor(String relativePath) {
-		
-		URL installURL= null;
-		if (fgComparePlugin != null)
-			installURL= fgComparePlugin.getBundle().getEntry("/"); //$NON-NLS-1$
-					
-		if (installURL != null) {
-			try {
-				URL url= new URL(installURL, Utilities.getIconPath(null) + relativePath);
-				return ImageDescriptor.createFromURL(url);
-			} catch (MalformedURLException e) {
-				Assert.isTrue(false);
-			}
-		}
-		return null;
+		if (fgComparePlugin == null)
+			return null;
+		IPath path= Utilities.getIconPath(null).append(relativePath);		
+		URL url= Platform.find(fgComparePlugin.getBundle(), path);
+		if (url == null)
+			return null;
+		return ImageDescriptor.createFromURL(url);
 	}
 	
 	/**

@@ -78,7 +78,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%defaultCompareEditor.name"
-            icon="icons/full/eview16/compare_view.gif"
+            icon="$nl$/icons/full/eview16/compare_view.gif"
             contributorClass="org.eclipse.compare.internal.CompareEditorContributor"
             class="org.eclipse.compare.internal.CompareEditor"
             id="org.eclipse.compare.CompareEditor">

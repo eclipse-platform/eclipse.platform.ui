@@ -31,8 +31,10 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.ui.*;
@@ -46,6 +48,8 @@ import org.eclipse.compare.IStreamContentAccessor;
  * Convenience and utility methods.
  */
 public class Utilities {
+	
+	private static final IPath ICONS_PATH= new Path("$nl$/icons/full/"); //$NON-NLS-1$
 	
 	public static void registerAction(IKeyBindingService kbs, IAction a, String id) {
 		if (kbs != null) {
@@ -186,8 +190,8 @@ public class Utilities {
 		return bos.toByteArray();
 	}
 
-	public static String getIconPath(Display display) {
-		return "icons/full/";	//$NON-NLS-1$
+	public static IPath getIconPath(Display display) {
+		return ICONS_PATH;
 	}
 	
 	/*
