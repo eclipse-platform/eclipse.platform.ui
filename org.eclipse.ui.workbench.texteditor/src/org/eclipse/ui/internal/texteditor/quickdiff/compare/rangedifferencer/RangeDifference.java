@@ -294,5 +294,37 @@ public class RangeDifference {
 			fRegion= new DiffRegion(this, 0, differences, source);
 		return fRegion;
 	}
+	
+	public String toString() {
+		StringBuffer buf= new StringBuffer("RangeDifference {"); //$NON-NLS-1$
+		switch (fKind) {
+			case NOCHANGE:
+				buf.append("NOCHANGE"); //$NON-NLS-1$
+				break;
+			case CHANGE:
+				buf.append("CHANGE/RIGHT"); //$NON-NLS-1$
+				break;
+			case CONFLICT:
+				buf.append("CONFLICT"); //$NON-NLS-1$
+				break;
+			case LEFT:
+				buf.append("LEFT"); //$NON-NLS-1$
+				break;
+			case ERROR:
+				buf.append("ERROR"); //$NON-NLS-1$
+				break;
+			case ANCESTOR:
+				buf.append("ANCESTOR"); //$NON-NLS-1$
+				break;
+			default:
+				break;
+		}
+		
+		buf.append(", Left: [" + fLeftStart + "+" + fLeftLength + ")");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		buf.append(", Right: [" + fRightStart + "+" + fRightLength + ")");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		buf.append("]"); //$NON-NLS-1$
+		
+		return buf.toString();
+	}
 }
 

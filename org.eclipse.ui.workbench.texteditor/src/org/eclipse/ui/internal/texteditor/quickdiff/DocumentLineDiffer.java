@@ -25,8 +25,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import org.eclipse.jface.util.Assert;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -35,7 +33,6 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -44,15 +41,21 @@ import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
 import org.eclipse.jface.text.source.ILineDifferExtension;
+import org.eclipse.jface.text.source.ILineRange;
+import org.eclipse.jface.text.source.LineRange;
 
-import org.eclipse.ui.progress.IProgressConstants;
-import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
-
+import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
-import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.DocLineComparator;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence.DJBHashFunction;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence.DocEquivalenceComparator;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence.DocumentEquivalenceClass;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence.IHashFunction;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifference;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifferencer;
+import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 
 /**
  * Standard implementation of <code>ILineDiffer</code> as an incremental diff engine. A
@@ -138,8 +141,18 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	private int fOpenConnections;
 	/** The current document being tracked. */
 	private IDocument fLeftDocument;
+	/**
+	 * The equivalence class of the left document.
+	 * @since 3.2
+	 */
+	private DocumentEquivalenceClass fLeftEquivalent;
 	/** The reference document. */
 	private IDocument fRightDocument;
+	/**
+	 * The equivalence class of the right document.
+	 * @since 3.2
+	 */
+	private DocumentEquivalenceClass fRightEquivalent;
 	/**
 	 * Flag to indicate whether a change has been made to the line table and any clients should
 	 * update their presentation.
@@ -407,6 +420,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (fLeftDocument != null) {
 			fLeftDocument.removeDocumentListener(this);
 			fLeftDocument= null;
+			fLeftEquivalent= null;
 		}
 
 		// if there already is a job:
@@ -543,10 +557,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					} while (true);
 				}
 
-
-				// 6:	Do Da Diffing
-				DocLineComparator ref= new DocLineComparator(reference, null);
-				DocLineComparator act= new DocLineComparator(actual, null);
+				IHashFunction hash= new DJBHashFunction(); 
+				fLeftEquivalent= new DocumentEquivalenceClass(reference, hash);
+				IRangeComparator ref= new DocEquivalenceComparator(fLeftEquivalent, null);
+				fRightEquivalent= new DocumentEquivalenceClass(actual, hash);
+				IRangeComparator act= new DocEquivalenceComparator(fRightEquivalent, null);
 				List diffs= RangeDifferencer.findRanges(monitor, ref, act);
 				// 7:	Reset the model to the just gotten differences
 				// 		re-inject stored events to get up to date.
@@ -567,10 +582,14 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 								return Status.CANCEL_STATUS;
 
 							if (fStoredEvents.isEmpty()) {
-								// we are done
+								// we are back in sync with the life documents
 								fInitializationJob= null;
 								fState= SYNCHRONIZED;
 								fLastDifference= null;
+
+								// replace the private documents with the actual
+								fLeftEquivalent.setDocument(left);
+								fRightEquivalent.setDocument(right);
 
 								// inform blocking calls.
 								DocumentLineDiffer.this.notifyAll();
@@ -580,9 +599,22 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 							event= (DocumentEvent) fStoredEvents.remove(0);
 						}
-
+						
 						// access documents non synchronized:
+						IDocument copy= null;
+						if (event.fDocument == right)
+							copy= actual;
+						else if (event.fDocument == left)
+							copy= reference;
+						else
+							Assert.isTrue(false);
+						
+						event.fDocument= copy;
 						handleAboutToBeChanged(event);
+						
+						// inject the event into our private copy
+						actual.replace(event.fOffset, event.fLength, event.fText);
+						
 						handleChanged(event);
 
 					} while (true);
@@ -604,6 +636,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 			private void clearModel() {
 				fLeftDocument= null;
+				fLeftEquivalent= null;
 				fInitializationJob= null;
 				fStoredEvents.clear();
 				fLastDifference= null;
@@ -653,7 +686,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (fIgnoreDocumentEvents)
 			return;
 
-		if (event.getDocument() == fLeftDocument) {
+		if (event.getDocument() == fLeftDocument) { // TODO twoside
 			initialize();
 			return;
 		}
@@ -700,6 +733,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// store size of replaced region (never synchronized -> not a problem)
 		fFirstLine= doc.getLineOfOffset(event.getOffset()); // store change bounding lines
 		fNLines= doc.getLineOfOffset(event.getOffset() + event.getLength()) - fFirstLine + 1;
+		fRightEquivalent.update(event);
 	}
 
 	/*
@@ -712,7 +746,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=44692
 		// don't allow incremental update for changes from the reference document
 		// as this could deadlock
-		if (event.getDocument() == fLeftDocument) {
+		if (event.getDocument() == fLeftDocument) { // TODO twoside
 			initialize();
 			return;
 		}
@@ -852,27 +886,25 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// get the document regions that will be rediffed, take into account that on the
 		// document, the change has already happened.
 		// left (reference) document
-		int leftOffset= left.getLineOffset(consistentBefore.leftStart() + shiftBefore);
-		int leftLine= Math.max(consistentAfter.leftEnd() - 1, 0);
+		int leftStartLine= consistentBefore.leftStart() + shiftBefore;
+		int leftLine= consistentAfter.leftEnd();
 		if (modified == left)
 			leftLine += lineDelta;
-		IRegion leftLastLine= left.getLineInformation(leftLine - shiftAfter);
-		int leftEndOffset= leftLastLine.getOffset() + leftLastLine.getLength();
-		IRegion leftRegion= new Region(leftOffset, leftEndOffset - leftOffset);
-		DocLineComparator reference= new DocLineComparator(left, leftRegion);
+		int leftEndLine= leftLine - shiftAfter;
+		ILineRange leftRange= new LineRange(leftStartLine, leftEndLine - leftStartLine);
+		IRangeComparator reference= new DocEquivalenceComparator(fLeftEquivalent, leftRange);
 
 		// right (actual) document
-		int rightOffset= right.getLineOffset(consistentBefore.rightStart() + shiftBefore);
-		int rightLine= Math.max(consistentAfter.rightEnd() - 1, 0);
+		int rightStartLine= consistentBefore.rightStart() + shiftBefore;
+		int rightLine= consistentAfter.rightEnd();
 		if (modified == right)
 			rightLine += lineDelta;
-		IRegion rightLastLine= right.getLineInformation(rightLine - shiftAfter);
-		int rightEndOffset= rightLastLine.getOffset() + rightLastLine.getLength();
-		IRegion rightRegion= new Region(rightOffset, rightEndOffset - rightOffset);
-		DocLineComparator change= new DocLineComparator(right, rightRegion);
+		int rightEndLine= rightLine - shiftAfter;
+		ILineRange rightRange= new LineRange(rightStartLine, rightEndLine - rightStartLine);
+		IRangeComparator change= new DocEquivalenceComparator(fRightEquivalent, rightRange);
 
 		// put an upper bound to the delay we can afford
-		if (leftLine - shiftAfter - (consistentBefore.leftStart() + shiftBefore) > 50 || rightLine - shiftAfter - (consistentBefore.rightStart() + shiftBefore) > 50) {
+		if (leftLine - shiftAfter - leftStartLine > 50 || rightLine - shiftAfter - rightStartLine > 50) {
 			initialize();
 			return;
 		}
@@ -889,12 +921,10 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 
 		// shift the partial diffs to the absolute document positions
-		int leftShift= consistentBefore.leftStart() + shiftBefore;
-		int rightShift= consistentBefore.rightStart() + shiftBefore;
 		for (Iterator it= diffs.iterator(); it.hasNext();) {
 			RangeDifference d= (RangeDifference) it.next();
-			d.shiftLeft(leftShift);
-			d.shiftRight(rightShift);
+			d.shiftLeft(leftStartLine);
+			d.shiftRight(rightStartLine);
 		}
 
 		// undo optimization shifting
@@ -946,7 +976,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			} else {
 				fRemoved.add(current);
 				it.remove();
-				fUpdateNeeded= true;
+				changed= true;
 			}
 			Assert.isTrue(it.hasNext());
 			current= (RangeDifference) it.next();
@@ -965,7 +995,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		} else {
 			fRemoved.add(current);
 			it.remove();
-			fUpdateNeeded= true;
+			changed= true;
 		}
 
 		// add remaining new diffs
@@ -978,6 +1008,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		// shift the old remaining diffs
 		boolean init= true;
+		int leftShift= 0;
+		int rightShift= 0;
 		while (it.hasNext()) {
 			current= (RangeDifference) it.next();
 			if (init) {
@@ -1290,10 +1322,12 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			if (fLeftDocument != null)
 				fLeftDocument.removeDocumentListener(this);
 			fLeftDocument= null;
+			fLeftEquivalent= null;
 
 			if (fRightDocument != null)
 				fRightDocument.removeDocumentListener(this);
 			fRightDocument= null;
+			fRightEquivalent= null;
 		}
 
 		if (fReferenceProvider != null) {
@@ -1398,6 +1432,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (fLeftDocument != null)
 			fLeftDocument.removeDocumentListener(this);
 		fLeftDocument= null;
+		fLeftEquivalent= null;
 
 		fLastDifference= null;
 		fStoredEvents.clear();
