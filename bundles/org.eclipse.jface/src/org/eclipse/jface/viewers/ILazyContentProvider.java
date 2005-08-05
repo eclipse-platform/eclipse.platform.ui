@@ -14,6 +14,12 @@ package org.eclipse.jface.viewers;
  * The ILazyContentProvider is the content provider
  * for table viewers created using the SWT.VIRTUAL flag that
  * only wish to return thier contents as they are queried.
+ * 
+ * <strong>NOTE:</strong> As the ILazyContentProvider does
+ * not have API for determining the total item count any
+ * changes to the number of items for this object while
+ * require a call to <code>#setItemCount</code> on the 
+ * viewer that uses it.
  */
 public interface ILazyContentProvider extends IContentProvider {
 	/**

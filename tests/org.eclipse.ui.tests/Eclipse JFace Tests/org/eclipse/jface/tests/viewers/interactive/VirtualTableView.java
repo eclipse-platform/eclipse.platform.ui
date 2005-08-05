@@ -60,7 +60,7 @@ public class VirtualTableView extends ViewPart {
 		resetInput.setText("Reset input");
 		resetInput.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e){
-				viewer.setInput(this);
+				resetInput();
 			}
 		});
 		
@@ -132,6 +132,13 @@ public class VirtualTableView extends ViewPart {
 	public void setFocus() {
 		viewer.getTable().setFocus();
 
+	}
+
+	/**
+	 * Reset the input of the view.
+	 */
+	protected void resetInput() {
+		viewer.setInput(this);
 	}
 
 }

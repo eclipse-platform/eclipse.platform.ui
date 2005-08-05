@@ -771,9 +771,11 @@ public class TableViewer extends StructuredViewer {
 		if(!(contentProvider instanceof ILazyContentProvider) 
 				&& (contentProvider instanceof IStructuredContentProvider)) {
 			//Don't cache if the root is null but cache if it is not lazy.
-			if(root != null)
+			if(root != null){
 				virtualManager.cachedElements = 
 					((IStructuredContentProvider) getContentProvider()).getElements(root);
+				getTable().setItemCount(virtualManager.cachedElements.length);
+			}
 		}
 		getTable().clearAll();
 	}
@@ -931,6 +933,8 @@ public class TableViewer extends StructuredViewer {
 	 * the model. Note that there is another method for efficiently processing
 	 * the simultaneous removal of multiple elements.
 	 * </p>
+	 * <strong>NOTE:</strong> removing an object from a virtual
+	 * table will decrement the itemCount.
 	 * 
 	 * @param element
 	 *            the element

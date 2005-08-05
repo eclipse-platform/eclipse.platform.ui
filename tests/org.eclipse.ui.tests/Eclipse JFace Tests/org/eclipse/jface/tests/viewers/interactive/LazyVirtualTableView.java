@@ -55,4 +55,11 @@ public class LazyVirtualTableView extends VirtualTableView {
 		};
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.tests.viewers.interactive.VirtualTableView#resetInput()
+	 */
+	protected void resetInput() {
+		viewer.setItemCount(itemCount);
+		super.resetInput();
+	}
 }
