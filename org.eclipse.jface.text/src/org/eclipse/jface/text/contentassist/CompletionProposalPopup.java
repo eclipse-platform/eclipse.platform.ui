@@ -167,6 +167,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private final Runnable fFilterRunnable= new Runnable() {
 		public void run() {
 
+			if (!fIsFilterPending)
+				return;
+			
 			fIsFilterPending= false;
 
 			Control control= fContentAssistSubjectControlAdapter.getControl();
