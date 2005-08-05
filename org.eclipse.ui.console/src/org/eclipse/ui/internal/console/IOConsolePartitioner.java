@@ -369,7 +369,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 			
 			synchronized(partitions) {
 				if (lastPartition == null || lastPartition.isReadOnly()) {
-					lastPartition = new IOConsolePartition(inputStream, event.fText); //$NON-NLS-1$
+					lastPartition = new IOConsolePartition(inputStream, event.fText); 
 					lastPartition.setOffset(event.fOffset);
 					partitions.add(lastPartition);
 					inputPartitions.add(lastPartition);

@@ -33,7 +33,7 @@ public class EnvironmentVariableResolver implements IDynamicVariableResolver {
 	 */
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		if (argument == null) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugCoreMessages.EnvironmentVariableResolver_0, null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugCoreMessages.EnvironmentVariableResolver_0, null)); 
 		}
 		Map map= DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
         String value= (String) map.get(argument);

@@ -82,7 +82,7 @@ public class ExpressionInformationControl extends PopupInformationControl {
 	 * @param commandId identifier of the command used to dismiss the popup 
 	 */
 	public ExpressionInformationControl(IWorkbenchPage page, IExpression exp, String commandId) {
-		super(page.getWorkbenchWindow().getShell(), DebugUIViewsMessages.ExpressionInformationControl_5, commandId); //$NON-NLS-1$
+		super(page.getWorkbenchWindow().getShell(), DebugUIViewsMessages.ExpressionInformationControl_5, commandId); 
 		this.page = page;
 		this.exp = exp;
 	}

@@ -229,7 +229,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 */
 	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException {
 		if (!supportsMode(mode)) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_9, new String[] {mode, getIdentifier()}), null));  //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_9, new String[] {mode, getIdentifier()}), null));  
 		}
 		if (fDelegates == null) {
 			// initialize delegate table with base modes
@@ -247,7 +247,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 					}
 					return (ILaunchConfigurationDelegate)object;
 				} 
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_Launch_delegate_for__0__does_not_implement_required_interface_ILaunchConfigurationDelegate__1, new String[]{getName()}), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_Launch_delegate_for__0__does_not_implement_required_interface_ILaunchConfigurationDelegate__1, new String[]{getName()}), null)); 
 			} 
 			// contributed modes
 			List contributed = ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getContributedDelegates();
@@ -269,7 +269,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		} else {
 			return delegate;
 		}
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_10, new String[] {getIdentifier(), mode}), null)); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_10, new String[] {getIdentifier(), mode}), null)); 
 	}
 
 	/* (non-Javadoc)

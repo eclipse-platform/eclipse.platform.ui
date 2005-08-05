@@ -79,7 +79,7 @@ public class InputStreamMonitor {
 				public void run() {
 					write();
 				}
-			}, DebugCoreMessages.InputStreamMonitor_label); //$NON-NLS-1$
+			}, DebugCoreMessages.InputStreamMonitor_label); 
             fThread.setDaemon(true);
 			fThread.start();
 		}

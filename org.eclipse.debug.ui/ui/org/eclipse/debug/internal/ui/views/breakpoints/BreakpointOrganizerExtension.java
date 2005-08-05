@@ -151,7 +151,7 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer {
     public String getOthersLabel() {
         String attribute = fElement.getAttribute(ATTR_OTHERS_LABEL);
         if (attribute == null) {
-            return DebugUIViewsMessages.OtherBreakpointOrganizer_0; //$NON-NLS-1$
+            return DebugUIViewsMessages.OtherBreakpointOrganizer_0; 
         }
         return attribute;
     }

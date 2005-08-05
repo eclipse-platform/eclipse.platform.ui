@@ -163,15 +163,15 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		String mode= getMode();
 		String label;
 		if (mode.equals(ILaunchManager.RUN_MODE)) {
-			label= ActionMessages.AbstractLaunchHistoryAction_1; //$NON-NLS-1$
+			label= ActionMessages.AbstractLaunchHistoryAction_1; 
 		} else if (mode.equals(ILaunchManager.DEBUG_MODE)){
-			label= ActionMessages.AbstractLaunchHistoryAction_2; //$NON-NLS-1$
+			label= ActionMessages.AbstractLaunchHistoryAction_2; 
 		} else if (mode.equals(ILaunchManager.PROFILE_MODE)){
-			label= ActionMessages.AbstractLaunchHistoryAction_3; //$NON-NLS-1$
+			label= ActionMessages.AbstractLaunchHistoryAction_3; 
 		} else {
-			label= ActionMessages.AbstractLaunchHistoryAction_4; //$NON-NLS-1$
+			label= ActionMessages.AbstractLaunchHistoryAction_4; 
 		}
-		return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new String[] {label, launchName}); //$NON-NLS-1$
+		return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new String[] {label, launchName}); 
 	}
 	
 	/**

@@ -93,7 +93,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 				String mode = (String)fCombos[i].getData();
 				String def = DebugUIPlugin.getDefault().getPerspectiveManager().getDefaultLaunchPerspective(getLaunchConfigurationType(), mode);
 				if (def == null) {
-					fCombos[i].setText(LaunchConfigurationsMessages.PerspectivesTab_1); //$NON-NLS-1$
+					fCombos[i].setText(LaunchConfigurationsMessages.PerspectivesTab_1); 
 				} else {
 					IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
 					IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId(def);
@@ -185,7 +185,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		
 		Label label = new Label(composite, SWT.LEFT + SWT.WRAP);
 		label.setFont(parent.getFont());
-		label.setText(MessageFormat.format(LaunchConfigurationsMessages.PerspectivesTab_0, new String[]{getLaunchConfigurationType().getName()})); //$NON-NLS-1$
+		label.setText(MessageFormat.format(LaunchConfigurationsMessages.PerspectivesTab_0, new String[]{getLaunchConfigurationType().getName()})); 
 		final GridData finalGd = new GridData();
 		finalGd.horizontalSpan = 2;
 		label.setLayoutData(finalGd);
@@ -212,7 +212,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
 		fPerspectiveLabels = new String[descriptors.length + 1];
-		fPerspectiveLabels[0] = LaunchConfigurationsMessages.PerspectivesTab_1; //$NON-NLS-1$
+		fPerspectiveLabels[0] = LaunchConfigurationsMessages.PerspectivesTab_1; 
 		fPerspectiveIds = new HashMap(descriptors.length);
 		for (int i = 0; i < descriptors.length; i++) {
 			IPerspectiveDescriptor descriptor = descriptors[i];
@@ -231,7 +231,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 			gd.horizontalSpan= 1;
 			label.setLayoutData(gd);
 			String text = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(fModeIds[i]).getLabel();
-			label.setText(MessageFormat.format(LaunchConfigurationsMessages.PerspectivesTab_2, new String[]{text})); //$NON-NLS-1$
+			label.setText(MessageFormat.format(LaunchConfigurationsMessages.PerspectivesTab_2, new String[]{text})); 
 			
 			Combo combo = new Combo(composite, SWT.READ_ONLY);
 			combo.setFont(composite.getFont());
@@ -245,7 +245,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		
 		createVerticalSpacer(composite, 2);
 		
-		fRestoreDefaults = createPushButton(composite, LaunchConfigurationsMessages.PerspectivesTab_3, null); //$NON-NLS-1$
+		fRestoreDefaults = createPushButton(composite, LaunchConfigurationsMessages.PerspectivesTab_3, null); 
 		gd= new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan= 2;
 		gd.horizontalAlignment= SWT.END;
@@ -292,7 +292,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 				}
 				if (descriptor == null) {
 					// select none
-					fCombos[i].setText(LaunchConfigurationsMessages.PerspectivesTab_1); //$NON-NLS-1$
+					fCombos[i].setText(LaunchConfigurationsMessages.PerspectivesTab_1); 
 				} else {
 					fCombos[i].setText(descriptor.getLabel());
 				}
@@ -325,7 +325,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		if (!fInitializing) {
 			String mode = (String)combo.getData();
 			String persp = combo.getText();
-			if (persp.equals(LaunchConfigurationsMessages.PerspectivesTab_1)) { //$NON-NLS-1$
+			if (persp.equals(LaunchConfigurationsMessages.PerspectivesTab_1)) { 
 				persp = IDebugUIConstants.PERSPECTIVE_NONE;
 			} else {
 				persp = (String)fPerspectiveIds.get(persp);
@@ -346,7 +346,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LaunchConfigurationsMessages.PerspectivesTab_7; //$NON-NLS-1$
+		return LaunchConfigurationsMessages.PerspectivesTab_7; 
 	}
 	
 	/**

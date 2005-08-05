@@ -48,8 +48,8 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
      * @param view the varibles view in which this action will appear
      */
 	public ChangeVariableValueAction(VariablesView view) {
-		super(view.getViewer(), ActionMessages.ChangeVariableValue_title); //$NON-NLS-1$
-		setDescription(ActionMessages.ChangeVariableValue_toolTipText); //$NON-NLS-1$
+		super(view.getViewer(), ActionMessages.ChangeVariableValue_title); 
+		setDescription(ActionMessages.ChangeVariableValue_toolTipText); 
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_CHANGE_VARIABLE_VALUE));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CHANGE_VARIABLE_VALUE));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_CHANGE_VARIABLE_VALUE));
@@ -105,10 +105,10 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			name= fVariable.getName();
 			value= fVariable.getValue().getValueString();
 		} catch (DebugException exception) {
-			DebugUIPlugin.errorDialog(shell, ActionMessages.ChangeVariableValue_errorDialogTitle,ActionMessages.ChangeVariableValue_errorDialogMessage, exception);	//$NON-NLS-2$ //$NON-NLS-1$
+			DebugUIPlugin.errorDialog(shell, ActionMessages.ChangeVariableValue_errorDialogTitle,ActionMessages.ChangeVariableValue_errorDialogMessage, exception);	// 
 			return;
 		}
-		ChangeVariableValueInputDialog inputDialog= new ChangeVariableValueInputDialog(shell, ActionMessages.ChangeVariableValue_1, MessageFormat.format(ActionMessages.ChangeVariableValue_2, new String[] {name}), value, new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$
+		ChangeVariableValueInputDialog inputDialog= new ChangeVariableValueInputDialog(shell, ActionMessages.ChangeVariableValue_1, MessageFormat.format(ActionMessages.ChangeVariableValue_2, new String[] {name}), value, new IInputValidator() { // 
 			/**
 			 * Returns an error string if the input is invalid
 			 */
@@ -118,9 +118,9 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 						return null; // null means valid
 					}
 				} catch (DebugException exception) {
-					return ActionMessages.ChangeVariableValue_3; //$NON-NLS-1$
+					return ActionMessages.ChangeVariableValue_3; 
 				}
-				return ActionMessages.ChangeVariableValue_4; //$NON-NLS-1$
+				return ActionMessages.ChangeVariableValue_4; 
 			}
 		});
 		
@@ -132,7 +132,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 				fVariable.setValue(newValue);
 				getSelectionProvider().setSelection(new StructuredSelection(fVariable));
 			} catch (DebugException de) {
-				DebugUIPlugin.errorDialog(shell, ActionMessages.ChangeVariableValue_errorDialogTitle,ActionMessages.ChangeVariableValue_errorDialogMessage, de);	//$NON-NLS-2$ //$NON-NLS-1$
+				DebugUIPlugin.errorDialog(shell, ActionMessages.ChangeVariableValue_errorDialogTitle,ActionMessages.ChangeVariableValue_errorDialogMessage, de);	// 
 			}
 		}
 	}

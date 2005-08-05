@@ -139,7 +139,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	}
 	
 	protected String getTitleAreaTitle() {
-		return LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Edit_launch_configuration_properties_1; //$NON-NLS-1$
+		return LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Edit_launch_configuration_properties_1; 
 	}
 			
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -149,7 +149,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	}
 					
 	protected String getShellTitle() {
-		return MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Properties_for__0__2, new String[]{getLaunchConfiguration().getName()}); //$NON-NLS-1$
+		return MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Properties_for__0__2, new String[]{getLaunchConfiguration().getName()}); 
 	}
 	
 	protected String getHelpContextId() {

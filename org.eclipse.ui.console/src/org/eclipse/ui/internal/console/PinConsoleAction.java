@@ -26,8 +26,8 @@ public class PinConsoleAction extends Action implements IUpdate {
 	 * Constructs a 'pin console' action
 	 */
 	public PinConsoleAction(IConsoleView view) {
-		super(ConsoleMessages.PinConsoleAction_0, IAction.AS_CHECK_BOX); //$NON-NLS-1$
-		setToolTipText(ConsoleMessages.PinConsoleAction_1); //$NON-NLS-1$
+		super(ConsoleMessages.PinConsoleAction_0, IAction.AS_CHECK_BOX); 
+		setToolTipText(ConsoleMessages.PinConsoleAction_1); 
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_PIN));
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_PIN));
 		setHoverImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_LCL_PIN));

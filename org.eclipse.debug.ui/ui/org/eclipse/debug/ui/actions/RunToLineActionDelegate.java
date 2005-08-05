@@ -93,7 +93,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			try {
 				fPartTarget.runToLine(fActivePart, fActivePart.getSite().getSelectionProvider().getSelection(), fTargetElement);
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.RunToLineAction_0, ActionMessages.RunToLineAction_1, e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.RunToLineAction_0, ActionMessages.RunToLineAction_1, e.getStatus()); // 
 			}
 		}
 	}
@@ -132,7 +132,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	public void init(IAction action) {
 		this.fAction = action; 
 		if (action != null) {
-			action.setText(ActionMessages.RunToLineActionDelegate_4); //$NON-NLS-1$
+			action.setText(ActionMessages.RunToLineActionDelegate_4); 
 			action.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_RUN_TO_LINE));
 			action.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RUN_TO_LINE));
 		}

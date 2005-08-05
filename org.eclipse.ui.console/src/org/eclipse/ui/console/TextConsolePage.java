@@ -158,7 +158,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		if (getConsole().getType() != null) {
 		    id = getConsole().getType() + "." + id; //$NON-NLS-1$
 		}
-		fMenuManager= new MenuManager("#ContextMenu", id);  //$NON-NLS-1$//$NON-NLS-2$
+		fMenuManager= new MenuManager("#ContextMenu", id);  //$NON-NLS-1$
 		fMenuManager.setRemoveAllWhenShown(true);
 		fMenuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager m) {
@@ -171,7 +171,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		createActions();
 		configureToolBar(getSite().getActionBars().getToolBarManager());
 		
-		getSite().registerContextMenu(id, fMenuManager, fViewer); //$NON-NLS-1$
+		getSite().registerContextMenu(id, fMenuManager, fViewer); 
 		getSite().setSelectionProvider(fViewer);
 		
 		fViewer.getSelectionProvider().addSelectionChangedListener(selectionChangedListener);

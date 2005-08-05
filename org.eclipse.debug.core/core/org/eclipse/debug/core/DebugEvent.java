@@ -305,9 +305,9 @@ public final class DebugEvent extends EventObject {
 	public DebugEvent(Object eventSource, int kind, int detail) {
 		super(eventSource);
 		if ((kind & (RESUME | SUSPEND | CREATE | TERMINATE | CHANGE | MODEL_SPECIFIC)) == 0)
-			throw new IllegalArgumentException(DebugCoreMessages.DebugEvent_illegal_kind); //$NON-NLS-1$
+			throw new IllegalArgumentException(DebugCoreMessages.DebugEvent_illegal_kind); 
 		if (kind != MODEL_SPECIFIC && detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST |EVALUATION | EVALUATION_IMPLICIT | STATE | CONTENT)) == 0)
-			throw new IllegalArgumentException(DebugCoreMessages.DebugEvent_illegal_detail); //$NON-NLS-1$
+			throw new IllegalArgumentException(DebugCoreMessages.DebugEvent_illegal_detail); 
 		fKind= kind;
 		fDetail= detail;
 	}

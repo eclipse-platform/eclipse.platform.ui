@@ -88,7 +88,7 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
-		return MessageFormat.format(SourceLookupUIMessages.addSourceLocation_editorMessage, new String[] { fLabel }); //$NON-NLS-1$
+		return MessageFormat.format(SourceLookupUIMessages.addSourceLocation_editorMessage, new String[] { fLabel }); 
 	}
 		
 	/**

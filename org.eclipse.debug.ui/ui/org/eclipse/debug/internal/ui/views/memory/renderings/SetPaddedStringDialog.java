@@ -44,7 +44,7 @@ public class SetPaddedStringDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".SetPaddedStrDialog_context"); //$NON-NLS-1$
 		
-		getShell().setText(DebugUIMessages.SetPaddedStringDialog_0); //$NON-NLS-1$
+		getShell().setText(DebugUIMessages.SetPaddedStringDialog_0); 
 		
 		Composite content = (Composite) super.createDialogArea(parent);
 		GridLayout layout = new GridLayout();
@@ -55,7 +55,7 @@ public class SetPaddedStringDialog extends Dialog {
 		content.setLayoutData(contentData);
 		
 		Label textLabel = new Label(content, SWT.NONE);
-		textLabel.setText(DebugUIMessages.SetPaddedStringDialog_1); //$NON-NLS-1$
+		textLabel.setText(DebugUIMessages.SetPaddedStringDialog_1); 
 		
 		GridData textLayout = new GridData();
 		textLabel.setLayoutData(textLayout);
@@ -73,7 +73,7 @@ public class SetPaddedStringDialog extends Dialog {
 		
 		if (str == null || str.length() == 0)
 		{
-			MemoryViewUtil.openError(DebugUIMessages.SetPaddedStringDialog_3, DebugUIMessages.SetPaddedStringDialog_4, null); //$NON-NLS-1$ //$NON-NLS-2$
+			MemoryViewUtil.openError(DebugUIMessages.SetPaddedStringDialog_3, DebugUIMessages.SetPaddedStringDialog_4, null); // 
 			return;
 		}
 			

@@ -34,14 +34,14 @@ public class StepReturnActionDelegate extends StepActionDelegate {
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return ActionMessages.StepReturnActionDelegate_Exceptions_occurred_attempting_to_run_to_return_of_the_frame__2; //$NON-NLS-1$
+		return ActionMessages.StepReturnActionDelegate_Exceptions_occurred_attempting_to_run_to_return_of_the_frame__2; 
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return ActionMessages.StepReturnActionDelegate_Run_to_return_failed__1; //$NON-NLS-1$
+		return ActionMessages.StepReturnActionDelegate_Run_to_return_failed__1; 
 	}
 
 	/**

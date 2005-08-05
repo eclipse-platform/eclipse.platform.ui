@@ -210,20 +210,20 @@ public class DefaultLabelProvider implements ILabelProvider {
 					if (element instanceof IProcess) {
 						IProcess process = (IProcess)element;
 						int exit = process.getExitValue();
-						terminatedMessage= MessageFormat.format(DebugUIMessages.DefaultLabelProvider_16, new String[]{new Integer(exit).toString()}); //$NON-NLS-1$
+						terminatedMessage= MessageFormat.format(DebugUIMessages.DefaultLabelProvider_16, new String[]{new Integer(exit).toString()}); 
 					} else {
-						terminatedMessage= DebugUIMessages.DefaultLabelProvider_1; //$NON-NLS-1$
+						terminatedMessage= DebugUIMessages.DefaultLabelProvider_1; 
 					}
 					label.insert(0, terminatedMessage);
 				}
 			} else if (element instanceof IDisconnect) {
 				if (((IDisconnect) element).isDisconnected()) {
-					label.insert(0, DebugUIMessages.DefaultLabelProvider__disconnected__1); //$NON-NLS-1$
+					label.insert(0, DebugUIMessages.DefaultLabelProvider__disconnected__1); 
 				}
 			}
 		} catch (DebugException e) {
 			DebugUIPlugin.log(e);
-			label.append(DebugUIMessages.DefaultLabelProvider__unknown__1); //$NON-NLS-1$
+			label.append(DebugUIMessages.DefaultLabelProvider__unknown__1); 
 		}
 		return label.toString();
 	}
@@ -243,7 +243,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		if (breakpoint instanceof ILineBreakpoint) {
 			try {
 				int lineNumber = ((ILineBreakpoint)breakpoint).getLineNumber();
-				label.append(MessageFormat.format(DebugUIMessages.DefaultLabelProvider_17, new String[]{Integer.toString(lineNumber)})); //$NON-NLS-1$
+				label.append(MessageFormat.format(DebugUIMessages.DefaultLabelProvider_17, new String[]{Integer.toString(lineNumber)})); 
 			} catch (CoreException e) {
 			}
 		}
@@ -257,7 +257,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				return de.getLabel(object);
 			}
 		}
-		return DebugUIMessages.DefaultLabelProvider__unknown__1; //$NON-NLS-1$
+		return DebugUIMessages.DefaultLabelProvider__unknown__1; 
 	}
 	
 	/**
@@ -265,7 +265,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 */
 	protected String getLaunchText(ILaunch launch) {
 		if (launch.getLaunchConfiguration() == null || (!launch.getLaunchConfiguration().exists() && !launch.getLaunchConfiguration().isWorkingCopy())) {
-			return DebugUIMessages.DefaultLabelProvider__unknown__1; //$NON-NLS-1$
+			return DebugUIMessages.DefaultLabelProvider__unknown__1; 
 		} 
 		// new launch configuration
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
@@ -309,9 +309,9 @@ public class DefaultLabelProvider implements ILabelProvider {
 		StringBuffer result= new StringBuffer();
 		result.append('"').append(expression.getExpressionText()).append('"');
 		if (expression.isPending()) {
-			result.append(DebugUIMessages.DefaultLabelProvider_12); //$NON-NLS-1$
+			result.append(DebugUIMessages.DefaultLabelProvider_12); 
 		} else if (expression.hasErrors()) {
-			result.append(DebugUIMessages.DefaultLabelProvider_13); //$NON-NLS-1$
+			result.append(DebugUIMessages.DefaultLabelProvider_13); 
 		} else {
 			IValue value= expression.getValue();
 			if (value != null) {	
@@ -322,7 +322,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			}
 		}
 		if (!expression.isEnabled()) {
-			result.append(DebugUIMessages.DefaultLabelProvider_15); //$NON-NLS-1$
+			result.append(DebugUIMessages.DefaultLabelProvider_15); 
 		}
 		return result.toString();
 	}
@@ -353,7 +353,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	protected String getMarkerText(IMarker marker) {
 		try {
 			if (marker.exists() && marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
-				return DebugUIMessages.DefaultLabelProvider_Breakpoint_1; //$NON-NLS-1$
+				return DebugUIMessages.DefaultLabelProvider_Breakpoint_1; 
 			}
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);

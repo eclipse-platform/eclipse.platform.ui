@@ -39,23 +39,23 @@ public class ToggleDetailPaneAction extends Action {
 		setOrientation(orientation);
 				
 		if (orientation == IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) {
-			setText(ActionMessages.ToggleDetailPaneAction_1);  //$NON-NLS-1$
-			setToolTipText(ActionMessages.ToggleDetailPaneAction_2);  //$NON-NLS-1$
-			setDescription(ActionMessages.ToggleDetailPaneAction_3);  //$NON-NLS-1$
+			setText(ActionMessages.ToggleDetailPaneAction_1);  
+			setToolTipText(ActionMessages.ToggleDetailPaneAction_2);  
+			setDescription(ActionMessages.ToggleDetailPaneAction_3);  
 			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_UNDER));
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_UNDER));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE_UNDER));
 		} else if (orientation == IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT) {
-			setText(ActionMessages.ToggleDetailPaneAction_4);  //$NON-NLS-1$
-			setToolTipText(ActionMessages.ToggleDetailPaneAction_5);  //$NON-NLS-1$
-			setDescription(ActionMessages.ToggleDetailPaneAction_6);  //$NON-NLS-1$
+			setText(ActionMessages.ToggleDetailPaneAction_4);  
+			setToolTipText(ActionMessages.ToggleDetailPaneAction_5);  
+			setDescription(ActionMessages.ToggleDetailPaneAction_6);  
 			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_RIGHT));
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_RIGHT));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE_RIGHT));
 		} else {
 			setText(hiddenLabel);
-			setToolTipText(ActionMessages.ToggleDetailPaneAction_8);  //$NON-NLS-1$
-			setDescription(ActionMessages.ToggleDetailPaneAction_9);  //$NON-NLS-1$
+			setToolTipText(ActionMessages.ToggleDetailPaneAction_8);  
+			setDescription(ActionMessages.ToggleDetailPaneAction_9);  
 			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_HIDE));
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_HIDE));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE_HIDE));

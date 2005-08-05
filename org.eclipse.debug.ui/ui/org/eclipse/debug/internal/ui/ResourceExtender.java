@@ -73,7 +73,7 @@ public class ResourceExtender extends PropertyTester {
 		        }
         	}
         } else {
-            if (PROPERTY_MATCHES_PATTERN.equals(method)) { //$NON-NLS-1$
+            if (PROPERTY_MATCHES_PATTERN.equals(method)) { 
                 String fileName = resource.getName();
                 String expected = (String) expectedValue;
                 expected = expected.replaceAll("\\.", "\\\\.");  //$NON-NLS-1$//$NON-NLS-2$

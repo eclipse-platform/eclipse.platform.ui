@@ -33,7 +33,7 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	 * Constructs an action to duplicate a launch configuration 
 	 */
 	public DuplicateLaunchConfigurationAction(Viewer viewer, String mode) {
-		super(LaunchConfigurationsMessages.DuplicateLaunchConfigurationAction__Duplicate_1, viewer, mode); //$NON-NLS-1$
+		super(LaunchConfigurationsMessages.DuplicateLaunchConfigurationAction__Duplicate_1, viewer, mode); 
 	}
 
 	/**

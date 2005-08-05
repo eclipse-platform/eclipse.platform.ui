@@ -42,9 +42,9 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	private IAction fAction;
 	
 	public SkipAllBreakpointsAction() {
-		super(ActionMessages.SkipAllBreakpointsAction_0); //$NON-NLS-1$
-		setToolTipText(ActionMessages.SkipAllBreakpointsAction_0); //$NON-NLS-1$
-		setDescription(ActionMessages.SkipAllBreakpointsAction_2); //$NON-NLS-1$
+		super(ActionMessages.SkipAllBreakpointsAction_0); 
+		setToolTipText(ActionMessages.SkipAllBreakpointsAction_0); 
+		setDescription(ActionMessages.SkipAllBreakpointsAction_2); 
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_SKIP_BREAKPOINTS));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.SKIP_ALL_BREAKPOINT_ACTION);
 		updateActionCheckedState();

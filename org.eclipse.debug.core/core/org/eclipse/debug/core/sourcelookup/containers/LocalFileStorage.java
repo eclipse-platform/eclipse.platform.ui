@@ -57,7 +57,7 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 		try {
 			return new FileInputStream(getFile());
 		} catch (IOException e){
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, SourceLookupMessages.LocalFileStorage_0, e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, SourceLookupMessages.LocalFileStorage_0, e)); 
 		}
 	}
 	

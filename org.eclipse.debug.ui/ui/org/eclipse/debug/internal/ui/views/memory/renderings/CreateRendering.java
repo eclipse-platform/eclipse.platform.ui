@@ -162,14 +162,14 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		String memoryBlockLabel = " "; //$NON-NLS-1$
 		memoryBlockLabel = getLabel();
 		
-		fMemoryBlockLabel.setText("  " + DebugUIMessages.CreateRenderingTab_Memory_monitor + memoryBlockLabel + "  "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		fMemoryBlockLabel.setText("  " + DebugUIMessages.CreateRenderingTab_Memory_monitor + memoryBlockLabel + "  "); //$NON-NLS-1$ //$NON-NLS-2$ 
 		GridData textLayout = new GridData();
 		textLayout.verticalAlignment=GridData.CENTER;
 		textLayout.horizontalAlignment=GridData.BEGINNING;
 		fMemoryBlockLabel.setLayoutData(textLayout);
 
 		Label renderingLabel = new Label(fCanvas, SWT.NONE);
-		renderingLabel.setText(DebugUIMessages.CreateRenderingTab_Select_renderings_to_create); //$NON-NLS-1$
+		renderingLabel.setText(DebugUIMessages.CreateRenderingTab_Select_renderings_to_create); 
 		GridData renderingLayout = new GridData();
 		renderingLayout.horizontalAlignment = GridData.BEGINNING;
 		renderingLayout.verticalAlignment = GridData.CENTER;
@@ -197,7 +197,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 			}});
 		
 		Button addButton = new Button(fCanvas, SWT.NONE);
-		addButton.setText(DebugUIMessages.CreateRenderingTab_Add_renderings); //$NON-NLS-1$
+		addButton.setText(DebugUIMessages.CreateRenderingTab_Add_renderings); 
 		GridData buttonLayout = new GridData();
 		buttonLayout.horizontalAlignment = GridData.BEGINNING;
 		buttonLayout.verticalAlignment = GridData.BEGINNING;
@@ -234,8 +234,8 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		{
 			Status stat = new Status(
 					IStatus.ERROR,DebugUIPlugin.getUniqueIdentifier(),
-					DebugException.INTERNAL_ERROR, DebugUIMessages.CreateRenderingTab_0, null); //$NON-NLS-1$
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.CreateRenderingTab_1, DebugUIMessages.CreateRenderingTab_2, stat); //$NON-NLS-1$ //$NON-NLS-2$
+					DebugException.INTERNAL_ERROR, DebugUIMessages.CreateRenderingTab_0, null); 
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.CreateRenderingTab_1, DebugUIMessages.CreateRenderingTab_2, stat); // 
 			return;
 		}
 										
@@ -268,7 +268,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 					}
 				} catch (CoreException e) {
 					
-					MemoryViewUtil.openError(DebugUIMessages.CreateRendering_0, DebugUIMessages.CreateRendering_1, e);  //$NON-NLS-1$ //$NON-NLS-2$
+					MemoryViewUtil.openError(DebugUIMessages.CreateRendering_0, DebugUIMessages.CreateRendering_1, e);  // 
 				}
 			}					
 		}		

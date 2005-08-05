@@ -334,7 +334,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		
 		fMemBlkViewer.addSelectionListener(fSelectionProvider);
 		
-		Control viewerControl = fMemBlkViewer.createViewPane(viewerViewForm, MemoryBlocksTreeViewPane.PANE_ID, DebugUIMessages.MemoryView_Memory_monitors); //$NON-NLS-1$
+		Control viewerControl = fMemBlkViewer.createViewPane(viewerViewForm, MemoryBlocksTreeViewPane.PANE_ID, DebugUIMessages.MemoryView_Memory_monitors); 
 		viewerViewForm.setContent(viewerControl);
 		
 		ISelection selection = fMemBlkViewer.getSelectionProvider().getSelection();
@@ -351,7 +351,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		viewerViewForm.setTopRight(viewerToolbar);
 		
 		Label viewerLabel = new Label(viewerViewForm, SWT.WRAP);
-		viewerLabel.setText(DebugUIMessages.MemoryView_Memory_monitors); //$NON-NLS-1$
+		viewerLabel.setText(DebugUIMessages.MemoryView_Memory_monitors); 
 		viewerViewForm.setTopLeft(viewerLabel);
 	}
 
@@ -359,13 +359,13 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	 * 
 	 */
 	public void createRenderingViewPane(String paneId) {
-		RenderingViewPane renderingPane = new RenderingViewPane(this); //$NON-NLS-1$
+		RenderingViewPane renderingPane = new RenderingViewPane(this); 
 		fViewPanes.put(paneId, renderingPane);
 		ViewForm renderingViewForm = new ViewForm(fSashForm, SWT.FLAT);
 		fViewPaneControls.put(paneId, renderingViewForm);
 		fWeights.add(new Integer(40));
 		
-		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.MemoryView_Memory_renderings); //$NON-NLS-1$
+		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.MemoryView_Memory_renderings); 
 		renderingViewForm.setContent(renderingControl);
 		renderingPane.addSelectionListener(fSelectionProvider);
 		
@@ -526,7 +526,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			}
 		}
 		
-		prefs.setValue(getVisibilityPrefId(), visibleViewPanes.toString());		 //$NON-NLS-1$
+		prefs.setValue(getVisibilityPrefId(), visibleViewPanes.toString());		 
 	}
 	
 	private void loadViewPanesVisibility()

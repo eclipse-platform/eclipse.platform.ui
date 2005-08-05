@@ -228,7 +228,7 @@ public class ExpressionView extends VariablesView {
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getToggleActionLabel()
 	 */
 	protected String getToggleActionLabel() {
-		return VariablesViewMessages.ExpressionView_4; //$NON-NLS-1$
+		return VariablesViewMessages.ExpressionView_4; 
 	}
 
 	/* (non-Javadoc)

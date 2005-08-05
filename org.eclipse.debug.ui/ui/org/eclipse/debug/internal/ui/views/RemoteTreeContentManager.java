@@ -201,7 +201,7 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
     	if (monitor.isCanceled()) {
     		return;
     	}
-        WorkbenchJob updateJob = new WorkbenchJob(DebugUIViewsMessages.IncrementalDeferredTreeContentManager_0) { //$NON-NLS-1$
+        WorkbenchJob updateJob = new WorkbenchJob(DebugUIViewsMessages.IncrementalDeferredTreeContentManager_0) { 
             /*
              * (non-Javadoc)
              * 
@@ -230,7 +230,7 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
      * @param monitor
      */
     protected void prune(final Object parent, final int offset) {
-        WorkbenchJob updateJob = new WorkbenchJob(DebugUIViewsMessages.IncrementalDeferredTreeContentManager_1) { //$NON-NLS-1$
+        WorkbenchJob updateJob = new WorkbenchJob(DebugUIViewsMessages.IncrementalDeferredTreeContentManager_1) { 
             /*
              * (non-Javadoc)
              * 
@@ -263,7 +263,7 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
 	 * @see org.eclipse.ui.progress.DeferredTreeContentManager#getFetchJobName(java.lang.Object, org.eclipse.ui.progress.IDeferredWorkbenchAdapter)
 	 */
 	protected String getFetchJobName(Object parent, IDeferredWorkbenchAdapter adapter) {
-		return DebugUIViewsMessages.RemoteTreeContentManager_0; //$NON-NLS-1$
+		return DebugUIViewsMessages.RemoteTreeContentManager_0; 
 	}
 	
 	

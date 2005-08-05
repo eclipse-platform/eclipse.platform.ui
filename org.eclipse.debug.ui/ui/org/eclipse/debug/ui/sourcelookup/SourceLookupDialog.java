@@ -64,7 +64,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		// create a composite with standard margins and spacing
-		setTitle(SourceLookupUIMessages.manageSourceDialog_description); //$NON-NLS-1$
+		setTitle(SourceLookupUIMessages.manageSourceDialog_description); 
 		setTitleImage(DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_EDIT_SRC_LOC_WIZ));
 		Composite composite = new Composite(parent, SWT.NONE);
 		
@@ -105,7 +105,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
 	 */	
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(SourceLookupUIMessages.manageSourceDialog_title); //$NON-NLS-1$
+		shell.setText(SourceLookupUIMessages.manageSourceDialog_title); 
 	}
 	
 	/* (non-Javadoc)

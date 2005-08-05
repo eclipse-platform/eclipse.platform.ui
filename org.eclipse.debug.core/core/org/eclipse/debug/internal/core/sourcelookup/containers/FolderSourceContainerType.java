@@ -57,7 +57,7 @@ public class FolderSourceContainerType extends AbstractSourceContainerTypeDelega
 			if ("folder".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("path"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(SourceLookupMessages.FolderSourceContainerType_10, null); //$NON-NLS-1$
+					abort(SourceLookupMessages.FolderSourceContainerType_10, null); 
 				}
 				String nest = element.getAttribute("nest"); //$NON-NLS-1$
 				boolean nested = "true".equals(nest); //$NON-NLS-1$
@@ -65,9 +65,9 @@ public class FolderSourceContainerType extends AbstractSourceContainerTypeDelega
 				IFolder folder = workspace.getRoot().getFolder(new Path(string));
 				return new FolderSourceContainer(folder, nested);
 			} 
-			abort(SourceLookupMessages.FolderSourceContainerType_11, null); //$NON-NLS-1$
+			abort(SourceLookupMessages.FolderSourceContainerType_11, null); 
 		}
-		abort(SourceLookupMessages.FolderSourceContainerType_12, null); //$NON-NLS-1$
+		abort(SourceLookupMessages.FolderSourceContainerType_12, null); 
 		return null;
 	}
 }

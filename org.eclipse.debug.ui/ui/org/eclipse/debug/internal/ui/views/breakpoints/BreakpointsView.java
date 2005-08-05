@@ -330,7 +330,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 */
 	private void handleBreakpointChecked(final CheckStateChangedEvent event, final IBreakpoint breakpoint) {
 		final boolean enable= event.getChecked();
-        String jobName = enable ? DebugUIViewsMessages.BreakpointsView_0 : DebugUIViewsMessages.BreakpointsView_1; //$NON-NLS-1$ //$NON-NLS-2$
+        String jobName = enable ? DebugUIViewsMessages.BreakpointsView_0 : DebugUIViewsMessages.BreakpointsView_1; // 
         new Job(jobName) {
             protected IStatus run(IProgressMonitor monitor) {
                 try {
@@ -339,9 +339,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
                 } catch (final CoreException e) {
                     Display.getDefault().asyncExec(new Runnable() {
                         public void run() {
-                            String titleState= enable ? DebugUIViewsMessages.BreakpointsView_6 : DebugUIViewsMessages.BreakpointsView_7; //$NON-NLS-1$ //$NON-NLS-2$
-                            String messageState= enable ? DebugUIViewsMessages.BreakpointsView_8 : DebugUIViewsMessages.BreakpointsView_9;  //$NON-NLS-1$ //$NON-NLS-2$
-                            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_10, new String[] { titleState }), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_11, new String[] { messageState }), e); //$NON-NLS-1$ //$NON-NLS-2$
+                            String titleState= enable ? DebugUIViewsMessages.BreakpointsView_6 : DebugUIViewsMessages.BreakpointsView_7; // 
+                            String messageState= enable ? DebugUIViewsMessages.BreakpointsView_8 : DebugUIViewsMessages.BreakpointsView_9;  // 
+                            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_10, new String[] { titleState }), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_11, new String[] { messageState }), e); // 
                             // If the breakpoint fails to update, reset its check state.
                             getCheckboxViewer().removeCheckStateListener(fCheckListener);
                             event.getCheckable().setChecked(breakpoint, !event.getChecked());
@@ -390,7 +390,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	public void dispose() {
         disposeAction(IWorkbenchActionDefinitionIds.COPY);
         disposeAction(IWorkbenchActionDefinitionIds.PASTE);
-        disposeAction(ACTION_REMOVE_FROM_GROUP); //$NON-NLS-1$
+        disposeAction(ACTION_REMOVE_FROM_GROUP); 
         
 	    if (getCheckboxViewer() != null) {
 	        getCheckboxViewer().removeCheckStateListener(fCheckListener);
@@ -432,7 +432,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         configure(copy, IWorkbenchActionDefinitionIds.COPY, ActionFactory.COPY.getId(), ISharedImages.IMG_TOOL_COPY);
         
         SelectionListenerAction remove = new RemoveFromWorkingSetAction(this);
-        setAction(ACTION_REMOVE_FROM_GROUP, remove); //$NON-NLS-1$
+        setAction(ACTION_REMOVE_FROM_GROUP, remove); 
         getViewer().addSelectionChangedListener(remove);
 	}
 

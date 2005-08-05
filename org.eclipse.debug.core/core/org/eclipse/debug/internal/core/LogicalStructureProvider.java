@@ -34,11 +34,11 @@ public class LogicalStructureProvider {
 		fConfigurationElement= element;
 		fModelIdentifier= fConfigurationElement.getAttribute("modelIdentifier"); //$NON-NLS-1$
 		if (fModelIdentifier == null) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LogicalStructureProvider_0, null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LogicalStructureProvider_0, null)); 
 		}
 		String className= fConfigurationElement.getAttribute("class"); //$NON-NLS-1$
 		if (className == null) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LogicalStructureProvider_1, null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LogicalStructureProvider_1, null)); 
 		}
 	}
 	

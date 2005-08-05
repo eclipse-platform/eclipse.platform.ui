@@ -38,8 +38,8 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 		}
 		
 		Shell shell = DebugUIPlugin.getShell();
-		String title = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0; //$NON-NLS-1$
-		String message = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_1; //$NON-NLS-1$
+		String title = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0; 
+		String message = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_1; 
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
 		
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);

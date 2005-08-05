@@ -27,7 +27,7 @@ public class ResourceSelector implements IArgumentSelector {
 	 */
 	public String selectArgument(IStringVariable variable, Shell shell) {
 		ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(shell, ResourcesPlugin.getWorkspace().getRoot(), IResource.FILE | IResource.FOLDER | IResource.PROJECT);
-		dialog.setTitle(StringSubstitutionMessages.ResourceSelector_0); //$NON-NLS-1$
+		dialog.setTitle(StringSubstitutionMessages.ResourceSelector_0); 
 		if (dialog.open() == Window.OK) {
 			Object[] objects = dialog.getResult();
 			if (objects.length == 1) {

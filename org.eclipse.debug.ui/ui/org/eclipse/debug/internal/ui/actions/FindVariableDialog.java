@@ -110,7 +110,7 @@ public class FindVariableDialog extends Dialog {
             } catch (DebugException e) {
                 DebugUIPlugin.log(e.getStatus());
             }
-            return ActionMessages.FindVariableDialog_0; //$NON-NLS-1$
+            return ActionMessages.FindVariableDialog_0; 
         }
         public void setAttribute(String attribute, Object value) {}
         public void computeDetail(IValue value, IValueDetailListener listener) {}
@@ -139,7 +139,7 @@ public class FindVariableDialog extends Dialog {
         Label label= new Label(composite, SWT.NONE);
         label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         label.setFont(parent.getFont());
-        label.setText(ActionMessages.FindVariableDialog_1); //$NON-NLS-1$
+        label.setText(ActionMessages.FindVariableDialog_1); 
         
         fText= new Text(composite, SWT.SINGLE | SWT.BORDER);
         fText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -153,7 +153,7 @@ public class FindVariableDialog extends Dialog {
         label= new Label(composite, SWT.NONE);
         label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         label.setFont(parent.getFont());
-        label.setText(ActionMessages.FindVariableDialog_2); //$NON-NLS-1$
+        label.setText(ActionMessages.FindVariableDialog_2); 
         
         fViewer= new TableViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
         Table table = fViewer.getTable();
@@ -203,7 +203,7 @@ public class FindVariableDialog extends Dialog {
     }
 
     protected void configureShell(Shell newShell) {
-        newShell.setText(ActionMessages.FindVariableDialog_3); //$NON-NLS-1$
+        newShell.setText(ActionMessages.FindVariableDialog_3); 
         super.configureShell(newShell);
     }
 

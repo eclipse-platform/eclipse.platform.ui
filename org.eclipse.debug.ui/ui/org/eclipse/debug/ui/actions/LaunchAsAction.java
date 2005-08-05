@@ -77,7 +77,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		super();
 		fLaunchGroupIdentifier = launchGroupIdentifier;
 		ILaunchMode launchMode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(getMode());
-		setText(MessageFormat.format(ActionMessages.LaunchAsAction_0, new String[]{launchMode.getLabel()})); //$NON-NLS-1$
+		setText(MessageFormat.format(ActionMessages.LaunchAsAction_0, new String[]{launchMode.getLabel()})); 
 		setMenuCreator(this);
 	}
 	

@@ -37,8 +37,8 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 		public boolean getConfirmation() {
 			IStructuredSelection selection = getStructuredSelection();
 			// Make the user confirm the deletion
-			String dialogMessage = selection.size() > 1 ? LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configurations__1 : LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configuration__2; //$NON-NLS-1$ //$NON-NLS-2$
-			return MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Confirm_Launch_Configuration_Deletion_3, dialogMessage); //$NON-NLS-1$
+			String dialogMessage = selection.size() > 1 ? LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configurations__1 : LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configuration__2; // 
+			return MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Confirm_Launch_Configuration_Deletion_3, dialogMessage); 
 		}
 
 	}
@@ -47,7 +47,7 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	 * Constructs an action to delete launch configuration(s) 
 	 */
 	public DeleteLaunchConfigurationAction(Viewer viewer, String mode) {
-		super(LaunchConfigurationsMessages.DeleteLaunchConfigurationAction_Dele_te_1, viewer, mode); //$NON-NLS-1$
+		super(LaunchConfigurationsMessages.DeleteLaunchConfigurationAction_Dele_te_1, viewer, mode); 
 		setConfirmationRequestor(new Confirmation());
 	}
 

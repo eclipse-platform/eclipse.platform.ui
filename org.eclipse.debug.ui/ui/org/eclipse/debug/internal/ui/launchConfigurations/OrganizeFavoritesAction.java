@@ -25,7 +25,7 @@ public class OrganizeFavoritesAction extends Action {
 	 * @param text
 	 */
 	public OrganizeFavoritesAction(String launchGroupId) {
-		super(LaunchConfigurationsMessages.OrganizeFavoritesAction_0); //$NON-NLS-1$
+		super(LaunchConfigurationsMessages.OrganizeFavoritesAction_0); 
 		fGroupId = launchGroupId;
 	}
 

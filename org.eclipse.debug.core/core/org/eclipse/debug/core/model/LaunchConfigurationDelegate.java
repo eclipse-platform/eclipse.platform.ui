@@ -132,10 +132,10 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		}
 		boolean continueLaunch = true;
 			
-		monitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_6); //$NON-NLS-1$
+		monitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_6); 
 		List errors = new ArrayList();
 		for (int i = 0; i < projects.length; i++) {
-			monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationDelegate_7, new String[]{projects[i].getName()})); //$NON-NLS-1$
+			monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationDelegate_7, new String[]{projects[i].getName()})); 
 			if (existsProblems(projects[i])) {
 				errors.add(projects[i]);
 			}	

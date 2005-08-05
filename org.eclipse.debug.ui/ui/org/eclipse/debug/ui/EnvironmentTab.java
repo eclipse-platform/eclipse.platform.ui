@@ -83,16 +83,16 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	protected TableViewer environmentTable;
 	protected String[] envTableColumnHeaders =
 	{
-		LaunchConfigurationsMessages.EnvironmentTab_Variable_1, //$NON-NLS-1$
-		LaunchConfigurationsMessages.EnvironmentTab_Value_2, //$NON-NLS-1$
+		LaunchConfigurationsMessages.EnvironmentTab_Variable_1, 
+		LaunchConfigurationsMessages.EnvironmentTab_Value_2, 
 	};
 	protected ColumnLayoutData[] envTableColumnLayouts =
 	{
 		new ColumnWeightData(50),
 		new ColumnWeightData(50)
 	};
-	private static final String NAME_LABEL= LaunchConfigurationsMessages.EnvironmentTab_8; //$NON-NLS-1$
-	private static final String VALUE_LABEL= LaunchConfigurationsMessages.EnvironmentTab_9; //$NON-NLS-1$
+	private static final String NAME_LABEL= LaunchConfigurationsMessages.EnvironmentTab_8; 
+	private static final String VALUE_LABEL= LaunchConfigurationsMessages.EnvironmentTab_9; 
 	protected static final String P_VARIABLE = "variable"; //$NON-NLS-1$
 	protected static final String P_VALUE = "value"; //$NON-NLS-1$
 	protected static String[] envTableColumnProperties =
@@ -221,13 +221,13 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		appendReplaceComposite.setLayout(layout);
 		appendReplaceComposite.setFont(parent.getFont());
 		
-		appendEnvironment= createRadioButton(appendReplaceComposite, LaunchConfigurationsMessages.EnvironmentTab_16); //$NON-NLS-1$
+		appendEnvironment= createRadioButton(appendReplaceComposite, LaunchConfigurationsMessages.EnvironmentTab_16); 
 		appendEnvironment.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		replaceEnvironment= createRadioButton(appendReplaceComposite, LaunchConfigurationsMessages.EnvironmentTab_17); //$NON-NLS-1$
+		replaceEnvironment= createRadioButton(appendReplaceComposite, LaunchConfigurationsMessages.EnvironmentTab_17); 
 	}
 	
 	/**
@@ -261,7 +261,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// Create label
 		Label label = new Label(tableComposite, SWT.NONE);
 		label.setFont(font);
-		label.setText(LaunchConfigurationsMessages.EnvironmentTab_Environment_variables_to_set__3); //$NON-NLS-1$
+		label.setText(LaunchConfigurationsMessages.EnvironmentTab_Environment_variables_to_set__3); 
 		// Create table
 		environmentTable = new TableViewer(tableComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		Table table = environmentTable.getTable();
@@ -323,20 +323,20 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
 		createVerticalSpacer(buttonComposite, 1);
 		// Create buttons
-		envAddButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_New_4, null); //$NON-NLS-1$
+		envAddButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_New_4, null); 
 		envAddButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvAddButtonSelected();
 			}
 				});
-		envSelectButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_18, null); //$NON-NLS-1$
+		envSelectButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_18, null); 
 		envSelectButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvSelectButtonSelected();
 			}
 		});
-		envEditButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Edit_5, null); //$NON-NLS-1$
+		envEditButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Edit_5, null); 
 		envEditButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event) {
@@ -344,7 +344,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		envEditButton.setEnabled(false);
-		envRemoveButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Remove_6, null); //$NON-NLS-1$
+		envRemoveButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Remove_6, null); 
 		envRemoveButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event) {
@@ -358,7 +358,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Adds a new environment variable to the table.
 	 */
 	protected void handleEnvAddButtonSelected() {
-		MultipleInputDialog dialog = new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.EnvironmentTab_22); //$NON-NLS-1$
+		MultipleInputDialog dialog = new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.EnvironmentTab_22); 
 		dialog.addTextField(NAME_LABEL, null, false);
 		dialog.addVariablesField(VALUE_LABEL, null, true);
 		
@@ -388,7 +388,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		for (int i = 0; i < items.length; i++) {
 			EnvironmentVariable existingVariable = (EnvironmentVariable) items[i].getData();
 			if (existingVariable.getName().equals(name)) {
-				boolean overWrite= MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.EnvironmentTab_12, MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_13, new String[] {name})); //$NON-NLS-1$ //$NON-NLS-2$
+				boolean overWrite= MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.EnvironmentTab_12, MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_13, new String[] {name})); // 
 				if (!overWrite) {
 					return false;
 				}
@@ -416,8 +416,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			envVariables.remove(var.getName());
 		}
 		
-		ListSelectionDialog dialog = new NativeEnvironmentDialog(getShell(), envVariables, createSelectionDialogContentProvider(), createSelectionDialogLabelProvider(), LaunchConfigurationsMessages.EnvironmentTab_19); //$NON-NLS-1$
-		dialog.setTitle(LaunchConfigurationsMessages.EnvironmentTab_20); //$NON-NLS-1$
+		ListSelectionDialog dialog = new NativeEnvironmentDialog(getShell(), envVariables, createSelectionDialogContentProvider(), createSelectionDialogLabelProvider(), LaunchConfigurationsMessages.EnvironmentTab_19); 
+		dialog.setTitle(LaunchConfigurationsMessages.EnvironmentTab_20); 
 		
 		int button = dialog.open();
 		if (button == Window.OK) {
@@ -517,7 +517,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		}
 		String originalName= var.getName();
 		String value= var.getValue();
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.EnvironmentTab_11); //$NON-NLS-1$
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.EnvironmentTab_11); 
 		dialog.addTextField(NAME_LABEL, originalName, false);
 		dialog.addVariablesField(VALUE_LABEL, value, true);
 		
@@ -613,7 +613,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LaunchConfigurationsMessages.EnvironmentTab_Environment_7; //$NON-NLS-1$
+		return LaunchConfigurationsMessages.EnvironmentTab_Environment_7; 
 	}
 	
 	/* (non-Javadoc)

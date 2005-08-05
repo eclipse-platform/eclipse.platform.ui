@@ -80,9 +80,9 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 		}
 
 		if (promptHint != null) {
-			dialogMessage = MessageFormat.format(StringSubstitutionMessages.PromptExpanderBase_0, new String[] {promptHint}); //$NON-NLS-1$
+			dialogMessage = MessageFormat.format(StringSubstitutionMessages.PromptExpanderBase_0, new String[] {promptHint}); 
 		} else {
-			dialogMessage = StringSubstitutionMessages.PromptExpanderBase_1; //$NON-NLS-1$
+			dialogMessage = StringSubstitutionMessages.PromptExpanderBase_1; 
 		}
 	}
 	
@@ -103,7 +103,7 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 			lastValue = dialogResultString;
 		} else {
 			// dialogResultString == null means prompt was cancelled
-			throw new DebugException(new Status(IStatus.CANCEL, DebugUIPlugin.getUniqueIdentifier(), IStatus.CANCEL, MessageFormat.format(StringSubstitutionMessages.PromptingResolver_0, new String[] { variable.getName() }), null)); //$NON-NLS-1$
+			throw new DebugException(new Status(IStatus.CANCEL, DebugUIPlugin.getUniqueIdentifier(), IStatus.CANCEL, MessageFormat.format(StringSubstitutionMessages.PromptingResolver_0, new String[] { variable.getName() }), null)); 
 		}
 		return value;
 	}

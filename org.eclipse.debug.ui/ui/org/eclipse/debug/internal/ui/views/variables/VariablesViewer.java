@@ -37,7 +37,7 @@ import org.eclipse.ui.progress.UIJob;
 public class VariablesViewer extends RemoteTreeViewer {
     
     private ArrayList fUpdateListeners = new ArrayList();
-    private StateRestorationJob fStateRestorationJob = new StateRestorationJob(DebugUIViewsMessages.RemoteTreeViewer_0); //$NON-NLS-1$
+    private StateRestorationJob fStateRestorationJob = new StateRestorationJob(DebugUIViewsMessages.RemoteTreeViewer_0); 
     private VariablesView fView = null;
     
     private class StateRestorationJob extends UIJob {

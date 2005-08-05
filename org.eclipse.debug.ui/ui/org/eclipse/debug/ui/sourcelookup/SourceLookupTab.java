@@ -90,7 +90,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return SourceLookupUIMessages.sourceTab_tabTitle; //$NON-NLS-1$
+		return SourceLookupUIMessages.sourceTab_tabTitle; 
 	}
 	
 	/* (non-Javadoc)

@@ -34,9 +34,9 @@ public class ShowTypesAction extends Action {
 	private IDebugView fView;
 
 	public ShowTypesAction(IDebugView view) {
-		super(ActionMessages.ShowTypesAction_Show__Type_Names_1, IAction.AS_CHECK_BOX); //$NON-NLS-1$
+		super(ActionMessages.ShowTypesAction_Show__Type_Names_1, IAction.AS_CHECK_BOX); 
 		setView(view);
-		setToolTipText(ActionMessages.ShowTypesAction_Show_Type_Names); //$NON-NLS-1$
+		setToolTipText(ActionMessages.ShowTypesAction_Show_Type_Names); 
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TYPE_NAMES));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES));

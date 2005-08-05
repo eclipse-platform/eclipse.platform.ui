@@ -140,16 +140,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		group.setLayoutData(gd);
-		group.setText(LaunchConfigurationsMessages.CommonTab_0); //$NON-NLS-1$
+		group.setText(LaunchConfigurationsMessages.CommonTab_0); 
 		group.setFont(comp.getFont());
 				
 		setLocalRadioButton(new Button(group, SWT.RADIO));
-		getLocalRadioButton().setText(LaunchConfigurationsMessages.CommonTab_L_ocal_3); //$NON-NLS-1$
+		getLocalRadioButton().setText(LaunchConfigurationsMessages.CommonTab_L_ocal_3); 
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		getLocalRadioButton().setLayoutData(gd);
 		setSharedRadioButton(new Button(group, SWT.RADIO));
-		getSharedRadioButton().setText(LaunchConfigurationsMessages.CommonTab_S_hared_4); //$NON-NLS-1$
+		getSharedRadioButton().setText(LaunchConfigurationsMessages.CommonTab_S_hared_4); 
 		getSharedRadioButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedRadioButtonSelected();
@@ -163,7 +163,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		getSharedLocationText().setLayoutData(gd);
 		getSharedLocationText().addModifyListener(fBasicModifyListener);
 		
-		setSharedLocationButton(createPushButton(group, LaunchConfigurationsMessages.CommonTab__Browse_6, null));	 //$NON-NLS-1$
+		setSharedLocationButton(createPushButton(group, LaunchConfigurationsMessages.CommonTab__Browse_6, null));	 
 		getSharedLocationButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedLocationButtonSelected();
@@ -179,7 +179,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		GridLayout favLayout = new GridLayout();
 		favComp.setLayout(favLayout);
 		
-		favComp.setText(LaunchConfigurationsMessages.CommonTab_Display_in_favorites_menu__10); //$NON-NLS-1$
+		favComp.setText(LaunchConfigurationsMessages.CommonTab_Display_in_favorites_menu__10); 
 		favComp.setFont(parent.getFont());
 		
 		fFavoritesTable = CheckboxTableViewer.newCheckList(favComp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
@@ -208,7 +208,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	
     private void createOutputCaptureComponent(Composite parent) {
         Group group = new Group(parent, SWT.NONE);
-        group.setText(LaunchConfigurationsMessages.CommonTab_4); //$NON-NLS-1$
+        group.setText(LaunchConfigurationsMessages.CommonTab_4); 
         GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
         gd.horizontalSpan = 2;
         group.setLayoutData(gd);
@@ -216,7 +216,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         group.setLayout(layout);
         group.setFont(parent.getFont());
         
-        fConsoleOutput = createCheckButton(group, LaunchConfigurationsMessages.CommonTab_5); //$NON-NLS-1$
+        fConsoleOutput = createCheckButton(group, LaunchConfigurationsMessages.CommonTab_5); 
         gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
         gd.horizontalSpan = 5;
         fConsoleOutput.setLayoutData(gd);
@@ -227,7 +227,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
             }
         });
         
-        fFileOutput = createCheckButton(group, LaunchConfigurationsMessages.CommonTab_6); //$NON-NLS-1$
+        fFileOutput = createCheckButton(group, LaunchConfigurationsMessages.CommonTab_6); 
         fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
         
         fFileText = new Text(group, SWT.SINGLE | SWT.BORDER);
@@ -239,13 +239,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         gd = new GridData(SWT.FILL, SWT.NORMAL, true, false);
         gd.horizontalSpan=2;
         spacer.setLayoutData(gd);
-        fWorkspaceBrowse = createPushButton(group, LaunchConfigurationsMessages.CommonTab_12, null); //$NON-NLS-1$
-        fFileBrowse = createPushButton(group, LaunchConfigurationsMessages.CommonTab_7, null); //$NON-NLS-1$
-        fVariables = createPushButton(group, LaunchConfigurationsMessages.CommonTab_9, null); //$NON-NLS-1$
+        fWorkspaceBrowse = createPushButton(group, LaunchConfigurationsMessages.CommonTab_12, null); 
+        fFileBrowse = createPushButton(group, LaunchConfigurationsMessages.CommonTab_7, null); 
+        fVariables = createPushButton(group, LaunchConfigurationsMessages.CommonTab_9, null); 
 
         spacer = new Label(group,SWT.NONE);
         spacer.setLayoutData(new GridData(SWT.FILL, SWT.NORMAL, false, false));
-        fAppend = createCheckButton(group, LaunchConfigurationsMessages.CommonTab_11); //$NON-NLS-1$
+        fAppend = createCheckButton(group, LaunchConfigurationsMessages.CommonTab_11); 
         gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
         gd.horizontalSpan = 4;
         fAppend.setLayoutData(gd);
@@ -271,8 +271,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         fWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-                dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13); //$NON-NLS-1$
-                dialog.setMessage(LaunchConfigurationsMessages.CommonTab_14); //$NON-NLS-1$
+                dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13); 
+                dialog.setMessage(LaunchConfigurationsMessages.CommonTab_14); 
                 dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
                 dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
                 int buttonId = dialog.open();
@@ -322,19 +322,19 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	    String defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
 	    
 	    Group group = new Group(parent, SWT.NONE);
-	    group.setText(LaunchConfigurationsMessages.CommonTab_1);  //$NON-NLS-1$
+	    group.setText(LaunchConfigurationsMessages.CommonTab_1);  
 	    GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 	    group.setLayoutData(gd);
 	    GridLayout layout = new GridLayout(2, false);
 	    group.setLayout(layout);
 	    group.setFont(parent.getFont());
 	    
-	    fDefaultEncodingButton = createRadioButton(group, MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, new String[]{defaultEncoding})); //$NON-NLS-1$
+	    fDefaultEncodingButton = createRadioButton(group, MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, new String[]{defaultEncoding})); 
 	    gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
 	    gd.horizontalSpan = 2;
 	    fDefaultEncodingButton.setLayoutData(gd);
 	    
-	    fAltEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.CommonTab_3);  //$NON-NLS-1$
+	    fAltEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.CommonTab_3);  
 	    fAltEncodingButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 	    
 	    fEncodingCombo = new Combo(group, SWT.READ_ONLY);
@@ -363,7 +363,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createLaunchInBackgroundComponent(Composite parent) {
-		fLaunchInBackgroundButton = createCheckButton(parent, LaunchConfigurationsMessages.CommonTab_10); //$NON-NLS-1$
+		fLaunchInBackgroundButton = createCheckButton(parent, LaunchConfigurationsMessages.CommonTab_10); 
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fLaunchInBackgroundButton.setLayoutData(data);
@@ -426,7 +426,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
 																	   getWorkspaceRoot(),
 																	   false,
-																	   LaunchConfigurationsMessages.CommonTab_Select_a_location_for_the_launch_configuration_13); //$NON-NLS-1$
+																	   LaunchConfigurationsMessages.CommonTab_Select_a_location_for_the_launch_configuration_13); 
 		
 		String currentContainerString = getSharedLocationText().getText();
 		IContainer currentContainer = getContainer(currentContainerString);
@@ -672,7 +672,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         if(fFileOutput.getSelection()) {
             int len = fFileText.getText().trim().length();
             if (len == 0) {
-                setErrorMessage(LaunchConfigurationsMessages.CommonTab_8); //$NON-NLS-1$
+                setErrorMessage(LaunchConfigurationsMessages.CommonTab_8); 
                 return false;
             }
         }
@@ -684,10 +684,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			String path = fSharedLocationText.getText().trim();
 			IContainer container = getContainer(path);
 			if (container == null || container.equals(ResourcesPlugin.getWorkspace().getRoot())) {
-				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Invalid_shared_configuration_location_14); //$NON-NLS-1$
+				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Invalid_shared_configuration_location_14); 
 				return false;
 			} else if (!container.getProject().isOpen()) {
-				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Cannot_save_launch_configuration_in_a_closed_project__1); //$NON-NLS-1$
+				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Cannot_save_launch_configuration_in_a_closed_project__1); 
 				return false;				
 			}
 		}
@@ -746,7 +746,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LaunchConfigurationsMessages.CommonTab__Common_15; //$NON-NLS-1$
+		return LaunchConfigurationsMessages.CommonTab__Common_15; 
 	}
 	
 	/* (non-Javadoc)

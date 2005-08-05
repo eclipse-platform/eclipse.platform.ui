@@ -56,7 +56,7 @@ public class ProjectSourceContainerType extends AbstractSourceContainerTypeDeleg
 			if ("project".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("name"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(SourceLookupMessages.ProjectSourceContainerType_10, null); //$NON-NLS-1$
+					abort(SourceLookupMessages.ProjectSourceContainerType_10, null); 
 				}
 				String nest = element.getAttribute("referencedProjects"); //$NON-NLS-1$
 				boolean ref = "true".equals(nest); //$NON-NLS-1$
@@ -64,9 +64,9 @@ public class ProjectSourceContainerType extends AbstractSourceContainerTypeDeleg
 				IProject project = workspace.getRoot().getProject(string);
 				return new ProjectSourceContainer(project, ref);
 			} 
-			abort(SourceLookupMessages.ProjectSourceContainerType_11, null); //$NON-NLS-1$
+			abort(SourceLookupMessages.ProjectSourceContainerType_11, null); 
 		}
-		abort(SourceLookupMessages.ProjectSourceContainerType_12, null); //$NON-NLS-1$
+		abort(SourceLookupMessages.ProjectSourceContainerType_12, null); 
 		return null;
 	}
 }

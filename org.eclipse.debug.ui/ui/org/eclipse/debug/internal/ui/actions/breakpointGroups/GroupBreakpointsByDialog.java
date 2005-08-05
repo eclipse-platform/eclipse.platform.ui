@@ -114,7 +114,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 		composite.setFont(parent.getFont());
 		
 		Label label= new Label(composite, SWT.WRAP);
-		label.setText(BreakpointGroupMessages.GroupBreakpointsByDialog_0); //$NON-NLS-1$
+		label.setText(BreakpointGroupMessages.GroupBreakpointsByDialog_0); 
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 3;
         label.setLayoutData(gridData);
@@ -162,7 +162,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 		availableComposite.setLayoutData(gridData);
 
 		Label label= new Label(availableComposite, SWT.WRAP);
-		label.setText(BreakpointGroupMessages.GroupBreakpointsByDialog_1); //$NON-NLS-1$
+		label.setText(BreakpointGroupMessages.GroupBreakpointsByDialog_1); 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
         label.setLayoutData(gridData);
 		
@@ -202,7 +202,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 		selectedComposite.setFont(parent.getFont());
 		
 		Label label= new Label(selectedComposite, SWT.WRAP);
-		label.setText(BreakpointGroupMessages.GroupBreakpointsByDialog_3); //$NON-NLS-1$
+		label.setText(BreakpointGroupMessages.GroupBreakpointsByDialog_3); 
 		gridData = new GridData();
 		gridData.horizontalSpan = 2;
         label.setLayoutData(gridData);
@@ -232,16 +232,16 @@ public class GroupBreakpointsByDialog extends Dialog {
 		buttonComposite.setLayoutData(new GridData());
 		buttonComposite.setFont(parent.getFont());
 		
-		fAddButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_2, null); //$NON-NLS-1$
+		fAddButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_2, null); 
 		fAddButton.addSelectionListener(fSelectionListener);
 		
-		fRemoveButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_4, null); //$NON-NLS-1$
+		fRemoveButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_4, null); 
 		fRemoveButton.addSelectionListener(fSelectionListener);
 		
-		fMoveUpButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_5, null); //$NON-NLS-1$
+		fMoveUpButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_5, null); 
 		fMoveUpButton.addSelectionListener(fSelectionListener);
 		
-		fMoveDownButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_6, null); //$NON-NLS-1$
+		fMoveDownButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_6, null); 
 		fMoveDownButton.addSelectionListener(fSelectionListener);
 	    
 	}
@@ -517,6 +517,6 @@ public class GroupBreakpointsByDialog extends Dialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(BreakpointGroupMessages.GroupBreakpointsByDialog_7); //$NON-NLS-1$
+        shell.setText(BreakpointGroupMessages.GroupBreakpointsByDialog_7); 
     }
 }

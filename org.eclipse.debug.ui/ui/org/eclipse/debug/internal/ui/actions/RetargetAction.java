@@ -95,7 +95,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 			try {
 				performAction(fTargetAdapter, getTargetSelection(), fActivePart);
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(fWindow.getShell(), ActionMessages.RetargetAction_2, ActionMessages.RetargetAction_3, e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(fWindow.getShell(), ActionMessages.RetargetAction_2, ActionMessages.RetargetAction_3, e.getStatus()); // 
 			}
 		}
 	}
@@ -140,8 +140,8 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 		Object adapter  = adaptable.getAdapter(getAdapterClass());
 		if (adapter == null) {
 			IAdapterManager adapterManager = Platform.getAdapterManager();
-			if (adapterManager.hasAdapter(adaptable, getAdapterClass().getName())) { //$NON-NLS-1$
-				fTargetAdapter = adapterManager.loadAdapter(adaptable, getAdapterClass().getName()); //$NON-NLS-1$
+			if (adapterManager.hasAdapter(adaptable, getAdapterClass().getName())) { 
+				fTargetAdapter = adapterManager.loadAdapter(adaptable, getAdapterClass().getName()); 
 			}
 		}
 		return adapter;

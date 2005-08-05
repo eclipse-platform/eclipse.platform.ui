@@ -27,8 +27,8 @@ public class FollowHyperlinkAction extends Action {
 	 * Constructs a follow link action
 	 */
 	public FollowHyperlinkAction(TextConsoleViewer consoleViewer) {
-	    super(ConsoleMessages.FollowHyperlinkAction_0); //$NON-NLS-1$
-		setToolTipText(ConsoleMessages.FollowHyperlinkAction_1); //$NON-NLS-1$
+	    super(ConsoleMessages.FollowHyperlinkAction_0); 
+		setToolTipText(ConsoleMessages.FollowHyperlinkAction_1); 
 		this.viewer = consoleViewer;
 	}
 	

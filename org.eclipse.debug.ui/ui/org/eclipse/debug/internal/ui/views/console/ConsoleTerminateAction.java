@@ -34,10 +34,10 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 	 * Creates a terminate action for the console 
 	 */
 	public ConsoleTerminateAction(ProcessConsole console) {
-		super(ConsoleMessages.ConsoleTerminateAction_0); //$NON-NLS-1$
+		super(ConsoleMessages.ConsoleTerminateAction_0); 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONSOLE_TERMINATE_ACTION);
 		fConsole = console;
-		setToolTipText(ConsoleMessages.ConsoleTerminateAction_1); //$NON-NLS-1$
+		setToolTipText(ConsoleMessages.ConsoleTerminateAction_1); 
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_TERMINATE));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_TERMINATE));

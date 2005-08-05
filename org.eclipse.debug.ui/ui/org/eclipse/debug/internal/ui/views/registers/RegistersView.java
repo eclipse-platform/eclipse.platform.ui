@@ -64,7 +64,7 @@ public class RegistersView extends VariablesView {
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getToggleActionLabel()
 	 */
 	protected String getToggleActionLabel() {
-		return RegistersViewMessages.RegistersView_0; //$NON-NLS-1$
+		return RegistersViewMessages.RegistersView_0; 
 	}
 
 	/**

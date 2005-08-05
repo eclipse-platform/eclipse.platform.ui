@@ -122,7 +122,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
 				throw e;
 			}
-			if (MessageDialog.openQuestion(getViewer().getControl().getShell(), ActionMessages.CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1, ActionMessages.CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2)) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (MessageDialog.openQuestion(getViewer().getControl().getShell(), ActionMessages.CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1, ActionMessages.CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2)) { // 
 				doCopy(clipboard, plainTextTransfer, buffer);
 			}
 		}	

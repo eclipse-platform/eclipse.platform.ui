@@ -323,7 +323,7 @@ public class DebugPlugin extends Plugin {
          * Creates a new event dispatch job.
          */
         public EventDispatchJob() {
-            super(DebugCoreMessages.DebugPlugin_1); //$NON-NLS-1$
+            super(DebugCoreMessages.DebugPlugin_1); 
             setPriority(Job.INTERACTIVE);
             setSystem(true);
         }
@@ -514,7 +514,7 @@ public class DebugPlugin extends Plugin {
 				if (handler instanceof IStatusHandler) {
 					return (IStatusHandler)handler;
 				}
-				invalidStatusHandler(null, MessageFormat.format(DebugCoreMessages.DebugPlugin_Registered_status_handler__0__does_not_implement_required_interface_IStatusHandler__1, new String[] {config.getDeclaringExtension().getUniqueIdentifier()})); //$NON-NLS-1$
+				invalidStatusHandler(null, MessageFormat.format(DebugCoreMessages.DebugPlugin_Registered_status_handler__0__does_not_implement_required_interface_IStatusHandler__1, new String[] {config.getDeclaringExtension().getUniqueIdentifier()})); 
 			} catch (CoreException e) {
 				log(e);
 			}
@@ -749,11 +749,11 @@ public class DebugPlugin extends Plugin {
 				if (p != null) {
 					p.destroy();
 				}
-				Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_Exception_occurred_executing_command_line__1, e); //$NON-NLS-1$
+				Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_Exception_occurred_executing_command_line__1, e); 
 				throw new CoreException(status);
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory			
-			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERR_WORKING_DIRECTORY_NOT_SUPPORTED, DebugCoreMessages.DebugPlugin_Eclipse_runtime_does_not_support_working_directory_2, e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERR_WORKING_DIRECTORY_NOT_SUPPORTED, DebugCoreMessages.DebugPlugin_Eclipse_runtime_does_not_support_working_directory_2, e); 
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 			
 			if (handler != null) {
@@ -921,13 +921,13 @@ public class DebugPlugin extends Plugin {
 			} else {
 				// invalid process factory
 				String badDefiner= infos[i].getNamespace();
-				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_31, new String[] {badDefiner, id}), null)); //$NON-NLS-1$
+				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_31, new String[] {badDefiner, id}), null)); 
 			}
 		}			
 	}
 	
 	private void invalidStatusHandler(Exception e, String id) {
-		log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_Invalid_status_handler_extension___0__2, new String[] {id}), e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_Invalid_status_handler_extension___0__2, new String[] {id}), e)); 
 	}
 	
 	/**
@@ -996,7 +996,7 @@ public class DebugPlugin extends Plugin {
 	class AsynchJob extends Job {
 		
 		public AsynchJob() {
-			super(DebugCoreMessages.DebugPlugin_Debug_async_queue_1); //$NON-NLS-1$
+			super(DebugCoreMessages.DebugPlugin_Debug_async_queue_1); 
 			setPriority(Job.INTERACTIVE);
 			setSystem(true);
 		}
@@ -1019,7 +1019,7 @@ public class DebugPlugin extends Plugin {
 				fRunnables = new Vector(5);
 			}
 			MultiStatus failed = null;
-			monitor.beginTask(DebugCoreMessages.DebugPlugin_Debug_async_queue_1, v.size()); //$NON-NLS-1$
+			monitor.beginTask(DebugCoreMessages.DebugPlugin_Debug_async_queue_1, v.size()); 
 			Iterator iter = v.iterator();
 			while (iter.hasNext() && !fShuttingDown && !monitor.isCanceled()) {
 				Runnable r = (Runnable)iter.next();
@@ -1027,9 +1027,9 @@ public class DebugPlugin extends Plugin {
 					r.run();
 				} catch (Exception e) {
 					if (failed == null) {
-						failed = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_0, null); //$NON-NLS-1$
+						failed = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_0, null); 
 					}
-					failed.add(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_0, e)); //$NON-NLS-1$
+					failed.add(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_0, e)); 
 				}
 				monitor.worked(1);
 			}
@@ -1059,11 +1059,11 @@ public class DebugPlugin extends Plugin {
 		public void handleException(Throwable exception) {
 			switch (fMode) {
 				case NOTIFY_FILTERS:
-					IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_An_exception_occurred_while_filtering_debug_events__3, exception); //$NON-NLS-1$
+					IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_An_exception_occurred_while_filtering_debug_events__3, exception); 
 					log(status);
 					break;
 				case NOTIFY_EVENTS:				
-					status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_An_exception_occurred_while_dispatching_debug_events__2, exception); //$NON-NLS-1$
+					status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_An_exception_occurred_while_dispatching_debug_events__2, exception); 
 					log(status);
 					break;
 			}
@@ -1134,7 +1134,7 @@ public class DebugPlugin extends Plugin {
 		try {
 			return LaunchManager.getDocument();
 		} catch (ParserConfigurationException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_3, e); //$NON-NLS-1$
+			abort(SourceLookupMessages.SourceLookupUtils_3, e); 
 		}		
 		return null;
 	}	
@@ -1151,9 +1151,9 @@ public class DebugPlugin extends Plugin {
 		try {
 			return LaunchManager.serializeDocument(document);
 		} catch (TransformerException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_4, e); //$NON-NLS-1$
+			abort(SourceLookupMessages.SourceLookupUtils_4, e); 
 		} catch (IOException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_5, e); //$NON-NLS-1$
+			abort(SourceLookupMessages.SourceLookupUtils_5, e); 
 		}
 		return null;
 	}
@@ -1176,18 +1176,18 @@ public class DebugPlugin extends Plugin {
 			stream = new ByteArrayInputStream(document.getBytes());
 			root = parser.parse(stream).getDocumentElement();
 		} catch (ParserConfigurationException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_6, e); //$NON-NLS-1$
+			abort(SourceLookupMessages.SourceLookupUtils_6, e); 
 		} catch (FactoryConfigurationError e) {
-			abort(SourceLookupMessages.SourceLookupUtils_7, e); //$NON-NLS-1$
+			abort(SourceLookupMessages.SourceLookupUtils_7, e); 
 		} catch (SAXException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_8, e); //$NON-NLS-1$
+			abort(SourceLookupMessages.SourceLookupUtils_8, e); 
 		} catch (IOException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_9, e); //$NON-NLS-1$
+			abort(SourceLookupMessages.SourceLookupUtils_9, e); 
 		} finally { 
 			try{
 				stream.close();
 			} catch(IOException e) {
-				abort(SourceLookupMessages.SourceLookupUtils_10, e); //$NON-NLS-1$
+				abort(SourceLookupMessages.SourceLookupUtils_10, e); 
 			}
 		}		
 		return root;

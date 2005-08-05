@@ -34,8 +34,8 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 	
 	public AddMemoryRenderingAction(IMemoryRenderingContainer container)
 	{
-		super(DebugUIMessages.AddMemoryRenderingAction_Add_renderings, AS_PUSH_BUTTON, container.getMemoryRenderingSite()); //$NON-NLS-1$
-		setToolTipText(DebugUIMessages.AddMemoryRenderingAction_Add_renderings); //$NON-NLS-1$
+		super(DebugUIMessages.AddMemoryRenderingAction_Add_renderings, AS_PUSH_BUTTON, container.getMemoryRenderingSite()); 
+		setToolTipText(DebugUIMessages.AddMemoryRenderingAction_Add_renderings); 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, DebugUIPlugin.getUniqueIdentifier() + ".AddRenderingContextAction_context"); //$NON-NLS-1$
 		fContainer = container;
 	}

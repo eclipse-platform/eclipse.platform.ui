@@ -70,8 +70,8 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	public StringVariableSelectionDialog(Shell parent) {
 		super(parent, new StringVariableLabelProvider());
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		setTitle(StringSubstitutionMessages.StringVariableSelectionDialog_2); //$NON-NLS-1$
-		setMessage(StringSubstitutionMessages.StringVariableSelectionDialog_3); //$NON-NLS-1$
+		setTitle(StringSubstitutionMessages.StringVariableSelectionDialog_2); 
+		setMessage(StringSubstitutionMessages.StringVariableSelectionDialog_3); 
 		setMultipleSelection(false);
 		setElements(VariablesPlugin.getDefault().getStringVariableManager().getVariables());
 	}
@@ -129,7 +129,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		
 		fEditVariablesButton = new Button(container, SWT.PUSH);
 		fEditVariablesButton.setFont(container.getFont());
-		fEditVariablesButton.setText(StringSubstitutionMessages.StringVariableSelectionDialog_0); //$NON-NLS-1$
+		fEditVariablesButton.setText(StringSubstitutionMessages.StringVariableSelectionDialog_0); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.horizontalSpan = 2;
 		fEditVariablesButton.setLayoutData(gd);
@@ -141,7 +141,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		
 		Label desc = new Label(container, SWT.NONE);
 		desc.setFont(parent.getFont());
-		desc.setText(StringSubstitutionMessages.StringVariableSelectionDialog_6); //$NON-NLS-1$
+		desc.setText(StringSubstitutionMessages.StringVariableSelectionDialog_6); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		desc.setLayoutData(gd);		
@@ -163,7 +163,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		
 		fArgumentButton = new Button(args, SWT.PUSH);
 		fArgumentButton.setFont(parent.getFont());
-		fArgumentButton.setText(StringSubstitutionMessages.StringVariableSelectionDialog_7); //$NON-NLS-1$
+		fArgumentButton.setText(StringSubstitutionMessages.StringVariableSelectionDialog_7); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.widthHint = SWTUtil.getButtonWidthHint(fArgumentButton);
 		fArgumentButton.setLayoutData(gd);
@@ -176,7 +176,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		
 		desc = new Label(container, SWT.NONE);
 		desc.setFont(parent.getFont());
-		desc.setText(StringSubstitutionMessages.StringVariableSelectionDialog_8); //$NON-NLS-1$
+		desc.setText(StringSubstitutionMessages.StringVariableSelectionDialog_8); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		desc.setLayoutData(gd);
@@ -194,7 +194,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	protected void editVariables() {
 		PreferencePage page = new StringVariablePreferencePage();
-		page.setTitle(StringSubstitutionMessages.StringVariableSelectionDialog_1); //$NON-NLS-1$
+		page.setTitle(StringSubstitutionMessages.StringVariableSelectionDialog_1); 
 		final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.ui.StringVariablePreferencePage", page); //$NON-NLS-1$
 		
 		PreferenceManager manager = new PreferenceManager();

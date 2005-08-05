@@ -353,8 +353,8 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 					editor[0] = page.openEditor(input, id, false);
 				} catch (PartInitException e) {
 					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), 
-						DebugUIViewsMessages.LaunchView_Error_1,  //$NON-NLS-1$
-						DebugUIViewsMessages.LaunchView_Exception_occurred_opening_editor_for_debugger__2,  //$NON-NLS-1$
+						DebugUIViewsMessages.LaunchView_Error_1,  
+						DebugUIViewsMessages.LaunchView_Exception_occurred_opening_editor_for_debugger__2,  
 						e);
 				}					
 			}

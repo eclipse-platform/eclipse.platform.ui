@@ -177,7 +177,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 					}
 				}
 			} catch (IllegalStateException e) {
-				abort(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_1, new String[] {getName()}), e); //$NON-NLS-1$
+				abort(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_1, new String[] {getName()}), e); 
 			}
 		}
 		return null;
@@ -192,7 +192,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 		try {
 			return SourceLookupUtils.getZipFile(fArchivePath);
 		} catch (IOException e) {
-			abort(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_2, new String[]{fArchivePath}), e); //$NON-NLS-1$
+			abort(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_2, new String[]{fArchivePath}), e); 
 		}
 		return null;
 	}

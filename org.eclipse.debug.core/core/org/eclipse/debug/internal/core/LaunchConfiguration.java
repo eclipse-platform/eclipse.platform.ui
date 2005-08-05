@@ -99,9 +99,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 
 			String message = null;				
 			if (path == null) {
-				message = DebugCoreMessages.LaunchConfiguration_Invalid_launch_configuration_memento__missing_path_attribute_3; //$NON-NLS-1$
+				message = DebugCoreMessages.LaunchConfiguration_Invalid_launch_configuration_memento__missing_path_attribute_3; 
 			} else if (localString == null) {
-				message = DebugCoreMessages.LaunchConfiguration_Invalid_launch_configuration_memento__missing_local_attribute_4; //$NON-NLS-1$
+				message = DebugCoreMessages.LaunchConfiguration_Invalid_launch_configuration_memento__missing_local_attribute_4; 
 			}
 			if (message != null) {
 				IStatus s = newStatus(message, DebugException.INTERNAL_ERROR, null);
@@ -117,7 +117,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 			setLocation(location);
 			if (location == null) {
-				IStatus s = newStatus(MessageFormat.format(DebugCoreMessages.LaunchConfiguration_Unable_to_restore_location_for_launch_configuration_from_memento___0__1, new String[]{path}), DebugPlugin.INTERNAL_ERROR, null); //$NON-NLS-1$
+				IStatus s = newStatus(MessageFormat.format(DebugCoreMessages.LaunchConfiguration_Unable_to_restore_location_for_launch_configuration_from_memento___0__1, new String[]{path}), DebugPlugin.INTERNAL_ERROR, null); 
 				throw new CoreException(s);
 			}
 			return;
@@ -128,7 +128,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		} catch (IOException e) {
 			ex = e;
 		}
-		IStatus s = newStatus(DebugCoreMessages.LaunchConfiguration_Exception_occurred_parsing_memento_5, DebugException.INTERNAL_ERROR, ex); //$NON-NLS-1$
+		IStatus s = newStatus(DebugCoreMessages.LaunchConfiguration_Exception_occurred_parsing_memento_5, DebugException.INTERNAL_ERROR, ex); 
 		throw new CoreException(s);
 	}
 	
@@ -311,7 +311,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				if (!(getLocation().toFile().delete())) {
 					throw new DebugException(
 						new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfiguration_Failed_to_delete_launch_configuration__1, null) //$NON-NLS-1$
+						 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfiguration_Failed_to_delete_launch_configuration__1, null) 
 					);
 				}
 				// manually update the launch manager cache since there
@@ -385,7 +385,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			IFile file = getFile();
 			if (file == null) {
 				// cannot generate memento - missing file
-				IStatus status = newStatus(MessageFormat.format(DebugCoreMessages.LaunchConfiguration_Unable_to_generate_memento_for__0___shared_file_does_not_exist__1, new String[]{getName()}), DebugException.INTERNAL_ERROR, null); //$NON-NLS-1$
+				IStatus status = newStatus(MessageFormat.format(DebugCoreMessages.LaunchConfiguration_Unable_to_generate_memento_for__0___shared_file_does_not_exist__1, new String[]{getName()}), DebugException.INTERNAL_ERROR, null); 
 				throw new CoreException(status); 
 			}
 			relativePath = getFile().getFullPath();
@@ -406,7 +406,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			e= te;
 		}
 		if (e != null) {
-			IStatus status = newStatus(DebugCoreMessages.LaunchConfiguration_Exception_occurred_creating_launch_configuration_memento_9, DebugException.INTERNAL_ERROR,  e); //$NON-NLS-1$
+			IStatus status = newStatus(DebugCoreMessages.LaunchConfiguration_Exception_occurred_creating_launch_configuration_memento_9, DebugException.INTERNAL_ERROR,  e); 
 			throw new CoreException(status);
 		}
 		//execution will never reach here
@@ -537,7 +537,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			// ensure the launch mode is valid
 			if (!mode.equals(launch.getLaunchMode())) {
 				IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, 
-						MessageFormat.format(DebugCoreMessages.LaunchConfiguration_13, new String[]{mode, launch.getLaunchMode()}), null); //$NON-NLS-1$
+						MessageFormat.format(DebugCoreMessages.LaunchConfiguration_13, new String[]{mode, launch.getLaunchMode()}), null); 
 				throw new CoreException(status);
 			}
 		}

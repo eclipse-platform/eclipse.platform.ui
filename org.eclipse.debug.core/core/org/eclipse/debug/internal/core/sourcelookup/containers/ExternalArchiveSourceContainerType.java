@@ -36,15 +36,15 @@ public class ExternalArchiveSourceContainerType extends AbstractSourceContainerT
 			if ("archive".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("path"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(SourceLookupMessages.ExternalArchiveSourceContainerType_10, null); //$NON-NLS-1$
+					abort(SourceLookupMessages.ExternalArchiveSourceContainerType_10, null); 
 				}
 				String detect = element.getAttribute("detectRoot"); //$NON-NLS-1$
 				boolean auto = "true".equals(detect); //$NON-NLS-1$
 				return new ExternalArchiveSourceContainer(string, auto);
 			} 
-			abort(SourceLookupMessages.ExternalArchiveSourceContainerType_11, null); //$NON-NLS-1$
+			abort(SourceLookupMessages.ExternalArchiveSourceContainerType_11, null); 
 		}
-		abort(SourceLookupMessages.ExternalArchiveSourceContainerType_12, null); //$NON-NLS-1$
+		abort(SourceLookupMessages.ExternalArchiveSourceContainerType_12, null); 
 		return null;
 	}
 	/* (non-Javadoc)

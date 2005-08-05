@@ -97,7 +97,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
         int accel = 1;
         // Add hard-coded action for flat breakpoints list
         IAction action = new GroupBreakpointsAction(null, fView);
-        addAccel(accel, action, BreakpointGroupMessages.GroupBreakpointsByAction_0); //$NON-NLS-1$
+        addAccel(accel, action, BreakpointGroupMessages.GroupBreakpointsByAction_0); 
         accel++;
         action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_VIEW_BREAKPOINTS));
         action.setChecked(none);
@@ -117,7 +117,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 	                    
         // advanced action
         AdvancedGroupBreakpointsByAction advancedAction = new AdvancedGroupBreakpointsByAction(fView);
-        addAccel(accel, advancedAction,BreakpointGroupMessages.GroupBreakpointsByAction_1); //$NON-NLS-1$
+        addAccel(accel, advancedAction,BreakpointGroupMessages.GroupBreakpointsByAction_1); 
         advancedAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_HIERARCHICAL));
         advancedAction.setChecked(advanced);
 		item= new ActionContributionItem(advancedAction);

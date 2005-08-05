@@ -31,7 +31,7 @@ public class LookupSourceAction extends SelectionListenerAction {
 	private IStackFrame frame = null;
 	
 	public LookupSourceAction(LaunchView view) {
-		super(SourceLookupUIMessages.LookupSourceAction_0); //$NON-NLS-1$
+		super(SourceLookupUIMessages.LookupSourceAction_0); 
 		setEnabled(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.LOOKUP_SOURCE_ACTION);
 		fView = view;

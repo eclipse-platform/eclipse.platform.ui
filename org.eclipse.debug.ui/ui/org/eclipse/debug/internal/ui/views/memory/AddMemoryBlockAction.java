@@ -234,7 +234,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 						if (length <= 0)
 						{
 							String message = DebugUIMessages.AddMemoryBlockAction_failed + "\n" + DebugUIMessages.AddMemoryBlockAction_input_invalid; //$NON-NLS-1$
-							MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, message, null); //$NON-NLS-1$
+							MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, message, null); 
 							exit = false;
 							continue;
 						}
@@ -277,7 +277,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				catch(NumberFormatException e2)
 				{
 					String message = DebugUIMessages.AddMemoryBlockAction_failed + "\n" + DebugUIMessages.AddMemoryBlockAction_input_invalid; //$NON-NLS-1$
-					MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, message, null); //$NON-NLS-1$
+					MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, message, null); 
 					exit = false;
 				}
 			}

@@ -130,7 +130,7 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
             getBreakpointManager().setEnabled(false);
             breakpointManager.addBreakpointManagerListener(this);
         }
-        Job job = new Job(ActionMessages.RunToLineHandler_0) { //$NON-NLS-1$
+        Job job = new Job(ActionMessages.RunToLineHandler_0) { 
             protected IStatus run(IProgressMonitor jobMonitor) {
                 if (!jobMonitor.isCanceled()) {
                     fTarget.breakpointAdded(fBreakpoint);

@@ -44,8 +44,8 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 
 	public ConsoleDropDownAction(IConsoleView view) {
 		fView= view;
-		setText(ConsoleMessages.ConsoleDropDownAction_0); //$NON-NLS-1$
-		setToolTipText(ConsoleMessages.ConsoleDropDownAction_1); //$NON-NLS-1$
+		setText(ConsoleMessages.ConsoleDropDownAction_0); 
+		setToolTipText(ConsoleMessages.ConsoleDropDownAction_1); 
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IConsoleConstants.IMG_VIEW_CONSOLE));
 		setMenuCreator(this);
 		ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(this);

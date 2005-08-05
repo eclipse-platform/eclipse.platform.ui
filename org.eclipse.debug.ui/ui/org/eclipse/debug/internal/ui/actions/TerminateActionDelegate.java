@@ -78,14 +78,14 @@ public class TerminateActionDelegate extends AbstractListenerActionDelegate {
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return ActionMessages.TerminateActionDelegate_Exceptions_occurred_attempting_to_terminate__2; //$NON-NLS-1$
+		return ActionMessages.TerminateActionDelegate_Exceptions_occurred_attempting_to_terminate__2; 
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return ActionMessages.TerminateActionDelegate_Terminate_failed__1; //$NON-NLS-1$
+		return ActionMessages.TerminateActionDelegate_Terminate_failed__1; 
 	}
 	
 	/**

@@ -49,10 +49,10 @@ public class CopyBreakpointsAction extends BreakpointSelectionAction {
      * @param clipboard a platform clipboard
      */
     public CopyBreakpointsAction(BreakpointsView view, Clipboard clipboard) {
-        super(BreakpointGroupMessages.CopyBreakpointsAction_0, view); //$NON-NLS-1$
+        super(BreakpointGroupMessages.CopyBreakpointsAction_0, view); 
         Assert.isNotNull(clipboard);
         this.clipboard = clipboard;
-        setToolTipText(BreakpointGroupMessages.CopyBreakpointsAction_1); //$NON-NLS-1$
+        setToolTipText(BreakpointGroupMessages.CopyBreakpointsAction_1); 
     }
 
     /**
@@ -106,8 +106,8 @@ public class CopyBreakpointsAction extends BreakpointSelectionAction {
             if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
                 throw e;
             if (MessageDialog.openQuestion(
-                    getBreakpointsView().getSite().getShell(), BreakpointGroupMessages.CopyBreakpointsAction_2, //$NON-NLS-1$
-                    BreakpointGroupMessages.CopyBreakpointsAction_3)) { //$NON-NLS-1$
+                    getBreakpointsView().getSite().getShell(), BreakpointGroupMessages.CopyBreakpointsAction_2, 
+                    BreakpointGroupMessages.CopyBreakpointsAction_3)) { 
                 setClipboard(selection, text);
             }
         }

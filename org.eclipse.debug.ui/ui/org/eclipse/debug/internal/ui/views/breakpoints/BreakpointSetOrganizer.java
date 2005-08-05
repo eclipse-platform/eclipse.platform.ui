@@ -124,7 +124,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
         IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
         for (int i = 0; i < workingSets.length; i++) {
             IWorkingSet set = workingSets[i];
-            if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) { //$NON-NLS-1$
+            if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) { 
                 clean(set);
             }
         }
@@ -192,7 +192,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
         String name = ""; //$NON-NLS-1$
         if (set != null) {
             // only consider breakpoint working sets
-            if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) { //$NON-NLS-1$
+            if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) { 
                 name = set.getName();
             }
         }

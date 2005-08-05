@@ -69,7 +69,7 @@ public class LogicalStructureType implements ILogicalStructureType {
 	}
 
 	private void missingAttribute(String attrName) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LogicalStructureType_7,new String[]{attrName}), null));		 //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LogicalStructureType_7,new String[]{attrName}), null));		 
 	}
 	
 	/* (non-Javadoc)
@@ -133,7 +133,7 @@ public class LogicalStructureType implements ILogicalStructureType {
 		}
 		String description = getDescription();
 		if (description == null) {
-		    return DebugCoreMessages.LogicalStructureType_0; //$NON-NLS-1$
+		    return DebugCoreMessages.LogicalStructureType_0; 
 		}
 		return description;
 	}

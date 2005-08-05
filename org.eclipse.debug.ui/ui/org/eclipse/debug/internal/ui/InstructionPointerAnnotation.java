@@ -36,7 +36,7 @@ public class InstructionPointerAnnotation extends Annotation {
 	public InstructionPointerAnnotation(IStackFrame stackFrame, boolean isTopFrame) {
 		super(isTopFrame ? IInternalDebugUIConstants.ANN_INSTR_POINTER_CURRENT: IInternalDebugUIConstants.ANN_INSTR_POINTER_SECONDARY,
 						 false,
-						 isTopFrame ? DebugUIMessages.InstructionPointerAnnotation_0 : DebugUIMessages.InstructionPointerAnnotation_1); //$NON-NLS-1$ //$NON-NLS-2$
+						 isTopFrame ? DebugUIMessages.InstructionPointerAnnotation_0 : DebugUIMessages.InstructionPointerAnnotation_1); // 
 		fStackFrame = stackFrame;
 	}
 	

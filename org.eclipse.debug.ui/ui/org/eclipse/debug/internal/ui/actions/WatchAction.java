@@ -78,7 +78,7 @@ public class WatchAction implements IObjectActionDelegate {
 		try {
 			expression = DebugPlugin.getDefault().getExpressionManager().newWatchExpression(variable.getName());
 		} catch (DebugException e) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.WatchAction_0, ActionMessages.WatchAction_1, e); //$NON-NLS-1$ //$NON-NLS-2$
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.WatchAction_0, ActionMessages.WatchAction_1, e); // 
 			return;
 		}
 		DebugPlugin.getDefault().getExpressionManager().addExpression(expression);

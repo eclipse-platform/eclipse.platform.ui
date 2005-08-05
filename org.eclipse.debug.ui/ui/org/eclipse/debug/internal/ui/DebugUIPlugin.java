@@ -558,8 +558,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			// cancelled by user
 			return false;
 		} catch (InvocationTargetException e) {
-			String title= DebugUIMessages.DebugUIPlugin_Run_Debug_1; //$NON-NLS-1$
-			String message= DebugUIMessages.DebugUIPlugin_Build_error__Check_log_for_details__2; //$NON-NLS-1$
+			String title= DebugUIMessages.DebugUIPlugin_Run_Debug_1; 
+			String message= DebugUIMessages.DebugUIPlugin_Build_error__Check_log_for_details__2; 
 			Throwable t = e.getTargetException();
 			errorDialog(getShell(), title, message, t);
 			return false;
@@ -760,7 +760,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			String waitForBuild = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
 
 			if (waitForBuild.equals(MessageDialogWithToggle.PROMPT)) {
-				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.DebugUIPlugin_23, DebugUIMessages.DebugUIPlugin_24, null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.DebugUIPlugin_23, DebugUIMessages.DebugUIPlugin_24, null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); // 
 				
 				switch (dialog.getReturnCode()) {
 					case IDialogConstants.CANCEL_ID:
@@ -845,7 +845,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				return;
 			}
 		}
-		DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, DebugUIMessages.DebugUITools_Exception_occurred_during_launch_2, t); //$NON-NLS-1$ //$NON-NLS-2$		
+		DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, DebugUIMessages.DebugUITools_Exception_occurred_during_launch_2, t); // 		
 	}
 	
 	/**
@@ -871,7 +871,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		String waitPref = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
 		if (wait) { // if there are build jobs running, do we wait or not??
 			if (waitPref.equals(MessageDialogWithToggle.PROMPT)) {
-				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.DebugUIPlugin_23, DebugUIMessages.DebugUIPlugin_24, null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.DebugUIPlugin_23, DebugUIMessages.DebugUIPlugin_24, null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); // 
 				
 				switch (dialog.getReturnCode()) {
 					case IDialogConstants.CANCEL_ID:
@@ -889,12 +889,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		}
 		
 		final boolean waitInJob = wait;
-		Job job = new Job(DebugUIMessages.DebugUITools_3) { //$NON-NLS-1$
+		Job job = new Job(DebugUIMessages.DebugUITools_3) { 
 			public IStatus run(final IProgressMonitor monitor) {
 				try {
 					if(waitInJob) {						
 						StringBuffer buffer= new StringBuffer(configuration.getName());
-						buffer.append(DebugUIMessages.DebugUIPlugin_0); //$NON-NLS-1$
+						buffer.append(DebugUIMessages.DebugUIPlugin_0); 
 						ILaunchConfigurationWorkingCopy workingCopy= configuration.copy(buffer.toString());
 						workingCopy.setAttribute(ATTR_LAUNCHING_CONFIG_HANDLE, configuration.getMemento());
 						final ILaunch pendingLaunch= new PendingLaunch(workingCopy, mode, this);
@@ -956,7 +956,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		IProgressService progressService = workbench.getProgressService();
 
 		job.setPriority(Job.INTERACTIVE);
-		job.setName(DebugUIMessages.DebugUITools_8); //$NON-NLS-1$
+		job.setName(DebugUIMessages.DebugUITools_8); 
 		if (wait) {
 			progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job); 
 		}

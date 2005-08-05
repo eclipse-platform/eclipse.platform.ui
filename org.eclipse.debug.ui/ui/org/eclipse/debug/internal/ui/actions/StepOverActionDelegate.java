@@ -34,14 +34,14 @@ public class StepOverActionDelegate extends StepActionDelegate {
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return ActionMessages.StepOverActionDelegate_Exceptions_occurred_attempting_to_step_over_the_frame_2; //$NON-NLS-1$
+		return ActionMessages.StepOverActionDelegate_Exceptions_occurred_attempting_to_step_over_the_frame_2; 
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return ActionMessages.StepOverActionDelegate_Step_over_failed_1; //$NON-NLS-1$
+		return ActionMessages.StepOverActionDelegate_Step_over_failed_1; 
 	}
 
 	/**

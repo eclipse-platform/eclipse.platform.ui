@@ -230,7 +230,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	public void terminate() throws DebugException {
 		MultiStatus status= 
-			new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugCoreMessages.Launch_terminate_failed, null); //$NON-NLS-1$
+			new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugCoreMessages.Launch_terminate_failed, null); 
 		
 		// terminate the system processes
 		IProcess[] processes = getProcesses();

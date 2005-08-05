@@ -83,7 +83,7 @@ public class LaunchConfigurationPresentationManager {
 			if (typeId == null) {
 				IExtension ext = groups[i].getDeclaringExtension();
 				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_Launch_configuration_tab_group_extension__0__does_not_specify_launch_configuration_type_1, (new String[] {ext.getUniqueIdentifier()})), null); //$NON-NLS-1$
+					 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_Launch_configuration_tab_group_extension__0__does_not_specify_launch_configuration_type_1, (new String[] {ext.getUniqueIdentifier()})), null); 
 					DebugUIPlugin.log(status);
 			} else {
 				// verify it references a valid launch configuration type
@@ -91,7 +91,7 @@ public class LaunchConfigurationPresentationManager {
 				if (lct == null) {
 					IExtension ext = groups[i].getDeclaringExtension();
 					IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_Launch_configuration_tab_group_extension__0__refers_to_non_existant_launch_configuration_type__1__2, (new String[] {ext.getUniqueIdentifier(), typeId})), null); //$NON-NLS-1$
+					 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_Launch_configuration_tab_group_extension__0__refers_to_non_existant_launch_configuration_type__1__2, (new String[] {ext.getUniqueIdentifier(), typeId})), null); 
 					DebugUIPlugin.log(status);
 				}
 			}
@@ -129,7 +129,7 @@ public class LaunchConfigurationPresentationManager {
 		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), mode);
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
-			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {type.getIdentifier()})), null);  //$NON-NLS-1$
+			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {type.getIdentifier()})), null);  
 			 throw new CoreException(status);
 		} 
 		return ext.newTabGroup();		
@@ -173,7 +173,7 @@ public class LaunchConfigurationPresentationManager {
 		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), mode);
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
-			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {type.getIdentifier()})), null); //$NON-NLS-1$
+			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {type.getIdentifier()})), null); 
 			 throw new CoreException(status);
 		} 
 		return ext.getHelpContextId();		

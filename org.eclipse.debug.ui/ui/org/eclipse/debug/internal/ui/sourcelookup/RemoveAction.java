@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class RemoveAction extends SourceContainerAction {
 	public RemoveAction() {
-		super(SourceLookupUIMessages.sourceTab_removeButton); //$NON-NLS-1$
+		super(SourceLookupUIMessages.sourceTab_removeButton); 
 	}
 	/**
 	 * Removes all selected entries.

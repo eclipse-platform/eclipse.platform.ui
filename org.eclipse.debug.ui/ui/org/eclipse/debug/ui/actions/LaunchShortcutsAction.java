@@ -87,7 +87,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		super();
 		fGroup = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(launchGroupIdentifier);
 		String label = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(fGroup.getMode()).getLabel();
-		setText(MessageFormat.format(ActionMessages.LaunchShortcutsAction_0, new String[] { label })); //$NON-NLS-1$
+		setText(MessageFormat.format(ActionMessages.LaunchShortcutsAction_0, new String[] { label })); 
 		setMenuCreator(this);
 		setEnabled(existsConfigTypesForMode());
 	}
@@ -207,7 +207,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		}
 		if (accelerator == 1) {
 			// No shortcuts added. Add "none available" action.
-			IAction action= new Action(ActionMessages.LaunchShortcutsAction_1) {}; //$NON-NLS-1$
+			IAction action= new Action(ActionMessages.LaunchShortcutsAction_1) {}; 
 			action.setEnabled(false);
 			ActionContributionItem item= new ActionContributionItem(action);
 			item.fill(fCreatedMenu, -1);

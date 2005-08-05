@@ -36,7 +36,7 @@ public class DynamicVariable extends StringVariable implements IDynamicVariable 
 		if (!supportsArgument()) {
 			// check for an argument - not supported
 			if (argument != null && argument.length() > 0) {
-				throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.DynamicVariable_0, new String[]{argument, getName()}), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.DynamicVariable_0, new String[]{argument, getName()}), null)); 
 			}
 		}
 		if (fResolver == null) {

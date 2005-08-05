@@ -192,7 +192,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				public void run() {
 					read();
 				}
-			}, DebugCoreMessages.OutputStreamMonitor_label); //$NON-NLS-1$
+			}, DebugCoreMessages.OutputStreamMonitor_label); 
             fThread.setDaemon(true);
             fThread.setPriority(Thread.MIN_PRIORITY);
 			fThread.start();

@@ -347,7 +347,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 			try {
 				fDelegate = (ILaunchShortcut)fConfig.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.LaunchShortcutExtension_Error_4, LaunchConfigurationsMessages.LaunchShortcutExtension_Unable_to_use_launch_shortcut_5, e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.LaunchShortcutExtension_Error_4, LaunchConfigurationsMessages.LaunchShortcutExtension_Unable_to_use_launch_shortcut_5, e.getStatus()); // 
 			}
 		}
 		return fDelegate;

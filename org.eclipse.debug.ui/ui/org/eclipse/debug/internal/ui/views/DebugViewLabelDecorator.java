@@ -116,7 +116,7 @@ public class DebugViewLabelDecorator extends LabelProvider implements ILabelDeco
 	public void computeText(Object element) {
 		synchronized(this) {
 			if (fNextJob == null) {
-				fNextJob= new LabelJob(DebugUIViewsMessages.DebugViewLabelDecorator_0, fPresentation); //$NON-NLS-1$
+				fNextJob= new LabelJob(DebugUIViewsMessages.DebugViewLabelDecorator_0, fPresentation); 
 			}
 			fNextJob.computeText(element);
 		}

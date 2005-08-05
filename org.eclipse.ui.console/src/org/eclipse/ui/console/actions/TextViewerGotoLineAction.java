@@ -45,10 +45,10 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 			try {
 				int i= Integer.parseInt(input);
 				if (i <= 0 || fLastLine < i)
-					return ConsoleMessages.TextViewerGotoLineAction_Line_number_out_of_range_1; //$NON-NLS-1$
+					return ConsoleMessages.TextViewerGotoLineAction_Line_number_out_of_range_1; 
 
 			} catch (NumberFormatException x) {
-				return ConsoleMessages.TextViewerGotoLineAction_Not_a_number_2; //$NON-NLS-1$
+				return ConsoleMessages.TextViewerGotoLineAction_Not_a_number_2; 
 			}
 
 			return null;
@@ -64,9 +64,9 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 	public TextViewerGotoLineAction(ITextViewer viewer) {
 		super(viewer, -1);
 		fTextViewer= viewer;
-		setText(ConsoleMessages.TextViewerGotoLineAction_Go_to__Line____Ctrl_L_4); //$NON-NLS-1$
-		setToolTipText(ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1); //$NON-NLS-1$
-		setDescription(ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1);		 //$NON-NLS-1$
+		setText(ConsoleMessages.TextViewerGotoLineAction_Go_to__Line____Ctrl_L_4); 
+		setToolTipText(ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1); 
+		setDescription(ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1);		 
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 			fTextViewer.getTextWidget().setSelection(start, start + length);
 			fTextViewer.revealRange(start, length);
 		} catch (BadLocationException x) {
-			ConsolePlugin.errorDialog(fTextViewer.getTextWidget().getShell(), ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1, ConsoleMessages.TextViewerGotoLineAction_Exceptions_occurred_attempt_to_go_to_line_2, x); //$NON-NLS-1$ //$NON-NLS-2$
+			ConsolePlugin.errorDialog(fTextViewer.getTextWidget().getShell(), ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1, ConsoleMessages.TextViewerGotoLineAction_Exceptions_occurred_attempt_to_go_to_line_2, x); // 
 		}
 	}
 
@@ -100,8 +100,8 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 			IDocument document= fTextViewer.getDocument();
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
 			int startLine= selection == null ? 1 : fTextViewer.getTextWidget().getLineAtOffset(selection.x) + 1;
-			String title= ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1; //$NON-NLS-1$
-			String message= MessageFormat.format(ConsoleMessages.TextViewerGotoLineAction_Enter_line_number__8, new Object[] {new Integer(fLastLine)}); //$NON-NLS-1$
+			String title= ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1; 
+			String message= MessageFormat.format(ConsoleMessages.TextViewerGotoLineAction_Enter_line_number__8, new Object[] {new Integer(fLastLine)}); 
 			String value= Integer.toString(startLine);
 			Shell activeShell= fTextViewer.getTextWidget().getShell();
 			InputDialog d= new InputDialog(activeShell, title, message, value, new NumberValidator());
@@ -110,11 +110,11 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 					int line= Integer.parseInt(d.getValue());
 					gotoLine(line - 1);
 				} catch (NumberFormatException x) {
-					ConsolePlugin.errorDialog(activeShell, ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1, ConsoleMessages.TextViewerGotoLineAction_Exceptions_occurred_attempt_to_go_to_line_2, x); //$NON-NLS-1$ //$NON-NLS-2$
+					ConsolePlugin.errorDialog(activeShell, ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1, ConsoleMessages.TextViewerGotoLineAction_Exceptions_occurred_attempt_to_go_to_line_2, x); // 
 				}
 			}
 		} catch (BadLocationException x) {
-			ConsolePlugin.errorDialog(fTextViewer.getTextWidget().getShell(), ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1, ConsoleMessages.TextViewerGotoLineAction_Exceptions_occurred_attempt_to_go_to_line_2, x); //$NON-NLS-1$ //$NON-NLS-2$
+			ConsolePlugin.errorDialog(fTextViewer.getTextWidget().getShell(), ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1, ConsoleMessages.TextViewerGotoLineAction_Exceptions_occurred_attempt_to_go_to_line_2, x); // 
 			return;
 		}
 	}

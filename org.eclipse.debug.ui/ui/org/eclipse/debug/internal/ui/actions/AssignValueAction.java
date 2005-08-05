@@ -40,7 +40,7 @@ public class AssignValueAction extends SelectionProviderAction {
 	private ISourceViewer detailsViewer;
 
 	public AssignValueAction(VariablesView varView, ISourceViewer detailViewer) {
-		super(varView.getViewer(), ActionMessages.AssignValueAction_1); //$NON-NLS-1$
+		super(varView.getViewer(), ActionMessages.AssignValueAction_1); 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.ASSIGN_VALUE_ACTION);
 		variablesView = varView;
 		detailsViewer = detailViewer;
@@ -101,7 +101,7 @@ public class AssignValueAction extends SelectionProviderAction {
 				variable.setValue(value);
 			} else {
 			    if (activeShell != null) {
-			        DebugUIPlugin.errorDialog(activeShell, ActionMessages.AssignValueAction_2, MessageFormat.format(ActionMessages.AssignValueAction_3, new String[] {value, variable.getName()}), new StatusInfo(IStatus.ERROR, ActionMessages.AssignValueAction_4));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			        DebugUIPlugin.errorDialog(activeShell, ActionMessages.AssignValueAction_2, MessageFormat.format(ActionMessages.AssignValueAction_3, new String[] {value, variable.getName()}), new StatusInfo(IStatus.ERROR, ActionMessages.AssignValueAction_4));  //  
 			    }
 			}
 		} catch (DebugException e) {

@@ -82,7 +82,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		
 		Label viewerLabel = new Label(comp, SWT.LEFT);
 		viewerLabel.setText(
-				SourceLookupUIMessages.sourceTab_lookupLabel); //$NON-NLS-1$
+				SourceLookupUIMessages.sourceTab_lookupLabel); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		viewerLabel.setLayoutData(gd);
@@ -115,7 +115,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		
 		fDuplicatesButton = new Button(comp, SWT.CHECK);
 		fDuplicatesButton.setText(
-				SourceLookupUIMessages.sourceTab_searchDuplicateLabel); //$NON-NLS-1$
+				SourceLookupUIMessages.sourceTab_searchDuplicateLabel); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fDuplicatesButton.setLayoutData(gd);
@@ -264,7 +264,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		}	
 		
 		if(type == null) {
-			setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_2); //$NON-NLS-1$
+			setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_2); 
 			return;
 		}
 		
@@ -276,12 +276,12 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 				memento = null; // don't use old memento
 				type = configuration.getType().getSourceLocatorId();
 				if(type == null) {
-					setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_2); //$NON-NLS-1$
+					setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_2); 
 					return;
 				}
 				locator = getLaunchManager().newSourceLocator(type);
 				if (!(locator instanceof AbstractSourceLookupDirector)) {
-					setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_2); //$NON-NLS-1$
+					setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_2); 
 					return;
 				}
 				migration = true;
@@ -344,13 +344,13 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 					workingCopy = fLocator.getLaunchConfiguration().getWorkingCopy();
 				}catch(CoreException e){ 
 					DebugUIPlugin.log(e);
-					setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_1); //$NON-NLS-1$
+					setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_1); 
 					return;
 				}
 			}
 			else workingCopy = configuration;	
 			if(workingCopy == null) {
-				DebugUIPlugin.logErrorMessage(SourceLookupUIMessages.sourceLookupPanel_1); //$NON-NLS-1$
+				DebugUIPlugin.logErrorMessage(SourceLookupUIMessages.sourceLookupPanel_1); 
 				return;
 			}
 			//set new values in director so memento returned is correct
@@ -371,7 +371,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 				setDirty(false);
 			}catch(CoreException e){
 				DebugUIPlugin.log(e);
-				setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_1); //$NON-NLS-1$
+				setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_1); 
 			}
 			
 		}			
@@ -405,7 +405,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return SourceLookupUIMessages.sourceTab_tabTitle; //$NON-NLS-1$
+		return SourceLookupUIMessages.sourceTab_tabTitle; 
 	}
 	
 	/* (non-Javadoc)

@@ -58,7 +58,7 @@ public class CodePagesPrefDialog extends Dialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 	
-		getShell().setText(DebugUIMessages.CodePagesPrefDialog_1); //$NON-NLS-1$
+		getShell().setText(DebugUIMessages.CodePagesPrefDialog_1); 
 		setShellStyle(SWT.RESIZE);
 		
 		Composite canvas = new Composite(parent, SWT.NONE);
@@ -71,7 +71,7 @@ public class CodePagesPrefDialog extends Dialog {
 		canvas.setLayoutData(spec2);
 
 		Label textLabel = new Label(canvas, SWT.WRAP);
-		textLabel.setText(DebugUIMessages.CodePagesPrefDialog_2); //$NON-NLS-1$
+		textLabel.setText(DebugUIMessages.CodePagesPrefDialog_2); 
 		GridData textLayout = new GridData();
 		textLayout.widthHint = 280;
 		textLayout.horizontalSpan = 2;
@@ -88,11 +88,11 @@ public class CodePagesPrefDialog extends Dialog {
 		
 		String codepage = DebugUITools.getPreferenceStore().getString(IDebugUIConstants.PREF_DEFAULT_ASCII_CODE_PAGE);
 		if (codepage == null || codepage.length() == 0)
-			codepage = IDebugPreferenceConstants.DEFAULT_ASCII_CP; //$NON-NLS-1$
+			codepage = IDebugPreferenceConstants.DEFAULT_ASCII_CP; 
 		fAsciiCodePage.setText(codepage);
 		
 		Label ebcdicLabel = new Label(canvas, SWT.WRAP);
-		ebcdicLabel.setText(DebugUIMessages.CodePagesPrefDialog_4); //$NON-NLS-1$
+		ebcdicLabel.setText(DebugUIMessages.CodePagesPrefDialog_4); 
 		GridData ebcdicLayout = new GridData();
 		ebcdicLayout.widthHint = 280;
 		ebcdicLayout.horizontalSpan = 2;
@@ -112,7 +112,7 @@ public class CodePagesPrefDialog extends Dialog {
 		fEbcdicCodePage.setText(codepage);
 		
 		if (codepage == null || codepage.length() == 0)
-			codepage = IDebugPreferenceConstants.DEFAULT_EBCDIC_CP; //$NON-NLS-1$	
+			codepage = IDebugPreferenceConstants.DEFAULT_EBCDIC_CP; //	
 		
 		return canvas;
 	}
@@ -127,8 +127,8 @@ public class CodePagesPrefDialog extends Dialog {
 			Shell shell = DebugUIPlugin.getShell();
 			if (shell != null)
 			{
-				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.CodePagesPrefDialog_0, e); //$NON-NLS-1$
-				ErrorDialog.openError(shell, DebugUIMessages.CodePagesPrefDialog_6,  DebugUIMessages.CodePagesPrefDialog_7, status);		 //$NON-NLS-1$ //$NON-NLS-2$
+				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.CodePagesPrefDialog_0, e); 
+				ErrorDialog.openError(shell, DebugUIMessages.CodePagesPrefDialog_6,  DebugUIMessages.CodePagesPrefDialog_7, status);		 // 
 			}
 			return;
 		}
@@ -141,8 +141,8 @@ public class CodePagesPrefDialog extends Dialog {
 			Shell shell = DebugUIPlugin.getShell();
 			if (shell != null)
 			{
-				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.CodePagesPrefDialog_0, e); //$NON-NLS-1$
-				ErrorDialog.openError(shell, DebugUIMessages.CodePagesPrefDialog_8,  DebugUIMessages.CodePagesPrefDialog_9, status);		 //$NON-NLS-1$ //$NON-NLS-2$
+				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.CodePagesPrefDialog_0, e); 
+				ErrorDialog.openError(shell, DebugUIMessages.CodePagesPrefDialog_8,  DebugUIMessages.CodePagesPrefDialog_9, status);		 // 
 			}
 			return;
 		}
@@ -159,7 +159,7 @@ public class CodePagesPrefDialog extends Dialog {
 	 */
 	
 	protected void createButtonsForButtonBar(Composite parent) {
-		Button defaultButton = createButton(parent, 3, DebugUIMessages.CodePagesPrefDialog_13, false); //$NON-NLS-1$
+		Button defaultButton = createButton(parent, 3, DebugUIMessages.CodePagesPrefDialog_13, false); 
 		defaultButton.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {

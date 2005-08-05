@@ -47,7 +47,7 @@ public class ResourceResolver implements IDynamicVariableResolver {
 				return translateToValue(resource, variable);
 			}
 		}
-		abort(MessageFormat.format(StringSubstitutionMessages.ResourceResolver_6, new String[]{getReferenceExpression(variable, argument)}), null);				 //$NON-NLS-1$
+		abort(MessageFormat.format(StringSubstitutionMessages.ResourceResolver_6, new String[]{getReferenceExpression(variable, argument)}), null);				 
 		return null;
 	}
 	
@@ -114,7 +114,7 @@ public class ResourceResolver implements IDynamicVariableResolver {
 	protected IResource getSelectedResource(IDynamicVariable variable) throws CoreException {
 		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
 		if (resource == null) {
-			abort(MessageFormat.format(StringSubstitutionMessages.ResourceResolver_7, new String[]{getReferenceExpression(variable, null)}), null); //$NON-NLS-1$
+			abort(MessageFormat.format(StringSubstitutionMessages.ResourceResolver_7, new String[]{getReferenceExpression(variable, null)}), null); 
 		}
 		return resource;	
 	}
@@ -136,7 +136,7 @@ public class ResourceResolver implements IDynamicVariableResolver {
 		} else if (name.endsWith("_name")) { //$NON-NLS-1$
 			return resource.getName();
 		}
-		abort(MessageFormat.format(StringSubstitutionMessages.ResourceResolver_8, new String[]{getReferenceExpression(variable, null)}), null); //$NON-NLS-1$
+		abort(MessageFormat.format(StringSubstitutionMessages.ResourceResolver_8, new String[]{getReferenceExpression(variable, null)}), null); 
 		return null;
 	}
 

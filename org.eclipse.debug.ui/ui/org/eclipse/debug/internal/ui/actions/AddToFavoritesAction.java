@@ -81,7 +81,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 					setGroup(group);
 					setLaunchConfiguration(configuration);
 					setMode(launch.getLaunchMode());				
-					setText(MessageFormat.format(ActionMessages.AddToFavoritesAction_1, new String[]{DebugUIPlugin.removeAccelerators(getGroup().getLabel())})); //$NON-NLS-1$
+					setText(MessageFormat.format(ActionMessages.AddToFavoritesAction_1, new String[]{DebugUIPlugin.removeAccelerators(getGroup().getLabel())})); 
 				}
 			}
 		}
@@ -157,7 +157,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 			}
 		});
 		if (ex[0] != null) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.AddToFavoritesAction_2, ActionMessages.AddToFavoritesAction_3, ex[0].getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.AddToFavoritesAction_2, ActionMessages.AddToFavoritesAction_3, ex[0].getStatus()); // 
 		}
 	}
 

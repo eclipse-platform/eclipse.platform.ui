@@ -209,7 +209,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		setVisibleArea(container);
 
 		fNameLabel = new Label(container, SWT.HORIZONTAL | SWT.LEFT);
-		fNameLabel.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16); //$NON-NLS-1$
+		fNameLabel.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16); 
 		gd = new GridData(GridData.BEGINNING);
 		fNameLabel.setLayoutData(gd);
 		fNameLabel.setFont(font);
@@ -253,7 +253,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		buttonComp.setLayoutData(gd);
 
 		setApplyButton(new Button(buttonComp, SWT.PUSH));
-		getApplyButton().setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17); //$NON-NLS-1$
+		getApplyButton().setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		getApplyButton().setLayoutData(gd);
 		getApplyButton().setFont(font);
@@ -265,7 +265,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		});
 
 		setRevertButton(new Button(buttonComp, SWT.PUSH));
-		getRevertButton().setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2);   //$NON-NLS-1$
+		getRevertButton().setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2);   
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		getRevertButton().setLayoutData(gd);
 		getRevertButton().setFont(font);
@@ -532,7 +532,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		// Retrieve the current tab group.  If there is none, clean up and leave
 		ILaunchConfigurationTabGroup tabGroup = getTabGroup();
 		if (tabGroup == null) {
-			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_No_tabs_defined_for_launch_configuration_type__0__1, new String[]{type.getName()}), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_No_tabs_defined_for_launch_configuration_type__0__1, new String[]{type.getName()}), null); 
 			CoreException e = new CoreException(status);
 			errorDialog(e);
 			setInitializingTabs(false);
@@ -583,7 +583,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		// Retrieve the current tab group.  If there is none, clean up and leave
 		ILaunchConfigurationTabGroup tabGroup = getTabGroup();
 		if (tabGroup == null) {
-			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_No_tabs_defined_for_launch_configuration_type__0__1, new String[]{type.getName()}), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_No_tabs_defined_for_launch_configuration_type__0__1, new String[]{type.getName()}), null); 
 			CoreException e = new CoreException(status);
 			errorDialog(e);
 			setInitializingTabs(false);
@@ -632,7 +632,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		try {
 			group = createGroup(configType);
 		} catch (CoreException ce) {
-			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_creating_launch_configuration_tabs_27,ce); //$NON-NLS-1$ //$NON-NLS-2$
+			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_creating_launch_configuration_tabs_27,ce); // 
 			return;
 		}
 
@@ -712,7 +712,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			TabItem tab = new TabItem(getTabFolder(), SWT.NONE);
 			String name = tabs[i].getName();
 			if (name == null) {
-				name = LaunchConfigurationsMessages.LaunchConfigurationDialog_unspecified_28; //$NON-NLS-1$
+				name = LaunchConfigurationsMessages.LaunchConfigurationDialog_unspecified_28; 
 			}
 			tab.setText(name);
 			Image image = tabs[i].getImage();
@@ -1057,7 +1057,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				throw new CoreException(new Status(IStatus.ERROR,
 													 DebugUIPlugin.getUniqueIdentifier(),
 													 0,
-													 LaunchConfigurationsMessages.LaunchConfigurationDialog_Name_required_for_launch_configuration_11, //$NON-NLS-1$
+													 LaunchConfigurationsMessages.LaunchConfigurationDialog_Name_required_for_launch_configuration_11, 
 													 null));
 			}
 	
@@ -1080,7 +1080,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 					throw new CoreException(new Status(IStatus.ERROR,
 														DebugUIPlugin.getUniqueIdentifier(),
 														0,
-														MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_0, new String[] { new String(new char[] {c}), currentName }), //$NON-NLS-1$
+														MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_0, new String[] { new String(new char[] {c}), currentName }), 
 														null));
 				}
 			}
@@ -1091,7 +1091,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 					throw new CoreException(new Status(IStatus.ERROR,
 														 DebugUIPlugin.getUniqueIdentifier(),
 														 0,
-														 LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_configuration_already_exists_with_this_name_12, //$NON-NLS-1$
+														 LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_configuration_already_exists_with_this_name_12, 
 														 null));
 				}
 			}
@@ -1228,7 +1228,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 			updateButtons();
 		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configuration_Error_46, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_while_saving_launch_configuration_47, e); //$NON-NLS-1$ //$NON-NLS-2$
+			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configuration_Error_46, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_while_saving_launch_configuration_47, e); // 
 			return;
 		}
 	}

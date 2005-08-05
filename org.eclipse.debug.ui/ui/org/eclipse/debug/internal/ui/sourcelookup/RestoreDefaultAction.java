@@ -25,7 +25,7 @@ public class RestoreDefaultAction extends SourceContainerAction {
 	private ISourceLookupDirector fDirector;
 
 	public RestoreDefaultAction() {
-		super(SourceLookupUIMessages.sourceTab_defaultButton); //$NON-NLS-1$
+		super(SourceLookupUIMessages.sourceTab_defaultButton); 
 	}
 	/**
 	 * @see IAction#run()

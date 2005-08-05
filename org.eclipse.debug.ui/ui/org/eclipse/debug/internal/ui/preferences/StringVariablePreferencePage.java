@@ -76,9 +76,9 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	
 	protected SimpleVariableContentProvider variableContentProvider= new SimpleVariableContentProvider();
 	
-	protected static final String NAME_LABEL= DebugPreferencesMessages.SimpleVariablePreferencePage_10; //$NON-NLS-1$
-	protected static final String VALUE_LABEL = DebugPreferencesMessages.SimpleVariablePreferencePage_11; //$NON-NLS-1$
-	protected static final String DESCRIPTION_LABEL = DebugPreferencesMessages.SimpleVariablePreferencePage_12; //$NON-NLS-1$
+	protected static final String NAME_LABEL= DebugPreferencesMessages.SimpleVariablePreferencePage_10; 
+	protected static final String VALUE_LABEL = DebugPreferencesMessages.SimpleVariablePreferencePage_11; 
+	protected static final String DESCRIPTION_LABEL = DebugPreferencesMessages.SimpleVariablePreferencePage_12; 
 	
 	protected static String[] variableTableColumnProperties= {
 		"variable", //$NON-NLS-1$
@@ -86,8 +86,8 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		"description" //$NON-NLS-1$
 	};
 	protected String[] variableTableColumnHeaders= {
-		DebugPreferencesMessages.SimpleVariablePreferencePage_3, //$NON-NLS-1$
-		DebugPreferencesMessages.SimpleVariablePreferencePage_4, //$NON-NLS-1$
+		DebugPreferencesMessages.SimpleVariablePreferencePage_3, 
+		DebugPreferencesMessages.SimpleVariablePreferencePage_4, 
 		DebugPreferencesMessages.SimpleVariablePreferencePage_5
 	};
 	protected ColumnLayoutData[] variableTableColumnLayouts= {
@@ -97,7 +97,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	};
 	
 	public StringVariablePreferencePage() {
-		setDescription(DebugPreferencesMessages.SimpleVariablePreferencePage_6); //$NON-NLS-1$
+		setDescription(DebugPreferencesMessages.SimpleVariablePreferencePage_6); 
 	}
 
 	/**
@@ -216,14 +216,14 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		buttonComposite.setFont(parent.getFont());
 		
 		// Create buttons
-		envAddButton = SWTUtil.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_7, null); //$NON-NLS-1$
+		envAddButton = SWTUtil.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_7, null); 
 		envAddButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event) {
 				handleAddButtonPressed();
 			}
 		});
-		envEditButton = SWTUtil.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_8, null); //$NON-NLS-1$
+		envEditButton = SWTUtil.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_8, null); 
 		envEditButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event) {
@@ -231,7 +231,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			}
 		});
 		envEditButton.setEnabled(false);
-		envRemoveButton = SWTUtil.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_9, null); //$NON-NLS-1$
+		envRemoveButton = SWTUtil.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_9, null); 
 		envRemoveButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event) {
@@ -242,7 +242,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	}
 	
 	private void handleAddButtonPressed() {
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.SimpleVariablePreferencePage_13); //$NON-NLS-1$
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.SimpleVariablePreferencePage_13); 
 		dialog.addTextField(NAME_LABEL, null, false);
 		dialog.addBrowseField(VALUE_LABEL, null, true);
 		dialog.addTextField(DESCRIPTION_LABEL, null, true);
@@ -275,7 +275,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			IValueVariable currentVariable = (IValueVariable) iter.next();
 			String variableName = currentVariable.getName();
 			if (variableName.equals(name)) {
-				boolean overWrite= MessageDialog.openQuestion(getShell(), DebugPreferencesMessages.SimpleVariablePreferencePage_15, MessageFormat.format(DebugPreferencesMessages.SimpleVariablePreferencePage_16, new String[] {name}));  //$NON-NLS-1$ //$NON-NLS-2$
+				boolean overWrite= MessageDialog.openQuestion(getShell(), DebugPreferencesMessages.SimpleVariablePreferencePage_15, MessageFormat.format(DebugPreferencesMessages.SimpleVariablePreferencePage_16, new String[] {name}));  // 
 				if (!overWrite) {
 					return false;
 				}
@@ -303,7 +303,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			description= ""; //$NON-NLS-1$
 		}
 		String originalName= variable.getName();
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.SimpleVariablePreferencePage_14); //$NON-NLS-1$
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.SimpleVariablePreferencePage_14); 
 		dialog.addTextField(NAME_LABEL, originalName, false);
 		dialog.addBrowseField(VALUE_LABEL, value, true);
 		dialog.addTextField(DESCRIPTION_LABEL, description, true);
@@ -346,7 +346,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			}
 		}
 		if (contributedVariablesToRemove.length() > 0) {
-			boolean remove= MessageDialog.openQuestion(getShell(), DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_21, MessageFormat.format(DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_22, new String[] {contributedVariablesToRemove.toString()})); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean remove= MessageDialog.openQuestion(getShell(), DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_21, MessageFormat.format(DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_22, new String[] {contributedVariablesToRemove.toString()})); // 
 			if (!remove) {
 				return;
 			}
@@ -448,7 +448,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			try {
 				manager.addVariables((IValueVariable[]) fVariables.toArray(new IValueVariable[0]));
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getShell(), DebugPreferencesMessages.StringVariablePreferencePage_24, DebugPreferencesMessages.StringVariablePreferencePage_25, e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(getShell(), DebugPreferencesMessages.StringVariablePreferencePage_24, DebugPreferencesMessages.StringVariablePreferencePage_25, e.getStatus()); // 
 			}
 		}
 		
@@ -489,9 +489,9 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 						if (variable.isContributed()) {
                             String pluginId = getVariableManager().getContributingPluginId(variable);
                             if (pluginId != null) {
-                                buffer.append(MessageFormat.format(DebugPreferencesMessages.StringVariablePreferencePage_0, new String[] {pluginId})); //$NON-NLS-1$
+                                buffer.append(MessageFormat.format(DebugPreferencesMessages.StringVariablePreferencePage_0, new String[] {pluginId})); 
                             } else {
-                                buffer.append(DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_23); //$NON-NLS-1$
+                                buffer.append(DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_23); 
                             }
 						}
 						return buffer.toString();

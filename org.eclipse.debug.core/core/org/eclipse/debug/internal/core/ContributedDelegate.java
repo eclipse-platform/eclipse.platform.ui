@@ -104,7 +104,7 @@ public class ContributedDelegate {
 			if (object instanceof ILaunchConfigurationDelegate) {
 				fDelegate = (ILaunchConfigurationDelegate)object;
 			} else {
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_Launch_delegate_for__0__does_not_implement_required_interface_ILaunchConfigurationDelegate__1, new String[]{getIdentifier()}), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_Launch_delegate_for__0__does_not_implement_required_interface_ILaunchConfigurationDelegate__1, new String[]{getIdentifier()}), null)); 
 			}		
 		}
 		return fDelegate;

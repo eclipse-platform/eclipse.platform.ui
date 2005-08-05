@@ -83,7 +83,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		}
 		
 		final Iterator itr= selection.iterator();
-		final MultiStatus ms= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.EnableBreakpointAction_Enable_breakpoint_s__failed_2, null); //$NON-NLS-1$
+		final MultiStatus ms= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.EnableBreakpointAction_Enable_breakpoint_s__failed_2, null); 
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
 				while (itr.hasNext()) {
@@ -120,7 +120,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		if (!ms.isOK()) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.EnableBreakpointAction_Enabling_breakpoints_3, ActionMessages.EnableBreakpointAction_Exceptions_occurred_enabling_the_breakpoint_s___4, ms); //$NON-NLS-2$ //$NON-NLS-1$
+				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.EnableBreakpointAction_Enabling_breakpoints_3, ActionMessages.EnableBreakpointAction_Exceptions_occurred_enabling_the_breakpoint_s___4, ms); // 
 			} else {
 				DebugUIPlugin.log(ms);
 			}
@@ -186,7 +186,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	private void handleException(CoreException ce) {
 		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
-			DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.EnableBreakpointAction_Enabling_breakpoints_3, ActionMessages.EnableBreakpointAction_Exceptions_occurred_enabling_the_breakpoint_s___4, ce); //$NON-NLS-2$ //$NON-NLS-1$
+			DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.EnableBreakpointAction_Enabling_breakpoints_3, ActionMessages.EnableBreakpointAction_Exceptions_occurred_enabling_the_breakpoint_s___4, ce); // 
 		} else {
 			DebugUIPlugin.log(ce);
 		}

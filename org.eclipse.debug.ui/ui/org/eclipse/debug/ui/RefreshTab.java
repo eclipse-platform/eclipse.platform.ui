@@ -125,7 +125,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setLayoutData(gd);
 		mainComposite.setFont(parent.getFont());
 		
-		fRefreshButton = createCheckButton(mainComposite, StringSubstitutionMessages.RefreshTab_31); //$NON-NLS-1$
+		fRefreshButton = createCheckButton(mainComposite, StringSubstitutionMessages.RefreshTab_31); 
 		fRefreshButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateEnabledState();
@@ -152,37 +152,37 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			}
 		};
 		
-		fWorkspaceButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_32); //$NON-NLS-1$
+		fWorkspaceButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_32); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fWorkspaceButton.setLayoutData(gd);
 		fWorkspaceButton.addSelectionListener(adapter);
 
-		fResourceButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_33); //$NON-NLS-1$
+		fResourceButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_33); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fResourceButton.setLayoutData(gd);
 		fResourceButton.addSelectionListener(adapter);
 
-		fProjectButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_34); //$NON-NLS-1$
+		fProjectButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_34); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fProjectButton.setLayoutData(gd);		
 		fProjectButton.addSelectionListener(adapter);
 
-		fContainerButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_35); //$NON-NLS-1$
+		fContainerButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_35); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fContainerButton.setLayoutData(gd);
 		fContainerButton.addSelectionListener(adapter);
 				
-		fWorkingSetButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_36); //$NON-NLS-1$
+		fWorkingSetButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_36); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		fWorkingSetButton.setLayoutData(gd);
 		fWorkingSetButton.addSelectionListener(adapter);		
 		
-		fSelectButton = createPushButton(fGroup, StringSubstitutionMessages.RefreshTab_37, null); //$NON-NLS-1$
+		fSelectButton = createPushButton(fGroup, StringSubstitutionMessages.RefreshTab_37, null); 
 		gd = (GridData)fSelectButton.getLayoutData();
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
 		fSelectButton.addSelectionListener(new SelectionAdapter() {
@@ -202,7 +202,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 		
 		if (fWorkingSet == null){
-			fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.RefreshTab_40, new IAdaptable[0]); //$NON-NLS-1$
+			fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.RefreshTab_40, new IAdaptable[0]); 
 		}
 		IWorkingSetEditWizard wizard= workingSetManager.createWorkingSetEditWizard(fWorkingSet);
 		WizardDialog dialog = new WizardDialog(DebugUIPlugin.getStandardDisplay().getActiveShell(), wizard);
@@ -222,7 +222,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	private void createRecursiveComponent(Composite parent) {
-		fRecursiveButton = createCheckButton(parent, StringSubstitutionMessages.RefreshTab_0); //$NON-NLS-1$
+		fRecursiveButton = createCheckButton(parent, StringSubstitutionMessages.RefreshTab_0); 
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fRecursiveButton.setLayoutData(data);
@@ -281,7 +281,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 				try {
 					IResource[] resources = getRefreshResources(scope);
 					IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
-					fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.RefreshTab_40, resources);					 //$NON-NLS-1$
+					fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.RefreshTab_40, resources);					 
 				} catch (CoreException e) {
 					fWorkingSet = null;
 				}
@@ -363,7 +363,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return StringSubstitutionMessages.RefreshTab_6; //$NON-NLS-1$
+		return StringSubstitutionMessages.RefreshTab_6; 
 	}
 	
 	/**
@@ -395,7 +395,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		if (fWorkingSetButton.getSelection() && (fWorkingSet == null || fWorkingSet.getElements().length == 0)) {
-			setErrorMessage(StringSubstitutionMessages.RefreshTab_42); //$NON-NLS-1$
+			setErrorMessage(StringSubstitutionMessages.RefreshTab_42); 
 			return false;
 		}
 		return true;
@@ -428,10 +428,10 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			return;
 		}
 	
-		monitor.beginTask(StringSubstitutionMessages.RefreshTab_7, //$NON-NLS-1$
+		monitor.beginTask(StringSubstitutionMessages.RefreshTab_7, 
 			resources.length);
 	
-		MultiStatus status = new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), 0, StringSubstitutionMessages.RefreshTab_8, null); //$NON-NLS-1$
+		MultiStatus status = new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), 0, StringSubstitutionMessages.RefreshTab_8, null); 
 		for (int i = 0; i < resources.length; i++) {
 			if (monitor.isCanceled())
 				break;
@@ -465,13 +465,13 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			Path path = new Path(pathString);
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			if (resource == null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, MessageFormat.format(StringSubstitutionMessages.RefreshTab_38, new String[]{pathString}), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, MessageFormat.format(StringSubstitutionMessages.RefreshTab_38, new String[]{pathString}), null)); 
 			} 
 			return new IResource[]{resource};
 		} else if (scope.startsWith("${working_set:")) { //$NON-NLS-1$
 			IWorkingSet workingSet =  getWorkingSet(scope);
 			if (workingSet == null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, StringSubstitutionMessages.RefreshTab_39, null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, StringSubstitutionMessages.RefreshTab_39, null)); 
 			} 
 			IAdaptable[] elements = workingSet.getElements();
 			IResource[] resources = new IResource[elements.length];

@@ -93,7 +93,7 @@ public abstract class AbstractConsole implements IConsole {
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.INTERNAL_ERROR, ConsoleMessages.AbstractConsole_0, exception); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.INTERNAL_ERROR, ConsoleMessages.AbstractConsole_0, exception); 
 			ConsolePlugin.log(status);
 		}
 

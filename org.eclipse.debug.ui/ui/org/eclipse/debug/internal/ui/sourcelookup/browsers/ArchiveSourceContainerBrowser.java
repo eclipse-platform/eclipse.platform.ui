@@ -82,8 +82,8 @@ public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowse
 
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(shell, lp, cp);
 		dialog.setValidator(validator);
-		dialog.setTitle(SourceLookupUIMessages.ArchiveSourceContainerBrowser_3); //$NON-NLS-1$
-		dialog.setMessage(SourceLookupUIMessages.ArchiveSourceContainerBrowser_4); //$NON-NLS-1$
+		dialog.setTitle(SourceLookupUIMessages.ArchiveSourceContainerBrowser_3); 
+		dialog.setMessage(SourceLookupUIMessages.ArchiveSourceContainerBrowser_4); 
 		dialog.addFilter(filter);
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));

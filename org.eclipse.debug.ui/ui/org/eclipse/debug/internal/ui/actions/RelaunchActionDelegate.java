@@ -69,13 +69,13 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return ActionMessages.RelaunchActionDelegate_Launch_Failed_1; //$NON-NLS-1$
+		return ActionMessages.RelaunchActionDelegate_Launch_Failed_1; 
 	}
 	
 	/**
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return ActionMessages.RelaunchActionDelegate_An_exception_occurred_while_launching_2; //$NON-NLS-1$
+		return ActionMessages.RelaunchActionDelegate_An_exception_occurred_while_launching_2; 
 	}
 }

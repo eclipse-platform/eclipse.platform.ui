@@ -37,7 +37,7 @@ public class EditSourceLookupPathAction extends SelectionListenerAction {
 	private LaunchView fView = null;
 	
 	public EditSourceLookupPathAction(LaunchView view) {
-		super(SourceLookupUIMessages.EditSourceLookupPathAction_0); //$NON-NLS-1$
+		super(SourceLookupUIMessages.EditSourceLookupPathAction_0); 
 		setEnabled(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.EDIT_SOURCELOOKUP_ACTION);
 		setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_SRC_LOOKUP_MENU));

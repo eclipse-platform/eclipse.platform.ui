@@ -53,7 +53,7 @@ public class ErrorRendering extends AbstractMemoryRendering {
 		fTextViewer.setDocument(new Document());
 		StyledText styleText = fTextViewer.getTextWidget();
 		
-		styleText.setText("\r\n\r\n" + DebugUIMessages.EmptyViewTab_Unable_to_create + "\n" + getRenderingName() + "\n\n" + DebugUIMessages.ErrorRendering_0 + fException.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		styleText.setText("\r\n\r\n" + DebugUIMessages.EmptyViewTab_Unable_to_create + "\n" + getRenderingName() + "\n\n" + DebugUIMessages.ErrorRendering_0 + fException.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
 		
 		
 		return fTextViewer.getControl();

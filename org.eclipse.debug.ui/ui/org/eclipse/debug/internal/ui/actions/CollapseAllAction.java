@@ -23,8 +23,8 @@ public class CollapseAllAction extends Action {
 	private AbstractTreeViewer fViewer;
 	
 	public CollapseAllAction(AbstractTreeViewer viewer) {
-		super(ActionMessages.CollapseAllAction_0, DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COLLAPSE_ALL)); //$NON-NLS-1$
-		setToolTipText(ActionMessages.CollapseAllAction_0); //$NON-NLS-1$
+		super(ActionMessages.CollapseAllAction_0, DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COLLAPSE_ALL)); 
+		setToolTipText(ActionMessages.CollapseAllAction_0); 
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COLLAPSE_ALL));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_COLLAPSE_ALL));
 		fViewer = viewer;

@@ -94,8 +94,8 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 
 	public ShowSupportedBreakpointsAction(StructuredViewer viewer, IViewPart view) {
 		super();
-		setText(ActionMessages.ShowSupportedBreakpointsAction_Show_For_Selected); //$NON-NLS-1$
-		setToolTipText(ActionMessages.ShowSupportedBreakpointsAction_tooltip); //$NON-NLS-1$
+		setText(ActionMessages.ShowSupportedBreakpointsAction_Show_For_Selected); 
+		setToolTipText(ActionMessages.ShowSupportedBreakpointsAction_tooltip); 
 		setViewerFilter(new BreakpointFilter());
 		setViewer(viewer);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET));

@@ -45,9 +45,9 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 		if (window == null) {
 			return;
 		}
-		boolean proceed = MessageDialog.openQuestion(window.getShell(), ActionMessages.RemoveAllBreakpointsAction_0, ActionMessages.RemoveAllBreakpointsAction_1); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean proceed = MessageDialog.openQuestion(window.getShell(), ActionMessages.RemoveAllBreakpointsAction_0, ActionMessages.RemoveAllBreakpointsAction_1); // 
 		if (proceed) {
-            new Job(ActionMessages.RemoveAllBreakpointsAction_2) { //$NON-NLS-1$
+            new Job(ActionMessages.RemoveAllBreakpointsAction_2) { 
                 protected IStatus run(IProgressMonitor monitor) {
                     try {
                         breakpointManager.removeBreakpoints(breakpoints, true);

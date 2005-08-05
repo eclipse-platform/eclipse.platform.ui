@@ -76,7 +76,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public ConsolePreferencePage() {
 		super(GRID);
-		setDescription(DebugPreferencesMessages.ConsolePreferencePage_Console_settings); //$NON-NLS-1$
+		setDescription(DebugPreferencesMessages.ConsolePreferencePage_Console_settings); 
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
@@ -95,13 +95,13 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public void createFieldEditors() {
 		
-		fWrapEditor = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_WRAP, DebugPreferencesMessages.ConsolePreferencePage_Wrap_text_1, SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
+		fWrapEditor = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_WRAP, DebugPreferencesMessages.ConsolePreferencePage_Wrap_text_1, SWT.NONE, getFieldEditorParent()); 
 		addField(fWrapEditor);
 		
-		fWidthEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_WIDTH, DebugPreferencesMessages.ConsolePreferencePage_Console_width, getFieldEditorParent()); //$NON-NLS-1$
+		fWidthEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_WIDTH, DebugPreferencesMessages.ConsolePreferencePage_Console_width, getFieldEditorParent()); 
 		addField(fWidthEditor);
 		fWidthEditor.setValidRange(80, 1000);
-		fWidthEditor.setErrorMessage(DebugPreferencesMessages.ConsolePreferencePage_console_width); //$NON-NLS-1$
+		fWidthEditor.setErrorMessage(DebugPreferencesMessages.ConsolePreferencePage_console_width); 
 		
 		fWrapEditor.getChangeControl(getFieldEditorParent()).addSelectionListener(
 			new SelectionAdapter() {
@@ -111,13 +111,13 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 			}
 		);
 		
-		fUseBufferSize = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, DebugPreferencesMessages.ConsolePreferencePage_Limit_console_output_1, SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
+		fUseBufferSize = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, DebugPreferencesMessages.ConsolePreferencePage_Limit_console_output_1, SWT.NONE, getFieldEditorParent()); 
 		addField(fUseBufferSize);
 		
-		fBufferSizeEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK, DebugPreferencesMessages.ConsolePreferencePage_Console_buffer_size__characters___2, getFieldEditorParent()); //$NON-NLS-1$
+		fBufferSizeEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK, DebugPreferencesMessages.ConsolePreferencePage_Console_buffer_size__characters___2, getFieldEditorParent()); 
 		addField(fBufferSizeEditor);
 		fBufferSizeEditor.setValidRange(1000, 1000000);
-		fBufferSizeEditor.setErrorMessage(DebugPreferencesMessages.ConsolePreferencePage_The_console_buffer_size_must_be_at_least_1000_characters__1); //$NON-NLS-1$
+		fBufferSizeEditor.setErrorMessage(DebugPreferencesMessages.ConsolePreferencePage_The_console_buffer_size_must_be_at_least_1000_characters__1); 
 		
 		fUseBufferSize.getChangeControl(getFieldEditorParent()).addSelectionListener(
 			new SelectionAdapter() {
@@ -127,17 +127,17 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 			}
 		);
 		
-		fTabSizeEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH, DebugPreferencesMessages.ConsolePreferencePage_12, getFieldEditorParent()); //$NON-NLS-1$
+		fTabSizeEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH, DebugPreferencesMessages.ConsolePreferencePage_12, getFieldEditorParent()); 
 		addField(fTabSizeEditor);
 		fTabSizeEditor.setValidRange(1,100);
-		fTabSizeEditor.setErrorMessage(DebugPreferencesMessages.ConsolePreferencePage_13); //$NON-NLS-1$
+		fTabSizeEditor.setErrorMessage(DebugPreferencesMessages.ConsolePreferencePage_13); 
 		
-		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_when_there_is_program_output_3, SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_when_there_is_program_error_3, SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_when_there_is_program_output_3, SWT.NONE, getFieldEditorParent())); 
+		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_when_there_is_program_error_3, SWT.NONE, getFieldEditorParent())); 
 
-		ColorFieldEditor sysout= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR, DebugPreferencesMessages.ConsolePreferencePage_Standard_Out__2, getFieldEditorParent()); //$NON-NLS-1$
-		ColorFieldEditor syserr= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR, DebugPreferencesMessages.ConsolePreferencePage_Standard_Error__3, getFieldEditorParent()); //$NON-NLS-1$
-		ColorFieldEditor sysin= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR, DebugPreferencesMessages.ConsolePreferencePage_Standard_In__4, getFieldEditorParent()); //$NON-NLS-1$
+		ColorFieldEditor sysout= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR, DebugPreferencesMessages.ConsolePreferencePage_Standard_Out__2, getFieldEditorParent()); 
+		ColorFieldEditor syserr= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR, DebugPreferencesMessages.ConsolePreferencePage_Standard_Error__3, getFieldEditorParent()); 
+		ColorFieldEditor sysin= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR, DebugPreferencesMessages.ConsolePreferencePage_Standard_In__4, getFieldEditorParent()); 
 		
 		addField(sysout);
 		addField(syserr);

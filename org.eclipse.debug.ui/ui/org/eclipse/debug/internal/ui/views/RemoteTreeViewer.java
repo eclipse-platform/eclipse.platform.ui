@@ -58,7 +58,7 @@ public class RemoteTreeViewer extends TreeViewer {
          * @param target the element to expand
          */
         public ExpansionJob() {
-            super(DebugUIViewsMessages.LaunchViewer_1); //$NON-NLS-1$
+            super(DebugUIViewsMessages.LaunchViewer_1); 
             setPriority(Job.INTERACTIVE);
             setSystem(true);
         }
@@ -127,7 +127,7 @@ public class RemoteTreeViewer extends TreeViewer {
          * @param target the element to select
          */
         public SelectionJob() {
-            super(DebugUIViewsMessages.LaunchViewer_0); //$NON-NLS-1$
+            super(DebugUIViewsMessages.LaunchViewer_0); 
             setPriority(Job.INTERACTIVE);
             setSystem(true);
         }

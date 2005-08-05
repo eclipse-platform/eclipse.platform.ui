@@ -36,8 +36,8 @@ public class ExternalArchiveSourceContainerBrowser extends AbstractSourceContain
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		FileDialog dialog = new FileDialog(shell, SWT.OPEN | SWT.MULTI);
 		String rootDir = DebugUIPlugin.getDefault().getDialogSettings().get(ROOT_DIR);
-		dialog.setText(SourceLookupUIMessages.ExternalArchiveSourceContainerBrowser_2); //$NON-NLS-1$
-		dialog.setFilterExtensions(new String[]{"*.jar;*.zip"});  //$NON-NLS-1$//$NON-NLS-2$
+		dialog.setText(SourceLookupUIMessages.ExternalArchiveSourceContainerBrowser_2); 
+		dialog.setFilterExtensions(new String[]{"*.jar;*.zip"});  //$NON-NLS-1$
 		if (rootDir != null) {
 			dialog.setFilterPath(rootDir);
 		}

@@ -245,7 +245,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	
 	protected void removeTerminatedLaunches(final ILaunch newLaunch) {
 		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
-		    Job launchRemovalJob = new Job(LaunchConfigurationsMessages.LaunchConfigurationManager_0) { //$NON-NLS-1$
+		    Job launchRemovalJob = new Job(LaunchConfigurationsMessages.LaunchConfigurationManager_0) { 
 		        protected IStatus run(IProgressMonitor monitor) {
 		            ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
 					Object[] launches= lManager.getLaunches();

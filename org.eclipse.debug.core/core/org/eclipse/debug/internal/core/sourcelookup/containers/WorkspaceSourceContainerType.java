@@ -36,9 +36,9 @@ public class WorkspaceSourceContainerType extends AbstractSourceContainerTypeDel
 			if ("workspace".equals(element.getNodeName())) { //$NON-NLS-1$
 				return new WorkspaceSourceContainer();
 			} 
-			abort(SourceLookupMessages.WorkspaceSourceContainerType_3, null); //$NON-NLS-1$
+			abort(SourceLookupMessages.WorkspaceSourceContainerType_3, null); 
 		}
-		abort(SourceLookupMessages.WorkspaceSourceContainerType_4, null); //$NON-NLS-1$
+		abort(SourceLookupMessages.WorkspaceSourceContainerType_4, null); 
 		return null;
 	}
 	/* (non-Javadoc)

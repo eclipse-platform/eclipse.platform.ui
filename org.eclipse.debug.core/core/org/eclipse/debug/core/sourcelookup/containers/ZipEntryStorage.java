@@ -65,7 +65,7 @@ public class ZipEntryStorage extends PlatformObject implements IStorage {
 		try {
 			return getArchive().getInputStream(getZipEntry());
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, SourceLookupMessages.ZipEntryStorage_0, e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, SourceLookupMessages.ZipEntryStorage_0, e)); 
 		}
 	}
 

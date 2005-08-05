@@ -82,7 +82,7 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 					if (single == null) {
 						single = e;
 					} else if (multiStatus == null) {
-						multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.CompositeSourceContainer_0, null); //$NON-NLS-1$
+						multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.CompositeSourceContainer_0, null); 
 						multiStatus.add(e.getStatus());
 					} else {
 						multiStatus.add(e.getStatus());

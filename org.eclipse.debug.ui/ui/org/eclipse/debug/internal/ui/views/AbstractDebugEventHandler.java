@@ -74,7 +74,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
         private static final int TIMEOUT = 200;
         
 	    public EventProcessingJob() {
-	        super(DebugUIViewsMessages.AbstractDebugEventHandler_0); //$NON-NLS-1$
+	        super(DebugUIViewsMessages.AbstractDebugEventHandler_0); 
 	        setSystem(true);
 	        setPriority(Job.INTERACTIVE);
 	    }

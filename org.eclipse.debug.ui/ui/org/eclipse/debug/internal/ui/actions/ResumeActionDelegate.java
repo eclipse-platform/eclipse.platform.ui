@@ -105,14 +105,14 @@ public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return ActionMessages.ResumeActionDelegate_Exceptions_occurred_attempting_to_resume__2; //$NON-NLS-1$
+		return ActionMessages.ResumeActionDelegate_Exceptions_occurred_attempting_to_resume__2; 
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return ActionMessages.ResumeActionDelegate_Resume_failed__1; //$NON-NLS-1$
+		return ActionMessages.ResumeActionDelegate_Resume_failed__1; 
 	}
 
 }

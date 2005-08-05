@@ -36,9 +36,9 @@ public class DirectorySourceContainerDialog {
 		}
 		//TODO not supposed to subclass DirectoryDialog, but need a checkbox added for subfolder searching
 		DirectoryDialog dialog = new DirectoryDialog(shell, SWT.MULTI);
-		dialog.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_0); //$NON-NLS-1$
+		dialog.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_0); 
 		dialog.setFilterPath(lastUsedPath);
-		dialog.setMessage(SourceLookupUIMessages.DirectorySourceContainerDialog_1); //$NON-NLS-1$
+		dialog.setMessage(SourceLookupUIMessages.DirectorySourceContainerDialog_1); 
 		fRes = dialog.open();
 		
 		if (fRes == null) {

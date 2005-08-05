@@ -42,7 +42,7 @@ public class ProjectSourceContainerBrowser extends AbstractSourceContainerBrowse
 		IStructuredContentProvider contentProvider=new BasicContainerContentProvider();
 		ILabelProvider labelProvider = new WorkbenchLabelProvider();
 		Dialog dialog = new ProjectSourceContainerDialog(shell,input, contentProvider, labelProvider,
-				SourceLookupUIMessages.projectSelection_chooseLabel); //$NON-NLS-1$
+				SourceLookupUIMessages.projectSelection_chooseLabel); 
 		if(dialog.open() == Window.OK){		
 			Object[] elements= ((ListSelectionDialog)dialog).getResult();
 			ArrayList res= new ArrayList();

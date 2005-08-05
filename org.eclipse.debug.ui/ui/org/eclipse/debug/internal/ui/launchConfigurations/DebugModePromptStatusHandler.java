@@ -50,10 +50,10 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
         }
         
 		Shell activeShell = DebugUIPlugin.getShell();
-		String title = LaunchConfigurationsMessages.DebugModePromptStatusHandler_0; //$NON-NLS-1$
-		String message = LaunchConfigurationsMessages.DebugModePromptStatusHandler_1; //$NON-NLS-1$
+		String title = LaunchConfigurationsMessages.DebugModePromptStatusHandler_0; 
+		String message = LaunchConfigurationsMessages.DebugModePromptStatusHandler_1; 
 		
-		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(activeShell, title, message, null, false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); //$NON-NLS-1$
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(activeShell, title, message, null, false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); 
 		int buttonId = dialog.getReturnCode();
 		if (buttonId == IDialogConstants.YES_ID) { 
 			relaunchInDebugMode(configuration);

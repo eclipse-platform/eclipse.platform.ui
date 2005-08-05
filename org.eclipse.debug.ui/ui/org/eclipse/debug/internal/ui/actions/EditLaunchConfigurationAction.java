@@ -87,7 +87,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 					}	
 					setLaunchConfiguration(configuration);
 					setMode(launch.getLaunchMode());
-					setText(MessageFormat.format(ActionMessages.EditLaunchConfigurationAction_1, new String[]{configuration.getName()})); //$NON-NLS-1$
+					setText(MessageFormat.format(ActionMessages.EditLaunchConfigurationAction_1, new String[]{configuration.getName()})); 
 					ImageDescriptor descriptor = null;
 					try {
 						descriptor = DebugPluginImages.getImageDescriptor(configuration.getType().getIdentifier());

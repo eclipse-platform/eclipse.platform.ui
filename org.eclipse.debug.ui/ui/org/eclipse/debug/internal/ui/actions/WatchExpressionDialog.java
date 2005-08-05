@@ -52,10 +52,10 @@ public class WatchExpressionDialog extends StatusDialog {
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 		String helpContextId = null;
 		if (editDialog) {
-			setTitle(ActionMessages.WatchExpressionDialog_0); //$NON-NLS-1$
+			setTitle(ActionMessages.WatchExpressionDialog_0); 
 			helpContextId = IDebugHelpContextIds.EDIT_WATCH_EXPRESSION_DIALOG;
 		} else {
-			setTitle(ActionMessages.WatchExpressionDialog_1); //$NON-NLS-1$
+			setTitle(ActionMessages.WatchExpressionDialog_1); 
 			helpContextId = IDebugHelpContextIds.ADD_WATCH_EXPRESSION_DIALOG;
 		}
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, helpContextId);
@@ -77,7 +77,7 @@ public class WatchExpressionDialog extends StatusDialog {
 
 		// snippet label
 		Label label= new Label(container, SWT.NONE);
-		label.setText(ActionMessages.WatchExpressionDialog_2); //$NON-NLS-1$
+		label.setText(ActionMessages.WatchExpressionDialog_2); 
 		gd= new GridData(GridData.BEGINNING);
 		label.setLayoutData(gd);
 		label.setFont(font);
@@ -112,7 +112,7 @@ public class WatchExpressionDialog extends StatusDialog {
 
 		// enable checkbox
 		fCheckBox= new Button(container, SWT.CHECK | SWT.LEFT);
-		fCheckBox.setText(ActionMessages.WatchExpressionDialog_3); //$NON-NLS-1$
+		fCheckBox.setText(ActionMessages.WatchExpressionDialog_3); 
 		fCheckBox.setSelection(fWatchExpression.isEnabled());
 		fCheckBox.setFont(font);
 
@@ -136,7 +136,7 @@ public class WatchExpressionDialog extends StatusDialog {
 	private void checkValues() {
 		StatusInfo status= new StatusInfo();
 		if (fSnippetViewer.getDocument().get().trim().length() == 0) {
-			status.setError(ActionMessages.WatchExpressionDialog_4); //$NON-NLS-1$
+			status.setError(ActionMessages.WatchExpressionDialog_4); 
 		}
 		updateStatus(status);
 	}

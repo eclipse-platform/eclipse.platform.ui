@@ -56,7 +56,7 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 		}
 				
 		Shell shell = DebugUIPlugin.getShell();
-		String title = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0; //$NON-NLS-1$
+		String title = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0; 
 		StringBuffer projectMessage = new StringBuffer();
 		for (int i = 0; i < projects.size(); i++) {
 			if (i > 0) {
@@ -64,7 +64,7 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 			}
 			projectMessage.append(((IProject)projects.get(i)).getName());
 		}
-		String message = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_2, new String[]{projectMessage.toString()}); //$NON-NLS-1$
+		String message = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_2, new String[]{projectMessage.toString()}); 
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
 		
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);

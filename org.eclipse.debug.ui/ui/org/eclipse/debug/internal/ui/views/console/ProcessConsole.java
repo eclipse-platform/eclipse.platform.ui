@@ -153,10 +153,10 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                 fFileOutputStream = new FileOutputStream(outputFile, append);
                 fileLoc = outputFile.getAbsolutePath();
                 
-                message = MessageFormat.format(ConsoleMessages.ProcessConsole_1, new String[] {fileLoc}); //$NON-NLS-1$
+                message = MessageFormat.format(ConsoleMessages.ProcessConsole_1, new String[] {fileLoc}); 
                 addPatternMatchListener(new ConsoleLogFilePatternMatcher(fileLoc));
             } catch (FileNotFoundException e) {
-                message = MessageFormat.format(ConsoleMessages.ProcessConsole_2, new String[] {file}); //$NON-NLS-1$
+                message = MessageFormat.format(ConsoleMessages.ProcessConsole_2, new String[] {file}); 
             } catch (CoreException e) {
                 DebugUIPlugin.log(e);
             }
@@ -247,7 +247,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
 
         if (process.isTerminated()) {
-            return MessageFormat.format(ConsoleMessages.ProcessConsole_0, new String[] { label }); //$NON-NLS-1$
+            return MessageFormat.format(ConsoleMessages.ProcessConsole_0, new String[] { label }); 
         }
         return label;
     }

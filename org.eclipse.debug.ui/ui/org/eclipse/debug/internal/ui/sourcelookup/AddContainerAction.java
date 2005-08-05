@@ -23,7 +23,7 @@ public class AddContainerAction extends SourceContainerAction {
 	private ISourceLookupDirector fDirector;
 	
 	public AddContainerAction() {
-		super(SourceLookupUIMessages.sourceTab_addButton); //$NON-NLS-1$
+		super(SourceLookupUIMessages.sourceTab_addButton); 
 	}
 	
 	/**

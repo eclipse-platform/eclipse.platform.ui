@@ -67,8 +67,8 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	
 	public ViewManagementPreferencePage() {
 		super();
-		setTitle(DebugPreferencesMessages.ViewManagementPreferencePage_1); //$NON-NLS-1$
-		setDescription(DebugPreferencesMessages.ViewManagementPreferencePage_0); //$NON-NLS-1$
+		setTitle(DebugPreferencesMessages.ViewManagementPreferencePage_1); 
+		setDescription(DebugPreferencesMessages.ViewManagementPreferencePage_0); 
 		setPreferenceStore(DebugUITools.getPreferenceStore());
 	}
 
@@ -96,15 +96,15 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	private void createViewTrackingOptions(Composite composite) {
 		fTrackViewsButton= new Button(composite, SWT.CHECK);
 		fTrackViewsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fTrackViewsButton.setText(DebugPreferencesMessages.ViewManagementPreferencePage_3); //$NON-NLS-1$
+		fTrackViewsButton.setText(DebugPreferencesMessages.ViewManagementPreferencePage_3); 
 		fTrackViewsButton.setSelection(DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS));
         fTrackViewsButton.addSelectionListener(fSelectionListener);
 		
 		Label label= new Label(composite, SWT.WRAP);
-		label.setText(DebugPreferencesMessages.ViewManagementPreferencePage_4); //$NON-NLS-1$
+		label.setText(DebugPreferencesMessages.ViewManagementPreferencePage_4); 
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fResetViewsButton= SWTUtil.createPushButton(composite, DebugPreferencesMessages.ViewManagementPreferencePage_5, null); //$NON-NLS-1$
+		fResetViewsButton= SWTUtil.createPushButton(composite, DebugPreferencesMessages.ViewManagementPreferencePage_5, null); 
 		((GridData) fResetViewsButton.getLayoutData()).horizontalAlignment= GridData.BEGINNING;
 		fResetViewsButton.addSelectionListener(fSelectionListener);
 		updateResetButton();
@@ -130,7 +130,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	 */
 	private void createPerspectiveViewer(Composite parent) {
 		Label label= new Label(parent, SWT.WRAP);
-		label.setText(DebugPreferencesMessages.ViewManagementPreferencePage_2); //$NON-NLS-1$
+		label.setText(DebugPreferencesMessages.ViewManagementPreferencePage_2); 
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);

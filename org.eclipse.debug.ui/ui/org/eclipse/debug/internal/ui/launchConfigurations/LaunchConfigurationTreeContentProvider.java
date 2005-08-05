@@ -74,7 +74,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 				ILaunchConfigurationType type = (ILaunchConfigurationType)parentElement;
 				return getLaunchManager().getLaunchConfigurations(type);
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); // 
 			}
 		} else {
 			return getLaunchManager().getLaunchConfigurationTypes();
@@ -93,7 +93,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 			try {
 				return ((ILaunchConfiguration)element).getType();
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); // 
 			}
 		} else if (element instanceof ILaunchConfigurationType) {
 			return ResourcesPlugin.getWorkspace().getRoot();

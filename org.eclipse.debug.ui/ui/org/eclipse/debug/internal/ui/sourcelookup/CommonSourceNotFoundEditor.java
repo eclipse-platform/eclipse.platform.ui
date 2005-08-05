@@ -152,7 +152,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		data.grabExcessHorizontalSpace = false;
 		data.grabExcessVerticalSpace = false;
 		button.setLayoutData(data);
-		button.setText(SourceLookupUIMessages.addSourceLocation_addButton2); //$NON-NLS-1$
+		button.setText(SourceLookupUIMessages.addSourceLocation_addButton2); 
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				buttonSelected();

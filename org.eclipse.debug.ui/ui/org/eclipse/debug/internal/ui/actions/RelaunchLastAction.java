@@ -60,8 +60,8 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 					DebugUITools.launch(configuration, getMode());
 				} else {
 					String configName = configuration.getName();
-					String title = ActionMessages.RelaunchLastAction_Cannot_relaunch_1; //$NON-NLS-1$
-					String message = MessageFormat.format(ActionMessages.RelaunchLastAction_Cannot_relaunch___0___because_it_does_not_support__2__mode_2, new String[] {configName, getMode()}); //$NON-NLS-1$
+					String title = ActionMessages.RelaunchLastAction_Cannot_relaunch_1; 
+					String message = MessageFormat.format(ActionMessages.RelaunchLastAction_Cannot_relaunch___0___because_it_does_not_support__2__mode_2, new String[] {configName, getMode()}); 
 					MessageDialog.openError(getShell(), title, message);				
 				}
 			} else {
@@ -69,7 +69,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 				openLaunchConfigurationDialog();
 			}
 		} catch (CoreException ce) {
-			DebugUIPlugin.errorDialog(getShell(), ActionMessages.RelaunchLastAction_Error_relaunching_3, ActionMessages.RelaunchLastAction_Error_encountered_attempting_to_relaunch_4, ce); //$NON-NLS-1$ //$NON-NLS-2$
+			DebugUIPlugin.errorDialog(getShell(), ActionMessages.RelaunchLastAction_Error_relaunching_3, ActionMessages.RelaunchLastAction_Error_encountered_attempting_to_relaunch_4, ce); // 
 		}
 	}
 	

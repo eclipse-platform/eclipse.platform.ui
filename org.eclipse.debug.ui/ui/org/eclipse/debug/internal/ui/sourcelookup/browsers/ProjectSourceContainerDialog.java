@@ -52,7 +52,7 @@ public class ProjectSourceContainerDialog extends ListSelectionDialog {
 		Composite composite = (Composite)super.createDialogArea(parent);
 		
 		final Button addRequired = new Button(composite, SWT.CHECK);
-		addRequired.setText(SourceLookupUIMessages.projectSelection_requiredLabel);  //$NON-NLS-1$
+		addRequired.setText(SourceLookupUIMessages.projectSelection_requiredLabel);  
 		addRequired.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fAddRequiredProjects = addRequired.getSelection();

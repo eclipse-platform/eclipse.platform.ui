@@ -30,8 +30,8 @@ public class CloseConsoleAction extends Action {
     private IConsole fConsole;
     
     public CloseConsoleAction(IConsole console) {
-        super(ConsoleMessages.CloseConsoleAction_0, ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_CLOSE)); //$NON-NLS-1$
-        setToolTipText(ConsoleMessages.CloseConsoleAction_1); //$NON-NLS-1$
+        super(ConsoleMessages.CloseConsoleAction_0, ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_CLOSE)); 
+        setToolTipText(ConsoleMessages.CloseConsoleAction_1); 
         fConsole = console;
     }
 

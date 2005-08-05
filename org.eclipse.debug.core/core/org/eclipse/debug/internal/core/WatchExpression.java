@@ -93,7 +93,7 @@ public class WatchExpression implements IWatchExpression {
 					return true;
 				}
 				public String[] getErrorMessages() {
-					return new String[] { DebugCoreMessages.WatchExpression_0 }; //$NON-NLS-1$
+					return new String[] { DebugCoreMessages.WatchExpression_0 }; 
 				}
 				public String getExpressionText() {
 					return WatchExpression.this.getExpressionText();

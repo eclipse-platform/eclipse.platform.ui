@@ -221,8 +221,8 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			window.getWorkbench().showPerspective(id, window);
 		} catch (WorkbenchException e) {
 			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
-			LaunchConfigurationsMessages.PerspectiveManager_Error_1,  //$NON-NLS-1$
-			MessageFormat.format(LaunchConfigurationsMessages.PerspectiveManager_Unable_to_switch_to_perspective___0__2, new String[]{id}), //$NON-NLS-1$
+			LaunchConfigurationsMessages.PerspectiveManager_Error_1,  
+			MessageFormat.format(LaunchConfigurationsMessages.PerspectiveManager_Unable_to_switch_to_perspective___0__2, new String[]{id}), 
 			e);
 		}
 	}
@@ -257,8 +257,8 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	protected void switchFailed(final Throwable t, final String launchName) {
 		sync(new Runnable() {
 			public void run() {
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.PerspectiveManager_Error_1,  //$NON-NLS-1$
-				 MessageFormat.format(LaunchConfigurationsMessages.PerspectiveManager_Unable_to_switch_perpsectives_as_specified_by_launch___0__4, new String[] {launchName}), //$NON-NLS-1$
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.PerspectiveManager_Error_1,  
+				 MessageFormat.format(LaunchConfigurationsMessages.PerspectiveManager_Unable_to_switch_perpsectives_as_specified_by_launch___0__4, new String[] {launchName}), 
 				 t);
 			}});
 	}
@@ -465,7 +465,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 *  automatically when the given launch suspends
 	 */
 	protected boolean shouldSwitchPerspectiveForSuspend(IWorkbenchWindow window, String perspectiveId) {
-		return shouldSwitchPerspective(window, perspectiveId, LaunchConfigurationsMessages.PerspectiveManager_13, IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND); //$NON-NLS-1$
+		return shouldSwitchPerspective(window, perspectiveId, LaunchConfigurationsMessages.PerspectiveManager_13, IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND); 
 	}
 	
 	/**
@@ -479,7 +479,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 *  automatically when a launch occurs
 	 */
 	protected boolean shouldSwitchPerspectiveForLaunch(IWorkbenchWindow window, String perspectiveId) {
-		return shouldSwitchPerspective(window, perspectiveId, LaunchConfigurationsMessages.PerspectiveManager_15, IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE); //$NON-NLS-1$
+		return shouldSwitchPerspective(window, perspectiveId, LaunchConfigurationsMessages.PerspectiveManager_15, IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE); 
 	}
 	
 	/**
@@ -522,7 +522,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
 			shell.forceActive();
 		}
-		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(shell, LaunchConfigurationsMessages.PerspectiveManager_12, MessageFormat.format(message, new String[] { perspectiveName }), null, false, DebugUIPlugin.getDefault().getPreferenceStore(), preferenceKey); //$NON-NLS-1$
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(shell, LaunchConfigurationsMessages.PerspectiveManager_12, MessageFormat.format(message, new String[] { perspectiveName }), null, false, DebugUIPlugin.getDefault().getPreferenceStore(), preferenceKey); 
 		boolean answer = (dialog.getReturnCode() == IDialogConstants.YES_ID);
 		synchronized (this) {
 			fPrompting= false;
@@ -645,11 +645,11 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			DebugUIPlugin.getDefault().getPreferenceStore().putValue(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES, xml);
 			DebugUIPlugin.getDefault().savePluginPreferences();				
 		} catch (IOException e) {
-			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.PerspectiveManager_9, e)); //$NON-NLS-1$
+			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.PerspectiveManager_9, e)); 
 		} catch (ParserConfigurationException e) {
-			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.PerspectiveManager_9, e)); //$NON-NLS-1$
+			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.PerspectiveManager_9, e)); 
 		} catch (TransformerException e) {
-			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.PerspectiveManager_9, e)); //$NON-NLS-1$
+			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.PerspectiveManager_9, e)); 
 		}
 	}
 	

@@ -47,9 +47,9 @@ public class DefaultSourceContainerType extends AbstractSourceContainerTypeDeleg
 			if ("default".equals(element.getNodeName())) { //$NON-NLS-1$
 				return new DefaultSourceContainer();
 			}
-			abort(SourceLookupMessages.DefaultSourceContainerType_6, null); //$NON-NLS-1$
+			abort(SourceLookupMessages.DefaultSourceContainerType_6, null); 
 		}
-		abort(SourceLookupMessages.DefaultSourceContainerType_7, null); //$NON-NLS-1$
+		abort(SourceLookupMessages.DefaultSourceContainerType_7, null); 
 		return null;		
 	}
 	

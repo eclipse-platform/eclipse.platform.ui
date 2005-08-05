@@ -43,7 +43,7 @@ public abstract class ModifyWatchpointAction implements IObjectActionDelegate, I
 	            }
 	        }
         } catch (CoreException e) {
-            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.ModifyWatchpointAction_0, ActionMessages.ModifyWatchpointAction_1, e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.ModifyWatchpointAction_0, ActionMessages.ModifyWatchpointAction_1, e.getStatus()); // 
         }
 
     }

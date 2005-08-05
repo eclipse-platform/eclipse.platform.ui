@@ -48,7 +48,7 @@ public class ProcessPropertyPage extends PropertyPage {
 		parent.setLayout(layout);
 		
 		Label l1= new Label(parent, SWT.NULL);
-		l1.setText(DebugPreferencesMessages.ProcessPropertyPage_Command_Line__1); //$NON-NLS-1$
+		l1.setText(DebugPreferencesMessages.ProcessPropertyPage_Command_Line__1); 
 		
 		GridData gd= new GridData();
 		gd.verticalAlignment= GridData.BEGINNING;

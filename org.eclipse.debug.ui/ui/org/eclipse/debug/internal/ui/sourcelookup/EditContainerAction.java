@@ -27,7 +27,7 @@ public class EditContainerAction extends SourceContainerAction {
 	private ISourceContainerBrowser fBrowser;
 	
 	public EditContainerAction() {
-		super(SourceLookupUIMessages.EditContainerAction_0); //$NON-NLS-1$
+		super(SourceLookupUIMessages.EditContainerAction_0); 
 	}
 	
 	/**

@@ -74,7 +74,7 @@ public class SourceNotFoundEditorInput extends PlatformObject implements IEditor
 		try {
 			return fFrame.getName();
 		} catch (DebugException e) {
-			return DebugUIViewsMessages.SourceNotFoundEditorInput_Source_Not_Found_1; //$NON-NLS-1$
+			return DebugUIViewsMessages.SourceNotFoundEditorInput_Source_Not_Found_1; 
 		}
 	}
 
@@ -89,7 +89,7 @@ public class SourceNotFoundEditorInput extends PlatformObject implements IEditor
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
-		return MessageFormat.format(DebugUIViewsMessages.SourceNotFoundEditorInput_Source_not_found_for__0__2,new String[] {fFrameText}); //$NON-NLS-1$
+		return MessageFormat.format(DebugUIViewsMessages.SourceNotFoundEditorInput_Source_not_found_for__0__2,new String[] {fFrameText}); 
 	}
 
 }

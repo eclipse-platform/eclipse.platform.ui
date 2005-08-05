@@ -33,8 +33,8 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
      * @param view the view of this action
      */
     public PasteBreakpointsAction(BreakpointsView view) {
-        super(BreakpointGroupMessages.PasteBreakpointsAction_0, view); //$NON-NLS-1$
-        setToolTipText(BreakpointGroupMessages.PasteBreakpointsAction_1); //$NON-NLS-1$
+        super(BreakpointGroupMessages.PasteBreakpointsAction_0, view); 
+        setToolTipText(BreakpointGroupMessages.PasteBreakpointsAction_1); 
     }
 
     /**

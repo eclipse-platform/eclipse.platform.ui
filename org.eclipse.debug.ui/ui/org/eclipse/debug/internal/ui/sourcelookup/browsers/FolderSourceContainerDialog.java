@@ -37,14 +37,14 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 			ILabelProvider labelProvider,
 			ITreeContentProvider contentProvider) {
 		super(parent, labelProvider, contentProvider);
-		setTitle(SourceLookupUIMessages.folderSelection_title);	//$NON-NLS-1$	
+		setTitle(SourceLookupUIMessages.folderSelection_title);	//	
 		setInput(ResourcesPlugin.getWorkspace().getRoot());
 		setSorter(new ResourceSorter(ResourceSorter.NAME));
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
 				for (int i= 0; i < selection.length; i++) {
 					if (!(selection[i] instanceof IFolder)) {
-						return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), -1, SourceLookupUIMessages.sourceSearch_folderSelectionError, null); //$NON-NLS-1$ 
+						return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), -1, SourceLookupUIMessages.sourceSearch_folderSelectionError, null); // 
 					} 				
 				}
 				return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
@@ -53,7 +53,7 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		setValidator(validator);	
 		setDoubleClickSelects(true);
 		setAllowMultiple(true);
-		setMessage(SourceLookupUIMessages.folderSelection_label); //$NON-NLS-1$
+		setMessage(SourceLookupUIMessages.folderSelection_label); 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,  IDebugHelpContextIds.ADD_FOLDER_CONTAINER_DIALOG);
 	}
 	

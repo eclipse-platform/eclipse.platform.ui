@@ -219,7 +219,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				fMonitor.killThread();
 				fMonitor = null;
 			}
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_terminate_failed, null);		 //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_terminate_failed, null);		 
 			throw new DebugException(status);
 		}
 	}
@@ -349,7 +349,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		if (isTerminated()) {
 			return fExitValue;
 		} 
-		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_Exit_value_not_available_until_process_terminates__1, null)); //$NON-NLS-1$
+		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_Exit_value_not_available_until_process_terminates__1, null)); 
 	}
 	
 	/**
@@ -411,7 +411,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		 * termination.
 		 */
 		public ProcessMonitorThread(RuntimeProcess process) {
-			super(DebugCoreMessages.ProcessMonitorJob_0); //$NON-NLS-1$
+			super(DebugCoreMessages.ProcessMonitorJob_0); 
 			setDaemon(true);
 			fRuntimeProcess= process;
 			fOSProcess= process.getSystemProcess();
