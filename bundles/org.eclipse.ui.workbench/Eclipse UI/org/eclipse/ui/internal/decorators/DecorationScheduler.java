@@ -274,11 +274,9 @@ public class DecorationScheduler {
 					monitor.subTask(reference.getSubTask());
 					// Don't decorate if there is already a pending result
 					Object element = reference.getElement();
-					Object adapted = reference.getAdaptedElement();
-
+				
 					boolean elementIsCached = true;
-					DecorationResult adaptedResult = null;
-
+					
 					// Synchronize on the result lock as we want to
 					// be sure that we do not try and decorate during
 					// label update servicing.
@@ -426,8 +424,11 @@ public class DecorationScheduler {
 				// If this is the first one check again in case 
 				// someone has already cleared it out.
 				if (currentIndex == NEEDS_INIT){
-					if(pendingUpdate.isEmpty())
+					if(pendingUpdate.isEmpty()){
+						//If the removal came in while we were waiting clear it anyways 
+						removedListeners.clear();
 						return Status.OK_STATUS;
+					}
 					setUpUpdates();
 				}
 				
@@ -582,8 +583,9 @@ public class DecorationScheduler {
 	 * @param listener
 	 */
 	void listenerRemoved(ILabelProviderListener listener) {
-		if(updatesPending())//Only keep track of them if there are updates pending
+		if(updatesPending()){//Only keep track of them if there are updates pending
 			removedListeners.add(listener);
+		}
 		if(!updatesPending())//Check again in case of race condition.
 			removedListeners.remove(listener);
 		
