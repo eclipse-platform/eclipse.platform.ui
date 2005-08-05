@@ -362,6 +362,9 @@ public class DeferredTreeContentManager {
      * @param parent
      */
     public void cancel(Object parent) {
+    	if(parent == null)
+    		return;
+    	
         Platform.getJobManager().cancel(new DeferredContentFamily(this, parent));
     }
 
