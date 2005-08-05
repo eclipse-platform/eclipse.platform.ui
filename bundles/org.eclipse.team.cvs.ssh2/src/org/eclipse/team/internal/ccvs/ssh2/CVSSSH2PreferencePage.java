@@ -33,6 +33,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.ui.*;
 
 import com.jcraft.jsch.*;
@@ -896,16 +897,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	
 	Composite buttons = new Composite(group, SWT.NULL);
 	buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-	layout = new GridLayout();
-	layout.marginHeight = 0;
-	layout.marginWidth = 0;
-	buttons.setLayout(layout);
+	buttons.setLayout(new GridLayout());
 
 	removeHostKeyButton = new Button(buttons, SWT.PUSH);
-	removeHostKeyButton.setText(CVSSSH2Messages.CVSSSH2PreferencePage_138);  
-	gd = new GridData();
-	gd.horizontalAlignment = GridData.FILL;
-	removeHostKeyButton.setLayoutData(gd);
+	removeHostKeyButton.setText(CVSSSH2Messages.CVSSSH2PreferencePage_138);
+	int buttonWidth= SWTUtils.calculateControlSize(SWTUtils.createDialogPixelConverter(parent), new Button [] { removeHostKeyButton });
+	removeHostKeyButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.END, SWT.CENTER, false, false));
 	removeHostKeyButton.setEnabled(false);
 	removeHostKeyButton.addListener(SWT.Selection, new Listener() {
 		public void handleEvent(Event e) {

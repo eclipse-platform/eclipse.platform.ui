@@ -15,5 +15,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.team.core,
  org.eclipse.swt,
  org.eclipse.ui,
- org.eclipse.team.cvs.ssh
+ org.eclipse.team.cvs.ssh,
+ org.eclipse.team.ui
 Eclipse-AutoStart: true
