@@ -76,7 +76,7 @@ public class PatternFilter extends ViewerFilter {
         if (patternString == null || patternString.equals("")) //$NON-NLS-1$
             matcher = null;
         else
-            matcher = new StringMatcher(patternString + "*", true, false); //$NON-NLS-1$
+            matcher = new StringMatcher("*" + patternString + "*", true, false); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
