@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -26,6 +25,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ui.PixelConverter;
+import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.ui.*;
 
 public class PasswordManagementPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -125,12 +125,6 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 		
 		removeButton = new Button(buttons, SWT.PUSH);
 		removeButton.setText(CVSUIMessages.PasswordManagementPreferencePage_5);  
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, removeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		removeButton.setLayoutData(data);
 		removeButton.setEnabled(false);
 		removeButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -139,18 +133,19 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 		});
 		removeAllButton = new Button(buttons, SWT.PUSH);
 		removeAllButton.setText(CVSUIMessages.PasswordManagementPreferencePage_6);  
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, removeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		removeAllButton.setLayoutData(data);
 		removeAllButton.setEnabled(true);
 		removeAllButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				removeAll();
 			}
 		});
+		
+		// Use the same size for the buttons and ensure they conform to the proper minimum size
+		int buttonWidth = SWTUtils.calculateControlSize(SWTUtils.createDialogPixelConverter(parent), new Button [] { removeButton, removeAllButton });
+		data = SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.END, SWT.CENTER, false, false);
+		removeButton.setLayoutData(data);
+		removeAllButton.setLayoutData(data);
+		
 		Dialog.applyDialogFont(ancestor);
 		viewer.setInput(KnownRepositories.getInstance());
 		handleSelection();
