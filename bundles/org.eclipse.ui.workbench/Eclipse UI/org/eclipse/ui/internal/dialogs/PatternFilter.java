@@ -57,7 +57,7 @@ public class PatternFilter extends ViewerFilter {
     public boolean select(Viewer viewer, Object parentElement, Object element) {
         Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
                 .getContentProvider()).getChildren(element);
-        if (children.length > 0)
+        if ((children != null) && (children.length > 0))
             return filter(viewer, element, children).length > 0;
 
         String labelText = ((ILabelProvider) ((StructuredViewer) viewer)

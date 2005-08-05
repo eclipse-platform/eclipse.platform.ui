@@ -21,9 +21,9 @@ import org.eclipse.ui.ide.IDE;
  */
 public class EditorSwitchTest extends BasicPerformanceTest {
 
-	private String file1;
+	private String extension1;
 
-	private String file2;
+	private String extension2;
 
 	/**
 	 * Constructor.
@@ -33,16 +33,10 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 	 */
 	public EditorSwitchTest(String[] pair) {
 		super("testEditorSwitch:" + pair[0] + "," + pair[1]);
-		file1 = "1." + pair[0];
-		file2 = "2." + pair[1];
+		extension1 = pair[0];
+		extension2 = pair[1];
 	}
-    
-    public EditorSwitchTest(String file1, String file2) {
-        super("testEditorSwitch:" + file1 + "," + file2);
-        this.file1 = file1;
-        this.file2 = file2;
-    }
-    
+
 	/**
 	 * Test editor opening performance. This test always fails.
 	 */
@@ -52,9 +46,9 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 		// the initial time to open, just switching.
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
 		final IWorkbenchPage activePage = window.getActivePage();
-		final IFile file1 = getProject().getFile(this.file1);
+		final IFile file1 = getProject().getFile("1." + extension1);
 		assertTrue(file1.exists());
-		final IFile file2 = getProject().getFile(this.file2);
+		final IFile file2 = getProject().getFile("1." + extension2);
 		assertTrue(file2.exists());
 		IDE.openEditor(activePage, file1, true);
 		IDE.openEditor(activePage, file2, true);

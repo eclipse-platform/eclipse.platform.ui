@@ -21,9 +21,8 @@ public class EditorPerformanceSuite extends TestSuite {
     
     public static final String [] EDITOR_FILE_EXTENSIONS = {"perf_basic", "perf_outline", "java"};
     public static final String [][] EDITOR_SWITCH_PAIRS = {
-        {"1.perf_outline", "1.java"},
-        {"1.perf_basic", "1.perf_outline"},
-        {"1.java", "plugin.xml"}};
+        {"perf_outline", "java"},
+        {"perf_basic", "perf_outline"}};
     
     /**
      * Returns the suite. This is required to use the JUnit Launcher.
@@ -55,7 +54,7 @@ public class EditorPerformanceSuite extends TestSuite {
      */
     private void addSwitchScenarios() {
         for (int i = 0; i < EDITOR_SWITCH_PAIRS.length; i++) {
-            addTest(new EditorSwitchTest(EDITOR_SWITCH_PAIRS[i][0], EDITOR_SWITCH_PAIRS[i][1]));            
+            addTest(new EditorSwitchTest(EDITOR_SWITCH_PAIRS[i]));            
         }       
     }
 
