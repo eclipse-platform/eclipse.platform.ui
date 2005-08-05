@@ -108,7 +108,6 @@ public class BuildCleanupListener implements IResourceDeltaVisitor, IResourceCha
 				if (resource.getType() == IResource.PROJECT) {
 					// If the project is not accessible, don't process it
 					if (!resource.isAccessible()) continue;
-					if ((delta.getFlags() & IResourceDelta.OPEN) != 0) continue;
 				}
 				
 				RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
