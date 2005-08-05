@@ -198,6 +198,46 @@ public final class BindingInteractionsTest extends UITestCase {
 
 	/**
 	 * <p>
+	 * Tests whether a user-defined deletion in one context will allow a binding
+	 * in a parent context to match.  Bug 105655.
+	 * </p>
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 */
+	public void testDeletedBindingAllowsParent() throws NotDefinedException {
+		final Context parentContext = contextManager.getContext("parent");
+		parentContext.define("name", "description", null);
+		final Context childContext = contextManager.getContext("child");
+		childContext.define("name", "description", "parent");
+
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+
+		bindingManager.setActiveScheme(scheme);
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("parent");
+		activeContextIds.add("child");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		final Binding childBinding = new TestBinding("childCommand", "na",
+				"child", null, null, Binding.SYSTEM, null);
+		bindingManager.addBinding(childBinding);
+		final Binding deletion = new TestBinding(null, "na", "child", null,
+				null, Binding.USER, null);
+		bindingManager.addBinding(deletion);
+		final Binding parentBinding = new TestBinding("parentCommand", "na",
+				"parent", null, null, Binding.SYSTEM, null);
+		bindingManager.addBinding(parentBinding);
+		assertEquals(
+				"The user should be able to remove bindings to allow a parent binding",
+				"parentCommand", bindingManager.getPerfectMatch(
+						TestBinding.TRIGGER_SEQUENCE).getParameterizedCommand()
+						.getId());
+	}
+
+	/**
+	 * <p>
 	 * Tests a common case for binding deletion. The binding is defined on all
 	 * platforms, then deleted on a specific platform, and defined again as
 	 * something else.
