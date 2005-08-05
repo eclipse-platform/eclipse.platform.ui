@@ -77,6 +77,8 @@ public class CVSDecoration {
 	private String fileFormatter;
 	private String folderFormatter;
 	private String projectFormatter;
+	private String dirtyTextIndicator;
+	private String addedTextIndicator;
 	private String resourceName;
 	
 	//	Images cached for better performance
@@ -250,27 +252,22 @@ public class CVSDecoration {
 		}	
 		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, getResourceName());
 		bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, getKeywordSubstitution());
-		if (resourceType != IResource.FILE) {
-            if (location != null) {
-    			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, location.getHost());
-    			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, location.getMethod().getName());
-    			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, location.getUsername());
-    			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, location.getRootDirectory());
-    
-                RepositoryManager repositoryManager = CVSUIPlugin.getPlugin().getRepositoryManager();
-                RepositoryRoot root = repositoryManager.getRepositoryRootFor(location);
-                CVSUIPlugin.getPlugin().getRepositoryManager();
-                String label = root.getName();
-                if (label == null) {
-                  label = location.getLocation(true);
-                }
-                bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_LABEL, label);
-            }
-            if (repository != null) {
-                bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, repository);
-            }
-        }
+		if (resourceType != IResource.FILE && location != null) {
+			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, location.getHost());
+			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, location.getMethod().getName());
+			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, location.getUsername());
+			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, location.getRootDirectory());
+			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, repository);
 
+            RepositoryManager repositoryManager = CVSUIPlugin.getPlugin().getRepositoryManager();
+            RepositoryRoot root = repositoryManager.getRepositoryRootFor(location);
+            CVSUIPlugin.getPlugin().getRepositoryManager();
+            String label = root.getName();
+            if (label == null) {
+              label = location.getLocation(true);
+            }
+            bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_LABEL, label);
+		}
 		CVSDecoratorConfiguration.decorate(this, getTextFormatter(), bindings);
 	}
 
@@ -433,61 +430,4 @@ public class CVSDecoration {
 	public void setVirtualFolder(boolean virtualFolder) {
 		this.virtualFolder = virtualFolder;
 	}
-    
-    public ICVSRepositoryLocation getLocation() {
-        return location;
-    }
-    
-    public void combine(CVSDecoration resourceDecoration) {
-        // dirty if any are dirty
-        if (resourceDecoration.isDirty())
-            setDirty(true);
-        // ignored only if all are ignored
-        if (isIgnored() && !resourceDecoration.isIgnored())
-            setIgnored(false);
-        // added only if all are added
-        if (isAdded() && !resourceDecoration.isAdded())
-            setAdded(false);
-        // remote if any have a remote
-        if (resourceDecoration.isHasRemote())
-            setHasRemote(true);
-        // Only new if all are new
-        if (isNewResource() && !resourceDecoration.isNewResource())
-            setNewResource(false);
-        // Only watch-edit enabled if all are
-        if (isWatchEditEnabled() && !resourceDecoration.isWatchEditEnabled())
-            setWatchEditEnabled(false);
-        // Only read-only if all are
-        if (isReadOnly() && !resourceDecoration.isReadOnly())
-            setReadOnly(false);
-        // Only virtual if all are
-        if (isVirtualFolder() && !resourceDecoration.isVirtualFolder())
-            setVirtualFolder(false);
-        // TODO what about needsMerge
-        // Can only have a revision for a direct mapping to a single file
-        if (getRevision() != null) {
-            revision = null;
-        }
-        // Can only have a keyword substitution mode for a direct mapping to a single file
-        if (getKeywordSubstitution() != null) {
-            keywordSubstitution = null;
-        }
-        // Will only show the tag if it is the same for all
-        if (getTag() != null) {
-            if (resourceDecoration.getTag() == null || !getTag().equals(resourceDecoration.getTag())) {
-                setTag(null);
-            }
-        }
-        // Can only have a repository path for a single folder
-        if (repository != null)
-            repository = null;
-        if (getLocation() != null) {
-            if (resourceDecoration.getLocation() == null || !getLocation().equals(resourceDecoration.getLocation())) {
-                setLocation(null);
-            }
-        }
-        // Assume the folder type for multiple resource mappings
-        resourceType = IResource.FOLDER;
-        
-    }
 }

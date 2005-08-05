@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
@@ -68,11 +67,7 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
      * @return
      */
     protected CVSDecoration getDecoration(IResource resource) throws CVSException {
-        try {
-            return CVSLightweightDecorator.decorate(resource, IResource.DEPTH_ZERO, false /* do not include dirty check */);
-        } catch (CoreException e) {
-            throw CVSException.wrapException(e);
-        }
+        return CVSLightweightDecorator.decorate(resource, false /* do not include dirty check */);
     }
 
     public Image decorateImage(Image base, Object element) {
