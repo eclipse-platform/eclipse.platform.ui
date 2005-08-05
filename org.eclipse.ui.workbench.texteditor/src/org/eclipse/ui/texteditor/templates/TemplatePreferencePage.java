@@ -24,8 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -54,8 +53,11 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -222,28 +224,46 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
         gd.horizontalSpan= 2;
         innerParent.setLayoutData(gd);
 
-		Table table= new Table(innerParent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-
-		GridData data= new GridData(GridData.FILL_BOTH);
-		data.widthHint= 360;
-		data.heightHint= convertHeightInCharsToPixels(10);
-		table.setLayoutData(data);
+        Composite tableComposite= new Composite(innerParent, SWT.NONE);
+        GridData data= new GridData(GridData.FILL_BOTH);
+        data.widthHint= 360;
+        data.heightHint= convertHeightInCharsToPixels(10);
+        tableComposite.setLayoutData(data);
+        
+        ColumnLayout columnLayout= new ColumnLayout();
+        tableComposite.setLayout(columnLayout);
+		Table table= new Table(tableComposite, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
+		GC gc= new GC(tableComposite.getDisplay());
+		gc.setFont(JFaceResources.getDialogFont());
+		
 		TableColumn column1= new TableColumn(table, SWT.NONE);
 		column1.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_name);
+		int minWidth= computeMinimumColumnWidth(gc, TextEditorTemplateMessages.TemplatePreferencePage_column_name);
+		columnLayout.addColumnData(new ColumnWeightData(2, minWidth, true));
 
 		TableColumn column2= new TableColumn(table, SWT.NONE);
 		column2.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_context);
+		minWidth= computeMinimumColumnWidth(gc, TextEditorTemplateMessages.TemplatePreferencePage_column_context);
+		columnLayout.addColumnData(new ColumnWeightData(1, minWidth, true));
 
 		TableColumn column3= new TableColumn(table, SWT.NONE);
 		column3.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_description);
+		minWidth= computeMinimumColumnWidth(gc, TextEditorTemplateMessages.TemplatePreferencePage_column_description);
+		columnLayout.addColumnData(new ColumnWeightData(3, minWidth, true));
 
 		TableColumn column4= new TableColumn(table, SWT.NONE);
 		column4.setAlignment(SWT.CENTER);
 		column4.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_autoinsert);
+		minWidth= computeMinimumColumnWidth(gc, TextEditorTemplateMessages.TemplatePreferencePage_column_autoinsert);
+		minWidth= Math.max(minWidth, computeMinimumColumnWidth(gc, TextEditorTemplateMessages.TemplatePreferencePage_on));
+		columnLayout.addColumnData(new ColumnPixelData(minWidth, false, false));
+		column4.setResizable(false);
+		
+		gc.dispose();
 
 		fTableViewer= new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TemplateLabelProvider());
@@ -376,12 +396,14 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fTableViewer.setCheckedElements(getEnabledTemplates());
 
 		updateButtons();
-        configureTableResizing(table);
-
 		Dialog.applyDialogFont(parent);
-		// trigger the resize
-		table.getHorizontalBar().setVisible(true);
+		innerParent.layout();
+		
 		return parent;
+	}
+
+	private int computeMinimumColumnWidth(GC gc, String string) {
+		return gc.stringExtent(string).x + 10; // pad 10 to accomodate table header trimmings
 	}
 
 	/**
@@ -409,90 +431,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	protected boolean isShowFormatterSetting() {
 		return true;
 	}
-
-	/**
-	 * Correctly resizes the table so no phantom columns appear
-	 * 
-	 * @param table the table
-	 * @since 3.1
-	 */
-	private static void configureTableResizing(final Table table) {
-	        ControlAdapter resizer= new ControlAdapter() {
-	        	private boolean fIsResizing= false;
-	        	private final int[] fWidths= {80, 80, 160, 50};
-	        	private int fSum= 370;
-	            public void controlResized(ControlEvent e) {
-	            	if (fIsResizing)
-	            		return;
-	            	try {
-	            		fIsResizing= true;
-	            		int clientAreaWidth= table.getClientArea().width;
-	            		TableColumn[] columns= table.getColumns();
-	            		int tableWidth= 0;
-	            		
-	            		if (e.widget == table) {
-	            			int initial[]= {80, 80, 80, 50};
-	            			int minimums[]= new int[columns.length];
-	            			int minSum= 0;
-	            			for (int i= 0; i < columns.length; i++) {
-								// don't make a column narrower than the minimum, 
-								// or than what it is currently if less than the minimum
-								minimums[i]= Math.min(fWidths[i], initial[i]);
-								minSum+= minimums[i];
-							}
-	            			
-	            			int newWidth= fSum < clientAreaWidth ? clientAreaWidth : Math.max(clientAreaWidth, minSum);
-							final int toDistribute= newWidth - fSum;
-							int lastPart= toDistribute;
-							if (toDistribute != 0) {
-								int[] iteration= {0,1,3,2}; // give the description column all the rest
-								for (int i= 0; i < iteration.length; i++) {
-									int c= iteration[i];
-									int width;
-									if (fSum > 0) {
-										int part;
-										if (i == iteration.length - 1)
-											part= lastPart;
-										else
-											// current width is the weight for the distribution of the extra space
-											part= toDistribute * fWidths[c] / fSum;
-										lastPart-= part;
-										width= Math.max(minimums[c], fWidths[c] + part);
-									} else {
-										width= toDistribute * initial[c] / 280;
-									}
-									columns[c].setWidth(width);
-									fWidths[c]= width;
-									tableWidth+= width;
-								}
-								fSum= tableWidth;
-							}
-	            		} else {
-	            			// column being resized
-	            			// on GTK, the last column gets auto-adapted - ignore this
-	            			if (e.widget == columns[3])
-	            				return;
-	            			for (int i= 0; i < columns.length; i++) {
-	            				fWidths[i]= columns[i].getWidth();
-								tableWidth+= fWidths[i];
-	            			}
-	            			fSum= tableWidth;
-	            		}
-	            		
-	            		// set scroll bar visible
-	            		table.getHorizontalBar().setVisible(tableWidth > clientAreaWidth);
-	            	} finally {
-	            		fIsResizing= false;
-	            	}
-	            }
-	        };
-			table.addControlListener(resizer);
-			TableColumn[] columns= table.getColumns();
-			for (int i= 0; i < columns.length; i++) {
-				columns[i].addControlListener(resizer);
-			}
-	    }
-
 
 	private TemplatePersistenceData[] getEnabledTemplates() {
 		List enabled= new ArrayList();
