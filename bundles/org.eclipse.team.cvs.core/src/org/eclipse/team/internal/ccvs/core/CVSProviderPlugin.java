@@ -37,7 +37,7 @@ public class CVSProviderPlugin extends Plugin {
 	// external command to run for ext connection method
 	public static final String DEFAULT_CVS_RSH = "ssh"; //$NON-NLS-1$
 	// external command parameters
-	public static final String DEFAULT_CVS_RSH_PARAMETERS = "{host} -l {user}"; //$NON-NLS-1$
+	public static final String DEFAULT_CVS_RSH_PARAMETERS = "-l {user} {host}"; //$NON-NLS-1$
 	// remote command to run for ext connection method
 	public static final String DEFAULT_CVS_SERVER = "cvs"; //$NON-NLS-1$
 	// determines if empty directories received from the server should be pruned.
