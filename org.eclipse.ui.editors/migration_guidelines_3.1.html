@@ -1,0 +1,34 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="IBM"><title>Platform Text Migration Guide</title>
+  <link rel="stylesheet" href="http://dev.eclipse.org/default_style.css" type="text/css">
+</head>
+<body bgcolor="#ffffff" text="#000000">
+<body text="#000000" bgcolor="#ffffff">
+<p>
+This document lists the API changes that occurred between R3.0 and R3.1 and
+how to migrate from the R3.0 API to the R3.1 API.
+</p>
+<p></p>
+<table style="width: 1000px; height: 437px;" border="0" cellpadding="2" cellspacing="5">
+  <tbody>
+    <tr>
+      <td align="left" width="72%"> <font size="+3"><b>Platform Text -
+</b></font><font size="+3"><b>Binary Compatibility Breakage from R3.0 to R3.1</b></font><font size="+3"><b></b></font><font color="#8080ff" size="-2"><br>
+</font></td>
+    </tr>
+	<tr>
+      <td>
+      <ul>
+        <li><span style="font-weight: bold; font-style: italic;">org.eclipse.jface.text.DefaultPositionUpdater.update(DocumentEvent event)</span>: to prevent holding on to the cached document after calling this method we set <code>fDocument</code> to <code>null</code> at the end of this method. Subclasses that extend <code>update(DocumentEvent event)</code> i.e. call <code>super.update(event)</code> will be broken if they access <code>fDocument</code> after that call. To fix this either replace <code>fDocument</code> with <code>event.getDocument()</code> or set <code>fDocument</code> again. If you do the latter do not forget to set it back to <code>null</code> at the end of your method.<br>
+</li></ul>
+      </td>
+    </tr>
+    <tr>
+<td align="left" width="72%"> <font size="+3"><b>Platform Text - </b></font><font size="+3"><b>Breaking API changes from R3.0 to R3.1</b></font><font color="#8080ff" size="-2">
+</font></td></tr>
+  </tbody>
+</table>
+<p> </p>
+</body></html>
