@@ -531,7 +531,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			getEventHandler().refresh();
 		} else if (propertyName.equals(IInternalDebugUIConstants.DETAIL_PANE_FONT)) {
 			getDetailViewer().getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));			
-		} else if (propertyName.equals(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
+		} else if (propertyName.equals(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
 			populateDetailPane();
 		}
 	}
@@ -1111,7 +1111,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 							insert = "\n" + result; //$NON-NLS-1$
 						}
 						try {
-							int max = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
+							int max = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
 							if (max > 0 && insert.length() > max) {
 								insert = insert.substring(0, max) + "..."; //$NON-NLS-1$
 							}

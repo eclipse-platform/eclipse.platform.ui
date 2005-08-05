@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.views.variables;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -25,7 +25,7 @@ public class MaxDetailsLengthDialog extends InputDialog {
 	 */
 	public MaxDetailsLengthDialog(Shell parent) {
 		super(parent, VariablesViewMessages.MaxDetailsLengthDialog_0, VariablesViewMessages.MaxDetailsLengthDialog_1,
-				Integer.toString(DebugUIPlugin.getDefault().getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH)),
+				Integer.toString(DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH)),
 				new IInputValidator() {
 					public String isValid(String newText) {
 						try {
@@ -49,7 +49,7 @@ public class MaxDetailsLengthDialog extends InputDialog {
 		String text = getValue();
 		try {
 			int max = Integer.parseInt(text);
-			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH, max);
+			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH, max);
 		} catch (NumberFormatException e) {
 		}
 		super.okPressed();

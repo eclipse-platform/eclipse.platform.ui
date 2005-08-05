@@ -1014,4 +1014,12 @@ public interface IDebugUIConstants {
 	 * @since 3.1
 	 */
 	public static final String PREF_DEFAULT_EBCDIC_CODE_PAGE = PLUGIN_ID + ".defaultEbcdicCodePage"; //$NON-NLS-1$
+
+	/**
+	 * Maximum number of characters to display in the details area of the variables
+	 * view, or 0 if unlimited.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String PREF_MAX_DETAIL_LENGTH = PLUGIN_ID + ".max_detail_length"; //$NON-NLS-1$
 }

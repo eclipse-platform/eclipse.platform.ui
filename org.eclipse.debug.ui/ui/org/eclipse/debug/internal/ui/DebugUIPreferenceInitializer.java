@@ -76,7 +76,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CHANGED_VARIABLE_COLOR, new RGB(255, 0, 0));
 		prefs.setDefault(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP, false);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH, 10000);
+		prefs.setDefault(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH, 10000);
 		
 		//Registers View
 		prefs.setDefault(IDebugPreferenceConstants.REGISTERS_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
