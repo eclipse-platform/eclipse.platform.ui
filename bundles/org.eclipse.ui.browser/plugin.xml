@@ -62,7 +62,7 @@
         toolbarPath="browser"
         label="%actionSetOpenWebBrowser"
         tooltip="%actionSetOpenWebBrowser"
-        icon="icons/obj16/internal_browser.gif"
+        icon="$nl$/icons/obj16/internal_browser.gif"
         class="org.eclipse.ui.internal.browser.OpenBrowserWorkbenchAction"/>
     </actionSet>
   </extension>

@@ -11,13 +11,15 @@
 package org.eclipse.ui.internal.browser;
 
 import java.net.URL;
-import java.util.Map;
 import java.util.HashMap;
-import org.eclipse.swt.graphics.Image;
+import java.util.Map;
+
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
 /**
  * Utility class to handle image resources.
  */
@@ -30,17 +32,8 @@ public class ImageResource {
 	private static Map imageDescriptors;
 
 	// base urls for images
-	private static URL ICON_BASE_URL;
-
-	static {
-		try {
-			String pathSuffix = "icons/"; //$NON-NLS-1$
-			ICON_BASE_URL = Platform.find(WebBrowserUIPlugin.getInstance().getBundle(), new Path(pathSuffix));
-		} catch (Exception e) {
-			Trace.trace(Trace.SEVERE, "Could not set icon base URL", e); //$NON-NLS-1$
-		}
-	}
-
+	private static IPath ICON_BASE_URL = new Path("$nl$/icons/"); //$NON-NLS-1$
+	
 	private static Image[] busyImages;
 
 	private static final String URL_CLCL = "clcl16/"; //$NON-NLS-1$
@@ -171,7 +164,8 @@ public class ImageResource {
 	 */
 	private static void registerImage(String key, String partialURL) {
 		try {
-			ImageDescriptor id = ImageDescriptor.createFromURL(new URL(ICON_BASE_URL, partialURL));
+			URL iconURL = Platform.find(WebBrowserUIPlugin.getInstance().getBundle(), ICON_BASE_URL.append(partialURL));
+			ImageDescriptor id = ImageDescriptor.createFromURL(iconURL);
 			imageRegistry.put(key, id);
 			imageDescriptors.put(key, id);
 		} catch (Exception e) {
