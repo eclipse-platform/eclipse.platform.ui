@@ -264,6 +264,8 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements IObj
      * @return the object class to which this decorator is registered
      */
     public String getObjectClass() {
+    	if(objectClass == null)//Make sure we have read the enablement
+    		getEnablement();
         return objectClass;
     }
     
@@ -271,11 +273,14 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements IObj
      * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#initializeEnablement()
      */
     protected void initializeEnablement() {
-        super.initializeEnablement();
-        ActionExpression expression = getEnablement();
-        objectClass = expression.extractObjectClass();
-        if (objectClass == null) {
-            objectClass = Object.class.getName();
-        }
+    	super.initializeEnablement();
+		ActionExpression expression = getEnablement();
+		if (expression != null) 
+			objectClass = expression.extractObjectClass();
+			
+		//If the class is null set it to Object
+		if (objectClass == null) {
+			objectClass = Object.class.getName();
+		}
     }
 }
