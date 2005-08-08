@@ -57,7 +57,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public abstract class FilteredPreferenceDialog extends PreferenceDialog implements IWorkbenchPreferenceContainer{
 
-	protected FilteredTextTree filteredTree;
+	protected FilteredComboTree filteredTree;
 
 	private Object pageData;
 	
@@ -65,8 +65,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	
 	private Collection updateJobs = new ArrayList();
 	
-	//A key which is paired with a search history string as part of dialog settings
-	private static final String SEARCHHISTORY = "SearchHistory"; //$NON-NLS-1$
+	//Composite toolBarComposite;
+
 	
 	/**
 	 * The preference page history.
@@ -110,7 +110,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	protected TreeViewer createTreeViewer(Composite parent) {
 		PatternItemFilter filter = new PatternItemFilter(true); 
 		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
-		filteredTree = new FilteredTextTree(parent, styleBits, filter,SEARCHHISTORY);
+		filteredTree = new FilteredComboTree(parent, styleBits, filter);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -123,8 +123,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		
 		//if the tree has only one or zero pages, make the combo area disable
 		if(hasAtMostOnePage(tree)){
-			filteredTree.getFilterControl().setEnabled(false);
-			filteredTree.getFilterControl().setSelection(new Point(0,0));
+			filteredTree.getFilterCombo().setEnabled(false);
+			filteredTree.getFilterCombo().setSelection(new Point(0,0));
 		}
 		
 		
@@ -354,23 +354,13 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 					null));
 		}
 		return success;
-	}	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#open()
-	 */
-	public int open() {
-		int code = super.open();
-		filteredTree.setPreferenceSearchHistory(filteredTree.getDialogSettings(),SEARCHHISTORY);
-		return code;
 	}
-	 
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
 		history.dispose();
-		filteredTree.saveDialogSettings(filteredTree.getDialogSettings(),SEARCHHISTORY);
 		return super.close();
 	}
 	

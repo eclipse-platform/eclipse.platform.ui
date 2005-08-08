@@ -26,13 +26,16 @@ import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
@@ -49,11 +52,11 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class FilteredTree extends Composite {
 
-    protected Text filterText;
-    
+    private Text filterText;
+
     private ToolBarManager filterToolBar;
 
-    protected TreeViewer treeViewer;
+    private TreeViewer treeViewer;
 
     private Composite filterParent;
 
@@ -130,7 +133,25 @@ public class FilteredTree extends Composite {
                 | GridData.GRAB_HORIZONTAL));
 
         createFilterControl(filterParent);
-	       
+	        getFilterControl().addKeyListener(new KeyAdapter() {
+	
+	            /*
+	             * (non-Javadoc)
+	             * 
+	             * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
+	             */
+	            public void keyReleased(KeyEvent e) {
+	            	// on a CR we want to transfer focus to the list
+	            	if(e.keyCode == SWT.ARROW_DOWN){
+
+	                    if (!(getFilterControl() instanceof Combo)) {
+	                    	treeViewer.getTree().setFocus();
+	                    }
+	            	} else
+	            		textChanged();
+	            }
+	        });
+
         GridData data = new GridData(GridData.FILL_HORIZONTAL
                 | GridData.GRAB_HORIZONTAL);
         getFilterControl().setLayoutData(data);
@@ -208,30 +229,6 @@ public class FilteredTree extends Composite {
 	protected void createFilterControl(Composite parent) {
 		filterText =  new Text(parent, SWT.SINGLE | SWT.BORDER);
 		filterText.getAccessible().addAccessibleListener(getAccessibleListener());
-	    getFilterControl().addKeyListener(getKeyListener());
-
-	}
-
-	/**
-	 * Get the key listener used for the receiver.
-	 * @return KeyListener
-	 */
-	protected KeyAdapter getKeyListener() {
-		return new KeyAdapter() {
-	    		
-	            /*
-	             * (non-Javadoc)
-	             * 
-	             * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
-	             */
-	            public void keyReleased(KeyEvent e) {
-	            	// on a CR we want to transfer focus to the list
-	            	if(e.keyCode == SWT.ARROW_DOWN)
-	                    treeViewer.getTree().setFocus();
-	            	else
-	            		textChanged();
-	            }
-	        };
 	}
 
 	protected AccessibleAdapter getAccessibleListener() {
@@ -240,7 +237,7 @@ public class FilteredTree extends Composite {
 			 * @see org.eclipse.swt.accessibility.AccessibleListener#getName(org.eclipse.swt.accessibility.AccessibleEvent)
 			 */
 			public void getName(AccessibleEvent e) {
-				String filterTextString = getFilterControlText();
+				String filterTextString = getFilterText();
 				if(filterTextString.length() == 0){
 					e.result = initialText;
 				}
@@ -251,6 +248,13 @@ public class FilteredTree extends Composite {
 		};
 	}
 
+	/**
+	 * Get the text from the filter widget.
+	 * @return String
+	 */
+    protected String getFilterText() {
+		return filterText.getText();
+	}
 	/**
      * update the receiver after the text has changed
      */
@@ -343,7 +347,7 @@ public class FilteredTree extends Composite {
      * 
      * @return the text field
      */
-    public Text getFilterControl() {
+    public Control getFilterControl() {
         return filterText;
     }
 
@@ -357,9 +361,22 @@ public class FilteredTree extends Composite {
     	setFilterText(initialText);
     	
         textChanged();
-    }
+        listener = new FocusListener() {
+            public void focusGained(FocusEvent event) {
+                selectAll();
+                getFilterControl().removeFocusListener(listener);
+            }
 
-	
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+             */
+            public void focusLost(FocusEvent e) {
+            }
+        };
+        getFilterControl().addFocusListener(listener);
+    }
 
 	protected void selectAll() {
 		filterText.selectAll();
@@ -394,4 +411,6 @@ public class FilteredTree extends Composite {
 				cachedTitle));
 		
 	}
+
+	
 }
