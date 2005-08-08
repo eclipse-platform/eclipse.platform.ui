@@ -59,10 +59,14 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      */
     public ChooseWorkspaceDialog(Shell parentShell,
             ChooseWorkspaceData launchData, boolean suppressAskAgain, boolean centerOnMonitor) {
-        super(parentShell);
+    	super(parentShell);
         this.launchData = launchData;
         this.suppressAskAgain = suppressAskAgain;
         this.centerOnMonitor = centerOnMonitor;
+        // if there is no parent shell, open the dialog on top of all windows
+        if(parentShell == null) {
+        	setShellStyle(getShellStyle() | SWT.ON_TOP);
+        }
     }
 
     /**
