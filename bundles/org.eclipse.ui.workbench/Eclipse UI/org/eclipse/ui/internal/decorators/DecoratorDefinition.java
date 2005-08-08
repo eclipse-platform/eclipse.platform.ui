@@ -251,6 +251,7 @@ public abstract class DecoratorDefinition {
 
     /**
      * Return whether or not this is a full or lightweight definition.
+     * @return <code>true</code> if this is not a lightweight decorator.
      */
     public abstract boolean isFull();
 
@@ -270,6 +271,13 @@ public abstract class DecoratorDefinition {
      * @return whether the decorator w=should be applied to the element
      */
     public boolean isEnabledFor(Object element) {
-        return isEnabled() && getEnablement().isEnabledFor(element);
+    	if(isEnabled()){
+    		ActionExpression expression =  getEnablement();
+    		if(expression != null)
+    			 return expression.isEnabledFor(element);
+    		return true;//Always on if no expression
+    	}
+    	return false;
+       
     }
 }

@@ -49,10 +49,6 @@ public class DecoratorRegistryReader extends RegistryReader {
     	if (desc == null)
     		return false;
     	
-        if (desc.getEnablement() == null) {
-            logMissingElement(element, DecoratorDefinition.CHILD_ENABLEMENT);
-        	return false;
-        }
         values.add(desc);
 
         return true;
