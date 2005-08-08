@@ -162,11 +162,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/**
 	 * The filter runnable.
 	 * 
-	 * @since 3.2
+	 * @since 3.1.1
 	 */
 	private final Runnable fFilterRunnable= new Runnable() {
 		public void run() {
-
 			if (!fIsFilterPending)
 				return;
 			
@@ -199,7 +198,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * <code>true</code> if <code>fFilterRunnable</code> has been
 	 * posted, <code>false</code> if not.
 	 * 
-	 * @since 3.2
+	 * @since 3.1.1
 	 */
 	private boolean fIsFilterPending= false;
 
