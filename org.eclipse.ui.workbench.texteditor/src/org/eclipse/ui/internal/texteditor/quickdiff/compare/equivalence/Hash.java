@@ -23,7 +23,6 @@ public abstract class Hash implements Cloneable {
 	 * @param obj {@inheritDoc}
 	 * @return <code>true</code> if the receiver is equal to <code>obj</code>
 	 */
-	public boolean equals(Object obj) {
-		throw new AssertionError("Subclasses of " + Hash.class.toString() + "must override equals()."); //$NON-NLS-1$ //$NON-NLS-2$
-	}
+	public abstract boolean equals(Object obj);
+
 }
