@@ -6,11 +6,17 @@
          <meta.schema plugin="org.eclipse.ui" id="actionSets" name="Action Sets"/>
       </appInfo>
       <documentation>
-         This extension point is used to add menus, menu items 
+         &lt;p&gt;
+This extension point is used to add menus, menu items 
 and toolbar buttons to the common areas in the Workbench
 window. These contributions are collectively known 
 as an &lt;i&gt;action set&lt;/i&gt; and appear within the 
 Workbench window by the user customizing a perspective.
+&lt;/p&gt;
+&lt;p&gt;
+There is an implementation limitation which currently affects action sets.  It is important to define the entire menu structure that is to be referenced within the action set.  So, for example, if another action set defines a menu called &quot;example&quot;, it is not possible to rely on &quot;example&quot; existing.  It is necessary to redefine the &quot;example&quot; menu in every action set that wishes to use it.
+&lt;/p&gt;
+
       </documentation>
    </annotation>
 
