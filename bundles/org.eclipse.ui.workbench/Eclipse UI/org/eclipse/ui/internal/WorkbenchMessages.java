@@ -895,10 +895,4 @@ public class WorkbenchMessages extends NLS {
     public static String FastViewBar_show_view;
 
 
-	public static String WorkbenchPreference_NeverStealFocus;
-
-
-	public static String WorkbenchPreference_NeverStealFocusTooltip;
-
-
 }

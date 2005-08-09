@@ -209,11 +209,4 @@ public interface IPreferenceConstants {
      * @since 3.0
      */
     public static final String SHOULD_PROMPT_FOR_ENABLEMENT = "shouldPromptForEnablement"; //$NON-NLS-1$
-
-    /**
-     * Prevents views and editors from moving to the foreground automatically.
-     * 
-     * @since 3.2
-     */
-	public static final String NEVER_STEAL_FOCUS = "NEVER_STEAL_FOCUS"; //$NON-NLS-1$
 }
