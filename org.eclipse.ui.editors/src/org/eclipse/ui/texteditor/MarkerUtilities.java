@@ -81,6 +81,8 @@ public final class MarkerUtilities {
 		}
 
 		private void appendAll(List list, Object[] objects) {
+			if (objects == null)
+				return;
 			for (int i= 0; i < objects.length; i++) {
 				Object o= objects[i];
 				if (!list.contains(o))
