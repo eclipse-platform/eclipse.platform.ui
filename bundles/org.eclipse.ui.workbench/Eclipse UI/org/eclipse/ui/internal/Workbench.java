@@ -402,8 +402,6 @@ public final class Workbench implements IWorkbench {
 		Thread.currentThread().setPriority(
 				Math.min(Thread.MAX_PRIORITY, Thread.NORM_PRIORITY + 1));
 
-		initializeImages();
-		
 		return newDisplay;
 	}
 
@@ -994,6 +992,7 @@ public final class Workbench implements IWorkbench {
 		addWindowListener(windowListener); 
 		bindingManager.addBindingManagerListener(bindingManagerListener);
 
+		initializeImages();
 		initializeFonts();
 		initializeColors();
 		initializeApplicationColors();
@@ -1118,7 +1117,7 @@ public final class Workbench implements IWorkbench {
 	 * 
 	 * @since 3.0
 	 */
-	private static void initializeImages() {
+	private void initializeImages() {
 		ImageDescriptor[] windowImages = WorkbenchPlugin.getDefault()
 				.getWindowImages();
 		if (windowImages == null)

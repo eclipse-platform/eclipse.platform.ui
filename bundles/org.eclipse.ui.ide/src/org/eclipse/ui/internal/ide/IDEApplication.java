@@ -314,9 +314,7 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
             boolean force) {
         URL url = null;
         do {
-        	// don't use the parent shell to make the dialog a top-level
-        	// shell. See bug 84881.
-            new ChooseWorkspaceDialog(null, launchData, false, true).prompt(force);
+            new ChooseWorkspaceDialog(shell, launchData, false, true).prompt(force);
             String instancePath = launchData.getSelection();
             if (instancePath == null)
                 return null;
