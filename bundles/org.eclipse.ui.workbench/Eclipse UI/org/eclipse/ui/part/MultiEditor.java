@@ -77,21 +77,6 @@ public abstract class MultiEditor extends EditorPart {
         return content;
     }
 
-    /**
-     * The <code>MultiEditor</code> implementation of this 
-     * method extends the <code>EditorPart</code> implementation,
-     * and disposes any inner editors.  Subclasses may extend.
-     * 
-     * @since 3.0
-     */
-    public void dispose() {
-        super.dispose();
-        IEditorPart[] editors = getInnerEditors();
-        for (int i = 0; i < editors.length; i++) {
-            editors[i].dispose();
-        }
-    }
-
     /*
      * @see IEditorPart#doSaveAs()
      */

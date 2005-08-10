@@ -1,7 +1,13 @@
-/*
- * (c) Copyright 2001 MyCorporation.
- * All Rights Reserved.
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.tests.multieditor;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -26,6 +32,8 @@ import org.eclipse.ui.tests.util.CallHistory;
 /**
  * Implementation of a TiledEditor. This is the testable version copied from bug
  * 42641.
+ * 
+ * @since 3.1.1
  */
 public class TiledEditor extends MultiEditor {
 

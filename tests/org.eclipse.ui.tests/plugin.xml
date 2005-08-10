@@ -598,6 +598,20 @@
             name="org.eclipse.ui.tests.contentType2Editor">
          <contentTypeBinding contentTypeId="org.eclipse.ui.tests.content-type2"/>
       </editor>
+      <editor
+            class="org.eclipse.ui.tests.multieditor.TiledEditor"
+            default="false"
+            icon="icons/editor.gif"
+            id="org.eclipse.ui.tests.multieditor.TiledEditor"
+            name="%Editors.TiledEditor"/>
+      <editor
+            class="org.eclipse.ui.tests.multieditor.TestEditor"
+            contributorClass="org.eclipse.ui.tests.multieditor.TestActionBarContributor"
+            default="false"
+            extensions="etest"
+            icon="icons/binary_co.gif"
+            id="org.eclipse.ui.tests.multieditor.TestEditor"
+            name="%Editors.TestEditor"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -645,6 +659,21 @@
                menubarPath="test/additions"
                id="org.eclipse.ui.tests.markers.delete">
          </action>
+      </actionSet>
+      <actionSet
+            id="org.eclipse.ui.tests.multieditor.actionSet"
+            label="TestEditorMulti"
+            visible="false">
+         <action
+               class="org.eclipse.ui.tests.api.MockEditorActionDelegate"
+               disabledIcon="icons/binary_co.gif"
+               icon="icons/view.gif"
+               id="org.eclipse.ui.tests.multieditor.editorAction.action"
+               label="MockMultiEditorAction"
+               state="false"
+               style="push"
+               toolbarPath="Normal/Presentation"
+               tooltip="MultiEditorActionThing"/>
       </actionSet>
    </extension>
    <extension
@@ -2317,5 +2346,13 @@
       <categoryImageBinding
             icon="icons/anything.gif"
             id="org.eclipse.category1"/>   
+   </extension>
+   <extension
+         id="org.eclipse.ui.tests.multieditor.ASPA"
+         name="ASPA"
+         point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation targetID="org.eclipse.ui.tests.multieditor.actionSet">
+         <part id="org.eclipse.ui.tests.multieditor.TestEditor"/>
+      </actionSetPartAssociation>
    </extension>
 </plugin>            

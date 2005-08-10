@@ -31,6 +31,7 @@ import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
 import org.eclipse.ui.tests.leaks.LeakTests;
 import org.eclipse.ui.tests.menus.MenusTestSuite;
+import org.eclipse.ui.tests.multieditor.MultiEditorTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
 import org.eclipse.ui.tests.operations.OperationsTestSuite;
@@ -84,5 +85,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new TestSuite(LeakTests.class));
         addTest(new ConcurrencyTestSuite());
         addTest(new OperationsTestSuite());
+        addTest(new MultiEditorTestSuite());
     }
 }
