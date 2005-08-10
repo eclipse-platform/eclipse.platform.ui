@@ -38,7 +38,7 @@ public class SearchPluginImages {
 	public static final String T_WIZBAN= "wizban/"; //$NON-NLS-1$
 	public static final String T_LCL= "lcl16/"; //$NON-NLS-1$
 	public static final String T_TOOL= "tool16/"; //$NON-NLS-1$
-	public static final String T_VIEW= "view16/"; //$NON-NLS-1$
+	public static final String T_EVIEW= "eview16/"; //$NON-NLS-1$
 
 	private static final String NAME_PREFIX= "org.eclipse.search.ui."; //$NON-NLS-1$
 	private static final int    NAME_PREFIX_LENGTH= NAME_PREFIX.length();
@@ -67,7 +67,7 @@ public class SearchPluginImages {
 	// Define images
 	public static final ImageDescriptor DESC_OBJ_TSEARCH_DPDN= createManaged(T_OBJ, IMG_OBJ_TSEARCH_DPDN);
 	public static final ImageDescriptor DESC_OBJ_SEARCHMARKER= createManaged(T_OBJ, IMG_OBJ_SEARCHMARKER);
-	public static final ImageDescriptor DESC_VIEW_SEARCHRES= createManaged(T_VIEW, IMG_VIEW_SEARCHRES);
+	public static final ImageDescriptor DESC_VIEW_SEARCHRES= createManaged(T_EVIEW, IMG_VIEW_SEARCHRES);
 	
 	public static Image get(String key) {
 		return PLUGIN_REGISTRY.get(key);
