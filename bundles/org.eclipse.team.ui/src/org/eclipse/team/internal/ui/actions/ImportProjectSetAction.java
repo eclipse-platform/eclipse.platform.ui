@@ -25,8 +25,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ui.ProjectSetImporter;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
@@ -48,7 +47,7 @@ public class ImportProjectSetAction extends ActionDelegate implements IObjectAct
 				}
 			});
 		} catch (InvocationTargetException exception) {
-			ErrorDialog.openError(shell, null, null, new Status(IStatus.ERROR, TeamUIPlugin.PLUGIN_ID, IStatus.ERROR, "Exception importing project set.", exception.getTargetException()));
+			ErrorDialog.openError(shell, null, null, new Status(IStatus.ERROR, TeamUIPlugin.PLUGIN_ID, IStatus.ERROR, TeamUIMessages.ImportProjectSetAction_0, exception.getTargetException()));
 		} catch (InterruptedException exception) {
 		}
 	}
