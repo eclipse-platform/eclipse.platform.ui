@@ -681,6 +681,16 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            name="%CommentTemplatesPreferencePage.name"
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.CommentTemplatesPreferencePage"
+            id="org.eclipse.team.cvs.ui.CommentTemplatesPreferences">
+            <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
             name="%ConsolePreferencePage.name"
             category="org.eclipse.team.cvs.ui.CVSPreferences"
             class="org.eclipse.team.internal.ccvs.ui.console.ConsolePreferencesPage"

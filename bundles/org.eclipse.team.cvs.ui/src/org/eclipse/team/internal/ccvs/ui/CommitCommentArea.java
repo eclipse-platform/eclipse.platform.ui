@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids - bug 57208
+ *     Maik Schreiber - bug 102461
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -26,6 +27,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
  * This area provides the widgets for providing the CVS commit comment
@@ -125,35 +127,57 @@ public class CommitCommentArea extends DialogArea {
         
         private final String fMessage;
         private final String [] fComments;
+        private String[] fCommentTemplates;
         private final Combo fCombo;
         
         
-        public ComboBox(Composite composite, String message, String [] options) {
+        public ComboBox(Composite composite, String message, String [] options,
+                String[] commentTemplates) {
             
             fMessage= message;
             fComments= options;
+            fCommentTemplates = commentTemplates;
             
             fCombo = new Combo(composite, SWT.READ_ONLY);
             fCombo.setLayoutData(SWTUtils.createHFillGridData());
             
             // populate the previous comment list
-            fCombo.add(fMessage);
-            for (int i = 0; i < fComments.length; i++) {
-                fCombo.add(HistoryView.flattenText(fComments[i]));
-            }
-            fCombo.setText(fMessage);
+            populateList();
             
             // We don't want to have an initial selection
             // (see bug 32078: http://bugs.eclipse.org/bugs/show_bug.cgi?id=32078)
             fCombo.addFocusListener(this);
             fCombo.addSelectionListener(this);
         }
+
+		private void populateList() {
+			fCombo.removeAll();
+			
+			fCombo.add(fMessage);
+            for (int i = 0; i < fCommentTemplates.length; i++) {
+                fCombo.add(CVSUIMessages.CommitCommentArea_6 + ": " + //$NON-NLS-1$
+                		HistoryView.flattenText(fCommentTemplates[i]));
+            }
+            for (int i = 0; i < fComments.length; i++) {
+                fCombo.add(HistoryView.flattenText(fComments[i]));
+            }
+            fCombo.setText(fMessage);
+		}
         
         public void widgetSelected(SelectionEvent e) {
-            final int index = fCombo.getSelectionIndex();
+            int index = fCombo.getSelectionIndex();
             if (index > 0) {
+                index--;
                 setChanged();
-                notifyObservers(fComments[index - 1]);
+                
+                // map from combo box index to array index
+                String message;
+                if (index < fCommentTemplates.length) {
+                	message = fCommentTemplates[index];
+                } else {
+                	message = fComments[index - fCommentTemplates.length];
+                }
+                notifyObservers(message);
             }
         }
         
@@ -178,10 +202,16 @@ public class CommitCommentArea extends DialogArea {
         public void setEnabled(boolean enabled) {
             fCombo.setEnabled(enabled);
         }
+        
+        void setCommentTemplates(String[] templates) {
+			fCommentTemplates = templates;
+			populateList();
+		}
     }
     
     private static final String EMPTY_MESSAGE= CVSUIMessages.CommitCommentArea_0; 
-    private static final String COMBO_MESSAGE= CVSUIMessages.CommitCommentArea_1; 
+    private static final String COMBO_MESSAGE= CVSUIMessages.CommitCommentArea_1;
+    private static final String CONFIGURE_TEMPLATES_MESSAGE= CVSUIMessages.CommitCommentArea_5;
     
     public static final String OK_REQUESTED = "OkRequested";//$NON-NLS-1$
     public static final String COMMENT_MODIFIED = "CommentModified";//$NON-NLS-1$
@@ -206,12 +236,36 @@ public class CommitCommentArea extends DialogArea {
         fTextBox= new TextBox(fComposite, EMPTY_MESSAGE, getInitialComment());
         
         final String [] comments = CVSUIPlugin.getPlugin().getRepositoryManager().getPreviousComments();
-        fComboBox= new ComboBox(fComposite, COMBO_MESSAGE, comments);
+        final String[] commentTemplates = CVSUIPlugin.getPlugin().getRepositoryManager().getCommentTemplates();
+        fComboBox= new ComboBox(fComposite, COMBO_MESSAGE, comments, commentTemplates);
+        
+        Link templatesPrefsLink = new Link(fComposite, 0);
+        templatesPrefsLink.setText("<a href=\"configureTemplates\">" + //$NON-NLS-1$
+        		CONFIGURE_TEMPLATES_MESSAGE + "</a>"); //$NON-NLS-1$
+        templatesPrefsLink.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				openCommentTemplatesPreferencePage();
+			}
+		
+			public void widgetSelected(SelectionEvent e) {
+				openCommentTemplatesPreferencePage();
+			}
+		});
         
         fComboBox.addObserver(fTextBox);
     }
     
-    public String getComment(boolean save) {
+    void openCommentTemplatesPreferencePage() {
+		PreferencesUtil.createPreferenceDialogOn(
+				null,
+				"org.eclipse.team.cvs.ui.CommentTemplatesPreferences", //$NON-NLS-1$
+				new String[] { "org.eclipse.team.cvs.ui.CommentTemplatesPreferences" }, //$NON-NLS-1$
+				null).open();
+		fComboBox.setCommentTemplates(
+				CVSUIPlugin.getPlugin().getRepositoryManager().getCommentTemplates());
+	}
+
+	public String getComment(boolean save) {
         final String comment= fTextBox.getText();
         if (comment == null)
             return ""; //$NON-NLS-1$

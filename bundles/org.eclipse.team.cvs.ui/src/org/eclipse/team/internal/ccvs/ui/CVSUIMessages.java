@@ -5,7 +5,8 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
+ *     Maik Schreiber - bug 102461
  **********************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -823,6 +824,16 @@ public class CVSUIMessages extends NLS {
 	public static String CommitCommentArea_2;
 	public static String CommitCommentArea_3;
 	public static String CommitCommentArea_4;
+    public static String CommitCommentArea_5;
+    public static String CommitCommentArea_6;
+    
+    public static String CommentTemplatesPreferencePage_Description;
+    public static String CommentTemplatesPreferencePage_New;
+    public static String CommentTemplatesPreferencePage_Edit;
+    public static String CommentTemplatesPreferencePage_Remove;
+    public static String CommentTemplatesPreferencePage_Preview;
+    public static String CommentTemplatesPreferencePage_EditCommentTemplateTitle;
+    public static String CommentTemplatesPreferencePage_EditCommentTemplateMessage;
 
 	public static String CheckoutProjectOperation_8;
 	public static String CheckoutProjectOperation_9;

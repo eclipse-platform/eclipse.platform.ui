@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - bug 74959
+ *     Maik Schreiber - bug 102461
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.repo;
 
@@ -48,8 +49,10 @@ public class RepositoryManager {
 	// new state file
 	private static final String REPOSITORIES_VIEW_FILE = "repositoriesView.xml"; //$NON-NLS-1$
 	private static final String COMMENT_HIST_FILE = "commitCommentHistory.xml"; //$NON-NLS-1$
+    private static final String COMMENT_TEMPLATES_FILE = "commentTemplates.xml"; //$NON-NLS-1$
 	static final String ELEMENT_COMMIT_COMMENT = "CommitComment"; //$NON-NLS-1$
 	static final String ELEMENT_COMMIT_HISTORY = "CommitComments"; //$NON-NLS-1$
+    static final String ELEMENT_COMMENT_TEMPLATES = "CommitCommentTemplates"; //$NON-NLS-1$
 
 	private Map repositoryRoots = new HashMap();
 	
@@ -57,6 +60,7 @@ public class RepositoryManager {
 
 	// The previously remembered comment
 	static String[] previousComments = new String[0];
+    static String[] commentTemplates = new String[0];
 	
 	public static boolean notifyRepoView = true;
 	
@@ -304,6 +308,7 @@ public class RepositoryManager {
 	public void startup() {
 		loadState();
 		loadCommentHistory();
+        loadCommentTemplates();
 		CVSProviderPlugin.getPlugin().addRepositoryListener(new ICVSListener() {
 			public void repositoryAdded(ICVSRepositoryLocation root) {
 				rootAdded(root);
@@ -317,6 +322,7 @@ public class RepositoryManager {
 	public void shutdown() throws TeamException {
 		saveState();
 		saveCommentHistory();
+        saveCommentTemplates();
 	}
 	
 	private void loadState() {
@@ -373,6 +379,23 @@ public class RepositoryManager {
 			CVSUIPlugin.log(e);
 		}
 	}
+    private void loadCommentTemplates() {
+        IPath pluginStateLocation = CVSUIPlugin.getPlugin().getStateLocation().append(COMMENT_TEMPLATES_FILE);
+        File file = pluginStateLocation.toFile();
+        if (!file.exists()) return;
+        try {
+            BufferedInputStream is = new BufferedInputStream(new FileInputStream(file));
+            try {
+                readCommentTemplates(is);
+            } finally {
+                is.close();
+            }
+        } catch (IOException e) {
+            CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); //$NON-NLS-1$
+        } catch (TeamException e) {
+            CVSUIPlugin.log(e);
+        }
+    }
 	
 	protected void saveState() throws TeamException {
 		IPath pluginStateLocation = CVSUIPlugin.getPlugin().getStateLocation();
@@ -420,6 +443,7 @@ public class RepositoryManager {
 			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { REPOSITORIES_VIEW_FILE }), ex); 
 		}
 	}
+	
 	private void readCommentHistory(InputStream stream) throws IOException, TeamException {
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -790,6 +814,9 @@ public class RepositoryManager {
 			makeFirstElement(index);
 			return;
 		}
+		if (containsCommentTemplate(comment))
+			return;
+		
 		// Insert the comment as the first element
 		String[] newComments = new String[Math.min(previousComments.length + 1, MAX_COMMENTS)];
 		newComments[0] = comment;
@@ -819,5 +846,84 @@ public class RepositoryManager {
 					nextIndex, (maxIndex - index));
 		}
 		previousComments = newComments;
+	}
+	
+	private void readCommentTemplates(InputStream stream) throws IOException, TeamException {
+		try {
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			SAXParser parser = factory.newSAXParser();
+			parser.parse(new InputSource(stream),
+					new CommentTemplatesContentHandler());
+		} catch (SAXException ex) {
+			throw new CVSException(NLS.bind(
+					CVSUIMessages.RepositoryManager_parsingProblem,
+					new String[] { COMMENT_TEMPLATES_FILE }), ex); //$NON-NLS-1$
+		} catch (ParserConfigurationException ex) {
+			throw new CVSException(NLS.bind(
+					CVSUIMessages.RepositoryManager_parsingProblem,
+					new String[] { COMMENT_TEMPLATES_FILE }), ex); //$NON-NLS-1$
+		}
+	}
+	
+	protected void saveCommentTemplates() throws TeamException {
+		IPath pluginStateLocation = CVSUIPlugin.getPlugin().getStateLocation();
+		File tempFile = pluginStateLocation.append(
+				COMMENT_TEMPLATES_FILE + ".tmp").toFile(); //$NON-NLS-1$
+		File histFile = pluginStateLocation.append(COMMENT_TEMPLATES_FILE)
+				.toFile();
+		try {
+			XMLWriter writer = new XMLWriter(new BufferedOutputStream(
+					new FileOutputStream(tempFile)));
+			try {
+				writeCommentTemplates(writer);
+			} finally {
+				writer.close();
+			}
+			if (histFile.exists()) {
+				histFile.delete();
+			}
+			boolean renamed = tempFile.renameTo(histFile);
+			if (!renamed) {
+				throw new TeamException(new Status(Status.ERROR,
+						CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(
+								CVSUIMessages.RepositoryManager_rename,
+								new String[] { tempFile.getAbsolutePath() }),
+						null)); //$NON-NLS-1$
+			}
+		} catch (IOException e) {
+			throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID,
+					TeamException.UNABLE, NLS.bind(
+							CVSUIMessages.RepositoryManager_save,
+							new String[] { histFile.getAbsolutePath() }), e)); //$NON-NLS-1$
+		}
+	}
+	
+	private void writeCommentTemplates(XMLWriter writer) {
+		writer.startTag(ELEMENT_COMMENT_TEMPLATES, null, false);
+		for (int i = 0; i < commentTemplates.length; i++)
+			writer.printSimpleTag(ELEMENT_COMMIT_COMMENT, commentTemplates[i]);
+		writer.endTag(ELEMENT_COMMENT_TEMPLATES);
+	}
+	
+	private boolean containsCommentTemplate(String comment) {
+		for (int i = 0; i < commentTemplates.length; i++) {
+			if (commentTemplates[i].equals(comment)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Get list of comment templates.
+	 */
+	public String[] getCommentTemplates() {
+		return commentTemplates;
+	}
+	
+	public void replaceAndSaveCommentTemplates(String[] templates)
+			throws TeamException {
+		commentTemplates = templates;
+		saveCommentTemplates();
 	}
 }
