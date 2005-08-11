@@ -28,9 +28,6 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
             public int getTabWidth() {                
                 return 3;
             }
-            public boolean stripBlankLines() {
-                return false;
-            }
             public boolean useSpacesInsteadOfTabs() {
                 return true;
             }
@@ -45,9 +42,6 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
         FormattingPreferences prefs = new FormattingPreferences(){
             public int getTabWidth() {                
                 return 7;
-            }
-            public boolean stripBlankLines() {
-                return false;
             }
             public boolean useSpacesInsteadOfTabs() {
                 return true;
@@ -64,9 +58,6 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
         FormattingPreferences prefs = new FormattingPreferences(){
             public int getTabWidth() {                
                 return 3;
-            }
-            public boolean stripBlankLines() {
-                return false;
             }
             public boolean useSpacesInsteadOfTabs() {
                 return false;
