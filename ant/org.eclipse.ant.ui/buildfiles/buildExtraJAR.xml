@@ -5,6 +5,7 @@
 
 	<target name="init" depends="properties">
 		<property name="version.suffix" value="_3.1.0"/>
+		<property name="new.version.suffix" value="_3.2.0"/>
 		<property name="bootclasspath" value=""/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
@@ -47,7 +48,7 @@
 					${basedir}/../org.eclipse.ui.console/bin;
 					${eclipse.home}/plugins/org.eclipse.ui.console${version.suffix}.jar;
 			 		${basedir}/../org.eclipse.jface/bin;
-			 		${eclipse.home}/plugins/org.eclipse.jface${version.suffix}.jar;
+			 		${eclipse.home}/plugins/org.eclipse.jface${new.version.suffix}.jar;
 					${basedir}/common_ant_support_bin;
 					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}.jar">			
 			<src path="Ant Runner Support/"/>
