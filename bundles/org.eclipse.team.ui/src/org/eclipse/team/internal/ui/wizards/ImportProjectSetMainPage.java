@@ -81,8 +81,15 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 			public void handleEvent(Event event) {
 				FileDialog d = new FileDialog(getShell());
 				d.setFilterExtensions(new String[] {"*.psf", "*"}); //$NON-NLS-1$ //$NON-NLS-2$
-				d.setFilterNames(new String[] {TeamUIMessages.ImportProjectSetMainPage_Project_Set_Files_2, TeamUIMessages.ImportProjectSetMainPage_allFiles}); //  
-				d.setFilterPath(new File(".").getAbsolutePath()); //$NON-NLS-1$
+				d.setFilterNames(new String[] {TeamUIMessages.ImportProjectSetMainPage_Project_Set_Files_2, TeamUIMessages.ImportProjectSetMainPage_allFiles}); //
+				String fileName= getFileName();
+				if (fileName != null) {
+					int separator= fileName.lastIndexOf(System.getProperty ("file.separator").charAt (0));
+					if (separator != -1) {
+						fileName= fileName.substring(0, separator);
+					}
+				}
+				d.setFilterPath(fileName); //$NON-NLS-1$
 				String f = d.open();
 				if (f != null) {
 					fileText.setText(f);
