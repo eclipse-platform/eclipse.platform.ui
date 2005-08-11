@@ -19,6 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -560,6 +561,9 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 			return;
 		}
 		CVSUIPlugin.getPlugin().getRepositoryManager().setLabel(location, newLabel);
+		CVSUIPlugin.broadcastPropertyChange(new PropertyChangeEvent(this, 
+				CVSUIPlugin.P_DECORATORS_CHANGED, null, null));
+
 	}
 	private String getOldLabel(CVSRepositoryLocation location) {
 		return CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryRootFor(location).getName();
