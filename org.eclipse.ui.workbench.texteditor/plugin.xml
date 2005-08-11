@@ -482,7 +482,7 @@
 	        commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
 	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="Ctrl+SPACE"/>
+	        sequence="CTRL+SPACE"/>
 	  <key
 	        commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -564,8 +564,20 @@
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             locale="zh"
+   	        contextId="org.eclipse.ui.contexts.dialogAndWindow"            
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+SPACE"/>
+            sequence="CTRL+SPACE"/>
+      <key   
+            locale="zh"  
+            contextId="org.eclipse.ui.textEditorScope"   
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"   
+            sequence="M3+/"/> 
+      <key
+            locale="zh"
+            commandId="org.eclipse.ui.edit.text.hippieCompletion"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+/"/>
       <key
             locale="zh"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
