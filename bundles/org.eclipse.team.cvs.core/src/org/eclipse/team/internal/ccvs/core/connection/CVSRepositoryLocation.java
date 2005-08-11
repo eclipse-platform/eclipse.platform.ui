@@ -96,6 +96,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	private int serverPlatform = UNDETERMINED_PLATFORM;
 	
 	public static final char COLON = ':';
+	public static final char SEMICOLON = ';';
 	public static final char HOST_SEPARATOR = '@';
 	public static final char PORT_SEPARATOR = '#';
 	public static final boolean STANDALONE_MODE = (System.getProperty("eclipse.cvs.standalone")==null) ? //$NON-NLS-1$ 
@@ -255,6 +256,13 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 *    The : after the host/port is not optional because of NT naming including device
 	 *    e.g. :pserver:username:password@hostname#port:D:\cvsroot
 	 * 
+	 * Also parse alternative format from WinCVS, which stores connection
+	 * parameters such as username and hostname in method options:
+	 *
+	 * :method[;option=arg...]:other_connection_data
+	 * 
+	 * e.g. :pserver;username=anonymous;hostname=localhost:/path/to/repository
+	 * 
 	 * If validateOnly is true, this method will always throw an exception.
 	 * The status of the exception indicates success or failure. The status
 	 * of the exception contains a specific message suitable for displaying
@@ -269,10 +277,30 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			int start = location.indexOf(COLON);
 			String methodName;
 			int end;
+			// For parsing alternative location format
+			int optionStart = location.indexOf(SEMICOLON);
+			HashMap hmOptions = new HashMap();
+
 			if (start == 0) {
 				end = location.indexOf(COLON, start + 1);
-				methodName = location.substring(start + 1, end);
-				start = end + 1;
+				
+				// Check for alternative location syntax
+				if (optionStart != -1) {
+					// errorMessage = CVSMessages.CVSRepositoryLocation_parsingMethodOptions;
+					methodName = location.substring(start + 1, optionStart);
+					// Save options in hash table
+					StringTokenizer stOpt = new StringTokenizer(
+						location.substring(optionStart+1, end),
+            					"=;"
+					);
+					while (stOpt.hasMoreTokens()) {
+						hmOptions.put(stOpt.nextToken(), stOpt.nextToken());
+					}
+					start = end + 1;
+				} else {
+					methodName = location.substring(start + 1, end);
+					start = end + 1;
+				}
 			} else {
 				// this could be an alternate format for ext: username:password@host:path
 				methodName = "ext"; //$NON-NLS-1$
@@ -290,6 +318,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			String user = null;
 			String password = null;
 			// if end is -1 then there is no host separator meaning that the username is not present
+			// or set in options of alternative-style location string
 			if (end != -1) {		
 				// Get the optional user and password
 				user = location.substring(start, end);
@@ -302,6 +331,12 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				}
 				// Set start to point after the host separator
 				start = end + 1;
+			} else if (optionStart != -1) {
+				// alternative location string data
+				// errorMessage = CVSMessages.CVSRepositoryLocation_parsingOptionsUsername;
+				if (hmOptions.containsKey("username")) user = hmOptions.get("username").toString();
+				// errorMessage = CVSMessages.CVSRepositoryLocation_parsingOptionsPassword;
+				if (hmOptions.containsKey("password")) user = hmOptions.get("password").toString();
 			}
 			
 			// Get the host (and port)
@@ -313,11 +348,15 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			    // Decrement the end since the slash is part of the path
 			    if (end != -1) end--;
 			}
-			String host = location.substring(start, end);
+			String host = (optionStart != -1) ? hmOptions.get("hostname").toString() : location.substring(start, end);
 			int port = USE_DEFAULT_PORT;
+			boolean havePort = false;
+			if (hmOptions.containsKey("port")) {
+				port = Integer.parseInt(hmOptions.get("port").toString());
+				havePort = true;
+			}
 			// Separate the port and host if there is a port
 			start = host.indexOf(PORT_SEPARATOR);
-			boolean havePort = false;
 			if (start != -1) {
 				try {
 					// Initially, we used a # between the host and port
