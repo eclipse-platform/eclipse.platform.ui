@@ -23,10 +23,10 @@ public class FilterInternalTargetsAction extends Action {
 	private AntEditorContentOutlinePage fPage;
 	
 	public FilterInternalTargetsAction(AntEditorContentOutlinePage page) {
-		super(AntOutlineMessages.FilterInternalTargetsAction_0); //$NON-NLS-1$
+		super(AntOutlineMessages.FilterInternalTargetsAction_0);
 		fPage = page;
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_FILTER_INTERNAL_TARGETS));
-		setToolTipText(AntOutlineMessages.FilterInternalTargetsAction_0); //$NON-NLS-1$
+		setToolTipText(AntOutlineMessages.FilterInternalTargetsAction_0);
 		setChecked(fPage.filterInternalTargets());
 	}
 	

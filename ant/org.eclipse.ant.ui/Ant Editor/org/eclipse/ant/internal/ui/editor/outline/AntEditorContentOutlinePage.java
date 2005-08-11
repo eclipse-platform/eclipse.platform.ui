@@ -431,7 +431,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		IFile file = element.getIFile();
 		if (file != null) {
 			menuManager.add(new Separator("group.open")); //$NON-NLS-1$
-			IMenuManager submenu= new MenuManager(AntOutlineMessages.AntEditorContentOutlinePage_Open_With_1);  //$NON-NLS-1$
+			IMenuManager submenu= new MenuManager(AntOutlineMessages.AntEditorContentOutlinePage_Open_With_1);
 			fOpenWithMenu.setNode(element);
 			submenu.add(fOpenWithMenu);
 			menuManager.appendToGroup("group.open", submenu); //$NON-NLS-1$

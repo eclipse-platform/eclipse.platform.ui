@@ -91,7 +91,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
     private Map getRunToLineAttributes() {
         Map attributes = new HashMap();
         attributes.put(IMarker.TRANSIENT, Boolean.TRUE);
-        attributes.put(IAntDebugConstants.ANT_RUN_TO_LINE, Boolean.TRUE); //$NON-NLS-1$
+        attributes.put(IAntDebugConstants.ANT_RUN_TO_LINE, Boolean.TRUE);
         return attributes;
     }
 

@@ -18,7 +18,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 public class AddVariableStringAction extends RuntimeClasspathAction {
 	
 	public AddVariableStringAction(IClasspathViewer viewer) {
-		super(AntLaunchConfigurationMessages.AddVariableStringAction_1, viewer); //$NON-NLS-1$
+		super(AntLaunchConfigurationMessages.AddVariableStringAction_1, viewer);
 	}
 	
 	/* (non-Javadoc)

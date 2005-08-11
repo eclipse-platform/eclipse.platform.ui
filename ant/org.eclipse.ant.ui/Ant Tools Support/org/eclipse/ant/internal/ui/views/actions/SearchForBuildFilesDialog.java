@@ -104,12 +104,12 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * Creates a new dialog to search for build files.
 	 */
 	public SearchForBuildFilesDialog() {
-		super(Display.getCurrent().getActiveShell(), AntViewActionMessages.SearchForBuildFilesDialog_Search_for_Build_Files_1, AntViewActionMessages.SearchForBuildFilesDialog__Input, //$NON-NLS-1$ //$NON-NLS-2$
+		super(Display.getCurrent().getActiveShell(), AntViewActionMessages.SearchForBuildFilesDialog_Search_for_Build_Files_1, AntViewActionMessages.SearchForBuildFilesDialog__Input,
 				settings.get(IAntUIPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING), new IInputValidator() {
 			public String isValid(String newText) {
 				String trimmedText = newText.trim();
 				if (trimmedText.length() == 0) {
-					return AntViewActionMessages.SearchForBuildFilesDialog_Build_name_cannot_be_empty_3; //$NON-NLS-1$
+					return AntViewActionMessages.SearchForBuildFilesDialog_Build_name_cannot_be_empty_3;
 				}
 				return null;
 			}
@@ -121,7 +121,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
-		getOkButton().setText(AntViewActionMessages.SearchForBuildFilesDialog__Search_4); //$NON-NLS-1$
+		getOkButton().setText(AntViewActionMessages.SearchForBuildFilesDialog__Search_4);
 
 		String workingSetName= settings.get(IAntUIPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE);
 		if (workingSetName.length() > 0) {
@@ -147,7 +147,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	
 	private void createScopeGroup(Composite composite, Font font) {
 		Group scope= new Group(composite, SWT.NONE);
-		scope.setText(AntViewActionMessages.SearchForBuildFilesDialog_Scope_5); //$NON-NLS-1$
+		scope.setText(AntViewActionMessages.SearchForBuildFilesDialog_Scope_5);
 		GridData data= new GridData(GridData.FILL_BOTH);
 		scope.setLayoutData(data);
 		GridLayout layout= new GridLayout(3, false);
@@ -168,12 +168,12 @@ public class SearchForBuildFilesDialog extends InputDialog {
 
 		workspaceScopeButton= new Button(radioComposite, SWT.RADIO);
 		workspaceScopeButton.setFont(font);
-		workspaceScopeButton.setText(AntViewActionMessages.SearchForBuildFilesDialog__Workspace_6); //$NON-NLS-1$
+		workspaceScopeButton.setText(AntViewActionMessages.SearchForBuildFilesDialog__Workspace_6);
 		workspaceScopeButton.addSelectionListener(selectionListener);
 
 		workingSetScopeButton=new Button(radioComposite, SWT.RADIO);
 		workingSetScopeButton.setFont(font);
-		workingSetScopeButton.setText(AntViewActionMessages.SearchForBuildFilesDialog_Wor_king_Set__7); //$NON-NLS-1$
+		workingSetScopeButton.setText(AntViewActionMessages.SearchForBuildFilesDialog_Wor_king_Set__7);
 		workingSetScopeButton.addSelectionListener(selectionListener);
 		
 		selectRadioButton(workspaceScopeButton);
@@ -188,7 +188,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		data= new GridData(GridData.VERTICAL_ALIGN_END);
 		chooseButton.setLayoutData(data);
 		chooseButton.setFont(font);
-		chooseButton.setText(AntViewActionMessages.SearchForBuildFilesDialog__Choose____8); //$NON-NLS-1$
+		chooseButton.setText(AntViewActionMessages.SearchForBuildFilesDialog__Choose____8);
 		chooseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleChooseButtonPressed();
@@ -243,7 +243,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	private void createIncludeErrorResultButton(Composite composite, Font font) {
 		includeErrorResultButton= new Button(composite, SWT.CHECK);
 		includeErrorResultButton.setFont(font);
-		includeErrorResultButton.setText(AntViewActionMessages.SearchForBuildFilesDialog_Include_errors); //$NON-NLS-1$
+		includeErrorResultButton.setText(AntViewActionMessages.SearchForBuildFilesDialog_Include_errors);
 		includeErrorResultButton.setSelection(settings.getBoolean(IAntUIPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS));
 	}
 	
@@ -259,9 +259,9 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		if (workingSetScopeButton.getSelection()) {
 			String error= null;
 			if (searchScopes == null) {
-				error= AntViewActionMessages.SearchForBuildFilesDialog_Must_select_a_working_set_10; //$NON-NLS-1$
+				error= AntViewActionMessages.SearchForBuildFilesDialog_Must_select_a_working_set_10;
 			} else if (searchScopes.isEmpty()) {
-				error= AntViewActionMessages.SearchForBuildFilesDialog_No_searchable; //$NON-NLS-1$
+				error= AntViewActionMessages.SearchForBuildFilesDialog_No_searchable;
 			}
 			if (error != null) {
 				setErrorMessage(error);

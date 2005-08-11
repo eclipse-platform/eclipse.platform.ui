@@ -34,7 +34,7 @@ public class AntInputHandler extends DefaultInputHandler {
 	 */
 	public void handleInput(InputRequest request) throws BuildException {
 		if (System.getProperty("eclipse.ant.noInput") != null) { //$NON-NLS-1$
-			throw new BuildException(AntSupportMessages.AntInputHandler_5); //$NON-NLS-1$
+			throw new BuildException(AntSupportMessages.AntInputHandler_5);
 		}
 		BuildException[] problem= new BuildException[1];
 		Runnable runnable= getHandleInputRunnable(request, problem);
@@ -48,7 +48,7 @@ public class AntInputHandler extends DefaultInputHandler {
 		return new Runnable() {
 			public void run() {
 				String prompt = getPrompt(request);
-		       	String title= AntSupportMessages.AntInputHandler_Ant_Input_Request_1; //$NON-NLS-1$
+		       	String title= AntSupportMessages.AntInputHandler_Ant_Input_Request_1;
 				IInputValidator validator= new IInputValidator() {
 					private boolean fFirstValidation =true;
                     public String isValid(String value) {
@@ -60,13 +60,13 @@ public class AntInputHandler extends DefaultInputHandler {
 						    fFirstValidation= false;
 						    return ""; //$NON-NLS-1$
 						}
-						return AntSupportMessages.AntInputHandler_Invalid_input_2; //$NON-NLS-1$
+						return AntSupportMessages.AntInputHandler_Invalid_input_2;
 					}
 				};
 		
 				InputDialog dialog= new InputDialog(null, title, prompt, null, validator);
 				if (dialog.open() != Window.OK) {
-					problem[0]= new BuildException(AntSupportMessages.AntInputHandler_Unable_to_respond_to__input__request_4); //$NON-NLS-1$
+					problem[0]= new BuildException(AntSupportMessages.AntInputHandler_Unable_to_respond_to__input__request_4);
 				}
 			}
 		};

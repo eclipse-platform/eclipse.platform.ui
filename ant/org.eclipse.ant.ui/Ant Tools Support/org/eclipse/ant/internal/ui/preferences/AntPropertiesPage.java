@@ -49,7 +49,7 @@ public class AntPropertiesPage implements IAntBlockContainer {
 	 */
 	protected TabItem createTabItem(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setText(AntPreferencesMessages.AntPropertiesPage_title); //$NON-NLS-1$
+		item.setText(AntPreferencesMessages.AntPropertiesPage_title);
 		item.setImage(AntObjectLabelProvider.getPropertyImage());
 		item.setData(this);
 		item.setControl(createContents(folder));
@@ -68,7 +68,7 @@ public class AntPropertiesPage implements IAntBlockContainer {
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		top.setLayoutData(gridData); 
 				
-		antPropertiesBlock.createControl(top, AntPreferencesMessages.AntPropertiesPage__Global_properties__1, AntPreferencesMessages.AntPropertiesPage_Glo_bal_property_files__2); //$NON-NLS-1$ //$NON-NLS-2$
+		antPropertiesBlock.createControl(top, AntPreferencesMessages.AntPropertiesPage__Global_properties__1, AntPreferencesMessages.AntPropertiesPage_Glo_bal_property_files__2);
 		
 		return top;
 	}

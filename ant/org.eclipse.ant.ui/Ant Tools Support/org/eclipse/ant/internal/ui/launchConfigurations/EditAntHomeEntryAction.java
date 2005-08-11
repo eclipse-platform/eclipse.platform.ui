@@ -39,7 +39,7 @@ public class EditAntHomeEntryAction extends RuntimeClasspathAction {
 	 * @param viewer classpath viewer
 	 */
 	public EditAntHomeEntryAction(IClasspathViewer viewer, AntClasspathTab tab) {
-		super(AntLaunchConfigurationMessages.EditAntHomeEntryAction_1, viewer); //$NON-NLS-1$
+		super(AntLaunchConfigurationMessages.EditAntHomeEntryAction_1, viewer);
 		fTab = tab;
 	}
 	
@@ -54,7 +54,7 @@ public class EditAntHomeEntryAction extends RuntimeClasspathAction {
 			lastUsedPath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage(AntPreferencesMessages.AntClasspathBlock_3); //$NON-NLS-1$
+		dialog.setMessage(AntPreferencesMessages.AntClasspathBlock_3);
 		dialog.setFilterPath(lastUsedPath);
 		String path = dialog.open();
 		if (path == null) {

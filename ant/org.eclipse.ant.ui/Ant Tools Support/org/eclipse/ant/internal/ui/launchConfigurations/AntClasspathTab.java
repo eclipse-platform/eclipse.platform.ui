@@ -57,7 +57,7 @@ public class AntClasspathTab extends JavaClasspathTab {
 		createButton(pathButtonComp, new AddJarAction(fClasspathViewer));
 		createButton(pathButtonComp, new AddExternalJarAction(fClasspathViewer, DIALOG_SETTINGS_PREFIX));
 		Button button = createButton(pathButtonComp, new AddFolderAction(fClasspathViewer));
-		button.setText(AntLaunchConfigurationMessages.AntClasspathTab_0); //$NON-NLS-1$
+		button.setText(AntLaunchConfigurationMessages.AntClasspathTab_0);
 		createButton(pathButtonComp, new AddVariableStringAction(fClasspathViewer));
 		RuntimeClasspathAction action= new RestoreDefaultEntriesAction(fClasspathViewer, this);
 		createButton(pathButtonComp, action);

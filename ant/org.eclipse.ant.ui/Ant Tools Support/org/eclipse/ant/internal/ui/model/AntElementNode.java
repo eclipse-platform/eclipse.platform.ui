@@ -487,10 +487,10 @@ public class AntElementNode implements IAdaptable {
 		String path= getFilePath();
 		
 		if (getImportNode() != null) {
-			displayName.append(MessageFormat.format(AntModelMessages.AntElementNode_9, new String[]{getImportNode().getLabel()})); //$NON-NLS-1$
+			displayName.append(MessageFormat.format(AntModelMessages.AntElementNode_9, new String[]{getImportNode().getLabel()}));
 		} else {
 			String entityName= getAntModel().getEntityName(path);
-			displayName.append(MessageFormat.format(AntModelMessages.AntElementNode_9, new String[]{entityName})); //$NON-NLS-1$
+			displayName.append(MessageFormat.format(AntModelMessages.AntElementNode_9, new String[]{entityName}));
 		}
 	}
 	
@@ -640,9 +640,9 @@ public class AntElementNode implements IAdaptable {
 	}
 
 	protected boolean checkReferenceRegion(IRegion region, String textToSearch, String attributeName) {
-		int attributeOffset= textToSearch.indexOf(attributeName); //$NON-NLS-1$
+		int attributeOffset= textToSearch.indexOf(attributeName);
 		while (attributeOffset > 0 && !Character.isWhitespace(textToSearch.charAt(attributeOffset - 1))) {
-			attributeOffset= textToSearch.indexOf(attributeName, attributeOffset + 1); //$NON-NLS-1$
+			attributeOffset= textToSearch.indexOf(attributeName, attributeOffset + 1);
 		}
 		if (attributeOffset != -1) {
 			attributeOffset+= attributeName.length();

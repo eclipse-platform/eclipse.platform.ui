@@ -29,12 +29,12 @@ public class ToggleLinkWithEditorAction extends Action {
 	AntEditor fEditor;
 	
 	public ToggleLinkWithEditorAction(AntEditor editor) {
-		super(AntOutlineMessages.ToggleLinkWithEditorAction_0); //$NON-NLS-1$
+		super(AntOutlineMessages.ToggleLinkWithEditorAction_0);
 		boolean isLinkingEnabled = AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.OUTLINE_LINK_WITH_EDITOR);
 		setChecked(isLinkingEnabled);
 		fEditor = editor;
-		setToolTipText(AntOutlineMessages.ToggleLinkWithEditorAction_1); //$NON-NLS-1$
-		setDescription(AntOutlineMessages.ToggleLinkWithEditorAction_2); //$NON-NLS-1$
+		setToolTipText(AntOutlineMessages.ToggleLinkWithEditorAction_1);
+		setDescription(AntOutlineMessages.ToggleLinkWithEditorAction_2);
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_LINK_WITH_EDITOR));
 	}
 	

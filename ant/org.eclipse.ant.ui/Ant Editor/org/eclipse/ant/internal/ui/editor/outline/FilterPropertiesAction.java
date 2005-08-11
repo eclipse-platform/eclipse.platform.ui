@@ -23,10 +23,10 @@ public class FilterPropertiesAction extends Action {
 	private AntEditorContentOutlinePage fPage;
 	
 	public FilterPropertiesAction(AntEditorContentOutlinePage page) {
-		super(AntOutlineMessages.FilterPropertiesAction_0); //$NON-NLS-1$
+		super(AntOutlineMessages.FilterPropertiesAction_0);
 		fPage = page;
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_FILTER_PROPERTIES));
-		setToolTipText(AntOutlineMessages.FilterPropertiesAction_0); //$NON-NLS-1$
+		setToolTipText(AntOutlineMessages.FilterPropertiesAction_0);
 		setChecked(fPage.filterProperties());
 	}
 	

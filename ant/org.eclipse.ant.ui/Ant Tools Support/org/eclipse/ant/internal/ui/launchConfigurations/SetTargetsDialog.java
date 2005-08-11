@@ -38,7 +38,7 @@ public class SetTargetsDialog extends Dialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		
-		getShell().setText(AntLaunchConfigurationMessages.SetTargetsDialog_0); //$NON-NLS-1$
+		getShell().setText(AntLaunchConfigurationMessages.SetTargetsDialog_0);
 		Composite composite = (Composite)super.createDialogArea(parent);
 		
 		fTargetsTab= new AntTargetsTab();

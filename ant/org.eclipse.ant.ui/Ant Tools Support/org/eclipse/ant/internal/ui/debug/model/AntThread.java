@@ -435,11 +435,11 @@ public class AntThread extends AntDebugElement implements IThread {
 
 	private void initializePropertyGroups() {
         AntDebugTarget target= getAntDebugTarget();
-		fUserProperties= new AntProperties(target, DebugModelMessages.AntThread_0); //$NON-NLS-1$
+		fUserProperties= new AntProperties(target, DebugModelMessages.AntThread_0);
 		fUserProperties.setValue(new AntPropertiesValue(target));
-		fSystemProperties= new AntProperties(target, DebugModelMessages.AntThread_1); //$NON-NLS-1$
+		fSystemProperties= new AntProperties(target, DebugModelMessages.AntThread_1);
 		fSystemProperties.setValue(new AntPropertiesValue(target));
-		fRuntimeProperties= new AntProperties(target, DebugModelMessages.AntThread_2); //$NON-NLS-1$
+		fRuntimeProperties= new AntProperties(target, DebugModelMessages.AntThread_2);
 		fRuntimeProperties.setValue(new AntPropertiesValue(target));
 	}
     

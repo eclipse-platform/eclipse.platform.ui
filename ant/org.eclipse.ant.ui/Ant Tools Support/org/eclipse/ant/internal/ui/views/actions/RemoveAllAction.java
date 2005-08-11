@@ -24,15 +24,15 @@ public class RemoveAllAction extends Action implements IUpdate {
 	private AntView view;
 	
 	public RemoveAllAction(AntView view) {
-		super(AntViewActionMessages.RemoveAllAction_Remove_All, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REMOVE_ALL)); //$NON-NLS-1$
-		setDescription(AntViewActionMessages.RemoveAllAction_Remove_All); //$NON-NLS-1$
-		setToolTipText(AntViewActionMessages.RemoveAllAction_Remove_All); //$NON-NLS-1$
+		super(AntViewActionMessages.RemoveAllAction_Remove_All, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REMOVE_ALL));
+		setDescription(AntViewActionMessages.RemoveAllAction_Remove_All);
+		setToolTipText(AntViewActionMessages.RemoveAllAction_Remove_All);
 		this.view= view;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.REMOVE_ALL_ACTION);
 	}
 	
 	public void run() {
-		boolean proceed = MessageDialog.openQuestion(view.getViewSite().getShell(), AntViewActionMessages.RemoveAllAction_0, AntViewActionMessages.RemoveAllAction_1); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean proceed = MessageDialog.openQuestion(view.getViewSite().getShell(), AntViewActionMessages.RemoveAllAction_0, AntViewActionMessages.RemoveAllAction_1);
 		if (proceed) {
 			view.removeAllProjects();
 		}

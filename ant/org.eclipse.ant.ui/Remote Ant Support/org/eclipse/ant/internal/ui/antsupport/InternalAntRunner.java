@@ -1080,7 +1080,7 @@ public class InternalAntRunner {
 		msg.append(RemoteAntMessages.getString("InternalAntRunner.use_given_file_for_log_37")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t\t-l\t<file>"); //$NON-NLS-1$
-		msg.append(RemoteAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$ //$NON-NLS-2$
+		msg.append(RemoteAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$
 		msg.append(lSep);  
 		msg.append("\t-logger <classname>\t\t"); //$NON-NLS-1$
 		msg.append(RemoteAntMessages.getString("InternalAntRunner.the_class_which_is_to_perform_logging_39")); //$NON-NLS-1$

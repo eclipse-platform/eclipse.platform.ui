@@ -435,7 +435,7 @@ public class BuildFileCreator
             catch (CoreException e)
             {
                 // cannot resolve variable
-                value = variable; //$NON-NLS-1$
+                value = variable;
             }
             variable2valueMap.put(ExportUtil.removePrefixAndSuffix(variable, "${", "}"), value); //$NON-NLS-1$ //$NON-NLS-2$
         }

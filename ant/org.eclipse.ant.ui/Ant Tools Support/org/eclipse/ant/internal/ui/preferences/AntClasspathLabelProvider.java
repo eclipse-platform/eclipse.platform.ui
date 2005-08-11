@@ -84,7 +84,7 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
     				String currentAntHome= fBlock.getAntHome();
     				label.append(" ("); //$NON-NLS-1$
     				if (defaultAntHome.equals(currentAntHome)) {
-    					label.append(AntPreferencesMessages.AntClasspathLabelProvider_0); //$NON-NLS-1$
+    					label.append(AntPreferencesMessages.AntClasspathLabelProvider_0);
     				} else {
     					label.append(fBlock.getAntHome());	
     				}

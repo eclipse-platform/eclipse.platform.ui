@@ -101,7 +101,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 	 * @param parent the composite to create the controls in
 	 */
 	private void createSetInputHandlerComponent(Composite parent) {
-		fSetInputHandlerButton = createCheckButton(parent, AntLaunchConfigurationMessages.AntMainTab_0); //$NON-NLS-1$
+		fSetInputHandlerButton = createCheckButton(parent, AntLaunchConfigurationMessages.AntMainTab_0);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fSetInputHandlerButton.setLayoutData(data);
@@ -117,7 +117,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 		try {
 			setInputHandler= configuration.getAttribute(IAntUIConstants.SET_INPUTHANDLER, true);
 		} catch (CoreException ce) {
-			AntUIPlugin.log(AntLaunchConfigurationMessages.AntMainTab_1, ce); //$NON-NLS-1$
+			AntUIPlugin.log(AntLaunchConfigurationMessages.AntMainTab_1, ce);
 		}
 		fSetInputHandlerButton.setSelection(setInputHandler);
 	}
@@ -127,7 +127,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 	 */
 	protected void handleWorkspaceLocationButtonSelected() {
 		FileSelectionDialog dialog;
-		dialog = new FileSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), AntLaunchConfigurationMessages.AntMainTab__Select_a_build_file__1); //$NON-NLS-1$
+		dialog = new FileSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), AntLaunchConfigurationMessages.AntMainTab__Select_a_build_file__1);
 		dialog.setFileFilter(".*\\.xml", true); //$NON-NLS-1$
 		dialog.open();
 		IStructuredSelection result = dialog.getResult();
@@ -144,7 +144,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 	 * @see org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab#getWorkingDirectoryLabel()
 	 */
 	protected String getWorkingDirectoryLabel() {
-		return AntLaunchConfigurationMessages.AntMainTab_3; //$NON-NLS-1$
+		return AntLaunchConfigurationMessages.AntMainTab_3;
 	}
 	
 	private void updateTargetsTab() {
@@ -164,6 +164,6 @@ public class AntMainTab extends ExternalToolsMainTab {
 	 * @see org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab#getLocationLabel()
 	 */
 	protected String getLocationLabel() {
-		return AntLaunchConfigurationMessages.AntMainTab_6; //$NON-NLS-1$
+		return AntLaunchConfigurationMessages.AntMainTab_6;
 	}
 }

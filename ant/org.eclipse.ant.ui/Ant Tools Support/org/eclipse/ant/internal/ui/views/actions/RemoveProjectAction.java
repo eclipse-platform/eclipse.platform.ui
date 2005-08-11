@@ -30,9 +30,9 @@ public class RemoveProjectAction extends Action implements IUpdate {
 	private AntView view;
 	
 	public RemoveProjectAction(AntView view) {
-		super(AntViewActionMessages.RemoveProjectAction_Remove, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REMOVE)); //$NON-NLS-1$
+		super(AntViewActionMessages.RemoveProjectAction_Remove, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REMOVE));
 		this.view= view;
-		setToolTipText(AntViewActionMessages.RemoveProjectAction_Remove_2); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.RemoveProjectAction_Remove_2);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.REMOVE_PROJECT_ACTION);
 	}
 

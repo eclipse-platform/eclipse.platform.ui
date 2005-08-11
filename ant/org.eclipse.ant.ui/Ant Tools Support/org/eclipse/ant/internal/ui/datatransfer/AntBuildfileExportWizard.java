@@ -46,7 +46,7 @@ public class AntBuildfileExportWizard extends Wizard implements IExportWizard
 
     public void init(IWorkbench workbench, IStructuredSelection selection)
     {
-        setWindowTitle(DataTransferMessages.AntBuildfileExportWizard_0); //$NON-NLS-1$
+        setWindowTitle(DataTransferMessages.AntBuildfileExportWizard_0);
     	setDefaultPageImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_WIZARD_BANNER));
         fSelection= selection;
     }

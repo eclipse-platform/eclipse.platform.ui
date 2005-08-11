@@ -38,7 +38,7 @@ public class AntNewJavaProjectWizard extends Wizard implements INewWizard {
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-		setWindowTitle(DataTransferMessages.AntNewJavaProjectWizard_0); //$NON-NLS-1$
+		setWindowTitle(DataTransferMessages.AntNewJavaProjectWizard_0);
 		setDefaultPageImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_WIZARD_BANNER));
 		
 	}

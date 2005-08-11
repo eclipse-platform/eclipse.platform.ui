@@ -46,10 +46,10 @@ import org.xml.sax.ext.DeclHandler;
 public class Parser {
 	
 	/** ParseError message when system parser doesn't do the job */
-	public static final String NOT_SUPPORTED = AntDTDMessages.Parser_XML_parser_does_not_support_DeclHandler_1; //$NON-NLS-1$
+	public static final String NOT_SUPPORTED = AntDTDMessages.Parser_XML_parser_does_not_support_DeclHandler_1;
 	/** ParseError message for a well-formed or validation error in XML or DTD.
 	 *  Currently not returned. */
-	public static final String PARSE_ERROR = AntDTDMessages.Parser_Error_parsing_XML_document_or_DTD_2; //$NON-NLS-1$
+	public static final String PARSE_ERROR = AntDTDMessages.Parser_Error_parsing_XML_document_or_DTD_2;
 	
 	private static final String INTERNAL = "internal://usereader.objfac.com"; //$NON-NLS-1$
 	

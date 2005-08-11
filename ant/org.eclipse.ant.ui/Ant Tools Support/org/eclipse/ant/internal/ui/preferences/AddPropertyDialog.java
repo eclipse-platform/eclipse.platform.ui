@@ -57,7 +57,7 @@ public class AddPropertyDialog extends Dialog {
 		((GridLayout) comp.getLayout()).numColumns = 2;
 		
 		fNameLabel = new Label(comp, SWT.NONE);
-		fNameLabel.setText(AntPreferencesMessages.AddPropertyDialog__Name__1); //$NON-NLS-1$
+		fNameLabel.setText(AntPreferencesMessages.AddPropertyDialog__Name__1);
 		fNameLabel.setFont(comp.getFont());
 		
 		fNameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
@@ -73,7 +73,7 @@ public class AddPropertyDialog extends Dialog {
 		});
 		
 		fValueLabel = new Label(comp, SWT.NONE);
-		fValueLabel.setText(AntPreferencesMessages.AddPropertyDialog__Value__2); //$NON-NLS-1$
+		fValueLabel.setText(AntPreferencesMessages.AddPropertyDialog__Value__2);
 		fValueLabel.setFont(comp.getFont());
 		
 		fValueText = new Text(comp, SWT.BORDER | SWT.SINGLE);
@@ -89,7 +89,7 @@ public class AddPropertyDialog extends Dialog {
 		});		
 		
 		Button variablesButton = new Button(comp, SWT.PUSH);
-		variablesButton.setText(AntPreferencesMessages.AddPropertyDialog_2); //$NON-NLS-1$
+		variablesButton.setText(AntPreferencesMessages.AddPropertyDialog_2);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.horizontalSpan = 2;
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);

@@ -74,7 +74,7 @@ public class AntImportNode extends AntTaskNode {
 			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_IMPORTS);
 		} catch (AntSecurityException se) {
 			//either a system exit or setting of system property was attempted
-            handleBuildException(new BuildException(AntModelMessages.AntImportNode_0), AntEditorPreferenceConstants.PROBLEM_SECURITY); //$NON-NLS-1$
+            handleBuildException(new BuildException(AntModelMessages.AntImportNode_0), AntEditorPreferenceConstants.PROBLEM_SECURITY);
 		}
 		return false;
 	}

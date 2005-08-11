@@ -42,7 +42,7 @@ public class AntProjectNode extends AntElementNode {
 	        if (fProject != null) {
 	            fLabel= fProject.getName();
 	        } else {
-	            fLabel= AntModelMessages.AntProjectNode_0; //$NON-NLS-1$
+	            fLabel= AntModelMessages.AntProjectNode_0;
 	        }
 	        if (fLabel == null || fLabel.length() == 0) {
 	            fLabel= "project"; //$NON-NLS-1$

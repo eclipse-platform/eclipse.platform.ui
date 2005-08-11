@@ -23,10 +23,10 @@ public class FilterInternalTargetsAction extends Action {
 	private AntView fView;
 	
 	public FilterInternalTargetsAction(AntView view) {
-		super(AntViewActionMessages.FilterInternalTargetsAction_0); //$NON-NLS-1$
+		super(AntViewActionMessages.FilterInternalTargetsAction_0);
 		fView = view;
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_FILTER_INTERNAL_TARGETS));
-		setToolTipText(AntViewActionMessages.FilterInternalTargetsAction_0); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.FilterInternalTargetsAction_0);
 		setChecked(fView.isFilterInternalTargets());
 	}
 	

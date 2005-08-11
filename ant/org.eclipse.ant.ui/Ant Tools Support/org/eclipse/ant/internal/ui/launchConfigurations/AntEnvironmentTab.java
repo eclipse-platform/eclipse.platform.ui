@@ -42,7 +42,7 @@ public class AntEnvironmentTab extends EnvironmentTab {
 		wrappingComposite.setFont(parent.getFont());
 		
 		warningLabel= new Label(wrappingComposite, SWT.NONE);
-		warningLabel.setText(AntLaunchConfigurationMessages.AntEnvironmentTab_0); //$NON-NLS-1$
+		warningLabel.setText(AntLaunchConfigurationMessages.AntEnvironmentTab_0);
 		
 		super.createControl(wrappingComposite);
 		setControl(wrappingComposite); // Overwrite setting in super method

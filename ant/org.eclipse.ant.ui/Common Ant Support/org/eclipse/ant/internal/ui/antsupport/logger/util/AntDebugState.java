@@ -314,7 +314,7 @@ public class AntDebugState {
 	        }
 	        if (index != -1) {
 	        //bug 84403
-	            //if (locationString.startsWith("file:")) { //$NON-NLS-1$
+	            //if (locationString.startsWith("file:")) {
 	              //  return FileUtils.newFileUtils().fromURI(locationString);
 	            //}
 	            //remove file:

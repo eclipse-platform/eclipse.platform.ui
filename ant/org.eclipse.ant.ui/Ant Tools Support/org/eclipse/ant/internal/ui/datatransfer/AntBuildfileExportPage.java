@@ -61,8 +61,8 @@ public class AntBuildfileExportPage extends WizardPage {
     {
         super("AntBuildfileExportWizardPage"); //$NON-NLS-1$
         setPageComplete(false);
-        setTitle(DataTransferMessages.AntBuildfileExportPage_0); //$NON-NLS-1$
-        setDescription(DataTransferMessages.AntBuildfileExportPage_1); //$NON-NLS-1$
+        setTitle(DataTransferMessages.AntBuildfileExportPage_0);
+        setDescription(DataTransferMessages.AntBuildfileExportPage_1);
     }
     
     /*
@@ -82,7 +82,7 @@ public class AntBuildfileExportPage extends WizardPage {
         //TODO set F1 help
         
         Label label= new Label(composite, SWT.LEFT);
-        label.setText(DataTransferMessages.AntBuildfileExportPage_2); //$NON-NLS-1$
+        label.setText(DataTransferMessages.AntBuildfileExportPage_2);
 
         Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         fTableViewer = new CheckboxTableViewer(table);
@@ -183,9 +183,9 @@ public class AntBuildfileExportPage extends WizardPage {
         List confirmOverwrite = getConfirmOverwriteSet(projects);
         if (confirmOverwrite.size() > 0)
         {
-            String message = DataTransferMessages.AntBuildfileExportPage_3 + ExportUtil.NEWLINE + //$NON-NLS-1$
+            String message = DataTransferMessages.AntBuildfileExportPage_3 + ExportUtil.NEWLINE +
                 EclipseClasspath.toString(confirmOverwrite, ExportUtil.NEWLINE);
-            if (! MessageDialog.openConfirm(getShell(), DataTransferMessages.AntBuildfileExportPage_4, message)) //$NON-NLS-1$
+            if (! MessageDialog.openConfirm(getShell(), DataTransferMessages.AntBuildfileExportPage_4, message))
             {
                 return true;
             }
@@ -235,11 +235,11 @@ public class AntBuildfileExportPage extends WizardPage {
         // show warning if project has cycle
         if (cyclicProjects.size() > 0)
         {
-            String warningMessage= MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_6 + ExportUtil.NEWLINE + ExportUtil.NEWLINE + //$NON-NLS-1$
-                    DataTransferMessages.AntBuildfileExportPage_7 + //$NON-NLS-1$
+            String warningMessage= MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_6 + ExportUtil.NEWLINE + ExportUtil.NEWLINE +
+                    DataTransferMessages.AntBuildfileExportPage_7 +
                     DataTransferMessages.AntBuildfileExportPage_8,
                     new String[] { ExportUtil.NEWLINE + EclipseClasspath.toString(cyclicProjects, ExportUtil.NEWLINE)});
-            MessageDialog.openWarning(getShell(), DataTransferMessages.AntBuildfileExportPage_9, warningMessage); //$NON-NLS-1$
+            MessageDialog.openWarning(getShell(), DataTransferMessages.AntBuildfileExportPage_9, warningMessage);
         }
         
         // show success message
@@ -249,7 +249,7 @@ public class AntBuildfileExportPage extends WizardPage {
             IJavaProject project = (IJavaProject) iter.next();
             projectNames.add(project.getProject().getName());
         }
-        String message = MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_5 + ExportUtil.NEWLINE, new String[] {ExportUtil.NEWLINE + EclipseClasspath.toString(projectNames, ExportUtil.NEWLINE)}); //$NON-NLS-1$
+        String message = MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_5 + ExportUtil.NEWLINE, new String[] {ExportUtil.NEWLINE + EclipseClasspath.toString(projectNames, ExportUtil.NEWLINE)});
         MessageDialog.openInformation(getShell(), DataTransferMessages.AntBuildfileExportPage_0, message);
 
         return true;

@@ -60,12 +60,12 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		getShell().setText(AntLaunchConfigurationMessages.TargetOrderDialog_Order_Targets_1); //$NON-NLS-1$
+		getShell().setText(AntLaunchConfigurationMessages.TargetOrderDialog_Order_Targets_1);
 		
 		Composite comp = (Composite)super.createDialogArea(parent);
 		((GridLayout)comp.getLayout()).numColumns= 2;
 		Label label = new Label(comp, SWT.NONE);
-		label.setText(AntLaunchConfigurationMessages.TargetOrderDialog__Specify_target_execution_order__2); //$NON-NLS-1$
+		label.setText(AntLaunchConfigurationMessages.TargetOrderDialog__Specify_target_execution_order__2);
 		label.setFont(comp.getFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -97,7 +97,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		
 		fUp = new Button(comp, SWT.PUSH);
 		fUp.setFont(parent.getFont());
-		fUp.setText(AntLaunchConfigurationMessages.TargetOrderDialog__Up_3); //$NON-NLS-1$
+		fUp.setText(AntLaunchConfigurationMessages.TargetOrderDialog__Up_3);
 		setButtonLayoutData(fUp);
 		fUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -107,7 +107,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		
 		fDown = new Button(comp, SWT.PUSH);
 		fDown.setFont(parent.getFont());
-		fDown.setText(AntLaunchConfigurationMessages.TargetOrderDialog__Down_4); //$NON-NLS-1$
+		fDown.setText(AntLaunchConfigurationMessages.TargetOrderDialog__Down_4);
 		setButtonLayoutData(fDown);
 		fDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

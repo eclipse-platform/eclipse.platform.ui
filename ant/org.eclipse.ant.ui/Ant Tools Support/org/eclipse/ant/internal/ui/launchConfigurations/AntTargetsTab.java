@@ -185,7 +185,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private void createSelectionCount(Composite parent) {
 		fSelectionCountLabel = new Label(parent, SWT.NONE);
 		fSelectionCountLabel.setFont(parent.getFont());
-		fSelectionCountLabel.setText(AntLaunchConfigurationMessages.AntTargetsTab_0_out_of_0_selected_2); //$NON-NLS-1$
+		fSelectionCountLabel.setText(AntLaunchConfigurationMessages.AntTargetsTab_0_out_of_0_selected_2);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		fSelectionCountLabel.setLayoutData(gd);
 	}
@@ -198,7 +198,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		Font font= parent.getFont();
 		
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(AntLaunchConfigurationMessages.AntTargetsTab_Target_execution_order__3); //$NON-NLS-1$
+		label.setText(AntLaunchConfigurationMessages.AntTargetsTab_Target_execution_order__3);
 		label.setFont(font);
 		
 		Composite orderComposite = new Composite(parent, SWT.NONE);
@@ -217,7 +217,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		fTargetOrderText.setLayoutData(gd);
 
-		fOrderButton = createPushButton(orderComposite, AntLaunchConfigurationMessages.AntTargetsTab__Order____4, null); //$NON-NLS-1$
+		fOrderButton = createPushButton(orderComposite, AntLaunchConfigurationMessages.AntTargetsTab__Order____4, null);
 		gd = (GridData)fOrderButton.getLayoutData();
 		gd.verticalAlignment = GridData.BEGINNING;
 		fOrderButton.setFont(font);
@@ -233,7 +233,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the parent composite
 	 */
 	private void createFilterInternalTargets(Composite parent) {
-		fFilterInternalTargets= createCheckButton(parent, AntLaunchConfigurationMessages.AntTargetsTab_12); //$NON-NLS-1$
+		fFilterInternalTargets= createCheckButton(parent, AntLaunchConfigurationMessages.AntTargetsTab_12);
 		fFilterInternalTargets.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleFilterTargetsSelected();
@@ -246,7 +246,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the parent composite
 	 */
 	private void createSortTargets(Composite parent) {
-		fSortButton= createCheckButton(parent, AntLaunchConfigurationMessages.AntTargetsTab_14); //$NON-NLS-1$
+		fSortButton= createCheckButton(parent, AntLaunchConfigurationMessages.AntTargetsTab_14);
 		fSortButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleSortTargetsSelected();
@@ -331,7 +331,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		Font font= parent.getFont();
 		Label label = new Label(parent, SWT.NONE);
 		label.setFont(font);
-		label.setText(AntLaunchConfigurationMessages.AntTargetsTab_Check_targets_to_e_xecute__1); //$NON-NLS-1$
+		label.setText(AntLaunchConfigurationMessages.AntTargetsTab_Check_targets_to_e_xecute__1);
 				
 		Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION | SWT.RESIZE);
 		
@@ -353,10 +353,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		table.setLayout(tableLayout);
 
 		TableColumn column1= new TableColumn(table, SWT.NULL);
-		column1.setText(AntLaunchConfigurationMessages.AntTargetsTab_Name_5); //$NON-NLS-1$
+		column1.setText(AntLaunchConfigurationMessages.AntTargetsTab_Name_5);
 			
 		TableColumn column2= new TableColumn(table, SWT.NULL);
-		column2.setText(AntLaunchConfigurationMessages.AntTargetsTab_Description_6); //$NON-NLS-1$
+		column2.setText(AntLaunchConfigurationMessages.AntTargetsTab_Description_6);
 		
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TargetTableLabelProvider());
@@ -446,9 +446,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		String total = Integer.toString(visible);
 		int numHidden= all - visible;
 		if (numHidden > 0) {
-			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.AntTargetsTab_13, new String[]{numSelected, String.valueOf(all), String.valueOf(numHidden)})); //$NON-NLS-1$
+			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.AntTargetsTab_13, new String[]{numSelected, String.valueOf(all), String.valueOf(numHidden)}));
 		} else {
-			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.AntTargetsTab__0__out_of__1__selected_7, new String[]{numSelected, total})); //$NON-NLS-1$
+			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.AntTargetsTab__0__out_of__1__selected_7, new String[]{numSelected, total}));
 		}
 		
 		fOrderButton.setEnabled(checked.length > 1);
@@ -510,12 +510,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				PlatformUI.getWorkbench().getProgressService().runInUI(context, operation, rule);
 			} catch (InvocationTargetException e) {
 			    AntUIPlugin.log("Internal error occurred retrieving targets", e.getTargetException()); //$NON-NLS-1$
-			    setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_1); //$NON-NLS-1$
+			    setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_1);
 			    fAllTargets= null;
 			    return null;
 			} catch (InterruptedException e) {
 			    AntUIPlugin.log("Internal error occurred retrieving targets", e); //$NON-NLS-1$
-			    setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_1); //$NON-NLS-1$
+			    setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_1);
 			    fAllTargets= null;
 			    return null;
 			}
@@ -563,7 +563,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		    if (message != null) {
 		        setErrorMessage(message);
 		    } else {
-		        setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_0); //$NON-NLS-1$
+		        setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_0);
 		    }
 		}
 	}
@@ -607,7 +607,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			configTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
 			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 		} catch (CoreException ce) {
-			AntUIPlugin.log(AntLaunchConfigurationMessages.AntTargetsTab_Error_reading_configuration_12, ce); //$NON-NLS-1$
+			AntUIPlugin.log(AntLaunchConfigurationMessages.AntTargetsTab_Error_reading_configuration_12, ce);
 		}
 		
 		if (newLocation == null) {
@@ -711,7 +711,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return AntLaunchConfigurationMessages.AntTargetsTab_Tar_gets_14; //$NON-NLS-1$
+		return AntLaunchConfigurationMessages.AntTargetsTab_Tar_gets_14;
 	}
 		
 	/* (non-Javadoc)
@@ -785,11 +785,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			}
 			File file = new File(expandedLocation);
 			if (!file.exists()) {
-				setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_15); //$NON-NLS-1$
+				setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_15);
 				return null;
 			}
 			if (!file.isFile()) {
-				setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_16); //$NON-NLS-1$
+				setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_16);
 				return null;
 			}
 			
@@ -799,7 +799,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			if (location != null) {
 				try {
 					manager.validateStringVariables(location);
-					setMessage(AntLaunchConfigurationMessages.AntTargetsTab_17); //$NON-NLS-1$
+					setMessage(AntLaunchConfigurationMessages.AntTargetsTab_17);
 					return null;
 				} catch (CoreException e2) {//invalid variable
 					setErrorMessage(e2.getStatus().getMessage());

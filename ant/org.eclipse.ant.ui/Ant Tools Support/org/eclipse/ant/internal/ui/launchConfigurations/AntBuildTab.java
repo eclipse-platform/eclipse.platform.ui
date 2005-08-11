@@ -124,7 +124,7 @@ public class AntBuildTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setLayoutData(gd);
 		mainComposite.setFont(parent.getFont());
 		
-		fBuildButton = createCheckButton(mainComposite, AntLaunchConfigurationMessages.AntBuildTab_1); //$NON-NLS-1$
+		fBuildButton = createCheckButton(mainComposite, AntLaunchConfigurationMessages.AntBuildTab_1);
 		fBuildButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateEnabledState();
@@ -151,25 +151,25 @@ public class AntBuildTab extends AbstractLaunchConfigurationTab {
 			}
 		};
 		
-		fWorkspaceButton = createRadioButton(fGroup, AntLaunchConfigurationMessages.AntBuildTab_2); //$NON-NLS-1$
+		fWorkspaceButton = createRadioButton(fGroup, AntLaunchConfigurationMessages.AntBuildTab_2);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fWorkspaceButton.setLayoutData(gd);
 		fWorkspaceButton.addSelectionListener(adapter);
 		
-		fProjectButton = createRadioButton(fGroup, AntLaunchConfigurationMessages.AntBuildTab_3); //$NON-NLS-1$
+		fProjectButton = createRadioButton(fGroup, AntLaunchConfigurationMessages.AntBuildTab_3);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fProjectButton.setLayoutData(gd);		
 		fProjectButton.addSelectionListener(adapter);
 				
-		fSpecificProjectsButton = createRadioButton(fGroup, AntLaunchConfigurationMessages.AntBuildTab_4); //$NON-NLS-1$
+		fSpecificProjectsButton = createRadioButton(fGroup, AntLaunchConfigurationMessages.AntBuildTab_4);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		fSpecificProjectsButton.setLayoutData(gd);
 		fSpecificProjectsButton.addSelectionListener(adapter);		
 		
-		fSelectButton = createPushButton(fGroup, AntLaunchConfigurationMessages.AntBuildTab_5, null); //$NON-NLS-1$
+		fSelectButton = createPushButton(fGroup, AntLaunchConfigurationMessages.AntBuildTab_5, null);
 		gd = (GridData)fSelectButton.getLayoutData();
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
 		fSelectButton.addSelectionListener(new SelectionAdapter() {
@@ -179,14 +179,14 @@ public class AntBuildTab extends AbstractLaunchConfigurationTab {
 		});
 		
 		createVerticalSpacer(mainComposite, 1);
-		fReferencedProjects = createCheckButton(mainComposite, AntLaunchConfigurationMessages.AntBuildTab_6); //$NON-NLS-1$
+		fReferencedProjects = createCheckButton(mainComposite, AntLaunchConfigurationMessages.AntBuildTab_6);
 	}
 
 	/**
 	 * Prompts the user to select the projects to build.
 	 */
 	private void selectResources() {
-		ListSelectionDialog dialog = new ListSelectionDialog(getShell(), ResourcesPlugin.getWorkspace(), new ProjectsContentProvider(), new WorkbenchLabelProvider(), AntLaunchConfigurationMessages.AntBuildTab_7); //$NON-NLS-1$
+		ListSelectionDialog dialog = new ListSelectionDialog(getShell(), ResourcesPlugin.getWorkspace(), new ProjectsContentProvider(), new WorkbenchLabelProvider(), AntLaunchConfigurationMessages.AntBuildTab_7);
 		dialog.setInitialElementSelections(fProjects);
 		if (dialog.open() == Window.CANCEL) {
 			return;
@@ -296,7 +296,7 @@ public class AntBuildTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return AntLaunchConfigurationMessages.AntBuildTab_8; //$NON-NLS-1$
+		return AntLaunchConfigurationMessages.AntBuildTab_8;
 	}
 	
 	/**
@@ -332,7 +332,7 @@ public class AntBuildTab extends AbstractLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		if (fBuildButton.getSelection() && fSpecificProjectsButton.getSelection() && fProjects.isEmpty()) {
-			setErrorMessage(AntLaunchConfigurationMessages.AntBuildTab_9); //$NON-NLS-1$
+			setErrorMessage(AntLaunchConfigurationMessages.AntBuildTab_9);
 			return false;
 		}
 		return true;

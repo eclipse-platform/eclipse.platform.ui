@@ -43,8 +43,8 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 	 * determining which buildfiles to refresh.
 	 */
 	public RefreshBuildFilesAction(AntView view) {
-		super(AntViewActionMessages.RefreshBuildFilesAction_Refresh_Buildfiles_1, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REFRESH)); //$NON-NLS-1$
-		setToolTipText(AntViewActionMessages.RefreshBuildFilesAction_Refresh_Buildfiles_1); //$NON-NLS-1$
+		super(AntViewActionMessages.RefreshBuildFilesAction_Refresh_Buildfiles_1, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REFRESH));
+		setToolTipText(AntViewActionMessages.RefreshBuildFilesAction_Refresh_Buildfiles_1);
 		fView = view;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.REFRESH_BUILDFILE_ACTION);
 	}
@@ -69,11 +69,11 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
-					monitor.beginTask(AntViewActionMessages.RefreshBuildFilesAction_Refreshing_buildfiles_3, projects.size()); //$NON-NLS-1$
+					monitor.beginTask(AntViewActionMessages.RefreshBuildFilesAction_Refreshing_buildfiles_3, projects.size());
 					AntProjectNodeProxy project;
 					while (iter.hasNext()) {
 						project= (AntProjectNodeProxy) iter.next();
-						monitor.subTask(MessageFormat.format(AntViewActionMessages.RefreshBuildFilesAction_Refreshing__0__4, new String[] {project.getBuildFileName()})); //$NON-NLS-1$
+						monitor.subTask(MessageFormat.format(AntViewActionMessages.RefreshBuildFilesAction_Refreshing__0__4, new String[] {project.getBuildFileName()}));
 						project.parseBuildFile(true);
 						monitor.worked(1);
 					}

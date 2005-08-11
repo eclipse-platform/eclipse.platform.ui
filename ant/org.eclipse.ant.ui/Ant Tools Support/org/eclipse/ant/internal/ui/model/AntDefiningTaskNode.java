@@ -103,11 +103,11 @@ public class AntDefiningTaskNode extends AntTaskNode {
                 //versions of the same JAR on the Ant runtime classpath (either explictly or via the plugin 
                 //classloaders. See bug 71888
                 ((AntModel)getAntModel()).removeDefiningTaskNodeInfo(this);
-                handleBuildException(new BuildException(AntModelMessages.AntDefiningTaskNode_0), AntEditorPreferenceConstants.PROBLEM_CLASSPATH); //$NON-NLS-1$
+                handleBuildException(new BuildException(AntModelMessages.AntDefiningTaskNode_0), AntEditorPreferenceConstants.PROBLEM_CLASSPATH);
             } catch (AntSecurityException se) {
 				//either a system exit or setting of system property was attempted
             	((AntModel)getAntModel()).removeDefiningTaskNodeInfo(this);
-                handleBuildException(new BuildException(AntModelMessages.AntDefiningTaskNode_1), AntEditorPreferenceConstants.PROBLEM_SECURITY); //$NON-NLS-1$
+                handleBuildException(new BuildException(AntModelMessages.AntDefiningTaskNode_1), AntEditorPreferenceConstants.PROBLEM_SECURITY);
 			}
 		}
 		return false;

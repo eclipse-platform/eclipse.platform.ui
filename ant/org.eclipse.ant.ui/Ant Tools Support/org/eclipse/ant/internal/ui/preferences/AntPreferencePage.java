@@ -47,11 +47,11 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	// Array containing the message to display, the preference key, and the 
 	// default value (initialized in storeInitialValues()) for each color preference
 	private final String[][] fAppearanceColorListModel= new String[][] {
-		{AntPreferencesMessages.AntPreferencePage__Error__2, IAntUIPreferenceConstants.CONSOLE_ERROR_COLOR, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.AntPreferencePage__Warning__3, IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.AntPreferencePage_I_nformation__4, IAntUIPreferenceConstants.CONSOLE_INFO_COLOR, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.AntPreferencePage_Ve_rbose__5, IAntUIPreferenceConstants.CONSOLE_VERBOSE_COLOR, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.AntPreferencePage_Deb_ug__6, IAntUIPreferenceConstants.CONSOLE_DEBUG_COLOR, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.AntPreferencePage__Error__2, IAntUIPreferenceConstants.CONSOLE_ERROR_COLOR, null},
+		{AntPreferencesMessages.AntPreferencePage__Warning__3, IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR, null},
+		{AntPreferencesMessages.AntPreferencePage_I_nformation__4, IAntUIPreferenceConstants.CONSOLE_INFO_COLOR, null},
+		{AntPreferencesMessages.AntPreferencePage_Ve_rbose__5, IAntUIPreferenceConstants.CONSOLE_VERBOSE_COLOR, null},
+		{AntPreferencesMessages.AntPreferencePage_Deb_ug__6, IAntUIPreferenceConstants.CONSOLE_DEBUG_COLOR, null},
 	};
 
 	/**
@@ -59,7 +59,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
      */
 	public AntPreferencePage() {
 		super(GRID);
-		setDescription(AntPreferencesMessages.AntPreferencePage_General); //$NON-NLS-1$
+		setDescription(AntPreferencesMessages.AntPreferencePage_General);
 		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
 	}
 	
@@ -71,7 +71,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 
 		Font font= getFieldEditorParent().getFont();
 		Label label= new Label(getFieldEditorParent(), SWT.WRAP);
-		label.setText(AntPreferencesMessages.AntPreferencePage_Enter); //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.AntPreferencePage_Enter);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 3;
 		gd.widthHint= convertWidthInCharsToPixels(60);
@@ -79,7 +79,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		label.setLayoutData(gd);
 		label.setFont(font);
 		
-		StringFieldEditor editor = new StringFieldEditor(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, AntPreferencesMessages.AntPreferencePage__Names__3, getFieldEditorParent()); //$NON-NLS-1$
+		StringFieldEditor editor = new StringFieldEditor(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, AntPreferencesMessages.AntPreferencePage__Names__3, getFieldEditorParent());
 		addField(editor);
 		
 		createSpace();
@@ -87,22 +87,22 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		if (!AntUIPlugin.isMacOS()) {
 			//the mac does not have a tools.jar Bug 40778
 		    label= new Label(getFieldEditorParent(), SWT.WRAP);
-			label.setText(AntPreferencesMessages.AntPreferencePage_0); //$NON-NLS-1$
+			label.setText(AntPreferencesMessages.AntPreferencePage_0);
 			gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			gd.horizontalSpan= 3;
 			gd.widthHint= convertWidthInCharsToPixels(60);
 			label.setLayoutData(gd);
 			label.setFont(font);
-			toolsWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.AntPreferencePage_1, getFieldEditorParent()); //$NON-NLS-1$
+			toolsWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.AntPreferencePage_1, getFieldEditorParent());
 			addField(toolsWarningEditor);
 			new Label(getFieldEditorParent(), SWT.NONE);
 		}
 		
-		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.AntPreferencePage_12, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.AntPreferencePage_12, getFieldEditorParent()));
 		
 		createSpace();
 		
-		editor = new URLFieldEditor(IAntUIPreferenceConstants.DOCUMENTATION_URL, AntPreferencesMessages.AntPreferencePage_2, getFieldEditorParent()); //$NON-NLS-1$
+		editor = new URLFieldEditor(IAntUIPreferenceConstants.DOCUMENTATION_URL, AntPreferencesMessages.AntPreferencePage_2, getFieldEditorParent());
 		addField(editor);
 		
 		createSpace();
@@ -134,7 +134,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	private void createColorComposite() {
 		Font font= getFieldEditorParent().getFont();
 		Label label= new Label(getFieldEditorParent(), SWT.LEFT);
-		label.setText(AntPreferencesMessages.AntPreferencePage_Ant_Color_Options__6);  //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.AntPreferencePage_Ant_Color_Options__6); 
 		label.setFont(font);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
@@ -167,7 +167,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		stylesComposite.setFont(font);
 
 		label= new Label(stylesComposite, SWT.LEFT);
-		label.setText(AntPreferencesMessages.AntPreferencePage_Color__7);  //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.AntPreferencePage_Color__7);
 		label.setFont(font);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;

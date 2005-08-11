@@ -57,14 +57,14 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		IPath buildFilePath= AntUtil.getFile(getBuildFileName()).getLocation();
 		if (buildFilePath == null) {
 			setProblemSeverity(AntModelProblem.SEVERITY_ERROR);
-			setProblemMessage(AntModelMessages.AntProjectNodeProxy_0); //$NON-NLS-1$
+			setProblemMessage(AntModelMessages.AntProjectNodeProxy_0);
 			return;
 		}
 		nodes = AntUtil.getTargets(buildFilePath.toString());
 		
 		if (nodes == null || nodes.length < 1) {
 			setProblemSeverity(AntModelProblem.SEVERITY_ERROR);
-			setProblemMessage(AntModelMessages.AntProjectNodeProxy_1); //$NON-NLS-1$
+			setProblemMessage(AntModelMessages.AntProjectNodeProxy_1);
 			return;
 		}
 		

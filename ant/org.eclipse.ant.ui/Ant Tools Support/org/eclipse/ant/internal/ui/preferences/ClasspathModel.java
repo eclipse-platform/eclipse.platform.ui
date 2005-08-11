@@ -56,21 +56,21 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		switch (entryType) {
 			case ANT_HOME :
 				if (fAntHomeEntry == null) {
-					String name= AntPreferencesMessages.ClasspathModel_2; //$NON-NLS-1$
+					String name= AntPreferencesMessages.ClasspathModel_2;
 					fAntHomeEntry= createGlobalEntry(new IAntClasspathEntry[0], name, false, true, ANT_HOME);
 				}
 				entryParent= fAntHomeEntry;
 				break;
 			case GLOBAL_USER :
 				if (fUserGlobalEntry == null) {
-					String name= AntPreferencesMessages.ClasspathModel_3; //$NON-NLS-1$
+					String name= AntPreferencesMessages.ClasspathModel_3;
 					fUserGlobalEntry= createGlobalEntry(new IAntClasspathEntry[0], name, true, true, GLOBAL_USER);
 				}
 				entryParent= fUserGlobalEntry;
 				break;
             case CONTRIBUTED :
                 if (fContributedGlobalEntry == null) {
-                    String name= AntPreferencesMessages.ClasspathModel_0; //$NON-NLS-1$
+                    String name= AntPreferencesMessages.ClasspathModel_0;
                     fContributedGlobalEntry= createGlobalEntry(new IAntClasspathEntry[0], name, true, true, CONTRIBUTED);
                 }
                 entryParent= fContributedGlobalEntry;
@@ -187,7 +187,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 
 	public void setAntHomeEntries(IAntClasspathEntry[] entries) {
 		if (fAntHomeEntry == null) {
-			String name= AntPreferencesMessages.ClasspathModel_2; //$NON-NLS-1$
+			String name= AntPreferencesMessages.ClasspathModel_2;
 			fAntHomeEntry= createGlobalEntry(entries, name, false, true, ANT_HOME);
 		} else {
 			fAntHomeEntry.removeAll();
@@ -213,7 +213,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 
 	public void setGlobalEntries(IAntClasspathEntry[] entries) {
 		if (fUserGlobalEntry == null) {
-			String name= AntPreferencesMessages.ClasspathModel_3; //$NON-NLS-1$
+			String name= AntPreferencesMessages.ClasspathModel_3;
 			fUserGlobalEntry= createGlobalEntry(entries, name, true, true, GLOBAL_USER);
 		} else {
 			fUserGlobalEntry.removeAll();
@@ -225,7 +225,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
     
     public void setContributedEntries(IAntClasspathEntry[] entries) {
         if (fContributedGlobalEntry == null) {
-            String name= AntPreferencesMessages.ClasspathModel_0; //$NON-NLS-1$
+            String name= AntPreferencesMessages.ClasspathModel_0;
             fContributedGlobalEntry= createGlobalEntry(entries, name, false, true, CONTRIBUTED);
         } else {
             fContributedGlobalEntry.removeAll();

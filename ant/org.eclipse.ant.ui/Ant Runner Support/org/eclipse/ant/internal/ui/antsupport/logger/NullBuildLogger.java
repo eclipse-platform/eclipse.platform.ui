@@ -163,7 +163,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 		fHandledException= exception;
         StringBuffer message= new StringBuffer();
         message.append(StringUtils.LINE_SEP);
-        message.append(AntSupportMessages.NullBuildLogger_1); //$NON-NLS-1$
+        message.append(AntSupportMessages.NullBuildLogger_1);
         message.append(StringUtils.LINE_SEP);
         if (Project.MSG_VERBOSE <= fMessageOutputLevel || !(exception instanceof BuildException)) {
             message.append(StringUtils.getStackTrace(exception));

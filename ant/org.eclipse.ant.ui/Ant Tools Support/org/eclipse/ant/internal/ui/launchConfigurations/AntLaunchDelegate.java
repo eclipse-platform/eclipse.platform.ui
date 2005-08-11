@@ -103,9 +103,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		boolean isSeparateJRE= AntUtil.isSeparateJREAntBuild(configuration);
 		
 		if (CommonTab.isLaunchInBackground(configuration)) {
-			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__1, new String[] {configuration.getName()}), 10); //$NON-NLS-1$
+			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__1, new String[] {configuration.getName()}), 10);
 		} else {
-			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Running__0__2, new String[] {configuration.getName()}), 100); //$NON-NLS-1$
+			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Running__0__2, new String[] {configuration.getName()}), 100);
 		}
 		
 		// resolve location
@@ -117,7 +117,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 		
 		if (!isSeparateJRE && AntRunner.isBuildRunning()) {
-			IStatus status= new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 1, MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Build_In_Progress, new String[]{location.toOSString()}), null); //$NON-NLS-1$
+			IStatus status= new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 1, MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Build_In_Progress, new String[]{location.toOSString()}), null);
 			throw new CoreException(status);
 		}		
 		
@@ -190,7 +190,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, isSeparateJRE, captureOutput, setInputHandler);
 		
 		if (isSeparateJRE) {
-			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__1, new String[] {configuration.getName()}), 10); //$NON-NLS-1$
+			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__1, new String[] {configuration.getName()}), 10);
 			runInSeparateVM(configuration, launch, monitor, idStamp, antHome, port, requestPort, commandLine, captureOutput, setInputHandler);
 		} else {
 			runInSameVM(configuration, launch, monitor, location, idStamp, runner, commandLine, captureOutput);
@@ -214,7 +214,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 					try {
 						finalRunner.run(process);
 					} catch (CoreException e) {
-						handleException(e, AntLaunchConfigurationMessages.AntLaunchDelegate_Failure); //$NON-NLS-1$
+						handleException(e, AntLaunchConfigurationMessages.AntLaunchDelegate_Failure);
 					}
 					process.terminated();
 				}
@@ -235,7 +235,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			} catch (CoreException e) {
 				process.terminated();
 				monitor.done();
-				handleException(e, AntLaunchConfigurationMessages.AntLaunchDelegate_23); //$NON-NLS-1$
+				handleException(e, AntLaunchConfigurationMessages.AntLaunchDelegate_23);
 				return;
 			}
 			process.terminated();
@@ -307,7 +307,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		if (store.getBoolean(IAntUIPreferenceConstants.ANT_ERROR_DIALOG)) {
 			AntUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 				public void run() {
-					MessageDialogWithToggle.openError(null, title, e.getMessage(), AntLaunchConfigurationMessages.AntLaunchDelegate_22, false, AntUIPlugin.getDefault().getPreferenceStore(), IAntUIPreferenceConstants.ANT_ERROR_DIALOG); //$NON-NLS-1$
+					MessageDialogWithToggle.openError(null, title, e.getMessage(), AntLaunchConfigurationMessages.AntLaunchDelegate_22, false, AntUIPlugin.getDefault().getPreferenceStore(), IAntUIPreferenceConstants.ANT_ERROR_DIALOG);
 				}
 			});
 		}
@@ -517,7 +517,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		vars.put("ANT_HOME", antHome); //$NON-NLS-1$
 		copy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, vars);
 
-		//copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"); //$NON-NLS-1$
+		//copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000");
 		IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 10);
 		AntJavaLaunchDelegate delegate= new AntJavaLaunchDelegate();
 		delegate.preLaunchCheck(copy, ILaunchManager.RUN_MODE, subMonitor);
@@ -550,7 +550,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 				}
 			};
 			DebugPlugin.getDefault().addDebugEventListener(listener);
-			monitor.subTask(AntLaunchConfigurationMessages.AntLaunchDelegate_28); //$NON-NLS-1$
+			monitor.subTask(AntLaunchConfigurationMessages.AntLaunchDelegate_28);
 			while (!monitor.isCanceled() && !terminated[0]) {
 				try {
 					Thread.sleep(50);
@@ -624,7 +624,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
             switch (c) {
                 case '"':
                     if (i != 0 && javaLibPath.charAt(i-1) == '\\') {
-                        buf.append(c); //$NON-NLS-1$
+                        buf.append(c);
                     }
                     break;
                 default:
@@ -664,7 +664,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
             if (fragments == null || fragments.length == 0) {
                 return null;
             }
-            Bundle fragBundle= Platform.getBundle(fragments[0].getSymbolicName()); //$NON-NLS-1$
+            Bundle fragBundle= Platform.getBundle(fragments[0].getSymbolicName());
             try {
                 URL url= Platform.asLocalURL(fragBundle.getEntry("/")); //$NON-NLS-1$
                 IPath path= new Path(url.getPath());

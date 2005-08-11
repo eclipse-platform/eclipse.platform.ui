@@ -112,10 +112,10 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	public String getName() throws DebugException {
 		if (fName == null) {
 			try {
-				fName= getLaunch().getLaunchConfiguration().getAttribute(IExternalToolConstants.ATTR_LOCATION, DebugModelMessages.AntDebugTarget_0); //$NON-NLS-1$
+				fName= getLaunch().getLaunchConfiguration().getAttribute(IExternalToolConstants.ATTR_LOCATION, DebugModelMessages.AntDebugTarget_0);
 				fName= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fName);
 			} catch (CoreException e) {
-				fName = DebugModelMessages.AntDebugTarget_0; //$NON-NLS-1$
+				fName = DebugModelMessages.AntDebugTarget_0;
 			}
 		}
 		return fName;

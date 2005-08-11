@@ -62,7 +62,7 @@ public class ImageDescriptorRegistry {
 		if (result != null)
 			return result;
 	
-		Assert.isTrue(fDisplay == AntUIPlugin.getStandardDisplay(), AntUIModelMessages.ImageDescriptorRegistry_Allocating_image_for_wrong_display_1); //$NON-NLS-1$
+		Assert.isTrue(fDisplay == AntUIPlugin.getStandardDisplay(), AntUIModelMessages.ImageDescriptorRegistry_Allocating_image_for_wrong_display_1);
 		result= descriptor.createImage();
 		if (result != null)
 			fRegistry.put(descriptor, result);

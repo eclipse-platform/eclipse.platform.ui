@@ -77,14 +77,14 @@ public class AppletUtil
             }
             writer.write("width=\""); //$NON-NLS-1$
             writer.write(Integer.toString(configuration.getAttribute(
-                    IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, 200))); //$NON-NLS-1$
+                    IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, 200)));
             writer.write("\" height=\""); //$NON-NLS-1$
             writer
                     .write(Integer
                             .toString(configuration
                                     .getAttribute(
                                             IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT,
-                                            200))); //$NON-NLS-1$
+                                            200)));
             writer.write("\">\n"); //$NON-NLS-1$
             Map parameters = configuration.getAttribute(
                     IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS,

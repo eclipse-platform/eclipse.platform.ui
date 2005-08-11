@@ -256,7 +256,7 @@ public class AntOpenWithMenu extends ContributionItem {
 	private void createDefaultMenuItem(Menu menu, final IFile fileResource) {
 		final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
 		menuItem.setSelection(IDE.getDefaultEditor(fileResource) == null);
-		menuItem.setText(AntViewActionMessages.AntViewOpenWithMenu_Default_Editor_4); //$NON-NLS-1$
+		menuItem.setText(AntViewActionMessages.AntViewOpenWithMenu_Default_Editor_4);
 
 		Listener listener = new Listener() {
 			/* (non-Javadoc)
@@ -270,7 +270,7 @@ public class AntOpenWithMenu extends ContributionItem {
 							try {
 								IDE.openEditor(fPage, fileResource, true);
 							} catch (PartInitException e) {
-								AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.AntViewOpenWithMenu_Editor_failed, new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
+								AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.AntViewOpenWithMenu_Editor_failed, new String[]{fileResource.getLocation().toOSString()}), e);
 							}
 						}
 						break;

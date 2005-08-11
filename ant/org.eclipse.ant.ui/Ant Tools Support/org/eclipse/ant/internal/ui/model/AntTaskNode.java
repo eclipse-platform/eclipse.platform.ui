@@ -125,7 +125,7 @@ public class AntTaskNode extends AntElementNode {
 				handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_TASKS);
 			} catch (AntSecurityException se) {
 				//either a system exit or setting of system property was attempted
-				handleBuildException(new BuildException(AntModelMessages.AntTaskNode_0), AntEditorPreferenceConstants.PROBLEM_SECURITY); //$NON-NLS-1$
+				handleBuildException(new BuildException(AntModelMessages.AntTaskNode_0), AntEditorPreferenceConstants.PROBLEM_SECURITY);
 			}
 		}
 		return false;

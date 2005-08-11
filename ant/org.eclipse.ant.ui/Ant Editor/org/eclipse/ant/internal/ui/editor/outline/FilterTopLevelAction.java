@@ -23,10 +23,10 @@ public class FilterTopLevelAction extends Action {
 	private AntEditorContentOutlinePage fPage;
 	
 	public FilterTopLevelAction(AntEditorContentOutlinePage page) {
-		super(AntOutlineMessages.FilterTopLevelAction_0); //$NON-NLS-1$
+		super(AntOutlineMessages.FilterTopLevelAction_0);
 		fPage = page;
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_FILTER_TOP_LEVEL));
-		setToolTipText(AntOutlineMessages.FilterTopLevelAction_0); //$NON-NLS-1$
+		setToolTipText(AntOutlineMessages.FilterTopLevelAction_0);
 		setChecked(fPage.filterTopLevel());
 	}
 	

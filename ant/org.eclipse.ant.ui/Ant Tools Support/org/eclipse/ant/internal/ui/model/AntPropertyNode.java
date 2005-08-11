@@ -64,7 +64,7 @@ public class AntPropertyNode extends AntTaskNode {
          	fValue= attributes.getValue(IAntModelConstants.ATTR_VALUE);
             if (fValue == null) {
                 fOccurrencesStartingPoint= IAntModelConstants.ATTR_LOCATION;
-                fValue= attributes.getValue(fOccurrencesStartingPoint); //$NON-NLS-1$
+                fValue= attributes.getValue(fOccurrencesStartingPoint);
             }
          } 
          setBaseLabel(label);
@@ -104,10 +104,10 @@ public class AntPropertyNode extends AntTaskNode {
             //classFileSetId refs a ClassFileSet which is an optional type that requires
             //BCEL JAR. Currently it is not possible to set these types of properties within the Ant Editor.
             //see bug 71888
-            handleBuildException(new BuildException(AntModelMessages.AntPropertyNode_0), AntEditorPreferenceConstants.PROBLEM_PROPERTIES); //$NON-NLS-1$
+            handleBuildException(new BuildException(AntModelMessages.AntPropertyNode_0), AntEditorPreferenceConstants.PROBLEM_PROPERTIES);
         } catch (AntSecurityException se) {
 			//either a system exit or setting of system property was attempted
-            handleBuildException(new BuildException(AntModelMessages.AntPropertyNode_1), AntEditorPreferenceConstants.PROBLEM_SECURITY); //$NON-NLS-1$
+            handleBuildException(new BuildException(AntModelMessages.AntPropertyNode_1), AntEditorPreferenceConstants.PROBLEM_SECURITY);
         } finally {
 			getProjectNode().setCurrentConfiguringProperty(null);
 		}
@@ -179,7 +179,7 @@ public class AntPropertyNode extends AntTaskNode {
 		if (textToSearch == null) {
 			return false;
 		}
-		int valueOffset= textToSearch.indexOf(fOccurrencesStartingPoint); //$NON-NLS-1$
+		int valueOffset= textToSearch.indexOf(fOccurrencesStartingPoint);
 		if (valueOffset > -1) {
 			valueOffset= textToSearch.indexOf('"', valueOffset);
 			if (valueOffset > -1) {			
@@ -214,7 +214,7 @@ public class AntPropertyNode extends AntTaskNode {
             }
         }
         if (fValue != null) {
-            int valueOffset= textToSearch.indexOf(fOccurrencesStartingPoint); //$NON-NLS-1$
+            int valueOffset= textToSearch.indexOf(fOccurrencesStartingPoint);
             int endOffset= getOffset() + getLength();
             while (valueOffset < endOffset) {
                 valueOffset= textToSearch.indexOf(identifier, valueOffset);

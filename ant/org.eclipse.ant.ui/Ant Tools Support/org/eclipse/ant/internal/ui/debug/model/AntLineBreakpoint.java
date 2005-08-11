@@ -71,7 +71,7 @@ public class AntLineBreakpoint extends LineBreakpoint {
 			    attributes.put(IBreakpoint.ENABLED, Boolean.TRUE);
 			    attributes.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
 			    attributes.put(IBreakpoint.ID, IAntDebugConstants.ID_ANT_DEBUG_MODEL);
-                attributes.put(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new String[] {Integer.toString(lineNumber)})); //$NON-NLS-1$
+                attributes.put(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new String[] {Integer.toString(lineNumber)}));
 			    ensureMarker().setAttributes(attributes);
                 
                 register(register);

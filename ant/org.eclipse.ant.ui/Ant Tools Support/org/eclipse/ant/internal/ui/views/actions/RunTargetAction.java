@@ -46,11 +46,11 @@ public class RunTargetAction extends Action implements IUpdate {
 	 */
 	public RunTargetAction(AntView view) {
 		
-		setText(AntViewActionMessages.RunTargetAction_Run_1); //$NON-NLS-1$
+		setText(AntViewActionMessages.RunTargetAction_Run_1);
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_RUN));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.RUN_TARGET_ACTION);
 
-		setToolTipText(AntViewActionMessages.RunTargetAction_3); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.RunTargetAction_3);
 		fView= view;
 	}
 
@@ -65,7 +65,7 @@ public class RunTargetAction extends Action implements IUpdate {
      * @param selectedElement The element to use as the context for launching
      */
     public void run(final AntElementNode selectedElement) {
-        UIJob job= new UIJob(AntViewActionMessages.RunTargetAction_2) { //$NON-NLS-1$
+        UIJob job= new UIJob(AntViewActionMessages.RunTargetAction_2) {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				launch(selectedElement);
 				return Status.OK_STATUS;
@@ -93,18 +93,18 @@ public class RunTargetAction extends Action implements IUpdate {
 		boolean enabled= false;
 		if (selection instanceof AntTargetNode) {
 			if (!((AntTargetNode) selection).isErrorNode()) {
-				setToolTipText(AntViewActionMessages.RunTargetAction_4); //$NON-NLS-1$
+				setToolTipText(AntViewActionMessages.RunTargetAction_4);
 				enabled= true;
 			}
 		} else if (selection instanceof AntProjectNode) {
 			if (!((AntProjectNode) selection).isErrorNode()) {
 				enabled= true;
-				setToolTipText(AntViewActionMessages.RunTargetAction_3); //$NON-NLS-1$
+				setToolTipText(AntViewActionMessages.RunTargetAction_3);
 			}
 		}  else if (selection instanceof AntTaskNode) {
 			if (!((AntTaskNode) selection).isErrorNode()) {
 				enabled= true;
-				setToolTipText(AntViewActionMessages.RunTargetAction_0); //$NON-NLS-1$
+				setToolTipText(AntViewActionMessages.RunTargetAction_0);
 			}
 		}
 		setEnabled(enabled);

@@ -152,7 +152,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * Inform the user that an ant file was not found to run.
 	 */
 	private void antFileNotFound() {
-		reportError(AntLaunchConfigurationMessages.AntLaunchShortcut_Unable, null); //$NON-NLS-1$	
+		reportError(AntLaunchConfigurationMessages.AntLaunchShortcut_Unable, null);	
 	}
 	
 	/**
@@ -225,7 +225,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 				}
 			}
 		} catch (CoreException exception) {
-			reportError(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchShortcut_Exception_launching, new String[] {file.getName()}), exception); //$NON-NLS-1$
+			reportError(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchShortcut_Exception_launching, new String[] {file.getName()}), exception);
 			return;
 		}
 		launch(mode, configuration);
@@ -312,7 +312,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 				}
 			}
 		} catch (CoreException exception) {
-			reportError(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchShortcut_Exception_launching, new String[] {filePath.toFile().getName()}), exception); //$NON-NLS-1$
+			reportError(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchShortcut_Exception_launching, new String[] {filePath.toFile().getName()}), exception);
 			return;
 		}
 		launch(mode, configuration);
@@ -424,7 +424,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			
 			return workingCopy.doSave();
 		} catch (CoreException e) {
-			reportError(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchShortcut_2, new String[]{filePath.toString()}), e); //$NON-NLS-1$
+			reportError(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchShortcut_2, new String[]{filePath.toString()}), e);
 		}
 		return null;
 	}
@@ -455,11 +455,11 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			try {
 				configs = manager.getLaunchConfigurations(type);
 			} catch (CoreException e) {
-				reportError(AntLaunchConfigurationMessages.AntLaunchShortcut_3, e); //$NON-NLS-1$
+				reportError(AntLaunchConfigurationMessages.AntLaunchShortcut_3, e);
 			}
 			if (configs != null && configs.length > 0) {
 				if (filePath == null) {
-					reportError(AntLaunchConfigurationMessages.AntLaunchShortcut_0, null); //$NON-NLS-1$
+					reportError(AntLaunchConfigurationMessages.AntLaunchShortcut_0, null);
 				} else {
 					for (int i = 0; i < configs.length; i++) {
 						ILaunchConfiguration configuration = configs[i];
@@ -491,8 +491,8 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		ILabelProvider labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(Display.getDefault().getActiveShell(), labelProvider);
 		dialog.setElements(configs.toArray(new ILaunchConfiguration[configs.size()]));
-		dialog.setTitle(AntLaunchConfigurationMessages.AntLaunchShortcut_4); //$NON-NLS-1$
-		dialog.setMessage(AntLaunchConfigurationMessages.AntLaunchShortcut_5); //$NON-NLS-1$
+		dialog.setTitle(AntLaunchConfigurationMessages.AntLaunchShortcut_4);
+		dialog.setMessage(AntLaunchConfigurationMessages.AntLaunchShortcut_5);
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		labelProvider.dispose();
@@ -530,7 +530,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		} else {
 			status = new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, message, throwable);
 		}
-		ErrorDialog.openError(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntLaunchConfigurationMessages.AntLaunchShortcut_Error_7, AntLaunchConfigurationMessages.AntLaunchShortcut_Build_Failed_2, status); //$NON-NLS-1$ //$NON-NLS-2$
+		ErrorDialog.openError(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntLaunchConfigurationMessages.AntLaunchShortcut_Error_7, AntLaunchConfigurationMessages.AntLaunchShortcut_Build_Failed_2, status); 
 	}
 
 	/**

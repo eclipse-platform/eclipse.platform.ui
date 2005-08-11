@@ -469,7 +469,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			task.setTaskName(element.getAttribute(AntCorePlugin.NAME));
 			task.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			
-			configureAntObject(result, element, task, task.getTaskName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_task); //$NON-NLS-1$
+			configureAntObject(result, element, task, task.getTaskName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_task);
 		}
 		return result;
 	}
@@ -504,7 +504,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			type.setTypeName(element.getAttribute(AntCorePlugin.NAME));
 			type.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			
-			configureAntObject(result, element, type, type.getTypeName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_type); //$NON-NLS-1$
+			configureAntObject(result, element, type, type.getTypeName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_type);
 		}
 		return result;
 	}
@@ -517,7 +517,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		
 		String library = element.getAttribute(AntCorePlugin.LIBRARY);
 		if (library == null) {
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_Library_not_specified_for___0__4, new String[]{objectName}), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_Library_not_specified_for___0__4, new String[]{objectName}), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return;
 		}
@@ -535,17 +535,17 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			} 
 
 			//type specifies a library that does not exist
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(errorMessage, new String[]{url.toExternalForm(), element.getNamespace()}), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(errorMessage, new String[]{url.toExternalForm(), element.getNamespace()}), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return;
 		} catch (MalformedURLException e) {
 			// if the URL does not have a valid format, just log and ignore the exception
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return;
 		} catch (Exception e) {
 			//likely extra classpath entry library that does not exist
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_8, new String[]{library, element.getNamespace()}), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_8, new String[]{library, element.getNamespace()}), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return;
 		}
@@ -570,18 +570,18 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					addPluginClassLoader(bundle);
 				} else {
 					//extra classpath entry that does not exist
-					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_6, new String[]{url.toExternalForm(), element.getNamespace()}), null); //$NON-NLS-1$
+					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_6, new String[]{url.toExternalForm(), element.getNamespace()}), null);
 					AntCorePlugin.getPlugin().getLog().log(status);
 					continue;
 				}
 			} catch (MalformedURLException e) {
 				//if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e);
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			} catch (Exception e) {
 				//likely extra classpath entry that does not exist
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_6, new String[]{library, element.getNamespace()}), null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_6, new String[]{library, element.getNamespace()}), null);
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
@@ -795,7 +795,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		try {
 			libraries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) source.getHeaders("").get(Constants.BUNDLE_CLASSPATH)); //$NON-NLS-1$
 		} catch (BundleException e) {
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_0, e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_0, e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return;
 		}
@@ -807,7 +807,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				destination.add(new AntClasspathEntry(Platform.asLocalURL(url)));
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e);  //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e);
 				AntCorePlugin.getPlugin().getLog().log(status);
 			}
 		}
@@ -952,7 +952,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			if (plugins.contains(current.getHost().getBundle())) {
 				prereqs.add(new Relation(current, current.getHost().getSupplier()));
 			} else {
-				AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_1, new String[] {current.getSymbolicName()}), null)); //$NON-NLS-1$
+				AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_1, new String[] {current.getSymbolicName()}), null));
 			}
 
 			BundleDescription[] prereqList = getDependentBundles(current);
@@ -1501,7 +1501,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		for (int i = 0; i < customProperties.length; i++) {
 			properties.append(customProperties[i].getName());
 			properties.append(',');
-			prefs.setValue(IAntCoreConstants.PREFIX_PROPERTY + customProperties[i].getName(), customProperties[i].getValue(false)); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFIX_PROPERTY + customProperties[i].getName(), customProperties[i].getValue(false));
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTIES, properties.toString());
 	}

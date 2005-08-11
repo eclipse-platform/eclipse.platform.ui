@@ -76,7 +76,7 @@ public class NfmParser {
 	}
 	
 	private void reportError(String name) throws ParseError {
-		throw new ParseError(MessageFormat.format(AntDTDSchemaMessages.NfmParser_Ambiguous, new String[]{name})); //$NON-NLS-1$
+		throw new ParseError(MessageFormat.format(AntDTDSchemaMessages.NfmParser_Ambiguous, new String[]{name}));
 	}
 
 	public static void collect(Dfm dfm, List dfms) {

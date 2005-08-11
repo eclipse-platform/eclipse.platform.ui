@@ -142,10 +142,10 @@ public class AntPropertiesBlock {
 	}
 
 	private void addPropertyFile() {
-		String title= AntPreferencesMessages.AntPropertiesFileSelectionDialog_12; //$NON-NLS-1$
-		String message= AntPreferencesMessages.AntPropertiesFileSelectionDialog_13; //$NON-NLS-1$
+		String title= AntPreferencesMessages.AntPropertiesFileSelectionDialog_12;
+		String message= AntPreferencesMessages.AntPropertiesFileSelectionDialog_13;
 		String filterExtension= "properties"; //$NON-NLS-1$
-		String filterMessage= AntPreferencesMessages.AntPropertiesFileSelectionDialog_14; //$NON-NLS-1$
+		String filterMessage= AntPreferencesMessages.AntPropertiesFileSelectionDialog_14;
 		
 		Object[] existingFiles= getPropertyFiles();
 		List propFiles= new ArrayList(existingFiles.length);
@@ -258,13 +258,13 @@ public class AntPropertiesBlock {
 	 */
 	protected void addButtonsToButtonGroup(Composite parent) {
 		if (editButton == null) {
-			addButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_1); //$NON-NLS-1$
-			editButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_2);  //$NON-NLS-1$
-			removeButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_3);  //$NON-NLS-1$
+			addButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_1);
+			editButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_2);
+			removeButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_3);
 		} else {
-			addFileButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_4); //$NON-NLS-1$
-			addExternalFileButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_14); //$NON-NLS-1$
-			removeFileButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_removeFileButton); //$NON-NLS-1$
+			addFileButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_4);
+			addExternalFileButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_14);
+			removeFileButton= createPushButton(parent, AntPreferencesMessages.AntPropertiesBlock_removeFileButton);
 		}
 	}
 	
@@ -321,7 +321,7 @@ public class AntPropertiesBlock {
 	 * Allows the user to enter a user property
 	 */
 	private void addProperty() {
-		String title = AntPreferencesMessages.AntPropertiesBlock_Add_Property_2;  //$NON-NLS-1$
+		String title = AntPreferencesMessages.AntPropertiesBlock_Add_Property_2;
 		AddPropertyDialog dialog = new AddPropertyDialog(propertyTableViewer.getControl().getShell(), title, new String[]{"", ""}); //$NON-NLS-1$ //$NON-NLS-2$
 		if (dialog.open() == Window.CANCEL) {
 			return;
@@ -344,7 +344,7 @@ public class AntPropertiesBlock {
 		Property prop = (Property) selection.getFirstElement();
 		
 		String originalName= prop.getName();
-		String title = AntPreferencesMessages.AntPropertiesBlock_Edit_User_Property_5; //$NON-NLS-1$
+		String title = AntPreferencesMessages.AntPropertiesBlock_Edit_User_Property_5;
 		AddPropertyDialog dialog = new AddPropertyDialog(propertyTableViewer.getControl().getShell(), title, new String[]{prop.getName(), prop.getValue(false)});
 	
 		if (dialog.open() == Window.CANCEL) {
@@ -372,10 +372,10 @@ public class AntPropertiesBlock {
 			String propertyName = property.getName();
 			if (propertyName.equals(name)) {
 				if (property.isDefault()) {
-					MessageDialog.openError(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.AntPropertiesBlock_17, MessageFormat.format(AntPreferencesMessages.AntPropertiesBlock_18, new String[]{propertyName, property.getPluginLabel()})); //$NON-NLS-1$ //$NON-NLS-2$
+					MessageDialog.openError(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.AntPropertiesBlock_17, MessageFormat.format(AntPreferencesMessages.AntPropertiesBlock_18, new String[]{propertyName, property.getPluginLabel()}));
 					return false;
 				} 
-				boolean overWrite= MessageDialog.openQuestion(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.AntPropertiesBlock_15, MessageFormat.format(AntPreferencesMessages.AntPropertiesBlock_16, new String[] {name}));  //$NON-NLS-1$ //$NON-NLS-2$
+				boolean overWrite= MessageDialog.openQuestion(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.AntPropertiesBlock_15, MessageFormat.format(AntPreferencesMessages.AntPropertiesBlock_16, new String[] {name}));
 				if (!overWrite) {
 					return false;
 				}

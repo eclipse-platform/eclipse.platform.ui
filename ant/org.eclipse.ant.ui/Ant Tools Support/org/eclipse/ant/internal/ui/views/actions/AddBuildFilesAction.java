@@ -37,9 +37,9 @@ public class AddBuildFilesAction extends Action {
 	private AntView view;
 
 	public AddBuildFilesAction(AntView view) {
-		super(AntViewActionMessages.AddBuildFilesAction_1, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ADD)); //$NON-NLS-1$
+		super(AntViewActionMessages.AddBuildFilesAction_1, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ADD));
 		this.view= view;
-		setToolTipText(AntViewActionMessages.AddBuildFilesAction_0); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.AddBuildFilesAction_0);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.ADD_BUILDFILE_ACTION);
 	}
 
@@ -47,10 +47,10 @@ public class AddBuildFilesAction extends Action {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		String title= AntViewActionMessages.AddBuildFilesAction_2; //$NON-NLS-1$
-		String message= AntViewActionMessages.AddBuildFilesAction_4; //$NON-NLS-1$
+		String title= AntViewActionMessages.AddBuildFilesAction_2;
+		String message= AntViewActionMessages.AddBuildFilesAction_4;
 		String filterExtension= "xml"; //$NON-NLS-1$
-		String filterMessage= AntViewActionMessages.AddBuildFilesAction_5; //$NON-NLS-1$
+		String filterMessage= AntViewActionMessages.AddBuildFilesAction_5;
 		
 		FileSelectionDialog dialog = new FileSelectionDialog(Display.getCurrent().getActiveShell(), getBuildFiles(), title, message, filterExtension, filterMessage);
 		dialog.open();
@@ -62,7 +62,7 @@ public class AddBuildFilesAction extends Action {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
-					monitor.beginTask(AntViewActionMessages.AddBuildFilesAction_3, result.length); //$NON-NLS-1$
+					monitor.beginTask(AntViewActionMessages.AddBuildFilesAction_3, result.length);
 					for (int i = 0; i < result.length && !monitor.isCanceled(); i++) {
 						Object file = result[i];
 						if (file instanceof IFile) {

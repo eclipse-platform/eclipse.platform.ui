@@ -46,7 +46,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	 * Creates the preference page
 	 */
 	public AntRuntimePreferencePage() {
-		setDescription(AntPreferencesMessages.AntPreferencePage_description); //$NON-NLS-1$
+		setDescription(AntPreferencesMessages.AntPreferencePage_description);
 		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
 	}
 	

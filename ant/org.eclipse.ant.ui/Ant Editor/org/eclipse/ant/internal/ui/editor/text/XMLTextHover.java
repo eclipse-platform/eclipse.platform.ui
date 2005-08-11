@@ -76,7 +76,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 	private String formatPathMessage(String[] list) {
 		StringBuffer buffer= new StringBuffer();
 		HTMLPrinter.addPageProlog(buffer);
-		HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_4); //$NON-NLS-1$
+		HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_4);
 		HTMLPrinter.startBulletList(buffer);
 		for (int i = 0; i < list.length; i++) {
 			HTMLPrinter.addBullet(buffer, list[i]);
@@ -196,7 +196,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		StringBuffer buffer= new StringBuffer();
 		HTMLPrinter.addPageProlog(buffer);
 		if (includes != null && includes.length > 0) {
-			HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_5); //$NON-NLS-1$
+			HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_5);
 			for (int i = 0; i < includes.length; i++) {
 				HTMLPrinter.addBullet(buffer, includes[i]);
 			}
@@ -204,7 +204,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		HTMLPrinter.addParagraph(buffer, ""); //$NON-NLS-1$
 		HTMLPrinter.addParagraph(buffer, ""); //$NON-NLS-1$
 		if (excludes != null && excludes.length > 0) {
-			HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_6); //$NON-NLS-1$
+			HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_6);
 			for (int i = 0; i < excludes.length; i++) {
 				HTMLPrinter.addBullet(buffer, excludes[i]);
 			}
@@ -331,7 +331,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 				public IInformationControl createInformationControl(Shell parent) {
 	  				return new DefaultInformationControl(parent, SWT.NONE, 
 	  					new HTMLTextPresenter(true),
-				   		AntEditorTextMessages.XMLTextHover_7); //$NON-NLS-1$
+				   		AntEditorTextMessages.XMLTextHover_7);
 			 	}
   			};
 		}

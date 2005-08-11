@@ -61,7 +61,7 @@ public class AntCodeFormatterPreferencePage extends AbstractAntEditorPreferenceP
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		//TODO set help
-		//WorkbenchHelp.setHelp(getControl(), "ANT_FORMATTER_PREFERENCE_PAGE"); //$NON-NLS-1$
+		//WorkbenchHelp.setHelp(getControl(), "ANT_FORMATTER_PREFERENCE_PAGE");
 	}
 
 	protected Control createContents(Composite parent) {
@@ -75,27 +75,27 @@ public class AntCodeFormatterPreferencePage extends AbstractAntEditorPreferenceP
 		layout.marginWidth= 0;
 		result.setLayout(layout);
 		
-		Group indentationGroup= createGroup(numColumns, result, AntPreferencesMessages.AntCodeFormatterPreferencePage_0); //$NON-NLS-1$
+		Group indentationGroup= createGroup(numColumns, result, AntPreferencesMessages.AntCodeFormatterPreferencePage_0);
 		
-		String labelText= AntPreferencesMessages.AntCodeFormatterPreferencePage_1; //$NON-NLS-1$
-		String[] errorMessages= new String[]{AntPreferencesMessages.AntCodeFormatterPreferencePage_2, AntPreferencesMessages.AntCodeFormatterPreferencePage_3}; //$NON-NLS-1$ //$NON-NLS-2$
+		String labelText= AntPreferencesMessages.AntCodeFormatterPreferencePage_1;
+		String[] errorMessages= new String[]{AntPreferencesMessages.AntCodeFormatterPreferencePage_2, AntPreferencesMessages.AntCodeFormatterPreferencePage_3};
 		addTextField(indentationGroup, labelText, AntEditorPreferenceConstants.FORMATTER_TAB_SIZE, 3, 0, errorMessages);
 		
-		labelText= AntPreferencesMessages.AntCodeFormatterPreferencePage_4; //$NON-NLS-1$
+		labelText= AntPreferencesMessages.AntCodeFormatterPreferencePage_4;
 		addCheckBox(indentationGroup, labelText, AntEditorPreferenceConstants.FORMATTER_TAB_CHAR, 1);
 		
-		Group wrappingGroup= createGroup(numColumns, result, AntPreferencesMessages.AntCodeFormatterPreferencePage_6); //$NON-NLS-1$
-		labelText= AntPreferencesMessages.AntCodeFormatterPreferencePage_7; //$NON-NLS-1$
-		errorMessages= new String[]{AntPreferencesMessages.AntCodeFormatterPreferencePage_8, AntPreferencesMessages.AntCodeFormatterPreferencePage_9}; //$NON-NLS-1$ //$NON-NLS-2$
+		Group wrappingGroup= createGroup(numColumns, result, AntPreferencesMessages.AntCodeFormatterPreferencePage_6);
+		labelText= AntPreferencesMessages.AntCodeFormatterPreferencePage_7;
+		errorMessages= new String[]{AntPreferencesMessages.AntCodeFormatterPreferencePage_8, AntPreferencesMessages.AntCodeFormatterPreferencePage_9};
 		addTextField(wrappingGroup, labelText, AntEditorPreferenceConstants.FORMATTER_MAX_LINE_LENGTH, 3, 0, errorMessages);
-		labelText= AntPreferencesMessages.AntCodeFormatterPreferencePage_10; //$NON-NLS-1$
+		labelText= AntPreferencesMessages.AntCodeFormatterPreferencePage_10;
 		addCheckBox(wrappingGroup, labelText, AntEditorPreferenceConstants.FORMATTER_WRAP_LONG, 1);
-		labelText= AntPreferencesMessages.AntCodeFormatterPreferencePage_5; //$NON-NLS-1$
+		labelText= AntPreferencesMessages.AntCodeFormatterPreferencePage_5;
 		addCheckBox(wrappingGroup, labelText, AntEditorPreferenceConstants.FORMATTER_ALIGN, 1);
 		
 		
 		Label label= new Label(result, SWT.LEFT);
-		label.setText(AntPreferencesMessages.AntEditorPreferencePage_9); //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.AntEditorPreferencePage_9);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Control previewer= createPreviewer(result);

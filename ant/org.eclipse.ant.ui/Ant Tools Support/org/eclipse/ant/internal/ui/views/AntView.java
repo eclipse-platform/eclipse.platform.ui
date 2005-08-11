@@ -237,7 +237,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			IFile buildFile= node.getIFile();
 			if (buildFile != null) {
 				menu.add(new Separator("group.open")); //$NON-NLS-1$
-				IMenuManager submenu= new MenuManager(AntViewMessages.AntView_1);  //$NON-NLS-1$
+				IMenuManager submenu= new MenuManager(AntViewMessages.AntView_1);
 				openWithMenu.setNode(node);
 				submenu.add(openWithMenu);
 				menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
@@ -404,7 +404,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			StringBuffer message= new StringBuffer();
 			Enumeration depends= target.getTarget().getDependencies();
 			if (depends.hasMoreElements()) {
-				message.append(AntViewMessages.AntView_3); //$NON-NLS-1$
+				message.append(AntViewMessages.AntView_3);
 				message.append((String)depends.nextElement()); // Unroll the loop to avoid trailing comma
 				while (depends.hasMoreElements()) {
 					String dependancy = (String) depends.nextElement();
@@ -414,7 +414,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			}
 			String description= target.getTarget().getDescription();
 			if (description != null && description.length() != 0) {
-				message.append(AntViewMessages.AntView_4); //$NON-NLS-1$
+				message.append(AntViewMessages.AntView_4);
 				message.append(description);
 				message.append('\"');
 			}

@@ -215,7 +215,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getName()
 	 */
 	public String getName() {
-		return AntLaunchConfigurationMessages.ContributedClasspathEntriesEntry_1; //$NON-NLS-1$
+		return AntLaunchConfigurationMessages.ContributedClasspathEntriesEntry_1;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getType()

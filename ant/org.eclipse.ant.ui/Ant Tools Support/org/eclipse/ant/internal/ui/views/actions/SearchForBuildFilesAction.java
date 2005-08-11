@@ -33,8 +33,8 @@ public class SearchForBuildFilesAction extends Action {
 	private AntView view;
 	
 	public SearchForBuildFilesAction(AntView view) {
-		super(AntViewActionMessages.SearchForBuildFilesAction_Search_1, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_SEARCH)); //$NON-NLS-1$
-		setToolTipText(AntViewActionMessages.SearchForBuildFilesAction_Add_build_files_with_search_2); //$NON-NLS-1$
+		super(AntViewActionMessages.SearchForBuildFilesAction_Search_1, AntUIImages.getImageDescriptor(IAntUIConstants.IMG_SEARCH));
+		setToolTipText(AntViewActionMessages.SearchForBuildFilesAction_Add_build_files_with_search_2);
 		this.view= view;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.SEARCH_FOR_BUILDFILES_ACTION);
 	}
@@ -52,10 +52,10 @@ public class SearchForBuildFilesAction extends Action {
 			try {
 				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) {
-						monitor.beginTask(AntViewActionMessages.SearchForBuildFilesAction_Processing_search_results_3, files.length); //$NON-NLS-1$
+						monitor.beginTask(AntViewActionMessages.SearchForBuildFilesAction_Processing_search_results_3, files.length);
 						for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
 							String buildFileName= files[i].getFullPath().toString();
-							monitor.subTask(MessageFormat.format(AntViewActionMessages.SearchForBuildFilesAction_Adding__0__4, new String[] {buildFileName})); //$NON-NLS-1$
+							monitor.subTask(MessageFormat.format(AntViewActionMessages.SearchForBuildFilesAction_Adding__0__4, new String[] {buildFileName}));
 							if (alreadyAdded(buildFileName)) {
 								// Don't parse projects that have already been added.
 								continue;

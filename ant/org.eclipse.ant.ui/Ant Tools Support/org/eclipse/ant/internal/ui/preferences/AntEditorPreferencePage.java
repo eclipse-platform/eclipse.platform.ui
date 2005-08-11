@@ -263,17 +263,17 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	
 	public AntEditorPreferencePage() {
 		super();
-		setDescription(AntPreferencesMessages.AntEditorPreferencePage_description); //$NON-NLS-1$
+		setDescription(AntPreferencesMessages.AntEditorPreferencePage_description);
 	}
 	
 	protected OverlayPreferenceStore createOverlayStore() {
 		fSyntaxColorListModel= new String[][] {
-				{AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_text_1, IAntEditorColorConstants.TEXT_COLOR, null}, //$NON-NLS-1$
-				{AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_processing_instuctions_2,  IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR, null}, //$NON-NLS-1$
-				{AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_constant_strings_3,  IAntEditorColorConstants.STRING_COLOR, null},  //$NON-NLS-1$
-				{AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_tags_4,    IAntEditorColorConstants.TAG_COLOR, null},  //$NON-NLS-1$
-				{AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_comments_5, IAntEditorColorConstants.XML_COMMENT_COLOR, null}, //$NON-NLS-1$
-				{AntPreferencesMessages.AntEditorPreferencePage_26, IAntEditorColorConstants.XML_DTD_COLOR, null} //$NON-NLS-1$
+				{AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_text_1, IAntEditorColorConstants.TEXT_COLOR, null},
+				{AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_processing_instuctions_2,  IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR, null},
+				{AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_constant_strings_3,  IAntEditorColorConstants.STRING_COLOR, null},
+				{AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_tags_4,    IAntEditorColorConstants.TAG_COLOR, null},
+				{AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_comments_5, IAntEditorColorConstants.XML_COMMENT_COLOR, null},
+				{AntPreferencesMessages.AntEditorPreferencePage_26, IAntEditorColorConstants.XML_DTD_COLOR, null}
 			};
 		ArrayList overlayKeys= new ArrayList();			
 		
@@ -326,16 +326,16 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 
-		String labelText= AntPreferencesMessages.AntEditorPreferencePage_2; //$NON-NLS-1$
+		String labelText= AntPreferencesMessages.AntEditorPreferencePage_2;
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES, 0);
 		
-		labelText= AntPreferencesMessages.AntEditorPreferencePage_4; //$NON-NLS-1$
+		labelText= AntPreferencesMessages.AntEditorPreferencePage_4;
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES, 0);
 		
-		labelText= AntPreferencesMessages.AntEditorPreferencePage_40; //$NON-NLS-1$
+		labelText= AntPreferencesMessages.AntEditorPreferencePage_40;
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, 0);
 		
-		labelText= AntPreferencesMessages.AntEditorPreferencePage_32; //$NON-NLS-1$
+		labelText= AntPreferencesMessages.AntEditorPreferencePage_32;
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, 0);
 
 		return appearanceComposite;
@@ -356,19 +356,19 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		TabItem item= new TabItem(folder, SWT.NONE);
-		item.setText(AntPreferencesMessages.AntEditorPreferencePage_general); //$NON-NLS-1$
+		item.setText(AntPreferencesMessages.AntEditorPreferencePage_general);
 		item.setControl(createAppearancePage(folder));
 		
 		item= new TabItem(folder, SWT.NONE);
-		item.setText(AntPreferencesMessages.AntEditorPreferencePage_1); //$NON-NLS-1$
+		item.setText(AntPreferencesMessages.AntEditorPreferencePage_1);
 		item.setControl(createSyntaxPage(folder));
 		
 		item= new TabItem(folder, SWT.NONE);
-		item.setText(AntPreferencesMessages.AntEditorPreferencePage_10); //$NON-NLS-1$
+		item.setText(AntPreferencesMessages.AntEditorPreferencePage_10);
 		item.setControl(createProblemsTabContent(folder));
 		
 		item= new TabItem(folder, SWT.NONE);
-		item.setText(AntPreferencesMessages.AntEditorPreferencePage_19); //$NON-NLS-1$
+		item.setText(AntPreferencesMessages.AntEditorPreferencePage_19);
 		item.setControl(createFoldingTabContent(folder));
 		
 		initialize();
@@ -384,15 +384,15 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		layout.numColumns= 2;
 		composite.setLayout(layout);
 		
-		addCheckBox(composite, AntPreferencesMessages.AntEditorPreferencePage_20, AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, 0);  //$NON-NLS-1$
+		addCheckBox(composite, AntPreferencesMessages.AntEditorPreferencePage_20, AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, 0);
 		
 		Label label= new Label(composite, SWT.LEFT);
-		label.setText(AntPreferencesMessages.AntEditorPreferencePage_21); //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.AntEditorPreferencePage_21);
 		
-		addCheckBox(composite, AntPreferencesMessages.AntEditorPreferencePage_22, AntEditorPreferenceConstants.EDITOR_FOLDING_DTD, 0); //$NON-NLS-1$
-		addCheckBox(composite, AntPreferencesMessages.AntEditorPreferencePage_23, AntEditorPreferenceConstants.EDITOR_FOLDING_COMMENTS, 0); //$NON-NLS-1$
-		addCheckBox(composite, AntPreferencesMessages.AntEditorPreferencePage_24, AntEditorPreferenceConstants.EDITOR_FOLDING_DEFINING, 0); //$NON-NLS-1$
-		addCheckBox(composite, AntPreferencesMessages.AntEditorPreferencePage_25, AntEditorPreferenceConstants.EDITOR_FOLDING_TARGETS, 0); //$NON-NLS-1$
+		addCheckBox(composite, AntPreferencesMessages.AntEditorPreferencePage_22, AntEditorPreferenceConstants.EDITOR_FOLDING_DTD, 0);
+		addCheckBox(composite, AntPreferencesMessages.AntEditorPreferencePage_23, AntEditorPreferenceConstants.EDITOR_FOLDING_COMMENTS, 0);
+		addCheckBox(composite, AntPreferencesMessages.AntEditorPreferencePage_24, AntEditorPreferenceConstants.EDITOR_FOLDING_DEFINING, 0);
+		addCheckBox(composite, AntPreferencesMessages.AntEditorPreferencePage_25, AntEditorPreferenceConstants.EDITOR_FOLDING_TARGETS, 0);
 		return composite;
 	}
 	
@@ -425,7 +425,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		colorComposite.setLayout(new GridLayout());
 
 		Label label= new Label(colorComposite, SWT.LEFT);
-		label.setText(AntPreferencesMessages.AntEditorPreferencePage_5); //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.AntEditorPreferencePage_5);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite editorComposite= new Composite(colorComposite, SWT.NONE);
@@ -454,7 +454,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		label= new Label(stylesComposite, SWT.LEFT);
-		label.setText(AntPreferencesMessages.AntEditorPreferencePage_6); //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.AntEditorPreferencePage_6);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
 		label.setLayoutData(gd);
@@ -466,21 +466,21 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		foregroundColorButton.setLayoutData(gd);
 		
 		fBoldCheckBox= new Button(stylesComposite, SWT.CHECK);
-		fBoldCheckBox.setText(AntPreferencesMessages.AntEditorPreferencePage_7); //$NON-NLS-1$
+		fBoldCheckBox.setText(AntPreferencesMessages.AntEditorPreferencePage_7);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
 		fBoldCheckBox.setLayoutData(gd);
 		
 		fItalicCheckBox= new Button(stylesComposite, SWT.CHECK);
-		fItalicCheckBox.setText(AntPreferencesMessages.AntEditorPreferencePage_8); //$NON-NLS-1$
+		fItalicCheckBox.setText(AntPreferencesMessages.AntEditorPreferencePage_8);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
 		fItalicCheckBox.setLayoutData(gd);
 		
 		label= new Label(colorComposite, SWT.LEFT);
-		label.setText(AntPreferencesMessages.AntEditorPreferencePage_9); //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.AntEditorPreferencePage_9);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Control previewer= createPreviewer(colorComposite);
@@ -584,7 +584,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		initializeWorkingValues();
 		
 		String[] errorWarningIgnoreLabels= new String[] {
-				AntPreferencesMessages.AntEditorPreferencePage_11, AntPreferencesMessages.AntEditorPreferencePage_12, AntPreferencesMessages.AntEditorPreferencePage_13}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				AntPreferencesMessages.AntEditorPreferencePage_11, AntPreferencesMessages.AntEditorPreferencePage_12, AntPreferencesMessages.AntEditorPreferencePage_13};
 		String[] errorWarningIgnore= new String[] { 
 				AntEditorPreferenceConstants.BUILDFILE_ERROR, 
 				AntEditorPreferenceConstants.BUILDFILE_WARNING, 
@@ -598,40 +598,40 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		Composite othersComposite= new Composite(folder, SWT.NULL);
 		othersComposite.setLayout(layout);
 		
-		String labelText= AntPreferencesMessages.AntEditorPreferencePage_28; //$NON-NLS-1$
+		String labelText= AntPreferencesMessages.AntEditorPreferencePage_28;
 		fIgnoreAllProblems= addCheckBox(othersComposite, labelText, AntEditorPreferenceConstants.BUILDFILE_IGNORE_ALL, 0);
 		
 		fIgnoreAllProblems.addSelectionListener(getSelectionListener());
 		
 		fBuildFilesToIgnoreProblemsDescription = new Label(othersComposite, SWT.WRAP);
-		fBuildFilesToIgnoreProblemsDescription.setText(AntPreferencesMessages.AntEditorPreferencePage_29); //$NON-NLS-1$
+		fBuildFilesToIgnoreProblemsDescription.setText(AntPreferencesMessages.AntEditorPreferencePage_29);
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan= nColumns;
 		fBuildFilesToIgnoreProblemsDescription.setLayoutData(gd);
 		
-		Control[] controls= addLabelledTextField(othersComposite, AntPreferencesMessages.AntEditorPreferencePage_30, AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE, 50, 0, null); //$NON-NLS-1$
+		Control[] controls= addLabelledTextField(othersComposite, AntPreferencesMessages.AntEditorPreferencePage_30, AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE, 50, 0, null);
 		fBuildFilesToIgnoreProblems= getTextControl(controls); 
 		fBuildFilesToIgnoreProblemsLabel= getLabelControl(controls);
 		
 		fSeverityLabel= new Label(othersComposite, SWT.WRAP);
-		fSeverityLabel.setText(AntPreferencesMessages.AntEditorPreferencePage_14); //$NON-NLS-1$
+		fSeverityLabel.setText(AntPreferencesMessages.AntEditorPreferencePage_14);
 		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan= nColumns;
 		fSeverityLabel.setLayoutData(gd);
 				
-		String label= AntPreferencesMessages.AntEditorPreferencePage_18; //$NON-NLS-1$
+		String label= AntPreferencesMessages.AntEditorPreferencePage_18;
 		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_TASKS, errorWarningIgnore, errorWarningIgnoreLabels, 0);
 		
-		label= AntPreferencesMessages.AntEditorPreferencePage_15; //$NON-NLS-1$
+		label= AntPreferencesMessages.AntEditorPreferencePage_15;
 		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_CLASSPATH, errorWarningIgnore, errorWarningIgnoreLabels, 0);	
 		
-		label= AntPreferencesMessages.AntEditorPreferencePage_16; //$NON-NLS-1$
+		label= AntPreferencesMessages.AntEditorPreferencePage_16;
 		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_PROPERTIES, errorWarningIgnore, errorWarningIgnoreLabels, 0);
 
-		label= AntPreferencesMessages.AntEditorPreferencePage_17; //$NON-NLS-1$
+		label= AntPreferencesMessages.AntEditorPreferencePage_17;
 		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_IMPORTS, errorWarningIgnore, errorWarningIgnoreLabels, 0);
         
-        label= AntPreferencesMessages.AntEditorPreferencePage_27; //$NON-NLS-1$
+        label= AntPreferencesMessages.AntEditorPreferencePage_27;
         addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_SECURITY, errorWarningIgnore, errorWarningIgnoreLabels, 0);
 		
 		updateControlsForProblemReporting(!AntUIPlugin.getDefault().getCombinedPreferenceStore().getBoolean(AntEditorPreferenceConstants.BUILDFILE_IGNORE_ALL));
@@ -757,13 +757,13 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	private void createHeader(Composite contents) {
 		final Link link= new Link(contents, SWT.NONE);
 		final String target= "org.eclipse.ui.preferencePages.GeneralTextEditor"; //$NON-NLS-1$
-		link.setText(AntPreferencesMessages.AntEditorPreferencePage_0); //$NON-NLS-1$
+		link.setText(AntPreferencesMessages.AntEditorPreferencePage_0);
 		link.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), target, null, null);
 			}
 		});
-		String linktooltip= AntPreferencesMessages.AntEditorPreferencePage_3; //$NON-NLS-1$
+		String linktooltip= AntPreferencesMessages.AntEditorPreferencePage_3;
 		link.setToolTipText(linktooltip);
 	}
 }

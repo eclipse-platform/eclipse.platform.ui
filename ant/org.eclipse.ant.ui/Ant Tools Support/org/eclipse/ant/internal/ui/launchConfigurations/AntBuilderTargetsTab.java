@@ -56,8 +56,8 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
     
     private Map fAttributeToTargets= new HashMap();
     
-    private static final String NOT_ENABLED= AntLaunchConfigurationMessages.AntBuilderTargetsTab_0;  //$NON-NLS-1$
-	private static final String DEFAULT_TARGET_SELECTED= AntLaunchConfigurationMessages.AntBuilderTargetsTab_10;  //$NON-NLS-1$
+    private static final String NOT_ENABLED= AntLaunchConfigurationMessages.AntBuilderTargetsTab_0; 
+	private static final String DEFAULT_TARGET_SELECTED= AntLaunchConfigurationMessages.AntBuilderTargetsTab_10;
     
 	private SelectionListener fSelectionListener= new SelectionAdapter() {
 		/* (non-Javadoc)
@@ -91,30 +91,30 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	protected void createTargetsComponent(Composite parent) {
-	    createLabel(AntLaunchConfigurationMessages.AntBuilderTargetsTab_1, parent); //$NON-NLS-1$
+	    createLabel(AntLaunchConfigurationMessages.AntBuilderTargetsTab_1, parent);
 	    fAfterCleanTargetText= createText(parent);
-		fAfterCleanTarget = createPushButton(parent, AntLaunchConfigurationMessages.AntBuilderTargetsTab_2, null); //$NON-NLS-1$
+		fAfterCleanTarget = createPushButton(parent, AntLaunchConfigurationMessages.AntBuilderTargetsTab_2, null);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		fAfterCleanTarget.setLayoutData(gd);
 		fAfterCleanTarget.addSelectionListener(fSelectionListener);
 		
-		createLabel(AntLaunchConfigurationMessages.AntBuilderTargetsTab_3, parent); //$NON-NLS-1$
+		createLabel(AntLaunchConfigurationMessages.AntBuilderTargetsTab_3, parent);
         fManualBuildTargetText = createText(parent);
-		fManualBuildTarget = createPushButton(parent, AntLaunchConfigurationMessages.AntBuilderTargetsTab_4, null); //$NON-NLS-1$
+		fManualBuildTarget = createPushButton(parent, AntLaunchConfigurationMessages.AntBuilderTargetsTab_4, null);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		fManualBuildTarget.setLayoutData(gd);
 		fManualBuildTarget.addSelectionListener(fSelectionListener);
         
-        createLabel(AntLaunchConfigurationMessages.AntBuilderTargetsTab_5, parent); //$NON-NLS-1$
+        createLabel(AntLaunchConfigurationMessages.AntBuilderTargetsTab_5, parent);
         fAutoBuildTargetText = createText(parent);
-		fAutoBuildTarget = createPushButton(parent, AntLaunchConfigurationMessages.AntBuilderTargetsTab_6, null); //$NON-NLS-1$
+		fAutoBuildTarget = createPushButton(parent, AntLaunchConfigurationMessages.AntBuilderTargetsTab_6, null);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		fAutoBuildTarget.setLayoutData(gd);
 		fAutoBuildTarget.addSelectionListener(fSelectionListener);
         
-        createLabel(AntLaunchConfigurationMessages.AntBuilderTargetsTab_7, parent); //$NON-NLS-1$
+        createLabel(AntLaunchConfigurationMessages.AntBuilderTargetsTab_7, parent);
         fDuringCleanTargetText = createText(parent);
-		fDuringCleanTarget = createPushButton(parent, AntLaunchConfigurationMessages.AntBuilderTargetsTab_8, null); //$NON-NLS-1$
+		fDuringCleanTarget = createPushButton(parent, AntLaunchConfigurationMessages.AntBuilderTargetsTab_8, null);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		fDuringCleanTarget.setLayoutData(gd);
 		fDuringCleanTarget.addSelectionListener(fSelectionListener);
@@ -324,7 +324,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
      * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
      */
     public String getName() {
-        return AntLaunchConfigurationMessages.AntTargetsTab_Tar_gets_14; //$NON-NLS-1$
+        return AntLaunchConfigurationMessages.AntTargetsTab_Tar_gets_14;
     }
         
     /* (non-Javadoc)

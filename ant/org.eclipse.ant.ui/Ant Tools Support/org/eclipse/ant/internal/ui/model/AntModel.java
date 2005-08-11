@@ -516,7 +516,7 @@ public class AntModel implements IAntModel {
         String defaultTargetName= fProjectNode.getDefaultTargetName();
         if (defaultTargetName != null && fProjectNode.getProject().getTargets().get(defaultTargetName) == null) {
             //no default target when one specified (default target does not have to be specified)
-            String message= MessageFormat.format(AntModelMessages.AntModel_43, new String[]{defaultTargetName}); //$NON-NLS-1$
+            String message= MessageFormat.format(AntModelMessages.AntModel_43, new String[]{defaultTargetName});
             IProblem problem= createProblem(message, fProjectNode.getOffset(), fProjectNode.getSelectionLength(), AntModelProblem.SEVERITY_ERROR);
             acceptProblem(problem);
             markHierarchy(fProjectNode, AntModelProblem.SEVERITY_ERROR, message);
@@ -546,7 +546,7 @@ public class AntModel implements IAntModel {
     private void checkMissingDependencies(AntElementNode node, AntElementNode originalNode) {
         String missing= ((AntTargetNode)node).checkDependencies();
         if (missing != null) {
-            String message= MessageFormat.format(AntModelMessages.AntModel_44, new String[]{missing}); //$NON-NLS-1$
+            String message= MessageFormat.format(AntModelMessages.AntModel_44, new String[]{missing});
             AntElementNode importNode= node.getImportNode();
             if (importNode != null) {
                 node= importNode;
@@ -811,7 +811,7 @@ public class AntModel implements IAntModel {
             taskName= ((UnknownElement) newTask).getTag();
         }
         
-        if (isPropertySettingTask(taskName)) { //$NON-NLS-1$
+        if (isPropertySettingTask(taskName)) {
             newNode= new AntPropertyNode(newTask, attributes);
         } else if (taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
             newNode= new AntImportNode(newTask, attributes);
@@ -1174,7 +1174,7 @@ public class AntModel implements IAntModel {
         int lineNumber= exception.getLineNumber();
         StringBuffer message= new StringBuffer(exception.getMessage());
         if (lineNumber != -1){
-            message.append(AntModelMessages.AntModel_1 + lineNumber); //$NON-NLS-1$
+            message.append(AntModelMessages.AntModel_1 + lineNumber);
         }
 
         AntElementNode errorNode= new AntElementNode(message.toString());

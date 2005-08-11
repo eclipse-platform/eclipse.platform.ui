@@ -27,7 +27,7 @@ public class URLFieldEditor extends StringButtonFieldEditor {
 		super(name, labelText, parent);
 		setEmptyStringAllowed(false);
 		setChangeButtonText(JFaceResources.getString("openBrowse"));//$NON-NLS-1$
-		setErrorMessage(AntPreferencesMessages.URLFieldEditor_0); //$NON-NLS-1$
+		setErrorMessage(AntPreferencesMessages.URLFieldEditor_0);
 	}
 	
 	/* (non-Javadoc)

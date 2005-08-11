@@ -145,7 +145,7 @@ public class SchemaFactory implements DeclHandler {
 		Element element = getElement(name);
 		if (!element.isUndefined()) {
 			// if the element has already been defined, this is an error
-			throw new SAXException(MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Doubly_defined, new String[]{name})); //$NON-NLS-1$
+			throw new SAXException(MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Doubly_defined, new String[]{name}));
 		}
 		
 		fElement = element;
@@ -177,7 +177,7 @@ public class SchemaFactory implements DeclHandler {
 		fLen = fBuf.length;
 		if (fBuf[0] != '(') {
 			throw new SAXException(
-				MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Start_with_left_parenthesis, new String[]{fElement.getName()})); //$NON-NLS-1$
+				MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Start_with_left_parenthesis, new String[]{fElement.getName()}));
 		}
 
 		boolean ortext = model.startsWith("(#PCDATA|"); //$NON-NLS-1$
@@ -214,7 +214,7 @@ public class SchemaFactory implements DeclHandler {
 			char op = fBuf[fPos];
 			if (op != '|' && op != ',') {
 				throw new SAXException(
-					MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Expecting_operator_or_right_parenthesis,  //$NON-NLS-1$
+					MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Expecting_operator_or_right_parenthesis,
 						new String[]{fElement.getName(),String.valueOf(fBuf)}));
 			}
 			Model model = new Model(op == '|' ? IModel.CHOICE : IModel.SEQUENCE);
@@ -228,7 +228,7 @@ public class SchemaFactory implements DeclHandler {
 			}
 			if (fBuf[fPos] != ')') {
 				throw new SAXException(
-						MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Expecting_operator_or_right_parenthesis,  //$NON-NLS-1$
+						MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Expecting_operator_or_right_parenthesis,
 						new String[]{fElement.getName(), String.valueOf(fBuf)}));					
 			}
 			fPos++;
@@ -261,7 +261,7 @@ public class SchemaFactory implements DeclHandler {
 	private void checkLen() throws SAXException {
 		if (fPos == fLen) {
 			throw new SAXException(
-				MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Unexpected_end,  //$NON-NLS-1$
+				MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Unexpected_end,
 					new String[]{fElement.getName(),
 						String.valueOf(fBuf)}));
 		}	

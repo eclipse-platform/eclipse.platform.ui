@@ -52,7 +52,7 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 				//no location
 			}
 			
-			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null); //$NON-NLS-1$
+			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
 			fWorkingDirText.setText(""); //$NON-NLS-1$
 			if (wd == null || isSameAsDefault(wd)) {
 				fUseDefaultWorkingDirButton.setSelection(true);

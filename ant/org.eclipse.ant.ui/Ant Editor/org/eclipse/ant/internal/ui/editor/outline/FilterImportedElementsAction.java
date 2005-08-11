@@ -23,10 +23,10 @@ public class FilterImportedElementsAction extends Action {
 	private AntEditorContentOutlinePage fPage;
 	
 	public FilterImportedElementsAction(AntEditorContentOutlinePage page) {
-		super(AntOutlineMessages.FilterImportedElementsAction_0); //$NON-NLS-1$
+		super(AntOutlineMessages.FilterImportedElementsAction_0);
 		fPage = page;
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_FILTER_IMPORTED_ELEMENTS));
-		setToolTipText(AntOutlineMessages.FilterImportedElementsAction_0); //$NON-NLS-1$
+		setToolTipText(AntOutlineMessages.FilterImportedElementsAction_0);
 		setChecked(fPage.filterImportedElements());
 	}
 

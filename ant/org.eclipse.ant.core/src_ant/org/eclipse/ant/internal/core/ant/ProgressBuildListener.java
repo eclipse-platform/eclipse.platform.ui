@@ -299,7 +299,7 @@ public class ProgressBuildListener implements BuildListener {
 		ProjectMonitors monitors = (ProjectMonitors) projects.get(mainProject);
 		if (monitors.getMainMonitor().isCanceled()) {
 			currentTaskThread= null;
-			throw new OperationCanceledException(InternalAntMessages.ProgressBuildListener_Build_cancelled__5); //$NON-NLS-1$
+			throw new OperationCanceledException(InternalAntMessages.ProgressBuildListener_Build_cancelled__5);
 		}
 	}
 
