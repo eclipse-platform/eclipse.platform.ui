@@ -48,6 +48,11 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 			CVSUIMessages.WatchEditPreferencePage_checkoutReadOnly,  
 			BooleanFieldEditor.DEFAULT, 
 			getFieldEditorParent()));
+		addField(new BooleanFieldEditor(
+				ICVSUIConstants.PREF_ENABLE_WATCH_ON_EDIT, 
+				CVSUIMessages.WatchEditPreferencePage_0,  
+				BooleanFieldEditor.DEFAULT, 
+				getFieldEditorParent()));
 		
 		actionEditor = new RadioGroupFieldEditor(
 			ICVSUIConstants.PREF_EDIT_ACTION,
@@ -98,6 +103,9 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 		target.setValue(
 			CVSProviderPlugin.READ_ONLY,
 			store.getBoolean(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY));
+		target.setValue(
+				CVSProviderPlugin.ENABLE_WATCH_ON_EDIT,
+				store.getBoolean(ICVSUIConstants.PREF_ENABLE_WATCH_ON_EDIT));
 	}
 	
 	/* (non-Javadoc)

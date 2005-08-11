@@ -147,6 +147,7 @@ public class CVSUIMessages extends NLS {
     public static String CVSDecoratorPreferencesPage_36;
     public static String CVSDecoratorPreferencesPage_37;
     public static String CVSDecoratorPreferencesPage_38;  // repository label
+    public static String CVSDecoratorPreferencesPage_39;
 
 	public static String CVSFilePropertiesPage_ignored;
 	public static String CVSFilePropertiesPage_notManaged;
@@ -706,6 +707,7 @@ public class CVSUIMessages extends NLS {
 	public static String WatchEditPreferencePage_autoUpdate;
 	public static String WatchEditPreferencePage_promptUpdate;
 	public static String WatchEditPreferencePage_neverUpdate;
+	public static String WatchEditPreferencePage_0;
 
 	public static String Uneditaction_confirmMessage;
 	public static String Uneditaction_confirmTitle;
@@ -985,13 +987,12 @@ public class CVSUIMessages extends NLS {
 	public static String UncommittedChangesDialog_3;
 	public static String UncommittedChangesDialog_4;
 	public static String AddWizard_0;
+	
+    public static String OpenChangeSetAction_0;
+    public static String OpenChangeSetAction_1;
 
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, CVSUIMessages.class);
-	}
-
-    public static String OpenChangeSetAction_0;
-    public static String OpenChangeSetAction_1;
-	public static String CVSDecoratorPreferencesPage_39;
+	}	
 }

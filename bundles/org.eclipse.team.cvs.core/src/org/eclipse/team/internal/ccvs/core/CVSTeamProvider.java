@@ -668,10 +668,20 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * @see CVSTeamProvider#unedit
 	 */
 	public void edit(IResource[] resources, boolean recurse, boolean notifyServer, final boolean notifyForWritable, final int notification, IProgressMonitor progress) throws CVSException {
+		final int notify;
+		if (notification == ICVSFile.NO_NOTIFICATION) {
+			if (CVSProviderPlugin.getPlugin().isWatchOnEdit()) {
+				notify = ICVSFile.NOTIFY_ON_ALL;
+			} else {
+				notify = ICVSFile.NO_NOTIFICATION;
+			}
+		} else {
+			notify = notification;
+		}
 		notifyEditUnedit(resources, recurse, notifyServer, new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {
 				if (notifyForWritable || file.isReadOnly())
-					file.edit(notification, notifyForWritable, Policy.monitorFor(null));
+					file.edit(notify, notifyForWritable, Policy.monitorFor(null));
 			}
 			public void visitFolder(ICVSFolder folder) throws CVSException {
 				// nothing needs to be done here as the recurse will handle the traversal
