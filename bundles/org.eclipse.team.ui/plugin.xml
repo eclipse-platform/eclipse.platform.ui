@@ -100,7 +100,19 @@
                enablesFor="1"
                id="nonbound.org.eclipse.team.ui.ConfigureProject">
          </action>
-      </objectContribution>      
+      </objectContribution>        
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.psf"
+            id="org.eclipse.team.ui.ProjectSetFileContributions">
+         <action
+               label="%ImportProjectSet.label"
+               class="org.eclipse.team.internal.ui.actions.ImportProjectSetAction"
+               menubarPath="team.main"
+               enablesFor="*"
+               id="nonbound.org.eclipse.team.ui.ImportProjectSetAction">
+         </action>
+      </objectContribution>    
    </extension>
 <!-- ************** Views ********************** -->
    <extension
