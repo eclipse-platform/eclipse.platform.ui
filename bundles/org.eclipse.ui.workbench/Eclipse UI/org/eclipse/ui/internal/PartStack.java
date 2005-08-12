@@ -1397,8 +1397,19 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             boolean keyboard) {
         if (pane == null) {
             if (canMoveFolder()) {
+            	
                 if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
-                    setState(IStackPresentationSite.STATE_RESTORED);
+                	// Calculate where the initial location was BEFORE the 'restore'...as a percentage
+                	Rectangle bounds = Geometry.toDisplay(getParent(), getPresentation().getControl().getBounds());
+                	float xpct = (initialLocation.x - bounds.x) / (float)(bounds.width);
+                	float ypct = (initialLocation.y - bounds.y) / (float)(bounds.height);
+
+                	setState(IStackPresentationSite.STATE_RESTORED);
+
+                	// Now, adjust the initial location to be within the bounds of the restored rect
+                	bounds = Geometry.toDisplay(getParent(), getPresentation().getControl().getBounds());
+                	initialLocation.x = (int) (bounds.x + (xpct * bounds.width));
+                	initialLocation.y = (int) (bounds.y + (ypct * bounds.height));
                 }
     
                 DragUtil.performDrag(PartStack.this, Geometry
@@ -1406,10 +1417,20 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                                 .getBounds()), initialLocation, !keyboard);
             }
         } else {
-            
+
             if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
-                presentationSite
-                        .setState(IStackPresentationSite.STATE_RESTORED);
+            	// Calculate where the initial location was BEFORE the 'restore'...as a percentage
+            	Rectangle bounds = Geometry.toDisplay(getParent(), getPresentation().getControl().getBounds());
+            	float xpct = (initialLocation.x - bounds.x) / (float)(bounds.width);
+            	float ypct = (initialLocation.y - bounds.y) / (float)(bounds.height);
+            	
+                presentationSite.setState(IStackPresentationSite.STATE_RESTORED);
+
+            	// Now, adjust the initial location to be within the bounds of the restored rect
+            	// See bug 100908
+            	bounds = Geometry.toDisplay(getParent(), getPresentation().getControl().getBounds());
+            	initialLocation.x = (int) (bounds.x + (xpct * bounds.width));
+            	initialLocation.y = (int) (bounds.y + (ypct * bounds.height));
             }
     
             DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
