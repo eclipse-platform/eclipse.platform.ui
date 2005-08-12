@@ -26,7 +26,13 @@ public interface ILazyContentProvider extends IContentProvider {
 	 * Called when a previously-blank item becomes visible in the
 	 * TableViewer. If the content provider knows the element
 	 * at this row, it should respond by calling 
-	 * TableViewer#replace(Object, int)
+	 * TableViewer#replace(Object, int).
+	 * 
+	 * <strong>NOTE</strong> #updateElement(int index) can be used to determine selection
+	 * values. TableViewer#replace(Object, int) is not called before 
+	 * returning from this method selections may have missing or stale elements.
+	 * In this situation it is suggested that the selection is asked
+	 * for again after he update.
 	 * 
 	 * @param index The index that is being updateed in the
 	 * table.

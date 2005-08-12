@@ -154,10 +154,13 @@ public class TableViewerTest extends StructuredItemViewerTest {
 	public void testRemove() {
 		TableViewer tableviewer = (TableViewer) fViewer;
 		TestElement first = fRootElement.getFirstChild();
+		((TestElement) fViewer.getInput()).deleteChild(first);
 		tableviewer.remove(first);
 		assertTrue("Removed item still exists",
 				fViewer.testFindItem(first) == null);
 
 	}
+
+	
 
 }

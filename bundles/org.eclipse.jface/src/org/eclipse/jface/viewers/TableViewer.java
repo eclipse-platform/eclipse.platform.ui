@@ -12,6 +12,7 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.jface.util.Assert;
@@ -576,6 +577,8 @@ public class TableViewer extends StructuredViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
 	protected List getSelectionFromWidget() {
+		if(virtualManager != null)
+			return getVirtualSelection();
 		Widget[] items = table.getSelection();
 		ArrayList list = new ArrayList(items.length);
 		for (int i = 0; i < items.length; i++) {
@@ -585,6 +588,50 @@ public class TableViewer extends StructuredViewer {
 				list.add(e);
 		}
 		return list;
+	}
+	
+	/**
+	 * Get the virtual selection. Avoid calling SWT whenever possible
+	 * to prevent extra widget creation.
+	 * @return List of Object
+	 */
+
+	private List getVirtualSelection() {
+		
+		int itemCount = getTable().getItemCount();
+		List result = new ArrayList();
+		if(getContentProvider() instanceof ILazyContentProvider){
+			for (int i = 0; i < itemCount; i++) {
+				ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
+				if(getTable().isSelected(i)){
+					lazy.updateElement(i);//Start the update
+					Object element = getTable().getItem(i).getData();
+					//Only add the element if it got updated.
+					//If this is done deferred the selection will
+					//be incomplete until selection is finished.
+					if(element != null)
+						result.add(element);				
+				}				
+			}
+		}
+		else{
+			for (int i = 0; i < itemCount; i++) {
+				if(getTable().isSelected(i)){
+					Object element = null;
+					//See if it is cached
+					if(virtualManager.cachedElements.length < i){
+						element = virtualManager.cachedElements[i];
+					}
+					if(element == null){//Already created then so just get the date
+						TableItem item = getTable().getItem(i);
+						result.add(item.getData());
+					}
+				}				
+			}
+			
+			
+		}
+		return result;
 	}
 
 	/**
@@ -1011,10 +1058,17 @@ public class TableViewer extends StructuredViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List, boolean)
 	 */
 	protected void setSelectionToWidget(List list, boolean reveal) {
+		
 		if (list == null) {
 			table.deselectAll();
 			return;
 		}
+		
+		if(virtualManager != null){
+			virtualSetSelectionToWidget(list, reveal);
+			return;
+		}
+		
 		int size = list.size();
 		TableItem[] items = new TableItem[size];
 		TableItem firstItem = null;
@@ -1039,6 +1093,80 @@ public class TableViewer extends StructuredViewer {
 		}
 			
 	}
+	
+	
+	/**
+	 * Set the selection on a virtual table
+	 * @param list The elements to set
+	 * @param reveal Whether or not reveal the first item.
+	 */
+	private void virtualSetSelectionToWidget(List list, boolean reveal) {
+		int size = list.size();
+		int[] indices = new int[list.size()];
+		
+		TableItem firstItem = null;
+		int count = 0;
+		HashSet virtualElements = new HashSet(); 
+		for (int i = 0; i < size; ++i) {
+			Object o = list.get(i);
+			Widget w = findItem(o);
+			if (w instanceof TableItem) {
+				TableItem item = (TableItem) w;
+				indices[count++] = getTable().indexOf(item);
+				if (firstItem == null)
+					firstItem = item;
+			}
+			else
+				virtualElements.add(o);
+		}
+		
+		if(getContentProvider() instanceof ILazyContentProvider){
+			ILazyContentProvider provider = 
+				(ILazyContentProvider) getContentProvider();
+		
+			//Now go through it again until all is done or we are no longer virtual
+			//This may create all items so it is not a good
+			//idea in general.
+			//Use #setSelection (int [] indices,boolean reveal) instead
+			for (int i = 0; i < getTable().getItemCount(); i++) {
+				provider.updateElement(i);
+				TableItem item = getTable().getItem(i);
+				if(virtualElements.contains(item.getData())){
+					indices[count++] = i;	
+					virtualElements.remove(item.getData());
+					if (firstItem == null)
+						firstItem = item;
+				}
+			}
+		}
+		else{
+			
+			if(count != list.size()){//As this is expensive skip it if all have been found
+				//If it is not lazy we can use the cache
+				for (int i = 0; i < virtualManager.cachedElements.length; i++) {
+					Object element = virtualManager.cachedElements[i];
+					if(virtualElements.contains(element)){
+						TableItem item = getTable().getItem(i);
+						item.getText();//Be sure to fire the update
+						indices[count++] = i;	
+						virtualElements.remove(element);
+						if (firstItem == null)
+							firstItem = item;
+					}
+				}
+			}
+		}
+		
+		if (count < size) {
+			System.arraycopy(indices, 0, indices = new int[count], 0, count);
+		}
+		table.setSelection(indices);
+
+		if (reveal && firstItem != null) {
+			table.showItem(firstItem);
+		}
+	}
+
 	/**
 	 * Set the item count of the receiver.
 	 * @param count the new table size.
