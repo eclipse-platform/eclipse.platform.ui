@@ -383,6 +383,50 @@ public final class BindingInteractionsTest extends UITestCase {
 						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 
 	}
+	
+	/**
+	 * Tests that if more than one deletion is defined for the same binding,
+	 * that the deletion will still work.  Bug 106574 points out a case where it
+	 * is possible for a deletion to clobber another deletion.
+	 * 
+	 * @since 3.2
+	 */
+	public void testDoubleDeletedBinding() {
+		final String parent = "parent";
+		final String child = "child";
+
+		// Set-up the contexts
+		final Context parentContext = contextManager.getContext(parent);
+		parentContext.define(parent, parent, null);
+		final Context childContext = contextManager.getContext(child);
+		childContext.define(child, child, parent);
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add(parent);
+		activeContextIds.add(child);
+		contextManager.setActiveContextIds(activeContextIds);
+
+		// Set-up the schemes.
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define(parent, parent, null);
+
+		/*
+		 * Set-up a binding, with two deletions. The first deletion matches the
+		 * context, but the second does not.
+		 */
+		final Binding binding = new TestBinding("command", "na", parent, null,
+				null, Binding.SYSTEM, null);
+		bindingManager.addBinding(binding);
+		final Binding correctDeletion = new TestBinding(null, "na", parent,
+				null, null, Binding.USER, null);
+		bindingManager.addBinding(correctDeletion);
+		final Binding wrongDeletion = new TestBinding(null, "na", child, null,
+				null, Binding.USER, null);
+		bindingManager.addBinding(wrongDeletion);
+
+		// Test that the deletion worked.
+		assertEquals("The parent should not be active", null, bindingManager
+				.getPerfectMatch(binding.getTriggerSequence()));
+	}
 
 	/**
 	 * This tests a complicated scenario that arises with the Emacs key binding
