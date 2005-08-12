@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * An entry greater than 0 in the graph is the number of times a thread in the entry's row
  * acquired the lock in the entry's column.
  * An entry of -1 means that the thread is waiting to acquire the lock.
- * An enry of 0 means that the thread and the lock have no relationship.
+ * An entry of 0 means that the thread and the lock have no relationship.
  * 
  * The difference between rules and locks is that locks can be suspended, while
  * rules are implicit locks and as such cannot be suspended.
@@ -124,7 +124,7 @@ class DeadlockDetector {
 	private boolean checkWaitCycles(int[] waitingThreads, int lockIndex) {
 		/**
 		 * find the lock that this thread is waiting for
-		 * recursively check if this is a cylce (ie. a thread waiting on itself)
+		 * recursively check if this is a cycle (i.e. a thread waiting on itself)
 		 */
 		for (int i = 0; i < graph.length; i++) {
 			if (graph[i][lockIndex] > NO_STATE) {
@@ -280,7 +280,7 @@ class DeadlockDetector {
 	}
 
 	/**
-	 * The given lock was aquired by the given thread.
+	 * The given lock was acquired by the given thread.
 	 */
 	void lockAcquired(Thread owner, ISchedulingRule lock) {
 		int lockIndex = indexOf(lock, true);
@@ -464,7 +464,7 @@ class DeadlockDetector {
 	}
 
 	/**
-	 * Return true IFF this thread owns rule locks (ie. implicit locks which
+	 * Return true IFF this thread owns rule locks (i.e. implicit locks which
 	 * cannot be suspended)
 	 */
 	private boolean ownsRuleLocks(Thread owner) {
@@ -565,7 +565,7 @@ class DeadlockDetector {
 				if (i >= graph.length - numRowsSkipped)
 					break;
 			}
-			//the nuber of columns we need to skip to get the correct entry from the old graph
+			//the number of columns we need to skip to get the correct entry from the old graph
 			//needs to be reset for every new row
 			int numColsSkipped = 0;
 			for (int j = 0; j < graph[i].length - numColsSkipped; j++) {
@@ -634,7 +634,7 @@ class DeadlockDetector {
 	}
 
 	/**
-	 * Get the thread whose locks can be suspended. (ie. all locks it owns are
+	 * Get the thread whose locks can be suspended. (i.e. all locks it owns are
 	 * actual locks and not rules). Return the first thread in the array by default.
 	 */
 	private Thread resolutionCandidate(Thread[] candidates) {

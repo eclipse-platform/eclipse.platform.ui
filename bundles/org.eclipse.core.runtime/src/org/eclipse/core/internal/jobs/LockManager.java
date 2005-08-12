@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.jobs.LockListener;
  * relationships between locks, rules, and the threads that own them.
  * Synchronizes all access to the graph on the only instance that exists in this class.
  * 
- * Also stores the state of suspended locks so that they can be reacquired with 
+ * Also stores the state of suspended locks so that they can be re-acquired with 
  * the proper lock depth. 
  */
 public class LockManager {
@@ -73,8 +73,8 @@ public class LockManager {
 	private DeadlockDetector locks = new DeadlockDetector();
 	/* 
 	 * Stores thread - stack pairs where every entry in the stack is an array 
-	 * of locks that were suspended while the thread was aquiring more locks
-	 * (a stack is needed because when a thread tries to reaquire suspended locks,
+	 * of locks that were suspended while the thread was acquiring more locks
+	 * (a stack is needed because when a thread tries to re-aquire suspended locks,
 	 * it can cause deadlock, and some locks it owns can be suspended again)
 	 */
 	private HashMap suspendedLocks = new HashMap();
@@ -162,7 +162,7 @@ public class LockManager {
 
 	/**
 	 * Handles exceptions that occur while calling third party code from within the
-	 * LockManager. This is essentially an inlined version of Platform.run(ISafeRunnable)
+	 * LockManager. This is essentially an in-lined version of Platform.run(ISafeRunnable)
 	 */
 	private static void handleException(Throwable e) {
 		IStatus status;
