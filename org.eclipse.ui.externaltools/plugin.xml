@@ -25,7 +25,7 @@
          <action
                label="%Action.externalTools"
                style="pulldown"
-               icon="icons/full/obj16/external_tools.gif"
+               icon="$nl$/icons/full/obj16/external_tools.gif"
                class="org.eclipse.ui.externaltools.internal.menu.ExternalToolMenuDelegate"
                menubarPath="org.eclipse.ui.run/ExternalToolsGroup"
                id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateMenu">
@@ -34,7 +34,7 @@
                definitionId="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
                label="%Action.externalTools"
                style="pulldown"
-               icon="icons/full/obj16/external_tools.gif"
+               icon="$nl$/icons/full/obj16/external_tools.gif"
                tooltip="%Action.externalToolsTip"
                class="org.eclipse.ui.externaltools.internal.menu.ExternalToolMenuDelegate"
                toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
@@ -142,12 +142,12 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="icons/full/obj16/external_tools.gif"
+            icon="$nl$/icons/full/obj16/external_tools.gif"
             configTypeID="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
             id="org.eclipse.ui.externaltools.launchConfigurationTypeImage.program">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="icons/full/obj16/external_tools.gif"
+            icon="$nl$/icons/full/obj16/external_tools.gif"
             configTypeID="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType"
             id="org.eclipse.ui.externaltools.launchConfigurationTypeImage.program.builder">
       </launchConfigurationTypeImage>
@@ -156,16 +156,16 @@
          point="org.eclipse.debug.ui.launchGroups">
       <launchGroup
             label="%ExternalToolsLaunchGroup.label"
-            bannerImage="icons/full/wizban/ext_tools_wiz.gif"
+            bannerImage="$nl$/icons/full/wizban/ext_tools_wiz.gif"
             category="org.eclipse.ui.externaltools"
-            image="icons/full/obj16/external_tools.gif"
+            image="$nl$/icons/full/obj16/external_tools.gif"
             mode="run"
             id="org.eclipse.ui.externaltools.launchGroup"
             title="%ExternalToolsLaunchGroup.title">
       </launchGroup>
       <launchGroup
             label="%ExternalToolsLaunchGroup.label"
-            bannerImage="icons/full/wizban/ext_tools_wiz.gif"
+            bannerImage="$nl$/icons/full/wizban/ext_tools_wiz.gif"
             category="org.eclipse.ui.externaltools.builder"
             image="icons/full/obj16/external_tools.gif"
             public="false"
