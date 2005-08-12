@@ -68,7 +68,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		
 		ILaunchConfiguration config= BuilderUtils.configFromBuildCommandArgs(getProject(), args, new String[1]);
         if (config == null) {
-            throw ExternalToolsPlugin.newError(ExternalToolsModelMessages.ExternalToolBuilder_0, null); //$NON-NLS-1$
+            throw ExternalToolsPlugin.newError(ExternalToolsModelMessages.ExternalToolBuilder_0, null);
         }
 		IProject[] projectsWithinScope= null;
 		IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config);
@@ -166,7 +166,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	}
 	
 	private void launchBuild(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
-		monitor.subTask(MessageFormat.format(ExternalToolsModelMessages.ExternalToolBuilder_Running__0_____1, new String[] { config.getName()})); //$NON-NLS-1$
+		monitor.subTask(MessageFormat.format(ExternalToolsModelMessages.ExternalToolBuilder_Running__0_____1, new String[] { config.getName()}));
 		buildStarted(kind);
 		// The default value for "launch in background" is true in debug core. If
 		// the user doesn't go through the UI, the new attribute won't be set. This means

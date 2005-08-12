@@ -136,7 +136,7 @@ public class BuilderUtils {
 		} catch (CoreException exception) {
 			Shell shell= ExternalToolsPlugin.getActiveWorkbenchShell();
 			if (shell != null) {
-				MessageDialog.openError(shell, ExternalToolsModelMessages.BuilderUtils_5, ExternalToolsModelMessages.BuilderUtils_6); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openError(shell, ExternalToolsModelMessages.BuilderUtils_5, ExternalToolsModelMessages.BuilderUtils_6);
 			}
 			return null;
 		}
@@ -277,7 +277,7 @@ public class BuilderUtils {
 	 */
 	public static ILaunchConfiguration duplicateConfiguration(IProject project, ILaunchConfiguration config) throws CoreException {
 		Map attributes= config.getAttributes();
-		String newName= new StringBuffer(config.getName()).append(ExternalToolsModelMessages.BuilderUtils_7).toString(); //$NON-NLS-1$
+		String newName= new StringBuffer(config.getName()).append(ExternalToolsModelMessages.BuilderUtils_7).toString();
 		newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(newName);
 		ILaunchConfigurationType newType= getConfigurationDuplicationType(config);
 		ILaunchConfigurationWorkingCopy newWorkingCopy= newType.newInstance(getBuilderFolder(project, true), newName);

@@ -29,7 +29,7 @@ public class ProgramMainTab extends ExternalToolsMainTab {
 	 */
 	protected void handleWorkspaceLocationButtonSelected() {
 		FileSelectionDialog dialog;
-		dialog = new FileSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), ExternalToolsProgramMessages.ProgramMainTab_Select); //$NON-NLS-1$
+		dialog = new FileSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), ExternalToolsProgramMessages.ProgramMainTab_Select);
 		dialog.open();
 		IStructuredSelection result = dialog.getResult();
 		if (result == null) {

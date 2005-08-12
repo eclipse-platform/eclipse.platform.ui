@@ -35,7 +35,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	
 	public ExternalToolsPreferencePage() {
 		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
-		setDescription(ExternalToolsUIMessages.ExternalToolsPreferencePage_External_tool_project_builders_migration_2); //$NON-NLS-1$
+		setDescription(ExternalToolsUIMessages.ExternalToolsPreferencePage_External_tool_project_builders_migration_2);
 	}
 
 	/**
@@ -51,8 +51,8 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		composite.setLayout(layout);
 		composite.setFont(parent.getFont());
 				
-		promptForToolMigrationButton= createCheckButton(composite, ExternalToolsUIMessages.ExternalToolsPreferencePage_Prompt_before_migrating_3, IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION); //$NON-NLS-1$
-		promptForProjectMigrationButton= createCheckButton(composite, ExternalToolsUIMessages.ExternalToolsPreferencePage_1, IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION); //$NON-NLS-1$
+		promptForToolMigrationButton= createCheckButton(composite, ExternalToolsUIMessages.ExternalToolsPreferencePage_Prompt_before_migrating_3, IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION);
+		promptForProjectMigrationButton= createCheckButton(composite, ExternalToolsUIMessages.ExternalToolsPreferencePage_1, IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION);
 		
 		applyDialogFont(composite);
 		

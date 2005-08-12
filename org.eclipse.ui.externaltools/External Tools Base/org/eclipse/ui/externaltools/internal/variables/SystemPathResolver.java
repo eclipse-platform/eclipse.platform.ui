@@ -29,7 +29,7 @@ public class SystemPathResolver implements IDynamicVariableResolver {
 	 */
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
         if (argument == null) {
-            throw new CoreException(new Status(IStatus.ERROR,  IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, VariableMessages.SystemPathResolver_0, null)); //$NON-NLS-1$
+            throw new CoreException(new Status(IStatus.ERROR,  IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, VariableMessages.SystemPathResolver_0, null));
         }
         Map map= DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
         String path= (String) map.get("PATH"); //$NON-NLS-1$

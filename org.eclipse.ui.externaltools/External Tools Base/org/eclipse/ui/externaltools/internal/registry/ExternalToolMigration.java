@@ -355,14 +355,14 @@ public final class ExternalToolMigration {
 			try {
 				runInBackground = config.getAttribute(ATTR_RUN_IN_BACKGROUND, runInBackground);
 			} catch (CoreException e) {
-				ExternalToolsPlugin.getDefault().log(ExternalToolsUIMessages.ExternalToolMigration_37, e); //$NON-NLS-1$
+				ExternalToolsPlugin.getDefault().log(ExternalToolsUIMessages.ExternalToolMigration_37, e);
 			}
 			try {
 				ILaunchConfigurationWorkingCopy workingCopy= config.getWorkingCopy();
 				workingCopy.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, runInBackground);
 				config= workingCopy.doSave();
 			} catch (CoreException e) {
-				ExternalToolsPlugin.getDefault().log(ExternalToolsUIMessages.ExternalToolMigration_38, e); //$NON-NLS-1$
+				ExternalToolsPlugin.getDefault().log(ExternalToolsUIMessages.ExternalToolMigration_38, e);
 			}
 		}
 		return config;

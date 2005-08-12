@@ -101,7 +101,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createLaunchInBackgroundComposite(Composite parent) {
-		fLaunchInBackgroundButton = createCheckButton(parent, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_14); //$NON-NLS-1$
+		fLaunchInBackgroundButton = createCheckButton(parent, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_14);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fLaunchInBackgroundButton.setLayoutData(data);
@@ -115,18 +115,18 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	protected void createBuildScheduleComponent(Composite parent) {
         if (fCreateBuildScheduleComponent) {
     		Label label= new Label(parent, SWT.NONE);
-    		label.setText(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Run_this_builder_for__1); //$NON-NLS-1$
+    		label.setText(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Run_this_builder_for__1);
     		label.setFont(parent.getFont());
-    		afterClean= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab__Full_builds_2, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Full, 2); //$NON-NLS-1$ //$NON-NLS-2$
-    		manualBuild= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab__Incremental_builds_4, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Inc, 2); //$NON-NLS-1$ //$NON-NLS-2$
-    		autoBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab__Auto_builds__Not_recommended__6, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Auto, 2); //$NON-NLS-1$ //$NON-NLS-2$
-    		fDuringClean= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_0, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_1, 2); //$NON-NLS-1$ //$NON-NLS-2$
+    		afterClean= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab__Full_builds_2, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Full, 2);
+    		manualBuild= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab__Incremental_builds_4, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Inc, 2);
+    		autoBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab__Auto_builds__Not_recommended__6, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Auto, 2);  
+    		fDuringClean= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_0, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_1, 2);
     		
     		createVerticalSpacer(parent, 2);
         }
 		
-		workingSetButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_workingSet_label, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_workingSet_tooltip, 1); //$NON-NLS-1$ //$NON-NLS-2$
-		specifyResources= createPushButton(parent, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_13, null); //$NON-NLS-1$
+		workingSetButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_workingSet_label, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_workingSet_tooltip, 1);
+		specifyResources= createPushButton(parent, ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_13, null);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		specifyResources.setLayoutData(gd);
 		specifyResources.addSelectionListener(new SelectionAdapter() {
@@ -135,7 +135,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 			}
 		});
         Label label= new Label(parent, SWT.NONE);
-        label.setText(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_2); //$NON-NLS-1$
+        label.setText(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_2);
         label.setFont(parent.getFont());
 	}
 	
@@ -275,7 +275,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Build_Options_9; //$NON-NLS-1$
+		return ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Build_Options_9;
 	}
 	
 	/* (non-Javadoc)
@@ -294,12 +294,12 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		if (fCreateBuildScheduleComponent) {
 		    boolean buildKindSelected= afterClean.getSelection() || manualBuild.getSelection() || autoBuildButton.getSelection() || fDuringClean.getSelection();
     		if (!buildKindSelected) {
-    			setErrorMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_buildKindError); //$NON-NLS-1$
+    			setErrorMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_buildKindError);
     			return false;
     		}
         }
 		if (workingSetButton.getSelection() && (workingSet == null || workingSet.getElements().length == 0)) {
-			setErrorMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_16); //$NON-NLS-1$
+			setErrorMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_16);
             return false;
 		}
 		
@@ -319,7 +319,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 		
 		if (workingSet == null){
-			workingSet = workingSetManager.createWorkingSet(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_15, new IAdaptable[0]); //$NON-NLS-1$
+			workingSet = workingSetManager.createWorkingSet(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_15, new IAdaptable[0]);
 		}
 		IWorkingSetEditWizard wizard= workingSetManager.createWorkingSetEditWizard(workingSet);
 		WizardDialog dialog = new WizardDialog(ExternalToolsPlugin.getStandardDisplay().getActiveShell(), wizard);

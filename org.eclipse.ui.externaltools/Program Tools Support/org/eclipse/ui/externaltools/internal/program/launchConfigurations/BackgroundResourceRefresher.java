@@ -71,7 +71,7 @@ public class BackgroundResourceRefresher implements IDebugEventSetListener  {
 	 * Submits a job to do the refresh
 	 */
 	protected void refresh() {
-		Job job= new Job(ExternalToolsProgramMessages.BackgroundResourceRefresher_0) { //$NON-NLS-1$
+		Job job= new Job(ExternalToolsProgramMessages.BackgroundResourceRefresher_0) {
 			public IStatus run(IProgressMonitor monitor) {
 				try {
 					RefreshTab.refreshResources(fConfiguration, monitor);

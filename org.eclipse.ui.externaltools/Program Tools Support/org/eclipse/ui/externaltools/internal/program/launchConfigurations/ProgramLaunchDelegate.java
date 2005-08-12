@@ -80,7 +80,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 				}
 				if (configType.equals(programType)) {
 					if (!launches[i].isTerminated()) {
-						MessageDialog.openWarning(window.getShell(), ExternalToolsProgramMessages.ProgramLaunchDelegate_Workbench_Closing_1, ExternalToolsProgramMessages.ProgramLaunchDelegate_The_workbench_is_exiting); //$NON-NLS-1$ //$NON-NLS-2$
+						MessageDialog.openWarning(window.getShell(), ExternalToolsProgramMessages.ProgramLaunchDelegate_Workbench_Closing_1, ExternalToolsProgramMessages.ProgramLaunchDelegate_The_workbench_is_exiting);
 						break;
 					}
 				}
@@ -163,11 +163,11 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		processAttributes.put(IProcess.ATTR_PROCESS_TYPE, programName);
 		
 		if (p != null) {
-			monitor.beginTask(MessageFormat.format(ExternalToolsProgramMessages.ProgramLaunchDelegate_3, new String[] {configuration.getName()}), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+			monitor.beginTask(MessageFormat.format(ExternalToolsProgramMessages.ProgramLaunchDelegate_3, new String[] {configuration.getName()}), IProgressMonitor.UNKNOWN);
 			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
 			if (process == null) {
 				p.destroy();
-				throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, ExternalToolsProgramMessages.ProgramLaunchDelegate_4, null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, ExternalToolsProgramMessages.ProgramLaunchDelegate_4, null));
 			}
 			
 		}

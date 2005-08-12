@@ -42,7 +42,7 @@ class BuilderLabelProvider extends LabelProvider {
 			} else if (element instanceof ILaunchConfiguration || element instanceof ILaunchConfigurationType) {
 				return getDebugModelText(element);
 			} else if (element instanceof ErrorConfig) {
-				return ExternalToolsUIMessages.BuilderPropertyPage_invalidBuildTool; //$NON-NLS-1$
+				return ExternalToolsUIMessages.BuilderPropertyPage_invalidBuildTool;
 			}
 			return super.getText(element);
 		}
@@ -70,7 +70,7 @@ class BuilderLabelProvider extends LabelProvider {
 			if (extension != null) {
 				builderName = extension.getLabel();
 			} else {
-				builderName = MessageFormat.format(ExternalToolsUIMessages.BuilderPropertyPage_missingBuilder, new Object[] { builderID }); //$NON-NLS-1$
+				builderName = MessageFormat.format(ExternalToolsUIMessages.BuilderPropertyPage_missingBuilder, new Object[] { builderID });
 			}
 			return builderName;
 		}
