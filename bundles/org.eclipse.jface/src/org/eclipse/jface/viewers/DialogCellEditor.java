@@ -16,6 +16,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -73,6 +75,12 @@ public abstract class DialogCellEditor extends CellEditor {
      * The button.
      */
     private Button button;
+
+	/**
+	 * Listens for 'focusLost' events and  fires the 'apply' event as long
+	 * as the focus wasn't lost because the dialog was opened.
+	 */
+	private FocusListener buttonFocusListener;
 
     /**
      * The value of this cell editor; initially <code>null</code>.
@@ -208,6 +216,9 @@ public abstract class DialogCellEditor extends CellEditor {
         button.setFont(font);
 
         button.addKeyListener(new KeyAdapter() {
+            /* (non-Javadoc)
+             * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
+             */
             public void keyReleased(KeyEvent e) {
                 if (e.character == '\u001b') { // Escape
                     fireCancelEditor();
@@ -216,9 +227,20 @@ public abstract class DialogCellEditor extends CellEditor {
         });
 
         button.addSelectionListener(new SelectionAdapter() {
+            /* (non-Javadoc)
+             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+             */
             public void widgetSelected(SelectionEvent event) {
-                Object newValue = openDialogBox(editor);
-                if (newValue != null) {
+            	// Remove the button's focus listener since it's guaranteed
+            	// to lose focus when the dialog opens
+            	button.removeFocusListener(getButtonFocusListener());
+                
+            	Object newValue = openDialogBox(editor);
+            	
+            	// Re-add the listener once the dialog closes
+            	button.addFocusListener(getButtonFocusListener());
+
+            	if (newValue != null) {
                     boolean newValidState = isCorrect(newValue);
                     if (newValidState) {
                         markDirty();
@@ -239,6 +261,21 @@ public abstract class DialogCellEditor extends CellEditor {
     }
 
     /* (non-Javadoc)
+     * 
+     * Override in order to remove the button's focus listener if the celleditor
+     * is deactivating.
+     * 
+     * @see org.eclipse.jface.viewers.CellEditor#deactivate()
+     */
+    public void deactivate() {
+    	if (button != null && !button.isDisposed()) {
+    		button.removeFocusListener(getButtonFocusListener());
+    	}
+    	
+		super.deactivate();
+	}
+
+	/* (non-Javadoc)
      * Method declared on CellEditor.
      */
     protected Object doGetValue() {
@@ -251,9 +288,39 @@ public abstract class DialogCellEditor extends CellEditor {
      */
     protected void doSetFocus() {
         button.setFocus();
+        
+        // add a FocusListener to the button
+        button.addFocusListener(getButtonFocusListener());
     }
 
-    /* (non-Javadoc)
+    /**
+     * Return a listener for button focus.
+     * @return FocusListener
+     */
+    private FocusListener getButtonFocusListener() {
+    	if (buttonFocusListener == null) {
+    		buttonFocusListener = new FocusListener() {
+
+				/* (non-Javadoc)
+				 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
+				 */
+				public void focusGained(FocusEvent e) {
+					// Do nothing
+				}
+
+				/* (non-Javadoc)
+				 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+				 */
+				public void focusLost(FocusEvent e) {
+					fireApplyEditorValue();
+				}
+    		};
+    	}
+    	
+    	return buttonFocusListener;
+	}
+
+	/* (non-Javadoc)
      * Method declared on CellEditor.
      */
     protected void doSetValue(Object value) {
