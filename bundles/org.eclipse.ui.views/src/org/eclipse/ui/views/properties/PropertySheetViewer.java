@@ -742,7 +742,20 @@ class PropertySheetViewer extends Viewer {
         // Part1: Double click only (allow traversal via keyboard without
         // activation
         tree.addSelectionListener(new SelectionAdapter() {
-            public void widgetDefaultSelected(SelectionEvent e) {
+            /* (non-Javadoc)
+             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            public void widgetSelected(SelectionEvent e) {
+            	// The viewer only owns the status line when there is
+            	// no 'active' cell editor
+            	if (cellEditor == null || !cellEditor.isActivated())
+            		updateStatusLine(e.item);
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetDefaultSelected(SelectionEvent e) {
                 handleSelect((TreeItem) e.item);
             }
         });
@@ -781,6 +794,34 @@ class PropertySheetViewer extends Viewer {
             }
         });
     }
+
+    /**
+     * Update the status line based on the data of item.
+     * @param item
+     */
+    protected void updateStatusLine(Widget item) {
+    	setMessage(null);
+    	setErrorMessage(null);
+    	
+    	// Update the status line
+    	if (item != null) {
+    		if (item.getData() instanceof PropertySheetEntry) {
+    			PropertySheetEntry psEntry = (PropertySheetEntry) item.getData();
+    			
+    			// For entries, show the description if any, else show the label
+    			String desc = psEntry.getDescription();
+    			if (desc != null && desc.length() > 0)
+    				setMessage(psEntry.getDescription());
+    			else
+	    			setMessage(psEntry.getDisplayName());
+    		}
+    			
+    		else if (item.getData() instanceof PropertySheetCategory) {
+    			PropertySheetCategory psCat = (PropertySheetCategory) item.getData();
+    			setMessage(psCat.getCategoryName());
+    		}
+    	}
+	}
 
     /**
      * Updates all of the items in the tree.
