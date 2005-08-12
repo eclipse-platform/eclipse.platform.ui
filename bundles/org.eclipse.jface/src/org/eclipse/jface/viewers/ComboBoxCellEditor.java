@@ -244,11 +244,22 @@ public class ComboBoxCellEditor extends CellEditor {
         markDirty();
         boolean isValid = isCorrect(newValue);
         setValueValid(isValid);
+        
         if (!isValid) {
-            // try to insert the current value into the error message.
-            setErrorMessage(MessageFormat.format(getErrorMessage(),
-                    new Object[] { items[selection] }));
+        	// Only format if the 'index' is valid
+        	if (items.length > 0 && selection >= 0 && selection < items.length) {
+	            // try to insert the current value into the error message.
+	            setErrorMessage(MessageFormat.format(getErrorMessage(),
+	                    new Object[] { items[selection] }));
+        	}
+        	else {
+	            // Since we don't have a valid index, assume we're using an 'edit'
+        		// combo so format using its text value
+	            setErrorMessage(MessageFormat.format(getErrorMessage(),
+	                    new Object[] { comboBox.getText() }));
+        	}
         }
+
         fireApplyEditorValue();
         deactivate();
     }
