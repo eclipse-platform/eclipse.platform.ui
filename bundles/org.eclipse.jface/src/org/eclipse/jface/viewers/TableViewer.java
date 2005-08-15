@@ -1052,6 +1052,28 @@ public class TableViewer extends StructuredViewer {
 			tableColorAndFont = new TableColorAndFontNoOp();
 				
 	}
+	
+	/**
+	 * <p>
+	 * Sets a new selection for this viewer and optionally makes it visible.
+	 * The TableViewer implmentation of this method is ineffecient for the
+	 * ILazyContentProvider as lookup is done by indices rather than elements
+	 * and may require population of the entire table in worse case. 
+	 * </p>
+	 * <p>
+	 * Use Table#setSelection(int[] indices) and Table#showSelection() if
+	 * you wish to set selection more effeciently when using a ILazyContentProvider.
+	 * </p>
+	 * 
+	 * @param selection the new selection
+     * @param reveal <code>true</code> if the selection is to be made
+     *   visible, and <code>false</code> otherwise
+	 * @see Table#setSelection(int[])
+	 * @see Table#showSelection()
+	 */
+	public void setSelection(ISelection selection, boolean reveal) {
+		super.setSelection(selection, reveal);
+	}
 
 	/*
 	 *  (non-Javadoc)
@@ -1071,7 +1093,6 @@ public class TableViewer extends StructuredViewer {
 		
 		int size = list.size();
 		TableItem[] items = new TableItem[size];
-		TableItem firstItem = null;
 		int count = 0;
 		for (int i = 0; i < size; ++i) {
 			Object o = list.get(i);
@@ -1079,8 +1100,6 @@ public class TableViewer extends StructuredViewer {
 			if (w instanceof TableItem) {
 				TableItem item = (TableItem) w;
 				items[count++] = item;
-				if (firstItem == null)
-					firstItem = item;
 			}
 		}
 		if (count < size) {
@@ -1088,8 +1107,8 @@ public class TableViewer extends StructuredViewer {
 		}
 		table.setSelection(items);
 
-		if (reveal && firstItem != null) {
-			table.showItem(firstItem);
+		if (reveal) {
+			table.showSelection();
 		}
 			
 	}
