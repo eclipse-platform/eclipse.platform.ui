@@ -434,6 +434,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (fIsFilterPending)
 			fFilterRunnable.run();
 		
+		// filter runnable may have hidden the proposals
+		if (!Helper.okToUse(fProposalTable))
+			return null;
+		
 		int i= fProposalTable.getSelectionIndex();
 		if (fFilteredProposals == null || i < 0 || i >= fFilteredProposals.length)
 			return null;
