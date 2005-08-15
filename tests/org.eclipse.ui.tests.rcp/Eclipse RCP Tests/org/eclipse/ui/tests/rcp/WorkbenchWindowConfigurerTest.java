@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.rcp;
 import junit.framework.TestCase;
 
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -113,9 +114,13 @@ public class WorkbenchWindowConfigurerTest extends TestCase {
 						getWindowConfigurer().setShowCoolBar(showCoolBar);
 						getWindowConfigurer().setShowPerspectiveBar(showPerspectiveBar);
 					}
+					public void createWindowContents(Shell shell) {
+						IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
+						configurer.createPageComposite(shell);
+					}
 				};
 			}
-	
+			
 			public void eventLoopIdle(Display disp) {
 				IWorkbenchWindow activeWorkbenchWindow = getWorkbenchConfigurer()
 						.getWorkbench().getActiveWorkbenchWindow();

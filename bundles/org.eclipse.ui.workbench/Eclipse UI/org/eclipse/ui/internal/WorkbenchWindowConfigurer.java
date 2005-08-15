@@ -330,6 +330,7 @@ public final class WorkbenchWindowConfigurer implements
      */
     public void setShowCoolBar(boolean show) {
         showToolBar = show;
+        window.setCoolBarVisible(show);
         // @issue need to be able to reconfigure after window's controls created
     }
 
@@ -360,6 +361,7 @@ public final class WorkbenchWindowConfigurer implements
      */
     public void setShowPerspectiveBar(boolean show) {
         showPerspectiveBar = show;
+        window.setPerspectiveBarVisible(show);
         // @issue need to be able to reconfigure after window's controls created
     }
 

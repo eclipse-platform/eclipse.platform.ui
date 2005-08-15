@@ -971,8 +971,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
         if (getWindowConfigurer().getShowCoolBar()) {
             topBar.setLeft(coolbarCacheWrapper.getControl());
-        } else {
-        	coolBarVisible = false;
         }
 
         createStatusLine(shell);
@@ -983,8 +981,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
         if (getWindowConfigurer().getShowPerspectiveBar()) {
             addPerspectiveBar(perspectiveBarStyle());
             perspectiveSwitcher.createControl(shell);
-        } else {
-        	perspectiveBarVisible = false;
         }
 
         createProgressIndicator(shell);
