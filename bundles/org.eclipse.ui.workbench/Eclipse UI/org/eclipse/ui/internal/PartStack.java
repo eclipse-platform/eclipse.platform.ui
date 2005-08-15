@@ -572,6 +572,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             PresentablePart next = (PresentablePart) iterator.next();
             
             next.enableInputs(isActive);
+            next.enableOutputs(isActive);
         }
     }
     
@@ -966,6 +967,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                 PresentablePart next = (PresentablePart) iterator.next();
                 
                 next.enableInputs(isActive);
+                next.enableOutputs(isActive);
             }
         }
         
