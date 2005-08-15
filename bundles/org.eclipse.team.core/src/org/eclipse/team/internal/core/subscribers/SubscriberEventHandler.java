@@ -239,7 +239,10 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 						monitor);
 				}
 			} catch (TeamException e) {
-				handleException(e, resource, ITeamStatus.SYNC_INFO_SET_ERROR, NLS.bind(Messages.SubscriberEventHandler_8, new String[] { resource.getFullPath().toString(), e.getMessage() })); 
+				// We only handle the exception if the resource's project is accessible.
+				// The project close delta will clean up.
+				if (resource.getProject().isAccessible())
+					handleException(e, resource, ITeamStatus.SYNC_INFO_SET_ERROR, NLS.bind(Messages.SubscriberEventHandler_8, new String[] { resource.getFullPath().toString(), e.getMessage() })); 
 			}
 		}
 
@@ -331,6 +334,15 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 							new SubscriberEvent(info.getLocal(), SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, info));
 				}
 				public void addError(ITeamStatus status) {
+					if (status instanceof TeamStatus) {
+						TeamStatus ts = (TeamStatus) status;
+						IResource resource = ts.getResource();
+						if (resource != null && !resource.getProject().isAccessible()) {
+							// The project was closed while we were collecting sync info.
+							// The close delta will cause us to clean up properly
+							return;
+						}
+					}
 					super.addError(status);
 					TeamPlugin.getPlugin().getLog().log(status);
 					syncSetInput.handleError(status);
