@@ -79,7 +79,7 @@ public interface IExtensionTracker {
 	/**
 	 * Remove all the objects associated with the given extension and return them.
 	 * @param extension : the extension for which the objects are removed
-	 * @return the objects that were assoicated with the extension.s
+	 * @return the objects that were associated with the extension.
 	 */
 	public Object[] unregisterObject(IExtension extension);
 
@@ -93,7 +93,7 @@ public interface IExtensionTracker {
 	public Object[] getObjects(IExtension extension);
 
 	/**
-	 * Close the tracker. All registered objects are fred and all handlers are being automatically removed.
+	 * Close the tracker. All registered objects are freed and all handlers are being automatically removed.
 	 */
 	public void close();
 }
