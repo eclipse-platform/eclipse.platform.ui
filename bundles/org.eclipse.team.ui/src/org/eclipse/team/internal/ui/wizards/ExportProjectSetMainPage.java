@@ -115,8 +115,15 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 				FileDialog d = new FileDialog(getShell(), SWT.SAVE);
 				d.setFilterExtensions(new String[] {"*.psf"}); //$NON-NLS-1$
 				d.setFilterNames(new String[] {TeamUIMessages.ExportProjectSetMainPage_Project_Set_Files_3}); 
-				d.setFileName(TeamUIMessages.ExportProjectSetMainPage_default); 
-				d.setFilterPath(new File(".").getAbsolutePath()); //$NON-NLS-1$
+				d.setFileName(TeamUIMessages.ExportProjectSetMainPage_default);
+				String fileName= getFileName();
+				if (fileName != null) {
+					int separator= fileName.lastIndexOf(System.getProperty ("file.separator").charAt (0)); //$NON-NLS-1$
+					if (separator != -1) {
+						fileName= fileName.substring(0, separator);
+					}
+				}
+				d.setFilterPath(fileName);
 				String f = d.open();
 				if (f != null) {
 					fileText.setText(f);
