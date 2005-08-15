@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne - bug 84808
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
@@ -87,7 +88,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * For the single folder case, return the name of the folder
 	 */
 	private String getFolderName() {
-		String name = folders[0].getName();
+		String name = getPreferredFolderName(folders[0]);
 		if (name .equals(".")) { //$NON-NLS-1$
 			name = new Path(null, folders[0].getRepository().getRootDirectory()).lastSegment();
 		}

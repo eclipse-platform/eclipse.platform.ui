@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne - bug 84808
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.ui;
@@ -96,6 +97,7 @@ public interface ICVSUIConstants {
     public final String PREF_COMMIT_FILES_DISPLAY_THRESHOLD = "pref_commit_files_display_threshold"; //$NON-NLS-1$
     public final String PREF_AUTO_SHARE_ON_IMPORT = "pref_auto_share_on_import"; //$NON-NLS-1$
 	public final String PREF_ENABLE_WATCH_ON_EDIT = "pref_enable_watch_on_edit"; //$NON-NLS-1$ 
+    public final String PREF_USE_PROJECT_NAME_ON_CHECKOUT = "pref_use_project_name_on_checkout"; //$NON-NLS-1$
 	// console preferences
 	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_MESSAGE_COLOR = "pref_console_message_color"; //$NON-NLS-1$

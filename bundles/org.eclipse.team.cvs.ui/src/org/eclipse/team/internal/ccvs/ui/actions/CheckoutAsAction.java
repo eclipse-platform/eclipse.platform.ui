@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne - bug 84808
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
@@ -16,7 +17,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.ui.operations.HasProjectMetaFileOperation;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.operations.ProjectMetaFileOperation;
 import org.eclipse.team.internal.ccvs.ui.wizards.CheckoutAsWizard;
 
 public class CheckoutAsAction extends CVSAction {
@@ -26,19 +28,20 @@ public class CheckoutAsAction extends CVSAction {
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
-		CheckoutAsWizard wizard = new CheckoutAsWizard(getTargetPart(), folders, allowProjectConfiguration(folders));
+		boolean withName = CVSUIPlugin.getPlugin().isUseProjectNameOnCheckout();
+		ProjectMetaFileOperation op = new ProjectMetaFileOperation(getTargetPart(), folders, withName);
+		op.run();
+		
+		// project configuration allowed only if single folder without metafile
+		boolean allowProjectConfig = (folders.length == 1 && !op.metaFileExists());
+		
+		if (withName) {
+			folders = op.getUpdatedFolders();
+		}
+		
+		CheckoutAsWizard wizard = new CheckoutAsWizard(getTargetPart(), folders, allowProjectConfig);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.open();
-	}
-	
-	/*
-	 * Return true if the remote project does not have a .project file
-	 * so that the checkout wizard will give the option to launch
-	 * the New Project wizard
-	 */
-	protected boolean allowProjectConfiguration(ICVSRemoteFolder[] folders) throws InvocationTargetException, InterruptedException {
-		if (folders.length != 1) return false;
-		return !HasProjectMetaFileOperation.hasMetaFile(getTargetPart(), folders[0]);	
 	}
 	
 	/* (non-Javadoc)

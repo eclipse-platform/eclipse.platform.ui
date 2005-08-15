@@ -7,6 +7,7 @@
  * Contributors: 
  *     IBM - Initial API and implementation
  *     Maik Schreiber - bug 102461
+ *     Philippe Ombredanne - bug 84808
  **********************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -227,6 +228,7 @@ public class CVSUIMessages extends NLS {
 	public static String CVSPreferencesPage_42;
 	public static String CVSPreferencesPage_43;
     public static String CVSPreferencesPage_44;
+    public static String CVSPreferencesPage_45;
 	public static String CVSPropertiesPage_virtualModule;
 
 
@@ -799,7 +801,7 @@ public class CVSUIMessages extends NLS {
 	public static String WorkspaceChangeSetCapability_7;
 	public static String WorkspaceChangeSetCapability_8;
 
-	public static String HasProjectMetaFile_taskName;
+	public static String ProjectMetaFile_taskName;
 	public static String TagFromWorkspace_taskName;
 	public static String TagFromRepository_taskName;
 	public static String UpdateOnlyMergeable_taskName;

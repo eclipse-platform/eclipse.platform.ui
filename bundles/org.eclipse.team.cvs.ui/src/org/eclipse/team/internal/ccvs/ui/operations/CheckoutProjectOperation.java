@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne - bug 84808
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
@@ -122,6 +123,19 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				// No project was specified but we need on for this to work
 				String name = new Path(null, resource.getRepository().getRootDirectory()).lastSegment();
 				project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			}
+			
+			// Check to see if using remote metafile project description name is preferred
+			if (project == null 
+					&& CVSUIPlugin.getPlugin().isUseProjectNameOnCheckout() 
+					&& resource instanceof RemoteProjectFolder) {
+				RemoteProjectFolder rpf = (RemoteProjectFolder) resource;
+				if (rpf.hasProjectName())
+				{
+					// no project was specified but we need to attempt the creation of one 
+					// based on the metafile project name 
+					project = ResourcesPlugin.getWorkspace().getRoot().getProject(rpf.getProjectName());
+				}
 			}
 			
 			// Determine the local target projects (either the project provider or the module expansions)
@@ -286,6 +300,13 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			if (expansions.length == 1 && expansions[0].equals(moduleName)) {
 				// For a remote folder, use the last segment as the project to be created
 				String lastSegment = new Path(null, expansions[0]).lastSegment();
+				// if using metafile project name is preferred, use it
+				if (CVSUIPlugin.getPlugin().isUseProjectNameOnCheckout() && remoteFolder instanceof RemoteProjectFolder) {
+					RemoteProjectFolder rpf = (RemoteProjectFolder) remoteFolder;
+					if (rpf.hasProjectName()) {
+						lastSegment = rpf.getProjectName();
+					}
+				} 
 				targetProjectSet.add(ResourcesPlugin.getWorkspace().getRoot().getProject(lastSegment));
 			} else {
 				for (int j = 0; j < expansions.length; j++) {

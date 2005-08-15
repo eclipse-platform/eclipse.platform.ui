@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne - bug 84808
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
@@ -73,7 +74,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 	 * For the single folder case, return the name of the folder
 	 */
 	private String getInputFolderName() {
-		return remoteFolders[0].getName();
+		return getPreferredFolderName(remoteFolders[0]);
 	}
 	
 	private String getRepository() throws CVSException {

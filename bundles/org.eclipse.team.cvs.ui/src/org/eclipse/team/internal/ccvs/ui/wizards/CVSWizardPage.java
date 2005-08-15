@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne - bug 84808
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
@@ -24,7 +25,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.operations.RemoteProjectFolder;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
@@ -309,5 +312,21 @@ public abstract class CVSWizardPage extends WizardPage {
 				w.getNextPage(this, false /* about to show */) != null;
 		}
 		return super.canFlipToNextPage();
+	}
+
+	/**
+	 * Utility method to get a folder name based on preferences.
+	 * Returns the folder name or the project name retrieved from the project metafile 
+	 * @param the CVS remote folder
+	 * @return a project name
+	 */
+	static protected String getPreferredFolderName(ICVSRemoteFolder folder) {
+		if (CVSUIPlugin.getPlugin().isUseProjectNameOnCheckout() && folder instanceof RemoteProjectFolder ) {
+			RemoteProjectFolder rpf = (RemoteProjectFolder) folder;
+			if (rpf.hasProjectName()) {
+				return rpf.getProjectName();
+			}
+		}
+		return folder.getName();
 	}
 }

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne - bug 84808
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
@@ -227,6 +228,18 @@ public class CheckoutAsWizard extends Wizard {
 		return folders;
 	}
 
+	/*
+	 * Return the remote folders to be checked out with 
+	 * Folder description if available based on preferrences settings
+	 */
+	private ICVSRemoteFolder[] getRemoteFoldersWithProjectDescriptions() throws InvocationTargetException, InterruptedException {
+		ICVSRemoteFolder[] folders = getRemoteFolders();
+		if (CVSUIPlugin.getPlugin().isUseProjectNameOnCheckout()) {
+			folders = ProjectMetaFileOperation.updateFoldersWithProjectName(part, folders);
+		}
+		return folders;
+	}
+
 	private CVSTag getSelectedTag() {
 		return tagSelectionPage.getSelectedTag();
 	}
@@ -247,7 +260,7 @@ public class CheckoutAsWizard extends Wizard {
 	private boolean performMultipleCheckoutAs() throws InvocationTargetException, InterruptedException {
 		String targetLocation = locationSelectionPage.getTargetLocation();
 		// Run the checkout in the background
-		new CheckoutMultipleProjectsOperation(part, getRemoteFolders(), targetLocation).run();
+		new CheckoutMultipleProjectsOperation(part, getRemoteFoldersWithProjectDescriptions(), targetLocation).run();
 		return true;
 	}
 

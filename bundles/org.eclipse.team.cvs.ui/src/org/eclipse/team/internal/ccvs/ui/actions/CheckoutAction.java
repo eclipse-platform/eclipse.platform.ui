@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne - bug 84808
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
@@ -16,7 +17,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutMultipleProjectsOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ProjectMetaFileOperation;
 
 /**
  * Checkout a remote module into the workspace ensuring that the user is prompted for
@@ -28,7 +31,7 @@ public class CheckoutAction extends CVSAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
 	 */
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		new CheckoutMultipleProjectsOperation(getTargetPart(), getSelectedRemoteFolders(), null)
+		new CheckoutMultipleProjectsOperation(getTargetPart(), getSelectedRemoteFoldersWithProjectName(), null)
 			.run();
 	}
 	
@@ -48,4 +51,18 @@ public class CheckoutAction extends CVSAction {
 	   }
 	   return true;
    }
+
+	/**
+	 * Get selected CVS remote folders, and add Project Description 
+	 * from metafile if available based on preferences settings
+	 * @throws InterruptedException 
+	 * @throws InvocationTargetException 
+	 */
+	private ICVSRemoteFolder[] getSelectedRemoteFoldersWithProjectName() throws InvocationTargetException, InterruptedException {
+		ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
+		if (CVSUIPlugin.getPlugin().isUseProjectNameOnCheckout()){
+			folders = ProjectMetaFileOperation.updateFoldersWithProjectName(getTargetPart(), folders);
+		}
+		return folders;
+	}
 }

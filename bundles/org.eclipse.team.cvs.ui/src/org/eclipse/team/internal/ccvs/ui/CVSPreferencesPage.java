@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne - bug 84808
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.ui;
@@ -375,6 +376,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		new Checkbox(composite, ICVSUIConstants.PREF_DEBUG_PROTOCOL, CVSUIMessages.CVSPreferencesPage_17, IHelpContextIds.PREF_DEBUG_PROTOCOL);
 		new Checkbox(composite, ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, CVSUIMessages.CVSPreferencesPage_18, IHelpContextIds.PREF_AUTOREFRESH_TAG);
         new Checkbox(composite, ICVSUIConstants.PREF_AUTO_SHARE_ON_IMPORT, CVSUIMessages.CVSPreferencesPage_44, null);
+        new Checkbox(composite, ICVSUIConstants.PREF_USE_PROJECT_NAME_ON_CHECKOUT, CVSUIMessages.CVSPreferencesPage_45, null);
         
         final Composite textComposite= SWTUtils.createHFillComposite(composite, SWTUtils.MARGINS_NONE, 2);
         new TextField(

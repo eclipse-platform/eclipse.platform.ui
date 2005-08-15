@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne - bug 84808
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
@@ -105,7 +106,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	
 	private IProject getSingleProject() {
 		if (singleProject == null) {
-			setProjectName(remoteFolders[0].getName());
+			setProjectName(getPreferredFolderName(remoteFolders[0]));
 		}
 		return singleProject;
 	}
@@ -295,7 +296,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 					return locationStatus.getMessage();
 			} else {
 				for (int i = 0; i < remoteFolders.length; i++) {
-					String projectName = remoteFolders[i].getName();
+					String projectName = getPreferredFolderName(remoteFolders[i]);
 					IStatus locationStatus = ResourcesPlugin.getWorkspace().validateProjectLocation(
 						ResourcesPlugin.getWorkspace().getRoot().getProject(projectName),
 						new Path(targetLocation).append(projectName));

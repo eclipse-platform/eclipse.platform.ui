@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philippe Ombredanne - bug 84808
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
@@ -24,7 +25,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutMultipleProjectsOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.HasProjectMetaFileOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ProjectMetaFileOperation;
 import org.eclipse.ui.*;
 
 /**
@@ -188,7 +189,25 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 					boolean hasMetafile = true;
 					if (selectedModules.length == 1) {
 						// Only allow configuration if one module is selected
-						hasMetafile = hasProjectMetafile(selectedModules[0]);
+						final ICVSRemoteFolder[] folders = new ICVSRemoteFolder[] {selectedModules[0]};
+						final boolean withName = CVSUIPlugin.getPlugin().isUseProjectNameOnCheckout();
+
+						// attempt to retrieve the project description depending on preferences
+						// this is a bit circumvoluted to batch the metafile check and retrieval in one op
+						final ICVSRemoteFolder[] folderResult = new ICVSRemoteFolder [1];
+						final boolean[] booleanResult = new boolean[] { true };
+						
+						getContainer().run(true, true, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								ProjectMetaFileOperation op = new ProjectMetaFileOperation(getPart(), new ICVSRemoteFolder[] {folders[0]}, withName);
+								op.run(monitor);
+								folderResult[0] = op.getUpdatedFolders()[0];
+								booleanResult[0] = op.metaFileExists();
+							}
+						});
+						hasMetafile = booleanResult[0];
+						if (withName && hasMetafile)
+							selectedModules[0] = folderResult[0];
 					}
 					resetSubwizard();
 					wizard = new CheckoutAsWizard(getPart(), selectedModules, ! hasMetafile /* allow configuration */);
@@ -213,18 +232,6 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 			return wizard.getNextPage(page);
 		}
 		return null;
-	}
-
-	private boolean hasProjectMetafile(final ICVSRemoteFolder selectedModule) throws InvocationTargetException, InterruptedException {
-		final boolean[] result = new boolean[] { true };
-		getContainer().run(true, true, new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				HasProjectMetaFileOperation op = new HasProjectMetaFileOperation(getPart(), selectedModule);
-				op.run(monitor);
-				result[0] = op.metaFileExists();
-			}
-		});
-		return result[0];
 	}
 
 	private ICVSRemoteFolder[] getSelectedModules() {
