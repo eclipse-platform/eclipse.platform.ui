@@ -274,9 +274,13 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	}
 	
 	public boolean commitChanges() {
-		return fCheckbox != null ? fCheckbox.getSelection() : false;
+		return fCheckbox != null ? fCheckbox.getSelection() && hasOutgoingChanges() : false;
 	}
 	
+	private boolean hasOutgoingChanges() {
+		return infos != null && infos.hasOutgoingChanges();
+	}
+
 	/**
 	 * @return Returns the project.
 	 */
