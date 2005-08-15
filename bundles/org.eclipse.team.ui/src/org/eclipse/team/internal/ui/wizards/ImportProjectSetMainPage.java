@@ -89,7 +89,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 						fileName= fileName.substring(0, separator);
 					}
 				}
-				d.setFilterPath(fileName); //$NON-NLS-1$
+				d.setFilterPath(fileName);
 				String f = d.open();
 				if (f != null) {
 					fileText.setText(f);
