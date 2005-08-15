@@ -81,11 +81,11 @@ class ImplicitJobs {
 			threadJob.push(rule);
 			//join the thread job outside sync block
 			if (threadJob.acquireRule) {
-				//no need to reaquire any locks because the thread did not wait to get this lock
+				//no need to re-aquire any locks because the thread did not wait to get this lock
 				if (manager.runNow(threadJob))
 					manager.getLockManager().addLockThread(Thread.currentThread(), rule);
 				else
-					threadJob.joinRun(monitor);
+					threadJob = threadJob.joinRun(monitor);
 			}
 		} finally {
 			//remember this thread job  - only do this

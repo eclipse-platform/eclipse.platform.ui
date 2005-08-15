@@ -141,29 +141,42 @@ class ThreadJob extends Job {
 	}
 
 	/**
-	 * Schedule the job and block the calling thread until the job starts running
+	 * Schedule the job and block the calling thread until the job starts running.
+	 * Returns the ThreadJob instance that was started.
 	 */
-	void joinRun(IProgressMonitor monitor) {
+	ThreadJob joinRun(IProgressMonitor monitor) {
 		if (isCanceled(monitor))
 			throw new OperationCanceledException();
 		//check if there is a blocking thread before waiting
 		InternalJob blockingJob = manager.findBlockingJob(this);
 		Thread blocker = blockingJob == null ? null : blockingJob.getThread();
+		ThreadJob result = this;
 		//lock listener decided to grant immediate access
-		if (!manager.getLockManager().aboutToWait(blocker)) {
+		try {
+			if (manager.getLockManager().aboutToWait(blocker))
+				return this;
 			try {
 				waitStart(monitor, blockingJob);
+				final Thread currentThread = Thread.currentThread();
 				while (true) {
 					if (isCanceled(monitor))
 						throw new OperationCanceledException();
 					//try to run the job 
 					if (manager.runNow(this))
-						break;
+						return this;
 					//update blocking job
 					blockingJob = manager.findBlockingJob(this);
+					//the rule could have been transferred to this thread while we were waiting
 					blocker = blockingJob == null ? null : blockingJob.getThread();
+					if (blocker == currentThread && blockingJob instanceof ThreadJob) {
+						//now we are just the nested acquire case
+						result = (ThreadJob)blockingJob;
+						result.push(getRule());
+						result.isBlocked = this.isBlocked;
+						return result;
+					}
 					if (manager.getLockManager().aboutToWait(blocker))
-						break;
+						return this;
 					//must lock instance before calling wait
 					synchronized (this) {
 						try {
@@ -174,10 +187,12 @@ class ThreadJob extends Job {
 					}
 				}
 			} finally {
-				waitEnd(monitor);
+				if (this == result)
+					waitEnd(monitor);
 			}
+		} finally {
+			manager.getLockManager().aboutToRelease();
 		}
-		manager.getLockManager().aboutToRelease();
 	}
 
 	/**
@@ -281,7 +296,7 @@ class ThreadJob extends Job {
 		final Thread currentThread = Thread.currentThread();
 		if (isRunning()) {
 			lockManager.addLockThread(currentThread, getRule());
-			//need to reaquire any locks that were suspended while this thread was blocked on the rule
+			//need to re-aquire any locks that were suspended while this thread was blocked on the rule
 			lockManager.resumeSuspendedLocks(currentThread);
 		} else {
 			//tell lock manager that this thread gave up waiting
