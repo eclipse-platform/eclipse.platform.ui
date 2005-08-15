@@ -107,7 +107,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			boolean accessible = resource.getProject().isAccessible();
 			if (accessible) {
 				// We only care about the failure if the project is open
-				handleException(e);
+				handleException(resource, e);
 			}
 			// Return dirty if the project is open and clean otherwise
 			return accessible;
@@ -167,7 +167,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			cvsDecoration.setWatchEditEnabled(cvsProvider.isWatchEditEnabled());	
 			cvsDecoration.apply(decoration);
 		} catch(CVSException e) {
-			handleException(e);
+			handleException(resource, e);
 		} catch (IllegalStateException e) {
 		    // This is thrown by Core if the workspace is in an illegal state
 		    // If we are not active, ignore it. Otherwise, propogate it.
@@ -335,7 +335,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			});
 			postLabelEvent(new LabelProviderChangedEvent(this, resources.toArray()));
 		} catch (CoreException e) {
-			handleException(e);
+			handleException(project, e);
 		}
 	}
 	
@@ -422,10 +422,13 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 	}
 	
 	/**
-	 * Handle exceptions that occur in the decorator. 
+	 * Handle exceptions that occur in the decorator.
+	 * Exceptions are only logged for resources that
+	 * are accessible (i.e. exist in an open project).
 	 */
-	private static void handleException(CoreException e) {
-		exceptions.handleException(e);
+	private static void handleException(IResource resource, CoreException e) {
+		if (resource.isAccessible())
+			exceptions.handleException(e);
 	}
 
 	/* (non-Javadoc)
