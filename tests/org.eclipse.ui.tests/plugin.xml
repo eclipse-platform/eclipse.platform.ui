@@ -598,6 +598,20 @@
             name="org.eclipse.ui.tests.contentType2Editor">
          <contentTypeBinding contentTypeId="org.eclipse.ui.tests.content-type2"/>
       </editor>
+      <editor
+            class="org.eclipse.ui.tests.multieditor.TiledEditor"
+            default="false"
+            icon="icons/editor.gif"
+            id="org.eclipse.ui.tests.multieditor.TiledEditor"
+            name="%Editors.TiledEditor"/>
+      <editor
+            class="org.eclipse.ui.tests.multieditor.TestEditor"
+            contributorClass="org.eclipse.ui.tests.multieditor.TestActionBarContributor"
+            default="false"
+            extensions="etest"
+            icon="icons/binary_co.gif"
+            id="org.eclipse.ui.tests.multieditor.TestEditor"
+            name="%Editors.TestEditor"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -2079,20 +2093,6 @@
             name="Editor w/Outline"
             id="org.eclipse.ui.tests.perf_outline"
             extensions="perf_outline"/>
-      <editor
-            class="org.eclipse.ui.tests.multieditor.TiledEditor"
-            default="false"
-            icon="icons/editor.gif"
-            id="org.eclipse.ui.tests.multieditor.TiledEditor"
-            name="%Editors.TiledEditor"/>
-      <editor
-            class="org.eclipse.ui.tests.multieditor.TestEditor"
-            contributorClass="org.eclipse.ui.tests.multieditor.TestActionBarContributor"
-            default="false"
-            extensions="etest"
-            icon="icons/binary_co.gif"
-            id="org.eclipse.ui.tests.multieditor.TestEditor"
-            name="%Editors.TestEditor"/>    
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

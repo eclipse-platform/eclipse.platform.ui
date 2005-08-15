@@ -713,12 +713,17 @@ public class EditorManager implements IExtensionChangeHandler {
         return null;
     }
 
-    /*
-     * Create the site and action bars for each inner editor.
+    /**
+     * Create the part and reference for each inner editor.
+     * 
+     * @param ref the MultiEditor ref
+     * @param part the part
+     * @param input the MultiEditor input
+     * @return the array of inner references to store in the MultiEditor ref
      */
-    private IEditorReference[] openMultiEditor(final IEditorReference ref,
-            final MultiEditor part, final EditorDescriptor desc,
-            final MultiEditorInput input, final boolean setVisible)
+    IEditorReference[] openMultiEditor(final IEditorReference ref,
+            final MultiEditor part, 
+            final MultiEditorInput input)
             throws PartInitException {
 
         String[] editorArray = input.getEditors();

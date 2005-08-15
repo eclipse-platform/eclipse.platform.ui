@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.dnd;
 
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.internal.dnd.TestDropLocation;
 import org.eclipse.ui.tests.autotests.AbstractTestLogger;
 
@@ -55,4 +56,20 @@ public class DetachedWindowDragTest	extends DragTest {
     	viewPart = page.showView(DragDropPerspectiveFactory.dropViewId3); 
         DragOperations.drag(viewPart, new DetachedDropTarget(), false);
     }
+
+	protected void doTearDown() throws Exception {
+		// hide detached views so they don't scare any following tests
+		
+		IViewReference view = page.findViewReference(DragDropPerspectiveFactory.dropViewId1);
+		page.attachView(view);
+//		page.hideView(view.getView(false));
+		view = page.findViewReference(DragDropPerspectiveFactory.dropViewId2);
+		page.attachView(view);
+//		page.hideView(view.getView(false));
+		view = page.findViewReference(DragDropPerspectiveFactory.dropViewId3);
+		page.attachView(view);
+//		page.hideView(view.getView(false));
+		
+		super.doTearDown();
+	}
 }

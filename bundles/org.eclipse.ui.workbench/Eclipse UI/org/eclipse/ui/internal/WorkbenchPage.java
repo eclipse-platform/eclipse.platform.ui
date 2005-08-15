@@ -760,6 +760,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 makeActive(ref);
             } else if (newPartContainer == activeEditorContainer) {
                 if (ref instanceof IEditorReference) {
+                	if (part!=null) {
+                    	IWorkbenchPartSite site = part.getSite();
+						if (site instanceof PartSite) {
+							ref = ((PartSite) site).getPane()
+									.getPartReference();
+						}
+                	}
                     makeActiveEditor((IEditorReference)ref);
                 } else {
                     makeActiveEditor(null);
@@ -1101,7 +1108,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @param ref the editor to make active, or <code>null</code> for no active editor
      */
     private void makeActiveEditor(IEditorReference ref) {
-        if (ref == getActiveEditor()) {
+        if (ref == getActiveEditorReference()) {
             return;
         }
         
@@ -1115,7 +1122,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         actionSwitcher.updateTopEditor(part);
 
         if (ref != null) {
-            activationList.bringToTop(ref);
+            activationList.bringToTop(getReference(part));
         }
         
         partList.setActiveEditor(ref);
@@ -1473,6 +1480,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (isZoomed())
             zoomOut();
 
+        makeActiveEditor(null);
         makeActive(null);
         
         // Close and dispose the editors.
@@ -2171,6 +2179,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * This method is called when the page is deactivated.
      */
     protected void onDeactivate() {
+    	makeActiveEditor(null);
         makeActive(null);
         if (getActivePerspective() != null)
             getActivePerspective().onDeactivate();
@@ -2466,6 +2475,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Sanity check.
         if (!certifyPart(part))
             return;
+
+        if (part instanceof MultiEditor) {
+            part = ((MultiEditor) part).getActiveEditor();
+        }
 
         // Real work.
         setActivePart(part);
@@ -2829,8 +2842,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             label = newPart != null ? newPart.getTitle() : "none"; //$NON-NLS-1$
         }
         try {
-            IWorkbenchPartReference partref = getReference(newPart); 
-            partBeingActivated = partref;
+            IWorkbenchPartReference partref = getReference(newPart);
+            IWorkbenchPartReference realPartRef = null;
+			if (newPart != null) {
+				IWorkbenchPartSite site = newPart.getSite();
+				if (site instanceof PartSite) {
+					realPartRef = ((PartSite) site).getPane()
+							.getPartReference();
+				}
+			}
+
+            partBeingActivated = realPartRef;
             
             UIStats.start(UIStats.ACTIVATE_PART, label);
             // Notify perspective. It may deactivate fast view.
@@ -2848,9 +2870,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             if (newPart != null) {
                 activationList.setActive(newPart);
                 if (newPart instanceof IEditorPart) {
-                    IEditorReference ref = (IEditorReference) getReference(newPart);
-                    makeActiveEditor(ref);
-                }
+					makeActiveEditor((IEditorReference)realPartRef);
+				}
             }
             activatePart(newPart);
             
@@ -3470,27 +3491,20 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          */
         void setActive(IWorkbenchPart part) {
             if (parts.size() <= 0)
-                return;
-            PartPane pane = ((PartSite) part.getSite()).getPane();
-            if (pane instanceof MultiEditorInnerPane) {
-                MultiEditorInnerPane innerPane = (MultiEditorInnerPane) pane;
-                setActive(innerPane.getParentPane().getPartReference().getPart(
-                        true));
-            } else {
-                IWorkbenchPartReference ref = getReference(part);
-                if (ref != null) {
-	                if (ref == parts.get(parts.size() - 1))
-	                    return;
-	                parts.remove(ref);
-	                parts.add(ref);
-                }
-            }
+				return;
+			IWorkbenchPartReference ref = getReference(part);
+			if (ref != null) {
+				if (ref == parts.get(parts.size() - 1))
+					return;
+				parts.remove(ref);
+				parts.add(ref);
+			}
         }
         
         /*
-         * Ensures that the given part appears AFTER any other part in the same
-         * container.
-         */
+		 * Ensures that the given part appears AFTER any other part in the same
+		 * container.
+		 */
         void bringToTop(IWorkbenchPartReference ref) {
             ILayoutContainer targetContainer = getContainer(ref);
             

@@ -10,19 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multieditor;
 
-import org.eclipse.jface.action.ICoolBarManager;
-import org.eclipse.ui.part.EditorActionBarContributor;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-public class TestActionBarContributor extends EditorActionBarContributor {
+public class MultiEditorTestSuite extends TestSuite {
 
-	public TestActionBarContributor() {
-		super();
+	public static Test suite() {
+		return new MultiEditorTestSuite();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToCoolBar(org.eclipse.jface.action.ICoolBarManager)
-	 */
-	public void contributeToCoolBar(ICoolBarManager coolBarManager) {
-		super.contributeToCoolBar(coolBarManager);
-	}
+    /**
+     * Construct the test suite.
+     */
+    public MultiEditorTestSuite() {
+        addTestSuite(MultiEditorTest.class);
+    }
 }

@@ -43,6 +43,8 @@ import org.eclipse.ui.internal.part.services.NullEditorInput;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
+import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.part.MultiEditorInput;
 
 public class EditorReference extends WorkbenchPartReference implements
         IEditorReference {
@@ -77,6 +79,13 @@ public class EditorReference extends WorkbenchPartReference implements
     String factoryId;
 
     IEditorInput restoredInput;
+    
+	/**
+	 * If the reference is instantiated as a MultiEditor, we need to dispose the
+	 * inner references correctly.
+	 */
+	private IEditorReference[] multiEditorChildren = null;
+
     
     public EditorReference(EditorManager manager, IEditorInput input, EditorDescriptor desc) {
         this.manager = manager;
@@ -231,7 +240,17 @@ public class EditorReference extends WorkbenchPartReference implements
     }
 
     protected void doDisposePart() {
-        if (part != null) {
+    	if (multiEditorChildren!=null) {
+    		for (int i=0; i<multiEditorChildren.length; ++i) {
+    			EditorReference ref = (EditorReference)multiEditorChildren[i];
+    			if (ref!=null) {
+    				ref.dispose();
+    			}
+    		}
+    		multiEditorChildren = null;
+    	}
+
+    	if (part != null) {
             EditorSite site = (EditorSite) ((IEditorPart)part).getEditorSite();
             manager.disposeEditorActionBars((EditorActionBars) site.getActionBars());
             site.dispose();
@@ -524,13 +543,18 @@ public class EditorReference extends WorkbenchPartReference implements
                 throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_missing_editor_descriptor, editorID));
             }
             
-            IEditorPart part;
+            IEditorPart part = null;
             
             if (desc.isInternal()) {    
                 // Create an editor instance.
                 try {
                     UIStats.start(UIStats.CREATE_PART, editorID);
                     part = manager.createPart(desc);
+                    
+                    if (part != null && part instanceof MultiEditor) {
+    					multiEditorChildren = manager.openMultiEditor(this,
+    						(MultiEditor) part, (MultiEditorInput) editorInput);
+    				}
                 } finally {
                     UIStats.end(UIStats.CREATE_PART, this, editorID);
                 }
@@ -625,4 +649,16 @@ public class EditorReference extends WorkbenchPartReference implements
     
     }
     
+    /**
+     * A quick way of finding out if this reference points to a MultiEditor.
+     * It depends on the fact that a MultiEditor does not lazily 
+     * instantiate it's child editors.
+     * 
+     * @return true if it has inner editor reference or the input is
+     * MultiEditorInput.
+     */
+    public boolean isMultiReference() {
+    	return multiEditorChildren!=null || restoredInput instanceof MultiEditorInput;
+    }
 }
+

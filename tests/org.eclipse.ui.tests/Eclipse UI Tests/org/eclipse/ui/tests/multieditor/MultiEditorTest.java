@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.tests.multieditor;
 
 import java.io.IOException;
@@ -74,19 +84,18 @@ public class MultiEditorTest extends UITestCase {
 	private static String[] gEditorOpenTrace = { "setInitializationData",
 			"init", "createPartControl", "createInnerPartControl",
 			"createInnerPartControl", "setFocus", "updateGradient",
-			"updateGradient", "updateGradient", };
+			"updateGradient", };
 
 	private static String[] gEditorFocusTrace = { "setInitializationData",
 			"init", "createPartControl", "createInnerPartControl",
 			"createInnerPartControl", "setFocus", "updateGradient",
-			"updateGradient", "updateGradient", "setFocus", "updateGradient",
-			"updateGradient", "updateGradient", };
+			"updateGradient", "updateGradient", "updateGradient", };
 
 	private static String[] gEditorCloseTrace = { "setInitializationData",
 			"init", "createPartControl", "createInnerPartControl",
 			"createInnerPartControl", "setFocus", "updateGradient",
-			"updateGradient", "updateGradient", "setFocus", "updateGradient",
-			"updateGradient", "updateGradient", "widgetsDisposed", "dispose" };
+			"updateGradient", "updateGradient", "updateGradient",
+			"widgetsDisposed", "dispose" };
 
 	public static TestSuite suite() {
 		return new TestSuite(MultiEditorTest.class);
@@ -159,6 +168,7 @@ public class MultiEditorTest extends UITestCase {
 		// listHistory(((TiledEditor) multiEditor).callHistory);
 
 		// check the public API called for opening the TiledEditor
+		((TiledEditor) multiEditor).callHistory.printToConsole();
 		assertTrue("The editor open trace was incorrect",
 				((TiledEditor) multiEditor).callHistory
 						.verifyOrder(gEditorOpenTrace));
@@ -170,6 +180,7 @@ public class MultiEditorTest extends UITestCase {
 
 		chewUpEvents();
 
+		// ((TiledEditor) multiEditor).callHistory.printToConsole();
 		assertTrue("Editor setFocus trace was incorrect",
 				((TiledEditor) multiEditor).callHistory
 						.verifyOrder(gEditorFocusTrace));
@@ -178,6 +189,7 @@ public class MultiEditorTest extends UITestCase {
 
 		chewUpEvents();
 
+		// ((TiledEditor) multiEditor).callHistory.printToConsole();
 		assertTrue("Editor close trace was incorrect",
 				((TiledEditor) multiEditor).callHistory
 						.verifyOrder(gEditorCloseTrace));
@@ -305,6 +317,7 @@ public class MultiEditorTest extends UITestCase {
 	 * @return the IContributionItem for the test editor cool bar.
 	 */
 	private IContributionItem findMyCoolBar(WorkbenchPage page) {
+		// listItems(page);
 		IContributionItem contribution = ((IActionBars2) page.getActionBars())
 				.getCoolBarManager().find(TESTEDITOR_COOLBAR);
 		// assertNotNull(contribution);
@@ -542,12 +555,14 @@ public class MultiEditorTest extends UITestCase {
 	}
 
 	/**
-	 * Close any editors at the end of a test, so the next test can be clean.
+	 * Close any editors at the beginner of a test, so the test can be clean.
 	 */
-	protected void doTearDown() throws Exception {
-		fWorkbench.getActiveWorkbenchWindow().getActivePage().closeAllEditors(
-				false);
-		super.doTearDown();
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
+		IWorkbenchPage page = fWorkbench.getActiveWorkbenchWindow()
+				.getActivePage();
+		page.closeAllEditors(false);
+
 	}
 
 	/**
