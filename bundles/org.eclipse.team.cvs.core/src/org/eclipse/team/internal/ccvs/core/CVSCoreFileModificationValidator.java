@@ -199,7 +199,7 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
     
     public ISchedulingRule validateEditRule(CVSResourceRuleFactory factory, IResource[] resources) {
         IFileModificationValidator override = getUIValidator();
-        if (override instanceof CVSCoreFileModificationValidator) {
+        if (override instanceof CVSCoreFileModificationValidator && override != this) {
             CVSCoreFileModificationValidator ui = (CVSCoreFileModificationValidator) override;
             return ui.validateEditRule(factory, resources);
         }
