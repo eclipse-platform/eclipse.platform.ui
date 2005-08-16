@@ -46,6 +46,11 @@ public class ConcreteMarker {
 
     private IMarker marker;
 
+    /**
+     * Cache for the marker ID.
+     */
+	private long id = -1L;
+
     public ConcreteMarker(IMarker toCopy) {
         marker = toCopy;
         refresh();
@@ -83,6 +88,9 @@ public class ConcreteMarker {
         } catch (CoreException e1) {
             type = ""; //$NON-NLS-1$
         }
+        
+        // store the marker ID locally
+        id = marker.getId();
     }
 
     public IResource getResource() {
@@ -135,6 +143,14 @@ public class ConcreteMarker {
 
     public long getCreationTime() {
         return creationTime;
+    }
+    
+    /**
+     * The underlying marker ID value.
+     * @return the marker's ID.
+     */
+    public long getId() {
+    	return id;
     }
 
     public IMarker getMarker() {

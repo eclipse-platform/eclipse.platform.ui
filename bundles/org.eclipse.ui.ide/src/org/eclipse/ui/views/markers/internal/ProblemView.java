@@ -45,7 +45,10 @@ public class ProblemView extends MarkerView {
             new FieldMessage(), new FieldResource(), new FieldFolder(),
             new FieldLineNumber() };
 
-    private final IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
+    private final IField[] HIDDEN_FIELDS = { new FieldCreationTime(),
+    		// Add the marker ID so the table sorter won't reduce 
+    		// errors on the same line bug 82502
+    		new FieldId() };
 
     // Field Tags
     // These tags MUST occur in the same order as the VISIBLE_FIELDS +
@@ -67,16 +70,19 @@ public class ProblemView extends MarkerView {
     private final static int LOCATION = 4;
 
     private final static int CREATION_TIME = 5;
+    
+    private final static int MARKER_ID = 6;
 
     private final static int[] DEFAULT_PRIORITIES = { SEVERITY, FOLDER,
-            RESOURCE, LOCATION, DESCRIPTION, CREATION_TIME };
+            RESOURCE, LOCATION, DESCRIPTION, CREATION_TIME, MARKER_ID };
 
     private final static int[] DEFAULT_DIRECTIONS = { DESCENDING, // severity
             ASCENDING, // folder
             ASCENDING, // resource
             ASCENDING, // location
             ASCENDING, // description
-            ASCENDING, }; // creation time
+            ASCENDING, // creation time
+            ASCENDING, }; // marker id
 
     private final static String[] ROOT_TYPES = { IMarker.PROBLEM };
 
