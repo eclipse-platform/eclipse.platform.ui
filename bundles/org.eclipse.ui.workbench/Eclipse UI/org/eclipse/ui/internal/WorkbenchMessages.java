@@ -309,6 +309,7 @@ public class WorkbenchMessages extends NLS {
 	public static String NewWizard_title;
 	public static String NestedContext_0;
 	public static String NewWizardNewPage_moreHelp;
+	public static String NewWizardNewPage_noHelp;
 	public static String NewWizardNewPage_description;
 	public static String NewWizardNewPage_wizardsLabel;
 	public static String NewWizardNewPage_showAll;

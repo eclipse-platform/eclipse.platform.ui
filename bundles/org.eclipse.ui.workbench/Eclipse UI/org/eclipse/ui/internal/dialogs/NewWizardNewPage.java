@@ -459,8 +459,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
         ToolBar toolBar = new ToolBar(composite, SWT.FLAT);
         helpButton = new ToolItem(toolBar, SWT.NONE);
         helpButton.setImage(buttonImage);
-        helpButton.setEnabled(false);
-        helpButton.setToolTipText(WorkbenchMessages.NewWizardNewPage_moreHelp);
         data = new GridData(GridData.HORIZONTAL_ALIGN_END
                 | GridData.VERTICAL_ALIGN_END);
         if (!needShowAll)
@@ -663,8 +661,10 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
         if (wizardHelpHref != null) {
             helpButton.setEnabled(true);
+            helpButton.setToolTipText(WorkbenchMessages.NewWizardNewPage_moreHelp);
         } else {
             helpButton.setEnabled(false);
+            helpButton.setToolTipText(WorkbenchMessages.NewWizardNewPage_noHelp);
         }
 
         if (hasImage(selectedObject)) {
