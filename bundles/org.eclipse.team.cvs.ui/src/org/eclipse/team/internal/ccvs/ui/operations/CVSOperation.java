@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
@@ -208,7 +209,7 @@ public abstract class CVSOperation extends TeamOperation {
 	 * @return whether the status is reportable or should be ignored
 	 */
     protected boolean isReportableError(IStatus status) {
-        return status.getCode() == CVSStatus.SERVER_ERROR || CVSStatus.isInternalError(status);
+        return status.getCode() == CVSStatus.SERVER_ERROR || CVSStatus.isInternalError(status) || status.getCode() == TeamException.UNABLE;
     }
 
     protected String getErrorMessage(IStatus[] failures, int totalOperations) {

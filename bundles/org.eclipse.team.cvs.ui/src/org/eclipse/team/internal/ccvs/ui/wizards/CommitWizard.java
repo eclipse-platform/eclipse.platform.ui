@@ -330,7 +330,7 @@ public class CommitWizard extends ResizableWizard {
         for (final Iterator iter = infos.iterator(); iter.hasNext();) {
             final SyncInfo info = (SyncInfo) iter.next();
             final IResource file= info.getLocal();
-            if (!((file.getType() & IResource.FILE) == 0 || isAdded(file)))
+            if (!isAdded(file))
                 unadded.add(info);
         }
         return unadded;
