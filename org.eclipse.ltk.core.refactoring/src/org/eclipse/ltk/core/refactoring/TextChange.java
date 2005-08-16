@@ -142,7 +142,10 @@ public abstract class TextChange extends AbstractTextEditChange {
 	 * @return the text edit change groups
 	 */
 	public TextEditChangeGroup[] getTextEditChangeGroups() {
-		return (TextEditChangeGroup[])getChangeGroups();
+		final TextEditBasedChangeGroup[] groups= getChangeGroups();
+		final TextEditChangeGroup[] result= new TextEditChangeGroup[groups.length];
+		System.arraycopy(groups, 0, result, 0, groups.length);
+		return result;
 	}
 	
 	/**
