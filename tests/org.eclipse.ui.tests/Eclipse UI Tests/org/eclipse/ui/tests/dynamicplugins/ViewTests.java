@@ -35,7 +35,8 @@ import org.eclipse.ui.views.IViewRegistry;
  */
 public class ViewTests extends DynamicTestCase {
 
-    private static final String VIEW_ID = "org.eclipse.newView1.newView1";
+    private static final String VIEW_ID1 = "org.eclipse.newView1.newView1";
+    private static final String VIEW_ID2 = "org.eclipse.newView1.newView2";
     private static final String CATEGORY_ID = "org.eclipse.newView1.newCategory1";
     
 	public ViewTests(String testName) {
@@ -47,7 +48,7 @@ public class ViewTests extends DynamicTestCase {
 		getBundle();
 				
 		ReferenceQueue queue = new ReferenceQueue();
-		IViewPart part = window.getActivePage().showView(VIEW_ID);
+		IViewPart part = window.getActivePage().showView(VIEW_ID1);
 		// we need to ensure that the view is closed in all open perspectives but this is not currently possible.
 		// window.getActivePage().setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId(EmptyPerspective.PERSP_ID2));
 		WeakReference ref = new WeakReference(part, queue);
@@ -61,7 +62,7 @@ public class ViewTests extends DynamicTestCase {
 			fail(e.getMessage());
 		} 
 		
-        assertNull(window.getActivePage().findView(VIEW_ID));		
+        assertNull(window.getActivePage().findView(VIEW_ID1));		
 	}
     
     /**
@@ -70,9 +71,9 @@ public class ViewTests extends DynamicTestCase {
     public void testHandlerRemoval() {
         IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();
         
-        assertNull(registry.find(VIEW_ID));
+        assertNull(registry.find(VIEW_ID1));
         getBundle();
-        ViewDescriptor desc = (ViewDescriptor) registry.find(VIEW_ID);
+        ViewDescriptor desc = (ViewDescriptor) registry.find(VIEW_ID1);
         assertNotNull(desc);
 		final ICommandService commandService = (ICommandService) fWorkbench.getAdapter(ICommandService.class);
         final Command command = commandService.getCommand(desc.getId());
@@ -80,18 +81,38 @@ public class ViewTests extends DynamicTestCase {
         removeBundle();
         assertFalse(command.isHandled());
     }
-
-	public void testViewProperties() {
-		IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();
+    
+    public void testViewWithoutCategory() {
+    		IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();
 		
-		assertNull(registry.find(VIEW_ID));
+		assertNull(registry.find(VIEW_ID2));
 		getBundle();
-		IViewDescriptor desc = registry.find(VIEW_ID);
+		IViewDescriptor desc = registry.find(VIEW_ID2);
 		assertNotNull(desc);
 	    
 		testViewProperties(desc);
 		removeBundle();	
-		assertNull(registry.find(VIEW_ID));
+		assertNull(registry.find(VIEW_ID2));
+		try {
+			testViewProperties(desc);
+			fail();		
+		}
+		catch (RuntimeException e) {	
+			// no-op
+		}
+    }
+
+	public void testViewWithCategory() {
+		IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();
+		
+		assertNull(registry.find(VIEW_ID1));
+		getBundle();
+		IViewDescriptor desc = registry.find(VIEW_ID1);
+		assertNotNull(desc);
+	    
+		testViewProperties(desc);
+		removeBundle();	
+		assertNull(registry.find(VIEW_ID1));
 		try {
 			testViewProperties(desc);
 			fail();		
@@ -105,7 +126,7 @@ public class ViewTests extends DynamicTestCase {
 		ViewRegistry registry = (ViewRegistry)WorkbenchPlugin.getDefault().getViewRegistry();
 		IStickyViewDescriptor [] descs = registry.getStickyViews();
 		for (int i = 0; i < descs.length; i++) {
-			assertFalse(VIEW_ID.equals(descs[i].getId()));
+			assertFalse(VIEW_ID1.equals(descs[i].getId()));
 		}
 		
 		getBundle();
@@ -113,7 +134,7 @@ public class ViewTests extends DynamicTestCase {
 		descs = registry.getStickyViews();
 		IStickyViewDescriptor desc = null;
 		for (int i = 0; i < descs.length; i++) {
-			if (VIEW_ID.equals(descs[i].getId())) {
+			if (VIEW_ID1.equals(descs[i].getId())) {
 				desc = descs[i];
 				break;
 			}					
@@ -124,7 +145,7 @@ public class ViewTests extends DynamicTestCase {
 		
 		descs = registry.getStickyViews();
 		for (int i = 0; i < descs.length; i++) {
-			assertFalse(VIEW_ID.equals(descs[i].getId()));
+			assertFalse(VIEW_ID1.equals(descs[i].getId()));
 		}
 		
 		try {
@@ -146,12 +167,12 @@ public class ViewTests extends DynamicTestCase {
 	public void testCategoryViewContainmentProperties() {
 		ViewRegistry registry = (ViewRegistry)WorkbenchPlugin.getDefault().getViewRegistry();
 		
-		assertNull(registry.find(VIEW_ID));
+		assertNull(registry.find(VIEW_ID1));
 		assertNull(registry.findCategory(CATEGORY_ID));
 
 		getBundle();
 		
-		IViewDescriptor desc = registry.find(VIEW_ID);
+		IViewDescriptor desc = registry.find(VIEW_ID1);
 		assertNotNull(desc);	    
 		IViewCategory category = registry.findCategory(CATEGORY_ID);
 		assertNotNull(category);
@@ -160,7 +181,7 @@ public class ViewTests extends DynamicTestCase {
 		assertTrue(category.getViews()[0] == desc);
 
 		removeBundle();	
-		assertNull(registry.find(VIEW_ID));
+		assertNull(registry.find(VIEW_ID1));
 		assertNull(registry.findCategory(CATEGORY_ID));
 		try {
 			testCategoryProperties(category);

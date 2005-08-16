@@ -32,5 +32,13 @@
             moveable="false"
             location="BOTTOM"
             id="org.eclipse.newView1.newView1"/>
+            
+            
+     <view
+            class="org.eclipse.ui.dynamic.DynamicView"
+            icon="anything.gif"
+            name="NewView2"
+            id="org.eclipse.newView1.newView2">
+     </view>
    </extension>
 </plugin>
