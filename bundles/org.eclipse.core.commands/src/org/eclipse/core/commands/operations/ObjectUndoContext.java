@@ -61,10 +61,11 @@ public final class ObjectUndoContext extends UndoContext {
 	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
 	 */
 	public String getLabel() {
-		if (label == null && object != null) {
+		if (label != null)
+			return label;
+		if (object != null) 	
 			return object.toString();
-		}
-		return label;
+		return super.getLabel();
 	}
 
 	/**
