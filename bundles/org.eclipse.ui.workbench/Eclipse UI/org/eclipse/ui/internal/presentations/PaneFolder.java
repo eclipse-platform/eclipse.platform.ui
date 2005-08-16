@@ -210,6 +210,11 @@ public final class PaneFolder {
     private boolean maximizeVisible = false;
 
     /**
+     * Make sure we don't recursively enter the layout() code.
+     */
+	private boolean inLayout = false;
+
+    /**
      * Creates a pane folder. This will create exactly one child control in the
      * given parent.
      * 
@@ -233,6 +238,17 @@ public final class PaneFolder {
 
                 public void controlResized(ControlEvent e) {
                     topRightResized = true;
+
+					// We need to do a layout of the PaneFolder
+					// when the title area proxy is resized.
+					if (inLayout ||  
+							viewForm == null || 
+							contentProxy == null || 
+							PaneFolder.this.isDisposed()) 
+						return;
+					PaneFolder.this.aboutToResize();
+					PaneFolder.this.layout(false);
+					
                 }
             });
             tabFolder.setTopRight(titleAreaProxy, SWT.FILL);
@@ -392,9 +408,13 @@ public final class PaneFolder {
     }
 
     public void layout(boolean flushCache) {
+    	if (inLayout) {
+    		return;
+    	}
+    	
         boolean showButtons = true;
-
-        try {
+        inLayout = true;
+		try {
 	        
         	viewForm.setLayoutDeferred(true);
 	
@@ -487,6 +507,7 @@ public final class PaneFolder {
 	        viewForm.setBounds(newBounds);
         } finally {
         	viewForm.setLayoutDeferred(false);
+        	inLayout = false;
         }
 
         viewFormTopRightProxy.layout();
