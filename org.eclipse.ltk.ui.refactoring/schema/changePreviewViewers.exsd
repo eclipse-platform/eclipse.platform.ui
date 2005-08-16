@@ -88,8 +88,8 @@ The default variable used during expression evaluation is bound to the change va
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.ltk.ui.refactoring.changePreviewViewers&quot;&gt;
       &lt;changePreviewViewer
-            class=&quot;org.eclipse.ltk.internal.ui.refactoring.TextChangePreviewViewer&quot;
-            id=&quot;org.eclipse.ltk.internal.ui.refactoring.textChangePreviewViewer&quot;&gt;
+            class=&quot;org.eclipse.ltk.internal.ui.refactoring.TextEditChangePreviewViewer&quot;
+            id=&quot;org.eclipse.ltk.internal.ui.refactoring.textEditChangePreviewViewer&quot;&gt;
          &lt;enablement&gt;
             &lt;instanceof value=&quot;org.eclipse.ltk.core.refactoring.TextChange&quot;/&gt;
          &lt;/enablement&gt;

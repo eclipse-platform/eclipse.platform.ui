@@ -12,33 +12,34 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.util.Assert;
-
+import org.eclipse.ltk.core.refactoring.AbstractTextEditChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.TextChange;
-import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
+
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
+
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.util.Assert;
 
 public class TextEditChangeElement extends ChangeElement {
 	
 	private static final ChangeElement[] fgChildren= new ChangeElement[0];
 	
-	private TextEditChangeGroup fChangeGroup;
+	private TextEditBasedChangeGroup fChangeGroup;
 	
-	public TextEditChangeElement(ChangeElement parent, TextEditChangeGroup changeGroup) {
+	public TextEditChangeElement(ChangeElement parent, TextEditBasedChangeGroup changeGroup) {
 		super(parent);
 		fChangeGroup= changeGroup;
 		Assert.isNotNull(fChangeGroup);
 	}
 	
 	/**
-	 * Returns the <code>TextEditChange</code> managed by this node.
+	 * Returns the <code>TextEditBasedChangeGroup</code> managed by this node.
 	 * 
-	 * @return the <code>TextEditChange</code>
+	 * @return the <code>TextEditBasedChangeGroup</code>
 	 */
-	public TextEditChangeGroup getTextEditChange() {
+	public TextEditBasedChangeGroup getChangeGroup() {
 		return fChangeGroup;
 	}
 	
@@ -61,13 +62,13 @@ public class TextEditChangeElement extends ChangeElement {
 		DefaultChangeElement element= getDefaultChangeElement();
 		if (element != null) {
 			Change change= element.getChange();
-			if (change instanceof TextChange) {
+			if (change instanceof AbstractTextEditChange) {
 				IRegion range= getTextRange(this);
 				ChangePreviewViewerInput input= null;
 				if (range != null) {
-					input= TextChangePreviewViewer.createInput(change, new TextEditChangeGroup[] {fChangeGroup}, range);
+					input= TextEditChangePreviewViewer.createInput(change, new TextEditBasedChangeGroup[] {fChangeGroup}, range);
 				} else {
-					input= TextChangePreviewViewer.createInput(change, fChangeGroup, 2);
+					input= TextEditChangePreviewViewer.createInput(change, fChangeGroup, 2);
 				}
 				viewer.setInput(input);
 			}

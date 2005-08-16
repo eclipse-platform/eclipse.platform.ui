@@ -14,9 +14,10 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.util.Assert;
 
+import org.eclipse.ltk.core.refactoring.AbstractTextEditChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.ltk.core.refactoring.TextChange;
+
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
@@ -26,7 +27,7 @@ public class DefaultChangeElement extends ChangeElement {
 	private ChangeElement[] fChildren;
 
 	/**
-	 * Creates a new <code>ChangeElement</code> for the given
+	 * Creates a new <code>DefaultChangeElement</code> for the given
 	 * change.
 	 * 
 	 * @param parent the change element's parent or <code>null
@@ -76,7 +77,7 @@ public class DefaultChangeElement extends ChangeElement {
 	 * @see ChangeElement.getActive
 	 */
 	public int getActive() {
-		if (fChange instanceof CompositeChange || fChange instanceof TextChange)
+		if (fChange instanceof CompositeChange || fChange instanceof AbstractTextEditChange)
 			return getCompositeChangeActive();
 		else
 			return getDefaultChangeActive();

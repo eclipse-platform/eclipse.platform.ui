@@ -15,19 +15,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.ltk.core.refactoring.AbstractTextEditChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.ltk.core.refactoring.TextChange;
-import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
+
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
  * A default content provider to present a hierarchy of <code>IChange</code>
  * objects in a tree viewer.
- * 
- * TODO should remove dependency to JDT/Core 
- *      (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=61312)
  */
 class ChangeElementContentProvider  implements ITreeContentProvider {
 	
@@ -35,8 +33,8 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 	
 	private static class OffsetComparator implements Comparator {
 		public int compare(Object o1, Object o2) {
-			TextEditChangeGroup c1= (TextEditChangeGroup)o1;
-			TextEditChangeGroup c2= (TextEditChangeGroup)o2;
+			TextEditBasedChangeGroup c1= (TextEditBasedChangeGroup)o1;
+			TextEditBasedChangeGroup c2= (TextEditBasedChangeGroup)o2;
 			int p1= getOffset(c1);
 			int p2= getOffset(c2);
 			if (p1 < p2)
@@ -46,7 +44,7 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 			// same offset
 			return 0;	
 		}
-		private int getOffset(TextEditChangeGroup edit) {
+		private int getOffset(TextEditBasedChangeGroup edit) {
 			return edit.getRegion().getOffset();
 		}
 	}
@@ -115,11 +113,11 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 			if (creator != null) {
 				creator.createChildren(changeElement);
 				result= changeElement.getChildren();
-			} else if (change instanceof TextChange) {
-				TextEditChangeGroup[] changes= getSortedTextEditChanges((TextChange)change);
-				result= new ChangeElement[changes.length];
-				for (int i= 0; i < changes.length; i++) {
-					result[i]= new TextEditChangeElement(changeElement, changes[i]);
+			} else if (change instanceof AbstractTextEditChange) {
+				TextEditBasedChangeGroup[] groups= getSortedChangeGroups((AbstractTextEditChange)change);
+				result= new ChangeElement[groups.length];
+				for (int i= 0; i < groups.length; i++) {
+					result[i]= new TextEditChangeElement(changeElement, groups[i]);
 				}
 				changeElement.setChildren(result);
 			}
@@ -127,16 +125,16 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 		return result;
 	}
 	
-	private TextEditChangeGroup[] getSortedTextEditChanges(TextChange change) {
-		TextEditChangeGroup[] edits= change.getTextEditChangeGroups();
-		List result= new ArrayList(edits.length);
-		for (int i= 0; i < edits.length; i++) {
-			if (!edits[i].getTextEditGroup().isEmpty())
-				result.add(edits[i]);
+	private TextEditBasedChangeGroup[] getSortedChangeGroups(AbstractTextEditChange change) {
+		TextEditBasedChangeGroup[] groups= change.getChangeGroups();
+		List result= new ArrayList(groups.length);
+		for (int i= 0; i < groups.length; i++) {
+			if (!groups[i].getTextEditGroup().isEmpty())
+				result.add(groups[i]);
 		}
 		Comparator comparator= new OffsetComparator();
 		Collections.sort(result, comparator);
-		return (TextEditChangeGroup[])result.toArray(new TextEditChangeGroup[result.size()]);
+		return (TextEditBasedChangeGroup[])result.toArray(new TextEditBasedChangeGroup[result.size()]);
 	}
 	
 	private void getFlattendedChildren(List result, DefaultChangeElement parent, CompositeChange focus) {

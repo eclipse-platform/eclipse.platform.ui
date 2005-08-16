@@ -49,7 +49,7 @@ class ChangeElementLabelProvider extends LabelProvider {
 			Object element= ((DefaultChangeElement)object).getChange();
 			return doGetImage(element);
 		} else if (object instanceof TextEditChangeElement) {
-			Object element= ((TextEditChangeElement)object).getTextEditChange();
+			Object element= ((TextEditChangeElement)object).getChangeGroup();
 			return doGetImage(element);
 		} else if (object instanceof ChangeElement) {
 			Object modifiedElement= ((ChangeElement)object).getModifiedElement();
@@ -72,14 +72,14 @@ class ChangeElementLabelProvider extends LabelProvider {
 			if (change instanceof TextFileChange) {
 				IFile file= ((TextFileChange)change).getFile();
 				return Messages.format(
-					RefactoringUIMessages.PreviewWizardPage_changeElementLabelProvider_textFormat,  //$NON-NLS-1$
+					RefactoringUIMessages.PreviewWizardPage_changeElementLabelProvider_textFormat,
 					new String[] {file.getName(), getPath(file)});
 			} else {
 				return change.getName();
 			}
 		} else if (object instanceof TextEditChangeElement) {
 			TextEditChangeElement element= (TextEditChangeElement)object;
-			String result= element.getTextEditChange().getName();
+			String result= element.getChangeGroup().getName();
 			return result;
 		}  else if (object instanceof ChangeElement) {
 			Object modifiedElement= ((ChangeElement)object).getModifiedElement();

@@ -16,9 +16,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.ltk.core.refactoring.AbstractTextEditChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.TextChange;
-import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
+
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
 import org.eclipse.jface.text.IRegion;
@@ -47,10 +48,10 @@ public abstract class PseudoLanguageChangeElement extends ChangeElement {
 		DefaultChangeElement element= getDefaultChangeElement();
 		if (element != null) {
 			Change change= element.getChange();
-			if (change instanceof TextChange) {
+			if (change instanceof AbstractTextEditChange) {
 				List edits= collectTextEditChanges();
-				viewer.setInput(TextChangePreviewViewer.createInput(change,
-					(TextEditChangeGroup[])edits.toArray(new TextEditChangeGroup[edits.size()]),
+				viewer.setInput(TextEditChangePreviewViewer.createInput(change,
+					(TextEditBasedChangeGroup[])edits.toArray(new TextEditBasedChangeGroup[edits.size()]),
 					getTextRange()));
 			}
 		} else {
@@ -130,7 +131,7 @@ public abstract class PseudoLanguageChangeElement extends ChangeElement {
 		for (int i= 0; i < children.length; i++) {
 			ChangeElement child= children[i];
 			if (child instanceof TextEditChangeElement) {
-				result.add(((TextEditChangeElement)child).getTextEditChange());
+				result.add(((TextEditChangeElement)child).getChangeGroup());
 			} else if (child instanceof PseudoLanguageChangeElement) {
 				result.addAll(((PseudoLanguageChangeElement)child).collectTextEditChanges());
 			}
