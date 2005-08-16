@@ -62,7 +62,11 @@ public class BuildCleanupListener implements IResourceDeltaVisitor, IResourceCha
 						EclipseSynchronizer.getInstance().resourcesRecreated(new IResource[] { resource }, null);
 					}
 					if (resource.getType() == IResource.FOLDER) {
-						handleOrphanedSubtree((IContainer)resource);
+						if (resource.getName().equals(SyncFileWriter.CVS_DIRNAME)) {
+							handleOrphanedSubtree(resource.getParent());
+						} else {
+							handleOrphanedSubtree((IContainer)resource);
+						}
 					}
 				}
 				break;
