@@ -9,6 +9,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat, Inc - extensive changes to allow importing of Archive Files
+ *     Philippe Ombredanne (pombredanne@nexb.com)
+ *     		- Bug 101180 [Import/Export] Import Existing Project into Workspace default widget is back button , should be text field
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -553,6 +555,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 					archivePathField.setEnabled(false);
 					browseArchivesButton.setEnabled(false);
 					updateProjectsList(directoryPathField.getText());
+					directoryPathField.setFocus();
 				}
 			}
 		});
@@ -570,10 +573,24 @@ public class WizardProjectsImportPage extends WizardPage implements
 					archivePathField.setEnabled(true);
 					browseArchivesButton.setEnabled(true);
 					updateProjectsList(archivePathField.getText());
+					archivePathField.setFocus();
 				}
 			}
 		});
 	}
+	
+    /* (non-Javadoc)
+     * Method declared on IDialogPage. Set the focus on path fields when page becomes visible.
+     */
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (visible && this.projectFromDirectoryRadio.getSelection()) {
+        	this.directoryPathField.setFocus();
+        } 
+        if (visible && this.projectFromArchiveRadio.getSelection()) {
+        	this.archivePathField.setFocus();
+        }  
+    }
 
 	/**
 	 * Update the list of projects based on path
