@@ -479,7 +479,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	private void appendProperty(StringBuffer commandLine, String name, String value) {
 		commandLine.append(" \"-D"); //$NON-NLS-1$
 		commandLine.append(name);
-		commandLine.append('='); 
+		commandLine.append('=');
 		commandLine.append(value);
 		commandLine.append("\""); //$NON-NLS-1$
 	}
