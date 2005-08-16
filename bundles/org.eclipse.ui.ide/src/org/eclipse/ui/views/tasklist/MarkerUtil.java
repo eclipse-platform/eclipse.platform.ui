@@ -246,7 +246,7 @@ class MarkerUtil implements IMarkerConstants {
     static ImageDescriptor getImageDescriptor(String key) {
         ImageDescriptor desc = (ImageDescriptor) imageDescriptors.get(key);
         if (desc == null) {
-            System.err.println("TaskList: No image descriptor for " + key); //$NON-NLS-1$
+        		IDEWorkbenchPlugin.log("TaskList: No image descriptor for " + key); //$NON-NLS-1$
         }
         return desc;
     }

@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.ImageSupport;
 
 final class ImageFactory {
@@ -46,7 +47,7 @@ final class ImageFactory {
 				image = imageDescriptor.createImage(false);
 
 				if (image == null)
-					System.err.println(ImageFactory.class +": error creating image for " + key); //$NON-NLS-1$
+					WorkbenchPlugin.log(ImageFactory.class +": error creating image for " + key); //$NON-NLS-1$
 
 				imageRegistry.put(key, image);
 			}
@@ -59,7 +60,7 @@ final class ImageFactory {
 		ImageDescriptor imageDescriptor = (ImageDescriptor) map.get(key);
 
 		if (imageDescriptor == null)
-			System.err.println(ImageFactory.class +": no image descriptor for " + key); //$NON-NLS-1$
+			WorkbenchPlugin.log(ImageFactory.class +": no image descriptor for " + key); //$NON-NLS-1$
 
 		return imageDescriptor;
 	}

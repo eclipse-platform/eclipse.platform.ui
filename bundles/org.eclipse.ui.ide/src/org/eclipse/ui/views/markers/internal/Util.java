@@ -19,6 +19,9 @@ import java.util.ResourceBundle;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.StatusUtil;
 
 public final class Util {
 
@@ -32,7 +35,9 @@ public final class Util {
         try {
             value = resourceBundle.getString(key);
         } catch (MissingResourceException eMissingResource) {
-            System.err.println(eMissingResource);
+        		IDEWorkbenchPlugin.log(eMissingResource.getMessage(), StatusUtil
+					.newStatus(IStatus.ERROR, eMissingResource.getMessage(),
+							eMissingResource));
         }
 
         return value != null ? value.trim() : null;

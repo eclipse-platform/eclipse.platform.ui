@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.IProgressConstants;
 
 /**
@@ -302,7 +303,7 @@ class FinishedJobs {
                 finishedTime.remove(jte);
                 disposeAction(jte);
                 if (NewProgressViewer.DEBUG)
-                    System.err.println("FinishedJobs: sucessfully removed job"); //$NON-NLS-1$
+                		WorkbenchPlugin.log("FinishedJobs: sucessfully removed job"); //$NON-NLS-1$
 
                 // delete all elements that have jte as their direct or indirect parent
                 JobTreeElement jtes[] = (JobTreeElement[]) keptjobinfos

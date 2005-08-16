@@ -67,6 +67,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.progress.IProgressConstants;
 
@@ -649,7 +650,7 @@ public class NewProgressViewer extends TreeViewer implements
                 super.handleEvent(event);
                 if (disposeImage && image != null && !image.isDisposed()) {
                     if (DEBUG)
-                        System.err.println("JobItem.image disposed"); //$NON-NLS-1$
+                    	WorkbenchPlugin.log("JobItem.image disposed"); //$NON-NLS-1$
                     image.dispose();
                 }
                 image = null;
@@ -1283,7 +1284,7 @@ public class NewProgressViewer extends TreeViewer implements
 
     public void add(Object parentElement, Object[] elements) {
         if (DEBUG)
-            System.err.println("add"); //$NON-NLS-1$
+			WorkbenchPlugin.log("add"); //$NON-NLS-1$
         if (list.isDisposed())
             return;
         JobTreeItem lastAdded = null;
@@ -1427,7 +1428,7 @@ public class NewProgressViewer extends TreeViewer implements
             list.getDisplay().asyncExec(new Runnable() {
                 public void run() {
                     if (DEBUG)
-                        System.err.println("  forced remove"); //$NON-NLS-1$
+						WorkbenchPlugin.log("  forced remove"); //$NON-NLS-1$
                     JobTreeItem ji = findJobItem(jte, false);
                     if (ji != null && !ji.isDisposed() && ji.remove())
                         relayout(true, true);
@@ -1631,7 +1632,7 @@ public class NewProgressViewer extends TreeViewer implements
         if (list.isDisposed())
             return;
         if (DEBUG)
-            System.err.println("refreshAll"); //$NON-NLS-1$
+			WorkbenchPlugin.log("refreshAll"); //$NON-NLS-1$
         boolean changed = false;
         boolean countChanged = false;
         JobTreeItem lastAdded = null;
@@ -1647,11 +1648,11 @@ public class NewProgressViewer extends TreeViewer implements
             JobItem ji = (JobItem) children[i];
             if (modelJobs.contains(ji.jobTreeElement)) {
                 if (DEBUG)
-                    System.err.println("  refresh"); //$NON-NLS-1$
+                		WorkbenchPlugin.log("  refresh"); //$NON-NLS-1$
                 changed |= ji.refresh();
             } else {
                 if (DEBUG)
-                    System.err.println("  remove: " + ji.jobTreeElement); //$NON-NLS-1$
+                		WorkbenchPlugin.log("  remove: " + ji.jobTreeElement); //$NON-NLS-1$
                 if (ji.remove())
                     countChanged = changed = true;
             }
@@ -1664,7 +1665,7 @@ public class NewProgressViewer extends TreeViewer implements
                 continue;
             if (findJobItem(element, false) == null) {
                 if (DEBUG)
-                    System.err.println("  added"); //$NON-NLS-1$
+                		WorkbenchPlugin.log("  added"); //$NON-NLS-1$
                 lastAdded = createItem(element);
                 changed = countChanged = true;
             }
@@ -1732,7 +1733,7 @@ public class NewProgressViewer extends TreeViewer implements
         if (list.isDisposed())
             return;
         if (DEBUG)
-            System.err.println("remove"); //$NON-NLS-1$
+        		WorkbenchPlugin.log("remove"); //$NON-NLS-1$
         boolean changed = false;
         for (int i = 0; i < elements.length; i++) {
             JobTreeItem ji = findJobItem(elements[i], false);

@@ -28,6 +28,8 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
 public final class Util {
 
     public final static SortedMap EMPTY_SORTED_MAP = Collections
@@ -460,7 +462,7 @@ public final class Util {
                     return trim ? translatedString.trim() : translatedString;
             } catch (MissingResourceException eMissingResource) {
                 if (signal)
-                    System.err.println(eMissingResource);
+                		WorkbenchPlugin.log(eMissingResource);
             }
 
         return trim ? string.trim() : string;

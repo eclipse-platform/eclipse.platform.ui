@@ -169,8 +169,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
     public static void log(String message) {
         getDefault().getLog().log(
                 StatusUtil.newStatus(IStatus.ERROR, message, null));
-        System.err.println(message);
-        //1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
     }
 
     /**
@@ -231,13 +229,9 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
         if (message != null) {
             getDefault().getLog().log(
                     StatusUtil.newStatus(IStatus.ERROR, message, null));
-            System.err.println(message + "\nReason:"); //$NON-NLS-1$
         }
 
         getDefault().getLog().log(status);
-        System.err.println(status.getMessage());
-
-        //1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
     }
 
     /* (non-javadoc)
