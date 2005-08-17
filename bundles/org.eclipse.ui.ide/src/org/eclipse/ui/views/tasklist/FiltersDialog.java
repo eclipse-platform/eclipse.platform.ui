@@ -421,7 +421,7 @@ class FiltersDialog extends Dialog {
 
         String[] filters = {
                 TaskListMessages.TaskList_contains, TaskListMessages.TaskList_doesNotContain }; 
-        descriptionGroup = new LabelComboTextGroup(composite, TaskListMessages.TaskList_whereDescription, filters, "", 200);//$NON-NLS-1$ //$NON-NLS-1$
+        descriptionGroup = new LabelComboTextGroup(composite, TaskListMessages.TaskList_whereDescription, filters, "", 200);//$NON-NLS-1$ 
         severityGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_severity_label, severityType); 
         priorityGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_priority_label, priorityType); 
         completionGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_status_label, completionType); 

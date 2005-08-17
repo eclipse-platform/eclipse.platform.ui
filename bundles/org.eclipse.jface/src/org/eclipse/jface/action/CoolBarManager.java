@@ -185,7 +185,7 @@ public class CoolBarManager extends ContributionManager implements
 
             String secondId = currentItem.getId();
             if (firstId.equals(secondId)) {
-                if (Policy.TRACE_TOOLBAR) { //$NON-NLS-1$
+                if (Policy.TRACE_TOOLBAR) { 
                     System.out.println("Trying to add a duplicate item."); //$NON-NLS-1$
                     new Exception().printStackTrace(System.out);
                     System.out.println("DONE --------------------------"); //$NON-NLS-1$
