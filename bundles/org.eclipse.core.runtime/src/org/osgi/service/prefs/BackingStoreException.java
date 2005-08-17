@@ -1,5 +1,5 @@
 /*
- * $Header: /cvshome/build/org.osgi.service.prefs/src/org/osgi/service/prefs/BackingStoreException.java,v 1.8 2005/05/13 20:33:41 hargrave Exp $
+ * $Header: /cvshome/build/org.osgi.service.prefs/src/org/osgi/service/prefs/BackingStoreException.java,v 1.9 2005/08/11 03:07:45 hargrave Exp $
  * 
  * Copyright (c) OSGi Alliance (2001, 2005). All Rights Reserved.
  * 
@@ -13,7 +13,7 @@ package org.osgi.service.prefs;
  * Thrown to indicate that a preferences operation could not complete because of
  * a failure in the backing store, or a failure to contact the backing store.
  * 
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class BackingStoreException extends Exception {
     static final long serialVersionUID = -1415637364122829574L;
@@ -60,6 +60,8 @@ public class BackingStoreException extends Exception {
 	/**
 	 * The cause of this exception can only be set when constructed.
 	 * 
+	 * @param cause Cause of the exception.
+	 * @return This object.
 	 * @throws java.lang.IllegalStateException This method will always throw an
 	 *         <code>IllegalStateException</code> since the cause of this
 	 *         exception can only be set when constructed.

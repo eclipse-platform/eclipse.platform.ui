@@ -1,5 +1,5 @@
 /*
- * $Header: /cvshome/build/org.osgi.service.prefs/src/org/osgi/service/prefs/PreferencesService.java,v 1.6 2005/05/13 20:33:41 hargrave Exp $
+ * $Header: /cvshome/build/org.osgi.service.prefs/src/org/osgi/service/prefs/PreferencesService.java,v 1.8 2005/08/11 03:07:45 hargrave Exp $
  * 
  * Copyright (c) OSGi Alliance (2001, 2005). All Rights Reserved.
  * 
@@ -26,16 +26,23 @@ package org.osgi.service.prefs;
 public interface PreferencesService {
 	/**
 	 * Returns the root system node for the calling bundle.
+	 * 
+	 * @return The root system node for the calling bundle.
 	 */
-	public abstract Preferences getSystemPreferences();
+	public Preferences getSystemPreferences();
 
 	/**
 	 * Returns the root node for the specified user and the calling bundle.
+	 * 
+	 * @param name The user for which to return the preference root node. 
+	 * @return The root node for the specified user and the calling bundle.
 	 */
-	public abstract Preferences getUserPreferences(String name);
+	public Preferences getUserPreferences(String name);
 
 	/**
 	 * Returns the names of users for which node trees exist.
+	 * 
+	 * @return The names of users for which node trees exist.
 	 */
-	public abstract String[] getUsers();
+	public String[] getUsers();
 }
