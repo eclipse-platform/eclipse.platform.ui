@@ -29,6 +29,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -719,6 +721,18 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	private IContentAssistSubjectControl fContentAssistSubjectControl;
 	/**
+	 * The content assist subject control's shell.
+	 *
+	 * @since 3.2
+	 */
+	private Shell fContentAssistSubjectControlShell;
+	/**
+	 * The content assist subject control's shell traverse listener.
+	 *
+	 * @since 3.2
+	 */
+	private TraverseListener fCASCSTraverseListener;
+	/**
 	 * The content assist subject control adapter.
 	 *
 	 * @since 3.0
@@ -1103,6 +1117,17 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		fContextInfoPopup= fContentAssistSubjectControlAdapter.createContextInfoPopup(this);
 		fProposalPopup= fContentAssistSubjectControlAdapter.createCompletionProposalPopup(this, controller);
+		
+		if (Helper.okToUse(fContentAssistSubjectControlAdapter.getControl())) {
+			fContentAssistSubjectControlShell= fContentAssistSubjectControlAdapter.getControl().getShell();
+			fCASCSTraverseListener= new TraverseListener() {
+				public void keyTraversed(TraverseEvent e) {
+					if (e.detail == SWT.TRAVERSE_ESCAPE && fProposalPopup != null && fProposalPopup.isActive())
+						e.doit= false;
+				}
+			};		
+			fContentAssistSubjectControlShell.addTraverseListener(fCASCSTraverseListener);
+		}
 
 		manageAutoActivation(fIsAutoActivated);
 	}
@@ -1118,7 +1143,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			fCloser.uninstall();
 			fCloser= null;
 		}
-
+		
+		if (Helper.okToUse(fContentAssistSubjectControlShell))
+			fContentAssistSubjectControlShell.removeTraverseListener(fCASCSTraverseListener);
+		fCASCSTraverseListener= null;
+		fContentAssistSubjectControlShell= null;
+		
 		fViewer= null;
 		fContentAssistSubjectControl= null;
 		fContentAssistSubjectControlAdapter= null;
