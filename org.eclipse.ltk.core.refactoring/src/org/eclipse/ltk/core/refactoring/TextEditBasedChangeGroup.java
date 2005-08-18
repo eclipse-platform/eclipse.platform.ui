@@ -31,18 +31,18 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 public class TextEditBasedChangeGroup {
 
 	/** The associated change */
-	private AbstractTextEditChange fChange;
+	private TextEditBasedChange fChange;
 	private boolean fIsEnabled;
 	private TextEditGroup fTextEditGroup;
 
 	/**
 	 * Creates new <code>TextEditBasedChangeGroup</code> for the given <code>
-	 * AbstractTextEditChange</code> and <code>TextEditGroup</code>.
+	 * TextEditBasedChange</code> and <code>TextEditGroup</code>.
 	 * 
 	 * @param change the change owning this text edit change group
 	 * @param group the underlying text edit group
 	 */
-	public TextEditBasedChangeGroup(AbstractTextEditChange change, TextEditGroup group) {
+	public TextEditBasedChangeGroup(TextEditBasedChange change, TextEditGroup group) {
 		Assert.isNotNull(change);
 		Assert.isNotNull(group);
 		fChange= change;
@@ -55,7 +55,7 @@ public class TextEditBasedChangeGroup {
 	 * 
 	 * @return the text edit change this group belongs to
 	 */
-	public AbstractTextEditChange getTextEditChange() {
+	public TextEditBasedChange getTextEditChange() {
 		return fChange;
 	}
 	

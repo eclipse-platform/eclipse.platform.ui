@@ -65,7 +65,7 @@ import org.eclipse.ltk.internal.core.refactoring.Changes;
  * 
  * @since 3.0
  */
-public abstract class TextChange extends AbstractTextEditChange {
+public abstract class TextChange extends TextEditBasedChange {
 
 	private TextEdit fEdit;
 	private TextEditCopier fCopier;

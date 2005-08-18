@@ -12,7 +12,7 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.ltk.core.refactoring.AbstractTextEditChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.core.refactoring.Change;
 
@@ -62,7 +62,7 @@ public class TextEditChangeElement extends ChangeElement {
 		DefaultChangeElement element= getDefaultChangeElement();
 		if (element != null) {
 			Change change= element.getChange();
-			if (change instanceof AbstractTextEditChange) {
+			if (change instanceof TextEditBasedChange) {
 				IRegion range= getTextRange(this);
 				ChangePreviewViewerInput input= null;
 				if (range != null) {

@@ -20,7 +20,7 @@
             class="org.eclipse.ltk.internal.ui.refactoring.TextEditChangePreviewViewer"
             id="org.eclipse.ltk.internal.ui.refactoring.textEditChangePreviewViewer">
          <enablement>
-            <instanceof value="org.eclipse.ltk.core.refactoring.AbstractTextEditChange"/>
+            <instanceof value="org.eclipse.ltk.core.refactoring.TextEditBasedChange"/>
          </enablement>
       </changePreviewViewer>
    </extension>

@@ -83,7 +83,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * 
  * @since 3.2
  */
-public class CompositeTextFileChange extends AbstractTextEditChange {
+public class CompositeTextFileChange extends TextEditBasedChange {
 
 	private static final class ComposableBufferChange {
 
@@ -382,14 +382,14 @@ public class CompositeTextFileChange extends AbstractTextEditChange {
 	}
 
 	/*
-	 * @see org.eclipse.ltk.core.refactoring.AbstractTextEditChange#getCurrentContent(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.ltk.core.refactoring.TextEditBasedChange#getCurrentContent(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final String getCurrentContent(final IProgressMonitor monitor) throws CoreException {
 		return getCurrentDocument(monitor).get();
 	}
 
 	/*
-	 * @see org.eclipse.ltk.core.refactoring.AbstractTextEditChange#getCurrentContent(org.eclipse.jface.text.IRegion,boolean,int,org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.ltk.core.refactoring.TextEditBasedChange#getCurrentContent(org.eclipse.jface.text.IRegion,boolean,int,org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final String getCurrentContent(final IRegion region, final boolean expand, final int surround, final IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(region);
@@ -437,7 +437,7 @@ public class CompositeTextFileChange extends AbstractTextEditChange {
 	}
 
 	/*
-	 * @see org.eclipse.ltk.core.refactoring.AbstractTextEditChange#getPreviewContent(org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup[],org.eclipse.jface.text.IRegion,boolean,int,org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.ltk.core.refactoring.TextEditBasedChange#getPreviewContent(org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup[],org.eclipse.jface.text.IRegion,boolean,int,org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final String getPreviewContent(final TextEditBasedChangeGroup[] groups, final IRegion region, final boolean expand, final int surround, final IProgressMonitor monitor) throws CoreException {
 
@@ -737,7 +737,7 @@ public class CompositeTextFileChange extends AbstractTextEditChange {
 	}
 
 	/*
-	 * @see org.eclipse.ltk.core.refactoring.AbstractTextEditChange#getPreviewContent(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.ltk.core.refactoring.TextEditBasedChange#getPreviewContent(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final String getPreviewContent(final IProgressMonitor monitor) throws CoreException {
 		return getPreviewDocument(monitor).get();
@@ -919,7 +919,7 @@ public class CompositeTextFileChange extends AbstractTextEditChange {
 	}
 
 	/*
-	 * @see org.eclipse.ltk.core.refactoring.AbstractTextEditChange#setKeepPreviewEdits(boolean)
+	 * @see org.eclipse.ltk.core.refactoring.TextEditBasedChange#setKeepPreviewEdits(boolean)
 	 */
 	public final void setKeepPreviewEdits(final boolean keep) {
 		super.setKeepPreviewEdits(keep);

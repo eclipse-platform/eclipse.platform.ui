@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.ltk.core.refactoring.AbstractTextEditChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -113,8 +113,8 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 			if (creator != null) {
 				creator.createChildren(changeElement);
 				result= changeElement.getChildren();
-			} else if (change instanceof AbstractTextEditChange) {
-				TextEditBasedChangeGroup[] groups= getSortedChangeGroups((AbstractTextEditChange)change);
+			} else if (change instanceof TextEditBasedChange) {
+				TextEditBasedChangeGroup[] groups= getSortedChangeGroups((TextEditBasedChange)change);
 				result= new ChangeElement[groups.length];
 				for (int i= 0; i < groups.length; i++) {
 					result[i]= new TextEditChangeElement(changeElement, groups[i]);
@@ -125,7 +125,7 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 		return result;
 	}
 	
-	private TextEditBasedChangeGroup[] getSortedChangeGroups(AbstractTextEditChange change) {
+	private TextEditBasedChangeGroup[] getSortedChangeGroups(TextEditBasedChange change) {
 		TextEditBasedChangeGroup[] groups= change.getChangeGroups();
 		List result= new ArrayList(groups.length);
 		for (int i= 0; i < groups.length; i++) {

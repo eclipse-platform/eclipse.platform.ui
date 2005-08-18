@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.util.Assert;
 
-import org.eclipse.ltk.core.refactoring.AbstractTextEditChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 
@@ -77,7 +77,7 @@ public class DefaultChangeElement extends ChangeElement {
 	 * @see ChangeElement.getActive
 	 */
 	public int getActive() {
-		if (fChange instanceof CompositeChange || fChange instanceof AbstractTextEditChange)
+		if (fChange instanceof CompositeChange || fChange instanceof TextEditBasedChange)
 			return getCompositeChangeActive();
 		else
 			return getDefaultChangeActive();

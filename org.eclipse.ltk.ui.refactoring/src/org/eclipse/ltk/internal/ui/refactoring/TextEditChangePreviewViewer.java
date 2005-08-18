@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-import org.eclipse.ltk.core.refactoring.AbstractTextEditChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.core.refactoring.Change;
 
@@ -140,7 +140,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 		}
 	}
 	
-	public static ChangePreviewViewerInput createInput(AbstractTextEditChange change) {
+	public static ChangePreviewViewerInput createInput(TextEditBasedChange change) {
 		return new ChangePreviewViewerInput(change);
 	}
 	
@@ -173,21 +173,21 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 				BufferChangeInput extended= (BufferChangeInput)input;
 				if (extended.group != null && extended.surroundingLines >= 0) {
 					TextEditBasedChangeGroup group= extended.group;
-					AbstractTextEditChange bufferChange= group.getTextEditChange();
-					setInput(bufferChange, bufferChange.getCurrentContent(group.getRegion(), true, 2, new NullProgressMonitor()),
-						bufferChange.getPreviewContent(new TextEditBasedChangeGroup[] { group }, group.getRegion(), true, 2, new NullProgressMonitor()),
-						bufferChange.getTextType());
+					TextEditBasedChange editChange= group.getTextEditChange();
+					setInput(editChange, editChange.getCurrentContent(group.getRegion(), true, 2, new NullProgressMonitor()),
+						editChange.getPreviewContent(new TextEditBasedChangeGroup[] { group }, group.getRegion(), true, 2, new NullProgressMonitor()),
+						editChange.getTextType());
 					return;
 				} else if (extended.groups != null && extended.groups.length > 0 && extended.range != null) {
-					AbstractTextEditChange bufferChange= extended.groups[0].getTextEditChange();
-					setInput(bufferChange, bufferChange.getCurrentContent(extended.range, true, 0, new NullProgressMonitor()),
-						bufferChange.getPreviewContent(extended.groups, extended.range, true, 0, new NullProgressMonitor()),
-						bufferChange.getTextType());
+					TextEditBasedChange editChange= extended.groups[0].getTextEditChange();
+					setInput(editChange, editChange.getCurrentContent(extended.range, true, 0, new NullProgressMonitor()),
+						editChange.getPreviewContent(extended.groups, extended.range, true, 0, new NullProgressMonitor()),
+						editChange.getTextType());
 					return;
 				}
-			} else if (change instanceof AbstractTextEditChange) {
-				AbstractTextEditChange bufferChange= (AbstractTextEditChange)change;
-				setInput(bufferChange, bufferChange.getCurrentContent(new NullProgressMonitor()), bufferChange.getPreviewContent(new NullProgressMonitor()), bufferChange.getTextType());
+			} else if (change instanceof TextEditBasedChange) {
+				TextEditBasedChange editChange= (TextEditBasedChange)change;
+				setInput(editChange, editChange.getCurrentContent(new NullProgressMonitor()), editChange.getPreviewContent(new NullProgressMonitor()), editChange.getTextType());
 				return;
 			} else {
 				fViewer.setInput(null);
@@ -202,7 +202,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 		fViewer.getViewer().refresh();
 	}
 	
-	private void setInput(AbstractTextEditChange change, String left, String right, String type) {
+	private void setInput(TextEditBasedChange change, String left, String right, String type) {
 		Object element= change.getModifiedElement();
 		if (element instanceof IAdaptable) {
 			IWorkbenchAdapter adapter= (IWorkbenchAdapter)((IAdaptable)element).getAdapter(IWorkbenchAdapter.class);

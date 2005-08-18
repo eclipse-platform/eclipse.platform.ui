@@ -34,7 +34,7 @@ import org.eclipse.ltk.internal.core.refactoring.Changes;
  * 
  * @since 3.2
  */
-public abstract class AbstractTextEditChange extends Change {
+public abstract class TextEditBasedChange extends Change {
 
 	/**
 	 * Text edit processor which has the ability to selectively include or exclude single text edits.
@@ -134,7 +134,7 @@ public abstract class AbstractTextEditChange extends Change {
 	 * 
 	 * @see #setTextType(String)
 	 */
-	protected AbstractTextEditChange(String name) {
+	protected TextEditBasedChange(String name) {
 		Assert.isNotNull(name, "Name must not be null"); //$NON-NLS-1$
 		fChangeGroups= new ArrayList(5);
 		fName= name;

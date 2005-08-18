@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.ltk.core.refactoring.AbstractTextEditChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.core.refactoring.Change;
 
@@ -48,10 +48,10 @@ public abstract class PseudoLanguageChangeElement extends ChangeElement {
 		DefaultChangeElement element= getDefaultChangeElement();
 		if (element != null) {
 			Change change= element.getChange();
-			if (change instanceof AbstractTextEditChange) {
-				List edits= collectTextEditChanges();
+			if (change instanceof TextEditBasedChange) {
+				List groups= collectTextEditChanges();
 				viewer.setInput(TextEditChangePreviewViewer.createInput(change,
-					(TextEditBasedChangeGroup[])edits.toArray(new TextEditBasedChangeGroup[edits.size()]),
+					(TextEditBasedChangeGroup[])groups.toArray(new TextEditBasedChangeGroup[groups.size()]),
 					getTextRange()));
 			}
 		} else {
