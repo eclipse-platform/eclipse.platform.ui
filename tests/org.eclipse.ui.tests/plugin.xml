@@ -425,6 +425,10 @@
       <category
             name="Component Tests"
             id="org.eclipse.ui.tests.components"/>
+      <view
+            class="org.eclipse.ui.tests.session.ViewWithState"
+            id="org.eclipse.ui.tests.session.ViewWithState"
+            name="ViewWithState"/>
 
    </extension>
    <extension
