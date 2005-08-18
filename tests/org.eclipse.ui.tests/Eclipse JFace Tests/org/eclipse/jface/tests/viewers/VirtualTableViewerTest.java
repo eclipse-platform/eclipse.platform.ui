@@ -247,6 +247,24 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		// are created.
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testDeleteSibling()
+	 */
+	public void testDeleteSibling() {
+		//Force creation of the item first
+		((TableViewer) fViewer).getTable().getItem(0).getText();
+		super.testDeleteSibling();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testSetSelection()
+	 */
+	public void testSetSelection() {
+		//Force creation of the item first
+		((TableViewer) fViewer).getTable().getItem(0).getText();
+		super.testSetSelection();
+	}
+	
 	/**
 	 * Test selecting all elements.
 	 */
