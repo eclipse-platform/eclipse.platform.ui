@@ -818,10 +818,12 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		// documents: left, right; modified and unchanged are either of both
 		IDocument left= fLeftDocument;
-		IDocument right= fRightDocument;
+		IDocument right= event.getDocument(); // TODO two-side
 		IDocument modified= event.getDocument();
 		if (modified != left && modified != right)
 			Assert.isTrue(false);
+		
+		boolean leftToRight= modified == left;
 
 		String insertion= event.getText();
 		int added= insertion == null ? 1 : modified.computeNumberOfLines(insertion) + 1;
@@ -838,7 +840,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		int lastLine= fFirstLine + fNLines - 1;
 
 		int repetitionField;
-		if (modified == left) {
+		if (leftToRight) {
 			int originalLine= getRightLine(lastLine + 1);
 			repetitionField= searchForRepetitionField(size - 1, right, originalLine);
 		} else {
@@ -851,7 +853,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// get enclosing range: search for a consistent block of at least the size of our
 		// change before and after the change.
 		RangeDifference consistentBefore, consistentAfter;
-		if (modified == left) {
+		if (leftToRight) {
 			consistentBefore= findConsistentRangeBeforeLeft(fFirstLine, size);
 			consistentAfter= findConsistentRangeAfterLeft(lastLine, size);
 		} else {
@@ -864,7 +866,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		int shiftBefore= 0;
 		if (consistentBefore.kind() == RangeDifference.NOCHANGE) {
 			int unchanged;
-			if (modified == left)
+			if (leftToRight)
 				unchanged= Math.min(fFirstLine, consistentBefore.leftEnd()) - consistentBefore.leftStart();
 			else
 				unchanged=  Math.min(fFirstLine, consistentBefore.rightEnd()) - consistentBefore.rightStart();
@@ -875,7 +877,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		int shiftAfter= 0;
 		if (consistentAfter.kind() == RangeDifference.NOCHANGE) {
 			int unchanged;
-			if (modified == left)
+			if (leftToRight)
 				unchanged= consistentAfter.leftEnd() - Math.max(lastLine + 1, consistentAfter.leftStart());
 			else
 				unchanged= consistentAfter.rightEnd() - Math.max(lastLine + 1, consistentAfter.rightStart());
@@ -888,7 +890,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// left (reference) document
 		int leftStartLine= consistentBefore.leftStart() + shiftBefore;
 		int leftLine= consistentAfter.leftEnd();
-		if (modified == left)
+		if (leftToRight)
 			leftLine += lineDelta;
 		int leftEndLine= leftLine - shiftAfter;
 		ILineRange leftRange= new LineRange(leftStartLine, leftEndLine - leftStartLine);
