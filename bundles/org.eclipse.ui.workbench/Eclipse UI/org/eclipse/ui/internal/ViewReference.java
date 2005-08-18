@@ -391,4 +391,14 @@ class ViewReference extends WorkbenchPartReference implements
         return result;
     }
     
+    /**
+     * The memento is that last view state saved by the workbench.
+     * 
+     * @return the last state that was saved by the workbench.  It can
+     * return <code>null</code>.
+     * @since 3.1.1
+     */
+    public IMemento getMemento() {
+    	return memento;
+    }
 }

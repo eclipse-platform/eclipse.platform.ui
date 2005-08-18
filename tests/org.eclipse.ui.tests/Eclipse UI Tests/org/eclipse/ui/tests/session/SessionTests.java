@@ -24,27 +24,37 @@ public class SessionTests extends TestSuite {
 	public SessionTests() {
 		addIntroTests();
 		addEditorTests();
+		addViewStateTests();
 	}
 
 	/**
 	 * @return
 	 */
 	public static Test suite() {
-    	return new SessionTests();
-    }
-	
+		return new SessionTests();
+	}
+
 	/**
 	 * Adds intro related session tests.
 	 */
 	private void addIntroTests() {
-		addTest(new WorkbenchSessionTest("introSessionTests", IntroSessionTests.class));
+		addTest(new WorkbenchSessionTest("introSessionTests",
+				IntroSessionTests.class));
 	}
-	
+
 	/**
 	 * Add editor tests that involve starting and stopping sessions.
 	 */
 	private void addEditorTests() {
 		addTest(new WorkbenchSessionTest("editorSessionTests",
-				Bug95357Test.class));		
+				Bug95357Test.class));
+	}
+
+	/**
+	 * Add a view state test that involves state from one session to the other.
+	 */
+	private void addViewStateTests() {
+		addTest(new WorkbenchSessionTest("editorSessionTests",
+				Bug98800Test.class));
 	}
 }

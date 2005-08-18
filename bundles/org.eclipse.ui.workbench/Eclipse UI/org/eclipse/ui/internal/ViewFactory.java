@@ -303,17 +303,27 @@ import org.eclipse.ui.views.IViewRegistry;
                 }
             });
         } else {
-            IMemento mem = getViewState(ViewFactory.getKey(ref));
-            if (mem != null) {
-                IMemento child = viewMemento
-                        .createChild(IWorkbenchConstants.TAG_VIEW_STATE);
-                child.putMemento(mem);
-            }
+        	IMemento mem = null;
+        	
+        	// if we've created the reference once, any previous workbench
+        	// state memento is there.  After once, there is no previous
+        	// session state, so it should be null.
+			if (ref instanceof ViewReference) {
+				mem = ((ViewReference) ref).getMemento();
+				if (mem!=null) {
+					mem = mem.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
+				}
+			}
+			if (mem != null) {
+				IMemento child = viewMemento
+						.createChild(IWorkbenchConstants.TAG_VIEW_STATE);
+				child.putMemento(mem);
+			}
         }
         return viewMemento;
     }
 
-    //	for dynamic UI
+    // for dynamic UI
     public void restoreViewState(IMemento memento) {
         String compoundId = memento.getString(IWorkbenchConstants.TAG_ID);
         mementoTable.put(compoundId, memento);
