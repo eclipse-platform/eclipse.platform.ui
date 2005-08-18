@@ -12,8 +12,6 @@
 
 package org.eclipse.ui.internal.wizards.datatransfer;
 
-import java.io.InputStream;
-import java.util.List;
 
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 
@@ -26,51 +24,6 @@ import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
  * @since 3.1
  */
 interface ILeveledImportStructureProvider extends IImportStructureProvider {
-	/**
-	 * Returns a collection with the children of the specified structured
-	 * element.
-	 */
-	public abstract List getChildren(Object element);
-
-	/**
-	 * Returns the contents of the specified structured element, or
-	 * <code>null</code> if there is a problem determining the element's
-	 * contents.
-	 * 
-	 * @param element
-	 *            a structured element
-	 * @return the contents of the structured element, or <code>null</code>
-	 */
-	public abstract InputStream getContents(Object element);
-
-	/**
-	 * Returns the full path of the specified structured element.
-	 * 
-	 * @param element
-	 *            a structured element
-	 * @return the display label of the structured element
-	 */
-	public abstract String getFullPath(Object element);
-
-	/**
-	 * Returns the display label of the specified structured element.
-	 * 
-	 * @param element
-	 *            a structured element
-	 * @return the display label of the structured element
-	 */
-	public abstract String getLabel(Object element);
-
-	/**
-	 * Returns a boolean indicating whether the passed structured element
-	 * represents a container element (as opposed to a leaf element).
-	 * 
-	 * @return boolean
-	 * @param element
-	 *            java.lang.Object
-	 */
-	public abstract boolean isFolder(Object element);
-
 	/**
 	 * Returns the entry that this importer uses as the root sentinel.
 	 * 
