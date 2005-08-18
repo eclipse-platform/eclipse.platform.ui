@@ -253,6 +253,17 @@
             <annotation>
                <documentation>
                   An optional properties file with resources for the templates specified in &lt;tt&gt;file&lt;/tt&gt;.
+&lt;br&gt;
+&lt;em&gt;Note:&lt;/em&gt; The translation files are not treated as resource bundles and hence the file name has to be left as is i.e. do not add the  locale to the file name. The translated files must be in the &apos;nl&apos; directory i.e. if a [plugin] defines a template translations file in its plugin.xml like:
+&lt;pre&gt;
+...
+  translations=$nl$/[plugin-relative path to file]
+...
+&lt;/pre&gt;
+then the translations must go into:
+&lt;pre&gt;
+  [plugins nl fragment]/nl/[locale]/templates/[plugin-relative path to file]
+&lt;/pre&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
