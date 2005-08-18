@@ -104,7 +104,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.TYPE_EXTENDER_UNKOWN_METHOD,
 				Messages.format(
-					ExpressionMessages.TypeExtender_unknownMethod,  //$NON-NLS-1$
+					ExpressionMessages.TypeExtender_unknownMethod,  
 					new Object[] {method, clazz.toString()})));
 		}
 		result.setPropertyTester(extender);
