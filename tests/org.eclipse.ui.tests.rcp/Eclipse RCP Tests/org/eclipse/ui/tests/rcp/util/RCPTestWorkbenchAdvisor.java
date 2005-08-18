@@ -65,6 +65,10 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
     }
 
     public void eventLoopIdle(final Display display) {
+    	// Bug 107369: RCP test suite hangs on GTK
+        if (idleBeforeExit!=-1 && --idleBeforeExit <= 0)
+            PlatformUI.getWorkbench().close();
+
         // bug 73184: On the mac the parent eventLoopIdle will put the display to sleep
         //            until there are events (e.g., mouse jiggled).
         if (!"carbon".equals(SWT.getPlatform()))
@@ -72,8 +76,5 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 
         if (idleBeforeExit == -1)
             return;
-
-        if (--idleBeforeExit <= 0)
-            PlatformUI.getWorkbench().close();
     }
 }
