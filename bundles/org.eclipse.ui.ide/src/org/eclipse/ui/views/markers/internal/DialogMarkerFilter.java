@@ -13,18 +13,27 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -57,7 +66,7 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
  * Dialog which allows user to modify all settings of an org.eclipse.ui.views.MarkerFilter object.
  * Not intended to be subclassed or instantiated by clients.
  */
-public class DialogMarkerFilter extends Dialog {
+public abstract class DialogMarkerFilter extends Dialog {
     /**
      * button IDs
      */
@@ -225,7 +234,7 @@ public class DialogMarkerFilter extends Dialog {
         }
     }
 
-    private MarkerFilter filter;
+    private MarkerFilter[] filters;
 
     private CheckboxTableViewer typesViewer;
 
@@ -263,12 +272,20 @@ public class DialogMarkerFilter extends Dialog {
         }
     };
 
+	private ListViewer filtersList;
+
+	private Composite selectedComposite;
+
+	private MarkerFilter[] selectedFilters;
+
     /**
-     * Creates a new filters dialog.
+     * Create a new instance of the receiver.
+     * @param parentShell
+     * @param filtersList
      */
-    DialogMarkerFilter(Shell parentShell, MarkerFilter filter) {
+    DialogMarkerFilter(Shell parentShell, MarkerFilter[] filtersList) {
         super(parentShell);
-        this.filter = filter;
+        this.filters = filtersList;
     }
 
     /* (non-Javadoc)
@@ -373,19 +390,213 @@ public class DialogMarkerFilter extends Dialog {
      * Method declared on Dialog.
      */
     protected Control createDialogArea(Composite parent) {
-        Composite composite = (Composite) super.createDialogArea(parent);
+        Composite dialogArea = (Composite) super.createDialogArea(parent);
         
-        createOnOffArea(composite);
-        createMarkerLimitArea(composite);
-        createTypesArea(composite);
-        createResourceArea(composite);
-        createAttributesArea(composite);
-        createResetArea(composite);
-        createSeparatorLine(composite);
+        dialogArea.setLayout(new GridLayout(2,false));
+        
+        createFiltersArea(dialogArea);
+        
+        createSelectedFilterArea(dialogArea);
 
         updateUIFromFilter();
+        
+        filtersList.setSelection(new StructuredSelection(filters[0]));
 
-        return composite;
+        return dialogArea;
+    }
+    
+    /**
+     * Create the list in the receiver.
+     * @param dialogArea
+     */
+    /**
+     * @param dialogArea
+     */
+    private void createFiltersArea(Composite dialogArea) {
+    	
+    	Composite listArea = new Composite(dialogArea,SWT.NONE);
+    	listArea.setLayoutData(
+				new GridData(SWT.FILL,SWT.FILL,false,true));
+    	listArea.setLayout(new GridLayout());
+    	
+    	Label title = new Label(listArea,SWT.NONE);
+    	title.setText(Messages.getString("MarkerFilter.filtersTitle"));//$NON-NLS-1$
+		filtersList = new ListViewer(listArea);
+		filtersList.setContentProvider(new IStructuredContentProvider(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 */
+			public Object[] getElements(Object inputElement) {
+				return filters;
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+			 */
+			public void dispose() {
+				//Do nothing
+			}
+			
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			 */
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				//Do nothing
+			}
+		});
+		
+		filtersList.setLabelProvider(new LabelProvider(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+			 */
+			public String getText(Object element) {
+				return((MarkerFilter) element).getName();
+			}
+		});
+		
+		selectedFilters = new MarkerFilter[]{filters[0]};
+		filtersList.setSelection(new StructuredSelection(selectedFilters));
+		
+		filtersList.addSelectionChangedListener(new ISelectionChangedListener(){
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+			 */
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateFilterFromUI(getSelectedFilter());
+				setSelectedFilter(event);
+				
+			}
+		});
+		
+		filtersList.setInput(this);
+		
+		filtersList.getControl().setLayoutData(
+				new GridData(SWT.FILL,SWT.FILL,false,true));
+		
+		Composite buttons = new Composite(listArea,SWT.NONE);
+		buttons.setLayout(new GridLayout(2,false));
+		
+		
+		Button addNew = new Button(buttons,SWT.PUSH);
+		addNew.setText(Messages.getString("MarkerFilter.addFilterName"));//$NON-NLS-1$)
+		addNew.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				InputDialog newDialog =
+					new InputDialog(
+							getShell(),
+							Messages.getString("MarkerFilterDialog.title"),//$NON-NLS-1$
+							Messages.getString("MarkerFilterDialog.message"),//$NON-NLS-1$
+							Messages.getString("MarkerFilter.defaultFilterName"),//$NON-NLS-1$
+							new IInputValidator(){
+								/* (non-Javadoc)
+								 * @see org.eclipse.jface.dialogs.IInputValidator#isValid(java.lang.String)
+								 */
+								public String isValid(String newText) {
+									if (newText.length() == 0)
+										return Messages.getString("MarkerFilterDialog.emptyMessage");//$NON-NLS-1$
+									return null;
+								}
+							}
+				);
+				newDialog.open();
+				String newName = newDialog.getValue();
+				if(newName != null){
+					createNewFilter(newName);					
+				}
+			}
+		});
+		
+		Button remove = new Button(buttons,SWT.PUSH);
+		remove.setText(Messages.getString("MarkerFilter.deleteSelectedName"));//$NON-NLS-1$)
+		remove.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				removeFilters(filtersList.getSelection());
+			}
+		});
+	}
+
+    /**
+     * Set the selected filter from event.
+     * @param event
+     */
+    protected void setSelectedFilter(SelectionChangedEvent event) {
+		
+		ISelection selection = event.getSelection();
+		if(selection instanceof IStructuredSelection){
+			Collection list =  ((IStructuredSelection)selection).toList();
+			MarkerFilter[] selected = new MarkerFilter[list.size()];
+			list.toArray(selected);
+			selectedFilters =  selected;
+			
+		}
+		else
+			selectedFilters = new MarkerFilter[0];
+		updateUIFromFilter();
+		
+	}
+
+	/**
+     * Remove the filters in selection.
+     * @param selection
+     */
+    protected void removeFilters(ISelection selection){
+    	if(selection instanceof IStructuredSelection){
+    		List toRemove = ((IStructuredSelection) selection).toList();
+    		MarkerFilter[] newFilters = new MarkerFilter[filters.length - toRemove.size()];
+    		int index = 0;
+    		for (int i = 0; i < filters.length; i++) {
+				if(toRemove.contains(filters[i]))
+					continue;
+				newFilters[index] = filters[i];
+				index ++;
+			}
+    		
+    		filters = newFilters;
+    		filtersList.refresh();
+    	}
+    }
+
+	/**
+     * Create a new filter called newName.
+     * @param newName
+     */
+	private void createNewFilter(String newName){
+		MarkerFilter[] newFilters = new MarkerFilter[filters.length + 1];
+		System.arraycopy(filters,0,newFilters,0,filters.length);
+		MarkerFilter filter = newFilter(newName);
+		filter.resetState();
+		newFilters[filters.length] = filter;
+		filters = newFilters;
+		filtersList.refresh();
+	}
+
+	/**
+	 * Crate a newFilter called newName
+	 * @param newName
+	 * @return MarkerFilter
+	 */
+	protected abstract MarkerFilter newFilter(String newName);
+
+	/**
+     * Create the area for the selected filter.
+     * @param composite
+     */
+    private void createSelectedFilterArea(Composite composite){
+    	
+    	selectedComposite = new Composite(composite,SWT.NONE);
+    	selectedComposite.setLayout(new GridLayout());
+    	selectedComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+    	
+    	createOnOffArea(selectedComposite);
+        createMarkerLimitArea(selectedComposite);
+        createTypesArea(selectedComposite);
+        createResourceArea(selectedComposite);
+        createAttributesArea(selectedComposite);
+        createResetArea(selectedComposite);
+        createSeparatorLine(selectedComposite);
+    	
     }
 
     /**
@@ -474,7 +685,7 @@ public class DialogMarkerFilter extends Dialog {
         typesViewer.setLabelProvider(getLabelProvider());
         typesViewer.setSorter(getSorter());
         typesViewer.addCheckStateListener(checkStateListener);
-        typesViewer.setInput(filter.getRootTypes().toArray());
+        typesViewer.setInput(getSelectedFilter().getRootTypes().toArray());
 
         Composite buttonComposite = new Composite(composite, SWT.NONE);
         GridLayout buttonLayout = new GridLayout();
@@ -487,10 +698,27 @@ public class DialogMarkerFilter extends Dialog {
                 false);
     }
 
-    private IStructuredContentProvider getContentProvider() {
+    
+    /**
+     * Get the currently selected marker filter if there is only one
+     * selection.
+     * @return MarkerFilter or <code>null</code>.
+     */
+    protected MarkerFilter getSelectedFilter() {
+    	
+    	if(selectedFilters.length == 1)
+    		return selectedFilters[0];
+    	return null;
+	}
+
+	private IStructuredContentProvider getContentProvider() {
         return new IStructuredContentProvider() {
             public Object[] getElements(Object inputElement) {
-                List roots = filter.getRootTypes();
+            	MarkerFilter selected = getSelectedFilter();
+            	if(selected == null)
+            		return new Object[0];
+            	
+                List roots = selected.getRootTypes();
                 List elements = new ArrayList();
                 for (int i = 0; i < roots.size(); i++) {
                     Object obj = roots.get(i);
@@ -696,7 +924,26 @@ public class DialogMarkerFilter extends Dialog {
      * Updates the given filter from the UI state.
      */
     protected void updateFilterFromUI() {
-        filter.setEnabled(filterEnabledButton.getSelection());
+    	
+    	MarkerFilter filter = getSelectedFilter();
+    	
+    	if(filter == null){
+    		selectedComposite.setEnabled(false);
+    		return;
+    	}
+    		
+    	if(!selectedComposite.isEnabled())
+    		selectedComposite.setEnabled(true);
+    	
+        updateFilterFromUI(filter);
+    }
+
+    /**
+     * Update the selected filter from the UI.
+     * @param filter
+     */
+	private void updateFilterFromUI(MarkerFilter filter) {
+		filter.setEnabled(filterEnabledButton.getSelection());
 
         filter.setSelectedTypes(getSelectedTypes());
 
@@ -723,12 +970,23 @@ public class DialogMarkerFilter extends Dialog {
 
         filter.setMarkerLimit(markerLimit);
         filter.setFilterOnMarkerLimit(filterOnMarkerLimit.getSelection());
-    }
+	}
 
     /**
      * Updates the UI state from the given filter.
      */
     protected void updateUIFromFilter() {
+    	
+    	MarkerFilter filter = getSelectedFilter();
+    	
+    	if(filter == null){
+    		selectedComposite.setEnabled(false);
+    		return;
+    	}
+    		
+    	if(!selectedComposite.isEnabled())
+    		selectedComposite.setEnabled(true);
+    	
         filterEnabledButton.setSelection(filter.isEnabled());
 
         setSelectedTypes(filter.getSelectedTypes());
@@ -779,15 +1037,15 @@ public class DialogMarkerFilter extends Dialog {
      * @param newFilter
      */
     public void setFilter(MarkerFilter newFilter) {
-        filter = newFilter;
+        filters = new MarkerFilter[] {newFilter};
         updateUIFromFilter();
     }
 
     /**
      * @return the MarkerFilter associated with the dialog.
      */
-    public MarkerFilter getFilter() {
-        return filter;
+    public MarkerFilter[] getFilters() {
+        return filters;
     }
 
     /**

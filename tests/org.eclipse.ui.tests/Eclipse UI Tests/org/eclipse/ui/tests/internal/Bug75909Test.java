@@ -58,7 +58,7 @@ public class Bug75909Test extends TestCase {
 	 * @throws Throwable
 	 */
 	public void testBasicFilter() throws Throwable {
-		ProblemFilter filter = new ProblemFilter();
+		ProblemFilter filter = new ProblemFilter("Bug75909Test");
 		filter.resetState();
 
 		List allTypes = new ArrayList();
@@ -86,8 +86,8 @@ public class Bug75909Test extends TestCase {
 		IDialogSettings settings = new DialogSettings("Workbench");
 		loadSettings(settings, Bug75909Test.OLD_DIALOG_SETTINGS_XML);
 
-		ProblemFilter filter = new ProblemFilter();
-		filter.restoreState(settings);
+		ProblemFilter filter = new ProblemFilter("Bug75909Test");
+		filter.restoreState(getFilterSettings(settings));
 
 		List selected = filter.getSelectedTypes();
 		assertEquals(Bug75909Test.OLD_SETTINGS_SELECTED, selected.size());
@@ -113,8 +113,8 @@ public class Bug75909Test extends TestCase {
 		IDialogSettings settings = new DialogSettings("Workbench");
 		loadSettings(settings, Bug75909Test.MISSING_DIALOG_SETTINGS_XML);
 
-		ProblemFilter filter = new ProblemFilter();
-		filter.restoreState(settings);
+		ProblemFilter filter = new ProblemFilter("Bug75909Test");
+		filter.restoreState(getFilterSettings(settings));
 
 		List included = new ArrayList();
 		filter.addAllSubTypes(included);
@@ -136,6 +136,15 @@ public class Bug75909Test extends TestCase {
 	}
 	
 	/**
+	 * Get the settings for the filter tag.
+	 * @param settings
+	 * @return IDialogSettings
+	 */
+	private IDialogSettings getFilterSettings(IDialogSettings settings) {
+		return settings.getSection("filter");
+	}
+
+	/**
 	 * MarkerFilter.saveState(IDialogSettings) should now save selected
 	 * types with <b>true</b> and unselected types are now saved to the
 	 * list with <b>false</b>.  This is an "identity transform" test.
@@ -143,7 +152,7 @@ public class Bug75909Test extends TestCase {
 	 * @throws Throwable
 	 */
 	public void testSaveState() throws Throwable {
-		ProblemFilter filter = new ProblemFilter();
+		ProblemFilter filter = new ProblemFilter("Bug75909Test");
 		filter.resetState();
 
 		List allTypes = new ArrayList();
@@ -161,11 +170,11 @@ public class Bug75909Test extends TestCase {
 		StringWriter out = new StringWriter();
 		settings.save(out);
 		
-		ProblemFilter f2 = new ProblemFilter();
+		ProblemFilter f2 = new ProblemFilter("Bug75909Test");
 		BufferedReader in = new BufferedReader(new StringReader(out.toString()));
 		settings = new DialogSettings("Workbench");
 		settings.load(in);
-		f2.restoreState(settings);
+		f2.restoreState(settings.getSection(f2.getName()));
 		
 		assertEquals(filter.getSelectedTypes().size(),
 				f2.getSelectedTypes().size());

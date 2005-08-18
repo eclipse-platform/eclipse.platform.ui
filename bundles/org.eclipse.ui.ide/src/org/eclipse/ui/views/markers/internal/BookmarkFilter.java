@@ -16,93 +16,103 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class BookmarkFilter extends MarkerFilter {
 
-    private final static String TAG_CONTAINS = "contains"; //$NON-NLS-1$
+	private final static String TAG_CONTAINS = "contains"; //$NON-NLS-1$
 
-    private final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
+	private final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
-    private final static String TAG_DIALOG_SECTION = "filter"; //$NON-NLS-1$
+	final static boolean DEFAULT_CONTAINS = true;
 
-    final static boolean DEFAULT_CONTAINS = true;
+	final static String DEFAULT_DESCRIPTION = ""; //$NON-NLS-1$
 
-    final static String DEFAULT_DESCRIPTION = ""; //$NON-NLS-1$
+	private boolean contains;
 
-    private boolean contains;
+	private String description;
 
-    private String description;
+	/**
+	 * Create a new instance of the recevier with the default name.
+	 * 
+	 */
+	public BookmarkFilter() {
+		this(Messages.getString("MarkerFilter.defaultFilterName"));//$NON-NLS-1$
+	}
 
-    public BookmarkFilter() {
-        super(new String[] { IMarker.BOOKMARK });
-    }
+	/**
+	 * Create a new instance of the recevier with the filterName
+	 * 
+	 * @param filterName
+	 */
+	public BookmarkFilter(String filterName) {
+		super(filterName, new String[] { IMarker.BOOKMARK });//$NON-NLS-1$
+	}
 
-    /**
-     * Returns true iff the given marker is accepted by this filter
-     */
-    public boolean selectMarker(ConcreteMarker marker) {
-        return !isEnabled()
-                || (super.selectMarker(marker) && selectByDescription(marker));
-    }
+	/**
+	 * Returns true iff the given marker is accepted by this filter
+	 */
+	public boolean selectMarker(ConcreteMarker marker) {
+		return !isEnabled()
+				|| (super.selectMarker(marker) && selectByDescription(marker));
+	}
 
-    private boolean selectByDescription(ConcreteMarker marker) {
-        if (description == null || description.equals("")) //$NON-NLS-1$
-            return true;
+	private boolean selectByDescription(ConcreteMarker marker) {
+		if (description == null || description.equals("")) //$NON-NLS-1$
+			return true;
 
-        String markerDescription = marker.getDescription();
-        int index = markerDescription.indexOf(description);
-        return contains ? (index >= 0) : (index < 0);
-    }
+		String markerDescription = marker.getDescription();
+		int index = markerDescription.indexOf(description);
+		return contains ? (index >= 0) : (index < 0);
+	}
 
-    boolean getContains() {
-        return contains;
-    }
+	boolean getContains() {
+		return contains;
+	}
 
-    String getDescription() {
-        return description;
-    }
+	String getDescription() {
+		return description;
+	}
 
-    void setContains(boolean contains) {
-        this.contains = contains;
-    }
+	void setContains(boolean contains) {
+		this.contains = contains;
+	}
 
-    void setDescription(String description) {
-        this.description = description;
-    }
+	void setDescription(String description) {
+		this.description = description;
+	}
 
-    void resetState() {
-        super.resetState();
-        contains = DEFAULT_CONTAINS;
-        description = DEFAULT_DESCRIPTION;
-    }
+	void resetState() {
+		super.resetState();
+		contains = DEFAULT_CONTAINS;
+		description = DEFAULT_DESCRIPTION;
+	}
 
-    public void restoreState(IDialogSettings dialogSettings) {
-        super.restoreState(dialogSettings);
-        IDialogSettings settings = dialogSettings
-                .getSection(TAG_DIALOG_SECTION);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
+	 */
+	protected void restoreFilterSettings(IDialogSettings settings) {
 
-        if (settings != null) {
-            String setting = settings.get(TAG_CONTAINS);
+		super.restoreFilterSettings(settings);
 
-            if (setting != null)
-                contains = Boolean.valueOf(setting).booleanValue();
+		String setting = settings.get(TAG_CONTAINS);
 
-            setting = settings.get(TAG_DESCRIPTION);
+		if (setting != null)
+			contains = Boolean.valueOf(setting).booleanValue();
 
-            if (setting != null)
-                description = new String(setting);
-        }
-    }
+		setting = settings.get(TAG_DESCRIPTION);
 
-    public void saveState(IDialogSettings dialogSettings) {
-        super.saveState(dialogSettings);
+		if (setting != null)
+			description = new String(setting);
 
-        if (dialogSettings != null) {
-            IDialogSettings settings = dialogSettings
-                    .getSection(TAG_DIALOG_SECTION);
+	}
 
-            if (settings == null)
-                settings = dialogSettings.addNewSection(TAG_DIALOG_SECTION);
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#saveFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
+	 */
+	protected void saveFilterSettings(IDialogSettings settings) {
+		super.saveFilterSettings(settings);
+		settings.put(TAG_CONTAINS, contains);
+		settings.put(TAG_DESCRIPTION, description);
+	}
 
-            settings.put(TAG_CONTAINS, contains);
-            settings.put(TAG_DESCRIPTION, description);
-        }
-    }
+	
 }

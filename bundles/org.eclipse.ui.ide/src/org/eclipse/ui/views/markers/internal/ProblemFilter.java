@@ -20,8 +20,6 @@ public class ProblemFilter extends MarkerFilter {
 
     private static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
-    private static final String TAG_DIALOG_SECTION = "filter"; //$NON-NLS-1$
-
     private static final String TAG_SELECT_BY_SEVERITY = "selectBySeverity"; //$NON-NLS-1$
 
     private static final String TAG_SEVERITY = "severity"; //$NON-NLS-1$
@@ -47,9 +45,14 @@ public class ProblemFilter extends MarkerFilter {
     private boolean selectBySeverity;
 
     private int severity;
-
-    public ProblemFilter() {
-        super(new String[] { IMarker.PROBLEM });
+    
+    /**
+     * Create a new instance of the receiver with name filterName.
+     * @param filterName A human readable name for the filter.
+     */
+    public ProblemFilter(String filterName) {
+        super(filterName,new String[] { IMarker.PROBLEM });
+        
     }
 
     public boolean selectMarker(ConcreteMarker marker) {
@@ -128,51 +131,51 @@ public class ProblemFilter extends MarkerFilter {
         severity = DEFAULT_SEVERITY;
     }
 
-    public void restoreState(IDialogSettings dialogSettings) {
-        super.restoreState(dialogSettings);
-        IDialogSettings settings = dialogSettings
-                .getSection(TAG_DIALOG_SECTION);
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
+     */
+    protected void restoreFilterSettings(IDialogSettings settings) {
+    
+    	super.restoreFilterSettings(settings);
+        
+        String setting = settings.get(TAG_CONTAINS);
 
-        if (settings != null) {
-            String setting = settings.get(TAG_CONTAINS);
+        if (setting != null)
+           contains = Boolean.valueOf(setting).booleanValue();
 
-            if (setting != null)
-                contains = Boolean.valueOf(setting).booleanValue();
+        setting = settings.get(TAG_DESCRIPTION);
 
-            setting = settings.get(TAG_DESCRIPTION);
+        if (setting != null)
+           description = new String(setting);
 
-            if (setting != null)
-                description = new String(setting);
+        setting = settings.get(TAG_SELECT_BY_SEVERITY);
 
-            setting = settings.get(TAG_SELECT_BY_SEVERITY);
+        if (setting != null)
+            selectBySeverity = Boolean.valueOf(setting).booleanValue();
 
-            if (setting != null)
-                selectBySeverity = Boolean.valueOf(setting).booleanValue();
+        setting = settings.get(TAG_SEVERITY);
 
-            setting = settings.get(TAG_SEVERITY);
-
-            if (setting != null)
-                try {
-                    severity = Integer.parseInt(setting);
-                } catch (NumberFormatException eNumberFormat) {
-                }
+        if (setting != null)
+            try {
+                 severity = Integer.parseInt(setting);
+            } catch (NumberFormatException eNumberFormat) {
         }
+        
+    
     }
-
-    public void saveState(IDialogSettings dialogSettings) {
-        super.saveState(dialogSettings);
-
-        if (dialogSettings != null) {
-            IDialogSettings settings = dialogSettings
-                    .getSection(TAG_DIALOG_SECTION);
-
-            if (settings == null)
-                settings = dialogSettings.addNewSection(TAG_DIALOG_SECTION);
-
-            settings.put(TAG_CONTAINS, contains);
-            settings.put(TAG_DESCRIPTION, description);
-            settings.put(TAG_SELECT_BY_SEVERITY, selectBySeverity);
-            settings.put(TAG_SEVERITY, severity);
-        }
+    
+  
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.MarkerFilter#saveFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
+     */
+    protected void saveFilterSettings(IDialogSettings settings) {
+    	super.saveFilterSettings(settings);
+    	settings.put(TAG_CONTAINS, contains);
+        settings.put(TAG_DESCRIPTION, description);
+        settings.put(TAG_SELECT_BY_SEVERITY, selectBySeverity);
+        settings.put(TAG_SEVERITY, severity);
+    
     }
+   
 }

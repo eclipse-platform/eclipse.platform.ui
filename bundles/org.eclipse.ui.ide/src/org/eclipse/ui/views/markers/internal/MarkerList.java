@@ -156,15 +156,21 @@ public class MarkerList {
 
     /**
      * Computes the set of markers that match the given filter
-     * @param filter the filter to apply
+     * @param filters the filters to apply
      * @param mon the monitor to update
      * @param ignoreExceptions whether or not exception will be shown
      * @return MarkerList
      * @throws CoreException
      */
-    public static MarkerList compute(MarkerFilter filter, IProgressMonitor mon,
+    public static MarkerList compute(MarkerFilter[] filters, IProgressMonitor mon,
             boolean ignoreExceptions) throws CoreException {
-        return new MarkerList(filter.findMarkers(mon, ignoreExceptions));
+    	
+    	Collection returnMarkers = new ArrayList();
+    	
+    	for (int i = 0; i < filters.length; i++) {
+    		returnMarkers.addAll(filters[i].findMarkers(mon, ignoreExceptions));
+		}
+        return new MarkerList(returnMarkers);
     }
 
     /**

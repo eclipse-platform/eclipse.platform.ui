@@ -12,7 +12,6 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -30,15 +29,11 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -131,8 +126,6 @@ public class TaskView extends MarkerView {
 
     private CellEditorActionHandler cellEditorActionHandler;
 
-    private TaskFilter taskFilter;
-
     private ActionAddGlobalTask addGlobalTaskAction;
 
     private ActionDeleteCompleted deleteCompletedAction;
@@ -181,24 +174,6 @@ public class TaskView extends MarkerView {
         super.dispose();
     }
 
-    public void init(IViewSite viewSite, IMemento memento)
-            throws PartInitException {
-        super.init(viewSite, memento);
-        taskFilter = new TaskFilter();
-        IDialogSettings dialogSettings = getDialogSettings();
-
-        if (taskFilter != null)
-            taskFilter.restoreState(dialogSettings);
-    }
-
-    public void saveState(IMemento memento) {
-        IDialogSettings dialogSettings = getDialogSettings();
-
-        if (taskFilter != null)
-            taskFilter.saveState(dialogSettings);
-
-        super.saveState(memento);
-    }
 
     protected ColumnPixelData[] getDefaultColumnLayouts() {
         return DEFAULT_COLUMN_LAYOUTS;
@@ -251,11 +226,7 @@ public class TaskView extends MarkerView {
         manager.add(markCompletedAction);
         manager.add(deleteCompletedAction);
     }
-
-    protected DialogMarkerFilter getFiltersDialog() {
-        return new DialogTaskFilter(getSite().getShell(), taskFilter);
-    }
-
+    
     protected IField[] getHiddenFields() {
         return HIDDEN_FIELDS;
     }
@@ -290,35 +261,32 @@ public class TaskView extends MarkerView {
         return new String[] { IMarker.TASK };
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.MarkerView#getFilter()
-     */
-    protected MarkerFilter getFilter() {
-        return taskFilter;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.MarkerView#openFiltersDialog()
-     */
-    public void openFiltersDialog() {
-        DialogTaskFilter dialog = new DialogTaskFilter(getSite().getShell(),
-                taskFilter);
-
-        if (dialog.open() == Window.OK) {
-            taskFilter = (TaskFilter) dialog.getFilter();
-            taskFilter.saveState(getDialogSettings());
-            refresh();
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.MarkerView#updateFilterSelection(org.eclipse.core.resources.IResource[])
-     */
-    protected void updateFilterSelection(IResource[] resources) {
-        taskFilter.setFocusResource(resources);
-    }
-
 	protected String getStaticContextId() {
         return PlatformUI.PLUGIN_ID + ".task_list_view_context"; //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#createFiltersDialog()
+	 */
+	protected DialogMarkerFilter createFiltersDialog() {
+
+		MarkerFilter[] filters = getFilters();
+		TaskFilter[] taskFilters = new TaskFilter[filters.length];
+		System.arraycopy(filters, 0, taskFilters, 0, filters.length);
+		return new DialogTaskFilter(getSite().getShell(), taskFilters);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#createFilter(java.lang.String)
+	 */
+	protected MarkerFilter createFilter(String name) {
+		return new TaskFilter(name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getSectionTag()
+	 */
+	protected String getSectionTag() {
+		return TAG_DIALOG_SECTION;
 	}
 }

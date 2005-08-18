@@ -12,7 +12,6 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
@@ -20,12 +19,8 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -88,30 +83,24 @@ public class ProblemView extends MarkerView {
 
     private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.problem"; //$NON-NLS-1$
 
-    private ProblemFilter problemFilter = new ProblemFilter();
-
     private ActionResolveMarker resolveMarkerAction;
 
     private TableSorter sorter;
 
-    public void dispose() {
+    /**
+     * Return a new instance of the receiver.
+     */
+    public ProblemView() {
+		super();		
+    }
+
+	public void dispose() {
         if (resolveMarkerAction != null)
             resolveMarkerAction.dispose();
 
         super.dispose();
     }
 
-    public void init(IViewSite viewSite, IMemento memento)
-            throws PartInitException {
-        super.init(viewSite, memento);
-        problemFilter.restoreState(getDialogSettings());
-    }
-
-    public void saveState(IMemento memento) {
-        problemFilter.saveState(getDialogSettings());
-
-        super.saveState(memento);
-    }
 
     protected ColumnPixelData[] getDefaultColumnLayouts() {
         return DEFAULT_COLUMN_LAYOUTS;
@@ -149,11 +138,6 @@ public class ProblemView extends MarkerView {
     protected void fillContextMenuAdditions(IMenuManager manager) {
         manager.add(new Separator());
         manager.add(resolveMarkerAction);
-    }
-
-    protected DialogMarkerFilter getFiltersDialog() {
-        return new DialogProblemFilter(getViewer().getControl().getShell(),
-                problemFilter);
     }
 
     protected IField[] getHiddenFields() {
@@ -230,36 +214,33 @@ public class ProblemView extends MarkerView {
         return new String[] { IMarker.PROBLEM };
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.MarkerView#getFilter()
-     */
-    protected MarkerFilter getFilter() {
-        return problemFilter;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.MarkerView#openFiltersDialog()
-     */
-    public void openFiltersDialog() {
-        DialogProblemFilter dialog = new DialogProblemFilter(getViewer()
-                .getControl().getShell(), problemFilter);
-
-        if (dialog.open() == Window.OK) {
-            problemFilter = (ProblemFilter) dialog.getFilter();
-            problemFilter.saveState(getDialogSettings());
-            refresh();
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.MarkerView#updateFilterSelection(org.eclipse.core.resources.IResource[])
-     */
-    protected void updateFilterSelection(IResource[] resources) {
-        problemFilter.setFocusResource(resources);
-    }
-
 	protected String getStaticContextId() {
 		// TODO this context is missing - add it
         return PlatformUI.PLUGIN_ID + ".problem_view_context"; //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#createFiltersDialog()
+	 */
+	protected DialogMarkerFilter createFiltersDialog() {
+
+		MarkerFilter[] filters = getFilters();
+		ProblemFilter[]problemFilters = new ProblemFilter[filters.length];
+		System.arraycopy(filters, 0, problemFilters, 0, filters.length);
+		return new DialogProblemFilter(getSite().getShell(), problemFilters);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#createFilter(java.lang.String)
+	 */
+	protected MarkerFilter createFilter(String name) {
+		return new ProblemFilter(name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getSectionTag()
+	 */
+	protected String getSectionTag() {
+		return TAG_DIALOG_SECTION;
 	}
 }
