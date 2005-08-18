@@ -85,7 +85,7 @@ public class RefactoringCorePlugin extends Plugin {
 			IStatus.ERROR, getPluginId(), 
 			IRefactoringCoreStatusCodes.INTERNAL_ERROR, 
 			Messages.format(
-				RefactoringCoreMessages.RefactoringCorePlugin_participant_removed,  //$NON-NLS-1$
+				RefactoringCoreMessages.RefactoringCorePlugin_participant_removed,  
 				descriptor.getId()),
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);

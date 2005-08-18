@@ -74,7 +74,7 @@ public class RedoRefactoringAction extends UndoManagerAction implements IWorkben
 		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.RedoRefactoringAction_error_title) { 
 			protected String getFullMessage(String errorMessage) {
 				return Messages.format(
-					RefactoringUIMessages.RedoRefactoringAction_error_message,  //$NON-NLS-1$
+					RefactoringUIMessages.RedoRefactoringAction_error_message,  
 					errorMessage);
 			}
 		};
@@ -132,7 +132,7 @@ public class RedoRefactoringAction extends UndoManagerAction implements IWorkben
 	
 	private String getActionText() {
 		return shortenText(Messages.format(
-			RefactoringUIMessages.RedoRefactoringAction_extendedLabel, //$NON-NLS-1$
+			RefactoringUIMessages.RedoRefactoringAction_extendedLabel, 
 			RefactoringCore.getUndoManager().peekRedoName()), fPatternLength);
 	}
 }

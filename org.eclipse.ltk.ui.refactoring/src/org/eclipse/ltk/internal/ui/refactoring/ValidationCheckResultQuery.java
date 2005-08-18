@@ -47,7 +47,7 @@ public class ValidationCheckResultQuery implements IValidationCheckResultQuery  
 	}
 	private String getFullMessage(String errorMessage) {
 		return Messages.format(
-			RefactoringUIMessages.ValidationCheckResultQuery_error_message,  //$NON-NLS-1$
+			RefactoringUIMessages.ValidationCheckResultQuery_error_message,  
 			errorMessage);
 	}
 }

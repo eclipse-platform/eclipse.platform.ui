@@ -92,12 +92,12 @@ public class RefactoringStatusDialog extends Dialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (!fStatus.hasFatalError()) {
 			if (fBackButton)
-				createButton(parent, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, false); //$NON-NLS-1$
+				createButton(parent, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, false); 
 			createButton(parent, IDialogConstants.OK_ID, RefactoringUIMessages.RefactoringStatusDialog_Continue, true); 
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		} else {
 			if (fBackButton)
-				createButton(parent, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, true); //$NON-NLS-1$
+				createButton(parent, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, true); 
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, fBackButton ? false : true);
 		}
 	}

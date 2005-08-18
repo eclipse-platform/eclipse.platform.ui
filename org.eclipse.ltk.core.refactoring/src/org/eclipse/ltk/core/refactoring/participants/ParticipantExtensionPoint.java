@@ -95,11 +95,11 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 								}
 							} catch(ClassCastException e) {
 								status.addError(Messages.format(
-									RefactoringCoreMessages.ParticipantExtensionPoint_participant_removed,  //$NON-NLS-1$
+									RefactoringCoreMessages.ParticipantExtensionPoint_participant_removed,  
 									descriptor.getName()));
 								RefactoringCorePlugin.logErrorMessage(
 									Messages.format(
-										RefactoringCoreMessages.ParticipantExtensionPoint_wrong_type, //$NON-NLS-1$
+										RefactoringCoreMessages.ParticipantExtensionPoint_wrong_type, 
 										new String[] {descriptor.getName(), fParticipantClass.getName()}));
 								iter.remove();
 							}
@@ -107,7 +107,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 					}
 				} catch (CoreException e) {
 					status.addError(Messages.format(
-						RefactoringCoreMessages.ParticipantExtensionPoint_participant_removed,  //$NON-NLS-1$
+						RefactoringCoreMessages.ParticipantExtensionPoint_participant_removed,  
 						descriptor.getName()));
 					RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
 					iter.remove();

@@ -87,22 +87,22 @@ public abstract class BufferValidationState {
 		if (!fExisted) {
 			if (fFile.exists())
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
-					RefactoringCoreMessages.TextChanges_error_existing, //$NON-NLS-1$
+					RefactoringCoreMessages.TextChanges_error_existing, 
 					fFile.getFullPath().toString()));
 		} else {
 			if (!fFile.exists())
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
-					RefactoringCoreMessages.TextChanges_error_not_existing, //$NON-NLS-1$
+					RefactoringCoreMessages.TextChanges_error_not_existing, 
 					fFile.getFullPath().toString()));
 		}
 		if (needsSaving) {
 			if (fFile.isReadOnly()) {
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
-					RefactoringCoreMessages.TextChanges_error_read_only, //$NON-NLS-1$
+					RefactoringCoreMessages.TextChanges_error_read_only, 
 					fFile.getFullPath().toString()));
 			} else if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) { 
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
-					RefactoringCoreMessages.TextChanges_error_outOfSync, //$NON-NLS-1$
+					RefactoringCoreMessages.TextChanges_error_outOfSync, 
 					fFile.getFullPath().toString()));
 			} 			
 		}
@@ -244,7 +244,7 @@ class DirtyBufferValidationState extends BufferValidationState {
 		// if (fChanged || (fContentStamp != IResource.NULL_STAMP && fContentStamp != fFile.getModificationStamp()) 
 		if (fChanged || fContentStamp != fFile.getModificationStamp()) { 
 			result.addFatalError(Messages.format(
-				RefactoringCoreMessages.TextChanges_error_content_changed, //$NON-NLS-1$
+				RefactoringCoreMessages.TextChanges_error_content_changed, 
 				fFile.getFullPath().toString()
 				)); 
 		}
@@ -303,7 +303,7 @@ class ModificationStampValidationState extends BufferValidationState {
 			|| (fModificationStamp.isFileStamp() 
 				&& currentStamp.isFileStamp() && isDirty(fFile))) {
 			result.addFatalError(Messages.format(
-				RefactoringCoreMessages.TextChanges_error_content_changed, //$NON-NLS-1$
+				RefactoringCoreMessages.TextChanges_error_content_changed, 
 				fFile.getFullPath().toString()
 				)); 
 			

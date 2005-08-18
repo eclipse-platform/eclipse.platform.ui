@@ -145,7 +145,7 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 		if (fValidationStatus != null && fValidationStatus.hasFatalError()) {
 			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(), 
 				Messages.format(
-					RefactoringUIMessages.RefactoringUI_cannot_execute, //$NON-NLS-1$
+					RefactoringUIMessages.RefactoringUI_cannot_execute, 
 					fValidationStatus.getMessageMatchingSeverity(RefactoringStatus.FATAL)));
 			return true;
 		}

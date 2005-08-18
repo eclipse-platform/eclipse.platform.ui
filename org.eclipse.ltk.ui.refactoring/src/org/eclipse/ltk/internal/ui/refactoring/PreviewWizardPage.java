@@ -182,7 +182,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			RefactoringWizard wizard= getRefactoringWizard();
 			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(), 
 				Messages.format(
-					RefactoringUIMessages.RefactoringUI_cannot_execute, //$NON-NLS-1$
+					RefactoringUIMessages.RefactoringUI_cannot_execute, 
 					fValidationStatus.getMessageMatchingSeverity(RefactoringStatus.FATAL)));
 			return true;
 		}
