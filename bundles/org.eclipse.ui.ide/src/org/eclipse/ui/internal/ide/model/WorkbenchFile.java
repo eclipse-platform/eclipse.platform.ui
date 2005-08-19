@@ -31,7 +31,7 @@ public class WorkbenchFile extends WorkbenchResource {
 		IContentType contentType = null;
 		// do we need to worry about checking here?
 		if (resource instanceof IFile) {
-			contentType = IDE.getContentType((IFile)resource);
+			contentType = IDE.guessContentType((IFile)resource);
 		}
         // @issue move IDE specific images
         ImageDescriptor image = PlatformUI.getWorkbench().getEditorRegistry()

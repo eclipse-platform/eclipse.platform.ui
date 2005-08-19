@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeMatcher;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorDescriptor;
@@ -965,6 +966,28 @@ public final class IDE {
 			return null;		
 		} finally {
 			UIStats.end(UIStats.CONTENT_TYPE_LOOKUP, file, file.getName());
+		}
+	}
+	
+	
+	/**
+	 * Guess at the content type of the given file based on the filename.
+	 * 
+	 * @param file the file to test
+	 * @return the content type, or <code>null</code> if it cannot be determined.
+	 * @since 3.2
+	 */
+	public static IContentType guessContentType(IFile file) {
+		String fileName = file.getName();
+		String label = fileName + " (guess)"; //$NON-NLS-1$
+		try {
+			UIStats.start(UIStats.CONTENT_TYPE_LOOKUP, fileName);
+			IContentTypeMatcher matcher = file.getProject().getContentTypeMatcher();
+			return matcher.findContentTypeFor(fileName);
+		} catch (CoreException e) {
+			return null;		
+		} finally {
+			UIStats.end(UIStats.CONTENT_TYPE_LOOKUP, file, fileName);
 		}
 	}
 }
