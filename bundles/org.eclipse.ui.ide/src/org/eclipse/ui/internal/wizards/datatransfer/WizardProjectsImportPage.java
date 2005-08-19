@@ -28,17 +28,9 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -67,8 +59,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.*;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
@@ -947,12 +938,39 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 *         successful.
 	 */
 	public boolean createProjects() {
-		// create the new project operation
-		Object[] selected = projectsList.getCheckedElements();
-		for (int i = 0; i < selected.length; i++) {
-			ProjectRecord record = (ProjectRecord) selected[i];
-			if (!createExistingProject(record))
-				return false;
+		final Object[] selected = projectsList.getCheckedElements();
+		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+			protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					monitor.beginTask(DataTransferMessages.DataTransfer_importTask, selected.length);
+					if (monitor.isCanceled())
+						throw new OperationCanceledException();
+					for (int i = 0; i < selected.length; i++)
+						createExistingProject((ProjectRecord) selected[i], new SubProgressMonitor(monitor, 1));
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+		// run the new project creation operation
+		try {
+			getContainer().run(true, true, op);
+		} catch (InterruptedException e) {
+			return false;
+		} catch (InvocationTargetException e) {
+			// one of the steps resulted in a core exception
+			Throwable t = e.getTargetException();
+			String message = DataTransferMessages.WizardExternalProjectImportPage_errorMessage;
+			IStatus status;
+			if (t instanceof CoreException)
+				status = ((CoreException)t).getStatus();
+			else
+				status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, message, t);
+			ErrorDialog.openError(getShell(), 
+				message,
+				null,
+				status);
+			return false;
 		}
 		return true;
 	}
@@ -961,10 +979,10 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * Create the project described in record. If it is successful return true.
 	 * 
 	 * @param record
-	 * @return boolean <code>true</code> of successult
+	 * @return boolean <code>true</code> if successful
+	 * @throws InterruptedException 
 	 */
-	private boolean createExistingProject(final ProjectRecord record) {
-
+	private boolean createExistingProject(final ProjectRecord record, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		String projectName = record.getProjectName();
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProject project = workspace.getRoot().getProject(projectName);
@@ -983,6 +1001,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		} else
 			record.description.setName(projectName);
 		if (record.projectArchiveFile != null) {
+			//import from archive
 			ArrayList fileSystemObjects = new ArrayList();
 			getFilesForProject(fileSystemObjects, record.provider,
 					record.parent);
@@ -991,42 +1010,22 @@ public class WizardProjectsImportPage extends WizardPage implements
 					.getFullPath(), record.provider.getRoot(), record.provider,
 					this, fileSystemObjects);
 			operation.setContext(getShell());
-			return executeImportOperation(operation);
+			operation.run(monitor);
+			return true;
 		}
-		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-			protected void execute(IProgressMonitor monitor)
-					throws CoreException {
-				monitor.beginTask("", 2000); //$NON-NLS-1$
-				project.create(record.description, new SubProgressMonitor(
-						monitor, 1000));
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
-				project.open(IResource.BACKGROUND_REFRESH,
-						new SubProgressMonitor(monitor, 1000));
-			}
-		};
-		// run the new project creation operation
+		//import from file system
 		try {
-			getContainer().run(true, true, op);
-		} catch (InterruptedException e) {
-			return false;
-		} catch (InvocationTargetException e) {
-			// ie.- one of the steps resulted in a core exception
-			Throwable t = e.getTargetException();
-			if (((CoreException) t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-				MessageDialog.openError(getShell(), 
-						DataTransferMessages.WizardExternalProjectImportPage_errorMessage,
-						NLS.bind(
-								DataTransferMessages.WizardExternalProjectImportPage_caseVariantExistsError,
-								record.description.getName())
-				);
-			} else {
-				ErrorDialog.openError(getShell(), 
-						DataTransferMessages.WizardExternalProjectImportPage_errorMessage,
-						((CoreException) t).getLocalizedMessage(), 
-						((CoreException) t).getStatus());
-			}
-			return false;
+			monitor.beginTask(
+					DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask, 
+					100); 
+			project.create(record.description, new SubProgressMonitor(
+					monitor, 30));
+			project.open(IResource.BACKGROUND_REFRESH,
+					new SubProgressMonitor(monitor, 70));
+		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
+		} finally {
+			monitor.done();
 		}
 		return true;
 	}
