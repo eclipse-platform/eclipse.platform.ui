@@ -359,7 +359,6 @@ public abstract class MarkerView extends TableView {
 			IDialogSettings filtersSection = mainSettings.getSection(OLD_FILTER_SECTION);
 			if(filtersSection != null){
 				MarkerFilter markerFilter = createFilter(Messages.getString("MarkerFilter.defaultFilterName"));//$NON-NLS-1$
-				markerFilter.resetState();
 				markerFilter.restoreState(filtersSection);
 				markerFilters = new MarkerFilter[] {markerFilter};
 			}
@@ -967,7 +966,10 @@ public abstract class MarkerView extends TableView {
 			MarkerFilter[] result = dialog.getFilters();
 			if (result == null)
 				return;
-			markerFilters = result;
+			if(result.length == 0)
+				markerFilters = new MarkerFilter[]{createFilter(Messages.getString("MarkerFilter.defaultFilterName"))};//$NON-NLS-1$
+			else
+				markerFilters = result;
 
 			refresh();
 		}

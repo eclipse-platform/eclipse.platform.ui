@@ -43,7 +43,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -260,18 +259,6 @@ public abstract class DialogMarkerFilter extends Dialog {
 
     private boolean dirty = false;
 
-    protected SelectionListener selectionListener = new SelectionAdapter() {
-        public void widgetSelected(SelectionEvent e) {
-            DialogMarkerFilter.this.widgetSelected(e);
-        }
-    };
-
-    protected ICheckStateListener checkStateListener = new ICheckStateListener() {
-        public void checkStateChanged(CheckStateChangedEvent event) {
-            DialogMarkerFilter.this.checkStateChanged(event);
-        }
-    };
-
 	private ListViewer filtersList;
 
 	private Composite selectedComposite;
@@ -312,7 +299,7 @@ public abstract class DialogMarkerFilter extends Dialog {
      * @param event
      */
     void checkStateChanged(CheckStateChangedEvent event) {
-        updateEnabledState();
+        updateEnabledState(true);
         markDirty();
     }
 
@@ -362,7 +349,11 @@ public abstract class DialogMarkerFilter extends Dialog {
             button.setLayoutData(gridData);
         }
         button.setText(text);
-        button.addSelectionListener(selectionListener);
+        button.addSelectionListener(new SelectionAdapter(){
+        	public void widgetSelected(SelectionEvent e) {
+        		  updateForSelection();
+        	}
+        });
         button.setFont(parent.getFont());
         return button;
     }
@@ -382,7 +373,11 @@ public abstract class DialogMarkerFilter extends Dialog {
         combo.setFont(parent.getFont());
         combo.setItems(items);
         combo.select(selectionIndex);
-        combo.addSelectionListener(selectionListener);
+        combo.addSelectionListener(new SelectionAdapter(){
+        	public void widgetSelected(SelectionEvent e) {
+      		  updateForSelection();
+      	}
+        });
         return combo;
     }
 
@@ -464,7 +459,7 @@ public abstract class DialogMarkerFilter extends Dialog {
 			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 			 */
 			public void selectionChanged(SelectionChangedEvent event) {
-				updateFilterFromUI(getSelectedFilter());
+				updateFilterFromUI();
 				setSelectedFilter(event);
 				
 			}
@@ -488,7 +483,7 @@ public abstract class DialogMarkerFilter extends Dialog {
 							getShell(),
 							Messages.getString("MarkerFilterDialog.title"),//$NON-NLS-1$
 							Messages.getString("MarkerFilterDialog.message"),//$NON-NLS-1$
-							Messages.getString("MarkerFilter.defaultFilterName"),//$NON-NLS-1$
+							Messages.getString("MarkerFilter.newFilterName"),//$NON-NLS-1$
 							new IInputValidator(){
 								/* (non-Javadoc)
 								 * @see org.eclipse.jface.dialogs.IInputValidator#isValid(java.lang.String)
@@ -555,6 +550,7 @@ public abstract class DialogMarkerFilter extends Dialog {
     		
     		filters = newFilters;
     		filtersList.refresh();
+    		updateUIFromFilter();
     	}
     }
 
@@ -566,7 +562,6 @@ public abstract class DialogMarkerFilter extends Dialog {
 		MarkerFilter[] newFilters = new MarkerFilter[filters.length + 1];
 		System.arraycopy(filters,0,newFilters,0,filters.length);
 		MarkerFilter filter = newFilter(newName);
-		filter.resetState();
 		newFilters[filters.length] = filter;
 		filters = newFilters;
 		filtersList.refresh();
@@ -623,7 +618,14 @@ public abstract class DialogMarkerFilter extends Dialog {
         Button button = new Button(parent, SWT.RADIO);
         button.setText(text);
         button.setFont(parent.getFont());
-        button.addSelectionListener(selectionListener);
+        button.addSelectionListener(new SelectionAdapter(){
+        	/* (non-Javadoc)
+        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+        	 */
+        	public void widgetSelected(SelectionEvent e) {
+        		  updateForSelection();
+        	}
+          });
         return button;
     }
 
@@ -684,7 +686,12 @@ public abstract class DialogMarkerFilter extends Dialog {
         typesViewer.setContentProvider(getContentProvider());
         typesViewer.setLabelProvider(getLabelProvider());
         typesViewer.setSorter(getSorter());
-        typesViewer.addCheckStateListener(checkStateListener);
+        typesViewer.addCheckStateListener(new ICheckStateListener(){
+        	public void checkStateChanged(CheckStateChangedEvent event) {
+        		updateEnabledState(event.getChecked());
+                markDirty();
+        	};
+        });
         typesViewer.setInput(getSelectedFilter().getRootTypes().toArray());
 
         Composite buttonComposite = new Composite(composite, SWT.NONE);
@@ -761,7 +768,14 @@ public abstract class DialogMarkerFilter extends Dialog {
                 false);
         filterEnabledButton.setFont(composite.getFont());
         filterEnabledButton.setLayoutData(new GridData());
-        filterEnabledButton.addSelectionListener(selectionListener);
+        filterEnabledButton.addSelectionListener(new SelectionAdapter(){
+        	/* (non-Javadoc)
+        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+        	 */
+        	public void widgetSelected(SelectionEvent e) {
+        		  updateForSelection();
+        	}
+          });
     }
 
     /**
@@ -782,7 +796,14 @@ public abstract class DialogMarkerFilter extends Dialog {
                 false);
         filterOnMarkerLimit.setFont(composite.getFont());
         filterOnMarkerLimit.setLayoutData(new GridData());
-        filterOnMarkerLimit.addSelectionListener(selectionListener);
+        filterOnMarkerLimit.addSelectionListener(new SelectionAdapter(){
+        	/* (non-Javadoc)
+        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+        	 */
+        	public void widgetSelected(SelectionEvent e) {
+        		  updateForSelection();
+        	}
+          });
         markerLimit = new Text(composite, SWT.SINGLE | SWT.BORDER);
         markerLimit.setTextLimit(6);
         GridData gridData = new GridData();
@@ -881,7 +902,7 @@ public abstract class DialogMarkerFilter extends Dialog {
         selectedResourceAndChildrenButton
                 .setSelection(onResource == MarkerFilter.ON_SELECTED_RESOURCE_AND_CHILDREN);
         workingSetGroup.setSelection(onResource == MarkerFilter.ON_WORKING_SET);
-        updateEnabledState();
+        updateEnabledState(true);
     }
 
     /**
@@ -900,35 +921,36 @@ public abstract class DialogMarkerFilter extends Dialog {
     }
 
     /**
-     * Updates the enabled state of the widgetry.
+     * Updates the enabled state of the widgetry based on whether or not it 
+     * is enabled.
      */
-    protected void updateEnabledState() {
-        filterOnMarkerLimit.setEnabled(isFilterEnabled());
-        markerLimit.setEnabled(isFilterEnabled()
+    protected void updateEnabledState(boolean enabled) {
+        filterOnMarkerLimit.setEnabled(enabled);
+        markerLimit.setEnabled(enabled
                 && filterOnMarkerLimit.getSelection());
 
-        typesViewer.getTable().setEnabled(isFilterEnabled());
-        selectAllButton.setEnabled(isFilterEnabled()
+        typesViewer.getTable().setEnabled(enabled);
+        selectAllButton.setEnabled(enabled
                 && typesViewer.getTable().getItemCount() > 0);
-        deselectAllButton.setEnabled(isFilterEnabled()
+        deselectAllButton.setEnabled(enabled
                 && typesViewer.getTable().getItemCount() > 0);
 
-        anyResourceButton.setEnabled(isFilterEnabled());
-        anyResourceInSameProjectButton.setEnabled(isFilterEnabled());
-        selectedResourceButton.setEnabled(isFilterEnabled());
-        selectedResourceAndChildrenButton.setEnabled(isFilterEnabled());
-        workingSetGroup.setEnabled(isFilterEnabled());
+        anyResourceButton.setEnabled(enabled);
+        anyResourceInSameProjectButton.setEnabled(enabled);
+        selectedResourceButton.setEnabled(enabled);
+        selectedResourceAndChildrenButton.setEnabled(enabled);
+        workingSetGroup.setEnabled(enabled);
     }
 
     /**
      * Updates the given filter from the UI state.
      */
-    protected void updateFilterFromUI() {
+    protected final void updateFilterFromUI() {
     	
     	MarkerFilter filter = getSelectedFilter();
     	
     	if(filter == null){
-    		selectedComposite.setEnabled(false);
+    		updateEnabledState(false);
     		return;
     	}
     		
@@ -942,7 +964,7 @@ public abstract class DialogMarkerFilter extends Dialog {
      * Update the selected filter from the UI.
      * @param filter
      */
-	private void updateFilterFromUI(MarkerFilter filter) {
+	protected void updateFilterFromUI(MarkerFilter filter) {
 		filter.setEnabled(filterEnabledButton.getSelection());
 
         filter.setSelectedTypes(getSelectedTypes());
@@ -975,21 +997,28 @@ public abstract class DialogMarkerFilter extends Dialog {
     /**
      * Updates the UI state from the given filter.
      */
-    protected void updateUIFromFilter() {
+    protected final void updateUIFromFilter() {
     	
     	MarkerFilter filter = getSelectedFilter();
     	
     	if(filter == null){
-    		selectedComposite.setEnabled(false);
+    		filterEnabledButton.setEnabled(false);
+    		updateEnabledState(false);
     		return;
     	}
-    		
-    	if(!selectedComposite.isEnabled())
-    		selectedComposite.setEnabled(true);
-    	
+    		    	
+    	filterEnabledButton.setEnabled(true);
         filterEnabledButton.setSelection(filter.isEnabled());
 
-        setSelectedTypes(filter.getSelectedTypes());
+        updateUIWithFilter(filter);
+    }
+
+    /**
+     * Update the UI with the contents of filter.
+     * @param filter
+     */
+	protected void updateUIWithFilter(MarkerFilter filter) {
+		setSelectedTypes(filter.getSelectedTypes());
 
         int on = filter.getOnResource();
         anyResourceButton.setSelection(on == MarkerFilter.ON_ANY_RESOURCE);
@@ -1005,17 +1034,9 @@ public abstract class DialogMarkerFilter extends Dialog {
         markerLimit.setText("" + filter.getMarkerLimit()); //$NON-NLS-1$
         filterOnMarkerLimit.setSelection(filter.getFilterOnMarkerLimit());
 
-        updateEnabledState();
-    }
+        updateEnabledState(true);
+	}
 
-    /**
-     * Handles selection on a check box or combo box.
-     * @param e
-     */
-    protected void widgetSelected(SelectionEvent e) {
-        updateEnabledState();
-        markDirty();
-    }
 
     /**
      * @return <code>true</code> if the dirty flag has been set otherwise
@@ -1052,9 +1073,19 @@ public abstract class DialogMarkerFilter extends Dialog {
      * @return <code>true</code> if the filter's enablement button is checked 
      * otherwise <code>false</code>.
      */
-    protected boolean isFilterEnabled() {
+    protected boolean isFilterButtonEnabled() {
         return (filterEnabledButton == null)
                 || filterEnabledButton.getSelection();
     }
+
+    /**
+     * A selection has occured on one of the checkboxes or combos.
+     * Update.
+     *
+     */
+	protected void updateForSelection() {
+		updateEnabledState(true);
+		markDirty();
+	}
 
 }

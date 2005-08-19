@@ -64,7 +64,14 @@ public class DialogTaskFilter extends
 			combo.setFont(parent.getFont());
 			combo.add(contains);
 			combo.add(doesNotContain);
-			combo.addSelectionListener(selectionListener);
+			combo.addSelectionListener(new SelectionAdapter(){
+	        	/* (non-Javadoc)
+	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	        	 */
+	        	public void widgetSelected(SelectionEvent e) {
+	        		  updateForSelection();
+	        	}
+	          });
 			// Prevent Esc and Return from closing the dialog when the combo is
 			// active.
 			combo.addTraverseListener(new TraverseListener() {
@@ -112,10 +119,14 @@ public class DialogTaskFilter extends
 			return description.getText();
 		}
 
-		public void updateEnablement() {
-			descriptionLabel.setEnabled(isFilterEnabled());
-			combo.setEnabled(isFilterEnabled());
-			description.setEnabled(isFilterEnabled());
+		/**
+		 * Update the enabled state.
+		 * @param enabled
+		 */
+		public void updateEnablement(boolean enabled) {
+			descriptionLabel.setEnabled(enabled);
+			combo.setEnabled(enabled);
+			description.setEnabled(enabled);
 		}
 	}
 
@@ -141,7 +152,7 @@ public class DialogTaskFilter extends
 				 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
 				public void widgetSelected(SelectionEvent e) {
-					updateEnablement();
+					updateEnablement(true);
 					DialogTaskFilter.this.markDirty();
 				}
 			};
@@ -160,23 +171,44 @@ public class DialogTaskFilter extends
 			highButton
 					.setText(Messages.getString("filtersDialog.priorityHigh")); //$NON-NLS-1$
 			highButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			highButton.addSelectionListener(selectionListener);
+			highButton.addSelectionListener(new SelectionAdapter(){
+	        	/* (non-Javadoc)
+	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	        	 */
+	        	public void widgetSelected(SelectionEvent e) {
+	        		  updateForSelection();
+	        	}
+	          });
 
 			normalButton = new Button(parent, SWT.CHECK);
 			normalButton.setFont(parent.getFont());
 			normalButton.setText(Messages
 					.getString("filtersDialog.priorityNormal")); //$NON-NLS-1$
 			normalButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			normalButton.addSelectionListener(selectionListener);
+			normalButton.addSelectionListener(new SelectionAdapter(){
+	        	/* (non-Javadoc)
+	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	        	 */
+	        	public void widgetSelected(SelectionEvent e) {
+	        		  updateForSelection();
+	        	}
+	          });
 
 			lowButton = new Button(parent, SWT.CHECK);
 			lowButton.setFont(parent.getFont());
 			lowButton.setText(Messages.getString("filtersDialog.priorityLow")); //$NON-NLS-1$
 			lowButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			lowButton.addSelectionListener(selectionListener);
+			lowButton.addSelectionListener(new SelectionAdapter(){
+	        	/* (non-Javadoc)
+	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	        	 */
+	        	public void widgetSelected(SelectionEvent e) {
+	        		  updateForSelection();
+	        	}
+	          });
 		}
 
-		public boolean isEnabled() {
+		public boolean isPriorityEnabled() {
 			return enablementButton.getSelection();
 		}
 
@@ -208,12 +240,16 @@ public class DialogTaskFilter extends
 			lowButton.setSelection(selected);
 		}
 
-		public void updateEnablement() {
-			enablementButton.setEnabled(isFilterEnabled());
-			highButton.setEnabled(enablementButton.isEnabled() && isEnabled());
+		/**
+		 * Update enablement based on enabled.
+		 * @param enabled
+		 */
+		public void updateEnablement(boolean enabled) {
+			enablementButton.setEnabled(enabled);
+			highButton.setEnabled(enabled && isPriorityEnabled());
 			normalButton
-					.setEnabled(enablementButton.isEnabled() && isEnabled());
-			lowButton.setEnabled(enablementButton.isEnabled() && isEnabled());
+					.setEnabled(enabled && isPriorityEnabled());
+			lowButton.setEnabled(enabled && isPriorityEnabled());
 		}
 	}
 
@@ -232,7 +268,7 @@ public class DialogTaskFilter extends
 		public StatusGroup(Composite parent) {
 			SelectionListener enablementListener = new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					updateEnablement();
+					updateEnablement(true);
 					DialogTaskFilter.this.markDirty();
 				}
 			};
@@ -279,7 +315,7 @@ public class DialogTaskFilter extends
 			incompleteButton.addSelectionListener(listener);
 		}
 
-		public boolean isEnabled() {
+		public boolean isStatusEnabled() {
 			return enablementButton.getSelection();
 		}
 
@@ -296,12 +332,16 @@ public class DialogTaskFilter extends
 			incompleteButton.setSelection(!done);
 		}
 
-		public void updateEnablement() {
-			enablementButton.setEnabled(isFilterEnabled());
-			completeButton.setEnabled(enablementButton.isEnabled()
-					&& isEnabled());
-			incompleteButton.setEnabled(enablementButton.isEnabled()
-					&& isEnabled());
+		/**
+		 * Update the enablement state of the group.
+		 * @param enabled
+		 */
+		public void updateEnablement(boolean enabled) {
+			enablementButton.setEnabled(enabled);
+			completeButton.setEnabled(isStatusEnabled()
+					&& enabled);
+			incompleteButton.setEnabled(isStatusEnabled()
+					&& enabled);
 		}
 	}
 
@@ -332,19 +372,18 @@ public class DialogTaskFilter extends
 		priorityGroup = new PriorityGroup(composite);
 		statusGroup = new StatusGroup(composite);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markerview.FiltersDialog#updateFilterFromUI(org.eclipse.ui.views.markerview.MarkerFilter)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateFilterFromUI(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
-	protected void updateFilterFromUI() {
+	protected void updateFilterFromUI(MarkerFilter filter) {
+		super.updateFilterFromUI(filter);
 
-		TaskFilter filter = (TaskFilter) getSelectedFilter();
-		filter.setContains(descriptionGroup.getContains());
-		filter.setDescription(descriptionGroup.getDescription().trim());
+		TaskFilter taskFilter = (TaskFilter)filter;
+		taskFilter.setContains(descriptionGroup.getContains());
+		taskFilter.setDescription(descriptionGroup.getDescription().trim());
 
-		filter.setSelectByPriority(priorityGroup.isEnabled());
+		taskFilter.setSelectByPriority(priorityGroup.isPriorityEnabled());
 		int priority = 0;
 		if (priorityGroup.isHighSelected()) {
 			priority = priority | TaskFilter.PRIORITY_HIGH;
@@ -355,50 +394,49 @@ public class DialogTaskFilter extends
 		if (priorityGroup.isLowSelected()) {
 			priority = priority | TaskFilter.PRIORITY_LOW;
 		}
-		filter.setPriority(priority);
+		taskFilter.setPriority(priority);
 
-		filter.setSelectByDone(statusGroup.isEnabled());
-		filter.setDone(statusGroup.getDone());
-
-		super.updateFilterFromUI();
+		taskFilter.setSelectByDone(statusGroup.isStatusEnabled());
+		taskFilter.setDone(statusGroup.getDone());
+	
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markerview.FiltersDialog#updateUIFromFilter(org.eclipse.ui.views.markerview.MarkerFilter)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateUIWithFilter(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
-	protected void updateUIFromFilter() {
+	protected void updateUIWithFilter(MarkerFilter filter) {
+		super.updateUIWithFilter(filter);
 
-		TaskFilter filter = (TaskFilter) getSelectedFilter();
-		descriptionGroup.setContains(filter.getContains());
-		descriptionGroup.setDescription(filter.getDescription());
 
-		priorityGroup.setEnabled(filter.getSelectByPriority());
-		int priority = filter.getPriority();
+		TaskFilter taskFilter = (TaskFilter)filter;
+		descriptionGroup.setContains(taskFilter.getContains());
+		descriptionGroup.setDescription(taskFilter.getDescription());
+
+		priorityGroup.setEnabled(taskFilter.getSelectByPriority());
+		int priority = taskFilter.getPriority();
 		priorityGroup
 				.setHighSelected((priority & TaskFilter.PRIORITY_HIGH) > 0);
 		priorityGroup
 				.setNormalSelected((priority & TaskFilter.PRIORITY_NORMAL) > 0);
 		priorityGroup.setLowSelected((priority & TaskFilter.PRIORITY_LOW) > 0);
 
-		statusGroup.setEnabled(filter.getSelectByDone());
-		statusGroup.setDone(filter.getDone());
+		statusGroup.setEnabled(taskFilter.getSelectByDone());
+		statusGroup.setDone(taskFilter.getDone());
 
 		super.updateUIFromFilter();
+	
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markerview.FiltersDialog#updateEnabledState()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateEnabledState(boolean)
 	 */
-	protected void updateEnabledState() {
-		super.updateEnabledState();
-		descriptionGroup.updateEnablement();
-		priorityGroup.updateEnablement();
-		statusGroup.updateEnablement();
+	protected void updateEnabledState(boolean enabled) {
+		super.updateEnabledState(enabled);
+		descriptionGroup.updateEnablement(enabled);
+		priorityGroup.updateEnablement(enabled);
+		statusGroup.updateEnablement(enabled);
 	}
+	
 
 	/*
 	 * (non-Javadoc)

@@ -28,8 +28,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class DialogProblemFilter extends
-		org.eclipse.ui.views.markers.internal.DialogMarkerFilter {
+public class DialogProblemFilter extends DialogMarkerFilter {
 
 	private DescriptionGroup descriptionGroup;
 
@@ -62,7 +61,14 @@ public class DialogProblemFilter extends
 			combo.setFont(parent.getFont());
 			combo.add(contains);
 			combo.add(doesNotContain);
-			combo.addSelectionListener(selectionListener);
+			combo.addSelectionListener(new SelectionAdapter(){
+	        	/* (non-Javadoc)
+	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	        	 */
+	        	public void widgetSelected(SelectionEvent e) {
+	        		  updateForSelection();
+	        	}
+	          });
 			// Prevent Esc and Return from closing the dialog when the combo is
 			// active.
 			combo.addTraverseListener(new TraverseListener() {
@@ -110,10 +116,15 @@ public class DialogProblemFilter extends
 			return description.getText();
 		}
 
-		public void updateEnablement() {
-			descriptionLabel.setEnabled(isFilterEnabled());
-			combo.setEnabled(isFilterEnabled());
-			description.setEnabled(isFilterEnabled());
+		/**
+		 * Update the enablement state based on whether or not
+		 * the receiver is enabled.
+		 * @param enabled
+		 */
+		public void updateEnablement(boolean enabled) {
+			descriptionLabel.setEnabled(enabled);
+			combo.setEnabled(enabled);
+			description.setEnabled(enabled);
 		}
 	}
 
@@ -139,7 +150,7 @@ public class DialogProblemFilter extends
 				 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
 				public void widgetSelected(SelectionEvent e) {
-					updateEnablement();
+					updateEnablement(true);
 					DialogProblemFilter.this.markDirty();
 				}
 			};
@@ -158,24 +169,45 @@ public class DialogProblemFilter extends
 			errorButton.setText(Messages
 					.getString("filtersDialog.severityError")); //$NON-NLS-1$
 			errorButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			errorButton.addSelectionListener(selectionListener);
+			errorButton.addSelectionListener(new SelectionAdapter(){
+	        	/* (non-Javadoc)
+	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	        	 */
+	        	public void widgetSelected(SelectionEvent e) {
+	        		  updateForSelection();
+	        	}
+	          });
 
 			warningButton = new Button(parent, SWT.CHECK);
 			warningButton.setFont(parent.getFont());
 			warningButton.setText(Messages
 					.getString("filtersDialog.severityWarning")); //$NON-NLS-1$
 			warningButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			warningButton.addSelectionListener(selectionListener);
+			warningButton.addSelectionListener(new SelectionAdapter(){
+	        	/* (non-Javadoc)
+	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	        	 */
+	        	public void widgetSelected(SelectionEvent e) {
+	        		  updateForSelection();
+	        	}
+	          });
 
 			infoButton = new Button(parent, SWT.CHECK);
 			infoButton.setFont(parent.getFont());
 			infoButton
 					.setText(Messages.getString("filtersDialog.severityInfo")); //$NON-NLS-1$
 			infoButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			infoButton.addSelectionListener(selectionListener);
+			infoButton.addSelectionListener(new SelectionAdapter(){
+	        	/* (non-Javadoc)
+	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	        	 */
+	        	public void widgetSelected(SelectionEvent e) {
+	        		  updateForSelection();
+	        	}
+	          });
 		}
 
-		public boolean isEnabled() {
+		public boolean isSeveritySelected() {
 			return enablementButton.getSelection();
 		}
 
@@ -207,12 +239,15 @@ public class DialogProblemFilter extends
 			infoButton.setSelection(selected);
 		}
 
-		public void updateEnablement() {
-			enablementButton.setEnabled(isFilterEnabled());
-			errorButton.setEnabled(enablementButton.isEnabled() && isEnabled());
-			warningButton.setEnabled(enablementButton.isEnabled()
-					&& isEnabled());
-			infoButton.setEnabled(enablementButton.isEnabled() && isEnabled());
+		/**
+		 * Update enablement based on the enabled flag.
+		 * @param enabled
+		 */
+		public void updateEnablement(boolean enabled) {
+			enablementButton.setEnabled(enabled);
+			errorButton.setEnabled(isSeveritySelected() && enabled);
+			warningButton.setEnabled(isSeveritySelected() && enabled);
+			infoButton.setEnabled(isSeveritySelected() && enabled);
 		}
 	}
 
@@ -243,18 +278,17 @@ public class DialogProblemFilter extends
 		severityGroup = new SeverityGroup(composite);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markerview.FiltersDialog#updateFilterFromUI(org.eclipse.ui.views.markerview.MarkerFilter)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateFilterFromUI(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
-	protected void updateFilterFromUI() {
+	protected void updateFilterFromUI(MarkerFilter filter) {
+		super.updateFilterFromUI(filter);
 
-		ProblemFilter filter = (ProblemFilter) getSelectedFilter();
-		filter.setContains(descriptionGroup.getContains());
-		filter.setDescription(descriptionGroup.getDescription().trim());
+		ProblemFilter problemFilter = (ProblemFilter) filter;
+		problemFilter.setContains(descriptionGroup.getContains());
+		problemFilter.setDescription(descriptionGroup.getDescription().trim());
 
-		filter.setSelectBySeverity(severityGroup.isEnabled());
+		problemFilter.setSelectBySeverity(severityGroup.isSeveritySelected());
 		int severity = 0;
 		if (severityGroup.isErrorSelected()) {
 			severity = severity | ProblemFilter.SEVERITY_ERROR;
@@ -265,43 +299,39 @@ public class DialogProblemFilter extends
 		if (severityGroup.isInfoSelected()) {
 			severity = severity | ProblemFilter.SEVERITY_INFO;
 		}
-		filter.setSeverity(severity);
-
-		super.updateFilterFromUI();
+		problemFilter.setSeverity(severity);
+	
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markerview.FiltersDialog#updateUIFromFilter(org.eclipse.ui.views.markerview.MarkerFilter)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateUIWithFilter(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
-	protected void updateUIFromFilter() {
+	protected void updateUIWithFilter(MarkerFilter filter) {
+		super.updateUIWithFilter(filter);
 
-		ProblemFilter filter = (ProblemFilter) getSelectedFilter();
-		descriptionGroup.setContains(filter.getContains());
-		descriptionGroup.setDescription(filter.getDescription());
+		ProblemFilter problemFilter = (ProblemFilter) filter;
+		descriptionGroup.setContains(problemFilter.getContains());
+		descriptionGroup.setDescription(problemFilter.getDescription());
 
-		severityGroup.setEnabled(filter.getSelectBySeverity());
-		int severity = filter.getSeverity();
+		severityGroup.setEnabled(problemFilter.getSelectBySeverity());
+		int severity = problemFilter.getSeverity();
 		severityGroup
 				.setErrorSelected((severity & ProblemFilter.SEVERITY_ERROR) > 0);
 		severityGroup
 				.setWarningSelected((severity & ProblemFilter.SEVERITY_WARNING) > 0);
 		severityGroup
 				.setInfoSelected((severity & ProblemFilter.SEVERITY_INFO) > 0);
-
-		super.updateUIFromFilter();
+	
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markerview.FiltersDialog#updateEnabledState()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateEnabledState(boolean)
 	 */
-	protected void updateEnabledState() {
-		super.updateEnabledState();
-		descriptionGroup.updateEnablement();
-		severityGroup.updateEnablement();
+	protected void updateEnabledState(boolean enabled) {
+		super.updateEnabledState(enabled);
+		descriptionGroup.updateEnablement(enabled);
+		severityGroup.updateEnablement(enabled);
 	}
 
 	/*

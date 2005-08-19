@@ -123,6 +123,9 @@ public class ProblemFilter extends MarkerFilter {
         this.severity = severity;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.MarkerFilter#resetState()
+     */
     public void resetState() {
         super.resetState();
         contains = DEFAULT_CONTAINS;

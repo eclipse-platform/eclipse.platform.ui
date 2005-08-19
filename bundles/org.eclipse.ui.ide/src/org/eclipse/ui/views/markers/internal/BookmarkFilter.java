@@ -78,6 +78,9 @@ public class BookmarkFilter extends MarkerFilter {
 		this.description = description;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#resetState()
+	 */
 	void resetState() {
 		super.resetState();
 		contains = DEFAULT_CONTAINS;

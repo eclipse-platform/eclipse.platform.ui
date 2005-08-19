@@ -14,6 +14,8 @@ package org.eclipse.ui.views.markers.internal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
@@ -24,8 +26,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class DialogBookmarkFilter extends
-		org.eclipse.ui.views.markers.internal.DialogMarkerFilter {
+/**
+ * DialogBookmarkFilter is the filter dialog for bookmarks
+ * 
+ */
+public class DialogBookmarkFilter extends DialogMarkerFilter {
 
 	private DescriptionGroup descriptionGroup;
 
@@ -56,7 +61,14 @@ public class DialogBookmarkFilter extends
 			combo.setFont(parent.getFont());
 			combo.add(contains);
 			combo.add(doesNotContain);
-			combo.addSelectionListener(selectionListener);
+			combo.addSelectionListener(new SelectionAdapter(){
+	        	/* (non-Javadoc)
+	        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	        	 */
+	        	public void widgetSelected(SelectionEvent e) {
+	        		  updateForSelection();
+	        	}
+	          });
 			// Prevent Esc and Return from closing the dialog when the combo is
 			// active.
 			combo.addTraverseListener(new TraverseListener() {
@@ -104,10 +116,14 @@ public class DialogBookmarkFilter extends
 			return description.getText();
 		}
 
-		public void updateEnablement() {
-			descriptionLabel.setEnabled(isFilterEnabled());
-			combo.setEnabled(isFilterEnabled());
-			description.setEnabled(isFilterEnabled());
+		/**
+		 * Update the enablement based on enabled.
+		 * @param enabled
+		 */
+		public void updateEnablement(boolean enabled) {
+			descriptionLabel.setEnabled(enabled);
+			combo.setEnabled(enabled);
+			description.setEnabled(enabled);
 		}
 	}
 
@@ -135,42 +151,36 @@ public class DialogBookmarkFilter extends
 		descriptionGroup = new DescriptionGroup(composite);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markerview.FiltersDialog#updateFilterFromUI(org.eclipse.ui.views.markerview.MarkerFilter)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateFilterFromUI(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
-	protected void updateFilterFromUI() {
+	protected void updateFilterFromUI(MarkerFilter filter) {
+		super.updateFilterFromUI(filter);
 
-		BookmarkFilter filter = (BookmarkFilter) getSelectedFilter();
-		filter.setContains(descriptionGroup.getContains());
-		filter.setDescription(descriptionGroup.getDescription().trim());
-
-		super.updateFilterFromUI();
+		BookmarkFilter bookmark = (BookmarkFilter) filter;
+		bookmark.setContains(descriptionGroup.getContains());
+		bookmark.setDescription(descriptionGroup.getDescription().trim());
+	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateUIWithFilter(org.eclipse.ui.views.markers.internal.MarkerFilter)
+	 */
+	protected void updateUIWithFilter(MarkerFilter filter) {
+		super.updateUIWithFilter(filter);
+		BookmarkFilter bookmark = (BookmarkFilter) filter;
+		descriptionGroup.setContains(bookmark.getContains());
+		descriptionGroup.setDescription(bookmark.getDescription());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markerview.FiltersDialog#updateUIFromFilter(org.eclipse.ui.views.markerview.MarkerFilter)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateEnabledState(boolean)
 	 */
-	protected void updateUIFromFilter() {
-
-		BookmarkFilter filter = (BookmarkFilter) getSelectedFilter();
-		descriptionGroup.setContains(filter.getContains());
-		descriptionGroup.setDescription(filter.getDescription());
-		super.updateUIFromFilter();
+	protected void updateEnabledState(boolean enabled) {
+		super.updateEnabledState(enabled);
+		descriptionGroup.updateEnablement(enabled);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markerview.FiltersDialog#updateEnabledState()
-	 */
-	protected void updateEnabledState() {
-		super.updateEnabledState();
-		descriptionGroup.updateEnablement();
-	}
+	
 
 	/*
 	 * (non-Javadoc)

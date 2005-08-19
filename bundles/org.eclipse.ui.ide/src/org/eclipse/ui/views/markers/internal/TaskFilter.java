@@ -166,6 +166,9 @@ public class TaskFilter extends MarkerFilter {
 		this.selectByPriority = selectByPriority;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#resetState()
+	 */
 	public void resetState() {
 		super.resetState();
 		contains = DEFAULT_CONTAINS;

@@ -125,6 +125,7 @@ public class MarkerFilter {
 			if (!this.rootTypes.contains(type))
 				this.rootTypes.add(type);
 		}
+		resetState();
 	}
 
 	/**
@@ -703,6 +704,9 @@ public class MarkerFilter {
 		cachedWorkingSet = null;
 	}
 
+	/**
+	 * Reset to the default state.
+	 */
 	void resetState() {
 		enabled = DEFAULT_ACTIVATION_STATUS;
 		filterOnMarkerLimit = DEFAULT_FILTER_ON_MARKER_LIMIT;
