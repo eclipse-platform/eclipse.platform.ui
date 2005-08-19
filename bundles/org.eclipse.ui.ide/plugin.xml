@@ -437,15 +437,8 @@
             name="%Views.Progress"
             icon="icons/full/eview16/pview.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.ExtensionFactory:progressView"
-            id="org.eclipse.ui.views.ProgressView">
-      </view>
-        <view
-            name="%Views.Progress.New"
-            icon="icons/full/eview16/pview.gif"
-            category="org.eclipse.ui"
             class="org.eclipse.ui.internal.progress.ProgressView"
-            id="org.eclipse.ui.views.NewProgressView">
+            id="org.eclipse.ui.views.ProgressView">
       </view>
       <view
             name="%Views.ResourceNavigator"
