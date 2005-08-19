@@ -81,11 +81,10 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 		// Update with the new elements to prevent flash
 		for (int i = 0; i < existingChildren.length; i++) {
-			((ProgressInfoItem) existingChildren[i]).remap(infos[i]);
-			((ProgressInfoItem) existingChildren[i]).setColor(i);
+			((ProgressInfoItem) existingChildren[i]).dispose();
 		}
 
-		for (int i = existingChildren.length; i < newItems.size(); i++) {
+		for (int i = 0; i < newItems.size(); i++) {
 			ProgressInfoItem item = createNewItem(infos[i]);
 			item.setColor(i);
 		}
@@ -219,9 +218,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
 		if (usingElementMap()) {
 			unmapElement(item);
-			mapElement(element, item);
 		}
-		((ProgressInfoItem) item).remap((JobTreeElement) element);
+		item.dispose();
+		add(new Object[] {element});
 	}
 
 	/*
@@ -348,25 +347,16 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		Object[] infos = getSortedChildren(getRoot());
 		Control[] existingChildren = control.getChildren();
 
-		int reuseLength = Math.min(infos.length, existingChildren.length);
-
-		// Update with the new elements to prevent flash
-		for (int i = 0; i < reuseLength; i++) {
-			ProgressInfoItem item = (ProgressInfoItem) existingChildren[i];
-			item.remap((JobTreeElement) infos[i]);
-			item.setColor(i);
+		for (int i = 0; i < existingChildren.length; i++) {
+			existingChildren[i].dispose();
+			
 		}
-
 		// Create new ones if required
-		for (int i = existingChildren.length; i < infos.length; i++) {
+		for (int i = 0; i < infos.length; i++) {
 			ProgressInfoItem item = createNewItem((JobTreeElement) infos[i]);
 			item.setColor(i);
 		}
 
-		// Delete old ones if not
-		for (int i = infos.length; i < existingChildren.length; i++) {
-			existingChildren[i].dispose();
-		}
 
 		control.layout(true);
 

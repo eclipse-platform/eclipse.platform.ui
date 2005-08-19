@@ -435,14 +435,30 @@ class ProgressInfoItem extends Composite {
 		progressLabel.setText(getMainTitle());
 		int percentDone = getPercentDone();
 
+		JobInfo[] infos = getJobInfos();
 		if (isRunning()) {
-			if (progressBar == null)
-				createProgressBar(percentDone == IProgressMonitor.UNKNOWN ? SWT.INDETERMINATE
-						: SWT.NONE);
+			if (progressBar == null){
+				if(percentDone == IProgressMonitor.UNKNOWN){
+					//Only do it if there is an indeterminate task
+					//There may be no task so we don't want to create it 
+					//until we know for sure
+					for (int i = 0; i < infos.length; i++) {
+						if(infos[i].hasTaskInfo() && infos[i].getTaskInfo().totalWork == IProgressMonitor.UNKNOWN){
+							createProgressBar(SWT.INDETERMINATE);
+							break;
+						}
+					}
+				}
+				else{
+					createProgressBar(SWT.NONE);
+					progressBar.setMinimum(0);
+					progressBar.setMaximum(100);
+				}
+			}
 
 			// Protect against bad counters
-			if (percentDone >= 0 && percentDone <= 100 && percentDone != progressBar.getSelection())
-				progressBar.setSelection(percentDone);
+			if (percentDone >= 0 && percentDone <= 100 && percentDone != progressBar.getSelection()){
+				progressBar.setSelection(percentDone);			}
 		}
 
 		else if (isCompleted()) {
@@ -460,7 +476,7 @@ class ProgressInfoItem extends Composite {
 		}
 		
 
-		JobInfo[] infos = getJobInfos();
+		
 		int taskCount = 0;
 		for (int i = 0; i < infos.length; i++) {
 			JobInfo jobInfo = infos[i];
@@ -496,6 +512,7 @@ class ProgressInfoItem extends Composite {
 					taskCount++;
 				}
 			}
+			setColor(i);
 		}
 
 		// Remove completed tasks
@@ -571,16 +588,6 @@ class ProgressInfoItem extends Composite {
 				return ti.getPercentDone();
 		}
 		return ((GroupInfo) info).getPercentDone();
-	}
-
-	void remap(JobTreeElement element) {
-		info = element;
-		setData(element);
-		
-		setToolBarImages();
-			
-		refresh();
-
 	}
 
 	/**
