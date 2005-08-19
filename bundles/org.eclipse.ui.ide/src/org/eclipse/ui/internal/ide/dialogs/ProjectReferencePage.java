@@ -36,6 +36,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.internal.ide.DialogUtil;
@@ -84,7 +85,8 @@ public class ProjectReferencePage extends PropertyPage {
 
         initialize();
 
-        createDescriptionLabel(composite);
+        Label description = createDescriptionLabel(composite);
+        description.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
         listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP
                 | SWT.BORDER);
