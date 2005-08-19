@@ -68,7 +68,7 @@ public class TextFileChange extends TextChange {
 	private int fSaveMode= KEEP_SAVE_STATE;
 	
 	// the mapped text buffer
-	private int fAquireCount;
+	private int fAcquireCount;
 	private ITextFileBuffer fBuffer;
 	
 	private boolean fDirty;
@@ -187,13 +187,13 @@ public class TextFileChange extends TextChange {
 	 * {@inheritDoc}
 	 */
 	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
-		if (fAquireCount > 0)
+		if (fAcquireCount > 0)
 			return fBuffer.getDocument();
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		IPath path= fFile.getFullPath();
 		manager.connect(path, pm);
-		fAquireCount++;
+		fAcquireCount++;
 		fBuffer= manager.getTextFileBuffer(path);
 		IDocument result= fBuffer.getDocument();
 		fContentStamp= ContentStamps.get(fFile, result);
@@ -213,12 +213,12 @@ public class TextFileChange extends TextChange {
 	 * {@inheritDoc}
 	 */
 	protected void releaseDocument(IDocument document, IProgressMonitor pm) throws CoreException {
-		Assert.isTrue(fAquireCount > 0);
-		if (fAquireCount == 1) {
+		Assert.isTrue(fAcquireCount > 0);
+		if (fAcquireCount == 1) {
 			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 			manager.disconnect(fFile.getFullPath(), pm);
 		}
-		fAquireCount--;
+		fAcquireCount--;
  	}
 	
 	/**
@@ -227,7 +227,19 @@ public class TextFileChange extends TextChange {
 	protected final Change createUndoChange(UndoEdit edit) {
 		return createUndoChange(edit, fContentStamp);
 	}
-	
+
+	/**
+	 * Is the document to be changed by this text file change currently
+	 * acquired?
+	 * 
+	 * @return <code>true</code> if the document is currently acquired,
+	 *         <code>false</code> otherwise
+	 * @since 3.2
+	 */
+	protected final boolean isDocumentAcquired() {
+		return fAcquireCount > 0;
+	}
+
 	private boolean needsSaving() {
 		return (fSaveMode & FORCE_SAVE) != 0 || (!fDirty && (fSaveMode & KEEP_SAVE_STATE) != 0);
 	}
