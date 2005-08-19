@@ -105,7 +105,7 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
 		
 		private void createTableViewer(Composite parent){        
 			//Create a table for the list
-	        Table table = new Table(parent, SWT.BORDER);
+	        Table table = new Table(parent, SWT.NONE);
 	        table.setFont(parent.getFont());
 
 	        // the list viewer
@@ -262,7 +262,8 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
             WorkbenchWizardElement currentWizardSelection = (WorkbenchWizardElement) ss
                     .getFirstElement();
             if (currentWizardSelection == null){
-            	setMessage(noSelectionMsg);            	
+            	setMessage(noSelectionMsg);  
+            	setSelectedNode(null);
             }
             else {
             	updateSelectedNode(currentWizardSelection);
@@ -359,32 +360,32 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
         
         try{
         	// restore last selections for each tab
+        	WorkbenchWizardElement importWizardElement = null;
 	        String importWizardId = settings.get(STORE_SELECTED_IMPORT_WIZARD_ID);
 	        setWizardElements(IMPORT_SELECTION);
 	        if (wizardElements != null && importWizardId != null){
-		        WorkbenchWizardElement wizard = findWizard(importWizardId);
-		        if (wizard == null)
-		            return;
-
-		        StructuredSelection selection = new StructuredSelection(wizard);
-		        importList.getViewer().setSelection(selection);
+		        importWizardElement = findWizard(importWizardId);
+		        if (importWizardElement != null){
+			        StructuredSelection selection = new StructuredSelection(importWizardElement);
+			        importList.getViewer().setSelection(selection);
+		        }
 	        }
 	        
+	        WorkbenchWizardElement exportWizardElement = null;
 	        String exportWizardId = settings.get(STORE_SELECTED_EXPORT_WIZARD_ID);
 	        setWizardElements(EXPORT_SELECTION);
-	        if (wizardElements != null && importWizardId != null){
-		        WorkbenchWizardElement wizard = findWizard(exportWizardId);
-		        if (wizard == null)
-		            return;
-
-		        StructuredSelection selection = new StructuredSelection(wizard);
-		        exportList.getViewer().setSelection(selection);
+	        if (wizardElements != null && exportWizardId != null){
+	        	exportWizardElement = findWizard(exportWizardId);
+		        if (exportWizardElement != null){
+			        StructuredSelection selection = new StructuredSelection(exportWizardElement);
+			        exportList.getViewer().setSelection(selection);
+		        }
 	        }
 	        
         	// restore last selected tab or set to desired page (if provided)
         	if (initialPageId == null){
         		// initial page not specified, use settings 
-				final int selectedTab = settings.getInt(IMPORT_EXPORT_SELECTION);
+				int selectedTab = settings.getInt(IMPORT_EXPORT_SELECTION);
 				if ((tabFolder.getItemCount() > selectedTab) && (selectedTab > 0)) {
 					tabFolder.setSelection(selectedTab);
 				}
@@ -392,11 +393,16 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
 					updateMessage(0);
 				}
         	}
-        	else{
-        		if (initialPageId == ImportExportWizard.IMPORT)
+        	else{	
+        		// initial page specified - set it and set the selected node for it, if one exists        		
+        		if (initialPageId == ImportExportWizard.IMPORT){
         			tabFolder.setSelection(IMPORT_SELECTION);
-        		else if (initialPageId == ImportExportWizard.EXPORT)
+        			updateMessage(tabFolder.getSelectionIndex());
+        		}
+        		else if (initialPageId == ImportExportWizard.EXPORT){
         			tabFolder.setSelection(EXPORT_SELECTION);
+        			updateMessage(tabFolder.getSelectionIndex());
+        		}
         	}	        
         }
         catch (NumberFormatException e){
