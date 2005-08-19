@@ -42,7 +42,7 @@ public class BookmarkFilter extends MarkerFilter {
 	 * @param filterName
 	 */
 	public BookmarkFilter(String filterName) {
-		super(filterName, new String[] { IMarker.BOOKMARK });//$NON-NLS-1$
+		super(filterName, new String[] { IMarker.BOOKMARK });
 	}
 
 	/**

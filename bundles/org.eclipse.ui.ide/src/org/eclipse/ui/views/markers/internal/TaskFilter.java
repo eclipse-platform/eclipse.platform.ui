@@ -72,7 +72,7 @@ public class TaskFilter extends MarkerFilter {
 	 * @param newName
 	 */
 	public TaskFilter(String newName) {
-		super(newName, new String[] { IMarker.TASK });//$NON-NLS-1$
+		super(newName, new String[] { IMarker.TASK });
 	}
 
 	public boolean selectMarker(ConcreteMarker marker) {
