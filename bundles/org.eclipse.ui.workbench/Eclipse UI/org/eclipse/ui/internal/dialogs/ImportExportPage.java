@@ -105,7 +105,7 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
 		
 		private void createTableViewer(Composite parent){        
 			//Create a table for the list
-	        Table table = new Table(parent, SWT.NONE);
+	        Table table = new Table(parent, SWT.BORDER);
 	        table.setFont(parent.getFont());
 
 	        // the list viewer
