@@ -760,6 +760,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         layout.marginHeight = 0;
         composite.setLayout(layout);
         GridData data = new GridData(GridData.FILL_BOTH);
+        data.heightHint = convertHeightInCharsToPixels(5);
         composite.setLayoutData(data);
 
         Label label = new Label(composite, SWT.LEFT);
@@ -769,7 +770,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         descriptionText = new Text(composite, SWT.H_SCROLL | SWT.V_SCROLL
                 | SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
         data = new GridData(GridData.FILL_BOTH);
-        descriptionText.setText("\n\n"); //$NON-NLS-1$
         descriptionText.setLayoutData(data);
         myApplyDialogFont(descriptionText);
     }
