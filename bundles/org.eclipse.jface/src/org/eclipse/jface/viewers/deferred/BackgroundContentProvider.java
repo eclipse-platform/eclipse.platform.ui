@@ -21,7 +21,6 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.AcceptAllFilter;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Contains the algorithm for performing background sorting and filtering in a virtual
@@ -145,13 +144,11 @@ import org.eclipse.swt.widgets.Display;
      * @param table table that will receive updates
      * @param model data source
      * @param sortOrder initial sort order
-     * @param display display
      */
     public BackgroundContentProvider(AbstractVirtualTable table, 
-            IConcurrentModel model, Comparator sortOrder, 
-            Display display) {
+            IConcurrentModel model, Comparator sortOrder) {
         
-        updator = new ConcurrentTableUpdator(table, display);
+        updator = new ConcurrentTableUpdator(table);
         this.model = model;
         this.sortOrder = sortOrder;
         sortJob.setSystem(true);

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers.deferred;
 
-import org.eclipse.swt.widgets.Display;
 
 
 /**
@@ -65,11 +64,6 @@ import org.eclipse.swt.widgets.Display;
     private int lastClear = 0;
     
     /**
-     * Display being used
-     */
-    private Display display;
-    
-    /**
      * Last known visible range
      */    
     private volatile Range lastRange = new Range(0,0);
@@ -105,7 +99,8 @@ import org.eclipse.swt.widgets.Display;
     Runnable uiRunnable = new Runnable() {
         public void run() {
             updateScheduled = false;
-            updateTable();
+            if(!table.getControl().isDisposed())
+            	updateTable();
         }
     };
     
@@ -113,11 +108,9 @@ import org.eclipse.swt.widgets.Display;
      * Creates a new table updator
      * 
      * @param table real table to update
-     * @param display display associated with the table
      */
-    public ConcurrentTableUpdator(AbstractVirtualTable table, Display display) {
+    public ConcurrentTableUpdator(AbstractVirtualTable table) {
         this.table = table;
-        this.display = display;
     }
     
     /**
@@ -270,7 +263,8 @@ import org.eclipse.swt.widgets.Display;
         synchronized(this) {
 	        if (!updateScheduled) {
 	            updateScheduled = true;
-	            display.asyncExec(uiRunnable);
+	            if(!table.getControl().isDisposed())
+	            	table.getControl().getDisplay().asyncExec(uiRunnable);
 	        }
         }
     }

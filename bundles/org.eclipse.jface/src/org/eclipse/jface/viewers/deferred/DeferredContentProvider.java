@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 
 /**
@@ -100,6 +100,13 @@ public class DeferredContentProvider implements ILazyContentProvider {
 					itemCount - start);
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.deferred.AbstractVirtualTable#getControl()
+		 */
+		public Control getControl() {
+			return viewer.getControl();
+		}
+		
 	};
 
 	/**
@@ -134,7 +141,7 @@ public class DeferredContentProvider implements ILazyContentProvider {
 		
 		BackgroundContentProvider newProvider = new BackgroundContentProvider(
 				table,
-				model, sortOrder, Display.getCurrent()); 
+				model, sortOrder); 
 		
 		setProvider(newProvider);
 		

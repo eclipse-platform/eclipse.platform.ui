@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers.deferred;
 
+import org.eclipse.swt.widgets.Control;
+
 /**
  * Wrapper for a virtual-table-like widget. Contains all methods needed for lazy updates.
  * The JFace algorithms for deferred or lazy content providers should talk to this class
@@ -77,4 +79,10 @@ abstract class AbstractVirtualTable {
      * @return the total number of items in the table
      */
     public abstract int getItemCount();
+    
+    /**
+     * Returns the SWT control that this API is wrappering.
+     * @return Control.
+     */
+    public abstract Control getControl();
 }
