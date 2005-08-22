@@ -97,7 +97,7 @@ public final class HippieCompletionEngine {
 
 	/**
 	 * The method is equivalent to
-	 * <code>getForwardCompletions(document, prefix, 0)</code>
+	 * <code>getCompletionsForward(document, prefix, 0)</code>
 	 *
 	 * @param document the document to scan
 	 * @param prefix the completion prefix
@@ -111,14 +111,14 @@ public final class HippieCompletionEngine {
 	}
 
 	/**
-	 * Return the list of completion suggestions the correspond to the provided
-	 * prefix
-	 *
+	 * Return the list of completion suggestions that correspond to the
+	 * provided prefix.
+	 * 
 	 * @param document the document to be scanned
 	 * @param prefix the prefix to search for
-	 * @param firstPosition the initial position in the document that the search
-	 *        will start from. In order to search from the beginning of the
-	 *        document use <code>firstPosition=0</code>.
+	 * @param firstPosition the initial position in the document that
+	 *        the search will start from. In order to search from the
+	 *        beginning of the document use <code>firstPosition=0</code>.
 	 * @return a {@link List} of possible completions (as {@link String}s),
 	 *         excluding the common prefix
 	 * @throws BadLocationException if there is some error scanning the
