@@ -16,6 +16,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -40,9 +42,11 @@ public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
-	protected void markReadOnly() throws Exception {
+	protected void setReadOnly(boolean state) throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
-		file.setReadOnly(true);
+		ResourceAttributes attributes= new ResourceAttributes();
+		attributes.setReadOnly(state);
+		file.setResourceAttributes(attributes);
 	}
 
 	/*

@@ -46,9 +46,13 @@ public class FileBuffersForExternalFiles extends FileBufferFunctions {
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
-	protected void markReadOnly() throws Exception {
+	protected void setReadOnly(boolean state) throws Exception {
 		File file= FileBuffers.getSystemFileAtLocation(getPath());
-		file.setReadOnly();
+		if (state)
+			file.setReadOnly();
+		else {
+			// FIXME: no Java API to remove read-only flag
+		}
 	}
 
 	/*

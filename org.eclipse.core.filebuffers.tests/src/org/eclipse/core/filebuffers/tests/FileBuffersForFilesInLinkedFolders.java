@@ -12,19 +12,21 @@ package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 
 import org.eclipse.jface.text.source.IAnnotationModel;
-
-import org.osgi.framework.Bundle;
 
 /**
  * FileBuffersForLinkedFiles
@@ -64,9 +66,11 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
-	protected void markReadOnly() throws Exception {
+	protected void setReadOnly(boolean state) throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
-		file.setReadOnly(true);
+		ResourceAttributes attributes= new ResourceAttributes();
+		attributes.setReadOnly(state);
+		file.setResourceAttributes(attributes);
 	}
 
 	/*

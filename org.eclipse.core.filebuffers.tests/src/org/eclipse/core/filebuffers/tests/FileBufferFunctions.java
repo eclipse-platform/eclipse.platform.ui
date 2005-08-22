@@ -41,7 +41,7 @@ public abstract class FileBufferFunctions extends TestCase {
 	
 	protected abstract IPath createPath(IProject project) throws Exception;
 	
-	protected abstract void markReadOnly() throws Exception;
+	protected abstract void setReadOnly(boolean state) throws Exception;
 	
 	protected abstract boolean modifyUnderlyingFile() throws Exception;
 	
@@ -258,12 +258,13 @@ public abstract class FileBufferFunctions extends TestCase {
 		fManager.connect(fPath, null);
 		try {
 			
-			markReadOnly();
+			setReadOnly(true);
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
 			fileBuffer.validateState(null, null);
 			assertTrue(fileBuffer.isStateValidated());
 			
 		} finally {
+			setReadOnly(false);
 			fManager.disconnect(fPath, null);
 		}
 	}
@@ -293,7 +294,7 @@ public abstract class FileBufferFunctions extends TestCase {
 		fManager.connect(fPath, null);
 		try {
 			
-			markReadOnly();
+			setReadOnly(true);
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
 			fileBuffer.validateState(null, null);
 			fileBuffer.resetStateValidation();
@@ -301,6 +302,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				assertFalse(fileBuffer.isStateValidated());
 			
 		} finally {
+			setReadOnly(false);
 			fManager.disconnect(fPath, null);
 		}
 	}
@@ -614,7 +616,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			fManager.connect(fPath, null);
 			try {
 
-				markReadOnly();
+				setReadOnly(true);
 				fileBuffer= fManager.getTextFileBuffer(fPath);
 				fileBuffer.validateState(null, null);
 
@@ -625,6 +627,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				}
 
 			} finally {
+				setReadOnly(false);
 				fManager.disconnect(fPath, null);
 			}
 			
@@ -703,7 +706,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			fManager.connect(fPath, null);
 			try {
 
-				markReadOnly();
+				setReadOnly(true);
 				fileBuffer= fManager.getTextFileBuffer(fPath);
 				fileBuffer.validateState(null, null);
 				fileBuffer.resetStateValidation();
@@ -715,6 +718,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				}
 
 			} finally {
+				setReadOnly(false);
 				fManager.disconnect(fPath, null);
 			}
 			
