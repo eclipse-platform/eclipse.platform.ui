@@ -45,8 +45,8 @@ public interface IMarkerImageProvider {
      * Returns <code>null</code> if there is no appropriate image.
      *
      * @param marker The marker to get an image path for.
+     * @return String
      *
-     * @see org.eclipse.jface.resource.FileImageDescriptor
      */
     public String getImagePath(IMarker marker);
 }

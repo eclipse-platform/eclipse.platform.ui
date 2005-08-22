@@ -34,7 +34,6 @@ public class ProblemImageProvider implements IMarkerImageProvider {
      *
      * @param marker The marker to get an image path for.
      *
-     * @see org.eclipse.jface.resource.FileImageDescriptor
      */
     public String getImagePath(IMarker marker) {
         String iconPath = "/icons/full/";//$NON-NLS-1$		
