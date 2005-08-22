@@ -11,7 +11,6 @@
 package org.eclipse.ui.tests.rcp.util;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
@@ -71,8 +70,8 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 
         // bug 73184: On the mac the parent eventLoopIdle will put the display to sleep
         //            until there are events (e.g., mouse jiggled).
-        if (!"carbon".equals(SWT.getPlatform()))
-            super.eventLoopIdle(display);
+//        if (!"carbon".equals(SWT.getPlatform()))
+//            super.eventLoopIdle(display);
 
         if (idleBeforeExit == -1)
             return;
