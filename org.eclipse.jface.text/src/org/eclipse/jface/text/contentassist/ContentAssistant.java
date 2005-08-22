@@ -325,6 +325,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				try {
 					d.syncExec(new Runnable() {
 						public void run() {
+							promoteKeyListener();
 							if (showStyle == SHOW_PROPOSALS)
 								fProposalPopup.showProposals(true);
 							else if (showStyle == SHOW_CONTEXT_INFO && fContextInfoPopup != null)
