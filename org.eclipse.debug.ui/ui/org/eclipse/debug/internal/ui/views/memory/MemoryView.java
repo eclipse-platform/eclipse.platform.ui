@@ -21,6 +21,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockListener;
@@ -28,6 +29,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
@@ -354,9 +356,13 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			{
 				fAddHandler = new AbstractHandler() {
 						public Object execute(ExecutionEvent event) throws ExecutionException {
-							AddMemoryBlockAction action = new AddMemoryBlockAction(MemoryView.this);
-							action.run();
-							action.dispose();
+							IAdaptable context = DebugUITools.getDebugContext();
+							if (context != null && MemoryViewUtil.isValidSelection(new StructuredSelection(context)))
+							{
+								AddMemoryBlockAction action = new AddMemoryBlockAction(MemoryView.this);
+								action.run();
+								action.dispose();
+							}
 							return null;
 						}};
 			}
