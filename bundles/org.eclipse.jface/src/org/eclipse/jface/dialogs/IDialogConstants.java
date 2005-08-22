@@ -43,6 +43,9 @@ import org.eclipse.jface.resource.JFaceResources;
  */
 public interface IDialogConstants {
     // button ids
+	
+	// Note:  if new button ids are added, see 
+	// MessageDialogWithToggle.mapButtonLabelToButtonID(String, int)
     /**
      * Button id for an "Ok" button (value 0).
      */

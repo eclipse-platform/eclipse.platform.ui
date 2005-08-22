@@ -422,59 +422,22 @@ public class MessageDialogWithToggle extends MessageDialog {
         final Button[] buttons = new Button[buttonLabels.length];
         final int defaultButtonIndex = getDefaultButtonIndex();
 
+        int suggestedId = IDialogConstants.INTERNAL_ID;
         for (int i = 0; i < buttonLabels.length; i++) {
-            int id = i;
             String label = buttonLabels[i];
-            if (IDialogConstants.OK_LABEL.equals(label)) {
-                id = IDialogConstants.OK_ID;
-            } else if (IDialogConstants.YES_LABEL.equals(label)) {
-                id = IDialogConstants.YES_ID;
-            } else if (IDialogConstants.NO_LABEL.equals(label)) {
-                id = IDialogConstants.NO_ID;
-            } else if (IDialogConstants.CANCEL_LABEL.equals(label)) {
-                id = IDialogConstants.CANCEL_ID;
-            } else if (IDialogConstants.YES_TO_ALL_LABEL.equals(label)) {
-                id = IDialogConstants.YES_TO_ALL_ID;
-            } else if (IDialogConstants.SKIP_LABEL.equals(label)) {
-                id = IDialogConstants.SKIP_ID;
-            } else if (IDialogConstants.STOP_LABEL.equals(label)) {
-                id = IDialogConstants.STOP_ID;
-            } else if (IDialogConstants.ABORT_LABEL.equals(label)) {
-                id = IDialogConstants.ABORT_ID;
-            } else if (IDialogConstants.RETRY_LABEL.equals(label)) {
-                id = IDialogConstants.RETRY_ID;
-            } else if (IDialogConstants.IGNORE_LABEL.equals(label)) {
-                id = IDialogConstants.IGNORE_ID;
-            } else if (IDialogConstants.PROCEED_LABEL.equals(label)) {
-                id = IDialogConstants.PROCEED_ID;
-            } else if (IDialogConstants.OPEN_LABEL.equals(label)) {
-                id = IDialogConstants.OPEN_ID;
-            } else if (IDialogConstants.CLOSE_LABEL.equals(label)) {
-                id = IDialogConstants.CLOSE_ID;
-            } else if (IDialogConstants.BACK_LABEL.equals(label)) {
-                id = IDialogConstants.BACK_ID;
-            } else if (IDialogConstants.NEXT_LABEL.equals(label)) {
-                id = IDialogConstants.NEXT_ID;
-            } else if (IDialogConstants.FINISH_LABEL.equals(label)) {
-                id = IDialogConstants.FINISH_ID;
-            } else if (IDialogConstants.HELP_LABEL.equals(label)) {
-                id = IDialogConstants.HELP_ID;
-            } else if (IDialogConstants.NO_TO_ALL_LABEL.equals(label)) {
-                id = IDialogConstants.NO_TO_ALL_ID;
-            }
-
-            //          No XXX_LABEL in IDialogConstants for these. Unlikely
-            //            they would be used in a message dialog though.
-            //        	public int DETAILS_ID = 13;
-            //        	public int SELECT_ALL_ID = 18;
-            //        	public int DESELECT_ALL_ID = 19;
-            //        	public int SELECT_TYPES_ID = 20;
-
+            // get the JFace button ID that matches the label, or use the specified
+            // id if there is no match.
+            int id = mapButtonLabelToButtonID(label, suggestedId);
+            
+            // if the suggested id was used, increment the default for next use
+            if (id == suggestedId)
+            	suggestedId++;
+ 
             Button button = createButton(parent, id, label,
                     defaultButtonIndex == i);
             buttons[i] = button;
+ 
         }
-
         setButtons(buttons);
     }
 
@@ -645,5 +608,79 @@ public class MessageDialogWithToggle extends MessageDialog {
         if ((toggleButton != null) && (!toggleButton.isDisposed())) {
             toggleButton.setSelection(toggleState);
         }
+    }
+    
+    /**
+     * Attempt to find a standard JFace button id that matches the specified button
+     * label.  If no match can be found, use the default id provided.
+     * 
+     * @param buttonLabel the button label whose id is sought
+     * @param defaultId the id to use for the button if there is no standard id
+     * @return the id for the specified button label
+     */
+    private int mapButtonLabelToButtonID(String buttonLabel, int defaultId) {
+    	// Not pretty but does the job...
+    	if (IDialogConstants.OK_LABEL.equals(buttonLabel)) 
+    		return IDialogConstants.OK_ID;
+    	
+	    if (IDialogConstants.YES_LABEL.equals(buttonLabel))
+	        return IDialogConstants.YES_ID;
+	    
+	    if (IDialogConstants.NO_LABEL.equals(buttonLabel)) 
+	        return IDialogConstants.NO_ID;
+	    
+	    if (IDialogConstants.CANCEL_LABEL.equals(buttonLabel))
+	         return IDialogConstants.CANCEL_ID;
+	    
+	    if (IDialogConstants.YES_TO_ALL_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.YES_TO_ALL_ID;
+	    
+	    if (IDialogConstants.SKIP_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.SKIP_ID;
+	    
+	    if (IDialogConstants.STOP_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.STOP_ID;
+	    
+	    if (IDialogConstants.ABORT_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.ABORT_ID;
+	    
+	    if (IDialogConstants.RETRY_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.RETRY_ID;
+	    
+	    if (IDialogConstants.IGNORE_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.IGNORE_ID;
+	    
+	    if (IDialogConstants.PROCEED_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.PROCEED_ID;
+	    
+	    if (IDialogConstants.OPEN_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.OPEN_ID;
+	    
+	    if (IDialogConstants.CLOSE_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.CLOSE_ID;
+	    
+	    if (IDialogConstants.BACK_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.BACK_ID;
+	    
+	    if (IDialogConstants.NEXT_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.NEXT_ID;
+	    
+	    if (IDialogConstants.FINISH_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.FINISH_ID;
+	    
+	    if (IDialogConstants.HELP_LABEL.equals(buttonLabel))
+	    	return IDialogConstants.HELP_ID;
+	    
+	    if (IDialogConstants.NO_TO_ALL_LABEL.equals(buttonLabel))
+	        return IDialogConstants.NO_TO_ALL_ID;
+        
+        //          No XXX_LABEL in IDialogConstants for these. Unlikely
+        //            they would be used in a message dialog though.
+        //        	public int DETAILS_ID = 13;
+        //        	public int SELECT_ALL_ID = 18;
+        //        	public int DESELECT_ALL_ID = 19;
+        //        	public int SELECT_TYPES_ID = 20;
+
+	    return defaultId;
     }
 }
