@@ -141,9 +141,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 						}
 					} 
 					else {	//otherwise, add a new one
-						// disable current view tab before handling new memory blocks
-						if (getTopMemoryTab() != null)
-							getTopMemoryTab().setEnabled(false);
 						
 						TabFolder folder =  new TabFolder(fViewPaneCanvas, SWT.NULL);
 						
@@ -171,6 +168,10 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 							if (!mv.isPinMBDisplay() || isFirstMemoryBlockForRetrieval(getMemoryBlockRetrieval(memory))
 								|| mv.isMemoryBlockRegistered(memory))
 							{
+								// disable current view tab before handling new memory blocks
+								if (getTopMemoryTab() != null)
+									getTopMemoryTab().setEnabled(false);
+								
 								setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
 								if (createTab != null)
 									setRenderingSelection(createTab.getRendering());
@@ -178,6 +179,10 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 						}
 						else
 						{
+							// disable current view tab before handling new memory blocks
+							if (getTopMemoryTab() != null)
+								getTopMemoryTab().setEnabled(false);
+							
 							setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
 							if (createTab != null)
 								setRenderingSelection(createTab.getRendering());
