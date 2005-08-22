@@ -15,10 +15,13 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 public class Messages {
+	
+	private static final String BUNDLE_NAME= "org.eclipse.ui.views.markers.internal.Messages"; //$NON-NLS-1$
 
-    private final static ResourceBundle bundle = ResourceBundle
-            .getBundle(Messages.class.getName());
+	private static final ResourceBundle RESOURCE_BUNDLE= 
+		ResourceBundle.getBundle(BUNDLE_NAME);
 
+ 
     private Messages() {
         super();
     }
@@ -28,6 +31,6 @@ public class Messages {
     }
 
     public static String getString(String key) {
-        return Util.getString(bundle, key);
+        return Util.getString(RESOURCE_BUNDLE, key);
     }
 }
