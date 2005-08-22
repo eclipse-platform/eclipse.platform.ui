@@ -46,7 +46,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -1929,16 +1928,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			final FontDialog fontDialog = new FontDialog(fontChangeButton
 					.getShell());
 			fontDialog.setFontList(getFontValue(definition));
-			final FontData[] data = new FontData[1];
-
-			//opening a font dialog can be very slow on some platforms - wrap it
-			BusyIndicator.showWhile(display, new Runnable() {
-				public void run() {
-					data[0] = fontDialog.open();
-				}
-			});
-
-			if (data[0] != null) {
+			final FontData data = fontDialog.open();
+			
+			if (data != null) {
 				setFontPreferenceValue(definition, fontDialog.getFontList());
 				setRegistryValue(definition, fontDialog.getFontList());
 			}
