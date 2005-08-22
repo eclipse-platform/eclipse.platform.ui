@@ -427,7 +427,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @param mgr the menu manager representing the context menu
 	 */
 	protected void fillContextMenu(IMenuManager mgr) {
-		mgr.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
+		mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, fCopyToClipboardAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction);
 		if (getCurrentMatch() != null)
