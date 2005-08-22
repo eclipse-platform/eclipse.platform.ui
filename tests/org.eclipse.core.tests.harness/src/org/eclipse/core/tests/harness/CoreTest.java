@@ -19,37 +19,17 @@ import org.eclipse.core.runtime.*;
  */
 public class CoreTest extends TestCase {
 
-	// plug-in identified for the core.tests.harness plug-in.
-	public static final String PI_HARNESS = "org.eclipse.core.tests.harness";
-
-	/** counter for generating unique random filesystem locations */
+	/** counter for generating unique random file system locations */
 	protected static int nextLocationCounter = 0;
 
-	public CoreTest() {
-		super();
-	}
-
-	public CoreTest(String name) {
-		super(name);
-	}
-
-	public static void log(String pluginID, IStatus status) {
-		Platform.getLog(Platform.getBundle(pluginID)).log(status);
-	}
-
-	public static void log(String pluginID, Throwable e) {
-		log(pluginID, new Status(IStatus.ERROR, pluginID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
-	}
+	// plug-in identified for the core.tests.harness plug-in.
+	public static final String PI_HARNESS = "org.eclipse.core.tests.harness";
 
 	public static void debug(String message) {
 		String id = "org.eclipse.core.tests.harness/debug";
 		String option = Platform.getDebugOption(id);
 		if (Boolean.TRUE.toString().equalsIgnoreCase(option))
 			System.out.println(message);
-	}
-
-	public String getUniqueString() {
-		return System.currentTimeMillis() + "-" + Math.random();
 	}
 
 	/**
@@ -64,6 +44,23 @@ public class CoreTest extends TestCase {
 		} else
 			e.printStackTrace();
 		fail(message + ": " + e);
+	}
+
+	private static void indent(OutputStream output, int indent) {
+		for (int i = 0; i < indent; i++)
+			try {
+				output.write("\t".getBytes());
+			} catch (IOException e) {
+				// ignore
+			}
+	}
+
+	public static void log(String pluginID, IStatus status) {
+		Platform.getLog(Platform.getBundle(pluginID)).log(status);
+	}
+
+	public static void log(String pluginID, Throwable e) {
+		log(pluginID, new Status(IStatus.ERROR, pluginID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
 	}
 
 	private static void write(IStatus status, int indent) {
@@ -93,17 +90,124 @@ public class CoreTest extends TestCase {
 		}
 	}
 
-	private static void indent(OutputStream output, int indent) {
-		for (int i = 0; i < indent; i++)
-			try {
-				output.write("\t".getBytes());
-			} catch (IOException e) {
-				// ignore
-			}
+	public CoreTest() {
+		super();
 	}
 
-	public IPath getTempDir() {
-		return FileSystemHelper.getTempDir();
+	public CoreTest(String name) {
+		super(name);
+	}
+
+	/**
+	 * Asserts that a stream closes successfully. Null streams
+	 * are ignored, but failure to close the stream is reported as
+	 * an assertion failure.
+	 * @since 3.2
+	 */
+	protected void assertClose(InputStream stream) {
+		if (stream == null)
+			return;
+		try {
+			stream.close();
+		} catch (IOException e) {
+			fail("Failed close in assertClose", e);
+		}
+	}
+
+	/**
+	 * Asserts that a stream closes successfully. Null streams
+	 * are ignored, but failure to close the stream is reported as
+	 * an assertion failure.
+	 * @since 3.2
+	 */
+	protected void assertClose(OutputStream stream) {
+		if (stream == null)
+			return;
+		try {
+			stream.close();
+		} catch (IOException e) {
+			fail("Failed close in assertClose", e);
+		}
+	}
+
+	protected void assertEquals(String message, Object[] expected, Object[] actual) {
+		if (expected == null && actual == null)
+			return;
+		if (expected == null || actual == null)
+			fail(message);
+		if (expected.length != actual.length)
+			fail(message);
+		for (int i = 0; i < expected.length; i++)
+			assertEquals(message, expected[i], actual[i]);
+	}
+
+	protected void assertEquals(String message, Object[] expected, Object[] actual, boolean orderImportant) {
+		// if the order in the array must match exactly, then call the other method
+		if (orderImportant) {
+			assertEquals(message, expected, actual);
+			return;
+		}
+		// otherwise use this method and check that the arrays are equal in any order
+		if (expected == null && actual == null)
+			return;
+		if (expected == actual)
+			return;
+		if (expected == null || actual == null)
+			assertTrue(message + ".1", false);
+		if (expected.length != actual.length)
+			assertTrue(message + ".2", false);
+		boolean[] found = new boolean[expected.length];
+		for (int i = 0; i < expected.length; i++) {
+			for (int j = 0; j < expected.length; j++) {
+				if (!found[j] && expected[i].equals(actual[j]))
+					found[j] = true;
+			}
+		}
+		for (int i = 0; i < found.length; i++)
+			if (!found[i])
+				assertTrue(message + ".3." + i, false);
+	}
+
+	/**
+	 * Create the given file in the file system. 
+	 */
+	public void createFileInFileSystem(File file, InputStream contents) throws IOException {
+		file.getParentFile().mkdirs();
+		FileOutputStream output = new FileOutputStream(file);
+		transferData(contents, output);
+	}
+
+	protected void ensureDoesNotExistInFileSystem(java.io.File file) {
+		FileSystemHelper.clear(file);
+	}
+
+	public InputStream getContents(java.io.File target, String errorCode) {
+		try {
+			return new FileInputStream(target);
+		} catch (IOException e) {
+			fail(errorCode, e);
+		}
+		return null; // never happens
+	}
+
+	/**
+	 * Return an input stream with some the specified text to use
+	 * as contents for a file resource.
+	 */
+	public InputStream getContents(String text) {
+		return new ByteArrayInputStream(text.getBytes());
+	}
+
+	public IProgressMonitor getMonitor() {
+		return new FussyProgressMonitor();
+	}
+
+	/**
+	 * Return an input stream with some random text to use
+	 * as contents for a file resource.
+	 */
+	public InputStream getRandomContents() {
+		return new ByteArrayInputStream(getRandomString().getBytes());
 	}
 
 	/**
@@ -148,31 +252,12 @@ public class CoreTest extends TestCase {
 		}
 	}
 
-	/**
-	 * Return an input stream with some random text to use
-	 * as contents for a file resource.
-	 */
-	public InputStream getRandomContents() {
-		return new ByteArrayInputStream(getRandomString().getBytes());
+	public IPath getTempDir() {
+		return FileSystemHelper.getTempDir();
 	}
 
-	public IProgressMonitor getMonitor() {
-		return new FussyProgressMonitor();
-	}
-
-	/**
-	 * Copy the data from the input stream to the output stream.
-	 * Do not close either of the streams.
-	 */
-	public void transferDataWithoutClose(InputStream input, OutputStream output) {
-		try {
-			int c = 0;
-			while ((c = input.read()) != -1)
-				output.write(c);
-		} catch (IOException e) {
-			e.printStackTrace();
-			assertTrue(e.toString(), false);
-		}
+	public String getUniqueString() {
+		return System.currentTimeMillis() + "-" + Math.random();
 	}
 
 	/**
@@ -196,71 +281,18 @@ public class CoreTest extends TestCase {
 	}
 
 	/**
-	 * Return an input stream with some the specified text to use
-	 * as contents for a file resource.
+	 * Copy the data from the input stream to the output stream.
+	 * Do not close either of the streams.
 	 */
-	public InputStream getContents(String text) {
-		return new ByteArrayInputStream(text.getBytes());
-	}
-
-	public InputStream getContents(java.io.File target, String errorCode) {
+	public void transferDataWithoutClose(InputStream input, OutputStream output) {
 		try {
-			return new FileInputStream(target);
+			int c = 0;
+			while ((c = input.read()) != -1)
+				output.write(c);
 		} catch (IOException e) {
-			fail(errorCode, e);
+			e.printStackTrace();
+			assertTrue(e.toString(), false);
 		}
-		return null; // never happens
-	}
-
-	protected void ensureDoesNotExistInFileSystem(java.io.File file) {
-		FileSystemHelper.clear(file);
-	}
-
-	protected void assertEquals(String message, Object[] expected, Object[] actual, boolean orderImportant) {
-		// if the order in the array must match exactly, then call the other method
-		if (orderImportant) {
-			assertEquals(message, expected, actual);
-			return;
-		}
-		// otherwise use this method and check that the arrays are equal in any order
-		if (expected == null && actual == null)
-			return;
-		if (expected == actual)
-			return;
-		if (expected == null || actual == null)
-			assertTrue(message + ".1", false);
-		if (expected.length != actual.length)
-			assertTrue(message + ".2", false);
-		boolean[] found = new boolean[expected.length];
-		for (int i = 0; i < expected.length; i++) {
-			for (int j = 0; j < expected.length; j++) {
-				if (!found[j] && expected[i].equals(actual[j]))
-					found[j] = true;
-			}
-		}
-		for (int i = 0; i < found.length; i++)
-			if (!found[i])
-				assertTrue(message + ".3." + i, false);
-	}
-
-	protected void assertEquals(String message, Object[] expected, Object[] actual) {
-		if (expected == null && actual == null)
-			return;
-		if (expected == null || actual == null)
-			fail(message);
-		if (expected.length != actual.length)
-			fail(message);
-		for (int i = 0; i < expected.length; i++)
-			assertEquals(message, expected[i], actual[i]);
-	}
-	
-	/**
-	 * Create the given file in the file system. 
-	 */
-	public void createFileInFileSystem(File file, InputStream contents) throws IOException {
-		file.getParentFile().mkdirs();
-		FileOutputStream output = new FileOutputStream(file);
-		transferData(contents, output);
 	}
 
 }
