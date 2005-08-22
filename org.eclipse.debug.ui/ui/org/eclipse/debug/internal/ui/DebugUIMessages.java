@@ -208,6 +208,9 @@ public class DebugUIMessages extends NLS {
 	public static String TableRenderingContentProvider_0;
 	public static String TableRenderingContentProvider_1;
 	public static String TableRenderingContentProvider_2;
+	public static String AddMemoryBlocksComposite_0;
+	public static String AddMemoryBlocksComposite_1;
+	public static String AddMemoryBlocksComposite_2;
 	
 	static {
 		// load message values from bundle file

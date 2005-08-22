@@ -11,9 +11,9 @@
 
 package org.eclipse.debug.internal.ui.views.memory;
 
-import java.util.Vector;
-import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
+
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -36,7 +36,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 
-	private static Vector history = new Vector();
 	private Combo expressionInput;
 	private Text lengthInput;
 	private String expression;
@@ -88,8 +87,8 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 		spec.heightHint = 50;
 		expressionInput.setLayoutData(spec);
 		
-		// add history
-		String[] historyExpression = (String[])history.toArray(new String[history.size()]);
+		// add HISTORY
+		String[] historyExpression = MemoryViewUtil.getHistory();
 		for (int i=0; i<historyExpression.length; i++)
 		{
 			expressionInput.add(historyExpression[i]);
@@ -152,9 +151,8 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 
 		expression = expressionInput.getText();
 
-		// add to history list
-		if (!history.contains(expression))
-			history.insertElementAt(expression, 0);
+		// add to HISTORY list
+		MemoryViewUtil.addHistory(expression);
 
 		if (needLength)
 			length = lengthInput.getText();

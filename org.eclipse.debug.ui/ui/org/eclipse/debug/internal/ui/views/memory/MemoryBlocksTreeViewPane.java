@@ -48,7 +48,10 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -79,6 +82,8 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 	private String fPaneId;
 	private boolean fVisible = true;
 	private ArrayList fMemoryBlocks = new ArrayList();
+
+	private AddMemoryBlocksComposite fAddMemoryBlocksComposite;
 	
 	class TreeViewerRemoveMemoryBlocksAction extends Action
 	{
@@ -211,6 +216,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		 */
 		public void dispose() {
 			super.dispose();
+			fAddMemoryBlocksComposite.dispose();
 			DebugPlugin.getDefault().getMemoryBlockManager().removeListener(this);
 			DebugPlugin.getDefault().removeDebugEventListener(this);
 		}
@@ -432,9 +438,18 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 	}
 	
 	public Control createViewPane(Composite parent, String paneId, String label)
-	{
+	{	
+		Composite composite = new Composite(parent, SWT.FILL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.makeColumnsEqualWidth = false;
+		composite.setLayout(layout);
+		
+		fAddMemoryBlocksComposite = new AddMemoryBlocksComposite(fParent);
+		fAddMemoryBlocksComposite.createComposite(composite);
+		
 		fPaneId = paneId;
-		fTreeViewer = new TreeViewer(parent);
+		fTreeViewer = new TreeViewer(composite);
 		fContentProvider = new MemoryBlocksViewerContentProvider();
 		fTreeViewer.setLabelProvider(new MemoryBlocksViewerLabelProvider());
 		fTreeViewer.setContentProvider(fContentProvider);
@@ -469,7 +484,14 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			fTreeViewer.setSelection(new StructuredSelection(memoryBlocks[0]));
 		}
 		
-		return fTreeViewer.getControl();
+		GridData data = new GridData();
+		data.grabExcessHorizontalSpace = true;
+		data.grabExcessVerticalSpace = true;
+		data.horizontalAlignment = SWT.FILL;
+		data.verticalAlignment = SWT.FILL;
+		fTreeViewer.getControl().setLayoutData(data);
+		
+		return composite;
 	}
 	
 	
@@ -486,6 +508,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			if (obj instanceof IDebugElement)
 			{
 				fTreeViewer.setInput(((IDebugElement)obj).getDebugTarget());
+				fAddMemoryBlocksComposite.update(selected);
 			}
 		}
 		
@@ -623,7 +646,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		
 		updateActionsEnablement();
 		
-		return new IAction[]{fAddMemoryBlockAction, fRemoveMemoryBlockAction, fRemoveAllMemoryBlocksAction};
+		return new IAction[]{fRemoveMemoryBlockAction, fRemoveAllMemoryBlocksAction};
 	}
 
 	/* (non-Javadoc)

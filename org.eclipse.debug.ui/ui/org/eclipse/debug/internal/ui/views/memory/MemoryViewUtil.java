@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
@@ -70,6 +71,7 @@ public class MemoryViewUtil {
 		SWT.ALT
 	};	
 	
+	public static ArrayList MEMORY_BLOCKS_HISTORY = new ArrayList();
 	
 	/**
 	 * @param selection
@@ -173,5 +175,19 @@ public class MemoryViewUtil {
 		}		
 		
 		return integer;
+	}
+	
+	public static void addHistory(String expression)
+	{		
+		if (!MEMORY_BLOCKS_HISTORY.contains(expression))
+			MEMORY_BLOCKS_HISTORY.add(0, expression);
+		
+		if (MEMORY_BLOCKS_HISTORY.size() > 5)
+			MEMORY_BLOCKS_HISTORY.remove(MEMORY_BLOCKS_HISTORY.size()-1);
+	}
+	
+	public static String[] getHistory() 
+	{
+		return (String[])MEMORY_BLOCKS_HISTORY.toArray(new String[MEMORY_BLOCKS_HISTORY.size()]);
 	}
 }

@@ -1705,7 +1705,7 @@ M4 = Platform-specific fourth key
             description="%ActionDefinition.toggleMethodBreakpoint.description"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint">
-      </command>
+      </command> 
 <!-- console -->      
       <command
             name="%ActionDefinition.eof.name"
@@ -1713,6 +1713,12 @@ M4 = Platform-specific fourth key
             description="%ActionDefinition.eof.description"
             id="org.eclipse.debug.ui.commands.eof">
       </command>
+<!-- Memory View -->
+ 	  <command
+       		categoryId="org.eclipse.debug.ui.category.run"
+      		description="%ActionDefinition.addMemoryBlock.description"
+     		id="org.eclipse.debug.ui.commands.addMemoryMonitor"
+     		name="%ActionDefinition.addMemoryBlock.name"/>           
 <!-- views -->
       <command
             name="%ViewCommand.debugView.name"
@@ -1846,6 +1852,11 @@ M4 = Platform-specific fourth key
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.debug.ui.VariableView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+             commandId="org.eclipse.debug.ui.commands.addMemoryMonitor"
+             contextId="org.eclipse.debug.ui.memoryview"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+M3+M"/>
   	</extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
@@ -2211,7 +2222,13 @@ M4 = Platform-specific fourth key
            description="%Context.console.description"
            id="org.eclipse.debug.ui.console"
            parentId="org.eclipse.ui.contexts.window">
-     </context>     
+     </context>  
+     <context
+           name="%Context.memoryview.name"
+           description="%Context.memoryview.description "
+           id="org.eclipse.debug.ui.memoryview"
+           parentId="org.eclipse.ui.contexts.window">
+     </context>      
   </extension>
   <extension
         point="org.eclipse.debug.ui.contextViewBindings">

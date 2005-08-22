@@ -17,6 +17,10 @@ import java.util.Hashtable;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockListener;
@@ -46,10 +50,14 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -70,6 +78,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private ArrayList fWeights = new ArrayList();
 	
 	private static final String VISIBILITY_PREF = IInternalDebugUIConstants.ID_MEMORY_VIEW+".viewPanesVisibility"; //$NON-NLS-1$
+	private static final String ID_MEMORY_VIEW_CONTEXT = "org.eclipse.debug.ui.memoryview"; //$NON-NLS-1$
+	private static final String ID_ADD_MEMORY_BLOCK_COMMAND = "org.eclipse.debug.ui.commands.addMemoryMonitor"; //$NON-NLS-1$
 	
 	private String[] defaultVisiblePaneIds ={MemoryBlocksTreeViewPane.PANE_ID, IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1};
 		
@@ -79,6 +89,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	
 	private boolean fPinMBDisplay = true;	// pin memory block display, on by default
 	private static int fViewCnt = 0;
+
+	private IContextActivation fContext;
 	
 	private Set fRegisteredMemoryBlocks = new HashSet();
 	private IMemoryBlockListener fMemoryBlockListener = new IMemoryBlockListener() {
@@ -91,7 +103,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			// clean up registered memory blocks
 			unRegisterMemoryBlocks(memory);
 		}};
-	
+	private AbstractHandler fAddHandler;
+		
 	class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener
 	{
 		ArrayList fListeners = new ArrayList();
@@ -191,6 +204,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 		 */
 		public void partActivated(IWorkbenchPartReference ref) {
+			if (ref.getPart(false) == fView)
+				activated();
 		}
 
 		/* (non-Javadoc)
@@ -209,6 +224,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
 		 */
 		public void partDeactivated(IWorkbenchPartReference ref) {
+			if (ref.getPart(false) == fView)
+				deactivated();
 		}
 
 		/* (non-Javadoc)
@@ -321,6 +338,49 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		restoreView();
 	}
 	
+    public void activated() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
+		IContextService contextSupport = (IContextService)workbench.getAdapter(IContextService.class);
+		
+		if (commandSupport != null && contextSupport != null)
+		{
+			fContext = contextSupport.activateContext(ID_MEMORY_VIEW_CONTEXT);
+			Command command = commandSupport.getCommand(ID_ADD_MEMORY_BLOCK_COMMAND);
+			
+			// dynamically change handler on Add Memory Monitor command based
+			// on which Memory View is active
+			if (fAddHandler == null)
+			{
+				fAddHandler = new AbstractHandler() {
+						public Object execute(ExecutionEvent event) throws ExecutionException {
+							AddMemoryBlockAction action = new AddMemoryBlockAction(MemoryView.this);
+							action.run();
+							action.dispose();
+							return null;
+						}};
+			}
+			command.setHandler(fAddHandler);
+		}
+    }
+    
+    public void deactivated()
+    {
+    	IWorkbench workbench = PlatformUI.getWorkbench();
+		ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
+		IContextService contextSupport = (IContextService)workbench.getAdapter(IContextService.class);
+		
+		if (commandSupport != null && contextSupport != null)
+		{
+			// 	remove handler
+			Command command = commandSupport.getCommand(ID_ADD_MEMORY_BLOCK_COMMAND);
+			command.setHandler(null);
+			
+			if (fContext != null)
+				contextSupport.deactivateContext(fContext);
+		}
+    }
+	
 	/**
 	 * 
 	 */
@@ -334,7 +394,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		
 		fMemBlkViewer.addSelectionListener(fSelectionProvider);
 		
-		Control viewerControl = fMemBlkViewer.createViewPane(viewerViewForm, MemoryBlocksTreeViewPane.PANE_ID, DebugUIMessages.MemoryView_Memory_monitors); 
+		Control viewerControl = fMemBlkViewer.createViewPane(viewerViewForm, MemoryBlocksTreeViewPane.PANE_ID, DebugUIMessages.MemoryView_Memory_monitors);
 		viewerViewForm.setContent(viewerControl);
 		
 		ISelection selection = fMemBlkViewer.getSelectionProvider().getSelection();
