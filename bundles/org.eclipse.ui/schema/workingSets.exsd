@@ -124,8 +124,7 @@ The resource navigator uses a working set to filter elements from the navigator 
             id=&quot;org.eclipse.ui.resourceWorkingSetPage&quot;
             name=&quot;Resource&quot;
             icon=&quot;icons/resworkset.gif&quot;
-            pageClass=&quot;org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage&quot;&gt;
-        &lt;/workingSet&gt;
+            pageClass=&quot;org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage&quot; /&gt;
     &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
