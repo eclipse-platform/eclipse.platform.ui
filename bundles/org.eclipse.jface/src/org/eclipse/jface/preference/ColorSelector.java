@@ -77,24 +77,7 @@ public class ColorSelector {
         fButton.setImage(fImage);
         fButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
-                ColorDialog colorDialog = new ColorDialog(fButton.getShell());
-                colorDialog.setRGB(fColorValue);
-                RGB newColor = colorDialog.open();
-                if (newColor != null) {
-                    RGB oldValue = fColorValue;
-                    fColorValue = newColor;
-                    final Object[] finalListeners = ColorSelector.this.listeners
-                            .getListeners();
-                    if (finalListeners.length > 0) {
-                        PropertyChangeEvent pEvent = new PropertyChangeEvent(
-                                this, PROP_COLORCHANGE, oldValue, newColor);
-                        for (int i = 0; i < finalListeners.length; ++i) {
-                            IPropertyChangeListener listener = (IPropertyChangeListener) finalListeners[i];
-                            listener.propertyChange(pEvent);
-                        }
-                    }
-                    updateColorImage();
-                }
+                open();
             }
         });
         fButton.addDisposeListener(new DisposeListener() {
@@ -221,4 +204,31 @@ public class ColorSelector {
         gc.dispose();
         fButton.setImage(fImage);
     }
+
+    /**
+	 * Activate the editor for this selector. This causes the color selection
+	 * dialog to appear and wait for user input.
+	 * 
+	 * @since 3.2
+	 */
+	public void open() {
+		ColorDialog colorDialog = new ColorDialog(fButton.getShell());
+		colorDialog.setRGB(fColorValue);
+		RGB newColor = colorDialog.open();
+		if (newColor != null) {
+		    RGB oldValue = fColorValue;
+		    fColorValue = newColor;
+		    final Object[] finalListeners = ColorSelector.this.listeners
+		            .getListeners();
+		    if (finalListeners.length > 0) {
+		        PropertyChangeEvent pEvent = new PropertyChangeEvent(
+		                this, PROP_COLORCHANGE, oldValue, newColor);
+		        for (int i = 0; i < finalListeners.length; ++i) {
+		            IPropertyChangeListener listener = (IPropertyChangeListener) finalListeners[i];
+		            listener.propertyChange(pEvent);
+		        }
+		    }
+		    updateColorImage();
+		}
+	}
 }

@@ -858,6 +858,13 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                     tree.getViewer().setExpandedState(element,
                             !tree.getViewer().getExpandedState(element));
                 }
+                
+                if (element instanceof FontDefinition) {
+                		editFont(tree.getDisplay());
+                }
+                else if (element instanceof ColorDefinition) {
+                		colorSelector.open();
+                }
             }
         });
         
@@ -1190,28 +1197,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
         fontChangeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
-            	final FontDefinition definition = getSelectedFontDefinition();
-                if (definition != null) {
-                    final FontDialog fontDialog = new FontDialog(fontChangeButton
-                            .getShell());
-                    fontDialog.setFontList(getFontValue(definition));
-                    final FontData [] data = new FontData[1];
-
-                    //opening a font dialog can be very slow on some platforms - wrap it
-	            	BusyIndicator.showWhile(event.display, new Runnable() {
-	            		public void run() {		
-	            			data[0] = fontDialog.open();
-	            		}
-				    }); 
-	            	
-                    if (data[0] != null) {
-                        setFontPreferenceValue(definition, fontDialog
-                                .getFontList());
-                        setRegistryValue(definition, fontDialog.getFontList());
-                    }	            	
-		
-		            updateFontControls(definition);
-            	}
+            	Display display = event.display;
+            	editFont(display);
             }
         });
 
@@ -1927,6 +1914,36 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			buffer.append(MARKER_COLOR);
 		} else if (object instanceof ThemeElementCategory) {
 			buffer.append(MARKER_CATEGORY);
+		}
+	}
+
+	/**
+	 * Edit the currently selected font.
+	 * 
+	 * @param display the display to open the dialog on
+	 * @since 3.2
+	 */
+	private void editFont(Display display) {
+		final FontDefinition definition = getSelectedFontDefinition();
+		if (definition != null) {
+			final FontDialog fontDialog = new FontDialog(fontChangeButton
+					.getShell());
+			fontDialog.setFontList(getFontValue(definition));
+			final FontData[] data = new FontData[1];
+
+			//opening a font dialog can be very slow on some platforms - wrap it
+			BusyIndicator.showWhile(display, new Runnable() {
+				public void run() {
+					data[0] = fontDialog.open();
+				}
+			});
+
+			if (data[0] != null) {
+				setFontPreferenceValue(definition, fontDialog.getFontList());
+				setRegistryValue(definition, fontDialog.getFontList());
+			}
+
+			updateFontControls(definition);
 		}
 	}
 }
