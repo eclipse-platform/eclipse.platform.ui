@@ -63,7 +63,7 @@ public class TaskFilter extends MarkerFilter {
 	 * 
 	 */
 	public TaskFilter() {
-		this(Messages.getString("MarkerFilter.defaultFilterName"));//$NON-NLS-1$
+		this(MarkerMessages.MarkerFilter_defaultFilterName);
 	}
 
 	/**

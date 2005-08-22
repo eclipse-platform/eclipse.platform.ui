@@ -37,13 +37,13 @@ public class ActionRemoveMarker extends SelectionProviderAction {
      * Creates the action.
      */
     public ActionRemoveMarker(IWorkbenchPart part, ISelectionProvider provider) {
-        super(provider, Messages.getString("deleteAction.title")); //$NON-NLS-1$
+        super(provider, MarkerMessages.deleteAction_title);
         this.part = part;
         setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
                 .getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
         setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
                 .getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
-        setToolTipText(Messages.getString("deleteAction.tooltip")); //$NON-NLS-1$
+        setToolTipText(MarkerMessages.deleteAction_tooltip);
         setEnabled(false);
     }
 
@@ -71,8 +71,9 @@ public class ActionRemoveMarker extends SelectionProviderAction {
                 }
             }, null);
         } catch (CoreException e) {
-            ErrorDialog.openError(part.getSite().getShell(), Messages
-                    .getString("RemoveMarker.errorTitle"), null, e.getStatus()); //$NON-NLS-1$
+            ErrorDialog.openError(part.getSite().getShell(), 
+            		MarkerMessages.RemoveMarker_errorTitle, 
+            		null, e.getStatus()); 
         }
     }
 

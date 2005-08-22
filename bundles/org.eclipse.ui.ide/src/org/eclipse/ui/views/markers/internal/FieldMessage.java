@@ -20,7 +20,7 @@ public class FieldMessage implements IField {
     private Image image;
 
     public FieldMessage() {
-        description = Messages.getString("description.message"); //$NON-NLS-1$
+        description = MarkerMessages.description_message;
     }
 
     /*

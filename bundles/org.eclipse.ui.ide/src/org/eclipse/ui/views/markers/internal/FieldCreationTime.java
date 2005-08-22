@@ -26,7 +26,7 @@ public class FieldCreationTime implements IField {
      * The constructor
      */
     public FieldCreationTime() {
-        description = Messages.getString("description.creationTime"); //$NON-NLS-1$
+        description = MarkerMessages.description_creationTime;
     }
 
     /*

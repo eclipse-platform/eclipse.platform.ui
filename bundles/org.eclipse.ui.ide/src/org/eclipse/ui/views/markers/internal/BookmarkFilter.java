@@ -33,7 +33,7 @@ public class BookmarkFilter extends MarkerFilter {
 	 * 
 	 */
 	public BookmarkFilter() {
-		this(Messages.getString("MarkerFilter.defaultFilterName"));//$NON-NLS-1$
+		this(MarkerMessages.MarkerFilter_defaultFilterName);
 	}
 
 	/**

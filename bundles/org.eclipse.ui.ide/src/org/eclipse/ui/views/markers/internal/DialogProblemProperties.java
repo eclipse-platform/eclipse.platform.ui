@@ -12,6 +12,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -54,25 +55,26 @@ class DialogProblemProperties extends DialogMarkerProperties {
         severityLabel.setImage(type.getImage(marker));
         int severity = marker.getAttribute(IMarker.SEVERITY, -1);
         if (severity == IMarker.SEVERITY_ERROR) {
-            severityLabel.setText(Messages.format(
-                    "propertiesDialog.severityLabel", //$NON-NLS-1$
-                    new String[] { Messages
-                            .getString("propertiesDialog.errorLabel") })); //$NON-NLS-1$
+            severityLabel.setText(
+            		NLS.bind(
+            			MarkerMessages.propertiesDialog_severityLabel,
+            		    MarkerMessages.propertiesDialog_errorLabel));
         } else if (severity == IMarker.SEVERITY_WARNING) {
-            severityLabel.setText(Messages.format(
-                    "propertiesDialog.severityLabel", //$NON-NLS-1$
-                    new String[] { Messages
-                            .getString("propertiesDialog.warningLabel") })); //$NON-NLS-1$
+            severityLabel.setText(
+            		NLS.bind(
+                			MarkerMessages.propertiesDialog_severityLabel,
+                		    MarkerMessages.propertiesDialog_warningLabel));
         } else if (severity == IMarker.SEVERITY_INFO) {
-            severityLabel.setText(Messages.format(
-                    "propertiesDialog.severityLabel", //$NON-NLS-1$
-                    new String[] { Messages
-                            .getString("propertiesDialog.infoLabel") })); //$NON-NLS-1$
+            severityLabel.setText(
+            		NLS.bind(
+                			MarkerMessages.propertiesDialog_severityLabel,
+                		    MarkerMessages.propertiesDialog_infoLabel));
         } else {
-            severityLabel.setText(Messages.format(
-                    "propertiesDialog.severityLabel", //$NON-NLS-1$
-                    new String[] { Messages
-                            .getString("propertiesDialog.noseverityLabel") })); //$NON-NLS-1$
+            severityLabel.setText(
+            		NLS.bind(
+                			MarkerMessages.propertiesDialog_severityLabel,
+                		    MarkerMessages.propertiesDialog_noseverityLabel));
+ 
         }
     }
 

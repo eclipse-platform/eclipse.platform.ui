@@ -45,7 +45,7 @@ public class ActionCopyMarker extends SelectionProviderAction {
      * Creates the action.
      */
     public ActionCopyMarker(IWorkbenchPart part, ISelectionProvider provider) {
-        super(provider, Messages.getString("copyAction.title")); //$NON-NLS-1$
+        super(provider, MarkerMessages.copyAction_title);
         this.part = part;
         setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
                 .getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
@@ -112,8 +112,9 @@ public class ActionCopyMarker extends SelectionProviderAction {
             if (MessageDialog
                     .openQuestion(
                             part.getSite().getShell(),
-                            Messages
-                                    .getString("CopyToClipboardProblemDialog.title"), Messages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+                            MarkerMessages
+                                    .CopyToClipboardProblemDialog_title, 
+                            MarkerMessages.CopyToClipboardProblemDialog_message))
                 setClipboard(markers, markerReport);
         }
     }
@@ -128,8 +129,8 @@ public class ActionCopyMarker extends SelectionProviderAction {
         try {
             markers = MarkerList.createMarkers(rawMarkers);
         } catch (CoreException e) {
-            ErrorDialog.openError(part.getSite().getShell(), Messages
-                    .getString("Error"), //$NON-NLS-1$
+            ErrorDialog.openError(part.getSite().getShell(), 
+            		MarkerMessages.Error,
                     null, e.getStatus());
             return ""; //$NON-NLS-1$
         }

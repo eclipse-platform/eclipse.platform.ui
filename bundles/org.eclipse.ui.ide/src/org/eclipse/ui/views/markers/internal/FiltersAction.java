@@ -26,9 +26,9 @@ class FiltersAction extends Action {
      * Creates the action
      */
     public FiltersAction(MarkerView view) {
-        super(Messages.getString("filtersAction.title")); //$NON-NLS-1$
+        super(MarkerMessages.filtersAction_title);
         setImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
-        setToolTipText(Messages.getString("filtersAction.tooltip")); //$NON-NLS-1$
+        setToolTipText(MarkerMessages.filtersAction_tooltip);
         this.view = view;
         setEnabled(true);
     }

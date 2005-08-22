@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 
 public class FieldLineNumber implements IField {
@@ -20,7 +21,7 @@ public class FieldLineNumber implements IField {
     private Image image;
 
     public FieldLineNumber() {
-        description = Messages.getString("description.lineNumber"); //$NON-NLS-1$
+        description = MarkerMessages.description_lineNumber;
     }
 
     /*
@@ -69,9 +70,10 @@ public class FieldLineNumber implements IField {
             return ""; //$NON-NLS-1$
         }
 
-        return Messages
-                .format(
-                        "label.lineNumber", new String[] { Integer.toString(marker.getLine()) }); //$NON-NLS-1$
+        return NLS.bind(
+        		MarkerMessages.label_lineNumber,
+        		Integer.toString(marker.getLine()));
+        
     }
 
     /*

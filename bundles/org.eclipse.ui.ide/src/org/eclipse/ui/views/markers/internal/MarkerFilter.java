@@ -199,9 +199,8 @@ public class MarkerFilter {
 			}
 		}
 
-		mon
-				.beginTask(
-						Messages.getString("MarkerFilter.searching"), typesToSearch.size() * resources.length); //$NON-NLS-1$
+		mon.beginTask(
+			 MarkerMessages.MarkerFilter_searching, typesToSearch.size() * resources.length);
 
 		// Use this hash set to determine if there are any resources in the
 		// list that appear along with their parent.

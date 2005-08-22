@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -129,8 +130,8 @@ public abstract class DialogMarkerFilter extends Dialog {
          */
         WorkingSetGroup(Composite parent) {
             // radio button has to be part of main radio button group
-            button = createRadioButton(parent, Messages
-                    .getString("filtersDialog.noWorkingSet")); //$NON-NLS-1$
+            button = createRadioButton(parent, MarkerMessages
+                    .filtersDialog_noWorkingSet);
             GridData data = new GridData(GridData.FILL_HORIZONTAL);
             button.setLayoutData(data);
 
@@ -143,7 +144,7 @@ public abstract class DialogMarkerFilter extends Dialog {
             radio.dispose();
             composite.setLayout(layout);
             selectButton = createButton(composite, SELECT_WORKING_SET_ID,
-                    Messages.getString("filtersDialog.workingSetSelect"), false); //$NON-NLS-1$
+                    MarkerMessages.filtersDialog_workingSetSelect, false);
         }
 
         /**
@@ -218,12 +219,13 @@ public abstract class DialogMarkerFilter extends Dialog {
         void setWorkingSet(IWorkingSet workingSet) {
             button.setData(workingSet);
             if (workingSet != null) {
-                button.setText(Messages.format("filtersDialog.workingSet", //$NON-NLS-1$
-                        new Object[] { workingSet.getName() }));
+                button.setText(
+                	NLS.bind(
+                			MarkerMessages.filtersDialog_workingSet, workingSet.getName()));
             } else {
                 button
-                        .setText(Messages
-                                .getString("filtersDialog.noWorkingSet")); //$NON-NLS-1$
+                        .setText(MarkerMessages
+                                .filtersDialog_noWorkingSet);
             }
         }
 
@@ -308,7 +310,7 @@ public abstract class DialogMarkerFilter extends Dialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(Messages.getString("filtersDialog.title")); //$NON-NLS-1$
+        newShell.setText(MarkerMessages.filtersDialog_title);
     }
 
     protected void createResetArea(Composite parent) {
@@ -320,7 +322,7 @@ public abstract class DialogMarkerFilter extends Dialog {
         composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
         Button reset = new Button(composite, SWT.PUSH);
-        reset.setText(Messages.getString("restoreDefaults.text")); //$NON-NLS-1$
+        reset.setText(MarkerMessages.restoreDefaults_text);
         reset.setData(new Integer(RESET_ID));
 
         reset.addSelectionListener(new SelectionAdapter() {
@@ -415,7 +417,7 @@ public abstract class DialogMarkerFilter extends Dialog {
     	listArea.setLayout(new GridLayout());
     	
     	Label title = new Label(listArea,SWT.NONE);
-    	title.setText(Messages.getString("MarkerFilter.filtersTitle"));//$NON-NLS-1$
+    	title.setText(MarkerMessages.MarkerFilter_filtersTitle);
 		filtersList = new ListViewer(listArea);
 		filtersList.setContentProvider(new IStructuredContentProvider(){
 			/* (non-Javadoc)
@@ -475,22 +477,22 @@ public abstract class DialogMarkerFilter extends Dialog {
 		
 		
 		Button addNew = new Button(buttons,SWT.PUSH);
-		addNew.setText(Messages.getString("MarkerFilter.addFilterName"));//$NON-NLS-1$)
+		addNew.setText(MarkerMessages.MarkerFilter_addFilterName);
 		addNew.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				InputDialog newDialog =
 					new InputDialog(
 							getShell(),
-							Messages.getString("MarkerFilterDialog.title"),//$NON-NLS-1$
-							Messages.getString("MarkerFilterDialog.message"),//$NON-NLS-1$
-							Messages.getString("MarkerFilter.newFilterName"),//$NON-NLS-1$
+							MarkerMessages.MarkerFilterDialog_title,
+							MarkerMessages.MarkerFilterDialog_message,
+							MarkerMessages.MarkerFilter_newFilterName,
 							new IInputValidator(){
 								/* (non-Javadoc)
 								 * @see org.eclipse.jface.dialogs.IInputValidator#isValid(java.lang.String)
 								 */
 								public String isValid(String newText) {
 									if (newText.length() == 0)
-										return Messages.getString("MarkerFilterDialog.emptyMessage");//$NON-NLS-1$
+										return MarkerMessages.MarkerFilterDialog_emptyMessage;
 									return null;
 								}
 							}
@@ -504,7 +506,7 @@ public abstract class DialogMarkerFilter extends Dialog {
 		});
 		
 		Button remove = new Button(buttons,SWT.PUSH);
-		remove.setText(Messages.getString("MarkerFilter.deleteSelectedName"));//$NON-NLS-1$)
+		remove.setText(MarkerMessages.MarkerFilter_deleteSelectedName);
 		remove.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				removeFilters(filtersList.getSelection());
@@ -639,13 +641,14 @@ public abstract class DialogMarkerFilter extends Dialog {
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         group.setLayout(new GridLayout());
         group.setFont(parent.getFont());
-        anyResourceButton = createRadioButton(group, Messages
-                .getString("filtersDialog.anyResource")); //$NON-NLS-1$
-        anyResourceInSameProjectButton = createRadioButton(group, Messages
-                .getString("filtersDialog.anyResourceInSameProject")); //$NON-NLS-1$ // added by cagatayk@acm.org
-        selectedResourceButton = createRadioButton(group, Messages
-                .getString("filtersDialog.selectedResource")); //$NON-NLS-1$
-        selectedResourceAndChildrenButton = createRadioButton(group, Messages.getString("filtersDialog.selectedAndChildren")); //$NON-NLS-1$
+        anyResourceButton = createRadioButton(group, MarkerMessages
+                .filtersDialog_anyResource);
+        anyResourceInSameProjectButton = createRadioButton(
+        		group, 
+        		MarkerMessages.filtersDialog_anyResourceInSameProject); //added by cagatayk@acm.org
+        selectedResourceButton = createRadioButton(group, MarkerMessages
+                .filtersDialog_selectedResource);
+        selectedResourceAndChildrenButton = createRadioButton(group, MarkerMessages.filtersDialog_selectedAndChildren);
         workingSetGroup = new WorkingSetGroup(group);
     }
 
@@ -662,7 +665,7 @@ public abstract class DialogMarkerFilter extends Dialog {
         composite.setLayout(layout);
 
         Label label = new Label(composite, SWT.NONE);
-        label.setText(Messages.getString("filtersDialog.showItemsOfType")); //$NON-NLS-1$
+        label.setText(MarkerMessages.filtersDialog_showItemsOfType);
         label.setFont(font);
 
         Table table = new Table(composite, SWT.CHECK | SWT.H_SCROLL
@@ -673,10 +676,10 @@ public abstract class DialogMarkerFilter extends Dialog {
         table.setLayout(tableLayout);
         tableLayout.addColumnData(new ColumnWeightData(40, true));
         TableColumn tc = new TableColumn(table, SWT.NONE, 0);
-        tc.setText(Messages.getString("filtersDialog.type.columnHeader")); //$NON-NLS-1$
+        tc.setText(MarkerMessages.filtersDialog_type_columnHeader);
         tableLayout.addColumnData(new ColumnWeightData(60, true));
         tc = new TableColumn(table, SWT.NONE, 1);
-        tc.setText(Messages.getString("filtersDialog.superTypecolumnHeader")); //$NON-NLS-1$
+        tc.setText(MarkerMessages.filtersDialog_superTypecolumnHeader);
         typesViewer = new CheckboxTableViewer(table);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.heightHint = 105;
@@ -698,10 +701,15 @@ public abstract class DialogMarkerFilter extends Dialog {
         GridLayout buttonLayout = new GridLayout();
         buttonLayout.marginWidth = 0;
         buttonComposite.setLayout(buttonLayout);
-        selectAllButton = createButton(buttonComposite, SELECT_ALL_ID,Messages.getString("filtersDialog.selectAll"), //$NON-NLS-1$ 
+        selectAllButton = createButton(
+        		buttonComposite, 
+        		SELECT_ALL_ID,
+        		MarkerMessages.filtersDialog_selectAll, 
                 false);
-        deselectAllButton = createButton(buttonComposite, DESELECT_ALL_ID,
-               Messages.getString("filtersDialog.deselectAll"), //$NON-NLS-1$ 
+        deselectAllButton = createButton(
+        		buttonComposite, 
+        		DESELECT_ALL_ID,
+                MarkerMessages.filtersDialog_deselectAll, 
                 false);
     }
 
@@ -764,7 +772,7 @@ public abstract class DialogMarkerFilter extends Dialog {
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         composite.setFont(font);
         composite.setLayout(new GridLayout());
-        filterEnabledButton = createCheckbox(composite, Messages.getString("filtersDialog.onOff"), //$NON-NLS-1$
+        filterEnabledButton = createCheckbox(composite, MarkerMessages.filtersDialog_onOff,
                 false);
         filterEnabledButton.setFont(composite.getFont());
         filterEnabledButton.setLayoutData(new GridData());
@@ -792,7 +800,7 @@ public abstract class DialogMarkerFilter extends Dialog {
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         composite.setLayout(layout);
-        filterOnMarkerLimit = createCheckbox(composite, Messages.getString("filtersDialog.limitVisibleMarkersTo"), //$NON-NLS-1$
+        filterOnMarkerLimit = createCheckbox(composite, MarkerMessages.filtersDialog_limitVisibleMarkersTo,
                 false);
         filterOnMarkerLimit.setFont(composite.getFont());
         filterOnMarkerLimit.setLayoutData(new GridData());
@@ -867,10 +875,10 @@ public abstract class DialogMarkerFilter extends Dialog {
         } catch (NumberFormatException eNumberFormat) {
             MessageBox messageBox = new MessageBox(getShell(), SWT.OK
                     | SWT.APPLICATION_MODAL | SWT.ICON_ERROR);
-            messageBox.setText(Messages
-                    .getString("filtersDialog.titleMarkerLimitInvalid")); //$NON-NLS-1$
-            messageBox.setMessage(Messages
-                    .getString("filtersDialog.messageMarkerLimitInvalid")); //$NON-NLS-1$
+            messageBox.setText(MarkerMessages
+                    .filtersDialog_titleMarkerLimitInvalid);
+            messageBox.setMessage(MarkerMessages
+                    .filtersDialog_messageMarkerLimitInvalid);
             messageBox.open();
 
             if (markerLimit.forceFocus()) {

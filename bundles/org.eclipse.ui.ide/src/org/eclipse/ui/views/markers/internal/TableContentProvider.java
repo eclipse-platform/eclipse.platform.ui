@@ -48,11 +48,11 @@ import org.eclipse.ui.progress.WorkbenchJob;
 class TableContentProvider implements IStructuredContentProvider {
 
     // NLS strings
-    private static final String TABLE_SYNCHRONIZATION = Messages
-            .getString("TableContentProvider.TableSynchronization"); //$NON-NLS-1$
+    private static final String TABLE_SYNCHRONIZATION = 
+    	MarkerMessages.TableContentProvider_TableSynchronization;
 
-    private static final String UPDATING_TABLE_WIDGET = Messages
-            .getString("TableContentProvider.Updating"); //$NON-NLS-1$
+    private static final String UPDATING_TABLE_WIDGET = 
+    	MarkerMessages.TableContentProvider_Updating;
 
     /**
      * Currently running update job.

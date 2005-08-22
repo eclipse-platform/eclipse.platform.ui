@@ -36,7 +36,7 @@ class SortUtil {
             IProgressMonitor mon) {
         Collection result = new ArrayList(elements.size());
 
-        mon.beginTask(Messages.getString("SortUtil.finding_first"), 1000); //$NON-NLS-1$
+        mon.beginTask(MarkerMessages.SortUtil_finding_first, 1000); 
 
         getFirst(result, elements, c, k, mon, 1000);
 
@@ -155,7 +155,7 @@ class SortUtil {
             IProgressMonitor mon) {
         mon
                 .beginTask(
-                        Messages.getString("SortUtil.partitioning"), input.size()); //$NON-NLS-1$
+                        MarkerMessages.SortUtil_partitioning, input.size()); 
 
         if (toTest == null || c == null) {
             int counter = 0;

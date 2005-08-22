@@ -23,7 +23,7 @@ public class ActionSelectAll extends SelectionProviderAction {
      * @param provider
      */
     public ActionSelectAll(TableViewer provider) {
-        super(provider, Messages.getString("selectAllAction.title")); //$NON-NLS-1$
+        super(provider, MarkerMessages.selectAllAction_title);
         setEnabled(true);
     }
 

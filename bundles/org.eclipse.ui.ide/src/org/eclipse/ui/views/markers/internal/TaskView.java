@@ -116,8 +116,7 @@ public class TaskView extends MarkerView {
                         ErrorDialog
                                 .openError(
                                         getSite().getShell(),
-                                        Messages
-                                                .getString("errorModifyingTask"), null, e.getStatus()); //$NON-NLS-1$
+                                        MarkerMessages.errorModifyingTask, null, e.getStatus()); 
                     }
                 }
             }
@@ -141,9 +140,9 @@ public class TaskView extends MarkerView {
         cellEditors[0] = new CheckboxCellEditor(tableViewer.getTable());
 
         String[] priorities = new String[] {
-                Messages.getString("priority.high"), //$NON-NLS-1$
-                Messages.getString("priority.normal"), //$NON-NLS-1$
-                Messages.getString("priority.low") //$NON-NLS-1$
+                MarkerMessages.priority_high,
+                MarkerMessages.priority_normal,
+                MarkerMessages.priority_low
         };
 
         cellEditors[1] = new ComboBoxCellEditor(tableViewer.getTable(),

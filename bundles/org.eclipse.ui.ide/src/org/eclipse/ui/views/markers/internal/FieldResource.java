@@ -20,7 +20,7 @@ public class FieldResource implements IField {
     private Image image;
 
     public FieldResource() {
-        description = Messages.getString("description.resource"); //$NON-NLS-1$
+        description = MarkerMessages.description_resource;
     }
 
     /*

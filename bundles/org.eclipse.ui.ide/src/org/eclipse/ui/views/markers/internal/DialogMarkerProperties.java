@@ -28,6 +28,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -200,7 +201,7 @@ class DialogMarkerProperties extends Dialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         if (title == null)
-            newShell.setText(Messages.getString("propertiesDialog.title")); //$NON-NLS-1$
+            newShell.setText(MarkerMessages.propertiesDialog_title);
         else
             newShell.setText(title);
     }
@@ -236,11 +237,11 @@ class DialogMarkerProperties extends Dialog {
 
     /**
      * Method createCreationTimeArea.
-     * @param composite
+     * @param parent
      */
     private void createCreationTimeArea(Composite parent) {
-        String creation = Messages
-                .getString("propertiesDialog.creationTime.text");//$NON-NLS-1$
+        String creation = MarkerMessages
+                .propertiesDialog_creationTime_text;
 
         Font font = parent.getFont();
         Composite composite = new Composite(parent, SWT.NONE);
@@ -281,7 +282,7 @@ class DialogMarkerProperties extends Dialog {
 
         
         Label label = new Label(composite, SWT.NONE);
-        label.setText(Messages.getString("propertiesDialog.description.text")); //$NON-NLS-1$
+        label.setText(MarkerMessages.propertiesDialog_description_text);
         label.setFont(font);
         int style = SWT.SINGLE | SWT.BORDER;
         descriptionText = new Text(composite, style);
@@ -319,8 +320,7 @@ class DialogMarkerProperties extends Dialog {
         composite.setLayout(layout);
 
         Label resourceLabel = new Label(composite, SWT.NONE);
-        resourceLabel.setText(Messages
-                .getString("propertiesDialog.resource.text")); //$NON-NLS-1$
+        resourceLabel.setText(MarkerMessages.propertiesDialog_resource_text);
         resourceLabel.setFont(font);
         resourceText = new Text(composite, SWT.SINGLE | SWT.WRAP
                 | SWT.READ_ONLY | SWT.BORDER);
@@ -329,7 +329,7 @@ class DialogMarkerProperties extends Dialog {
         resourceText.setFont(font);
 
         Label folderLabel = new Label(composite, SWT.NONE);
-        folderLabel.setText(Messages.getString("propertiesDialog.folder.text")); //$NON-NLS-1$
+        folderLabel.setText(MarkerMessages.propertiesDialog_folder_text);
         folderLabel.setFont(font);
         folderText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY
                 | SWT.BORDER);
@@ -338,8 +338,7 @@ class DialogMarkerProperties extends Dialog {
         folderText.setFont(font);
 
         Label locationLabel = new Label(composite, SWT.NONE);
-        locationLabel.setText(Messages
-                .getString("propertiesDialog.location.text")); //$NON-NLS-1$
+        locationLabel.setText(MarkerMessages.propertiesDialog_location_text);
         locationLabel.setFont(font);
         locationText = new Text(composite, SWT.SINGLE | SWT.WRAP
                 | SWT.READ_ONLY | SWT.BORDER);
@@ -368,8 +367,7 @@ class DialogMarkerProperties extends Dialog {
             if (line.equals("")) //$NON-NLS-1$
                 locationText.setText(""); //$NON-NLS-1$
             else
-                locationText.setText(Messages.format(
-                        "label.lineNumber", new String[] { line })); //$NON-NLS-1$
+                locationText.setText(NLS.bind(MarkerMessages.label_lineNumber, line));
         }
 
         descriptionText.selectAll();
@@ -409,8 +407,8 @@ class DialogMarkerProperties extends Dialog {
 
             Object line = initialAttributes.get(IMarker.LINE_NUMBER);
             if (line != null && line instanceof Integer && locationText != null)
-                locationText.setText(Messages.format(
-                        "label.lineNumber", new Object[] { line })); //$NON-NLS-1$
+                locationText.setText(
+                    NLS.bind(MarkerMessages.label_lineNumber, line));
         }
     }
 
@@ -496,7 +494,7 @@ class DialogMarkerProperties extends Dialog {
             ErrorDialog
                     .openError(
                             getShell(),
-                            Messages.getString("Error"), null, coreExceptions[0].getStatus()); //$NON-NLS-1$
+                            MarkerMessages.Error, null, coreExceptions[0].getStatus()); 
 
     }
 

@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.actions.SelectionProviderAction;
 
 public class ActionDeleteCompleted extends SelectionProviderAction {
@@ -36,7 +37,7 @@ public class ActionDeleteCompleted extends SelectionProviderAction {
      * @param provider
      */
     public ActionDeleteCompleted(TaskView part, ISelectionProvider provider) {
-        super(provider, Messages.getString("deleteCompletedAction.title")); //$NON-NLS-1$
+        super(provider, MarkerMessages.deleteCompletedAction_title);
         this.part = part;
         setEnabled(false);
     }
@@ -48,22 +49,23 @@ public class ActionDeleteCompleted extends SelectionProviderAction {
         final List completed = getCompletedTasks();
         // Check if there is anything to do
         if (completed.size() == 0) {
-            MessageDialog.openInformation(part.getSite().getShell(), Messages
-                    .getString("deleteCompletedTasks.dialogTitle"), //$NON-NLS-1$
-                    Messages.getString("deleteCompletedTasks.noneCompleted")); //$NON-NLS-1$
+            MessageDialog.openInformation(part.getSite().getShell(), 
+            		MarkerMessages.deleteCompletedTasks_dialogTitle,
+                    MarkerMessages.deleteCompletedTasks_noneCompleted);
             return;
         }
         String message;
         if (completed.size() == 1) {
-            message = Messages
-                    .getString("deleteCompletedTasks.permanentSingular"); //$NON-NLS-1$
+            message = MarkerMessages
+                    .deleteCompletedTasks_permanentSingular;
         } else {
-            message = Messages.format("deleteCompletedTasks.permanentPlural", //$NON-NLS-1$
-                    new Object[] { new Integer(completed.size()) });
+            message = NLS.bind(
+            		MarkerMessages.deleteCompletedTasks_permanentPlural,
+            		String.valueOf(completed.size()));
         }
         // Verify.
-        if (!MessageDialog.openConfirm(part.getSite().getShell(), Messages
-                .getString("deleteCompletedTasks.dialogTitle"), //$NON-NLS-1$
+        if (!MessageDialog.openConfirm(part.getSite().getShell(), MarkerMessages
+                .deleteCompletedTasks_dialogTitle,
                 message)) {
             return;
         }
@@ -83,8 +85,8 @@ public class ActionDeleteCompleted extends SelectionProviderAction {
             ErrorDialog
                     .openError(
                             part.getSite().getShell(),
-                            Messages
-                                    .getString("deleteCompletedTasks.errorMessage"), null, e.getStatus()); //$NON-NLS-1$
+                            MarkerMessages
+                                    .deleteCompletedTasks_errorMessage, null, e.getStatus()); 
         }
     }
 

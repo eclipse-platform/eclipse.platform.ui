@@ -30,15 +30,15 @@ public class ActionAddGlobalTask extends Action {
      * @param part
      */
     public ActionAddGlobalTask(IWorkbenchPart part) {
-        setText(Messages.getString("addGlobalTaskAction.title")); //$NON-NLS-1$
+        setText(MarkerMessages.addGlobalTaskAction_title); 
         setImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor(ENABLED_IMAGE_PATH));
-        setToolTipText(Messages.getString("addGlobalTaskAction.tooltip")); //$NON-NLS-1$
+        setToolTipText(MarkerMessages.addGlobalTaskAction_tooltip);
         this.part = part;
     }
 
     public void run() {
         DialogTaskProperties dialog = new DialogTaskProperties(part.getSite()
-                .getShell(), Messages.getString("addGlobalTaskDialog.title")); //$NON-NLS-1$
+                .getShell(), MarkerMessages.addGlobalTaskDialog_title);
         dialog.open();
     }
 }

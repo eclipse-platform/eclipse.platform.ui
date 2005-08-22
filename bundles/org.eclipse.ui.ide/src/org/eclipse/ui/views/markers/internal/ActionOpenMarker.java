@@ -41,7 +41,7 @@ public class ActionOpenMarker extends SelectionProviderAction {
     protected IWorkbenchPart part;
 
     public ActionOpenMarker(IWorkbenchPart part, ISelectionProvider provider) {
-        super(provider, Messages.getString("openAction.title")); //$NON-NLS-1$
+        super(provider, MarkerMessages.openAction_title);
         this.part = part;
         setImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor(IMAGE_PATH));
         setDisabledImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor(DISABLED_IMAGE_PATH));
@@ -90,14 +90,14 @@ public class ActionOpenMarker extends SelectionProviderAction {
                 if (nestedException != null) {
                     // Open an error dialog and include the extra
                     // status information from the nested CoreException
-                    ErrorDialog.openError(part.getSite().getShell(), Messages
-                            .getString("OpenMarker.errorTitle"), //$NON-NLS-1$
+                    ErrorDialog.openError(part.getSite().getShell(), 
+                    		MarkerMessages.OpenMarker_errorTitle,
                             e.getMessage(), nestedException.getStatus());
                 } else {
                     // Open a regular error dialog since there is no
                     // extra information to display
-                    MessageDialog.openError(part.getSite().getShell(), Messages
-                            .getString("OpenMarker.errorTitle"), //$NON-NLS-1$
+                    MessageDialog.openError(part.getSite().getShell(), 
+                    		MarkerMessages.OpenMarker_errorTitle,
                             e.getMessage());
                 }
             }

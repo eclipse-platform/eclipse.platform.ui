@@ -33,8 +33,7 @@ import org.eclipse.swt.widgets.Table;
  */
 final class DeferredQueue {
 
-    private static final String SETTING_CONTENTS = Messages
-            .getString("DeferredQueue.setting_contents"); //$NON-NLS-1$
+    private static final String SETTING_CONTENTS = MarkerMessages.DeferredQueue_setting_contents;
 
     /**
      * Maximum number of items to be added or removed from the viewer in a single update.

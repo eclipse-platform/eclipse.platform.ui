@@ -51,6 +51,7 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -85,20 +86,20 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
 public abstract class MarkerView extends TableView {
 
-	private static final String WAITING_FOR_WORKSPACE_CHANGES_TO_FINISH = Messages
-			.getString("MarkerView.waiting_on_changes"); //$NON-NLS-1$
+	private static final String WAITING_FOR_WORKSPACE_CHANGES_TO_FINISH = 
+		MarkerMessages.MarkerView_waiting_on_changes;
 
-	private static final String SEARCHING_FOR_MARKERS = Messages
-			.getString("MarkerView.searching_for_markers"); //$NON-NLS-1$
+	private static final String SEARCHING_FOR_MARKERS = 
+		MarkerMessages.MarkerView_searching_for_markers;
 
-	private static final String REFRESHING_MARKER_COUNTS = Messages
-			.getString("MarkerView.refreshing_counts"); //$NON-NLS-1$
+	private static final String REFRESHING_MARKER_COUNTS = 
+		MarkerMessages.MarkerView_refreshing_counts;
 
-	private static final String QUEUEING_VIEWER_UPDATES = Messages
-			.getString("MarkerView.queueing_updates"); //$NON-NLS-1$
+	private static final String QUEUEING_VIEWER_UPDATES = 
+		MarkerMessages.MarkerView_queueing_updates;
 
-	private static final String FILTERING_ON_MARKER_LIMIT = Messages
-			.getString("MarkerView.18"); //$NON-NLS-1$
+	private static final String FILTERING_ON_MARKER_LIMIT = 
+		MarkerMessages.MarkerView_18;
 
 	private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
 
@@ -225,7 +226,7 @@ public abstract class MarkerView extends TableView {
 		int markerLimit = getMarkerLimit();
 		monitor
 				.beginTask(
-						Messages.getString("MarkerView.19"), markerLimit == -1 ? 60 : 100); //$NON-NLS-1$
+						MarkerMessages.MarkerView_19, markerLimit == -1 ? 60 : 100); 
 
 		haltTableUpdates();
 		IJobManager jobMan = Platform.getJobManager();
@@ -315,8 +316,8 @@ public abstract class MarkerView extends TableView {
 
 		if (refreshJob == null) {
 
-			refreshJob = new RestartableJob(Messages.format(
-					"MarkerView.refreshTitle", new Object[] { getTitle() }),//$NON-NLS-1$
+			refreshJob = new RestartableJob(
+					NLS.bind(MarkerMessages.MarkerView_refreshTitle, getTitle()),
 					new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor)
 								throws InvocationTargetException,
@@ -358,7 +359,7 @@ public abstract class MarkerView extends TableView {
 			IDialogSettings mainSettings = getDialogSettings();
 			IDialogSettings filtersSection = mainSettings.getSection(OLD_FILTER_SECTION);
 			if(filtersSection != null){
-				MarkerFilter markerFilter = createFilter(Messages.getString("MarkerFilter.defaultFilterName"));//$NON-NLS-1$
+				MarkerFilter markerFilter = createFilter(MarkerMessages.MarkerFilter_defaultFilterName);
 				markerFilter.restoreState(filtersSection);
 				markerFilters = new MarkerFilter[] {markerFilter};
 			}
@@ -375,8 +376,8 @@ public abstract class MarkerView extends TableView {
 		
 
 		if (markerFilters.length == 0){// Make sure there is at least a default
-			MarkerFilter filter = createFilter(Messages
-					.getString("MarkerFilter.defaultFilterName"));//$NON-NLS-1$
+			MarkerFilter filter = createFilter(
+					MarkerMessages.MarkerFilter_defaultFilterName);
 			filter.resetState();
 			markerFilters = new MarkerFilter[] { filter };
 		}
@@ -862,13 +863,16 @@ public abstract class MarkerView extends TableView {
 		int filteredCount = currentMarkers.getItemCount();
 		int totalCount = getTotalMarkers();
 		if (filteredCount == totalCount) {
-			status = Messages
-					.format(
-							"filter.itemsMessage", new Object[] { new Integer(totalCount) }); //$NON-NLS-1$
+			status = 
+				NLS.bind(
+					MarkerMessages.filter_itemsMessage, 
+					new Integer(totalCount));
 		} else {
-			status = Messages
-					.format(
-							"filter.matchedMessage", new Object[] { new Integer(filteredCount), new Integer(totalCount) }); //$NON-NLS-1$
+			status = 
+				NLS.bind(
+						MarkerMessages.filter_matchedMessage, 
+						new Integer(filteredCount),
+						new Integer(totalCount));
 		}
 		setContentDescription(status);
 	}
@@ -941,9 +945,10 @@ public abstract class MarkerView extends TableView {
 	 */
 	protected String updateSummarySelected(IStructuredSelection selection) {
 		// Show how many items selected
-		return Messages
-				.format(
-						"marker.statusSummarySelected", new Object[] { new Integer(selection.size()), "" }); //$NON-NLS-1$ //$NON-NLS-2$
+		return NLS.bind(
+				MarkerMessages.marker_statusSummarySelected,
+				new Integer(selection.size()), 
+				"");//$NON-NLS-1$ 
 	}
 
 	/**
@@ -967,7 +972,9 @@ public abstract class MarkerView extends TableView {
 			if (result == null)
 				return;
 			if(result.length == 0)
-				markerFilters = new MarkerFilter[]{createFilter(Messages.getString("MarkerFilter.defaultFilterName"))};//$NON-NLS-1$
+				markerFilters = 
+					new MarkerFilter[]{
+					   createFilter(MarkerMessages.MarkerFilter_defaultFilterName)};
 			else
 				markerFilters = result;
 
@@ -1086,8 +1093,8 @@ public abstract class MarkerView extends TableView {
 	 * 
 	 */
 	private void createUIJob() {
-		uiJob = new WorkbenchJob(Messages
-				.getString("MarkerView.refreshProgress")) { //$NON-NLS-1$
+		uiJob = new WorkbenchJob(
+				MarkerMessages.MarkerView_refreshProgress) { 
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				// Ensure that the view hasn't been disposed

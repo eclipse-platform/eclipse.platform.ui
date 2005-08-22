@@ -20,7 +20,7 @@ public class FieldId implements IField {
     private Image image;
 
     public FieldId() {
-        description = Messages.getString("description.markerId"); //$NON-NLS-1$
+        description = MarkerMessages.description_markerId;
     }
 
     /*

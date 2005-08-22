@@ -21,7 +21,7 @@ public class TableSortAction extends Action {
     private TableSortDialog dialog;
 
     public TableSortAction(TableView view, TableSortDialog dialog) {
-        super(Messages.getString("sortAction.title")); //$NON-NLS-1$
+        super(MarkerMessages.sortAction_title);
         this.view = view;
         this.dialog = dialog;
         setEnabled(true);

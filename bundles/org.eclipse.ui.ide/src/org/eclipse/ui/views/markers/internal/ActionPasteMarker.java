@@ -45,7 +45,7 @@ public class ActionPasteMarker extends SelectionProviderAction {
      * Creates the action.
      */
     public ActionPasteMarker(IWorkbenchPart part, ISelectionProvider provider) {
-        super(provider, Messages.getString("pasteAction.title")); //$NON-NLS-1$
+        super(provider, MarkerMessages.pasteAction_title);
         this.part = part;
         this.pastableTypes = new String[0];
         setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
@@ -88,8 +88,8 @@ public class ActionPasteMarker extends SelectionProviderAction {
                 }
             }, null);
         } catch (CoreException e) {
-            ErrorDialog.openError(part.getSite().getShell(), Messages
-                    .getString("PasteMarker.errorTitle"), //$NON-NLS-1$
+            ErrorDialog.openError(part.getSite().getShell(), 
+            		MarkerMessages.PasteMarker_errorTitle,
                     null, e.getStatus());
             return;
         }

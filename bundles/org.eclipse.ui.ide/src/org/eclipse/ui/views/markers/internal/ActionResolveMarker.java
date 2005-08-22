@@ -32,7 +32,7 @@ public class ActionResolveMarker extends SelectionProviderAction {
     private IWorkbenchPart part;
 
     public ActionResolveMarker(IWorkbenchPart part, ISelectionProvider provider) {
-        super(provider, Messages.getString("resolveMarkerAction.title")); //$NON-NLS-1$
+        super(provider, MarkerMessages.resolveMarkerAction_title);
         this.part = part;
         setEnabled(false);
     }
@@ -53,10 +53,8 @@ public class ActionResolveMarker extends SelectionProviderAction {
             MessageDialog
                     .openInformation(
                             part.getSite().getShell(),
-                            Messages
-                                    .getString("resolveMarkerAction.dialogTitle"), //$NON-NLS-1$
-                            Messages
-                                    .getString("resolveMarkerAction.noResolutionsLabel")); //$NON-NLS-1$
+                            MarkerMessages.resolveMarkerAction_dialogTitle,
+                            MarkerMessages.resolveMarkerAction_noResolutionsLabel);
             return;
         }
         MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(

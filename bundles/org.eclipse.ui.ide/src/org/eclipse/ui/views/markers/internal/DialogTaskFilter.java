@@ -44,10 +44,9 @@ public class DialogTaskFilter extends
 
 		private Text description;
 
-		private String contains = Messages.getString("filtersDialog.contains"); //$NON-NLS-1$
+		private String contains = MarkerMessages.filtersDialog_contains;
 
-		private String doesNotContain = Messages
-				.getString("filtersDialog.doesNotContain"); //$NON-NLS-1$
+		private String doesNotContain = MarkerMessages.filtersDialog_doesNotContain;
 
 		/**
 		 * Create a new DescriptionGroup.
@@ -57,8 +56,8 @@ public class DialogTaskFilter extends
 		public DescriptionGroup(Composite parent) {
 			descriptionLabel = new Label(parent, SWT.NONE);
 			descriptionLabel.setFont(parent.getFont());
-			descriptionLabel.setText(Messages
-					.getString("filtersDialog.descriptionLabel")); //$NON-NLS-1$
+			descriptionLabel.setText(
+				MarkerMessages.filtersDialog_descriptionLabel);
 
 			combo = new Combo(parent, SWT.READ_ONLY);
 			combo.setFont(parent.getFont());
@@ -162,14 +161,14 @@ public class DialogTaskFilter extends
 			data.horizontalSpan = 2;
 			enablementButton.setLayoutData(data);
 			enablementButton.setFont(parent.getFont());
-			enablementButton.setText(Messages
-					.getString("filtersDialog.priorityLabel")); //$NON-NLS-1$
+			enablementButton.setText(
+					MarkerMessages.filtersDialog_priorityLabel);
 			enablementButton.addSelectionListener(listener);
 
 			highButton = new Button(parent, SWT.CHECK);
 			highButton.setFont(parent.getFont());
 			highButton
-					.setText(Messages.getString("filtersDialog.priorityHigh")); //$NON-NLS-1$
+					.setText(MarkerMessages.filtersDialog_priorityHigh);
 			highButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			highButton.addSelectionListener(new SelectionAdapter(){
 	        	/* (non-Javadoc)
@@ -182,8 +181,7 @@ public class DialogTaskFilter extends
 
 			normalButton = new Button(parent, SWT.CHECK);
 			normalButton.setFont(parent.getFont());
-			normalButton.setText(Messages
-					.getString("filtersDialog.priorityNormal")); //$NON-NLS-1$
+			normalButton.setText(MarkerMessages.filtersDialog_priorityNormal);
 			normalButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			normalButton.addSelectionListener(new SelectionAdapter(){
 	        	/* (non-Javadoc)
@@ -196,7 +194,7 @@ public class DialogTaskFilter extends
 
 			lowButton = new Button(parent, SWT.CHECK);
 			lowButton.setFont(parent.getFont());
-			lowButton.setText(Messages.getString("filtersDialog.priorityLow")); //$NON-NLS-1$
+			lowButton.setText(MarkerMessages.filtersDialog_priorityLow);
 			lowButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			lowButton.addSelectionListener(new SelectionAdapter(){
 	        	/* (non-Javadoc)
@@ -278,8 +276,7 @@ public class DialogTaskFilter extends
 			data.horizontalSpan = 2;
 			enablementButton.setLayoutData(data);
 			enablementButton.setFont(parent.getFont());
-			enablementButton.setText(Messages
-					.getString("filtersDialog.statusLabel")); //$NON-NLS-1$
+			enablementButton.setText(MarkerMessages.filtersDialog_statusLabel);
 			enablementButton.addSelectionListener(enablementListener);
 
 			Composite composite = new Composite(parent, SWT.NONE);
@@ -304,14 +301,12 @@ public class DialogTaskFilter extends
 
 			completeButton = new Button(composite, SWT.RADIO);
 			completeButton.setFont(composite.getFont());
-			completeButton.setText(Messages
-					.getString("filtersDialog.statusComplete")); //$NON-NLS-1$
+			completeButton.setText(MarkerMessages.filtersDialog_statusComplete);
 			completeButton.addSelectionListener(listener);
 
 			incompleteButton = new Button(composite, SWT.RADIO);
 			incompleteButton.setFont(composite.getFont());
-			incompleteButton.setText(Messages
-					.getString("filtersDialog.statusIncomplete")); //$NON-NLS-1$
+			incompleteButton.setText(MarkerMessages.filtersDialog_statusIncomplete);
 			incompleteButton.addSelectionListener(listener);
 		}
 
@@ -422,8 +417,6 @@ public class DialogTaskFilter extends
 
 		statusGroup.setEnabled(taskFilter.getSelectByDone());
 		statusGroup.setDone(taskFilter.getDone());
-
-		super.updateUIFromFilter();
 	
 	}
 

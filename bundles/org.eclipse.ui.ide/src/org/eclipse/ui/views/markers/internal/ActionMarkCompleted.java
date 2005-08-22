@@ -28,7 +28,7 @@ public class ActionMarkCompleted extends SelectionProviderAction {
      * @param provider
      */
     public ActionMarkCompleted(ISelectionProvider provider) {
-        super(provider, Messages.getString("markCompletedAction.title")); //$NON-NLS-1$
+        super(provider, MarkerMessages.markCompletedAction_title);
         setEnabled(false);
     }
 

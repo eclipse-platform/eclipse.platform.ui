@@ -18,6 +18,7 @@ import java.util.Comparator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -80,7 +81,7 @@ public class TableSortDialog extends Dialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(Messages.getString("sortDialog.title")); //$NON-NLS-1$
+        newShell.setText(MarkerMessages.sortDialog_title);
     }
 
     /* (non-Javadoc)
@@ -115,7 +116,7 @@ public class TableSortDialog extends Dialog {
         initPriotityText();
 
         Label sortByLabel = new Label(prioritiesArea, SWT.NULL);
-        sortByLabel.setText(Messages.getString("sortDialog.label")); //$NON-NLS-1$
+        sortByLabel.setText(MarkerMessages.sortDialog_label); 
         GridData data = new GridData();
         data.horizontalSpan = 3;
         sortByLabel.setLayoutData(data);
@@ -124,9 +125,8 @@ public class TableSortDialog extends Dialog {
             final int index = i;
             Label numberLabel = new Label(prioritiesArea, SWT.NULL);
             numberLabel
-                    .setText(Messages
-                            .format(
-                                    "sortDialog.columnLabel", new Object[] { new Integer(i + 1) })); //$NON-NLS-1$
+                    .setText(NLS
+                            .bind(MarkerMessages.sortDialog_columnLabel,new Integer(i + 1))); 
 
             priorityCombos[i] = new Combo(prioritiesArea, SWT.READ_ONLY);
             priorityCombos[i].setLayoutData(new GridData(
@@ -238,13 +238,13 @@ public class TableSortDialog extends Dialog {
 	private String getDescendingText(int index) {
 		switch (index) {
 		case 1:
-			return Messages.getString("sortDirectionDescending.text2");//$NON-NLS-1$
+			return MarkerMessages.sortDirectionDescending_text2;
 		case 2:
-			return Messages.getString("sortDirectionDescending.text3");//$NON-NLS-1$
+			return MarkerMessages.sortDirectionDescending_text3;
 		case 3:
-			return Messages.getString("sortDirectionDescending.text4");//$NON-NLS-1$
+			return MarkerMessages.sortDirectionDescending_text4;
 		default:
-			return Messages.getString("sortDirectionDescending.text");//$NON-NLS-1$
+			return MarkerMessages.sortDirectionDescending_text;
 	}
 	
 }
@@ -258,13 +258,13 @@ public class TableSortDialog extends Dialog {
 	private String getAscendingText(int index) {
 		switch (index) {
 			case 1:
-				return Messages.getString("sortDirectionAscending.text2");//$NON-NLS-1$
+				return MarkerMessages.sortDirectionAscending_text2;
 			case 2:
-				return Messages.getString("sortDirectionAscending.text3");//$NON-NLS-1$
+				return MarkerMessages.sortDirectionAscending_text3;
 			case 3:
-				return Messages.getString("sortDirectionAscending.text4");//$NON-NLS-1$
+				return MarkerMessages.sortDirectionAscending_text4;
 			default:
-				return Messages.getString("sortDirectionAscending.text");//$NON-NLS-1$
+				return MarkerMessages.sortDirectionAscending_text;
 		}
 		
 	}
@@ -275,7 +275,7 @@ public class TableSortDialog extends Dialog {
      */
     private void createRestoreDefaultsButton(Composite parent) {
         Button defaultsButton = new Button(parent, SWT.PUSH);
-        defaultsButton.setText(Messages.getString("restoreDefaults.text")); //$NON-NLS-1$
+        defaultsButton.setText(MarkerMessages.restoreDefaults_text);
         setButtonSize(defaultsButton, new GridData(
                 GridData.HORIZONTAL_ALIGN_END | GridData.FILL_HORIZONTAL));
         defaultsButton.addSelectionListener(new SelectionAdapter() {

@@ -24,7 +24,7 @@ public class FieldFolder implements IField {
     private Image image;
 
     public FieldFolder() {
-        description = Messages.getString("description.folder"); //$NON-NLS-1$
+        description = MarkerMessages.description_folder;
     }
 
     /*

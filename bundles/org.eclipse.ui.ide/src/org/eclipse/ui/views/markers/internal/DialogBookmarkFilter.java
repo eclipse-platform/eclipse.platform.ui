@@ -41,10 +41,10 @@ public class DialogBookmarkFilter extends DialogMarkerFilter {
 
 		private Text description;
 
-		private String contains = Messages.getString("filtersDialog.contains"); //$NON-NLS-1$
+		private String contains = MarkerMessages.filtersDialog_contains;
 
-		private String doesNotContain = Messages
-				.getString("filtersDialog.doesNotContain"); //$NON-NLS-1$
+		private String doesNotContain = 
+			MarkerMessages.filtersDialog_doesNotContain;
 
 		/**
 		 * Create a description group.
@@ -54,8 +54,8 @@ public class DialogBookmarkFilter extends DialogMarkerFilter {
 		public DescriptionGroup(Composite parent) {
 			descriptionLabel = new Label(parent, SWT.NONE);
 			descriptionLabel.setFont(parent.getFont());
-			descriptionLabel.setText(Messages
-					.getString("filtersDialog.descriptionLabel")); //$NON-NLS-1$
+			descriptionLabel.setText(
+				MarkerMessages.filtersDialog_descriptionLabel);
 
 			combo = new Combo(parent, SWT.READ_ONLY);
 			combo.setFont(parent.getFont());

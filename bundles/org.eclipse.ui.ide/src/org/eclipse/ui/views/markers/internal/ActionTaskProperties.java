@@ -22,7 +22,7 @@ public class ActionTaskProperties extends SelectionProviderAction {
     private IWorkbenchPart part;
 
     public ActionTaskProperties(IWorkbenchPart part, ISelectionProvider provider) {
-        super(provider, Messages.getString("propertiesAction.title")); //$NON-NLS-1$
+        super(provider, MarkerMessages.propertiesAction_title);
         setEnabled(false);
         this.part = part;
     }

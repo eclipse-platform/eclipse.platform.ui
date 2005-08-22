@@ -23,7 +23,7 @@ public class FieldDone implements IField {
 
 	static final String INCOMPLETE_IMAGE_PATH = "obj16/incomplete_tsk.gif"; //$NON-NLS-1$
 
-	private String description = Messages.getString("completion.description"); //$NON-NLS-1$
+	private String description = MarkerMessages.completion_description;
 
 
 	/**

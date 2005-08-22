@@ -34,7 +34,7 @@ public class FieldSeverity implements IField {
      * Create a new instance of the receiver.
      */
     public FieldSeverity() {
-        description = Messages.getString("problemSeverity.description"); //$NON-NLS-1$
+        description = MarkerMessages.problemSeverity_description;
     }
 
     /*

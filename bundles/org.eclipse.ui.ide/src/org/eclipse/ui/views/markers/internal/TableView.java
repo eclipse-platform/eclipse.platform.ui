@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -117,9 +118,11 @@ public abstract class TableView extends ViewPart {
 
         viewer = new TableViewer(createTable(parent));
         createColumns(viewer.getTable());
-        content = new TableContentProvider(viewer, Messages.format(
-                "TableView.populating", //$NON-NLS-1$
-                new Object[] { getTitle() }), getProgressService());
+        content = new TableContentProvider(viewer, 
+        		NLS.bind(
+        				MarkerMessages.TableView_populating, 
+        				getTitle()), 
+        		getProgressService());
 
         viewer.setContentProvider(content);
 

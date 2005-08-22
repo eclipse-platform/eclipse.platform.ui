@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
@@ -19,6 +21,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
@@ -173,21 +176,22 @@ public class ProblemView extends MarkerView {
         int filteredCount = visibleMarkers.getItemCount();
         int totalCount = getTotalMarkers();
         if (filteredCount != totalCount)
-            breakdown = Messages.format("problem.filter.matchedMessage", //$NON-NLS-1$
+            breakdown = 
+            	NLS.bind(MarkerMessages.problem_filter_matchedMessage,
                     new Object[] { breakdown, new Integer(filteredCount),
                             new Integer(totalCount) });
         setContentDescription(breakdown);
     }
 
     private String formatSummaryBreakDown(MarkerList visibleMarkers) {
-        return Messages.format("problem.statusSummaryBreakdown", //$NON-NLS-1$
+        return MessageFormat.format(MarkerMessages.problem_statusSummaryBreakdown,
                 new Object[] { new Integer(visibleMarkers.getErrors()),
                         new Integer(visibleMarkers.getWarnings()),
                         new Integer(visibleMarkers.getInfos()) });
     }
 
     private String getSummary(MarkerList markers, String messageKey) {
-        String message = Messages.format(messageKey, new Object[] {
+        String message = NLS.bind(messageKey, new Object[] {
                 new Integer(markers.getItemCount()),
                 formatSummaryBreakDown(markers) });
         return message;

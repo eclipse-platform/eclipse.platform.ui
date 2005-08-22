@@ -80,8 +80,7 @@ public class BookmarkView extends MarkerView {
 						ErrorDialog
 								.openError(
 										getSite().getShell(),
-										Messages
-												.getString("errorModifyingBookmark"), null, e.getStatus()); //$NON-NLS-1$
+										MarkerMessages.errorModifyingBookmark, null, e.getStatus()); 
 					}
 				}
 			}

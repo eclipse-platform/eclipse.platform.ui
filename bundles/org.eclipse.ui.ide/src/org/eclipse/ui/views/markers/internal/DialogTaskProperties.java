@@ -29,14 +29,14 @@ import org.eclipse.swt.widgets.Shell;
 
 public class DialogTaskProperties extends DialogMarkerProperties {
 
-    private static final String PRIORITY_HIGH = Messages
-            .getString("propertiesDialog.priorityHigh"); //$NON-NLS-1$
+    private static final String PRIORITY_HIGH = 
+    	MarkerMessages.propertiesDialog_priorityHigh;
 
-    private static final String PRIORITY_NORMAL = Messages
-            .getString("propertiesDialog.priorityNormal"); //$NON-NLS-1$
+    private static final String PRIORITY_NORMAL = 
+    	MarkerMessages.propertiesDialog_priorityNormal;
 
-    private static final String PRIORITY_LOW = Messages
-            .getString("propertiesDialog.priorityLow"); //$NON-NLS-1$
+    private static final String PRIORITY_LOW = 
+    	MarkerMessages.propertiesDialog_priorityLow;
 
     protected Combo priorityCombo;
 
@@ -72,7 +72,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 
         Label label = new Label(composite, SWT.NONE);
         label.setFont(composite.getFont());
-        label.setText(Messages.getString("propertiesDialog.priority")); //$NON-NLS-1$
+        label.setText(MarkerMessages.propertiesDialog_priority);
         priorityCombo = new Combo(composite, SWT.READ_ONLY);
         priorityCombo.setItems(new String[] { PRIORITY_HIGH, PRIORITY_NORMAL,
                 PRIORITY_LOW });
@@ -99,8 +99,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 
         completedCheckbox = new Button(composite, SWT.CHECK);
         completedCheckbox.setFont(composite.getFont());
-        completedCheckbox.setText(Messages
-                .getString("propertiesDialog.completed")); //$NON-NLS-1$
+        completedCheckbox.setText(MarkerMessages.propertiesDialog_completed);
         GridData gridData = new GridData();
         gridData.horizontalIndent = convertHorizontalDLUsToPixels(20);
         completedCheckbox.setLayoutData(gridData);

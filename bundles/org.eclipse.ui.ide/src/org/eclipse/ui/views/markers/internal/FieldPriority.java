@@ -35,7 +35,7 @@ public class FieldPriority implements IField {
      * Return a new instance of the receiver.
      */
     public FieldPriority() {
-        description = Messages.getString("priority.description"); //$NON-NLS-1$
+        description = MarkerMessages.priority_description;
     }
 
     /*
