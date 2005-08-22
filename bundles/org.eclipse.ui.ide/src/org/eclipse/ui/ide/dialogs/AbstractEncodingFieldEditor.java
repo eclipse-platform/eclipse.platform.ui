@@ -262,6 +262,8 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	private void updateEncodingState(boolean useDefault) {
 		defaultEncodingButton.setSelection(useDefault);
 		otherEncodingButton.setSelection(!useDefault);
+		if(useDefault)
+			encodingCombo.setText(getDefaultEnc());
 		encodingCombo.setEnabled(!useDefault);
 		updateValidState();
 	}

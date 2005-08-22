@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -31,11 +34,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
+import org.eclipse.ui.ide.IDEEncoding;
+import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.LineDelimiterEditor;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -55,6 +62,14 @@ public class IDEWorkspacePreferencePage extends PreferencePage
     private IntegerFieldEditor saveInterval;
 
     private Button autoRefreshButton;
+    
+    private ResourceEncodingFieldEditor encodingEditor;
+
+	private LineDelimiterEditor lineSeparatorEditor;
+	
+    //A boolean to indicate if the user settings were cleared.
+	private boolean clearUserSettings = false;
+
     /*
      * (non-Javadoc)
      * 
@@ -84,7 +99,19 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         createSaveIntervalGroup(composite);
 		createSpace(composite);
 		createAutoRefreshControls(composite);
-        applyDialogFont(composite);
+		
+		Composite lower = new Composite(composite,SWT.NONE);
+		GridLayout lowerLayout = new GridLayout();
+		lowerLayout.numColumns = 2;
+		lowerLayout.makeColumnsEqualWidth = true;
+		lower.setLayout(lowerLayout);
+		
+		lower.setLayoutData(new GridData(
+                GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		
+		createEncodingEditorControls(lower);
+		createLineSeparatorEditorControls(lower);
+		applyDialogFont(composite);
 
         return composite;
     }
@@ -170,6 +197,48 @@ public class IDEWorkspacePreferencePage extends PreferencePage
     }
 
     /**
+     * Create a composite that contains the encoding controls
+     * 
+     * @param parent
+     */
+    private void createEncodingEditorControls(Composite parent){    			
+		Composite encodingComposite = new Composite(parent,SWT.NONE);
+		encodingComposite.setLayout(new GridLayout());
+		encodingComposite.setLayoutData(new GridData(
+                GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		
+		encodingEditor = new ResourceEncodingFieldEditor(IDEWorkbenchMessages.WorkbenchPreference_encoding, encodingComposite, ResourcesPlugin
+				.getWorkspace().getRoot());
+
+		encodingEditor.setPage(this);
+		encodingEditor.load();
+		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+			 */
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID))
+					 setValid(encodingEditor.isValid());
+
+			}
+		});
+    }
+    
+    /**
+     * Create a composite that contains the line delimiter controls
+     * 
+     * @param parent
+     */
+    private void createLineSeparatorEditorControls(Composite parent){
+    	Composite lineComposite = new Composite(parent,SWT.NONE);
+		lineComposite.setLayout(new GridLayout());
+		lineComposite.setLayoutData(new GridData(
+                GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		
+		lineSeparatorEditor = new LineDelimiterEditor(lineComposite);
+		lineSeparatorEditor.doLoad();
+    }
+    /**
      * Returns the IDE preference store.
      * @return the preference store.
      */
@@ -238,6 +307,13 @@ public class IDEWorkspacePreferencePage extends PreferencePage
                 .getPluginPreferences().getDefaultBoolean(
                         ResourcesPlugin.PREF_AUTO_REFRESH);
         autoRefreshButton.setSelection(autoRefresh);
+        
+        clearUserSettings = true;
+
+		List encodings = WorkbenchEncoding.getDefinedEncodings();
+		Collections.sort(encodings);
+        encodingEditor.loadDefault();
+		lineSeparatorEditor.loadDefault();
 
         super.performDefaults();
     }
@@ -295,6 +371,10 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         boolean autoRefresh = autoRefreshButton.getSelection();
         preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, autoRefresh);
         
+        if (clearUserSettings)
+			IDEEncoding.clearUserEncodings();
+        encodingEditor.store();
+		lineSeparatorEditor.store();
         return super.performOk();
     }
 
