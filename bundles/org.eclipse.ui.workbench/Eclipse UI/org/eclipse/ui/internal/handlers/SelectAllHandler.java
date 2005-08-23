@@ -99,11 +99,13 @@ public class SelectAllHandler extends WidgetMethodHandler {
 		// Let's see if we have a control that supports point-based selection.
 		if (method == null) {
 			final Control focusControl = Display.getCurrent().getFocusControl();
-			try {
-				method = focusControl.getClass().getMethod("setSelection", //$NON-NLS-1$
-						METHOD_PARAMETERS);
-			} catch (NoSuchMethodException e) {
-				// Do nothing.
+			if (focusControl != null) {
+				try {
+					method = focusControl.getClass().getMethod("setSelection", //$NON-NLS-1$
+							METHOD_PARAMETERS);
+				} catch (NoSuchMethodException e) {
+					// Do nothing.
+				}
 			}
 		}
 
