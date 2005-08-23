@@ -382,6 +382,7 @@ public class IDEWorkbenchMessages extends NLS {
 
 	// --- Import ---
 	public static String WizardImportPage_specifyFolder;
+	public static String WizardImportPage_specifyProject;
 	public static String WizardImportPage_folderMustExist;
 	public static String WizardImportPage_errorDialogTitle;
 	public static String WizardImportPage_folder;
