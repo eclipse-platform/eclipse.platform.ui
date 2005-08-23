@@ -501,7 +501,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Initializes the preferences for this plugin if necessary.
 	 */
-	protected void initializePreferences() {
+	protected void initializeDefaultPluginPreferences() {
 		IPreferenceStore store = getPreferenceStore();
 		// Get the plugin preferences for CVS Core
 		Preferences corePrefs = CVSProviderPlugin.getPlugin().getPluginPreferences();
@@ -599,7 +599,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		super.start(context);
 		
 		initializeImages();
-		initializePreferences();
 		
 		CVSAdapterFactory factory = new CVSAdapterFactory();
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFile.class);
