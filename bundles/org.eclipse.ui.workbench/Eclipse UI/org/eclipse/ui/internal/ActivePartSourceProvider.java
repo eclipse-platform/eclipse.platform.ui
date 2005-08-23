@@ -71,9 +71,6 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 	private final IWindowListener windowListener = new IWindowListener() {
 
 		public final void windowActivated(final IWorkbenchWindow window) {
-			if (window != null) {
-				window.getPartService().addPartListener(partListener);
-			}
 			checkActivePart();
 		}
 
@@ -85,9 +82,6 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		}
 
 		public final void windowDeactivated(final IWorkbenchWindow window) {
-			if (window != null) {
-				window.getPartService().removePartListener(partListener);
-			}
 			checkActivePart();
 		}
 
