@@ -496,6 +496,13 @@ public class WizardArchiveFileResourceImportPage1 extends
             enableButtonGroup(false);
             return false;
         } 
+        
+        List resourcesToExport = selectionGroup.getAllWhiteCheckedItems();
+        if (resourcesToExport.size() == 0){
+        	setErrorMessage(DataTransferMessages.FileImport_noneSelected);
+        	return false;
+        }
+        
         enableButtonGroup(true);
         return true;
     }

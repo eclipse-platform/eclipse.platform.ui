@@ -23,6 +23,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
@@ -278,7 +280,14 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
                 getResourceProvider(IResource.FILE), WorkbenchLabelProvider
                         .getDecoratingWorkbenchLabelProvider(), SWT.NONE,
                 DialogUtil.inRegularFontMode(parent));
-
+        
+        ICheckStateListener listener = new ICheckStateListener() {
+            public void checkStateChanged(CheckStateChangedEvent event) {
+                updateWidgetEnablements();
+            }
+        };
+        
+        this.resourceGroup.addCheckStateListener(listener);
     }
 
     /*
@@ -600,5 +609,17 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
     protected boolean saveDirtyEditors() {
         return IDEWorkbenchPlugin.getDefault().getWorkbench().saveAllEditors(
                 true);
+    }
+    
+    /**
+     * Check if widgets are enabled or disabled by a change in the dialog.
+     */
+    protected void updateWidgetEnablements() {
+
+        boolean pageComplete = determinePageCompletion();
+        setPageComplete(pageComplete);
+        if (pageComplete)
+            setMessage(null);
+        super.updateWidgetEnablements();
     }
 }

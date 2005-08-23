@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -278,25 +277,18 @@ public class WizardFileSystemResourceExportPage1 extends
      *	@return boolean
      */
     public boolean finish() {
+        List resourcesToExport = getWhiteCheckedResources();
         if (!ensureTargetIsValid(new File(getDestinationValue())))
             return false;
 
-        List resourcesToExport = getWhiteCheckedResources();
 
         //Save dirty editors if possible but do not stop if not all are saved
         saveDirtyEditors();
         // about to invoke the operation so save our state
         saveWidgetValues();
 
-        if (resourcesToExport.size() > 0)
-            return executeExportOperation(new FileSystemExportOperation(null,
-                    resourcesToExport, getDestinationValue(), this));
-
-        MessageDialog.openInformation(getContainer().getShell(),
-                DataTransferMessages.DataTransfer_information,
-                DataTransferMessages.FileExport_noneSelected);
-
-        return false;
+        return executeExportOperation(new FileSystemExportOperation(null,
+                resourcesToExport, getDestinationValue(), this));
     }
 
     /**
@@ -441,7 +433,24 @@ public class WizardFileSystemResourceExportPage1 extends
         return true;
     }
 
-    /**
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.ui.dialogs.WizardDataTransferPage#validateSourceGroup()
+     */
+    protected boolean validateSourceGroup() {
+    	// there must be some resources selected for Export
+    	boolean isValid = true;
+        List resourcesToExport = getWhiteCheckedResources();
+    	if (resourcesToExport.size() == 0){
+    		setErrorMessage(DataTransferMessages.FileExport_noneSelected);
+            isValid =  false;
+    	}
+    	else
+    		setErrorMessage(null);
+		return super.validateSourceGroup() && isValid;
+	}
+
+	/**
      * Get the message used to denote an empty destination.
      */
     protected String destinationEmptyMessage() {

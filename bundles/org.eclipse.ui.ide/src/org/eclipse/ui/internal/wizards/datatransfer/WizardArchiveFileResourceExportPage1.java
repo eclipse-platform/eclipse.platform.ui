@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -224,26 +223,18 @@ public class WizardArchiveFileResourceExportPage1 extends
      * @returns boolean
      */
     public boolean finish() {
+    	List resourcesToExport = getWhiteCheckedResources();
+    	
         if (!ensureTargetIsValid())
             return false;
-
-        List resourcesToExport = getWhiteCheckedResources();
 
         //Save dirty editors if possible but do not stop if not all are saved
         saveDirtyEditors();
         // about to invoke the operation so save our state
         saveWidgetValues();
 
-        if (resourcesToExport.size() > 0) {
-            return executeExportOperation(new ArchiveFileExportOperation(null,
-                    resourcesToExport, getDestinationValue()));
-        }
-
-        MessageDialog.openInformation(getContainer().getShell(),
-                DataTransferMessages.DataTransfer_information,
-                DataTransferMessages.FileExport_noneSelected);
-
-        return false;
+        return executeExportOperation(new ArchiveFileExportOperation(null,
+                resourcesToExport, getDestinationValue()));
     }
 
     /**
