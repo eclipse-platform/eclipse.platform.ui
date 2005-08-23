@@ -123,7 +123,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Initializes the preferences for this plugin if necessary.
 	 */
-	protected void initializePreferences() {
+	protected void initializeDefaultPluginPreferences() {
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, false);
 		store.setDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, true);
@@ -178,7 +178,6 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		super.start(context);
 		
 		initializeImages(this);
-		initializePreferences();
 
 		// This is a backwards compatibility check to ensure that repository
 		// provider capability are enabled automatically if an old workspace is
