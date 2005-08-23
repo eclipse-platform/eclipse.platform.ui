@@ -447,7 +447,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fMenu.setParent(getSite().getActionBars().getMenuManager());
 		fMenu.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mgr) {
-				SearchView.createStandardGroups(mgr);
+				SearchView.createContextMenuGroups(mgr);
 				fillContextMenu(mgr);
 				fViewPart.fillContextMenu(mgr);
 			}
@@ -635,7 +635,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		
 		IToolBarManager tbm = getSite().getActionBars().getToolBarManager();
 		tbm.removeAll();
-		SearchView.createStandardGroups(tbm);
+		SearchView.createToolBarGroups(tbm);
 		fillToolbar(tbm);
 		tbm.update(false);
 		

@@ -11,7 +11,6 @@
  *       o New search view sets incorrect title
  *         (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=60966)
  *******************************************************************************/
-
 package org.eclipse.search2.internal.ui;
 
 import java.text.MessageFormat;
@@ -28,7 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 
 import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -80,7 +78,12 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	
 	private IMemento fPageState;
 	
-	public static void createStandardGroups(IContributionManager menu) {
+	/**
+	 * Creates the groups and separators for the search view's context menu
+	 * 
+	 * @param menu the context menu
+	 */
+	public static void createContextMenuGroups(IMenuManager menu) {
 		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));
@@ -93,6 +96,27 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
 		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
+	}
+
+	/**
+	 * Creates the groups and separators for the search view's 
+	 * tool bar
+	 * 
+	 * @param toolbar the toolbar
+	 */
+	public static void createToolBarGroups(IToolBarManager toolbar) {
+		toolbar.add(new Separator(IContextMenuConstants.GROUP_NEW));
+		toolbar.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
+		toolbar.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));
+		toolbar.add(new Separator(IContextMenuConstants.GROUP_SHOW));
+		toolbar.add(new Separator(IContextMenuConstants.GROUP_BUILD));
+		toolbar.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
+		toolbar.add(new Separator(IContextMenuConstants.GROUP_REMOVE_MATCHES));
+		toolbar.add(new GroupMarker(IContextMenuConstants.GROUP_GENERATE));
+		toolbar.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		toolbar.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
+		toolbar.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
+		toolbar.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
 	}
 
 	class DummyPart implements IWorkbenchPart {
@@ -306,7 +330,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	private void initializeToolBar() {
 		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
-		createStandardGroups(tbm);
+		createToolBarGroups(tbm);
 		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fCancelAction); //$NON-NLS-1$
 		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchesDropDownAction); //$NON-NLS-1$
 		getViewSite().getActionBars().updateActionBars();
@@ -389,7 +413,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-		createStandardGroups(site.getActionBars().getMenuManager());
+		createContextMenuGroups(site.getActionBars().getMenuManager());
 		fPageState= memento;
 		IWorkbenchSiteProgressService progressService= getProgressService();
 		if (progressService != null)
