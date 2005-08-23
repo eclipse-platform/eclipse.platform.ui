@@ -1488,7 +1488,19 @@ public final class BindingManager implements IContextManagerListener,
 			final Binding binding = bindingsCopy[i];
 			if ((binding.getParameterizedCommand() == null)
 					&& (localeMatches(binding)) && (platformMatches(binding))) {
-				deletions.put(binding.getTriggerSequence(), binding);
+				final TriggerSequence sequence = binding.getTriggerSequence();
+				final Object currentValue = deletions.get(sequence);
+				if (currentValue instanceof Binding) {
+					final Collection collection = new ArrayList(2);
+					collection.add(currentValue);
+					collection.add(binding);
+					deletions.put(sequence, collection);
+				} else if (currentValue instanceof Collection) {
+					final Collection collection = (Collection) currentValue;
+					collection.add(binding);
+				} else {
+					deletions.put(sequence, binding);
+				}
 				bindingsCopy[i] = null;
 				deletedCount++;
 			}
@@ -1505,10 +1517,25 @@ public final class BindingManager implements IContextManagerListener,
 			if (binding != null) {
 				final Object deletion = deletions.get(binding
 						.getTriggerSequence());
-				if ((deletion != null)
-						&& (((Binding) deletion).deletes(binding))) {
-					bindingsCopy[i] = null;
-					deletedCount++;
+				if (deletion instanceof Binding) {
+					if (((Binding) deletion).deletes(binding)) {
+						bindingsCopy[i] = null;
+						deletedCount++;
+					}
+					
+				} else if (deletion instanceof Collection) {
+					final Collection collection = (Collection) deletion;
+					final Iterator iterator = collection.iterator();
+					while (iterator.hasNext()) {
+						final Object deletionBinding = iterator.next();
+						if (deletionBinding instanceof Binding) {
+							if (((Binding) deletionBinding).deletes(binding)) {
+								bindingsCopy[i] = null;
+								deletedCount++;
+							}
+						}
+					}
+					
 				}
 			}
 		}
