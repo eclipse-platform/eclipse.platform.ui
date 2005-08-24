@@ -12,9 +12,7 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -48,7 +46,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -122,9 +119,6 @@ public class EditorManager implements IExtensionChangeHandler {
     // the icon should be removed or added accordingly
     private IPropertyChangeListener editorPropChangeListnener = null;
 
-    // Use a cache to optimise image creation
-    Hashtable imgHashtable = new Hashtable();
-
     // Handler for the pin editor keyboard shortcut
     private IHandlerActivation pinEditorHandlerActivation = null;
 
@@ -173,14 +167,6 @@ public class EditorManager implements IExtensionChangeHandler {
 				handlerService.deactivateHandler(pinEditorHandlerActivation);
                 pinEditorHandlerActivation = null;
             }
-            // Dispose the cached images for editors
-            Enumeration images = imgHashtable.elements();
-            while (images.hasMoreElements()) {
-                Image image = (Image) images.nextElement();
-                image.dispose();
-            }
-            // Clear cached images hash table
-            imgHashtable.clear();
         }
     }
 
