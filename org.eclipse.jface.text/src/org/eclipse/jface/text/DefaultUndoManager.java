@@ -401,11 +401,11 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			text.append(delimiter);
 		    text.append("text: '"); //$NON-NLS-1$
 			text.append(fText);
-		    text.append('\''); //$NON-NLS-1$
+		    text.append('\'');
 			text.append(delimiter);
 		    text.append("preservedText: '"); //$NON-NLS-1$
 			text.append(fPreservedText);
-		    text.append('\''); //$NON-NLS-1$
+		    text.append('\'');
 		    return text.toString();
 		}
 		
@@ -1075,7 +1075,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 					fCurrent.fStart= fCurrent.fEnd= modelStart;
 				if (length > 0)
 					fTextBuffer.append(insertedText);
-			} else if (length > 0) {
+			} else if (length >= 0) {
 				// by pasting or model manipulation
 				fCurrent.fRedoModificationStamp= beforeChangeModificationStamp;
 				if (fCurrent.attemptCommit())
