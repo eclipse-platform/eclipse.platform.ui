@@ -13,7 +13,11 @@ package org.eclipse.jface.resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.Policy;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
@@ -104,10 +108,20 @@ public abstract class ResourceManager {
         }
         
         try {
-            return (Image)create(descriptor);
-        } catch (DeviceResourceException e) {
-            return getDefaultImage();
-        }
+			return (Image) create(descriptor);
+		} catch (DeviceResourceException e) {
+			Policy.getLog().log(
+					new Status(IStatus.WARNING, "org.eclipse.jface", 0, //$NON-NLS-1$
+							"The image could not be loaded: " + descriptor, //$NON-NLS-1$
+							e));
+			return getDefaultImage();
+		} catch (SWTException e) {
+			Policy.getLog().log(
+					new Status(IStatus.WARNING, "org.eclipse.jface", 0, //$NON-NLS-1$
+							"The image could not be loaded: " + descriptor, //$NON-NLS-1$
+							e));
+			return getDefaultImage();
+		}
     }
     
     /**
