@@ -92,7 +92,7 @@ public class CompatibilityHelper {
 		if (compatibility == null)
 			throw new IllegalStateException();
 
-		Boolean result = new Boolean(false);
+		Boolean result = Boolean.FALSE;
 		try {
 			Method setPlugin = descriptor.getClass().getMethod("hasPluginObject", null); //$NON-NLS-1$
 			result = (Boolean) setPlugin.invoke(descriptor, null);

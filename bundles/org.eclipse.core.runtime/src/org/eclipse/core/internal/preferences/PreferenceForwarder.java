@@ -147,7 +147,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		else if (obj instanceof byte[])
 			return defaults.getByteArray(key, BYTE_ARRAY_DEFAULT_DEFAULT);
 		else if (obj instanceof Boolean)
-			return new Boolean(defaults.getBoolean(key, BOOLEAN_DEFAULT_DEFAULT));
+			return defaults.getBoolean(key, BOOLEAN_DEFAULT_DEFAULT) ? Boolean.TRUE : Boolean.FALSE;
 		else
 			return null;
 	}
