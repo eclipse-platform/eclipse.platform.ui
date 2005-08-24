@@ -61,7 +61,7 @@ public final class OpenPerspectiveAction extends Action implements
         this.descriptor = descriptor;
         this.callback = callback;
 
-        final String label = descriptor.getLabel();
+        final String label = '&' + descriptor.getLabel();
         setText(label);
         setToolTipText(label);
         setImageDescriptor(descriptor.getImageDescriptor());

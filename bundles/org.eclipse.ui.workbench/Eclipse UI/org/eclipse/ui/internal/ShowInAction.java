@@ -37,7 +37,7 @@ public class ShowInAction extends Action {
      * Creates a new <code>ShowInAction</code>.
      */
     protected ShowInAction(IWorkbenchWindow window, IViewDescriptor desc) {
-        super(desc.getLabel());
+        super('&' + desc.getLabel());
         setImageDescriptor(desc.getImageDescriptor());
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.SHOW_IN_ACTION);

@@ -40,7 +40,7 @@ public class ShowViewAction extends Action implements IPluginContribution {
         // TODO: is this wart still needed? 
         String accel = desc instanceof ViewDescriptor ? ((ViewDescriptor) desc)
 				.getAccelerator() : null;
-        String label = desc.getLabel();
+        String label = '&' + desc.getLabel();
         setText(accel == null ? label : label + "@" + accel); //$NON-NLS-1$
         setImageDescriptor(desc.getImageDescriptor());
         setToolTipText(label);

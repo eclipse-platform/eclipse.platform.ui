@@ -47,7 +47,7 @@ public class NewWizardShortcutAction extends Action implements
      */
     public NewWizardShortcutAction(IWorkbenchWindow window,
             IWizardDescriptor wizardDesc) {
-        super(wizardDesc.getLabel());
+        super('&' + wizardDesc.getLabel());
         setToolTipText(wizardDesc.getDescription());
         setImageDescriptor(wizardDesc.getImageDescriptor());
         setId(ActionFactory.NEW.getId());
