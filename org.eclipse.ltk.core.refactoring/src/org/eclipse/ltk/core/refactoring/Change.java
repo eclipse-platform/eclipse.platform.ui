@@ -81,6 +81,10 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * the whole change tree no undo object will be present.    
  * </p>
  * <p>
+ * Changes which are returned as top-level changes (e.g. by <code>Refactoring.createChange()</code>)
+ * can optionally return a descriptor object of the refactoring which created this change object.
+ * </p>
+ * <p>
  * Clients may subclass this class.
  * </p>
  * 
@@ -97,6 +101,35 @@ public abstract class Change implements IAdaptable {
 	protected Change() {
 	}
 	
+	/**
+	 * Returns a descriptor of the refactoring which created this change object.
+	 * <p>
+	 * Subclasses of changes created by
+	 * {@link Refactoring#createChange(IProgressMonitor)} may extend this method
+	 * to return an appropriate descriptor object. If no descriptor object is
+	 * returned in a subclass implementation, the super implementation has to be
+	 * called.
+	 * </p>
+	 * <p>
+	 * The default implementation delegates the request to the parent change.
+	 * </p>
+	 * 
+	 * @return a refactoring descriptor representing the refactoring which
+	 *         created this change object, or <code>null</code>
+	 * 
+	 * @since 3.2
+	 */
+	public RefactoringDescriptor getRefactoringDescriptor() {
+		Change parent= fParent;
+		while (parent != null) {
+			RefactoringDescriptor descriptor= parent.getRefactoringDescriptor();
+			if (descriptor != null)
+				return descriptor;
+			parent= parent.getParent();
+		}
+		return null;
+	}
+
 	/**
 	 * Returns the human readable name of this change. The
 	 * name <em>MUST</em> not be <code>null</code>.

@@ -45,7 +45,19 @@ public class CompositeChange extends Change {
 	private List fChanges;
 	private boolean fIsSynthetic;
 	private Change fUndoUntilException;
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public RefactoringDescriptor getRefactoringDescriptor() {
+		for (final Iterator iterator= fChanges.iterator(); iterator.hasNext();) {
+			Change change= (Change) iterator.next();
+			RefactoringDescriptor descriptor= change.getRefactoringDescriptor();
+			if (descriptor != null)
+				return descriptor;
+		}
+		return null;
+	}
 
 	/**
 	 * Creates a new composite change with the given name.
