@@ -296,16 +296,6 @@ public abstract class DialogMarkerFilter extends Dialog {
     }
 
     /**
-     * This method is called when a button is checked or unchecked. It updates the enablement
-     * state of all widgets and marks the dialog as dirty.
-     * @param event
-     */
-    void checkStateChanged(CheckStateChangedEvent event) {
-        updateEnabledState(true);
-        markDirty();
-    }
-
-    /**
      * Method declared on Window.
      */
     protected void configureShell(Shell newShell) {
@@ -691,9 +681,8 @@ public abstract class DialogMarkerFilter extends Dialog {
         typesViewer.setSorter(getSorter());
         typesViewer.addCheckStateListener(new ICheckStateListener(){
         	public void checkStateChanged(CheckStateChangedEvent event) {
-        		updateEnabledState(event.getChecked());
-                markDirty();
-        	};
+        		markDirty();
+        	}
         });
         typesViewer.setInput(getSelectedFilter().getRootTypes().toArray());
 
@@ -831,8 +820,7 @@ public abstract class DialogMarkerFilter extends Dialog {
      * 
      * @param parent the parent Composite
      */
-    protected void createAttributesArea(Composite parent) {
-    }
+    abstract void createAttributesArea(Composite parent);
 
     private ILabelProvider getLabelProvider() {
         return new TypesLabelProvider();
