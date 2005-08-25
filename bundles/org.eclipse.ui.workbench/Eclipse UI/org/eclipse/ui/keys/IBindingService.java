@@ -95,7 +95,7 @@ public interface IBindingService {
 	 * Returns the array of defined schemes in the workbench.
 	 * 
 	 * @return The array of schemes (<code>Scheme</code>) that are defined;
-	 *         never <code>null</code>, but may be empty.
+	 *         it may be <code>null</code>, and it may be empty.
 	 */
 	public Scheme[] getDefinedSchemes();
 
