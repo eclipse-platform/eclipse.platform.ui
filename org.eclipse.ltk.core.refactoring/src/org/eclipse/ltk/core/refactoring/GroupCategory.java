@@ -13,8 +13,8 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * A group category is use to annotate change groups so that
- * the can be identified and filter.
+ * A group category is used to annotate change groups so that
+ * they can be identified and filtered.
  * 
  * @since 3.2
  */
@@ -26,7 +26,7 @@ public class GroupCategory {
 
 	/**
 	 * Creates a new group category with the given name and
-	 * description
+	 * description.
 	 * 
 	 * @param id a unique identifier
 	 * @param name the name
