@@ -25,7 +25,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.Assert;
@@ -392,12 +391,7 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 	 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseMove(MouseEvent event) {
-
-		if (event.widget instanceof Control && !((Control) event.widget).isFocusControl()) {
-			deactivate();
-			return;
-		}
-
+	
 		if (!fActive) {
 			if (event.stateMask != fHyperlinkStateMask)
 				return;
