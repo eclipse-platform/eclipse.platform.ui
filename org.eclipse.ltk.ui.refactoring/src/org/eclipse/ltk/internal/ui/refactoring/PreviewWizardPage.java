@@ -10,9 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import org.eclipse.compare.CompareUI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.GroupCategory;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
+
+import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -21,8 +35,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -39,10 +59,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
 
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
+import org.eclipse.compare.CompareUI;
+
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
@@ -95,12 +113,91 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		}
 	}
 	
+	private class FilterAction extends Action {
+		private FilterDropDownAction fOwner;
+		private GroupCategory fGroupCategory;
+		public FilterAction(FilterDropDownAction owner, GroupCategory category) {
+			super(category.getName(), IAction.AS_RADIO_BUTTON);
+			setToolTipText(category.getDescription());
+			fOwner= owner;
+			fGroupCategory= category;
+		}
+		public void run() {
+			setActiveGroupCategory(fGroupCategory);
+			fOwner.executed(this);
+		}
+	}
+	private class ShowAllAction extends Action {
+		private FilterDropDownAction fOwner;
+		public ShowAllAction(FilterDropDownAction owner) {
+			super(RefactoringUIMessages.PreviewWizardPage_showAll_text, IAction.AS_RADIO_BUTTON);
+			super.setToolTipText(RefactoringUIMessages.PreviewWizardPage_showAll_description);
+			fOwner= owner;
+			setChecked(true);
+		}
+		public void run() {
+			clearGroupCategories();
+			fOwner.executed(this);
+		}
+	}
+	private class FilterDropDownAction extends Action implements IMenuCreator {
+		private Menu fMenu;
+		private ShowAllAction fShowAllAction;
+		private FilterAction[] fFilterActions;
+		private Action fActiveAction;
+		
+		public FilterDropDownAction() {
+			setImageDescriptor(RefactoringPluginImages.DESC_ELCL_FILTER);
+			setDisabledImageDescriptor(RefactoringPluginImages.DESC_DLCL_FILTER);
+			setMenuCreator(this);
+		}
+		public void initialize(Collection groupCategories) {
+			fShowAllAction= new ShowAllAction(this);
+			fActiveAction= fShowAllAction;
+			fFilterActions= new FilterAction[groupCategories.size()];
+			int i= 0;
+			for (Iterator iter= groupCategories.iterator(); iter.hasNext();) {
+				fFilterActions[i++]= new FilterAction(this, (GroupCategory)iter.next());
+			}
+			setEnabled(groupCategories.size() > 0);
+		}
+		public void dispose() {
+			if (fMenu != null) {
+				fMenu.dispose();
+				fMenu= null;				
+			}
+		}
+		public Menu getMenu(Control parent) {
+			dispose();
+			fMenu= new Menu(parent);
+			new ActionContributionItem(fShowAllAction).fill(fMenu, -1);
+			new MenuItem(fMenu, SWT.SEPARATOR);
+			for (int i= 0; i < fFilterActions.length; i++) {
+				new ActionContributionItem(fFilterActions[i]).fill(fMenu, -1);
+			}
+			return fMenu;
+		}
+		public Menu getMenu(Menu parent) {
+			return null;
+		}
+		public void executed(Action action) {
+			if (fActiveAction == action)
+				return;
+			fActiveAction.setChecked(false);
+			fActiveAction= action;
+			fActiveAction.setChecked(true);
+		}
+	}
+	
 	private Change fChange;
+	private List fActiveGroupCategories;
 	private CompositeChange fTreeViewerInputChange;
 	private ChangeElement fCurrentSelection;
 	private PageBook fPageContainer;
 	private Control fStandardPage;
 	private Control fNullPage;
+	private FilterDropDownAction fFilterDropDownAction;
+	private ViewerPane fTreeViewerPane;
 	private ChangeElementTreeViewer fTreeViewer;
 	private PageBook fPreviewContainer;
 	private ChangePreviewViewerDescriptor fCurrentDescriptor;
@@ -217,19 +314,24 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		
 		SashForm sashForm= new SashForm(result, SWT.VERTICAL);
 		
-		ViewerPane pane= new ViewerPane(sashForm, SWT.BORDER | SWT.FLAT);
-		pane.setText(RefactoringUIMessages.PreviewWizardPage_changes); 
-		ToolBarManager tbm= pane.getToolBarManager();
+		fTreeViewerPane= new ViewerPane(sashForm, SWT.BORDER | SWT.FLAT);
+		fTreeViewerPane.setText(RefactoringUIMessages.PreviewWizardPage_changes); 
+		ToolBarManager tbm= fTreeViewerPane.getToolBarManager();
 		tbm.add(new NextChange());
 		tbm.add(new PreviousChange());
+		tbm.add(new Separator());
+		fFilterDropDownAction= new FilterDropDownAction();
+		fFilterDropDownAction.setEnabled(false);
+		tbm.add(fFilterDropDownAction);
+		
 		tbm.update(true);
 		
-		fTreeViewer= createTreeViewer(pane);
+		fTreeViewer= createTreeViewer(fTreeViewerPane);
 		fTreeViewer.setContentProvider(createTreeContentProvider());
 		fTreeViewer.setLabelProvider(createTreeLabelProvider());
 		fTreeViewer.addSelectionChangedListener(createSelectionChangedListener());
 		fTreeViewer.addCheckStateListener(createCheckStateListener());
-		pane.setContent(fTreeViewer.getControl());
+		fTreeViewerPane.setContent(fTreeViewer.getControl());
 		setTreeViewerInput();
 		
 		fPreviewContainer= new PageBook(sashForm, SWT.NONE);
@@ -284,6 +386,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 					}
 				}
 			}
+			fFilterDropDownAction.initialize(collectGroupCategories());
 			super.setVisible(visible);
 			fTreeViewer.getControl().setFocus();
 		} else {
@@ -367,13 +470,13 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 						newViewer= fNullPreviewer;
 					}
 					fCurrentDescriptor= descriptor;
-					element.feedInput(newViewer);
+					element.feedInput(newViewer, fActiveGroupCategories);
 					if (fCurrentPreviewViewer != null && fCurrentPreviewViewer != fNullPreviewer)
 						fCurrentPreviewViewer.getControl().dispose();
 					fCurrentPreviewViewer= newViewer;				
 					fPreviewContainer.showPage(fCurrentPreviewViewer.getControl());
 				} else {
-					element.feedInput(fCurrentPreviewViewer);
+					element.feedInput(fCurrentPreviewViewer, fActiveGroupCategories);
 				}
 			}
 		} catch (CoreException e) {
@@ -402,5 +505,46 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		if (fChange instanceof CompositeChange)
 			return ((CompositeChange)fChange).getChildren().length > 0;
 		return true;
+	}
+	
+	//---- manage group categories --------------------------------------------
+	
+	private Collection collectGroupCategories() {
+		Set result= new HashSet();
+		collectGroupCategories(result, fChange);
+		return result;
+	}
+	
+	private void collectGroupCategories(Set result, Change change) {
+		if (change instanceof TextEditBasedChange) {
+			TextEditBasedChangeGroup[] groups= ((TextEditBasedChange)change).getChangeGroups();
+			for (int i= 0; i < groups.length; i++) {
+				result.addAll(groups[i].getGroupCategorySet().asList());
+			}
+		} else if (change instanceof CompositeChange) {
+			Change[] children= ((CompositeChange)change).getChildren();
+			for (int i= 0; i < children.length; i++) {
+				collectGroupCategories(result, children[i]);
+			}
+		}
+	}
+	
+	private void setActiveGroupCategory(GroupCategory category) {
+		if (fActiveGroupCategories == null) {
+			fActiveGroupCategories= new ArrayList(1);
+		} else {
+			fActiveGroupCategories.clear();
+		}
+		fActiveGroupCategories.add(category);
+		fTreeViewer.setGroupCategory(fActiveGroupCategories);
+		fTreeViewerPane.setText(Messages.format(
+			RefactoringUIMessages.PreviewWizardPage_changes_filtered, 
+			category.getName()));
+	}
+	
+	private void clearGroupCategories() {
+		fActiveGroupCategories= null;
+		fTreeViewer.setGroupCategory(null);
+		fTreeViewerPane.setText(RefactoringUIMessages.PreviewWizardPage_changes); 
 	}
 }

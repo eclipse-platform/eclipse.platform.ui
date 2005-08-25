@@ -16,18 +16,17 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.GroupCategorySet;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
-import org.eclipse.ltk.core.refactoring.Change;
-
-import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
-
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
 public abstract class PseudoLanguageChangeElement extends ChangeElement {
 
 	private List fChildren;
+	private GroupCategorySet fGroupCategories;
 	
 	public PseudoLanguageChangeElement(ChangeElement parent) {
 		super(parent);
@@ -44,12 +43,12 @@ public abstract class PseudoLanguageChangeElement extends ChangeElement {
 		return element.getChangePreviewViewerDescriptor();
 	}
 	
-	public void feedInput(IChangePreviewViewer viewer) throws CoreException {
+	public void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException {
 		DefaultChangeElement element= getDefaultChangeElement();
 		if (element != null) {
 			Change change= element.getChange();
 			if (change instanceof TextEditBasedChange) {
-				List groups= collectTextEditChanges();
+				List groups= collectTextEditBasedChangeGroups(categories);
 				viewer.setInput(TextEditChangePreviewViewer.createInput(change,
 					(TextEditBasedChangeGroup[])groups.toArray(new TextEditBasedChangeGroup[groups.size()]),
 					getTextRange()));
@@ -91,6 +90,31 @@ public abstract class PseudoLanguageChangeElement extends ChangeElement {
 		return (ChangeElement[]) fChildren.toArray(new ChangeElement[fChildren.size()]);
 	}
 	
+	public boolean hasOneGroupCategory(List categories) {
+		if (fChildren == null)
+			return false;
+		return getGroupCategorySet().containsOneCategory(categories);
+	}
+	
+	public GroupCategorySet getGroupCategorySet() {
+		if (fGroupCategories == null) {
+			fGroupCategories= GroupCategorySet.NONE;
+			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
+				ChangeElement node= (ChangeElement)iter.next();
+				GroupCategorySet other= null;
+				if (node instanceof TextEditChangeElement) {
+					other= ((TextEditChangeElement)node).getGroupCategorySet();
+				} else if (node instanceof PseudoLanguageChangeElement) {
+					other= ((PseudoLanguageChangeElement)node).getGroupCategorySet();
+				} else {
+					Assert.isTrue(false, "Shouldn't happen"); //$NON-NLS-1$
+				}
+				fGroupCategories= GroupCategorySet.union(fGroupCategories, other);
+			}
+		}
+		return fGroupCategories;
+	}
+	
 	/**
 	 * Adds the given <code>TextEditChangeElement<code> as a child to this 
 	 * <code>PseudoJavaChangeElement</code>
@@ -125,15 +149,17 @@ public abstract class PseudoLanguageChangeElement extends ChangeElement {
 		return (DefaultChangeElement)element;
 	}
 	
-	private List collectTextEditChanges() {
+	private List collectTextEditBasedChangeGroups(List categories) {
 		List result= new ArrayList(10);
 		ChangeElement[] children= getChildren();
 		for (int i= 0; i < children.length; i++) {
 			ChangeElement child= children[i];
 			if (child instanceof TextEditChangeElement) {
-				result.add(((TextEditChangeElement)child).getChangeGroup());
+				TextEditBasedChangeGroup changeGroup= ((TextEditChangeElement)child).getChangeGroup();
+				if (categories == null || changeGroup.getGroupCategorySet().containsOneCategory(categories))
+					result.add(changeGroup);
 			} else if (child instanceof PseudoLanguageChangeElement) {
-				result.addAll(((PseudoLanguageChangeElement)child).collectTextEditChanges());
+				result.addAll(((PseudoLanguageChangeElement)child).collectTextEditBasedChangeGroups(categories));
 			}
 		}
 		return result;

@@ -37,6 +37,8 @@ public class RefactoringPluginImages {
 
 	private static final String T_WIZBAN= "wizban"; 	//$NON-NLS-1$
 	private static final String T_OBJ= "obj16"; 		//$NON-NLS-1$
+	private static final String T_ELCL= "elcl16"; 	//$NON-NLS-1$
+	private static final String T_DLCL= "dlcl16"; 	//$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_WIZBAN_REFACTOR= createUnManaged(T_WIZBAN, "refactor_wiz.gif"); 			//$NON-NLS-1$
 	
@@ -45,6 +47,9 @@ public class RefactoringPluginImages {
 	public static final String IMG_OBJS_REFACTORING_WARNING= NAME_PREFIX + "warning_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_REFACTORING_INFO= NAME_PREFIX + "info_obj.gif"; 	//$NON-NLS-1$
 
+	public static final ImageDescriptor DESC_ELCL_FILTER= createUnManaged(T_ELCL, "filter_ps.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DLCL_FILTER= createUnManaged(T_DLCL, "filter_ps.gif"); //$NON-NLS-1$
+	
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_FATAL= createManaged(T_OBJ, IMG_OBJS_REFACTORING_FATAL);
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_ERROR= createManaged(T_OBJ, IMG_OBJS_REFACTORING_ERROR);
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_WARNING= createManaged(T_OBJ, IMG_OBJS_REFACTORING_WARNING);

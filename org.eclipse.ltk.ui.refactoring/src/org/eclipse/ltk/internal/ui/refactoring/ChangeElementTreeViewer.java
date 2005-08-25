@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
@@ -21,11 +25,29 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 
 class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	
+	private static class GroupCategoryFilter extends ViewerFilter {
+		private List fGroupCategories;
+		public void setGroupCategory(List groupCategories) {
+			fGroupCategories= groupCategories;
+		}
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (fGroupCategories == null)
+				return true;
+			return ((ChangeElement)element).hasOneGroupCategory(fGroupCategories);
+		}
+	}
+	
+	// Workaround for http://bugs.eclipse.org/bugs/show_bug.cgi?id=9390
+	private List fDeferredTreeItemUpdates;
+	
 	public ChangeElementTreeViewer(Composite parentComposite) {
 		super(parentComposite, SWT.NONE);
+		addFilter(new GroupCategoryFilter());
 		addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event){
 				ChangeElement element= (ChangeElement)event.getElement();
@@ -47,21 +69,49 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		});
 	}
 	
+	public void setGroupCategory(List groupCategories) {
+		((GroupCategoryFilter)(getFilters()[0])).setGroupCategory(groupCategories);
+		try {
+			fDeferredTreeItemUpdates= new ArrayList();
+			refresh();
+			processDeferredTreeItemUpdates();
+		} finally  {
+			fDeferredTreeItemUpdates= null;
+		}
+	}
+	
 	protected void inputChanged(Object input, Object oldInput) {
-		super.inputChanged(input, oldInput);
-		// XXX workaround for http://bugs.eclipse.org/bugs/show_bug.cgi?id=9390
-		initializeChildren((ChangeElement)input);
+		try {
+			fDeferredTreeItemUpdates= new ArrayList();
+			super.inputChanged(input, oldInput);
+			processDeferredTreeItemUpdates();
+		} finally {
+			fDeferredTreeItemUpdates= null;
+		}
 	}
 	
 	protected void doUpdateItem(Item item, Object element) {
 		super.doUpdateItem(item, element);
-		TreeItem treeItem= (TreeItem)item;
-		ChangeElement ce= (ChangeElement)element;
+		if (fDeferredTreeItemUpdates == null) {
+			applyCheckedState((TreeItem)item, (ChangeElement)element);
+		} else {
+			fDeferredTreeItemUpdates.add(item);
+		}
+	}
+	
+	private void processDeferredTreeItemUpdates() {
+		for (Iterator iter= fDeferredTreeItemUpdates.iterator(); iter.hasNext();) {
+			TreeItem item= (TreeItem)iter.next();
+			applyCheckedState(item, (ChangeElement)item.getData());
+		}
+	}
+	
+	private void applyCheckedState(TreeItem item, ChangeElement ce) {
 		int state= ce.getActive();
 		boolean checked= state == ChangeElement.INACTIVE ? false : true;
-		treeItem.setChecked(checked);
+		item.setChecked(checked);
 		boolean grayed= state == ChangeElement.PARTLY_ACTIVE ? true : false;
-		treeItem.setGrayed(grayed);
+		item.setGrayed(grayed);
 	}
 	
 	protected void revealNext() {
@@ -70,24 +120,6 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	
 	protected void revealPrevious() {
 		revealElement(false);
-	}
-	
-	private void initializeChildren(ChangeElement element) {
-		if (element == null)
-			return;
-		ChangeElement[] children= element.getChildren();
-		if (children == null)
-			return;
-		for (int i= 0; i < children.length; i++) {
-			ChangeElement child= children[i];
-			int state= child.getActive();
-			boolean checked= state == ChangeElement.INACTIVE ? false : true;
-			if (checked)
-				setChecked(child, checked);
-			boolean grayed= state == ChangeElement.PARTLY_ACTIVE ? true : false;
-			if (grayed)
-				setGrayed(child, grayed);
-		}
 	}
 	
 	private void setSubtreeGrayed(Object element, boolean grayed) {

@@ -112,6 +112,7 @@ public abstract class TextEditBasedChange extends Change {
 
 	/** The list of change groups */
 	private List fChangeGroups;
+	private GroupCategorySet fCombiedGroupCategories;
 	
 	/** The name of the change */
 	private String fName;
@@ -151,6 +152,9 @@ public abstract class TextEditBasedChange extends Change {
 	public void addChangeGroup(TextEditBasedChangeGroup group) {
 		Assert.isTrue(group != null);
 		fChangeGroups.add(group);
+		if (fCombiedGroupCategories != null) {
+			fCombiedGroupCategories= GroupCategorySet.union(fCombiedGroupCategories, group.getGroupCategorySet());
+		}
 	}
 
 	/**
@@ -162,6 +166,28 @@ public abstract class TextEditBasedChange extends Change {
 	 */
 	public void addTextEditGroup(TextEditGroup group) {
 		addChangeGroup(new TextEditBasedChangeGroup(this, group));
+	}
+	
+	/**
+	 * Returns <code>true</code> if the change has one of the given group 
+	 * categories. Otherwise <code>false</code> is returned.
+	 *
+	 * @param groupCategories the group categories to check
+	 * 
+	 * @return whether the change has one of the given group
+	 *  categories
+	 *  
+	 * @since 3.2
+	 */
+	public boolean hasOneGroupCategory(List groupCategories) {
+		if (fCombiedGroupCategories == null) {
+			fCombiedGroupCategories= GroupCategorySet.NONE;
+			for (Iterator iter= fChangeGroups.iterator(); iter.hasNext();) {
+				TextEditBasedChangeGroup group= (TextEditBasedChangeGroup)iter.next();
+				fCombiedGroupCategories= GroupCategorySet.union(fCombiedGroupCategories, group.getGroupCategorySet());
+			}
+		}
+		return fCombiedGroupCategories.containsOneCategory(groupCategories);
 	}
 
 	/**

@@ -1,0 +1,73 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.ltk.core.refactoring;
+
+import org.eclipse.ltk.internal.core.refactoring.Assert;
+
+/**
+ * A group category is use to annotate change groups so that
+ * the can be identified and filter.
+ * 
+ * @since 3.2
+ */
+public class GroupCategory {
+	
+	private String fId;
+	private String fName;
+	private String fDescription;
+
+	/**
+	 * Creates a new group category with the given name and
+	 * description
+	 * 
+	 * @param id a unique identifier
+	 * @param name the name
+	 * @param description the description
+	 */
+	public GroupCategory(String id, String name, String description) {
+		Assert.isNotNull(id);
+		Assert.isNotNull(name);
+		Assert.isNotNull(description);
+		fId= id;
+		fName= name;
+		fDescription= description;
+	}
+	
+	/**
+	 * Returns the name of the group category.
+	 * 
+	 * @return the name
+	 */
+	public String getName() {
+		return fName;
+	}
+	
+	/**
+	 * Returns the description of the group category.
+	 * 
+	 * @return the description
+	 */
+	public String getDescription() {
+		return fDescription;
+	}
+	
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || !getClass().equals(obj.getClass()))
+			return false;
+		return fId.equals(((GroupCategory)obj).fId);
+	}
+	
+	public int hashCode() {
+		return fId.hashCode();
+	}
+}

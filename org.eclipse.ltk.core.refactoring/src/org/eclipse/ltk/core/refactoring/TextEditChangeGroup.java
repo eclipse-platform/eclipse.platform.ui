@@ -37,6 +37,20 @@ public class TextEditChangeGroup extends TextEditBasedChangeGroup {
 	}
 
 	/**
+	 * Creates new <code>TextEditChangeGroup</code> for the given <code>
+	 * TextChange</code>, <code>TextEditGroup</code> and <code>GroupCategorySet</code>.
+	 * 
+	 * @param change the change owning this text edit change group
+	 * @param group the underlying text edit group
+	 * @param groupCategories the set of group categories
+	 *  
+	 *  @since 3.2
+	 */
+	public TextEditChangeGroup(TextChange change, TextEditGroup group, GroupCategorySet groupCategories) {
+		super(change, group, groupCategories);
+	}
+
+	/**
 	 * Returns the text change this group belongs to.
 	 * 
 	 * @return the text change this group belongs to

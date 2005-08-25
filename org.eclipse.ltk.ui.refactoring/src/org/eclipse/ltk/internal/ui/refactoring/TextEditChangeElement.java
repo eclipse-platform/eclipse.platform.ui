@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.ltk.core.refactoring.GroupCategorySet;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -58,7 +61,7 @@ public class TextEditChangeElement extends ChangeElement {
 		return element.getChangePreviewViewerDescriptor();
 	}
 	
-	public void feedInput(IChangePreviewViewer viewer) throws CoreException {
+	public void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException {
 		DefaultChangeElement element= getDefaultChangeElement();
 		if (element != null) {
 			Change change= element.getChange();
@@ -100,6 +103,14 @@ public class TextEditChangeElement extends ChangeElement {
 	 */
 	public ChangeElement[] getChildren() {
 		return fgChildren;
+	}
+	
+	public boolean hasOneGroupCategory(List categories) {
+		return fChangeGroup.getGroupCategorySet().containsOneCategory(categories);
+	}
+	
+	public GroupCategorySet getGroupCategorySet() {
+		return fChangeGroup.getGroupCategorySet();
 	}
 	
 	private DefaultChangeElement getDefaultChangeElement() {

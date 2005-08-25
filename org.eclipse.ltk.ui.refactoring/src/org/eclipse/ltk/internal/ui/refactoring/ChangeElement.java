@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ltk.core.refactoring.Change;
@@ -69,7 +71,17 @@ public abstract class ChangeElement {
 	 */
 	public abstract ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException;
 	
-	public abstract void feedInput(IChangePreviewViewer viewer) throws CoreException;
+	/**
+	 * Feeds the input that corresponds to this change element into the
+	 * given viewer. 
+	 * 
+	 * @param viewer the viewer to feed the input into
+	 * @param categories the group categories to filter for or 
+	 *  <code>null</code> if no filtering should take place
+	 * 
+	 * @throws CoreException if an error occurred while feeding the input
+	 */
+	public abstract void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException;
 	
 	/**
 	 * Returns the change directly associated with this change element or <code
@@ -120,4 +132,17 @@ public abstract class ChangeElement {
 	 * @return the change element's children.
 	 */
 	public abstract ChangeElement[] getChildren();
+	
+	/**
+	 * Returns <code>true</code> if the change node has
+	 * one of the given group categories. Otherwise
+	 * <code>false</code> is returned.
+	 *
+	 * @param categories the group categories to check
+	 * 
+	 * @return whether the change node has one of the given 
+	 *  group categories
+	 */
+	public abstract boolean hasOneGroupCategory(List categories);
+	
 }

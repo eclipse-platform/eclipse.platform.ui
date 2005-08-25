@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+import org.eclipse.ltk.core.refactoring.GroupCategory;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -49,14 +50,16 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 
 	private ComparePreviewer fViewer;
 	
-	private static class BufferChangeInput extends ChangePreviewViewerInput {
+	private static class TextEditBasedChangeInput extends ChangePreviewViewerInput {
 		TextEditBasedChangeGroup group;
 		int surroundingLines;
 		
 		TextEditBasedChangeGroup[] groups;
 		IRegion range;
 		
-		public BufferChangeInput(Change change) {
+		GroupCategory groupCategory;
+		
+		public TextEditBasedChangeInput(Change change) {
 			super(change);
 		}
 	}
@@ -145,14 +148,14 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 	}
 	
 	public static ChangePreviewViewerInput createInput(Change change, TextEditBasedChangeGroup group, int surroundingLines) {
-		BufferChangeInput input= new BufferChangeInput(change);
+		TextEditBasedChangeInput input= new TextEditBasedChangeInput(change);
 		input.group= group;
 		input.surroundingLines= surroundingLines;
 		return input;
 	}
 	
 	public static ChangePreviewViewerInput createInput(Change change, TextEditBasedChangeGroup[] groups, IRegion range) {
-		BufferChangeInput input= new BufferChangeInput(change);
+		TextEditBasedChangeInput input= new TextEditBasedChangeInput(change);
 		input.groups= groups;
 		input.range= range;
 		return input;
@@ -169,8 +172,8 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 	public void setInput(ChangePreviewViewerInput input) {
 		try {
 			Change change= input.getChange();
-			if (input instanceof BufferChangeInput) {
-				BufferChangeInput extended= (BufferChangeInput)input;
+			if (input instanceof TextEditBasedChangeInput) {
+				TextEditBasedChangeInput extended= (TextEditBasedChangeInput)input;
 				if (extended.group != null && extended.surroundingLines >= 0) {
 					TextEditBasedChangeGroup group= extended.group;
 					TextEditBasedChange editChange= group.getTextEditChange();
@@ -180,8 +183,12 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 					return;
 				} else if (extended.groups != null && extended.groups.length > 0 && extended.range != null) {
 					TextEditBasedChange editChange= extended.groups[0].getTextEditChange();
+					TextEditBasedChangeGroup[] groups= extended.groups;
+					if (extended.groupCategory != null) {
+						
+					}
 					setInput(editChange, editChange.getCurrentContent(extended.range, true, 0, new NullProgressMonitor()),
-						editChange.getPreviewContent(extended.groups, extended.range, true, 0, new NullProgressMonitor()),
+						editChange.getPreviewContent(groups, extended.range, true, 0, new NullProgressMonitor()),
 						editChange.getTextType());
 					return;
 				}
