@@ -605,7 +605,7 @@
       <editor
             class="org.eclipse.ui.tests.multieditor.TiledEditor"
             default="false"
-            icon="icons/editor.gif"
+            icon="icons/binary_co.gif"
             id="org.eclipse.ui.tests.multieditor.TiledEditor"
             name="%Editors.TiledEditor"/>
       <editor
