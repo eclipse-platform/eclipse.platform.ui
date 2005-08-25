@@ -997,26 +997,13 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			if (message != null) {
 				StringBuffer temp= new StringBuffer();
 				temp.append('[');
-				temp.append(removeAmpersandsFrom(tab.getName()));
+				temp.append(DebugUIPlugin.removeAccelerators(tab.getName()));
 				temp.append("]: "); //$NON-NLS-1$
 				temp.append(message);
 				return temp.toString();
 			}
 		}
 		return null;
-	}
-	
-	/**
-	 * Return a copy of the specified string without ampersands.
-	 */
-	private String removeAmpersandsFrom(String string) {
-		String newString = new String(string);
-		int index = newString.indexOf('&');
-		while (index != -1) {
-			newString = string.substring(0, index) + newString.substring(index + 1, newString.length());
-			index = newString.indexOf('&');
-		}
-		return newString;
 	}	
 	
 	/**
