@@ -475,31 +475,54 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
          */
         public String getText(Object element) {
             if (element instanceof IHierarchalThemeElementDefinition) {
-                if (((IHierarchalThemeElementDefinition) element)
+                IHierarchalThemeElementDefinition themeElement = (IHierarchalThemeElementDefinition) element;
+				if (themeElement
                         .getDefaultsTo() != null) {
-                    String myCategory = ((ICategorizedThemeElementDefinition) element)
+                    String myCategory = ((ICategorizedThemeElementDefinition) themeElement)
                             .getCategoryId();
                     ICategorizedThemeElementDefinition def;
                     if (element instanceof ColorDefinition)
-                        def = (ICategorizedThemeElementDefinition) themeRegistry
-                                .findColor(((IHierarchalThemeElementDefinition) element)
+                        def = themeRegistry
+                                .findColor(themeElement
                                         .getDefaultsTo());
                     else
-                        def = (ICategorizedThemeElementDefinition) themeRegistry
-                                .findFont(((IHierarchalThemeElementDefinition) element)
+                        def = themeRegistry
+                                .findFont(themeElement
                                         .getDefaultsTo());
 
                     if (!ColorsAndFontsPreferencePage.equals(def
                             .getCategoryId(), myCategory)) {
-                        return MessageFormat
-                                .format(
-                                        RESOURCE_BUNDLE
-                                                .getString("defaultFormat"), new Object[] { ((IThemeElementDefinition) element).getName(), def.getName() }); //$NON-NLS-1$ 	                
+                    		if (isDefault(themeElement)) {
+							return MessageFormat
+									.format(
+											RESOURCE_BUNDLE
+													.getString("defaultFormat_default"), new Object[] { themeElement.getName(), def.getName() }); //$NON-NLS-1$
+						}
+                		
+                			return MessageFormat
+							.format(
+									RESOURCE_BUNDLE
+											.getString("defaultFormat_override"), new Object[] { themeElement.getName(), def.getName() }); //$NON-NLS-1$
                     }
                 }
             }
             return ((IThemeElementDefinition) element).getName();
         }
+
+        /**
+         * Return whether the element is set to default.
+         * 
+         * @param def the definition
+         * @return whether the element is set to default
+         * @since 3.2
+         */
+		private boolean isDefault(IThemeElementDefinition def) {
+			if (def instanceof FontDefinition)
+				return ColorsAndFontsPreferencePage.this.isDefault((FontDefinition)def);
+			else if (def instanceof ColorDefinition)
+				return ColorsAndFontsPreferencePage.this.isDefault((ColorDefinition)def);
+			return false;
+		}
     }
 
     /**
