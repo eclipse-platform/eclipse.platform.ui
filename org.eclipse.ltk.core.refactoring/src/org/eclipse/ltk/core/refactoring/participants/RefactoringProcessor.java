@@ -194,14 +194,14 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	public abstract Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 
 	/**
-	 * Additional hook allowing processor's to add changes to the set of workspace
+	 * Additional hook allowing processors to add changes to the set of workspace
 	 * modifications after all participant changes have been created.
 	 * 
 	 * @param participantChanges an array containing the changes created by the
 	 *  participants
 	 * @param pm a progress monitor to report progress
 	 * 
-	 * @return change representing additional workspace modifications
+	 * @return change representing additional workspace modifications, or <code>null</code>
 	 * 
 	 * @throws CoreException if an error occurred while creating the post change
 	 * 
