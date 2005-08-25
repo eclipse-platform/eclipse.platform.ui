@@ -218,18 +218,18 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
             Object currentElement = elements.next();
             if (resourceClass.isInstance(currentElement)) { // already a resource
                 result.add(currentElement);
-            } else if (!(currentElement instanceof IAdaptable)) { // cannot be converted to resource
-                return StructuredSelection.EMPTY; // so fail
-            } else {
+            } else if (currentElement instanceof IAdaptable){
                 Object adapter = ((IAdaptable) currentElement)
                         .getAdapter(resourceClass);
-                if (!(resourceClass.isInstance(adapter))) // chose not to be converted to resource
-                    return StructuredSelection.EMPTY; // so fail
-                result.add(adapter); // add the converted resource
+                if (resourceClass.isInstance(adapter)) 
+                	result.add(adapter); // add the converted resource
+                
             }
         }
 
-        // all converted fine, answer new selection
+        // all that can be converted are done, answer new selection
+        if (result.isEmpty())
+        	return StructuredSelection.EMPTY;
         return new StructuredSelection(result.toArray());
     }
 
