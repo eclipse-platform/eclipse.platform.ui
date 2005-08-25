@@ -21,9 +21,12 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.actions.ActionDelegate;
 
 /**
  * This class serves as an adapter for actions contributed to the vertical ruler's
@@ -36,7 +39,7 @@ import org.eclipse.ui.IEditorPart;
  *
  * @since 2.0
  */
-public abstract class AbstractRulerActionDelegate implements IEditorActionDelegate, MouseListener, IMenuListener {
+public abstract class AbstractRulerActionDelegate extends ActionDelegate implements IEditorActionDelegate, IActionDelegate2, MouseListener, IMenuListener {
 
 	/** The editor. */
 	private IEditorPart fEditor;
@@ -97,6 +100,14 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	public void run(IAction callerAction) {
 		if (fAction != null)
 			fAction.run();
+	}
+	
+	/*
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
+	public void runWithEvent(IAction action, Event event) {
+		if (fAction != null)
+			fAction.runWithEvent(event);
 	}
 
 	/*
