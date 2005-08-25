@@ -27,8 +27,6 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -73,7 +71,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * content-assist should be terminated and all
 	 * associated windows closed.
 	 */
-	class Closer implements ControlListener, MouseListener, FocusListener, DisposeListener, IViewportListener {
+	class Closer implements Listener, ControlListener, FocusListener, DisposeListener, IViewportListener {
 
 		/** The shell that a <code>ControlListener</code> is registered with. */
 		private Shell fShell;
@@ -91,8 +89,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				Shell shell= control.getShell();
 				fShell= shell;
 				shell.addControlListener(this);
-
-				control.addMouseListener(this);
+				
+				fShell.getDisplay().addFilter(SWT.MouseDown, this);
 				control.addFocusListener(this);
 
 				/*
@@ -117,7 +115,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			fControl= null;
 			if (Helper.okToUse(control)) {
 
-				control.removeMouseListener(this);
+				control.getDisplay().removeFilter(SWT.MouseDown, this);
 				control.removeFocusListener(this);
 
 				/*
@@ -141,26 +139,6 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * @see ControlListener#controlMoved(ControlEvent)
 		 */
 		public void controlMoved(ControlEvent e) {
-			hide();
-		}
-
-		/*
-		 * @see MouseListener#mouseDown(MouseEvent)
-		 */
-		public void mouseDown(MouseEvent e) {
-			hide();
-		}
-
-		/*
-		 * @see MouseListener#mouseUp(MouseEvent)
-		 */
-		public void mouseUp(MouseEvent e) {
-		}
-
-		/*
-		 * @see MouseListener#mouseDoubleClick(MouseEvent)
-		 */
-		public void mouseDoubleClick(MouseEvent e) {
 			hide();
 		}
 
@@ -203,6 +181,16 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 */
 		public void viewportChanged(int topIndex) {
 			hide();
+		}
+
+		/*
+		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+		 * @since 3.1
+		 */
+		public void handleEvent(Event event) {
+			Widget widget= event.widget;
+			if (widget instanceof Control && ((Control)widget).getShell() == fShell)
+				hide();
 		}
 	}
 
