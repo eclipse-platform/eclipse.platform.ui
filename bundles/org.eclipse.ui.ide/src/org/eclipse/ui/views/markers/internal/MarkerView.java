@@ -212,6 +212,9 @@ public abstract class MarkerView extends TableView {
 	WorkbenchJob uiJob;
 
 	private MarkerFilter[] markerFilters = new MarkerFilter[0];
+	
+	//A cache of the enabled filters
+	private MarkerFilter[] enabledFilters = null;
 
 	/**
 	 * This job is scheduled whenever a filter or resource change occurs. It
@@ -243,7 +246,7 @@ public abstract class MarkerView extends TableView {
 
 			monitor.subTask(SEARCHING_FOR_MARKERS);
 			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
-			MarkerList markerList = MarkerList.compute(getFilters(),
+			MarkerList markerList = MarkerList.compute(getEnabledFilters(),
 					subMonitor, true);
 
 			if (monitor.isCanceled()) {
@@ -361,13 +364,13 @@ public abstract class MarkerView extends TableView {
 			if(filtersSection != null){
 				MarkerFilter markerFilter = createFilter(MarkerMessages.MarkerFilter_defaultFilterName);
 				markerFilter.restoreState(filtersSection);
-				markerFilters = new MarkerFilter[] {markerFilter};
+				setFilters(new MarkerFilter[] {markerFilter});
 			}
 				
 		}
 		else{
 			IDialogSettings[] sections = settings.getSections();
-			markerFilters = new MarkerFilter[sections.length];
+			setFilters(new MarkerFilter[sections.length]);
 			for (int i = 0; i < sections.length; i++) {
 				markerFilters[i] = createFilter(sections[i].getName());
 				markerFilters[i].restoreState(sections[i]);
@@ -379,7 +382,7 @@ public abstract class MarkerView extends TableView {
 			MarkerFilter filter = createFilter(
 					MarkerMessages.MarkerFilter_defaultFilterName);
 			filter.resetState();
-			markerFilters = new MarkerFilter[] { filter };
+			setFilters(new MarkerFilter[] { filter });
 		}
 
 	}
@@ -787,13 +790,11 @@ public abstract class MarkerView extends TableView {
 	private boolean updateNeeded(IResource[] oldResources,
 			IResource[] newResources) {
 		// determine if an update if refiltering is required
-		MarkerFilter[] filters = getFilters();
+		MarkerFilter[] filters = getEnabledFilters();
 		boolean updateNeeded = false;
 
 		for (int i = 0; i < filters.length; i++) {
 			MarkerFilter filter = filters[i];
-			if (!filter.isEnabled())
-				continue;
 
 			int onResource = filter.getOnResource();
 			if (onResource == MarkerFilter.ON_ANY_RESOURCE
@@ -835,12 +836,12 @@ public abstract class MarkerView extends TableView {
 	 * @return int
 	 */
 	private int getMarkerLimit() {
-		MarkerFilter[] filters = getFilters();
+		MarkerFilter[] filters = getEnabledFilters();
 		int limit = -1;
 
 		for (int i = 0; i < filters.length; i++) {
 			MarkerFilter filter = filters[i];
-			if (!filter.isEnabled() || !filter.getFilterOnMarkerLimit())
+			if (!filter.getFilterOnMarkerLimit())
 				continue;
 
 			if (limit >= 0)
@@ -972,14 +973,22 @@ public abstract class MarkerView extends TableView {
 			if (result == null)
 				return;
 			if(result.length == 0)
-				markerFilters = 
-					new MarkerFilter[]{
-					   createFilter(MarkerMessages.MarkerFilter_defaultFilterName)};
+				setFilters(new MarkerFilter[]{
+					   createFilter(MarkerMessages.MarkerFilter_defaultFilterName)});
 			else
-				markerFilters = result;
+				setFilters(result);
 
 			refresh();
 		}
+	}
+	
+	/**
+	 * Set the filters to newFilters.
+	 * @param newFilters
+	 */
+	void setFilters(MarkerFilter[] newFilters){
+		markerFilters = newFilters;
+		enabledFilters = null;
 	}
 
 	/**
@@ -1109,6 +1118,26 @@ public abstract class MarkerView extends TableView {
 		};
 		uiJob.setPriority(Job.INTERACTIVE);
 		uiJob.setSystem(true);
+	}
+	
+	/**
+	 * Get the filters that are currently enabled.
+	 * @return MarkerFilter[]
+	 */
+	MarkerFilter[] getEnabledFilters(){
+		
+		if(enabledFilters == null){
+			MarkerFilter[] allFilters = getFilters();
+			ArrayList filters = new ArrayList(0);
+			for (int i = 0; i < allFilters.length; i++) {
+				if(allFilters[i].isEnabled())
+					filters.add(allFilters[i]);				
+			}
+			enabledFilters = new MarkerFilter[filters.size()];
+			filters.toArray(enabledFilters);
+		}	
+		return enabledFilters;
+		
 	}
 
 }
