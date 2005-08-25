@@ -197,7 +197,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	}
 	
 	private boolean isFirstMemoryBlockForRetrieval(IMemoryBlockRetrieval retrieval)
-	{
+	{	
 		Iterator iter = fAddedMemoryBlocks.iterator();
 		while (iter.hasNext())
 		{
@@ -466,6 +466,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			fMemoryBlockFromTabFolder.put(folder, memBlock);
 			setTabFolder((TabFolder) fTabFolderForMemoryBlock.get(memBlock));
 			fViewPaneCanvas.layout();
+			fAddedMemoryBlocks.add(memBlock);
 		}
 
 		// restore view tabs
@@ -543,6 +544,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					setTabFolder((TabFolder) fTabFolderForMemoryBlock.get(memoryblk));
 
 					fViewPaneCanvas.layout();
+					
+					fAddedMemoryBlocks.add(memoryblk);
 				}
 
 				TabFolder tabFolder = (TabFolder) fStackLayout.topControl;
@@ -954,6 +957,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memoryBlock));
 				fTabFolderForDebugView.put(getMemoryBlockRetrieval(memoryBlock), fTabFolderForMemoryBlock.get(memoryBlock));
 				fViewPaneCanvas.layout();
+				fAddedMemoryBlocks.add(memoryBlock);
 			}
 			
 			if (fTabFolderForMemoryBlock.containsKey(memoryBlock))
