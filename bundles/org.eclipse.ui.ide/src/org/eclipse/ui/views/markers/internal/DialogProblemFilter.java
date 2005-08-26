@@ -240,10 +240,13 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 		 * @param enabled
 		 */
 		public void updateEnablement(boolean enabled) {
+			
+			boolean showingSeverity = isSeveritySelected();
 			enablementButton.setEnabled(enabled);
-			errorButton.setEnabled(isSeveritySelected() && enabled);
-			warningButton.setEnabled(isSeveritySelected() && enabled);
-			infoButton.setEnabled(isSeveritySelected() && enabled);
+			errorButton.setEnabled(showingSeverity && enabled);
+			warningButton.setEnabled(showingSeverity && enabled);
+			infoButton.setEnabled(showingSeverity && enabled);
+			
 		}
 	}
 
@@ -303,7 +306,6 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateUIWithFilter(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
 	protected void updateUIWithFilter(MarkerFilter filter) {
-		super.updateUIWithFilter(filter);
 
 		ProblemFilter problemFilter = (ProblemFilter) filter;
 		descriptionGroup.setContains(problemFilter.getContains());
@@ -311,12 +313,15 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 
 		severityGroup.setEnabled(problemFilter.getSelectBySeverity());
 		int severity = problemFilter.getSeverity();
+		
 		severityGroup
 				.setErrorSelected((severity & ProblemFilter.SEVERITY_ERROR) > 0);
 		severityGroup
 				.setWarningSelected((severity & ProblemFilter.SEVERITY_WARNING) > 0);
 		severityGroup
 				.setInfoSelected((severity & ProblemFilter.SEVERITY_INFO) > 0);
+		
+		super.updateUIWithFilter(filter);
 	
 	}
 

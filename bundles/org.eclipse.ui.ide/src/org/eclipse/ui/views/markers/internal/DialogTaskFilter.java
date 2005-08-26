@@ -400,9 +400,6 @@ public class DialogTaskFilter extends
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateUIWithFilter(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
 	protected void updateUIWithFilter(MarkerFilter filter) {
-		super.updateUIWithFilter(filter);
-
-
 		TaskFilter taskFilter = (TaskFilter)filter;
 		descriptionGroup.setContains(taskFilter.getContains());
 		descriptionGroup.setDescription(taskFilter.getDescription());
@@ -417,6 +414,9 @@ public class DialogTaskFilter extends
 
 		statusGroup.setEnabled(taskFilter.getSelectByDone());
 		statusGroup.setDone(taskFilter.getDone());
+		
+		super.updateUIWithFilter(filter);
+
 	
 	}
 
