@@ -110,8 +110,7 @@ public class ShowViewMenu extends ContributionItem {
 
             public void run() {
                 try {
-                    handler.execute(new ExecutionEvent(Collections.EMPTY_MAP, null,
-                            null));
+                    handler.execute(new ExecutionEvent());
                 } catch (final ExecutionException e) {
                     // Do nothing.
                 }

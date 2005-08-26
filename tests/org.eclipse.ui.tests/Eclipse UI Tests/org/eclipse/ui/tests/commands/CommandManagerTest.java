@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.tests.commands;
 
-import java.util.Collections;
-
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
@@ -103,8 +101,7 @@ public final class CommandManagerTest extends UITestCase {
 		final ExecutionListener listener = new ExecutionListener();
 		commandManager.addExecutionListener(listener);
 		Exception exception = null;
-		final ExecutionEvent event = new ExecutionEvent(Collections.EMPTY_MAP,
-				null, null);
+		final ExecutionEvent event = new ExecutionEvent();
 		try {
 			command.execute(event);
 		} catch (final ExecutionException e) {

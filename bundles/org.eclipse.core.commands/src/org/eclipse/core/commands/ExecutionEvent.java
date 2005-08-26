@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.commands;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -50,6 +51,17 @@ public final class ExecutionEvent {
 	 * typically an SWT event. This value may be <code>null</code>.
 	 */
 	private final Object trigger;
+	
+	/**
+	 * Constructs a new instance of <code>ExecutionEvent</code> with no
+	 * parameters, no trigger and no application context.  This is just a
+	 * convenience method.
+	 *
+	 * @since 3.2
+	 */
+	public ExecutionEvent() {
+		this(Collections.EMPTY_MAP, null, null);
+	}
 
 	/**
      * Constructs a new instance of <code>ExecutionEvent</code>.
