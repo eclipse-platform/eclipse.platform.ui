@@ -930,6 +930,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         }
         
 		enableButtonGroup(true);
+		setErrorMessage(null);
         return true;
     }
 

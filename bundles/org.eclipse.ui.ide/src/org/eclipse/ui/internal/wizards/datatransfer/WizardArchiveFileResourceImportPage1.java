@@ -504,6 +504,7 @@ public class WizardArchiveFileResourceImportPage1 extends
         }
         
         enableButtonGroup(true);
+        setErrorMessage(null);
         return true;
     }
 }
