@@ -103,13 +103,13 @@ public final class ContextService implements IContextService {
 		 */
 		return contextManager.getContext(contextId);
 	}
-	
-	public final Context[] getDefinedContexts() {
-		return contextManager.getDefinedContexts();
-	}
 
 	public final Collection getDefinedContextIds() {
 		return contextManager.getDefinedContextIds();
+	}
+	
+	public final Context[] getDefinedContexts() {
+		return contextManager.getDefinedContexts();
 	}
 
 	public final int getShellType(final Shell shell) {
