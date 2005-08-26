@@ -27,6 +27,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+/**
+ * The ProblemView is the view that displays problem
+ * markers.
+ *
+ */
 public class ProblemView extends MarkerView {
 
     private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
