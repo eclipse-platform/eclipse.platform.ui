@@ -61,6 +61,15 @@ public interface ICommandService {
 	public Command getCommand(String commandId);
 
 	/**
+	 * Returns the collection of all of the defined categories in the workbench.
+	 * 
+	 * @return The collection of categories (<code>Category</code>) that are
+	 *         defined; never <code>null</code>, but may be empty.
+	 * @since 3.2
+	 */
+	public Category[] getDefinedCategories();
+
+	/**
 	 * Returns the collection of the identifiers for all of the defined
 	 * categories in the workbench.
 	 * 
@@ -68,6 +77,15 @@ public interface ICommandService {
 	 *         that are defined; never <code>null</code>, but may be empty.
 	 */
 	public Collection getDefinedCategoryIds();
+
+	/**
+	 * Returns the collection of all of the defined commands in the workbench.
+	 * 
+	 * @return The collection of commands (<code>Command</code>) that are
+	 *         defined; never <code>null</code>, but may be empty.
+	 * @since 3.2
+	 */
+	public Command[] getDefinedCommands();
 
 	/**
 	 * Returns the collection of the identifiers for all of the defined commands

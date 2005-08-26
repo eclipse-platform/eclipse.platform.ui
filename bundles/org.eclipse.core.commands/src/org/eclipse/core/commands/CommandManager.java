@@ -357,6 +357,24 @@ public final class CommandManager implements ICategoryListener,
 	}
 
 	/**
+	 * Returns the those categories that are defined.
+	 * 
+	 * @return The defined categories; this value may be empty, but it is never
+	 *         <code>null</code>.
+	 * @since 3.2
+	 */
+	public final Category[] getDefinedCategories() {
+		final Category[] categories = new Category[definedCategoryIds.size()];
+		final Iterator categoryIdItr = definedCategoryIds.iterator();
+		int i = 0;
+		while (categoryIdItr.hasNext()) {
+			String categoryId = (String) categoryIdItr.next();
+			categories[i++] = getCategory(categoryId);
+		}
+		return categories;
+	}
+
+	/**
 	 * Returns the set of identifiers for those category that are defined.
 	 * 
 	 * @return The set of defined category identifiers; this value may be empty,
@@ -364,6 +382,24 @@ public final class CommandManager implements ICategoryListener,
 	 */
 	public final Set getDefinedCategoryIds() {
 		return Collections.unmodifiableSet(definedCategoryIds);
+	}
+
+	/**
+	 * Returns the those commands that are defined.
+	 * 
+	 * @return The defined commands; this value may be empty, but it is never
+	 *         <code>null</code>.
+	 * @since 3.2
+	 */
+	public final Command[] getDefinedCommands() {
+		final Command[] commands = new Command[definedCommandIds.size()];
+		final Iterator commandIdItr = definedCommandIds.iterator();
+		int i = 0;
+		while (commandIdItr.hasNext()) {
+			String commandId = (String) commandIdItr.next();
+			commands[i++] = getCommand(commandId);
+		}
+		return commands;
 	}
 
 	/**

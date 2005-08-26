@@ -68,6 +68,10 @@ public final class CommandService implements ICommandService {
 		 */
 		return commandManager.getCommand(commandId);
 	}
+	
+	public final Category[] getDefinedCategories() {
+		return commandManager.getDefinedCategories();
+	}
 
 	public final Collection getDefinedCategoryIds() {
 		return commandManager.getDefinedCategoryIds();
@@ -75,6 +79,10 @@ public final class CommandService implements ICommandService {
 
 	public final Collection getDefinedCommandIds() {
 		return commandManager.getDefinedCommandIds();
+	}
+	
+	public final Command[] getDefinedCommands() {
+		return commandManager.getDefinedCommands();
 	}
 
 	public final void readRegistry() {
