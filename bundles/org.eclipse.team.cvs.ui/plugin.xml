@@ -18,7 +18,7 @@
    <extension
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
-            label="CVS"
+            label="%CVS"
             icon="$nl$/icons/full/eview16/console_view.gif"
             class="org.eclipse.team.internal.ccvs.ui.console.CVSConsoleFactory"/>
    </extension>
@@ -427,7 +427,7 @@
                label="%AddToBranch.label"
                icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.add_to_branch_context"
-               tooltip="%ddToBranch.tooltip"
+               tooltip="%AddToBranch.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.repo.AddToBranchAction"
                menubarPath="miscGroup"
                id="org.eclipse.team.ccvs.ui.addToBranch">
@@ -1250,19 +1250,19 @@
 	<colorDefinition 
         id="org.eclipse.team.cvs.ui.fontsandcolors.outgoing_change_foreground_color"
         categoryId="org.eclipse.team.cvs.ui.fontsandcolors"
-        label="Outgoing Change (Foreground)"
+        label="%OutgoingChangeForegroundColor.label"
         value="COLOR_LIST_FOREGROUND">
         <description>
-        This color is used for the foreground color for resources that have outgoing changes.
+        %OutgoingChangeForegroundColor.description
         </description>
       </colorDefinition>
       <colorDefinition 
         id="org.eclipse.team.cvs.ui.fontsandcolors.outgoing_change_background_color"
         categoryId="org.eclipse.team.cvs.ui.fontsandcolors"
-        label="Outgoing Change (Background)"
+        label="%OutgoingChangeBackgroundColor.label"
         value="COLOR_LIST_BACKGROUND">
         <description>
-        This color is used for the background color for resources that have outgoing changes.
+        %OutgoingChangeBackgroundColor.description
         </description>
       </colorDefinition>  
       <fontDefinition
@@ -1270,7 +1270,7 @@
         categoryId="org.eclipse.team.cvs.ui.fontsandcolors"      
         label="%OutgoingChangeFont.label">
         <description>
-        The font used to display outgoing changes.
+        %OutgoingChangeFont.description
         </description>
       </fontDefinition>
       <colorDefinition 
@@ -1279,7 +1279,7 @@
         label="%IgnoredResourceForegroundColor.label"
         value="COLOR_LIST_FOREGROUND">
         <description>
-        This color is used for the foreground color for resources that are ignored from CVS.
+        %IgnoredResourceForegroundColor.description
         </description>
       </colorDefinition>
       <colorDefinition 
@@ -1288,7 +1288,7 @@
         label="%IgnoredResourceBackgroundColor.label"
         value="COLOR_LIST_BACKGROUND">
         <description>
-        This color is used for the background color for resources that are ignored from CVS.
+        %IgnoredResourceBackgroundColor.description
         </description>
       </colorDefinition>  
       <fontDefinition
@@ -1296,7 +1296,7 @@
         categoryId="org.eclipse.team.cvs.ui.fontsandcolors"      
         label="%IgnoredResourceFont.label">
         <description>
-        The font used to display resources that are ignored from CVS.
+        %IgnoredResourceFont.description
         </description>
       </fontDefinition>    
 </extension>

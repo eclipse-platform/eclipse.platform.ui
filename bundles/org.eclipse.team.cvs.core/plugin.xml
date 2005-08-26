@@ -4,9 +4,9 @@
 
     
 <!-- *************** Extension Points **************** -->
-   <extension-point id="authenticator" name="Authenticator" schema="schema/authenticator.exsd"/>
-   <extension-point id="connectionmethods" name="ConnectionMethods" schema="schema/connectionmethods.exsd"/>
-   <extension-point id="filemodificationvalidator" name="FileModificationValidator" schema="schema/filemodificationvalidator.exsd"/>
+   <extension-point id="authenticator" name="%Authenticator" schema="schema/authenticator.exsd"/>
+   <extension-point id="connectionmethods" name="%ConnectionMethods" schema="schema/connectionmethods.exsd"/>
+   <extension-point id="filemodificationvalidator" name="%FileModificationValidator" schema="schema/filemodificationvalidator.exsd"/>
 
 <!-- *************** Connection Methods **************** -->
    <extension
