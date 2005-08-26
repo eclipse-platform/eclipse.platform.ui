@@ -1242,7 +1242,7 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns all bundles with the specified symbolic name.  If no resolved bundles 
+	 * Returns all resolved bundles with the specified symbolic name.  If no resolved bundles 
 	 * with the specified symbolic name can be found, <tt>null</tt> is returned.  
 	 * If the version argument is not null then only the Bundles that have 
 	 * the specified symbolic name and a version greater than or equal to the 
@@ -1252,8 +1252,8 @@ public final class Platform {
 	 * @param symbolicName the symbolic name of the bundles that are to be returned.
 	 * @param version the version that the return bundle versions must match, 
 	 * or <tt>null</tt> if no version matching is to be done. 
-	 * @return the array of Bundles with the specified name that match the 
-	 * specified version and match rule, or <tt>null</tt> if no bundles are found.
+	 * @return the array of resolved Bundles with the specified name that match the 
+	 * specified version and match rule, or <tt>null</tt> if no resolved bundles are found.
 	 */
 	public static Bundle[] getBundles(String symbolicName, String version) {
 		return InternalPlatform.getDefault().getBundles(symbolicName, version);
