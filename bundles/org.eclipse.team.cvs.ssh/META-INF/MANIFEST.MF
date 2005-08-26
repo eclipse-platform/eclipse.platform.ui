@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.cvs.ssh
-Bundle-Version: 3.2.0
+Bundle-Version: 3.1.0
 Bundle-Activator: org.eclipse.team.internal.ccvs.ssh.SSHPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
