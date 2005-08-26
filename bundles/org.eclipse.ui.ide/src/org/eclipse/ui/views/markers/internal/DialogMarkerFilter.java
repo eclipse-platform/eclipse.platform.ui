@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
@@ -239,8 +238,6 @@ public abstract class DialogMarkerFilter extends Dialog {
 
     private CheckboxTableViewer typesViewer;
 
-    private Button filterEnabledButton;
-
     private Button filterOnMarkerLimit;
 
     private Button anyResourceButton;
@@ -261,7 +258,7 @@ public abstract class DialogMarkerFilter extends Dialog {
 
     private boolean dirty = false;
 
-	private ListViewer filtersList;
+	private CheckboxTableViewer filtersList;
 
 	private Composite selectedComposite;
 
@@ -408,7 +405,7 @@ public abstract class DialogMarkerFilter extends Dialog {
     	
     	Label title = new Label(listArea,SWT.NONE);
     	title.setText(MarkerMessages.MarkerFilter_filtersTitle);
-		filtersList = new ListViewer(listArea);
+		filtersList = CheckboxTableViewer.newCheckList(listArea, SWT.BORDER);
 		filtersList.setContentProvider(new IStructuredContentProvider(){
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
@@ -458,6 +455,9 @@ public abstract class DialogMarkerFilter extends Dialog {
 		});
 		
 		filtersList.setInput(this);
+		for (int i = 0; i < filters.length; i++) {
+			filtersList.setChecked(filters[i], filters[i].isEnabled());
+		}
 		
 		filtersList.getControl().setLayoutData(
 				new GridData(SWT.FILL,SWT.FILL,false,true));
@@ -575,8 +575,7 @@ public abstract class DialogMarkerFilter extends Dialog {
     	selectedComposite = new Composite(composite,SWT.NONE);
     	selectedComposite.setLayout(new GridLayout());
     	selectedComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-    	
-    	createOnOffArea(selectedComposite);
+
         createMarkerLimitArea(selectedComposite);
         createTypesArea(selectedComposite);
         createResourceArea(selectedComposite);
@@ -750,30 +749,6 @@ public abstract class DialogMarkerFilter extends Dialog {
         };
     }
 
-    /**
-     * Creates the filter enablement area.
-     * 
-     * @param parent the parent composite
-     */
-    protected void createOnOffArea(Composite parent) {
-        Font font = parent.getFont();
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        composite.setFont(font);
-        composite.setLayout(new GridLayout());
-        filterEnabledButton = createCheckbox(composite, MarkerMessages.filtersDialog_onOff,
-                false);
-        filterEnabledButton.setFont(composite.getFont());
-        filterEnabledButton.setLayoutData(new GridData());
-        filterEnabledButton.addSelectionListener(new SelectionAdapter(){
-        	/* (non-Javadoc)
-        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-        	 */
-        	public void widgetSelected(SelectionEvent e) {
-        		  updateForSelection();
-        	}
-          });
-    }
 
     /**
      * Creates the area where the user can specify a maximum number of items
@@ -882,8 +857,6 @@ public abstract class DialogMarkerFilter extends Dialog {
      * but doesn't actually reset our filter.
      */
     protected void resetPressed() {
-        filterEnabledButton
-                .setSelection(MarkerFilter.DEFAULT_ACTIVATION_STATUS);
         filterOnMarkerLimit
                 .setSelection(MarkerFilter.DEFAULT_FILTER_ON_MARKER_LIMIT);
         markerLimit.setText(String.valueOf(MarkerFilter.DEFAULT_MARKER_LIMIT));
@@ -961,7 +934,6 @@ public abstract class DialogMarkerFilter extends Dialog {
      * @param filter
      */
 	protected void updateFilterFromUI(MarkerFilter filter) {
-		filter.setEnabled(filterEnabledButton.getSelection());
 
         filter.setSelectedTypes(getSelectedTypes());
 
@@ -998,14 +970,10 @@ public abstract class DialogMarkerFilter extends Dialog {
     	MarkerFilter filter = getSelectedFilter();
     	
     	if(filter == null){
-    		filterEnabledButton.setEnabled(false);
     		updateEnabledState(false);
     		return;
     	}
     		    	
-    	filterEnabledButton.setEnabled(true);
-        filterEnabledButton.setSelection(filter.isEnabled());
-
         updateUIWithFilter(filter);
     }
 
@@ -1065,14 +1033,6 @@ public abstract class DialogMarkerFilter extends Dialog {
         return filters;
     }
 
-    /**
-     * @return <code>true</code> if the filter's enablement button is checked 
-     * otherwise <code>false</code>.
-     */
-    protected boolean isFilterButtonEnabled() {
-        return (filterEnabledButton == null)
-                || filterEnabledButton.getSelection();
-    }
 
     /**
      * A selection has occured on one of the checkboxes or combos.
