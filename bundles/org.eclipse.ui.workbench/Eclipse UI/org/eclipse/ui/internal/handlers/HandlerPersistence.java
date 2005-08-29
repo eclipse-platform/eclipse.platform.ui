@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.handlers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.expressions.ElementHandler;
@@ -19,13 +20,19 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -100,12 +107,21 @@ final class HandlerPersistence {
 	/**
 	 * The name of the commands extension point.
 	 */
-	private static final String EXTENSION_COMMANDS = "org.eclipse.ui.commands"; //$NON-NLS-1$
+	private static final String EXTENSION_COMMANDS = PlatformUI.PLUGIN_ID + '.'
+			+ IWorkbenchConstants.PL_COMMANDS;
 
 	/**
 	 * The name of the commands extension point.
 	 */
-	private static final String EXTENSION_HANDLERS = "org.eclipse.ui.handlers"; //$NON-NLS-1$
+	private static final String EXTENSION_HANDLERS = PlatformUI.PLUGIN_ID + '.'
+			+ IWorkbenchConstants.PL_HANDLERS;
+	
+	/**
+	 * The handler activations that have come from the registry. This is used to
+	 * flush the activations when the registry is re-read. This value is never
+	 * <code>null</code>
+	 */
+	private static final Collection handlerActivations = new ArrayList();
 
 	/**
 	 * The index of the command elements in the indexed array.
@@ -127,6 +143,12 @@ final class HandlerPersistence {
 	 * @see HandlerPersistence#read(IHandlerService)
 	 */
 	private static final int INDEX_HANDLER_SUBMISSIONS = 2;
+
+	/**
+	 * Whether the preference and registry change listeners have been attached
+	 * yet.
+	 */
+    private static boolean listenersAttached = false;
 
 	/**
 	 * Inserts the given element into the indexed two-dimensional array in the
@@ -163,6 +185,20 @@ final class HandlerPersistence {
 			}
 		}
 		elements[currentCount] = elementToAdd;
+	}
+	
+	/**
+	 * Deactivates all of the activations made by this class, and then clears
+	 * the collection. This should be called before every read.
+	 * 
+	 * @param handlerService
+	 *            The service handling the activations; must not be
+	 *            <code>null</code>.
+	 */
+	private static final void clearActivations(
+			final IHandlerService handlerService) {
+		handlerService.deactivateHandlers(handlerActivations);
+		handlerActivations.clear();
 	}
 
 	/**
@@ -214,6 +250,7 @@ final class HandlerPersistence {
 			}
 		}
 
+		clearActivations(handlerService);
 		readDefaultHandlersFromCommandsExtensionPoint(
 				indexedConfigurationElements[INDEX_COMMAND_DEFINITIONS],
 				commandDefinitionCount, handlerService);
@@ -223,6 +260,53 @@ final class HandlerPersistence {
 		readHandlersFromHandlersExtensionPoint(
 				indexedConfigurationElements[INDEX_HANDLER_DEFINITIONS],
 				handlerDefinitionCount, handlerService);
+		
+		/*
+		 * Adds listener so that future registry changes trigger an update of
+		 * the command manager automatically.
+		 */
+		if (!listenersAttached) {
+			registry.addRegistryChangeListener(new IRegistryChangeListener() {
+				public final void registryChanged(
+						final IRegistryChangeEvent event) {
+					/*
+					 * Handlers will need to be re-read (i.e., re-verified) if
+					 * any of the handler extensions change (i.e., handlers,
+					 * commands), or if any of the command extensions change
+					 * (i.e., action definitions).
+					 */
+					final IExtensionDelta[] handlerDeltas = event
+							.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+									IWorkbenchConstants.PL_HANDLERS);
+					if (handlerDeltas.length == 0) {
+						final IExtensionDelta[] commandDeltas = event
+								.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+										IWorkbenchConstants.PL_COMMANDS);
+						if (commandDeltas.length == 0) {
+							final IExtensionDelta[] actionDefinitionDeltas = event
+									.getExtensionDeltas(
+											PlatformUI.PLUGIN_ID,
+											IWorkbenchConstants.PL_ACTION_DEFINITIONS);
+							if (actionDefinitionDeltas.length == 0) {
+								return;
+							}
+						}
+					}
+
+					/*
+					 * At least one of the deltas is non-zero, so re-read all of
+					 * the bindings.
+					 */
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							read(handlerService);
+						}
+					});
+				}
+			}, PlatformUI.PLUGIN_ID);
+
+			listenersAttached = true;
+		}
 	}
 
 	/**
@@ -260,8 +344,9 @@ final class HandlerPersistence {
 				continue;
 			}
 
-			handlerService.activateHandler(commandId, new HandlerProxy(
-					configurationElement, ATTRIBUTE_DEFAULT_HANDLER));
+			handlerActivations.add(handlerService.activateHandler(commandId,
+					new HandlerProxy(configurationElement,
+							ATTRIBUTE_DEFAULT_HANDLER)));
 		}
 	}
 
@@ -412,18 +497,19 @@ final class HandlerPersistence {
 			}
 
 			if (activeWhenExpression != null) {
-				handlerService
+				handlerActivations.add(handlerService
 						.activateHandler(commandId, new HandlerProxy(
 								configurationElement, ATTRIBUTE_CLASS,
 								enabledWhenExpression, handlerService),
 								activeWhenExpression, ISources.ACTIVE_CONTEXT
 										| ISources.ACTIVE_CURRENT_SELECTION
 										| ISources.ACTIVE_EDITOR
-										| ISources.ACTIVE_PART);
+										| ISources.ACTIVE_PART));
 			} else {
-				handlerService.activateHandler(commandId, new HandlerProxy(
-						configurationElement, ATTRIBUTE_CLASS,
-						enabledWhenExpression, handlerService));
+				handlerActivations.add(handlerService.activateHandler(
+						commandId, new HandlerProxy(configurationElement,
+								ATTRIBUTE_CLASS, enabledWhenExpression,
+								handlerService)));
 			}
 		}
 
@@ -480,8 +566,9 @@ final class HandlerPersistence {
 				continue;
 			}
 
-			handlerService.activateHandler(commandId, new LegacyHandlerWrapper(
-					new LegacyHandlerProxy(configurationElement)));
+			handlerActivations.add(handlerService.activateHandler(commandId,
+					new LegacyHandlerWrapper(new LegacyHandlerProxy(
+							configurationElement))));
 		}
 
 		// If there were any warnings, then log them now.

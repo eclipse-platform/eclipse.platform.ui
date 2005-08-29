@@ -29,9 +29,17 @@ public class DynamicPluginsTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public DynamicPluginsTestSuite() {
+		addTest(new TestSuite(
+				AcceleratorConfigurationsExtensionDynamicTest.class));
+		addTest(new TestSuite(AcceleratorScopesExtensionDynamicTest.class));
+		addTest(new TestSuite(ActionDefinitionsExtensionDynamicTest.class));
 	    addTest(new TestSuite(ActionSetTests.class));
 		addTest(new TestSuite(ActivitySupportTests.class));
+		addTest(new TestSuite(BindingsExtensionDynamicTest.class));
 		addTest(new TestSuite(BrowserTests.class));
+		addTest(new TestSuite(CommandsExtensionDynamicTest.class));
+		addTest(new TestSuite(ContextsExtensionDynamicTest.class));
+		addTest(new TestSuite(HandlersExtensionDynamicTest.class));
 		addTest(new TestSuite(PreferencePageTests.class));
 		addTest(new TestSuite(KeywordTests.class));
 		addTest(new TestSuite(PropertyPageTests.class));

@@ -12,16 +12,24 @@
 package org.eclipse.ui.internal.contexts;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -85,17 +93,20 @@ final class ContextPersistence {
 	/**
 	 * The name of the accelerator scopes extension point.
 	 */
-	private static final String EXTENSION_ACCELERATOR_SCOPES = "org.eclipse.ui.acceleratorScopes"; //$NON-NLS-1$
+	private static final String EXTENSION_ACCELERATOR_SCOPES = PlatformUI.PLUGIN_ID
+			+ '.' + IWorkbenchConstants.PL_ACCELERATOR_SCOPES;
 
 	/**
 	 * The name of the commands extension point.
 	 */
-	private static final String EXTENSION_COMMANDS = "org.eclipse.ui.commands"; //$NON-NLS-1$
+	private static final String EXTENSION_COMMANDS = PlatformUI.PLUGIN_ID + '.'
+			+ IWorkbenchConstants.PL_COMMANDS;
 
 	/**
 	 * The name of the contexts extension point.
 	 */
-	private static final String EXTENSION_CONTEXTS = "org.eclipse.ui.contexts"; //$NON-NLS-1$
+	private static final String EXTENSION_CONTEXTS = PlatformUI.PLUGIN_ID + '.'
+			+ IWorkbenchConstants.PL_CONTEXTS;
 
 	/**
 	 * The index of the context elements in the indexed array.
@@ -103,6 +114,12 @@ final class ContextPersistence {
 	 * @see ContextPersistence#read(ContextManager)
 	 */
 	private static final int INDEX_CONTEXT_DEFINITIONS = 0;
+
+	/**
+	 * Whether the preference and registry change listeners have been attached
+	 * yet.
+	 */
+    private static boolean listenersAttached = false;
 
 	/**
 	 * Inserts the given element into the indexed two-dimensional array in the
@@ -215,6 +232,47 @@ final class ContextPersistence {
 		readContextsFromExtensionPoint(
 				indexedConfigurationElements[INDEX_CONTEXT_DEFINITIONS],
 				contextDefinitionCount, contextManager);
+		
+        /*
+		 * Adds listener so that future registry changes trigger an update of
+		 * the command manager automatically.
+		 */
+		if (!listenersAttached) {
+			registry.addRegistryChangeListener(new IRegistryChangeListener() {
+				public final void registryChanged(
+						final IRegistryChangeEvent event) {
+					final IExtensionDelta[] acceleratorScopeDeltas = event
+							.getExtensionDeltas(
+									PlatformUI.PLUGIN_ID,
+									IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
+					if (acceleratorScopeDeltas.length == 0) {
+						final IExtensionDelta[] contextDeltas = event
+								.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+										IWorkbenchConstants.PL_CONTEXTS);
+						if (contextDeltas.length == 0) {
+							final IExtensionDelta[] commandDeltas = event
+									.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+											IWorkbenchConstants.PL_COMMANDS);
+							if (commandDeltas.length == 0) {
+								return;
+							}
+						}
+					}
+
+					/*
+					 * At least one of the deltas is non-zero, so re-read all of
+					 * the bindings.
+					 */
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							read(contextManager);
+						}
+					});
+				}
+			}, PlatformUI.PLUGIN_ID);
+
+			listenersAttached = true;
+		}
 	}
 
 	/**
@@ -234,6 +292,22 @@ final class ContextPersistence {
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final ContextManager contextManager) {
+		// Undefine all the previous handle objects.
+		final Set contextIds = contextManager.getDefinedContextIds();
+		if (contextIds != null) {
+			final Iterator contextIdItr = contextIds.iterator();
+			final Context[] contexts = new Context[contextIds.size()];
+			int i = 0;
+			
+			while (contextIdItr.hasNext()) {
+				contexts[i++] = contextManager.getContext((String) contextIdItr.next());
+			}
+
+			for (int j = 0; j < contexts.length; j++) {
+				contexts[j].undefine();
+			}
+		}
+		
 		/*
 		 * If necessary, this list of status items will be constructed. It will
 		 * only contains instances of <code>IStatus</code>.
