@@ -27,9 +27,13 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
@@ -50,12 +54,14 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.keys.IBindingService;
@@ -231,18 +237,21 @@ public final class BindingPersistence {
 	/**
 	 * The name of the deprecated accelerator configurations extension point.
 	 */
-	private static final String EXTENSION_ACCELERATOR_CONFIGURATIONS = "org.eclipse.ui.acceleratorConfigurations"; //$NON-NLS-1$
+	private static final String EXTENSION_ACCELERATOR_CONFIGURATIONS = PlatformUI.PLUGIN_ID
+			+ '.' + IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS;
 
 	/**
 	 * The name of the bindings extension point.
 	 */
-	private static final String EXTENSION_BINDINGS = "org.eclipse.ui.bindings"; //$NON-NLS-1$
+	private static final String EXTENSION_BINDINGS = PlatformUI.PLUGIN_ID + '.'
+			+ IWorkbenchConstants.PL_BINDINGS;
 
 	/**
 	 * The name of the commands extension point, and the name of the key for the
 	 * commands preferences.
 	 */
-	private static final String EXTENSION_COMMANDS = "org.eclipse.ui.commands"; //$NON-NLS-1$
+	private static final String EXTENSION_COMMANDS = PlatformUI.PLUGIN_ID + '.'
+			+ IWorkbenchConstants.PL_COMMANDS;
 
 	/**
 	 * The index of the active scheme configuration elements in the indexed
@@ -274,15 +283,16 @@ public final class BindingPersistence {
 	private static final String LEGACY_DEFAULT_SCOPE = "org.eclipse.ui.globalScope"; //$NON-NLS-1$
 
 	/**
+	 * Whether the preference and registry change listeners have been attached
+	 * yet.
+	 */
+    private static boolean listenersAttached = false;
+    
+    /**
 	 * A look-up map for 2.1.x style <code>string</code> keys on a
 	 * <code>keyBinding</code> element.
 	 */
 	private static final Map r2_1KeysByName = new HashMap();
-    
-    /**
-     * Whether the property change listener has been attached yet.
-     */
-    private static boolean propertyChangeListenerAttached = false;
 
 	static {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
@@ -642,19 +652,78 @@ public final class BindingPersistence {
                 commandService);
 
         /*
-         * Add a listener so that future preference changes trigger an update of
-         * the binding manager automatically.
-         */
-        if (!propertyChangeListenerAttached) {
-            store.addPropertyChangeListener(new IPropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent event) {
-                    if (EXTENSION_COMMANDS.equals(event.getProperty())) {
-                        read(bindingManager, commandService);
-                    }
-                }
-            });
-            propertyChangeListenerAttached = true;
-        }
+		 * Adds listener so that future preference and registry changes trigger
+		 * an update of the binding manager automatically.
+		 */
+        if (!listenersAttached) {
+			store.addPropertyChangeListener(new IPropertyChangeListener() {
+				public final void propertyChange(final PropertyChangeEvent event) {
+					if (EXTENSION_COMMANDS.equals(event.getProperty())) {
+						read(bindingManager, commandService);
+					}
+				}
+			});
+
+			registry.addRegistryChangeListener(new IRegistryChangeListener() {
+				public final void registryChanged(
+						final IRegistryChangeEvent event) {
+					/*
+					 * Bindings will need to be re-read (i.e., re-verified) if
+					 * any of the binding extensions change (i.e., accelerator
+					 * configurations, bindings, commands), or if any of the
+					 * command or context extensions change (i.e., accelerator
+					 * scopes, contexts, action definitions).
+					 */
+					final IExtensionDelta[] acceleratorConfigurationDeltas = event
+							.getExtensionDeltas(
+									PlatformUI.PLUGIN_ID,
+									IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS);
+					if (acceleratorConfigurationDeltas.length == 0) {
+						final IExtensionDelta[] bindingDeltas = event
+								.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+										IWorkbenchConstants.PL_BINDINGS);
+						if (bindingDeltas.length == 0) {
+							final IExtensionDelta[] commandDeltas = event
+									.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+											IWorkbenchConstants.PL_COMMANDS);
+							if (commandDeltas.length == 0) {
+								final IExtensionDelta[] acceleratorScopeDeltas = event
+										.getExtensionDeltas(
+												PlatformUI.PLUGIN_ID,
+												IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
+								if (acceleratorScopeDeltas.length == 0) {
+									final IExtensionDelta[] contextDeltas = event
+											.getExtensionDeltas(
+													PlatformUI.PLUGIN_ID,
+													IWorkbenchConstants.PL_CONTEXTS);
+									if (contextDeltas.length == 0) {
+										final IExtensionDelta[] actionDefinitionDeltas = event
+												.getExtensionDeltas(
+														PlatformUI.PLUGIN_ID,
+														IWorkbenchConstants.PL_ACTION_DEFINITIONS);
+										if (actionDefinitionDeltas.length == 0) {
+											return;
+										}
+									}
+								}
+							}
+						}
+					}
+					
+					/*
+					 * At least one of the deltas is non-zero, so re-read all of
+					 * the bindings.
+					 */
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							read(bindingManager, commandService);
+						}
+					});
+				}
+			}, PlatformUI.PLUGIN_ID);
+
+			listenersAttached = true;
+		}
     }
 
 
@@ -778,7 +847,8 @@ public final class BindingPersistence {
 							.getScheme(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID));
 		} catch (final NotDefinedException e) {
 			// Damn, we're fucked.
-			throw new Error("You cannot make something from nothing"); //$NON-NLS-1$
+			throw new Error(
+					"The default default active scheme id is not defined."); //$NON-NLS-1$
 		}
 	}
 
@@ -1365,6 +1435,15 @@ public final class BindingPersistence {
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final BindingManager bindingManager) {
+		// Undefine all the previous handle objects.
+		final HandleObject[] handleObjects = bindingManager
+				.getDefinedSchemes();
+		if (handleObjects != null) {
+			for (int i = 0; i < handleObjects.length; i++) {
+				handleObjects[i].undefine();
+			}
+		}
+		
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
 

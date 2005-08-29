@@ -70,9 +70,9 @@ public class UiTestSuite extends TestSuite {
         addTest(new ZoomTestSuite());
         addTest(new DataTransferTestSuite());
         addTest(new PreferencesTestSuite());
+        addTest(new DynamicPluginsTestSuite());
         addTest(new KeysTestSuite());
         addTest(new MultiPageEditorTestSuite());
-        addTest(new DynamicPluginsTestSuite());
         addTest(new ActivitiesTestSuite());
         addTest(new CommandsTestSuite());
         addTest(new ContextsTestSuite());

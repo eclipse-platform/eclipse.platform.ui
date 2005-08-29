@@ -78,6 +78,57 @@ public interface IWorkbenchConstants {
     public static final String PL_DECORATORS = "decorators"; //$NON-NLS-1$
 
     public static final String PL_SYSTEM_SUMMARY_SECTIONS = "systemSummarySections"; //$NON-NLS-1$
+
+    /**
+     * The legacy extension point (2.1.x and earlier) for specifying a key
+     * binding scheme.
+     * 
+     * @since 3.1.1
+     */
+    public static final String PL_ACCELERATOR_CONFIGURATIONS = "acceleratorConfigurations"; //$NON-NLS-1$
+    
+    /**
+     * The legacy extension point (2.1.x and earlier) for specifying a context.
+     * 
+     * @since 3.1.1
+     */
+    public static final String PL_ACCELERATOR_SCOPES = "acceleratorScopes"; //$NON-NLS-1$
+    
+    /**
+     * The legacy extension point (2.1.x and earlier) for specifying a command.
+     * 
+     * @since 3.1.1
+     */
+    public static final String PL_ACTION_DEFINITIONS = "actionDefinitions"; //$NON-NLS-1$
+    
+    /**
+     * The extension point (3.1 and later) for specifying bindings, such as
+     * keyboard shortcuts.
+     * 
+     * @since 3.1.1
+     */
+    public static final String PL_BINDINGS = "bindings"; //$NON-NLS-1$
+    
+    /**
+     * The extension point (2.1.x and later) for specifying a command.  A lot
+     * of other things have appeared first in this extension point and then been
+     * moved to their own extension point.
+     * 
+     * @since 3.1.1
+     */
+    public static final String PL_COMMANDS = "commands"; //$NON-NLS-1$
+    
+    /**
+     * The extension point (3.0 and later) for specifying a context.
+     * 
+     * @since 3.1.1
+     */
+    public static final String PL_CONTEXTS = "contexts"; //$NON-NLS-1$
+    
+    /**
+     * The extension point (3.1 and later) for specifying handlers.
+     */
+    public static final String PL_HANDLERS = "handlers"; //$NON-NLS-1$
     
     /**
      * The extension point for encoding definitions.

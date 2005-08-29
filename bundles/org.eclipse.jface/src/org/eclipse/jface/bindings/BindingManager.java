@@ -520,10 +520,12 @@ public final class BindingManager implements IContextManagerListener,
 			// Check the scheme ids.
 			final String schemeId = binding.getSchemeId();
 			found = false;
-			for (int j = 0; j < activeSchemeIds.length; j++) {
-				if (Util.equals(schemeId, activeSchemeIds[j])) {
-					found = true;
-					break;
+			if (activeSchemeIds != null) {
+				for (int j = 0; j < activeSchemeIds.length; j++) {
+					if (Util.equals(schemeId, activeSchemeIds[j])) {
+						found = true;
+						break;
+					}
 				}
 			}
 			if (!found) {
@@ -1023,8 +1025,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * This method completes in <code>O(1)</code>.
 	 * </p>
 	 * 
-	 * @return The array of defined schemes; this value may be empty, but it is
-	 *         never <code>null</code>.
+	 * @return The array of defined schemes; this value may be empty or
+	 *         <code>null</code>.
 	 */
 	public final Scheme[] getDefinedSchemes() {
 		if ((definedSchemes == null) || (definedSchemeCount == 0)) {

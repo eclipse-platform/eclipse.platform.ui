@@ -17,12 +17,19 @@ import java.util.List;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 
@@ -95,12 +102,14 @@ final class CommandPersistence {
 	/**
 	 * The name of the action definitions extension point.
 	 */
-	private static final String EXTENSION_ACTION_DEFINITIONS = "org.eclipse.ui.actionDefinitions"; //$NON-NLS-1$
+	private static final String EXTENSION_ACTION_DEFINITIONS = PlatformUI.PLUGIN_ID
+			+ '.' + IWorkbenchConstants.PL_ACTION_DEFINITIONS;
 
 	/**
 	 * The name of the commands extension point.
 	 */
-	private static final String EXTENSION_COMMANDS = "org.eclipse.ui.commands"; //$NON-NLS-1$
+	private static final String EXTENSION_COMMANDS = PlatformUI.PLUGIN_ID + '.'
+			+ IWorkbenchConstants.PL_COMMANDS;
 
 	/**
 	 * The index of the category elements in the indexed array.
@@ -115,6 +124,12 @@ final class CommandPersistence {
 	 * @see CommandPersistence#read(CommandManager)
 	 */
 	private static final int INDEX_COMMAND_DEFINITIONS = 1;
+
+	/**
+	 * Whether the preference and registry change listeners have been attached
+	 * yet.
+	 */
+    private static boolean listenersAttached = false;
 
 	/**
 	 * Inserts the given element into the indexed two-dimensional array in the
@@ -205,6 +220,42 @@ final class CommandPersistence {
 		readCommandsFromCommandsExtensionPoint(
 				indexedConfigurationElements[INDEX_COMMAND_DEFINITIONS],
 				commandDefinitionCount, commandManager);
+		
+        /*
+		 * Adds listener so that future registry changes trigger an update of
+		 * the command manager automatically.
+		 */
+		if (!listenersAttached) {
+			registry.addRegistryChangeListener(new IRegistryChangeListener() {
+				public final void registryChanged(
+						final IRegistryChangeEvent event) {
+					final IExtensionDelta[] commandDeltas = event
+							.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+									IWorkbenchConstants.PL_COMMANDS);
+					if (commandDeltas.length == 0) {
+						final IExtensionDelta[] actionDefinitionDeltas = event
+								.getExtensionDeltas(
+										PlatformUI.PLUGIN_ID,
+										IWorkbenchConstants.PL_ACTION_DEFINITIONS);
+						if (actionDefinitionDeltas.length == 0) {
+							return;
+						}
+					}
+
+					/*
+					 * At least one of the deltas is non-zero, so re-read all of
+					 * the bindings.
+					 */
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							read(commandManager);
+						}
+					});
+				}
+			}, PlatformUI.PLUGIN_ID);
+
+			listenersAttached = true;
+		}
 	}
 
 	/**
@@ -224,6 +275,15 @@ final class CommandPersistence {
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final CommandManager commandManager) {
+		// Undefine all the previous handle objects.
+		final HandleObject[] handleObjects = commandManager
+				.getDefinedCategories();
+		if (handleObjects != null) {
+			for (int i = 0; i < handleObjects.length; i++) {
+				handleObjects[i].undefine();
+			}
+		}
+		
 		/*
 		 * If necessary, this list of status items will be constructed. It will
 		 * only contains instances of <code>IStatus</code>.
@@ -305,6 +365,15 @@ final class CommandPersistence {
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final CommandManager commandManager) {
+		// Undefine all the previous handle objects.
+		final HandleObject[] handleObjects = commandManager
+				.getDefinedCommands();
+		if (handleObjects != null) {
+			for (int i = 0; i < handleObjects.length; i++) {
+				handleObjects[i].undefine();
+			}
+		}
+		
 		/*
 		 * If necessary, this list of status items will be constructed. It will
 		 * only contains instances of <code>IStatus</code>.
