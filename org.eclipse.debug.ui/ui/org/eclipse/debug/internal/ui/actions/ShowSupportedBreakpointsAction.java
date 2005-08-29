@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -171,7 +172,6 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	protected void reapplyFilters(List debugTargets) {
 		fDebugTargets= debugTargets;		
 		getViewer().refresh();
-		fView.initializeCheckedState();
 	}
 	
 	protected IViewPart getView() {
@@ -220,10 +220,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 			getView().getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		}
 		super.valueChanged(on);
-		fView.initializeCheckedState();
-//		if (!on) {
-//			((BreakpointsView)getView()).initializeCheckedState((CheckboxTreeViewer) getViewer());
-//		}
+		fView.getViewer().refresh();
 	}
 	
 }

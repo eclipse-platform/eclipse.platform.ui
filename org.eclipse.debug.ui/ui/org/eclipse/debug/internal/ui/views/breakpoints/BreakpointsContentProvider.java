@@ -23,7 +23,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
@@ -32,19 +31,9 @@ import org.eclipse.jface.viewers.Viewer;
 public class BreakpointsContentProvider implements ITreeContentProvider, IPropertyChangeListener {
     
     private IBreakpointOrganizer[] fOrganizers = null;
-    private TreeViewer fViewer;
-    private BreakpointsView fView;
+    private BreakpointsViewer fViewer;
     private Object[] fElements;
     private boolean fDisposed = false;
-
-    /** 
-     * Constucts a new content provider for the given view.
-     * 
-     * @param view
-     */
-    public BreakpointsContentProvider(BreakpointsView view) {
-        fView = view;
-    }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
@@ -92,7 +81,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
      * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    	fViewer = (TreeViewer)viewer;
+    	fViewer = (BreakpointsViewer)viewer;
         if (newInput != null) {
             reorganize();
         }
@@ -127,7 +116,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
             // maintain expandsion based on visible breakpoints
             IBreakpoint[] breakpoints = null;
             if (isShowingGroups()) {
-                breakpoints = ((BreakpointsViewer)fViewer).getVisibleBreakpoints();
+                breakpoints = fViewer.getVisibleBreakpoints();
             }
             reorganize();
             if (isShowingGroups()) {
@@ -137,7 +126,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
                     for (int j = 0; j < breakpoints.length; j++) {
                         if (container.contains(breakpoints[j])) {
                             fViewer.expandToLevel(container, AbstractTreeViewer.ALL_LEVELS);
-                            fView.updateCheckedState(container);
+                            fViewer.updateCheckedState(container);
                             break;
                         }
                     }
@@ -227,7 +216,6 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
         }
         fViewer.getControl().setRedraw(false);
         fViewer.refresh();
-        fView.initializeCheckedState();
         fViewer.getControl().setRedraw(true);
     }
 

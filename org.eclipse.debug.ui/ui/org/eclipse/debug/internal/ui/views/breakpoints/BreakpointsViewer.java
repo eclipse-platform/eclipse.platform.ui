@@ -13,9 +13,11 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.widgets.Item;
@@ -113,4 +115,84 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	getTree().setSelection(new TreeItem[]{item});
     	updateSelection(getSelection());
     }
+    
+    
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.Viewer#refresh()
+	 */
+	public void refresh() {
+		super.refresh();
+		initializeCheckedState();
+	}
+
+	/**
+	 * Sets the initial checked state of the items in the viewer.
+	 */
+	private void initializeCheckedState() {
+		TreeItem[] items = getTree().getItems();
+		for (int i = 0; i < items.length; i++) {
+			updateCheckedState(items[i]);
+		}
+	}    
+    
+    /**
+     * Update the checked state up the given element and all of its children.
+     * 
+     * @param element
+     */
+	public void updateCheckedState(Object element) {
+        Widget widget = searchItem(element);
+        if (widget != null) {
+            updateCheckedState((TreeItem)widget);
+        }
+	}
+    
+    /**
+     * Update the checked state up the given element and all of its children.
+     * 
+     * @param element
+     */
+    public void updateCheckedState(TreeItem item) {
+        Object element = item.getData();
+        if (element instanceof IBreakpoint) {
+            try {
+                item.setChecked(((IBreakpoint) element).isEnabled());
+                refreshItem(item);
+            } catch (CoreException e) {
+                DebugUIPlugin.log(e);
+            }
+        } else if (element instanceof BreakpointContainer) {
+            IBreakpoint[] breakpoints = ((BreakpointContainer) element).getBreakpoints();
+            int enabledChildren= 0;
+            for (int i = 0; i < breakpoints.length; i++) {
+                IBreakpoint breakpoint = breakpoints[i];
+                try {
+                    if (breakpoint.isEnabled()) {
+                        enabledChildren++;
+                    }
+                } catch (CoreException e) {
+                    DebugUIPlugin.log(e);
+                }
+            }
+            if (enabledChildren == 0) {
+                // Uncheck the container node if no children are enabled
+                item.setGrayed(false);
+                item.setChecked(false);
+            } else if (enabledChildren == breakpoints.length) {
+                // Check the container if all children are enabled
+                item.setGrayed(false);
+                item.setChecked(true);
+            } else {
+                // If some but not all children are enabled, gray the container node
+                item.setGrayed(true);
+                item.setChecked(true);
+            }
+            // Update any children (breakpoints and containers)
+            TreeItem[] items = item.getItems();
+            for (int i = 0; i < items.length; i++) {
+                updateCheckedState(items[i]);
+            }
+        }
+    }        
 }

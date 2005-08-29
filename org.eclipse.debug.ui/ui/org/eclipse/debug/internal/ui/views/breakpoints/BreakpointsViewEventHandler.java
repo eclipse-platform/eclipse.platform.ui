@@ -92,7 +92,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
                                 }
                             }
                         }
-                        fView.initializeCheckedState();
+                        fView.getViewer().refresh();
                         viewer.setSelection(new StructuredSelection(breakpoints));
                         viewer.getControl().setRedraw(true);
 						fView.updateObjects();
@@ -113,7 +113,6 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 						CheckboxTreeViewer viewer= (CheckboxTreeViewer)fView.getViewer();
                         viewer.getControl().setRedraw(false);
                         ((BreakpointsContentProvider)viewer.getContentProvider()).reorganize();
-                        fView.initializeCheckedState();
                         viewer.getControl().setRedraw(true);
 						fView.updateObjects();
 					}
