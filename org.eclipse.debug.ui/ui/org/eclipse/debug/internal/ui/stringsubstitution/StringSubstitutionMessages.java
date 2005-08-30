@@ -54,4 +54,8 @@ public class StringSubstitutionMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, StringSubstitutionMessages.class);
 	}
+
+	public static String SystemPropertyArgumentSelector_0;
+
+	public static String SystemPropertyArgumentSelector_1;
 }

@@ -89,6 +89,11 @@
             name="system"
             resolver="org.eclipse.debug.internal.core.SystemVariableResolver"
             description="%system_var.description">
+      </variable>
+      <variable
+            name="system_property"
+            resolver="org.eclipse.debug.internal.core.SystemPropertyResolver"
+            description="%system_property.description">
       </variable>      
    </extension>
    

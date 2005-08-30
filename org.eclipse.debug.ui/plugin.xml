@@ -2010,6 +2010,9 @@ M4 = Platform-specific fourth key
             argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
             variableName="resource_name">
       </variablePresentation>
+      <variablePresentation
+            argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.SystemPropertyArgumentSelector"
+            variableName="system_property"/>
    </extension>
 <!-- Launch Config Comparators -->
    <extension
