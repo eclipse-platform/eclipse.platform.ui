@@ -413,7 +413,6 @@
             id="org.eclipse.ui.preferencePages.Keys">
          <keywordReference id="org.eclipse.ui.ide.keys"/>
       </page>
-      <!--
       <page
             name="%PreferencePages.NewKeys"
             category="org.eclipse.ui.preferencePages.Workbench"
@@ -421,7 +420,6 @@
             id="org.eclipse.ui.preferencePages.NewKeys">
          <keywordReference id="org.eclipse.ui.ide.keys"/>
       </page>
-      -->
     
       <page
             class="org.eclipse.ui.ExtensionFactory:contentTypesPreferencePage"

@@ -880,9 +880,74 @@ public final class BindingManager implements IContextManagerListener,
 
 		// Compute the active bindings.
 		commandIdsByTrigger = new HashMap();
-		computeBindings(null, commandIdsByTrigger, null);
+		final Map triggersByParameterizedCommand = new HashMap();
+		computeBindings(null, commandIdsByTrigger,
+				triggersByParameterizedCommand);
 		existingCache.setBindingsByTrigger(commandIdsByTrigger);
+		existingCache.setTriggersByCommandId(triggersByParameterizedCommand);
 		return Collections.unmodifiableMap(commandIdsByTrigger);
+	}
+
+	/**
+	 * <p>
+	 * Computes the bindings for the current state of the application, but
+	 * disregarding the current contexts. This can be useful when trying to
+	 * display all the possible bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of bindings.
+	 * </p>
+	 * 
+	 * @return A map of trigger (<code>TriggerSequence</code>) to bindings (
+	 *         <code>Collection</code> containing <code>Binding</code>).
+	 *         This map may be empty, but it is never <code>null</code>.
+	 * @since 3.2
+	 */
+	private final Map getActiveBindingsDisregardingContextByParameterizedCommand() {
+		if (bindings == null) {
+			// Not yet initialized. This is happening too early. Do nothing.
+			return Collections.EMPTY_MAP;
+		}
+
+		// Build a cached binding set for that state.
+		final CachedBindingSet bindingCache = new CachedBindingSet(null,
+				locales, platforms, activeSchemeIds);
+
+		/*
+		 * Check if the cached binding set already exists. If so, simply set the
+		 * active bindings and return.
+		 */
+		CachedBindingSet existingCache = (CachedBindingSet) cachedBindings
+				.get(bindingCache);
+		if (existingCache == null) {
+			existingCache = bindingCache;
+			cachedBindings.put(existingCache, existingCache);
+		}
+		Map triggersByParameterizedCommand = existingCache
+				.getTriggersByCommandId();
+		if (triggersByParameterizedCommand != null) {
+			if (DEBUG) {
+				System.out.println("BINDINGS >> Cache hit"); //$NON-NLS-1$
+			}
+
+			return Collections.unmodifiableMap(triggersByParameterizedCommand);
+		}
+
+		// There is no cached entry for this.
+		if (DEBUG) {
+			System.out.println("BINDINGS >> Cache miss"); //$NON-NLS-1$
+		}
+
+		// Compute the active bindings.
+		final Map commandIdsByTrigger = new HashMap();
+		triggersByParameterizedCommand = new HashMap();
+		computeBindings(null, commandIdsByTrigger,
+				triggersByParameterizedCommand);
+		existingCache.setBindingsByTrigger(commandIdsByTrigger);
+		existingCache.setTriggersByCommandId(triggersByParameterizedCommand);
+		System.out.println(triggersByParameterizedCommand);
+		return Collections.unmodifiableMap(triggersByParameterizedCommand);
 	}
 
 	/**
@@ -914,6 +979,39 @@ public final class BindingManager implements IContextManagerListener,
 		}
 
 		return mergedBindings;
+	}
+
+	/**
+	 * <p>
+	 * Returns the active bindings for a particular command identifier, but
+	 * discounting the current contexts. This method operates in O(n) time over
+	 * the number of bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>. If the active bindings are
+	 * not yet computed, then this completes in <code>O(nn)</code>, where
+	 * <code>n</code> is the number of bindings.
+	 * </p>
+	 * 
+	 * @param parameterizedCommand
+	 *            The fully-parameterized command whose bindings are requested.
+	 *            This argument may be <code>null</code>.
+	 * @return The array of active triggers (<code>TriggerSequence</code>)
+	 *         for a particular command identifier. This value is guaranteed to
+	 *         never be <code>null</code>, but it may be empty.
+	 * @since 3.2
+	 */
+	public final TriggerSequence[] getActiveBindingsDisregardingContextFor(
+			final ParameterizedCommand parameterizedCommand) {
+		final Object object = getActiveBindingsDisregardingContextByParameterizedCommand()
+				.get(parameterizedCommand);
+		if (object instanceof Collection) {
+			final Collection collection = (Collection) object;
+			return (TriggerSequence[]) collection
+					.toArray(new TriggerSequence[collection.size()]);
+		}
+
+		return new TriggerSequence[0];
 	}
 
 	/**

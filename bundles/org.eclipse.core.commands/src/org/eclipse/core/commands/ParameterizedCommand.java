@@ -253,7 +253,8 @@ public final class ParameterizedCommand implements Comparable {
 		}
 
 		this.command = command;
-		this.parameterizations = parameterizations;
+		this.parameterizations = (parameterizations == null || parameterizations.length == 0) ? null
+				: parameterizations;
 	}
 
 	/* (non-Javadoc)
