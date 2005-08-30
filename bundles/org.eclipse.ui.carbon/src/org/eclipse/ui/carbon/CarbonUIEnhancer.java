@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.carbon;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.internal.Callback;
@@ -54,14 +57,23 @@ public class CarbonUIEnhancer implements IStartup {
      */
     public CarbonUIEnhancer() {
         if (fgAboutActionName == null) {
-            ResourceBundle resourceBundle = ResourceBundle
-                    .getBundle(RESOURCE_BUNDLE);
-            try {
-                fgAboutActionName = resourceBundle
-                        .getString("AboutAction.name"); //$NON-NLS-1$
-            } catch (MissingResourceException e) {
-                fgAboutActionName = "About"; //$NON-NLS-1$
-            }
+            IProduct product = Platform.getProduct();
+            String productName = null;
+            if (product != null)
+                productName = product.getName();
+    			ResourceBundle resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
+    			try {
+    				if (productName != null) {
+    					String format = resourceBundle.getString("AboutAction.format"); //$NON-NLS-1$
+    					if (format != null)
+    						fgAboutActionName= MessageFormat.format(format, new Object[] { productName } );
+     			}
+    				if (fgAboutActionName == null)
+    					fgAboutActionName = resourceBundle.getString("AboutAction.name"); //$NON-NLS-1$
+    			} catch (MissingResourceException e) {
+    			}
+    			if (fgAboutActionName == null)
+    				fgAboutActionName = "About"; //$NON-NLS-1$
         }
     }
 
