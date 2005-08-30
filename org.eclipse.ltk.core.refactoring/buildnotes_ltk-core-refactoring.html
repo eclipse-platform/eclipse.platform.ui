@@ -12,8 +12,11 @@
 <h1>
 Eclipse Platform Build Notes 3.2 Stream&nbsp;<br>
 LTK Core Refactoring</h1>
+<h3>3.2 M2, September 6, 2005</h3>
+<h4>Implementation Changes</h4>
+The management of a group category set has been moved from the <code>TextEditBasedChangeGroup</code>
+to a special text edit group <code>CategorizedTextEditGroup</code>.
 <h3>3.2 M2, August 30, 2005</h3>
-<h4>Problem Reports Fixed</h4>
 <h4>Implementation Changes</h4>
 Support for group categories for text edit based changes has been added. This support
 enables the refactoring preview wizard to filter the change tree against certain
@@ -22,7 +25,6 @@ new API classes are: <code>GroupCategory</code>, <code>GroupCategorySet</code> a
 the group category specific API additions on <code>TextEditBasedChange</code> and <code>
 TextEditBasedChangeGroup</code>.
 <h3>3.2 M2, August 23, 2005</h3>
-<h4>Problem Reports Fixed</h4>
 <h4>Implementation Changes</h4>
 <ul>
   <li>New API has been added to support composite refactorings:

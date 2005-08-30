@@ -34,7 +34,6 @@ public class TextEditBasedChangeGroup {
 	private TextEditBasedChange fChange;
 	private boolean fIsEnabled;
 	private TextEditGroup fTextEditGroup;
-	private GroupCategorySet fGroupCategories;
 
 	/**
 	 * Creates new <code>TextEditBasedChangeGroup</code> for the given <code>
@@ -44,26 +43,11 @@ public class TextEditBasedChangeGroup {
 	 * @param group the underlying text edit group
 	 */
 	public TextEditBasedChangeGroup(TextEditBasedChange change, TextEditGroup group) {
-		this(change, group, GroupCategorySet.NONE);
-	}
-	
-	/**
-	 * Creates new <code>TextEditBasedChangeGroup</code> for the given <code>
-	 * TextEditBasedChange</code>, code>TextEditGroup</code> and <code>
-	 * GroupCategorySet</code>.
-	 * 
-	 * @param change the change owning this text edit change group
-	 * @param group the underlying text edit group
-	 * @param groupCategories the set of group categories
-	 */
-	public TextEditBasedChangeGroup(TextEditBasedChange change, TextEditGroup group, GroupCategorySet groupCategories) {
 		Assert.isNotNull(change);
 		Assert.isNotNull(group);
-		Assert.isNotNull(groupCategories);
 		fChange= change;
 		fIsEnabled= true;
 		fTextEditGroup= group;
-		fGroupCategories= groupCategories;
 	}
 	
 	/**
@@ -145,6 +129,9 @@ public class TextEditBasedChangeGroup {
 	 * @return the group categories of this change group
 	 */
 	public GroupCategorySet getGroupCategorySet() {
-		return fGroupCategories;
+		if (fTextEditGroup instanceof CategorizedTextEditGroup) {
+			return ((CategorizedTextEditGroup)fTextEditGroup).getGroupCategorySet();
+		}
+		return GroupCategorySet.NONE;
 	}
 }
