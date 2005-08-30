@@ -38,7 +38,7 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (fGroupCategories == null)
 				return true;
-			return ((ChangeElement)element).hasOneGroupCategory(fGroupCategories);
+			return ((PreviewNode)element).hasOneGroupCategory(fGroupCategories);
 		}
 	}
 	
@@ -50,17 +50,17 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		addFilter(new GroupCategoryFilter());
 		addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event){
-				ChangeElement element= (ChangeElement)event.getElement();
+				PreviewNode element= (PreviewNode)event.getElement();
 				boolean checked= event.getChecked();
 				
 				element.setEnabled(checked);
 				setSubtreeChecked(element, checked);
 				setSubtreeGrayed(element, false);
-				ChangeElement parent= element.getParent();
+				PreviewNode parent= element.getParent();
 				while(parent != null) {
 					int active= parent.getActive();
-					parent.setEnabledShallow(active == ChangeElement.PARTLY_ACTIVE || active == ChangeElement.ACTIVE);
-					boolean grayed= (active == ChangeElement.PARTLY_ACTIVE);
+					parent.setEnabledShallow(active == PreviewNode.PARTLY_ACTIVE || active == PreviewNode.ACTIVE);
+					boolean grayed= (active == PreviewNode.PARTLY_ACTIVE);
 					setChecked(parent, checked ? true : grayed);
 					setGrayed(parent, grayed);
 					parent= parent.getParent();
@@ -93,7 +93,7 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	protected void doUpdateItem(Item item, Object element) {
 		super.doUpdateItem(item, element);
 		if (fDeferredTreeItemUpdates == null) {
-			applyCheckedState((TreeItem)item, (ChangeElement)element);
+			applyCheckedState((TreeItem)item, (PreviewNode)element);
 		} else {
 			fDeferredTreeItemUpdates.add(item);
 		}
@@ -102,15 +102,15 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	private void processDeferredTreeItemUpdates() {
 		for (Iterator iter= fDeferredTreeItemUpdates.iterator(); iter.hasNext();) {
 			TreeItem item= (TreeItem)iter.next();
-			applyCheckedState(item, (ChangeElement)item.getData());
+			applyCheckedState(item, (PreviewNode)item.getData());
 		}
 	}
 	
-	private void applyCheckedState(TreeItem item, ChangeElement ce) {
+	private void applyCheckedState(TreeItem item, PreviewNode ce) {
 		int state= ce.getActive();
-		boolean checked= state == ChangeElement.INACTIVE ? false : true;
+		boolean checked= state == PreviewNode.INACTIVE ? false : true;
 		item.setChecked(checked);
-		boolean grayed= state == ChangeElement.PARTLY_ACTIVE ? true : false;
+		boolean grayed= state == PreviewNode.PARTLY_ACTIVE ? true : false;
 		item.setGrayed(grayed);
 	}
 	
@@ -147,16 +147,16 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	}
 	
 	private void revealElement(boolean next) {
-		ChangeElement current= (ChangeElement)getInput();
+		PreviewNode current= (PreviewNode)getInput();
 		IStructuredSelection selection= (IStructuredSelection)getSelection();
 		if (!selection.isEmpty())
-			current= (ChangeElement)selection.iterator().next();
+			current= (PreviewNode)selection.iterator().next();
 			
-		ChangeElement candidate= getLeaf(current, next);
+		PreviewNode candidate= getLeaf(current, next);
 		if (candidate == null) {
 			candidate= getElement(current, next);
 			if (candidate != null) {
-				ChangeElement leaf= getLeaf(candidate, next);
+				PreviewNode leaf= getLeaf(candidate, next);
 				if (leaf != null)
 					candidate= leaf;
 			}
@@ -167,9 +167,9 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 			getControl().getDisplay().beep();
 	}
 	
-	private ChangeElement getLeaf(ChangeElement element, boolean first) {
-		ChangeElement result= null;
-		ChangeElement[] children= element.getChildren();
+	private PreviewNode getLeaf(PreviewNode element, boolean first) {
+		PreviewNode result= null;
+		PreviewNode[] children= element.getChildren();
 		while(children != null && children.length > 0) {
 			result= children[first ? 0 : children.length - 1];
 			children= result.getChildren();
@@ -177,19 +177,19 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		return result;
 	}
 	
-	private ChangeElement getElement(ChangeElement element, boolean next) {
+	private PreviewNode getElement(PreviewNode element, boolean next) {
 		while(true) {
-			ChangeElement parent= element.getParent();
+			PreviewNode parent= element.getParent();
 			if (parent == null)
 				return null;
-			ChangeElement candidate= getSibling(parent.getChildren(), element, next);
+			PreviewNode candidate= getSibling(parent.getChildren(), element, next);
 			if (candidate != null)
 				return candidate;
 			element= parent;
 		}
 	}
 	
-	private ChangeElement getSibling(ChangeElement[] children, ChangeElement element, boolean next) {
+	private PreviewNode getSibling(PreviewNode[] children, PreviewNode element, boolean next) {
 		for (int i= 0; i < children.length; i++) {
 			if (children[i] == element) {
 				if (next)

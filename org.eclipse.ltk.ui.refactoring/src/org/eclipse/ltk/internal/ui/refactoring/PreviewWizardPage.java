@@ -192,7 +192,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	private Change fChange;
 	private List fActiveGroupCategories;
 	private CompositeChange fTreeViewerInputChange;
-	private ChangeElement fCurrentSelection;
+	private PreviewNode fCurrentSelection;
 	private PageBook fPageContainer;
 	private Control fStandardPage;
 	private Control fNullPage;
@@ -369,12 +369,12 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		fCurrentSelection= null;
 		if (hasChanges()) {
 			fPageContainer.showPage(fStandardPage);
-			ChangeElement treeViewerInput= (ChangeElement)fTreeViewer.getInput();
+			AbstractChangeNode treeViewerInput= (AbstractChangeNode)fTreeViewer.getInput();
 			if (visible && treeViewerInput != null) {
 				IStructuredSelection selection= (IStructuredSelection)fTreeViewer.getSelection();
 				if (selection.isEmpty()) {
 					ITreeContentProvider provider= (ITreeContentProvider)fTreeViewer.getContentProvider();
-					ChangeElement element= getFirstNonCompositeChange(provider, treeViewerInput);
+					PreviewNode element= getFirstNonCompositeChange(provider, treeViewerInput);
 					if (element != null) {
 						if (getRefactoringWizard().internalGetExpandFirstNode(InternalAPI.INSTANCE)) {
 							Object[] subElements= provider.getElements(element);
@@ -396,15 +396,17 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		getRefactoringWizard().internalSetPreviewShown(InternalAPI.INSTANCE, visible);
 	}
 	
-	private ChangeElement getFirstNonCompositeChange(ITreeContentProvider provider, ChangeElement input) {
-		ChangeElement focus= input;
+	private PreviewNode getFirstNonCompositeChange(ITreeContentProvider provider, AbstractChangeNode input) {
+		PreviewNode focus= input;
 		Change change= input.getChange();
 		while (change != null && change instanceof CompositeChange) {
-			ChangeElement[] children= (ChangeElement[])provider.getElements(focus);
+			PreviewNode[] children= (PreviewNode[])provider.getElements(focus);
 			if (children == null || children.length == 0)
 				return null;
 			focus= children[0];
-			change= focus.getChange();
+			change= (focus instanceof AbstractChangeNode)
+				? ((AbstractChangeNode)focus).getChange()
+				: null;
 		}
 		return focus;
 	}
@@ -412,9 +414,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	private void setTreeViewerInput() {
 		if (fTreeViewer == null)
 			return;
-		ChangeElement input= null;
+		PreviewNode input= null;
 		if (fTreeViewerInputChange != null) {
-			input= new DefaultChangeElement(null, fTreeViewerInputChange);
+			input= AbstractChangeNode.createNode(null, fTreeViewerInputChange);
 		}
 		fTreeViewer.setInput(input);
 	}
@@ -422,12 +424,12 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	private ICheckStateListener createCheckStateListener() {
 		return new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event){
-				ChangeElement element= (ChangeElement)event.getElement();
+				PreviewNode element= (PreviewNode)event.getElement();
 				if (isChild(fCurrentSelection, element) || isChild(element, fCurrentSelection)) {
 					showPreview(fCurrentSelection);
 				}
 			}
-			private boolean isChild(ChangeElement element, ChangeElement child) {
+			private boolean isChild(PreviewNode element, PreviewNode child) {
 				while (child != null) {
 					if (child == element)
 						return true;
@@ -443,7 +445,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
 				if (sel.size() == 1) {
-					ChangeElement newSelection= (ChangeElement)sel.getFirstElement();
+					PreviewNode newSelection= (PreviewNode)sel.getFirstElement();
 					if (newSelection != fCurrentSelection) {
 						fCurrentSelection= newSelection;
 						showPreview(newSelection);
@@ -455,7 +457,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		};
 	}	
 
-	private void showPreview(ChangeElement element) {
+	private void showPreview(PreviewNode element) {
 		try {
 			if (element == null) {
 				showNullPreviewer();

@@ -21,17 +21,17 @@ import org.eclipse.ltk.core.refactoring.Change;
 
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
+import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.Assert;
 
-public class TextEditChangeElement extends ChangeElement {
-	
-	private static final ChangeElement[] fgChildren= new ChangeElement[0];
+public final class TextEditGroupNode extends TextEditChangeNode.ChildNode {
 	
 	private TextEditBasedChangeGroup fChangeGroup;
 	
-	public TextEditChangeElement(ChangeElement parent, TextEditBasedChangeGroup changeGroup) {
+	public TextEditGroupNode(PreviewNode parent, TextEditBasedChangeGroup changeGroup) {
 		super(parent);
 		fChangeGroup= changeGroup;
 		Assert.isNotNull(fChangeGroup);
@@ -42,27 +42,27 @@ public class TextEditChangeElement extends ChangeElement {
 	 * 
 	 * @return the <code>TextEditBasedChangeGroup</code>
 	 */
-	public TextEditBasedChangeGroup getChangeGroup() {
+	TextEditBasedChangeGroup getChangeGroup() {
 		return fChangeGroup;
 	}
 	
-	public Object getModifiedElement() {
-		return fChangeGroup;
+	public String getText() {
+		return fChangeGroup.getName();
 	}
 	
-	public Change getChange() {
-		return null;
+	public ImageDescriptor getImageDescriptor() {
+		return RefactoringPluginImages.DESC_OBJS_TEXT_EDIT;
 	}
 	
-	public ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
-		DefaultChangeElement element= getDefaultChangeElement();
+	ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
+		InternalTextEditChangeNode element= getTextEditChangeNode();
 		if (element == null)
 			return null;
 		return element.getChangePreviewViewerDescriptor();
 	}
 	
-	public void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException {
-		DefaultChangeElement element= getDefaultChangeElement();
+	void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException {
+		InternalTextEditChangeNode element= getTextEditChangeNode();
 		if (element != null) {
 			Change change= element.getChange();
 			if (change instanceof TextEditBasedChange) {
@@ -80,53 +80,36 @@ public class TextEditChangeElement extends ChangeElement {
 		}
 	}
 	
-	/* non Java-doc
-	 * @see ChangeElement#setActive
-	 */
-	public void setEnabled(boolean enabled) {
+	void setEnabled(boolean enabled) {
 		fChangeGroup.setEnabled(enabled);
 	}
 	
-	public void setEnabledShallow(boolean enabled) {
+	void setEnabledShallow(boolean enabled) {
 		fChangeGroup.setEnabled(enabled);
 	}
 	
-	/* non Java-doc
-	 * @see ChangeElement.getActive
-	 */
-	public int getActive() {
-		return fChangeGroup.isEnabled() ? ACTIVE : INACTIVE;
+	int getActive() {
+		return fChangeGroup.isEnabled() ? PreviewNode.ACTIVE : PreviewNode.INACTIVE;
 	}
 	
-	/* non Java-doc
-	 * @see ChangeElement.getChildren
-	 */
-	public ChangeElement[] getChildren() {
-		return fgChildren;
+	PreviewNode[] getChildren() {
+		return PreviewNode.EMPTY_CHILDREN;
 	}
 	
-	public boolean hasOneGroupCategory(List categories) {
+	boolean hasOneGroupCategory(List categories) {
 		return fChangeGroup.getGroupCategorySet().containsOneCategory(categories);
 	}
 	
-	public GroupCategorySet getGroupCategorySet() {
+	GroupCategorySet getGroupCategorySet() {
 		return fChangeGroup.getGroupCategorySet();
 	}
 	
-	private DefaultChangeElement getDefaultChangeElement() {
-		ChangeElement element= getParent();
-		while(!(element instanceof DefaultChangeElement) && element != null) {
-			element= element.getParent();
-		}
-		return (DefaultChangeElement)element;
-	}
-	
-	private static IRegion getTextRange(ChangeElement element) throws CoreException {
+	private static IRegion getTextRange(PreviewNode element) throws CoreException {
 		if (element == null)
 			return null;
-		if (element instanceof PseudoLanguageChangeElement) {
-			return ((PseudoLanguageChangeElement)element).getTextRange();
-		} else if (element instanceof DefaultChangeElement) {
+		if (element instanceof InternalLanguageElementNode) {
+			return ((InternalLanguageElementNode)element).getTextRange();
+		} else if (element instanceof TextEditChangeNode) {
 			return null;
 		}
 		return getTextRange(element.getParent());

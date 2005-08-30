@@ -10,8 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-public interface IChangeElementChildrenCreator {
+import org.eclipse.ltk.core.refactoring.Change;
 
-	public void createChildren(DefaultChangeElement changeElement);
+public class DefaultChangeNode extends AbstractChangeNode {
 	
+	public DefaultChangeNode(PreviewNode parent, Change change) {
+		super(parent, change);
+	}
+	
+	int getActive() {
+		return getDefaultChangeActive();
+	}
+	
+	PreviewNode[] doCreateChildren() {
+		return EMPTY_CHILDREN;
+	}
 }

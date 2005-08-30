@@ -1,0 +1,137 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.ltk.internal.ui.refactoring;
+
+import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+
+import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
+import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
+import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
+
+public abstract class AbstractChangeNode extends PreviewNode {
+
+	private Change fChange;
+	private PreviewNode[] fChildren;
+
+	public static PreviewNode createNode(PreviewNode parent, Change change) {
+		if (change instanceof CompositeChange) {
+			return new CompositeChangeNode(parent, (CompositeChange)change);
+		} else if (change instanceof TextEditBasedChange) {
+			InternalTextEditChangeNode result= (TextEditChangeNode)change.getAdapter(TextEditChangeNode.class);
+			if (result == null) {
+				result= new TextEditChangeNode((TextEditBasedChange)change);
+			}
+			result.initialize(parent);
+			return result;
+		}
+		return new DefaultChangeNode(parent, change);
+	}
+	
+	/**
+	 * Creates a new <code>AbstractChangeNode</code> for the given
+	 * change.
+	 * 
+	 * @param parent the change nodes's parent or <code>null
+	 * 	</code> if the change node doesn't have a parent
+	 * @param change the actual change. Argument must not be
+	 * 	<code>null</code>
+	 */
+	AbstractChangeNode(PreviewNode parent, Change change) {
+		super(parent);
+		Assert.isNotNull(change);
+		fChange= change;
+	}
+	
+	/**
+	 * Returns the underlying <code>Change</code> object.
+	 * 
+	 * @return the underlying change
+	 */
+	Change getChange() {
+		return fChange;
+	}
+	
+	PreviewNode[] getChildren() {
+		if (fChildren == null) {
+			fChildren= doCreateChildren();
+		}
+		return fChildren;
+	}
+	
+	abstract PreviewNode[] doCreateChildren();
+	
+	public String getText() {
+		return fChange.getName();
+	}
+	
+	public ImageDescriptor getImageDescriptor() {
+		return RefactoringPluginImages.DESC_OBJS_DEFAULT_CHANGE;
+	}
+	
+	ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
+		return ChangePreviewViewerDescriptor.get(fChange);
+	}
+	
+	void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException {
+		viewer.setInput(new ChangePreviewViewerInput(fChange));
+	}
+	
+	void setEnabled(boolean enabled) {
+		fChange.setEnabled(enabled);
+	}
+	
+	void setEnabledShallow(boolean enabled) {
+		fChange.setEnabledShallow(enabled);
+	}
+	
+	boolean hasOneGroupCategory(List categories) {
+		PreviewNode[] children= getChildren();
+		for (int i= 0; i < children.length; i++) {
+			if (children[i].hasOneGroupCategory(categories))
+				return true;
+		}
+		return false;
+	}
+	
+	int getDefaultChangeActive() {
+		int result= fChange.isEnabled() ? ACTIVE : INACTIVE;
+		if (fChildren != null) {
+			for (int i= 0; i < fChildren.length; i++) {
+				result= ACTIVATION_TABLE[fChildren[i].getActive()][result];
+				if (result == PARTLY_ACTIVE)
+					break;
+			}
+		}
+		return result;
+	}
+	
+	int getCompositeChangeActive() {		
+		if (fChildren != null && fChildren.length > 0) {
+			int result= fChildren[0].getActive();
+			for (int i= 1; i < fChildren.length; i++) {
+				result= ACTIVATION_TABLE[fChildren[i].getActive()][result];
+				if (result == PARTLY_ACTIVE)
+					break;
+			}
+			return result;
+		} else {
+			return ACTIVE;
+		}
+	}
+}

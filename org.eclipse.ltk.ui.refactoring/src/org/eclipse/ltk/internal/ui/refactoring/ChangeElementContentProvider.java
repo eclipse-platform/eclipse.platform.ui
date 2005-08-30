@@ -30,7 +30,7 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 	 * @see ITreeContentProvider#getChildren
 	 */
 	public Object[] getChildren(Object o) {
-		ChangeElement element= (ChangeElement)o;
+		PreviewNode element= (PreviewNode)o;
 		return element.getChildren();
 	}
 	
@@ -38,7 +38,7 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 	 * @see ITreeContentProvider#getParent
 	 */
 	public Object getParent(Object element){
-		return ((ChangeElement)element).getParent();
+		return ((PreviewNode)element).getParent();
 	}
 	
 	/* non Java-doc
