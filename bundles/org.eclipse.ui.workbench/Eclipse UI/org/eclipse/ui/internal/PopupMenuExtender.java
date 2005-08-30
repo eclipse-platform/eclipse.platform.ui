@@ -156,6 +156,12 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
      */
     public final void addMenuId(final String menuId) {
         menuIds.add(menuId);
+		bitSet &= ~STATIC_ACTION_READ;
+		if (staticActionBuilder != null) {
+			staticActionBuilder.dispose();
+			staticActionBuilder = null;
+		}
+		readStaticActions();
     }
 
     /**
