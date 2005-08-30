@@ -84,7 +84,11 @@
             class="org.eclipse.ui.tests.api.PerspectiveWithMultiViewPlaceholdersInFolder"
             name="UI Test Perspective with Multi View Placeholders In Folder"
             id="org.eclipse.ui.tests.PerspectiveWithMultiViewPlaceholdersInFolder">
-      </perspective>      
+      </perspective>
+      <perspective
+            class="org.eclipse.ui.tests.api.PerspectiveViewsBug88345"
+            id="org.eclipse.ui.tests.api.PerspectiveViewsBug88345"
+            name="UI Test Perspective for closable view"/>      
    </extension>
    <extension
          point="org.eclipse.ui.views">

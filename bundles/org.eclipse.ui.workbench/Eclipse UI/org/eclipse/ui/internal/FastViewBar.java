@@ -953,4 +953,14 @@ public class FastViewBar implements IWindowTrim {
         }
     }
     
+    /**
+     * Returns the context menu contribution item.  This is for
+     * internal UI testing only.
+     * 
+     * @return the context menu contribution item
+     * @since 3.1.1
+     */
+    public FastViewBarContextMenuContribution testContextMenu() {
+    	return contextContributionItem;
+    }
 }

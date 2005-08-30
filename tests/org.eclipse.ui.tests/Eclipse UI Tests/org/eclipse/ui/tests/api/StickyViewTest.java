@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.FastViewBar;
+import org.eclipse.ui.internal.FastViewBarContextMenuContribution;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 
@@ -200,6 +207,86 @@ public class StickyViewTest extends UITestCase {
             fail(e.getMessage());
         }
     }
+    
+	/**
+	 * Test that a view marked as non-closable cannot be closed as a fast view.
+	 * 
+	 * @throws Throwable
+	 * @since 3.1.1
+	 */
+	public void testPerspectiveCloseFastView() throws Throwable {
+		page.setPerspective(WorkbenchPlugin.getDefault()
+				.getPerspectiveRegistry().findPerspectiveWithId(
+						PerspectiveViewsBug88345.PERSP_ID));
+
+		try {
+			// the non-closeable view
+			IViewReference stickyRef = page
+					.findViewReference(MockViewPart.IDMULT);
+			IViewPart stickyView = (IViewPart) stickyRef.getPart(true);
+			page.activate(stickyView);
+
+			IViewReference viewRef = page
+					.findViewReference(PerspectiveViewsBug88345.NORMAL_VIEW_ID);
+
+			WorkbenchPage wpage = (WorkbenchPage) page;
+			assertFalse(wpage.isFastView(stickyRef));
+
+			wpage.addFastView(stickyRef);
+			assertTrue(wpage.isFastView(stickyRef));
+
+			wpage.addFastView(viewRef);
+			assertTrue(wpage.isFastView(viewRef));
+
+			FastViewBar fastViewBar = ((WorkbenchWindow) page
+					.getWorkbenchWindow()).getFastViewBar();
+			FastViewBarContextMenuContribution menuContribution = fastViewBar
+					.testContextMenu();
+
+			// set the target of a normal view that is now a fast view
+			// close should be enabled
+			menuContribution.setTarget(viewRef);
+			checkCloseMenuItem(wpage, menuContribution, true);
+
+			// set the target of our non-closeable fast view
+			// close should not be enabled
+			menuContribution.setTarget(stickyRef);
+			checkCloseMenuItem(wpage, menuContribution, false);
+		} finally {
+			page.closePerspective(page.getPerspective(), false, false);
+		}
+	}
+
+	/**
+	 * Find the close menu item and make sure it's enabled/disabled.
+	 * 
+	 * @param wpage the workbench page
+	 * @param menuContribution the fast bar menu contribution item
+	 * @param closeEnabled should close be enabled
+	 * @since 3.1.1
+	 */
+	private void checkCloseMenuItem(WorkbenchPage wpage,
+			FastViewBarContextMenuContribution menuContribution,
+			boolean closeEnabled) {
+		Menu m = new Menu(wpage.getWorkbenchWindow().getShell());
+		try {
+			menuContribution.fill(m, 0);
+			MenuItem[] items = m.getItems();
+			MenuItem closeItem = null;
+			for (int i = 0; i < items.length; i++) {
+				MenuItem item = items[i];
+				if (item.getText().indexOf("Close") >= 0) {
+					closeItem = item;
+				}
+			}
+			assertNotNull(closeItem);
+			assertEquals(closeEnabled, closeItem.isEnabled());
+		} finally {
+			menuContribution.dispose();
+			m.dispose();
+		}
+	}
+
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()

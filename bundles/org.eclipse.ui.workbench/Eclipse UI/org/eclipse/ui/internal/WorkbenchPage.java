@@ -2118,6 +2118,20 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         else
             return false;
     }
+    
+    /**
+     * Return whether the view is closeable or not.
+     * 
+     * @param ref the view reference to check.  Must not be <code>null</code>.
+     * @return true if the part is closeable.
+     * @since 3.1.1
+     */
+    public boolean isCloseable(IViewReference ref) {
+		Perspective persp = getActivePerspective();
+		if (persp != null)
+			return persp.isCloseable(ref);
+		return false;
+	}
 
     /**
      * Returns whether the layout of the active
