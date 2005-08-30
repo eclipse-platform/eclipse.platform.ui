@@ -55,7 +55,7 @@ public class GroupCategorySet {
 		Assert.isNotNull(two);
 		// for performance we are using identity here. This is
 		// valid since group categories are value objects and
-		// therfore best used as static final fields.
+		// therefore best used as static final fields.
 		if (one == two)
 			return one;
 		if (one == NONE)
