@@ -1248,9 +1248,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         if (s == null)
             s = ""; //$NON-NLS-1$
         setTitle(s);
-        if (currentPage != null)
+        if (currentPage != null) {
             setTitleImage(currentPage.getImage());
-        updateDescriptionMessage();
+            updateDescriptionMessage();
+        }
         updateMessage();
     }
 
