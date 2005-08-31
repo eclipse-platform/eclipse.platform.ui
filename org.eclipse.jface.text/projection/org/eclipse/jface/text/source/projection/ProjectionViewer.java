@@ -611,6 +611,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		} else {
 			try {
 				fHandleProjectionChanges= false;
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=108258
+				// make sure the document range is strictly line based
+				int end= offset + length;
+				offset= toLineStart(offset);
+				length= toEndLineStart(end) - offset;
 				projection.addMasterDocumentRange(offset, length);
 			} finally {
 				fHandleProjectionChanges= true;
@@ -636,11 +641,45 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		} else {
 			try {
 				fHandleProjectionChanges= false;
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=108258
+				// make sure the document range is strictly line based
+				int end= offset + length;
+				offset= toLineStart(offset);
+				length= toEndLineStart(end) - offset;
 				projection.removeMasterDocumentRange(offset, length);
 			} finally {
 				fHandleProjectionChanges= true;
 			}
 		}
+	}
+	
+	/**
+	 * Returns the first line offset &lt;= <code>offset</code>.
+	 * 
+	 * @param offset the master document offset
+	 * @return the first line offset &lt;= <code>offset</code>.
+	 * @throws BadLocationException if the offset is invalid
+	 * @since 3.2
+	 */
+	private int toLineStart(int offset) throws BadLocationException {
+		return getDocument().getLineInformationOfOffset(offset).getOffset();
+	}
+	
+	/**
+	 * Returns the first line offset &lt;= <code>offset</code>. If the line is the last one in
+	 * the document and offset is the end of the document, no modification is done.
+	 * 
+	 * @param offset the master document offset
+	 * @return the closest line offset &gt;= <code>offset</code>
+	 * @throws BadLocationException if the offset is invalid
+	 * @since 3.2
+	 */
+	private int toEndLineStart(int offset) throws BadLocationException {
+		IDocument document= getDocument();
+		int line= document.getLineOfOffset(offset);
+		if (document.getNumberOfLines() > line + 1)
+			return document.getLineOffset(line);
+		return offset;
 	}
 
 	/*
