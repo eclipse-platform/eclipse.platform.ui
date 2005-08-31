@@ -37,6 +37,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -56,7 +57,16 @@ public class EncodingChangeTests extends TestCase {
 		return new TestSuite(EncodingChangeTests.class);
 	}
 	
+	public static void closeEditor(IEditorPart editor) {
+		IWorkbenchPartSite site;
+		IWorkbenchPage page;
+		if (editor != null && (site= editor.getSite()) != null && (page= site.getPage()) != null)
+			page.closeEditor(editor, false);
+	}
+	
+	
 	private IFile fFile;
+	private IEditorPart fEditor;
 	private int fCount;
 	
 	private String getOriginalContent() {
@@ -77,15 +87,12 @@ public class EncodingChangeTests extends TestCase {
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		while (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().getDisplay().readAndDispatch()) {
-		}
+		closeEditor(fEditor);
+		fFile= null;
 		try {
 			ResourceHelper.deleteProject("EncodingChangeTestProject");
 		} catch (CoreException ex) {
 			// ignore
-		}
-		fFile= null;
-		while (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().getDisplay().readAndDispatch()) {
 		}
 	}
 	
@@ -98,9 +105,9 @@ public class EncodingChangeTests extends TestCase {
 			fail();
 		}
 		try {
-			IEditorPart part= IDE.openEditor(page, fFile);
-			if (part instanceof TextEditor) {
-				TextEditor editor= (TextEditor)part;
+			fEditor= IDE.openEditor(page, fFile);
+			if (fEditor instanceof TextEditor) {
+				TextEditor editor= (TextEditor)fEditor;
 				Accessor accessor= new Accessor(editor, StatusTextEditor.class);
 				while (editor.getSite().getShell().getDisplay().readAndDispatch()) {
 				}
@@ -108,6 +115,7 @@ public class EncodingChangeTests extends TestCase {
 				assertNull(composite);
 				DefaultEncodingSupport encodingSupport= (DefaultEncodingSupport)editor.getAdapter(IEncodingSupport.class);
 				assertEquals("US-ASCII", encodingSupport.getEncoding());
+				
 			} else
 				fail();
 		} catch (PartInitException e) {
@@ -119,9 +127,9 @@ public class EncodingChangeTests extends TestCase {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
 		try {
-			IEditorPart part= IDE.openEditor(page, fFile);
-			if (part instanceof TextEditor) {
-				TextEditor editor= (TextEditor)part;
+			fEditor= IDE.openEditor(page, fFile);
+			if (fEditor instanceof TextEditor) {
+				TextEditor editor= (TextEditor)fEditor;
 				while (editor.getSite().getShell().getDisplay().readAndDispatch()) {
 				}
 				DefaultEncodingSupport encodingSupport= (DefaultEncodingSupport)editor.getAdapter(IEncodingSupport.class);
@@ -154,9 +162,9 @@ public class EncodingChangeTests extends TestCase {
 			fail();
 		}
 		try {
-			IEditorPart part= IDE.openEditor(page, fFile);
-			if (part instanceof TextEditor) {
-				TextEditor editor= (TextEditor)part;
+			fEditor= IDE.openEditor(page, fFile);
+			if (fEditor instanceof TextEditor) {
+				TextEditor editor= (TextEditor)fEditor;
 				Accessor accessor= new Accessor(editor, StatusTextEditor.class);
 				while (editor.getSite().getShell().getDisplay().readAndDispatch()) {
 				}
@@ -172,6 +180,6 @@ public class EncodingChangeTests extends TestCase {
 				fail();
 		} catch (PartInitException e) {
 			fail();
-		}
+		} 
 	}
 }
