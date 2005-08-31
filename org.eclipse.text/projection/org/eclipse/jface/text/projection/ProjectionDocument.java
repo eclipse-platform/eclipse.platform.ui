@@ -725,7 +725,7 @@ public class ProjectionDocument extends AbstractDocument {
 	}
 
 	/**
-	 * Ensures that when the master event effects this projection document, that the whole region described by the
+	 * Ensures that when the master event affects this projection document, that the whole region described by the
 	 * event is part of this projection document.
 	 *
 	 * @param masterEvent the master document event

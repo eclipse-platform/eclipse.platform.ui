@@ -99,13 +99,12 @@ class FragmentUpdater extends DefaultPositionUpdater {
 	}
 
 	/**
-	 * Returns whether this updater considers any position affected by the given
-	 * document event. A position is affected if either the offset or the length
-	 * of the position is modified but the position is not just shifted.
-	 *
+	 * Returns whether this updater considers any position affected by the given document event. A
+	 * position is affected if <code>event</code> {@link Position#overlapsWith(int, int) overlaps}
+	 * with it but not if the position is only shifted.
+	 * 
 	 * @param event the event
-	 * @return <code>true</code> if there is any affected position,
-	 *         <code>false</code> otherwise
+	 * @return <code>true</code> if there is any affected position, <code>false</code> otherwise
 	 */
 	public boolean affectsPositions(DocumentEvent event) {
 		IDocument document= event.getDocument();
