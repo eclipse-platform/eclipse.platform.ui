@@ -2228,6 +2228,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fMouseListener= new MouseListener() {
 
 				private boolean fDoubleClicked= false;
+				private final int fDoubleClickTime= Display.getDefault().getDoubleClickTime();
+				private long fMouseUpDelta= 0;
 
 				private void triggerAction(String actionID) {
 					IAction action= getAction(actionID);
@@ -2239,11 +2241,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					}
 				}
 
-				public void mouseUp(MouseEvent e) {
+				public void mouseUp(final MouseEvent e) {
 					setFocus();
-					if (1 == e.button && !fDoubleClicked)
-						triggerAction(ITextEditorActionConstants.RULER_CLICK);
-					fDoubleClicked= false;
+					final int delay= fDoubleClickTime - (int)(System.currentTimeMillis() - fMouseUpDelta);
+					if (1 != e.button)
+						return;
+					
+					Runnable runnable= new Runnable() {
+						public void run() {
+							if (!fDoubleClicked)
+								triggerAction(ITextEditorActionConstants.RULER_CLICK);
+						}
+					};
+					if (delay <= 0)
+						runnable.run();
+					else
+						Display.getDefault().timerExec(delay, runnable);
 				}
 
 				public void mouseDoubleClick(MouseEvent e) {
@@ -2254,6 +2267,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 
 				public void mouseDown(MouseEvent e) {
+					fMouseUpDelta= System.currentTimeMillis();
+					fDoubleClicked= false;
 					StyledText text= fSourceViewer.getTextWidget();
 					if (text != null && !text.isDisposed()) {
 							Display display= text.getDisplay();
@@ -2620,14 +2635,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		rulerControl.addMouseListener(getRulerMouseListener());
 
 		if (fRulerContextMenuId != null)
-			getSite().registerContextMenu(fRulerContextMenuId, manager, getSelectionProvider());
+			getEditorSite().registerContextMenu(fRulerContextMenuId, manager, getSelectionProvider(), false);
 		else if (fCompatibilityMode)
-			getSite().registerContextMenu(DEFAULT_RULER_CONTEXT_MENU_ID, manager, getSelectionProvider());
+			getEditorSite().registerContextMenu(DEFAULT_RULER_CONTEXT_MENU_ID, manager, getSelectionProvider(), false);
 
 		if ((fRulerContextMenuId != null && fCompatibilityMode) || fRulerContextMenuId  == null) {
 			String partId= getSite().getId();
 			if (partId != null)
-				getSite().registerContextMenu(partId + ".RulerContext", manager, getSelectionProvider()); //$NON-NLS-1$
+				getEditorSite().registerContextMenu(partId + ".RulerContext", manager, getSelectionProvider(), false); //$NON-NLS-1$
 		}
 
 		if (fRulerContextMenuId == null)
