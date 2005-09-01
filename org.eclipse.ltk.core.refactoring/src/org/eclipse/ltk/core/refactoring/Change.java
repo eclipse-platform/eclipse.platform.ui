@@ -105,13 +105,8 @@ public abstract class Change implements IAdaptable {
 	 * Returns a descriptor of the refactoring which created this change object.
 	 * <p>
 	 * Subclasses of changes created by
-	 * {@link Refactoring#createChange(IProgressMonitor)} may extend this method
-	 * to return an appropriate descriptor object. If no descriptor object is
-	 * returned in a subclass implementation, the super implementation has to be
-	 * called.
-	 * </p>
-	 * <p>
-	 * The default implementation delegates the request to the parent change.
+	 * {@link Refactoring#createChange(IProgressMonitor)} may override this
+	 * method to return an appropriate descriptor object.
 	 * </p>
 	 * 
 	 * @return a refactoring descriptor representing the refactoring which
@@ -120,13 +115,6 @@ public abstract class Change implements IAdaptable {
 	 * @since 3.2
 	 */
 	public RefactoringDescriptor getRefactoringDescriptor() {
-		Change parent= fParent;
-		while (parent != null) {
-			RefactoringDescriptor descriptor= parent.getRefactoringDescriptor();
-			if (descriptor != null)
-				return descriptor;
-			parent= parent.getParent();
-		}
 		return null;
 	}
 

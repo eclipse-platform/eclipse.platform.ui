@@ -472,6 +472,19 @@ public class CompositeChange extends Change {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public RefactoringDescriptor getRefactoringDescriptor() {
+		for (final Iterator iterator= fChanges.iterator(); iterator.hasNext();) {
+			final Change change= (Change) iterator.next();
+			final RefactoringDescriptor descriptor= change.getRefactoringDescriptor();
+			if (descriptor != null)
+				return descriptor;
+		}
+		return null;
+	}
+
 	public String toString() {
 		StringBuffer buff= new StringBuffer();
 		buff.append(getName());
