@@ -254,7 +254,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         Font font = parent.getFont();
 
         infoArea = new Composite(parent, SWT.NULL);
-        GridData data = new GridData(GridData.FILL, GridData.CENTER, true, true);
+        GridData data = new GridData(GridData.FILL, GridData.FILL, true, true);
         // need to provide space for arbitrary feature infos, not just the
         // one selected by default
         data.heightHint = convertVerticalDLUsToPixels(INFO_HEIGHT);
@@ -275,7 +275,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         text = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
         text.setCaret(null);
         text.setFont(parent.getFont());
-        data = new GridData(GridData.FILL, GridData.BEGINNING, true, true);
+        data = new GridData(GridData.FILL, GridData.FILL, true, true);
         text.setLayoutData(data);
         text.setFont(font);
         text.setCursor(null);
