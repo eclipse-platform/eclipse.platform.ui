@@ -155,7 +155,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			return projectName;
 		}
 	}
-
+    
 	private Text directoryPathField;
 
 	private CheckboxTreeViewer projectsList;
@@ -828,7 +828,10 @@ public class WizardProjectsImportPage extends WizardPage implements
 		// no project description found, so recurse into sub-directories
 		for (int i = 0; i < contents.length; i++) {
 			if (contents[i].isDirectory())
-				collectProjectFilesFromDirectory(files, contents[i], monitor);
+				if (!contents[i].getName().equals(
+						IDEApplication.METADATA_FOLDER))
+					collectProjectFilesFromDirectory(files, contents[i],
+							monitor);
 		}
 		return true;
 	}

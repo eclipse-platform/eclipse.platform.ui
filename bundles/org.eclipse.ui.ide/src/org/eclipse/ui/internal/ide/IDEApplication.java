@@ -43,7 +43,10 @@ import org.eclipse.ui.PlatformUI;
  */
 public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
 
-    private static final String METADATA_FOLDER = ".metadata"; //$NON-NLS-1$
+	/**
+	 * The name of the folder containing metadata information for the workspace.
+	 */
+    public static final String METADATA_FOLDER = ".metadata"; //$NON-NLS-1$
 
     private static final String VERSION_FILENAME = "version.ini"; //$NON-NLS-1$
 
