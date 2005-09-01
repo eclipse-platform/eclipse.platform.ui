@@ -160,8 +160,11 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
     protected abstract IStatusLineManager getStatusLineManager();
 
     public IPartActionBars getPartActionBars() {
-        if (partActionBars == null) {
-            partActionBars = createPartActionBars();
+    	if (partActionBars == null) {
+    		partActionBars = (IPartActionBars) getSite().getAdapter(IPartActionBars.class);
+    		if(partActionBars==null) {
+    			partActionBars = createPartActionBars();
+    		}
         }
         return partActionBars ;
     }

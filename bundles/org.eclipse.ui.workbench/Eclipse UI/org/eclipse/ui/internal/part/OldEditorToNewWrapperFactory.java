@@ -17,6 +17,7 @@ import org.eclipse.ui.internal.components.framework.ComponentFactory;
 import org.eclipse.ui.internal.components.framework.ComponentHandle;
 import org.eclipse.ui.internal.components.framework.Components;
 import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.part.components.services.IDirtyHandler;
 
 /**
  * @since 3.1
@@ -33,7 +34,7 @@ public class OldEditorToNewWrapperFactory extends ComponentFactory {
         StandardWorkbenchServices services = new StandardWorkbenchServices(availableServices);
         
         try {
-            return new ComponentHandle(new OldEditorToNewWrapper(part, services));
+            return new ComponentHandle(new OldEditorToNewWrapper(part, services, (IDirtyHandler) availableServices.getService(IDirtyHandler.class)));
 //            bundle, composite, 
 //                    new ProviderToAdaptableAdapter(availableServices), input, page, actionBars, selectionHandler,
 //                    name, state, status, partDescriptor), true);

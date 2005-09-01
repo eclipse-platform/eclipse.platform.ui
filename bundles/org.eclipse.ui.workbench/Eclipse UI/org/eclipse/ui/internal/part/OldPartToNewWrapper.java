@@ -103,7 +103,7 @@ public abstract class OldPartToNewWrapper implements IFocusable, IAdaptable, IDi
      *
      * @param propId
      */
-    private void propertyChanged(int propId) {
+    protected void propertyChanged(int propId) {
         switch(propId) {
         	case IWorkbenchPartConstants.PROP_TITLE:
         	    if (part.getTitleImage() != lastImage ) {

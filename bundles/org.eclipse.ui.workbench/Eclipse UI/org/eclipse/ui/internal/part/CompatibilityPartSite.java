@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.PartSite;
 /**
  * @since 3.1
  */
-public class CompatibilityPartSite implements IWorkbenchPartSite, IViewSite, IEditorSite {
+public class CompatibilityPartSite implements IViewSite, IEditorSite {
     private ArrayList menuExtenders;
     private IWorkbenchPart part;
     private ISelectionProvider selectionProvider;
@@ -47,6 +47,7 @@ public class CompatibilityPartSite implements IWorkbenchPartSite, IViewSite, IEd
             services.getSelectionHandler().setSelection(event.getSelection());
         }
     };
+	private IWorkbenchPartSite parentSite;
 
     /**
      * @param adapterProvider
@@ -59,6 +60,10 @@ public class CompatibilityPartSite implements IWorkbenchPartSite, IViewSite, IEd
     public CompatibilityPartSite(StandardWorkbenchServices services, IWorkbenchPart part, 
             IEditorActionBarContributor actionBarContributor, IActionBars actionBars) {
         super();
+        IPartHost partHost = (IPartHost) services.getAdapter(IPartHost.class);
+        if(partHost!=null) {
+        	this.parentSite = partHost.getSite();
+        }
         this.services = services;
         this.part = part;
         this.actionBarContributor = actionBarContributor;
@@ -213,4 +218,13 @@ public class CompatibilityPartSite implements IWorkbenchPartSite, IViewSite, IEd
         registerContextMenu(getId(), menuManager, selectionProvider,
                 includeEditorInput);
     }
+	public IWorkbenchPartSite getParentSite() {
+		return parentSite;
+	}
+	public void dispose() {
+	}
+	public void activateActionBars(boolean enable) {
+	}
+	public void deactivateActionBars(boolean enable) {
+	}
 }

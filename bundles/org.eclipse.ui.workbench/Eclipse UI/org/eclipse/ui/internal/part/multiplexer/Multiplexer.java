@@ -77,5 +77,9 @@ public class Multiplexer {
     public ServiceFactory getDelegatingContext() {
         return delegatingContext;
     }
+
+	public MultiplexerChild getActive() {
+		return activePart;
+	}
     
 }

@@ -11,16 +11,21 @@
 package org.eclipse.ui.internal.part;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
+import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.components.framework.ComponentException;
 import org.eclipse.ui.internal.components.framework.Components;
 import org.eclipse.ui.internal.part.components.services.IActionBarContributor;
+import org.eclipse.ui.internal.part.components.services.IDirtyHandler;
+import org.eclipse.ui.internal.part.components.services.INameable;
 import org.eclipse.ui.internal.part.services.NullActionBars;
 
 /**
@@ -32,11 +37,14 @@ public class OldEditorToNewWrapper extends OldPartToNewWrapper {
 	private IEditorPart part;
 	
     private IActionBarContributor actionBarContributor;
+
+	private final IDirtyHandler dirtyHandler;
     
-	public OldEditorToNewWrapper(IEditorPart part, StandardWorkbenchServices services) throws CoreException, ComponentException {
+	public OldEditorToNewWrapper(IEditorPart part, StandardWorkbenchServices services, IDirtyHandler dirtyHandler) throws CoreException, ComponentException {
         super(services);
         
 		this.part = part;
+		this.dirtyHandler = dirtyHandler;
         actionBarContributor = services.getActionBarContributorFactory().getContributor(services.getDescriptor());
         
         IActionBars actionBars = (IActionBars)Components.getAdapter(actionBarContributor, IActionBars.class);
@@ -59,6 +67,14 @@ public class OldEditorToNewWrapper extends OldPartToNewWrapper {
 		part.createPartControl(services.getParentComposite());
 		
 		setPart(part);
+		
+		INameable nameable = services.getNameable();
+		nameable.setName(getPartName());
+		nameable.setContentDescription(getContentDescription());
+		nameable.setTooltip(part.getTitleToolTip());
+		nameable.setImage(ImageDescriptor.createFromImage(part.getTitleImage(), Display.getCurrent()));
+		
+		dirtyHandler.setDirty(isDirty());
 	}
     
     /* (non-Javadoc)
@@ -94,7 +110,7 @@ public class OldEditorToNewWrapper extends OldPartToNewWrapper {
             return wbp2.getPartName();
         }
         
-        return ""; //$NON-NLS-1$    
+        return part.getTitle(); //$NON-NLS-1$    
     }
     
     /* (non-Javadoc)
@@ -110,4 +126,13 @@ public class OldEditorToNewWrapper extends OldPartToNewWrapper {
         
         actionBarContributor.dispose();
     }
+    
+    protected void propertyChanged(int propId) {
+		switch (propId) {
+		case IWorkbenchPartConstants.PROP_DIRTY:
+			dirtyHandler.setDirty(isDirty());
+			break;
+		}
+		super.propertyChanged(propId);
+	}
 }

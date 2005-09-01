@@ -73,6 +73,7 @@ public class ChildKeyBindingService implements IKeyBindingService, INestedCompon
             
             parent.registerAction(next);
         }
+        parent.setScopes(scopes);
         active = true;
     }
     

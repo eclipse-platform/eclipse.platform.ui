@@ -176,6 +176,12 @@ public final class ComponentPart extends Part implements IFocusable {
         if (visibleContext.hasService(key)) {
             return Components.queryInterface(adapters, key);
         }
+
+        // try to adapt the component object itself
+        if(key instanceof Class) {
+        	return Components.getAdapter(component.getInstance(), (Class)key);
+        }
+        
         return null;
     }
 

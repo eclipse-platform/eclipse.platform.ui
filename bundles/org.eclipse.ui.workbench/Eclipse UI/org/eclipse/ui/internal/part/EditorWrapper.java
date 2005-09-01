@@ -34,7 +34,10 @@ public class EditorWrapper extends PartWrapper {
         super(parentControl, bundle, page, gen, context);
 
         try {
-            part = (IEditorPart)getWrappedPart().getService(IEditorPart.class);
+        	if (getWrappedPart().hasService(IEditorPart.class)) {
+				part = (IEditorPart) getWrappedPart().getService(
+						IEditorPart.class);
+			}
             if (part == null) {
                 IServiceProvider container = getContainer();
                 StandardWorkbenchServices services = new StandardWorkbenchServices(container);

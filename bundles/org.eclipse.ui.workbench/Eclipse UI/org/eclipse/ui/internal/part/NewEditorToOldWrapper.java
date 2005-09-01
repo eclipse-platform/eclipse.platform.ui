@@ -19,8 +19,9 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.Components;
 import org.eclipse.ui.internal.components.framework.FactoryMap;
 import org.eclipse.ui.internal.components.framework.ServiceFactory;
 import org.eclipse.ui.internal.part.components.services.IPartActionBars;
@@ -100,9 +101,7 @@ public class NewEditorToOldWrapper extends NewPartToOldWrapper implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
      */
-    public void init(IEditorSite site, IEditorInput input)
-            throws PartInitException {
-
+    public void init(IEditorSite site, IEditorInput input) {
         ((PartPropertyProvider)getPropertyProvider()).setEditorInput(input);
         setSite(site);
     }
@@ -111,20 +110,30 @@ public class NewEditorToOldWrapper extends NewPartToOldWrapper implements
      * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
      */
     public void doSave(IProgressMonitor monitor) {
-
+    	ISaveablePart saveablePart = (ISaveablePart) Components.getAdapter(getPart(), ISaveablePart.class);
+    	if(saveablePart!=null) {
+    		saveablePart.doSave(monitor);
+    	}
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.ISaveablePart#doSaveAs()
      */
     public void doSaveAs() {
-
+    	ISaveablePart saveablePart = (ISaveablePart) Components.getAdapter(getPart(), ISaveablePart.class);
+    	if(saveablePart!=null) {
+    		saveablePart.doSaveAs();
+    	}
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
      */
     public boolean isSaveAsAllowed() {
+    	ISaveablePart saveablePart = (ISaveablePart) Components.getAdapter(getPart(), ISaveablePart.class);
+    	if(saveablePart!=null) {
+    		return saveablePart.isSaveAsAllowed();
+    	}
         return false;
     }
 
@@ -132,6 +141,10 @@ public class NewEditorToOldWrapper extends NewPartToOldWrapper implements
      * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
      */
     public boolean isSaveOnCloseNeeded() {
+    	ISaveablePart saveablePart = (ISaveablePart) Components.getAdapter(getPart(), ISaveablePart.class);
+    	if(saveablePart!=null) {
+    		return saveablePart.isSaveOnCloseNeeded();
+    	}
         return false;
     }
 
