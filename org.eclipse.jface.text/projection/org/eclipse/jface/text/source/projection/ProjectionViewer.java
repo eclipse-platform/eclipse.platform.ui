@@ -614,8 +614,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=108258
 				// make sure the document range is strictly line based
 				int end= offset + length;
-				offset= toLineStart(offset);
-				length= toEndLineStart(end) - offset;
+				offset= toLineStart(projection.getMasterDocument(), offset, false);
+				length= toLineStart(projection.getMasterDocument(), end, true) - offset;
 				projection.addMasterDocumentRange(offset, length);
 			} finally {
 				fHandleProjectionChanges= true;
@@ -644,8 +644,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=108258
 				// make sure the document range is strictly line based
 				int end= offset + length;
-				offset= toLineStart(offset);
-				length= toEndLineStart(end) - offset;
+				offset= toLineStart(projection.getMasterDocument(), offset, false);
+				length= toLineStart(projection.getMasterDocument(), end, true) - offset;
 				projection.removeMasterDocumentRange(offset, length);
 			} finally {
 				fHandleProjectionChanges= true;
@@ -654,32 +654,24 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 	
 	/**
-	 * Returns the first line offset &lt;= <code>offset</code>.
+	 * Returns the first line offset &lt;= <code>offset</code>. If <code>testLastLine</code>
+	 * is <code>true</code> and the offset is on last line then <code>offset</code> is returned.
 	 * 
+	 * @param document the document
 	 * @param offset the master document offset
-	 * @return the first line offset &lt;= <code>offset</code>.
-	 * @throws BadLocationException if the offset is invalid
-	 * @since 3.2
-	 */
-	private int toLineStart(int offset) throws BadLocationException {
-		return getDocument().getLineInformationOfOffset(offset).getOffset();
-	}
-	
-	/**
-	 * Returns the first line offset &lt;= <code>offset</code>. If the line is the last one in
-	 * the document and offset is the end of the document, no modification is done.
-	 * 
-	 * @param offset the master document offset
+	 * @param testLastLine <code>true</code> if the test for the last line should be performed
 	 * @return the closest line offset &gt;= <code>offset</code>
 	 * @throws BadLocationException if the offset is invalid
 	 * @since 3.2
 	 */
-	private int toEndLineStart(int offset) throws BadLocationException {
-		IDocument document= getDocument();
-		int line= document.getLineOfOffset(offset);
-		if (document.getNumberOfLines() > line + 1)
-			return document.getLineOffset(line);
-		return offset;
+	private int toLineStart(IDocument document, int offset, boolean testLastLine) throws BadLocationException {
+		if (document == null)
+			return offset;
+		
+		if (testLastLine && offset >= document.getLineInformationOfOffset(document.getLength() - 1).getOffset())
+			return offset;
+		
+		return document.getLineInformationOfOffset(offset).getOffset();
 	}
 
 	/*
