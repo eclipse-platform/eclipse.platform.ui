@@ -18,8 +18,11 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -202,6 +205,14 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         text.setFocus();
         text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.FILL_HORIZONTAL));
+        text.addModifyListener(new ModifyListener(){
+        	public void modifyText(ModifyEvent e) {
+        		Button okButton = getButton(Window.OK);
+        		if(okButton != null && !okButton.isDisposed()) {
+        			okButton.setEnabled(!"".equals(text.getText())); //$NON-NLS-1$
+        		}
+        	}
+        });
         setInitialTextValues(text);
 
         Button browseButton = new Button(panel, SWT.PUSH);
