@@ -12,10 +12,14 @@
 package org.eclipse.jface.bindings.keys;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -466,6 +470,12 @@ public final class KeySequenceText {
 	 * that an infinite number should be allowed.
 	 */
 	public static final int INFINITE = -1;
+	
+	/**
+	 * The name of the property representing the current key sequence in this
+	 * key sequence widget.
+	 */
+	public static final String P_KEY_SEQUENCE = "org.eclipse.jface.bindings.keys.KeySequenceText.KeySequence"; //$NON-NLS-1$
 
 	/**
 	 * The keys trapped by this widget. This list is guaranteed to be roughly
@@ -483,6 +493,12 @@ public final class KeySequenceText {
 	 * The text of the key sequence -- containing only the complete key strokes.
 	 */
 	private KeySequence keySequence = KeySequence.getInstance();
+	
+	/**
+	 * Those listening to changes to the key sequence in this widget. This value
+	 * may be <code>null</code> if there are no listeners.
+	 */
+	private Collection listeners = null;
 
 	/** The maximum number of key strokes permitted in the sequence. */
 	private int maxStrokes = INFINITE;
@@ -533,11 +549,34 @@ public final class KeySequenceText {
 	}
 
 	/**
+	 * Adds a property change listener to this key sequence widget. It will be
+	 * notified when the key sequence changes.
+	 * 
+	 * @param listener
+	 *            The listener to be notified when changes occur; must not be
+	 *            <code>null</code>.
+	 */
+	public final void addPropertyChangeListener(
+			final IPropertyChangeListener listener) {
+		if (listener == null) {
+			return;
+		}
+
+		if (listeners == null) {
+			listeners = new ArrayList(1);
+		}
+
+		listeners.add(listener);
+	}
+
+	/**
 	 * Clears the text field and resets all the internal values.
 	 */
 	public void clear() {
+		final KeySequence oldKeySequence = keySequence;
 		keySequence = KeySequence.getInstance();
 		text.setText(EMPTY_STRING);
+		firePropertyChangeEvent(oldKeySequence);
 	}
 
 	/**
@@ -642,6 +681,26 @@ public final class KeySequenceText {
 		}
 
 		return startStrokeIndex;
+	}
+	
+	/**
+	 * Fires a property change event to all of the listeners.
+	 * 
+	 * @param oldKeySequence
+	 *            The old key sequence; must not be <code>null</code>.
+	 */
+	protected final void firePropertyChangeEvent(
+			final KeySequence oldKeySequence) {
+		if (listeners != null) {
+			final Iterator listenerItr = listeners.iterator();
+			final PropertyChangeEvent event = new PropertyChangeEvent(this,
+					P_KEY_SEQUENCE, oldKeySequence, getKeySequence());
+			while (listenerItr.hasNext()) {
+				final IPropertyChangeListener listener = (IPropertyChangeListener) listenerItr
+						.next();
+				listener.propertyChange(event);
+			}
+		}
 	}
 
 	/**
@@ -770,6 +829,21 @@ public final class KeySequenceText {
 	private boolean isCursorInLastPosition() {
 		return (text.getSelection().y >= getText().length());
 	}
+	
+	/**
+	 * Removes the given listener from this key sequence widget.
+	 * 
+	 * @param listener
+	 *            The listener to be removed; must not be <code>null</code>.
+	 */
+	public final void removePropertyChangeListener(
+			final IPropertyChangeListener listener) {
+		if ((listener == null) || (listeners == null)) {
+			return;
+		}
+
+		listeners.remove(listener);
+	}
 
 	/**
 	 * <p>
@@ -787,6 +861,7 @@ public final class KeySequenceText {
 	 *            if none.
 	 */
 	public void setKeySequence(KeySequence newKeySequence) {
+		final KeySequence oldKeySequence = keySequence;
 		keySequence = newKeySequence;
 
 		// Trim any extra strokes.
@@ -811,6 +886,8 @@ public final class KeySequenceText {
 			text.addModifyListener(updateSequenceListener);
 			text.setSelection(getText().length());
 		}
+		
+		firePropertyChangeEvent(oldKeySequence);
 	}
 
 	/**
