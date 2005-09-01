@@ -17,7 +17,7 @@ import java.util.Map;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * Descriptor object of a recorded refactoring.
+ * Descriptor object of a refactoring.
  * <p>
  * This class is not indented to be subclassed outside the refactoring
  * framework.
