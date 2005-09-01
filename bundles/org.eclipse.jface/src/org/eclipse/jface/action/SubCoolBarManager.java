@@ -48,7 +48,7 @@ public class SubCoolBarManager extends SubContributionManager implements
     public int getStyle() {
         // It is okay to cast down since we only accept coolBarManager objects in the
         // constructor
-        return ((CoolBarManager) getParent()).getStyle();
+        return ((ICoolBarManager) getParent()).getStyle();
     }
 
     /**
