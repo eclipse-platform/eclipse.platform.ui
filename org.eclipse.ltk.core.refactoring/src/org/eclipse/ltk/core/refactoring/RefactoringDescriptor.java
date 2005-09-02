@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,10 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * 
  * @since 3.2
  */
-public class RefactoringDescriptor {
+public class RefactoringDescriptor implements Serializable {
+
+	/** The serial version UID */
+	private static final long serialVersionUID= 1L;
 
 	/** The map of arguments (element type: &lt;String, String&gt;) */
 	private final Map fArguments;
