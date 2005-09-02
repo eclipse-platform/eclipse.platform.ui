@@ -110,7 +110,7 @@ public class OldEditorToNewWrapper extends OldPartToNewWrapper {
             return wbp2.getPartName();
         }
         
-        return part.getTitle(); //$NON-NLS-1$    
+        return part.getTitle();
     }
     
     /* (non-Javadoc)
