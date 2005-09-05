@@ -611,11 +611,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		} else {
 			try {
 				fHandleProjectionChanges= false;
-				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=108258
-				// make sure the document range is strictly line based
-				int end= offset + length;
-				offset= toLineStart(projection.getMasterDocument(), offset, false);
-				length= toLineStart(projection.getMasterDocument(), end, true) - offset;
 				projection.addMasterDocumentRange(offset, length);
 			} finally {
 				fHandleProjectionChanges= true;
@@ -641,11 +636,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		} else {
 			try {
 				fHandleProjectionChanges= false;
-				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=108258
-				// make sure the document range is strictly line based
-				int end= offset + length;
-				offset= toLineStart(projection.getMasterDocument(), offset, false);
-				length= toLineStart(projection.getMasterDocument(), end, true) - offset;
 				projection.removeMasterDocumentRange(offset, length);
 			} finally {
 				fHandleProjectionChanges= true;
@@ -653,27 +643,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 	
-	/**
-	 * Returns the first line offset &lt;= <code>offset</code>. If <code>testLastLine</code>
-	 * is <code>true</code> and the offset is on last line then <code>offset</code> is returned.
-	 * 
-	 * @param document the document
-	 * @param offset the master document offset
-	 * @param testLastLine <code>true</code> if the test for the last line should be performed
-	 * @return the closest line offset &gt;= <code>offset</code>
-	 * @throws BadLocationException if the offset is invalid
-	 * @since 3.2
-	 */
-	private int toLineStart(IDocument document, int offset, boolean testLastLine) throws BadLocationException {
-		if (document == null)
-			return offset;
-		
-		if (testLastLine && offset >= document.getLineInformationOfOffset(document.getLength() - 1).getOffset())
-			return offset;
-		
-		return document.getLineInformationOfOffset(offset).getOffset();
-	}
-
 	/*
 	 * @see org.eclipse.jface.text.TextViewer#setVisibleRegion(int, int)
 	 */
@@ -794,7 +763,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			removeMasterDocumentRange(projection, offset, length);
 
 		if (projection != null && fireRedraw) {
-			// repaint line above
+			// repaint line above to get the folding box
 			IDocument document= getDocument();
 			int line= document.getLineOfOffset(offset);
 			if (line > 0) {
@@ -808,22 +777,22 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * Makes the given range visible again while keeping the given collapsed
 	 * ranges. If requested, a redraw request is issued.
 	 *
-	 * @param expanded the range to be expanded
-	 * @param collapsed a sequence of collapsed ranges completely contained by
-	 *            the expanded range
+	 * @param offset the offset of the range to be expanded
+	 * @param length the length of the range to be expanded
 	 * @param fireRedraw <code>true</code> if a redraw request should be
 	 *            issued, <code>false</code> otherwise
 	 * @throws BadLocationException in case the range is invalid
 	 */
-	private void expand(Position expanded, ProjectionAnnotation[] collapsed, boolean fireRedraw) throws BadLocationException {
+	private void expand(int offset, int length, boolean fireRedraw) throws BadLocationException {
 		IDocument slave= getVisibleDocument();
 		if (slave instanceof ProjectionDocument) {
 			ProjectionDocument projection= (ProjectionDocument) slave;
 
 			// expand
-			addMasterDocumentRange(projection, expanded.getOffset(), expanded.getLength());
+			addMasterDocumentRange(projection, offset, length);
 
 			// collapse contained regions
+			ProjectionAnnotation[] collapsed= computeCollapsedNestedAnnotations(offset, length);
 			if (collapsed != null) {
 				for (int i= 0; i < collapsed.length; i++) {
 					IRegion[] regions= computeCollapsedRegions(fProjectionAnnotationModel.getPosition(collapsed[i]));
@@ -832,6 +801,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 							removeMasterDocumentRange(projection, regions[j].getOffset(), regions[j].getLength());
 				}
 			}
+
+			// redraw if requested
+			if (fireRedraw)
+				internalInvalidateTextPresentation(offset, length);
 		}
 	}
 
@@ -1021,13 +994,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		commandQueue.clear();
 	}
 
-	private boolean covers(Position expanded, Position position) {
-		if (!expanded.equals(position) && !position.isDeleted())
-			return expanded.getOffset() <= position.getOffset() &&  position.getOffset() + position.getLength() <= expanded.getOffset() + expanded.getLength();
+	private boolean covers(int offset, int length, Position position) {
+		if (!(position.offset == offset && position.length == length) && !position.isDeleted())
+			return offset <= position.getOffset() && position.getOffset() + position.getLength() <= offset + length;
 		return false;
 	}
 
-	private ProjectionAnnotation[] computeCollapsedNestedAnnotations(Position expanded) {
+	private ProjectionAnnotation[] computeCollapsedNestedAnnotations(int offset, int length) {
 		List annotations= new ArrayList(5);
 		Iterator e= fProjectionAnnotationModel.getAnnotationIterator();
 		while (e.hasNext()) {
@@ -1038,7 +1011,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					// annotation might already be deleted, we will be informed later on about this deletion
 					continue;
 				}
-				if (covers(expanded, position))
+				if (covers(offset, length, position))
 					annotations.add(annotation);
 			}
 		}
@@ -1068,10 +1041,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			ProjectionAnnotation annotation= (ProjectionAnnotation) removedAnnotations[i];
 			if (annotation.isCollapsed()) {
 				Position expanded= event.getPositionOfRemovedAnnotation(annotation);
-				ProjectionAnnotation[] collapsed= computeCollapsedNestedAnnotations(expanded);
-				expand(expanded, collapsed, false);
-				if (fireRedraw)
-					internalInvalidateTextPresentation(expanded.getOffset(), expanded.getLength());
+				IRegion[] regions= computeCollapsedRegions(expanded);
+				if (regions != null)
+					for (int j= 0; j < regions.length; j++)
+						expand(regions[j].getOffset(), regions[j].getLength(), fireRedraw);
 			}
 		}
 	}
@@ -1168,20 +1141,18 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			if (position == null)
 				continue;
 
-			if (annotation.isCollapsed()) {
-				if (!covers(coverage, position)) {
+			if (!covers(coverage, position)) {
+				if (annotation.isCollapsed()) {
 					coverage.add(position);
 					IRegion[] regions= computeCollapsedRegions(position);
 					if (regions != null)
 						for (int j= 0; j < regions.length; j++)
 							collapse(regions[j].getOffset(), regions[j].getLength(), fireRedraw);
-				}
-			} else {
-				if (!covers(coverage, position)) {
-					ProjectionAnnotation[] collapsed= computeCollapsedNestedAnnotations(position);
-					expand(position, collapsed, false);
-					if (fireRedraw)
-						internalInvalidateTextPresentation(position.getOffset(), position.getLength());
+				} else {
+					IRegion[] regions= computeCollapsedRegions(position);
+					if (regions != null)
+						for (int j= 0; j < regions.length; j++)
+							expand(regions[j].getOffset(), regions[j].getLength(), fireRedraw);
 				}
 			}
 		}
