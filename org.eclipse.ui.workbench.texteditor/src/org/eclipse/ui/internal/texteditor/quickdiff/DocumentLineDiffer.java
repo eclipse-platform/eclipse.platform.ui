@@ -662,6 +662,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				} catch (ArrayStoreException e) {
 				} catch (IndexOutOfBoundsException e) {
 				} catch (ConcurrentModificationException e) {
+				} catch (NegativeArraySizeException e) {
 				}
 				return null;
 			}
@@ -712,6 +713,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			reinitOnError(e);
 			return;
 		} catch (ConcurrentModificationException e) {
+			reinitOnError(e);
+			return;
+		} catch (NegativeArraySizeException e) {
 			reinitOnError(e);
 			return;
 		}
@@ -769,6 +773,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			reinitOnError(e);
 			return;
 		} catch (ConcurrentModificationException e) {
+			reinitOnError(e);
+			return;
+		} catch (NegativeArraySizeException e) {
 			reinitOnError(e);
 			return;
 		}
