@@ -56,4 +56,11 @@ public class CopyArguments extends RefactoringArguments {
 	public ReorgExecutionLog getExecutionLog() {
 		return fLog;
 	}
+	
+	/* (non-Javadoc)
+	 * @see RefactoringArguments#toString()
+	 */
+	public String toString() {
+		return "copy to " + fDestination.toString(); //$NON-NLS-1$
+	}
 }

@@ -25,5 +25,12 @@ public class DeleteArguments extends RefactoringArguments {
 	 * Creates a new delete arguments object.
 	 */
 	public DeleteArguments() {
-	}	
+	}
+	
+    /* (non-Javadoc)
+     * @see RefactoringArguments#toString()
+     */
+    public String toString() {
+    	return "delete"; //$NON-NLS-1$
+    }
 }

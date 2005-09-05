@@ -53,4 +53,12 @@ public final class GenericRefactoringArguments extends RefactoringArguments {
 		Assert.isNotNull(value);
 		fAttributes.put(name, value);
 	}
+	
+	/* (non-Javadoc)
+	 * @see RefactoringArguments#toString()
+	 */
+	public String toString() {
+		return fAttributes.toString();
+	}
+
 }

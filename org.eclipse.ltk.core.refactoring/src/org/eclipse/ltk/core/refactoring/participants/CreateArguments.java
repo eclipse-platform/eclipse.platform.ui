@@ -25,5 +25,12 @@ public class CreateArguments extends RefactoringArguments {
 	 * Creates a new create arguments object.
 	 */
 	public CreateArguments() {
-	}	
+	}
+    
+    /* (non-Javadoc)
+     * @see RefactoringArguments#toString()
+     */
+    public String toString() {
+    	return "create"; //$NON-NLS-1$
+    }
 }

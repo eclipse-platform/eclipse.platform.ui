@@ -32,4 +32,18 @@ public abstract class RefactoringArguments {
 	 */
 	protected RefactoringArguments() {
 	}
+	
+	/**
+	 * Returns a string representation of these arguments suitable for debugging
+	 * purposes only.
+	 * <p>
+	 * Subclasses should reimplement this method.
+	 * </p>
+	 * 
+	 * @return a debug string 
+	 * @since 3.2
+	 */
+	public String toString() {
+		return super.toString();
+	}
 }
