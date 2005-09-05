@@ -493,22 +493,25 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		int dy= dh / 2;
 		Shell shell= getShell();
 		Rectangle rect= shell.getBounds();
-		Rectangle displayRect= shell.getDisplay().getClientArea();
-		Rectangle monitorRect= shell.getMonitor().getClientArea();
-		rect.x= Math.max(0, rect.x - dx);
-		rect.y= Math.max(0, rect.y - dy);
-		// limit with and hight to monitor
-		rect.width= Math.min(rect.width + dw, monitorRect.width);
-		rect.height= Math.min(rect.height + dh, monitorRect.height);
-		int xe= rect.x + rect.width;
-		// position the dialog on the display
-		if (xe > displayRect.width) {
-			rect.x-= xe - displayRect.width; 
+		Rectangle clientRect= shell.getMonitor().getClientArea();
+		rect.x= Math.max(clientRect.x, rect.x - dx);
+		rect.y= Math.max(clientRect.y, rect.y - dy);
+		
+		// limit with and height to monitor
+		rect.width= Math.min(rect.width + dw, clientRect.width);
+		rect.height= Math.min(rect.height + dh, clientRect.height);
+
+		// Reposition the dialog so that it will be fully visible.
+		// Normalize x and y relative to the client area.
+		int xe= (rect.x - clientRect.x) + rect.width;
+		if (xe > clientRect.width) {
+			rect.x-= xe - clientRect.width; 
 		}
-		int ye= rect.y + rect.height;
-		if (ye > displayRect.height) {
-			rect.y-= ye - displayRect.height; 
+		int ye= (rect.y - clientRect.y) + rect.height;
+		if (ye > clientRect.height) {
+			rect.y-= ye - clientRect.height; 
 		}
+		
 		shell.setBounds(rect);
 	}
 	
