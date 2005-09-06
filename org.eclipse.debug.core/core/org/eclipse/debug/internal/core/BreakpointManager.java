@@ -393,7 +393,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * <li>A lower level exception occurred while accessing the given marker</li>
 	 * </ol>
 	 */
-	private IBreakpoint createBreakpoint(IMarker marker) throws DebugException {
+	public IBreakpoint createBreakpoint(IMarker marker) throws DebugException {
 		IBreakpoint breakpoint= (IBreakpoint) fMarkersToBreakpoints.get(marker);
 		if (breakpoint != null) {
 			return breakpoint;
