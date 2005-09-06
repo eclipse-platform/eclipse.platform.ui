@@ -71,7 +71,9 @@ public class RefactoringDescriptor implements Serializable {
 	 *            <code>null</code> for no commment
 	 * @param arguments
 	 *            the argument map (element type: &lt;String, String&gt;). The
-	 *            keys of the arguments must not contain spaces.
+	 *            keys of the arguments are required to be non-empty strings
+	 *            which must not contain spaces. The values must be non-empty
+	 *            strings
 	 */
 	public RefactoringDescriptor(final String id, final String project, final String description, final String comment, final Map arguments) {
 		Assert.isTrue(id != null && !"".equals(id)); //$NON-NLS-1$
