@@ -17,17 +17,23 @@ import org.eclipse.swt.SWT;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import org.eclipse.jface.text.DefaultTextHover;
 import org.eclipse.jface.text.DefaultUndoManager;
+import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.DefaultAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 import org.eclipse.ui.internal.editors.text.URLHyperlinkDetector;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AnnotationPreference;
 
 
 /**
@@ -44,20 +50,6 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * </p>
 	 */
 	protected IPreferenceStore fPreferenceStore;
-
-	/**
-	 * A no-op implementation of <code>IAnnotationHover</code> that will trigger the text editor
-	 * to set up annotation hover support.
-	 */
-	private static class NullHover implements IAnnotationHover {
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
-		 */
-		public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
-			return null;
-		}
-	}
-
 
 	/**
 	 * Creates a text source viewer configuration.
@@ -77,9 +69,108 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
+	 * @since 3.2
 	 */
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
-		return new NullHover();
+		return new DefaultAnnotationHover() {
+			protected boolean isIncluded(Annotation annotation) {
+				return isShowInVerticalRuler(annotation);
+			}
+		};
+	}
+
+	/*
+	 * @see DefaultAnnotationHover#isIncluded(Annotation)
+	 * @since 3.2
+	 */
+	protected boolean isShowInVerticalRuler(Annotation annotation) {
+		AnnotationPreference preference= getAnnotationPreference(annotation);
+		if (preference == null)
+			return false;
+		String key= preference.getVerticalRulerPreferenceKey();
+		// backward compatibility
+		if (key != null && !fPreferenceStore.getBoolean(key))
+			return false;
+		
+		return true;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getOverviewRulerAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
+	 * @since 3.1
+	 */
+	public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer) {
+		return new DefaultAnnotationHover() {
+			protected boolean isIncluded(Annotation annotation) {
+				return isShowInOverviewRuler(annotation);
+			}
+		};
+	}
+
+	/*
+	 * @see DefaultAnnotationHover#isIncluded(Annotation)
+	 * @since 3.2
+	 */
+	protected boolean isShowInOverviewRuler(Annotation annotation) {
+		AnnotationPreference preference= getAnnotationPreference(annotation);
+		if (preference == null)
+			return false;
+		String key= preference.getOverviewRulerPreferenceKey();
+		if (key == null || !fPreferenceStore.getBoolean(key))
+			return false;
+		
+		return true;
+	}
+
+	/*
+	 * @see SourceViewerConfiguration#getConfiguredTextHoverStateMasks(ISourceViewer, String)
+	 */
+	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
+		return new int[] { ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK };
+	}
+
+	/*
+	 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String)
+	 */
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+		return new DefaultTextHover(sourceViewer) {
+			protected boolean isIncluded(Annotation annotation) {
+				return isShownInText(annotation);
+			}
+		};
+	}
+	
+	/*
+	 * @see DefaultTextHover#isIncluded(Annotation)
+	 * @since 3.2
+	 */
+	protected boolean isShownInText(Annotation annotation) {
+		AnnotationPreference preference= getAnnotationPreference(annotation);
+		if (preference == null)
+			return false;
+		String key= preference.getTextPreferenceKey();
+		if (key != null) {
+			if (!fPreferenceStore.getBoolean(key))
+				return false;
+		} else {
+			key= preference.getHighlightPreferenceKey();
+			if (key == null || !fPreferenceStore.getBoolean(key))
+				return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Returns the annotation preference for the given annotation.
+	 *
+	 * @param annotation the annotation
+	 * @return the annotation preference or <code>null</code> if none
+	 * @since 3.2
+	 */
+	private AnnotationPreference getAnnotationPreference(Annotation annotation) {
+		if (annotation == null || fPreferenceStore == null)
+			return null;
+		return EditorsUI.getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
 	}
 
 	/*
@@ -195,4 +286,23 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		int undoHistorySize= fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE);
 		return new DefaultUndoManager(undoHistorySize);
 	}
+	
+	/*
+	 * @see SourceViewerConfiguration#getReconciler(ISourceViewer)
+	 * <p>
+	 * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
+	 * </p>
+	 * @since 3.2
+	 */
+//	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+//		if (fPreferenceStore == null)
+//			return super.getReconciler(sourceViewer);
+//		
+//		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, EditorsUI.getSpellingService(), "org.eclipse.ui.workbench.texteditor.spelling"); //$NON-NLS-1$
+//		MonoReconciler reconciler= new MonoReconciler(strategy, false);
+//		reconciler.setIsIncrementalReconciler(false);
+//		reconciler.setProgressMonitor(new NullProgressMonitor());
+//		reconciler.setDelay(500);
+//		return reconciler;
+//	}
 }
