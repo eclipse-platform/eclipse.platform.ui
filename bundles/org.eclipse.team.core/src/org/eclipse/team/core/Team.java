@@ -225,7 +225,7 @@ public final class Team {
 		globalIgnore = new TreeMap();
 		ignoreMatchers = null;
 		for (int i = 0; i < patterns.length; i++) {
-			globalIgnore.put(patterns[i], new Boolean(enabled[i]));
+			globalIgnore.put(patterns[i], Boolean.valueOf(enabled[i]));
 		}
 		// Now set into preferences
 		StringBuffer buf = new StringBuffer();
@@ -272,9 +272,9 @@ public final class Team {
 							}
 							boolean enabled = selected != null && selected.equalsIgnoreCase("true"); //$NON-NLS-1$
 							// if this ignore doesn't already exist, add it to the global list
-							pIgnore.put(pattern, new Boolean(enabled));
+							pIgnore.put(pattern, Boolean.valueOf(enabled));
 							if (!gIgnore.containsKey(pattern)) {
-								gIgnore.put(pattern, new Boolean(enabled));
+								gIgnore.put(pattern, Boolean.valueOf(enabled));
 							}
 						}
 					}
@@ -308,7 +308,7 @@ public final class Team {
 				pattern = tok.nextToken();
 				if (pattern.length()==0) return;
 				enabled = tok.nextToken();
-				globalIgnore.put(pattern, new Boolean(enabled));
+				globalIgnore.put(pattern, Boolean.valueOf(enabled));
 			} 
 		} catch (NoSuchElementException e) {
 			return;
@@ -337,7 +337,7 @@ public final class Team {
 				for (int i = 0; i < ignoreCount; i++) {
 					String pattern = dis.readUTF();
 					boolean enabled = dis.readBoolean();
-					globalIgnore.put(pattern, new Boolean(enabled));
+					globalIgnore.put(pattern, Boolean.valueOf(enabled));
 				}
 			} finally {
 				dis.close();

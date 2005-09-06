@@ -100,7 +100,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final char HOST_SEPARATOR = '@';
 	public static final char PORT_SEPARATOR = '#';
 	public static final boolean STANDALONE_MODE = (System.getProperty("eclipse.cvs.standalone")==null) ? //$NON-NLS-1$ 
-		false	:(new Boolean(System.getProperty("eclipse.cvs.standalone")).booleanValue()); //$NON-NLS-1$ 
+		false	:(Boolean.valueOf(System.getProperty("eclipse.cvs.standalone")).booleanValue()); //$NON-NLS-1$ 
 	
 	// command to start remote cvs in server mode
 	private static final String INVOKE_SVR_CMD = "server"; //$NON-NLS-1$
