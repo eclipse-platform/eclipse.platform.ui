@@ -25,6 +25,7 @@
 			<fileset dir=".">
 			  <include name="plugin.xml" />
 			  <include name="plugin.properties" />
+			  <include name=".options" />
 			  <include name="META-INF/**" />
 			</fileset>
 			<fileset dir="bin" />
