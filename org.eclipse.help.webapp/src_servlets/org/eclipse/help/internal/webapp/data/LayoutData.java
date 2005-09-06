@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
+import java.util.ArrayList;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.*;
 
 public class LayoutData extends RequestData {
@@ -81,7 +85,14 @@ public class LayoutData extends RequestData {
 		View searchview = new View("search", //$NON-NLS-1$
 				"", //$NON-NLS-1$
 				preferences.getImagesDirectory() + "/search_results_view.gif", 'R'); //$NON-NLS-1$
-
+		
+		View indexview = null;
+		if (HelpPlugin.getIndexManager().getIndex(Platform.getNL())
+				.getEntries().size() > 0) {
+			indexview = new View("index", "", preferences.getImagesDirectory()
+					+ "/index_view.gif", 'I');
+		}
+		
 		View linksview = null;
 		View bookmarksview = null;
 
@@ -94,15 +105,20 @@ public class LayoutData extends RequestData {
 					"", //$NON-NLS-1$
 					preferences.getImagesDirectory() + "/bookmarks_view.gif", (char)0); //$NON-NLS-1$
 
-		if (linksview != null && bookmarksview != null)
-			views = new View[]{tocview, searchview, linksview, bookmarksview};
-		else if (linksview != null)
-			views = new View[]{tocview, searchview, linksview};
-		else if (bookmarksview != null)
-			views = new View[]{tocview, searchview, bookmarksview};
-		else
-			views = new View[]{tocview, searchview};
-
+		ArrayList viewList = new ArrayList();
+		viewList.add(tocview);
+		viewList.add(searchview);
+		if (indexview != null){
+			viewList.add(indexview);
+		}
+		if (linksview != null){
+			viewList.add(linksview);
+		}
+		if (bookmarksview !=null){
+			viewList.add(bookmarksview);
+		}
+		
+		views = (View[]) viewList.toArray(new View[viewList.size()]);
 		return views;
 	}
 

@@ -14,6 +14,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.toc.*;
+import org.eclipse.help.internal.index.*;
 import org.eclipse.help.internal.util.*;
 import org.osgi.framework.*;
 /**
@@ -38,6 +39,8 @@ public class HelpPlugin extends Plugin
 	protected TocManager tocManager;
 	protected static Object tocManagerCreateLock = new Object();
 	protected ContextManager contextManager;
+
+	protected IndexManager indexManager;
 
 	/**
 	 * Logs an Error message with an exception.
@@ -161,6 +164,12 @@ public class HelpPlugin extends Plugin
 		if (type == BundleEvent.RESOLVED || type == BundleEvent.UNRESOLVED) {
 			ResourceLocator.clearZipCache();
 		}
+	}
+
+	public static IndexManager getIndexManager() {
+		if (getDefault().indexManager == null)
+			getDefault().indexManager = new IndexManager();
+		return getDefault().indexManager;
 	}
 
 }

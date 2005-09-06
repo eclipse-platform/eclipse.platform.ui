@@ -28,6 +28,11 @@
     </servlet>
     
     <servlet>
+        <servlet-name>index</servlet-name>
+        <servlet-class>org.eclipse.help.internal.webapp.servlet.IndexServlet</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>search</servlet-name>
         <servlet-class>org.eclipse.help.internal.webapp.servlet.SearchServlet</servlet-class>
     </servlet>
@@ -74,6 +79,11 @@
         <url-pattern>/toc/*</url-pattern>
     </servlet-mapping>
        
+    <servlet-mapping>
+        <servlet-name>index</servlet-name>
+        <url-pattern>/index/*</url-pattern>
+    </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>search</servlet-name>
         <url-pattern>/search/*</url-pattern>
