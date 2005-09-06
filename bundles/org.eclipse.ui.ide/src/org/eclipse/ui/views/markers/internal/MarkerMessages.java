@@ -30,6 +30,7 @@ public class MarkerMessages extends NLS{
 	public static String sortAction_title;
 	public static String filtersAction_title;
 	public static String filtersAction_tooltip;
+	public static String filtersSubMenu_title;
 
 	public static String sortDialog_title;
 	public static String sortDialog_label;
@@ -209,5 +210,7 @@ public class MarkerMessages extends NLS{
 	public static String MarkerFilterDialog_title;
 	public static String MarkerFilterDialog_message;
 	public static String MarkerFilterDialog_emptyMessage;
+	
+	public static String CheckedTableSelectionDialog_emptyListMessage;
 
 }

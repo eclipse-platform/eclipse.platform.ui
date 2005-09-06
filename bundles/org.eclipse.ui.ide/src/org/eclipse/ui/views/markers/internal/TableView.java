@@ -13,8 +13,6 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -54,6 +52,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
+/**
+ * The TableView is a view that generically implements
+ * views with tables.
+ *
+ */
 public abstract class TableView extends ViewPart {
 
     private TableContentProvider content;
@@ -64,21 +67,17 @@ public abstract class TableView extends ViewPart {
 
     private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 
-    public static final String SORT_ACTION_ID = "sort"; //$NON-NLS-1$
-
-    public static final String FILTERS_ACTION_ID = "filters"; //$NON-NLS-1$
-
     private TableViewer viewer;
 
     private IMemento memento;
 
-    //protected ColumnLayoutData[] columnLayouts;
-
-    private Map actions = new HashMap();
-
     private ISelectionProvider selectionProvider = new SelectionProviderAdapter();
 
     private TableSorter sorter;
+
+	private TableSortAction sortAction;
+
+	private FiltersAction filtersAction;
 
     /* (non-Javadoc)
      * Method declared on IViewPart.
@@ -163,8 +162,11 @@ public abstract class TableView extends ViewPart {
 
         getSite().setSelectionProvider(getSelectionProvider());
 
-        initActionBars(getViewSite().getActionBars());
-        registerGlobalActions(getViewSite().getActionBars());
+        IActionBars actionBars = getViewSite().getActionBars();
+        initMenu(actionBars.getMenuManager());
+        initToolBar(actionBars.getToolBarManager());
+        
+       registerGlobalActions(getViewSite().getActionBars());
 
         viewer.addOpenListener(new IOpenListener() {
             public void open(OpenEvent event) {
@@ -291,19 +293,13 @@ public abstract class TableView extends ViewPart {
         }
     }
 
+    /**
+     * Create the actions for the receiver.
+     */
     protected void createActions() {
         if (getSortDialog() != null) {
-            putAction(SORT_ACTION_ID,
-                    new TableSortAction(this, getSortDialog()));
+           sortAction = new TableSortAction(this, getSortDialog());
         }
-    }
-
-    protected IAction getAction(String id) {
-        return (IAction) actions.get(id);
-    }
-
-    protected void putAction(String id, IAction action) {
-        actions.put(id, action);
     }
 
     protected MenuManager initContextMenu() {
@@ -321,21 +317,27 @@ public abstract class TableView extends ViewPart {
 
     protected abstract void initToolBar(IToolBarManager tbm);
 
-    protected void initActionBars(IActionBars actionBars) {
-        initMenu(actionBars.getMenuManager());
-        initToolBar(actionBars.getToolBarManager());
-    }
-
+    /**
+     * Init the menu for the receiver.
+     * @param menu
+     */
     protected void initMenu(IMenuManager menu) {
-        IAction sortAction = getAction(SORT_ACTION_ID);
         if (sortAction != null)
             menu.add(sortAction);
-        IAction filtersAction = getAction(FILTERS_ACTION_ID);
+        addDropDownContributions(menu);
         if (filtersAction != null)
             menu.add(filtersAction);
     }
 
-    protected abstract void registerGlobalActions(IActionBars actionBars);
+    /**
+     * Add any extra contributions to the drop down.
+     * @param menu
+     */
+    void addDropDownContributions(IMenuManager menu) {
+		//Do nothing by default.
+	}
+
+	protected abstract void registerGlobalActions(IActionBars actionBars);
 
     protected abstract void fillContextMenu(IMenuManager manager);
 
@@ -507,5 +509,22 @@ public abstract class TableView extends ViewPart {
             service = (IWorkbenchSiteProgressService) siteService;
         return service;
     }
+
+    /**
+     * Set the filters action.
+     * @param action
+     */
+	void setFilterAction(FiltersAction action) {
+		filtersAction = action;
+		
+	}
+	
+	/**
+	 * Return the filter action for the receiver.
+	 * @return
+	 */
+	IAction getFilterAction() {
+		return filtersAction;
+	}
 
 }

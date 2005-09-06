@@ -42,6 +42,7 @@ import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -84,6 +85,11 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
+/**
+ * MarkerView is the abstract super class of the marker
+ * based views.
+ *
+ */
 public abstract class MarkerView extends TableView {
 
 	private static final String WAITING_FOR_WORKSPACE_CHANGES_TO_FINISH = 
@@ -110,6 +116,8 @@ public abstract class MarkerView extends TableView {
 	private static final String TAG_ID = "id"; //$NON-NLS-1$
 	
 	private static final String TAG_FILTERS_SECTION = "filters"; //$NON-NLS-1$
+	
+	private static final String MENU_FILTERS_GROUP = "group.filter";//$NON-NLS-1$ 
 	
 	//Section from a 3.1 or earlier workbench
 	private static final String OLD_FILTER_SECTION = "filter"; //$NON-NLS-1$
@@ -224,8 +232,10 @@ public abstract class MarkerView extends TableView {
 
 	private RestartableJob refreshJob = null;
 
+	private MenuManager filtersMenu;
+
 	private void internalRefresh(IProgressMonitor monitor)
-			throws InvocationTargetException, InterruptedException {
+			throws InvocationTargetException {
 		int markerLimit = getMarkerLimit();
 		monitor
 				.beginTask(
@@ -323,8 +333,7 @@ public abstract class MarkerView extends TableView {
 					NLS.bind(MarkerMessages.MarkerView_refreshTitle, getTitle()),
 					new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException,
-								InterruptedException {
+								throws InvocationTargetException{
 							internalRefresh(monitor);
 						}
 					}, getProgressService());
@@ -348,7 +357,7 @@ public abstract class MarkerView extends TableView {
 			getProgressService().showBusyForFamily(
 					ResourcesPlugin.FAMILY_AUTO_BUILD);
 		}
-		restoreFilters();
+
 	}
 
 	/**
@@ -370,11 +379,13 @@ public abstract class MarkerView extends TableView {
 		}
 		else{
 			IDialogSettings[] sections = settings.getSections();
-			setFilters(new MarkerFilter[sections.length]);
+			MarkerFilter[] newFilters = new MarkerFilter[sections.length];
+			
 			for (int i = 0; i < sections.length; i++) {
-				markerFilters[i] = createFilter(sections[i].getName());
-				markerFilters[i].restoreState(sections[i]);
+				newFilters[i] = createFilter(sections[i].getName());
+				newFilters[i].restoreState(sections[i]);
 			}
+			setFilters(newFilters);
 		}
 		
 
@@ -448,6 +459,7 @@ public abstract class MarkerView extends TableView {
 				.getPage().getSelection());
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
 				resourceListener);
+		restoreFilters();
 		refresh();
 
 		// Set help on the view itself
@@ -536,10 +548,10 @@ public abstract class MarkerView extends TableView {
 
 		super.createActions();
 
-		putAction(FILTERS_ACTION_ID, new FiltersAction(this));
+		setFilterAction(new FiltersAction(this));
 	}
 
-	protected abstract String[] getMarkerTypes();
+	abstract String[] getMarkerTypes();
 
 	/*
 	 * (non-Javadoc)
@@ -548,7 +560,7 @@ public abstract class MarkerView extends TableView {
 	 */
 	protected void initToolBar(IToolBarManager tbm) {
 		tbm.add(deleteAction);
-		tbm.add(getAction(TableView.FILTERS_ACTION_ID));
+		tbm.add(getFilterAction());
 		tbm.update(false);
 	}
 
@@ -632,9 +644,12 @@ public abstract class MarkerView extends TableView {
 		manager.add(propertiesAction);
 	}
 
-	protected void fillContextMenuAdditions(IMenuManager manager) {
-	}
-
+	/**
+	 * Fill the context menu for the receiver.
+	 * @param manager
+	 */
+	abstract void fillContextMenuAdditions(IMenuManager manager) ;
+	
 	/**
 	 * Get the filters for the receiver.
 	 * 
@@ -989,6 +1004,19 @@ public abstract class MarkerView extends TableView {
 	void setFilters(MarkerFilter[] newFilters){
 		markerFilters = newFilters;
 		enabledFilters = null;
+		refreshFilterMenu();
+	}
+
+	/**
+	 * Refresh the contents of the filter sub menu.
+	 */
+	private void refreshFilterMenu() {
+		filtersMenu.removeAll();
+		MarkerFilter[] filters = getFilters();
+		for (int i = 0; i < filters.length; i++) {
+			filtersMenu.add(new FilterEnablementAction(filters[i],this));
+		}
+		
 	}
 
 	/**
@@ -1140,4 +1168,15 @@ public abstract class MarkerView extends TableView {
 		
 	}
 
+	/* (non-Javadoc)
+ 	 * @see org.eclipse.ui.views.markers.internal.TableView#addDropDownContributions(org.eclipse.jface.action.IMenuManager)
+ 	 */
+	void addDropDownContributions(IMenuManager menu) {
+		super.addDropDownContributions(menu);
+		menu.add(new Separator(MENU_FILTERS_GROUP));
+		//Don't add in the filters until they are set
+		filtersMenu = new MenuManager(MarkerMessages.filtersSubMenu_title);
+		
+		menu.appendToGroup(MENU_FILTERS_GROUP, filtersMenu);
+	}
 }

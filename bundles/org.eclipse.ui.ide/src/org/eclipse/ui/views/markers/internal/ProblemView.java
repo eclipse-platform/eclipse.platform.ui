@@ -114,6 +114,9 @@ public class ProblemView extends MarkerView {
         return DEFAULT_COLUMN_LAYOUTS;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.TableView#getDialogSettings()
+     */
     protected IDialogSettings getDialogSettings() {
         AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
                 .getPlugin(PlatformUI.PLUGIN_ID);
@@ -127,6 +130,9 @@ public class ProblemView extends MarkerView {
         return settings;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.TableView#createActions()
+     */
     protected void createActions() {
         super.createActions();
         propertiesAction = new ActionProblemProperties(this,
@@ -143,6 +149,9 @@ public class ProblemView extends MarkerView {
             columns[0].setResizable(false);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.MarkerView#fillContextMenuAdditions(org.eclipse.jface.action.IMenuManager)
+     */
     protected void fillContextMenuAdditions(IMenuManager manager) {
         manager.add(new Separator());
         manager.add(resolveMarkerAction);
@@ -169,10 +178,6 @@ public class ProblemView extends MarkerView {
 
     protected IField[] getVisibleFields() {
         return VISIBLE_FIELDS;
-    }
-
-    protected void initMenu(IMenuManager menu) {
-        super.initMenu(menu);
     }
 
     void updateTitle() {
