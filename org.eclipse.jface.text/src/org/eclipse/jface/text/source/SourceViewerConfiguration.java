@@ -27,6 +27,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
@@ -257,6 +258,8 @@ public class SourceViewerConfiguration {
 	 * @since 2.1
 	 */
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) {
+		if (stateMask == ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK)
+			return getTextHover(sourceViewer, contentType);
 		return null;
 	}
 
