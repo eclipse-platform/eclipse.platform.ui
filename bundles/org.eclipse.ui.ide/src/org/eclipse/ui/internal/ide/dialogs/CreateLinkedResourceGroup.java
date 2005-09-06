@@ -415,6 +415,11 @@ public class CreateLinkedResourceGroup {
 
         if (createLink == false)
             return createStatus(IStatus.OK, ""); //$NON-NLS-1$
+        
+        if (path.isUNC()) {
+            // print that path is not valid, but don't do core validation. See bug 90825.
+        	return createStatus(IStatus.WARNING, IDEWorkbenchMessages.CreateLinkedResourceGroup_unableToValidateLinkTarget);
+        }
 
         IStatus locationStatus = workspace.validateLinkLocation(linkHandle,
                 path);

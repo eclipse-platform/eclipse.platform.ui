@@ -686,6 +686,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CreateLinkedResourceGroup_linkTargetNotFile;
 	public static String CreateLinkedResourceGroup_linkTargetNotFolder;
 	public static String CreateLinkedResourceGroup_linkTargetNonExistent;
+	public static String CreateLinkedResourceGroup_unableToValidateLinkTarget;
 
 	public static String PathVariablesBlock_variablesLabel;
 	public static String PathVariablesBlock_addVariableButton;
