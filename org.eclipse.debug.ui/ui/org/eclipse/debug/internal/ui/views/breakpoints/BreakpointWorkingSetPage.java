@@ -24,6 +24,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -94,8 +95,14 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		label.setText(DebugUIViewsMessages.BreakpointWorkingSetPage_3); 
 		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
-		IViewPart fViewpart = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
-		fTViewer = new TransientBreakpointsViewer(composite, DebugPlugin.getDefault().getBreakpointManager(), (IStructuredSelection)fViewpart.getViewSite().getSelectionProvider().getSelection());
+		IViewPart viewpart = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
+		IStructuredSelection selection; 
+		if (viewpart == null) {
+			selection = new StructuredSelection();
+		} else {
+			selection = (IStructuredSelection)viewpart.getViewSite().getSelectionProvider().getSelection();
+		}
+		fTViewer = new TransientBreakpointsViewer(composite, DebugPlugin.getDefault().getBreakpointManager(), selection);
 		// Add select / deselect all buttons for bug 46669
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout(2, false));
