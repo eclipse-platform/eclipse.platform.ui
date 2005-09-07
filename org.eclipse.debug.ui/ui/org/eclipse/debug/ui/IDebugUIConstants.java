@@ -1022,4 +1022,11 @@ public interface IDebugUIConstants {
 	 * @since 3.2
 	 */
 	public static final String PREF_MAX_DETAIL_LENGTH = PLUGIN_ID + ".max_detail_length"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for breakpoint working set type.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String BREAKPOINT_WORKINGSET_ID = "org.eclipse.debug.ui.breakpointWorkingSet"; //$NON-NLS-1$	
 }

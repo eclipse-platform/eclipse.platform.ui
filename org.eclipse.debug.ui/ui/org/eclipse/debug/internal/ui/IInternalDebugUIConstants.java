@@ -273,4 +273,20 @@ public interface IInternalDebugUIConstants {
 	 * @since 3.1
 	 */
 	public static final String PROPERTY_PAGE_START_ADDRESS = "pageStart"; //$NON-NLS-1$
+	
+	/**
+	 * This constant is used as a "quick-fix" for the issue of breakpoint to working set
+	 * persistance when the state of a project changes.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String WORKING_SET_NAME = "workingset_name"; //$NON-NLS-1$
+	
+	/**
+	 * This constant is used as a "quick-fix" for the issue of breakpoint to working set
+	 * persistance when the state of a project changes.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String WORKING_SET_ID = "workingset_id";  //$NON-NLS-1$
 }

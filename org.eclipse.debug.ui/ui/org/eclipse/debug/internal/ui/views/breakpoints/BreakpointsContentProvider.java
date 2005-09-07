@@ -94,7 +94,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
      * @param organizers the nested order of breakpoint organizers, or <code>null</code>
      * if none 
      */
-    void setOrganizers(IBreakpointOrganizer[] organizers) {
+    public void setOrganizers(IBreakpointOrganizer[] organizers) {
         if (organizers != null && organizers.length == 0) {
             organizers = null;
         }

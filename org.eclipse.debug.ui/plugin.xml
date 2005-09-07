@@ -430,7 +430,7 @@
                class="org.eclipse.debug.internal.ui.actions.RetargetToggleLineBreakpointAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
                id="org.eclipse.debug.ui.actions.ToggleBreakpoint">
-         </action>         
+         </action>
       </actionSet>
    </extension>   
    <extension
@@ -1287,6 +1287,19 @@
                enablesFor="1+"
                id="org.eclipse.debug.ui.actions.EnableBreakpoint">
         </action>
+        <action
+              class="org.eclipse.debug.internal.ui.importexport.breakpoints.ImportBreakpoints"
+              icon="icons/full/etool16/import_wiz.gif"
+              id="org.eclipse.debug.internal.ui.importexport.breakpoints.importBreakpointsContext"
+              label="%importBreakpoints.label"
+              menubarPath="additions"/>
+        <action
+              class="org.eclipse.debug.internal.ui.importexport.breakpoints.ExportBreakpoints"
+              enablesFor="1+"
+              icon="icons/full/etool16/export_wiz.gif"
+              id="org.eclipse.debug.internal.ui.importexport.breakpoints.exportBreakpointsContext"
+              label="%exportBreakpoints.label"
+              menubarPath="additions"/>
       </viewerContribution>
       <!-- Breakpoint actions -->
 <!-- Contributions to Variables View Popup Menu -->
@@ -2444,6 +2457,32 @@ M4 = Platform-specific fourth key
        <keyword
              id="org.eclipse.debug.ui.viewManagement"
              label="%preferenceKeywords.viewManagement"/>
+    </extension>
+    <extension
+          point="org.eclipse.ui.importWizards">
+       <wizard
+             class="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardImportBreakpoints"
+             icon="icons/full/eview16/breakpoint_view.gif"
+             id="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardImportBreakpoints"
+             name="%exportBreakpoints.name">
+          <description>
+          		%importBreakpoints.description
+          </description>
+          <selection class="org.eclipse.core.resources.IResource"/>
+       </wizard>
+    </extension>
+    <extension
+          point="org.eclipse.ui.exportWizards">
+       <wizard
+             class="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints"
+             icon="icons/full/eview16/breakpoint_view.gif"
+             id="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints"
+             name="%exportBreakpoints.name">
+          <description>
+          	%exportBreakpoints.description
+          </description>
+          <selection class="org.eclipse.core.resources.IResource"/>
+       </wizard>
     </extension>
 
 </plugin>
