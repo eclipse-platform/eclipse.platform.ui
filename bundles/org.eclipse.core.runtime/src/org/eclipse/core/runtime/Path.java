@@ -203,7 +203,7 @@ public class Path implements IPath, Cloneable {
 		int len = segments.length;
 		String[] newSegments = new String[len];
 		System.arraycopy(segments, 0, newSegments, 0, len - 1);
-		newSegments[len - 1] = segments[len - 1] + "." + extension; //$NON-NLS-1$
+		newSegments[len - 1] = segments[len - 1] + '.' + extension;
 		return new Path(device, newSegments, separators);
 	}
 
@@ -545,7 +545,7 @@ public class Path implements IPath, Cloneable {
 		if (lastSegment == null) {
 			return null;
 		}
-		int index = lastSegment.lastIndexOf("."); //$NON-NLS-1$
+		int index = lastSegment.lastIndexOf('.');
 		if (index == -1) {
 			return null;
 		}
