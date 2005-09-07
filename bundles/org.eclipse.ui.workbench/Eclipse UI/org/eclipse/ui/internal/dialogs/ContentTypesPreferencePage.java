@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -87,6 +88,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         String ext;
 
         boolean isPredefined;
+        
+        int sortValue;
 
         /*
          * (non-Javadoc)
@@ -109,6 +112,13 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         }
     }
 
+    private class FileSpecSorter extends ViewerSorter {
+		public int category(Object element) {
+			// only Spec objects in here - unchecked cast
+			return ((Spec)element).sortValue;
+		}
+	}
+    
     private class FileSpecContentProvider implements IStructuredContentProvider {
 
         /*
@@ -160,6 +170,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                 Spec spec = new Spec();
                 spec.name = usernamefileSpecs[i];
                 spec.isPredefined = false;
+                spec.sortValue = 0;
                 returnValues.add(spec);
             }
 
@@ -167,6 +178,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                 Spec spec = new Spec();
                 spec.name = prenamefileSpecs[i];
                 spec.isPredefined = true;
+                spec.sortValue = 1;
                 returnValues.add(spec);
             }
 
@@ -174,6 +186,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                 Spec spec = new Spec();
                 spec.ext = userextfileSpecs[i];
                 spec.isPredefined = false;
+                spec.sortValue = 2;
                 returnValues.add(spec);
             }
 
@@ -181,6 +194,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                 Spec spec = new Spec();
                 spec.ext = preextfileSpecs[i];
                 spec.isPredefined = true;
+                spec.sortValue = 3;
                 returnValues.add(spec);
             }
 
@@ -373,6 +387,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         }
         {
             fileAssociationViewer = new ListViewer(composite);
+            fileAssociationViewer.setSorter(new FileSpecSorter());
             fileAssociationViewer.getControl().setFont(composite.getFont());
             fileAssociationViewer
                     .setContentProvider(new FileSpecContentProvider());
@@ -523,6 +538,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                     .setContentProvider(new ContentTypesContentProvider());
             contentTypesViewer
                     .setLabelProvider(new ContentTypesLabelProvider());
+            contentTypesViewer.setSorter(new ViewerSorter());
             contentTypesViewer.setInput(Platform.getContentTypeManager());
             GridData data = new GridData(GridData.FILL_BOTH);
             data.horizontalSpan = 2;
