@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -271,10 +272,36 @@ public abstract class DialogMarkerFilter extends Dialog {
      */
     DialogMarkerFilter(Shell parentShell, MarkerFilter[] filtersList) {
         super(parentShell);
-        this.filters = filtersList;
+        setFilters(filtersList);
     }
 
-    /* (non-Javadoc)
+    /**
+     * Set the filters in the filtersList by copying them.
+     * @param initialFilters
+     */
+    private void setFilters(MarkerFilter[] initialFilters) {
+		MarkerFilter[] newMarkers  = new MarkerFilter[initialFilters.length];
+		for (int i = 0; i < initialFilters.length; i++) {
+			MarkerFilter newFilter;
+			try {
+				newFilter = initialFilters[i].makeClone();
+			} catch (CloneNotSupportedException exception) {
+				ErrorDialog.openError(
+						getShell(), 
+						MarkerMessages.MarkerFilterDialog_errorTitle, 
+						MarkerMessages.MarkerFilterDialog_failedFilterMessage, 
+						Util.errorStatus(exception));
+				return;
+			}
+			
+			newMarkers[i] = newFilter;
+				
+		}
+		filters = newMarkers;
+				
+	}
+
+	/* (non-Javadoc)
      * Method declared on Dialog.
      */
     protected void buttonPressed(int buttonId) {
@@ -436,6 +463,16 @@ public abstract class DialogMarkerFilter extends Dialog {
 			 */
 			public String getText(Object element) {
 				return((MarkerFilter) element).getName();
+			}
+		});
+		
+		filtersList.addCheckStateListener(new ICheckStateListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
+			 */
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				((MarkerFilter) event.getElement()).setEnabled(event.getChecked());
+				
 			}
 		});
 		
@@ -834,6 +871,7 @@ public abstract class DialogMarkerFilter extends Dialog {
             }
 
             updateFilterFromUI();
+            
             super.okPressed();
         } catch (NumberFormatException eNumberFormat) {
             MessageBox messageBox = new MessageBox(getShell(), SWT.OK
@@ -923,9 +961,6 @@ public abstract class DialogMarkerFilter extends Dialog {
     		return;
     	}
     		
-    	if(!selectedComposite.isEnabled())
-    		selectedComposite.setEnabled(true);
-    	
         updateFilterFromUI(filter);
     }
 
@@ -1022,7 +1057,7 @@ public abstract class DialogMarkerFilter extends Dialog {
      * @param newFilter
      */
     public void setFilter(MarkerFilter newFilter) {
-        filters = new MarkerFilter[] {newFilter};
+        setFilters(new MarkerFilter[] {newFilter});
         updateUIFromFilter();
     }
 

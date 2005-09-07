@@ -212,5 +212,8 @@ public class MarkerMessages extends NLS{
 	public static String MarkerFilterDialog_emptyMessage;
 	
 	public static String CheckedTableSelectionDialog_emptyListMessage;
+	
+	public static String MarkerFilterDialog_errorTitle;
+	public static String MarkerFilterDialog_failedFilterMessage;
 
 }

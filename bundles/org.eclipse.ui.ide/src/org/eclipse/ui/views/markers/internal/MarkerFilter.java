@@ -33,7 +33,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
-public class MarkerFilter {
+public class MarkerFilter implements Cloneable{
 
 
 	private static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
@@ -896,6 +896,15 @@ public class MarkerFilter {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	/**
+	 * Make a clone of the receiver.
+	 * @return MarkerFilter
+	 * @throws CloneNotSupportedException
+	 */
+	public MarkerFilter makeClone() throws CloneNotSupportedException{
+		return (MarkerFilter) this.clone();
 	}
 
 }
