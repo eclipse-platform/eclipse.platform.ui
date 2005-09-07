@@ -270,7 +270,6 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 		composite.setFont(parent.getFont());
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout(5, false);
-		layout.verticalSpacing = 7;
 		composite.setLayout(layout);
 
 		descriptionGroup = new DescriptionGroup(composite);

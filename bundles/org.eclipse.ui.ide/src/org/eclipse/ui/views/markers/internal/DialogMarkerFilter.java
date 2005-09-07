@@ -46,6 +46,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -273,6 +274,7 @@ public abstract class DialogMarkerFilter extends Dialog {
     DialogMarkerFilter(Shell parentShell, MarkerFilter[] filtersList) {
         super(parentShell);
         setFilters(filtersList);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /**
@@ -326,16 +328,11 @@ public abstract class DialogMarkerFilter extends Dialog {
         super.configureShell(newShell);
         newShell.setText(MarkerMessages.filtersDialog_title);
     }
+   
 
     protected void createResetArea(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setFont(parent.getFont());
-        GridLayout layout = new GridLayout();
-        layout.marginWidth = 0;
-        composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-        Button reset = new Button(composite, SWT.PUSH);
+       
+        Button reset = new Button(parent, SWT.PUSH);
         reset.setText(MarkerMessages.restoreDefaults_text);
         reset.setData(new Integer(RESET_ID));
 
@@ -345,8 +342,12 @@ public abstract class DialogMarkerFilter extends Dialog {
             }
         });
 
-        reset.setFont(composite.getFont());
-        setButtonLayoutData(reset);
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END);
+        int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+        Point minSize = reset.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+        data.widthHint = Math.max(widthHint, minSize.x);
+        data.horizontalSpan = 2;
+        reset.setLayoutData(data);
     }
 
     /**
@@ -413,6 +414,7 @@ public abstract class DialogMarkerFilter extends Dialog {
         
         filtersList.setSelection(new StructuredSelection(filters[0]));
 
+        applyDialogFont(dialogArea);
         return dialogArea;
     }
     
@@ -610,16 +612,23 @@ public abstract class DialogMarkerFilter extends Dialog {
     private void createSelectedFilterArea(Composite composite){
     	
     	selectedComposite = new Composite(composite,SWT.NONE);
-    	selectedComposite.setLayout(new GridLayout());
+    	selectedComposite.setLayout(new GridLayout(2,false));
     	selectedComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-
-        createMarkerLimitArea(selectedComposite);
-        createTypesArea(selectedComposite);
-        createResourceArea(selectedComposite);
-        createAttributesArea(selectedComposite);
-        createResetArea(selectedComposite);
-        createSeparatorLine(selectedComposite);
     	
+    	Composite leftComposite = new Composite(selectedComposite,SWT.NONE);
+    	leftComposite.setLayout(new GridLayout());
+    	leftComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+    	createMarkerLimitArea(leftComposite);       
+        createResourceArea(leftComposite);
+        createAttributesArea(leftComposite);
+               
+    	Composite rightComposite = new Composite(selectedComposite,SWT.NONE);
+    	createTypesArea(rightComposite);
+    	rightComposite.setLayout(new GridLayout());
+    	rightComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+    	
+    	createSeparatorLine(selectedComposite);
+    	createResetArea(composite);
     }
 
     /**
@@ -631,7 +640,7 @@ public abstract class DialogMarkerFilter extends Dialog {
         // Build the separator line
         Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = 1;
+        gd.horizontalSpan = 2;
         separator.setLayoutData(gd);
     }
 
@@ -686,7 +695,7 @@ public abstract class DialogMarkerFilter extends Dialog {
     protected void createTypesArea(Composite parent) {
         Font font = parent.getFont();
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         GridLayout layout = new GridLayout();
         composite.setLayout(layout);
 
@@ -707,9 +716,10 @@ public abstract class DialogMarkerFilter extends Dialog {
         tc = new TableColumn(table, SWT.NONE, 1);
         tc.setText(MarkerMessages.filtersDialog_superTypecolumnHeader);
         typesViewer = new CheckboxTableViewer(table);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        gridData.heightHint = 105;
-        gridData.widthHint = 350;
+        GridData gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
+        gridData.widthHint = convertVerticalDLUsToPixels(200);
+        gridData.heightHint = convertVerticalDLUsToPixels(200);
+        
         typesViewer.getTable().setFont(font);
         typesViewer.getControl().setLayoutData(gridData);
         typesViewer.setContentProvider(getContentProvider());
