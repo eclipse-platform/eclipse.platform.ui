@@ -39,10 +39,17 @@
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">
+
+      <category
+            name="%ImportExportWizards.Category.Basic"
+            id="org.eclipse.ui.Basic">
+      </category>
+      
       <wizard
             name="%ImportWizards.Preferences"
             icon="icons/full/obj16/importpref_obj.gif"
             id="org.eclipse.ui.wizards.import.Preferences"
+            category="org.eclipse.ui.Basic"            
             class="org.eclipse.ui.ExtensionFactory:preferencesImportWizard">
          <description>
             %ImportWizards.PreferencesDescription
@@ -51,6 +58,7 @@
       <wizard
             name="%ImportWizards.FileSystem"
             icon="icons/full/etool16/importdir_wiz.gif"
+            category="org.eclipse.ui.Basic"            
             class="org.eclipse.ui.wizards.datatransfer.FileSystemImportWizard"
             id="org.eclipse.ui.wizards.import.FileSystem">
          <description>
@@ -63,6 +71,7 @@
       <wizard
             name="%ImportWizards.ExternalProject"
             icon="icons/full/etool16/newprj_wiz.gif"
+            category="org.eclipse.ui.Basic"            
             class="org.eclipse.ui.wizards.datatransfer.ExternalProjectImportWizard"
             id="org.eclipse.ui.wizards.import.ExternalProject">
          <description>
@@ -72,6 +81,7 @@
       <wizard
             name="%ImportWizards.ZipFile"
             icon="icons/full/etool16/importzip_wiz.gif"
+            category="org.eclipse.ui.Basic"            
             class="org.eclipse.ui.wizards.datatransfer.ZipFileImportWizard"
             id="org.eclipse.ui.wizards.import.ZipFile">
          <description>
@@ -84,9 +94,16 @@
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
+
+      <category
+            name="%ImportExportWizards.Category.Basic"
+            id="org.eclipse.ui.Basic">
+      </category>
+               
       <wizard
             name="%ExportWizards.Preferences"
             icon="icons/full/obj16/exportpref_obj.gif"
+            category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.ExtensionFactory:preferencesExportWizard"
             id="org.eclipse.ui.wizards.export.Preferences">
          <description>
@@ -96,6 +113,7 @@
       <wizard
             name="%ExportWizards.FileSystem"
             icon="icons/full/etool16/exportdir_wiz.gif"
+            category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.datatransfer.FileSystemExportWizard"
             id="org.eclipse.ui.wizards.export.FileSystem">
          <description>
@@ -108,6 +126,7 @@
       <wizard
             name="%ExportWizards.ZipFile"
             icon="icons/full/etool16/exportzip_wiz.gif"
+            category="org.eclipse.ui.Basic"            
             class="org.eclipse.ui.wizards.datatransfer.ZipFileExportWizard"
             id="org.eclipse.ui.wizards.export.ZipFile">
          <description>
