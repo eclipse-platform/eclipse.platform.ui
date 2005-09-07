@@ -315,6 +315,8 @@ class JobInfo extends JobTreeElement {
         if (info != null){
         	if(info.totalWork == IProgressMonitor.UNKNOWN)
         		return IProgressMonitor.UNKNOWN;
+        	if(info.totalWork == 0)
+        		return 0;
             return (int) info.preWork * 100 / info.totalWork;
         }
         return IProgressMonitor.UNKNOWN;
