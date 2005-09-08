@@ -36,7 +36,7 @@ public class ModalContext {
      * <code>false</code> by default.
      */
     private static boolean debug = false;
-
+    
     /**
      * The number of nested modal runs, or 0 if not inside a modal run.
      * This is global state.
@@ -369,4 +369,17 @@ public class ModalContext {
     public static void setDebugMode(boolean debugMode) {
         debug = debugMode;
     }
+
+	/**
+	 * Sets whether ModalContext may process events (by calling <code>Display.readAndDispatch()</code>)
+	 * while running operations. By default, ModalContext will process events while running operations.
+	 * Use this method to disallow event processing temporarily.
+	 * @param allowReadAndDispatch <code>true</code> (the default) if events may be processed while
+	 * running an operation, <code>false</code> if Display.readAndDispatch() should not be called
+	 * from ModalContext.
+	 */
+	public static void setAllowReadAndDispatch(boolean allowReadAndDispatch) {
+		// use a separate thread if and only if it is OK to spin the event loop
+		runInSeparateThread = allowReadAndDispatch;
+	}
 }

@@ -56,6 +56,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.dialogs.WorkbenchDialogBlockedHandler;
@@ -498,7 +499,7 @@ public class ProgressManager extends ProgressProvider implements
         //only need a default monitor for operations the UI thread
         //and only if there is a display
         Display display;
-        if (PlatformUI.isWorkbenchRunning()) {
+        if (PlatformUI.isWorkbenchRunning() && !((Workbench)PlatformUI.getWorkbench()).isStarting()) {
             display = PlatformUI.getWorkbench().getDisplay();
             if (!display.isDisposed()
                     && (display.getThread() == Thread.currentThread()))
@@ -1089,7 +1090,7 @@ public class ProgressManager extends ProgressProvider implements
         BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
             public void run() {
                 try {
-                    manager.beginRule(rule, getEventLoopMonitor());
+                    manager.beginRule(rule, ((Workbench)PlatformUI.getWorkbench()).isStarting() ? new NullProgressMonitor() : getEventLoopMonitor());
                     context.run(false, false, runnable);
                 } catch (InvocationTargetException e) {
                     exception[0] = e;

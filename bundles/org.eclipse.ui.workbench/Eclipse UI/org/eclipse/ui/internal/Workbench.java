@@ -118,6 +118,7 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
@@ -1010,22 +1011,6 @@ public final class Workbench implements IWorkbench {
 		// initialize workbench single-click vs double-click behavior
 		initializeSingleClickOption();
 
-		// deadlock code
-		boolean avoidDeadlock = true;
-
-		String[] commandLineArgs = Platform.getCommandLineArgs();
-		for (int i = 0; i < commandLineArgs.length; i++) {
-			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
-				avoidDeadlock = false;
-		}
-
-		if (avoidDeadlock) {
-			UILockListener uiLockListener = new UILockListener(display);
-			Platform.getJobManager().setLockListener(uiLockListener);
-			display
-					.setSynchronizer(new UISynchronizer(display, uiLockListener));
-		}
-
 		// attempt to restore a previous workbench state
 		try {
 			UIStats.start(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
@@ -1041,8 +1026,6 @@ public final class Workbench implements IWorkbench {
 		}
 
 		forceOpenPerspective();
-
-		isStarting = false;
 
 		return true;
 	}
@@ -1157,11 +1140,12 @@ public final class Workbench implements IWorkbench {
 		return isClosing;
 	}
 
-	/*
-	 * Returns true if the workbench is in the process of starting
+	/**
+	 * Returns true if the Workbench is in the process of starting.
+	 * @return <code>true</code> if the Workbench is starting, but not yet running
+	 * the event loop.
 	 */
-	/* package */
-	boolean isStarting() {
+	public boolean isStarting() {
 		return isStarting;
 	}
 
@@ -1652,6 +1636,38 @@ public final class Workbench implements IWorkbench {
 	private int runUI() {
 		UIStats.start(UIStats.START_WORKBENCH, "Workbench"); //$NON-NLS-1$
 
+		// deadlock code
+		boolean avoidDeadlock = true;
+
+		String[] commandLineArgs = Platform.getCommandLineArgs();
+		for (int i = 0; i < commandLineArgs.length; i++) {
+			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
+				avoidDeadlock = false;
+		}
+
+		if (avoidDeadlock) {
+			UILockListener uiLockListener = new UILockListener(display);
+			Platform.getJobManager().setLockListener(uiLockListener);
+			display.setSynchronizer(new UISynchronizer(display, uiLockListener));
+		}
+		
+		// ModalContext should not spin the event loop (there is no UI yet to block)
+		ModalContext.setAllowReadAndDispatch(false);
+		
+		// if the -debug command line argument is used and the event loop is being
+		// run while starting the Workbench, log a warning.
+        if (WorkbenchPlugin.DEBUG) {
+			display.asyncExec(new Runnable(){
+				public void run() {
+					if(isStarting()) {
+						WorkbenchPlugin.log(StatusUtil.newStatus(
+								IStatus.WARNING, 
+								"Event loop should not be run while the Workbench is starting.",  //$NON-NLS-1$
+								new RuntimeException()));
+					}
+				}});
+        }
+		
 		Listener closeListener = new Listener() {
 			public void handleEvent(Event event) {
 				event.doit = close();
@@ -1694,6 +1710,10 @@ public final class Workbench implements IWorkbench {
 				});
 
 				getWorkbenchTestable().init(display, this);
+
+				// allow ModalContext to spin the event loop
+				ModalContext.setAllowReadAndDispatch(true);
+				isStarting = false;
 
 				// the event loop
 				runEventLoop(handler, display);
