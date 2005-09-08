@@ -12,7 +12,9 @@ package org.eclipse.ui.tests.api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -112,8 +114,9 @@ public class IWorkbenchPageTest extends UITestCase {
 		
 		assertNotNull(sets);
 		assertEquals(2, sets.length);
-		assertEquals(set1, sets[0]);
-		assertEquals(set2, sets[1]);
+		Set realSet = new HashSet(Arrays.asList(sets));
+		assertTrue(realSet.contains(set1));
+		assertTrue(realSet.contains(set2));
 		
 		page.setWorkingSets(new IWorkingSet[0]);
 		sets = page.getWorkingSets();

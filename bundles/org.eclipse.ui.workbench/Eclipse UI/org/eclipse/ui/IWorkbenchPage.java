@@ -881,9 +881,11 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	public IWorkingSet[] getWorkingSets();
 
 	/**
-	 * Set the working sets for this page.
+	 * Set the working sets for this page. Any duplicate entries will be
+	 * removed from the array by this method.
 	 * 
-	 * @param sets the new working sets for this page
+	 * @param sets
+	 *            the new working sets for this page
 	 * @since 3.2
 	 */
 	public void setWorkingSets(IWorkingSet[] sets);

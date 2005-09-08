@@ -4357,9 +4357,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			newWorkingSets = new IWorkingSet[0];
 
 		IWorkingSet[] oldWorkingSets = workingSets;
+		
+		// filter out any duplicates if necessary
+		if (newWorkingSets.length > 1) {	
+			Set setOfSets = new HashSet();
+			for (int i = 0; i < newWorkingSets.length; i++) {
+				setOfSets.add(newWorkingSets[i]);
+			}
+			newWorkingSets = (IWorkingSet[]) setOfSets
+					.toArray(new IWorkingSet[setOfSets.size()]);
+		}
 
 		workingSets = newWorkingSets;
-		if (oldWorkingSets != newWorkingSets) {
+		if (!Arrays.equals(oldWorkingSets, newWorkingSets)) {
 			firePropertyChange(CHANGE_WORKING_SETS_REPLACE, oldWorkingSets,
 					newWorkingSets);
 		}
