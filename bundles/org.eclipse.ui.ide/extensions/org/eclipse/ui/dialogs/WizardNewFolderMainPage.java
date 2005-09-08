@@ -145,10 +145,18 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
         }
         linkedResourceGroup = new CreateLinkedResourceGroup(IResource.FOLDER,
                 new Listener() {
-                    public void handleEvent(Event e) {
-                        setPageComplete(validatePage());
-                        firstLinkCheck = false;
-                    }
+		            public void handleEvent(Event e) {
+		                setPageComplete(validatePage());
+		                firstLinkCheck = false;
+		            }
+                },
+                new CreateLinkedResourceGroup.IStringValue() {
+                	public String getValue() {
+                		return resourceGroup.getResource();
+                	}
+                	public void setValue(String string) {
+                		resourceGroup.setResource(string);
+                	}
                 });
     }
 

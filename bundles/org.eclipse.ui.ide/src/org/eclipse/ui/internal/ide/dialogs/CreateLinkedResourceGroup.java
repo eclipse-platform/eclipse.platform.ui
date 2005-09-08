@@ -77,6 +77,28 @@ public class CreateLinkedResourceGroup {
 
     private Label resolvedPathLabelData;
 
+	private final IStringValue updatableResourceName;
+    
+    /**
+     * Helper interface intended for updating a string value based on the
+     * currently selected link target.
+     * @since 3.2
+     */
+    public static interface IStringValue {
+    	/**
+    	 * Sets the String value.
+    	 * @param string a non-null String
+    	 */
+    	void setValue(String string);
+    	/**
+    	 * Gets the String value.
+    	 * @return the current value, or <code>null</code>
+    	 */
+    	String getValue();
+    }
+    
+    private String lastUpdatedValue;
+
     /**
      * Creates a link target group 
      *
@@ -84,10 +106,19 @@ public class CreateLinkedResourceGroup {
      * 	<code>IResource.FILE</code> or <code>IResource.FOLDER</code>
      * @param listener listener to notify when one of the widgets'
      * 	value is changed.
+     * @param updatableResourceName an updatable string value that will be
+     *  updated to reflect the link target's last segment, or <code>null</code>.
+     *  Updating will only happen if the current value of that string is null
+     *  or the empty string, or if it has not been changed since the last time
+     *  it was updated. 
      */
-    public CreateLinkedResourceGroup(int type, Listener listener) {
+    public CreateLinkedResourceGroup(int type, Listener listener, IStringValue updatableResourceName) {
         this.type = type;
         this.listener = listener;
+		this.updatableResourceName = updatableResourceName;
+		if (updatableResourceName != null) {
+			lastUpdatedValue = updatableResourceName.getValue();
+		}
     }
 
     /**
@@ -168,6 +199,17 @@ public class CreateLinkedResourceGroup {
             public void modifyText(ModifyEvent e) {
                 linkTarget = linkTargetField.getText();
                 resolveVariable();
+                if(updatableResourceName!=null) {
+                	String value = updatableResourceName.getValue();
+					if(value==null || value.equals("") || value.equals(lastUpdatedValue)) { //$NON-NLS-1$
+	                	IPath linkTargetPath = new Path(linkTarget);
+	                	String lastSegment = linkTargetPath.lastSegment();
+	                	if (lastSegment != null) {
+	                		lastUpdatedValue = lastSegment;
+	                		updatableResourceName.setValue(lastSegment);
+	                	}
+                	}
+                }
                 if (listener != null)
                     listener.handleEvent(new Event());
             }

@@ -182,6 +182,14 @@ public class NewFolderDialog extends SelectionStatusDialog {
                         validateLinkedResource();
                         firstLinkCheck = false;
                     }
+                },
+                new CreateLinkedResourceGroup.IStringValue(){
+					public void setValue(String string) {
+						folderNameField.setText(string);
+					}
+					public String getValue() {
+						return folderNameField.getText();
+					}
                 });
     }
 

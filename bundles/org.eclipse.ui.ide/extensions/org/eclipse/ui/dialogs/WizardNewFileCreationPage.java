@@ -164,6 +164,14 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
                         setPageComplete(validatePage());
                         firstLinkCheck = false;
                     }
+                },
+                new CreateLinkedResourceGroup.IStringValue(){
+					public void setValue(String string) {
+						resourceGroup.setResource(string);
+					}
+					public String getValue() {
+						return resourceGroup.getResource();
+					}
                 });
     }
 
