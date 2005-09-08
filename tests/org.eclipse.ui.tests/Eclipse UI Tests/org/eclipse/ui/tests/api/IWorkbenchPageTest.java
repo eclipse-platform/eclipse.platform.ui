@@ -30,6 +30,8 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -72,6 +74,64 @@ public class IWorkbenchPageTest extends UITestCase {
             proj = null;
         }
     }
+    
+    /**
+	 * Tests the new working set API.
+	 * 
+	 * @since 3.2
+	 */
+	public void testWorkingSets1() {
+		IWorkbenchPage page = fActivePage;
+		IWorkingSet[] sets = page.getWorkingSets();
+		assertNotNull(sets);
+		assertEquals(0, sets.length);
+
+		IWorkingSetManager manager = page.getWorkbenchWindow().getWorkbench()
+				.getWorkingSetManager();
+
+		
+		IWorkingSet set1 = manager.createWorkingSet("w1", new IAdaptable[0]);
+		manager.addWorkingSet(set1);
+		IWorkingSet set2 = manager.createWorkingSet("w2", new IAdaptable[0]);
+		manager.addWorkingSet(set2);
+		
+		page.setWorkingSets(new IWorkingSet[] {set1});
+		sets = page.getWorkingSets();
+		
+		assertNotNull(sets);
+		assertEquals(1, sets.length);
+		assertEquals(set1, sets[0]);
+		
+		page.setWorkingSets(new IWorkingSet[0]);
+		sets = page.getWorkingSets();
+		assertNotNull(sets);
+		assertEquals(0, sets.length);
+		
+		page.setWorkingSets(new IWorkingSet[] {set1, set2});
+		sets = page.getWorkingSets();
+		
+		assertNotNull(sets);
+		assertEquals(2, sets.length);
+		assertEquals(set1, sets[0]);
+		assertEquals(set2, sets[1]);
+		
+		page.setWorkingSets(new IWorkingSet[0]);
+		sets = page.getWorkingSets();
+		assertNotNull(sets);
+		assertEquals(0, sets.length);
+	}
+	
+	 /**
+	 * Tests the new working set API.
+	 * 
+	 * @since 3.2
+	 */
+	public void testWorkingSets2() {
+		fActivePage.setWorkingSets(null);
+		IWorkingSet [] sets = fActivePage.getWorkingSets();
+		assertNotNull(sets);
+		assertEquals(0, sets.length);
+	}
     
     /**
      * Test the VIEW_VISIBLE parameter for showView, opening the view in the 

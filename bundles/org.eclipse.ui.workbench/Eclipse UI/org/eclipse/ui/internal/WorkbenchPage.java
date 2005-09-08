@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -167,15 +168,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     private Set dirtyPerspectives = new HashSet();
     
-    private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+    private IPropertyChangeListener workingSetPropertyChangeListener = new IPropertyChangeListener() {
         /*
          * Remove the working set from the page if the working set is deleted.
          */
         public void propertyChange(PropertyChangeEvent event) {
             String property = event.getProperty();
-            if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property)
-                    && event.getOldValue().equals(workingSet)) {
-                setWorkingSet(null);
+            if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property)) {
+            		if(event.getOldValue().equals(workingSet))
+            			setWorkingSet(null);
+            		
+            		// room for optimization here
+            		List newList = new ArrayList(Arrays.asList(workingSets));
+            		if (newList.remove(event.getOldValue()))
+            			setWorkingSets((IWorkingSet []) newList
+								.toArray(new IWorkingSet [newList.size()]));
             }
         }
     };
@@ -253,6 +260,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         }
 	};
+	private IWorkingSet[] workingSets = new IWorkingSet[0];
 
 	private IExtensionPoint getPerspectiveExtensionPoint() {
 		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
@@ -2555,7 +2563,26 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                             .getWorkbench().getWorkingSetManager();
                     setWorkingSet(workingSetManager.getWorkingSet(workingSetName));
                 }
-    
+                
+	            IMemento workingSetMem = memento
+						.getChild(IWorkbenchConstants.TAG_WORKING_SETS);
+	            if (workingSetMem != null) {
+					IMemento[] workingSetChildren = workingSetMem
+							.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
+					List workingSetList = new ArrayList(
+							workingSetChildren.length);
+					for (int i = 0; i < workingSetChildren.length; i++) {
+						IWorkingSet set = getWorkbenchWindow().getWorkbench()
+								.getWorkingSetManager().getWorkingSet(
+										workingSetChildren[i].getID());
+						if (set != null)
+							workingSetList.add(set);
+					}
+
+					workingSets = (IWorkingSet[]) workingSetList
+							.toArray(new IWorkingSet[workingSetList.size()]);
+				}
+	            
                 // Restore editor manager.
                 IMemento childMem = memento
                         .getChild(IWorkbenchConstants.TAG_EDITORS);
@@ -2798,6 +2825,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             memento.putString(IWorkbenchConstants.TAG_WORKING_SET, workingSet
                     .getName());
         }
+        
+        IMemento workingSetMem = memento
+				.createChild(IWorkbenchConstants.TAG_WORKING_SETS);
+		for (int i = 0; i < workingSets.length; i++) {
+			workingSetMem.createChild(IWorkbenchConstants.TAG_WORKING_SET,
+					workingSets[i].getName());
+		}
 
         navigationHistory.saveState(memento
                 .createChild(IWorkbenchConstants.TAG_NAVIGATION_HISTORY));
@@ -3124,10 +3158,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
         if (newWorkingSet != null) {
             WorkbenchPlugin.getDefault().getWorkingSetManager()
-                    .addPropertyChangeListener(propertyChangeListener);
+                    .addPropertyChangeListener(workingSetPropertyChangeListener);
         } else {
             WorkbenchPlugin.getDefault().getWorkingSetManager()
-                    .removePropertyChangeListener(propertyChangeListener);
+                    .removePropertyChangeListener(workingSetPropertyChangeListener);
         }
     }
 
@@ -4313,4 +4347,31 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         
         return isPartVisible(part);
     }
+
+	public IWorkingSet[] getWorkingSets() {
+		return workingSets;
+	}
+
+	public void setWorkingSets(IWorkingSet[] newWorkingSets) {
+		if (newWorkingSets == null)
+			newWorkingSets = new IWorkingSet[0];
+
+		IWorkingSet[] oldWorkingSets = workingSets;
+
+		workingSets = newWorkingSets;
+		if (oldWorkingSets != newWorkingSets) {
+			firePropertyChange(CHANGE_WORKING_SETS_REPLACE, oldWorkingSets,
+					newWorkingSets);
+		}
+		if (newWorkingSets != null) {
+			WorkbenchPlugin
+					.getDefault()
+					.getWorkingSetManager()
+					.addPropertyChangeListener(workingSetPropertyChangeListener);
+		} else {
+			WorkbenchPlugin.getDefault().getWorkingSetManager()
+					.removePropertyChangeListener(
+							workingSetPropertyChangeListener);
+		}
+	}
 }

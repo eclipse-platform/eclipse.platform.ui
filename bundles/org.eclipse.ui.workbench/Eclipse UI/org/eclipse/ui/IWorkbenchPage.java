@@ -148,6 +148,15 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
     public static final String CHANGE_WORKING_SET_REPLACE = "workingSetReplace"; //$NON-NLS-1$	 
 
     /**
+     * Change event id when the page working set list was replaced
+     * 
+     * @see IPropertyChangeListener
+     * @since 3.2
+     */
+    public static final String CHANGE_WORKING_SETS_REPLACE = "workingSetsReplace"; //$NON-NLS-1$	 
+
+    
+    /**
      * Show view mode that indicates the view should be made visible and 
      * activated.  Use of this mode has the same effect as calling 
      * {@link #showView(String)}.
@@ -859,4 +868,23 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @since 3.1
 	 */    
     public IExtensionTracker getExtensionTracker();
+    
+    /**
+	 * Return the visible working sets for this page. Please note that this array is
+	 * not filtered by activities. Clients should attempt to ensure that any use
+	 * of this method is consistant with the currently enabled activity set.
+	 * 
+	 * @return the visible working sets for this page
+	 * @see IWorkbench#getActivitySupport()
+	 * @since 3.2
+	 */
+	public IWorkingSet[] getWorkingSets();
+
+	/**
+	 * Set the working sets for this page.
+	 * 
+	 * @param sets the new working sets for this page
+	 * @since 3.2
+	 */
+	public void setWorkingSets(IWorkingSet[] sets);
 }
