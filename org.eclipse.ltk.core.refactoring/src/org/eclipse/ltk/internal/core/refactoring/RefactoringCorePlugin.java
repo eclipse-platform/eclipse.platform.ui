@@ -24,6 +24,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.IUndoManager;
 
+import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringHistoryParticipant;
+import org.eclipse.ltk.internal.core.refactoring.history.ProjectRefactoringHistoryParticipant;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistory;
+
 import org.osgi.framework.BundleContext;
 
 public class RefactoringCorePlugin extends Plugin {
@@ -32,6 +36,8 @@ public class RefactoringCorePlugin extends Plugin {
 	private static IUndoManager fgUndoManager= null;
 	
 	private static IUndoContext fRefactoringUndoContext;
+	
+	private IRefactoringHistoryParticipant fHistoryParticipant= null;
 	
 	public RefactoringCorePlugin() {
 		fgDefault= this;
@@ -101,6 +107,14 @@ public class RefactoringCorePlugin extends Plugin {
 		return fgUndoManager;
 	}
 	
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		final RefactoringHistory history= RefactoringHistory.getInstance();
+		history.connect();
+		fHistoryParticipant= new ProjectRefactoringHistoryParticipant();
+		history.addHistoryParticipant(fHistoryParticipant);
+	}
+	
 	public void stop(BundleContext context) throws Exception {
 		if (fRefactoringUndoContext != null) {
 			IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
@@ -110,6 +124,10 @@ public class RefactoringCorePlugin extends Plugin {
 		}
 		if (fgUndoManager != null)
 			fgUndoManager.shutdown();
+		final RefactoringHistory history= RefactoringHistory.getInstance();
+		history.disconnect();
+		if (fHistoryParticipant != null)
+			history.removeHistoryParticipant(fHistoryParticipant);
 		super.stop(context);
 	}
 	

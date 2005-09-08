@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePreferences;
+import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringHistory;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistory;
 
 /**
  * Central access point to access resources managed by the refactoring
@@ -57,6 +59,21 @@ public class RefactoringCore {
 		return RefactoringCorePlugin.getUndoManager();
 	}
 	
+	/**
+	 * Returns the singleton refactoring history.
+	 * <p>
+	 * Note: This API is considered experimental and may change in the near
+	 * future.
+	 * </p>
+	 * 
+	 * @return the refactoring history
+	 * 
+	 * @since 3.2
+	 */
+	public static IRefactoringHistory getRefactoringHistory() {
+		return RefactoringHistory.getInstance();
+	}
+
 	/**
 	 * When condition checking is performed for a refactoring then the
 	 * condition check is interpreted as failed if the refactoring status
