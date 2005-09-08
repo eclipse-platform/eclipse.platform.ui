@@ -706,18 +706,15 @@ public abstract class DialogMarkerFilter extends Dialog {
         Table table = new Table(composite, SWT.CHECK | SWT.H_SCROLL
                 | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
         table.setLinesVisible(true);
-        table.setHeaderVisible(true);
+        table.setHeaderVisible(false);
         TableLayout tableLayout = new TableLayout();
         table.setLayout(tableLayout);
-        tableLayout.addColumnData(new ColumnWeightData(40, true));
+        tableLayout.addColumnData(new ColumnWeightData(100, true));
         TableColumn tc = new TableColumn(table, SWT.NONE, 0);
-        tc.setText(MarkerMessages.filtersDialog_type_columnHeader);
-        tableLayout.addColumnData(new ColumnWeightData(60, true));
-        tc = new TableColumn(table, SWT.NONE, 1);
-        tc.setText(MarkerMessages.filtersDialog_superTypecolumnHeader);
+       
         typesViewer = new CheckboxTableViewer(table);
         GridData gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
-        gridData.widthHint = convertVerticalDLUsToPixels(200);
+        gridData.widthHint = convertVerticalDLUsToPixels(100);
         gridData.heightHint = convertVerticalDLUsToPixels(200);
         
         typesViewer.getTable().setFont(font);
