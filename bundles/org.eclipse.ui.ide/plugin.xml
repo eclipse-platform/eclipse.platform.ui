@@ -259,6 +259,14 @@
                menubarPath="navigate/open.ext2"
                id="org.eclipse.ui.OpenWorkspaceFile">
          </action>
+         <action
+               class="org.eclipse.ui.internal.actions.SelectWorkingSetsAction"
+               definitionId="org.eclipse.ui.navigate.selectWorkingSets"
+               id="selectWorkingSets"
+               label="%SelectWorkingSetsAction.label"
+               menubarPath="window/additions"
+               style="pulldown"
+               toolbarPath="workingSets"/>
       </actionSet>
       <actionSet
             label="%KeyBindingActionSet.label"
