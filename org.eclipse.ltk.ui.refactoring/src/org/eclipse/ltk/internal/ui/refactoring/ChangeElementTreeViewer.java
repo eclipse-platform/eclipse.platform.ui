@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -78,6 +79,15 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		} finally  {
 			fDeferredTreeItemUpdates= null;
 		}
+	}
+	
+	protected void handleInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
+		PreviewNode next= getLeaf((PreviewNode)getInput(), true);
+		if (next != null) {
+			newSelection= new StructuredSelection(next);
+			setSelection(newSelection);	
+		}
+		super.handleInvalidSelection(invalidSelection, newSelection);
 	}
 	
 	protected void inputChanged(Object input, Object oldInput) {
@@ -169,10 +179,10 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	
 	private PreviewNode getLeaf(PreviewNode element, boolean first) {
 		PreviewNode result= null;
-		PreviewNode[] children= element.getChildren();
+		PreviewNode[] children= getFilteredChildrenAsPreviewNodes(element); 
 		while(children != null && children.length > 0) {
 			result= children[first ? 0 : children.length - 1];
-			children= result.getChildren();
+			children= getFilteredChildrenAsPreviewNodes(result);
 		}
 		return result;
 	}
@@ -182,7 +192,9 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 			PreviewNode parent= element.getParent();
 			if (parent == null)
 				return null;
-			PreviewNode candidate= getSibling(parent.getChildren(), element, next);
+			PreviewNode candidate= getSibling(
+				getFilteredChildrenAsPreviewNodes(parent),
+				element, next);
 			if (candidate != null)
 				return candidate;
 			element= parent;
@@ -205,5 +217,14 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 			}
 		}
 		return null;
+	}
+	
+	private PreviewNode[] getFilteredChildrenAsPreviewNodes(PreviewNode parent) {
+		Object[] filtered= getFilteredChildren(parent);
+		PreviewNode[] result= new PreviewNode[filtered.length];
+		for (int i= 0; i < result.length; i++) {
+			result[i]= (PreviewNode)filtered[i];
+		}
+		return result;
 	}
 }
