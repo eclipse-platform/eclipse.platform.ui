@@ -24,5 +24,22 @@
          </enablement>
       </changePreviewViewer>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage"
+            class="org.eclipse.ltk.internal.ui.refactoring.history.WorkInProgressPreferencePage"
+            id="org.eclipse.ltk.ui.refactoring.work.in.progress"
+            name="Work in Progress"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            adaptable="true"
+            class="org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPropertyPage"
+            id="org.eclipse.ltk.ui.refactoring.property.page"
+            name="%RefactoringPropertyPage_name"
+            objectClass="org.eclipse.core.resources.IProject"/>
+   </extension>
 
 </plugin>

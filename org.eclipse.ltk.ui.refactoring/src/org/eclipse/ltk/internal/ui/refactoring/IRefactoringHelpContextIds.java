@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-
 public interface IRefactoringHelpContextIds {
 
 	// copied from JDT_UI so we still forward to this documentation since we are
@@ -24,5 +23,11 @@ public interface IRefactoringHelpContextIds {
 	public static final String PREVIOUS_CHANGE_ACTION=		PREFIX + "previous_change_action"; 	 //$NON-NLS-1$
 	
 	public static final String REFACTORING_PREVIEW_WIZARD_PAGE= PREFIX + "refactoring_preview_wizard_page_context"; //$NON-NLS-1$
-	public static final String REFACTORING_ERROR_WIZARD_PAGE=	PREFIX + "refactoring_error_wizard_page_context";  //$NON-NLS-1$	
+	public static final String REFACTORING_ERROR_WIZARD_PAGE=	PREFIX + "refactoring_error_wizard_page_context";  //$NON-NLS-1$
+
+	/** @since 3.2 */
+	public static final String REFACTORING_HISTORY_DIALOG= PREFIX + "refactoring_history_dialog"; //$NON-NLS-1$
+
+	/** @since 3.2 */
+	public static final String REFACTORING_HISTORY_EXPORT_DIALOG= PREFIX + "refactoring_history_export_dialog"; //$NON-NLS-1$
 }

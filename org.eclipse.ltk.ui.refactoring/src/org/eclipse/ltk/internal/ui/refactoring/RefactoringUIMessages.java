@@ -97,6 +97,16 @@ public final class RefactoringUIMessages extends NLS {
 	
 	public static String ValidationCheckResultQuery_error_message;
 
+	public static String ExportRefactoringHistoryDialog_file_filter_name;
+	public static String ExportRefactoringHistoryDialog_file_filter_extension;
+	public static String ExportRefactoringHistoryDialog_file_default_name;
+	public static String ExportRefactoringHistoryDialog_file_overwrite_query;
+	public static String ExportRefactoringHistoryDialog_export_caption;
+	public static String ExportRefactoringHistoryDialog_export_all_caption;
+
+	public static String RefactoringPropertyPage_enable_message;
+	public static String RefactoringPropertyPage_label_message;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringUIMessages.class);
 	}
