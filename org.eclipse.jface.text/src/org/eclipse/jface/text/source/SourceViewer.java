@@ -450,12 +450,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 	/**
 	 * Disposes the visual annotation model.
-	 *
-	 * XXX: make protected after 3.1
-	 * 		https://bugs.eclipse.org/bugs/show_bug.cgi?id=99682
+	 * 
 	 * @since 3.1
 	 */
-	private void disposeVisualAnnotationModel() {
+	protected void disposeVisualAnnotationModel() {
 		if (fVisualAnnotationModel != null) {
 			if (getDocument() != null)
 				fVisualAnnotationModel.disconnect(getDocument());
