@@ -15,7 +15,7 @@ package org.eclipse.ui.texteditor;
  * Extension interface for {@link org.eclipse.ui.texteditor.ITextEditor}. Adds
  * the following functions:
  * <ul>
- * <li>insert mode management
+ * 	<li>insert mode management</li>
  * </ul>
  * <p>
  *
