@@ -15,8 +15,8 @@ package org.eclipse.ui.texteditor;
  * Extension interface for {@link org.eclipse.ui.texteditor.ITextEditor}. Adds
  * the following functions:
  * <ul>
- * <li>modifiable state of the editor's input
- * <li>validate state of editor input
+ * 	<li>modifiable state of the editor's input</li>
+ * 	<li>validate state of editor input</li>
  * </ul>
  *
  * @since 2.1

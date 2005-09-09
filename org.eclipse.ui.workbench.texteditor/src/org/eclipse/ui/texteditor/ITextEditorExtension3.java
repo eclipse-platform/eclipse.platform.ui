@@ -17,7 +17,6 @@ package org.eclipse.ui.texteditor;
  * <ul>
  * 	<li>insert mode management</li>
  * </ul>
- * <p>
  *
  * @since 3.0
  */
