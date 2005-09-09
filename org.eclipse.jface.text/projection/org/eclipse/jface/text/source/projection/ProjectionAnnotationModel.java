@@ -100,6 +100,38 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	}
 
 	/**
+	 * Collapses all annotations that overlap with the given range and are collapsed.
+	 * 
+	 * @param offset the range offset
+	 * @param length the range length
+	 * @return <code>true</code> if any annotation has been collapse, <code>false</code>
+	 *         otherwise
+	 * @since 3.2
+	 */
+	public boolean collapseAll(int offset, int length) {
+
+		boolean collapsing= false;
+
+		Iterator iterator= getAnnotationIterator();
+		while (iterator.hasNext()) {
+			ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
+			if (!annotation.isCollapsed()) {
+				Position position= getPosition(annotation);
+				if (position != null && position.overlapsWith(offset, length) /* || is a delete at the boundary */ ) {
+					annotation.markCollapsed();
+					modifyAnnotation(annotation, false);
+					collapsing= true;
+				}
+			}
+		}
+
+		if (collapsing)
+			fireModelChanged();
+
+		return collapsing;
+	}
+	
+	/**
 	 * Expands all annotations that overlap with the given range and are collapsed. Fires a model change event if
 	 * requested.
 	 *

@@ -82,6 +82,12 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	public static final int TOGGLE= BASE + 3;
 	/** Operation constant for the expand all operation. */
 	public static final int EXPAND_ALL= BASE + 4;
+	/**
+	 * Operation constant for the collapse all operation.
+	 * 
+	 * @since 3.2
+	 */
+	public static final int COLLAPSE_ALL= BASE + 5;
 
 	/**
 	 * Internal listener to changes of the annotation model.
@@ -589,6 +595,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				fProjectionAnnotationModel.collapse(bestMatch);
 				revealRange(selection.x, selection.y);
 			}
+		}
+	}
+
+	private void collapseAll() {
+		int offset= 0;
+		IDocument doc= getDocument();
+		int length= doc == null ? 0 : doc.getLength();
+		if (isProjectionMode()) {
+			fProjectionAnnotationModel.collapseAll(offset, length);
 		}
 	}
 
@@ -1464,6 +1479,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				}
 				break;
 
+			case COLLAPSE_ALL:
+				if (redraws())
+					collapseAll();
+				break;
+				
 			case COLLAPSE:
 				if (redraws()) {
 					collapse();
@@ -1482,6 +1502,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 		switch (operation) {
 			case COLLAPSE:
+			case COLLAPSE_ALL:
 			case EXPAND:
 			case EXPAND_ALL:
 				return isProjectionMode();

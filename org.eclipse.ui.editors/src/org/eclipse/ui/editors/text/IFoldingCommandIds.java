@@ -59,5 +59,14 @@ public interface IFoldingCommandIds {
 	 * @since 3.2
 	 */
 	String FOLDING_COLLAPSE_ALL = "org.eclipse.ui.edit.text.folding.collapse_all"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier of the "restore folding structure" command.
+	 * <p>
+	 * Value: {@value}.</p>
+	 * 
+	 * @since 3.2
+	 */
+	String FOLDING_RESTORE= "org.eclipse.ui.edit.text.folding.restore"; //$NON-NLS-1$
 
 }
