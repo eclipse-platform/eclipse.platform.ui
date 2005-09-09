@@ -50,7 +50,7 @@ public class UntitledTextFileWizard extends Wizard implements INewWizard {
 
 	private File queryFile() {
 		IPath stateLocation= EditorsPlugin.getDefault().getStateLocation();
-		IPath path= stateLocation.append("/_" + new Object().hashCode()); //$NON-NLS-1$ //$NON-NLS-2$
+		IPath path= stateLocation.append("/_" + new Object().hashCode()); //$NON-NLS-1$
 		return new File(path.toOSString());
 	}
 
