@@ -24,6 +24,7 @@
  </package>
 
  <package name="org.eclipse.jface.text.contentassist">
+   <type name="ContentAssistEvent" instantiate="false" subclass="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.formatter">

@@ -227,7 +227,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 				setCustomInformationControlCreator(null);
 
 			// compute subject area
-			setMargins(4, -2);
+			setMargins(4, 0);
 			Rectangle area= fProposalTable.getBounds();
 			area.x= 0; // subject area is the whole subject control
 			area.y= 0;
@@ -242,12 +242,12 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	 */
 	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
-		Point size= subjectControl.getSize();
+		Point size= subjectControl.getShell().getSize();
 
-		Rectangle otherTrim= subjectControl.getShell().computeTrim(0, 0, 0, 0);
-		size.x += otherTrim.width;
-		size.y += otherTrim.height;
-
+//		Rectangle otherTrim= subjectControl.getShell().computeTrim(0, 0, 0, 0);
+//		size.x += otherTrim.width;
+//		size.y += otherTrim.height;
+//
 		if (informationControl instanceof IInformationControlExtension3) {
 			Rectangle thisTrim= ((IInformationControlExtension3)informationControl).computeTrim();
 			size.x -= thisTrim.width;

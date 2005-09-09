@@ -20,6 +20,7 @@
    <type name="ITextEditorDropTargetListener" implement="false"/>
    <type name="RevertToSavedAction" subclass="false"/>
    <type name="SaveAction" subclass="false"/>
+   <type name="HippieProposalComputer" subclass="false"/>
  </package>
 
  <package name="org.eclipse.ui.texteditor.link">
