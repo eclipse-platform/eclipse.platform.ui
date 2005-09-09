@@ -29,7 +29,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * 
  * @since 3.2
  */
-public class RefactoringDescriptor implements Serializable {
+public class RefactoringDescriptor implements Comparable, Serializable {
 
 	/** The serial version UID */
 	private static final long serialVersionUID= 1L;
@@ -85,6 +85,28 @@ public class RefactoringDescriptor implements Serializable {
 		fDescription= description;
 		fComment= comment;
 		fArguments= Collections.unmodifiableMap(new HashMap(arguments));
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public final int compareTo(final Object object) {
+		if (object instanceof RefactoringDescriptor) {
+			final RefactoringDescriptor descriptor= (RefactoringDescriptor) object;
+			return (int) (fTimeStamp - descriptor.fTimeStamp);
+		}
+		return 0;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public final boolean equals(final Object object) {
+		if (object instanceof RefactoringDescriptor) {
+			final RefactoringDescriptor descriptor= (RefactoringDescriptor) object;
+			return fTimeStamp == descriptor.fTimeStamp;
+		}
+		return false;
 	}
 
 	/**
@@ -145,6 +167,13 @@ public class RefactoringDescriptor implements Serializable {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public final int hashCode() {
+		return (int) fTimeStamp;
+	}
+
+	/**
 	 * Sets the time stamp of this refactoring.
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
@@ -155,5 +184,30 @@ public class RefactoringDescriptor implements Serializable {
 	 */
 	public final void setTimeStamp(final long stamp) {
 		fTimeStamp= stamp;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public final String toString() {
+
+		final StringBuffer buffer= new StringBuffer(128);
+
+		buffer.append(getClass().getName());
+		buffer.append("[timeStamp="); //$NON-NLS-1$
+		buffer.append(fTimeStamp);
+		buffer.append(",id="); //$NON-NLS-1$
+		buffer.append(fID);
+		buffer.append(",description="); //$NON-NLS-1$
+		buffer.append(fDescription);
+		buffer.append(",project="); //$NON-NLS-1$
+		buffer.append(fProject);
+		buffer.append(",arguments="); //$NON-NLS-1$
+		buffer.append(fArguments);
+		buffer.append(",comment="); //$NON-NLS-1$
+		buffer.append(fComment);
+		buffer.append("]"); //$NON-NLS-1$
+
+		return buffer.toString();
 	}
 }
