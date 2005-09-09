@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchPage;
 
 
 /**
- * Action for jumping to a particular line if the editor's text viewer.
+ * Action for jumping to a particular line in the editor's text viewer.
  * The user is requested to enter the line number into an input dialog.
  * The action is initially associated with a text editor via the constructor,
  * but that can be subsequently changed using <code>setEditor</code>.
