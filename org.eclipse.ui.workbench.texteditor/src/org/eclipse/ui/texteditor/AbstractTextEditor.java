@@ -185,7 +185,7 @@ import org.eclipse.ui.part.EditorPart;
  * If no id is set while in compatibility mode, the menu is registered under
  * <code>DEFAULT_RULER_CONTEXT_MENU_ID</code>.</p>
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, INavigationLocationProvider {
+public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, ITextEditorExtension4, INavigationLocationProvider {
 
 	/**
 	 * Tag used in xml configuration files to specify editor action contributions.
@@ -4538,6 +4538,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.HIPPIE_COMPLETION_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 		setAction(ITextEditorActionConstants.HIPPIE_COMPLETION, action);
+		
+		action= new GotoAnnotationAction(this, true);
+		setAction(ITextEditorActionConstants.NEXT, action);
+		action= new GotoAnnotationAction(this, false);
+		setAction(ITextEditorActionConstants.PREVIOUS, action);
 
 		PropertyDialogAction openProperties= new PropertyDialogAction(
 				new IShellProvider() {
@@ -5478,4 +5483,147 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public boolean isChangeInformationShowing() {
 		return false;
 	}
+	
+	/**
+	 * Sets the given message as error message to this editor's status line.
+	 *
+	 * @param message message to be set
+	 * @since 3.2
+	 */
+	protected void setStatusLineErrorMessage(String message) {
+		IEditorStatusLine statusLine= (IEditorStatusLine)getAdapter(IEditorStatusLine.class);
+		if (statusLine != null)
+			statusLine.setMessage(true, message, null);
+	}
+
+	/**
+	 * Sets the given message as message to this editor's status line.
+	 *
+	 * @param message message to be set
+	 * @since 3.2
+	 */
+	protected void setStatusLineMessage(String message) {
+		IEditorStatusLine statusLine= (IEditorStatusLine)getAdapter(IEditorStatusLine.class);
+		if (statusLine != null)
+			statusLine.setMessage(false, message, null);
+	}
+	
+	/**
+	 * Jumps to the next annotation according to the given direction.
+	 *
+	 * @param forward <code>true</code> if search direction is forward, <code>false</code> if backward
+	 * @return the selected annotation or <code>null</code> if none
+	 * @see #isNavigationTarget(Annotation)
+	 * @see #findAnnotation(int, int, boolean, Position)
+	 * @since 3.2
+	 */
+	public Annotation gotoAnnotation(boolean forward) {
+		ITextSelection selection= (ITextSelection) getSelectionProvider().getSelection();
+		Position position= new Position(0, 0);
+		Annotation annotation= findAnnotation(selection.getOffset(), selection.getLength(), forward, position);
+		setStatusLineErrorMessage(null);
+		setStatusLineMessage(null);
+		
+		if (annotation != null) {
+			selectAndReveal(position.getOffset(), position.getLength());
+			setStatusLineMessage(annotation.getText());
+		}
+		return annotation;
+	}
+	
+	/**
+	 * Returns the annotation closest to the given range respecting the given
+	 * direction. If an annotation is found, the annotations current position
+	 * is copied into the provided annotation position.
+	 *
+	 * @param offset the region offset
+	 * @param length the region length
+	 * @param forward <code>true</code> for forwards, <code>false</code> for backward
+	 * @param annotationPosition the position of the found annotation
+	 * @return the found annotation
+	 * @since 3.2
+	 */
+	protected Annotation findAnnotation(final int offset, final int length, boolean forward, Position annotationPosition) {
+
+		Annotation nextAnnotation= null;
+		Position nextAnnotationPosition= null;
+		Annotation containingAnnotation= null;
+		Position containingAnnotationPosition= null;
+		boolean currentAnnotation= false;
+
+		IDocument document= getDocumentProvider().getDocument(getEditorInput());
+		int endOfDocument= document.getLength();
+		int distance= Integer.MAX_VALUE;
+
+		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
+		Iterator e= model.getAnnotationIterator();
+		while (e.hasNext()) {
+			Annotation a= (Annotation) e.next();
+			if (!isNavigationTarget(a))
+				continue;
+
+			Position p= model.getPosition(a);
+			if (p == null)
+				continue;
+
+			if (forward && p.offset == offset || !forward && p.offset + p.getLength() == offset + length) {// || p.includes(offset)) {
+				if (containingAnnotation == null || (forward && p.length >= containingAnnotationPosition.length || !forward && p.length >= containingAnnotationPosition.length)) {
+					containingAnnotation= a;
+					containingAnnotationPosition= p;
+					currentAnnotation= p.length == length;
+				}
+			} else {
+				int currentDistance= 0;
+
+				if (forward) {
+					currentDistance= p.getOffset() - offset;
+					if (currentDistance < 0)
+						currentDistance= endOfDocument + currentDistance;
+
+					if (currentDistance < distance || currentDistance == distance && p.length < nextAnnotationPosition.length) {
+						distance= currentDistance;
+						nextAnnotation= a;
+						nextAnnotationPosition= p;
+					}
+				} else {
+					currentDistance= offset + length - (p.getOffset() + p.length);
+					if (currentDistance < 0)
+						currentDistance= endOfDocument + currentDistance;
+
+					if (currentDistance < distance || currentDistance == distance && p.length < nextAnnotationPosition.length) {
+						distance= currentDistance;
+						nextAnnotation= a;
+						nextAnnotationPosition= p;
+					}
+				}
+			}
+		}
+		if (containingAnnotationPosition != null && (!currentAnnotation || nextAnnotation == null)) {
+			annotationPosition.setOffset(containingAnnotationPosition.getOffset());
+			annotationPosition.setLength(containingAnnotationPosition.getLength());
+			return containingAnnotation;
+		}
+		if (nextAnnotationPosition != null) {
+			annotationPosition.setOffset(nextAnnotationPosition.getOffset());
+			annotationPosition.setLength(nextAnnotationPosition.getLength());
+		}
+
+		return nextAnnotation;
+	}
+
+	/**
+	 * Returns whether the given annotation is configured as a target for the
+	 * "Go to Next/Previous Annotation" actions.
+	 * <p>
+	 * Per default every annotation is a target.
+	 * </p>
+	 *
+	 * @param annotation the annotation
+	 * @return <code>true</code> if this is a target, <code>false</code> otherwise
+	 * @since 3.2
+	 */
+	protected boolean isNavigationTarget(Annotation annotation) {
+		return true;
+	}
+
 }

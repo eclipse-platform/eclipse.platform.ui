@@ -434,6 +434,22 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @see org.eclipse.ui.actions.ActionFactory#REVERT
 	 */
 	static final String REVERT= ActionFactory.REVERT.getId();
+	
+	/**
+	 * Name of standard Next global action in the Navigate menu.
+	 * Value <code>"next"</code>
+	 * @since 3.2
+	 * @see org.eclipse.ui.actions.ActionFactory#NEXT
+	 */
+	static final String NEXT= ActionFactory.NEXT.getId();
+	
+	/**
+	 * Name of standard Previous global action in the Navigate menu.
+	 * Value <code>"previous"</code>
+	 * @since 3.2
+	 * @see org.eclipse.ui.actions.ActionFactory#PREVIOUS
+	 */
+	static final String PREVIOUS= ActionFactory.PREVIOUS.getId();
 
 	/**
 	 * Name of the action for re-establishing the state after the

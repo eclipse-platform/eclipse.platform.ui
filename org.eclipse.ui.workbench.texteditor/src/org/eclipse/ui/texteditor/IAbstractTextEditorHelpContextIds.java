@@ -176,6 +176,20 @@ public interface IAbstractTextEditorHelpContextIds {
 
 	/**
 	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.goto_next_annotation_action_context"</code>
+	 * @since 3.2
+	 */
+	public static final String GOTO_NEXT_ANNOTATION_ACTION= PREFIX + "goto_next_annotation" + ACTION_POSTFIX;; //$NON-NLS-1$
+	
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.goto_previous_annotation_action_context"</code>
+	 * @since 3.2
+	 */
+	public static final String GOTO_PREVIOUS_ANNOTATION_ACTION= PREFIX + "goto_previous_annotation" + ACTION_POSTFIX;;	 //$NON-NLS-1$
+	
+	/**
+	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.FindIncremental_action_context"</code>
 	 * @since 2.0
 	 */

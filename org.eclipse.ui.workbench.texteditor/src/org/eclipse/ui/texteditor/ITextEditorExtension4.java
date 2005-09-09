@@ -1,0 +1,37 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.ui.texteditor;
+
+import org.eclipse.jface.text.source.Annotation;
+
+/**
+ * Extension interface for {@link org.eclipse.ui.texteditor.ITextEditor}. Adds
+ * the following functions:
+ * <ul>
+ * 	<li>annotation navigation</li>
+ * </ul>
+ * <p>
+ * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
+ * </p>
+ *
+ * @since 3.2
+ */
+public interface ITextEditorExtension4 {
+
+	/**
+	 * Jumps to the next annotation according to the given direction.
+	 *
+	 * @param forward <code>true</code> if search direction is forward, <code>false</code> if backward
+	 * @return the selected annotation or <code>null</code> if none
+	 */
+	public Annotation gotoAnnotation(boolean forward);
+}

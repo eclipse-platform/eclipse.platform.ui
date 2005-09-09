@@ -366,7 +366,7 @@
       </actionSet>
       <actionSet
             label="%textEditorAnnotationNavigationActionSet.label"
-            visible="false"
+            visible="true"
             id="org.eclipse.ui.edit.text.actionSet.annotationNavigation">
          <action
                allowLabelUpdate="true"

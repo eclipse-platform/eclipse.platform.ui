@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
@@ -41,6 +43,8 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -74,8 +78,11 @@ import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -203,7 +210,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * The editor's goto marker adapter.
 	 */
 	private Object fGotoMarkerAdapter= new GotoMarkerAdapter();
-
+	/**
+	 * Indicates whether this editor is updating views that show markers.
+	 * @see #updateMarkerViews(Annotation)
+	 * @since 3.2
+	 */
+	private boolean fIsUpdatingMarkerViews= false;
 
 	/**
 	 * Creates a new text editor.
@@ -1083,7 +1095,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @deprecated visibility will be reduced, use <code>getAdapter(IGotoMarker.class) for accessing this method</code>
 	 */
 	public void gotoMarker(IMarker marker) {
-
+		if (fIsUpdatingMarkerViews)
+			return;
+		
 		if (getSourceViewer() == null)
 			return;
 
@@ -1471,5 +1485,87 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			return new NonLocalUndoUserApprover(undoContext, this, new Object [] { affectedObject }, IResource.class);
 		}
 		return super.getUndoRedoOperationApprover(undoContext);
+	}
+	
+	/**
+	 * Returns whether the given annotation is configured as a target for the
+	 * "Go to Next/Previous Annotation" actions.
+	 * <p>
+	 * The annotation is a target if their annotation type is configured to be
+	 * in the Next/Previous tool bar drop down menu and if it is checked.
+	 * </p>
+	 *
+	 * @param annotation the annotation
+	 * @return <code>true</code> if this is a target, <code>false</code> otherwise
+	 * @since 3.2
+	 */
+	protected boolean isNavigationTarget(Annotation annotation) {
+		AnnotationPreference preference= getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
+//		See bug 41689
+//		String key= forward ? preference.getIsGoToNextNavigationTargetKey() : preference.getIsGoToPreviousNavigationTargetKey();
+		String key= preference == null ? null : preference.getIsGoToNextNavigationTargetKey();
+		return (key != null && getPreferenceStore().getBoolean(key));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * This extended implementation updates views that also show the
+	 * select marker annotation.
+	 * </p>
+	 * @since 3.2
+	 */
+	public Annotation gotoAnnotation(boolean forward) {
+		Annotation annotation= super.gotoAnnotation(forward);
+		if (annotation != null) {
+//			fLastMarkerTarget= null;
+			try {
+				fIsUpdatingMarkerViews= true;
+				updateMarkerViews(annotation);
+			} finally {
+				fIsUpdatingMarkerViews= false;
+			}
+		}
+		return annotation;
+	}
+	
+	/**
+	 * Updates visible views that show markers.
+	 * <p>
+	 * If the given annotation can be associated with a marker then
+	 * this method tries select the this marker in views that show
+	 * markers.
+	 * </p> 
+	 * @param annotation
+	 * @since 3.2
+	 */
+	protected void updateMarkerViews(Annotation annotation) {
+		IMarker marker= null;
+		if (annotation instanceof MarkerAnnotation)
+			marker= ((MarkerAnnotation)annotation).getMarker();
+
+		if (marker != null) {
+			try {
+				IWorkbenchPage page= getSite().getPage();
+				IViewPart view= null;
+				if (marker.isSubtypeOf(IMarker.PROBLEM))
+					view= page.findView(IPageLayout.ID_PROBLEM_VIEW);
+				else if (marker.isSubtypeOf(IMarker.TASK))
+					view= page.findView(IPageLayout.ID_TASK_LIST);
+				else if (marker.isSubtypeOf(IMarker.BOOKMARK))
+					view= page.findView(IPageLayout.ID_BOOKMARKS);
+				
+				
+				if (view != null) {
+					Method method= view.getClass().getMethod("setSelection", new Class[] { IStructuredSelection.class, boolean.class}); //$NON-NLS-1$
+					method.invoke(view, new Object[] {new StructuredSelection(marker), Boolean.TRUE });
+				}
+			} catch (CoreException x) {
+			} catch (NoSuchMethodException x) {
+			} catch (IllegalAccessException x) {
+			} catch (InvocationTargetException x) {
+			}
+			// ignore exceptions, don't update any of the lists, just set status line
+		}
 	}
 }

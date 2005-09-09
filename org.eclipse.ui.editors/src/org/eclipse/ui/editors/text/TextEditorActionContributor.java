@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 
 import org.eclipse.ui.IActionBars;
@@ -19,6 +20,7 @@ import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.texteditor.BasicTextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
 
@@ -61,11 +63,18 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		if (part instanceof ITextEditor)
 			textEditor= (ITextEditor) part;
 
+		/** The global actions to be connected with editor actions */
 		IActionBars actionBars= getActionBars();
-		if (actionBars != null) {
-			actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), getAction(textEditor, IDEActionFactory.ADD_TASK.getId()));
-			actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), getAction(textEditor, IDEActionFactory.BOOKMARK.getId()));
-		}
+		
+		actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), getAction(textEditor, IDEActionFactory.ADD_TASK.getId()));
+		actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), getAction(textEditor, IDEActionFactory.BOOKMARK.getId()));
+		
+		IAction action= getAction(textEditor, ITextEditorActionConstants.NEXT);
+		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_NEXT_ANNOTATION, action);
+		actionBars.setGlobalActionHandler(ITextEditorActionConstants.NEXT, action);
+		action= getAction(textEditor, ITextEditorActionConstants.PREVIOUS);
+		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_PREVIOUS_ANNOTATION, action);
+		actionBars.setGlobalActionHandler(ITextEditorActionConstants.PREVIOUS, action);
 
 		fChangeEncodingAction.setAction(getAction(textEditor, ITextEditorActionConstants.CHANGE_ENCODING));
 	}
