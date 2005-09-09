@@ -209,10 +209,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		ITextEditor editor= (part instanceof ITextEditor) ? (ITextEditor) part : null;
 
 		IActionBars actionBars= getActionBars();
-		if (actionBars != null) {
-			for (int i= 0; i < ACTIONS.length; i++)
-				actionBars.setGlobalActionHandler(ACTIONS[i], getAction(editor, ACTIONS[i]));
-		}
+		for (int i= 0; i < ACTIONS.length; i++)
+			actionBars.setGlobalActionHandler(ACTIONS[i], getAction(editor, ACTIONS[i]));
 
 		fFindNext.setAction(getAction(editor, ITextEditorActionConstants.FIND_NEXT));
 		fFindPrevious.setAction(getAction(editor, ITextEditorActionConstants.FIND_PREVIOUS));
