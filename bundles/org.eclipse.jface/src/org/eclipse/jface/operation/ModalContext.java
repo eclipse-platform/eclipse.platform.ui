@@ -377,6 +377,7 @@ public class ModalContext {
 	 * @param allowReadAndDispatch <code>true</code> (the default) if events may be processed while
 	 * running an operation, <code>false</code> if Display.readAndDispatch() should not be called
 	 * from ModalContext.
+	 * @since 3.2
 	 */
 	public static void setAllowReadAndDispatch(boolean allowReadAndDispatch) {
 		// use a separate thread if and only if it is OK to spin the event loop
