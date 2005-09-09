@@ -160,30 +160,34 @@ public class PageLayout implements IPageLayout {
             return;
         if (id != null) {
             try {
-                IViewReference ref = viewFactory.createView(id);
-                fastViews.add(ref);
+				IViewDescriptor viewDescriptor = viewFactory.getViewRegistry()
+						.find(ViewFactory.extractPrimaryId(id));
+				if (!WorkbenchActivityHelper.filterItem(viewDescriptor)) {
+					IViewReference ref = viewFactory.createView(id);
+					fastViews.add(ref);
 
-                // force creation of the view layout rec
-                ViewLayoutRec rec = getViewLayoutRec(id, true);
+					// force creation of the view layout rec
+					ViewLayoutRec rec = getViewLayoutRec(id, true);
 
-                // remember the ratio, if valid
-                if (ratio >= IPageLayout.RATIO_MIN
-                        && ratio <= IPageLayout.RATIO_MAX) {
-                    rec.fastViewWidthRatio = ratio;
-                }
-            } catch (PartInitException e) {
-                WorkbenchPlugin.log(getClass(), "addFastView", e); //$NON-NLS-1$
-            }
+					// remember the ratio, if valid
+					if (ratio >= IPageLayout.RATIO_MIN
+							&& ratio <= IPageLayout.RATIO_MAX) {
+						rec.fastViewWidthRatio = ratio;
+					}
+				}
+			} catch (PartInitException e) {
+				WorkbenchPlugin.log(getClass(), "addFastView", e); //$NON-NLS-1$
+			}
         }
     }
 
     /**
-     * Check to see if the partId represents a fast view's id.
-     * 
-     * @param partId
-     * 			The part's id.
-     * @return true if the partId is a fast view id.
-     */
+	 * Check to see if the partId represents a fast view's id.
+	 * 
+	 * @param partId
+	 *            The part's id.
+	 * @return true if the partId is a fast view id.
+	 */
     private boolean isFastViewId(String partId) {
         for (int i = 0; i < fastViews.size(); i++) {
             if (((IViewReference) fastViews.get(i)).getId().equals(partId))
