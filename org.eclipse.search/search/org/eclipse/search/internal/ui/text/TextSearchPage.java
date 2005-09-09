@@ -135,7 +135,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			settings.put("isRegExSearch", isRegExSearch); //$NON-NLS-1$
 			settings.put("textPattern", textPattern); //$NON-NLS-1$
 			settings.put("fileNamePatterns", fileNamePatterns); //$NON-NLS-1$
-			settings.put("scope", scope); //$NON-NLS-1$ //$NON-NLS-2$
+			settings.put("scope", scope); //$NON-NLS-1$
 			if (workingSets != null) {
 				String[] wsIds= new String[workingSets.length];
 				for (int i= 0; i < workingSets.length; i++) {
