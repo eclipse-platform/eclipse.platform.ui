@@ -145,6 +145,8 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
             <annotation>
                <documentation>
                   the name of an object&apos;s attribute. Acceptable names reflect the object type, and should be publicly declared by the plug-in where the object type is declared.
+
+@see IResourceActionFilter for a list of the supported constants
                </documentation>
             </annotation>
          </attribute>

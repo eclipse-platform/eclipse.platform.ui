@@ -76,7 +76,9 @@
             <annotation>
                <documentation>
                   a fully qualified name of a class which implements &lt;samp&gt;org.eclipse.jface.viewers.ILabelDecorator&lt;/samp&gt;
-if &lt;b&gt;&lt;i&gt; lightweight&lt;/i&gt;&lt;/b&gt; is false or  &lt;samp&gt;org.eclipse.jface.viewers.ILightweightLabelDecorator&lt;/samp&gt; if lightweight is true. The default value is false. If there is no &lt;b&gt;&lt;i&gt;class&lt;/i&gt;&lt;/b&gt; element it is assumed to be true.
+if &lt;b&gt;&lt;i&gt; lightweight&lt;/i&gt;&lt;/b&gt; is false or  &lt;samp&gt;org.eclipse.jface.viewers.ILightweightLabelDecorator&lt;/samp&gt; if lightweight is true. The default value is false. If there is no &lt;b&gt;&lt;i&gt;class&lt;/i&gt;&lt;/b&gt; element it is assumed to be lightweight.
+
+In the case where there is no decorator class this is said to be declarative. Declarative decorators with an enablement based on session properties, persistant properties or project description values (such as natures) will need to be updated explicitly when these values change using &lt;code&gt;IDecoratorManager#update()&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ILabelDecorator"/>
