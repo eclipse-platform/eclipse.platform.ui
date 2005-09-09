@@ -21,6 +21,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -91,37 +93,45 @@ public class IWorkbenchPageTest extends UITestCase {
 		IWorkingSetManager manager = page.getWorkbenchWindow().getWorkbench()
 				.getWorkingSetManager();
 
-		
-		IWorkingSet set1 = manager.createWorkingSet("w1", new IAdaptable[0]);
-		manager.addWorkingSet(set1);
-		IWorkingSet set2 = manager.createWorkingSet("w2", new IAdaptable[0]);
-		manager.addWorkingSet(set2);
-		
-		page.setWorkingSets(new IWorkingSet[] {set1});
-		sets = page.getWorkingSets();
-		
-		assertNotNull(sets);
-		assertEquals(1, sets.length);
-		assertEquals(set1, sets[0]);
-		
-		page.setWorkingSets(new IWorkingSet[0]);
-		sets = page.getWorkingSets();
-		assertNotNull(sets);
-		assertEquals(0, sets.length);
-		
-		page.setWorkingSets(new IWorkingSet[] {set1, set2});
-		sets = page.getWorkingSets();
-		
-		assertNotNull(sets);
-		assertEquals(2, sets.length);
-		Set realSet = new HashSet(Arrays.asList(sets));
-		assertTrue(realSet.contains(set1));
-		assertTrue(realSet.contains(set2));
-		
-		page.setWorkingSets(new IWorkingSet[0]);
-		sets = page.getWorkingSets();
-		assertNotNull(sets);
-		assertEquals(0, sets.length);
+		IWorkingSet set1 = null, set2 = null;
+		try {
+			set1 = manager.createWorkingSet("w1", new IAdaptable[0]);
+			manager.addWorkingSet(set1);
+			set2 = manager.createWorkingSet("w2", new IAdaptable[0]);
+			manager.addWorkingSet(set2);
+			
+			page.setWorkingSets(new IWorkingSet[] {set1});
+			sets = page.getWorkingSets();
+			
+			assertNotNull(sets);
+			assertEquals(1, sets.length);
+			assertEquals(set1, sets[0]);
+			
+			page.setWorkingSets(new IWorkingSet[0]);
+			sets = page.getWorkingSets();
+			assertNotNull(sets);
+			assertEquals(0, sets.length);
+			
+			page.setWorkingSets(new IWorkingSet[] {set1, set2});
+			sets = page.getWorkingSets();
+			
+			assertNotNull(sets);
+			assertEquals(2, sets.length);
+			Set realSet = new HashSet(Arrays.asList(sets));
+			assertTrue(realSet.contains(set1));
+			assertTrue(realSet.contains(set2));
+			
+			page.setWorkingSets(new IWorkingSet[0]);
+			sets = page.getWorkingSets();
+			assertNotNull(sets);
+			assertEquals(0, sets.length);
+		}
+		finally {
+			if (set1 != null) 
+				manager.removeWorkingSet(set1);
+			if (set2 != null)
+				manager.removeWorkingSet(set2);
+		}
 	}
 	
 	 /**
@@ -135,12 +145,54 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertNotNull(sets);
 		assertEquals(0, sets.length);
 	}
+	
+	/**
+	 * Tests the working set listeners.
+	 * 
+	 * @since 3.2
+	 */
+	public void testWorkingSets3() {
+		IWorkingSetManager manager = fActivePage.getWorkbenchWindow().getWorkbench()
+				.getWorkingSetManager();
+
+		IWorkingSet set1 = null;
+		final IWorkingSet [][] sets = new IWorkingSet[1][];
+		sets[0] = new IWorkingSet[0];
+		IPropertyChangeListener listener = new IPropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent event) {
+				IWorkingSet [] oldSets = (IWorkingSet[]) event.getOldValue();
+				assertTrue(Arrays.equals(sets[0], oldSets));
+				sets[0] = (IWorkingSet[]) event.getNewValue();
+			}};
+		try {
+			set1 = manager.createWorkingSet("w1", new IAdaptable[0]);
+			manager.addWorkingSet(set1);
+
+			fActivePage.addPropertyChangeListener(listener);
+			
+			fActivePage.setWorkingSets(new IWorkingSet[] { set1 });
+			fActivePage.setWorkingSets(new IWorkingSet[] { });
+			fActivePage.setWorkingSets(new IWorkingSet[] { set1 });
+			
+			sets[0] = fActivePage.getWorkingSets();
+
+			assertNotNull(sets[0]);
+			assertEquals(1, sets[0].length);
+			assertEquals(set1, sets[0][0]);
+
+		} finally {
+			fActivePage.removePropertyChangeListener(listener);
+			if (set1 != null)
+				manager.removeWorkingSet(set1);
+		}
+	}
     
     /**
-     * Test the VIEW_VISIBLE parameter for showView, opening the view in the 
-     * stack that does not contain the active view.  Ensures that the created 
-     * view is not the active part but is the top part in its stack.
-     */
+	 * Test the VIEW_VISIBLE parameter for showView, opening the view in the
+	 * stack that does not contain the active view. Ensures that the created
+	 * view is not the active part but is the top part in its stack.
+	 */
     public void testView_VISIBLE2() {
         WorkbenchPage page = (WorkbenchPage) fActivePage;
         try {
