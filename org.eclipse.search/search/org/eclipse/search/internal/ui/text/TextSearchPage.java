@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.eclipse.core.internal.resources.mapping.ResourceMapping;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 
@@ -608,23 +610,34 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			Iterator iter= ((IStructuredSelection) selection).iterator();
 			while (iter.hasNext()) {
 				Object curr= iter.next();
-
-				IResource resource= null;			
-				if (curr instanceof IResource) {
-					resource= (IResource) curr;
-				} else if (curr instanceof IAdaptable) {
-					resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
-					if (resource == null && isProjectScope)
-						resource= (IProject) ((IAdaptable)curr).getAdapter(IProject.class);
-				}
-				if (resource != null) {
-					if (isProjectScope) {
-						resource= resource.getProject();
-						if (firstProjectName == null) {
-							firstProjectName= resource.getName();
+				
+				if (curr instanceof IWorkingSet && !isProjectScope) {
+					IWorkingSet ws= (IWorkingSet)curr;
+					IAdaptable[] elements= ws.getElements();
+					for (int i= 0; i < elements.length; i++) {
+						IResource resource= (IResource)elements[i].getAdapter(IResource.class);
+						if (resource != null) {
+							resources.add(resource);
 						}
 					}
-					resources.add(resource);
+				} else {
+					IResource resource= null;			
+					if (curr instanceof IResource) {
+						resource= (IResource) curr;
+					} else if (curr instanceof IAdaptable) {
+						resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
+						if (resource == null && isProjectScope)
+							resource= (IProject) ((IAdaptable)curr).getAdapter(IProject.class);
+					}
+					if (resource != null) {
+						if (isProjectScope) {
+							resource= resource.getProject();
+							if (firstProjectName == null) {
+								firstProjectName= resource.getName();
+							}
+						}
+						resources.add(resource);
+					}
 				}
 			}
 		} else if (isProjectScope) {
