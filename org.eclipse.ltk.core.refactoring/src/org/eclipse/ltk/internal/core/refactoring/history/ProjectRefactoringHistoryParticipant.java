@@ -26,6 +26,9 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -52,6 +55,22 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  */
 public final class ProjectRefactoringHistoryParticipant implements IRefactoringHistoryParticipant {
 
+	/** Workspace resource change listener */
+	private final class WorkspaceChangeListener implements IResourceChangeListener {
+
+		public void resourceChanged(final IResourceChangeEvent event) {
+			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+				final IResource resource= event.getResource();
+				if (resource != null && resource.getType() == IResource.FILE) {
+					final IFile file= (IFile) resource;
+					if (file.getName().equals(PATH_HISTORY_FILE)) {
+						// TODO: implement
+					}
+				}
+			}
+		}
+	}
+
 	/** The history file extension */
 	private static final String EXTENSION_HISTORY_FILE= "dat"; //$NON-NLS-1$
 
@@ -60,6 +79,32 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 
 	/** The history folder */
 	private static final String NAME_HISTORY_FOLDER= ".refactorings"; //$NON-NLS-1$
+
+	/** The history file path */
+	private static final String PATH_HISTORY_FILE= NAME_HISTORY_FILE + "." + EXTENSION_HISTORY_FILE; //$NON-NLS-1$
+
+	/** The resource listener, or <code>null</code> */
+	private IResourceChangeListener fResourceListener= null;
+
+	/**
+	 * @inheritDoc
+	 */
+	public void connect() {
+		if (fResourceListener == null) {
+			fResourceListener= new WorkspaceChangeListener();
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(fResourceListener, IResourceChangeEvent.POST_CHANGE);
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public void disconnect() {
+		if (fResourceListener != null) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(fResourceListener);
+			fResourceListener= null;
+		}
+	}
 
 	/**
 	 * Returns the project history file for the specified project.
@@ -84,7 +129,7 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 		if (!folder.exists())
 			folder.create(true, true, null);
 		if (folder.exists()) {
-			final IFile file= folder.getFile(NAME_HISTORY_FILE + "." + EXTENSION_HISTORY_FILE); //$NON-NLS-1$
+			final IFile file= folder.getFile(PATH_HISTORY_FILE);
 			if (!file.exists())
 				file.create(new ByteArrayInputStream(new byte[] {}), true, null);
 			if (file.exists()) {

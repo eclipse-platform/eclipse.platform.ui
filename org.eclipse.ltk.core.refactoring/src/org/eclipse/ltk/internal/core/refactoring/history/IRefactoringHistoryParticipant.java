@@ -28,6 +28,22 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 public interface IRefactoringHistoryParticipant {
 
 	/**
+	 * Connects the participant to the refactoring history.
+	 * <p>
+	 * If the participant is already connected, nothing happens.
+	 * </p>
+	 */
+	public void connect();
+
+	/**
+	 * Disconnects the participant from the refactoring history.
+	 * <p>
+	 * If the participant is not connected, nothing happens.
+	 * </p>
+	 */
+	public void disconnect();
+
+	/**
 	 * Pops the specified refactoring descriptor from the top of the refactoring
 	 * history.
 	 * 

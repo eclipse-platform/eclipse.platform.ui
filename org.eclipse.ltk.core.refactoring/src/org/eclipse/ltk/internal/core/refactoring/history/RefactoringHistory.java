@@ -23,6 +23,7 @@ import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -56,6 +57,10 @@ import org.eclipse.ltk.internal.core.refactoring.UndoableOperation2ChangeAdapter
 
 /**
  * Global workspace refactoring history.
+ * <p>
+ * Clients may obtain call only methods from interface
+ * {@link org.eclipse.ltk.internal.core.refactoring.history.IRefactoringHistory}.
+ * </p>
  * 
  * @since 3.2
  */
@@ -317,7 +322,7 @@ public final class RefactoringHistory implements IRefactoringHistory {
 		public void resourceChanged(final IResourceChangeEvent event) {
 			if (event.getType() == IResourceChangeEvent.PRE_DELETE) {
 				final IResource resource= event.getResource();
-				if (resource.getType() == IResource.PROJECT) {
+				if (resource != null && resource.getType() == IResource.PROJECT) {
 					final IProject project= (IProject) resource;
 					if (fUndoStack != null)
 						fUndoStack.removeDescriptors(project);
@@ -414,6 +419,9 @@ public final class RefactoringHistory implements IRefactoringHistory {
 
 	/**
 	 * Returns the singleton instance of the refactoring history.
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
 	 * 
 	 * @return the singleton instance
 	 */
@@ -456,8 +464,10 @@ public final class RefactoringHistory implements IRefactoringHistory {
 	 */
 	public void addHistoryParticipant(final IRefactoringHistoryParticipant participant) {
 		Assert.isNotNull(participant);
-		if (!fHistoryParticipants.contains(participant))
+		if (!fHistoryParticipants.contains(participant)) {
 			fHistoryParticipants.add(participant);
+			participant.connect();
+		}
 	}
 
 	/**
@@ -624,6 +634,49 @@ public final class RefactoringHistory implements IRefactoringHistory {
 	}
 
 	/**
+	 * Merges the refactoring descriptor with this history.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor to merge
+	 */
+	private void mergeRefactoringDescriptor(final RefactoringDescriptor descriptor) {
+		Assert.isNotNull(descriptor);
+
+		// TODO: implement
+
+		RefactoringDescriptor current= null;
+		final ListIterator iterator= fUndoStack.fImplementation.listIterator();
+		while (iterator.hasNext()) {
+			current= (RefactoringDescriptor) iterator.next();
+			if (current.getTimeStamp() <= descriptor.getTimeStamp())
+				break;
+		}
+		iterator.add(descriptor);
+	}
+
+	/**
+	 * Merges the specified refactoring descriptors with this history.
+	 * <p>
+	 * The refactoring history must be in connected state.
+	 * </p>
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param descriptors
+	 *            the refactoring descriptors to merge
+	 */
+	public void mergeRefactoringDescriptors(final RefactoringDescriptor[] descriptors) {
+		Assert.isNotNull(descriptors);
+		Assert.isNotNull(fUndoStack);
+		RefactoringDescriptor descriptor= null;
+		for (int index= 0; index < descriptors.length; index++) {
+			descriptor= descriptors[index];
+			mergeRefactoringDescriptor(descriptor);
+		}
+	}
+
+	/**
 	 * Reads the workspace history from disk.
 	 * 
 	 * @param file
@@ -658,11 +711,15 @@ public final class RefactoringHistory implements IRefactoringHistory {
 	 */
 	public void removeHistoryParticipant(final IRefactoringHistoryParticipant participant) {
 		Assert.isNotNull(participant);
-		fHistoryParticipants.remove(participant);
+		if (fHistoryParticipants.remove(participant))
+			participant.disconnect();
 	}
 
 	/**
 	 * Returns the descriptor the specified handle points to.
+	 * <p>
+	 * The refactoring history must be in connected state.
+	 * </p>
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
 	 * </p>
