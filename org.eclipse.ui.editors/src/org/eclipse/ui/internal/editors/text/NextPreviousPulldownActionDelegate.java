@@ -11,8 +11,10 @@
 
 package org.eclipse.ui.internal.editors.text;
 
-import java.util.ArrayList;
+import java.text.Collator;
 import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -43,13 +45,16 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	private IPreferenceStore fStore;
 
 	/** Action for handling menu item selection. */
-	private static class NavigationEnablementAction extends Action {
+	private static class NavigationEnablementAction extends Action implements Comparable {
 
 		/** The preference store. */
 		private IPreferenceStore fStore;
 
 		/** The preference key for the value in the store. */
 		private String fKey;
+		
+		/** The display string. */
+		private String fName;
 
 		/**
 		 * Creates a named navigation enablement action.
@@ -62,6 +67,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 			super(name, IAction.AS_CHECK_BOX);
 			fStore= store;
 			fKey= key;
+			fName= name;
 			setChecked(fStore.getBoolean(fKey));
 		}
 
@@ -70,6 +76,19 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 		 */
 		public void run() {
 			fStore.setValue(fKey, isChecked());
+		}
+
+		/*
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 * @since 3.1
+		 */
+		public int compareTo(Object o) {
+			if (!(o instanceof NavigationEnablementAction))
+				return -1;
+
+			String otherName= ((NavigationEnablementAction)o).fName;
+
+			return Collator.getInstance().compare(fName, otherName);
 		}
 	}
 
@@ -147,7 +166,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	 */
 	private IAction[] getActionsFromDescriptors() {
 		MarkerAnnotationPreferences fMarkerAnnotationPreferences= new MarkerAnnotationPreferences();
-		ArrayList containers= new ArrayList();
+		SortedSet containers= new TreeSet();
 
 		Iterator iter= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (iter.hasNext()) {
