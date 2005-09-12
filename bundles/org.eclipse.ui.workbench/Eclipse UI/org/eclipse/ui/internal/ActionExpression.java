@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -158,6 +160,20 @@ public class ActionExpression {
         }
         return true;
     }
+    
+    /**
+     * Return the values of the expression type that the receiver
+     * is enabled for. If the receiver is not enabled for the
+     * expressionType then return <code>null</code>.
+     * 
+     * @param expressionType the expression type to consider
+     * @return Collection if there are values for this expression
+     * or <code>null</code> if this is not possible in the 
+     * receiver or any of it's children
+     */
+    public Collection valuesForExpression(String expressionType){
+    	return root.valuesForExpression(expressionType);
+    }
 
     /**
      * Create an expression from the attributes and sub-elements of the
@@ -225,6 +241,20 @@ public class ActionExpression {
         public String extractObjectClass() {
             return null;
         }
+        
+        /**
+         * Return the value of the expression type that the receiver
+         * is enabled for. If the receiver is not enabled for the
+         * expressionType then return <code>null</code>.
+         * 
+         * @param expressionType the expression type to consider
+         * @return  Collection of String if there are values for this expression
+         * or <code>null</code> if this is not possible in the 
+         * receiver or any of it's children
+         */
+        public Collection valuesForExpression(String expressionType){
+        	return null;
+        }
     }
 
     private static abstract class CompositeExpression extends
@@ -284,6 +314,28 @@ public class ActionExpression {
                     return objectClass;
             }
             return null;
+        }
+        
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.internal.ActionExpression.AbstractExpression#valuesForExpression(java.lang.String)
+         */
+        public Collection valuesForExpression(String expressionType) {
+        	 Iterator iterator = list.iterator();
+        	 Collection allValues = null;
+             while (iterator.hasNext()) {
+                 AbstractExpression next = (AbstractExpression) iterator.next();
+                 Collection values =
+                	  next.valuesForExpression(expressionType);
+                 if(values != null){
+                	 if(allValues == null)
+                		 allValues = values;
+                	 else
+                		 allValues.addAll(values);
+                 }
+                	
+             }
+             return allValues;
         }
     }
 
@@ -351,6 +403,14 @@ public class ActionExpression {
          */
         public String extractObjectClass() {
             return child.extractObjectClass();
+        }
+        
+     
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.internal.ActionExpression.AbstractExpression#valuesForExpression(java.lang.String)
+         */
+        public Collection valuesForExpression(String expressionType) {
+        	return child.valuesForExpression(expressionType);
         }
 
     }
@@ -513,6 +573,20 @@ public class ActionExpression {
                         .getAdapter(IActionFilter.class);
             return filter;
         }
+        
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.internal.ActionExpression.AbstractExpression#valuesForExpression(java.lang.String)
+         */
+        public Collection valuesForExpression(String expressionType) {
+        	if(expressionType.equals(name)){
+        		Collection returnValue =  new HashSet();
+        		returnValue.add(value);
+        		return returnValue;
+        	}
+        	return null;
+        }
+       
     }
 
     private static class ObjectClassExpression extends AbstractExpression {

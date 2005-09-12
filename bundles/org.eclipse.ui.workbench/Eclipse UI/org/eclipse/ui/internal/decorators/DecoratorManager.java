@@ -35,6 +35,8 @@ import org.eclipse.jface.viewers.IDelayedLabelDecorator;
 import org.eclipse.jface.viewers.IFontDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ILabelUpdateProcessor;
+import org.eclipse.jface.viewers.ILabelUpdateValidator;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Color;
@@ -93,12 +95,15 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
     private final String P_FALSE = "false"; //$NON-NLS-1$
 
+	private ResourceUpdateListener updateListener;
+
     /**
      * Create a new instance of the receiver and load the
      * settings from the installed plug-ins.
      */
     public DecoratorManager() {
         
+    	updateListener = new ResourceUpdateListener();
         scheduler = new DecorationScheduler(this);
         IExtensionTracker tracker = PlatformUI.getWorkbench()
 				.getExtensionTracker();
@@ -496,7 +501,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * @see IBaseLabelProvider#dispose()
      */
     public void dispose() {
-        //Do nothing as this is not viewer dependant
+       updateListener.dispose();
     }
 
     /**
@@ -654,6 +659,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         if(lightweightManager != null)//Do not create if not required
         	getLightweightManager().shutdown();
         scheduler.shutdown();
+        dispose();
     }
 
     /**
@@ -916,6 +922,38 @@ public class DecoratorManager implements IDelayedLabelDecorator,
                 }           
             }    
         }
+		
+	}
+
+	/**
+	 * Return the update listener for the receiver.
+	 * @return ResourceUpdateListener
+	 */
+	ResourceUpdateListener getUpdateListener() {
+		return updateListener;
+	}
+	
+	/**
+	 * The value has changed ask the listeners if they 
+	 * want to do anything.
+	 * @param element
+	 */
+	void updateForValueChanged(final Object element, final ILabelUpdateValidator validator){
+		
+		 Object[] array = listeners.getListeners();
+	        for (int i = 0; i < array.length; i++) {
+	            if(array[i] instanceof ILabelUpdateProcessor){
+	            	final ILabelUpdateProcessor processor = (ILabelUpdateProcessor) array[i];
+	            	Platform.run(new SafeRunnable() {
+	            		public void run() {
+	            			processor.processUpdates(element,validator);
+	            		}
+	            	});
+	            }
+	            else
+		        	prepareDecoration(element, null);
+	        }
+	        
 		
 	}
 }

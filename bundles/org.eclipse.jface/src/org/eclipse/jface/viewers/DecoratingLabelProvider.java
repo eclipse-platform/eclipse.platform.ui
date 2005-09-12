@@ -23,7 +23,15 @@ import org.eclipse.swt.graphics.Image;
  * the nested label provider.
  */
 public class DecoratingLabelProvider extends LabelProvider implements
-        ILabelProvider, IViewerLabelProvider, IColorProvider, IFontProvider {
+        ILabelProvider, IViewerLabelProvider, IColorProvider, IFontProvider, ILabelUpdateProcessor {
+	
+	/**
+	 * The UPDATE_LABEL flag indicates that the label should 
+	 * be updated for the element passed to the validator.
+	 * @see ILabelUpdateValidator
+	 */
+	public static final String UPDATE_LABEL = "UPDATE_LABEL";//$NON-NLS-1$
+	
     private ILabelProvider provider;
 
     private ILabelDecorator decorator;
@@ -263,4 +271,11 @@ public class DecoratingLabelProvider extends LabelProvider implements
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ILabelUpdateProcessor#processUpdates(java.lang.Object, org.eclipse.jface.viewers.ILabelUpdateValidator)
+	 */
+	public void processUpdates(Object element, ILabelUpdateValidator validator) {
+		if(validator.shouldUpdate(element) == UPDATE_LABEL)
+			fireLabelProviderChanged(new LabelProviderChangedEvent(this,element));
+	}
 }
