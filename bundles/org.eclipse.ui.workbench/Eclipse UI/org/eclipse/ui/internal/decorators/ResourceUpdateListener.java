@@ -57,7 +57,7 @@ public class ResourceUpdateListener implements IResourceChangeListener {
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 
-		if (definitionsToNatures == null)
+		if (definitionsToNatures == null || event.getDelta() == null)
 			return;
 
 		IResourceDelta[] deltas = event.getDelta().getAffectedChildren();
