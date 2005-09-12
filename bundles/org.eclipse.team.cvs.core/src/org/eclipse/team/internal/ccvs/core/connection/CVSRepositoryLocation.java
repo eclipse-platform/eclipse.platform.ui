@@ -291,7 +291,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 					// Save options in hash table
 					StringTokenizer stOpt = new StringTokenizer(
 						location.substring(optionStart+1, end),
-            					"=;"
+            					"=;" //$NON-NLS-1$
 					);
 					while (stOpt.hasMoreTokens()) {
 						hmOptions.put(stOpt.nextToken(), stOpt.nextToken());
@@ -334,9 +334,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			} else if (optionStart != -1) {
 				// alternative location string data
 				// errorMessage = CVSMessages.CVSRepositoryLocation_parsingOptionsUsername;
-				if (hmOptions.containsKey("username")) user = hmOptions.get("username").toString();
+				if (hmOptions.containsKey("username")) user = hmOptions.get("username").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 				// errorMessage = CVSMessages.CVSRepositoryLocation_parsingOptionsPassword;
-				if (hmOptions.containsKey("password")) user = hmOptions.get("password").toString();
+				if (hmOptions.containsKey("password")) user = hmOptions.get("password").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			// Get the host (and port)
@@ -348,11 +348,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			    // Decrement the end since the slash is part of the path
 			    if (end != -1) end--;
 			}
-			String host = (optionStart != -1) ? hmOptions.get("hostname").toString() : location.substring(start, end);
+			String host = (optionStart != -1) ? hmOptions.get("hostname").toString() : location.substring(start, end); //$NON-NLS-1$
 			int port = USE_DEFAULT_PORT;
 			boolean havePort = false;
-			if (hmOptions.containsKey("port")) {
-				port = Integer.parseInt(hmOptions.get("port").toString());
+			if (hmOptions.containsKey("port")) { //$NON-NLS-1$
+				port = Integer.parseInt(hmOptions.get("port").toString()); //$NON-NLS-1$
 				havePort = true;
 			}
 			// Separate the port and host if there is a port
