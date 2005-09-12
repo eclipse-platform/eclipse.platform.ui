@@ -620,6 +620,40 @@
             icon="icons/binary_co.gif"
             id="org.eclipse.ui.tests.multieditor.TestEditor"
             name="%Editors.TestEditor"/>
+      <!-- the order of the following is very important.  We want to ensure that the 
+      default editor gets pushed to the front of the list. -->
+      <editor
+            class="org.eclipse.ui.tests.api.MockEditorPart"
+            default="false"
+            icon="icons/anything.gif"
+            id="org.eclipse.ui.tests.nondefaultedContentTypeEditor1"
+            name="defaultedContentTypeEditor">
+         <contentTypeBinding contentTypeId="org.eclipse.ui.tests.defaultedContentType"/>
+      </editor>
+      <editor
+            class="org.eclipse.ui.tests.api.MockEditorPart"
+            default="false"
+            icon="icons/anything.gif"
+            id="org.eclipse.ui.tests.nondefaultedContentTypeEditor2"
+            name="defaultedContentTypeEditor">
+         <contentTypeBinding contentTypeId="org.eclipse.ui.tests.defaultedContentType"/>
+      </editor>
+      <editor
+            class="org.eclipse.ui.tests.api.MockEditorPart"
+            default="true"
+            icon="icons/anything.gif"
+            id="org.eclipse.ui.tests.defaultedContentTypeEditor"
+            name="defaultedContentTypeEditor">
+         <contentTypeBinding contentTypeId="org.eclipse.ui.tests.defaultedContentType"/>
+      </editor>
+      <editor
+            class="org.eclipse.ui.tests.api.MockEditorPart"
+            default="false"
+            icon="icons/anything.gif"
+            id="org.eclipse.ui.tests.nondefaultedContentTypeEditor3"
+            name="defaultedContentTypeEditor">
+         <contentTypeBinding contentTypeId="org.eclipse.ui.tests.defaultedContentType"/>
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -852,6 +886,11 @@
 				<parameter name="element" value="contentType1" />
 			</describer>
        </content-type>
+       <content-type
+             file-extensions="defaultedContentType"
+             id="defaultedContentType"
+             name="org.eclipse.ui.tests.defaultedContentType"
+             priority="normal"/>
    </extension>
    		
    <extension

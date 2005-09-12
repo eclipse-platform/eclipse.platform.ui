@@ -247,8 +247,14 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
 					}
 					else {
 						IEditorDescriptor [] newArray = new IEditorDescriptor[editorArray.length + 1];
-						System.arraycopy(editorArray, 0, newArray, 0, editorArray.length);
-						newArray[editorArray.length] = editor;
+						if (bDefault) { // default editors go to the front of the line
+							newArray[0] = editor;
+							System.arraycopy(editorArray, 0, newArray, 1, editorArray.length);
+						}
+						else {
+							newArray[editorArray.length] = editor;
+							System.arraycopy(editorArray, 0, newArray, 0, editorArray.length);
+						}
 						contentTypeToEditorMappings.put(contentType, newArray);
 					}
 				}

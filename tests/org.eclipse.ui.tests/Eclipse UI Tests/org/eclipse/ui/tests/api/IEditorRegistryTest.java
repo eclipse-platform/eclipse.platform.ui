@@ -330,6 +330,23 @@ public class IEditorRegistryTest extends TestCase {
 		assertEquals("org.eclipse.ui.tests.contentType2Editor", descriptor.getId());	
 	}
 	
+	public void testDefaultedContentTypeEditor() {
+		// check the default editor
+		IEditorDescriptor descriptor = fReg.getDefaultEditor("foo.defaultedContentType");
+		assertNotNull(descriptor);
+		assertEquals("org.eclipse.ui.tests.defaultedContentTypeEditor", descriptor.getId());	
+		
+		// check the entire list
+		IEditorDescriptor [] descriptors = fReg.getEditors("foo.defaultedContentType");
+		assertNotNull(descriptors);
+		assertEquals(4, descriptors.length);
+		
+		assertEquals("org.eclipse.ui.tests.defaultedContentTypeEditor", descriptors[0].getId());	
+		assertEquals("org.eclipse.ui.tests.nondefaultedContentTypeEditor1", descriptors[1].getId());	
+		assertEquals("org.eclipse.ui.tests.nondefaultedContentTypeEditor2", descriptors[2].getId());	
+		assertEquals("org.eclipse.ui.tests.nondefaultedContentTypeEditor3", descriptors[3].getId());	
+	}
+	
     /**
      * Assert that IEditorRegistry.getEditors() does not return null children
      * when the default editor has been set to null.
