@@ -70,7 +70,11 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 public class WizardProjectsImportPage extends WizardPage implements
 		IOverwriteQuery {
 
-	private class ProjectRecord {
+	/**
+	 * Class declared public only for test suite. 
+	 *
+	 */
+	public class ProjectRecord {
 		File projectSystemFile;
 
 		Object projectArchiveFile;
@@ -584,11 +588,12 @@ public class WizardProjectsImportPage extends WizardPage implements
     }
 
 	/**
-	 * Update the list of projects based on path
+	 * Update the list of projects based on path.
+	 * Method declared public only for test suite.
 	 * 
 	 * @param path
 	 */
-	protected void updateProjectsList(final String path) {
+	public void updateProjectsList(final String path) {
 		
 		if(path.equals(lastPath))//Do not select the same path again
 			return;
@@ -1133,6 +1138,30 @@ public class WizardProjectsImportPage extends WizardPage implements
 		});
 		return dialog.getReturnCode() < 0 ? CANCEL : response[dialog
 				.getReturnCode()];
+	}
+
+	/**
+	 * Method used for test suite.
+	 * @return A list of all the selected projects by name
+	 */
+	public ProjectRecord[] getProjects() {
+		return selectedProjects;
+	}
+
+	/**
+	 * Method used for test suite.
+	 * @return The Import from Directory RadioButton
+	 */
+	public Button getProjectFromDirectoryRadio() {
+		return projectFromDirectoryRadio;
+	}
+
+	/**
+	 * Method used for test suite.
+	 * @return The CheckboxTreeViewer containing all the projects found 
+	 */
+	public CheckboxTreeViewer getProjectsList() {
+		return projectsList;
 	}
 
 }

@@ -1,0 +1,278 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2005 Red Hat, Inc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - Bits of importWizard from DeprecatedUIWizards 
+ *     Red Hat, Inc - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.ui.tests.datatransfer;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.ImportExportWizard;
+import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
+import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage.ProjectRecord;
+import org.eclipse.ui.tests.TestPlugin;
+import org.eclipse.ui.tests.util.DialogCheck;
+import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.util.UITestCase;
+
+public class ImportExistingTest extends UITestCase {
+	public static final String PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
+	public ImportExistingTest(String testName) {
+		super(testName);
+	}
+	
+	private Shell getShell() {
+		return DialogCheck.getShell();
+	}
+	
+	public void testFindSingleZip() {
+		try {
+			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+					new Path(PATH_PREFIX+"helloworld.zip")));
+			WizardProjectsImportPage wpip = getNewWizard();
+			HashSet projects = new HashSet();
+			projects.add("HelloWorld");
+			
+			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
+			wpip.updateProjectsList(helloworld.getPath());
+
+			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
+			assertTrue("Not all projects were found correctly in tar", projectNames.containsAll(projects));
+		} catch (IOException e) {
+			fail(e.toString());
+		}
+	}
+	
+	public void testFindSingleTar() {
+		try {
+			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+					new Path(PATH_PREFIX+"helloworld.tar")));
+			WizardProjectsImportPage wpip = getNewWizard();
+			HashSet projects = new HashSet();
+			projects.add("HelloWorld");
+			
+			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
+			wpip.updateProjectsList(helloworld.getPath());
+			
+			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+			
+			assertTrue("Not all projects were found correctly in tar", projectNames.containsAll(projects));
+		} catch (IOException e) {
+			fail(e.toString());
+		}
+	}
+
+	public void testFindSingleDirectory() {
+		try {
+			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+					new Path(PATH_PREFIX+"HelloWorld")));
+			WizardProjectsImportPage wpip = getNewWizard();
+			HashSet projects = new HashSet();
+			projects.add("HelloWorld");
+			
+			wpip.getProjectFromDirectoryRadio().setSelection((true)); // We're importing a directory
+			wpip.updateProjectsList(helloworld.getPath());
+			
+			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
+			assertTrue("Not all projects were found correctly in directory", projectNames.containsAll(projects));
+		} catch (IOException e) {
+			fail(e.toString());
+		}
+	}
+	
+	public void testImportSingleZip() {
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			
+			IProject[] workspaceProjects = root.getProjects();
+            for (int i = 0; i < workspaceProjects.length; i++) 
+            	FileUtil.deleteProject(workspaceProjects[i]);
+			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+					new Path(PATH_PREFIX+"helloworld.zip")));
+			WizardProjectsImportPage wpip = getNewWizard();
+			HashSet projects = new HashSet();
+			projects.add("HelloWorld");
+			
+			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
+			wpip.updateProjectsList(helloworld.getPath());
+			
+			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
+			assertTrue("Not all projects were found correctly in zip", projectNames.containsAll(projects));
+
+			CheckboxTreeViewer projectsList= wpip.getProjectsList();
+			projectsList.setCheckedElements(selectedProjects);
+			wpip.createProjects(); // Try importing all the projects we found
+
+			// "HelloWorld" should be the only project in the workspace
+			workspaceProjects = root.getProjects();
+			if (workspaceProjects.length != 1)
+				fail("Incorrect Number of projects imported");
+			IFolder helloFolder = workspaceProjects[0].getFolder("HelloWorld");
+			if (helloFolder.exists())
+				fail("Project was imported as a folder into itself");
+
+		} catch (IOException e) {
+			fail(e.toString());
+		} catch (CoreException e) {
+			fail(e.toString());
+		}
+
+	}
+	
+	public void testImportSingleTar() {
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			
+			IProject[] workspaceProjects = root.getProjects();
+            for (int i = 0; i < workspaceProjects.length; i++) 
+            	FileUtil.deleteProject(workspaceProjects[i]);
+            URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+            		new Path(PATH_PREFIX+"helloworld.tar")));
+			WizardProjectsImportPage wpip = getNewWizard();
+			HashSet projects = new HashSet();
+			projects.add("HelloWorld");
+			
+			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
+			wpip.updateProjectsList(helloworld.getPath());
+			
+			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
+			assertTrue("Not all projects were found correctly in tar", projectNames.containsAll(projects));
+
+			CheckboxTreeViewer projectsList= wpip.getProjectsList();
+			projectsList.setCheckedElements(selectedProjects);
+			wpip.createProjects(); // Try importing all the projects we found
+
+			// "HelloWorld" should be the only project in the workspace
+			workspaceProjects = root.getProjects();
+			if (workspaceProjects.length != 1)
+				fail("Incorrect Number of projects imported");
+			IFolder helloFolder = workspaceProjects[0].getFolder("HelloWorld");
+			if (helloFolder.exists())
+				fail("Project was imported as a folder into itself");
+
+		} catch (IOException e) {
+			fail(e.toString());
+		} catch (CoreException e) {
+			fail(e.toString());
+		}
+
+	}
+	
+	public void testImportSingleDirectory() {
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			
+			IProject[] workspaceProjects = root.getProjects();
+            for (int i = 0; i < workspaceProjects.length; i++) 
+            	FileUtil.deleteProject(workspaceProjects[i]);
+			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+					new Path(PATH_PREFIX+"HelloWorld")));
+			WizardProjectsImportPage wpip = getNewWizard();
+			HashSet projects = new HashSet();
+			projects.add("HelloWorld");
+			
+			wpip.getProjectFromDirectoryRadio().setSelection((true)); //We want this one selected
+			wpip.updateProjectsList(helloworld.getPath());
+			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
+			assertTrue("Not all projects were found correctly in zip", projectNames.containsAll(projects));
+
+			CheckboxTreeViewer projectsList= wpip.getProjectsList();
+			projectsList.setCheckedElements(selectedProjects);
+			wpip.createProjects(); // Try importing all the projects we found
+
+			// "HelloWorld" should be the only project in the workspace
+			workspaceProjects = root.getProjects();
+			if (workspaceProjects.length != 1)
+				fail("Incorrect Number of projects imported");
+			IFolder helloFolder = workspaceProjects[0].getFolder("HelloWorld");
+			if (helloFolder.exists())
+				fail("Project was imported as a folder into itself");
+
+		} catch (IOException e) {
+			fail(e.toString());
+		} catch (CoreException e) {
+			fail(e.toString());
+		}
+	}
+	
+	private WizardProjectsImportPage getNewWizard()
+	{
+		WizardProjectsImportPage wpip = new WizardProjectsImportPage();
+		
+		Shell shell = getShell();
+		wpip.createControl(shell);
+		
+		ImportExportWizard wizard = new ImportExportWizard();
+		wizard.init(getWorkbench(), null);
+		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
+		.getDialogSettings();
+		IDialogSettings wizardSettings = workbenchSettings
+		.getSection("ImportExportAction");
+		if (wizardSettings == null)
+			wizardSettings = workbenchSettings
+			.addNewSection("ImportExportAction");
+		wizard.setDialogSettings(wizardSettings);
+		wizard.setForcePreviousAndNextButtons(true);
+		
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		dialog.create();
+		dialog.getShell().setSize(
+				Math.max(100, dialog.getShell().getSize().x),
+				100);
+		
+		wpip.setWizard(dialog.getCurrentPage().getWizard());
+		return wpip;
+	}
+}
