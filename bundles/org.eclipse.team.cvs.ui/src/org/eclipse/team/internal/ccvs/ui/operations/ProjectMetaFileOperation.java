@@ -163,7 +163,7 @@ public class ProjectMetaFileOperation extends CVSOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return CVSUIMessages.ProjectMetaFile_taskName; //$NON-NLS-1$
+		return CVSUIMessages.ProjectMetaFile_taskName;
 	}
 	
 	/* (non-Javadoc)
