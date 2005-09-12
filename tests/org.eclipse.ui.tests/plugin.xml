@@ -88,7 +88,11 @@
       <perspective
             class="org.eclipse.ui.tests.api.PerspectiveViewsBug88345"
             id="org.eclipse.ui.tests.api.PerspectiveViewsBug88345"
-            name="UI Test Perspective for closable view"/>      
+            name="UI Test Perspective for closable view"/>
+      <perspective
+            class="org.eclipse.ui.tests.dnd.StandaloneViewPerspective"
+            id="org.eclipse.ui.tests.dnd.StandaloneViewPerspective"
+            name="Standalone View DnD Perspective"/>      
    </extension>
    <extension
          point="org.eclipse.ui.views">
