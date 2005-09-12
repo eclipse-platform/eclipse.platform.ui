@@ -77,8 +77,6 @@ public class CVSDecoration {
 	private String fileFormatter;
 	private String folderFormatter;
 	private String projectFormatter;
-	private String dirtyTextIndicator;
-	private String addedTextIndicator;
 	private String resourceName;
 	
 	//	Images cached for better performance
