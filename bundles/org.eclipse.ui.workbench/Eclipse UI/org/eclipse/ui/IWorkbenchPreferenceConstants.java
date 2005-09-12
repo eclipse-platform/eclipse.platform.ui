@@ -352,4 +352,11 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.1
      */
     public static final String SHOW_PROGRESS_ON_STARTUP = "SHOW_PROGRESS_ON_STARTUP"; //$NON-NLS-1$
+    
+    /**
+     * Stores whether or not to show the memory monitor in the workbench window.
+     * 
+     * @since 3.1
+     */
+    public static final String SHOW_MEMORY_MONITOR = "SHOW_MEMORY_MONITOR"; //$NON-NLS-1$
 }

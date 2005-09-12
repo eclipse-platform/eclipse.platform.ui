@@ -1003,9 +1003,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @return <code>true</code> to show the heap status indicator, <code>false</code> otherwise
 	 */
 	private boolean getShowHeapStatus() {
-		return Boolean.valueOf(
-				Platform.getDebugOption(PlatformUI.PLUGIN_ID
-						+ "/perf/showHeapStatus")).booleanValue(); //$NON-NLS-1$
+		return //Show if the preference is set or debug option is on
+		PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR)
+			||
+				Boolean.valueOf(
+						Platform.getDebugOption(PlatformUI.PLUGIN_ID
+								+ "/perf/showHeapStatus")).booleanValue(); //$NON-NLS-1$
 	}
 
 	/**

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -91,6 +92,7 @@ public class WorkbenchPreferenceInitializer extends
 		node.putBoolean("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
 
 		// Heap status preferences
+		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, false);
 		node.putInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL, 500);
 		node.putBoolean(IHeapStatusConstants.PREF_SHOW_MAX, false);
 		
