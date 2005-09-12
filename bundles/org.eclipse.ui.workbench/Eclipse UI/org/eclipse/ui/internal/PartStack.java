@@ -437,8 +437,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * See IVisualContainer#add
      */
     public void add(LayoutPart child) {
-        children.add(child);
-        showPart(child, null);
+        add(child, null);
     }
 
     /**
@@ -446,6 +445,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      */
     protected void add(LayoutPart newChild, Object cookie) {
         children.add(newChild);
+        
+        // Fix for bug 78470:
+        if(!(newChild.getContainer() instanceof ContainerPlaceholder))
+        	newChild.setContainer(this);
+        
         showPart(newChild, cookie);
     }
 
@@ -586,10 +590,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         presentationSite.setPresentation(presentation);
 
         // Add all visible children to the presentation
-        Iterator iter = children.iterator();
-        while (iter.hasNext()) {
-            LayoutPart part = (LayoutPart) iter.next();
-
+        // Use a copy of the current set of children to avoid a ConcurrentModificationException
+        // if a part is added to the same stack while iterating over the children (bug 78470)
+        LayoutPart[] childParts = (LayoutPart[]) children.toArray(new LayoutPart[children.size()]);
+        for (int i = 0; i < childParts.length; i++) {
+			LayoutPart part = childParts[i];
             showPart(part, null);
         }
 
