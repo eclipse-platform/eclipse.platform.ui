@@ -295,23 +295,39 @@ public final class RefactoringHistory implements IRefactoringHistory {
 			if (operation instanceof UndoableOperation2ChangeAdapter) {
 				adapter= (UndoableOperation2ChangeAdapter) operation;
 			}
-			if (adapter == null)
-				return;
-			final Change change= adapter.getChange();
-			switch (event.getEventType()) {
-				case OperationHistoryEvent.ABOUT_TO_EXECUTE:
-					fDescriptor= change.getRefactoringDescriptor();
-					break;
-				case OperationHistoryEvent.DONE:
-					handleRefactoringPerformed(fDescriptor);
-					fDescriptor= null;
-					break;
-				case OperationHistoryEvent.UNDONE:
-					handleChangeUndone();
-					break;
-				case OperationHistoryEvent.REDONE:
-					handleChangeRedone();
-					break;
+			if (adapter != null) {
+				final Change change= adapter.getChange();
+				switch (event.getEventType()) {
+					case OperationHistoryEvent.ABOUT_TO_EXECUTE:
+						fDescriptor= change.getRefactoringDescriptor();
+						if (fDescriptor != null)
+							fireAboutToPerformEvent(fDescriptor);
+						else
+							fireAboutToPerformEvent(fNullDescriptor);
+						break;
+					case OperationHistoryEvent.DONE:
+						handleRefactoringPerformed(fDescriptor);
+						if (fDescriptor != null)
+							fireRefactoringPerformedEvent(fDescriptor);
+						else
+							fireRefactoringPerformedEvent(fNullDescriptor);
+						fDescriptor= null;
+						break;
+					case OperationHistoryEvent.ABOUT_TO_UNDO:
+						fireAboutToUndoEvent(fUndoStack.peek());
+						break;
+					case OperationHistoryEvent.UNDONE:
+						handleChangeUndone();
+						fireRefactoringUndoneEvent(fRedoStack.peek());
+						break;
+					case OperationHistoryEvent.ABOUT_TO_REDO:
+						fireAboutToRedoEvent(fRedoStack.peek());
+						break;
+					case OperationHistoryEvent.REDONE:
+						handleChangeRedone();
+						fireRefactoringRedoneEvent(fUndoStack.peek());
+						break;
+				}
 			}
 		}
 	}
@@ -431,6 +447,9 @@ public final class RefactoringHistory implements IRefactoringHistory {
 		return fInstance;
 	}
 
+	/** The history listeners */
+	private final List fHistoryListeners= new ArrayList(2);
+
 	/** The history participants */
 	private final List fHistoryParticipants= new ArrayList(2);
 
@@ -457,6 +476,15 @@ public final class RefactoringHistory implements IRefactoringHistory {
 	 */
 	private RefactoringHistory() {
 		// Not for instantiation
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public void addHistoryListener(final IRefactoringHistoryListener listener) {
+		Assert.isNotNull(listener);
+		if (!fHistoryListeners.contains(listener))
+			fHistoryListeners.add(listener);
 	}
 
 	/**
@@ -521,6 +549,144 @@ public final class RefactoringHistory implements IRefactoringHistory {
 			fUndoStack= null;
 			fRedoStack= null;
 			fOperationListener= null;
+		}
+	}
+
+	/**
+	 * Fires the about to perform event.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 */
+	void fireAboutToPerformEvent(final RefactoringDescriptor descriptor) {
+		Assert.isNotNull(descriptor);
+		for (int index= 0; index < fHistoryListeners.size(); index++) {
+			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+			Platform.run(new ISafeRunnable() {
+
+				public final void handleException(final Throwable throwable) {
+					RefactoringCorePlugin.log(throwable);
+				}
+
+				public void run() throws Exception {
+					listener.aboutToPerformRefactoring(RefactoringHistory.this, descriptor);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Fires the about to redo event.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 */
+	void fireAboutToRedoEvent(final RefactoringDescriptor descriptor) {
+		Assert.isNotNull(descriptor);
+		for (int index= 0; index < fHistoryListeners.size(); index++) {
+			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+			Platform.run(new ISafeRunnable() {
+
+				public void handleException(final Throwable throwable) {
+					RefactoringCorePlugin.log(throwable);
+				}
+
+				public void run() throws Exception {
+					listener.aboutToRedoRefactoring(RefactoringHistory.this, descriptor);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Fires the about to undo event.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 */
+	void fireAboutToUndoEvent(final RefactoringDescriptor descriptor) {
+		Assert.isNotNull(descriptor);
+		for (int index= 0; index < fHistoryListeners.size(); index++) {
+			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+			Platform.run(new ISafeRunnable() {
+
+				public void handleException(final Throwable throwable) {
+					RefactoringCorePlugin.log(throwable);
+				}
+
+				public void run() throws Exception {
+					listener.aboutToUndoRefactoring(RefactoringHistory.this, descriptor);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Fires the refactoring performed event.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 */
+	void fireRefactoringPerformedEvent(final RefactoringDescriptor descriptor) {
+		Assert.isNotNull(descriptor);
+		for (int index= 0; index < fHistoryListeners.size(); index++) {
+			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+			Platform.run(new ISafeRunnable() {
+
+				public void handleException(final Throwable throwable) {
+					RefactoringCorePlugin.log(throwable);
+				}
+
+				public void run() throws Exception {
+					listener.refactoringPerformed(RefactoringHistory.this, descriptor);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Fires the refactoring redone event.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 */
+	void fireRefactoringRedoneEvent(final RefactoringDescriptor descriptor) {
+		Assert.isNotNull(descriptor);
+		for (int index= 0; index < fHistoryListeners.size(); index++) {
+			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+			Platform.run(new ISafeRunnable() {
+
+				public void handleException(final Throwable throwable) {
+					RefactoringCorePlugin.log(throwable);
+				}
+
+				public void run() throws Exception {
+					listener.refactoringRedone(RefactoringHistory.this, descriptor);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Fires the refactoring undone event.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 */
+	void fireRefactoringUndoneEvent(final RefactoringDescriptor descriptor) {
+		Assert.isNotNull(descriptor);
+		for (int index= 0; index < fHistoryListeners.size(); index++) {
+			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+			Platform.run(new ISafeRunnable() {
+
+				public void handleException(final Throwable throwable) {
+					RefactoringCorePlugin.log(throwable);
+				}
+
+				public void run() throws Exception {
+					listener.refactoringUndone(RefactoringHistory.this, descriptor);
+				}
+			});
 		}
 	}
 
@@ -704,6 +870,14 @@ public final class RefactoringHistory implements IRefactoringHistory {
 		} finally {
 			stream.close();
 		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public void removeHistoryListener(final IRefactoringHistoryListener listener) {
+		Assert.isNotNull(listener);
+		fHistoryListeners.remove(listener);
 	}
 
 	/**

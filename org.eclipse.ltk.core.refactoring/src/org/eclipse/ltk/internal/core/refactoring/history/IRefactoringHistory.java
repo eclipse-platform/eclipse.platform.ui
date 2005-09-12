@@ -28,12 +28,27 @@ import org.eclipse.core.resources.IProject;
 public interface IRefactoringHistory {
 
 	/**
+	 * Adds the specified refactoring history listener to this history.
+	 * <p>
+	 * If the listener is already registered with the history, nothing happens.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the listener to add
+	 */
+	public void addHistoryListener(IRefactoringHistoryListener listener);
+
+	/**
 	 * Adds the specified refactoring history participant to this history.
+	 * <p>
+	 * If the participant is already registered with the history, nothing
+	 * happens.
+	 * </p>
 	 * 
 	 * @param participant
 	 *            the participant to add
 	 */
-	public void addHistoryParticipant(final IRefactoringHistoryParticipant participant);
+	public void addHistoryParticipant(IRefactoringHistoryParticipant participant);
 
 	/**
 	 * Connects the refactoring history to the workbench's operation history.
@@ -60,7 +75,7 @@ public interface IRefactoringHistory {
 	 * @return An array of refactoring descriptor handles, in no particular
 	 *         order
 	 */
-	public RefactoringDescriptorHandle[] getProjectHistory(final IProject project);
+	public RefactoringDescriptorHandle[] getProjectHistory(IProject project);
 
 	/**
 	 * Returns a project refactoring history for the specified project.
@@ -74,7 +89,7 @@ public interface IRefactoringHistory {
 	 * @return An array of refactoring descriptor handles, in no particular
 	 *         order
 	 */
-	public RefactoringDescriptorHandle[] getProjectHistory(final IProject project, final long start, final long end);
+	public RefactoringDescriptorHandle[] getProjectHistory(IProject project, long start, long end);
 
 	/**
 	 * Returns the workspace refactoring history.
@@ -94,13 +109,27 @@ public interface IRefactoringHistory {
 	 * @return An array of refactoring descriptor handles, in no particular
 	 *         order
 	 */
-	public RefactoringDescriptorHandle[] getWorkspaceHistory(final long start, final long end);
+	public RefactoringDescriptorHandle[] getWorkspaceHistory(long start, long end);
 
 	/**
-	 * Removes the specified refactoring participant from this history.
+	 * Removes the specified refactoring history listener from this history.
+	 * <p>
+	 * If the listener is not registered with the history, nothing happens.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the listener to remove
+	 */
+	public void removeHistoryListener(IRefactoringHistoryListener listener);
+
+	/**
+	 * Removes the specified refactoring history participant from this history.
+	 * <p>
+	 * If the participant is not registered with the history, nothing happens.
+	 * </p>
 	 * 
 	 * @param participant
 	 *            the participant to remove
 	 */
-	public void removeHistoryParticipant(final IRefactoringHistoryParticipant participant);
+	public void removeHistoryParticipant(IRefactoringHistoryParticipant participant);
 }
