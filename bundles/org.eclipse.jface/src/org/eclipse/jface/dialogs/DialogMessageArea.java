@@ -165,12 +165,18 @@ public class DialogMessageArea extends Object {
         }
         messageComposite.setVisible(true);
         titleLabel.setVisible(false);
-        // Any more updates required
-        if (newMessage.equals(messageText.getText())
-                && newImage == messageImageLabel.getImage())
+        // Any more updates required?
+        // If the message text equals the tooltip (i.e. non-shortened text is the same)
+        // and shortened text is the same (i.e. not a resize)
+        // and the image is the same then nothing to do
+        String shortText = Dialog.shortenText(newMessage,messageText);
+        if (newMessage.equals(messageText.getToolTipText())
+                && newImage == messageImageLabel.getImage()
+                	&& shortText.equals(messageText.getText()))
             return;
         messageImageLabel.setImage(newImage);
         messageText.setText(Dialog.shortenText(newMessage,messageText));
+        messageText.setToolTipText(newMessage);
         lastMessageText = newMessage;
  
     }
