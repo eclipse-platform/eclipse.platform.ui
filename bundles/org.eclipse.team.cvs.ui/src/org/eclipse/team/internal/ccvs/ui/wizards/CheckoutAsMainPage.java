@@ -195,6 +195,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 				if (!nameStatus.isOK()) {
 					setErrorMessage(nameStatus.getMessage());
 					setPageComplete(false);
+					return;
 				}
 			}
 		}
