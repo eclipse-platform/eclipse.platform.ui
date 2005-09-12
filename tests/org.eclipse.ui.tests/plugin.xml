@@ -89,6 +89,10 @@
             class="org.eclipse.ui.tests.api.PerspectiveViewsBug88345"
             id="org.eclipse.ui.tests.api.PerspectiveViewsBug88345"
             name="UI Test Perspective for closable view"/>      
+      <perspective
+            class="org.eclipse.ui.tests.internal.Bug78470Test$MyPerspective"
+            id="org.eclipse.ui.tests.internal.Bug78470Test.MyPerspective"
+            name="org.eclipse.ui.tests.internal.Bug78470Test.MyPerspective"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -433,6 +437,18 @@
             class="org.eclipse.ui.tests.session.ViewWithState"
             id="org.eclipse.ui.tests.session.ViewWithState"
             name="ViewWithState"/>
+      <view
+            class="org.eclipse.ui.tests.internal.Bug78470Test$MyViewPart"
+            id="org.eclipse.ui.tests.internal.Bug78470Test.MyViewPart"
+            name="org.eclipse.ui.tests.internal.Bug78470Test.MyViewPart"/>
+      <view
+            class="org.eclipse.ui.tests.internal.Bug78470Test$MyViewPart"
+            id="org.eclipse.ui.tests.internal.Bug78470Test.MyViewPart2"
+            name="org.eclipse.ui.tests.internal.Bug78470Test.MyViewPart2"/>
+      <view
+            class="org.eclipse.ui.tests.internal.Bug78470Test$MyViewPart"
+            id="org.eclipse.ui.tests.internal.Bug78470Test.MyViewPart3"
+            name="org.eclipse.ui.tests.internal.Bug78470Test.MyViewPart3"/>
 
    </extension>
    <extension
