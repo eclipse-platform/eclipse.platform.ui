@@ -15,8 +15,11 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
@@ -893,7 +896,7 @@ public class Session {
 				globalOptions = quietOption.addToEnd(globalOptions);
 			}
 			// Get the user preference for read-only
-			if (CVSProviderPlugin.getPlugin().getPluginPreferences().getBoolean(CVSProviderPlugin.READ_ONLY)) {
+			if (isWatchEditEnabled()) {
 				if (!Command.MAKE_READ_ONLY.isElementOf(globalOptions)) {
 					globalOptions = Command.MAKE_READ_ONLY.addToEnd(globalOptions);
 				}
@@ -901,6 +904,27 @@ public class Session {
 		}
 		return globalOptions;
 	}
+
+	private boolean isWatchEditEnabled() {
+		// First, look at the global preference
+		if (CVSProviderPlugin.getPlugin().getPluginPreferences().getBoolean(CVSProviderPlugin.READ_ONLY)) {
+			return true;
+		}
+		// If there is a provider, use the providers setting for watch/edit
+		try {
+			IResource resource = getLocalRoot().getIResource();
+			if (resource != null) {
+				RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+				if (provider != null) {
+					return ((CVSTeamProvider) provider).isWatchEditEnabled();
+				}
+			}
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+		}
+		return false;
+	}
+	
 	/**
 	 * Method setIgnoringLocalChanges.
 	 * @param b
