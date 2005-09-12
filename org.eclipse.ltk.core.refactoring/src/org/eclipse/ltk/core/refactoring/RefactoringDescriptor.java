@@ -174,6 +174,19 @@ public class RefactoringDescriptor implements Comparable, Serializable {
 	}
 
 	/**
+	 * Returns whether this descriptor describes an unknown refactoring.
+	 * <p>
+	 * The default implementation returns <code>false</code>.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if the descriptor describes an unknown
+	 *         refactoring, <code>false</code> otherwise
+	 */
+	public boolean isUnknown() {
+		return false;
+	}
+
+	/**
 	 * Sets the time stamp of this refactoring.
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
@@ -194,19 +207,23 @@ public class RefactoringDescriptor implements Comparable, Serializable {
 		final StringBuffer buffer= new StringBuffer(128);
 
 		buffer.append(getClass().getName());
-		buffer.append("[timeStamp="); //$NON-NLS-1$
-		buffer.append(fTimeStamp);
-		buffer.append(",id="); //$NON-NLS-1$
-		buffer.append(fID);
-		buffer.append(",description="); //$NON-NLS-1$
-		buffer.append(fDescription);
-		buffer.append(",project="); //$NON-NLS-1$
-		buffer.append(fProject);
-		buffer.append(",arguments="); //$NON-NLS-1$
-		buffer.append(fArguments);
-		buffer.append(",comment="); //$NON-NLS-1$
-		buffer.append(fComment);
-		buffer.append("]"); //$NON-NLS-1$
+		if (isUnknown())
+			buffer.append("[unknown refactoring]"); //$NON-NLS-1$
+		else {
+			buffer.append("[timeStamp="); //$NON-NLS-1$
+			buffer.append(fTimeStamp);
+			buffer.append(",id="); //$NON-NLS-1$
+			buffer.append(fID);
+			buffer.append(",description="); //$NON-NLS-1$
+			buffer.append(fDescription);
+			buffer.append(",project="); //$NON-NLS-1$
+			buffer.append(fProject);
+			buffer.append(",arguments="); //$NON-NLS-1$
+			buffer.append(fArguments);
+			buffer.append(",comment="); //$NON-NLS-1$
+			buffer.append(fComment);
+			buffer.append("]"); //$NON-NLS-1$
+		}
 
 		return buffer.toString();
 	}

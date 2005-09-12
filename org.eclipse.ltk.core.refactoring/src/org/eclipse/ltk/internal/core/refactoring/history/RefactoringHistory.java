@@ -66,28 +66,6 @@ import org.eclipse.ltk.internal.core.refactoring.UndoableOperation2ChangeAdapter
  */
 public final class RefactoringHistory implements IRefactoringHistory {
 
-	/** Refactoring descriptor for changes which do not return a descriptor */
-	private final class NullRefactoringDescriptor extends RefactoringDescriptor implements Serializable {
-
-		/** The serial version UID */
-		private static final long serialVersionUID= 1L;
-
-		/**
-		 * Creates a new null refactoring descriptor.
-		 */
-		private NullRefactoringDescriptor() {
-			super(NULL_REFACTORING_ID, null, RefactoringCoreMessages.RefactoringHistory_unsupported_refactoring_description, null, Collections.EMPTY_MAP);
-		}
-
-		private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
-			// Do nothing
-		}
-
-		private void writeObject(final ObjectOutputStream stream) throws IOException {
-			// Do nothing
-		}
-	}
-
 	/** Stack of refactoring descriptors which notified participants */
 	private final class ParticipatingRefactoringDescriptorStack extends RefactoringDescriptorStack {
 
@@ -332,6 +310,28 @@ public final class RefactoringHistory implements IRefactoringHistory {
 		}
 	}
 
+	/** Refactoring descriptor for changes which do not return a descriptor */
+	private final class UnknownRefactoringDescriptor extends RefactoringDescriptor implements Serializable {
+
+		/** The serial version UID */
+		private static final long serialVersionUID= 1L;
+
+		/**
+		 * Creates a new unknown refactoring descriptor.
+		 */
+		private UnknownRefactoringDescriptor() {
+			super(UNKNOWN_REFACTORING_ID, null, RefactoringCoreMessages.RefactoringHistory_unknown_refactoring_description, null, Collections.EMPTY_MAP);
+		}
+
+		private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+			// Do nothing
+		}
+
+		private void writeObject(final ObjectOutputStream stream) throws IOException {
+			// Do nothing
+		}
+	}
+
 	/** Workspace resource change listener */
 	private final class WorkspaceChangeListener implements IResourceChangeListener {
 
@@ -424,14 +424,14 @@ public final class RefactoringHistory implements IRefactoringHistory {
 	/** The history file name */
 	public static final String NAME_HISTORY_FILE= "refactoring_history"; //$NON-NLS-1$
 
-	/** The null refactoring id */
-	private static final String NULL_REFACTORING_ID= RefactoringCorePlugin.getDefault().getBundle().getSymbolicName() + ".null.refactoring"; //$NON-NLS-1$
-
 	/** The project refactoring history preference */
 	public static final String PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY= "org.eclipse.ltk.core.refactoring.enable.project.refactoring.history"; //$NON-NLS-1$
 
 	/** The workspace refactoring history preference */
 	public static final String PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY= "org.eclipse.ltk.core.refactoring.enable.workspace.refactoring.history"; //$NON-NLS-1$
+
+	/** The unknown refactoring id */
+	private static final String UNKNOWN_REFACTORING_ID= RefactoringCorePlugin.getDefault().getBundle().getSymbolicName() + ".unknown.refactoring"; //$NON-NLS-1$
 
 	/**
 	 * Returns the singleton instance of the refactoring history.
@@ -454,7 +454,7 @@ public final class RefactoringHistory implements IRefactoringHistory {
 	private final List fHistoryParticipants= new ArrayList(2);
 
 	/** The null refactoring descriptor */
-	private final RefactoringDescriptor fNullDescriptor= new NullRefactoringDescriptor();
+	private final RefactoringDescriptor fNullDescriptor= new UnknownRefactoringDescriptor();
 
 	/** The operation listener, or <code>null</code> */
 	private IOperationHistoryListener fOperationListener= null;
