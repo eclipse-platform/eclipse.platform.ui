@@ -2181,6 +2181,122 @@
       <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
    </extension>
    
+   <extension
+   		point="org.eclipse.ui.importWizards">
+      <category
+            name="Test Import Category"
+            id="org.eclipse.ui.tests.TestImport">
+      </category>
+      <category
+            name="Test Import Parented Category"
+            parentCategory="org.eclipse.ui.Basic"
+            id="org.eclipse.ui.tests.TestImportParented">
+      </category>    
+      <category
+            name="Test Import Duplicate Category"
+            id="org.eclipse.ui.tests.TestImportDup">
+      </category>
+      <category
+            name="Test Import Duplicate Category"
+            id="org.eclipse.ui.tests.TestImportDup">
+      </category>
+              
+      <wizard
+            name="Test Import Wizard No Category"
+            class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
+            id="org.eclipse.ui.tests.import.NoCategory">
+      </wizard>  
+      <wizard
+            name="Test Import Category Not Valid"
+            class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
+            category="org.eclipse.ui.InvalidCategory"
+            id="org.eclipse.ui.tests.import.InvalidCategory">
+      </wizard>  
+      <wizard
+            name="Test Import Add To New Category"
+            class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
+            category="org.eclipse.ui.tests.TestImport"
+            id="org.eclipse.ui.tests.import.NewCategory">
+      </wizard> 
+      <wizard
+            name="Test Import Add To Parented Category"
+            class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
+            category="org.eclipse.ui.Basic/org.eclipse.ui.tests.TestImportParented"
+            id="org.eclipse.ui.tests.import.NewParentedCategory">
+      </wizard>       
+      <wizard
+            name="Test Import Duplicate Category"
+            class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
+            category="org.eclipse.ui.tests.TestImportDup"
+            id="org.eclipse.ui.tests.import.DuplicateCategory">
+      </wizard> 
+      <wizard
+            name="Test Import Using Export Category"
+            class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
+            category="org.eclipse.ui.tests.TestExport"
+            id="org.eclipse.ui.tests.import.UsingExportCategory">
+      </wizard>       
+                                
+   	</extension>
+
+   <extension
+   		point="org.eclipse.ui.exportWizards">
+      <category
+            name="Test Export Category"
+            id="org.eclipse.ui.tests.TestExport">
+      </category>
+      <category
+            name="Test Export Parented Category"
+            parentCategory="org.eclipse.ui.Basic"
+            id="org.eclipse.ui.tests.TestExportParented">
+      </category>
+      <category
+            name="Test Export Duplicate Category"
+            id="org.eclipse.ui.tests.TestExportDup">
+      </category>
+      <category
+            name="Test Export Duplicate Category"
+            id="org.eclipse.ui.tests.TestExportDup">
+      </category>      
+ 
+      <wizard
+            name="Test Export Wizard No Category"
+            class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
+            id="org.eclipse.ui.tests.export.NoCategory">
+      </wizard>      
+      <wizard
+            name="Test Export Category Not Valid"
+            class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
+            category="org.eclipse.ui.InvalidCategory"
+            id="org.eclipse.ui.tests.export.InvalidCategory">
+      </wizard>   
+      <wizard
+            name="Test Export Add To New Category"
+            class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
+            category="org.eclipse.ui.tests.TestExport"
+            id="org.eclipse.ui.tests.export.NewCategory">
+      </wizard> 
+      <wizard
+            name="Test Export Add To Parented Category"
+            class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
+            category="org.eclipse.ui.Basic/org.eclipse.ui.tests.TestExportParented"
+            id="org.eclipse.ui.tests.export.NewParentedCategory">
+      </wizard>  
+      <wizard
+            name="Test Export Duplicate Category"
+            class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
+            category="org.eclipse.ui.tests.TestExportDup"
+            id="org.eclipse.ui.tests.export.DuplicateCategory">
+      </wizard>        
+      <wizard
+            name="Test Export Using Import Category"
+            class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
+            category="org.eclipse.ui.tests.TestImport"
+            id="org.eclipse.ui.tests.export.UsingImportCategory">
+      </wizard>  
+                             
+   	</extension>
+   	   
     <extension
          point="org.eclipse.ui.encodings">
       <encoding name="Blorf"/>
