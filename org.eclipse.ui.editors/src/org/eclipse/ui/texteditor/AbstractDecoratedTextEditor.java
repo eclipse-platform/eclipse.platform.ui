@@ -215,7 +215,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @see #updateMarkerViews(Annotation)
 	 * @since 3.2
 	 */
-	private boolean fIsUpdatingMarkerViews= false;
+	protected boolean fIsUpdatingMarkerViews= false;
 
 	/**
 	 * Creates a new text editor.
@@ -1517,15 +1517,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	public Annotation gotoAnnotation(boolean forward) {
 		Annotation annotation= super.gotoAnnotation(forward);
-		if (annotation != null) {
-//			fLastMarkerTarget= null;
-			try {
-				fIsUpdatingMarkerViews= true;
-				updateMarkerViews(annotation);
-			} finally {
-				fIsUpdatingMarkerViews= false;
-			}
-		}
+		if (annotation != null)
+			updateMarkerViews(annotation);
 		return annotation;
 	}
 	
@@ -1543,9 +1536,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		IMarker marker= null;
 		if (annotation instanceof MarkerAnnotation)
 			marker= ((MarkerAnnotation)annotation).getMarker();
-
+		
 		if (marker != null) {
 			try {
+				fIsUpdatingMarkerViews= true;
 				IWorkbenchPage page= getSite().getPage();
 				IViewPart view= null;
 				if (marker.isSubtypeOf(IMarker.PROBLEM))
@@ -1558,12 +1552,15 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				
 				if (view != null) {
 					Method method= view.getClass().getMethod("setSelection", new Class[] { IStructuredSelection.class, boolean.class}); //$NON-NLS-1$
+					fIsUpdatingMarkerViews= true;
 					method.invoke(view, new Object[] {new StructuredSelection(marker), Boolean.TRUE });
 				}
 			} catch (CoreException x) {
 			} catch (NoSuchMethodException x) {
 			} catch (IllegalAccessException x) {
 			} catch (InvocationTargetException x) {
+			} finally {
+				fIsUpdatingMarkerViews= false;
 			}
 			// ignore exceptions, don't update any of the lists, just set status line
 		}
