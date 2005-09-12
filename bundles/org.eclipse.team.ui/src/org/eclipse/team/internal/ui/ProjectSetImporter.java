@@ -55,7 +55,7 @@ public class ProjectSetImporter {
 			
 			Map map = handler.getReferences();
 			List newProjects = new ArrayList();
-			if (map.size() == 0 && handler.isVersionOne()) {
+			if ((map == null || map.size() == 0) && handler.isVersionOne()) {
 				IProjectSetSerializer serializer = Team.getProjectSetSerializer("versionOneSerializer"); //$NON-NLS-1$
 				if (serializer != null) {
 					IProject[] projects = serializer.addToWorkspace(new String[0], filename, shell, monitor);
