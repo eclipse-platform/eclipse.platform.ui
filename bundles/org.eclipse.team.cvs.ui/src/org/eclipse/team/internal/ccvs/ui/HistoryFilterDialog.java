@@ -25,7 +25,6 @@ import org.eclipse.ui.PlatformUI;
 
 public class HistoryFilterDialog extends Dialog {
 
-	private HistoryView historyView;
 	private HistoryFilter historyFilter;	
 	
 	//widgets
@@ -42,7 +41,6 @@ public class HistoryFilterDialog extends Dialog {
 
 	public HistoryFilterDialog(HistoryView view) {
 		super(view.getViewSite().getShell());
-		this.historyView = view;
 	}
 
 	protected void configureShell(Shell newShell) {
@@ -218,7 +216,6 @@ public class HistoryFilterDialog extends Dialog {
 
         //create the filter
         historyFilter = new HistoryFilter(
-            historyView,
             author.getText(),
             comment.getText(),
             fromDate,

@@ -54,7 +54,6 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	private ISynchronizeParticipant participant;
 	private ISynchronizePageConfiguration pageConfiguration;
 	private Image titleImage;
-	private Shell shell;
 	private Shell dialogShell;
 	
 	// Tracking of dirty state
@@ -143,7 +142,6 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	 */
 	public ParticipantPageSaveablePart(Shell shell, CompareConfiguration cc, ISynchronizePageConfiguration pageConfiguration, ISynchronizeParticipant participant) {
 		this.cc = cc;
-		this.shell = shell;
 		this.participant = participant;
 		this.pageConfiguration = pageConfiguration;
 		

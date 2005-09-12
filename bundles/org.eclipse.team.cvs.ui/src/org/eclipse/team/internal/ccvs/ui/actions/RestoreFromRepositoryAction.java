@@ -55,7 +55,6 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
 	 * contains files that exist on a branch but not in HEAD
 	 */
 	class AtticLogListener extends CommandOutputListener {
-		private static final String ATTIC = "Attic"; //$NON-NLS-1$
 		private static final String RCS_FILE_POSTFIX = ",v"; //$NON-NLS-1$
 		private static final String LOGGING_PREFIX = "Logging "; //$NON-NLS-1$
 		ICVSFolder currentFolder;

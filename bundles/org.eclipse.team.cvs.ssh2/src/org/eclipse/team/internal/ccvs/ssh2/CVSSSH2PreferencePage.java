@@ -745,7 +745,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  kpair.setPassphrase(pass);
 
-	  IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
 	  String home=ssh2HomeText.getText();
 
 	  File _home=new File(home);
@@ -925,7 +924,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
 		removeHostKeyButton.setEnabled(!empty);
 	}
 	private void removeHostKey(){
-		JSch jsch=JSchSession.getJSch();
 		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 		HostKeyRepository hkr=JSchSession.getJSch().getHostKeyRepository();
 		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
@@ -965,7 +963,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
       channel.connect();
       ChannelSftp c=(ChannelSftp)channel;
 
-      String pwd=c.pwd();
+      /* String pwd=*/ c.pwd(); // Read off the channel
       SftpATTRS attr=null;
 
       try{ attr=c.stat(".ssh"); } //$NON-NLS-1$

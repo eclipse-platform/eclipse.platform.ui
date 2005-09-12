@@ -26,7 +26,6 @@ public class ConfigurationWizardElement extends WorkbenchAdapter implements IAda
 	private String id;
 	private String name;
 	private ImageDescriptor imageDescriptor;
-	private String description;
 	private IConfigurationElement configurationElement;
 	
 	/**
@@ -112,7 +111,7 @@ public class ConfigurationWizardElement extends WorkbenchAdapter implements IAda
 	 * @param value  the new desrciption
 	 */
 	public void setDescription(String value) {
-		description = value;
+		// Not used
 	}
 	/**
 	 * Sets the id parameter of this element

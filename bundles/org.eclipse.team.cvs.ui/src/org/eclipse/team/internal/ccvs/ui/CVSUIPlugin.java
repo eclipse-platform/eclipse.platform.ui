@@ -277,8 +277,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * Initializes the table of images used in this plugin.
 	 */
 	private void initializeImages() {
-		URL baseURL = getBundle().getEntry("/"); //$NON-NLS-1$
-		
 		// objects
 		createImageDescriptor(ICVSUIConstants.IMG_REPOSITORY); 
 		createImageDescriptor(ICVSUIConstants.IMG_REFRESH);

@@ -16,15 +16,13 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
 public class HistoryFilter extends ViewerFilter {
-	private HistoryView view;
 	public String author;
 	public Date fromDate;
 	public Date toDate;
 	public String comment;
 	public boolean isOr;
 
-	public HistoryFilter(HistoryView hView, String author, String comment, Date fromDate, Date toDate, boolean isOr) {
-		this.view = hView;
+	public HistoryFilter(String author, String comment, Date fromDate, Date toDate, boolean isOr) {
 		this.author = author;
 		this.comment = comment;
 		this.fromDate = fromDate;

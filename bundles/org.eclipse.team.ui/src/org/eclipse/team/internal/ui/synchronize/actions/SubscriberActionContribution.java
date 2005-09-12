@@ -16,7 +16,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.ConfigureRefreshScheduleDialog;
-import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IActionBars;
 
@@ -64,7 +63,6 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 					d.open();
 				}
 			};
-			String participantName = Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, configuration.getParticipant().getName());
 			Utils.initAction(configureSchedule, "action.configureSchedulel."); //$NON-NLS-1$
 		}
 		

@@ -42,8 +42,6 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 	// This static field will hold the singleton instance of the plugin class
 	private static FileSystemPlugin plugin;
 	
-	private PessimisticFilesystemProviderPlugin pessimisticPlugin;
-	
 	/**
 	 * Override the standard plugin constructor.
 	 * 
@@ -53,7 +51,8 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 		super(descriptor);
 		// record this instance as the singleton
 		plugin = this;
-		pessimisticPlugin = new PessimisticFilesystemProviderPlugin(descriptor);
+		// Instanctiate pessimistic provider
+		new PessimisticFilesystemProviderPlugin(descriptor);
 	}
 	
 	/**

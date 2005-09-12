@@ -127,7 +127,6 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 				}
 				Map byParent= sortByParent(toRemove);
 
-				Set keys= byParent.keySet();
 				monitor.beginTask("Removing from control", 1000);
 				for (Iterator i= byParent.keySet().iterator(); i.hasNext();) {
 					IContainer parent= (IContainer) i.next();

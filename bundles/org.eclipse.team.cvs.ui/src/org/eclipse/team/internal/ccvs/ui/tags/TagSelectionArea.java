@@ -26,12 +26,12 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter.ProjectElementSorter;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -76,7 +76,6 @@ public class TagSelectionArea extends DialogArea {
     private String helpContext;
     private Text filterText;
     private TagSource tagSource;
-    private Label tagAreaTextLabel;
     private final Shell shell;
     private TagRefreshButtonArea tagRefreshArea;
     private final TagSource.ITagSourceChangeListener listener = new TagSource.ITagSourceChangeListener() {
@@ -146,9 +145,9 @@ public class TagSelectionArea extends DialogArea {
         Composite inner = createGrabbingComposite(parent, 1);
         if (isIncludeFilterInputArea()) {
             createFilterInput(inner);
-            tagAreaTextLabel = createWrappingLabel(inner, CVSUIMessages.TagSelectionArea_0, 1); 
+            createWrappingLabel(inner, CVSUIMessages.TagSelectionArea_0, 1); 
         } else {
-		    tagAreaTextLabel = createWrappingLabel(inner, NLS.bind(CVSUIMessages.TagSelectionArea_1, new String[] { getTagAreaLabel() }), 1);  
+		    createWrappingLabel(inner, NLS.bind(CVSUIMessages.TagSelectionArea_1, new String[] { getTagAreaLabel() }), 1);  
         }
 		switcher = new PageBook(inner, SWT.NONE);
 		GridData gridData = new GridData(GridData.FILL_BOTH);
@@ -430,7 +429,7 @@ public class TagSelectionArea extends DialogArea {
 			dateTagElements = new ArrayList();
 			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
-				Object next = CVSAction.getAdapter(elements.next(), TagElement.class);
+				Object next = TeamAction.getAdapter(elements.next(), TagElement.class);
 				if (next instanceof TagElement) {
 					if(((TagElement)next).getTag().getType() == CVSTag.DATE){
 						dateTagElements.add(next);

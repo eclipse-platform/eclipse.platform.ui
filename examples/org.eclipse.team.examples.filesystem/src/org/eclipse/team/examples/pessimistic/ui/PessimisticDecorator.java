@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.examples.pessimistic.ui;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -28,13 +25,10 @@ import org.eclipse.team.examples.pessimistic.*;
  */
 public class PessimisticDecorator extends LabelProvider implements ILabelDecorator, IResourceStateListener {
 
-	private Set fDecoratedProjects;
-
 	/**
 	 * Constructor needed for extension
 	 */
 	public PessimisticDecorator() {
-		fDecoratedProjects= new HashSet(1);
 		PessimisticFilesystemProviderPlugin.getInstance().addProviderListener(this);
 	}
 

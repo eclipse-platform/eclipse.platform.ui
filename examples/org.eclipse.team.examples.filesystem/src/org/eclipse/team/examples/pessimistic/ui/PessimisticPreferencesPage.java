@@ -76,14 +76,7 @@ public class PessimisticPreferencesPage
 	private static final String[] EDIT_NO_PROMPT_OPTION_STRINGS= 
 		new String[] { 
 			"Checkout", 
-			"Do nothing", };
-	/*
-	 * Option values for the files are edited without a context preference.
-	 */
-	private static final int[] EDIT_NO_PROMPT_OPTION_KEYS=
-		new int[] { 
-			IPessimisticFilesystemConstants.OPTION_AUTOMATIC,
-			IPessimisticFilesystemConstants.OPTION_DO_NOTHING, };			
+			"Do nothing", };		
 
 	/*
 	 * Option strings for the files are saved preference.

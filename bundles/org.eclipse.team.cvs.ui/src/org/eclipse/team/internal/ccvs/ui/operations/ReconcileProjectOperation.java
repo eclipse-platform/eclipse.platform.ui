@@ -35,7 +35,6 @@ public class ReconcileProjectOperation extends ShareProjectOperation {
 
 	private ICVSRemoteFolder folder;
 	private ContentComparisonSyncInfoFilter contentCompare = new ContentComparisonSyncInfoFilter(false);
-	private CVSWorkspaceSubscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 
 	public ReconcileProjectOperation(Shell shell, IProject project, ICVSRemoteFolder folder) {
 		super(shell, folder.getRepository(), project, folder.getRepositoryRelativePath());
