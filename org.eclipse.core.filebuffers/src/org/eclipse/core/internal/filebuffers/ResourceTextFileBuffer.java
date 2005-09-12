@@ -334,7 +334,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 				monitor= Progress.getMonitor(monitor);
 				try {
-					monitor.beginTask(FileBuffersMessages.ResourceTextFileBuffer_task_saving, 2); //$NON-NLS-1$
+					monitor.beginTask(FileBuffersMessages.ResourceTextFileBuffer_task_saving, 2);
 					ContainerCreator creator = new ContainerCreator(fFile.getWorkspace(), fFile.getParent().getFullPath());
 					IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
 					creator.createContainer(subMonitor);
