@@ -259,14 +259,6 @@
                menubarPath="navigate/open.ext2"
                id="org.eclipse.ui.OpenWorkspaceFile">
          </action>
-         <action
-               class="org.eclipse.ui.internal.actions.SelectWorkingSetsAction"
-               definitionId="org.eclipse.ui.navigate.selectWorkingSets"
-               id="selectWorkingSets"
-               label="%SelectWorkingSetsAction.label"
-               menubarPath="window/additions"
-               style="pulldown"
-               toolbarPath="workingSets"/>
       </actionSet>
       <actionSet
             label="%KeyBindingActionSet.label"
@@ -279,6 +271,20 @@
                id="org.eclipse.ui.actions.showKeyAssistHandler"
                definitionId="org.eclipse.ui.window.showKeyAssist">
          </action>
+      </actionSet>
+      <actionSet
+            label="%WorkingSetsActionSet.label"
+            description="%WorkingSetsActionSet.description"
+            visible="true"
+            id="org.eclipse.ui.WorkingSetActionSet">
+         <action
+               class="org.eclipse.ui.internal.actions.SelectWorkingSetsAction"
+               definitionId="org.eclipse.ui.navigate.selectWorkingSets"
+               id="selectWorkingSets"
+               label="%SelectWorkingSetsAction.label"
+               menubarPath="window/additions"
+               style="pulldown"
+               toolbarPath="workingSets"/>
       </actionSet>
    </extension>
    <extension
@@ -637,6 +643,12 @@
             description="%command.correctionAssistProposals.description"
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals">
+      </command>
+      <command
+            name="%command.selectWorkingSets.name"
+            description="%command.selectWorkingSets.description"
+            categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.navigate.selectWorkingSets">
       </command>
    </extension>
    
