@@ -913,7 +913,7 @@ public class Session {
 		// If there is a provider, use the providers setting for watch/edit
 		try {
 			IResource resource = getLocalRoot().getIResource();
-			if (resource != null) {
+			if (resource != null && resource.getType() != IResource.ROOT) {
 				RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
 				if (provider != null) {
 					return ((CVSTeamProvider) provider).isWatchEditEnabled();
