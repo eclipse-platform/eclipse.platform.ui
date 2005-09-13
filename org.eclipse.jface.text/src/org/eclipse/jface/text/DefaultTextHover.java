@@ -13,7 +13,9 @@ package org.eclipse.jface.text;
 import java.util.Iterator;
 
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.ISourceViewerExtension2;
 
 /**
  * Standard implementation of {@link org.eclipse.jface.text.ITextHover}.
@@ -42,12 +44,15 @@ public class DefaultTextHover implements ITextHover {
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
+		IAnnotationModel model= getAnnotationModel(fSourceViewer);
+		if (model == null)
+			return null;
 		
-		Iterator e= fSourceViewer.getAnnotationModel().getAnnotationIterator();
+		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Annotation a= (Annotation) e.next();
 			if (isIncluded(a)) {
-				Position p= fSourceViewer.getAnnotationModel().getPosition(a);
+				Position p= model.getPosition(a);
 				if (p != null && p.overlapsWith(hoverRegion.getOffset(), hoverRegion.getLength())) {
 					String msg= a.getText();
 					if (msg != null && msg.trim().length() > 0)
@@ -75,6 +80,14 @@ public class DefaultTextHover implements ITextHover {
 	 */
 	protected boolean isIncluded(Annotation annotation) {
 		return true;
+	}
+	
+	private IAnnotationModel getAnnotationModel(ISourceViewer viewer) {
+		if (viewer instanceof ISourceViewerExtension2) {
+			ISourceViewerExtension2 extension= (ISourceViewerExtension2) viewer;
+			return extension.getVisualAnnotationModel();
+		}
+		return viewer.getAnnotationModel();
 	}
 	
 	private IRegion findWord(IDocument document, int offset) {
