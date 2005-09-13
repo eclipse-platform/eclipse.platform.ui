@@ -307,8 +307,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 		if(natureValues != null){
 			String[] natures = new String[natureValues.size()];
 			natureValues.toArray(natures);
-			WorkbenchPlugin.getDefault().getDecoratorManager().getUpdateListener()
-				.listenFor(this, newState, natures);
+			
 		}
 
 	}

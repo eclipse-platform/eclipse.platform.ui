@@ -95,7 +95,6 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
     private final String P_FALSE = "false"; //$NON-NLS-1$
 
-	private ResourceUpdateListener updateListener;
 
     /**
      * Create a new instance of the receiver and load the
@@ -103,8 +102,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      */
     public DecoratorManager() {
         
-    	updateListener = new ResourceUpdateListener();
-        scheduler = new DecorationScheduler(this);
+    	 scheduler = new DecorationScheduler(this);
         IExtensionTracker tracker = PlatformUI.getWorkbench()
 				.getExtensionTracker();
         tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
@@ -501,7 +499,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * @see IBaseLabelProvider#dispose()
      */
     public void dispose() {
-       updateListener.dispose();
+       //do nothing
     }
 
     /**
@@ -925,13 +923,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 		
 	}
 
-	/**
-	 * Return the update listener for the receiver.
-	 * @return ResourceUpdateListener
-	 */
-	ResourceUpdateListener getUpdateListener() {
-		return updateListener;
-	}
+
 	
 	/**
 	 * The value has changed ask the listeners if they 
