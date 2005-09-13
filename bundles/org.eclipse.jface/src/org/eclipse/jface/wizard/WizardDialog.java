@@ -821,6 +821,12 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      * the runnable will run in the UI thread and it is the runnable's
      * responsibility to call <code>Display.readAndDispatch()</code>
      * to ensure UI responsiveness.
+     * 
+     * UI state is saved prior to executing the long-running operation and is 
+     * restored after the long-running operation completes executing.  Any attempt  
+     * to change the UI state of the wizard in the long-running operation will be 
+     * nullified when original UI state is restored.
+     * 
      */
     public void run(boolean fork, boolean cancelable,
             IRunnableWithProgress runnable) throws InvocationTargetException,
