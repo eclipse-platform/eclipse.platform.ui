@@ -318,12 +318,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 				}
 			});
 		} else {
-			if (fLastCompletionOffset == fFilterOffset) {
-				handleRepeatedInvocation();
-			} else {
-				fLastCompletionOffset= fFilterOffset;
-			}
-			
+			fLastCompletionOffset= fFilterOffset;
+			handleRepeatedInvocation();
 		}
 
 		return getErrorMessage();
@@ -333,8 +329,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		ICompletionProposal[] recomputed= null;
 		if (fContentAssistant.recomputeOnRepetition()) {
 			recomputed= computeProposals(fFilterOffset);
-			if (recomputed != null)
+			if (recomputed != null) {
+				fComputedProposals= recomputed;
 				setProposals(recomputed, false);
+			}
 		}
 	}
 
@@ -1318,7 +1316,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			fContentAssistSubjectControlAdapter.setSelectedRange(fFilterOffset + postfix.length(), 0);
 			fContentAssistSubjectControlAdapter.revealRange(fFilterOffset + postfix.length(), 0);
-			fLastCompletionOffset= fFilterOffset + postfix.length();
+			fFilterOffset+= postfix.length();
+			fLastCompletionOffset= fFilterOffset;
 
 			return false;
 		} catch (BadLocationException e) {
