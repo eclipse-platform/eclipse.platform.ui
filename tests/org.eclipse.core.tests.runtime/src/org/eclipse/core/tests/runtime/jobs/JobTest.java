@@ -253,9 +253,9 @@ public class JobTest extends TestCase {
 			status[i] = TestBarrier.STATUS_START;
 		}
 
-		//all the jobs should be running at the same time
-		//by the time the third job changes the status flag, the other jobs should have already done so
-		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_START);
+		//the first 3 jobs should be running at the same time
+		for (int i = 0; i < 3; i++)
+			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_WAIT_FOR_START);
 
 		//the 3 jobs should now be waiting for the STATUS_WAIT_FOR_RUN flag
 		for (int i = 0; i < 3; i++) {
