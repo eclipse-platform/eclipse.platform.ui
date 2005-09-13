@@ -514,15 +514,13 @@ public final class RefactoringHistory implements IRefactoringHistory {
 			fRedoStack= new RefactoringDescriptorStack();
 			fRedoStack.setCapacity(MAX_REDO_STACK);
 			try {
-				if (RefactoringCorePlugin.getDefault().getPluginPreferences().getBoolean(RefactoringHistory.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY)) {
-					final ISavedState state= workspace.addSaveParticipant(RefactoringCorePlugin.getDefault(), new WorkspaceSaveParticipant());
-					if (state != null) {
-						final IPath path= state.lookup(new Path(NAME_HISTORY_FILE));
-						if (path != null) {
-							final File file= RefactoringCorePlugin.getDefault().getStateLocation().append(path).toFile();
-							if (file != null && file.canRead())
-								readWorkspaceHistory(file);
-						}
+				final ISavedState state= workspace.addSaveParticipant(RefactoringCorePlugin.getDefault(), new WorkspaceSaveParticipant());
+				if (state != null) {
+					final IPath path= state.lookup(new Path(NAME_HISTORY_FILE));
+					if (path != null) {
+						final File file= RefactoringCorePlugin.getDefault().getStateLocation().append(path).toFile();
+						if (file != null && file.canRead())
+							readWorkspaceHistory(file);
 					}
 				}
 			} catch (IllegalStateException exception) {
