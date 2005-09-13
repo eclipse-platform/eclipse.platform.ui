@@ -4044,7 +4044,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			// FIXME: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=82256
 			final String ATT_DEFINITION_ID= "definitionId";//$NON-NLS-1$
 			String defId= element.getAttribute(ATT_DEFINITION_ID);
-			return new EditorPluginAction(element, this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$
+			return new EditorPluginAction(element, this, defId, IAction.AS_UNSPECIFIED);
 		}
 
 		return null;
