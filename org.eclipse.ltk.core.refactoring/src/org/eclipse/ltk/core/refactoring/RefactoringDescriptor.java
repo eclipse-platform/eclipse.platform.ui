@@ -87,8 +87,8 @@ public class RefactoringDescriptor implements Comparable, Serializable {
 		fArguments= Collections.unmodifiableMap(new HashMap(arguments));
 	}
 
-	/**
-	 * @inheritDoc
+	/*
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public final int compareTo(final Object object) {
 		if (object instanceof RefactoringDescriptor) {
@@ -98,8 +98,8 @@ public class RefactoringDescriptor implements Comparable, Serializable {
 		return 0;
 	}
 
-	/**
-	 * @inheritDoc
+	/*
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public final boolean equals(final Object object) {
 		if (object instanceof RefactoringDescriptor) {
@@ -166,8 +166,8 @@ public class RefactoringDescriptor implements Comparable, Serializable {
 		return fTimeStamp;
 	}
 
-	/**
-	 * @inheritDoc
+	/*
+	 * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {
 		return (int) fTimeStamp;
@@ -199,8 +199,8 @@ public class RefactoringDescriptor implements Comparable, Serializable {
 		fTimeStamp= stamp;
 	}
 
-	/**
-	 * @inheritDoc
+	/*
+	 * @see java.lang.Object#toString()
 	 */
 	public final String toString() {
 
