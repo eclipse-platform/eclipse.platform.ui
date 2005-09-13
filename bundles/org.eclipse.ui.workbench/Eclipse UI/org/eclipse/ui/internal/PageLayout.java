@@ -160,18 +160,20 @@ public class PageLayout implements IPageLayout {
             return;
         if (id != null) {
             try {
-                IViewReference ref = viewFactory.createView(id);
-                fastViews.add(ref);
+				IViewReference ref = viewFactory.createView(ViewFactory
+						.extractPrimaryId(id), ViewFactory
+						.extractSecondaryId(id));
+				fastViews.add(ref);
 
-                // force creation of the view layout rec
-                ViewLayoutRec rec = getViewLayoutRec(id, true);
+				// force creation of the view layout rec
+				ViewLayoutRec rec = getViewLayoutRec(id, true);
 
-                // remember the ratio, if valid
-                if (ratio >= IPageLayout.RATIO_MIN
-                        && ratio <= IPageLayout.RATIO_MAX) {
-                    rec.fastViewWidthRatio = ratio;
-                }
-            } catch (PartInitException e) {
+				// remember the ratio, if valid
+				if (ratio >= IPageLayout.RATIO_MIN
+						&& ratio <= IPageLayout.RATIO_MAX) {
+					rec.fastViewWidthRatio = ratio;
+				}
+			} catch (PartInitException e) {
                 WorkbenchPlugin.log(getClass(), "addFastView", e); //$NON-NLS-1$
             }
         }
@@ -185,19 +187,25 @@ public class PageLayout implements IPageLayout {
      * @return true if the partId is a fast view id.
      */
     private boolean isFastViewId(String partId) {
-        for (int i = 0; i < fastViews.size(); i++) {
-            if (((IViewReference) fastViews.get(i)).getId().equals(partId))
-                return true;
-        }
-        return false;
-    }
+		for (int i = 0; i < fastViews.size(); i++) {
+			IViewReference ref = (IViewReference) fastViews.get(i);
+			String secondaryId = ref.getSecondaryId();
+			String refId = (secondaryId == null ? ref.getId() : ref.getId()
+					+ ":" + secondaryId); //$NON-NLS-1$
+			if (refId.equals(partId)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
     /**
-     * Returns the view layout record for the given view id, or null if not found.
-     * If create is true, the record is created if it doesn't already exist.
-     * 
-     * @since 3.0
-     */
+	 * Returns the view layout record for the given view id, or null if not
+	 * found. If create is true, the record is created if it doesn't already
+	 * exist.
+	 * 
+	 * @since 3.0
+	 */
     ViewLayoutRec getViewLayoutRec(String id, boolean create) {
         Assert.isTrue(getRefPart(id) != null || isFastViewId(id));
 
@@ -440,14 +448,12 @@ public class PageLayout implements IPageLayout {
     private LayoutPart createView(String partID) throws PartInitException {
         if (partID.equals(ID_EDITOR_AREA)) {
             return editorFolder;
-        } else {
-        	
-            IViewDescriptor viewDescriptor = viewFactory.getViewRegistry()
-                    .find(ViewFactory.extractPrimaryId(partID));
-            if (WorkbenchActivityHelper.filterItem(viewDescriptor))
-                return null;
-            return LayoutHelper.createView(getViewFactory(), partID);
         }
+		IViewDescriptor viewDescriptor = viewFactory.getViewRegistry()
+		        .find(ViewFactory.extractPrimaryId(partID));
+		if (WorkbenchActivityHelper.filterItem(viewDescriptor))
+		    return null;
+		return LayoutHelper.createView(getViewFactory(), partID);
     }
 
     /**

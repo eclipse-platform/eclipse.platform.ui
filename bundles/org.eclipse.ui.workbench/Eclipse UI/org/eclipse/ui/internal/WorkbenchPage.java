@@ -2134,6 +2134,20 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
     /**
+     * Return whether the view is moveable or not.
+     * 
+     * @param ref the view reference to check.  Must not be <code>null</code>.
+     * @return true if the part is moveable.
+     * @since 3.1.1
+     */
+    public boolean isMoveable(IViewReference ref) {
+		Perspective persp = getActivePerspective();
+		if (persp != null)
+			return persp.isMoveable(ref);
+		return false;
+	}
+
+    /**
      * Returns whether the layout of the active
      * perspective is fixed.
      */
