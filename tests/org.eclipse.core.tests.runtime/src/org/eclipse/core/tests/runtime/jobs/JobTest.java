@@ -49,14 +49,14 @@ public class JobTest extends TestCase {
 		shortJob.done(Status.CANCEL_STATUS);
 		assertTrue("4.0", shortJob.getResult().getSeverity() == IStatus.OK);
 
-		//calling the done method before a job is cancelled
+		//calling the done method before a job is canceled
 		longJob.schedule();
 		waitForState(longJob, Job.RUNNING);
 		longJob.done(Status.OK_STATUS);
 		longJob.cancel();
 		waitForState(longJob, Job.NONE);
 
-		//the done call should be ignored, and the job status should still be cancelled
+		//the done call should be ignored, and the job status should still be canceled
 		assertTrue("5.0", longJob.getResult().getSeverity() == IStatus.CANCEL);
 
 		longJob.done(Status.OK_STATUS);
@@ -588,7 +588,7 @@ public class JobTest extends TestCase {
 	}
 
 	/*
-	 * Test that a cancelled job is rescheduled
+	 * Test that a canceled job is rescheduled
 	 */
 	public void testRescheduleCancel() {
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
