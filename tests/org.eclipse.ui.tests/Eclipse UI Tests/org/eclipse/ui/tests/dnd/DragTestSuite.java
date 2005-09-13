@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.dnd;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -102,6 +103,7 @@ public class DragTestSuite extends AutoTestSuite {
             // Test dragging onto a detached window
             addAllCombinationsDetached(source, getDetachedWindowDropTargets(source));
         }
+        addTest(new TestSuite(Bug87211Test.class));
     }
 
     /**

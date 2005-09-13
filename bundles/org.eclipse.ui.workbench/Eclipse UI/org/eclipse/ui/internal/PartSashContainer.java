@@ -1028,9 +1028,13 @@ public abstract class PartSashContainer extends LayoutPart implements
 
                 int side = Geometry.getClosestSide(targetBounds, position);
                 int distance = Geometry.getDistanceFromEdge(targetBounds, position, side);
+               
+                // is the source coming from a standalone part
+                boolean standalone = (isStackType(sourcePart) && ((PartStack) sourcePart).isStandalone()) ||
+                (isPaneType(sourcePart) && ((PartPane) sourcePart).getStack().isStandalone());
                 
                 // Reserve the 5 pixels around the edge of the part for the drop-on-edge cursor
-                if (distance >= 5) {
+                if (distance >= 5 && !standalone) {
                     // Otherwise, ask the part if it has any special meaning for this drop location
                     IDropTarget target = targetPart.getDropTarget(draggedObject, position);
                     if (target != null) {
@@ -1038,7 +1042,7 @@ public abstract class PartSashContainer extends LayoutPart implements
                     }
                 }
                 
-                if (distance > 30 && isStackType(targetPart)) {
+                if (distance > 30 && isStackType(targetPart) && !standalone) {
                     if (targetPart instanceof ILayoutContainer) {
                         ILayoutContainer targetContainer = (ILayoutContainer)targetPart;
                         if (targetContainer.allowsAdd(sourcePart)) {
@@ -1165,6 +1169,12 @@ public abstract class PartSashContainer extends LayoutPart implements
         } else {
             PartStack newPart = createStack();
 
+            // if the toDrop array has 1 item propogate the stack
+            // appearance
+            if (toDrop.length == 1) {
+            	newPart.appearance = toDrop[0].getStack().appearance;
+            }
+            
             for (int idx = 0; idx < toDrop.length; idx++) {
                 PartPane next = toDrop[idx];
                 stack(next, newPart);
