@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import java.util.Collection;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.ui.internal.ActionExpression;
+import org.eclipse.ui.internal.IObjectContributor;
+import org.eclipse.ui.internal.LegacyResourceSupport;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The DeclarativeDecoratorDefinition is a decorator definition that is defined
@@ -98,7 +104,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 
 		if (decorator == null) {
 
-			if (definingElement.getAttribute(DecoratorDefinition.ATT_CLASS) == null)
+			if (isDeclarative())
 				decorator = new DeclarativeDecorator(definingElement,
 						getIconLocation());
 			else {
@@ -136,6 +142,16 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 			throw exceptions[0];
 
 		return decorator;
+	}
+
+	/**
+	 * Return whether or not this represents a 
+	 * declarative decorator.
+	 * @return boolean <code>true</code> if this is 
+	 * declarative
+	 */
+	private boolean isDeclarative() {
+		return definingElement.getAttribute(DecoratorDefinition.ATT_CLASS) == null;
 	}
 
 	/**
@@ -295,21 +311,14 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 			objectClass = Object.class.getName();
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean newState) {
 		super.setEnabled(newState);
-		Collection natureValues = getEnablement().valuesForExpression("nature");//$NON-NLS-1$
-		if(natureValues != null){
-			String[] natures = new String[natureValues.size()];
-			natureValues.toArray(natures);
-			
-		}
-
+		if(isDeclarative())
+			DeclarativeDecorator.setEnabledBy(getId(),getEnablement());
 	}
 
 }

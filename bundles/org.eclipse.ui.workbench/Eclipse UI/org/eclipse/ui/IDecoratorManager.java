@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDelayedLabelDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelUpdateValidator;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
 /**
@@ -101,5 +102,18 @@ public interface IDecoratorManager extends IDelayedLabelDecorator{
      * @param decoratorId the decorator id
      */
     void update(String decoratorId);
+
+    /**
+	 * The value has changed for element. Check the ILabelProviderListeners 
+	 * to see if any of them are ILabelUpdateProcessors and if so allow
+	 * them to process updates.
+	 * <strong>NOTE:</strong> This API is experimental and 
+	 * may change during the 3.2 developement cycle.
+	 * @param element
+	 * @param validator
+	 * @since 3.2
+	 */
+    
+	void updateForValueChanged(Object element, ILabelUpdateValidator validator);
 
 }

@@ -26,11 +26,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.internal.decorators.DecoratorUpdateListener;
 import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * This internal class represents the top of the IDE workbench.
@@ -319,5 +321,21 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getIDEImageDescriptor(String relativePath){
 		return imageDescriptorFromPlugin(IDE_WORKBENCH, ICONS_PATH + relativePath);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		DecoratorUpdateListener.startUp();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+		DecoratorUpdateListener.shutDown();
 	}
 }

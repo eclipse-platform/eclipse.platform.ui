@@ -95,6 +95,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
     private final String P_FALSE = "false"; //$NON-NLS-1$
 
+	private LightweightDecoratorListener updateListener;
 
     /**
      * Create a new instance of the receiver and load the
@@ -102,7 +103,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      */
     public DecoratorManager() {
         
-    	 scheduler = new DecorationScheduler(this);
+        scheduler = new DecorationScheduler(this);
         IExtensionTracker tracker = PlatformUI.getWorkbench()
 				.getExtensionTracker();
         tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
@@ -660,8 +661,9 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         dispose();
     }
 
-    /**
-     * @see IDecoratorManager#getEnabled(String)
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IDecoratorManager#getEnabled(java.lang.String)
      */
     public boolean getEnabled(String decoratorId) {
         DecoratorDefinition definition = getDecoratorDefinition(decoratorId);
@@ -925,12 +927,10 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
 
 	
-	/**
-	 * The value has changed ask the listeners if they 
-	 * want to do anything.
-	 * @param element
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IDecoratorManager#updateForValueChanged(java.lang.Object, org.eclipse.jface.viewers.ILabelUpdateValidator)
 	 */
-	void updateForValueChanged(final Object element, final ILabelUpdateValidator validator){
+	public void updateForValueChanged(final Object element, final ILabelUpdateValidator validator){
 		
 		 Object[] array = listeners.getListeners();
 	        for (int i = 0; i < array.length; i++) {
@@ -943,7 +943,9 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 	            	});
 	            }
 	            else
-		        	prepareDecoration(element, null);
+	            	 // Queue the decoration.
+	                scheduler.queueForDecoration(element, getResourceAdapter(element),
+	                        true, null); 
 	        }
 	        
 		
