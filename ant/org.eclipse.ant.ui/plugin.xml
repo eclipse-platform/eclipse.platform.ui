@@ -721,7 +721,8 @@ M4 = Platform-specific fourth key -->
             id="org.eclipse.ant.ui.export" 
             name="%antExportWizard.name"
             class="org.eclipse.ant.internal.ui.datatransfer.AntBuildfileExportWizard" 
-            icon="$nl$/icons/full/obj16/ant.gif">
+            icon="$nl$/icons/full/obj16/ant.gif"
+            category="org.eclipse.ui.Basic">
          <description> 
             %antExportWizard.description
          </description>
