@@ -14,13 +14,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import org.eclipse.core.internal.resources.mapping.ResourceMapping;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -660,10 +659,19 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		} else {
 			name= SearchMessages.SelectionScope; 
 		}
+		removeCloseProjects(resources);
 		IResource[] arr= (IResource[]) resources.toArray(new IResource[resources.size()]);
 		return SearchScope.newSearchScope(name, arr);
 	}
 
+	private void removeCloseProjects(Collection resources) {
+		for (Iterator iter= resources.iterator(); iter.hasNext();) {
+			IResource resource= (IResource)iter.next();
+			if (resource.getType() == IResource.PROJECT && !((IProject)resource).isOpen())
+				iter.remove();
+		}
+	}
+	
 	private IProject getEditorProject() {
 		IWorkbenchPart activePart= SearchPlugin.getActivePage().getActivePart();
 		if (activePart instanceof IEditorPart) {
