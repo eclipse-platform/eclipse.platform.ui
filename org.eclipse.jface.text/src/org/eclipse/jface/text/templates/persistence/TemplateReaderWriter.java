@@ -252,7 +252,7 @@ public class TemplateReaderWriter {
 			DocumentBuilder builder= factory.newDocumentBuilder();
 			Document document= builder.newDocument();
 
-			Node root= document.createElement(TEMPLATE_ROOT); //$NON-NLS-1$
+			Node root= document.createElement(TEMPLATE_ROOT);
 			document.appendChild(root);
 
 			for (int i= 0; i < templates.length; i++) {
@@ -290,16 +290,16 @@ public class TemplateReaderWriter {
 				}
 
 				Attr enabled= document.createAttribute(ENABLED_ATTRIBUTE);
-				enabled.setValue(data.isEnabled() ? Boolean.toString(true) : Boolean.toString(false)); //$NON-NLS-1$ //$NON-NLS-2$
+				enabled.setValue(data.isEnabled() ? Boolean.toString(true) : Boolean.toString(false));
 				attributes.setNamedItem(enabled);
 
 				Attr deleted= document.createAttribute(DELETED_ATTRIBUTE);
-				deleted.setValue(data.isDeleted() ? Boolean.toString(true) : Boolean.toString(false)); //$NON-NLS-1$ //$NON-NLS-2$
+				deleted.setValue(data.isDeleted() ? Boolean.toString(true) : Boolean.toString(false));
 				attributes.setNamedItem(deleted);
 
 				if (template != null) {
 					Attr autoInsertable= document.createAttribute(AUTO_INSERTABLE_ATTRIBUTE);
-					autoInsertable.setValue(template.isAutoInsertable() ? Boolean.toString(true) : Boolean.toString(false)); //$NON-NLS-1$ //$NON-NLS-2$
+					autoInsertable.setValue(template.isAutoInsertable() ? Boolean.toString(true) : Boolean.toString(false));
 					attributes.setNamedItem(autoInsertable);
 				}
 

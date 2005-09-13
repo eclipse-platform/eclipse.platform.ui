@@ -230,7 +230,7 @@ public class LinkedPositionGroup {
 			else
 				length= eventEnd - relativeOffset - fLastRegion.getOffset();
 
-			String text= event.getText(); //$NON-NLS-1$
+			String text= event.getText();
 			if (text == null)
 				text= ""; //$NON-NLS-1$
 

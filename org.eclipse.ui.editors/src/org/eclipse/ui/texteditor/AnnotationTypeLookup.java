@@ -191,7 +191,7 @@ public final class AnnotationTypeLookup {
 
 		AnnotationTypeMapping mapping= new AnnotationTypeMapping();
 
-		String s= element.getAttribute(typeAttributeName);  //$NON-NLS-1$
+		String s= element.getAttribute(typeAttributeName);
 		if (s == null || s.trim().length() == 0) return null;
 		mapping.fAnnotationType= s;
 

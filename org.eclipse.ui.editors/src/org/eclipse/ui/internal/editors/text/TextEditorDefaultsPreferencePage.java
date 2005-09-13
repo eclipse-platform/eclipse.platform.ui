@@ -762,7 +762,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 
 		fFieldsInitialized= true;
-		updateStatus(new StatusInfo()); //$NON-NLS-1$
+		updateStatus(new StatusInfo());
 
         // Update slaves
         Iterator iter= fMasterSlaveListeners.iterator();

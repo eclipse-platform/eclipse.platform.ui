@@ -128,7 +128,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		boolean isTaskMarker= MarkerUtilities.isMarkerType(marker, IMarker.TASK);
 		if (isProblemMarker || isTaskMarker) {
 			IWorkbenchPage page= fTextEditor.getSite().getPage();
-			IViewPart view= page.findView(isProblemMarker ? IPageLayout.ID_PROBLEM_VIEW: IPageLayout.ID_TASK_LIST); //$NON-NLS-1$  //$NON-NLS-2$
+			IViewPart view= page.findView(isProblemMarker ? IPageLayout.ID_PROBLEM_VIEW: IPageLayout.ID_TASK_LIST);
 			if (view != null) {
 				boolean selectionSet= false;
 				try {

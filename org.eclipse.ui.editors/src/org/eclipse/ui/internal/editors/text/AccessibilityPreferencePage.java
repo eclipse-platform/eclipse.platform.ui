@@ -438,7 +438,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 		fFieldsInitialized= true;
 
-		updateStatus(new StatusInfo()); //$NON-NLS-1$
+		updateStatus(new StatusInfo());
 
 	}
 

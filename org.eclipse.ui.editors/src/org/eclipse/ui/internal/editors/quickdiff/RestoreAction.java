@@ -69,7 +69,7 @@ public class RestoreAction extends QuickDiffRestoreAction {
 		if (info.getRemovedLinesBelow() == 1)
 			setText(QuickDiffMessages.getString(SINGLE_KEY));
 		else
-			setText(QuickDiffMessages.getFormattedString(MULTIPLE_KEY, String.valueOf(info.getRemovedLinesBelow()))); //$NON-NLS-1$
+			setText(QuickDiffMessages.getFormattedString(MULTIPLE_KEY, String.valueOf(info.getRemovedLinesBelow())));
 		return true;
 	}
 

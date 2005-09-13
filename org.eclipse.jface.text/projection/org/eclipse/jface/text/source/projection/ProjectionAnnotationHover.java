@@ -57,7 +57,7 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 		return null;
 	}
 
-	/**
+	/*
 	 * @since 3.1
 	 */
 	private boolean isCaptionLine(ProjectionAnnotation annotation, Position position, IDocument document, int line) {

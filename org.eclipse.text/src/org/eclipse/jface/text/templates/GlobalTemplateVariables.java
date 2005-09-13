@@ -61,7 +61,7 @@ public class GlobalTemplateVariables {
 			super(NAME, TextTemplateMessages.getString("GlobalVariables.variable.description.selectedWord")); //$NON-NLS-1$
 		}
 		protected String resolve(TemplateContext context) {
-			String selection= context.getVariable(SELECTION); //$NON-NLS-1$
+			String selection= context.getVariable(SELECTION);
 			if (selection == null)
 				return ""; //$NON-NLS-1$
 			return selection;
@@ -84,7 +84,7 @@ public class GlobalTemplateVariables {
 			super(NAME, TextTemplateMessages.getString("GlobalVariables.variable.description.selectedLines")); //$NON-NLS-1$
 		}
 		protected String resolve(TemplateContext context) {
-			String selection= context.getVariable(SELECTION); //$NON-NLS-1$
+			String selection= context.getVariable(SELECTION);
 			if (selection == null)
 				return ""; //$NON-NLS-1$
 			return selection;

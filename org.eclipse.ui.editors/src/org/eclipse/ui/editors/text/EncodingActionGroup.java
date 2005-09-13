@@ -276,7 +276,7 @@ public class EncodingActionGroup extends ActionGroup {
 			if (initialValue == null)
 				initialValue= ""; //$NON-NLS-1$
 
-			InputDialog d= new InputDialog(editor.getSite().getShell(), title, message, initialValue, inputValidator); //$NON-NLS-1$
+			InputDialog d= new InputDialog(editor.getSite().getShell(), title, message, initialValue, inputValidator);
 			if (d.open() == Window.OK)
 				encodingSupport.setEncoding(d.getValue());
 		}
