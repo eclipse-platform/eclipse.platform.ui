@@ -13,7 +13,7 @@
    <extension
          id="testDynamicEncodingAddition"
          point="org.eclipse.ui.encodings">
-      <encoding name="EUC-JP"/>
+      <encoding name="Cp1257"/>
    </extension>
  
 

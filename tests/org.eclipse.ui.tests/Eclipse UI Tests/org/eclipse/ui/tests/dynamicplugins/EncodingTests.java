@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  */
 public class EncodingTests extends DynamicTestCase {
 
-	private static final String ENCODING = "EUC-JP";
+	private static final String ENCODING = "Cp1257";
 	/**
 	 * @param testName
 	 */
