@@ -67,7 +67,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	private Text fDestinationNameField = null;
 	private Button fDestinationBrowseButton = null;
 	private IPath fPath = null;
-	private TransientBreakpointsViewer fTView = null;
+	private EmbeddedBreakpointsViewer fTView = null;
 	private IStructuredSelection fSelection = null;
 	private Button fSelectAll = null;
 	private Button fDeselectAll = null;
@@ -170,7 +170,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		composite.setFont(font);
-		fTView = new TransientBreakpointsViewer(composite, DebugPlugin.getDefault().getBreakpointManager(), fSelection);
+		fTView = new EmbeddedBreakpointsViewer(composite, DebugPlugin.getDefault().getBreakpointManager(), fSelection);
 		fTView.getViewer().addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				setPageComplete(detectPageComplete());

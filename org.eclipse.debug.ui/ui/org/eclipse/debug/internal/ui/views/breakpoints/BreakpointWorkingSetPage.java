@@ -18,7 +18,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.internal.ui.importexport.breakpoints.TransientBreakpointsViewer;
+import org.eclipse.debug.internal.ui.importexport.breakpoints.EmbeddedBreakpointsViewer;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -55,7 +55,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 	final private static String PAGE_ID= "breakpointWorkingSetPage"; //$NON-NLS-1$
 	
 	private Text fWorkingSetName;
-	private TransientBreakpointsViewer fTViewer;
+	private EmbeddedBreakpointsViewer fTViewer;
 	private boolean fFirstCheck;
 	private IWorkingSet fWorkingSet;
 
@@ -102,7 +102,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		} else {
 			selection = (IStructuredSelection)viewpart.getViewSite().getSelectionProvider().getSelection();
 		}
-		fTViewer = new TransientBreakpointsViewer(composite, DebugPlugin.getDefault().getBreakpointManager(), selection);
+		fTViewer = new EmbeddedBreakpointsViewer(composite, DebugPlugin.getDefault().getBreakpointManager(), selection);
 		// Add select / deselect all buttons for bug 46669
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout(2, false));

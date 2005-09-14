@@ -49,7 +49,7 @@ import org.eclipse.ui.IViewPart;
  *
  * @since 3.2
  */
-public class TransientBreakpointsViewer {
+public class EmbeddedBreakpointsViewer {
 
 	//widgets
 	private IStructuredSelection fSelection = null;
@@ -76,7 +76,7 @@ public class TransientBreakpointsViewer {
 	 * @param parent the parent to add this composite to
 	 * @param input the input to the viewer
 	 */
-	public TransientBreakpointsViewer(Composite parent, Object input) {
+	public EmbeddedBreakpointsViewer(Composite parent, Object input) {
 		Assert.isNotNull(parent);
 		Assert.isNotNull(input);
 		createControl(parent, input, null);
@@ -89,7 +89,7 @@ public class TransientBreakpointsViewer {
 	 * @param input the input to the viewer
 	 * @param selection the selection to set on the viewer
 	 */
-	public TransientBreakpointsViewer(Composite parent, Object input, IStructuredSelection selection) {
+	public EmbeddedBreakpointsViewer(Composite parent, Object input, IStructuredSelection selection) {
 		Assert.isNotNull(parent);
 		Assert.isNotNull(input);
 		createControl(parent, input, selection);
