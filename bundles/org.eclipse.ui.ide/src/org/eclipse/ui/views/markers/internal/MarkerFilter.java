@@ -38,10 +38,6 @@ public class MarkerFilter implements Cloneable{
 
 	private static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
 
-	private static final String TAG_FILTER_ON_MARKER_LIMIT = "filterOnMarkerLimit"; //$NON-NLS-1$
-
-	private static final String TAG_MARKER_LIMIT = "markerLimit"; //$NON-NLS-1$
-
 	private static final String TAG_ON_RESOURCE = "onResource"; //$NON-NLS-1$
 
 	private static final String TAG_SELECTED_TYPES = "selectedType"; //$NON-NLS-1$
@@ -75,10 +71,6 @@ public class MarkerFilter implements Cloneable{
 
 	static final int ON_WORKING_SET = 4;
 
-	static final int DEFAULT_MARKER_LIMIT = 100;
-
-	static final boolean DEFAULT_FILTER_ON_MARKER_LIMIT = true;
-
 	static final int DEFAULT_ON_RESOURCE = ON_ANY_RESOURCE;
 
 	static final boolean DEFAULT_ACTIVATION_STATUS = true;
@@ -91,11 +83,7 @@ public class MarkerFilter implements Cloneable{
 
 	protected int onResource;
 
-	protected boolean filterOnMarkerLimit;
-
 	protected boolean enabled;
-
-	protected int markerLimit;
 
 	private MarkerTypesModel typesModel;
 
@@ -542,23 +530,6 @@ public class MarkerFilter implements Cloneable{
 	}
 
 	/**
-	 * @return the defined limit on the number of markers to be displayed.
-	 */
-	int getMarkerLimit() {
-		return markerLimit;
-	}
-
-	/**
-	 * Sets the limit on the number of markers to be displayed.
-	 * 
-	 * @param the
-	 *            new limit
-	 */
-	void setMarkerLimit(int markerLimit) {
-		this.markerLimit = markerLimit;
-	}
-
-	/**
 	 * @return
 	 * <ul>
 	 * <li><code>MarkerFilter.ON_ANY_RESOURCE</code> if showing items
@@ -623,17 +594,6 @@ public class MarkerFilter implements Cloneable{
 	}
 
 	/**
-	 * @return
-	 * <ul>
-	 * <li><code>true</code> if filtering by marker limit is enabled.</li>
-	 * <li><code>false</code> if filtering by marker limit is not enabled.</li>
-	 * </ul>
-	 */
-	boolean getFilterOnMarkerLimit() {
-		return filterOnMarkerLimit;
-	}
-
-	/**
 	 * <b>Warning:</b> for internal package use only. Return the root marker
 	 * types.
 	 * 
@@ -681,13 +641,6 @@ public class MarkerFilter implements Cloneable{
 	}
 
 	/**
-	 * Sets the enablement state of filtering by marker limit.
-	 */
-	void setFilterOnMarkerLimit(boolean filterOnMarkerLimit) {
-		this.filterOnMarkerLimit = filterOnMarkerLimit;
-	}
-
-	/**
 	 * Sets the selected marker types to be displayed. The List <b>MUST ONLY</b>
 	 * contain <code>MarkerType</code> objects.
 	 */
@@ -708,8 +661,6 @@ public class MarkerFilter implements Cloneable{
 	 */
 	void resetState() {
 		enabled = DEFAULT_ACTIVATION_STATUS;
-		filterOnMarkerLimit = DEFAULT_FILTER_ON_MARKER_LIMIT;
-		markerLimit = DEFAULT_MARKER_LIMIT;
 		onResource = DEFAULT_ON_RESOURCE;
 		selectedTypes.clear();
 		addAllSubTypes(selectedTypes);
@@ -755,19 +706,6 @@ public class MarkerFilter implements Cloneable{
 
 		if (setting != null)
 			enabled = Boolean.valueOf(setting).booleanValue();
-
-		setting = settings.get(TAG_FILTER_ON_MARKER_LIMIT);
-
-		if (setting != null)
-			filterOnMarkerLimit = Boolean.valueOf(setting).booleanValue();
-
-		setting = settings.get(TAG_MARKER_LIMIT);
-
-		if (setting != null)
-			try {
-				markerLimit = Integer.parseInt(setting);
-			} catch (NumberFormatException eNumberFormat) {
-			}
 
 		setting = settings.get(TAG_ON_RESOURCE);
 
@@ -865,8 +803,6 @@ public class MarkerFilter implements Cloneable{
 	 */
 	protected void saveFilterSettings(IDialogSettings settings) {
 		settings.put(TAG_ENABLED, enabled);
-		settings.put(TAG_FILTER_ON_MARKER_LIMIT, filterOnMarkerLimit);
-		settings.put(TAG_MARKER_LIMIT, markerLimit);
 		settings.put(TAG_ON_RESOURCE, onResource);
 
 		String markerTypeIds = ""; //$NON-NLS-1$

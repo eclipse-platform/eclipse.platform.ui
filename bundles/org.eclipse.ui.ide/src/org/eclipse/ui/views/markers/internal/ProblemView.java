@@ -25,6 +25,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -256,5 +257,19 @@ public class ProblemView extends MarkerView {
 	 */
 	protected String getSectionTag() {
 		return TAG_DIALOG_SECTION;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerEnablementPreferenceName()
+	 */
+	String getMarkerEnablementPreferenceName() {
+		return IDEInternalPreferences.LIMIT_PROBLEMS;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerLimitPreferenceName()
+	 */
+	String getMarkerLimitPreferenceName() {
+		return IDEInternalPreferences.PROBLEMS_LIMIT;
 	}
 }

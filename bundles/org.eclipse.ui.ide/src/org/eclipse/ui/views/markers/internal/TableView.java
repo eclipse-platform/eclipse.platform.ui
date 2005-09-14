@@ -50,6 +50,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.preferences.ViewPreferencesAction;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
@@ -75,9 +76,11 @@ public abstract class TableView extends ViewPart {
 
     private TableSorter sorter;
 
-	private TableSortAction sortAction;
+	private IAction sortAction;
 
-	private FiltersAction filtersAction;
+	private IAction filtersAction;
+
+	private IAction preferencesAction;
 
     /* (non-Javadoc)
      * Method declared on IViewPart.
@@ -327,6 +330,8 @@ public abstract class TableView extends ViewPart {
         addDropDownContributions(menu);
         if (filtersAction != null)
             menu.add(filtersAction);
+        if (preferencesAction != null)
+            menu.add(preferencesAction);
     }
 
     /**
@@ -521,10 +526,26 @@ public abstract class TableView extends ViewPart {
 	
 	/**
 	 * Return the filter action for the receiver.
-	 * @return
+	 * @return IAction
 	 */
 	IAction getFilterAction() {
 		return filtersAction;
+	}
+
+	/**
+	 * Return the preferences action.
+	 * @return IAction
+	 */
+	IAction getPreferencesAction() {
+		return preferencesAction;
+	}
+
+	/**
+	 * Set the preferences action.
+	 * @param preferencesAction
+	 */
+	void setPreferencesAction(ViewPreferencesAction preferencesAction) {
+		this.preferencesAction = preferencesAction;
 	}
 
 }

@@ -46,4 +46,22 @@ public interface IDEInternalPreferences {
 
     // (boolean) Whether or not to display the Welcome dialog on startup.
     public static final String WELCOME_DIALOG = "WELCOME_DIALOG"; //$NON-NLS-1$
+    
+    //Whether or not to limit problems
+    public static final String LIMIT_PROBLEMS = "LIMIT_PROBLEMS"; //$NON-NLS-1$
+    
+    //problem limits
+    public static final String PROBLEMS_LIMIT = "PROBLEMS_LIMIT"; //$NON-NLS-1$
+    
+    //Whether or not to limit tasks
+    public static final String LIMIT_TASKS = "LIMIT_TASKS"; //$NON-NLS-1$
+    
+    //tasks limits
+    public static final String TASKS_LIMIT = "TASKS_LIMIT"; //$NON-NLS-1$
+    
+    //Whether or not to limit bookmarks
+    public static final String LIMIT_BOOKMARKS = "LIMIT_BOOKMARKS"; //$NON-NLS-1$
+    
+    //bookmark limits
+    public static final String BOOKMARKS_LIMIT = "BOOKMARKS_LIMIT"; //$NON-NLS-1$
 }

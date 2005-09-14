@@ -40,8 +40,6 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -54,11 +52,9 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
@@ -240,8 +236,6 @@ public abstract class DialogMarkerFilter extends Dialog {
 
     private CheckboxTableViewer typesViewer;
 
-    private Button filterOnMarkerLimit;
-
     private Button anyResourceButton;
 
     private Button anyResourceInSameProjectButton;
@@ -255,8 +249,6 @@ public abstract class DialogMarkerFilter extends Dialog {
     private Button deselectAllButton;
 
     private WorkingSetGroup workingSetGroup;
-
-    private Text markerLimit;
 
     private boolean dirty = false;
 
@@ -618,8 +610,7 @@ public abstract class DialogMarkerFilter extends Dialog {
     	Composite leftComposite = new Composite(selectedComposite,SWT.NONE);
     	leftComposite.setLayout(new GridLayout());
     	leftComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-    	createMarkerLimitArea(leftComposite);       
-        createResourceArea(leftComposite);
+    	createResourceArea(leftComposite);
         createAttributesArea(leftComposite);
                
     	Composite rightComposite = new Composite(selectedComposite,SWT.NONE);
@@ -710,7 +701,7 @@ public abstract class DialogMarkerFilter extends Dialog {
         TableLayout tableLayout = new TableLayout();
         table.setLayout(tableLayout);
         tableLayout.addColumnData(new ColumnWeightData(100, true));
-        TableColumn tc = new TableColumn(table, SWT.NONE, 0);
+        new TableColumn(table, SWT.NONE, 0);
        
         typesViewer = new CheckboxTableViewer(table);
         GridData gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
@@ -793,46 +784,6 @@ public abstract class DialogMarkerFilter extends Dialog {
         };
     }
 
-
-    /**
-     * Creates the area where the user can specify a maximum number of items
-     * to display in the table.
-     * 
-     * @param parent the parent composite
-     */
-    protected void createMarkerLimitArea(Composite parent) {
-        Font font = parent.getFont();
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        composite.setFont(font);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        composite.setLayout(layout);
-        filterOnMarkerLimit = createCheckbox(composite, MarkerMessages.filtersDialog_limitVisibleMarkersTo,
-                false);
-        filterOnMarkerLimit.setFont(composite.getFont());
-        filterOnMarkerLimit.setLayoutData(new GridData());
-        filterOnMarkerLimit.addSelectionListener(new SelectionAdapter(){
-        	/* (non-Javadoc)
-        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-        	 */
-        	public void widgetSelected(SelectionEvent e) {
-        		  updateForSelection();
-        	}
-          });
-        markerLimit = new Text(composite, SWT.SINGLE | SWT.BORDER);
-        markerLimit.setTextLimit(6);
-        GridData gridData = new GridData();
-        gridData.widthHint = convertWidthInCharsToPixels(10);
-        markerLimit.setLayoutData(gridData);
-        markerLimit.setFont(font);
-        markerLimit.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                markDirty();
-            }
-        });
-    }
-
     /**
      * This method is intended to be overridden by subclasses of FiltersDialog. The
      * attributes area will be created just above the Restore Defaults button.
@@ -870,30 +821,8 @@ public abstract class DialogMarkerFilter extends Dialog {
      * because after super.open() is called, the widgetry is disposed.
      */
     protected void okPressed() {
-        try {
-            int markerLimit = Integer.parseInt(this.markerLimit.getText());
-
-            if (markerLimit < 1) {
-                throw new NumberFormatException();
-            }
-
-            updateFilterFromUI();
-            
-            super.okPressed();
-        } catch (NumberFormatException eNumberFormat) {
-            MessageBox messageBox = new MessageBox(getShell(), SWT.OK
-                    | SWT.APPLICATION_MODAL | SWT.ICON_ERROR);
-            messageBox.setText(MarkerMessages
-                    .filtersDialog_titleMarkerLimitInvalid);
-            messageBox.setMessage(MarkerMessages
-                    .filtersDialog_messageMarkerLimitInvalid);
-            messageBox.open();
-
-            if (markerLimit.forceFocus()) {
-                markerLimit.setSelection(0, markerLimit.getCharCount());
-                markerLimit.showSelection();
-            }
-        }
+       updateFilterFromUI();
+       super.okPressed();
     }
 
     /**
@@ -902,9 +831,6 @@ public abstract class DialogMarkerFilter extends Dialog {
      * but doesn't actually reset our filter.
      */
     protected void resetPressed() {
-        filterOnMarkerLimit
-                .setSelection(MarkerFilter.DEFAULT_FILTER_ON_MARKER_LIMIT);
-        markerLimit.setText(String.valueOf(MarkerFilter.DEFAULT_MARKER_LIMIT));
         typesViewer.setAllChecked(true);
         int onResource = MarkerFilter.DEFAULT_ON_RESOURCE;
         anyResourceButton
@@ -939,10 +865,7 @@ public abstract class DialogMarkerFilter extends Dialog {
      * is enabled.
      */
     protected void updateEnabledState(boolean enabled) {
-        filterOnMarkerLimit.setEnabled(enabled);
-        markerLimit.setEnabled(enabled
-                && filterOnMarkerLimit.getSelection());
-
+      
         typesViewer.getTable().setEnabled(enabled);
         selectAllButton.setEnabled(enabled
                 && typesViewer.getTable().getItemCount() > 0);
@@ -992,16 +915,6 @@ public abstract class DialogMarkerFilter extends Dialog {
             filter.setOnResource(MarkerFilter.ON_ANY_RESOURCE);
 
         filter.setWorkingSet(workingSetGroup.getWorkingSet());
-
-        int markerLimit = MarkerFilter.DEFAULT_MARKER_LIMIT;
-
-        try {
-            markerLimit = Integer.parseInt(this.markerLimit.getText());
-        } catch (NumberFormatException e) {
-        }
-
-        filter.setMarkerLimit(markerLimit);
-        filter.setFilterOnMarkerLimit(filterOnMarkerLimit.getSelection());
 	}
 
     /**
@@ -1036,9 +949,6 @@ public abstract class DialogMarkerFilter extends Dialog {
                 .setSelection(on == MarkerFilter.ON_SELECTED_RESOURCE_AND_CHILDREN);
         workingSetGroup.setSelection(on == MarkerFilter.ON_WORKING_SET);
         workingSetGroup.setWorkingSet(filter.getWorkingSet());
-
-        markerLimit.setText("" + filter.getMarkerLimit()); //$NON-NLS-1$
-        filterOnMarkerLimit.setSelection(filter.getFilterOnMarkerLimit());
 
         updateEnabledState(true);
 	}

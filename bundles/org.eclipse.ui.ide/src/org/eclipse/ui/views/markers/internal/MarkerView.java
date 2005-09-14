@@ -44,6 +44,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -79,7 +80,9 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.MarkerTransfer;
+import org.eclipse.ui.preferences.ViewPreferencesAction;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
@@ -549,7 +552,46 @@ public abstract class MarkerView extends TableView {
 		super.createActions();
 
 		setFilterAction(new FiltersAction(this));
+		
+		setPreferencesAction(new ViewPreferencesAction(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.preferences.ViewPreferencesAction#openViewPreferencesDialog()
+			 */
+			public void openViewPreferencesDialog() {
+				openPreferencesDialog(
+						getMarkerEnablementPreferenceName(),
+						getMarkerLimitPreferenceName());
+				
+			}
+
+		
+		});
 	}
+	
+	/**
+	 * Open a dialog to set the preferences.
+	 * @param markerEnablementPreferenceName
+	 * @param markerLimitPreferenceName
+	 */
+	private void openPreferencesDialog(String markerEnablementPreferenceName, String markerLimitPreferenceName) {
+		
+		Dialog dialog = new MarkerViewPreferenceDialog(getSite().getWorkbenchWindow().getShell(),markerEnablementPreferenceName,markerLimitPreferenceName,"Set Limits");//$NON-NLS-1$
+		if(dialog.open() == Window.OK)
+			refresh();
+		
+	}
+	
+	/**
+	 * Get the name of the marker enablement preference.
+	 * @return String
+	 */
+	abstract String getMarkerLimitPreferenceName();
+	
+	/**
+	 * Get the name of the marker limit preference.
+	 * @return String
+	 */
+	abstract String getMarkerEnablementPreferenceName();
 
 	abstract String[] getMarkerTypes();
 
@@ -851,20 +893,17 @@ public abstract class MarkerView extends TableView {
 	 * @return int
 	 */
 	private int getMarkerLimit() {
-		MarkerFilter[] filters = getEnabledFilters();
-		int limit = -1;
-
-		for (int i = 0; i < filters.length; i++) {
-			MarkerFilter filter = filters[i];
-			if (!filter.getFilterOnMarkerLimit())
-				continue;
-
-			if (limit >= 0)
-				limit = Math.min(limit, filter.getMarkerLimit());
-			else
-				limit = filter.getMarkerLimit();
+		
+		//If limits are enabled return it. Otherwise return -1
+		if(IDEWorkbenchPlugin.
+			getDefault().getPreferenceStore().
+				getBoolean(getMarkerEnablementPreferenceName())){
+			return IDEWorkbenchPlugin.
+				getDefault().getPreferenceStore().
+					getInt(getMarkerLimitPreferenceName());
+		
 		}
-		return limit;
+		return -1;
 
 	}
 

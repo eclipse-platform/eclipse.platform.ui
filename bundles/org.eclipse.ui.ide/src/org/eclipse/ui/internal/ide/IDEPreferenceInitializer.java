@@ -55,6 +55,16 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(getHelpSeparatorKey("group.main"), true); //$NON-NLS-1$
 		node.putBoolean(getHelpSeparatorKey("group.assist"), true); //$NON-NLS-1$
 		node.putBoolean(getHelpSeparatorKey("group.updates"), true); //$NON-NLS-1$
+		
+		//Set up marker limits
+		node.putBoolean(IDEInternalPreferences.LIMIT_PROBLEMS, true);
+		node.putInt(IDEInternalPreferences.PROBLEMS_LIMIT, 100);
+		
+		node.putBoolean(IDEInternalPreferences.LIMIT_BOOKMARKS, true);
+		node.putInt(IDEInternalPreferences.BOOKMARKS_LIMIT, 100);
+		
+		node.putBoolean(IDEInternalPreferences.LIMIT_TASKS, true);
+		node.putInt(IDEInternalPreferences.TASKS_LIMIT, 100);
 	}
 	private String getHelpSeparatorKey(String groupId) {
 		return "useSeparator."+IWorkbenchActionConstants.M_HELP+"."+groupId; //$NON-NLS-1$ //$NON-NLS-2$

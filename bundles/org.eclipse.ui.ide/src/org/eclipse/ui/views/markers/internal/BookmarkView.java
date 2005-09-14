@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -205,4 +206,19 @@ public class BookmarkView extends MarkerView {
 		//Do nothing in this view
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerEnablementPreferenceName()
+	 */
+	String getMarkerEnablementPreferenceName() {
+		return IDEInternalPreferences.LIMIT_BOOKMARKS;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerLimitPreferenceName()
+	 */
+	String getMarkerLimitPreferenceName() {
+		return IDEInternalPreferences.BOOKMARKS_LIMIT;
+	}
+	
 }
