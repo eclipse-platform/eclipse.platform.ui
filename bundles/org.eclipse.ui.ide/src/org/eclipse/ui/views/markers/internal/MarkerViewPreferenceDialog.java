@@ -85,7 +85,7 @@ public class MarkerViewPreferenceDialog extends ViewSettingsDialog {
 		boolean checked = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.getBoolean(enablementKey);
 		enablementButton = new Button(topComposite, SWT.CHECK);
-		enablementButton.setText("Use Marker Limits");//$NON-NLS-1$
+		enablementButton.setText(MarkerMessages.MarkerPreferences_MarkerLimits);
 		enablementButton.setSelection(checked);
 
 		editArea = new Composite(topComposite, SWT.NONE);
@@ -96,7 +96,7 @@ public class MarkerViewPreferenceDialog extends ViewSettingsDialog {
 		editArea.setLayoutData(editData);
 
 		limitEditor = new IntegerFieldEditor(
-				"limit", "Limit visible items to", editArea);//$NON-NLS-1$//$NON-NLS-2$
+				"limit", MarkerMessages.MarkerPreferences_VisibleItems, editArea);//$NON-NLS-1$
 		limitEditor.setPreferenceStore(IDEWorkbenchPlugin.getDefault()
 				.getPreferenceStore());
 		limitEditor.setPreferenceName(limitKey);

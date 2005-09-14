@@ -575,7 +575,12 @@ public abstract class MarkerView extends TableView {
 	 */
 	private void openPreferencesDialog(String markerEnablementPreferenceName, String markerLimitPreferenceName) {
 		
-		Dialog dialog = new MarkerViewPreferenceDialog(getSite().getWorkbenchWindow().getShell(),markerEnablementPreferenceName,markerLimitPreferenceName,"Set Limits");//$NON-NLS-1$
+		Dialog dialog = 
+			new MarkerViewPreferenceDialog(
+					getSite().getWorkbenchWindow().getShell(),
+					markerEnablementPreferenceName,
+					markerLimitPreferenceName,
+					MarkerMessages.MarkerPreferences_DialogTitle);
 		if(dialog.open() == Window.OK)
 			refresh();
 		

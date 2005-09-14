@@ -215,5 +215,9 @@ public class MarkerMessages extends NLS{
 	
 	public static String MarkerFilterDialog_errorTitle;
 	public static String MarkerFilterDialog_failedFilterMessage;
+	
+	public static String MarkerPreferences_DialogTitle;
+	public static String MarkerPreferences_MarkerLimits;
+	public static String MarkerPreferences_VisibleItems;
 
 }
