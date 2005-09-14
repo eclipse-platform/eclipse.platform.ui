@@ -24,6 +24,7 @@ public class PerspectiveViewsBug88345 implements IPerspectiveFactory {
 
 	public static final String NORMAL_VIEW_ID = "org.eclipse.ui.views.ContentOutline";
 	public static final String PERSP_ID = "org.eclipse.ui.tests.api.PerspectiveViewsBug88345";
+	public static final String MOVE_ID = MockViewPart.IDMULT + ":1";
 
 	public PerspectiveViewsBug88345() {
 		// do nothing
@@ -35,5 +36,9 @@ public class PerspectiveViewsBug88345 implements IPerspectiveFactory {
 		layout.addView(NORMAL_VIEW_ID,
 				IPageLayout.RIGHT, 0.25f, IPageLayout.ID_EDITOR_AREA);
 		layout.getViewLayout(MockViewPart.IDMULT).setCloseable(false);
+		
+		// added for the bug 99723 test
+		layout.addFastView(MOVE_ID);
+		layout.getViewLayout(MOVE_ID).setMoveable(false);
 	}
 }

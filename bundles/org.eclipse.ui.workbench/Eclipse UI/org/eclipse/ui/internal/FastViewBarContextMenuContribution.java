@@ -55,7 +55,6 @@ public class FastViewBarContextMenuContribution extends ContributionItem {
         }
 
         restoreItem = new MenuItem(menu, SWT.CHECK, index++);
-        restoreItem.setSelection(true);
         restoreItem.setText(WorkbenchMessages.ViewPane_fastView);
         restoreItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -98,11 +97,16 @@ public class FastViewBarContextMenuContribution extends ContributionItem {
         }
         
         boolean selectingView = (selectedView != null);
-        restoreItem.setEnabled(selectingView);
+        WorkbenchPage page = bar.getWindow().getActiveWorkbenchPage();
+        
+        if (selectingView) {
+        	restoreItem.setEnabled(page!=null && page.isMoveable(selectedView));
+        } else {
+        	restoreItem.setEnabled(false);
+        }
         restoreItem.setSelection(true);
         
         if (selectingView) {
-			WorkbenchPage page = bar.getWindow().getActiveWorkbenchPage();
 			closeItem
 					.setEnabled(page != null && page.isCloseable(selectedView));
 		} else {

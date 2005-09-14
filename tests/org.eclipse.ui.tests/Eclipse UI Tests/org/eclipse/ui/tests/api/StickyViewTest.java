@@ -246,41 +246,87 @@ public class StickyViewTest extends UITestCase {
 			// set the target of a normal view that is now a fast view
 			// close should be enabled
 			menuContribution.setTarget(viewRef);
-			checkCloseMenuItem(wpage, menuContribution, true);
+			checkEnabledMenuItem(wpage, menuContribution, "Close", true);
 
 			// set the target of our non-closeable fast view
 			// close should not be enabled
 			menuContribution.setTarget(stickyRef);
-			checkCloseMenuItem(wpage, menuContribution, false);
+			checkEnabledMenuItem(wpage, menuContribution, "Close", false);
+		} finally {
+			page.closePerspective(page.getPerspective(), false, false);
+		}
+	}
+	
+	/**
+	 * Test that a fast view marked as non-moveable cannot be docked.
+	 * 
+	 * @throws Throwable
+	 * @since 3.1.1
+	 */
+	public void testPerspectiveMoveFastView() throws Throwable {
+		page.setPerspective(WorkbenchPlugin.getDefault()
+				.getPerspectiveRegistry().findPerspectiveWithId(
+						PerspectiveViewsBug88345.PERSP_ID));
+
+		try {
+			// the non-moveable view
+			IViewReference stickyRef = page
+					.findViewReference(MockViewPart.IDMULT, "1");
+
+			IViewReference viewRef = page
+					.findViewReference(PerspectiveViewsBug88345.NORMAL_VIEW_ID);
+
+			WorkbenchPage wpage = (WorkbenchPage) page;
+			assertFalse(wpage.isFastView(viewRef));
+			assertTrue(wpage.isFastView(stickyRef));
+
+			wpage.addFastView(viewRef);
+			assertTrue(wpage.isFastView(viewRef));
+
+			FastViewBar fastViewBar = ((WorkbenchWindow) page
+					.getWorkbenchWindow()).getFastViewBar();
+			FastViewBarContextMenuContribution menuContribution = fastViewBar
+					.testContextMenu();
+
+			// set the target of a normal view that is now a fast view
+			// Fast View should be enabled
+			menuContribution.setTarget(viewRef);
+			checkEnabledMenuItem(wpage, menuContribution, "Fast View", true);
+
+			// set the target of our non-closeable fast view
+			// Fast View should not be enabled
+			menuContribution.setTarget(stickyRef);
+			checkEnabledMenuItem(wpage, menuContribution, "Fast View", false);
 		} finally {
 			page.closePerspective(page.getPerspective(), false, false);
 		}
 	}
 
 	/**
-	 * Find the close menu item and make sure it's enabled/disabled.
+	 * Find the supplied menu item and make sure it's enabled/disabled.
 	 * 
 	 * @param wpage the workbench page
 	 * @param menuContribution the fast bar menu contribution item
-	 * @param closeEnabled should close be enabled
+	 * @param isEnabled should the item be enabled
 	 * @since 3.1.1
 	 */
-	private void checkCloseMenuItem(WorkbenchPage wpage,
+	private void checkEnabledMenuItem(WorkbenchPage wpage,
 			FastViewBarContextMenuContribution menuContribution,
-			boolean closeEnabled) {
+			String itemName,
+			boolean isEnabled) {
 		Menu m = new Menu(wpage.getWorkbenchWindow().getShell());
 		try {
 			menuContribution.fill(m, 0);
 			MenuItem[] items = m.getItems();
-			MenuItem closeItem = null;
+			MenuItem checkItem = null;
 			for (int i = 0; i < items.length; i++) {
 				MenuItem item = items[i];
-				if (item.getText().indexOf("Close") >= 0) {
-					closeItem = item;
+				if (item.getText().indexOf(itemName) >= 0) {
+					checkItem = item;
 				}
 			}
-			assertNotNull(closeItem);
-			assertEquals(closeEnabled, closeItem.isEnabled());
+			assertNotNull(checkItem);
+			assertEquals(isEnabled, checkItem.isEnabled());
 		} finally {
 			menuContribution.dispose();
 			m.dispose();
