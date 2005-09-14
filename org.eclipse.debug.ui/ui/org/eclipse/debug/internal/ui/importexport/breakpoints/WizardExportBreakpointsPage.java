@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -71,6 +72,10 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	private Button fSelectAll = null;
 	private Button fDeselectAll = null;
 
+	//state constants
+	private static final String OVERWRITE_ALL_STATE = "overwrite"; //$NON-NLS-1$
+	private static final String DESTINATION_FILE_NAME = "filename"; //$NON-NLS-1$
+	
 	/**
 	 * This is the default constructor. It accepts the name for the tab as a
 	 * parameter and an existing selection
@@ -171,11 +176,13 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 				setPageComplete(detectPageComplete());
 			}
 		});
+		fTView.getViewer().setSelection(fSelection);
 		createButtonsGroup(composite);
 		createDestinationGroup(composite);
 		createOptionsGroup(composite);
 		setControl(composite); 
 		setPageComplete(detectPageComplete());
+		restoreWidgetState();
 	}// end createControl
 
 	/**
@@ -187,7 +194,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setFont(parent.getFont());
         GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
+        layout.numColumns = 3;
         layout.makeColumnsEqualWidth = true;
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
@@ -269,6 +276,31 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	}// end createDestinationGroup
 
 	/**
+	 * Save the state of the widgets select, for successive invocations of the wizard
+	 */
+	private void saveWidgetState() {
+		IDialogSettings settings = getDialogSettings();
+		if(settings != null) {
+			settings.put(OVERWRITE_ALL_STATE, fOverwriteExistingFilesCheckbox.getSelection());
+			settings.put(DESTINATION_FILE_NAME, fDestinationNameField.getText().trim());
+		}//end if
+	}//end save state
+	
+	/**
+	 * Restores the state of the wizard from previous invocations
+	 */
+	private void restoreWidgetState() {
+		IDialogSettings settings = getDialogSettings();
+		if(settings != null) {
+			fOverwriteExistingFilesCheckbox.setSelection(Boolean.valueOf(settings.get(OVERWRITE_ALL_STATE)).booleanValue());
+			String filename = settings.get(DESTINATION_FILE_NAME);
+			if (filename != null) {
+				fDestinationNameField.setText(filename);
+			}
+		}//end if
+	}//end restore state
+	
+	/**
 	 * The Finish button is clicked on the main wizard
 	 * dialog to export the breakpoints, we write them out with all persistnat
 	 * information to a simple XML file via the use of XMLMemento.
@@ -287,6 +319,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 					fPath = fPath.addFileExtension(IImportExportConstants.EXTENSION); 
 				}//end elseif
 			}//end if
+			saveWidgetState();
 			if(fPath.toFile().exists()) {
 				if(fOverwriteExistingFilesCheckbox.getSelection()) {
 					getContainer().run(true, true, new ExportOperation(fTView.getCheckedElements().toArray(), fPath, true));

@@ -11,6 +11,8 @@
 
 package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
@@ -45,10 +47,21 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 	private WizardImportBreakpointsPage fMainPage = null;
 	
 	/**
+	 * Identifier for dialog settings section for the import wizard. 
+	 */
+	private static final String IMPORT_DIALOG_SETTINGS = "BreakpointImportSettings"; //$NON-NLS-1$
+	
+	/**
 	 * This is the default constructor
 	 */
 	public WizardImportBreakpoints() {
 		super();
+		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
+		IDialogSettings workbenchSettings = plugin.getDialogSettings();
+		IDialogSettings section = workbenchSettings.getSection(IMPORT_DIALOG_SETTINGS);
+		if (section == null)
+			section = workbenchSettings.addNewSection(IMPORT_DIALOG_SETTINGS);
+		setDialogSettings(section);
 	}
 
 	/* (non-Javadoc)

@@ -19,12 +19,14 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsContentProvider;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsLabelProvider;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsSorter;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeViewerListener;
@@ -105,7 +107,12 @@ public class TransientBreakpointsViewer {
 		fSelection = selection;
 		if(fSelection == null) {
 			IViewPart fViewpart = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
-			fSelection = (IStructuredSelection)fViewpart.getViewSite().getSelectionProvider().getSelection();
+			if(fViewpart != null) {
+				fSelection = (IStructuredSelection)fViewpart.getViewSite().getSelectionProvider().getSelection();
+			}//end if
+			else {
+				fSelection = new StructuredSelection();
+			}//end else
 		}//end if
 		Font font = parent.getFont();
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -121,7 +128,15 @@ public class TransientBreakpointsViewer {
 		fView = ((BreakpointsView)DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW));
 		fTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewer = new BreakpointsViewer(fTree);
-		fViewer.setLabelProvider(new BreakpointsLabelProvider());
+		//fix for bug #109008
+		IBaseLabelProvider labelProvider = null;
+		if (fView == null) {
+			labelProvider = new BreakpointsLabelProvider();
+		} else {
+			labelProvider = fView.getCheckboxViewer().getLabelProvider();
+		}
+		fViewer.setSorter(new BreakpointsSorter());
+		fViewer.setLabelProvider(labelProvider);
 		fViewer.addCheckStateListener(fCheckListener);
 		fViewer.addTreeListener(new ITreeViewerListener() {
 			public void treeExpanded(TreeExpansionEvent event) {

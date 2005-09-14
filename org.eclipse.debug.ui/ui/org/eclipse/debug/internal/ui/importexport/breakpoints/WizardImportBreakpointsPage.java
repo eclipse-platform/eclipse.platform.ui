@@ -13,9 +13,11 @@ package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -47,6 +49,11 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	private Button fBrowseForFileButton = null;
 	private File fImportFile = null;
 	
+//	state constants
+	private static final String REMOVE_DUPS = "overwrite"; //$NON-NLS-1$
+	private static final String CREATE_WORKING_SETS = "createws"; //$NON-NLS-1$
+	private static final String SOURCE_FILE_NAME = "filename"; //$NON-NLS-1$
+	
 	/**
 	 * This is the default constructor. It accepts the name for the tab as a
 	 * parameter
@@ -64,6 +71,9 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		Widget source = event.widget;
 		if(source == fBrowseForFileButton) {
 			handleBrowseForFileButtonPressed();
+		} else if (source == fFileNameField) {
+			String fileName = fFileNameField.getText();
+			fImportFile = new File(fileName);			
 		}//end if
 		setPageComplete(detectPageComplete());
 	}// end handleEvent
@@ -76,14 +86,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		dialog.setFilterExtensions(new String[]{"*."+IImportExportConstants.EXTENSION});  //$NON-NLS-1$
 		String file = dialog.open();
 		if(file != null) {
-			fImportFile = new File(file);
-			if (fImportFile == null) {
-				setMessage(ImportExportMessages.WizardImportBreakpointsPage_1, ERROR); 
-			}//end if
-			else {
-				fFileNameField.setText(fImportFile.toString());
-				setPageComplete(true);
-			}//end else
+			fFileNameField.setText(file);
 		}// end if
 	}//end handleBrowseForFileButtonPressed
 	
@@ -98,8 +101,9 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		composite.setFont(parent.getFont());
 		createDestinationGroup(composite);
 		createOptionsGroup(composite);
-		setPageComplete(detectPageComplete());
 		setControl(composite);
+		restoreWidgetState();
+		setPageComplete(detectPageComplete());
 	}// end createControl
 
 	/**
@@ -109,10 +113,17 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 * @return if the prerequesites of the wizard are met to allow the wizard to complete.
 	 */
 	private boolean detectPageComplete() {
-		if (fFileNameField.getText().trim().equals("")) {//$NON-NLS-1$
+		String fileName = fFileNameField.getText().trim();
+		if (fileName.equals("")) {//$NON-NLS-1$
 			setMessage(ImportExportMessages.WizardImportBreakpointsPage_6);
 			return false;
 		}
+		fImportFile = new File(fileName);
+		if (!fImportFile.exists()) {
+			setMessage(MessageFormat.format(ImportExportMessages.WizardImportBreakpointsPage_1, new String[]{fileName}), ERROR);
+			return false;
+		}//end if
+		
 		setMessage(ImportExportMessages.WizardImportBreakpointsPage_2); 
 		return true;
 	}//end detectPageComplete
@@ -169,6 +180,33 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	}// end createDestinationGroup
 	
 	/**
+	 * Save the state of the widgets select, for successive invocations of the wizard
+	 */
+	private void saveWidgetState() {
+		IDialogSettings settings = getDialogSettings();
+		if(settings != null) {
+			settings.put(REMOVE_DUPS, fAutoRemoveDuplicates.getSelection());
+			settings.put(CREATE_WORKING_SETS, fAutoCreateWorkingSets.getSelection());
+			settings.put(SOURCE_FILE_NAME, fFileNameField.getText().trim());
+		}//end if
+	}//end save state
+	
+	/**
+	 * Restores the state of the wizard from previous invocations
+	 */
+	private void restoreWidgetState() {
+		IDialogSettings settings = getDialogSettings();
+		if(settings != null) {
+			fAutoRemoveDuplicates.setSelection(Boolean.valueOf(settings.get(REMOVE_DUPS)).booleanValue());
+			fAutoCreateWorkingSets.setSelection(Boolean.valueOf(settings.get(CREATE_WORKING_SETS)).booleanValue());
+			String fileName = settings.get(SOURCE_FILE_NAME);
+			if (fileName != null) {
+				fFileNameField.setText(fileName);
+			}
+		}//end if
+	}//end restore state
+	
+	/**
 	 * <p>
 	 * This method is called when the Finish button is click on the main wizard
 	 * dialog To import the breakpoints, we read then from the tree
@@ -178,6 +216,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 */
 	public boolean finish() {	
 		try {
+			saveWidgetState();
 			getContainer().run(true, true, new ImportOperation(fImportFile, fAutoRemoveDuplicates.getSelection(), fAutoCreateWorkingSets.getSelection()));
 		}// end try
 		catch (InterruptedException e) {
