@@ -168,18 +168,16 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void clear() {
 		// illegal state if this node has been removed
 		checkRemoved();
-		HashMapOfString temp = properties;
-		if (temp == null)
-			return;
 		// call each one separately (instead of Properties.clear) so
 		// clients get change notification
-		String[] keys = temp.keys();
+		String[] keys;
+		synchronized (this) {
+			if (properties == null)
+				return;
+			keys = properties.keys();
+		}
 		for (int i = 0; i < keys.length; i++)
 			remove(keys[i]);
-		//Thread safety: protect against concurrent modification
-		synchronized (this) {
-			properties = null;
-		}
 		makeDirty();
 	}
 
@@ -246,13 +244,12 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	protected Properties convertToProperties(Properties result, String prefix) throws BackingStoreException {
 		// add the key/value pairs from this node
-		HashMapOfString temp = properties;
 		boolean addSeparator = prefix.length() != 0;
-		if (temp != null) {
-			synchronized (temp) {
-				String[] keys = temp.keys();
+		synchronized (this) {
+			if (properties != null) {
+				String[] keys = properties.keys();
 				for (int i = 0; i < keys.length; i++) {
-					String value = temp.get(keys[i]);
+					String value = properties.get(keys[i]);
 					if (value != null)
 						result.put(encodePath(prefix, keys[i]), value);
 				}
@@ -510,14 +507,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
-		//Thread safety: copy field reference in case of concurrent modification
-		HashMapOfString temp = properties;
-		if (temp == null) {
-			if (InternalPlatform.DEBUG_PREFERENCE_GET)
-				Policy.debug("Getting preference value: " + absolutePath() + '/' + key + "->null"); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
+		String result;
+		synchronized (this) {
+			result = properties == null ? null : properties.get(key);
 		}
-		String result = temp.get(key);
 		if (InternalPlatform.DEBUG_PREFERENCE_GET)
 			Policy.debug("Getting preference value: " + absolutePath() + '/' + key + "->" + result); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
@@ -585,10 +578,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public String[] keys() {
 		// illegal state if this node has been removed
 		checkRemoved();
-		HashMapOfString temp = properties;
-		if (temp == null || temp.size() == 0)
-			return EMPTY_STRING_ARRAY;
-		return temp.keys();
+		synchronized (this) {
+			return properties == null ? EMPTY_STRING_ARRAY : properties.keys();
+		}
 	}
 
 	protected void load() throws BackingStoreException {
@@ -1007,9 +999,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void shareStrings(StringPool pool) {
 		//protect access while destructively sharing strings
 		synchronized (this) {
-			HashMapOfString temp = properties;
-			if (temp != null)
-				temp.shareStrings(pool);
+			if (properties != null)
+				properties.shareStrings(pool);
 		}
 		IEclipsePreferences[] myChildren = getChildren(false);
 		for (int i = 0; i < myChildren.length; i++)
