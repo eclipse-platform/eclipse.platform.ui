@@ -23,6 +23,7 @@ import org.eclipse.core.internal.preferences.StringPool;
  * This map is not thread safe.
  */
 public final class HashMapOfString {
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	/**
 	 * number of elements in the table
 	 */
@@ -72,6 +73,8 @@ public final class HashMapOfString {
 	 * Returns an array of all keys in this map.
 	 */
 	public String[] keys() {
+		if (elementSize == 0)
+			return EMPTY_STRING_ARRAY;
 		String[] result = new String[elementSize];
 		int next = 0;
 		for (int i = 0; i < keyTable.length; i++)
