@@ -110,7 +110,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 			set = (IWorkingSet) event.getOldValue();
 		}//end else if
 		//fix for bug 103731
-		if(event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_ADD)) { //$NON-NLS-1$
+		if(event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_ADD)) {
 			IAdaptable[] breakpoints = set.getElements();
 			for (int i = 0; i < breakpoints.length; i++) {
 				if (breakpoints[i] instanceof IBreakpoint) {
