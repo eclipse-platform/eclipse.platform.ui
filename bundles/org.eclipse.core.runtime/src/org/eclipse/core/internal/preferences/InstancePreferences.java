@@ -40,7 +40,7 @@ public class InstancePreferences extends EclipsePreferences {
 		// to disk when #flush() is called.
 		if (baseLocation == null) {
 			Location instanceLocation = Platform.getInstanceLocation();
-			if (instanceLocation != null && instanceLocation.isSet())
+			if (instanceLocation != null && (instanceLocation.isSet() || instanceLocation.allowsDefault()))
 				baseLocation = InternalPlatform.getDefault().getMetaArea().getStateLocation(Platform.PI_RUNTIME);
 		}
 		return baseLocation;
