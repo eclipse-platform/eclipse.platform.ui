@@ -89,9 +89,11 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 	 *            the resource bundle to use
 	 * @param input
 	 *            the sorted input of the dialog
+	 * @param id
+	 *            the ID of the dialog button
 	 */
-	public ExportRefactoringHistoryDialog(final Shell parent, final ResourceBundle bundle, final RefactoringDescriptorHandle[] input) {
-		super(parent, bundle, input);
+	public ExportRefactoringHistoryDialog(final Shell parent, final ResourceBundle bundle, final RefactoringDescriptorHandle[] input, final int id) {
+		super(parent, bundle, input, id);
 	}
 
 	/**

@@ -55,7 +55,6 @@ import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogSettings;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -74,6 +73,9 @@ import org.eclipse.compare.Splitter;
  */
 public class RefactoringHistoryDialog extends Dialog {
 
+	/** The button label key */
+	private static final String BUTTON_LABEL= "buttonLabel"; //$NON-NLS-1$
+
 	/** The comment caption key */
 	private static final String COMMENT_CAPTION= "commentCaption"; //$NON-NLS-1$
 
@@ -81,7 +83,7 @@ public class RefactoringHistoryDialog extends Dialog {
 	private static final String DAY_FORMAT= "dayFormat"; //$NON-NLS-1$
 
 	/** The dialog bounds key */
-	private final static String DIALOG_BOUNDS= "RefactoringHistoryDialog"; //$NON-NLS-1$
+	private static final String DIALOG_BOUNDS= "RefactoringHistoryDialog"; //$NON-NLS-1$
 
 	/** The dialog title key */
 	private static final String DIALOG_TITLE= "title"; //$NON-NLS-1$
@@ -132,11 +134,14 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The resource bundle to use */
 	protected final ResourceBundle fBundle;
 
+	/** The button id */
+	protected final int fButtonId;
+
 	/** The comment pane */
 	private CompareViewerSwitchingPane fCommentPane= null;
 
-	/** The date image */
-	private Image fDateImage= null;
+	/** The container image */
+	private Image fContainerImage= null;
 
 	/** The history input of the dialog */
 	protected final RefactoringDescriptorHandle[] fHistoryInput;
@@ -174,13 +179,16 @@ public class RefactoringHistoryDialog extends Dialog {
 	 *            the resource bundle to use
 	 * @param input
 	 *            the sorted input of the dialog
+	 * @param id
+	 *            the ID of the dialog button
 	 */
-	public RefactoringHistoryDialog(final Shell parent, final ResourceBundle bundle, final RefactoringDescriptorHandle[] input) {
+	public RefactoringHistoryDialog(final Shell parent, final ResourceBundle bundle, final RefactoringDescriptorHandle[] input, final int id) {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		fBundle= bundle;
 		fHistoryInput= input;
 		fSettings= RefactoringUIPlugin.getDefault().getDialogSettings();
+		fButtonId= id;
 	}
 
 	/**
@@ -207,7 +215,7 @@ public class RefactoringHistoryDialog extends Dialog {
 			final Date date= new Date(stamp);
 			if (lastDay == null || day != stampToDate(((Date) lastDay.getData()).getTime())) {
 				lastDay= new TreeItem(fHistoryTree, SWT.NONE);
-				lastDay.setImage(fDateImage);
+				lastDay.setImage(fContainerImage);
 				final long today= stampToDate(System.currentTimeMillis());
 				String formatted= DateFormat.getDateInstance().format(date);
 				String key;
@@ -286,7 +294,8 @@ public class RefactoringHistoryDialog extends Dialog {
 	 * @inheritDoc
 	 */
 	protected void createButtonsForButtonBar(final Composite parent) {
-		final Button button= createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, false);
+		final Button button= createButton(parent, fButtonId, fBundle.getString(BUTTON_LABEL), false);
+		button.setFocus();
 		button.addSelectionListener(new SelectionAdapter() {
 
 			public final void widgetSelected(final SelectionEvent event) {
@@ -302,7 +311,7 @@ public class RefactoringHistoryDialog extends Dialog {
 		final Composite result= (Composite) super.createDialogArea(parent);
 		getShell().setText(fBundle.getString(DIALOG_TITLE));
 
-		fDateImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_DATE.createImage();
+		fContainerImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_DATE.createImage();
 		fRefactoringImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_TIME.createImage();
 		fRefactorImage= RefactoringPluginImages.DESC_OBJS_COMPOSITE_CHANGE.createImage();
 
@@ -326,8 +335,8 @@ public class RefactoringHistoryDialog extends Dialog {
 		splitter.addDisposeListener(new DisposeListener() {
 
 			public final void widgetDisposed(final DisposeEvent event) {
-				if (fDateImage != null)
-					fDateImage.dispose();
+				if (fContainerImage != null)
+					fContainerImage.dispose();
 				if (fRefactoringImage != null)
 					fRefactoringImage.dispose();
 				if (fRefactorImage != null)
@@ -522,14 +531,13 @@ public class RefactoringHistoryDialog extends Dialog {
 	 * @param widget
 	 *            the selected widget
 	 * @param object
-	 *            the selected object
+	 *            the selected object, or <code>null</code>
 	 * @param check
 	 *            <code>true</code> if the object has been checked,
 	 *            <code>false</code> otherwise
 	 */
 	protected void handleSelection(final Widget widget, final Object object, final boolean check) {
 		Assert.isNotNull(widget);
-		Assert.isNotNull(object);
 		if (object instanceof RefactoringDescriptorHandle) {
 			final RefactoringDescriptorHandle handle= (RefactoringDescriptorHandle) object;
 			final RefactoringDescriptor descriptor= handle.resolveDescriptor();
