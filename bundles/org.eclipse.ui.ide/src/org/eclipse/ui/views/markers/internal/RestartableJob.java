@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
@@ -76,6 +77,9 @@ public final class RestartableJob {
      */
     private void createJob(String name) {
         theJob = new Job(name) {
+            /* (non-Javadoc)
+             * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
+             */
             protected IStatus run(IProgressMonitor innerMonitor) {
                 try {
                     synchronized (lock) {
@@ -94,6 +98,19 @@ public final class RestartableJob {
                 } else {
                     return Status.OK_STATUS;
                 }
+            }
+            
+            /* (non-Javadoc)
+             * @see org.eclipse.core.internal.jobs.InternalJob#shouldSchedule()
+             */
+            public boolean shouldSchedule() {
+            	return PlatformUI.isWorkbenchRunning();
+            }
+            /* (non-Javadoc)
+             * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+             */
+            public boolean shouldRun() {
+            	return PlatformUI.isWorkbenchRunning();
             }
         };
 
@@ -153,4 +170,5 @@ public final class RestartableJob {
             restartNeeded = false;
         }
     }
+    
 }
