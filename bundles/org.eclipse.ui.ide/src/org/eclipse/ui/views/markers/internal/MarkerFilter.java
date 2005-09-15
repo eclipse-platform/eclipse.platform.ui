@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -45,7 +46,6 @@ public class MarkerFilter implements Cloneable{
 	private static final String TAG_WORKING_SET = "workingSet"; //$NON-NLS-1$
 
 	private static final String TAG_TYPES_DELIMITER = ":"; //$NON-NLS-1$
-
 	/**
 	 * New attribute to handle the selection status of marker types.
 	 */
@@ -667,41 +667,27 @@ public class MarkerFilter implements Cloneable{
 		setWorkingSet(null);
 	}
 
+	
 	/**
-	 * Get the filter settings for the receiver. If create is <code>true</code>
-	 * then create them. Return null if they do not exist or if they cannot
-	 * be created when create is <code>true</code>.
-	 * @param dialogSettings IDialogSettings
-	 * @param create
-	 * @return IDialogSettings
+	 * Restore the state in the memento.
+	 * @param memento
 	 */
-	private IDialogSettings getFilterSettings(IDialogSettings dialogSettings, boolean create){
+	public final void restoreState(IMemento memento) {
+		resetState();		
+		restoreFilterSettings(memento);
 
-		// Make sure there is one for each named filter
-		IDialogSettings currentFilterSettings = dialogSettings.getSection(getName());
-
-		if (currentFilterSettings == null && create)
-			currentFilterSettings = dialogSettings.addNewSection(getName());
-		
-		return currentFilterSettings;
 	}
 	
 	/**
-	 * Restore the state in the dialog settings.
-	 * @param dialogSettings
-	 */
-	public final void restoreState(IDialogSettings dialogSettings) {
-		resetState();
-		
-		restoreFilterSettings(dialogSettings);
-
-	}
-
-	/**
 	 * Restore the state of the receiver in the supplied settings.
+	 * This is kept for backwards compatibility with 3.1 dialog
+	 * settings.
 	 * @param settings
 	 */
-	protected void restoreFilterSettings(IDialogSettings settings) {
+	public void restoreFilterSettings(IDialogSettings settings) {
+		
+		resetState();	
+		
 		String setting = settings.get(TAG_ENABLED);
 
 		if (setting != null)
@@ -784,26 +770,96 @@ public class MarkerFilter implements Cloneable{
 	}
 
 	/**
-	 * Save the state of the receiver to the supplied settings.
-	 * @param dialogSettings
+	 * Restore the state of the receiver in the supplied settings.
+	 * @param memento
 	 */
-	public final void saveState(IDialogSettings dialogSettings) {
-		
-		IDialogSettings currentFilterSettings = 
-			getFilterSettings(dialogSettings, true);
-		
-		if(currentFilterSettings != null)
-			saveFilterSettings(currentFilterSettings);
-		
+	protected void restoreFilterSettings(IMemento memento) {
+		String setting = memento.getString(TAG_ENABLED);
+
+		if (setting != null)
+			enabled = Boolean.valueOf(setting).booleanValue();
+
+		Integer resourceSetting = memento.getInteger(TAG_ON_RESOURCE);
+
+		if (resourceSetting != null) {
+			onResource = resourceSetting.intValue();
+		}
+
+		// new selection list attribute
+		// format is "id:(true|false):"
+		setting = memento.getString(TAG_SELECTION_STATUS);
+
+		if (setting != null) {
+			selectedTypes.clear();
+
+			// get the complete list of types
+			List newTypes = new ArrayList();
+			addAllSubTypes(newTypes);
+
+			StringTokenizer stringTokenizer = new StringTokenizer(setting);
+
+			while (stringTokenizer.hasMoreTokens()) {
+				String id = stringTokenizer.nextToken(TAG_TYPES_DELIMITER);
+				String status = null;
+				if (stringTokenizer.hasMoreTokens()) {
+					status = stringTokenizer.nextToken(TAG_TYPES_DELIMITER);
+				}
+
+				MarkerType markerType = typesModel.getType(id);
+				if (markerType != null) {
+					newTypes.remove(markerType);
+
+					// add the type to the selected list
+					if (!SELECTED_FALSE.equals(status)
+							&& !selectedTypes.contains(markerType)) {
+						selectedTypes.add(markerType);
+					}
+				}
+			}
+
+			// any types we know about that weren't either true or
+			// false in the selection attribute are new. By default,
+			// new marker types will be selected=true
+			for (int i = 0; i < newTypes.size(); ++i) {
+				selectedTypes.add(newTypes.get(i));
+			}
+		} else {
+			// the settings didn't contain the new selection attribute
+			// so check for the old selection attribute.
+			// format is just "id:"
+			setting = memento.getString(TAG_SELECTED_TYPES);
+
+			if (setting != null) {
+				selectedTypes.clear();
+				StringTokenizer stringTokenizer = new StringTokenizer(setting);
+
+				while (stringTokenizer.hasMoreTokens()) {
+					MarkerType markerType = typesModel.getType(stringTokenizer
+							.nextToken(TAG_TYPES_DELIMITER));
+
+					if (markerType != null
+							&& !selectedTypes.contains(markerType))
+						selectedTypes.add(markerType);
+				}
+			}
+
+		}
+
+		setting = memento.getString(TAG_WORKING_SET);
+
+		if (setting != null)
+			setWorkingSet(WorkbenchPlugin.getDefault().getWorkingSetManager()
+					.getWorkingSet(setting));
 	}
 
 	/**
 	 * Save the filter settings for the receiver.
 	 * @param settings
 	 */
-	protected void saveFilterSettings(IDialogSettings settings) {
-		settings.put(TAG_ENABLED, enabled);
-		settings.put(TAG_ON_RESOURCE, onResource);
+	public void saveFilterSettings(IMemento settings) {
+		
+		settings.putString(TAG_ENABLED, String.valueOf(enabled));
+		settings.putInteger(TAG_ON_RESOURCE, onResource);
 
 		String markerTypeIds = ""; //$NON-NLS-1$
 
@@ -819,10 +875,10 @@ public class MarkerFilter implements Cloneable{
 			}
 		}
 
-		settings.put(TAG_SELECTION_STATUS, markerTypeIds);
+		settings.putString(TAG_SELECTION_STATUS, markerTypeIds);
 
 		if (workingSet != null)
-			settings.put(TAG_WORKING_SET, workingSet.getName());
+			settings.putString(TAG_WORKING_SET, workingSet.getName());
 	}
 
 	/**

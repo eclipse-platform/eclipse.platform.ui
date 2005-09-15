@@ -272,4 +272,11 @@ public class ProblemView extends MarkerView {
 	String getMarkerLimitPreferenceName() {
 		return IDEInternalPreferences.PROBLEMS_LIMIT;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getFiltersPreferenceName()
+	 */
+	String getFiltersPreferenceName() {
+		return IDEInternalPreferences.PROBLEMS_FILTERS;
+	}
 }

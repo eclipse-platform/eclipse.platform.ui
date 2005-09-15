@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +13,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
@@ -41,10 +40,6 @@ public class Bug75909Test extends TestCase {
 	private static final String MISSING_MARKER_ID = "org.eclipse.jdt.core.problem";
 
 	private static final String OLD_DIALOG_SETTINGS_XML = "old_dialog_settings.xml";
-
-	private static final String NEW_DIALOG_SETTINGS_XML = "new_dialog_settings.xml";
-
-	private static final String MISSING_DIALOG_SETTINGS_XML = "new_dialog_missing_id.xml";
 
 	public static TestSuite suite() {
 		return new TestSuite(Bug75909Test.class);
@@ -87,7 +82,7 @@ public class Bug75909Test extends TestCase {
 		loadSettings(settings, Bug75909Test.OLD_DIALOG_SETTINGS_XML);
 
 		ProblemFilter filter = new ProblemFilter("Bug75909Test");
-		filter.restoreState(getFilterSettings(settings));
+		filter.restoreFilterSettings(getFilterSettings(settings));
 
 		List selected = filter.getSelectedTypes();
 		assertEquals(Bug75909Test.OLD_SETTINGS_SELECTED, selected.size());
@@ -110,11 +105,10 @@ public class Bug75909Test extends TestCase {
 	 * @throws Throwable
 	 */
 	public void testRestoreNewStateMissingId() throws Throwable {
-		IDialogSettings settings = new DialogSettings("Workbench");
-		loadSettings(settings, Bug75909Test.MISSING_DIALOG_SETTINGS_XML);
+		IMemento settings = createMissingMemento();
 
 		ProblemFilter filter = new ProblemFilter("Bug75909Test");
-		filter.restoreState(getFilterSettings(settings));
+		filter.restoreState(settings);
 
 		List included = new ArrayList();
 		filter.addAllSubTypes(included);
@@ -135,6 +129,23 @@ public class Bug75909Test extends TestCase {
 		assertTrue(selected.contains(missing));
 	}
 	
+	/**
+	 * Create a missing memento that is missing it's name.
+	 * @return IMemento
+	 */
+	private IMemento createMissingMemento() {
+		TestMemento memento = new TestMemento("filter","Filter Test");
+		memento.putString("selectBySeverity","false");
+		memento.putString("contains","true");
+		memento.putString("enabled","true");
+		memento.putInteger("severity",0);
+		memento.putString("description","");
+		memento.putString("filterOnMarkerLimit","true");
+		memento.putString("selectionStatus" ,"org.eclipse.core.resources.problemmarker:true:org.eclipse.pde.validation-marker:false:org.eclipse.jdt.core.buildpath_problem:true:org.eclipse.ant.ui.buildFileProblem:true:");
+		memento.putInteger("onResource",0);
+		return memento;
+	}
+
 	/**
 	 * Get the settings for the filter tag.
 	 * @param settings
@@ -164,17 +175,11 @@ public class Bug75909Test extends TestCase {
 		// there should be one less select type than all of the types.
 		assertEquals(allTypes.size() - 1, filter.getSelectedTypes().size());
 
-		IDialogSettings settings = new DialogSettings("Workbench");
-		filter.saveState(settings);
+		IMemento settings = new TestMemento("Test","Bug75909Test");
+		filter.saveFilterSettings(settings);
 
-		StringWriter out = new StringWriter();
-		settings.save(out);
-		
 		ProblemFilter f2 = new ProblemFilter("Bug75909Test");
-		BufferedReader in = new BufferedReader(new StringReader(out.toString()));
-		settings = new DialogSettings("Workbench");
-		settings.load(in);
-		f2.restoreState(settings.getSection(f2.getName()));
+		f2.restoreState(settings);
 		
 		assertEquals(filter.getSelectedTypes().size(),
 				f2.getSelectedTypes().size());

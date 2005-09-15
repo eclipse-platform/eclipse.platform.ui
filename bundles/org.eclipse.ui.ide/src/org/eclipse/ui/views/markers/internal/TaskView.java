@@ -303,4 +303,11 @@ public class TaskView extends MarkerView {
 	String getMarkerLimitPreferenceName() {
 		return IDEInternalPreferences.TASKS_LIMIT;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getFiltersPreferenceName()
+	 */
+	String getFiltersPreferenceName() {
+		return IDEInternalPreferences.TASKS_FILTERS;
+	}
 }

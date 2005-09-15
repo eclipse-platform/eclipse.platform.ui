@@ -221,4 +221,11 @@ public class BookmarkView extends MarkerView {
 		return IDEInternalPreferences.BOOKMARKS_LIMIT;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getFiltersPreferenceName()
+	 */
+	String getFiltersPreferenceName() {
+		return IDEInternalPreferences.BOOKMARKS_FILTERS;
+	}
+	
 }

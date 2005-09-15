@@ -13,6 +13,7 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.ui.IMemento;
 
 public class TaskFilter extends MarkerFilter {
 
@@ -184,7 +185,7 @@ public class TaskFilter extends MarkerFilter {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
 	 */
-	protected void restoreFilterSettings(IDialogSettings settings) {
+	public void restoreFilterSettings(IDialogSettings settings) {
 		super.restoreFilterSettings(settings);
 
 		String setting = settings.get(TAG_CONTAINS);
@@ -221,18 +222,57 @@ public class TaskFilter extends MarkerFilter {
 			selectByPriority = Boolean.valueOf(setting).booleanValue();
 
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#saveFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.ui.IMemento)
 	 */
-	protected void saveFilterSettings(IDialogSettings settings) {
+	protected void restoreFilterSettings(IMemento settings) {
+		super.restoreFilterSettings(settings);
+
+		String setting = settings.getString(TAG_CONTAINS);
+
+		if (setting != null)
+			contains = Boolean.valueOf(setting).booleanValue();
+
+		setting = settings.getString(TAG_DESCRIPTION);
+
+		if (setting != null)
+			description = new String(setting);
+
+		setting = settings.getString(TAG_DONE);
+
+		if (setting != null)
+			done = Boolean.valueOf(setting).booleanValue();
+
+		Integer priorityValue = settings.getInteger(TAG_PRIORITY);
+
+		if (setting != null)
+			priority = priorityValue.intValue();
+
+		setting = settings.getString(TAG_SELECT_BY_DONE);
+
+		if (setting != null)
+			selectByDone = Boolean.valueOf(setting).booleanValue();
+
+		setting = settings.getString(TAG_SELECT_BY_PRIORITY);
+
+		if (setting != null)
+			selectByPriority = Boolean.valueOf(setting).booleanValue();
+
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#saveFilterSettings(org.eclipse.ui.IMemento)
+	 */
+	public void saveFilterSettings(IMemento settings) {
 		super.saveFilterSettings(settings);
-		settings.put(TAG_CONTAINS, contains);
-		settings.put(TAG_DESCRIPTION, description);
-		settings.put(TAG_DONE, done);
-		settings.put(TAG_PRIORITY, priority);
-		settings.put(TAG_SELECT_BY_DONE, selectByDone);
-		settings.put(TAG_SELECT_BY_PRIORITY, selectByPriority);
+		settings.putString(TAG_CONTAINS, String.valueOf(contains));
+		settings.putString(TAG_DESCRIPTION, description);
+		settings.putString(TAG_DONE, String.valueOf(done));
+		settings.putInteger(TAG_PRIORITY, priority);
+		settings.putString(TAG_SELECT_BY_DONE, String.valueOf(selectByDone));
+		settings.putString(TAG_SELECT_BY_PRIORITY, String.valueOf(selectByPriority));
 
 	}
 

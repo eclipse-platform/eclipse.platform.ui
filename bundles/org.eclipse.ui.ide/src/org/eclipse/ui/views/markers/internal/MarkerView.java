@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +50,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
@@ -76,6 +80,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
@@ -89,26 +95,20 @@ import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
 /**
- * MarkerView is the abstract super class of the marker
- * based views.
- *
+ * MarkerView is the abstract super class of the marker based views.
+ * 
  */
 public abstract class MarkerView extends TableView {
 
-	private static final String WAITING_FOR_WORKSPACE_CHANGES_TO_FINISH = 
-		MarkerMessages.MarkerView_waiting_on_changes;
+	private static final String WAITING_FOR_WORKSPACE_CHANGES_TO_FINISH = MarkerMessages.MarkerView_waiting_on_changes;
 
-	private static final String SEARCHING_FOR_MARKERS = 
-		MarkerMessages.MarkerView_searching_for_markers;
+	private static final String SEARCHING_FOR_MARKERS = MarkerMessages.MarkerView_searching_for_markers;
 
-	private static final String REFRESHING_MARKER_COUNTS = 
-		MarkerMessages.MarkerView_refreshing_counts;
+	private static final String REFRESHING_MARKER_COUNTS = MarkerMessages.MarkerView_refreshing_counts;
 
-	private static final String QUEUEING_VIEWER_UPDATES = 
-		MarkerMessages.MarkerView_queueing_updates;
+	private static final String QUEUEING_VIEWER_UPDATES = MarkerMessages.MarkerView_queueing_updates;
 
-	private static final String FILTERING_ON_MARKER_LIMIT = 
-		MarkerMessages.MarkerView_18;
+	private static final String FILTERING_ON_MARKER_LIMIT = MarkerMessages.MarkerView_18;
 
 	private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
 
@@ -117,12 +117,14 @@ public abstract class MarkerView extends TableView {
 	private static final String TAG_RESOURCE = "resource"; //$NON-NLS-1$
 
 	private static final String TAG_ID = "id"; //$NON-NLS-1$
-	
+
 	private static final String TAG_FILTERS_SECTION = "filters"; //$NON-NLS-1$
 	
+	private static final String TAG_FILTER_ENTRY = "filter"; //$NON-NLS-1$
+
 	private static final String MENU_FILTERS_GROUP = "group.filter";//$NON-NLS-1$ 
-	
-	//Section from a 3.1 or earlier workbench
+
+	// Section from a 3.1 or earlier workbench
 	private static final String OLD_FILTER_SECTION = "filter"; //$NON-NLS-1$
 
 	// A private field for keeping track of the number of markers
@@ -223,8 +225,8 @@ public abstract class MarkerView extends TableView {
 	WorkbenchJob uiJob;
 
 	private MarkerFilter[] markerFilters = new MarkerFilter[0];
-	
-	//A cache of the enabled filters
+
+	// A cache of the enabled filters
 	private MarkerFilter[] enabledFilters = null;
 
 	/**
@@ -240,9 +242,8 @@ public abstract class MarkerView extends TableView {
 	private void internalRefresh(IProgressMonitor monitor)
 			throws InvocationTargetException {
 		int markerLimit = getMarkerLimit();
-		monitor
-				.beginTask(
-						MarkerMessages.MarkerView_19, markerLimit == -1 ? 60 : 100); 
+		monitor.beginTask(MarkerMessages.MarkerView_19, markerLimit == -1 ? 60
+				: 100);
 
 		haltTableUpdates();
 		IJobManager jobMan = Platform.getJobManager();
@@ -332,11 +333,11 @@ public abstract class MarkerView extends TableView {
 
 		if (refreshJob == null) {
 
-			refreshJob = new RestartableJob(
-					NLS.bind(MarkerMessages.MarkerView_refreshTitle, getTitle()),
+			refreshJob = new RestartableJob(NLS.bind(
+					MarkerMessages.MarkerView_refreshTitle, getTitle()),
 					new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException{
+								throws InvocationTargetException {
 							internalRefresh(monitor);
 						}
 					}, getProgressService());
@@ -348,7 +349,7 @@ public abstract class MarkerView extends TableView {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.views.internal.tableview.TableView#init(org.eclipse.ui.IViewSite,
+	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite,
 	 *      org.eclipse.ui.IMemento)
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
@@ -360,45 +361,109 @@ public abstract class MarkerView extends TableView {
 			getProgressService().showBusyForFamily(
 					ResourcesPlugin.FAMILY_AUTO_BUILD);
 		}
+		loadFiltersPreferences();
 
 	}
 
 	/**
-	 * Restore the filters from the dialog settings.
+	 * Load the filters preference.
 	 */
-	private void restoreFilters() {
-		IDialogSettings settings = getFiltersSection(false);
+	private void loadFiltersPreferences() {
 
-		if (settings == null){
-			//Check if we have an old filter setting around
-			IDialogSettings mainSettings = getDialogSettings();
-			IDialogSettings filtersSection = mainSettings.getSection(OLD_FILTER_SECTION);
-			if(filtersSection != null){
-				MarkerFilter markerFilter = createFilter(MarkerMessages.MarkerFilter_defaultFilterName);
-				markerFilter.restoreState(filtersSection);
-				setFilters(new MarkerFilter[] {markerFilter});
-			}
-				
+		String preference = IDEWorkbenchPlugin.getDefault()
+				.getPreferenceStore().getString(getFiltersPreferenceName());
+
+		if (preference.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT)) {
+			createDefaultFilter();
+			return;
 		}
-		else{
-			IDialogSettings[] sections = settings.getSections();
+
+		StringReader reader = new StringReader(preference);
+		try {
+			restoreFilters(XMLMemento.createReadRoot(reader));
+		} catch (WorkbenchException e) {
+			IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+		}
+
+	}
+
+	/**
+	 * Store the filters preference.
+	 */
+	private void storeFiltersPreferences() {
+
+		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
+
+		MarkerFilter[] filters = getFilters();
+		for (int i = 0; i < filters.length; i++) {
+			memento.createChild(TAG_FILTER_ENTRY,filters[i].getName());
+			filters[i].saveFilterSettings(memento);
+		}
+
+		StringWriter writer = new StringWriter();
+		try {
+			memento.save(writer);
+		} catch (IOException e) {
+			IDEWorkbenchPlugin.getDefault().getLog().log(Util.errorStatus(e));
+		}
+
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(
+				getFiltersPreferenceName(), writer.toString());
+		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
+
+	}
+
+	/**
+	 * Get the name of the filters preference for instances of the receiver.
+	 * 
+	 * @return String
+	 */
+	abstract String getFiltersPreferenceName();
+
+	/**
+	 * Restore the filters from the minento.
+	 */
+	private void restoreFilters(IMemento memento) {
+
+		IMemento[] sections = null;
+		if (memento != null)
+			sections = memento.getChildren(TAG_FILTER_ENTRY);
+
+		if (sections == null) {
+			// Check if we have an old filter setting around
+			IDialogSettings mainSettings = getDialogSettings();
+			IDialogSettings filtersSection = mainSettings
+					.getSection(OLD_FILTER_SECTION);
+			if (filtersSection != null) {
+				MarkerFilter markerFilter = createFilter(MarkerMessages.MarkerFilter_defaultFilterName);
+				markerFilter.restoreFilterSettings(filtersSection);
+				setFilters(new MarkerFilter[] { markerFilter });
+			}
+
+		} else {
 			MarkerFilter[] newFilters = new MarkerFilter[sections.length];
-			
+
 			for (int i = 0; i < sections.length; i++) {
-				newFilters[i] = createFilter(sections[i].getName());
+				newFilters[i] = createFilter(sections[i].getID());
 				newFilters[i].restoreState(sections[i]);
 			}
 			setFilters(newFilters);
 		}
-		
 
-		if (markerFilters.length == 0){// Make sure there is at least a default
-			MarkerFilter filter = createFilter(
-					MarkerMessages.MarkerFilter_defaultFilterName);
-			filter.resetState();
-			setFilters(new MarkerFilter[] { filter });
+		if (markerFilters.length == 0) {// Make sure there is at least a default
+			createDefaultFilter();
 		}
 
+	}
+
+	/**
+	 * Create a default filter for the receiver.
+	 * 
+	 */
+	private void createDefaultFilter() {
+		MarkerFilter filter = createFilter(MarkerMessages.MarkerFilter_defaultFilterName);
+		filter.resetState();
+		setFilters(new MarkerFilter[] { filter });
 	}
 
 	/**
@@ -415,35 +480,6 @@ public abstract class MarkerView extends TableView {
 	 * @return String
 	 */
 	protected abstract String getSectionTag();
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPersistable#saveState(org.eclipse.ui.IMemento)
-	 */
-	public void saveState(IMemento memento) {
-		super.saveState(memento);
-		IDialogSettings settings = getFiltersSection(true);
-	
-		MarkerFilter[] filters = getFilters();
-		for (int i = 0; i < filters.length; i++) {
-			filters[i].saveState(settings);
-		}
-	}
-
-	/**
-	 * Get the filters section of the dialog settings of the 
-	 * receiver. If it does not exist create it if create is
-	 * <code>true</code>.
-	 * 
-	 * @param create
-	 * @return IDialogSettings
-	 */
-	private IDialogSettings getFiltersSection(boolean create) {
-		IDialogSettings settings = getDialogSettings();
-		IDialogSettings filtersSection = settings.getSection(TAG_FILTERS_SECTION);
-		if(filtersSection == null && create)
-			filtersSection= settings.addNewSection(TAG_FILTERS_SECTION);
-		return filtersSection;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -462,7 +498,6 @@ public abstract class MarkerView extends TableView {
 				.getPage().getSelection());
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
 				resourceListener);
-		restoreFilters();
 		refresh();
 
 		// Set help on the view itself
@@ -508,6 +543,7 @@ public abstract class MarkerView extends TableView {
 	 */
 	public void dispose() {
 		super.dispose();
+
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(
 				resourceListener);
 		getSite().getPage().removeSelectionListener(focusListener);
@@ -552,48 +588,50 @@ public abstract class MarkerView extends TableView {
 		super.createActions();
 
 		setFilterAction(new FiltersAction(this));
-		
-		setPreferencesAction(new ViewPreferencesAction(){
-			/* (non-Javadoc)
+
+		setPreferencesAction(new ViewPreferencesAction() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.preferences.ViewPreferencesAction#openViewPreferencesDialog()
 			 */
 			public void openViewPreferencesDialog() {
-				openPreferencesDialog(
-						getMarkerEnablementPreferenceName(),
+				openPreferencesDialog(getMarkerEnablementPreferenceName(),
 						getMarkerLimitPreferenceName());
-				
+
 			}
 
-		
 		});
 	}
-	
+
 	/**
 	 * Open a dialog to set the preferences.
+	 * 
 	 * @param markerEnablementPreferenceName
 	 * @param markerLimitPreferenceName
 	 */
-	private void openPreferencesDialog(String markerEnablementPreferenceName, String markerLimitPreferenceName) {
-		
-		Dialog dialog = 
-			new MarkerViewPreferenceDialog(
-					getSite().getWorkbenchWindow().getShell(),
-					markerEnablementPreferenceName,
-					markerLimitPreferenceName,
-					MarkerMessages.MarkerPreferences_DialogTitle);
-		if(dialog.open() == Window.OK)
+	private void openPreferencesDialog(String markerEnablementPreferenceName,
+			String markerLimitPreferenceName) {
+
+		Dialog dialog = new MarkerViewPreferenceDialog(getSite()
+				.getWorkbenchWindow().getShell(),
+				markerEnablementPreferenceName, markerLimitPreferenceName,
+				MarkerMessages.MarkerPreferences_DialogTitle);
+		if (dialog.open() == Window.OK)
 			refresh();
-		
+
 	}
-	
+
 	/**
 	 * Get the name of the marker enablement preference.
+	 * 
 	 * @return String
 	 */
 	abstract String getMarkerLimitPreferenceName();
-	
+
 	/**
 	 * Get the name of the marker limit preference.
+	 * 
 	 * @return String
 	 */
 	abstract String getMarkerEnablementPreferenceName();
@@ -693,10 +731,11 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Fill the context menu for the receiver.
+	 * 
 	 * @param manager
 	 */
-	abstract void fillContextMenuAdditions(IMenuManager manager) ;
-	
+	abstract void fillContextMenuAdditions(IMenuManager manager);
+
 	/**
 	 * Get the filters for the receiver.
 	 * 
@@ -898,15 +937,13 @@ public abstract class MarkerView extends TableView {
 	 * @return int
 	 */
 	private int getMarkerLimit() {
-		
-		//If limits are enabled return it. Otherwise return -1
-		if(IDEWorkbenchPlugin.
-			getDefault().getPreferenceStore().
-				getBoolean(getMarkerEnablementPreferenceName())){
-			return IDEWorkbenchPlugin.
-				getDefault().getPreferenceStore().
-					getInt(getMarkerLimitPreferenceName());
-		
+
+		// If limits are enabled return it. Otherwise return -1
+		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
+				getMarkerEnablementPreferenceName())) {
+			return IDEWorkbenchPlugin.getDefault().getPreferenceStore().getInt(
+					getMarkerLimitPreferenceName());
+
 		}
 		return -1;
 
@@ -923,16 +960,11 @@ public abstract class MarkerView extends TableView {
 		int filteredCount = currentMarkers.getItemCount();
 		int totalCount = getTotalMarkers();
 		if (filteredCount == totalCount) {
-			status = 
-				NLS.bind(
-					MarkerMessages.filter_itemsMessage, 
-					new Integer(totalCount));
+			status = NLS.bind(MarkerMessages.filter_itemsMessage, new Integer(
+					totalCount));
 		} else {
-			status = 
-				NLS.bind(
-						MarkerMessages.filter_matchedMessage, 
-						new Integer(filteredCount),
-						new Integer(totalCount));
+			status = NLS.bind(MarkerMessages.filter_matchedMessage,
+					new Integer(filteredCount), new Integer(totalCount));
 		}
 		setContentDescription(status);
 	}
@@ -1005,10 +1037,8 @@ public abstract class MarkerView extends TableView {
 	 */
 	protected String updateSummarySelected(IStructuredSelection selection) {
 		// Show how many items selected
-		return NLS.bind(
-				MarkerMessages.marker_statusSummarySelected,
-				new Integer(selection.size()), 
-				"");//$NON-NLS-1$ 
+		return NLS.bind(MarkerMessages.marker_statusSummarySelected,
+				new Integer(selection.size()), "");//$NON-NLS-1$ 
 	}
 
 	/**
@@ -1031,21 +1061,22 @@ public abstract class MarkerView extends TableView {
 			MarkerFilter[] result = dialog.getFilters();
 			if (result == null)
 				return;
-			if(result.length == 0)
-				setFilters(new MarkerFilter[]{
-					   createFilter(MarkerMessages.MarkerFilter_defaultFilterName)});
+			if (result.length == 0)
+				setFilters(new MarkerFilter[] { createFilter(MarkerMessages.MarkerFilter_defaultFilterName) });
 			else
 				setFilters(result);
 
+			storeFiltersPreferences();
 			refresh();
 		}
 	}
-	
+
 	/**
 	 * Set the filters to newFilters.
+	 * 
 	 * @param newFilters
 	 */
-	void setFilters(MarkerFilter[] newFilters){
+	void setFilters(MarkerFilter[] newFilters) {
 		markerFilters = newFilters;
 		enabledFilters = null;
 		refreshFilterMenu();
@@ -1055,12 +1086,14 @@ public abstract class MarkerView extends TableView {
 	 * Refresh the contents of the filter sub menu.
 	 */
 	private void refreshFilterMenu() {
+		if (filtersMenu == null)
+			return;
 		filtersMenu.removeAll();
 		MarkerFilter[] filters = getFilters();
 		for (int i = 0; i < filters.length; i++) {
-			filtersMenu.add(new FilterEnablementAction(filters[i],this));
+			filtersMenu.add(new FilterEnablementAction(filters[i], this));
 		}
-		
+
 	}
 
 	/**
@@ -1174,8 +1207,7 @@ public abstract class MarkerView extends TableView {
 	 * 
 	 */
 	private void createUIJob() {
-		uiJob = new WorkbenchJob(
-				MarkerMessages.MarkerView_refreshProgress) { 
+		uiJob = new WorkbenchJob(MarkerMessages.MarkerView_refreshProgress) {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				// Ensure that the view hasn't been disposed
@@ -1191,36 +1223,39 @@ public abstract class MarkerView extends TableView {
 		uiJob.setPriority(Job.INTERACTIVE);
 		uiJob.setSystem(true);
 	}
-	
+
 	/**
 	 * Get the filters that are currently enabled.
+	 * 
 	 * @return MarkerFilter[]
 	 */
-	MarkerFilter[] getEnabledFilters(){
-		
-		if(enabledFilters == null){
+	MarkerFilter[] getEnabledFilters() {
+
+		if (enabledFilters == null) {
 			MarkerFilter[] allFilters = getFilters();
 			ArrayList filters = new ArrayList(0);
 			for (int i = 0; i < allFilters.length; i++) {
-				if(allFilters[i].isEnabled())
-					filters.add(allFilters[i]);				
+				if (allFilters[i].isEnabled())
+					filters.add(allFilters[i]);
 			}
 			enabledFilters = new MarkerFilter[filters.size()];
 			filters.toArray(enabledFilters);
-		}	
+		}
 		return enabledFilters;
-		
+
 	}
 
-	/* (non-Javadoc)
- 	 * @see org.eclipse.ui.views.markers.internal.TableView#addDropDownContributions(org.eclipse.jface.action.IMenuManager)
- 	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.TableView#addDropDownContributions(org.eclipse.jface.action.IMenuManager)
+	 */
 	void addDropDownContributions(IMenuManager menu) {
 		super.addDropDownContributions(menu);
 		menu.add(new Separator(MENU_FILTERS_GROUP));
-		//Don't add in the filters until they are set
+		// Don't add in the filters until they are set
 		filtersMenu = new MenuManager(MarkerMessages.filtersSubMenu_title);
-		
+
 		menu.appendToGroup(MENU_FILTERS_GROUP, filtersMenu);
 	}
 }

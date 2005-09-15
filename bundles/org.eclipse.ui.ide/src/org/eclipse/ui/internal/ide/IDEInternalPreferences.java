@@ -50,6 +50,9 @@ public interface IDEInternalPreferences {
     //Whether or not to limit problems
     public static final String LIMIT_PROBLEMS = "LIMIT_PROBLEMS"; //$NON-NLS-1$
     
+    //The list of defined problems filters
+    public static final String PROBLEMS_FILTERS = "PROBLEMS_FILTERS"; //$NON-NLS-1$
+    
     //problem limits
     public static final String PROBLEMS_LIMIT = "PROBLEMS_LIMIT"; //$NON-NLS-1$
     
@@ -59,9 +62,15 @@ public interface IDEInternalPreferences {
     //tasks limits
     public static final String TASKS_LIMIT = "TASKS_LIMIT"; //$NON-NLS-1$
     
+    //The list of defined tasks filters
+    public static final String TASKS_FILTERS = "TASKS_FILTERS"; //$NON-NLS-1$
+    
     //Whether or not to limit bookmarks
     public static final String LIMIT_BOOKMARKS = "LIMIT_BOOKMARKS"; //$NON-NLS-1$
     
     //bookmark limits
     public static final String BOOKMARKS_LIMIT = "BOOKMARKS_LIMIT"; //$NON-NLS-1$
+    
+//  The list of defined tasks filters
+    public static final String BOOKMARKS_FILTERS = "BOOKAMRKS_FILTERS"; //$NON-NLS-1$
 }

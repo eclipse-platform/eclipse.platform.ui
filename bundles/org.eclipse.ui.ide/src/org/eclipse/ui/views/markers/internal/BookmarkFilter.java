@@ -13,6 +13,7 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.ui.IMemento;
 
 public class BookmarkFilter extends MarkerFilter {
 
@@ -78,7 +79,9 @@ public class BookmarkFilter extends MarkerFilter {
 		this.description = description;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#resetState()
 	 */
 	void resetState() {
@@ -92,7 +95,7 @@ public class BookmarkFilter extends MarkerFilter {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
 	 */
-	protected void restoreFilterSettings(IDialogSettings settings) {
+	public void restoreFilterSettings(IDialogSettings settings) {
 
 		super.restoreFilterSettings(settings);
 
@@ -109,13 +112,32 @@ public class BookmarkFilter extends MarkerFilter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#saveFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.ui.IMemento)
 	 */
-	protected void saveFilterSettings(IDialogSettings settings) {
-		super.saveFilterSettings(settings);
-		settings.put(TAG_CONTAINS, contains);
-		settings.put(TAG_DESCRIPTION, description);
+	protected void restoreFilterSettings(IMemento memento) {
+		super.restoreFilterSettings(memento);
+
+		String setting = memento.getString(TAG_CONTAINS);
+
+		if (setting != null)
+			contains = Boolean.valueOf(setting).booleanValue();
+
+		setting = memento.getString(TAG_DESCRIPTION);
+
+		if (setting != null)
+			description = new String(setting);
+
 	}
 
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#saveFilterSettings(org.eclipse.ui.IMemento)
+	 */
+	public void saveFilterSettings(IMemento memento) {
+		super.saveFilterSettings(memento);
+		memento.putString(TAG_CONTAINS, String.valueOf(contains));
+		memento.putString(TAG_DESCRIPTION, description);
+	}
+
 }
