@@ -196,40 +196,48 @@ public class RefactoringHistoryDialog extends Dialog {
 		Assert.isNotNull(handle);
 		if (fHistoryTree == null || fHistoryTree.isDisposed())
 			return;
-		final TreeItem[] items= fHistoryTree.getItems();
-		TreeItem lastDay= null;
-		if (items.length > 0)
-			lastDay= items[items.length - 1];
 		final long stamp= handle.getTimeStamp();
-		final long day= stampToDate(stamp);
-		final Date date= new Date(stamp);
-		if (lastDay == null || day != stampToDate(((Date) lastDay.getData()).getTime())) {
-			lastDay= new TreeItem(fHistoryTree, SWT.NONE);
-			lastDay.setImage(fDateImage);
-			final long today= stampToDate(System.currentTimeMillis());
-			String formatted= DateFormat.getDateInstance().format(date);
-			String key;
-			if (day == today)
-				key= TODAY_FORMAT;
-			else if (day == today - 1)
-				key= YESTERDAY_FORMAT;
-			else
-				key= DAY_FORMAT;
-			final String pattern= fBundle.getString(key);
-			if (pattern != null)
-				formatted= MessageFormat.format(pattern, new String[] { formatted});
-			lastDay.setText(formatted);
-			lastDay.setData(date);
-			fHistoryModel.put(date, new ArrayList(8));
+		TreeItem item= null;
+		if (stamp > 0) {
+			final TreeItem[] items= fHistoryTree.getItems();
+			TreeItem lastDay= null;
+			if (items.length > 0)
+				lastDay= items[items.length - 1];
+			final long day= stampToDate(stamp);
+			final Date date= new Date(stamp);
+			if (lastDay == null || day != stampToDate(((Date) lastDay.getData()).getTime())) {
+				lastDay= new TreeItem(fHistoryTree, SWT.NONE);
+				lastDay.setImage(fDateImage);
+				final long today= stampToDate(System.currentTimeMillis());
+				String formatted= DateFormat.getDateInstance().format(date);
+				String key;
+				if (day == today)
+					key= TODAY_FORMAT;
+				else if (day == today - 1)
+					key= YESTERDAY_FORMAT;
+				else
+					key= DAY_FORMAT;
+				final String pattern= fBundle.getString(key);
+				if (pattern != null)
+					formatted= MessageFormat.format(pattern, new String[] { formatted});
+				lastDay.setText(formatted);
+				lastDay.setData(date);
+				fHistoryModel.put(date, new ArrayList(8));
+			}
+			item= new TreeItem(lastDay, SWT.NONE);
+			item.setImage(fRefactoringImage);
+			final List list= (List) fHistoryModel.get(lastDay.getData());
+			list.add(handle);
+			item.setText(MessageFormat.format(fBundle.getString(REFACTORING_FORMAT), new String[] { DateFormat.getTimeInstance().format(date), handle.getDescription()}));
+			item.setData(handle);
+			if (selected)
+				lastDay.setExpanded(true);
+		} else {
+			item= new TreeItem(fHistoryTree, SWT.NONE);
+			item.setImage(fRefactoringImage);
+			item.setText(handle.getDescription());
 		}
-		final TreeItem item= new TreeItem(lastDay, SWT.NONE);
-		item.setImage(fRefactoringImage);
-		final List list= (List) fHistoryModel.get(lastDay.getData());
-		list.add(handle);
-		item.setText(MessageFormat.format(fBundle.getString(REFACTORING_FORMAT), new String[] { DateFormat.getTimeInstance().format(date), handle.getDescription()}));
-		item.setData(handle);
 		if (selected) {
-			lastDay.setExpanded(true);
 			fHistoryTree.setSelection(new TreeItem[] { item});
 			handleSelection(item, handle, true);
 		}
@@ -499,8 +507,11 @@ public class RefactoringHistoryDialog extends Dialog {
 			final Object data= item.getData();
 			if (data instanceof RefactoringDescriptorHandle)
 				set.add(data);
-			else if (data instanceof Date)
-				set.addAll((Collection) fHistoryModel.get(data));
+			else if (data instanceof Date) {
+				final Collection collection= (Collection) fHistoryModel.get(data);
+				if (collection != null)
+					set.addAll(collection);
+			}
 		}
 		return (RefactoringDescriptorHandle[]) set.toArray(new RefactoringDescriptorHandle[set.size()]);
 	}
