@@ -94,7 +94,9 @@ class IDEIdleHelper {
 	 */
 	IDEIdleHelper(IWorkbenchConfigurer aConfigurer) {
 		this.configurer = aConfigurer;
-		if (!Boolean.getBoolean(PROP_GC))
+		String enabled = System.getProperty(PROP_GC);
+		//gc is turned on by default if property is missing
+		if (enabled != null && enabled.equalsIgnoreCase(Boolean.FALSE.toString()))
 			return;
 		//init gc interval
 		Integer prop = Integer.getInteger(PROP_GC_INTERVAL);
