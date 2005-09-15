@@ -334,6 +334,13 @@ public interface IDebugUIConstants {
 	 */
 	public static final String IMG_LCL_REMOVE_ALL = "IMG_LCL_REMOVE_ALL"; //$NON-NLS-1$	
 	
+    /**
+     * Remove action image identifier
+     * 
+     * @since 3.2
+     */
+    public static final String IMG_LCL_REMOVE = "IMG_LCL_REMOVE"; //$NON-NLS-1$
+    
 	/**
 	 * Content assist action image identifier.
 	 */

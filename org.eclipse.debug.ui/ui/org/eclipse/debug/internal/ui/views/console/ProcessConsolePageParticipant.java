@@ -56,7 +56,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 	
 	// actions
 	private ConsoleTerminateAction fTerminate;
-	private ConsoleRemoveAllTerminatedAction fRemoveTerminated;
+    private ConsoleRemoveLaunchAction fRemoveTerminated;
+	private ConsoleRemoveAllTerminatedAction fRemoveAllTerminated;
 
     private ProcessConsole fConsole;
 
@@ -95,7 +96,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         fPage = page;
         fConsole = (ProcessConsole) console;
         
-        fRemoveTerminated = new ConsoleRemoveAllTerminatedAction();
+        fRemoveTerminated = new ConsoleRemoveLaunchAction();
+        fRemoveAllTerminated = new ConsoleRemoveAllTerminatedAction();
         fTerminate = new ConsoleTerminateAction(fConsole);
         
         fView = (IConsoleView) fPage.getSite().getPage().findView(IConsoleConstants.ID_CONSOLE_VIEW);
@@ -120,9 +122,13 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         deactivated();
         fPage.getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
-		if (fRemoveTerminated != null) {
-			fRemoveTerminated.dispose();
-			fRemoveTerminated = null;
+        if (fRemoveTerminated != null) {
+            fRemoveTerminated.dispose();
+            fRemoveTerminated = null;
+        }
+		if (fRemoveAllTerminated != null) {
+			fRemoveAllTerminated.dispose();
+			fRemoveAllTerminated = null;
 		}
 		if (fTerminate != null) {
 		    fTerminate.dispose();
@@ -136,7 +142,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
      */
     protected void configureToolBar(IToolBarManager mgr) {
 		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fTerminate);
-		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fRemoveTerminated);
+        mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fRemoveTerminated);
+		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fRemoveAllTerminated);
     }
 
     /* (non-Javadoc)

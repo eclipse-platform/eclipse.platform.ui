@@ -2393,6 +2393,14 @@ M4 = Platform-specific fourth key
                 id="org.eclipse.debug.ui.consoleRemoveAllTerminatedAction"
 				helpContextId="console_remove_all_terminated_context"/>
           <action
+                label="%RemoveLaunch.label"
+                tooltip="%RemoveLaunch.tooltip"
+				icon="$nl$/icons/full/elcl16/rem_co.gif"
+                class="org.eclipse.debug.internal.ui.views.console.ConsoleRemoveLaunchAction"
+                menubarPath="additions"
+                id="org.eclipse.debug.ui.consoleRemoveTerminatedAction"
+				helpContextId="console_remove_terminated_context"/>
+          <action
                 label="%TerminateAction.label"
                 tooltip="%TerminateAction.tooltip"
                 icon="$nl$/icons/full/elcl16/terminate_co.gif"
