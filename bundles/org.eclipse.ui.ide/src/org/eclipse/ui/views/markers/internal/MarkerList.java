@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -165,7 +166,7 @@ public class MarkerList {
     public static MarkerList compute(MarkerFilter[] filters, IProgressMonitor mon,
             boolean ignoreExceptions) throws CoreException {
     	
-    	Collection returnMarkers = new ArrayList();
+    	Collection returnMarkers = new HashSet();//avoid duplicates
     	
     	for (int i = 0; i < filters.length; i++) {
     		returnMarkers.addAll(filters[i].findMarkers(mon, ignoreExceptions));
