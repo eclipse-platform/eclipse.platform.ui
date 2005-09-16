@@ -77,7 +77,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	static final String GROUP_OPEN= "group.open"; //$NON-NLS-1$
 
 	/**
-	 * Menu group for code generation and code assist actions.
+	 * Menu group for code generation and content assist actions.
 	 * Value <code>"group.generate"</code>).
 	 * @since 3.1
 	 */
