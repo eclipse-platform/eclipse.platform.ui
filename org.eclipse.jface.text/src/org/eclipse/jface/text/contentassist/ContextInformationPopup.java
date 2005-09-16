@@ -69,7 +69,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		final IContextInformationValidator fValidator;
 		final IContextInformationPresenter fPresenter;
 
-		/**
+		/*
 		 * @since 3.1
 		 */
 		public ContextFrame(IContextInformation information, int beginOffset, int offset, int visibleOffset, IContextInformationValidator validator, IContextInformationPresenter presenter) {
