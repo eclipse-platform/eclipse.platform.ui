@@ -147,9 +147,8 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 			IFile[] files= collectFiles((IResource[]) fResources.toArray(new IResource[fResources.size()]));
 			if (files != null && files.length > 0)
 				doRun(files, null, fFileBufferOperation);
-		} else if (fLocation != null) {
+		} else if (isAcceptableLocation(fLocation)) 
 			doRun(null, fLocation, fFileBufferOperation);
-		}
 	}
 
 	protected IFile[] collectFiles(IResource[] resources) {

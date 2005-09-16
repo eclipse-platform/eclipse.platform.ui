@@ -281,7 +281,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 				IFile[] files= collectFiles(fResources);
 				if (files != null && files.length > 0)
 					doRun(files, null, fFileBufferOperation);
-			} else if (fLocation != null)
+			} else if (isAcceptableLocation(fLocation))
 				doRun(null, fLocation, fFileBufferOperation);
 
 			// Standard return value. DO NOT CHANGE.
