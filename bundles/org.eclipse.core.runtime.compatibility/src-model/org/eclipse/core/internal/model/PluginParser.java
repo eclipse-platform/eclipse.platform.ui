@@ -49,7 +49,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 	private static final int PLUGIN_EXTENSION_STATE = 6;
 	private static final int RUNTIME_LIBRARY_STATE = 7;
 	private static final int LIBRARY_EXPORT_STATE = 8;
-	private static final int LIBRARY_PACKAGES_STATE = 12;
+//	private static final int LIBRARY_PACKAGES_STATE = 12;
 	private static final int PLUGIN_REQUIRES_IMPORT_STATE = 9;
 	private static final int CONFIGURATION_ELEMENT_STATE = 10;
 	private static final int FRAGMENT_STATE = 11;
