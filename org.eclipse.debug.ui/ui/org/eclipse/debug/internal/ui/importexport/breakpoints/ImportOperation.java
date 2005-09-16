@@ -204,12 +204,30 @@ public class ImportOperation implements IRunnableWithProgress {
 			set.setId(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID);
 			wsmanager.addWorkingSet(set);
 		}//end if
-		IAdaptable[] elements = set.getElements();
-		IAdaptable[] newElements = new IAdaptable[elements.length + 1];
-		newElements[newElements.length-1] = (IBreakpoint)element;
-		System.arraycopy(elements, 0, newElements, 0, elements.length);
-		set.setElements(newElements);
+		if(!setContainsBreakpoint(set, (IBreakpoint)element)) {
+			IAdaptable[] elements = set.getElements();
+			IAdaptable[] newElements = new IAdaptable[elements.length + 1];
+			newElements[newElements.length-1] = (IBreakpoint)element;
+			System.arraycopy(elements, 0, newElements, 0, elements.length);
+			set.setElements(newElements);
+		}//end if
 	}
+	
+	/**
+	 * Method to ensure markers and breakpoints are not both added to the working set
+	 * @param set the set to check
+	 * @param breakpoint the breakpoint to check for existance
+	 * @return true if it is present false otherwise
+	 */
+	private boolean setContainsBreakpoint(IWorkingSet set, IBreakpoint breakpoint) {
+		IAdaptable[] elements = set.getElements();
+		for(int i = 0; i < elements.length; i++) {
+			if(elements[i].equals(breakpoint)) {
+				return true;
+			}//end if
+		}//end for
+		return false;
+	}//end setContainsBreakpoint
 	
 	/**
 	 * This method is used internally to search the pre-existing listing of breakpoints to find a 

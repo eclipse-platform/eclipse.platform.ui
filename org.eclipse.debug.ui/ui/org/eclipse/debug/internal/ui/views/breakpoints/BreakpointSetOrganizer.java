@@ -168,6 +168,11 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	 */
 	private void addBreakpointToSet(IBreakpoint breakpoint, IWorkingSet set) {
 		IAdaptable[] elements = set.getElements();
+		for(int i = 0; i < elements.length; i++) {
+			if(elements[i].equals(breakpoint)) {
+				return;
+			}//end if
+		}//end for
 		IAdaptable[] newElements = new IAdaptable[elements.length + 1];
 		newElements[newElements.length-1] = breakpoint;
 		System.arraycopy(elements, 0, newElements, 0, elements.length);
