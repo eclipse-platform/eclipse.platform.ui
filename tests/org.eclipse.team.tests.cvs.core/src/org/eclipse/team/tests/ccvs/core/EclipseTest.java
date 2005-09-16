@@ -1178,6 +1178,7 @@ public class EclipseTest extends ResourceTest {
 				ensureDoesNotExistInWorkspace(projects);
 			} catch (AssertionFailedError e) {
 				// The delete failed. Write the active jobs to stdout
+				System.out.println(e.getMessage());
 				System.out.println("Jobs active at time of deletion failure: "); //$NON-NLS-1$
 				if (allJobs.length == 0) {
 					System.out.println("None"); //$NON-NLS-1$
@@ -1191,7 +1192,61 @@ public class EclipseTest extends ResourceTest {
 				}
 			}
 		} else {
+			ensureNotReadOnly(resource);
 			super.ensureDoesNotExistInWorkspace(resource);
+		}
+	}
+	
+	private void ensureNotReadOnly(IResource resource) {
+		if (resource.exists()) {
+			try {
+				resource.accept(new IResourceVisitor() {
+					public boolean visit(IResource resource) throws CoreException {
+						if (resource.exists() && resource.isReadOnly()) {
+							resource.setReadOnly(false);
+						}
+						return true;
+					}
+				});
+			} catch (CoreException e) {
+				fail("#ensureNotReadOnly " + resource.getFullPath(), e);
+			}
+		}
+		
+	}
+
+	/**
+	 * Delete each project from the workspace and return a status that
+	 * contains any failures
+	 */
+	public void ensureDoesNotExistInWorkspace(final IProject[] projects) {
+		final Map failures = new HashMap();
+		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) {
+				for (int i = 0; i < projects.length; i++) {
+					try {
+						if (projects[i].exists())
+							projects[i].delete(true, null);
+					} catch (CoreException e) {
+						write(new CVSStatus(IStatus.ERROR, "Could not delete project " + projects[i].getName(), e), 0);
+						failures.put(projects[i], e);
+					}
+				}
+			}
+		};
+		try {
+			getWorkspace().run(body, null);
+		} catch (CoreException e) {
+			fail("#ensureDoesNotExistInWorkspace(IResource[])", e);
+		}
+		if (!failures.isEmpty()) {
+			StringBuffer text = new StringBuffer();
+			text.append("Could not delete all projects: ");
+			for (Iterator iter = failures.keySet().iterator(); iter.hasNext();) {
+				IProject project = (IProject) iter.next();
+				text.append(project.getName());
+			}
+			fail(text.toString());
 		}
 	}
 	
