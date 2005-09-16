@@ -26,6 +26,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -564,4 +565,75 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
         cmd.event = null;
         cmd.text = null;
     }
+
+    protected void internalRevealRange(int start, int end) {
+        StyledText textWidget = getTextWidget();
+        int startLine = documentAdapter.getLineAtOffset(start);
+        int endLine = documentAdapter.getLineAtOffset(end);
+
+        int top = textWidget.getTopIndex();
+        if (top > -1) {
+            // scroll vertically
+            int lines = getVisibleLinesInViewport();
+            int bottom = top + lines;
+
+            // two lines at the top and the bottom should always be left
+            // if window is smaller than 5 lines, always center position is chosen
+            int bufferZone = 2;
+            if (startLine >= top + bufferZone && startLine <= bottom - bufferZone && endLine >= top + bufferZone && endLine <= bottom - bufferZone) {
+
+                // do not scroll at all as it is already visible
+            } else {
+                int delta = Math.max(0, lines - (endLine - startLine));
+                textWidget.setTopIndex(startLine - delta / 3);
+                updateViewportListeners(INTERNAL);
+            }
+
+            // scroll horizontally
+            if (endLine < startLine) {
+                endLine += startLine;
+                startLine = endLine - startLine;
+                endLine -= startLine;
+            }
+
+            int startPixel = -1;
+            int endPixel = -1;
+
+            if (endLine > startLine) {
+                // reveal the beginning of the range in the start line
+                IRegion extent = getExtent(start, start);
+                startPixel = extent.getOffset() + textWidget.getHorizontalPixel();
+                endPixel = startPixel;
+            } else {
+                IRegion extent = getExtent(start, end);
+                startPixel = extent.getOffset() + textWidget.getHorizontalPixel();
+                endPixel = startPixel + extent.getLength();
+            }
+
+            int visibleStart = textWidget.getHorizontalPixel();
+            int visibleEnd = visibleStart + textWidget.getClientArea().width;
+
+            // scroll only if not yet visible
+            if (startPixel < visibleStart || visibleEnd < endPixel) {
+                // set buffer zone to 10 pixels
+                bufferZone = 10;
+                int newOffset = visibleStart;
+                int visibleWidth = visibleEnd - visibleStart;
+                int selectionPixelWidth = endPixel - startPixel;
+
+                if (startPixel < visibleStart)
+                    newOffset = startPixel;
+                else if (selectionPixelWidth + bufferZone < visibleWidth)
+                    newOffset = endPixel + bufferZone - visibleWidth;
+                else
+                    newOffset = startPixel;
+
+                float index = ((float) newOffset) / ((float) getAverageCharWidth());
+
+                textWidget.setHorizontalIndex(Math.round(index));
+            }
+
+        }
+    }
+
 }
