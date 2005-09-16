@@ -300,7 +300,7 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
     private void updateSelectedNode(WorkbenchWizardElement wizardElement){
         setErrorMessage(null);
         if (wizardElement == null) {
-            setMessage(null);
+        	updateMessage(tabFolder.getSelectionIndex());
             setSelectedNode(null);
             return;
         }
@@ -327,14 +327,13 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
     	if (viewer != null){
     		ISelection selection = viewer.getSelection();
             IStructuredSelection ss = (IStructuredSelection) selection;
-            WorkbenchWizardElement currentWizardSelection = (WorkbenchWizardElement) ss
-                    .getFirstElement();
-            if (currentWizardSelection == null){
+            Object sel = ss.getFirstElement();
+            if (sel instanceof WorkbenchWizardElement){
+               	updateSelectedNode((WorkbenchWizardElement)sel);
+            }
+            else{
             	setMessage(noSelectionMsg);  
             	setSelectedNode(null);
-            }
-            else {
-            	updateSelectedNode(currentWizardSelection);
             }
     	}
     	else 
