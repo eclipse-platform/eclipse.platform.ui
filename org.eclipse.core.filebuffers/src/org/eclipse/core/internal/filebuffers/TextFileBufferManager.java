@@ -88,22 +88,26 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void connect(IPath location, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
-
-		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
-		if (fileBuffer == null)  {
-
+		
+		AbstractFileBuffer fileBuffer= null;
+		synchronized (fFilesBuffers) {
+			fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
+			if (fileBuffer != null)  {
+				fileBuffer.connect();
+				return;
+			}
+			
 			fileBuffer= createFileBuffer(location);
 			if (fileBuffer == null)
 				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null));
-
+			
 			fileBuffer.create(location, monitor);
 			fileBuffer.connect();
 			fFilesBuffers.put(location, fileBuffer);
-			fireBufferCreated(fileBuffer);
-
-		} else {
-			fileBuffer.connect();
 		}
+		
+		// Do notification outside synchronized block
+		fireBufferCreated(fileBuffer);
 	}
 
 	/*
@@ -113,15 +117,22 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
 
-		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
-		if (fileBuffer != null) {
+		AbstractFileBuffer fileBuffer;
+		synchronized (fFilesBuffers) {
+			fileBuffer= (AbstractFileBuffer)fFilesBuffers.get(location);
+			if (fileBuffer == null)
+				return;
+			
 			fileBuffer.disconnect();
-			if (fileBuffer.isDisconnected()) {
-				fFilesBuffers.remove(location);
-				fireBufferDisposed(fileBuffer);
-				fileBuffer.dispose();
-			}
+			if (!fileBuffer.isDisconnected())
+				return;
+			
+			fFilesBuffers.remove(location);
 		}
+		
+		// Do notification outside synchronized block
+		fireBufferDisposed(fileBuffer);
+		fileBuffer.dispose();
 	}
 
 	/*
@@ -213,15 +224,20 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public IFileBuffer getFileBuffer(IPath location) {
 		location= FileBuffers.normalizeLocation(location);
-		return (IFileBuffer) fFilesBuffers.get(location);
+		return internalGetFileBuffer(location);
+	}
+	
+	private AbstractFileBuffer internalGetFileBuffer(IPath location) {
+		synchronized (fFilesBuffers) {
+			return (AbstractFileBuffer)fFilesBuffers.get(location);
+		}
 	}
 
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.core.runtime.IPath)
 	 */
 	public ITextFileBuffer getTextFileBuffer(IPath location) {
-		location= FileBuffers.normalizeLocation(location);
-		return (ITextFileBuffer) fFilesBuffers.get(location);
+		return (ITextFileBuffer)getFileBuffer(location);
 	}
 
 	/*
@@ -306,8 +322,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public void addFileBufferListener(IFileBufferListener listener) {
 		Assert.isNotNull(listener);
-		if (!fFileBufferListeners.contains(listener))
-			fFileBufferListeners.add(listener);
+		synchronized (fFileBufferListeners) {
+			if (!fFileBufferListeners.contains(listener))
+				fFileBufferListeners.add(listener);
+		}
 	}
 
 	/*
@@ -315,7 +333,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public void removeFileBufferListener(IFileBufferListener listener) {
 		Assert.isNotNull(listener);
-		fFileBufferListeners.remove(listener);
+		synchronized (fFileBufferListeners) {
+			fFileBufferListeners.remove(listener);
+		}
 	}
 
 	/*
@@ -332,7 +352,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
 
-		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
+		AbstractFileBuffer fileBuffer= internalGetFileBuffer(location);
 		if (fileBuffer != null)
 			fileBuffer.requestSynchronizationContext();
 	}
@@ -344,7 +364,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
 
-		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
+		AbstractFileBuffer fileBuffer= internalGetFileBuffer(location);
 		if (fileBuffer != null)
 			fileBuffer.releaseSynchronizationContext();
 	}
@@ -372,9 +392,15 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 		return null;
 	}
+	
+	private Iterator getFileBufferListenerIterator() {
+		synchronized (fFileBufferListeners) {
+			return new ArrayList(fFileBufferListeners).iterator();
+		}
+	}
 
 	protected void fireDirtyStateChanged(final IFileBuffer buffer, final boolean isDirty) {
-		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			Platform.run(new SafeNotifier() {
@@ -386,7 +412,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireBufferContentAboutToBeReplaced(final IFileBuffer buffer) {
-		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			Platform.run(new SafeNotifier() {
@@ -398,7 +424,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireBufferContentReplaced(final IFileBuffer buffer) {
-		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			Platform.run(new SafeNotifier() {
@@ -410,7 +436,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireUnderlyingFileMoved(final IFileBuffer buffer, final IPath target) {
-		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			Platform.run(new SafeNotifier() {
@@ -422,7 +448,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireUnderlyingFileDeleted(final IFileBuffer buffer) {
-		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			Platform.run(new SafeNotifier() {
@@ -434,7 +460,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireStateValidationChanged(final IFileBuffer buffer, final boolean isStateValidated) {
-		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			Platform.run(new SafeNotifier() {
@@ -446,7 +472,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireStateChanging(final IFileBuffer buffer) {
-		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			Platform.run(new SafeNotifier() {
@@ -458,7 +484,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireStateChangeFailed(final IFileBuffer buffer) {
-		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			Platform.run(new SafeNotifier() {
@@ -470,7 +496,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireBufferCreated(final IFileBuffer buffer) {
-		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			Platform.run(new SafeNotifier() {
@@ -482,7 +508,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireBufferDisposed(final IFileBuffer buffer) {
-		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		Iterator e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			Platform.run(new SafeNotifier() {
