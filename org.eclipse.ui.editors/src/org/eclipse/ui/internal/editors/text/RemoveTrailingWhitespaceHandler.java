@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -21,6 +24,8 @@ import org.eclipse.core.filebuffers.manipulation.RemoveTrailingWhitespaceOperati
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.editors.text.FileBufferOperationHandler;
+
+import org.eclipse.ui.internal.editors.text.SelectResourcesDialog.IFilter;
 
 
 /**
@@ -39,19 +44,25 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 	 */
 	protected boolean isAcceptableLocation(IPath location) {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		return manager.isTextFileLocation(location);
+		return location != null && manager.isTextFileLocation(location, true);
 	}
 
 	/*
 	 * @see org.eclipse.ui.editors.text.FileBufferOperationHandler#collectFiles(org.eclipse.core.resources.IResource[])
 	 */
 	protected IFile[] collectFiles(IResource[] resources) {
-
 		IFile[] files= super.collectFiles(resources);
-		if (files != null && resources != null && files.length == resources.length)
+		files= filterUnacceptableFiles(files);
+		if (containsOnlyFiles(resources))
 			return files;
 
-		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), TextEditorMessages.RemoveTrailingWhitespaceHandler_dialog_title, TextEditorMessages.RemoveTrailingWhitespaceHandler_dialog_description);
+    	final IFilter filter= new IFilter() {
+			public boolean accept(IResource resource) {
+				return resource != null && isAcceptableLocation(resource.getFullPath());
+			}
+		};
+
+		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), TextEditorMessages.RemoveTrailingWhitespaceHandler_dialog_title, TextEditorMessages.RemoveTrailingWhitespaceHandler_dialog_description, filter);
 		dialog.setInput(resources);
 		int result= dialog.open();
 		if (Window.OK == result) {
@@ -60,4 +71,39 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 		}
 		return null;
 	}
+	
+	/**
+	 * Checks whether the given resources array contains
+	 * only files.
+	 * 
+	 * @param resources the array with the resources
+	 * @return <code>true</code> if there array only contains <code>IFiles</code>s
+	 * @since 3.2
+	 */
+	private boolean containsOnlyFiles(IResource[] resources) {
+		for (int i= 0; i < resources.length; i++) {
+			IResource resource= resources[i];
+			if ((IResource.FILE & resource.getType()) == 0)
+				return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Filters the unacceptable files.
+	 * 
+	 * @param files the files to filter
+	 * @return an array of files
+	 * @since 3.2
+	 */
+	private IFile[] filterUnacceptableFiles(IFile[] files) {
+		Set filtered= new HashSet();
+		for (int i= 0; i < files.length; i++) {
+			IFile file= files[i];
+			if (isAcceptableLocation(file.getFullPath()))
+				filtered.add(file);
+		}
+		return (IFile[]) filtered.toArray(new IFile[filtered.size()]);
+	}
+
 }

@@ -98,6 +98,29 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @param location the location to check
 	 * @return <code>true</code> if the location is a text file location
 	 * @since 3.1
+	 * @deprecated As of 3.2, replaced by {@link #isTextFileLocation(IPath, boolean)}
 	 */
 	boolean isTextFileLocation(IPath location);
+	/**
+	 * Returns whether a file at the given location is or can be considered a
+	 * text file. If the file exists, the concrete content type of the file is
+	 * checked. If the concrete content type for the existing file can not be
+	 * determined, this method returns <code>!strict</code>. If the file does
+	 * not exist, it is checked whether a text content type is associated with
+	 * the given location. If no content type is associated with the location,
+	 * this method returns <code>!strict</code>.
+	 * <p>
+	 * The provided location is either a full path of a workspace resource or an
+	 * absolute path in the local file system. The file buffer manager does not
+	 * resolve the location of workspace resources in the case of linked
+	 * resources.
+	 * </p>
+	 *
+	 * @param location	the location to check
+	 * @param strict	<code>true</code> if a file with unknown content type
+	 * 					is not treated as text file, <code>false</code> otherwise
+	 * @return <code>true</code> if the location is a text file location
+	 * @since 3.2
+	 */
+	boolean isTextFileLocation(IPath location, boolean strict);
 }

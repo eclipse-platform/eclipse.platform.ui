@@ -128,6 +128,14 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#isTextFileLocation(org.eclipse.core.runtime.IPath)
 	 */
 	public boolean isTextFileLocation(IPath location) {
+		return isTextFileLocation(location, false);
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#isTextFileLocation(org.eclipse.core.runtime.IPath, boolean)
+	 * @since 3.2
+	 */
+	public boolean isTextFileLocation(IPath location, boolean strict) {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
 
@@ -156,7 +164,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 					return false;
 				}
 			}
-			return true;
+			return !strict;
 		}
 
 		File externalFile= FileBuffers.getSystemFileAtLocation(location);
@@ -183,7 +191,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 					}
 				}
 
-				return true;
+				return !strict;
 
 			}
 
@@ -194,7 +202,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 						return true;
 				return false;
 			}
-			return true;
+			return !strict;
 		}
 
 		return false;
@@ -357,7 +365,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	private AbstractFileBuffer createFileBuffer(IPath location) {
-		if (isTextFileLocation(location)) {
+		if (isTextFileLocation(location, false)) {
 			if (FileBuffers.getWorkspaceFileAtLocation(location) != null)
 				return new ResourceTextFileBuffer(this);
 			return new JavaTextFileBuffer(this);

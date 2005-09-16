@@ -18,12 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -37,6 +31,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -54,7 +55,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  *
  * @since 3.1
  */
-public class SelectResourcesDialog extends Dialog {
+class SelectResourcesDialog extends Dialog {
 
 	interface IFilter {
 		boolean accept(IResource resource);
@@ -66,12 +67,14 @@ public class SelectResourcesDialog extends Dialog {
     private String fTitle;
     private String fInstruction;
     private Label fCountIndication;
+	private IFilter fAcceptableLocationsFilter;
 
 
-	public SelectResourcesDialog(Shell parentShell, String title, String instruction) {
+	public SelectResourcesDialog(Shell parentShell, String title, String instruction, IFilter acceptableLocationsFilter) {
 		super(parentShell);
 		fTitle= title;
 		fInstruction= instruction;
+		fAcceptableLocationsFilter= acceptableLocationsFilter;
 	}
 
 	public void setInput(IResource[] input) {
@@ -149,7 +152,7 @@ public class SelectResourcesDialog extends Dialog {
                     ArrayList results = new ArrayList();
                     for (int i = 0; i < members.length; i++) {
                         //And the test bits with the resource types to see if they are what we want
-                        if ((members[i].getType() & resourceType) > 0) {
+                        if ((members[i].getType() & resourceType) > 0 && (resourceType != IResource.FILE || fAcceptableLocationsFilter == null || fAcceptableLocationsFilter.accept(members[i]))) {
                             results.add(members[i]);
                         }
                     }
