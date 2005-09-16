@@ -114,6 +114,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				if (!fDisplay.isDisposed()) {
 					fDisplay.addFilter(SWT.Show, this);
 					fDisplay.addFilter(SWT.Activate, this);
+					fDisplay.addFilter(SWT.MouseWheel, this);
 				}
 			}
 		}
@@ -152,6 +153,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (fDisplay != null && !fDisplay.isDisposed()) {
 				fDisplay.removeFilter(SWT.Show, this);
 				fDisplay.removeFilter(SWT.Activate, this);
+				fDisplay.removeFilter(SWT.MouseWheel, this);
 			}
 			fDisplay= null;
 		}
@@ -259,7 +261,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @since 3.1
 		 */
 		public void handleEvent(Event event) {
-			if (event.type == SWT.Activate || event.type == SWT.Show)
+			if (event.type == SWT.Activate || event.type == SWT.Show || event.type == SWT.MouseWheel)
 				stop();
 		}
 	}

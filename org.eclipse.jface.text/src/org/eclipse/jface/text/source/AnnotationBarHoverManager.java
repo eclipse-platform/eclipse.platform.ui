@@ -14,6 +14,7 @@ package org.eclipse.jface.text.source;
 
 import java.util.Iterator;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -30,6 +31,9 @@ import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.AbstractInformationControlManager;
@@ -59,7 +63,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 *
 	 * @since 3.0
 	 */
-	protected class Closer extends MouseTrackAdapter implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, DisposeListener, ShellListener {
+	protected class Closer extends MouseTrackAdapter implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, DisposeListener, ShellListener, Listener {
 
 		/** The closer's subject control */
 		private Control fSubjectControl;
@@ -69,6 +73,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		private boolean fIsActive= false;
 		/** The information control. */
 		private IInformationControl fInformationControlToClose;
+		/**
+		 * The cached display.
+		 * @since 3.2
+		 */
+		private Display fDisplay;
 
 
 		/**
@@ -109,6 +118,10 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.getShell().addShellListener(this);
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addKeyListener(this);
+				
+				fDisplay= fSubjectControl.getDisplay();
+				if (!fDisplay.isDisposed())
+					fDisplay.addFilter(SWT.MouseWheel, this);
 			}
 		}
 
@@ -141,6 +154,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
 			}
+			
+			if (fDisplay != null && !fDisplay.isDisposed())
+				fDisplay.removeFilter(SWT.MouseWheel, this);
+			fDisplay= null;
+			
 		}
 
 		/*
@@ -169,6 +187,15 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 */
 		public void mouseDoubleClick(MouseEvent event) {
 			stop();
+		}
+		
+		/*
+		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+		 * @since 3.2
+		 */
+		public void handleEvent(Event event) {
+			if (event.type == SWT.MouseWheel)
+				stop();
 		}
 
 		/*
