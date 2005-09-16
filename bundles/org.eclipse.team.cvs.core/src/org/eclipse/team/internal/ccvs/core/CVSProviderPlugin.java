@@ -33,7 +33,7 @@ public class CVSProviderPlugin extends Plugin {
 	
 	// preference names
 	public static final String READ_ONLY = "cvs.read.only"; //$NON-NLS-1$
-	public static final String ENABLE_WATCH_ON_EDIT = "cvs.read.only"; //$NON-NLS-1$
+	public static final String ENABLE_WATCH_ON_EDIT = "cvs.watch.on.edit"; //$NON-NLS-1$
 
 	// external command to run for ext connection method
 	public static final String DEFAULT_CVS_RSH = "ssh"; //$NON-NLS-1$
