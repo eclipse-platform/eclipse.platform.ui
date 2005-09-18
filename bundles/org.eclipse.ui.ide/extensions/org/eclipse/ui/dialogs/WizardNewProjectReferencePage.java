@@ -38,7 +38,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * subclassed to suit.
  * </p>
  * <p>
- * Example useage:
+ * Example usage:
  * <pre>
  * referencePage = new WizardNewProjectReferencePage("basicReferenceProjectPage");
  * referencePage.setTitle("Project");

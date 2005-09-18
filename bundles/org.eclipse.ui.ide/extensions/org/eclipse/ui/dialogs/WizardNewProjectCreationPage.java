@@ -47,7 +47,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * This page may be used by clients as-is; it may be also be subclassed to suit.
  * </p>
  * <p>
- * Example useage:
+ * Example usage:
  * <pre>
  * mainPage = new WizardNewProjectCreationPage("basicNewProjectPage");
  * mainPage.setTitle("Project");

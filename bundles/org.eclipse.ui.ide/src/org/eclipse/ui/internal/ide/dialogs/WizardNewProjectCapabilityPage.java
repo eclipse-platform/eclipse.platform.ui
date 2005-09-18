@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
  * Second page for the new project creation wizard. This page
  * collects the capabilities of the new project.
  * <p>
- * Example useage:
+ * Example usage:
  * <pre>
  * mainPage = new WizardNewProjectCapabilityPage("wizardNewProjectCapabilityPage");
  * mainPage.setTitle("Project");

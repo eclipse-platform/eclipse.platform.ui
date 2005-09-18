@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.ide.misc.WizardStepGroup;
 /**
  * This page allows the user to review the steps to be done.
  * <p>
- * Example useage:
+ * Example usage:
  * <pre>
  * mainPage = new MultiStepReviewWizardPage("multiStepReviewPage");
  * mainPage.setTitle("Project");

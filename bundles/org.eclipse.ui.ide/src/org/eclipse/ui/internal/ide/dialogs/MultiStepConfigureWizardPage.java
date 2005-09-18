@@ -37,7 +37,7 @@ import org.eclipse.ui.internal.ide.misc.WizardStepGroup;
  * step that has a wizard will have its pages embedded into this
  * page. At the end, the step will be asked to complete its work.
  * <p>
- * Example useage:
+ * Example usage:
  * <pre>
  * mainPage = new MultiStepConfigureWizardPage("multiStepWizardPage");
  * mainPage.setTitle("Project");
