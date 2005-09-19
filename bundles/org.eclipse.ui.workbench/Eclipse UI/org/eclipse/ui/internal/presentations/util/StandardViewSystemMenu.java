@@ -40,10 +40,15 @@ public class StandardViewSystemMenu implements ISystemMenu {
     private SystemMenuMinimize minimize;
     private SystemMenuMaximize maximize;
     private SystemMenuClose close;
-
+    
+    /**
+     * Create the standard view menu
+     * 
+     * @param site the site to associate the view with
+     */
     public StandardViewSystemMenu(IStackPresentationSite site) {
         restore = new SystemMenuRestore(site);
-        move = new SystemMenuMove(site, WorkbenchMessages.ViewPane_moveView, false);
+        move = new SystemMenuMove(site, getMoveMenuText(), false);
         minimize = new SystemMenuMinimize(site);
         maximize = new SystemMenuMaximize(site);
         close = new SystemMenuClose(site);
@@ -66,6 +71,10 @@ public class StandardViewSystemMenu implements ISystemMenu {
         } // End of system menu initialization
 
     }
+
+    String getMoveMenuText() {
+    	return WorkbenchMessages.ViewPane_moveView;
+    }
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.presentations.util.ISystemMenu#show(org.eclipse.swt.graphics.Point, org.eclipse.ui.presentations.IPresentablePart)
@@ -84,6 +93,9 @@ public class StandardViewSystemMenu implements ISystemMenu {
         aMenu.setVisible(true);
     }
     
+    /**
+     * Dispose resources associated with this menu
+     */
     public void dispose() {
         menuManager.dispose();
         menuManager.removeAll();

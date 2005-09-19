@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.presentations.util;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.presentations.SystemMenuCloseAll;
 import org.eclipse.ui.internal.presentations.SystemMenuCloseOthers;
 import org.eclipse.ui.internal.presentations.SystemMenuNewEditor;
@@ -46,6 +47,10 @@ public class StandardEditorSystemMenu extends StandardViewSystemMenu {
 		menuManager.add(openAgain);
     }
 
+    String getMoveMenuText() {
+    	return WorkbenchMessages.EditorPane_moveEditor;
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.presentations.util.ISystemMenu#show(org.eclipse.swt.widgets.Control, org.eclipse.swt.graphics.Point, org.eclipse.ui.presentations.IPresentablePart)
      */

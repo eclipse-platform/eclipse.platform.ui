@@ -572,6 +572,8 @@ public class WorkbenchMessages extends NLS {
 	public static String ViewPane_moveView;
 	public static String ViewPane_moveFolder;
 
+	public static String EditorPane_moveEditor;
+
 	public static String ViewLabel_unknown;
 
 	public static String ViewFactory_initException;
