@@ -22,6 +22,7 @@ import junit.framework.TestSuite;
 import org.eclipse.text.edits.CopySourceEdit;
 import org.eclipse.text.edits.CopyTargetEdit;
 import org.eclipse.text.edits.DeleteEdit;
+import org.eclipse.text.edits.ISourceModifier;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MoveSourceEdit;
@@ -35,6 +36,7 @@ import org.eclipse.text.edits.UndoEdit;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 
 public class TextEditTests extends TestCase {
 
@@ -1225,6 +1227,119 @@ public class TextEditTests extends TestCase {
 
 	}
 
+	public void testSourceTransformationIncludes() throws Exception {
+		MoveSourceEdit ms= new MoveSourceEdit(2, 4);
+		MoveTargetEdit mt= new MoveTargetEdit(9, ms);
+		fRoot.addChild(ms);
+		fRoot.addChild(mt);
+		RangeMarker r1= new RangeMarker(3,2);
+		ms.addChild(r1);
+		ms.setSourceModifier(new ISourceModifier() {
+			public ISourceModifier copy() {
+				return this;
+			}
+			public ReplaceEdit[] getModifications(String source) {
+				return new ReplaceEdit[] { new ReplaceEdit(1,1,"aa") };
+			}
+		});
+		fRoot.apply(fDocument);
+		String result= "016782aa459";
+		assertEquals("Buffer content", result, fDocument.get());
+		assertEquals(r1, 6, 3);
+	}
+	
+	// Regression test for 108672 [quick fix] Exception when applying Convert to enhanced for loop
+	public void testSourceTranformationMultipleCovers() throws Exception {
+		MoveSourceEdit ms= new MoveSourceEdit(2, 4);
+		MoveTargetEdit mt= new MoveTargetEdit(9, ms);
+		fRoot.addChild(ms);
+		fRoot.addChild(mt);
+		RangeMarker r1= new RangeMarker(3,0);
+		ms.addChild(r1);
+		RangeMarker r2= new RangeMarker(3,0);
+		ms.addChild(r2);
+		RangeMarker r3= new RangeMarker(4,2);
+		ms.addChild(r3);
+		ms.setSourceModifier(new ISourceModifier() {
+			public ISourceModifier copy() {
+				return this;
+			}
+			public ReplaceEdit[] getModifications(String source) {
+				return new ReplaceEdit[] { new ReplaceEdit(0,2,"aa") };
+			}
+		});
+		fRoot.apply(fDocument);
+		String result= "01678aa459";
+		assertEquals("Buffer content", result, fDocument.get());
+		assertTrue(r1.isDeleted());
+		assertTrue(r2.isDeleted());
+		assertEquals(r3, 7, 2);
+	}
+	
+	public void testSourceTranformationSplit1() throws Exception {
+		MoveSourceEdit ms= new MoveSourceEdit(2, 4);
+		MoveTargetEdit mt= new MoveTargetEdit(9, ms);
+		fRoot.addChild(ms);
+		fRoot.addChild(mt);
+		RangeMarker r1= new RangeMarker(3,2);
+		ms.addChild(r1);
+		ms.setSourceModifier(new ISourceModifier() {
+			public ISourceModifier copy() {
+				return this;
+			}
+			public ReplaceEdit[] getModifications(String source) {
+				return new ReplaceEdit[] { new ReplaceEdit(0,2,"aa") };
+			}
+		});
+		fRoot.apply(fDocument);
+		String result= "01678aa459";
+		assertEquals("Buffer content", result, fDocument.get());
+		assertEquals(r1, 7, 1);
+	}
+	
+	public void testSourceTranformationSplit2() throws Exception {
+		MoveSourceEdit ms= new MoveSourceEdit(2, 4);
+		MoveTargetEdit mt= new MoveTargetEdit(9, ms);
+		fRoot.addChild(ms);
+		fRoot.addChild(mt);
+		RangeMarker r1= new RangeMarker(3,2);
+		ms.addChild(r1);
+		ms.setSourceModifier(new ISourceModifier() {
+			public ISourceModifier copy() {
+				return this;
+			}
+			public ReplaceEdit[] getModifications(String source) {
+				return new ReplaceEdit[] { new ReplaceEdit(2,2,"aa") };
+			}
+		});
+		fRoot.apply(fDocument);
+		String result= "0167823aa9";
+		assertEquals("Buffer content", result, fDocument.get());
+		assertEquals(r1, 6, 3);
+	}
+	
+	public void testIntersect() throws Exception {
+		IRegion result= MoveSourceEdit.intersect(new RangeMarker(0,1), new RangeMarker(2,1));
+		assertNull(result);
+		result= MoveSourceEdit.intersect(new RangeMarker(2,1), new RangeMarker(0,1));
+		assertNull(result);
+		result= MoveSourceEdit.intersect(new RangeMarker(0,1), new RangeMarker(1,1));
+		assertNull(result);
+		result= MoveSourceEdit.intersect(new RangeMarker(1,1), new RangeMarker(0,1));
+		assertNull(result);
+		result= MoveSourceEdit.intersect(new RangeMarker(0,2), new RangeMarker(1,2));
+		assertNotNull(result);
+		assertEquals(result, 1, 1);
+		result= MoveSourceEdit.intersect(new RangeMarker(1,2), new RangeMarker(0,2));
+		assertNotNull(result);
+		assertEquals(result, 1, 1);
+		result= MoveSourceEdit.intersect(new RangeMarker(1,2), new RangeMarker(2,2));
+		assertNotNull(result);
+		assertEquals(result, 2, 1);
+		result= MoveSourceEdit.intersect(new RangeMarker(2,2), new RangeMarker(1,2));
+		assertNotNull(result);
+		assertEquals(result, 2, 1);
+	}
 	
 	private void doUndoRedo(UndoEdit undo, String redoResult) throws Exception {
 		UndoEdit redo= undo.apply(fDocument);
@@ -1238,6 +1353,11 @@ public class TextEditTests extends TestCase {
 	private void assertEquals(TextEdit edit, int offset, int length) {
 		assertEquals("Offset", offset, edit.getOffset());
 		assertEquals("Length", length, edit.getLength());	
+	}
+	
+	private void assertEquals(IRegion region, int offset, int length) {
+		assertEquals("Offset", offset, region.getOffset());
+		assertEquals("Length", length, region.getLength());	
 	}
 	
 	private void assertBufferContent() {

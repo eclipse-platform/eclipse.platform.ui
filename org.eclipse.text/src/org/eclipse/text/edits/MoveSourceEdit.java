@@ -341,13 +341,14 @@ public final class MoveSourceEdit extends TextEdit {
 		}
 		TextEdit[] children= parent.getChildren();
 		// First dive down to find the right parent.
+		int removed= 0;
 		for (int i= 0; i < children.length; i++) {
 			TextEdit child= children[i];
 			if (child.covers(edit)) {
 				insert(child, edit, edits);
 				return;
 			} else if (edit.covers(child)) {
-				parent.removeChild(i);
+				parent.removeChild(i - removed++);
 				edit.addChild(child);
 			} else {
 				IRegion intersect= intersect(edit, child);
@@ -355,6 +356,7 @@ public final class MoveSourceEdit extends TextEdit {
 					ReplaceEdit[] splits= splitEdit(edit, intersect);
 					insert(child, splits[0], edits);
 					edits.add(splits[1]);
+					return;
 				}
 			}
 		}
@@ -372,11 +374,11 @@ public final class MoveSourceEdit extends TextEdit {
 		int end2= offset2 + length2 - 1;
 		if (end2 < offset1)
 			return null;
+		
+		int end= Math.min(end1, end2);
 		if (offset1 < offset2) {
-			int end= Math.max(end1, end2);
 			return new Region(offset2, end - offset2 + 1);
 		}
-		int end= Math.max(end1, end2);
 		return new Region(offset1, end - offset1 + 1);
 	}
 
