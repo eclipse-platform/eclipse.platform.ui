@@ -44,6 +44,7 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.decorators.DecoratorUpdateListener;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
@@ -185,6 +186,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         try {
             refreshFromLocal();
             checkUpdates();
+            DecoratorUpdateListener.startUp();
         } finally {//Resume background jobs after we startup
             Platform.getJobManager().resume();
         }
@@ -205,6 +207,14 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         if (IDEWorkbenchPlugin.getPluginWorkspace() != null) {
             disconnectFromWorkspace();
         }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.WorkbenchAdvisor#preShutdown()
+     */
+    public boolean preShutdown() {
+    	DecoratorUpdateListener.shutDown();
+    	return super.preShutdown();
     }
 
     /* (non-Javadoc)
