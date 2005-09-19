@@ -13,18 +13,22 @@
 
 package org.eclipse.ui.tests.datatransfer;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -34,12 +38,17 @@ import org.eclipse.ui.internal.dialogs.ImportExportWizard;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage.ProjectRecord;
 import org.eclipse.ui.tests.TestPlugin;
+import org.eclipse.ui.tests.performance.FileTool;
 import org.eclipse.ui.tests.util.DialogCheck;
 import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 public class ImportExistingTest extends UITestCase {
-	public static final String PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
+	private static final String PLUGIN_ID = "org.eclipse.ui.tests";
+	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
+	private static final String WS_DATA_PREFIX = "data/workspaces";
+	private static final String WS_DATA_LOCATION = "importExistingFromDirTest";
+	
 	public ImportExistingTest(String testName) {
 		super(testName);
 	}
@@ -51,7 +60,7 @@ public class ImportExistingTest extends UITestCase {
 	public void testFindSingleZip() {
 		try {
 			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-					new Path(PATH_PREFIX+"helloworld.zip")));
+					new Path(DATA_PATH_PREFIX+"helloworld.zip")));
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
@@ -65,7 +74,7 @@ public class ImportExistingTest extends UITestCase {
 				projectNames.add(selectedProjects[i].getProjectName());
 			}
 
-			assertTrue("Not all projects were found correctly in tar", projectNames.containsAll(projects));
+			assertTrue("Not all projects were found correctly in zip", projectNames.containsAll(projects));
 		} catch (IOException e) {
 			fail(e.toString());
 		}
@@ -74,7 +83,7 @@ public class ImportExistingTest extends UITestCase {
 	public void testFindSingleTar() {
 		try {
 			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-					new Path(PATH_PREFIX+"helloworld.tar")));
+					new Path(DATA_PATH_PREFIX+"helloworld.tar")));
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
@@ -96,22 +105,27 @@ public class ImportExistingTest extends UITestCase {
 
 	public void testFindSingleDirectory() {
 		try {
-			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-					new Path(PATH_PREFIX+"HelloWorld")));
+			String dataLocation = copyDataLocation();
+			IPath wsPath = new Path(dataLocation).append(PLUGIN_ID).append(
+					DATA_PATH_PREFIX).append("HelloWorld");
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
-			
-			wpip.getProjectFromDirectoryRadio().setSelection((true)); // We're importing a directory
-			wpip.updateProjectsList(helloworld.getPath());
-			
-			ProjectRecord[] selectedProjects= wpip.getProjects();
+
+			wpip.getProjectFromDirectoryRadio().setSelection((true)); // We're
+																		// importing
+																		// a
+																		// directory
+			wpip.updateProjectsList(wsPath.toOSString());
+
+			ProjectRecord[] selectedProjects = wpip.getProjects();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
 			}
 
-			assertTrue("Not all projects were found correctly in directory", projectNames.containsAll(projects));
+			assertTrue("Not all projects were found correctly in directory",
+					projectNames.containsAll(projects));
 		} catch (IOException e) {
 			fail(e.toString());
 		}
@@ -125,7 +139,7 @@ public class ImportExistingTest extends UITestCase {
             for (int i = 0; i < workspaceProjects.length; i++) 
             	FileUtil.deleteProject(workspaceProjects[i]);
 			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-					new Path(PATH_PREFIX+"helloworld.zip")));
+					new Path(DATA_PATH_PREFIX+"helloworld.zip")));
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
@@ -169,7 +183,7 @@ public class ImportExistingTest extends UITestCase {
             for (int i = 0; i < workspaceProjects.length; i++) 
             	FileUtil.deleteProject(workspaceProjects[i]);
             URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-            		new Path(PATH_PREFIX+"helloworld.tar")));
+            		new Path(DATA_PATH_PREFIX+"helloworld.tar")));
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
@@ -206,20 +220,22 @@ public class ImportExistingTest extends UITestCase {
 	}
 	
 	public void testImportSingleDirectory() {
+		IPath wsPath = null;
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			
 			IProject[] workspaceProjects = root.getProjects();
             for (int i = 0; i < workspaceProjects.length; i++) 
             	FileUtil.deleteProject(workspaceProjects[i]);
-			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-					new Path(PATH_PREFIX+"HelloWorld")));
+			
+            String dataLocation = copyDataLocation();
+            wsPath = new Path(dataLocation).append(PLUGIN_ID).append(DATA_PATH_PREFIX).append("HelloWorld");
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
 			
 			wpip.getProjectFromDirectoryRadio().setSelection((true)); //We want this one selected
-			wpip.updateProjectsList(helloworld.getPath());
+			wpip.updateProjectsList(wsPath.toOSString());
 			ProjectRecord[] selectedProjects= wpip.getProjects();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
@@ -246,9 +262,38 @@ public class ImportExistingTest extends UITestCase {
 			fail(e.toString());
 		}
 	}
+
+	/**
+	 * Copies the data to a temporary directory and returns the new location.
+	 * 
+	 * @return the location
+	 */
+	private String copyDataLocation() throws IOException {
+        TestPlugin plugin = TestPlugin.getDefault();
+        if (plugin == null)
+            throw new IllegalStateException(
+                    "TestPlugin default reference is null");
+        
+        URL fullPathString = plugin.getDescriptor().find(
+				new Path(WS_DATA_PREFIX).append(WS_DATA_LOCATION + ".zip"));
+        
+        if (fullPathString == null) 
+        	throw new IllegalArgumentException();
+        
+        IPath path = new Path(fullPathString.getPath());
+
+        File origin = path.toFile();
+        if (!origin.exists())
+			throw new IllegalArgumentException();
+        
+        ZipFile zFile = new ZipFile(origin);        
+		
+		File destination = new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir()).toOSString());
+		FileTool.unzip(zFile, destination);
+		return destination.getAbsolutePath();
+	}
 	
-	private WizardProjectsImportPage getNewWizard()
-	{
+	private WizardProjectsImportPage getNewWizard(){
 		WizardProjectsImportPage wpip = new WizardProjectsImportPage();
 		
 		Shell shell = getShell();
