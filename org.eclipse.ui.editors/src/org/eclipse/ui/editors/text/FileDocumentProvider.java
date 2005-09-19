@@ -376,13 +376,20 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			try {
 
 				FileInfo info= (FileInfo)getElementInfo(editorInput);
+				boolean removeBOM= false;
+				if (CHARSET_UTF_8.equals(encoding)) {
+					if (info != null)
+						removeBOM= info.fHasBOM;
+					else
+						removeBOM= hasBOM(editorInput);
+				}
 
 				/*
 				 * XXX:
 				 * This is a workaround for a corresponding bug in Java readers and writer,
 				 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 				 */
-				if (info != null && info.fHasBOM && CHARSET_UTF_8.equals(encoding)) {
+				if (removeBOM) {
 					int n= 0;
 					do {
 						int bytes= contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
@@ -697,6 +704,15 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			FileInfo info= new FileInfo(d, m, f);
 			info.fModificationStamp= computeModificationStamp(input.getFile());
 			info.fStatus= s;
+			info.fEncoding= getPersistedEncoding(element);
+			info.fHasBOM= hasBOM(element);
+
+			/*
+			 * The code below is a no-op in the implementation in this class
+			 * because the info is not yet stored in the element map.
+			 * Calling to not break clients who have overridden the method.
+			 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109255
+			 */
 			cacheEncodingState(element);
 
 			return info;
@@ -1150,7 +1166,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			}
 		}
 	}
-
+	
 	/**
 	 * Computes the scheduling rule needed to create or modify a resource. If
 	 * the resource exists, its modify rule is returned. If it does not, the
