@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.Assert;
@@ -140,6 +141,8 @@ public class TemplateStore {
 		writer.save((TemplatePersistenceData[]) custom.toArray(new TemplatePersistenceData[custom.size()]), output);
 
 		fPreferenceStore.setValue(fKey, output.toString());
+		if (fPreferenceStore instanceof IPersistentPreferenceStore)
+			((IPersistentPreferenceStore)fPreferenceStore).save();
 	}
 
 	/**
