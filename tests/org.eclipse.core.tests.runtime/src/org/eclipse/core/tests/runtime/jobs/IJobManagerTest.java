@@ -238,7 +238,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				return ASYNC_FINISH;
 			}
 		};
-		//create and run a thread that will run and finish the async job
+		//create and run a thread that will run and finish the asynchronous job
 		Runnable r = new Runnable() {
 			public void run() {
 				job.schedule();
@@ -654,7 +654,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		});
 
 		//start the thread that will join the first family of jobs
-		//it will be blocked until the all jobs in the first family finish execution or are cancelled
+		//it will be blocked until the all jobs in the first family finish execution or are canceled
 		t.start();
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_START);
 		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
@@ -665,7 +665,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		assertTrue("2.1", status[0] == TestBarrier.STATUS_RUNNING);
 
 		//cancel the first family of jobs
-		//the join call should be unblocked when all the jobs are cancelled
+		//the join call should be unblocked when all the jobs are canceled
 		manager.cancel(first);
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
 
@@ -881,7 +881,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	public void testJobFamilyNULL() {
-		//test methods that accept the null job family (ie. all jobs)
+		//test methods that accept the null job family (i.e. all jobs)
 		final int NUM_JOBS = 20;
 		Job[] jobs = new Job[NUM_JOBS];
 		//create two different families of jobs
@@ -975,7 +975,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		for (int i = 1; i < NUM_JOBS; i++) {
 			//all other jobs in the first family should be sleeping
-			//they can now be cancelled
+			//they can now be canceled
 			if (jobs[i].belongsTo(first)) {
 				assertState("2." + i, jobs[i], Job.SLEEPING);
 				jobs[i].cancel();
@@ -996,7 +996,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		for (int i = 1; i < NUM_JOBS; i++) {
 			//all other jobs in the second family should be sleeping
-			//they can now be cancelled
+			//they can now be canceled
 			if (jobs[i].belongsTo(second)) {
 				assertState("4." + i, jobs[i], Job.SLEEPING);
 				jobs[i].cancel();
@@ -1561,7 +1561,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	/**
-	 * A job has been cancelled.  Pause this thread so that a worker thread
+	 * A job has been canceled.  Pause this thread so that a worker thread
 	 * has a chance to receive the cancel event.
 	 */
 	private void waitForCancel(Job job) {
@@ -1606,15 +1606,15 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	/**
-	 * Ensure given job complets within a second.
+	 * Ensure given job completes within a second.
 	 */
 	private void waitForCompletion(Job job) {
 		waitForCompletion(job, 1000);
 	}
 
 	/**
-	 * A family of jobs have been cancelled. Pause this thread until all of the jobs
-	 * in the family are cancelled
+	 * A family of jobs have been canceled. Pause this thread until all of the jobs
+	 * in the family are canceled
 	 */
 	private void waitForFamilyCancel(Job[] jobs, TestJobFamily type) {
 
@@ -1625,7 +1625,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				sleep(100);
 				Thread.yield();
 				//sanity test to avoid hanging tests
-				assertTrue("Timeout waiting for job in family " + type.getType() + "to be cancelled ", i++ < 100);
+				assertTrue("Timeout waiting for job in family " + type.getType() + "to be canceled ", i++ < 100);
 			}
 		}
 	}
