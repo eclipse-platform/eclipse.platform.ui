@@ -23,6 +23,10 @@ import org.eclipse.jface.text.IRegion;
  * and a name into a single object. The name must be a human
  * readable string use to present the text edit group in the
  * user interface.
+ * <p>
+ * Clients may extend this class to add extra information to
+ * a text edit group.
+ * </p>
  *
  * @since 3.0
  */
