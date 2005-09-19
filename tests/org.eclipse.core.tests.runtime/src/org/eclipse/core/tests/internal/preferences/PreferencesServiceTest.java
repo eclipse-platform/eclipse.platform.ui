@@ -119,12 +119,12 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferencesService service = Platform.getPreferencesService();
 
 		// create test node hierarchy
-		String qualifier = getRandomString() + '1';
+		String qualifier = getUniqueString() + '1';
 		IEclipsePreferences test = new TestScope().getNode(qualifier);
-		String key = getRandomString() + 'k';
-		String value = getRandomString() + 'v';
+		String key = getUniqueString() + 'k';
+		String value = getUniqueString() + 'v';
 		String key1 = "http://eclipse.org:24";
-		String value1 = getRandomString() + "v1";
+		String value1 = getUniqueString() + "v1";
 		String actual = test.get(key, null);
 		assertNull("1.0", actual);
 		test.put(key, value);
@@ -150,14 +150,14 @@ public class PreferencesServiceTest extends RuntimeTest {
 		byte[] bytes = output.toByteArray();
 
 		// add new values
-		String newKey = getRandomString() + '3';
-		String newValue = getRandomString() + '4';
+		String newKey = getUniqueString() + '3';
+		String newValue = getUniqueString() + '4';
 		actual = test.get(newKey, null);
 		assertNull("3.0", actual);
 		test.put(newKey, newValue);
 		actual = test.get(newKey, null);
 		assertEquals("3.1", newValue, actual);
-		String newOldValue = getRandomString() + '5';
+		String newOldValue = getUniqueString() + '5';
 		test.put(key, newOldValue);
 		actual = test.get(key, null);
 		assertEquals("3.2", newOldValue, actual);
@@ -245,8 +245,8 @@ public class PreferencesServiceTest extends RuntimeTest {
 				DefaultScope.SCOPE};
 		String[] fullOrder = new String[] {"a", "b", "c"};
 		String[] nullKeyOrder = new String[] {"e", "f", "g"};
-		String qualifier = getRandomString();
-		String key = getRandomString();
+		String qualifier = getUniqueString();
+		String key = getUniqueString();
 
 		// bogus set parms
 		try {
@@ -331,9 +331,9 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 	public void testGetWithNodes() {
 		IPreferencesService service = Platform.getPreferencesService();
-		String qualifier = getRandomString();
-		String key = getRandomString();
-		String expected = getRandomString();
+		String qualifier = getUniqueString();
+		String key = getUniqueString();
+		String expected = getUniqueString();
 
 		// nothing set - navigation
 		Preferences node = service.getRootNode().node(TestScope.SCOPE).node(qualifier);
@@ -368,7 +368,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		// set the value in the default scope as well
 		Preferences defaultNode = service.getRootNode().node(DefaultScope.SCOPE).node(qualifier);
-		String defaultValue = getRandomString();
+		String defaultValue = getUniqueString();
 		defaultNode.put(key, defaultValue);
 		actual = defaultNode.get(key, null);
 		assertNotNull("7.0", actual);
@@ -394,12 +394,12 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 	public void testSearchingStringBasics() {
 		IPreferencesService service = Platform.getPreferencesService();
-		String qualifier = getRandomString();
-		String key = getRandomString();
+		String qualifier = getUniqueString();
+		String key = getUniqueString();
 		Preferences node = service.getRootNode().node(TestScope.SCOPE).node(qualifier);
 		Preferences defaultNode = service.getRootNode().node(DefaultScope.SCOPE).node(qualifier);
-		String value = getRandomString();
-		String defaultValue = getRandomString() + '1';
+		String value = getUniqueString();
+		String defaultValue = getUniqueString() + '1';
 		String actual = null;
 
 		ArrayList list = new ArrayList();
@@ -483,7 +483,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 	public void testGet() {
 		IPreferencesService service = Platform.getPreferencesService();
-		String qualifier = getRandomString();
+		String qualifier = getUniqueString();
 		Preferences node = service.getRootNode().node(TestScope.SCOPE).node(qualifier);
 		service.setDefaultLookupOrder(qualifier, null, new String[] {TestScope.SCOPE});
 
@@ -536,9 +536,9 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 	public void testImportLegacy() {
 		IPreferencesService service = Platform.getPreferencesService();
-		String[] qualifiers = new String[] {getRandomString() + 1, getRandomString() + 2};
-		String[] oldKeys = new String[] {getRandomString() + 3, getRandomString() + 4};
-		String[] newKeys = new String[] {getRandomString() + 5, getRandomString() + 6};
+		String[] qualifiers = new String[] {getUniqueString() + 1, getUniqueString() + 2};
+		String[] oldKeys = new String[] {getUniqueString() + 3, getUniqueString() + 4};
+		String[] newKeys = new String[] {getUniqueString() + 5, getUniqueString() + 6};
 		Preferences node = service.getRootNode().node(Plugin.PLUGIN_PREFERENCE_SCOPE);
 		String actual;
 
@@ -555,7 +555,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		for (int i = 0; i < qualifiers.length; i++) {
 			Preferences current = node.node(qualifiers[i]);
 			for (int j = 0; j < oldKeys.length; j++) {
-				current.put(oldKeys[j], getRandomString());
+				current.put(oldKeys[j], getUniqueString());
 				actual = current.get(oldKeys[j], null);
 				assertNotNull("2.0." + current.absolutePath() + IPath.SEPARATOR + oldKeys[j], actual);
 			}
@@ -590,7 +590,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 			// version id
 			properties.put(qualifiers[i], "2.1.3");
 			for (int j = 0; j < keys.length; j++)
-				properties.put(qualifiers[i] + IPath.SEPARATOR + keys[j], getRandomString());
+				properties.put(qualifiers[i] + IPath.SEPARATOR + keys[j], getUniqueString());
 		}
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
@@ -617,7 +617,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 	public void testExportExcludes1() {
 
 		// add some random key/value pairs
-		String qualifier = getRandomString();
+		String qualifier = getUniqueString();
 		String child = "child";
 		IEclipsePreferences node = new TestScope().getNode(qualifier);
 		Preferences childNode = node.node(child);
@@ -644,10 +644,10 @@ public class PreferencesServiceTest extends RuntimeTest {
 	 * - expect that k/v pair to be in the file
 	 */
 	public void testExportExcludes2() {
-		String qualifier = getRandomString();
+		String qualifier = getUniqueString();
 		IEclipsePreferences node = new TestScope().getNode(qualifier);
-		String key = getRandomString();
-		String value = getRandomString();
+		String key = getUniqueString();
+		String value = getUniqueString();
 		node.put(key, value);
 		String[] excludesList = new String[] {};
 
@@ -664,7 +664,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 	 * - expect only the other key to exist
 	 */
 	public void testExportExcludes3() {
-		String qualifier = getRandomString();
+		String qualifier = getUniqueString();
 		IEclipsePreferences node = new TestScope().getNode(qualifier);
 		String k1 = "a";
 		String k2 = "b";
@@ -691,7 +691,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 	 * - expect all k/v pairs
 	 */
 	public void testExportExcludes4() {
-		String qualifier = getRandomString();
+		String qualifier = getUniqueString();
 		IEclipsePreferences node = new TestScope().getNode(qualifier);
 		String k1 = "a";
 		String k2 = "b";
@@ -713,10 +713,10 @@ public class PreferencesServiceTest extends RuntimeTest {
 	 * - exporting default values shouldn't do anything
 	 */
 	public void testExportDefaults() {
-		String qualifier = getRandomString();
+		String qualifier = getUniqueString();
 		IEclipsePreferences node = new DefaultScope().getNode(qualifier);
 		for (int i = 0; i < 10; i++)
-			node.put(Integer.toString(i), getRandomString());
+			node.put(Integer.toString(i), getUniqueString());
 
 		ExportVerifier verifier = new ExportVerifier(node, (String[]) null);
 		verifier.verify();
@@ -729,7 +729,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 	 * - expect all values to be exported but that one
 	 */
 	public void testExportExcludes5() {
-		String qualifier = getRandomString();
+		String qualifier = getUniqueString();
 		IEclipsePreferences node = new TestScope().getNode(qualifier);
 		Preferences child1 = node.node("c1");
 		Preferences child2 = node.node("c2");
