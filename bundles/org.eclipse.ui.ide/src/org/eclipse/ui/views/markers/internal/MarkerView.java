@@ -396,8 +396,8 @@ public abstract class MarkerView extends TableView {
 
 		MarkerFilter[] filters = getFilters();
 		for (int i = 0; i < filters.length; i++) {
-			memento.createChild(TAG_FILTER_ENTRY,filters[i].getName());
-			filters[i].saveFilterSettings(memento);
+			IMemento child = memento.createChild(TAG_FILTER_ENTRY,filters[i].getName());
+			filters[i].saveFilterSettings(child);
 		}
 
 		StringWriter writer = new StringWriter();
