@@ -94,6 +94,9 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The project caption key */
 	private static final String PROJECT_CAPTION= "projectCaption"; //$NON-NLS-1$
 
+	/** The refactoring collection key */
+	private static final String REFACTORING_COLLECTION= "refactoringCollection"; //$NON-NLS-1$
+
 	/** The refactoring format key */
 	private static final String REFACTORING_FORMAT= "refactoringFormat"; //$NON-NLS-1$
 
@@ -137,11 +140,20 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The button id */
 	protected final int fButtonId;
 
+	/** The caption image */
+	private Image fCaptionImage= null;
+
+	/** The collection item, or <code>null</code> */
+	private TreeItem fCollectionItem= null;
+
 	/** The comment pane */
 	private CompareViewerSwitchingPane fCommentPane= null;
 
 	/** The container image */
 	private Image fContainerImage= null;
+
+	/** The element image */
+	private Image fElementImage= null;
 
 	/** The history input of the dialog */
 	protected final RefactoringDescriptorHandle[] fHistoryInput;
@@ -158,14 +170,11 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The history tree */
 	private Tree fHistoryTree= null;
 
+	/** The item image */
+	private Image fItemImage= null;
+
 	/** The project, or <code>null</code> */
 	private IProject fProject= null;
-
-	/** The refactor image */
-	private Image fRefactorImage= null;
-
-	/** The refactoring image */
-	private Image fRefactoringImage= null;
 
 	/** The dialog settings, or <code>null</code> */
 	private IDialogSettings fSettings= null;
@@ -187,8 +196,8 @@ public class RefactoringHistoryDialog extends Dialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		fBundle= bundle;
 		fHistoryInput= input;
-		fSettings= RefactoringUIPlugin.getDefault().getDialogSettings();
 		fButtonId= id;
+		fSettings= RefactoringUIPlugin.getDefault().getDialogSettings();
 	}
 
 	/**
@@ -233,7 +242,7 @@ public class RefactoringHistoryDialog extends Dialog {
 				fHistoryModel.put(date, new ArrayList(8));
 			}
 			item= new TreeItem(lastDay, SWT.NONE);
-			item.setImage(fRefactoringImage);
+			item.setImage(fElementImage);
 			final List list= (List) fHistoryModel.get(lastDay.getData());
 			list.add(handle);
 			item.setText(MessageFormat.format(fBundle.getString(REFACTORING_FORMAT), new String[] { DateFormat.getTimeInstance().format(date), handle.getDescription()}));
@@ -241,9 +250,15 @@ public class RefactoringHistoryDialog extends Dialog {
 			if (selected)
 				lastDay.setExpanded(true);
 		} else {
-			item= new TreeItem(fHistoryTree, SWT.NONE);
-			item.setImage(fRefactoringImage);
+			if (fCollectionItem == null) {
+				fCollectionItem= new TreeItem(fHistoryTree, SWT.NONE);
+				fCollectionItem.setImage(fCaptionImage);
+				fCollectionItem.setText(fBundle.getString(REFACTORING_COLLECTION));
+			}
+			item= new TreeItem(fCollectionItem, SWT.NONE);
+			item.setImage(fItemImage);
 			item.setText(handle.getDescription());
+			item.setData(handle);
 		}
 		if (selected) {
 			fHistoryTree.setSelection(new TreeItem[] { item});
@@ -284,10 +299,12 @@ public class RefactoringHistoryDialog extends Dialog {
 	public final void create() {
 		fHistoryModel.clear();
 		super.create();
+		fCollectionItem= null;
 		for (int index= 0; index < fHistoryInput.length - 1; index++)
 			addDescriptor(fHistoryInput[index], false);
 		if (fHistoryInput.length > 0)
 			addDescriptor(fHistoryInput[fHistoryInput.length - 1], true);
+		fCollectionItem= null;
 	}
 
 	/**
@@ -311,9 +328,10 @@ public class RefactoringHistoryDialog extends Dialog {
 		final Composite result= (Composite) super.createDialogArea(parent);
 		getShell().setText(fBundle.getString(DIALOG_TITLE));
 
+		fItemImage= RefactoringPluginImages.DESC_OBJS_DEFAULT_CHANGE.createImage();
 		fContainerImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_DATE.createImage();
-		fRefactoringImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_TIME.createImage();
-		fRefactorImage= RefactoringPluginImages.DESC_OBJS_COMPOSITE_CHANGE.createImage();
+		fElementImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_TIME.createImage();
+		fCaptionImage= RefactoringPluginImages.DESC_OBJS_COMPOSITE_CHANGE.createImage();
 
 		final Composite container= new Composite(result, SWT.NONE);
 		GridLayout layout= new GridLayout(2, false);
@@ -337,10 +355,12 @@ public class RefactoringHistoryDialog extends Dialog {
 			public final void widgetDisposed(final DisposeEvent event) {
 				if (fContainerImage != null)
 					fContainerImage.dispose();
-				if (fRefactoringImage != null)
-					fRefactoringImage.dispose();
-				if (fRefactorImage != null)
-					fRefactorImage.dispose();
+				if (fElementImage != null)
+					fElementImage.dispose();
+				if (fCaptionImage != null)
+					fCaptionImage.dispose();
+				if (fElementImage != null)
+					fElementImage.dispose();
 			}
 		});
 
@@ -354,7 +374,7 @@ public class RefactoringHistoryDialog extends Dialog {
 		leftPane.setLayout(layout);
 
 		fHistoryPane= new CompareViewerPane(leftPane, SWT.BORDER | SWT.FLAT);
-		fHistoryPane.setImage(fRefactorImage);
+		fHistoryPane.setImage(fCaptionImage);
 		String text= null;
 		if (fProject != null)
 			text= MessageFormat.format(fBundle.getString(PROJECT_CAPTION), new String[] { fProject.getName()});
