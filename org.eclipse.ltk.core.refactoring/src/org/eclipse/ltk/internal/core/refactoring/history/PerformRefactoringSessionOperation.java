@@ -95,8 +95,13 @@ public class PerformRefactoringSessionOperation implements IWorkspaceRunnable {
 						execute= true;
 				} else
 					execute= false;
-				if (execute)
-					ResourcesPlugin.getWorkspace().run(new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS), new SubProgressMonitor(monitor, 1));
+				if (execute) {
+					final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
+					ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 1));
+					fSessionStatus.merge(operation.getConditionStatus());
+					if (!fSessionStatus.hasFatalError())
+						fSessionStatus.merge(operation.getValidationStatus());
+				}
 			}
 		} finally {
 			monitor.done();
