@@ -1106,6 +1106,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		getTracker().replace(pos, length, text);
 
 		fModificationStamp= modificationStamp;
+		fNextModificationStamp= Math.max(fModificationStamp, fNextModificationStamp);
 		e.fModificationStamp= fModificationStamp;
 
 		fireDocumentChanged(e);
@@ -1138,6 +1139,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		getTracker().set(text);
 
 		fModificationStamp= modificationStamp;
+		fNextModificationStamp= Math.max(fModificationStamp, fNextModificationStamp);
 		e.fModificationStamp= fModificationStamp;
 
 		fireDocumentChanged(e);
