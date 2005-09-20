@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.wizards;
 
 import java.io.File;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -83,11 +84,13 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 				d.setFilterExtensions(new String[] {"*.psf", "*"}); //$NON-NLS-1$ //$NON-NLS-2$
 				d.setFilterNames(new String[] {TeamUIMessages.ImportProjectSetMainPage_Project_Set_Files_2, TeamUIMessages.ImportProjectSetMainPage_allFiles}); //
 				String fileName= getFileName();
-				if (fileName != null) {
+				if (fileName != null && fileName.length() > 0) {
 					int separator= fileName.lastIndexOf(System.getProperty ("file.separator").charAt (0)); //$NON-NLS-1$
 					if (separator != -1) {
 						fileName= fileName.substring(0, separator);
 					}
+				} else {
+					fileName= ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 				}
 				d.setFilterPath(fileName);
 				String f = d.open();
