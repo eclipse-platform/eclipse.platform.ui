@@ -23,7 +23,7 @@ import org.eclipse.osgi.util.NLS;
  * Implementation note: all the data structures of this class are protected
  * by a single lock object held as a private field in this class.  The JobManager
  * instance itself is not used because this class is publicly reachable, and third
- * party clients may try to sychronize on it.
+ * party clients may try to synchronize on it.
  * 
  * The WorkerPool class uses its own monitor for synchronizing its data
  * structures. To avoid deadlock between the two classes, the JobManager
