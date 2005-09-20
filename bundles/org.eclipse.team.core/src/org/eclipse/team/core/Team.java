@@ -146,6 +146,12 @@ public final class Team {
 		// The ignores are cached and when the preferences change the
 		// cache is cleared. This makes it faster to lookup without having
 		// to re-parse the preferences.
+		initializeIgnores();
+		IIgnoreInfo[] result = getIgnoreInfo(globalIgnore);
+		return result;
+	}
+
+	private static void initializeIgnores() {
 		if (globalIgnore == null) {
 			globalIgnore = new TreeMap();
 			pluginIgnore = new TreeMap();
@@ -157,8 +163,6 @@ public final class Team {
 			}
 			initializePluginIgnores(pluginIgnore, globalIgnore);
 		}
-		IIgnoreInfo[] result = getIgnoreInfo(globalIgnore);
-		return result;
 	}
 
 	private static IIgnoreInfo[] getIgnoreInfo(Map gIgnore) {
@@ -222,6 +226,7 @@ public final class Team {
 	 * Add patterns to the list of global ignores.
 	 */
 	public static void setAllIgnores(String[] patterns, boolean[] enabled) {
+		initializeIgnores();
 		globalIgnore = new TreeMap();
 		ignoreMatchers = null;
 		for (int i = 0; i < patterns.length; i++) {
