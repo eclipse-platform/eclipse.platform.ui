@@ -113,6 +113,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	private String fExplicitEncoding;
 	/** Tells whether the file on disk has a BOM. */
 	private boolean fHasBOM;
+	/**
+	 * Lock for lazy creation of annotation model.
+	 * @since 3.2
+	 */
+	private final Object fAnnotationModelCreationLock= new Object();
 
 
 	public ResourceTextFileBuffer(TextFileBufferManager manager) {
@@ -130,6 +135,13 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getAnnotationModel()
 	 */
 	public IAnnotationModel getAnnotationModel() {
+		synchronized (fAnnotationModelCreationLock) {
+			if (fAnnotationModel == null && !isDisconnected()) {
+				fAnnotationModel= fManager.createAnnotationModel(getLocation());
+				if (fAnnotationModel != null)
+					fAnnotationModel.connect(fDocument);
+			}
+		}
 		return fAnnotationModel;
 	}
 
@@ -246,8 +258,6 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 			fDocument= fManager.createEmptyDocument(getLocation());
 			setDocumentContent(fDocument, fFile, fEncoding);
-
-			fAnnotationModel= fManager.createAnnotationModel(getLocation());
 
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(getLocation());

@@ -107,6 +107,11 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	private boolean fHasBOM;
 	/** The annotation model of this file buffer */
     private IAnnotationModel fAnnotationModel;
+	/**
+	 * Lock for lazy creation of annotation model.
+	 * @since 3.2
+	 */
+	private final Object fAnnotationModelCreationLock= new Object();
 
 
 	public JavaTextFileBuffer(TextFileBufferManager manager) {
@@ -124,6 +129,13 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getAnnotationModel()
 	 */
 	public IAnnotationModel getAnnotationModel() {
+		synchronized (fAnnotationModelCreationLock) {
+			if (fAnnotationModel == null && !isDisconnected()) {
+				fAnnotationModel= fManager.createAnnotationModel(getLocation());
+				if (fAnnotationModel != null)
+					fAnnotationModel.connect(fDocument);
+			}
+		}
 		return fAnnotationModel;
 	}
 
@@ -333,9 +345,6 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			fDocument= fManager.createEmptyDocument(getLocation());
 			cacheEncodingState(monitor);
 			setDocumentContent(fDocument, fFile, fEncoding, monitor);
-
-			fAnnotationModel= fManager.createAnnotationModel(getLocation());
-
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(getLocation());
 			fStatus= x.getStatus();
