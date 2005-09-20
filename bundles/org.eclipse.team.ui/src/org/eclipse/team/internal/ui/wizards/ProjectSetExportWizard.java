@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,8 +35,8 @@ import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.ITeamUIImages;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.UIProjectSetSerializationContext;
 import org.eclipse.ui.IExportWizard;
@@ -55,7 +55,6 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 		mainPage = new ExportProjectSetMainPage("projectSetMainPage", TeamUIMessages.ProjectSetExportWizard_Export_a_Project_Set_3, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_EXPORT_BANNER)); //$NON-NLS-1$ 
 		IProject[] projects = (IProject[])selection.toList().toArray(new IProject[0]);
 		mainPage.setSelectedProjects(projects);
-		mainPage.setFileName(ProjectSetImportWizard.lastFile);
 		addPage(mainPage);
 	}
 	public boolean performFinish() {
@@ -68,7 +67,7 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 					if (path.getFileExtension() == null) {
 						filename = filename + ".psf"; //$NON-NLS-1$
 					}
-					ProjectSetImportWizard.lastFile = filename;
+					PsfFilenameStore.remember(filename);
 					File file = new File(filename);
 					File parentFile = file.getParentFile();
 					if (parentFile != null && !parentFile.exists()) {
@@ -196,7 +195,7 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 		}
 		return result[0];
 	}
-	
+
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,16 +17,28 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.internal.ui.IHelpContextIds;
+import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 
 public class ImportProjectSetMainPage extends TeamWizardPage {
-	Text fileText;
+	Combo fileCombo;
 	String file = ""; //$NON-NLS-1$
 	Button browseButton;
 	Button createWorkingSetButton;
@@ -62,11 +74,14 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		inner.setLayout(layout);
 		
 		createLabel(inner, TeamUIMessages.ImportProjectSetMainPage_Project_Set_File_Name__2); 
-		fileText = createTextField(inner);
-		if (file != null) fileText.setText(file);
-		fileText.addListener(SWT.Modify, new Listener() {
+
+		fileCombo = createDropDownCombo(inner);
+		file = PsfFilenameStore.getSuggestedDefault();
+		fileCombo.setItems(PsfFilenameStore.getHistory());
+		fileCombo.setText(file);
+		fileCombo.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
-				file = fileText.getText();				
+				file = fileCombo.getText();				
 				updateEnablement();
 			}
 		});
@@ -95,7 +110,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 				d.setFilterPath(fileName);
 				String f = d.open();
 				if (f != null) {
-					fileText.setText(f);
+					fileCombo.setText(f);
 					file = f;
 				}
 			}
@@ -188,19 +203,15 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		}
 		setPageComplete(complete);
 	}
-	
+
 	public String getFileName() {
 		return file;
 	}
-	public void setFileName(String file) {
-		if (file != null) {
-			this.file = file;
-		}
-	}
+
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			fileText.setFocus();
+			fileCombo.setFocus();
 		}
 	}
 
@@ -211,5 +222,4 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		if (!createWorkingSet) return null;
 		return workingSetName;
 	}
-
 }

@@ -16,6 +16,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -96,5 +97,21 @@ public abstract class TeamWizardPage extends WizardPage {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		text.setLayoutData(data);
 		return text;
+	}
+
+	/**
+	 * Create a drop-down combo box specific for this application
+	 * 
+	 * @param parent  the parent of the new combo box
+	 * @return the new combo box
+	 */
+	protected Combo createDropDownCombo(Composite parent) {
+		Combo combo = new Combo(parent, SWT.DROP_DOWN);
+		GridData comboData = new GridData(GridData.FILL_HORIZONTAL);
+		comboData.verticalAlignment = GridData.CENTER;
+		comboData.grabExcessVerticalSpace = false;
+		comboData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		combo.setLayoutData(comboData);
+		return combo;
 	}
 }

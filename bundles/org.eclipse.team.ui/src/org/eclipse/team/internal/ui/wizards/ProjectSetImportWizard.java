@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,6 @@ import org.xml.sax.SAXException;
 
 public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 	ImportProjectSetMainPage mainPage;
-	public static String lastFile;
 
 	public ProjectSetImportWizard() {
 		setNeedsProgressMonitor(true);
@@ -44,11 +43,10 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 	
 	public void addPages() {
 		mainPage = new ImportProjectSetMainPage("projectSetMainPage", TeamUIMessages.ProjectSetImportWizard_Import_a_Project_Set_3, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_IMPORT_BANNER)); //$NON-NLS-1$ 
-		mainPage.setFileName(lastFile);
 		addPage(mainPage);
 	}
+
 	public boolean performFinish() {
-		
 		// check if the desired working set exists
 		final String workingSetName = mainPage.getWorkingSetName();
 		if (workingSetName != null) {
@@ -62,8 +60,9 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 		try {
 			getContainer().run(true, true, new WorkspaceModifyOperation(null) {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException {
-					lastFile= mainPage.getFileName();
-					IProject[] newProjects= ProjectSetImporter.importProjectSet(lastFile, getShell(), monitor);
+					String psfFile = mainPage.getFileName();
+					PsfFilenameStore.remember(psfFile);
+					IProject[] newProjects= ProjectSetImporter.importProjectSet(psfFile, getShell(), monitor);
 					if (workingSetName != null)
 						createWorkingSet(workingSetName, newProjects);
 					result[0] = true;
@@ -102,7 +101,10 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 			oldSet.setElements(projects);
 		}	
 	}
-	
+
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		// The code that finds "selection" is broken (it is always empty), so we
+		// must dig for the selection in the workbench.
+		PsfFilenameStore.setDefaultFromSelection(workbench);
 	}
 }

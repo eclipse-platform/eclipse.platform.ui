@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,8 @@
 package org.eclipse.team.internal.ui.wizards;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -19,11 +20,20 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.TeamUIMessages;
@@ -32,7 +42,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class ExportProjectSetMainPage extends TeamWizardPage {
-	Text fileText;
+	Combo fileCombo;
 	String file = ""; //$NON-NLS-1$
 	Button browseButton;
 	List selectedProjects = new ArrayList();
@@ -94,11 +104,14 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		inner.setLayout(layout);
 
 		createLabel(inner, TeamUIMessages.ExportProjectSetMainPage__File_name__1); 
-		fileText = createTextField(inner);
-		if (file != null) fileText.setText(file);
-		fileText.addListener(SWT.Modify, new Listener() {
+
+		fileCombo = createDropDownCombo(inner);
+		file = PsfFilenameStore.getSuggestedDefault();
+		fileCombo.setItems(PsfFilenameStore.getHistory());
+		fileCombo.setText(file);
+		fileCombo.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
-				file = fileText.getText();
+				file = fileCombo.getText();				
 				updateEnablement();
 			}
 		});
@@ -126,7 +139,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 				d.setFilterPath(fileName);
 				String f = d.open();
 				if (f != null) {
-					fileText.setText(f);
+					fileCombo.setText(f);
 					file = f;
 				}
 			}
@@ -193,7 +206,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			fileText.setFocus();
+			fileCombo.setFocus();
 		}
 	}
 }
