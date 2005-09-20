@@ -307,6 +307,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 						}
 					}
 					
+					fHasProposals= true; // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109965
 					if (count == 1 && !autoActivated && canAutoInsert(fComputedProposals[0])) {
 						insertProposal(fComputedProposals[0], (char) 0, 0, fInvocationOffset);
 						hide();
@@ -666,6 +667,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (fMessageTextFont != null) {
 			fMessageTextFont.dispose();
 			fMessageTextFont= null;
+		}
+		
+		if (fMessageText != null) {
+			fMessageText= null;
 		}
 		
 		fLastCompletionOffset= -1;
@@ -1167,6 +1172,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 						}
 					}
 					
+					fHasProposals= true; // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109965
 					if (count == 1 && canAutoInsert(fFilteredProposals[0])) {
 						insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
 						hide();
