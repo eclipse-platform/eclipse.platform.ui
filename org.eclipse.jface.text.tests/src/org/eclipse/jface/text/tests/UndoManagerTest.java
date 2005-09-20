@@ -415,6 +415,19 @@ public class UndoManagerTest extends TestCase {
 
 	}
 	
+	// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=109104 
+	public void testDocumentStamp2() throws BadLocationException {
+		final Document document= new Document("");
+		final int stringLength= 13;
+		fTextViewer.setDocument(document);
+		document.replace(0, 0, createRandomString(stringLength));
+		long stamp= document.getModificationStamp();
+		fUndoManager.undo();
+		document.replace(0, 0, createRandomString(stringLength));
+		assertFalse(stamp == document.getModificationStamp());
+		
+	}
+	
 	private static String createRandomString(int length) {
 		final StringBuffer buffer= new StringBuffer();
 		
