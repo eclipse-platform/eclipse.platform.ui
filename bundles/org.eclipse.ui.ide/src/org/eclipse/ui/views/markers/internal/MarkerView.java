@@ -388,9 +388,10 @@ public abstract class MarkerView extends TableView {
 	}
 
 	/**
-	 * Store the filters preference.
+	 * Update for filter changes. Save the preference and
+	 * clear the enabled cache.
 	 */
-	private void storeFiltersPreferences() {
+	void updateForFilterChanges() {
 
 		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
 
@@ -410,7 +411,8 @@ public abstract class MarkerView extends TableView {
 		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(
 				getFiltersPreferenceName(), writer.toString());
 		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
-
+		
+		clearEnabledFilters();
 	}
 
 	/**
@@ -1066,7 +1068,8 @@ public abstract class MarkerView extends TableView {
 			else
 				setFilters(result);
 
-			storeFiltersPreferences();
+			updateForFilterChanges();
+			refreshFilterMenu();
 			refresh();
 		}
 	}
@@ -1078,8 +1081,14 @@ public abstract class MarkerView extends TableView {
 	 */
 	void setFilters(MarkerFilter[] newFilters) {
 		markerFilters = newFilters;
+	}
+
+	/**
+	 * Clear the cache of enabled filters.
+	 *
+	 */
+	void clearEnabledFilters() {
 		enabledFilters = null;
-		refreshFilterMenu();
 	}
 
 	/**
@@ -1255,7 +1264,7 @@ public abstract class MarkerView extends TableView {
 		menu.add(new Separator(MENU_FILTERS_GROUP));
 		// Don't add in the filters until they are set
 		filtersMenu = new MenuManager(MarkerMessages.filtersSubMenu_title);
-
+		refreshFilterMenu();
 		menu.appendToGroup(MENU_FILTERS_GROUP, filtersMenu);
 	}
 }
