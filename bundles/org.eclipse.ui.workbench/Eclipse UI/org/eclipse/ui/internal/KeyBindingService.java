@@ -585,12 +585,12 @@ public final class KeyBindingService implements INestableKeyBindingService {
              * Either activate this service again, or remove the submission
              * myself.
              */
-            if (handlerSubmission != null) {
-                if (parent != null) {
-                    if (active) {
-                        parent.activateNestedService(this);
-                    }
-                } else {
+            if (parent != null) {
+                if (active) {
+                    parent.activateNestedService(this);
+                }
+            } else {
+            	if (handlerSubmission != null) {
                     Workbench.getInstance().getCommandSupport()
                             .removeHandlerSubmission(handlerSubmission);
                     handlerSubmission.getHandler().dispose();
