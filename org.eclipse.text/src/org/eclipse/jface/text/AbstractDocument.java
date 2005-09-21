@@ -156,7 +156,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	private long fModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	/**
-	 * The current modification stamp.
+	 * Keeps track of next modification stamp.
 	 * @since 3.1.1
 	 */
 	private long fNextModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
