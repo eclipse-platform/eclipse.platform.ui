@@ -112,7 +112,7 @@ public class HeapStatus extends Composite {
 		if (gcImage != null)
 			imgBounds = gcImage.getBounds();
 		Display display = getDisplay();
-		usedMemCol = new Color(display, 255, 255, 175);  // light yellow
+		usedMemCol = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		lowMemCol = new Color(display, 255, 70, 70);  // medium red 
 		freeMemCol = new Color(display, 255, 190, 125);  // light orange
 		bgCol = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
