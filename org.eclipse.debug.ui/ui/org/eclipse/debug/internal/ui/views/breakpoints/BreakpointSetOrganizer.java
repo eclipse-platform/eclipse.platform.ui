@@ -144,39 +144,43 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 			IMarker marker = breakpoints[i].getMarker();
 			String[] names = getWorkingsetAttributeFromMarker(marker, IInternalDebugUIConstants.WORKING_SET_NAME);
 			//add it to the default set if the listing is empty
-			for (int j = 1; j < names.length; j++) {
-				set = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(names[j]);
-				// if we cannot find the one we want, try to get the default
-				if (set == null) {
-					set = getDefaultWorkingSet();
-				}// end if
-				if (set != null) {
-					fCache.addEntry(marker, set.getName()); // fix for bug 103731
-					fCache.flushMarkerCache(marker);
+			if (names.length == 0) {
+				addBreakpointToSet(breakpoints[i], getDefaultWorkingSet());
+			} else {
+				for (int j = 1; j < names.length; j++) {
+					set = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(names[j]);
+					// if we cannot find the one we want, try to get the default
+					if (set == null) {
+						set = getDefaultWorkingSet();
+					}// end if
 					addBreakpointToSet(breakpoints[i], set);
-				}// end if
-			}// end for
+				}// end for
+			}
 		}// end for
 	}
 
 	/**
 	 * Adds a breakpoint to a workingset
 	 * @param breakpoint the breakpoint to add
-	 * @param set the set to add it to
+	 * @param set the set to add it to or <code>null</code> if none
 	 * 
 	 * @since 3.2
 	 */
 	private void addBreakpointToSet(IBreakpoint breakpoint, IWorkingSet set) {
-		IAdaptable[] elements = set.getElements();
-		for(int i = 0; i < elements.length; i++) {
-			if(elements[i].equals(breakpoint)) {
-				return;
-			}//end if
-		}//end for
-		IAdaptable[] newElements = new IAdaptable[elements.length + 1];
-		newElements[newElements.length-1] = breakpoint;
-		System.arraycopy(elements, 0, newElements, 0, elements.length);
-		set.setElements(newElements);
+		if (set != null) {
+			IAdaptable[] elements = set.getElements();
+			for(int i = 0; i < elements.length; i++) {
+				if(elements[i].equals(breakpoint)) {
+					return;
+				}//end if
+			}//end for
+			fCache.addEntry(breakpoint.getMarker(), set.getName());			//fix for bug 103731
+			fCache.flushMarkerCache(breakpoint.getMarker());
+			IAdaptable[] newElements = new IAdaptable[elements.length + 1];
+			newElements[newElements.length-1] = breakpoint;
+			System.arraycopy(elements, 0, newElements, 0, elements.length);
+			set.setElements(newElements);
+		}
 	}
 	
 	/*
@@ -308,8 +312,6 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	public void addBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
 		if (category instanceof WorkingSetCategory) {
 			IWorkingSet set = ((WorkingSetCategory) category).getWorkingSet();
-			fCache.addEntry(breakpoint.getMarker(), set.getName());			//fix for bug 103731
-			fCache.flushMarkerCache(breakpoint.getMarker());
 			addBreakpointToSet(breakpoint, set);
 		}//end if
 	}
