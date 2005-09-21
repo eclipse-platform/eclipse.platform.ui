@@ -1632,6 +1632,7 @@ public final class BindingManager implements IContextManagerListener,
 							if (((Binding) deletionBinding).deletes(binding)) {
 								bindingsCopy[i] = null;
 								deletedCount++;
+								break;
 							}
 						}
 					}
