@@ -321,7 +321,8 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 				a.update();
 				modifyAnnotationPosition(a, p, false);
 			}
-		}
+		} else
+			addMarkerAnnotation(marker);
 	}
 
 	/*
