@@ -856,7 +856,8 @@ public class IResourceTest extends ResourceTest {
 	 * IProgressMonitor)
 	 */
 	public void testDelete() {
-		Object[][] inputs = new Object[][] {FALSE_AND_TRUE, PROGRESS_MONITORS, interestingResources};
+		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), null};
+		Object[][] inputs = new Object[][] {FALSE_AND_TRUE, monitors, interestingResources};
 		final String CANCELED = "canceled";
 		new TestPerformer("IResourceTest.testDelete") {
 
