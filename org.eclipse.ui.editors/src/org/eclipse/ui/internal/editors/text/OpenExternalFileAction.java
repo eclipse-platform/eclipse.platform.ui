@@ -145,12 +145,26 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 		}
 	}
 
+	/*
+	 * XXX: Requested a helper to get the correct editor descriptor
+	 *		see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=110203
+	 */
 	private String getEditorId(File file) {
 		IWorkbench workbench= fWindow.getWorkbench();
 		IEditorRegistry editorRegistry= workbench.getEditorRegistry();
 		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(file.getName(), getContentType(file));
+
+		// check the OS for in-place editor (OLE on Win32)
+		if (descriptor == null && editorRegistry.isSystemInPlaceEditorAvailable(file.getName()))
+			descriptor= editorRegistry.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
+		
+		// check the OS for external editor
+		if (descriptor == null && editorRegistry.isSystemExternalEditorAvailable(file.getName()))
+			descriptor= editorRegistry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+		
 		if (descriptor != null)
 			return descriptor.getId();
+		
 		return EditorsUI.DEFAULT_TEXT_EDITOR_ID;
 	}
 
