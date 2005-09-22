@@ -2318,4 +2318,26 @@
             icon="icons/anything.gif"
             id="org.eclipse.category1"/>   
    </extension>
+   
+   
+
+   <!-- 
+   this content type was added to provide
+   "regression test" for bug 107121. See OpenNavigatorFolderTest
+   for more details. 
+   -->
+   <extension point="org.eclipse.core.runtime.contentTypes">
+   	<content-type 
+   		file-extensions="htmltestonly" 
+   		priority="high"
+   		name="Content Type for Test Only" 
+   		id="testOnlyContentType"
+   		base-type="org.eclipse.core.runtime.text">
+   		<describer
+   			class="org.eclipse.ui.tests.performance.ContentDescriberForTestsOnly" />
+   	</content-type>
+   </extension>
+
+
+   
 </plugin>            
