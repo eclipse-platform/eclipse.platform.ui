@@ -9,6 +9,7 @@
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
 		<property name="version.suffix" value="_3.1.0"/>
+		<property name="new.version.suffix" value="_3.2.0"/>
 	</target>
 
 	<target name="properties" if="eclipse.running">
@@ -30,7 +31,7 @@
 					${basedir}/../org.eclipse.core.variables/bin;
 					${eclipse.home}/plugins/org.eclipse.core.variables${version.suffix}.jar;
 					${basedir}/../org.eclipse.osgi/bin;
-					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}.jar;
+					${eclipse.home}/plugins/org.eclipse.osgi${new.version.suffix}.jar;
 					${basedir}/bin">
 			<src path="src_ant/"/>
 		</javac>
