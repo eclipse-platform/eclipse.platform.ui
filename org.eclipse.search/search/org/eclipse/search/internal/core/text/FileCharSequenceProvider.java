@@ -11,10 +11,13 @@
 package org.eclipse.search.internal.core.text;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.content.IContentDescription;
 
 import org.eclipse.core.resources.IFile;
 
@@ -234,6 +237,8 @@ public class FileCharSequenceProvider {
 	
 	private final class FileCharSequence implements CharSequence {
 		
+		private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
+		
 		private Reader fReader;
 		private int fReaderPos;
 		
@@ -267,8 +272,50 @@ public class FileCharSequenceProvider {
 			if (fReader != null) {
 				fReader.close();
 			}
-			fReader= new InputStreamReader(fFile.getContents(), fFile.getCharset());
+			String charset= fFile.getCharset();
+			fReader= new InputStreamReader(getInputStream(charset), charset);
 			fReaderPos= 0;
+		}
+		
+		private InputStream getInputStream(String charset) throws CoreException, IOException {
+			boolean ok= false;
+			InputStream contents= fFile.getContents();
+			try {
+				if (CHARSET_UTF_8.equals(charset)) {
+					/*
+					 * This is a workaround for a corresponding bug in Java readers and writer,
+					 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+					 * we remove the BOM before passing the stream to the reader
+					 */
+					IContentDescription description= fFile.getContentDescription();
+					if ((description != null) && (description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null)) {
+						int bomLength= IContentDescription.BOM_UTF_8.length;
+						byte[] bomStore= new byte[bomLength];
+						int bytesRead= 0;
+						do {
+							int bytes= contents.read(bomStore, bytesRead, bomLength - bytesRead);
+							if (bytes == -1)
+								throw new IOException();
+							bytesRead += bytes;
+						} while (bytesRead < bomLength);
+						
+						if (!Arrays.equals(bomStore, IContentDescription.BOM_UTF_8)) {
+							// discard file reader, we were wrong, no BOM -> new stream
+							contents.close();
+							contents= fFile.getContents();
+						}
+					}
+				}
+				ok= true;
+			} finally {
+				if (!ok && contents != null)
+					try {
+						contents.close();
+					} catch (IOException ex) {
+						// ignore
+					}
+			}
+			return contents;
 		}
 		
 		private void clearReader() throws IOException {
