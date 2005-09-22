@@ -289,8 +289,10 @@ public class NavigationHistory implements INavigationHistory {
      * Adds a location to the history.
      */
     private void addEntry(IEditorPart part, boolean markLocation) {
-        if (ignoreEntries > 0 || part == null)
+        if (ignoreEntries > 0 || part == null 
+        		|| "".equals(part.getSite().getId())) { //$NON-NLS-1$
             return;
+        }
 
         INavigationLocation location = null;
         if (markLocation && part instanceof INavigationLocationProvider)
