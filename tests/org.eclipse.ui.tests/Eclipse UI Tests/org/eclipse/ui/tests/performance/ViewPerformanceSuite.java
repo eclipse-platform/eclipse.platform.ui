@@ -48,6 +48,7 @@ public class ViewPerformanceSuite extends TestSuite {
 	public ViewPerformanceSuite() {
 		addOpenCloseTests();
 		addResizeTests();
+		addTestSuite(OpenNavigatorFolderTest.class);
 	}
 
 	/**
