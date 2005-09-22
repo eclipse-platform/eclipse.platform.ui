@@ -31,6 +31,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -74,6 +75,84 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.1
 	 */
 	private static final boolean USE_VIRTUAL= !Platform.WS_MOTIF.equals(Platform.getWS());
+	
+	/**
+	 * The empty proposal displayed if there is nothing else to show.
+	 * 
+	 * @since 3.2
+	 */
+	private static final class EmptyProposal implements ICompletionProposal, ICompletionProposalExtension {
+
+		String fDisplayString;
+		int fOffset;
+		/*
+		 * @see ICompletionProposal#apply(IDocument)
+		 */
+		public void apply(IDocument document) {
+		}
+
+		/*
+		 * @see ICompletionProposal#getSelection(IDocument)
+		 */
+		public Point getSelection(IDocument document) {
+			return new Point(fOffset, 0);
+		}
+
+		/*
+		 * @see ICompletionProposal#getContextInformation()
+		 */
+		public IContextInformation getContextInformation() {
+			return null;
+		}
+
+		/*
+		 * @see ICompletionProposal#getImage()
+		 */
+		public Image getImage() {
+			return null;
+		}
+
+		/*
+		 * @see ICompletionProposal#getDisplayString()
+		 */
+		public String getDisplayString() {
+			return fDisplayString;
+		}
+
+		/*
+		 * @see ICompletionProposal#getAdditionalProposalInfo()
+		 */
+		public String getAdditionalProposalInfo() {
+			return null;
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#apply(org.eclipse.jface.text.IDocument, char, int)
+		 */
+		public void apply(IDocument document, char trigger, int offset) {
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#isValidFor(org.eclipse.jface.text.IDocument, int)
+		 */
+		public boolean isValidFor(IDocument document, int offset) {
+			return false;
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#getTriggerCharacters()
+		 */
+		public char[] getTriggerCharacters() {
+			return null;
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#getContextInformationPosition()
+		 */
+		public int getContextInformationPosition() {
+			return -1;
+		}
+	}
 
 	private final class ProposalSelectionListener implements KeyListener {
 		public void keyPressed(KeyEvent e) {
@@ -228,10 +307,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private int fLastCompletionOffset;
 	/**
-	 * Usually <code>true</code>, <code>false</code> if the popup is displaying an empty list after repeated invocation.
+	 * The (reusable) empty proposal.
+	 * 
+	 * @since 3.2
 	 */
-	private boolean fHasProposals;
-
+	private final EmptyProposal fEmptyProposal= new EmptyProposal();
+	/**
+	 * The text for the empty proposal, or <code>null</code> to use the default text.
+	 * 
+	 * @since 3.2
+	 */
+	private String fEmptyMessage= null;
 
 	/**
 	 * Creates a new completion proposal popup for the given elements.
@@ -278,8 +364,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 		final Control control= fContentAssistSubjectControlAdapter.getControl();
 
 		if (!Helper.okToUse(fProposalShell) && control != null && !control.isDisposed()) {
-			fContentAssistant.resetRepetition();
-			
 			// add the listener before computing the proposals so we don't move the caret
 			// when the user types fast.
 			fContentAssistSubjectControlAdapter.addKeyListener(fKeyListener);
@@ -293,21 +377,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 					fComputedProposals= computeProposals(fInvocationOffset);
 
 					int count= (fComputedProposals == null ? 0 : fComputedProposals.length);
-					if (count == 0) {
-						if (fContentAssistant.recomputeOnRepetition()) {
-							fComputedProposals= computeProposals(fInvocationOffset);
-							count= (fComputedProposals == null ? 0 : fComputedProposals.length);
-						}
-						if (count == 0) {
-							if (!autoActivated)
-								control.getDisplay().beep();
-							
-							hide();
-							return;
-						}
-					}
+					if (count == 0 && hideWhenNoProposals(autoActivated))
+						return;
 					
-					fHasProposals= true; // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109965
 					if (count == 1 && !autoActivated && canAutoInsert(fComputedProposals[0])) {
 						insertProposal(fComputedProposals[0], (char) 0, 0, fInvocationOffset);
 						hide();
@@ -325,15 +397,38 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		return getErrorMessage();
 	}
-
-	private void handleRepeatedInvocation() {
-		ICompletionProposal[] recomputed= null;
-		if (fContentAssistant.recomputeOnRepetition()) {
-			recomputed= computeProposals(fFilterOffset);
-			if (recomputed != null) {
-				fComputedProposals= recomputed;
-				setProposals(recomputed, false);
+	
+	/**
+	 * Hides the popup and returns <code>true</code> if the popup is configured
+	 * to never display an empty list. Returns <code>false</code> otherwise.
+	 * 
+	 * @param autoActivated whether the invocation was auto-activated
+	 * @return <code>false</code> if an empty list should be displayed, <code>true</code> otherwise
+	 * @since 3.2
+	 */
+	private boolean hideWhenNoProposals(boolean autoActivated) {
+		if (autoActivated || !fContentAssistant.isShowEmptyList()) {
+			if (!autoActivated) {
+				Control control= fContentAssistSubjectControlAdapter.getControl();
+				if (control != null && !control.isDisposed())
+					control.getDisplay().beep();
 			}
+			hide();
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * If content assist is set up to handle cycling, then the proposals are recomputed. Otherwise,
+	 * nothing happens.
+	 * 
+	 * @since 3.2
+	 */
+	private void handleRepeatedInvocation() {
+		if (fContentAssistant.isCyclingMode()) {
+			fComputedProposals= computeProposals(fFilterOffset);
+			setProposals(fComputedProposals, false);
 		}
 	}
 
@@ -391,12 +486,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 		layout.verticalSpacing= 1;
 		fProposalShell.setLayout(layout);
 		
-		String message= fContentAssistant.getMessage();
-		if (message != null) {
+		if (fContentAssistant.isCyclingMode()) {
 			fMessageText= new Label(fProposalShell, SWT.RIGHT);
 			GridData textData= new GridData(SWT.FILL, SWT.BOTTOM, true, false);
 			fMessageText.setLayoutData(textData);
-			fMessageText.setText(message + " "); //$NON-NLS-1$
+			fMessageText.setText(fContentAssistant.getMessage() + " "); //$NON-NLS-1$
 			Font font= fMessageText.getFont();
 			Display display= fProposalShell.getDisplay();
 			FontData[] fontDatas= font.getFontData();
@@ -549,9 +643,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private void insertProposal(ICompletionProposal p, char trigger, int stateMask, final int offset) {
 
-		if (!fHasProposals)
-			return;
-		
 		fInserting= true;
 		IRewriteTarget target= null;
 		IEditingSupport helper= new IEditingSupport() {
@@ -673,7 +764,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fMessageText= null;
 		}
 		
+		fEmptyMessage= null;
+		
 		fLastCompletionOffset= -1;
+		
+		fContentAssistant.fireSessionEndEvent();
 	}
 
 	/**
@@ -733,12 +828,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 				((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
 			
 			if (proposals == null || proposals.length == 0) {
-				proposals= new ICompletionProposal[] { new CompletionProposal(JFaceTextMessages.getString("CompletionProposalPopup.no_proposals"), fFilterOffset, 0, 0)}; //$NON-NLS-1$
+				fEmptyProposal.fOffset= fFilterOffset;
+				fEmptyProposal.fDisplayString= fEmptyMessage != null ? fEmptyMessage : JFaceTextMessages.getString("CompletionProposalPopup.no_proposals"); //$NON-NLS-1$
+				proposals= new ICompletionProposal[] { fEmptyProposal };
 				fProposalTable.setEnabled(false);
-				fHasProposals= false;
 			} else {
 				fProposalTable.setEnabled(true);
-				fHasProposals= true;
 			}
 
 			fFilteredProposals= proposals;
@@ -1159,20 +1254,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 					fFilteredProposals= computeProposals(fInvocationOffset);
 
 					int count= (fFilteredProposals == null ? 0 : fFilteredProposals.length);
-					if (count == 0) {
-						if (fContentAssistant.recomputeOnRepetition()) {
-							fFilteredProposals= computeProposals(fInvocationOffset);
-							count= (fFilteredProposals == null ? 0 : fFilteredProposals.length);
-						}
-						
-						if (count == 0) {
-							control.getDisplay().beep();
-							hide();
-							return;
-						}
-					}
+					if (count == 0 && hideWhenNoProposals(false))
+						return;
 					
-					fHasProposals= true; // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109965
 					if (count == 1 && canAutoInsert(fFilteredProposals[0])) {
 						insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
 						hide();
@@ -1407,9 +1491,28 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return insertion;
 	}
 	
-	public void setMessage(String message) {
+	/**
+	 * Sets the message for the repetition affordance text at the bottom of the proposal. Only has
+	 * an effect if {@link ContentAssistant#isCyclingMode()} returns <code>true</code>.
+	 * 
+	 * @param message the new caption
+	 * @since 3.2
+	 */
+	void setMessage(String message) {
 		Assert.isNotNull(message);
 		if (isActive() && fMessageText != null)
 			fMessageText.setText(message + " "); //$NON-NLS-1$
+	}
+
+	/**
+	 * Sets the text to be displayed if no proposals are available. Only has an effect if
+	 * {@link ContentAssistant#isShowEmptyList()} returns <code>true</code>.
+	 * 
+	 * @param message the empty message
+	 * @since 3.2
+	 */
+	void setEmptyMessage(String message) {
+		Assert.isNotNull(message);
+		fEmptyMessage= message;
 	}
 }

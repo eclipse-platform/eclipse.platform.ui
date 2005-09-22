@@ -328,10 +328,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 					d.syncExec(new Runnable() {
 						public void run() {
 							promoteKeyListener();
-							if (showStyle == SHOW_PROPOSALS)
+							if (showStyle == SHOW_PROPOSALS) {
+								fireSessionBeginEvent();
 								fProposalPopup.showProposals(true);
-							else if (showStyle == SHOW_CONTEXT_INFO && fContextInfoPopup != null)
+							} else if (showStyle == SHOW_CONTEXT_INFO && fContextInfoPopup != null) {
 								fContextInfoPopup.showContextProposals(true);
+							}
 						}
 					});
 				} catch (SWTError e) {
@@ -760,19 +762,23 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	private List fCompletionListeners= new ArrayList();
 	/**
-	 * The repetition count - counts how many times code completion was invoked at the same offset
-	 * in a single code completion session.
+	 * The message to display at the bottom of the proposal popup.
 	 * 
 	 * @since 3.2
 	 */
-	private int fRepetition;
+	private String fMessage= ""; //$NON-NLS-1$
 	/**
-	 * The message to display at the bottom of the proposal popup, or <code>null</code> if no
-	 * message should be shown.
+	 * The cycling mode property.
 	 * 
 	 * @since 3.2
 	 */
-	private String fMessage= null;
+	private boolean fIsCyclingMode= false;
+	/**
+	 * The show empty property.
+	 * 
+	 * @since 3.2
+	 */
+	private boolean fShowEmptyList= false;
 
 	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
@@ -1400,6 +1406,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	public String showPossibleCompletions() {
 		promoteKeyListener();
+		fireSessionBeginEvent();
 		if (fIsPrefixCompletionEnabled)
 			return fProposalPopup.incrementalComplete();
 		return fProposalPopup.showProposals(false);
@@ -1410,6 +1417,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	public String completePrefix() {
+		fireSessionBeginEvent();
 		promoteKeyListener();
 		return fProposalPopup.incrementalComplete();
 	}
@@ -1420,7 +1428,6 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	protected void possibleCompletionsClosed() {
 		storeCompletionProposalPopupSize();
-		fRepetition= 0;
 	}
 
 	/*
@@ -1554,7 +1561,6 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		IContentAssistProcessor p= getProcessor(viewer, offset);
 		if (p != null) {
-			fireEvent(viewer, offset, p);
 			result= p.computeCompletionProposals(viewer, offset);
 			fLastErrorMessage= p.getErrorMessage();
 		}
@@ -1904,23 +1910,6 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 	
 	/**
-	 * Sets the caption message displayed at the bottom of the completion proposal popup.
-	 * 
-	 * @param message the message
-	 * @since 3.2
-	 */
-	public void setMessage(String message) {
-		Assert.isNotNull(message);
-		fMessage= message;
-		if (fProposalPopup != null)
-			fProposalPopup.setMessage(message);
-	}
-	
-	String getMessage() {
-		return fMessage;
-	}
-	
-	/**
 	 * Adds a completion listener that will be informed before proposals are computed.
 	 * <p>
 	 * XXX this API is provisional and may change anytime during the course of 3.2
@@ -1947,24 +1936,115 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		fCompletionListeners.remove(listener);
 	}
 
-	private void fireEvent(ITextViewer viewer, int offset, IContentAssistProcessor processor) {
-		ContentAssistEvent event= new ContentAssistEvent(this, new TextContentAssistInvocationContext(viewer, offset), processor, fRepetition);
+	void fireSessionBeginEvent() {
+		if (fProposalPopup == null || !fProposalPopup.isActive()) {
+			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
+			ContentAssistEvent event= new ContentAssistEvent(this, processor);
+			for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
+				ICompletionListener listener= (ICompletionListener) it.next();
+				listener.assistSessionStarted(event);
+			}
+		}
+	}
+	
+	void fireSessionEndEvent() {
+		IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
+		ContentAssistEvent event= new ContentAssistEvent(this, processor);
 		for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
 			ICompletionListener listener= (ICompletionListener) it.next();
-			listener.computingProposals(event);
+			listener.assistSessionEnded(event);
 		}
 	}
 
-	boolean recomputeOnRepetition() {
-		fRepetition++;
-		return doRepetitionHandling();
+	/**
+	 * Enables cycling mode, which will cause a user affordance to be displayed at the bottom of the
+	 * completion pop-up. The default is no cycling.
+	 * <p>
+	 * XXX this API is provisional and may change anytime during the course of 3.2
+	 * </p>
+	 * 
+	 * @param cycling <code>true</code> to enable cycling mode, <code>false</code> to disable
+	 * @since 3.2
+	 */
+	public void setCyclingMode(boolean cycling) {
+		fIsCyclingMode= cycling;
 	}
 
-	private boolean doRepetitionHandling() {
-		return fMessage != null;
+	/**
+	 * Returns <code>true</code> if cycling mode is enabled, <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if cycling mode is enabled, <code>false</code> otherwise
+	 * @since 3.2
+	 */
+	boolean isCyclingMode() {
+		return fIsCyclingMode;
+	}
+	
+	/**
+	 * Enables displaying an empty completion proposal pop-up. The default is not to show an empty
+	 * list.
+	 * <p>
+	 * XXX this API is provisional and may change anytime during the course of 3.2
+	 * </p>
+	 * 
+	 * @param showEmpty <code>true</code> to show empty lists
+	 * @since 3.2
+	 */
+	public void setShowEmptyList(boolean showEmpty) {
+		fShowEmptyList= showEmpty;
+	}
+	
+	/**
+	 * Returns <code>true</code> if empty lists should be displayed, <code>false</code>
+	 * otherwise.
+	 * 
+	 * @return <code>true</code> if empty lists should be displayed, <code>false</code>
+	 *         otherwise
+	 * @since 3.2
+	 */
+	boolean isShowEmptyList() {
+		return fShowEmptyList;
 	}
 
-	void resetRepetition() {
-		fRepetition= 0;
+	/**
+	 * Sets the caption message displayed at the bottom of the completion proposal popup.
+	 * <p>
+	 * XXX this API is provisional and may change anytime during the course of 3.2
+	 * </p>
+	 * 
+	 * @param message the message
+	 * @since 3.2
+	 */
+	public void setMessage(String message) {
+		Assert.isLegal(message != null);
+		fMessage= message;
+		if (fProposalPopup != null)
+			fProposalPopup.setMessage(message);
+	}
+	
+	/**
+	 * Returns the affordance caption for the cycling affordance at the bottom of the pop-up.
+	 * 
+	 * @return the affordance caption for the cycling affordance at the bottom of the pop-up
+	 * @since 3.2
+	 */
+	String getMessage() {
+		return fMessage;
+	}
+
+	/**
+	 * Sets the text to be shown if no proposals are available and {@link #isShowEmptyList()} is
+	 * <code>true</code>.
+	 * <p>
+	 * XXX this API is provisional and may change anytime during the course of 3.2
+	 * </p>
+	 * 
+	 * @param message the text for the empty list
+	 * @since 3.2
+	 */
+	public void setEmptyMessage(String message) {
+		Assert.isLegal(message != null);
+		if (fProposalPopup != null)
+			fProposalPopup.setEmptyMessage(message);
 	}
 }

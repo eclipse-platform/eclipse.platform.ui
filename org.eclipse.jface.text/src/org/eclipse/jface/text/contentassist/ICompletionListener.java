@@ -13,9 +13,15 @@ package org.eclipse.jface.text.contentassist;
  */
 public interface ICompletionListener {
 	/**
-	 * Informs the receiver that completion proposals will be computed.
+	 * Called when code assist is invoked when there is no current code assist session.
 	 * 
 	 * @param event the content assist event
 	 */
-	void computingProposals(ContentAssistEvent event);
+	void assistSessionStarted(ContentAssistEvent event);
+	/**
+	 * Called when a code assist session ends (for example, the proposal popup is closed).
+	 * 
+	 * @param event the content assist event
+	 */
+	void assistSessionEnded(ContentAssistEvent event);
 }
