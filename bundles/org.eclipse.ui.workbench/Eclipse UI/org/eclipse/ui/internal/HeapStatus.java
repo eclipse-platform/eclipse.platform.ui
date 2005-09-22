@@ -210,8 +210,7 @@ public class HeapStatus extends Composite {
         prefStore.removePropertyChangeListener(prefListener);
     	if (gcImage != null)
     		gcImage.dispose();
-        if (usedMemCol != null)
-        	usedMemCol.dispose();
+       
         if (lowMemCol != null)
         	lowMemCol.dispose();
         if (freeMemCol != null)
