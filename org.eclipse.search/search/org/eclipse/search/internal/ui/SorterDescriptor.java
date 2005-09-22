@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
-import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
@@ -41,6 +39,8 @@ class SorterDescriptor {
 	
 	/**
 	 * Creates a new sorter node with the given configuration element.
+	 * 
+	 * @param element the configuration element 
 	 */
 	public SorterDescriptor(IConfigurationElement element) {
 		fElement= element;
