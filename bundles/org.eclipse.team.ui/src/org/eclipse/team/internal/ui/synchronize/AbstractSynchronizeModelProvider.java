@@ -49,6 +49,12 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	 */
 	public static final String P_VIEWER_SELECTION_STATE = TeamUIPlugin.ID  + ".P_VIEWER_SELECTION_STATE"; //$NON-NLS-1$
 	
+	/**
+	 * Property constant for the checked state for the elements displayed by the page. The
+	 * checked state is a List of resource paths.
+	 */
+	public static final String P_VIEWER_CHECKED_STATE = TeamUIPlugin.ID  + ".P_VIEWER_CHECKED_STATE"; //$NON-NLS-1$
+	
 	private ISynchronizeModelElement root;
 	
 	private ISynchronizePageConfiguration configuration;
@@ -62,7 +68,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
     private SynchronizePageActionGroup actionGroup;
 
     private ListenerList listeners;
-
+    
     private static final boolean DEBUG = false;
 	
 	/**
@@ -402,6 +408,20 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
     }
     
     /*
+     * Return all the resources that are checked in the page.
+     * This method should only be called in the UI thread
+     * after validating that the viewer is still valid.
+     */
+    protected IResource[] getCheckedResources() {
+        StructuredViewer viewer = getViewer();
+        if (viewer instanceof CheckboxTreeViewer){
+        	return getResources(((CheckboxTreeViewer)viewer).getCheckedElements());
+        }
+        
+        return new IResource[0];
+    }
+    
+    /*
      * Expand the resources if they appear in the page.
      * This method should only be called in the UI thread
      * after validating that the viewer is still valid.
@@ -489,13 +509,19 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		//	save visible expanded elements and selection
 	    final StructuredViewer viewer = getViewer();
 		if (viewer != null && !viewer.getControl().isDisposed() && viewer instanceof AbstractTreeViewer) {
+			//check to see if we should store the checked states of the tree
+			
+			final boolean storeChecks = ((SynchronizePageConfiguration)configuration).getViewerStyle() == SynchronizePageConfiguration.CHECKBOX;
 			final IResource[][] expandedResources = new IResource[1][0];
 			final IResource[][] selectedResources = new IResource[1][0];
+			final IResource[][] checkedResources = new IResource[1][0];
 			viewer.getControl().getDisplay().syncExec(new Runnable() {
 				public void run() {
 					if (viewer != null && !viewer.getControl().isDisposed()) {
 					    expandedResources[0] = getExpandedResources();
 					    selectedResources[0] = getSelectedResources();
+					    if (storeChecks)
+					    	checkedResources [0] = getCheckedResources();
 					}
 				}
 			});
@@ -503,6 +529,8 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 			// Save expansion and selection
 			cacheResources(expandedResources[0], P_VIEWER_EXPANSION_STATE);
 			cacheResources(selectedResources[0], P_VIEWER_SELECTION_STATE);
+			if (storeChecks)
+				cacheResources(checkedResources[0], P_VIEWER_CHECKED_STATE);
 		}
 	}
 
@@ -516,6 +544,10 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		if (viewer != null && !viewer.getControl().isDisposed() && viewer instanceof AbstractTreeViewer) {
 		    IResource[] resourcesToExpand = getCachedResources(P_VIEWER_EXPANSION_STATE);
 		    IResource[] resourcesToSelect = getCachedResources(P_VIEWER_SELECTION_STATE);
+		    if (((SynchronizePageConfiguration)configuration).getViewerStyle() == SynchronizePageConfiguration.CHECKBOX){
+		    	IResource[] resourcesToCheck = getCachedResources(P_VIEWER_CHECKED_STATE);
+		    	checkResources(resourcesToCheck);
+		    }
 		    expandResources(resourcesToExpand);
 			selectResources(resourcesToSelect);
 		}
@@ -540,6 +572,34 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
             viewer.setSelection(new StructuredSelection(selectedElements));
     }
 
+    /*
+	 * Check the given resources in the view. This method can
+	 * only be invoked from the UI thread.
+	 */
+    protected void checkResources(IResource[] resourcesToCheck) {
+    	 Set checkedElements = new HashSet();
+         StructuredViewer viewer = getViewer();
+         if (!(viewer instanceof CheckboxTreeViewer))
+        	 return;
+         
+         for (int j = 0; j < resourcesToCheck.length; j++) {
+             IResource resource = resourcesToCheck[j];
+             if (resource.getType() != IResource.FILE)
+            	 continue;
+             
+ 			 ISynchronizeModelElement[] elements = getModelObjects(resource);
+             // Only expand when there is one element per resource
+             if (elements.length == 1) {
+     			for (int i = 0; i < elements.length; i++) {
+                     ISynchronizeModelElement element = elements[i];
+                     checkedElements.add(element);
+                 }
+             }
+ 		}
+         if (!checkedElements.isEmpty())
+             ((CheckboxTreeViewer) viewer).setCheckedElements(checkedElements.toArray());
+    }
+    
     /*
      * Convert a path to a resource by first looking in the resource
      * tree and, if that fails, by using the path format to create

@@ -671,6 +671,10 @@ public class Utils {
     public static void syncExec(final Runnable r, StructuredViewer v) {
 		if(v == null) return;
 		final Control ctrl = v.getControl();
+		syncExec(r, ctrl);
+    }
+
+	public static void syncExec(final Runnable r, final Control ctrl) {
 		if (ctrl != null && !ctrl.isDisposed()) {
 			ctrl.getDisplay().syncExec(new Runnable() {
 				public void run() {
@@ -680,7 +684,7 @@ public class Utils {
 				}
 			});
 		}
-    }
+	}
 
     public static SyncInfo getSyncInfo(ISynchronizeModelElement node) {
         if (node instanceof IAdaptable) {
