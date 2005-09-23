@@ -3066,12 +3066,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		return null;
 	}
-
+	
 	/*
-	 * @see EditorPart#setInput(org.eclipse.ui.IEditorInput)
+	 * @see org.eclipse.ui.part.EditorPart#setInputWithNotify(org.eclipse.ui.IEditorInput)
+	 * @since 3.2
 	 */
-	public final void setInput(IEditorInput input) {
-
+	protected final void setInputWithNotify(IEditorInput input) {
 		try {
 
 			doSetInput(input);
@@ -3091,7 +3091,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			ErrorDialog.openError(shell, title, msg, x.getStatus());
 		}
 	}
-
+	
+	/*
+	 * @see EditorPart#setInput(org.eclipse.ui.IEditorInput)
+	 */
+	public final void setInput(IEditorInput input) {
+		setInputWithNotify(input);
+	}
+	
 	/*
 	 * @see ITextEditor#close
 	 */
