@@ -9,10 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.*;
 
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.model.*;
+import java.io.File;
+
+import org.eclipse.update.configuration.IVolume;
+import org.eclipse.update.core.model.ModelObject;
 
 /**
  * Default implementation of a IVolume

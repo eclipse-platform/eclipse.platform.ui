@@ -27,6 +27,8 @@ import org.eclipse.update.core.SiteFeatureReferenceModel;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.core.model.SiteModelFactory;
+import org.eclipse.update.internal.core.connection.ConnectionFactory;
+import org.eclipse.update.internal.core.connection.IResponse;
 import org.eclipse.update.internal.model.SiteWithTimestamp;
 
 /**
@@ -68,7 +70,7 @@ public class SiteURLFactory extends BaseSiteFactory implements ISiteFactoryExten
 			SiteURLContentProvider contentProvider = new SiteURLContentProvider(url);
 	
 			URL resolvedURL = URLEncoder.encode(url);
-			Response response = UpdateCore.getPlugin().get(resolvedURL);
+			IResponse response = ConnectionFactory.get(resolvedURL);
 			UpdateManagerUtils.checkConnectionResult(response, resolvedURL);
 			siteStream = response.getInputStream(monitor);
 			// the stream can be null if the user cancels the connection

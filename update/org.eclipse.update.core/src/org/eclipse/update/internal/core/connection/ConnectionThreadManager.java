@@ -8,14 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.core;
+package org.eclipse.update.internal.core.connection;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * This class manages threads that are dispatched to 
@@ -36,16 +47,21 @@ import org.eclipse.osgi.util.NLS;
  * close the stream to avoid resource leak.
  */
 public class ConnectionThreadManager {
+	
 	// set connection timeout to 1 minute
 	private static final String CONNECT_TIMEOUT = "60000"; //$NON-NLS-1$
 	// set read timeout to 1 minute
 	private static final String READ_TIMEOUT = "60000"; //$NON-NLS-1$
 	// max number of active threads
 	private static final int MAX_COUNT = 9;
-	private Vector threads;
+	private List threads = new ArrayList(MAX_COUNT);
+	
+	
 
 	public static class StreamRunnable implements Runnable {
+		
 		private URLConnection urlConnection;
+		private IOException ioException;
 		private Exception exception;
 		private InputStream is;
 		private boolean disconnected;
@@ -62,6 +78,10 @@ public class ConnectionThreadManager {
 			return urlConnection.getURL();
 		}
 
+		public IOException getIOException() {
+			return ioException;
+		}
+		
 		public Exception getException() {
 			return exception;
 		}
@@ -91,14 +111,21 @@ public class ConnectionThreadManager {
 						}
 					}
 				}
+			} catch (IOException e) {
+				ioException = e;
 			} catch (Exception e) {
 				exception = e;
+			} finally {
+				//threads.
 			}
 		}
 	}
 
+	
 	class ConnectionThread extends Thread {
+		
 		private StreamRunnable runnable;
+		
 		public ConnectionThread(StreamRunnable runnable) {
 			super(runnable, "update-connection"); //$NON-NLS-1$
 			this.runnable = runnable;
@@ -121,11 +148,13 @@ public class ConnectionThreadManager {
 			System.setProperty(key, value);
 	}
 
-	public Thread createThread(StreamRunnable runnable) throws CoreException {
+	public Thread getConnectionThread(StreamRunnable runnable) throws CoreException {
+		
 		validateExistingThreads();
-		if (threads == null)
-			threads = new Vector();
-		Thread t = new ConnectionThread(runnable);
+	
+		//if (threads == null)
+		//	threads = new Vector();
+		Thread t = new Thread(runnable);
 		t.setDaemon(true);
 		threads.add(t);
 		return t;
@@ -137,9 +166,10 @@ public class ConnectionThreadManager {
 	 * still working.
 	 */
 	private void validateExistingThreads() throws CoreException {
-		if (threads == null)
+		
+		if ((threads == null) || (threads.size() == 0))
 			return;
-			
+		
 		int aliveCount = purgeTerminatedThreads();
 
 		if (aliveCount > MAX_COUNT) {
@@ -175,6 +205,11 @@ public class ConnectionThreadManager {
 	 */
 	
 	private int purgeTerminatedThreads() {
+		
+		if (threads.size() == 0) {
+			return 0;
+		}
+		
 		int aliveCount = 0;
 
 		Object[] array = threads.toArray();

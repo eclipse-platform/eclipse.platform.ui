@@ -10,14 +10,33 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.*;
-import org.osgi.framework.*;
+import org.eclipse.update.core.ContentReference;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureContentConsumer;
+import org.eclipse.update.core.IInstallHandler;
+import org.eclipse.update.core.IInstallHandlerEntry;
+import org.eclipse.update.core.IInstallHandlerWithFilter;
+import org.eclipse.update.core.INonPluginEntry;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.IVerificationListener;
+import org.eclipse.update.core.InstallMonitor;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.internal.core.connection.ConnectionFactory;
+import org.osgi.framework.Bundle;
 
 public class InstallHandlerProxy implements IInstallHandlerWithFilter {
 
@@ -509,7 +528,7 @@ public class InstallHandlerProxy implements IInstallHandlerWithFilter {
 			InputStream is = null;
 			try {
 				fos = new FileOutputStream(tempLib);
-				is = UpdateCore.getPlugin().get(cp).getInputStream();
+				is = ConnectionFactory.get(cp).getInputStream();
 				Utilities.copy(is, fos, null);
 			} finally {
 				if (fos != null)

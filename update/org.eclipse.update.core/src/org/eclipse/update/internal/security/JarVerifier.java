@@ -10,18 +10,36 @@
  *******************************************************************************/
 package org.eclipse.update.internal.security;
 
-import java.io.*;
-import java.security.*;
-import java.security.cert.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
-import java.util.*;
-import java.util.jar.*;
-import java.util.zip.*;
+import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipException;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.core.ContentReference;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IVerificationResult;
+import org.eclipse.update.core.IVerifier;
+import org.eclipse.update.core.InstallMonitor;
+import org.eclipse.update.core.JarContentReference;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.Verifier;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.connection.ConnectionFactory;
 
 /**
  * The JarVerifier will check the integrity of the JAR.
@@ -66,7 +84,7 @@ public class JarVerifier extends Verifier {
 			while (listOfKeystoreHandles.hasNext()) {
 				try {
 					handle = listOfKeystoreHandles.next();
-					in = UpdateCore.getPlugin().get(handle.getLocation()).getInputStream();
+					in = ConnectionFactory.get(handle.getLocation()).getInputStream();
 					try {
 						keystore = KeyStore.getInstance(handle.getType());
 						keystore.load(in, null); // no password

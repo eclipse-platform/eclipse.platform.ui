@@ -9,13 +9,26 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.*;
-import java.net.*;
 
-import org.eclipse.core.runtime.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
+import org.eclipse.update.core.BaseFeatureFactory;
+import org.eclipse.update.core.Feature;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureContentConsumer;
+import org.eclipse.update.core.IFeatureContentProvider;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.internal.core.connection.ConnectionFactory;
 
 /**
  * FeatureFactory for Executable Features
@@ -46,7 +59,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 
 			URL nonResolvedURL = contentProvider.getFeatureManifestReference(null).asURL();
 			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
-			featureStream = UpdateCore.getPlugin().get(resolvedURL).getInputStream();
+			featureStream = ConnectionFactory.get(resolvedURL).getInputStream();
 
 			feature = (TargetFeature) this.parseFeature(featureStream, resolvedURL.toExternalForm());
 			monitor.worked(1);

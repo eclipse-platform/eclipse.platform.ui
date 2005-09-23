@@ -8,21 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.core;
+package org.eclipse.update.internal.core.connection;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.update.internal.core.IStatusCodes;
+import org.eclipse.update.internal.core.UpdateCore;
 
-public class OtherResponse implements Response {
+public class OtherResponse implements IResponse {
 	private static final long POLLING_INTERVAL = 200;
 	protected URL url;
 	protected InputStream in;
 	protected URLConnection connection;
 	protected long lastModified;
 
-	public OtherResponse(URL url) throws IOException {
+	protected OtherResponse(URL url) throws IOException {
 		this.url = url;
 //		connection = url.openConnection();
 	}
@@ -37,7 +44,7 @@ public class OtherResponse implements Response {
 		return in;
 	}
 	/**
-	 * @see Response#getInputStream(IProgressMonitor)
+	 * @see IResponse#getInputStream(IProgressMonitor)
 	 */
 	public InputStream getInputStream(IProgressMonitor monitor)
 		throws IOException, CoreException {
@@ -85,9 +92,7 @@ public class OtherResponse implements Response {
 			throws IOException, CoreException {
 			ConnectionThreadManager.StreamRunnable runnable =
 				new ConnectionThreadManager.StreamRunnable(urlConnection);
-			Thread t =
-				UpdateCore.getPlugin().getConnectionManager().createThread(
-					runnable);
+			Thread t = ConnectionThreadManagerFactory.getConnectionManager().getConnectionThread(runnable);
 			t.start();
 			InputStream is = null;
 			try {

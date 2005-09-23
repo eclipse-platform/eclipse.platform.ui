@@ -8,14 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.core;
+package org.eclipse.update.internal.core.connection;
 
-import java.io.*;
-import java.net.*;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.update.internal.core.IStatusCodes;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
 
-public class HttpResponse implements Response {
+public class HttpResponse implements IResponse {
 	/**
 	 * Monitored InputStream.  Upon IOException, discards
 	 * connection so it is not resused.
@@ -95,25 +105,15 @@ public class HttpResponse implements Response {
 	}
 	
 	private static final long POLLING_INTERVAL = 200;
-//    private static final String ECLIPSE_DOWNLOADS = "http://www.eclipse.org/downloads/download.php?r=1&file=/eclipse";
-//    private static final String ECLIPSE_UPDATES="http://update.eclipse.org";
+
 	protected URL url;
-//    protected URL originalURL;
 	protected InputStream in;
 	protected URLConnection connection;
 	protected long lastModified;
 	protected long offset;
 
-	public HttpResponse(URL url) {
-//        this.originalURL = url;
+	protected HttpResponse(URL url) {
         this.url = url;
-//        String urlstring = url.toExternalForm();
-//        if (urlstring.startsWith(ECLIPSE_UPDATES))
-//            try {
-//                this.url = new URL(ECLIPSE_DOWNLOADS + urlstring.substring(ECLIPSE_UPDATES.length()));
-//            } catch (MalformedURLException e) {
-//               this.url = url;
-//            }
 	}
 
 	public InputStream getInputStream() throws IOException {
@@ -133,10 +133,10 @@ public class HttpResponse implements Response {
 		return in;
 	}
 	/**
-	 * @see Response#getInputStream(IProgressMonitor)
+	 * @see IResponse#getInputStream(IProgressMonitor)
 	 */
 	public InputStream getInputStream(IProgressMonitor monitor)
-		throws IOException, CoreException {
+		throws IOException, CoreException, TooManyOpenConnectionsException {
 		if (in == null && url != null) {
 			if (connection == null || offset > 0)
 				connection = url.openConnection();
@@ -220,11 +220,11 @@ public class HttpResponse implements Response {
 	private InputStream openStreamWithCancel(
 		URLConnection urlConnection,
 		IProgressMonitor monitor)
-		throws IOException, CoreException {
+		throws IOException, CoreException, TooManyOpenConnectionsException  {
+
 		ConnectionThreadManager.StreamRunnable runnable =
 			new ConnectionThreadManager.StreamRunnable(urlConnection);
-		Thread t =
-			UpdateCore.getPlugin().getConnectionManager().createThread(
+		Thread t = ConnectionThreadManagerFactory.getConnectionManager().getConnectionThread(
 				runnable);
 		t.start();
 		InputStream is = null;
@@ -239,18 +239,16 @@ public class HttpResponse implements Response {
 					is = runnable.getInputStream();
 					break;
 				}
-				if (runnable.getException() != null) {
-					if (runnable.getException() instanceof IOException)
-						throw (IOException) runnable.getException();
-					else
+				if (runnable.getIOException() != null) 
+					throw runnable.getIOException();
+				if (runnable.getException() != null) 
 						throw new CoreException(new Status(IStatus.ERROR,
-								UpdateCore.getPlugin().getBundle()
-										.getSymbolicName(), IStatus.OK,
-								runnable.getException().getMessage(), runnable
-										.getException()));
+															UpdateCore.getPlugin().getBundle().getSymbolicName(), 
+															IStatus.OK,
+															runnable.getException().getMessage(), 
+															runnable.getException()));
 				}
 				t.join(POLLING_INTERVAL);
-			}
 		} catch (InterruptedException e) {
 		}
 		return is;

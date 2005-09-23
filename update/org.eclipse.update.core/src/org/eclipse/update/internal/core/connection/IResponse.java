@@ -8,13 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.core;
+package org.eclipse.update.internal.core.connection;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
-public interface Response {
+public interface IResponse {
 
 	/**
 	 * Method getInputStream.
@@ -37,7 +39,7 @@ public interface Response {
 	 *             if no more connection threads are available
 	 */
 	public InputStream getInputStream(IProgressMonitor monitor)
-		throws IOException, CoreException;
+		throws IOException, CoreException, TooManyOpenConnectionsException;
 
 	/**
 	 * Method getContentLength.

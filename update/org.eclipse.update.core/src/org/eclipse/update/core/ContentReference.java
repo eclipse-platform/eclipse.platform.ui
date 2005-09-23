@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.URLEncoder;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.internal.core.connection.ConnectionFactory;
+import org.eclipse.update.internal.core.connection.HttpResponse;
+import org.eclipse.update.internal.core.connection.IResponse;
 
 /**
  * Content reference implements a general access wrapper 
@@ -56,7 +64,7 @@ public class ContentReference {
 	private String id;
 	private URL url; // reference is either URL reference *OR*
 	private File file; //    local file reference
-	private Response response;
+	private IResponse response;
 	private int permission; 
 	private long length;
 	
@@ -140,7 +148,7 @@ public class ContentReference {
 		else if (url != null) {
 			if (response == null) {
 				URL resolvedURL = URLEncoder.encode(url);
-				response = UpdateCore.getPlugin().get(resolvedURL);
+				response = ConnectionFactory.get(resolvedURL);
 				UpdateManagerUtils.checkConnectionResult(response,resolvedURL);
 			}
 			InputStream is=response.getInputStream();
@@ -159,7 +167,7 @@ public class ContentReference {
 	InputStream getPartialInputStream(long offset) throws IOException {
 		if (url != null && "http".equals(url.getProtocol())) { //$NON-NLS-1$
 			URL resolvedURL = URLEncoder.encode(url);
-			response = UpdateCore.getPlugin().get(resolvedURL);
+			response = ConnectionFactory.get(resolvedURL);
 			if(response instanceof HttpResponse)
 				((HttpResponse)response).setOffset(offset);
 			UpdateManagerUtils.checkConnectionResult(response,resolvedURL);
@@ -186,7 +194,7 @@ public class ContentReference {
 				URL resolvedURL = null;
 				try {
 					resolvedURL = URLEncoder.encode(url);
-					response = UpdateCore.getPlugin().get(resolvedURL);
+					response = ConnectionFactory.get(resolvedURL);
 				} catch (IOException e) {
 					return ContentReference.UNKNOWN_SIZE;
 				}
@@ -320,7 +328,7 @@ public class ContentReference {
 				if (response == null) {
 					try {
 						URL resolvedURL = URLEncoder.encode(url);
-						response = UpdateCore.getPlugin().get(resolvedURL);
+						response = ConnectionFactory.get(resolvedURL);
 					} catch (MalformedURLException e) {
 						// return 0
 					} catch (IOException e) {

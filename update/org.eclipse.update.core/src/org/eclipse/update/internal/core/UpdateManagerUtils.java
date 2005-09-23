@@ -9,16 +9,49 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.*;
-import java.net.*;
-import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Stack;
+import java.util.StringTokenizer;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
-import org.osgi.framework.*;
-import org.osgi.service.packageadmin.*;
+import org.eclipse.update.core.ContentReference;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IImport;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.IPlatformEnvironment;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.InstallMonitor;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.internal.core.connection.ConnectionFactory;
+import org.eclipse.update.internal.core.connection.IResponse;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.Constants;
+import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * 
@@ -515,7 +548,7 @@ public class UpdateManagerUtils {
 	 * thow an IO exception
 	 * 
 	 */
-	public static void checkConnectionResult(Response response,URL url) throws IOException {
+	public static void checkConnectionResult(IResponse response,URL url) throws IOException {
 		// did the server return an error code ?
 			int result = response.getStatusCode();
 
@@ -803,7 +836,7 @@ public static class Writer {
 	public static boolean isSameTimestamp(URL url, long timestamp) {	
 		try {
 			URL resolvedURL = URLEncoder.encode(url);
-			Response response = UpdateCore.getPlugin().get(resolvedURL);
+			IResponse response = ConnectionFactory.get(resolvedURL);
 			long remoteLastModified = response.getLastModified();
 			// 2 seconds tolerance, as some OS's may round up the time stamp
 			// to the closest second. For safety, we make it 2 seconds.

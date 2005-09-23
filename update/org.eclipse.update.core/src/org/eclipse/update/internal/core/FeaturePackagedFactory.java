@@ -63,7 +63,8 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 			feature.markReadOnly();			
 		}  catch (CoreException e){
 			throw e;
-		} catch (Exception e) { 
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw Utilities.newCoreException(NLS.bind(Messages.FeatureFactory_CreatingError, (new String[] { url.toExternalForm() })), e);
 		}finally {
 			try {

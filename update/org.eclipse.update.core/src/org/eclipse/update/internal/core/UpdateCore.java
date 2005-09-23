@@ -10,15 +10,26 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.configurator.*;
-import org.osgi.framework.*;
-import org.osgi.service.packageadmin.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configurator.ConfiguratorUtils;
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IImport;
+import org.eclipse.update.core.JarContentReference;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.internal.core.connection.ConnectionThreadManager;
+import org.eclipse.update.internal.core.connection.ConnectionThreadManagerFactory;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -62,9 +73,6 @@ public class UpdateCore extends Plugin {
 	//log
 	private static UpdateManagerLogWriter log;
 	private static final String LOG_FILE="install.log"; //$NON-NLS-1$
-	
-	//Connection manager
-	private ConnectionThreadManager connectionManager;
 
 	// bundle data
 	private BundleContext context;
@@ -85,14 +93,6 @@ public class UpdateCore extends Plugin {
 		return plugin;
 	}
 	
-	/**
-	 * Returns the manager that manages URL connection threads.
-	 */
-	public ConnectionThreadManager getConnectionManager() {
-		if (connectionManager==null)
-			connectionManager = new ConnectionThreadManager();
-		return connectionManager;
-	}
 
 	private boolean getBooleanDebugOption(String flag, boolean dflt) {
 		String result = Platform.getDebugOption(flag);
@@ -212,34 +212,7 @@ public class UpdateCore extends Plugin {
 	 * <li>An I/O error occurs while communicating with the server
 	 * <ul>
 	 */
-	public Response get(URL url) throws IOException {
-		//Request request = null;
-		Response response = null;
-		
-		if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
-			response = new FileResponse(url);
-		} else if (url != null && url.getProtocol().startsWith("http")) { //$NON-NLS-1$
-			response = new HttpResponse(url);
-		} else {
-			response = new OtherResponse(url);
-		}
-		
-		/*else {
-			try {
-				request = new Request("GET", url, null);
-				response = client.invoke(request);
-			} finally {
-				if (request != null) {
-					try {
-						request.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}*/
-		return response;
-	}
+
 	
 	/*
 	 * Returns true if the feature is a patch
@@ -296,8 +269,9 @@ public class UpdateCore extends Plugin {
 		Utilities.shutdown(); // cleanup temp area
 		if (log!=null)
 			log.shutdown();
-		if (connectionManager!=null)
-			connectionManager.shutdown();
+		
+		ConnectionThreadManagerFactory.getConnectionManager().shutdown();
+
 		
 		this.context = null;
 		if (pkgAdminTracker != null) {

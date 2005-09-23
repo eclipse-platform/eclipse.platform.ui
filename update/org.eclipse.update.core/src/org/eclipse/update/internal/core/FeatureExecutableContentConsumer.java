@@ -11,10 +11,18 @@
 package org.eclipse.update.internal.core;
 
  
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.update.core.ContentReference;
+import org.eclipse.update.core.IContentConsumer;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureContentConsumer;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.INonPluginEntry;
+import org.eclipse.update.core.IPluginEntry;
 
 /**
  * ContentConsumer Implementation for a FeatureExecutable

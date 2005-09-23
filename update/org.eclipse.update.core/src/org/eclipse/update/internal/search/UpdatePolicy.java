@@ -10,20 +10,34 @@
  *******************************************************************************/
 package org.eclipse.update.internal.search;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.*;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.configurator.UpdateURLDecoder;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.search.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.internal.core.connection.ConnectionFactory;
+import org.eclipse.update.internal.core.connection.IResponse;
+import org.eclipse.update.search.IUpdateSiteAdapter;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * 
@@ -93,7 +107,7 @@ public class UpdatePolicy {
 		throws CoreException {
 		InputStream policyStream = null;
 		try {
-			Response response = UpdateCore.getPlugin().get(mapFile);
+			IResponse response = ConnectionFactory.get(mapFile);
 			UpdateManagerUtils.checkConnectionResult(response, mapFile);
 			policyStream = response.getInputStream(monitor);
 			// the stream can be null if the user cancels the connection

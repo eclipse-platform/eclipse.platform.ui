@@ -10,14 +10,28 @@
  *******************************************************************************/
 package org.eclipse.update.core;
  
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.core.model.ArchiveReferenceModel;
+import org.eclipse.update.core.model.CategoryModel;
+import org.eclipse.update.core.model.InvalidSiteTypeException;
+import org.eclipse.update.core.model.SiteModel;
+import org.eclipse.update.core.model.SiteModelFactory;
+import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.internal.core.connection.ConnectionFactory;
+import org.eclipse.update.internal.core.connection.IResponse;
 
 /**
  * Base implementation of a site factory.
@@ -142,7 +156,7 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 	 * @return InputStream
 	 */
 	protected InputStream openStream(URL resolvedURL)  throws IOException {
-		Response response = UpdateCore.getPlugin().get(resolvedURL);
+		IResponse response = ConnectionFactory.get(resolvedURL);
 		return response.getInputStream();
 	}
 

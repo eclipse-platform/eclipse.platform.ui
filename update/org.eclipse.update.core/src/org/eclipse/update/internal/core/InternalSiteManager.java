@@ -31,6 +31,8 @@ import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.core.Site;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
+import org.eclipse.update.internal.core.connection.ConnectionFactory;
+import org.eclipse.update.internal.core.connection.IResponse;
 import org.eclipse.update.internal.model.ITimestamp;
 
 /**
@@ -182,7 +184,7 @@ public class InternalSiteManager {
 				siteTimestamps.put(site.getURL(), new Long(((ITimestamp)site).getTimestamp().getTime()));
 			} else {
 				try {
-					Response response = UpdateCore.getPlugin().get(URLEncoder.encode(siteURL));
+					IResponse response = ConnectionFactory.get(URLEncoder.encode(siteURL));
 					siteTimestamps.put(siteURL, new Long(response.getLastModified()));
 				} catch (MalformedURLException e) {
 				} catch (IOException e) {

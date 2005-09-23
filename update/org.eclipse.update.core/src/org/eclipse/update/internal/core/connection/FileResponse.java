@@ -8,18 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.core;
+package org.eclipse.update.internal.core.connection;
 import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.internal.core.IStatusCodes;
 
-public class FileResponse implements Response {
+public class FileResponse implements IResponse {
 
 	protected URL url;
 	protected long lastModified;
 
-	public FileResponse(URL url) {
+	protected FileResponse(URL url) {
 		this.url = url;
 	}
 

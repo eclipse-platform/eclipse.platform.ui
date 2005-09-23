@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.update.internal.security;
 
-import java.io.*;
-import java.net.*;
-import java.security.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.Security;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.connection.ConnectionFactory;
 /**
  * Class to manage the different KeyStores we should
  * check for certificates of Signed JAR
@@ -135,7 +143,7 @@ public class KeyStores {
 		
 		try {
 			URL url = new URL(location);
-			in = UpdateCore.getPlugin().get(url).getInputStream();
+			in = ConnectionFactory.get(url).getInputStream();
 			Reader reader = new InputStreamReader(in);
 			int result = reader.read(buff);
 			StringBuffer contentBuff = new StringBuffer();
