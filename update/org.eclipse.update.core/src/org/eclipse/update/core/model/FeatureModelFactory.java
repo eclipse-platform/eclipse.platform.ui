@@ -37,7 +37,7 @@ import org.xml.sax.*;
 public class FeatureModelFactory {
 
 
-	private static DefaultFeatureParser parser = new DefaultFeatureParser();
+	//private static DefaultFeatureParser parser = new DefaultFeatureParser();
 
 	/**
 	 * Creates a default model factory.
@@ -78,7 +78,7 @@ public class FeatureModelFactory {
      */
     public FeatureModel parseFeature(InputStream stream, String location)
         throws CoreException, SAXException {
-        
+    	DefaultFeatureParser parser = new DefaultFeatureParser();
         parser.init(this, location);
         FeatureModel featureModel = null;
         try {

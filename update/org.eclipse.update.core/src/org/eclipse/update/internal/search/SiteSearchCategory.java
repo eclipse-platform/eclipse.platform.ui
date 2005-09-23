@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.search;
 
+
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -38,40 +39,38 @@ public class SiteSearchCategory extends BaseSearchCategory {
 					ignores.add(categoriesToSkip[i]);
 				}
 			}
+			
 
+			List siteFeatureReferences = new ArrayList(Arrays.asList(refs));
 			monitor.beginTask("", refs.length); //$NON-NLS-1$
-
-			for (int i = 0; i < refs.length; i++) {
-				ISiteFeatureReference ref = refs[i];
-				boolean skipFeature = false;
-				if (monitor.isCanceled())
-					break;
-				if (ignores.size() > 0) {
-					ICategory[] categories = ref.getCategories();
-
-					for (int j = 0; j < categories.length; j++) {
-						ICategory category = categories[j];
-						if (ignores.contains(category.getName())) {
-							skipFeature = true;
-							break;
-						}
+			ThreadGroup featureDownloaders = new ThreadGroup("FeatureDownloader");
+			int numberOfThreads = (refs.length > 5)? 5: refs.length;
+			
+			for( int i = 0; i < numberOfThreads; i++) {
+				Thread featureDownloader = new Thread(featureDownloaders, new FeatureDownloader(siteFeatureReferences, collector, filter, ignores, monitor));
+				featureDownloader.start();
+			}
+			
+			
+			while(featureDownloaders.activeCount() != 0) {
+				
+				if (monitor.isCanceled()) {
+					synchronized(siteFeatureReferences) { 
+						siteFeatureReferences.clear();
 					}
 				}
-				try {
-					if (!skipFeature) {
-						if (filter.accept(ref)) {
-							IFeature feature = ref.getFeature(null);
-							if (filter.accept(feature))
-								collector.accept(feature);
-							monitor.subTask(feature.getLabel());
-						}
+				Thread[] temp = new Thread[featureDownloaders.activeCount()];
+				featureDownloaders.enumerate(temp);
+				if (temp[0] != null) {
+					try	{
+						temp[0].join(250);
+					} catch (InterruptedException ie) {
+						//FIX ME:
+						ie.printStackTrace();
 					}
-				} catch (CoreException e) {
-					System.out.println(e);
-				} finally {
-					monitor.worked(1);
 				}
 			}
+			
 		}
 
 		/* (non-Javadoc)
@@ -89,5 +88,81 @@ public class SiteSearchCategory extends BaseSearchCategory {
 
 	public IUpdateSearchQuery[] getQueries() {
 		return queries;
+	}
+	
+	
+	private static class FeatureDownloader implements Runnable {
+		
+		private List siteFeatureReferences;
+		
+		private IProgressMonitor monitor;
+		
+		private IUpdateSearchFilter filter;
+		
+		private IUpdateSearchResultCollector collector;
+		
+		private HashSet ignores;
+
+		private FeatureDownloader() {			
+		}
+		
+		public FeatureDownloader(List siteFeatureReferences, IUpdateSearchResultCollector collector, IUpdateSearchFilter filter, HashSet ignores, IProgressMonitor monitor) {
+			super();
+
+			this.collector = collector;
+			this.filter = filter;
+			this.ignores = ignores;
+			this.monitor = monitor;
+			this.siteFeatureReferences = siteFeatureReferences;
+		}
+
+		public void run() {
+			
+			ISiteFeatureReference siteFeatureReference = null;
+			
+			while (siteFeatureReferences.size() != 0) {
+				
+				synchronized(siteFeatureReferences) { 
+					if (siteFeatureReferences.size() != 0) {
+						siteFeatureReference = (ISiteFeatureReference)siteFeatureReferences.remove(0);
+					} else {
+						siteFeatureReference = null;
+					}
+				}
+				if (siteFeatureReference != null) {
+					boolean skipFeature = false;
+					if (monitor.isCanceled())
+						break;
+					if (ignores.size() > 0) {
+						ICategory[] categories = siteFeatureReference.getCategories();
+						
+						for (int j = 0; j < categories.length; j++) {
+							ICategory category = categories[j];
+							if (ignores.contains(category.getName())) {
+								skipFeature = true;
+								break;
+							}
+						}
+					}
+					try {
+						if (!skipFeature) {
+							if (filter.accept(siteFeatureReference)) {
+								IFeature feature = siteFeatureReference.getFeature(null);
+								synchronized(siteFeatureReferences) {
+									if (filter.accept(feature))								
+										collector.accept(feature);							    
+									monitor.subTask(feature.getLabel());
+								}
+							}
+						}
+					} catch (CoreException e) {
+						System.out.println(e);
+					} finally {
+						monitor.worked(1);
+					}
+				}
+			}
+			
+		}
 	}
 }
