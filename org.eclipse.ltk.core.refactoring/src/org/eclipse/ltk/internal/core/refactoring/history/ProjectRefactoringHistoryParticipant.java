@@ -14,10 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -40,16 +36,6 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 /**
  * Refactoring history participant which maintains project refactoring
  * histories.
- * <p>
- * The file format of a project refactoring history is as follows:
- * 
- * <pre>
- *     History ::= Descriptor*
- *     Descriptor ::= TimeStamp (long) ID (String) ArgCount (int) Arg* Description (String) StringCount (int) Project? Comment? Size (long)
- *     Arg ::= Key (String) Value (String)
- * </pre>
- * 
- * </p>
  * 
  * @since 3.2
  */
@@ -72,10 +58,10 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 	}
 
 	/** The history file extension */
-	private static final String EXTENSION_HISTORY_FILE= "dat"; //$NON-NLS-1$
+	private static final String EXTENSION_HISTORY_FILE= "history"; //$NON-NLS-1$
 
 	/** The history file name */
-	private static final String NAME_HISTORY_FILE= "org.eclipse.ltk.core.refactoring.history"; //$NON-NLS-1$
+	private static final String NAME_HISTORY_FILE= "refactorings"; //$NON-NLS-1$
 
 	/** The history folder */
 	private static final String NAME_HISTORY_FOLDER= ".refactorings"; //$NON-NLS-1$
@@ -250,37 +236,8 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 		Assert.isNotNull(descriptor);
 		final long oldLength= file.length();
 		file.seek(oldLength);
-		file.writeLong(descriptor.getTimeStamp());
-		file.writeUTF(descriptor.getID());
-		final Set arguments= descriptor.getArguments().entrySet();
-		file.writeInt(arguments.size());
-		Map.Entry entry= null;
-		for (final Iterator iterator= arguments.iterator(); iterator.hasNext();) {
-			entry= (Entry) iterator.next();
-			file.writeUTF(entry.getKey().toString());
-			file.writeUTF(entry.getValue().toString());
-		}
-		file.writeUTF(descriptor.getDescription());
-		int size= 0;
-		final String project= descriptor.getProject();
-		boolean writeProject= false;
-		if (project != null && !"".equals(project)) { //$NON-NLS-1$
-			writeProject= true;
-			size++;
-		}
-		final String comment= descriptor.getComment();
-		boolean writeComment= false;
-		if (comment != null && !"".equals(comment)) { //$NON-NLS-1$
-			writeComment= true;
-			size++;
-		}
-		file.writeInt(size);
-		if (writeProject)
-			file.writeUTF(project);
-		if (writeComment)
-			file.writeUTF(comment);
+		ProjectRefactoringHistorySerializer.writeDescriptor(file, descriptor);
 		final long newLength= file.length();
-		file.writeLong(newLength - oldLength + 8); // Also count first long
-		// denoting size
+		file.writeLong(newLength - oldLength + 8);
 	}
 }
