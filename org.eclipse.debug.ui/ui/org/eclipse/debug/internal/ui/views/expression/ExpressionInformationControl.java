@@ -198,23 +198,25 @@ public class ExpressionInformationControl extends PopupInformationControl {
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					TreeItem[] selections = tree.getSelection();
-					Object data = selections[selections.length-1].getData();
-					
-					IValue val = null;
-					if (data instanceof IndexedVariablePartition) {
-						// no details for parititions
-						return;
+					if (selections.length > 0) {
+						Object data = selections[selections.length-1].getData();
+						
+						IValue val = null;
+						if (data instanceof IndexedVariablePartition) {
+							// no details for parititions
+							return;
+						}
+						if (data instanceof IVariable) {						
+							val = ((IVariable)data).getValue();
+						} else if (data instanceof IExpression) {
+							val = ((IExpression)data).getValue();
+						}
+						if (val == null) {
+							return;
+						}			
+						
+						updateValueDisplay(val);
 					}
-					if (data instanceof IVariable) {						
-						val = ((IVariable)data).getValue();
-					} else if (data instanceof IExpression) {
-						val = ((IExpression)data).getValue();
-					}
-					if (val == null) {
-						return;
-					}			
-					
-					updateValueDisplay(val);
 				} catch (DebugException ex) {
 					DebugUIPlugin.log(ex);
 				}
