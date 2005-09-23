@@ -107,7 +107,7 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 				appendToGroup(
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
-						new CVSActionDelegateWrapper(new GenerateDiffFileAction(), configuration));
+						new CreatePatchAction(configuration));
 				appendToGroup(
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 						CONTEXT_MENU_CONTRIBUTION_GROUP_3,

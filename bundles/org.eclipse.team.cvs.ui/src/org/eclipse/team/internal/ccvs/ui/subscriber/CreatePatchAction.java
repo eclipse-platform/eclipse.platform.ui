@@ -1,0 +1,63 @@
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.internal.ccvs.ui.subscriber;
+
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
+
+public class CreatePatchAction extends CVSParticipantAction {
+
+	protected CreatePatchAction(ISynchronizePageConfiguration configuration) {
+		super(configuration);
+	}
+
+	protected SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
+	 */
+	protected FastSyncInfoFilter getSyncInfoFilter() {
+		return new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING});
+	}
+
+	public void runOperation() {
+        final SyncInfoSet set = getSyncInfoSet();
+        GenerateDiffFileWizard.run(getConfiguration().getSite().getPart(), set.getResources());
+    }
+	
+	/*
+     * Return the selected SyncInfo for which this action is enabled.
+     * 
+     * @return the selected SyncInfo for which this action is enabled.
+     */
+    private SyncInfoSet getSyncInfoSet() {
+        IDiffElement [] elements= getFilteredDiffElements();
+        SyncInfoSet filtered = new SyncInfoSet();
+        for (int i = 0; i < elements.length; i++) {
+            IDiffElement e = elements[i];
+            if (e instanceof SyncInfoModelElement) {
+                filtered.add(((SyncInfoModelElement)e).getSyncInfo());
+            }
+        }
+        return filtered;
+    }
+    
+    protected String getBundleKeyPrefix() {
+    	return "GenerateDiffFileAction."; //$NON-NLS-1$
+    }
+}

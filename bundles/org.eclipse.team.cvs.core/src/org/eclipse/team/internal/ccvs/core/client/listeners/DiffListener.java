@@ -22,9 +22,14 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
 
 public class DiffListener extends CommandOutputListener {
 	PrintStream patchStream;
+	boolean wroteToStream;
+	
+	//Error Messages returned by CVS
+	static final String ERR_NOSUCHDIRECTORY = "cvs [diff aborted]: no such directory"; //$NON-NLS-1$
 	
 	public DiffListener(PrintStream patchStream) {
 		this.patchStream = patchStream;
+		wroteToStream=false;
 	}
 	
 	public IStatus messageLine(
@@ -41,6 +46,8 @@ public class DiffListener extends CommandOutputListener {
 			line = line.substring(0, line.length() - 1);
 		}
 		patchStream.println(line);
+		wroteToStream=true;
+		
 		return OK;
 	}
 
@@ -54,6 +61,15 @@ public class DiffListener extends CommandOutputListener {
 		if (getServerMessage(line, location) != null) {
 			return OK;
 		}
+		
+		//Check to see if this is a no such directory message
+		if (line.indexOf(ERR_NOSUCHDIRECTORY) != -1){
+			return OK;
+		}
 		return super.errorLine(line, location, commandRoot, monitor);
+	}
+
+	public boolean wroteToStream() {
+		return wroteToStream;
 	}
 }

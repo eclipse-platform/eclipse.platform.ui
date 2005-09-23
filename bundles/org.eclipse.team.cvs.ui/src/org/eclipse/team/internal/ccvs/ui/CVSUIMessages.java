@@ -570,8 +570,6 @@ public class CVSUIMessages extends NLS {
 	public static String Save_In_Workspace_7;
 	public static String Select_a_folder_then_type_in_the_file_name__8;
 	public static String Fi_le_name__9;
-	public static String Do_not_recurse_into_sub_folders_10;
-	public static String Do_not_include_new_files_in_patch_11;
 	public static String Diff_output_format_12;
 	public static String Unified__format_required_by_Compare_With_Patch_feature__13;
 	public static String Context_14;
@@ -861,6 +859,16 @@ public class CVSUIMessages extends NLS {
 	public static String GenerateDiffFileOperation_0;
 	public static String GenerateDiffFileOperation_1;
 	public static String GenerateDiffFileOperation_2;
+	public static String DiffOperation_0;
+	public static String DiffOperation_1;
+	public static String GenerateDiffFileWizard_6;
+	public static String GenerateDiffFileWizard_7;
+	public static String GenerateDiffFileWizard_8;
+	public static String GenerateDiffFileWizard_9;
+	public static String GenerateDiffFileWizard_10;
+	public static String GenerateDiffFileWizard_File_multisegments;
+	public static String GenerateDiffFileWizard_SelectAll;
+	public static String GenerateDiffFileWizard_DeselectAll;	
 	public static String GenerateDiffFileWizard_0;
 	public static String GenerateDiffFileWizard_2;
 	public static String GenerateDiffFileWizard_3;
@@ -1003,9 +1011,9 @@ public class CVSUIMessages extends NLS {
 	
     public static String OpenChangeSetAction_0;
     public static String OpenChangeSetAction_1;
-
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, CVSUIMessages.class);
-	}	
+	}
 }

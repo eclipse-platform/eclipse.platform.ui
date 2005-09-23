@@ -213,15 +213,6 @@
                value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
          </filter>
          <action
-               helpContextId="org.eclipse.team.cvs.ui.team_create_patch_action_context"
-               label="%GenerateDiff.label"
-               definitionId="org.eclipse.team.cvs.ui.GenerateDiff"
-               class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"
-               tooltip="%GenerateDiff.tooltip"
-               menubarPath="team.main/group1"
-               id="org.eclipse.team.cvs.ui.GenerateDiff">
-         </action>
-         <action
                label="%ShowEditorsAction.label"
                helpContextId="org.eclipse.team.cvs.ui.team_show_editors_action_context"
                tooltip="%ShowEditorsAction.tooltip"
@@ -323,6 +314,14 @@
                menubarPath="replaceWithMenu/replaceWithGroup"
                id="org.eclipse.team.cvs.ui.replace">
          </action>
+         <action
+               class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"
+               definitionId="org.eclipse.team.cvs.ui.GenerateDiff"
+               helpContextId="org.eclipse.team.cvs.ui.team_create_patch_action_context"
+               id="org.eclipse.team.cvs.ui.GenerateDiff"
+               label="%GenerateDiff.label"
+               menubarPath="team.main/group1"
+               tooltip="%GenerateDiff.tooltip"/>
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_update_action_context"
                label="%UpdateAction.label"

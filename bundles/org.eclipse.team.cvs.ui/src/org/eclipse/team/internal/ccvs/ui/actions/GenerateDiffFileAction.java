@@ -10,12 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
+import org.eclipse.core.internal.resources.mapping.ResourceMapping;
+import org.eclipse.core.internal.resources.mapping.ResourceTraversal;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
+import org.eclipse.team.internal.core.subscribers.SubscriberResourceMappingContext;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action to generate a patch file using the CVS diff command.
@@ -23,29 +32,80 @@ import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
  * NOTE: This is a temporary action and should eventually be replaced
  * by a create patch command in the compare viewer.
  */
-public class GenerateDiffFileAction extends WorkspaceAction {
+public class GenerateDiffFileAction extends WorkspaceTraversalAction{
     
-    // The initial size of this wizard.
-    private final static int INITIAL_WIDTH = 300;
-    private final static int INITIAL_HEIGHT = 350;
-	
 	/** (Non-javadoc)
 	 * Method declared on IActionDelegate.
 	 */
 	public void execute(IAction action) {
-		final String title = CVSUIMessages.GenerateCVSDiff_title; 
-		final IResource[] resources = getSelectedResources();
-		final GenerateDiffFileWizard wizard = new GenerateDiffFileWizard(resources[0]);
-		wizard.setWindowTitle(title);
-		WizardDialog dialog = new WizardDialog(getShell(), wizard);
-		dialog.setMinimumPageSize(INITIAL_WIDTH, INITIAL_HEIGHT);
-		dialog.open();
+
+		try {
+			final IResource [][] resources = new IResource[][] { null };
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						resources[0] = getDeepResourcesToPatch(monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			});
+			GenerateDiffFileWizard.run(getTargetPart(), resources[0]);
+		} catch (InvocationTargetException e) {
+			CVSUIPlugin.openError(getShell(), null, null, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
+		} catch (InterruptedException e) {
+			// Ignore
+		}
 	}
-	
+
+	 private IResource[] getDeepResourcesToPatch(IProgressMonitor monitor) throws CoreException {
+	        ResourceMapping[] mappings = getCVSResourceMappings();
+	        List roots = new ArrayList();
+	        for (int i = 0; i < mappings.length; i++) {
+	            ResourceMapping mapping = mappings[i];
+	            ResourceTraversal[] traversals = mapping.getTraversals(
+	            		SubscriberResourceMappingContext.getCheckInContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber()), 
+	            		monitor);
+	            for (int j = 0; j < traversals.length; j++) {
+	                ResourceTraversal traversal = traversals[j];
+	                IResource[] resources = traversal.getResources();
+	                if (traversal.getDepth() == IResource.DEPTH_INFINITE) {
+	                    roots.addAll(Arrays.asList(resources));
+	                } else if (traversal.getDepth() == IResource.DEPTH_ZERO) {
+	                    collectShallowFiles(resources, roots);
+	                } else if (traversal.getDepth() == IResource.DEPTH_ONE) {
+	                    collectShallowFiles(resources, roots);
+	                    for (int k = 0; k < resources.length; k++) {
+	                        IResource resource = resources[k];
+	                        if (resource.getType() != IResource.FILE) {
+	                            collectShallowFiles(members(resource), roots);
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        return (IResource[]) roots.toArray(new IResource[roots.size()]);
+	    }
+	 
+	   private void collectShallowFiles(IResource[] resources, List roots) {
+	        for (int k = 0; k < resources.length; k++) {
+	            IResource resource = resources[k];
+	            if (resource.getType() == IResource.FILE)
+	                roots.add(resource);
+	        }
+	    }
+	   
+	   private IResource[] members(IResource resource) throws CoreException {
+	        return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().members(resource);
+	    }
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForMultipleResources()
 	 */
 	protected boolean isEnabledForMultipleResources() {
+		if(Boolean.getBoolean(GenerateDiffFileWizard.WORKSPACEPATCH_FLAG)){ 
+			return true;
+		}
+		
 		return false;
 	}
 
@@ -55,6 +115,7 @@ public class GenerateDiffFileAction extends WorkspaceAction {
 	protected boolean isEnabledForUnmanagedResources() {
 		return true;
 	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getId()
