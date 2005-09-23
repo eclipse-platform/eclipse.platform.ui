@@ -175,7 +175,7 @@ public class BookmarkView extends MarkerView {
 	 */
 	protected DialogMarkerFilter createFiltersDialog() {
 
-		MarkerFilter[] filters = getFilters();
+		MarkerFilter[] filters = getUserFilters();
 		BookmarkFilter[] bookmarkFilters = new BookmarkFilter[filters.length];
 		System.arraycopy(filters, 0, bookmarkFilters, 0, filters.length);
 		return new DialogBookmarkFilter(getSite().getShell(), bookmarkFilters);

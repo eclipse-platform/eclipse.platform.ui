@@ -270,7 +270,7 @@ public class TaskView extends MarkerView {
 	 */
 	protected DialogMarkerFilter createFiltersDialog() {
 
-		MarkerFilter[] filters = getFilters();
+		MarkerFilter[] filters = getUserFilters();
 		TaskFilter[] taskFilters = new TaskFilter[filters.length];
 		System.arraycopy(filters, 0, taskFilters, 0, filters.length);
 		return new DialogTaskFilter(getSite().getShell(), taskFilters);

@@ -219,5 +219,18 @@ public class MarkerMessages extends NLS{
 	public static String MarkerPreferences_DialogTitle;
 	public static String MarkerPreferences_MarkerLimits;
 	public static String MarkerPreferences_VisibleItems;
-
+	
+	public static String ProblemFilterDialog_System_Filters_Title;
+	public static String ProblemFilterDialog_All_Problems;
+	public static String ProblemFilterDialog_Selected_Types;
+	public static String ProblemFilterDialog_Info_Severity;
+	public static String ProblemFilterDialog_Warning_Severity;
+	public static String ProblemFilterDialog_Error_Severity;
+	public static String ProblemFilterDialog_Contains_Description;
+	public static String ProblemFilterDialog_Does_Not_Contain_Description;
+	public static String ProblemFilterDialog_any;
+	public static String ProblemFilterDialog_sameContainer;
+	public static String ProblemFilterDialog_selectedAndChildren;
+	public static String ProblemFilterDialog_selected;
+	public static String ProblemFilterDialog_workingSet;
 }

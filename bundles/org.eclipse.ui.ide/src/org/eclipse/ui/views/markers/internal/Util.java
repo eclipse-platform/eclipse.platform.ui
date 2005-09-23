@@ -25,6 +25,10 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 
 public final class Util {
+	
+	static String EMPTY_STRING = "";//$NON-NLS-1$
+	static String TWO_LINE_FEED = "\n\n";//$NON-NLS-1$
+	static String LINE_FEED_AND_TAB = "\n\t";//$NON-NLS-1$
 
 	public static String getString(ResourceBundle resourceBundle, String key)
 			throws IllegalArgumentException {

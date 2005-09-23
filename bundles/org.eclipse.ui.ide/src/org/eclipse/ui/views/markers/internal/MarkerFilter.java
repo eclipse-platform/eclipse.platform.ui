@@ -61,17 +61,17 @@ public class MarkerFilter implements Cloneable{
 	 */
 	private static final String SELECTED_TRUE = "true"; //$NON-NLS-1$
 
-	static final int ON_ANY_RESOURCE = 0;
+	static final int ON_ANY = 0;
 
-	static final int ON_SELECTED_RESOURCE_ONLY = 1;
+	static final int ON_SELECTED_ONLY = 1;
 
-	static final int ON_SELECTED_RESOURCE_AND_CHILDREN = 2;
+	static final int ON_SELECTED_AND_CHILDREN = 2;
 
-	static final int ON_ANY_RESOURCE_OF_SAME_PROJECT = 3;
+	static final int ON_ANY_IN_SAME_CONTAINER = 3;
 
 	static final int ON_WORKING_SET = 4;
 
-	static final int DEFAULT_ON_RESOURCE = ON_ANY_RESOURCE;
+	static final int DEFAULT_ON_RESOURCE = ON_ANY;
 
 	static final boolean DEFAULT_ACTIVATION_STATUS = true;
 
@@ -311,23 +311,23 @@ public class MarkerFilter implements Cloneable{
 			int limit = -1;
 
 			switch (getOnResource()) {
-			case ON_ANY_RESOURCE: {
+			case ON_ANY: {
 				unfiltered = findMarkers(new IResource[] { ResourcesPlugin
 						.getWorkspace().getRoot() }, IResource.DEPTH_INFINITE,
 						limit, mon, ignoreExceptions);
 				break;
 			}
-			case ON_SELECTED_RESOURCE_ONLY: {
+			case ON_SELECTED_ONLY: {
 				unfiltered = findMarkers(focusResource, IResource.DEPTH_ZERO,
 						limit, mon, ignoreExceptions);
 				break;
 			}
-			case ON_SELECTED_RESOURCE_AND_CHILDREN: {
+			case ON_SELECTED_AND_CHILDREN: {
 				unfiltered = findMarkers(focusResource,
 						IResource.DEPTH_INFINITE, limit, mon, ignoreExceptions);
 				break;
 			}
-			case ON_ANY_RESOURCE_OF_SAME_PROJECT: {
+			case ON_ANY_IN_SAME_CONTAINER: {
 				unfiltered = findMarkers(getProjects(focusResource),
 						IResource.DEPTH_INFINITE, limit, mon, ignoreExceptions);
 				break;
@@ -456,7 +456,7 @@ public class MarkerFilter implements Cloneable{
 	 *         should be filtered out
 	 */
 	private boolean selectBySelection(ConcreteMarker marker) {
-		if (onResource == ON_ANY_RESOURCE || marker == null)
+		if (onResource == ON_ANY || marker == null)
 			return true;
 
 		if (focusResource == null)
@@ -471,7 +471,7 @@ public class MarkerFilter implements Cloneable{
 			if (resource != null)
 				return isEnclosed(resource);
 
-		} else if (onResource == ON_ANY_RESOURCE_OF_SAME_PROJECT) {
+		} else if (onResource == ON_ANY_IN_SAME_CONTAINER) {
 			IProject project = resource.getProject();
 
 			if (project == null) {
@@ -488,12 +488,12 @@ public class MarkerFilter implements Cloneable{
 				if (project.equals(selectedProject))
 					return true;
 			}
-		} else if (onResource == ON_SELECTED_RESOURCE_ONLY) {
+		} else if (onResource == ON_SELECTED_ONLY) {
 			for (int i = 0; i < focusResource.length; i++) {
 				if (resource.equals(focusResource[i]))
 					return true;
 			}
-		} else if (onResource == ON_SELECTED_RESOURCE_AND_CHILDREN) {
+		} else if (onResource == ON_SELECTED_AND_CHILDREN) {
 			for (int i = 0; i < focusResource.length; i++) {
 				IResource parentResource = resource;
 
@@ -530,16 +530,15 @@ public class MarkerFilter implements Cloneable{
 	}
 
 	/**
-	 * @return
 	 * <ul>
-	 * <li><code>MarkerFilter.ON_ANY_RESOURCE</code> if showing items
+	 * <li><code>MarkerFilter.ON_ANY</code> if showing items
 	 * associated with any resource.</li>
-	 * <li><code>MarkerFilter.ON_SELECTED_RESOURCE_ONLY</code> if showing
+	 * <li><code>MarkerFilter.ON_SELECTED_ONLY</code> if showing
 	 * items associated with the selected resource within the workbench.</li>
-	 * <li><code>MarkerFilter.ON_SELECTED_RESOURCE_AND_CHILDREN</code> if
+	 * <li><code>MarkerFilter.ON_SELECTED_AND_CHILDREN</code> if
 	 * showing items associated with the selected resource within the workbench
 	 * and its children.</li>
-	 * <li><code>MarkerFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT</code> if
+	 * <li><code>MarkerFilter.ON_ANY_OF_SAME_PROJECT</code> if
 	 * showing items in the same project as the selected resource within the
 	 * workbench.</li>
 	 * <li><code>MarkerFilter.ON_WORKING_SET</code> if showing items in some
@@ -564,7 +563,7 @@ public class MarkerFilter implements Cloneable{
 	 *            </ul>
 	 */
 	void setOnResource(int onResource) {
-		if (onResource >= ON_ANY_RESOURCE && onResource <= ON_WORKING_SET)
+		if (onResource >= ON_ANY && onResource <= ON_WORKING_SET)
 			this.onResource = onResource;
 	}
 
@@ -614,12 +613,12 @@ public class MarkerFilter implements Cloneable{
 	}
 
 	/**
-	 * <b>Warning:</b> for internal private use only. Test based on the types
-	 * model.
+	 * Find the typeModel entry that matches id.
 	 * 
 	 * @param id
 	 *            the ID for a marker type
-	 * @return the type for this id
+	 * @return  MarkerType or <code>null</code> if it is not
+	 *  found.
 	 */
 	public MarkerType getMarkerType(String id) {
 		return typesModel.getType(id);
@@ -638,14 +637,6 @@ public class MarkerFilter implements Cloneable{
 	 */
 	void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-
-	/**
-	 * Sets the selected marker types to be displayed. The List <b>MUST ONLY</b>
-	 * contain <code>MarkerType</code> objects.
-	 */
-	void setSelectedTypes(List selectedTypes) {
-		this.selectedTypes = selectedTypes;
 	}
 
 	/**
@@ -747,17 +738,7 @@ public class MarkerFilter implements Cloneable{
 			setting = settings.get(TAG_SELECTED_TYPES);
 
 			if (setting != null) {
-				selectedTypes.clear();
-				StringTokenizer stringTokenizer = new StringTokenizer(setting);
-
-				while (stringTokenizer.hasMoreTokens()) {
-					MarkerType markerType = typesModel.getType(stringTokenizer
-							.nextToken(TAG_TYPES_DELIMITER));
-
-					if (markerType != null
-							&& !selectedTypes.contains(markerType))
-						selectedTypes.add(markerType);
-				}
+				generateSelectedTypes(setting);
 			}
 
 		}
@@ -767,6 +748,33 @@ public class MarkerFilter implements Cloneable{
 		if (setting != null)
 			setWorkingSet(WorkbenchPlugin.getDefault().getWorkingSetManager()
 					.getWorkingSet(setting));
+	}
+
+	/**
+	 * Set the selected types based on the value.
+	 * @param selectedTypesValue
+	 */
+	void generateSelectedTypes(String selectedTypesValue) {
+		selectedTypes.clear();
+		StringTokenizer stringTokenizer = new StringTokenizer(selectedTypesValue);
+
+		while (stringTokenizer.hasMoreTokens()) {
+			MarkerType markerType = getMarkerType(stringTokenizer
+				.nextToken(TAG_TYPES_DELIMITER));
+
+			if (markerType != null
+					&& !selectedTypes.contains(markerType))
+				selectedTypes.add(markerType);
+		}
+	}
+	
+	/**
+	 * Find the markerType matching typeName
+	 * @param typeName
+	 * @return MarkerType
+	 */
+	MarkerType findMarkerType(String typeName){
+		return typesModel.getType(typeName);
 	}
 
 	/**
@@ -830,17 +838,7 @@ public class MarkerFilter implements Cloneable{
 			setting = memento.getString(TAG_SELECTED_TYPES);
 
 			if (setting != null) {
-				selectedTypes.clear();
-				StringTokenizer stringTokenizer = new StringTokenizer(setting);
-
-				while (stringTokenizer.hasMoreTokens()) {
-					MarkerType markerType = typesModel.getType(stringTokenizer
-							.nextToken(TAG_TYPES_DELIMITER));
-
-					if (markerType != null
-							&& !selectedTypes.contains(markerType))
-						selectedTypes.add(markerType);
-				}
+				generateSelectedTypes(setting);
 			}
 
 		}
@@ -897,6 +895,14 @@ public class MarkerFilter implements Cloneable{
 	 */
 	public MarkerFilter makeClone() throws CloneNotSupportedException{
 		return (MarkerFilter) this.clone();
+	}
+
+	/**
+	 * Set the selected types.
+	 * @param selectedTypes List of MarkerType.
+	 */
+	public void setSelectedTypes(List selectedTypes) {
+		this.selectedTypes = selectedTypes;
 	}
 
 }

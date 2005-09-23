@@ -9,6 +9,7 @@
    <extension-point id="markerResolution" name="%ExtPoint.markerResolution" schema="schema/markerResolution.exsd"/>
    <extension-point id="projectNatureImages" name="%ExtPoint.projectNatureImages" schema="schema/projectNatureImages.exsd"/>
    <extension-point id="resourceFilters" name="%ExtPoint.resourceFilters" schema="schema/resourceFilters.exsd"/>
+   <extension-point id="markerSupport" name="%ExtPoint.markerSupport" schema="schema/markerSupport.exsd"/>
 
    <extension
          id="workbench"

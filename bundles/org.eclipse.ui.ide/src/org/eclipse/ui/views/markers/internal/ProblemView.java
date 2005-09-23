@@ -12,6 +12,8 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -239,7 +241,7 @@ public class ProblemView extends MarkerView {
 	 */
 	protected DialogMarkerFilter createFiltersDialog() {
 
-		MarkerFilter[] filters = getFilters();
+		MarkerFilter[] filters = getUserFilters();
 		ProblemFilter[]problemFilters = new ProblemFilter[filters.length];
 		System.arraycopy(filters, 0, problemFilters, 0, filters.length);
 		return new DialogProblemFilter(getSite().getShell(), problemFilters);
@@ -278,5 +280,27 @@ public class ProblemView extends MarkerView {
 	 */
 	String getFiltersPreferenceName() {
 		return IDEInternalPreferences.PROBLEMS_FILTERS;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getAllFilters()
+	 */
+	MarkerFilter[] getAllFilters() {
+		MarkerFilter[] userFilters =  super.getAllFilters();
+		Collection declaredFilters = ProblemFilterRegistry.getInstance().getRegisteredFilters();
+		Iterator iterator = 
+			declaredFilters.iterator();
+		
+		MarkerFilter[] allFilters = new MarkerFilter[userFilters.length + declaredFilters.size()];
+		System.arraycopy(userFilters, 0, allFilters, 0, userFilters.length);
+		int index = userFilters.length;
+		
+		while(iterator.hasNext()){
+			allFilters[index] = (MarkerFilter) iterator.next();
+			index++;
+		}
+		return allFilters;
+		
 	}
 }

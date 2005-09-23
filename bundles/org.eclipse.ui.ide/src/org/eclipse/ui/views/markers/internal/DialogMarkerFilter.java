@@ -254,8 +254,6 @@ public abstract class DialogMarkerFilter extends Dialog {
 
 	private CheckboxTableViewer filtersList;
 
-	private Composite selectedComposite;
-
 	private MarkerFilter[] selectedFilters;
 
     /**
@@ -400,8 +398,8 @@ public abstract class DialogMarkerFilter extends Dialog {
         
         createFiltersArea(dialogArea);
         
-        createSelectedFilterArea(dialogArea);
-
+        Composite selectedComposite = createSelectedFilterArea(dialogArea);
+        selectedComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         updateUIFromFilter();
         
         filtersList.setSelection(new StructuredSelection(filters[0]));
@@ -417,7 +415,7 @@ public abstract class DialogMarkerFilter extends Dialog {
     /**
      * @param dialogArea
      */
-    private void createFiltersArea(Composite dialogArea) {
+    void createFiltersArea(Composite dialogArea) {
     	
     	Composite listArea = new Composite(dialogArea,SWT.NONE);
     	listArea.setLayoutData(
@@ -601,11 +599,10 @@ public abstract class DialogMarkerFilter extends Dialog {
      * Create the area for the selected filter.
      * @param composite
      */
-    private void createSelectedFilterArea(Composite composite){
+    Composite createSelectedFilterArea(Composite composite){
     	
-    	selectedComposite = new Composite(composite,SWT.NONE);
+    	Composite selectedComposite = new Composite(composite,SWT.NONE);
     	selectedComposite.setLayout(new GridLayout(2,false));
-    	selectedComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
     	
     	Composite leftComposite = new Composite(selectedComposite,SWT.NONE);
     	leftComposite.setLayout(new GridLayout());
@@ -619,7 +616,9 @@ public abstract class DialogMarkerFilter extends Dialog {
     	rightComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
     	
     	createSeparatorLine(selectedComposite);
-    	createResetArea(composite);
+    	createResetArea(selectedComposite);
+    	
+    	return selectedComposite;
     }
 
     /**
@@ -756,23 +755,7 @@ public abstract class DialogMarkerFilter extends Dialog {
             	if(selected == null)
             		return new Object[0];
             	
-                List roots = selected.getRootTypes();
-                List elements = new ArrayList();
-                for (int i = 0; i < roots.size(); i++) {
-                    Object obj = roots.get(i);
-                    if (obj instanceof MarkerType) {
-                        elements.add(obj);
-                        MarkerType[] subTypes = ((MarkerType) obj)
-                                .getAllSubTypes();
-                        for (int j = 0; j < subTypes.length; j++) {
-                            MarkerType subType = subTypes[j];
-                            if (!elements.contains(subType)) {
-                                elements.add(subType);
-                            }
-                        }
-                    }
-                }
-                return elements.toArray();
+                return getAllMarkerTypes(selected);
             }
 
             public void dispose() {
@@ -834,13 +817,13 @@ public abstract class DialogMarkerFilter extends Dialog {
         typesViewer.setAllChecked(true);
         int onResource = MarkerFilter.DEFAULT_ON_RESOURCE;
         anyResourceButton
-                .setSelection(onResource == MarkerFilter.ON_ANY_RESOURCE);
+                .setSelection(onResource == MarkerFilter.ON_ANY);
         anyResourceInSameProjectButton
-                .setSelection(onResource == MarkerFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT);
+                .setSelection(onResource == MarkerFilter.ON_ANY_IN_SAME_CONTAINER);
         selectedResourceButton
-                .setSelection(onResource == MarkerFilter.ON_SELECTED_RESOURCE_ONLY);
+                .setSelection(onResource == MarkerFilter.ON_SELECTED_ONLY);
         selectedResourceAndChildrenButton
-                .setSelection(onResource == MarkerFilter.ON_SELECTED_RESOURCE_AND_CHILDREN);
+                .setSelection(onResource == MarkerFilter.ON_SELECTED_AND_CHILDREN);
         workingSetGroup.setSelection(onResource == MarkerFilter.ON_WORKING_SET);
         updateEnabledState(true);
     }
@@ -903,16 +886,16 @@ public abstract class DialogMarkerFilter extends Dialog {
         filter.setSelectedTypes(getSelectedTypes());
 
         if (selectedResourceButton.getSelection())
-            filter.setOnResource(MarkerFilter.ON_SELECTED_RESOURCE_ONLY);
+            filter.setOnResource(MarkerFilter.ON_SELECTED_ONLY);
         else if (selectedResourceAndChildrenButton.getSelection())
             filter
-                    .setOnResource(MarkerFilter.ON_SELECTED_RESOURCE_AND_CHILDREN);
+                    .setOnResource(MarkerFilter.ON_SELECTED_AND_CHILDREN);
         else if (anyResourceInSameProjectButton.getSelection())
-            filter.setOnResource(MarkerFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT);
+            filter.setOnResource(MarkerFilter.ON_ANY_IN_SAME_CONTAINER);
         else if (workingSetGroup.getSelection())
             filter.setOnResource(MarkerFilter.ON_WORKING_SET);
         else
-            filter.setOnResource(MarkerFilter.ON_ANY_RESOURCE);
+            filter.setOnResource(MarkerFilter.ON_ANY);
 
         filter.setWorkingSet(workingSetGroup.getWorkingSet());
 	}
@@ -940,13 +923,13 @@ public abstract class DialogMarkerFilter extends Dialog {
 		setSelectedTypes(filter.getSelectedTypes());
 
         int on = filter.getOnResource();
-        anyResourceButton.setSelection(on == MarkerFilter.ON_ANY_RESOURCE);
+        anyResourceButton.setSelection(on == MarkerFilter.ON_ANY);
         anyResourceInSameProjectButton
-                .setSelection(on == MarkerFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT);
+                .setSelection(on == MarkerFilter.ON_ANY_IN_SAME_CONTAINER);
         selectedResourceButton
-                .setSelection(on == MarkerFilter.ON_SELECTED_RESOURCE_ONLY);
+                .setSelection(on == MarkerFilter.ON_SELECTED_ONLY);
         selectedResourceAndChildrenButton
-                .setSelection(on == MarkerFilter.ON_SELECTED_RESOURCE_AND_CHILDREN);
+                .setSelection(on == MarkerFilter.ON_SELECTED_AND_CHILDREN);
         workingSetGroup.setSelection(on == MarkerFilter.ON_WORKING_SET);
         workingSetGroup.setWorkingSet(filter.getWorkingSet());
 
@@ -994,6 +977,31 @@ public abstract class DialogMarkerFilter extends Dialog {
 	protected void updateForSelection() {
 		updateEnabledState(true);
 		markDirty();
+	}
+
+	/**
+	 * Get all of the marker types avilable for the filter
+	 * @param selected
+	 * @return Object[]
+	 */
+	Object[] getAllMarkerTypes(MarkerFilter selected) {
+		List roots = selected.getRootTypes();
+		List elements = new ArrayList();
+		for (int i = 0; i < roots.size(); i++) {
+		    Object obj = roots.get(i);
+		    if (obj instanceof MarkerType) {
+		        elements.add(obj);
+		        MarkerType[] subTypes = ((MarkerType) obj)
+		                .getAllSubTypes();
+		        for (int j = 0; j < subTypes.length; j++) {
+		            MarkerType subType = subTypes[j];
+		            if (!elements.contains(subType)) {
+		                elements.add(subType);
+		            }
+		        }
+		    }
+		}
+		return elements.toArray();
 	}
 
 }

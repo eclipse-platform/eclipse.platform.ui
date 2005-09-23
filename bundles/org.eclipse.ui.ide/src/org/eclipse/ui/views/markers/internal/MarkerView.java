@@ -395,7 +395,7 @@ public abstract class MarkerView extends TableView {
 
 		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
 
-		MarkerFilter[] filters = getFilters();
+		MarkerFilter[] filters = getUserFilters();
 		for (int i = 0; i < filters.length; i++) {
 			IMemento child = memento.createChild(TAG_FILTER_ENTRY,filters[i].getName());
 			filters[i].saveFilterSettings(child);
@@ -743,7 +743,7 @@ public abstract class MarkerView extends TableView {
 	 * 
 	 * @return MarkerFilter[]
 	 */
-	protected final MarkerFilter[] getFilters() {
+	protected final MarkerFilter[] getUserFilters() {
 		return markerFilters;
 	}
 
@@ -900,7 +900,7 @@ public abstract class MarkerView extends TableView {
 			MarkerFilter filter = filters[i];
 
 			int onResource = filter.getOnResource();
-			if (onResource == MarkerFilter.ON_ANY_RESOURCE
+			if (onResource == MarkerFilter.ON_ANY
 					|| onResource == MarkerFilter.ON_WORKING_SET) {
 				continue;
 			}
@@ -913,7 +913,7 @@ public abstract class MarkerView extends TableView {
 			if (Arrays.equals(oldResources, newResources)) {
 				continue;
 			}
-			if (onResource == MarkerFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT) {
+			if (onResource == MarkerFilter.ON_ANY_IN_SAME_CONTAINER) {
 				Collection oldProjects = MarkerFilter
 						.getProjectsAsCollection(oldResources);
 				Collection newProjects = MarkerFilter
@@ -1098,7 +1098,7 @@ public abstract class MarkerView extends TableView {
 		if (filtersMenu == null)
 			return;
 		filtersMenu.removeAll();
-		MarkerFilter[] filters = getFilters();
+		MarkerFilter[] filters = getAllFilters();
 		for (int i = 0; i < filters.length; i++) {
 			filtersMenu.add(new FilterEnablementAction(filters[i], this));
 		}
@@ -1241,17 +1241,35 @@ public abstract class MarkerView extends TableView {
 	MarkerFilter[] getEnabledFilters() {
 
 		if (enabledFilters == null) {
-			MarkerFilter[] allFilters = getFilters();
-			ArrayList filters = new ArrayList(0);
-			for (int i = 0; i < allFilters.length; i++) {
-				if (allFilters[i].isEnabled())
-					filters.add(allFilters[i]);
-			}
+			Collection filters = findEnabledFilters();
+			
 			enabledFilters = new MarkerFilter[filters.size()];
 			filters.toArray(enabledFilters);
 		}
 		return enabledFilters;
 
+	}
+
+	/**
+	 * Find the filters enabled in the view.
+	 * @return Collection of MarkerFilter
+	 */
+	protected Collection findEnabledFilters() {
+		MarkerFilter[] allFilters = getAllFilters();
+		ArrayList filters = new ArrayList(0);
+		for (int i = 0; i < allFilters.length; i++) {
+			if (allFilters[i].isEnabled())
+				filters.add(allFilters[i]);
+		}
+		return filters;
+	}
+
+	/**
+	 * Get all of the filters applied to the receiver.
+	 * @return MarkerFilter[]
+	 */
+	MarkerFilter[] getAllFilters() {
+		return getUserFilters();
 	}
 
 	/*

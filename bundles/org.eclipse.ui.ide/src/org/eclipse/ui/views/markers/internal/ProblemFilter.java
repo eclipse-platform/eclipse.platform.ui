@@ -46,7 +46,7 @@ public class ProblemFilter extends MarkerFilter {
 	private boolean selectBySeverity;
 
 	private int severity;
-
+	
 	/**
 	 * Create a new instance of the receiver with name filterName.
 	 * 
