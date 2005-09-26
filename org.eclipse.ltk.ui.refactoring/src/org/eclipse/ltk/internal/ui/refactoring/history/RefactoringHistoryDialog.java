@@ -573,12 +573,14 @@ public class RefactoringHistoryDialog extends Dialog {
 
 	/**
 	 * Sets the project which the history belongs to.
+	 * <p>
+	 * The project does not have to exist.
+	 * </p>
 	 * 
 	 * @param project
 	 *            the project, or <code>null</code> for the workspace
 	 */
 	public final void setProject(final IProject project) {
-		Assert.isTrue(project == null || project.exists());
 		fProject= project;
 	}
 }
