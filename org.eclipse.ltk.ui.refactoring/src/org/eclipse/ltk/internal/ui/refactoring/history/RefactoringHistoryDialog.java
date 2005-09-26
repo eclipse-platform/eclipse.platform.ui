@@ -154,6 +154,9 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The container image */
 	private Image fContainerImage= null;
 
+	/** Should time information be displayed? */
+	private boolean fDisplayTime= true;
+
 	/** The element image */
 	private Image fElementImage= null;
 
@@ -219,9 +222,9 @@ public class RefactoringHistoryDialog extends Dialog {
 		Assert.isNotNull(handle);
 		if (fHistoryTree == null || fHistoryTree.isDisposed())
 			return;
-		final long stamp= handle.getTimeStamp();
 		TreeItem item= null;
-		if (stamp > 0) {
+		final long stamp= handle.getTimeStamp();
+		if (stamp > 0 && fDisplayTime) {
 			final TreeItem[] items= fHistoryTree.getItems();
 			TreeItem lastDay= null;
 			if (items.length > 0)
@@ -585,6 +588,20 @@ public class RefactoringHistoryDialog extends Dialog {
 		}
 		fCommentPane.setInput(null);
 		fCommentPane.setText(fBundle.getString(COMMENT_CAPTION));
+	}
+
+	/**
+	 * Determines whether time information should be displayed.
+	 * <p>
+	 * The default value is <code>true</code>.
+	 * </p>
+	 * 
+	 * @param display
+	 *            <code>true</code> to display time information,
+	 *            <code>false</code> otherwise
+	 */
+	public final void setDisplayTime(final boolean display) {
+		fDisplayTime= display;
 	}
 
 	/**
