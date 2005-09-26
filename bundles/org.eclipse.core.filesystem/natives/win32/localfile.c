@@ -13,7 +13,7 @@
 #include <sys/stat.h>
 #include <windows.h>
 #include <stdio.h>
-#include "localfile.h"
+#include "../localfile.h"
 
 /*
  * Converts a FILETIME in a java long (milliseconds).
