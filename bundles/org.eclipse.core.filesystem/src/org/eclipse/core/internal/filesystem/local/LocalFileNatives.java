@@ -27,7 +27,7 @@ abstract class LocalFileNatives {
 
 	/** instance of this library */
 	// The name convention is to use the plugin version at the time the library is changed.  
-	private static final String LIBRARY_NAME = "localfile_3_2_0"; //$NON-NLS-1$
+	private static final String LIBRARY_NAME = "localfile_1_0_0"; //$NON-NLS-1$
 
 	static {
 		try {
