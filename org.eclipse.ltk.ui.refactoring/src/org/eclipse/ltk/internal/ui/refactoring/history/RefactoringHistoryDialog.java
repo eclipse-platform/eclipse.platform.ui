@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogSettings;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -311,14 +312,17 @@ public class RefactoringHistoryDialog extends Dialog {
 	 * @inheritDoc
 	 */
 	protected void createButtonsForButtonBar(final Composite parent) {
-		final Button button= createButton(parent, fButtonId, fBundle.getString(BUTTON_LABEL), false);
+		Button button= createButton(parent, fButtonId, fBundle.getString(BUTTON_LABEL), true);
 		button.setFocus();
-		button.addSelectionListener(new SelectionAdapter() {
+		final SelectionAdapter adapter= new SelectionAdapter() {
 
 			public final void widgetSelected(final SelectionEvent event) {
 				close();
 			}
-		});
+		};
+		button.addSelectionListener(adapter);
+		button= createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		button.addSelectionListener(adapter);
 	}
 
 	/**
