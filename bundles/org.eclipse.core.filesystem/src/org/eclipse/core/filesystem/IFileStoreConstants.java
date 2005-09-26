@@ -36,14 +36,6 @@ public interface IFileStoreConstants {
 	public static final String PT_FILE_SYSTEMS = "filesystems"; //$NON-NLS-1$
 
 	/**
-	 * A constant (value -1) representing an invalid value.
-	 * 
-	 * @see IFileInfo#getLastModified()
-	 * @see IFileInfo#getLength()
-	 */
-	public static final int INVALID = -1;
-	
-	/**
 	 * A constant known to be zero (0), used in operations which
 	 * take bit flags to indicate that "no bits are set".
 	 */

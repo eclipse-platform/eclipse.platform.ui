@@ -23,8 +23,8 @@ public class FileInfo implements IFileInfo, IFileStoreConstants {
 	
 	private int attributes = 0;
 
-	private long lastModified = IFileStoreConstants.INVALID;
-	private long length = IFileStoreConstants.INVALID;
+	private long lastModified = IFileStoreConstants.NONE;
+	private long length = IFileStoreConstants.NONE;
 	private String name = ""; //$NON-NLS-1$
 
 	/**

@@ -43,18 +43,18 @@ public interface IFileInfo extends Comparable {
 	public boolean getAttribute(int attribute);
 
 	/**
-	 * Returns the last modified time for this file, or {@link IFileStoreConstants#INVALID}
+	 * Returns the last modified time for this file, or {@link IFileStoreConstants#NONE}
 	 * if the file does not exist or the last modified time could not be computed.
 	 * 
-	 * @return the last modified time for this file, or {@link IFileStoreConstants#INVALID}
+	 * @return the last modified time for this file, or {@link IFileStoreConstants#NONE}
 	 */
 	public abstract long getLastModified();
 
 	/**
-	 * Returns the length of this file, or {@link IFileStoreConstants#INVALID}
+	 * Returns the length of this file, or {@link IFileStoreConstants#NONE}
 	 * if the file does not exist, is a directory, or the length could not be computed.
 	 * 
-	 * @return the length of this file, or {@link IFileStoreConstants#INVALID}
+	 * @return the length of this file, or {@link IFileStoreConstants#NONE}
 	 */
 	public abstract long getLength();
 
@@ -102,18 +102,18 @@ public interface IFileInfo extends Comparable {
 	public void setExists(boolean value);
 
 	/**
-	 * Sets the last modified time for this file.  A value of {@link IFileStoreConstants#INVALID}
+	 * Sets the last modified time for this file.  A value of {@link IFileStoreConstants#NONE}
 	 * indicates the file does not exist or the last modified time could not be computed.
 	 * 
-	 * @param time the last modified time for this file, or {@link IFileStoreConstants#INVALID}
+	 * @param time the last modified time for this file, or {@link IFileStoreConstants#NONE}
 	 */
 	public abstract void setLastModified(long time);
 
 	/**
-	 * Sets the length of this file. A value of {@link IFileStoreConstants#INVALID}
+	 * Sets the length of this file. A value of {@link IFileStoreConstants#NONE}
 	 * indicates the file does not exist, is a directory, or the length could not be computed.
 	 * 
-	 * @param length the length of this file, or {@link IFileStoreConstants#INVALID}
+	 * @param length the length of this file, or {@link IFileStoreConstants#NONE}
 	 */
 	public abstract void setLength(long length);
 	
