@@ -73,6 +73,26 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 	private IResourceChangeListener fResourceListener= null;
 
 	/**
+	 * Appends the specified descriptor as new head to the history.
+	 * 
+	 * @param file
+	 *            the history file
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @throws IOException
+	 *             if an input/output error occurs
+	 */
+	private void appendHead(final RandomAccessFile file, final RefactoringDescriptor descriptor) throws IOException {
+		Assert.isNotNull(file);
+		Assert.isNotNull(descriptor);
+		final long oldLength= file.length();
+		file.seek(oldLength);
+		ProjectRefactoringHistorySerializer.writeDescriptor(file, descriptor);
+		final long newLength= file.length();
+		file.writeLong(newLength - oldLength + 8);
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	public void connect() {
@@ -83,34 +103,16 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 	}
 
 	/**
-	 * @inheritDoc
-	 */
-	public void disconnect() {
-		if (fResourceListener != null) {
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(fResourceListener);
-			fResourceListener= null;
-		}
-	}
-
-	/**
-	 * Returns the project history file for the specified project.
-	 * <p>
-	 * The file has to be manually closed after processing.
-	 * </p>
+	 * Creates and returns the project history file.
 	 * 
 	 * @param project
 	 *            the project
-	 * @param mode
-	 *            the file mode
-	 * @return the project history file, or <code>null</code>
+	 * @return the lazily created project history file
 	 * @throws CoreException
 	 *             if an error occurs
-	 * @throws FileNotFoundException
-	 *             if the history file cannot be found
 	 */
-	private RandomAccessFile getProjectHistoryFile(final IProject project, final String mode) throws CoreException, FileNotFoundException {
+	private IFile createProjectHistory(final IProject project) throws CoreException {
 		Assert.isTrue(project.exists());
-		Assert.isTrue(mode != null && !"".equals(mode)); //$NON-NLS-1$
 		final IFolder folder= project.getFolder(NAME_HISTORY_FOLDER);
 		if (!folder.exists())
 			folder.create(true, true, null);
@@ -118,12 +120,19 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 			final IFile file= folder.getFile(PATH_HISTORY_FILE);
 			if (!file.exists())
 				file.create(new ByteArrayInputStream(new byte[] {}), true, null);
-			if (file.exists()) {
-				final String path= file.getLocation().toOSString();
-				return new RandomAccessFile(path, mode);
-			}
+			return file;
 		}
 		return null;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public void disconnect() {
+		if (fResourceListener != null) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(fResourceListener);
+			fResourceListener= null;
+		}
 	}
 
 	/**
@@ -143,6 +152,31 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 	}
 
 	/**
+	 * Opens the project history file for the specified project.
+	 * <p>
+	 * The file has to be manually closed after processing.
+	 * </p>
+	 * 
+	 * @param project
+	 *            the project
+	 * @param mode
+	 *            the file open mode
+	 * @return the project history file, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs
+	 * @throws FileNotFoundException
+	 *             if the history file cannot be found
+	 */
+	private RandomAccessFile openProjectHistory(final IProject project, final String mode) throws CoreException, FileNotFoundException {
+		Assert.isTrue(project.exists());
+		Assert.isTrue(mode != null && !"".equals(mode)); //$NON-NLS-1$
+		final IFile file= createProjectHistory(project);
+		if (file.exists())
+			return new RandomAccessFile(file.getLocation().toOSString(), mode);
+		return null;
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	public void pop(final RefactoringDescriptor descriptor) throws CoreException {
@@ -152,7 +186,7 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 			final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (project != null && project.exists() && isHistoryEnabled(project)) {
 				try {
-					final RandomAccessFile file= getProjectHistoryFile(project, "rw"); //$NON-NLS-1$
+					final RandomAccessFile file= openProjectHistory(project, "rw"); //$NON-NLS-1$
 					if (file != null) {
 						try {
 							removeHead(file);
@@ -162,6 +196,9 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 							} catch (IOException exception) {
 								// Do nothing
 							}
+							final IResource resource= createProjectHistory(project);
+							if (resource != null)
+								resource.refreshLocal(IResource.DEPTH_ZERO, null);
 						}
 					}
 				} catch (FileNotFoundException exception) {
@@ -183,16 +220,19 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 			final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (project != null && project.exists() && isHistoryEnabled(project)) {
 				try {
-					final RandomAccessFile file= getProjectHistoryFile(project, "rw"); //$NON-NLS-1$
+					final RandomAccessFile file= openProjectHistory(project, "rw"); //$NON-NLS-1$
 					if (file != null) {
 						try {
-							replaceHead(file, descriptor);
+							appendHead(file, descriptor);
 						} finally {
 							try {
 								file.close();
 							} catch (IOException exception) {
 								// Do nothing
 							}
+							final IResource resource= createProjectHistory(project);
+							if (resource != null)
+								resource.refreshLocal(IResource.DEPTH_ZERO, null);
 						}
 					}
 				} catch (FileNotFoundException exception) {
@@ -219,25 +259,5 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 			file.seek(length - 8);
 		final long size= file.readLong();
 		file.setLength(Math.max(length - size, 0));
-	}
-
-	/**
-	 * Appends the specified descriptor as new head to the history.
-	 * 
-	 * @param file
-	 *            the history file
-	 * @param descriptor
-	 *            the refactoring descriptor
-	 * @throws IOException
-	 *             if an input/output error occurs
-	 */
-	private void replaceHead(final RandomAccessFile file, final RefactoringDescriptor descriptor) throws IOException {
-		Assert.isNotNull(file);
-		Assert.isNotNull(descriptor);
-		final long oldLength= file.length();
-		file.seek(oldLength);
-		ProjectRefactoringHistorySerializer.writeDescriptor(file, descriptor);
-		final long newLength= file.length();
-		file.writeLong(newLength - oldLength + 8);
 	}
 }
