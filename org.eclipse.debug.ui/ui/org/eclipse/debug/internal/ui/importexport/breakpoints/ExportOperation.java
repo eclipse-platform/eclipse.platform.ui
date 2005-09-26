@@ -43,10 +43,10 @@ public class ExportOperation implements IRunnableWithProgress {
 	 * @param path the path.file to export the breakpoints to
 	 * @param autoOverwrite if we should automatically overwrite an existing file
 	 */
-	public ExportOperation(Object[] breakpoints, IPath path, boolean exists) {
+	public ExportOperation(Object[] breakpoints, IPath path, boolean autoOverwrite) {
 		fBreakpoints = breakpoints;
 		fPath = path;
-		fExists = exists;
+		fExists = autoOverwrite;
 	}//end constructor
 
 	/* (non-Javadoc)
