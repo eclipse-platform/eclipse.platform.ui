@@ -88,8 +88,8 @@ public class PerformRefactoringSessionOperation implements IWorkspaceRunnable {
 				boolean execute= false;
 				final RefactoringDescriptor descriptor= descriptors[index];
 				final Refactoring refactoring= factory.createRefactoring(descriptor);
-				if (refactoring instanceof IInitializableRefactoring) {
-					final IInitializableRefactoring extended= (IInitializableRefactoring) refactoring;
+				if (refactoring instanceof IInitializableRefactoringObject) {
+					final IInitializableRefactoringObject extended= (IInitializableRefactoringObject) refactoring;
 					final RefactoringArguments arguments= factory.createArguments(descriptor);
 					if (arguments != null && extended.initialize(arguments))
 						execute= true;

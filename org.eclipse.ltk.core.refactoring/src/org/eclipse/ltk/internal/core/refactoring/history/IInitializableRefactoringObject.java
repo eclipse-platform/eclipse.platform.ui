@@ -13,7 +13,8 @@ package org.eclipse.ltk.internal.core.refactoring.history;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 /**
- * Interface for refactorings which can be initialized by refactoring arguments.
+ * Interface for refactoring objects which can be initialized by refactoring
+ * arguments.
  * <p>
  * This interface is intended to be implemented by clients.
  * </p>
@@ -23,16 +24,17 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
  * 
  * @since 3.2
  */
-public interface IInitializableRefactoring {
+public interface IInitializableRefactoringObject {
 
 	/**
-	 * Initializes the refactoring with the refactoring arguments.
+	 * Initializes the refactoring object with the refactoring arguments.
 	 * 
 	 * @param arguments
 	 *            the refactoring arguments
-	 * @return <code>true</code> if the refactoring could be initialized,
-	 *         <code>false</code> otherwise. If the refactoring could not be
-	 *         initialized, it will not be executed.
+	 * @return <code>true</code> if the refactoring object could be
+	 *         initialized, <code>false</code> otherwise. If the refactoring
+	 *         object could not be initialized, its corresponding refactoring
+	 *         will not be executed.
 	 */
 	public boolean initialize(RefactoringArguments arguments);
 }
