@@ -48,6 +48,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -82,9 +83,6 @@ public class RefactoringHistoryDialog extends Dialog {
 
 	/** The day format key */
 	private static final String DAY_FORMAT= "dayFormat"; //$NON-NLS-1$
-
-	/** The dialog bounds key */
-	private static final String DIALOG_BOUNDS= "RefactoringHistoryDialog"; //$NON-NLS-1$
 
 	/** The dialog title key */
 	private static final String DIALOG_TITLE= "title"; //$NON-NLS-1$
@@ -135,6 +133,9 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The dialog bounds, or <code>null</code> */
 	private Rectangle fBounds= null;
 
+	/** The dialog bounds key */
+	private final String fBoundsKey;
+
 	/** The resource bundle to use */
 	protected final ResourceBundle fBundle;
 
@@ -174,6 +175,9 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The item image */
 	private Image fItemImage= null;
 
+	/** The message, or <code>null</code> */
+	private String fMessage= null;
+
 	/** The project, or <code>null</code> */
 	private IProject fProject= null;
 
@@ -199,6 +203,7 @@ public class RefactoringHistoryDialog extends Dialog {
 		fHistoryInput= input;
 		fButtonId= id;
 		fSettings= RefactoringUIPlugin.getDefault().getDialogSettings();
+		fBoundsKey= getClass().getName();
 	}
 
 	/**
@@ -273,9 +278,9 @@ public class RefactoringHistoryDialog extends Dialog {
 	public final boolean close() {
 		final boolean result= super.close();
 		if (result && fBounds != null) {
-			IDialogSettings settings= fSettings.getSection(DIALOG_BOUNDS);
+			IDialogSettings settings= fSettings.getSection(fBoundsKey);
 			if (settings == null) {
-				settings= new DialogSettings(DIALOG_BOUNDS);
+				settings= new DialogSettings(fBoundsKey);
 				fSettings.addSection(settings);
 			}
 			settings.put(X, fBounds.x);
@@ -331,12 +336,10 @@ public class RefactoringHistoryDialog extends Dialog {
 	protected Control createDialogArea(final Composite parent) {
 		final Composite result= (Composite) super.createDialogArea(parent);
 		getShell().setText(fBundle.getString(DIALOG_TITLE));
-
 		fItemImage= RefactoringPluginImages.DESC_OBJS_DEFAULT_CHANGE.createImage();
 		fContainerImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_DATE.createImage();
 		fElementImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_TIME.createImage();
 		fCaptionImage= RefactoringPluginImages.DESC_OBJS_COMPOSITE_CHANGE.createImage();
-
 		final Composite container= new Composite(result, SWT.NONE);
 		GridLayout layout= new GridLayout(2, false);
 		layout.marginHeight= 0;
@@ -344,14 +347,12 @@ public class RefactoringHistoryDialog extends Dialog {
 		layout.horizontalSpacing= 0;
 		layout.verticalSpacing= 0;
 		container.setLayout(layout);
-
 		GridData data= new GridData();
 		data.grabExcessHorizontalSpace= true;
 		data.grabExcessVerticalSpace= true;
 		data.horizontalAlignment= SWT.FILL;
 		data.verticalAlignment= SWT.FILL;
 		container.setLayoutData(data);
-
 		final Splitter splitter= new Splitter(container, SWT.VERTICAL);
 		splitter.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL | GridData.GRAB_VERTICAL));
 		splitter.addDisposeListener(new DisposeListener() {
@@ -367,16 +368,13 @@ public class RefactoringHistoryDialog extends Dialog {
 					fElementImage.dispose();
 			}
 		});
-
 		createVerticalButtonBar(container);
-
 		final Composite leftPane= new Composite(splitter, SWT.NONE);
 		layout= new GridLayout();
 		layout.marginWidth= 0;
 		layout.marginHeight= 2;
 		layout.verticalSpacing= 2;
 		leftPane.setLayout(layout);
-
 		fHistoryPane= new CompareViewerPane(leftPane, SWT.BORDER | SWT.FLAT);
 		fHistoryPane.setImage(fCaptionImage);
 		String text= null;
@@ -386,7 +384,6 @@ public class RefactoringHistoryDialog extends Dialog {
 			text= fBundle.getString(WORKSPACE_CAPTION);
 		fHistoryPane.setText(text);
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
-
 		fHistoryTree= createHistoryTree(fHistoryPane);
 		fHistoryTree.addSelectionListener(new SelectionAdapter() {
 
@@ -396,7 +393,6 @@ public class RefactoringHistoryDialog extends Dialog {
 			}
 		});
 		fHistoryPane.setContent(fHistoryTree);
-
 		fCommentPane= new CompareViewerSwitchingPane(splitter, SWT.BORDER | SWT.FLAT) {
 
 			protected final Viewer getViewer(final Viewer viewer, final Object input) {
@@ -411,9 +407,9 @@ public class RefactoringHistoryDialog extends Dialog {
 			}
 		};
 		fCommentPane.setText(fBundle.getString(COMMENT_CAPTION));
-		splitter.setWeights(new int[] { 70, 30});
+		createMessageBar(splitter);
+		splitter.setWeights(new int[] { 70, 30, 10});
 		applyDialogFont(parent);
-
 		return result;
 	}
 
@@ -427,6 +423,19 @@ public class RefactoringHistoryDialog extends Dialog {
 	protected Tree createHistoryTree(final Composite parent) {
 		Assert.isNotNull(parent);
 		return new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+	}
+
+	/**
+	 * Creates the message bar below the refactoring history tree.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createMessageBar(final Composite parent) {
+		if (fMessage != null && !"".equals(fMessage)) { //$NON-NLS-1$
+			final Label label= new Label(parent, SWT.LEFT | SWT.WRAP | SWT.HORIZONTAL);
+			label.setText(fMessage);
+		}
 	}
 
 	/**
@@ -444,7 +453,7 @@ public class RefactoringHistoryDialog extends Dialog {
 	 */
 	protected final Point getInitialLocation(final Point size) {
 		final Point location= super.getInitialLocation(size);
-		final IDialogSettings settings= fSettings.getSection(DIALOG_BOUNDS);
+		final IDialogSettings settings= fSettings.getSection(fBoundsKey);
 		if (settings != null) {
 			try {
 				location.x= settings.getInt(X);
@@ -479,7 +488,7 @@ public class RefactoringHistoryDialog extends Dialog {
 				}
 			});
 		}
-		final IDialogSettings settings= fSettings.getSection(DIALOG_BOUNDS);
+		final IDialogSettings settings= fSettings.getSection(fBoundsKey);
 		if (settings == null) {
 			if (fBundle != null) {
 				try {
@@ -573,6 +582,16 @@ public class RefactoringHistoryDialog extends Dialog {
 		}
 		fCommentPane.setInput(null);
 		fCommentPane.setText(fBundle.getString(COMMENT_CAPTION));
+	}
+
+	/**
+	 * Sets the message to display below the refactoring tree.
+	 * 
+	 * @param message
+	 *            the message to display, or <code>null</code> for none
+	 */
+	public final void setMessage(final String message) {
+		fMessage= message;
 	}
 
 	/**
