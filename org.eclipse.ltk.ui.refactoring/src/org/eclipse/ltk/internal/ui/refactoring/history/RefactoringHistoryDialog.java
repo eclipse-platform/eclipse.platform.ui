@@ -408,7 +408,10 @@ public class RefactoringHistoryDialog extends Dialog {
 		};
 		fCommentPane.setText(fBundle.getString(COMMENT_CAPTION));
 		createMessageBar(splitter);
-		splitter.setWeights(new int[] { 70, 30, 10});
+		if (fMessage != null && !"".equals(fMessage)) //$NON-NLS-1$
+			splitter.setWeights(new int[] { 70, 15, 15});
+		else
+			splitter.setWeights(new int[] { 70, 30});
 		applyDialogFont(parent);
 		return result;
 	}
