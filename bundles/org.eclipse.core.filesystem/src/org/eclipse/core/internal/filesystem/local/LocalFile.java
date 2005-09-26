@@ -103,8 +103,13 @@ public class LocalFile extends FileStore {
 	}
 
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) {
-		if (LocalFileNatives.usingNatives())
-			return LocalFileNatives.fetchFileInfo(filePath);
+		if (LocalFileNatives.usingNatives()) {
+			IFileInfo info = LocalFileNatives.fetchFileInfo(filePath);
+			//natives don't set the file name on all platforms
+			if (info.getName().length() == 0)
+				info.setName(file.getName());
+			return info;
+		}
 		//in-lined non-native implementation
 		IFileInfo info = FileSystemCore.createFileInfo();
 		info.setName(file.getName());
