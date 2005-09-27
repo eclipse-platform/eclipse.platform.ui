@@ -506,17 +506,17 @@ public class CoolBarManager extends ContributionManager implements
         if ((currentElement != null) && (currentElement.isSeparator())) {
             collapseSeparators(iterator);
             return;
-        } else {
-            //Find next separator
-            while (iterator.hasNext()) {
-                IContributionItem item = (IContributionItem) iterator.next();
-                if (item.isSeparator()) {
-                    // we we find a separator, collapse any consecutive
-                    // separators
-                    // and return
-                    collapseSeparators(iterator);
-                    return;
-                }
+        } 
+
+        //Find next separator
+        while (iterator.hasNext()) {
+            IContributionItem item = (IContributionItem) iterator.next();
+            if (item.isSeparator()) {
+                // we we find a separator, collapse any consecutive
+                // separators
+                // and return
+                collapseSeparators(iterator);
+                return;
             }
         }
     }
