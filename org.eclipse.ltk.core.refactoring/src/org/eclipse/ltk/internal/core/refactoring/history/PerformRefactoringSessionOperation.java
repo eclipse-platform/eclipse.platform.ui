@@ -91,10 +91,16 @@ public class PerformRefactoringSessionOperation implements IWorkspaceRunnable {
 				if (refactoring instanceof IInitializableRefactoringObject) {
 					final IInitializableRefactoringObject extended= (IInitializableRefactoringObject) refactoring;
 					final RefactoringArguments arguments= factory.createArguments(descriptor);
-					if (arguments != null && extended.initialize(arguments))
-						execute= true;
-				} else
-					execute= false;
+					if (arguments != null) {
+						final RefactoringStatus status= extended.initialize(arguments);
+						if (!status.hasFatalError())
+							execute= true;
+						else {
+							fSessionStatus.merge(status);
+							break;
+						}
+					}
+				}
 				if (execute) {
 					final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 					ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 1));

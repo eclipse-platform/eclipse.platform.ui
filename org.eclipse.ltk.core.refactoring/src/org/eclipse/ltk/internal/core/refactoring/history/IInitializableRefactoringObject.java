@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring.history;
 
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 /**
@@ -31,10 +33,9 @@ public interface IInitializableRefactoringObject {
 	 * 
 	 * @param arguments
 	 *            the refactoring arguments
-	 * @return <code>true</code> if the refactoring object could be
-	 *         initialized, <code>false</code> otherwise. If the refactoring
-	 *         object could not be initialized, its corresponding refactoring
-	 *         will not be executed.
+	 * @return an object describing the status of the initialization. If the
+	 *         status has severity <code>FATAL_ERROR</code>, the associated
+	 *         refactoring will not be executed.
 	 */
-	public boolean initialize(RefactoringArguments arguments);
+	public RefactoringStatus initialize(RefactoringArguments arguments);
 }
