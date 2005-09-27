@@ -9,7 +9,6 @@ public class TestImportWizard extends Wizard implements IImportWizard {
 
 	public TestImportWizard() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public boolean performFinish() {

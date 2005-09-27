@@ -26,11 +26,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
-public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
+public class ImportOperationTest extends DataTransferTestCase implements IOverwriteQuery {
 
     private String localDirectory;
 
@@ -59,17 +58,6 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
         String newFilePath = parentName + File.separatorChar + filePath;
         File newFile = new File(newFilePath);
         newFile.createNewFile();
-    }
-
-    private void deleteDirectory(File directory) {
-        File[] children = directory.listFiles();
-        for (int i = 0; i < children.length; i++) {
-            if (children[i].isDirectory())
-                deleteDirectory(children[i]);
-            else
-                children[i].delete();
-        }
-        directory.delete();
     }
 
     /*

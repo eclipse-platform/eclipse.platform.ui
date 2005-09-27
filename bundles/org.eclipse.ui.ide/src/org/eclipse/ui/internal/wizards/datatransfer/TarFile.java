@@ -29,7 +29,7 @@ public class TarFile {
 	private TarInputStream entryEnumerationStream;
 	private TarEntry curEntry;
 	private TarInputStream entryStream;
-
+	
 	/**
 	 * Create a new TarFile for the given file.
 	 * 
@@ -45,11 +45,22 @@ public class TarFile {
 		try {
 			in = new GZIPInputStream(in);
 		} catch(IOException e) {
-			// need to recreate the input.
+			//If it is not compressed we close
+			//the old one and recreate
+			in.close();		
 			in = new FileInputStream(file);
 		}
 		entryEnumerationStream = new TarInputStream(in);
 		curEntry = entryEnumerationStream.getNextEntry();
+	}
+	
+	/**
+	 * Close the tar file input stream.
+	 * 
+	 * @throws IOException if the file cannot be successfully closed
+	 */
+	public void close() throws IOException {
+		entryEnumerationStream.close();
 	}
 
 	/**

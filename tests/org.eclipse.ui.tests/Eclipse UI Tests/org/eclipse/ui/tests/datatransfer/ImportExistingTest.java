@@ -41,13 +41,14 @@ import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.performance.FileTool;
 import org.eclipse.ui.tests.util.DialogCheck;
 import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
 
-public class ImportExistingTest extends UITestCase {
+public class ImportExistingTest extends DataTransferTestCase {
 	private static final String PLUGIN_ID = "org.eclipse.ui.tests";
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
 	private static final String WS_DATA_PREFIX = "data/workspaces";
 	private static final String WS_DATA_LOCATION = "importExistingFromDirTest";
+	
+	private String dataLocation = null;
 	
 	public ImportExistingTest(String testName) {
 		super(testName);
@@ -57,6 +58,25 @@ public class ImportExistingTest extends UITestCase {
 		return DialogCheck.getShell();
 	}
 	
+	
+	protected void doTearDown() throws Exception {
+		super.doTearDown();
+		IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IProject[] projects = wsRoot.getProjects();
+		for (int i = 0; i < projects.length; i++){
+			FileUtil.deleteProject(projects[i]);
+		}
+		// clean up any data directories created
+		if (dataLocation != null){
+			File root = new File(dataLocation);
+			if (root.exists()){
+				deleteDirectory(root);
+				root.delete();
+			}
+		}
+		dataLocation = null;	// reset for next test
+	}
+
 	public void testFindSingleZip() {
 		try {
 			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
@@ -105,17 +125,14 @@ public class ImportExistingTest extends UITestCase {
 
 	public void testFindSingleDirectory() {
 		try {
-			String dataLocation = copyDataLocation();
+			dataLocation = copyDataLocation();
 			IPath wsPath = new Path(dataLocation).append(PLUGIN_ID).append(
 					DATA_PATH_PREFIX).append("HelloWorld");
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
-
-			wpip.getProjectFromDirectoryRadio().setSelection((true)); // We're
-																		// importing
-																		// a
-																		// directory
+			// We're importing a directory
+			wpip.getProjectFromDirectoryRadio().setSelection((true)); 
 			wpip.updateProjectsList(wsPath.toOSString());
 
 			ProjectRecord[] selectedProjects = wpip.getProjects();
@@ -228,13 +245,13 @@ public class ImportExistingTest extends UITestCase {
             for (int i = 0; i < workspaceProjects.length; i++) 
             	FileUtil.deleteProject(workspaceProjects[i]);
 			
-            String dataLocation = copyDataLocation();
+            dataLocation = copyDataLocation();
             wsPath = new Path(dataLocation).append(PLUGIN_ID).append(DATA_PATH_PREFIX).append("HelloWorld");
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
 			
-			wpip.getProjectFromDirectoryRadio().setSelection((true)); //We want this one selected
+			wpip.getProjectFromDirectoryRadio().setSelection((true)); 
 			wpip.updateProjectsList(wsPath.toOSString());
 			ProjectRecord[] selectedProjects= wpip.getProjects();
 			ArrayList projectNames = new ArrayList();

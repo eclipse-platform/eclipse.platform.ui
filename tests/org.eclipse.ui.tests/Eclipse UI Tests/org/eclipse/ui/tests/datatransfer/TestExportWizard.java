@@ -7,20 +7,15 @@ import org.eclipse.ui.IWorkbench;
 
 public class TestExportWizard extends Wizard implements IExportWizard {
 
+	public TestExportWizard(){
+		super();
+	}
 	public boolean performFinish() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
 	}
