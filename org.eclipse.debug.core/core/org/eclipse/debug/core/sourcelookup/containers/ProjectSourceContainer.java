@@ -7,17 +7,20 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mikhail Khodjaiants, QNX - Bug 110227: Possible infinite loop in ProjectSourceContainer  
  *******************************************************************************/
 package org.eclipse.debug.core.sourcelookup.containers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
-import org.eclipse.debug.internal.core.sourcelookup.containers.*;
+import org.eclipse.debug.internal.core.sourcelookup.containers.ContainerSourceContainer;
 
 /**
  * A project in the workspace. Source is searched for in the root project
@@ -88,7 +91,7 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 		if (getProject().isOpen()) {
 			if (isSearchReferencedProjects()) {
 				IProject project = getProject();
-				IProject[] projects = project.getReferencedProjects();
+				IProject[] projects = getAllReferencedProjects(project);
 				ISourceContainer[] folders = super.createSourceContainers();
 				List all = new ArrayList(folders.length + projects.length);
 				for (int i = 0; i < folders.length; i++) {
@@ -96,7 +99,7 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 				}
 				for (int i = 0; i < projects.length; i++) {
 					if (project.exists() && project.isOpen()) {
-						ProjectSourceContainer container = new ProjectSourceContainer(projects[i], true);
+						ProjectSourceContainer container = new ProjectSourceContainer(projects[i], false);
 						container.init(getDirector());
 						all.add(container);
 					}
@@ -106,5 +109,21 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 			return super.createSourceContainers();
 		}
 		return new ISourceContainer[0];
+	}
+
+	private IProject[] getAllReferencedProjects(IProject project) throws CoreException {
+		Set all = new HashSet();
+		getAllReferencedProjects(all, project);
+		return (IProject[]) all.toArray(new IProject[all.size()]);
+	}
+
+	private void getAllReferencedProjects(Set all, IProject project) throws CoreException {
+		IProject[] refs = project.getReferencedProjects();
+		for (int i = 0; i < refs.length; i++) {
+			if (!all.contains(refs[i]) && refs[i].exists() && refs[i].isOpen()) {
+				all.add(refs[i]);
+				getAllReferencedProjects(all, refs[i]);
+			}
+		}
 	}
 }
