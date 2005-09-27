@@ -8,7 +8,7 @@
 #
 # makefile for libcore.so
 
-CORE.C = localfile.c
+CORE.C = ../localfile.c
 CORE.O = localfile.o
 LIB_NAME = liblocalfile.so
 LIB_NAME_FULL = liblocalfile_1_0_0.so
@@ -20,9 +20,10 @@ OS_TYPE = linux
 JAVA_HOME = ~/vm/sun142
 
 JDK_INCLUDE = -I ${JAVA_HOME}/include -I ${JAVA_HOME}/include/${OS_TYPE}
+COMMON_INCLUDE = -I include
 
 core :
-	gcc -fPIC -g -c $(JDK_INCLUDE) -o $(CORE.O) $(CORE.C)
+	gcc -fPIC -g -c $(JDK_INCLUDE) $(COMMON_INCLUDE) -o $(CORE.O) $(CORE.C)
 	gcc -g -shared -Wl,-soname,$(LIB_NAME) -o $(LIB_NAME_FULL) $(CORE.O) -lc
 
 clean :

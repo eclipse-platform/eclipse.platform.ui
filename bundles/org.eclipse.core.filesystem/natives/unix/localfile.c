@@ -1,19 +1,22 @@
 /*******************************************************************************
-* Copyright (c) 2000, 2005 IBM Corporation and others.
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
-*
-* Contributors:
-*     IBM Corporation - initial API and implementation
-*******************************************************************************/
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - get/setResourceAttribute code
+ *******************************************************************************/
 #include <jni.h>
-#include <io.h>
+#include <sys/types.h>
 #include <sys/stat.h>
-#include <windows.h>
-#include <stdio.h>
+#include <utime.h>
+#include <stdlib.h>
+#include <string.h>
 #include "../localfile.h"
+#include <os_custom.h>
 
 /*
  * Get a null-terminated byte array from a java byte array.
@@ -47,10 +50,9 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 /*
  * Converts a stat structure to IFileInfo 
  */
-jboolean convertStatToFileInfo(JNIEnv *env, stat info, jobject fileInfo) {
+jboolean convertStatToFileInfo (JNIEnv *env, struct stat info, jobject fileInfo) {
     jclass cls;
     jmethodID mid;
-	ULONGLONG fileLength;
 
     cls = (*env)->GetObjectClass(env, fileInfo);
     if (cls == 0) return JNI_FALSE;
@@ -67,27 +69,26 @@ jboolean convertStatToFileInfo(JNIEnv *env, stat info, jobject fileInfo) {
     (*env)->CallVoidMethod(env, fileInfo, mid, ((jlong) info.st_mtime) * 1000); /* lower bits */
 
 	// file length
-	fileLength =(info.nFileSizeHigh * (MAXDWORD+1)) + info.nFileSizeLow;
     mid = (*env)->GetMethodID(env, cls, "setLength", "(J)V");
     if (mid == 0) return JNI_FALSE;
-    (*env)->CallVoidMethod(env, fileInfo, mid, fileLength);
+    (*env)->CallVoidMethod(env, fileInfo, mid, info.st_size);
 
 	// folder or file?
-	if ((info.st_mode & S_IFDIR) == S_IFDIR)
+	if ((info.st_mode & S_IFDIR) == S_IFDIR) {
 	    mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
 	    if (mid == 0) return JNI_FALSE;
 	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_DIRECTORY, JNI_TRUE);
     }
 
 	// read-only?
-	if ((info.st_mode & S_IWRITE) != S_IWRITE)
+	if ((info.st_mode & S_IWRITE) != S_IWRITE) {
 	    mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
 	    if (mid == 0) return JNI_FALSE;
 	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_READ_ONLY, JNI_TRUE);
     }
 
 	// executable?
-    if ((info.st_mode & S_IXUSR) == S_IXUSR)
+    if ((info.st_mode & S_IXUSR) == S_IXUSR) {
 	    mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
 	    if (mid == 0) return JNI_FALSE;
 	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_EXECUTABLE, JNI_TRUE);
@@ -109,7 +110,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 
 	/* get stat */
 	name = getByteArray(env, target);
-	code = stat(name, &info);
+	code = stat((const char*)name, &info);
 	free(name);
 
 	/* test if an error occurred */
@@ -145,13 +146,13 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
   sourceFile = getByteArray(env, source);
   destinationFile = getByteArray(env, destination);
 
-  code = stat(sourceFile, &info);
+  code = stat((const char*)sourceFile, &info);
   if (code == 0) {
-    code = chmod(destinationFile, info.st_mode);
+    code = chmod((const char*)destinationFile, info.st_mode);
     if (code == 0 && copyLastModified) {
       ut.actime = info.st_atime;
       ut.modtime = info.st_mtime;
-      code = utime(destinationFile, &ut);
+      code = utime((const char*)destinationFile, &ut);
     }
   }
 
@@ -198,7 +199,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 
     /* get the current permissions */
     name = getByteArray(env, target);
-    code = stat(name, &info);
+    code = stat((const char*)name, &info);
     
     /* create the mask */
     mask = S_IRUSR |
@@ -221,7 +222,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	    mask |= (S_IRUSR | S_IWUSR);
     
     /* write the permissions */
-    code = chmod(name, mask);
+    code = chmod((const char*)name, mask);
 
 fail:
 	if (name) free(name);
