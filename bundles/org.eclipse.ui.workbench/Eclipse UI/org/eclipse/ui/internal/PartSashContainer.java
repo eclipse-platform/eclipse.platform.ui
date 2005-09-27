@@ -981,8 +981,11 @@ public abstract class PartSashContainer extends LayoutPart implements
                 int distance = Geometry.getDistanceFromEdge(targetBounds, position, side);
                 
                 // is the source coming from a standalone part
-                boolean standalone = (isStackType(sourcePart) && ((PartStack) sourcePart).isStandalone()) ||
-                    (isPaneType(sourcePart) && ((PartPane) sourcePart).getStack().isStandalone());
+                boolean standalone = (isStackType(sourcePart) 
+                		&& ((PartStack) sourcePart).isStandalone())
+                    || (isPaneType(sourcePart)
+                    		&& ((PartPane)sourcePart).getStack()!=null
+                    		&& ((PartPane)sourcePart).getStack().isStandalone());
 
                 // Reserve the 5 pixels around the edge of the part for the drop-on-edge cursor
                 if (!standalone && distance >= 5) {
@@ -1122,7 +1125,7 @@ public abstract class PartSashContainer extends LayoutPart implements
 
             // if the toDrop array has 1 item propogate the stack
             // appearance
-            if (toDrop.length == 1) {
+            if (toDrop.length == 1 && toDrop[0].getStack()!=null) {
                 newPart.appearance = toDrop[0].getStack().appearance;
             }
 
