@@ -307,6 +307,13 @@ public class MultiEditorTest extends UITestCase {
 		// 3.0, fails in 3.1
 		assertEquals("The Outline view is not talking to the correct editor",
 				multiEditor.getActiveEditor(), outlineEditor);
+		
+		page.closeEditor(editor, false);
+		chewUpEvents();
+		
+		view = (IContributedContentsView) outline
+				.getAdapter(IContributedContentsView.class);
+		assertNull(view.getContributingPart());
 	}
 
 	/**

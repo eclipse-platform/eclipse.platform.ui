@@ -22,9 +22,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.themes.ITheme;
@@ -40,6 +44,8 @@ public abstract class MultiEditor extends EditorPart {
     private int activeEditorIndex;
 
     private IEditorPart innerEditors[];
+
+	private IPartListener2 propagationListener;
 
     /**
      * Constructor for TileEditor.
@@ -101,6 +107,7 @@ public abstract class MultiEditor extends EditorPart {
         setSite(site);
         setPartName(input.getName());
         setTitleToolTip(input.getToolTipText());
+        setupEvents();
     }
 
     /*
@@ -252,4 +259,72 @@ public abstract class MultiEditor extends EditorPart {
 
         public int[] bgPercents;
     }
+    
+    
+    
+    /**
+     * Set up the MultiEditor to propagate events like partClosed().
+     *
+     * @since 3.2
+     */
+    private void setupEvents() {
+		propagationListener = new IPartListener2() {
+			public void partActivated(IWorkbenchPartReference partRef) {
+			}
+
+			public void partBroughtToTop(IWorkbenchPartReference partRef) {
+			}
+
+			public void partClosed(IWorkbenchPartReference partRef) {
+				IWorkbenchPart part = partRef.getPart(false);
+				if (part == MultiEditor.this) {
+					if (innerEditors != null) {
+						for (int i = 0; i < innerEditors.length; i++) {
+							IEditorPart editor = innerEditors[i];
+							IWorkbenchPartReference innerRef = ((PartSite) editor
+									.getSite()).getPartReference();
+							((WorkbenchPage) getSite().getPage())
+									.getPartService().firePartClosed(innerRef);
+						}
+					}
+				}
+			}
+
+			public void partDeactivated(IWorkbenchPartReference partRef) {
+			}
+
+			public void partOpened(IWorkbenchPartReference partRef) {
+				IWorkbenchPart part = partRef.getPart(false);
+				if (part == MultiEditor.this) {
+					if (innerEditors != null) {
+						for (int i = 0; i < innerEditors.length; i++) {
+							IEditorPart editor = innerEditors[i];
+							IWorkbenchPartReference innerRef = ((PartSite) editor
+									.getSite()).getPartReference();
+							((WorkbenchPage) getSite().getPage())
+									.getPartService().firePartOpened(innerRef);
+						}
+					}
+				}
+			}
+
+			public void partHidden(IWorkbenchPartReference partRef) {
+			}
+
+			public void partVisible(IWorkbenchPartReference partRef) {
+			}
+
+			public void partInputChanged(IWorkbenchPartReference partRef) {
+			}
+		};
+		getSite().getPage().addPartListener(propagationListener);
+    }
+
+    /**
+     * Release the added listener.
+     */
+	public void dispose() {
+		super.dispose();
+		getSite().getPage().removePartListener(propagationListener);
+	}
 }

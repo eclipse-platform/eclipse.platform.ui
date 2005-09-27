@@ -3145,6 +3145,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public IWorkbenchPartFactory getPartFactory() {
     	return partFactory;
     }
+    
+    public PartService getPartService() {
+    	return (PartService)partList.getPartService();
+    }
 
     /**
      * Restore the toolbar layout for the active perspective.
