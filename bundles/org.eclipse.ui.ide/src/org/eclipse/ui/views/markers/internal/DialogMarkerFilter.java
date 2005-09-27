@@ -586,6 +586,8 @@ public abstract class DialogMarkerFilter extends Dialog {
 		newFilters[filters.length] = filter;
 		filters = newFilters;
 		filtersList.refresh();
+		filtersList.setSelection(new StructuredSelection(filter), true);
+		filtersList.getControl().setFocus();
 	}
 
 	/**
