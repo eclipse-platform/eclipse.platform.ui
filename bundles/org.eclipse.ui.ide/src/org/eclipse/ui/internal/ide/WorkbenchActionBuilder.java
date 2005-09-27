@@ -125,9 +125,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     
     private IWorkbenchAction minimizePartAction;
 
-    private IWorkbenchAction workbenchEditorsAction;
+    private IWorkbenchAction switchToEditorAction;
 
-    private IWorkbenchAction workbookEditorsAction;
+    private IWorkbenchAction openEditorDropDownAction;
 
     private IWorkbenchAction backwardHistoryAction;
 
@@ -698,7 +698,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         subMenu.add(activateEditorAction);
         subMenu.add(nextEditorAction);
         subMenu.add(prevEditorAction);
-        subMenu.add(workbookEditorsAction);
+        subMenu.add(switchToEditorAction);
+        subMenu.add(openEditorDropDownAction);
         subMenu.add(new Separator());
         subMenu.add(nextPartAction);
         subMenu.add(prevPartAction);
@@ -1069,8 +1070,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         activateEditorAction = null;
         maximizePartAction = null;
         minimizePartAction = null;
-        workbenchEditorsAction = null;
-        workbookEditorsAction = null;
+        switchToEditorAction = null;
+        openEditorDropDownAction = null;
         backwardHistoryAction = null;
         forwardHistoryAction = null;
         undoAction = null;
@@ -1304,13 +1305,13 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		minimizePartAction = ActionFactory.MINIMIZE.create(window);
 		register(minimizePartAction);
         
-        workbenchEditorsAction = ActionFactory.SHOW_OPEN_EDITORS
+        switchToEditorAction = ActionFactory.SHOW_OPEN_EDITORS
                 .create(window);
-        register(workbenchEditorsAction);
+        register(switchToEditorAction);
 
-        workbookEditorsAction = ActionFactory.SHOW_WORKBOOK_EDITORS
+        openEditorDropDownAction = ActionFactory.SHOW_WORKBOOK_EDITORS
                 .create(window);
-        register(workbookEditorsAction);
+        register(openEditorDropDownAction);
 
         hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(window);
         register(hideShowEditorAction);
