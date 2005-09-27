@@ -70,10 +70,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 		System.getProperty("line.separator").getBytes(), new byte[] { '\r', '\n' }); //$NON-NLS-1$
 	
 	public static final IStatus OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, CVSMessages.ok, null); 
-
-	private static final int UNIFIED_FORMAT = 0;
-	private static final int CONTEXT_FORMAT = 1;
-	private static final int STANDARD_FORMAT = 2;
 	
 	private CVSWorkspaceRoot workspaceRoot;
 	private IProject project;

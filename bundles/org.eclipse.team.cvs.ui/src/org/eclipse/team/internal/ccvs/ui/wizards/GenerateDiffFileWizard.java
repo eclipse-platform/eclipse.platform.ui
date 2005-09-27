@@ -474,17 +474,12 @@ public class GenerateDiffFileWizard extends Wizard {
             initializeDefaultValues();
             
 			fParticipant = new CreatePatchWizardParticipant(new ResourceScope(((GenerateDiffFileWizard)this.getWizard()).resources), (GenerateDiffFileWizard) this.getWizard());
-		
-
-	          SyncInfoSet infos;
-				try {
-					infos = getAllOutOfSync();
-				} catch (CVSException e) {}
+			try {
+				getAllOutOfSync();
+			} catch (CVSException e) {}
 	           
-			
 			final PixelConverter converter= new PixelConverter(parent);
 			createChangesArea(composite, converter);
-            
 
 			createSelectionButtons(composite);
            
@@ -1277,7 +1272,7 @@ public class GenerateDiffFileWizard extends Wizard {
 
 	private void generateDiffToFile(File file, boolean multiPatch, boolean useProjectRelativePaths) throws TeamException {
 		DiffOperation diffop = null;
-		if (locationPage.selectedLocation == locationPage.WORKSPACE){
+		if (locationPage.selectedLocation == LocationPage.WORKSPACE){
 			diffop = new WorkspaceFileDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources),optionsPage.getOptions(),file, multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
 		}
 		else {

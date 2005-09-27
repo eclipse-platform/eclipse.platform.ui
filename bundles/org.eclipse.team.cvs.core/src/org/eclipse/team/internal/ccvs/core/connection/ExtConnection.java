@@ -100,8 +100,6 @@ public class ExtConnection implements IServerConnection {
 				8192 /*buffersize*/, 1000 /*writeTimeout*/, 1000 /*closeTimeout*/), location.getTimeout(), monitor);
 
 			// XXX need to do something more useful with stderr
-			// discard the input to prevent the process from hanging due to a full pipe
-			Thread thread = new DiscardInputThread(process.getErrorStream());
 			connected = true;
 		} finally {
 			if (! connected) {
@@ -110,23 +108,6 @@ public class ExtConnection implements IServerConnection {
 				} finally {
 					// Ignore any exceptions during close
 				}
-			}
-		}
-	}
-	
-	private static class DiscardInputThread extends Thread {
-		private InputStream in;
-		public DiscardInputThread(InputStream in) {
-			this.in = in;
-		}
-		public void run() {
-			try {
-				try {
-					while (in.read() != -1);
-				} finally {
-					in.close();
-				}
-			} catch (IOException e) {
 			}
 		}
 	}
