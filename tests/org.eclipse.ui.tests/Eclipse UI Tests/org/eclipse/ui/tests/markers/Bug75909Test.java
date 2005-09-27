@@ -1,4 +1,4 @@
-package org.eclipse.ui.tests.internal;
+package org.eclipse.ui.tests.markers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import junit.framework.TestSuite;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.tests.internal.TestMemento;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 

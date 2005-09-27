@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin
+   id="newProblemFilter"
+   name="newProblemFilter Plug-in"
+   version="1.0.0">
+   <requires>
+      <import plugin="org.eclipse.ui.ide"/>
+   </requires>
+   <extension
+   		 id="testDynamicFilterAddition"
+         point="org.eclipse.ui.ide.markerSupport">
+    <problemFilter
+            enabled="true"
+            id="filter1"
+            name="Filter 1"
+            onDescription="method"/>
+      <problemFilter
+            id="filter2"
+            name="Filter 2"
+            onDescription="!method"/>
+      <problemFilter
+            enabled="true"
+            id="filter3"
+            name="Filter 3">
+         <selectedType markerId="org.eclipse.core.resources.problemmarker"/>
+      </problemFilter>
+   </extension>
+</plugin>
