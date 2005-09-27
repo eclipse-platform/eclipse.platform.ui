@@ -233,4 +233,6 @@ public class MarkerMessages extends NLS{
 	public static String ProblemFilterDialog_selectedAndChildren;
 	public static String ProblemFilterDialog_selected;
 	public static String ProblemFilterDialog_workingSet;
+	
+	public static String ProblemFilterRegistry_nullType;
 }

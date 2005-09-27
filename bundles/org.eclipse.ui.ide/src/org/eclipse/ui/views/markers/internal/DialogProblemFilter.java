@@ -548,9 +548,10 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 			filterBuffer.append(scopeString);
 
 		String descriptionString = getDescriptionString(filter);
-		if (descriptionString != null)
+		if (descriptionString != null){
 			filterBuffer.append(Util.TWO_LINE_FEED);
-		filterBuffer.append(descriptionString);
+			filterBuffer.append(descriptionString);
+		}
 
 		String severityString = getSeverityString(filter);
 		if (severityString != null) {
@@ -618,7 +619,7 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 	 * @return String or <code>null</code>.
 	 */
 	private String getDescriptionString(ProblemFilter filter) {
-		if (filter.getDescription() == null)
+		if (filter.getDescription().length() == 0)
 			return null;
 		if (filter.getContains())
 			return NLS.bind(

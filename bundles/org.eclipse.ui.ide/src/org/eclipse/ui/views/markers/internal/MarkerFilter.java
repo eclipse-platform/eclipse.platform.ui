@@ -61,15 +61,15 @@ public class MarkerFilter implements Cloneable{
 	 */
 	private static final String SELECTED_TRUE = "true"; //$NON-NLS-1$
 
-	static final int ON_ANY = 0;
+	public static final int ON_ANY = 0;
 
-	static final int ON_SELECTED_ONLY = 1;
+	public static final int ON_SELECTED_ONLY = 1;
 
-	static final int ON_SELECTED_AND_CHILDREN = 2;
+	public static final int ON_SELECTED_AND_CHILDREN = 2;
 
-	static final int ON_ANY_IN_SAME_CONTAINER = 3;
+	public static final int ON_ANY_IN_SAME_CONTAINER = 3;
 
-	static final int ON_WORKING_SET = 4;
+	public static final int ON_WORKING_SET = 4;
 
 	static final int DEFAULT_ON_RESOURCE = ON_ANY;
 
@@ -545,7 +545,7 @@ public class MarkerFilter implements Cloneable{
 	 * working set.</li>
 	 * </ul>
 	 */
-	int getOnResource() {
+	public int getOnResource() {
 		return onResource;
 	}
 
@@ -588,7 +588,7 @@ public class MarkerFilter implements Cloneable{
 	 * <li><code>false</code> if the filter is not enabled.</li>
 	 * </ul>
 	 */
-	boolean isEnabled() {
+	public boolean isEnabled() {
 		return enabled;
 	}
 

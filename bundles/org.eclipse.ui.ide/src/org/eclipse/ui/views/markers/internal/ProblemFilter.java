@@ -33,11 +33,11 @@ public class ProblemFilter extends MarkerFilter {
 
 	final static int DEFAULT_SEVERITY = 0;
 
-	final static int SEVERITY_ERROR = 1 << 2;
+	public final static int SEVERITY_ERROR = 1 << 2;
 
-	final static int SEVERITY_WARNING = 1 << 1;
+	public final static int SEVERITY_WARNING = 1 << 1;
 
-	final static int SEVERITY_INFO = 1 << 0;
+	public final static int SEVERITY_INFO = 1 << 0;
 
 	private boolean contains;
 
@@ -46,6 +46,8 @@ public class ProblemFilter extends MarkerFilter {
 	private boolean selectBySeverity;
 
 	private int severity;
+	
+	private String id;
 	
 	/**
 	 * Create a new instance of the receiver with name filterName.
@@ -216,6 +218,23 @@ public class ProblemFilter extends MarkerFilter {
 				.valueOf(selectBySeverity));
 		settings.putInteger(TAG_SEVERITY, severity);
 
+	}
+
+	/**
+	 * Get the id of the filter. <code>null</code> if the
+	 * filter is user defined.
+	 * @return String
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * Set the id to id.
+	 * @param id String
+	 */
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

@@ -8,7 +8,9 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -22,11 +24,13 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * @since 3.2
  * 
  */
-class ProblemFilterRegistry implements IExtensionChangeHandler {
+public class ProblemFilterRegistry implements IExtensionChangeHandler {
 
-	private static final String MARKER_SUPPORT = "markerSupport";//$NON-NLS-1$
+	public static final String MARKER_SUPPORT = "markerSupport";//$NON-NLS-1$
 
 	private static final String NAME = "name"; //$NON-NLS-1$
+	
+	private static final String ID = "id"; //$NON-NLS-1$
 
 	private static final String ENABLED = "enabled"; //$NON-NLS-1$
 
@@ -65,7 +69,7 @@ class ProblemFilterRegistry implements IExtensionChangeHandler {
 	 * Get the instance of the registry.
 	 * @return ProblemFilterRegistry
 	 */
-	static ProblemFilterRegistry getInstance(){
+	public static ProblemFilterRegistry getInstance(){
 		if(singleton == null)
 			singleton = new ProblemFilterRegistry();
 		return singleton;
@@ -119,6 +123,8 @@ class ProblemFilterRegistry implements IExtensionChangeHandler {
 				continue;
 			ProblemFilter filter = new ProblemFilter(element.getAttribute(NAME));
 
+			filter.setId(element.getAttribute(ID));
+			
 			String enabledValue = element.getAttribute(ENABLED);
 			filter.setEnabled(enabledValue == null
 					|| Boolean.valueOf(enabledValue).booleanValue());
@@ -153,7 +159,18 @@ class ProblemFilterRegistry implements IExtensionChangeHandler {
 				String markerId = types[j].getAttribute(MARKER_ID);
 				if (markerId != null){
 					MarkerType type = filter.getMarkerType(markerId);
-					selectedTypes.add(type);
+					if(type == null){
+						IStatus status = 
+							new Status(
+									IStatus.WARNING,
+									IDEWorkbenchPlugin.IDE_WORKBENCH,
+									IStatus.WARNING,
+									MarkerMessages.ProblemFilterRegistry_nullType,
+									null);
+						IDEWorkbenchPlugin.getDefault().getLog().log(status);
+					}
+					else
+						selectedTypes.add(type);
 				}
 			}
 			filter.setSelectedTypes(selectedTypes);
@@ -217,7 +234,13 @@ class ProblemFilterRegistry implements IExtensionChangeHandler {
 	 *      org.eclipse.core.runtime.IExtension)
 	 */
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
-		registeredFilters.addAll(newFilters(extension));
+		Collection filters = newFilters(extension);
+		registeredFilters.addAll(filters);
+		Iterator newFilters = filters.iterator();
+		while (newFilters.hasNext()) {
+			tracker.registerObject(extension, newFilters.next(),
+					IExtensionTracker.REF_STRONG);
+		}
 
 	}
 
