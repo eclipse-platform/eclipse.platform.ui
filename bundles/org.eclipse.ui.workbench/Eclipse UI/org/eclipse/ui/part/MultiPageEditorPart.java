@@ -495,12 +495,6 @@ public abstract class MultiPageEditorPart extends EditorPart {
      * @param newPageIndex the index of the activated page 
      */
     protected void pageChange(int newPageIndex) {
-        // XXX: Workaround for 1GCN531: SWT:WIN2000 - CTabFolder child's visibility is false on notification
-        Control control = getControl(newPageIndex);
-        if (control != null) {
-            control.setVisible(true);
-        }
-        // XXX: End workaround
         setFocus();
         IEditorPart activeEditor = getEditor(newPageIndex);
         IEditorActionBarContributor contributor = getEditorSite()
@@ -511,16 +505,12 @@ public abstract class MultiPageEditorPart extends EditorPart {
                     .setActivePage(activeEditor);
         }
         if (activeEditor != null) {
-            //Workaround for 1GAUS7C: ITPUI:ALL - Editor not activated when restored from previous session
-            //do not need second if once fixed
             ISelectionProvider selectionProvider = activeEditor.getSite()
                     .getSelectionProvider();
-            if (selectionProvider != null) {
                 SelectionChangedEvent event = new SelectionChangedEvent(
                         selectionProvider, selectionProvider.getSelection());
                 ((MultiPageSelectionProvider) getSite().getSelectionProvider())
                         .fireSelectionChanged(event);
-            }
         }
     }
 
