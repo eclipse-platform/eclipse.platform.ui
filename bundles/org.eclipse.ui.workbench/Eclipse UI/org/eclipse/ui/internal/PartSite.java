@@ -446,14 +446,16 @@ public abstract class PartSite implements IWorkbenchPartSite {
             return getSiteProgressService();
         }
         try {
-        	IServiceProvider container = getServiceContainer();
-
-        	return container.getService(adapter);
+	        	IServiceProvider container = getServiceContainer();
+	
+	        	Object adapted = container.getService(adapter);
+	        	if (adapted != null)
+	        		return adapted;
         } catch (ComponentException e) {
             WorkbenchPlugin.getDefault().getLog().log(e.getStatus());
         }
         
-        return null;
+        return Platform.getAdapterManager().getAdapter(this, adapter);
     }
     
     /**
