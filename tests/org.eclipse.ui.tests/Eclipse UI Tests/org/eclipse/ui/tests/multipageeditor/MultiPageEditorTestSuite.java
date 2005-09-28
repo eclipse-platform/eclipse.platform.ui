@@ -33,6 +33,7 @@ public class MultiPageEditorTestSuite extends TestSuite {
      */
     public MultiPageEditorTestSuite() {
         addTestSuite(MultiEditorInputTest.class);
+        addTestSuite(MultiVariablePageTest.class);
         // Focus issues
         // addTest(new TestSuite(MultiPageKeyBindingTest.class));
     }

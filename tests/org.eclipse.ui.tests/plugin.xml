@@ -674,6 +674,12 @@
             name="defaultedContentTypeEditor">
          <contentTypeBinding contentTypeId="org.eclipse.ui.tests.defaultedContentType"/>
       </editor>
+      <editor
+            class="org.eclipse.ui.tests.multipageeditor.MultiVariablePageEditor"
+            extensions="multivar"
+            icon="icons/mockeditorpart1.gif"
+            id="org.eclipse.ui.tests.multipageeditor.MultiVariablePageEditor"
+            name="Multi Variable Page Editor"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

@@ -568,6 +568,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
     protected void setActivePage(int pageIndex) {
         Assert.isTrue(pageIndex >= 0 && pageIndex < getPageCount());
         getTabFolder().setSelection(pageIndex);
+        pageChange(pageIndex);
     }
 
     /**
