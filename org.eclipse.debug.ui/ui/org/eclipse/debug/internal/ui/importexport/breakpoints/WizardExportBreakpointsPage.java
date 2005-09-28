@@ -17,8 +17,10 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -28,6 +30,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -184,6 +187,13 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		setPageComplete(detectPageComplete());
 		restoreWidgetState();
 	}// end createControl
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
+	 */
+	public Image getImage() {
+		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_WIZBAN_EXPORT_BREAKPOINTS);
+	}
 
 	/**
      * Creates the buttons for selecting all or none of the elements.

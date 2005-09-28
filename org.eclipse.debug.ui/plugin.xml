@@ -1289,14 +1289,14 @@
         </action>
         <action
               class="org.eclipse.debug.internal.ui.importexport.breakpoints.ImportBreakpoints"
-              icon="icons/full/etool16/import_wiz.gif"
+              icon="icons/full/elcl16/import_brkpts.gif"
               id="org.eclipse.debug.internal.ui.importexport.breakpoints.importBreakpointsContext"
               label="%importBreakpoints.label"
               menubarPath="additions"/>
         <action
               class="org.eclipse.debug.internal.ui.importexport.breakpoints.ExportBreakpoints"
               enablesFor="1+"
-              icon="icons/full/etool16/export_wiz.gif"
+              icon="icons/full/elcl16/export_brkpts.gif"
               id="org.eclipse.debug.internal.ui.importexport.breakpoints.exportBreakpointsContext"
               label="%exportBreakpoints.label"
               menubarPath="additions"/>
@@ -2470,7 +2470,7 @@ M4 = Platform-specific fourth key
           point="org.eclipse.ui.importWizards">
        <wizard
              class="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardImportBreakpoints"
-             icon="icons/full/eview16/breakpoint_view.gif"
+             icon="icons/full/elcl16/import_brkpts.gif"
              id="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardImportBreakpoints"
              name="%exportBreakpoints.name">
           <description>
@@ -2483,7 +2483,7 @@ M4 = Platform-specific fourth key
           point="org.eclipse.ui.exportWizards">
        <wizard
              class="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints"
-             icon="icons/full/eview16/breakpoint_view.gif"
+             icon="icons/full/elcl16/export_brkpts.gif"
              id="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints"
              name="%exportBreakpoints.name">
           <description>
