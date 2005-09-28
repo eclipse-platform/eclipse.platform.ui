@@ -669,6 +669,10 @@
             sequence="M1+M2+R"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            commandId="org.eclipse.ui.navigate.openResource"
+            sequence="CTRL+X CTRL+F"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.project.buildAll"
             sequence="M1+B"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
