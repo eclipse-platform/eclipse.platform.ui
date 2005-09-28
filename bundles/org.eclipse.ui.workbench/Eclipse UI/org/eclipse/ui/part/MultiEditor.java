@@ -28,6 +28,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
+import org.eclipse.ui.internal.PartService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -277,15 +278,14 @@ public abstract class MultiEditor extends EditorPart {
 
 			public void partClosed(IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
-				if (part == MultiEditor.this) {
-					if (innerEditors != null) {
-						for (int i = 0; i < innerEditors.length; i++) {
-							IEditorPart editor = innerEditors[i];
-							IWorkbenchPartReference innerRef = ((PartSite) editor
-									.getSite()).getPartReference();
-							((WorkbenchPage) getSite().getPage())
-									.getPartService().firePartClosed(innerRef);
-						}
+				if (part == MultiEditor.this && innerEditors != null) {
+					PartService partService = ((WorkbenchPage) getSite()
+							.getPage()).getPartService();
+					for (int i = 0; i < innerEditors.length; i++) {
+						IEditorPart editor = innerEditors[i];
+						IWorkbenchPartReference innerRef = ((PartSite) editor
+								.getSite()).getPartReference();
+						partService.firePartClosed(innerRef);
 					}
 				}
 			}
@@ -295,15 +295,14 @@ public abstract class MultiEditor extends EditorPart {
 
 			public void partOpened(IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
-				if (part == MultiEditor.this) {
-					if (innerEditors != null) {
-						for (int i = 0; i < innerEditors.length; i++) {
-							IEditorPart editor = innerEditors[i];
-							IWorkbenchPartReference innerRef = ((PartSite) editor
-									.getSite()).getPartReference();
-							((WorkbenchPage) getSite().getPage())
-									.getPartService().firePartOpened(innerRef);
-						}
+				if (part == MultiEditor.this && innerEditors != null) {
+					PartService partService = ((WorkbenchPage) getSite()
+							.getPage()).getPartService();
+					for (int i = 0; i < innerEditors.length; i++) {
+						IEditorPart editor = innerEditors[i];
+						IWorkbenchPartReference innerRef = ((PartSite) editor
+								.getSite()).getPartReference();
+						partService.firePartOpened(innerRef);
 					}
 				}
 			}
@@ -324,7 +323,7 @@ public abstract class MultiEditor extends EditorPart {
      * Release the added listener.
      */
 	public void dispose() {
-		super.dispose();
 		getSite().getPage().removePartListener(propagationListener);
+		super.dispose();
 	}
 }

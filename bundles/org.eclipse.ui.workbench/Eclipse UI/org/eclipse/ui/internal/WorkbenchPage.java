@@ -3146,6 +3146,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     	return partFactory;
     }
     
+    /**
+     * Allow access to the part service for this page ... used internally to
+     * propogate certain types of events to the page part listeners.
+     * @return the part service for this page.
+     */
     public PartService getPartService() {
     	return (PartService)partList.getPartService();
     }
