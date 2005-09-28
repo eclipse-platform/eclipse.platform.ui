@@ -584,6 +584,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
         message = messageString == null ? "" : messageString; //$NON-NLS-1$
         if (messageLabel == null || messageLabel.isDisposed())
             return;
+        messageLabel.setToolTipText(messageString);
         messageLabel.setText(shortenText(message,messageLabel));
     }
 
