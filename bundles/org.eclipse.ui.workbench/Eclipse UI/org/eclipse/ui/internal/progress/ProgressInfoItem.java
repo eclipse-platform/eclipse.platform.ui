@@ -710,6 +710,7 @@ class ProgressInfoItem extends Composite {
 			link.setData(property);
 		}
 
+		link.setToolTipText(taskString);
 		taskString = Dialog.shortenText(taskString, link);
 		link.setText(property == null ? taskString : NLS.bind(
 				"<a>{0}</a>", taskString));//$NON-NLS-1$
