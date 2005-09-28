@@ -125,7 +125,7 @@ public class LocalFile extends FileStore {
 	public IFileStore getChild(String name) {
 		return new LocalFile(new File(file, name));
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#getFileSystem()
@@ -153,12 +153,15 @@ public class LocalFile extends FileStore {
 	 * to optimize java.io.File object creation.
 	 */
 	private boolean internalDelete(File target, String pathToDelete, MultiStatus status) {
-		boolean failedRecursive = false;
+		//first try to delete - this should succeed for files and symbolic links to directories
+		if (target.delete() || !target.exists())
+			return true;
 		if (target.isDirectory()) {
 			String[] list = target.list();
 			if (list == null)
 				list = EMPTY_STRING_ARRAY;
 			int parentLength = pathToDelete.length();
+			boolean failedRecursive = false;
 			for (int i = 0, imax = list.length; i < imax; i++) {
 				//optimized creation of child path object
 				StringBuffer childBuffer = new StringBuffer(parentLength + list[i].length() + 1);
@@ -169,27 +172,25 @@ public class LocalFile extends FileStore {
 				// try best effort on all children so put logical OR at end
 				failedRecursive = !internalDelete(new java.io.File(childName), childName, status) || failedRecursive;
 			}
+			try {
+				// don't try to delete the root if one of the children failed
+				if (!failedRecursive && target.delete())
+					return true;
+			} catch (Exception e) {
+				// we caught a runtime exception so log it
+				String message = NLS.bind(Messages.couldnotDelete, target.getAbsolutePath());
+				status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, ERROR_DELETE, message, e));
+				return false;
+			}
 		}
-		boolean failedThis = false;
-		try {
-			// don't try to delete the root if one of the children failed
-			if (!failedRecursive && target.exists())
-				failedThis = !target.delete();
-		} catch (Exception e) {
-			// we caught a runtime exception so log it
-			String message = NLS.bind(Messages.couldnotDelete, target.getAbsolutePath());
-			status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, ERROR_DELETE, message, e));
-			return false;
-		}
-		if (failedThis) {
-			String message = null;
-			if (fetchInfo().isReadOnly())
-				message = NLS.bind(Messages.couldnotDeleteReadOnly, target.getAbsolutePath());
-			else
-				message = NLS.bind(Messages.couldnotDelete, target.getAbsolutePath());
-			status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, ERROR_DELETE, message, null));
-		}
-		return !(failedRecursive || failedThis);
+		//if we got this far, we failed
+		String message = null;
+		if (fetchInfo().isReadOnly())
+			message = NLS.bind(Messages.couldnotDeleteReadOnly, target.getAbsolutePath());
+		else
+			message = NLS.bind(Messages.couldnotDelete, target.getAbsolutePath());
+		status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, ERROR_DELETE, message, null));
+		return false;
 	}
 
 	public boolean isParentOf(IFileStore other) {
