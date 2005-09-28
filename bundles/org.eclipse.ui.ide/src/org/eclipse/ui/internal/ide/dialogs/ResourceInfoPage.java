@@ -44,9 +44,8 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.LineDelimiterEditor;
 
 /**
- * This is a dummy page that is added to the property dialog when multiple
- * elements are selected. At the moment we don't handle multiple selection in a
- * meaningful way.
+ * The ResourceInfoPage is the page that shows the basic
+ * info about the resource.
  */
 public class ResourceInfoPage extends PropertyPage {
 
@@ -70,7 +69,7 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private ResourceEncodingFieldEditor encodingEditor;
 	
-	private LineDelimiterEditor lineDelemiterEditor;
+	private LineDelimiterEditor lineDelimiterEditor;
 
 	private static String READ_ONLY = IDEWorkbenchMessages.ResourceInfo_readOnly;
 
@@ -296,8 +295,8 @@ public class ResourceInfoPage extends PropertyPage {
 		});
 		
 		if (resource.getType() == IResource.PROJECT) {
-			lineDelemiterEditor = new LineDelimiterEditor(composite, resource.getProject());
-			lineDelemiterEditor.doLoad();
+			lineDelimiterEditor = new LineDelimiterEditor(composite, resource.getProject());
+			lineDelimiterEditor.doLoad();
 		}
 
 		return composite;
@@ -678,8 +677,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 		encodingEditor.loadDefault();
 		
-		if (lineDelemiterEditor != null)
-			lineDelemiterEditor.loadDefault();
+		if (lineDelimiterEditor != null)
+			lineDelimiterEditor.loadDefault();
 
 	}
 
@@ -692,8 +691,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 		encodingEditor.store();
 		
-		if (lineDelemiterEditor != null)
-			lineDelemiterEditor.store();
+		if (lineDelimiterEditor != null)
+			lineDelimiterEditor.store();
 
 		try {
 			//Nothing to update if we never made the box
