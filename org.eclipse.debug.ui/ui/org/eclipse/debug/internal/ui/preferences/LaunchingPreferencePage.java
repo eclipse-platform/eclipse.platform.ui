@@ -55,7 +55,6 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		createSpacer(getFieldEditorParent(), 2);
 
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugPreferencesMessages.LaunchingPreferencePage_10, SWT.NONE, getFieldEditorParent())); 
-		createSwitchPerspectiveEditor();
 		createRelaunchInDebugMode();
 		createContinueWithCompileErrors();
 		
@@ -103,16 +102,6 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 							{DebugPreferencesMessages.LaunchingPreferencePage_9, MessageDialogWithToggle.PROMPT}}, 
 						getFieldEditorParent(),
 						true));
-	}
-	
-	private void createSwitchPerspectiveEditor() {
-		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE,
-				DebugPreferencesMessages.LaunchingPreferencePage_11, 3, 
-				new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_12, MessageDialogWithToggle.ALWAYS}, 
-								{DebugPreferencesMessages.LaunchingPreferencePage_13, MessageDialogWithToggle.NEVER}, 
-								{DebugPreferencesMessages.LaunchingPreferencePage_14, MessageDialogWithToggle.PROMPT}}, 
-				getFieldEditorParent(),
-				true));
 	}
 	
 	private void createRelaunchInDebugMode() {

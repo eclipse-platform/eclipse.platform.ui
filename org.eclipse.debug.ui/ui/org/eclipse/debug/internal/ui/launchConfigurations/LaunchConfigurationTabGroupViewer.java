@@ -573,7 +573,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			setInitializingTabs(false);
 			return;
 		}
-
 		// hide the name area
 		fNameLabel.setVisible(false);
 		fNameWidget.setVisible(false);
@@ -617,7 +616,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private void showInstanceTabsFor(ILaunchConfigurationType configType) {
 
 		// Don't do any work if the current tabs are for the current config type
-		if (getTabType() != null && getTabType().equals(configType) && !(getTabGroup() instanceof PerspectiveTabGroup)) {
+		if (getTabType() != null && getTabType().equals(configType) && !(getTabGroup() instanceof SharedLaunchTabGroup)) {
 			return;
 		}
 		
@@ -678,18 +677,16 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private void showSharedTabsFor(ILaunchConfigurationType configType) {
 
 		// Don't do any work if the current tabs are for the current config type
-		if (getTabType() != null && getTabType().equals(configType) && (getTabGroup() instanceof PerspectiveTabGroup)) {
+		if (getTabType() != null && getTabType().equals(configType) && (getTabGroup() instanceof SharedLaunchTabGroup)) {
 			return;
 		}		
-		
 		// Build the new tabs
-		ILaunchConfigurationTabGroup group = new PerspectiveTabGroup(configType);
+		ILaunchConfigurationTabGroup group = new SharedLaunchTabGroup(configType);
 		group.createTabs(getLaunchConfigurationDialog(), getLaunchConfigurationDialog().getMode());
 		ILaunchConfigurationTab[] tabs = group.getTabs();
 		for (int i = 0; i < tabs.length; i++) {
 			tabs[i].setLaunchConfigurationDialog(getLaunchConfigurationDialog());
-		}
-				
+		}//end for
 		showTabsFor(group);
 		setTabType(configType);
 		setTabGroup(group);		
@@ -934,11 +931,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if(isInitializingTabs()) {
 			return false;
 		}
-		
-		if (getActiveTab() instanceof PerspectivesTab) {
+		if (getActiveTab() instanceof SharedLaunchTab) {
 			return false;
 		}
-		
 		if (getWorkingCopy() == null) {
 			return false;
 		}
@@ -1224,7 +1219,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Notification that the 'Revert' button has been pressed
 	 */
 	protected void handleRevertPressed() {
-		if (getActiveTab() instanceof PerspectivesTab) {
+		if (getActiveTab() instanceof SharedLaunchTab) {
 			inputChanged(getTabType());	
 		} else {
 			inputChanged(getOriginal());

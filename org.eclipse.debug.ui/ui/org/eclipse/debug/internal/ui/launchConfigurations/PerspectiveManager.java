@@ -76,11 +76,11 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	private Map fPreferenceMap;
 	
 	// XML tags
-	private static final String ELEMENT_PERSPECTIVES = "launchPerspectives"; //$NON-NLS-1$
-	private static final String ELEMENT_PERSPECTIVE = "launchPerspective"; //$NON-NLS-1$
-	private static final String ATTR_TYPE_ID = "configurationType"; //$NON-NLS-1$
-	private static final String ATTR_MODE_ID = "mode"; //$NON-NLS-1$
-	private static final String ATTR_PERSPECTIVE_ID = "perspective";  //$NON-NLS-1$
+	public static final String ELEMENT_PERSPECTIVES = "launchPerspectives"; //$NON-NLS-1$
+	public static final String ELEMENT_PERSPECTIVE = "launchPerspective"; //$NON-NLS-1$
+	public static final String ATTR_TYPE_ID = "configurationType"; //$NON-NLS-1$
+	public static final String ATTR_MODE_ID = "mode"; //$NON-NLS-1$
+	public static final String ATTR_PERSPECTIVE_ID = "perspective";  //$NON-NLS-1$
 
 	/**
 	 * Flag used to indicate that the user is already being prompted to
@@ -628,7 +628,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * is launched in the given mode. <code>PERSPECTIVE_NONE</code> indicates no
 	 * perspective switch should take place. <code>PERSPECTIVE_DEFAULT</code> indicates
 	 * a default perspective switch should take place, as defined by the associated
-	 * launch tab group extension. Saves plug-in preferences.
+	 * launch tab group extension.
 	 * 
 	 * @param type launch configuration type
 	 * @param mode launch mode identifier
@@ -642,8 +642,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		String xml;
 		try {
 			xml = generatePerspectiveXML();
-			DebugUIPlugin.getDefault().getPreferenceStore().putValue(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES, xml);
-			DebugUIPlugin.getDefault().savePluginPreferences();				
+			DebugUIPlugin.getDefault().getPreferenceStore().putValue(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES, xml);			
 		} catch (IOException e) {
 			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.PerspectiveManager_9, e)); 
 		} catch (ParserConfigurationException e) {
@@ -727,7 +726,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * @param mode launch mode
 	 * @return perspective identifier, or <code>null</code>
 	 */
-	protected String getDefaultLaunchPerspective(ILaunchConfigurationType type, String mode) {
+	public String getDefaultLaunchPerspective(ILaunchConfigurationType type, String mode) {
 		LaunchConfigurationTabGroupExtension extension = LaunchConfigurationPresentationManager.getDefault().getExtension(type.getIdentifier(), mode);
 		if (extension != null) {
 			String id = extension.getPerspective(mode);

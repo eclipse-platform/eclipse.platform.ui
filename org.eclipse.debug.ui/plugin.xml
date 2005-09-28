@@ -127,6 +127,13 @@
             id="org.eclipse.debug.ui.StringVariablePreferencePage">
          <keywordReference id="org.eclipse.debug.ui.stringSubstitution"/>
       </page>
+      <page
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.debug.internal.ui.preferences.PerspectivePreferencePage"
+            id="org.eclipse.debug.ui.PerspectivePreferencePage"
+            name="%PerspectivePreferencePage.name">
+         <keywordReference id="org.eclipse.debug.ui.perspectivesPref"/>
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

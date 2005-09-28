@@ -1000,16 +1000,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * <code>false</code> otherwise.
 	 */
 	private boolean showSaveChangesDialog() {
-		String message = null;
-		if (getActiveTab() instanceof PerspectivesTab) {
-			try {
-				message = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationsDialog_45, new String[]{getTabViewer().getWorkingCopy().getType().getName()}); 
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
-		} else {
-			message = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___29, new String[]{getTabViewer().getWorkingCopy().getName()}); 
-		}
+		String message = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___29, new String[]{getTabViewer().getWorkingCopy().getName()}); 
 		MessageDialog dialog = new MessageDialog(getShell(), 
 												 LaunchConfigurationsMessages.LaunchConfigurationDialog_Save_changes__31, 
 												 null,

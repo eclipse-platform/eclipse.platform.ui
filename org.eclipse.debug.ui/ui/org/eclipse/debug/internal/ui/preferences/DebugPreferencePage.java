@@ -14,12 +14,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -59,7 +57,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, DebugPreferencesMessages.DebugPreferencePage_3, SWT.NONE, getFieldEditorParent())); 
 		addField(new BooleanFieldEditor(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, DebugPreferencesMessages.DebugPreferencePage_26, SWT.NONE, getFieldEditorParent())); 
-		createSwitchPerspectiveOnSuspendEditor();
 
 		createSpacer(getFieldEditorParent(), 2);
 		
@@ -78,16 +75,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-	}
-	
-	private void createSwitchPerspectiveOnSuspendEditor() {
-		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND,
-				DebugPreferencesMessages.DebugPreferencePage_21, 3, 
-				new String[][] {{DebugPreferencesMessages.DebugPreferencePage_22, MessageDialogWithToggle.ALWAYS}, 
-								{DebugPreferencesMessages.DebugPreferencePage_23, MessageDialogWithToggle.NEVER}, 
-								{DebugPreferencesMessages.DebugPreferencePage_24, MessageDialogWithToggle.PROMPT}}, 
-				getFieldEditorParent(),
-				true));
 	}
 		
 	protected void createSpacer(Composite composite, int columnSpan) {

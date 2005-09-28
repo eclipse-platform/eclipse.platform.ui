@@ -11,6 +11,8 @@
 package org.eclipse.debug.core;
 
  
+import java.util.Set;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -213,4 +215,13 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @since 3.0
 	 */
 	public String getPluginIdentifier();
+	
+	/**
+	 * Returns all of the registered supported modes for this launch configuration type.
+	 * This method does not return null.
+	 * 
+	 * @return the set of all supported modes
+	 * @since 3.2
+	 */
+	public Set getSupportedModes();
 }

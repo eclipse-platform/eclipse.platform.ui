@@ -125,12 +125,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String EnvironmentTab_19;
 	public static String EnvironmentTab_20;
 
-	public static String PerspectivesTab_0;
-	public static String PerspectivesTab_1;
-	public static String PerspectivesTab_2;
-	public static String PerspectivesTab_3;
-	public static String PerspectivesTab_7;
-
 	public static String FavoritesDialog_1;
 	public static String FavoritesDialog_2;
 	public static String FavoritesDialog_3;
@@ -154,4 +148,12 @@ public class LaunchConfigurationsMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, LaunchConfigurationsMessages.class);
 	}
+
+	public static String SharedLaunchTab_0;
+
+	public static String SharedLaunchTab_1;
+
+	public static String SharedLaunchTab_2;
+
+	public static String SharedLaunchTab_3;
 }

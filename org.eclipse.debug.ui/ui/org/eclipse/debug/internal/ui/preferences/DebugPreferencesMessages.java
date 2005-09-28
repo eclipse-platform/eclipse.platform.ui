@@ -100,4 +100,17 @@ public class DebugPreferencesMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugPreferencesMessages.class);
 	}
+
+	public static String PerspectivePreferencePage_0;
+
+	public static String PerspectivePreferencePage_1;
+
+	public static String PerspectivePreferencePage_2;
+
+	public static String PerspectivePreferencePage_3;
+
+	public static String PerspectivePreferencePage_4;
+
+	public static String PerspectivePreferencePage_5;
+
 }

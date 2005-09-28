@@ -119,6 +119,18 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	}
 	
 	/**
+	 * Returns all of the modes supported by this launch configuration type
+	 * fix for bug 79709
+	 * @return the complete listing of supported modes for this launch configuration
+	 * @since 3.2
+	 */
+	public Set getSupportedModes() {
+		HashSet modes = new HashSet(getBaseModes());
+		modes.addAll(getContributedModes());
+		return modes;
+	}//end getSupportedModes
+	
+	/**
 	 * Returns the set of modes delegates have been contributed for
 	 * 
 	 * @return the set of modes delegates have been contributed for
