@@ -16,7 +16,17 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * The base class for all file system implementations.  
+ * The common superclass for all file system implementations.  Instances
+ * of this class are provided using the <tt>org.eclipse.core.filesystem.filesystems</tt>
+ * extension point.
+ * <p>
+ * On creation, the <code>setInitializationData</code> method is called with
+ * any parameter data specified in the declaring plug-in's manifest.
+ * </p>
+ * <p>
+ * Clients may subclass this class.
+ * </p>
+ * @since 3.2
  */
 public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	private String scheme;

@@ -62,7 +62,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 		final HashMap registry = getFileSystemRegistry();
 		Object result = registry.get(scheme);
 		if (result == null)
-			Policy.error(IFileStoreConstants.INTERNAL_ERROR, NLS.bind("No file system is defined for scheme: {0}", scheme));
+			Policy.error(IFileStoreConstants.ERROR_INTERNAL, NLS.bind("No file system is defined for scheme: {0}", scheme));
 		if (result instanceof IFileSystem)
 			return (IFileSystem)result;
 		try {

@@ -31,7 +31,6 @@ public interface IFileStoreConstants {
 	 * The simple identifier constant (value "<code>filesystems</code>") of
 	 * the extension point of the Core file system plug-in where plug-ins declare
 	 * file system implementations.
-	 * @todo Call this extension point "providers" rather than "filesystems"??
 	 */
 	public static final String PT_FILE_SYSTEMS = "filesystems"; //$NON-NLS-1$
 
@@ -150,66 +149,66 @@ public interface IFileStoreConstants {
 	 * exists on the file system.
 	 * Severity: error. Category: file system.
 	 */
-	public static final int EXISTS_LOCAL = 268;
+	public static final int ERROR_EXISTS = 268;
 
 	/** Status code constant (value 269) indicating a store unexpectedly 
 	 * does not exist on the file system.
 	 * Severity: error. Category: file system.
 	 */
-	public static final int NOT_FOUND_LOCAL = 269;
+	public static final int ERROR_NOT_EXISTS = 269;
 
 	/** Status code constant (value 270) indicating the file system location for
 	 * a store could not be computed. 
 	 * Severity: error. Category: file system.
 	 */
-	public static final int NO_LOCATION_LOCAL = 270;
+	public static final int ERROR_NO_LOCATION = 270;
 
 	/** Status code constant (value 271) indicating an error occurred while
 	 * reading from the file system.
 	 * Severity: error. Category: file system.
 	 */
-	public static final int FAILED_READ_LOCAL = 271;
+	public static final int ERROR_READ = 271;
 
 	/** Status code constant (value 272) indicating an error occurred while
 	 * writing to the file system.
 	 * Severity: error. Category: file system.
 	 */
-	public static final int FAILED_WRITE_LOCAL = 272;
+	public static final int ERROR_WRITE = 272;
 
 	/** Status code constant (value 273) indicating an error occurred while
 	 * deleting from the file system.
 	 * Severity: error. Category: file system.
 	 */
-	public static final int FAILED_DELETE_LOCAL = 273;
+	public static final int ERROR_DELETE = 273;
 
 	/** Status code constant (value 275) indicating this file system is not case
 	 * sensitive and a file that differs only in case unexpectedly exists on 
 	 * the file system.
 	 * Severity: error. Category: file system.
 	 */
-	public static final int CASE_VARIANT_EXISTS = 275;
+	public static final int ERROR_CASE_VARIANT_EXISTS = 275;
 
 	/** Status code constant (value 276) indicating a file exists in the
 	 * file system but is not of the expected type (file instead of directory,
 	 * or vice-versa).
 	 * Severity: error. Category: file system.
 	 */
-	public static final int WRONG_TYPE_LOCAL = 276;
+	public static final int ERROR_WRONG_TYPE = 276;
 
 	/** Status code constant (value 277) indicating that the parent
 	 * file in the file system is marked as read-only.
 	 * Severity: error. Category: file system.
 	 */
-	public static final int PARENT_READ_ONLY = 277;
+	public static final int ERROR_PARENT_READ_ONLY = 277;
 
 	/** Status code constant (value 279) indicating that the 
 	 * file in the file system is marked as read-only.
 	 * Severity: error. Category: file system.
 	 */
-	public static final int READ_ONLY_LOCAL = 279;
+	public static final int ERROR_READ_ONLY = 279;
 
 	/** Status code constant (value 566) indicating an error internal has occurred.
 	 * Severity: error. Category: internal.
 	 */
-	public static final int INTERNAL_ERROR = 566;
+	public static final int ERROR_INTERNAL = 566;
 }

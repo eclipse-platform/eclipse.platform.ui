@@ -21,8 +21,10 @@ import org.eclipse.osgi.util.NLS;
  * The abstract superclass of all {@link IFileStore} implementations.  All
  * file stores must subclass this base class, implementing all abstract
  * methods according to their specification in the {@link IFileStore} API.
- * 
- * Mention these should be "handle-like" lightweight objects.
+ * <p>
+ * Clients may subclass this class.
+ * </p>
+ * @since 3.2
  */
 public abstract class FileStore extends PlatformObject implements IFileStoreConstants, IFileStore {
 	/**
@@ -96,7 +98,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 						bytesRead = source.read(buffer);
 					} catch (IOException e) {
 						String msg = NLS.bind(Messages.failedReadDuringWrite, path);
-						Policy.error(FAILED_READ_LOCAL, msg, e);
+						Policy.error(ERROR_READ, msg, e);
 					}
 					if (bytesRead == -1)
 						break;
@@ -104,7 +106,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 						destination.write(buffer, 0, bytesRead);
 					} catch (IOException e) {
 						String msg = NLS.bind(Messages.couldNotWrite, path);
-						Policy.error(FAILED_WRITE_LOCAL, msg, e);
+						Policy.error(ERROR_WRITE, msg, e);
 					}
 					monitor.worked(1);
 				}
@@ -147,7 +149,8 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 
 	/**
 	 * The default implementation of {@link IFileStore#copy(IFileStore, int, IProgressMonitor)}.
-	 * Subclasses may override.
+	 * This implementation performs a copy by using other primitive methods. 
+	 * Subclasses may override this method.
 	 */
 	public void copy(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
@@ -213,7 +216,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	protected void copyFile(IFileInfo sourceInfo, IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		try {
 			if ((options & OVERWRITE) == 0 && destination.fetchInfo().exists())
-				Policy.error(IFileStoreConstants.EXISTS_LOCAL, NLS.bind(Messages.fileExists, destination));
+				Policy.error(IFileStoreConstants.ERROR_EXISTS, NLS.bind(Messages.fileExists, destination));
 			long length = sourceInfo.getLength();
 			int totalWork;
 			if (length == -1)
@@ -243,10 +246,19 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#delete(int, org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * The default implementation of {@link IFileStore#delete(int, IProgressMonitor)}.
+	 * This implementation always throws an exception indicating that deletion
+	 * is not supported by this file system.  This method should be overridden
+	 * for all file systems on which deletion is supported.
+	 * 
+	 * @param options bit-wise or of option flag constants
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting and cancellation are not desired
 	 */
-	public abstract void delete(int options, IProgressMonitor monitor) throws CoreException;
+	public void delete(int options, IProgressMonitor monitor) throws CoreException {
+		Policy.error(IFileStoreConstants.ERROR_DELETE, NLS.bind(Messages.noImplDelete, toString()));
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#fetchInfo()
@@ -265,6 +277,19 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 */
 	public abstract IFileStore getChild(String name);
 
+	/**
+	 * The default implementation of {@link IFileStore#getFileSystem()}.
+	 * Subclasses may override.
+	 */
+	public IFileSystem getFileSystem() {
+		try {
+			return FileSystemCore.getFileSystem(toURI().getScheme());
+		} catch (CoreException e) {
+			//this will only happen if toURI() has been incorrectly implemented
+			throw new RuntimeException(e);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#getName()
 	 */
@@ -288,15 +313,21 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#mkdir(int, org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * The default implementation of {@link IFileStore#mkdir(int, IProgressMonitor)}.
+	 * This implementation always throws an exception indicating that this file system 
+	 * is read only. This method should be overridden for all writable file systems.
+	 * 
+	 * @param options bit-wise or of option flag constants
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting and cancellation are not desired
 	 */
 	public abstract IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#move(org.eclipse.core.filesystem.IFileStore, int, org.eclipse.core.runtime.IProgressMonitor)
-	 * Default implementation uses other primitives. Subclasses can override
-	 * to provide an implementation that is optimized for a particular file system.
+	/**
+	 * The default implementation of {@link IFileStore#move(IFileStore, int, IProgressMonitor)}.
+	 * This implementation performs a move by using other primitive methods. 
+	 * Subclasses may override this method.
 	 */
 	public void move(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
@@ -307,7 +338,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 		} catch (CoreException e) {
 			//throw new error to indicate failure occurred during a move
 			String message = NLS.bind(Messages.couldNotMove, toString());
-			Policy.error(FAILED_WRITE_LOCAL, message, e);
+			Policy.error(ERROR_WRITE, message, e);
 		} finally {
 			monitor.done();
 		}
@@ -318,15 +349,32 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 */
 	public abstract InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#openOutputStream(int, IProgressMonitor)
+	/**
+	 * The default implementation of {@link IFileStore#openOutputStream(int, IProgressMonitor)}.
+	 * This implementation always throws an exception indicating that this file system 
+	 * is read only. This method should be overridden for all writable file systems.
+	 * 
+	 * @param options bit-wise or of option flag constants
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting and cancellation are not desired
 	 */
-	public abstract OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException;
+	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
+		Policy.error(IFileStoreConstants.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
+		return null;//can't get here
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#setFileInfo(org.eclipse.core.filesystem.IFileInfo, int, org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * The default implementation of {@link IFileStore#putInfo(IFileInfo, int, IProgressMonitor)}.
+	 * This implementation always throws an exception indicating that this file system 
+	 * is read only. This method should be overridden for all writable file systems.
+	 * 
+	 * @param options bit-wise or of option flag constants
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting and cancellation are not desired
 	 */
-	public abstract void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException;
+	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
+		Policy.error(IFileStoreConstants.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
+	}
 
 	/**
 	 * Default implementation of IFileStore.#toString(). This default implementation

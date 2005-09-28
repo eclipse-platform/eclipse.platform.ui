@@ -29,6 +29,8 @@ public class Messages extends NLS {
 	public static String failedReadDuringWrite;
 	public static String fileNotFound;
 	public static String moving;
+	public static String noImplDelete;
+	public static String noImplWrite;
 	public static String notAFile;
 	public static String readOnlyParent;
 	public static String fileExists;
@@ -37,4 +39,5 @@ public class Messages extends NLS {
 		// initialize resource bundles
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
+
 }
