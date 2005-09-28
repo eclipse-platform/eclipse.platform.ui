@@ -239,7 +239,9 @@ public class BasicPartList extends AbstractTableInformationControl {
         //close the shell
         dispose();
 
-        site.selectPart((IPresentablePart)selectedElement);
+        if (selectedElement instanceof IPresentablePart) {
+        	site.selectPart((IPresentablePart)selectedElement);
+        }
     }
 
     protected boolean deleteSelectedElements() {
