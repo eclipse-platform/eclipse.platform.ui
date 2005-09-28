@@ -12,7 +12,7 @@
 LIB_NAME = liblocalfile_1_0_0.jnilib
 
 core:
-	cc -I /System/Library/Frameworks/JavaVM.framework/Headers core.c -o $(LIB_NAME) -bundle -framework JavaVM -framework CoreServices
+	cc -I /System/Library/Frameworks/JavaVM.framework/Headers localfile.c -o $(LIB_NAME) -bundle -framework JavaVM -framework CoreServices
 
 clean:
 	rm *.o

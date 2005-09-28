@@ -18,7 +18,6 @@
 #include <string.h>
 
 #include "../localfile.h"
-#include <os_custom.h>
 
 #include <CoreServices/CoreServices.h>
 
@@ -63,7 +62,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 jboolean convertStatToFileInfo (JNIEnv *env, struct stat info, jobject fileInfo) {
     jclass cls;
     jmethodID mid;
-    boolean readOnly;
+    jboolean readOnly;
 
     cls = (*env)->GetObjectClass(env, fileInfo);
     if (cls == 0) return JNI_FALSE;
@@ -145,7 +144,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 
 	/* get stat */
 	char *name= getUTF8ByteArray(env, target);
-	code = stat((const char*)name, &info);
+	code = stat(name, &info);
 	free(name);
 
 	/* test if an error occurred */
@@ -216,9 +215,6 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
  */
 JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_LocalFileNatives_internalSetFileInfoW
   (JNIEnv *env, jclass clazz, jcharArray target, jobject obj, jint options) {
-    int mask;
-    struct stat info;
-    jbyte *name;
     jint code = -1;
     jmethodID mid;
     jboolean executable, readOnly, archive;
@@ -237,8 +233,8 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
     archive = (*env)->CallBooleanMethod(env, obj, mid, ATTRIBUTE_ARCHIVE);
 
 	/* get the current permissions */
-	jbyte *name= getUTF8ByteArray(env, target);
-	struct stat info;
+	jbyte *name = getUTF8ByteArray(env, target);
+    struct stat info;
 	int result= stat(name, &info);
 	if (result != 0) goto fail;
 
