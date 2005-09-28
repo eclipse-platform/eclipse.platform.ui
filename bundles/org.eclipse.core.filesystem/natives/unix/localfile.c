@@ -71,7 +71,7 @@ jboolean convertStatToFileInfo (JNIEnv *env, struct stat info, jobject fileInfo)
 	// file length
     mid = (*env)->GetMethodID(env, cls, "setLength", "(J)V");
     if (mid == 0) return JNI_FALSE;
-    (*env)->CallVoidMethod(env, fileInfo, mid, info.st_size);
+    (*env)->CallVoidMethod(env, fileInfo, mid, (jlong)info.st_size);
 
 	// folder or file?
 	if ((info.st_mode & S_IFDIR) == S_IFDIR) {
