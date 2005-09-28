@@ -9,11 +9,10 @@
 # makefile for libcore on MacOS X
 
 
-LIB_NAME = libcore_3_1_0.jnilib
+LIB_NAME = liblocalfile_1_0_0.jnilib
 
 core:
 	cc -I /System/Library/Frameworks/JavaVM.framework/Headers core.c -o $(LIB_NAME) -bundle -framework JavaVM -framework CoreServices
-	mv $(LIB_NAME) ../os/macosx/ppc
 
 clean:
 	rm *.o
