@@ -34,7 +34,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * @param style
 	 */
 	public DetailedProgressViewer(Composite parent, int style) {
-		scrolled = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL
+		scrolled = new ScrolledComposite(parent, SWT.V_SCROLL
 				| style);
 		int height = JFaceResources.getDefaultFont().getFontData()[0]
 				.getHeight();

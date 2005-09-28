@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -667,7 +668,6 @@ class ProgressInfoItem extends Composite {
 		Link link;
 		if (index >= taskEntries.size()) {// Is it new?
 			link = new Link(this, SWT.NONE);
-//			link.addMouseListener(mouseListener);
 
 			FormData linkData = new FormData();
 			if (index == 0) {
@@ -710,6 +710,7 @@ class ProgressInfoItem extends Composite {
 			link.setData(property);
 		}
 
+		taskString = Dialog.shortenText(taskString, link);
 		link.setText(property == null ? taskString : NLS.bind(
 				"<a>{0}</a>", taskString));//$NON-NLS-1$
 
