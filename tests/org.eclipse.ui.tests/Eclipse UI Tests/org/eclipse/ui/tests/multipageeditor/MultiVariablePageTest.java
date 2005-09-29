@@ -16,11 +16,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -33,7 +35,7 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class MultiVariablePageTest extends UITestCase {
 
-	private static final String FILE_CONTENTS = "#section01\nsection 1\n#section02\nsection 2\nwith info\n";
+	private static final String FILE_CONTENTS = "#section01\nsection 1\n#section02\nsection 2\nwith info\n#section03\nLast page\n";
 
 	private static final String MTEST01_FILE = "mtest01.multivar";
 
@@ -52,10 +54,41 @@ public class MultiVariablePageTest extends UITestCase {
 	 */
 	public void testSetActivePage() throws Throwable {
 		// Open a new test window.
-		IWorkbenchWindow window = openTestWindow();
+		// Create and open a blurb file.
+		IEditorPart part = openMultivarFile();
 
-		// Create a blurb file.
-		IWorkbenchPage page = window.getActivePage();
+		MultiVariablePageEditor editor = (MultiVariablePageEditor) part;
+		ISelection selection = editor.getEditorSite().getSelectionProvider()
+				.getSelection();
+		TextSelection text = (TextSelection) selection;
+		// when the first page comes up, we should have selected the first
+		// section.
+		assertEquals("#section01", text.getText());
+
+		editor.setPage(1);
+		selection = editor.getEditorSite().getSelectionProvider()
+				.getSelection();
+		text = (TextSelection) selection;
+		// when we change to the second page, the selection should be
+		// updated.
+		assertEquals("#section02", text.getText());
+	}
+
+	public void testRemovePage() throws Throwable {
+		// Open a new test window.
+		// Create and open a blurb file.
+		IEditorPart part = openMultivarFile();
+
+		MultiVariablePageEditor editor = (MultiVariablePageEditor) part;
+		editor.addLastPage();
+		Control c = editor.getLastPage();
+		assertFalse(c.isDisposed());
+		editor.removeLastPage();
+		assertTrue(c.isDisposed());
+	}
+
+	private IEditorPart openMultivarFile() throws CoreException, PartInitException {
+		IWorkbenchPage page = openTestWindow().getActivePage();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject testProject = workspace.getRoot().getProject(
 				MULTI_VARIABLE_PROJ);
@@ -75,21 +108,7 @@ public class MultiVariablePageTest extends UITestCase {
 		IEditorPart part = IDE.openEditor(page, multiFile);
 		assertTrue("Should have opened our multi variable page editor",
 				part instanceof MultiVariablePageEditor);
-
-		MultiVariablePageEditor editor = (MultiVariablePageEditor) part;
-		ISelection selection = editor.getEditorSite().getSelectionProvider()
-				.getSelection();
-		TextSelection text = (TextSelection) selection;
-		// when the first page comes up, we should have selected the first
-		// section.
-		assertEquals("#section01", text.getText());
-
-		editor.setPage(1);
-		selection = editor.getEditorSite().getSelectionProvider()
-				.getSelection();
-		text = (TextSelection) selection;
-		// when we change to the second page, the selection should be
-		// updated.
-		assertEquals("#section02", text.getText());
+		return part;
 	}
+	
 }

@@ -15,6 +15,10 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -28,6 +32,8 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * @since 3.2
  */
 public class MultiVariablePageEditor extends MultiPageEditorPart {
+
+	private Composite lastPage;
 
 	/**
 	 * Default with 2 pages, although they're on the same editor input
@@ -99,5 +105,33 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 	 */
 	public void setPage(int index) {
 		super.setActivePage(index);
+	}
+	
+	/**
+	 * Add a page with a composite for testing.
+	 *
+	 */
+	public void addLastPage() {
+		lastPage = new Composite(getContainer(), SWT.NONE);
+		Label l = new Label(lastPage, SWT.SHADOW_IN);
+		l.setText(getEditorInput().getName());
+		addPage(2, lastPage);
+	}
+	
+	/**
+	 * remove the last page for testing.
+	 *
+	 */
+	public void removeLastPage() {
+		removePage(2);
+		lastPage = null;
+	}
+	
+	/**
+	 * Get the last page composite for testing.
+	 * @return the last page.
+	 */
+	public Control getLastPage() {
+		return lastPage;
 	}
 }

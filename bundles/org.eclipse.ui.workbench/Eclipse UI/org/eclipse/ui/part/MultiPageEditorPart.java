@@ -551,12 +551,19 @@ public abstract class MultiPageEditorPart extends EditorPart {
         Assert.isTrue(pageIndex >= 0 && pageIndex < getPageCount());
         // get editor (if any) before disposing item
         IEditorPart editor = getEditor(pageIndex);
-        // dispose item before disposing editor, in case there's an exception in editor's dispose
+        
+        // get control for the item if it's not an editor
+        Control pageControl = getItem(pageIndex).getControl();
+        
+        // dispose item before disposing editor, in case there's an exception 
+        // in editor's dispose
         getItem(pageIndex).dispose();
         // dispose editor (if any)
         if (editor != null) {
             nestedEditors.remove(editor);
             disposePart(editor);
+        } else if (pageControl!=null) {
+        	pageControl.dispose();
         }
     }
 
