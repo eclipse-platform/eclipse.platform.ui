@@ -32,6 +32,9 @@ import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
@@ -314,7 +317,9 @@ public class ImportExistingTest extends DataTransferTestCase {
 		WizardProjectsImportPage wpip = new WizardProjectsImportPage();
 		
 		Shell shell = getShell();
-		wpip.createControl(shell);
+		Composite parent = new Composite(shell, SWT.NONE);
+		parent.setLayout(new GridLayout());
+		wpip.createControl(parent);
 		
 		ImportExportWizard wizard = new ImportExportWizard();
 		wizard.init(getWorkbench(), null);
