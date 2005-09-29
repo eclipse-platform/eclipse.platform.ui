@@ -40,5 +40,6 @@ public class InternalTestSuite extends TestSuite {
         addTest(Bug75909Test.suite());
         addTest(new TestSuite(Bug78470Test.class));
         addTest(new TestSuite(DeclarativeFilterTest.class));
+        addTest(Bug99858Test.suite());
     }
 }

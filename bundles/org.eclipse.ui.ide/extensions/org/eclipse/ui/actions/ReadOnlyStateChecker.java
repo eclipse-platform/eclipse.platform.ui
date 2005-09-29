@@ -150,7 +150,8 @@ public class ReadOnlyStateChecker {
         for (int i = 0; i < itemsToCheck.length; i++) {
             IResource resourceToCheck = itemsToCheck[i];
             ResourceAttributes checkAttributes = resourceToCheck.getResourceAttributes();
-            if (!yesToAllSelected && shouldCheck(resourceToCheck) 
+            if (!yesToAllSelected && shouldCheck(resourceToCheck)
+            		&& checkAttributes!=null
             		&& checkAttributes.isReadOnly()) {
                 int action = queryYesToAllNoCancel(resourceToCheck);
                 if (action == IDialogConstants.YES_ID) {
