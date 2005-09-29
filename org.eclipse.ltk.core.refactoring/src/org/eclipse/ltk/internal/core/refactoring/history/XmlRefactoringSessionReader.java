@@ -61,6 +61,17 @@ public final class XmlRefactoringSessionReader extends DefaultHandler implements
 	private String fVersion= null;
 
 	/**
+	 * Creates a core exception from the given throwable.
+	 * 
+	 * @param throwable
+	 *            the throwable
+	 * @return the core exception
+	 */
+	private CoreException createCoreException(final Throwable throwable) {
+		return new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, throwable.getLocalizedMessage(), null));
+	}
+
+	/**
 	 * Creates a new parser from the specified factory.
 	 * 
 	 * @param factory
@@ -106,11 +117,11 @@ public final class XmlRefactoringSessionReader extends DefaultHandler implements
 					return descriptor;
 				}
 			} catch (IOException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+				throw createCoreException(exception);
 			} catch (ParserConfigurationException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+				throw createCoreException(exception);
 			} catch (SAXException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+				throw createCoreException(exception);
 			}
 		}
 		return null;
