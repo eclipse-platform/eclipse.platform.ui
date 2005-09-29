@@ -11,11 +11,12 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.SelectionProviderAction;
@@ -29,78 +30,85 @@ import org.eclipse.ui.ide.IDE;
  */
 public class ActionResolveMarker extends SelectionProviderAction {
 
-    private IWorkbenchPart part;
+	private IWorkbenchPart part;
 
-    public ActionResolveMarker(IWorkbenchPart part, ISelectionProvider provider) {
-        super(provider, MarkerMessages.resolveMarkerAction_title);
-        this.part = part;
-        setEnabled(false);
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 * @param part
+	 * @param provider
+	 */
+	public ActionResolveMarker(IWorkbenchPart part, ISelectionProvider provider) {
+		super(provider, MarkerMessages.resolveMarkerAction_title);
+		this.part = part;
+		setEnabled(false);
+	}
 
-    /**
-     * Displays a list of resolutions and performs the selection.
-     */
-    public void run() {
-        if (!isEnabled()) {
-            return;
-        }
-        IMarker marker = getMarker();
-        if (marker == null) {
-            return;
-        }
-        IMarkerResolution[] resolutions = getResolutions(marker);
-        if (resolutions.length == 0) {
-            MessageDialog
-                    .openInformation(
-                            part.getSite().getShell(),
-                            MarkerMessages.resolveMarkerAction_dialogTitle,
-                            MarkerMessages.resolveMarkerAction_noResolutionsLabel);
-            return;
-        }
-        MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(
-                part.getSite().getShell(), resolutions);
-        if (d.open() != Window.OK)
-            return;
-        Object[] result = d.getResult();
-        if (result != null && result.length > 0)
-            ((IMarkerResolution) result[0]).run(marker);
-    }
+	/**
+	 * Displays a list of resolutions and performs the selection.
+	 */
+	public void run() {
+		if (!isEnabled()) {
+			return;
+		}
+		Iterator markers = getStructuredSelection().toList().iterator();
 
-    /**
-     * Returns the resolutions for the given marker.
-     *
-     * @param the marker for which to obtain resolutions
-     * @return the resolutions for the selected marker	
-     */
-    private IMarkerResolution[] getResolutions(IMarker marker) {
-        return IDE.getMarkerHelpRegistry().getResolutions(marker);
-    }
+		if (!markers.hasNext()) {
+			return;
+		}
+		while (markers.hasNext()) {
+			IMarker marker = (IMarker) markers.next();
+			IMarkerResolution[] resolutions = getResolutions(marker);
+			if (resolutions.length == 0) {
+				MessageDialog.openInformation(part.getSite().getShell(),
+						MarkerMessages.resolveMarkerAction_dialogTitle,
+						MarkerMessages.resolveMarkerAction_noResolutionsLabel);
+				return;
+			}
+			IMarkerResolution resolution = resolutions[0];
+			if (resolutions.length > 1) {
+				MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(
+						part.getSite().getShell(), resolutions);
+				d.open();
+				
+				Object[] result = d.getResult();
+				if (result == null || result.length == 0)
+					return;
+				resolution = (IMarkerResolution) result[0];
+			}
+			resolution.run(marker);
+		}
 
-    /**
-     * Returns the selected marker (may be <code>null</code>).
-     * 
-     * @return the selected marker
-     */
-    private IMarker getMarker() {
-        IStructuredSelection selection = getStructuredSelection();
-        // only enable for single selection
-        if (selection.size() != 1)
-            return null;
-        return (IMarker) selection.getFirstElement();
-    }
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    public void selectionChanged(IStructuredSelection selection) {
-        setEnabled(false);
-        if (selection.size() != 1) {
-            return;
-        }
-        IMarker marker = (IMarker) selection.getFirstElement();
-        if (marker == null) {
-            return;
-        }
-        setEnabled(IDE.getMarkerHelpRegistry().hasResolutions(marker));
-    }
+	/**
+	 * Returns the resolutions for the given marker.
+	 * 
+	 * @param marker the marker for which to obtain resolutions
+	 * @return IMarkerResolution[] the resolutions for the selected marker
+	 */
+	private IMarkerResolution[] getResolutions(IMarker marker) {
+		return IDE.getMarkerHelpRegistry().getResolutions(marker);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+		setEnabled(false);
+		if (selection.size() == 0) {
+			return;
+		}
+		Iterator markers = selection.iterator();
+
+		while (markers.hasNext()) {
+			if (IDE.getMarkerHelpRegistry().hasResolutions(
+					(IMarker) markers.next())) {
+				setEnabled(true);
+				return;
+			}
+		}
+		setEnabled(false);
+	}
 }
