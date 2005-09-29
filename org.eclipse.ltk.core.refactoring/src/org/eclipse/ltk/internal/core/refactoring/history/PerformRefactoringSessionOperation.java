@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.jface.text.Assert;
-
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -28,6 +26,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
+import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 
 /**
@@ -48,11 +47,22 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
  */
 public class PerformRefactoringSessionOperation implements IWorkspaceRunnable {
 
-	/** The refactoring session descriptor */
-	private final RefactoringSessionDescriptor fSessionDescriptor;
+	/** The refactoring descriptors */
+	private final RefactoringDescriptor[] fRefactoringDescriptors;
 
 	/** The status of the session */
 	private RefactoringStatus fSessionStatus= new RefactoringStatus();
+
+	/**
+	 * Creates a new perform refactoring session operation.
+	 * 
+	 * @param descriptors
+	 *            the refactoring descriptors
+	 */
+	public PerformRefactoringSessionOperation(final RefactoringDescriptor[] descriptors) {
+		Assert.isNotNull(descriptors);
+		fRefactoringDescriptors= descriptors;
+	}
 
 	/**
 	 * Creates a new perform refactoring session operation.
@@ -61,8 +71,7 @@ public class PerformRefactoringSessionOperation implements IWorkspaceRunnable {
 	 *            the refactoring session descriptor
 	 */
 	public PerformRefactoringSessionOperation(final RefactoringSessionDescriptor descriptor) {
-		Assert.isNotNull(descriptor);
-		fSessionDescriptor= descriptor;
+		this(descriptor.getRefactorings());
 	}
 
 	/**
@@ -80,13 +89,12 @@ public class PerformRefactoringSessionOperation implements IWorkspaceRunnable {
 	 */
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		fSessionStatus= new RefactoringStatus();
-		final RefactoringDescriptor[] descriptors= fSessionDescriptor.getRefactorings();
-		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringSessionOperation_perform_refactoring_session, descriptors.length);
+		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringSessionOperation_perform_refactoring_session, fRefactoringDescriptors.length);
 		final ScriptableRefactoringFactory factory= ScriptableRefactoringFactory.getInstance();
 		try {
-			for (int index= 0; index < descriptors.length && !fSessionStatus.hasFatalError(); index++) {
+			for (int index= 0; index < fRefactoringDescriptors.length && !fSessionStatus.hasFatalError(); index++) {
 				boolean execute= false;
-				final RefactoringDescriptor descriptor= descriptors[index];
+				final RefactoringDescriptor descriptor= fRefactoringDescriptors[index];
 				final Refactoring refactoring= factory.createRefactoring(descriptor);
 				if (refactoring instanceof IInitializableRefactoringObject) {
 					final IInitializableRefactoringObject extended= (IInitializableRefactoringObject) refactoring;
