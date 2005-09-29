@@ -831,9 +831,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 				fEmptyProposal.fOffset= fFilterOffset;
 				fEmptyProposal.fDisplayString= fEmptyMessage != null ? fEmptyMessage : JFaceTextMessages.getString("CompletionProposalPopup.no_proposals"); //$NON-NLS-1$
 				proposals= new ICompletionProposal[] { fEmptyProposal };
-				fProposalTable.setEnabled(false);
-			} else {
-				fProposalTable.setEnabled(true);
 			}
 
 			fFilteredProposals= proposals;
