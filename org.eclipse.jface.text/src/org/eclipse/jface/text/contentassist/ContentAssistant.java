@@ -2035,8 +2035,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Sets the text to be shown if no proposals are available and {@link #isShowEmptyList()} is
-	 * <code>true</code>.
+	 * Sets the text to be shown if no proposals are available and
+	 * {@link #setShowEmptyList(boolean) empty lists} are displayed.
 	 * <p>
 	 * XXX this API is provisional and may change anytime during the course of 3.2
 	 * </p>
