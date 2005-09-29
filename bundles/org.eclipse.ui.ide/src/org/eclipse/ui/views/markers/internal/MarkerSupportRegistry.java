@@ -24,60 +24,63 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * @since 3.2
  * 
  */
-public class ProblemFilterRegistry implements IExtensionChangeHandler {
+public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
+	private static final String DESCRIPTION = "onDescription"; //$NON-NLS-1$
+
+	private static final String ENABLED = "enabled"; //$NON-NLS-1$
+	
+	private static final Object ERROR = "ERROR";//$NON-NLS-1$
+
+	private static final String ID = "id"; //$NON-NLS-1$
+
+	private static final Object INFO = "INFO";//$NON-NLS-1$
+
+	private static final String MARKER_ID = "markerId"; //$NON-NLS-1$
+
+	/**
+	 * The tag for the marker support extension
+	 */
 	public static final String MARKER_SUPPORT = "markerSupport";//$NON-NLS-1$
 
 	private static final String NAME = "name"; //$NON-NLS-1$
 	
-	private static final String ID = "id"; //$NON-NLS-1$
-
-	private static final String ENABLED = "enabled"; //$NON-NLS-1$
-
-	private static final Object PROBLEM_FILTER = "problemFilter";//$NON-NLS-1$
-
-	private static final String SELECTED_TYPE = "selectedType"; //$NON-NLS-1$
-
-	private static final String MARKER_ID = "markerId"; //$NON-NLS-1$
-
-	private static final String SCOPE = "scope"; //$NON-NLS-1$
-	
 	private static final Object ON_ANY = "ON_ANY"; //$NON-NLS-1$
-
-	private static final Object ON_SELECTED_ONLY = "ON_SELECTED_ONLY"; //$NON-NLS-1$
-
-	private static final Object ON_SELECTED_AND_CHILDREN = "ON_SELECTED_AND_CHILDREN";//$NON-NLS-1$
 
 	private static final Object ON_ANY_IN_SAME_CONTAINER = "ON_ANY_IN_SAME_CONTAINER";//$NON-NLS-1$
 
-	private static final String DESCRIPTION = "onDescription"; //$NON-NLS-1$
+	private static final Object ON_SELECTED_AND_CHILDREN = "ON_SELECTED_AND_CHILDREN";//$NON-NLS-1$
+
+	private static final Object ON_SELECTED_ONLY = "ON_SELECTED_ONLY"; //$NON-NLS-1$
+
+	private static final Object PROBLEM_FILTER = "problemFilter";//$NON-NLS-1$
+
+	private static final String SCOPE = "scope"; //$NON-NLS-1$
+
+	private static final String SELECTED_TYPE = "selectedType"; //$NON-NLS-1$
 
 	private static final String SEVERITY = "severity";//$NON-NLS-1$
 
-	private static final Object INFO = "INFO";//$NON-NLS-1$
+	private static MarkerSupportRegistry singleton;
 
 	private static final Object WARNING = "WARNING";//$NON-NLS-1$
 
-	private static final Object ERROR = "ERROR";//$NON-NLS-1$
-
-	private static ProblemFilterRegistry singleton;
-
-	private Collection registeredFilters = new ArrayList();
-
-	
 	/**
 	 * Get the instance of the registry.
 	 * @return ProblemFilterRegistry
 	 */
-	public static ProblemFilterRegistry getInstance(){
+	public static MarkerSupportRegistry getInstance(){
 		if(singleton == null)
-			singleton = new ProblemFilterRegistry();
+			singleton = new MarkerSupportRegistry();
 		return singleton;
 	}
+
+	
+	private Collection registeredFilters = new ArrayList();
 	/**
 	 * Create a new instance of the receiver and read the registry.
 	 */
-	private ProblemFilterRegistry() {
+	private MarkerSupportRegistry() {
 		IExtensionTracker tracker = PlatformUI.getWorkbench()
 				.getExtensionTracker();
 		IExtensionPoint point = Platform.getExtensionRegistry()
@@ -95,25 +98,83 @@ public class ProblemFilterRegistry implements IExtensionChangeHandler {
 
 	}
 
-	/**
-	 * Read the filter from the extension and register it using the tracker.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param tracker
-	 * @param extension
-	 * @return ProblemFilter
+	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker,
+	 *      org.eclipse.core.runtime.IExtension)
 	 */
-	public Collection readExtension(IExtensionTracker tracker,
-			IExtension extension) {
+	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		Collection filters = newFilters(extension);
-		Iterator iterator = filters.iterator();
-		while (iterator.hasNext()) {
-			tracker.registerObject(extension, iterator.next(),
+		registeredFilters.addAll(filters);
+		Iterator newFilters = filters.iterator();
+		while (newFilters.hasNext()) {
+			tracker.registerObject(extension, newFilters.next(),
 					IExtensionTracker.REF_STRONG);
-
 		}
-		return filters;
+
 	}
 
+	/**
+	 * Get the collection of currently registered filters.
+	 * @return Collection of ProblemFilter
+	 */
+	public Collection getRegisteredFilters() {
+		return registeredFilters;
+	}
+
+	/**
+	 * Get the constant for scope from element. Return -1 if there is no value.
+	 * 
+	 * @param element
+	 * @return int one of MarkerView#ON_ANY MarkerView#ON_SELECTED_ONLY
+	 *         MarkerView#ON_SELECTED_AND_CHILDREN
+	 *         MarkerView#ON_ANY_IN_SAME_CONTAINER
+	 */
+	private int getScopeValue(IConfigurationElement element) {
+		String scope = element.getAttribute(SCOPE);
+		if (scope == null)
+			return -1;
+		if (scope.equals(ON_ANY))
+			return MarkerFilter.ON_ANY;
+		if (scope.equals(ON_SELECTED_ONLY))
+			return MarkerFilter.ON_SELECTED_ONLY;
+		if (scope.equals(ON_SELECTED_AND_CHILDREN))
+			return MarkerFilter.ON_SELECTED_AND_CHILDREN;
+		if (scope.equals(ON_ANY_IN_SAME_CONTAINER))
+			return MarkerFilter.ON_ANY_IN_SAME_CONTAINER;
+
+		return -1;
+	}
+	
+	/**
+	 * Get the constant for scope from element. Return -1 if there is no value.
+	 * 
+	 * @param element
+	 * @return int one of MarkerView#ON_ANY MarkerView#ON_SELECTED_ONLY
+	 *         MarkerView#ON_SELECTED_AND_CHILDREN
+	 *         MarkerView#ON_ANY_IN_SAME_CONTAINER
+	 */
+	private int getSeverityValue(IConfigurationElement element) {
+		String severity = element.getAttribute(SEVERITY);
+		if (severity == null)
+			return -1;
+		if (severity.equals(INFO))
+			return ProblemFilter.SEVERITY_INFO;
+		if (severity.equals(WARNING))
+			return ProblemFilter.SEVERITY_WARNING;
+		if (severity.equals(ERROR))
+			return ProblemFilter.SEVERITY_ERROR;
+
+
+		return -1;
+	}
+
+	/**
+	 * Read the problem filters in the receiver.
+	 * @param extension
+	 * @return Collection of ProblemFilter
+	 */
 	private Collection newFilters(IExtension extension) {
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 		Collection filters = new ArrayList();
@@ -181,69 +242,24 @@ public class ProblemFilterRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Get the constant for scope from element. Return -1 if there is no value.
+	 * Read the filter from the extension and register it using the tracker.
 	 * 
-	 * @param element
-	 * @return int one of MarkerView#ON_ANY MarkerView#ON_SELECTED_ONLY
-	 *         MarkerView#ON_SELECTED_AND_CHILDREN
-	 *         MarkerView#ON_ANY_IN_SAME_CONTAINER
+	 * @param tracker
+	 * @param extension
+	 * @return ProblemFilter
 	 */
-	private int getScopeValue(IConfigurationElement element) {
-		String scope = element.getAttribute(SCOPE);
-		if (scope == null)
-			return -1;
-		if (scope.equals(ON_ANY))
-			return MarkerFilter.ON_ANY;
-		if (scope.equals(ON_SELECTED_ONLY))
-			return MarkerFilter.ON_SELECTED_ONLY;
-		if (scope.equals(ON_SELECTED_AND_CHILDREN))
-			return MarkerFilter.ON_SELECTED_AND_CHILDREN;
-		if (scope.equals(ON_ANY_IN_SAME_CONTAINER))
-			return MarkerFilter.ON_ANY_IN_SAME_CONTAINER;
+	public Collection readExtension(IExtensionTracker tracker,
+			IExtension extension) {
+		Collection filters = newFilters(extension);
+		Iterator iterator = filters.iterator();
+		while (iterator.hasNext()) {
+			tracker.registerObject(extension, iterator.next(),
+					IExtensionTracker.REF_STRONG);
 
-		return -1;
+		}
+		return filters;
 	}
 	
-	/**
-	 * Get the constant for scope from element. Return -1 if there is no value.
-	 * 
-	 * @param element
-	 * @return int one of MarkerView#ON_ANY MarkerView#ON_SELECTED_ONLY
-	 *         MarkerView#ON_SELECTED_AND_CHILDREN
-	 *         MarkerView#ON_ANY_IN_SAME_CONTAINER
-	 */
-	private int getSeverityValue(IConfigurationElement element) {
-		String severity = element.getAttribute(SEVERITY);
-		if (severity == null)
-			return -1;
-		if (severity.equals(INFO))
-			return ProblemFilter.SEVERITY_INFO;
-		if (severity.equals(WARNING))
-			return ProblemFilter.SEVERITY_WARNING;
-		if (severity.equals(ERROR))
-			return ProblemFilter.SEVERITY_ERROR;
-
-
-		return -1;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker,
-	 *      org.eclipse.core.runtime.IExtension)
-	 */
-	public void addExtension(IExtensionTracker tracker, IExtension extension) {
-		Collection filters = newFilters(extension);
-		registeredFilters.addAll(filters);
-		Iterator newFilters = filters.iterator();
-		while (newFilters.hasNext()) {
-			tracker.registerObject(extension, newFilters.next(),
-					IExtensionTracker.REF_STRONG);
-		}
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -255,14 +271,6 @@ public class ProblemFilterRegistry implements IExtensionChangeHandler {
 			registeredFilters.remove(objects[i]);
 		}
 
-	}
-	
-	/**
-	 * Get the collection of currently registered filters.
-	 * @return Collection of ProblemFilter
-	 */
-	public Collection getRegisteredFilters() {
-		return registeredFilters;
 	}
 
 }

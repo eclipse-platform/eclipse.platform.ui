@@ -288,7 +288,7 @@ public class ProblemView extends MarkerView {
 	 */
 	MarkerFilter[] getAllFilters() {
 		MarkerFilter[] userFilters =  super.getAllFilters();
-		Collection declaredFilters = ProblemFilterRegistry.getInstance().getRegisteredFilters();
+		Collection declaredFilters = MarkerSupportRegistry.getInstance().getRegisteredFilters();
 		Iterator iterator = 
 			declaredFilters.iterator();
 		

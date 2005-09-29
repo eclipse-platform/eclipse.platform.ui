@@ -446,7 +446,7 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
-				return ProblemFilterRegistry.getInstance()
+				return MarkerSupportRegistry.getInstance()
 						.getRegisteredFilters().toArray();
 			}
 
@@ -521,7 +521,7 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 					}
 				});
 
-		Iterator definedFilters = ProblemFilterRegistry.getInstance()
+		Iterator definedFilters = MarkerSupportRegistry.getInstance()
 				.getRegisteredFilters().iterator();
 		definedList.setInput(this);
 		while (definedFilters.hasNext()) {
