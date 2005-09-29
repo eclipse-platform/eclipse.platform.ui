@@ -1939,7 +1939,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	void fireSessionBeginEvent() {
-		if (fProposalPopup == null || !fProposalPopup.isActive()) {
+		if (fContentAssistSubjectControlAdapter != null && (fProposalPopup == null || !fProposalPopup.isActive())) {
 			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
 			ContentAssistEvent event= new ContentAssistEvent(this, processor);
 			for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
@@ -1950,11 +1950,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 	
 	void fireSessionEndEvent() {
-		IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
-		ContentAssistEvent event= new ContentAssistEvent(this, processor);
-		for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
-			ICompletionListener listener= (ICompletionListener) it.next();
-			listener.assistSessionEnded(event);
+		if (fContentAssistSubjectControlAdapter != null) {
+			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
+			ContentAssistEvent event= new ContentAssistEvent(this, processor);
+			for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
+				ICompletionListener listener= (ICompletionListener) it.next();
+				listener.assistSessionEnded(event);
+			}
 		}
 	}
 
