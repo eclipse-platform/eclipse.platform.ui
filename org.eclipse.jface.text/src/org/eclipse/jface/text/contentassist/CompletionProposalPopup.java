@@ -1065,13 +1065,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private void selectProposal(int index, boolean smartToggle) {
 
-		if (fFilteredProposals == null)
-			return;
-
 		ICompletionProposal oldProposal= getSelectedProposal();
 		if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
 			((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
 
+		if (fFilteredProposals == null)
+			return;
+		
 		ICompletionProposal proposal= fFilteredProposals[index];
 		if (proposal instanceof ICompletionProposalExtension2 && fViewer != null)
 			((ICompletionProposalExtension2) proposal).selected(fViewer, smartToggle);
