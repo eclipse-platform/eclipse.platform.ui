@@ -507,6 +507,18 @@ public class DeleteResourceAction extends SelectionListenerAction {
 				}
 				return Status.OK_STATUS;
     		}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+			 */
+			public boolean belongsTo(Object family) {
+				if (IDEWorkbenchMessages.DeleteResourceAction_jobName
+						.equals(family)) {
+					return true;
+				}
+				return super.belongsTo(family);
+			}
+    		
     	};
     	deleteJob.setRule(getDeleteRule(resourcesToDelete));
     	deleteJob.setUser(true);

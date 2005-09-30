@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
@@ -29,11 +30,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 
 /**
- * bug 99858 [IDE] Error upon deleting a project.  Tests that our delete
- * code no longer throws a CoreException when deleting a closed project.
+ * bug 99858 [IDE] Error upon deleting a project. Tests that our delete code no
+ * longer throws a CoreException when deleting a closed project.
  * 
  * @since 3.2
  */
@@ -54,12 +56,12 @@ public class Bug99858Test extends TestCase {
 	}
 
 	/**
-	 * Create a project with some files, close it, and delete it.  With
-	 * the changes in runtime to throw a CoreException from
-	 * IContainer#members(), the project won't get deleted if 
-	 * ReadOnlyStateChecker is not fixed.
+	 * Create a project with some files, close it, and delete it. With the
+	 * changes in runtime to throw a CoreException from IContainer#members(),
+	 * the project won't get deleted if ReadOnlyStateChecker is not fixed.
 	 * 
-	 * @throws Throwable if it goes wrong
+	 * @throws Throwable
+	 *             if it goes wrong
 	 */
 	public void testDeleteClosedProject() throws Throwable {
 		IWorkbenchPage page = PlatformUI.getWorkbench()
@@ -104,7 +106,7 @@ public class Bug99858Test extends TestCase {
 				.getGlobalActionHandler(ActionFactory.DELETE.getId());
 
 		assertTrue(del.isEnabled());
-		
+
 		// run the delete event.
 		del.runWithEvent(null);
 
@@ -112,14 +114,17 @@ public class Bug99858Test extends TestCase {
 
 		// the delete even ran
 		assertTrue(newDel.fRan);
-		
+
+		Platform.getJobManager().join(
+				IDEWorkbenchMessages.DeleteResourceAction_jobName, null);
+
 		// if our project still exists, the delete failed.
 		assertFalse(testProject.exists());
 	}
 
 	/**
-	 * Subclass the delete action and go into testing mode, which
-	 * limits user dialogs.
+	 * Subclass the delete action and go into testing mode, which limits user
+	 * dialogs.
 	 * 
 	 * @since 3.2
 	 */
@@ -133,19 +138,22 @@ public class Bug99858Test extends TestCase {
 		}
 
 		public void run() {
-			fRan = true;
 			super.run();
+			fRan = true;
 		}
 	}
 
 	/**
-	 * Create a quick project file, so the project has some children
-	 * to delete.
+	 * Create a quick project file, so the project has some children to delete.
 	 * 
-	 * @param testProject the project
-	 * @param name the filename
-	 * @param contents A small string for contents
-	 * @throws CoreException if IFile#create(...) throws an exception
+	 * @param testProject
+	 *            the project
+	 * @param name
+	 *            the filename
+	 * @param contents
+	 *            A small string for contents
+	 * @throws CoreException
+	 *             if IFile#create(...) throws an exception
 	 */
 	private void createProjectFile(IProject testProject, String name,
 			String contents) throws CoreException {
