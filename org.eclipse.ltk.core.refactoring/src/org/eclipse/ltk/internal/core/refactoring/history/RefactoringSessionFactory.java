@@ -28,19 +28,19 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * 
  * @since 3.2
  */
-public final class ScriptableRefactoringFactory {
+public final class RefactoringSessionFactory {
 
 	/** The singleton instance */
-	private static ScriptableRefactoringFactory fInstance= null;
+	private static RefactoringSessionFactory fInstance= null;
 
 	/**
 	 * Returns the singleton instance of the refactoring factory.
 	 * 
 	 * @return the singleton instance
 	 */
-	public static ScriptableRefactoringFactory getInstance() {
+	public static RefactoringSessionFactory getInstance() {
 		if (fInstance == null)
-			fInstance= new ScriptableRefactoringFactory();
+			fInstance= new RefactoringSessionFactory();
 		return fInstance;
 	}
 
@@ -54,9 +54,9 @@ public final class ScriptableRefactoringFactory {
 	private final Map fRefactoringMap= new HashMap();
 
 	/**
-	 * Creates a new scriptable refactoring factory.
+	 * Creates a new refactoring session factory.
 	 */
-	private ScriptableRefactoringFactory() {
+	private RefactoringSessionFactory() {
 		// Not instantiatable
 	}
 
