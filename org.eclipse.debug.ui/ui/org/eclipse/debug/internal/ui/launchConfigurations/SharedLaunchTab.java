@@ -15,9 +15,12 @@ import java.text.MessageFormat;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -82,13 +85,6 @@ public class SharedLaunchTab extends AbstractLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = composite.getBounds().width - 30;
 		label.setLayoutData(gd);
-		createVerticalSpacer(composite, 1);
-		label = new Label(composite, SWT.LEFT | SWT.WRAP);
-		label.setFont(font);
-		label.setText(MessageFormat.format(LaunchConfigurationsMessages.SharedLaunchTab_1, null));
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = composite.getBounds().width - 30;
-		label.setLayoutData(gd);
 		composite.layout(true, true);
 		setControl(composite);
 	}//end create control
@@ -114,6 +110,13 @@ public class SharedLaunchTab extends AbstractLaunchConfigurationTab {
 	public String getName() {
 		return LaunchConfigurationsMessages.SharedLaunchTab_2; 
 	}//end getName
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_HELP_TAB);
+	}
 
 	public String getMessage() {
 		return MessageFormat.format(LaunchConfigurationsMessages.SharedLaunchTab_3, new String[] {fType.getName()});
