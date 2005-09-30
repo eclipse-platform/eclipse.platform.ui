@@ -179,6 +179,8 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
                 for (int i = 0; i < partitionerStyles.length; i++) {
                     ranges.add(partitionerStyles[i]);
                 }
+            } else {
+                ranges.add(new StyleRange(offset, length, null, null));
             }
 
             try {
