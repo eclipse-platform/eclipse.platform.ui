@@ -15,7 +15,7 @@ package org.eclipse.ltk.internal.core.refactoring.history;
  * 
  * @since 3.2
  */
-public final class RefactoringSessionFactory {
+public final class RefactoringSessionToolFactory {
 
 	/**
 	 * Creates a default refactoring session reader object.
@@ -38,7 +38,7 @@ public final class RefactoringSessionFactory {
 	/**
 	 * Creates a new refactoring session factory.
 	 */
-	private RefactoringSessionFactory() {
+	private RefactoringSessionToolFactory() {
 		// Not for instantiation
 	}
 }

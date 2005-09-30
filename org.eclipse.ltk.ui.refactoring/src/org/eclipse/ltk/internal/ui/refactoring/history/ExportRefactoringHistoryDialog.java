@@ -37,7 +37,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
 import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringSessionTransformer;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringDescriptorHandle;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringSessionFactory;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringSessionToolFactory;
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
@@ -206,7 +206,7 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 		final String path= dialog.open();
 		if (path != null) {
 			try {
-				final IRefactoringSessionTransformer transformer= RefactoringSessionFactory.createDefaultTransformer();
+				final IRefactoringSessionTransformer transformer= RefactoringSessionToolFactory.createDefaultTransformer();
 				try {
 					transformer.beginSession(null);
 					for (int index= 0; index < handles.length; index++) {
