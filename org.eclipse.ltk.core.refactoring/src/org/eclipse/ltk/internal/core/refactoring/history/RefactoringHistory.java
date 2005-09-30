@@ -23,7 +23,6 @@ import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -795,49 +794,6 @@ public final class RefactoringHistory implements IRefactoringHistory {
 			descriptor.setTimeStamp(System.currentTimeMillis());
 		} else
 			fUndoStack.push(fNullDescriptor);
-	}
-
-	/**
-	 * Merges the refactoring descriptor with this history.
-	 * 
-	 * @param descriptor
-	 *            the refactoring descriptor to merge
-	 */
-	private void mergeRefactoringDescriptor(final RefactoringDescriptor descriptor) {
-		Assert.isNotNull(descriptor);
-
-		// TODO: implement
-
-		RefactoringDescriptor current= null;
-		final ListIterator iterator= fUndoStack.fImplementation.listIterator();
-		while (iterator.hasNext()) {
-			current= (RefactoringDescriptor) iterator.next();
-			if (current.getTimeStamp() <= descriptor.getTimeStamp())
-				break;
-		}
-		iterator.add(descriptor);
-	}
-
-	/**
-	 * Merges the specified refactoring descriptors with this history.
-	 * <p>
-	 * The refactoring history must be in connected state.
-	 * </p>
-	 * <p>
-	 * Note: This API must not be called from outside the refactoring framework.
-	 * </p>
-	 * 
-	 * @param descriptors
-	 *            the refactoring descriptors to merge
-	 */
-	public void mergeRefactoringDescriptors(final RefactoringDescriptor[] descriptors) {
-		Assert.isNotNull(descriptors);
-		Assert.isNotNull(fUndoStack);
-		RefactoringDescriptor descriptor= null;
-		for (int index= 0; index < descriptors.length; index++) {
-			descriptor= descriptors[index];
-			mergeRefactoringDescriptor(descriptor);
-		}
 	}
 
 	/**
