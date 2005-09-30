@@ -27,11 +27,12 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
- * XML-based implementation of refactoring session transformer.
+ * XML-based implementation of
+ * {@link org.eclipse.ltk.internal.core.refactoring.history.IRefactoringSessionTransformer}.
  * 
  * @since 3.2
  */
-public final class XmlRefactoringSessionTransformer implements IRefactoringSessionTransformer {
+final class XmlRefactoringSessionTransformer implements IRefactoringSessionTransformer {
 
 	/** The comment attribute */
 	public static final String ATTRIBUTE_COMMENT= "comment"; //$NON-NLS-1$
