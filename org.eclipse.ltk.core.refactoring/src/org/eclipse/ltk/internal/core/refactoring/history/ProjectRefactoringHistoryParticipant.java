@@ -23,8 +23,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -41,22 +39,6 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  */
 public final class ProjectRefactoringHistoryParticipant implements IRefactoringHistoryParticipant {
 
-	/** Workspace resource change listener */
-	private final class WorkspaceChangeListener implements IResourceChangeListener {
-
-		public void resourceChanged(final IResourceChangeEvent event) {
-			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
-				final IResource resource= event.getResource();
-				if (resource != null && resource.getType() == IResource.FILE) {
-					final IFile file= (IFile) resource;
-					if (file.getName().equals(PATH_HISTORY_FILE)) {
-						// TODO: implement
-					}
-				}
-			}
-		}
-	}
-
 	/** The history file extension */
 	private static final String EXTENSION_HISTORY_FILE= "history"; //$NON-NLS-1$
 
@@ -68,9 +50,6 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 
 	/** The history file path */
 	private static final String PATH_HISTORY_FILE= NAME_HISTORY_FILE + "." + EXTENSION_HISTORY_FILE; //$NON-NLS-1$
-
-	/** The resource listener, or <code>null</code> */
-	private IResourceChangeListener fResourceListener= null;
 
 	/**
 	 * Appends the specified descriptor as new head to the history.
@@ -96,10 +75,7 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 	 * @inheritDoc
 	 */
 	public void connect() {
-		if (fResourceListener == null) {
-			fResourceListener= new WorkspaceChangeListener();
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(fResourceListener, IResourceChangeEvent.POST_CHANGE);
-		}
+		// Do nothing
 	}
 
 	/**
@@ -129,10 +105,7 @@ public final class ProjectRefactoringHistoryParticipant implements IRefactoringH
 	 * @inheritDoc
 	 */
 	public void disconnect() {
-		if (fResourceListener != null) {
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(fResourceListener);
-			fResourceListener= null;
-		}
+		// Do nothing
 	}
 
 	/**
