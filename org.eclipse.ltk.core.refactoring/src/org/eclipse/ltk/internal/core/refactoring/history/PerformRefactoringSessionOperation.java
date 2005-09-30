@@ -20,6 +20,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -45,7 +46,31 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
  * 
  * @since 3.2
  */
-public class PerformRefactoringSessionOperation implements IWorkspaceRunnable {
+public final class PerformRefactoringSessionOperation implements IWorkspaceRunnable {
+
+	/** Refactoring history listener */
+	private class RefactoringHistoryListener extends RefactoringHistoryAdapter {
+
+		/*
+		 * @see org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryAdapter#refactoringPerformed(org.eclipse.ltk.internal.core.refactoring.history.IRefactoringHistory,org.eclipse.ltk.core.refactoring.RefactoringDescriptor)
+		 */
+		public final void refactoringPerformed(final IRefactoringHistory history, final RefactoringDescriptor descriptor) {
+			Assert.isNotNull(descriptor);
+			if (!descriptor.isUnknown())
+				fCurrentDescriptor= descriptor;
+			else
+				fCurrentDescriptor= null;
+		}
+	}
+
+	/**
+	 * The descriptor of the currently executed refactoring, or
+	 * <code>null</code>
+	 */
+	private RefactoringDescriptor fCurrentDescriptor= null;
+
+	/** The refactoring history listener, or <code>null</code> */
+	private IRefactoringHistoryListener fHistoryListener= null;
 
 	/** The refactoring descriptors */
 	private final RefactoringDescriptor[] fRefactoringDescriptors;
@@ -90,34 +115,45 @@ public class PerformRefactoringSessionOperation implements IWorkspaceRunnable {
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		fSessionStatus= new RefactoringStatus();
 		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringSessionOperation_perform_refactoring_session, fRefactoringDescriptors.length);
-		final ScriptableRefactoringFactory factory= ScriptableRefactoringFactory.getInstance();
+		final RefactoringSessionFactory factory= RefactoringSessionFactory.getInstance();
 		try {
+			fHistoryListener= new RefactoringHistoryListener();
+			RefactoringCore.getRefactoringHistory().addHistoryListener(fHistoryListener);
 			for (int index= 0; index < fRefactoringDescriptors.length && !fSessionStatus.hasFatalError(); index++) {
 				boolean execute= false;
 				final RefactoringDescriptor descriptor= fRefactoringDescriptors[index];
-				final Refactoring refactoring= factory.createRefactoring(descriptor);
-				if (refactoring instanceof IInitializableRefactoringObject) {
-					final IInitializableRefactoringObject extended= (IInitializableRefactoringObject) refactoring;
-					final RefactoringArguments arguments= factory.createArguments(descriptor);
-					if (arguments != null) {
-						final RefactoringStatus status= extended.initialize(arguments);
-						if (!status.hasFatalError())
-							execute= true;
-						else {
-							fSessionStatus.merge(status);
-							break;
+				if (!descriptor.isUnknown()) {
+					final Refactoring refactoring= factory.createRefactoring(descriptor);
+					if (refactoring instanceof IInitializableRefactoringObject) {
+						final IInitializableRefactoringObject object= (IInitializableRefactoringObject) refactoring;
+						final RefactoringArguments arguments= factory.createArguments(descriptor);
+						if (arguments != null) {
+							final RefactoringStatus status= object.initialize(arguments);
+							if (!status.hasFatalError())
+								execute= true;
+							else {
+								fSessionStatus.merge(status);
+								break;
+							}
 						}
 					}
-				}
-				if (execute) {
-					final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
-					ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 1));
-					fSessionStatus.merge(operation.getConditionStatus());
-					if (!fSessionStatus.hasFatalError())
-						fSessionStatus.merge(operation.getValidationStatus());
+					if (execute) {
+						final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
+						ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 1));
+						if (fCurrentDescriptor != null && !fCurrentDescriptor.isUnknown())
+							RefactoringHistory.getInstance().setDependency(fCurrentDescriptor, descriptor);
+						fSessionStatus.merge(operation.getConditionStatus());
+						if (!fSessionStatus.hasFatalError())
+							fSessionStatus.merge(operation.getValidationStatus());
+					}
 				}
 			}
 		} finally {
+			fCurrentDescriptor= null;
+			if (fHistoryListener != null) {
+				RefactoringCore.getRefactoringHistory().removeHistoryListener(fHistoryListener);
+				fHistoryListener= null;
+			}
 			monitor.done();
 		}
 	}

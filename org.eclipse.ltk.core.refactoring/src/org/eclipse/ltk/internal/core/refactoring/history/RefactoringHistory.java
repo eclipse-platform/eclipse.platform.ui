@@ -865,6 +865,28 @@ public final class RefactoringHistory implements IRefactoringHistory {
 	}
 
 	/**
+	 * Returns the descriptor the specified handle points to.
+	 * <p>
+	 * The refactoring history must be in connected state.
+	 * </p>
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param source
+	 *            the source refactoring descriptor
+	 * @param target
+	 *            the target refactoring descriptor
+	 */
+	public void setDependency(final RefactoringDescriptor source, final RefactoringDescriptor target) {
+		Assert.isNotNull(source);
+		Assert.isNotNull(target);
+		Assert.isTrue(!target.isUnknown());
+
+		// TODO: implement
+	}
+
+	/**
 	 * Writes the workspace history to disk.
 	 * 
 	 * @param file
