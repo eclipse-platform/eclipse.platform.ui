@@ -149,11 +149,7 @@ public class LaunchConfigurationsMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, LaunchConfigurationsMessages.class);
 	}
 
-	public static String SharedLaunchTab_0;
+	public static String LaunchConfigurationTabGroupViewer_1;
 
-	public static String SharedLaunchTab_1;
-
-	public static String SharedLaunchTab_2;
-
-	public static String SharedLaunchTab_3;
+	public static String LaunchConfigurationTabGroupViewer_2;
 }

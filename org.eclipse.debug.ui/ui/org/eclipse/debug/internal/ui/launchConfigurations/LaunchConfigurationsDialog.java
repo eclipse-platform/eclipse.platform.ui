@@ -755,10 +755,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  		ISelection selection = event.getSelection();
  		if (!selection.isEmpty()) {
  			if (selection instanceof IStructuredSelection) {
+ 				//fix for bug 111079
+ 				Button button = getButton(ID_LAUNCH_BUTTON);
  				IStructuredSelection structuredSelection = (IStructuredSelection)selection;
  				if (structuredSelection.size() == 1) {
  					newInput = structuredSelection.getFirstElement();
- 				}
+ 					button.setEnabled(true);
+ 				}//end if
+ 				else {
+ 					button.setEnabled(false);
+ 				}//end else
  			}
  		}
  		ILaunchConfiguration original = getTabViewer().getOriginal();
@@ -1076,7 +1082,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		String mode = getMode();
 		close();
-		DebugUITools.launch(config, mode);
+		if(config != null) {
+			DebugUITools.launch(config, mode);
+		}//end if
 	}
 	
 	/***************************************************************************************
@@ -1296,7 +1304,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		setErrorMessage(getTabViewer().getErrorMesssage());
 		setMessage(getTabViewer().getMessage());				
 	}
-	
+
 	/**
 	 * Returns the launch configuration selection area control.
 	 * 

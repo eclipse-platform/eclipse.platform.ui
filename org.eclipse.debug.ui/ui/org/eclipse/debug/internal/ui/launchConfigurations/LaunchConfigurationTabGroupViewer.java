@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -148,6 +149,18 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * launch configuration type or <code>null</code> if none.
 	 */
 	private String fDescription = null;
+	
+	/**
+	 * A placeholder for switching between the tabs for a config and the getting started tab
+	 * @since 3.2
+	 */
+	private Composite fTabPlaceHolder = null;
+	
+	/**
+	 * A new composite replacing the perspectives tab
+	 * @since 3.2
+	 */
+	private Composite fGettingStarted = null;
 
 	/**
 	 * Constructs a viewer in the given composite, contained by the given
@@ -232,18 +245,33 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
-
-		fTabComposite = new Composite(container, SWT.NONE);
+		
+		/*
+		 * fix for bug 66576 and 79709
+		 */
+		fTabPlaceHolder = new Composite(container, SWT.NONE);
+		fTabPlaceHolder.setLayout(new StackLayout());
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		fTabPlaceHolder.setLayoutData(gd);
+		
+		fGettingStarted = new Composite(fTabPlaceHolder, SWT.NONE);
+		fGettingStarted.setLayout(new GridLayout());
+		gd = new GridData(GridData.FILL_BOTH);
+		fGettingStarted.setLayoutData(gd);
+		
+		createGettingStarted(fGettingStarted);
+		
+		fTabComposite = new Composite(fTabPlaceHolder, SWT.NONE);
 		GridLayout outerTabCompositeLayout = new GridLayout();
 		outerTabCompositeLayout.marginHeight = 0;
 		outerTabCompositeLayout.marginWidth = 0;
 		fTabComposite.setLayout(outerTabCompositeLayout);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
 		fTabComposite.setLayoutData(gd);
 
 		createTabFolder(fTabComposite);
-
+		
 		Composite buttonComp = new Composite(container, SWT.NONE);
 		GridLayout buttonCompLayout = new GridLayout();
 		buttonCompLayout.numColumns = 2;
@@ -278,6 +306,48 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 
 	}
 	
+	/**
+	 * Simple method to create a spacer in the page
+	 * 
+	 * @param composite the composite to add the spacer to
+	 * @param columnSpan the amount of space for the spacer
+	 * @since 3.2
+	 */
+	protected void createSpacer(Composite composite, int columnSpan) {
+		Label label = new Label(composite, SWT.NONE);
+		GridData gd = new GridData();
+		gd.horizontalSpan = columnSpan;
+		label.setLayoutData(gd);
+	}// end createSpacer
+	
+	/**
+	 * Creates some help text for the tab group launch types
+	 * @param parent thep arent composite
+	 * @since 3.2
+	 */
+	private void createGettingStarted(Composite parent) {
+		Font font = parent.getFont();
+		GridData gd = null;
+		createSpacer(parent, 1);
+		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
+		label.setFont(font);
+		label.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_2, null));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = parent.getBounds().width - 30;
+		label.setLayoutData(gd);
+		createSpacer(parent, 1);
+		label = new Label(parent, SWT.LEFT | SWT.WRAP);
+		label.setFont(font);
+		label.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_1, null));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = parent.getBounds().width - 30;
+		label.setLayoutData(gd);
+	}
+	
+	/**
+	 * Creates the tab folder for displaying config instances
+	 * @param parent
+	 */
 	private void createTabFolder(Composite parent) {
 		Point size = null;
 		if (fTabFolder != null) {
@@ -465,18 +535,25 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			public void run() {
 				try {
 					if (fInput instanceof ILaunchConfiguration) {
+						/*
+						 * fix for bug 66576 and 79709
+						 */
+						((StackLayout)fTabPlaceHolder.getLayout()).topControl = fTabComposite;
+						fTabPlaceHolder.layout(true);
 						ILaunchConfiguration configuration = (ILaunchConfiguration)fInput;
 						setOriginal(configuration);
 						setWorkingCopy(configuration.getWorkingCopy());
 						displayInstanceTabs();
 					} else if (fInput instanceof ILaunchConfigurationType) {
-						ILaunchConfiguration configuration = LaunchConfigurationManager.getSharedTypeConfig((ILaunchConfigurationType)fInput);
-						setOriginal(configuration);
-						setWorkingCopy(configuration.getWorkingCopy());
-						displaySharedTabs();
+						/*
+						 * fix for bug 66576 and 79709
+						 */
+						fDescription = getDescription((ILaunchConfigurationType)fInput);
+						setNoInput();
+						refreshStatus();
 					} else {
 						setNoInput();
-					}
+					}//end else
 					setRedraw(true);
 				} catch (CoreException ce) {
 					errorDialog(ce);
@@ -491,7 +568,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private void setNoInput() {
 		setOriginal(null);
 		setWorkingCopy(null);
-		getVisibleArea().setVisible(false);
+		fNameLabel.setVisible(false);
+		fNameWidget.setVisible(false);
+		((StackLayout)fTabPlaceHolder.getLayout()).topControl = fGettingStarted;
+		fTabPlaceHolder.layout(true);
 		disposeExistingTabs();				
 	}
 	
@@ -558,65 +638,13 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	}
 	
 	/**
-	 * Displays tabs for the current config type
-	 */
-	protected void displaySharedTabs() {
-		// Turn on initializing flag to ignore message updates
-		setInitializingTabs(true);
-
-		ILaunchConfigurationType type = null;
-		try {
-			type = getWorkingCopy().getType();
-			showSharedTabsFor(type);
-		} catch (CoreException e) {
-			errorDialog(e);
-			setInitializingTabs(false);
-			return;
-		}
-		// hide the name area
-		fNameLabel.setVisible(false);
-		fNameWidget.setVisible(false);
-		// Update the name field before to avoid verify error
-		getNameWidget().setText(getWorkingCopy().getName());
-
-		// Retrieve the current tab group.  If there is none, clean up and leave
-		ILaunchConfigurationTabGroup tabGroup = getTabGroup();
-		if (tabGroup == null) {
-			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_No_tabs_defined_for_launch_configuration_type__0__1, new String[]{type.getName()}), null); 
-			CoreException e = new CoreException(status);
-			errorDialog(e);
-			setInitializingTabs(false);
-			return;
-		}
-
-		// Update the tabs with the new working copy
-		tabGroup.initializeFrom(getWorkingCopy());
-
-		// Update the name field after in case client changed it
-		getNameWidget().setText(getWorkingCopy().getName());
-		
-		fCurrentTabIndex = getTabFolder().getSelectionIndex();
-
-		// Turn off initializing flag to update message
-		setInitializingTabs(false);
-		
-		if (!getVisibleArea().isVisible()) {
-			getVisibleArea().setVisible(true);
-		}
-		
-		fDescription = getDescription(null);
-		
-		refreshStatus();		
-	}	
-	
-	/**
 	 * Populate the tabs in the configuration edit area to be appropriate to the current
 	 * launch configuration type.
 	 */
 	private void showInstanceTabsFor(ILaunchConfigurationType configType) {
 
 		// Don't do any work if the current tabs are for the current config type
-		if (getTabType() != null && getTabType().equals(configType) && !(getTabGroup() instanceof SharedLaunchTabGroup)) {
+		if (getTabType() != null && getTabType().equals(configType)) { 
 			return;
 		}
 		
@@ -670,28 +698,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		return description;
 	}
 	
-	/**
-	 * Populate the tabs in the configuration edit area for the shared info
-	 * for the given launch config type.
-	 */
-	private void showSharedTabsFor(ILaunchConfigurationType configType) {
-
-		// Don't do any work if the current tabs are for the current config type
-		if (getTabType() != null && getTabType().equals(configType) && (getTabGroup() instanceof SharedLaunchTabGroup)) {
-			return;
-		}		
-		// Build the new tabs
-		ILaunchConfigurationTabGroup group = new SharedLaunchTabGroup(configType);
-		group.createTabs(getLaunchConfigurationDialog(), getLaunchConfigurationDialog().getMode());
-		ILaunchConfigurationTab[] tabs = group.getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			tabs[i].setLaunchConfigurationDialog(getLaunchConfigurationDialog());
-		}//end for
-		showTabsFor(group);
-		setTabType(configType);
-		setTabGroup(group);		
-	}		
-
 	/**
 	 * Create the tabs in the configuration edit area for the given tab group.
 	 */
@@ -929,9 +935,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	public boolean canLaunch() {
 		if(isInitializingTabs()) {
-			return false;
-		}
-		if (getActiveTab() instanceof SharedLaunchTab) {
 			return false;
 		}
 		if (getWorkingCopy() == null) {
@@ -1219,11 +1222,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Notification that the 'Revert' button has been pressed
 	 */
 	protected void handleRevertPressed() {
-		if (getActiveTab() instanceof SharedLaunchTab) {
-			inputChanged(getTabType());	
-		} else {
-			inputChanged(getOriginal());
-		}
+		inputChanged(getOriginal());
 	}	
 	
 	/**

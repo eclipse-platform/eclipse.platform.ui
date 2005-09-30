@@ -97,7 +97,6 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_OBJECT_MEMORY_CHANGED="IMG_OBJECT_MEMORY_CHANGED";  //$NON-NLS-1$
     public static final String IMG_OBJECT_MEMORY="IMG_OBJECT_MEMORY";  //$NON-NLS-1$
     public static final String IMG_OBJS_BREAKPOINT_TYPE="IMG_OBJ_BREAKPOINT_TYPE"; //$NON-NLS-1$
-    public static final String IMG_OBJS_HELP_TAB = "IMG_OBJS_HELP_TAB"; //$NON-NLS-1$
     
     // wizard images
     public static final String IMG_WIZBAN_IMPORT_BREAKPOINTS = "IMG_WIZBAN_IMPORT_BREAKPOINTS"; //$NON-NLS-1$

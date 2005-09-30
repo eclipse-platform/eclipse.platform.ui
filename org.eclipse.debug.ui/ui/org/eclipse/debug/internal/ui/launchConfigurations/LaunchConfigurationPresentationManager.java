@@ -190,7 +190,7 @@ public class LaunchConfigurationPresentationManager {
 	public String getDescription(ILaunchConfigurationType configType, String mode) {
 		LaunchConfigurationPresentationManager manager = LaunchConfigurationPresentationManager.getDefault();
 		LaunchConfigurationTabGroupExtension extension = manager.getExtension(configType.getAttribute("id"), mode); //$NON-NLS-1$
-		return extension.getDescription(mode);
+		return (extension != null ? extension.getDescription(mode) : null);
 	}	
 	
 }
