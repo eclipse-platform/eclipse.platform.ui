@@ -14,7 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
-import org.eclipse.ui.views.markers.internal.ProblemFilterRegistry;
+import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 /**
  * Test the loading and unloading of problem filters.
@@ -51,7 +51,7 @@ public class ProblemFilterTests extends DynamicTestCase {
 	}
 
 	public boolean hasFilter(String id) {
-		Iterator filters = ProblemFilterRegistry.getInstance()
+		Iterator filters = MarkerSupportRegistry.getInstance()
 				.getRegisteredFilters().iterator();
 		while (filters.hasNext()) {
 			ProblemFilter filter = (ProblemFilter) filters.next();
@@ -76,7 +76,7 @@ public class ProblemFilterTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return ProblemFilterRegistry.MARKER_SUPPORT;
+		return MarkerSupportRegistry.MARKER_SUPPORT;
 	}
 
 	/*

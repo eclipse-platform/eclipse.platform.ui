@@ -17,7 +17,7 @@ import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.ui.views.markers.internal.MarkerFilter;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
-import org.eclipse.ui.views.markers.internal.ProblemFilterRegistry;
+import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 public class DeclarativeFilterTest extends UITestCase {
 
@@ -53,7 +53,7 @@ public class DeclarativeFilterTest extends UITestCase {
 	 * @return ProblemFilter or <code>null</code>
 	 */
 	private ProblemFilter getFilter(String id) {
-		Iterator filters = ProblemFilterRegistry.getInstance()
+		Iterator filters = MarkerSupportRegistry.getInstance()
 				.getRegisteredFilters().iterator();
 		while (filters.hasNext()) {
 			ProblemFilter filter = (ProblemFilter) filters.next();
