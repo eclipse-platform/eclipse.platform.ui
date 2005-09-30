@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -54,8 +56,6 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
      */
     private static final int INCLUDE_EDITOR_INPUT = 1 << 1;
 
-    private final Set menuIds = new HashSet();
-
     private final MenuManager menu;
 
     private SubMenuManager menuWrapper;
@@ -64,7 +64,7 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
 
     private final IWorkbenchPart part;
 
-    private ViewerActionBuilder staticActionBuilder;
+    private Map staticActionBuilders = null;
 
     /**
      * The boolean properties maintained by this extender. A bit set is used to
@@ -114,13 +114,12 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
         if (includeEditorInput) {
             bitSet |= INCLUDE_EDITOR_INPUT;
         }
-        menuIds.add(id);
         menu.addMenuListener(this);
         if (!menu.getRemoveAllWhenShown()) {
             menuWrapper = new SubMenuManager(menu);
             menuWrapper.setVisible(true);
         }
-        readStaticActions();
+        readStaticActionsFor(id);
         Platform.getExtensionRegistry().addRegistryChangeListener(this);
     }
 
@@ -131,7 +130,11 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
      * @return The set of all identifiers that represent this extender.
      */
     public Set getMenuIds() {
-        return menuIds;
+    	if (staticActionBuilders == null) {
+    		return Collections.EMPTY_SET;
+    	}
+    	
+        return staticActionBuilders.keySet();
     }
 
     /**
@@ -155,8 +158,9 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
      *            <code>null</code>.
      */
     public final void addMenuId(final String menuId) {
-        menuIds.add(menuId);
-    }
+		bitSet &= ~STATIC_ACTION_READ;
+		readStaticActionsFor(menuId);
+	}
 
     /**
      * Determines whether this extender would be the same as another extender
@@ -248,14 +252,39 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
             }
         }
     }
+    
+    /**
+     * Disposes all of the static actions.
+     */
+    private final void clearStaticActions() {
+		bitSet &= ~STATIC_ACTION_READ;
+		if (staticActionBuilders != null) {
+			final Iterator staticActionBuilderItr = staticActionBuilders
+					.values().iterator();
+			while (staticActionBuilderItr.hasNext()) {
+				final Object staticActionBuilder = staticActionBuilderItr
+						.next();
+				if (staticActionBuilder instanceof ViewerActionBuilder) {
+					((ViewerActionBuilder) staticActionBuilder).dispose();
+				}
+			}
+		}
+	}
 
     /**
      * Adds static items to the context menu.
      */
     private void addStaticActions(IMenuManager mgr) {
-        if (staticActionBuilder != null)
-            staticActionBuilder.contribute(mgr, null, true);
-    }
+		if (staticActionBuilders != null) {
+			final Iterator staticActionBuilderItr = staticActionBuilders
+					.values().iterator();
+			while (staticActionBuilderItr.hasNext()) {
+				final ViewerActionBuilder staticActionBuilder = (ViewerActionBuilder) staticActionBuilderItr
+						.next();
+				staticActionBuilder.contribute(mgr, null, true);
+			}
+		}
+	}
 
     /**
      * Notifies the listener that the menu is about to be shown.
@@ -275,35 +304,45 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
     }
 
     /**
-     * Read static items for the context menu.
+     * Read all of the static items for the content menu.
      */
-    private void readStaticActions() {
-    	if ((bitSet & STATIC_ACTION_READ) != 0)
-    		return;
-    	
-    	bitSet |= STATIC_ACTION_READ;
-    	
-        // If no menu id provided, then there is no contributions
-        // to add. Fix for bug #33140.
-        if (menuIds.isEmpty()) {
-            return;
-        }
-
-        final Iterator menuIdItr = menuIds.iterator();
-        while (menuIdItr.hasNext()) {
-            final String menuId = (String) menuIdItr.next();
-            if ((menuId == null) || (menuId.length() < 1)) { // Bug 33140
-                continue;
-            }
-
-            staticActionBuilder = new ViewerActionBuilder();
-            if (!staticActionBuilder.readViewerContributions(menuId,
-                    selProvider, part)) {
-                staticActionBuilder = null;
-            }
-
-        }
+    private final void readStaticActions() {
+    	if (staticActionBuilders != null) {
+			final Iterator menuIdItr = staticActionBuilders.keySet().iterator();
+			while (menuIdItr.hasNext()) {
+				final String menuId = (String) menuIdItr.next();
+				readStaticActionsFor(menuId);
+			}
+		}
     }
+
+    /**
+	 * Read static items for a particular menu id, into the context menu.
+	 */
+    private void readStaticActionsFor(final String menuId) {
+		if ((bitSet & STATIC_ACTION_READ) != 0)
+			return;
+
+		bitSet |= STATIC_ACTION_READ;
+
+		// If no menu id provided, then there is no contributions
+		// to add. Fix for bug #33140.
+		if ((menuId == null) || (menuId.length() < 1)) {
+			return;
+		}
+
+		if (staticActionBuilders == null) {
+			staticActionBuilders = new HashMap();
+		}
+
+		Object object = staticActionBuilders.get(menuId);
+		if (!(object instanceof ViewerActionBuilder)) {
+			object = new ViewerActionBuilder();
+			staticActionBuilders.put(menuId, object);
+		}
+		final ViewerActionBuilder staticActionBuilder = (ViewerActionBuilder) object;
+		staticActionBuilder.readViewerContributions(menuId, selProvider, part);
+	}
 
     /**
      * Checks for the existance of an MB_ADDITIONS group.
@@ -314,7 +353,7 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
         if (item == null) {
             WorkbenchPlugin
                     .log("Context menu missing standard group 'org.eclipse.ui.IWorkbenchActionConstants.MB_ADDITIONS'. (menu ids = " //$NON-NLS-1$
-                            + menuIds.toString() + ")  part id = " //$NON-NLS-1$
+                            + getMenuIds().toString() + ")  part id = " //$NON-NLS-1$
                             + (part == null ? "???" : part.getSite().getId()) //$NON-NLS-1$
                             + ")"); //$NON-NLS-1$
         }
@@ -325,9 +364,7 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
      * is disposed.
      */
     public void dispose() {
-        if (staticActionBuilder != null) {
-            staticActionBuilder.dispose();
-        }
+    	clearStaticActions();
         Platform.getExtensionRegistry().removeRegistryChangeListener(this);
         menu.removeMenuListener(this);
     }
@@ -363,11 +400,7 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
 				if (clearPopups) {
 					display.syncExec(new Runnable() {
 						public void run() {
-							bitSet &= ~STATIC_ACTION_READ;
-							if (staticActionBuilder != null) {
-								staticActionBuilder.dispose();
-								staticActionBuilder = null;
-							}
+							clearStaticActions();
 						}
 					});
 				}
