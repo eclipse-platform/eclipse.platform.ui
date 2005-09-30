@@ -90,36 +90,35 @@ public class OtherResponse implements IResponse {
 			URLConnection urlConnection,
 			IProgressMonitor monitor)
 			throws IOException, CoreException {
-			ConnectionThreadManager.StreamRunnable runnable =
-				new ConnectionThreadManager.StreamRunnable(urlConnection);
-			Thread t = ConnectionThreadManagerFactory.getConnectionManager().getConnectionThread(runnable);
-			t.start();
-			InputStream is = null;
-			try {
-				for (;;) {
-					if (monitor.isCanceled()) {
-						runnable.disconnect();
-                        connection = null;
-						break;
-					}
-					if (runnable.getInputStream() != null) {
-						is = runnable.getInputStream();
-						break;
-					}
-					if (runnable.getException() != null) {
-						if (runnable.getException() instanceof IOException)
-							throw (IOException) runnable.getException();
-						else
-							throw new CoreException(new Status(IStatus.ERROR,
-									UpdateCore.getPlugin().getBundle()
-											.getSymbolicName(), IStatus.OK,
-									runnable.getException().getMessage(), runnable
-											.getException()));
-					}
-					t.join(POLLING_INTERVAL);
+		ConnectionThreadManager.StreamRunnable runnable =
+			new ConnectionThreadManager.StreamRunnable(urlConnection);
+		Thread t = ConnectionThreadManagerFactory.getConnectionManager().getConnectionThread(
+				runnable);
+		t.start();
+		InputStream is = null;
+		try {
+			for (;;) {
+				if (monitor.isCanceled()) {
+					runnable.disconnect();
+                    connection = null;
+					break;
 				}
-			} catch (InterruptedException e) {
-			}
-			return is;
+				if (runnable.getInputStream() != null) {
+					is = runnable.getInputStream();
+					break;
+				}
+				if (runnable.getIOException() != null) 
+					throw runnable.getIOException();
+				if (runnable.getException() != null) 
+						throw new CoreException(new Status(IStatus.ERROR,
+															UpdateCore.getPlugin().getBundle().getSymbolicName(), 
+															IStatus.OK,
+															runnable.getException().getMessage(), 
+															runnable.getException()));
+				}
+				t.join(POLLING_INTERVAL);
+		} catch (InterruptedException e) {
 		}
+		return is;
+	}
 }
