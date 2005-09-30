@@ -260,8 +260,10 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 		Policy.error(IFileStoreConstants.ERROR_DELETE, NLS.bind(Messages.noImplDelete, toString()));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#fetchInfo()
+	/**
+	 * The default implementation of {@link IFileStore#fetchInfo()}.
+	 * This implementation forwards to {@link IFileStore#fetchInfo(int, IProgressMonitor)}.
+	 * Subclasses may override this method.
 	 */
 	public IFileInfo fetchInfo() {
 		return fetchInfo(IFileStoreConstants.NONE, null);
@@ -289,7 +291,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#getName()
 	 */
@@ -300,8 +302,14 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 */
 	public abstract IFileStore getParent();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#isParentOf(org.eclipse.core.filesystem.IFileStore)
+	/**
+	 * The default implementation of {@link IFileStore#isParentOf(IFileStore)}.
+	 * This implementation performs parent calculation using other primitive methods. 
+	 * Subclasses may override this method.
+	 * 
+	 * @param other The store to test for parentage.
+	 * @return <code>true</code> if this store is a parent of the provided
+	 * store, and <code>false</code> otherwise.
 	 */
 	public boolean isParentOf(IFileStore other) {
 		while (true) {
@@ -322,7 +330,10 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 */
-	public abstract IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException;
+	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException {
+		Policy.error(IFileStoreConstants.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
+		return null;//can't get here
+	}
 
 	/**
 	 * The default implementation of {@link IFileStore#move(IFileStore, int, IProgressMonitor)}.
@@ -377,9 +388,11 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	}
 
 	/**
-	 * Default implementation of IFileStore.#toString(). This default implementation
+	 * Default implementation of {@link IFileStore#toString()}. This default implementation
 	 * returns a string equal to the one returned by #toURI().toString(). Subclasses
 	 * may override to provide a more specific string representation of this store.
+	 * 
+	 * @return A string representation of this store.
 	 */
 	public String toString() {
 		return toURI().toString();
