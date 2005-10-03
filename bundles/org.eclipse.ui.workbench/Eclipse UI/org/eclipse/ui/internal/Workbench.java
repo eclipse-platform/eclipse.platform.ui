@@ -52,6 +52,7 @@ import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
+import org.eclipse.jface.commands.CommandImageManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -98,6 +99,7 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IContextService;
@@ -106,6 +108,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
+import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.commands.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ContextService;
@@ -952,6 +955,10 @@ public final class Workbench implements IWorkbench {
 		final IBindingService bindingService = new BindingService(
 				bindingManager, this);
 		services.put(IBindingService.class, bindingService);
+		final CommandImageManager commandImageManager = new CommandImageManager();
+		final ICommandImageService commandImageService = new CommandImageService(
+				commandImageManager, commandService);
+		services.put(ICommandImageService.class, commandImageService);
 
 		/*
 		 * Phase 2 of the initialization of commands. The registry and
@@ -962,6 +969,7 @@ public final class Workbench implements IWorkbench {
 		handlerService.readRegistry();
 		contextService.readRegistry();
 		bindingService.readRegistryAndPreferences(commandService);
+		commandImageService.readRegistry();
 
 		/*
 		 * Phase 3 of the initialization of commands. The source providers that

@@ -119,10 +119,17 @@ public interface IWorkbenchConstants {
     public static final String PL_COMMANDS = "commands"; //$NON-NLS-1$
     
     /**
-     * The extension point (3.0 and later) for specifying a context.
-     * 
-     * @since 3.1.1
-     */
+	 * The extension point (3.2 and later) for associating images with commands.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String PL_COMMAND_IMAGES = "commandImages"; //$NON-NLS-1$
+    
+    /**
+	 * The extension point (3.0 and later) for specifying a context.
+	 * 
+	 * @since 3.1.1
+	 */
     public static final String PL_CONTEXTS = "contexts"; //$NON-NLS-1$
     
     /**
