@@ -36,7 +36,12 @@ public interface IFileStoreConstants {
 
 	/**
 	 * A constant known to be zero (0), used in operations which
-	 * take bit flags to indicate that "no bits are set".
+	 * take bit flags to indicate that "no bits are set".  This value is
+	 * also used as a default value in cases where a file system attribute
+	 * cannot be computed.
+	 * 
+	 * @see IFileInfo#getLength()
+	 * @see IFileInfo#getLastModified()
 	 */
 	public static final int NONE = 0;
 
