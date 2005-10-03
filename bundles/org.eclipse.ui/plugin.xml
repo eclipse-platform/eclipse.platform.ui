@@ -191,15 +191,6 @@
             sequence="M1+M2+E"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
-            platform="gtk"
-            sequence="M1+M2+E"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-      <key
-            commandId="org.eclipse.ui.window.switchToEditor"
-            platform="gtk"
-            sequence="ESC M1+E"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-      <key
             commandId="org.eclipse.ui.window.showSystemMenu"
             sequence="M3+-"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
