@@ -81,7 +81,7 @@ public abstract class ResizableDialog extends Dialog {
 			);
 		}
 		
-		IDialogSettings bounds= fSettings.getSection(DIALOG_BOUNDS_KEY); //$NON-NLS-1$
+		IDialogSettings bounds= fSettings.getSection(DIALOG_BOUNDS_KEY);
 		if (bounds == null) {
 			if (fBundle != null) {
 				width= Utilities.getInteger(fBundle, WIDTH, 0);

@@ -140,9 +140,9 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		TableColumn column = new TableColumn(fIdMapsTable, SWT.NONE);
 		column.setText(XMLCompareMessages.XMLComparePreference_topTableColumn1); 
 		column = new TableColumn(fIdMapsTable, SWT.NONE);
-		column.setText(column2Text); //$NON-NLS-1$
+		column.setText(column2Text);
 		column = new TableColumn(fIdMapsTable, SWT.NONE);
-		column.setText(column3Text); //$NON-NLS-1$
+		column.setText(column3Text);
 		
 		fillIdMapsTable();
 
@@ -249,9 +249,9 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		column = new TableColumn(fMappingsTable, SWT.NONE);
 		column.setText(XMLCompareMessages.XMLComparePreference_middleTableColumn2); 
 		column = new TableColumn(fMappingsTable, SWT.NONE);
-		column.setText(column3Text); //$NON-NLS-1$
+		column.setText(column3Text);
 		column = new TableColumn(fMappingsTable, SWT.NONE);
-		column.setText(column4Text); //$NON-NLS-1$
+		column.setText(column4Text);
 	
 		buttons= new Composite(parent, SWT.NULL);
 		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));

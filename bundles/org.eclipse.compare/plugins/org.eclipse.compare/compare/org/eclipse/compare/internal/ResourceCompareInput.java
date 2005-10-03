@@ -374,7 +374,7 @@ class ResourceCompareInput extends CompareEditorInput {
 		if (IFile[].class.equals(adapter)) {
 		    HashSet collector= new HashSet();
 		    collectDirtyResources(fRoot, collector);
-		    return (IFile[]) collector.toArray(new IFile[collector.size()]);
+		    return collector.toArray(new IFile[collector.size()]);
 		}
 		return super.getAdapter(adapter);
 	}

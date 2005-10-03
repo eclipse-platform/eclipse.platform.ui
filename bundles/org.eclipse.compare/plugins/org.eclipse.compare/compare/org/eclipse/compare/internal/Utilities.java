@@ -447,7 +447,7 @@ public class Utilities {
 		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(files, shell);
 		if (! status.isOK()) {
 			String message= getString("ValidateEdit.error.unable_to_perform"); //$NON-NLS-1$
-			ErrorDialog.openError(shell, title, message, status); //$NON-NLS-1$
+			ErrorDialog.openError(shell, title, message, status);
 			return false;
 		}
 			
@@ -566,7 +566,7 @@ public class Utilities {
 		byte[] bytes= null;
 		if (s != null) {
 			try {
-				bytes= s.getBytes(encoding); //$NON-NLS-1$
+				bytes= s.getBytes(encoding);
 			} catch (UnsupportedEncodingException e) {
 				bytes= s.getBytes();
 			}

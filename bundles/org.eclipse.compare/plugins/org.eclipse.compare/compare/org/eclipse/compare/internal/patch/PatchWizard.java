@@ -51,7 +51,7 @@ import org.eclipse.compare.internal.*;
 		fPatcher= new Patcher();
 				
 		IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
-		IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY); //$NON-NLS-1$
+		IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
 		if (section == null)
 			fHasNewDialogSettings= true;
 		else {
