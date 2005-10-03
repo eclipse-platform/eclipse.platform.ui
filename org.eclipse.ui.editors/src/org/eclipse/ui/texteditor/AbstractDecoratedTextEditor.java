@@ -345,7 +345,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.1
 	 */
 	protected Control createStatusControl(Composite parent, final IStatus status) {
-		Object adapter= (IEncodingSupport)getAdapter(IEncodingSupport.class);
+		Object adapter= getAdapter(IEncodingSupport.class);
 		DefaultEncodingSupport encodingSupport= null;
 		if (adapter instanceof DefaultEncodingSupport)
 			encodingSupport= (DefaultEncodingSupport)adapter;
