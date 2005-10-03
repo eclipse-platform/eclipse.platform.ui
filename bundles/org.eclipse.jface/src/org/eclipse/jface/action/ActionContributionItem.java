@@ -63,6 +63,12 @@ public class ActionContributionItem extends ContributionItem {
      * special input mode in some cases.
      */
     private static final int UPPER_GTK_ACCEL_BOUND = SWT.MOD1 | SWT.MOD2 | 'F';
+    
+    /**
+	 * After <a href="http://bugzilla.gnome.org/show_bug.cgi?id=82011">Bug 82011</a>
+	 * is fixed, "CTRL+SHIFT+U" will be the only special character.
+	 */
+    private static final int AFTER_82011_IS_FIXED = SWT.MOD1 | SWT.MOD2 | 'U';
 
     /** a string inserted in the middle of text that has been shortened */
     private static final String ellipsis = "..."; //$NON-NLS-1$
@@ -764,8 +770,8 @@ public class ActionContributionItem extends ContributionItem {
 							if (commandAccelerator != null) {
 								int accelInt = callback.getAccelerator(
 										commandId).intValue();
-								if ((accelInt >= LOWER_GTK_ACCEL_BOUND)
-										&& (accelInt <= UPPER_GTK_ACCEL_BOUND)) {
+								if (((accelInt >= LOWER_GTK_ACCEL_BOUND) && (accelInt <= UPPER_GTK_ACCEL_BOUND))
+										|| (accelInt == AFTER_82011_IS_FIXED)) {
 									accelerator = accelInt;
 									acceleratorText = callback
 											.getAcceleratorText(commandId);
