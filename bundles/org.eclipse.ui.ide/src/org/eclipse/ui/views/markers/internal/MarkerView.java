@@ -591,8 +591,10 @@ public abstract class MarkerView extends TableView {
 			revealAction.dispose();
 			propertiesAction.dispose();
 			clipboard.dispose();
-			showInMenu.dispose();
+			
 		}
+		if(showInMenu != null)
+			showInMenu.dispose();
 	}
 
 	/*
