@@ -11,10 +11,14 @@
 package org.eclipse.jface.text.source;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -1153,83 +1157,143 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	public void paintControl(PaintEvent event) {
 		if (fTextWidget != null)
-			handleDrawRequest(event.gc);
+			handleDrawRequest(event);
 	}
 
 	/**
 	 * Handles the request to draw the annotations using the given graphical context.
 	 *
-	 * @param gc the graphical context
+	 * @param event the paint event or <code>null</code>
 	 */
-	private void handleDrawRequest(GC gc) {
+	private void handleDrawRequest(PaintEvent event) {
 
 		if (fTextWidget == null) {
 			// is already disposed
 			return;
 		}
 
-		ReusableRegion range= new ReusableRegion();
+		IRegion clippingRegion= computeClippingRegion(event);
+		if (clippingRegion == null)
+			return;
+		
+		int vOffset= clippingRegion.getOffset();
+		int vLength= clippingRegion.getLength();
+		
+		final GC gc= event != null ? event.gc : null;
 
-		int vOffset= getInclusiveTopIndexStartOffset();
-		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17147
-		int vLength= getExclusiveBottomIndexEndOffset() - vOffset;
-
-		Set decorations;
-
-		// Clone decorations set
+		// Clone decorations
+		Collection decorations;
 		synchronized (fDecorationMapLock) {
-			decorations= new HashSet(fDecorationsMap.entrySet());
+			decorations= new ArrayList(fDecorationsMap.size());
+			decorations.addAll(fDecorationsMap.entrySet());
 		}
 
-		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
+		/*
+		 * Create a new list of annotations to be drawn, since removing from decorations is more
+		 * expensive. One bucket per drawing layer. Use linked lists as addition is cheap here.
+		 */
+		ArrayList toBeDrawn= new ArrayList(10);
+		for (Iterator e = decorations.iterator(); e.hasNext();) {
+			Map.Entry entry= (Map.Entry)e.next();
+			
+			Annotation a= (Annotation)entry.getKey();
+			Decoration pp = (Decoration)entry.getValue();
+			// prune any annotation that is not drawable or does not need drawing
+			if (!(a.isMarkedDeleted() || pp.fPainter == fgNullDrawer || pp.fPainter instanceof NullStrategy || skip(a) || !pp.fPosition.overlapsWith(vOffset, vLength))) {
+				// ensure sized appropriately
+				for (int i= toBeDrawn.size(); i <= pp.fLayer; i++)
+					toBeDrawn.add(new LinkedList());
+				((List) toBeDrawn.get(pp.fLayer)).add(entry);
+			}
+		}
+		
+		ReusableRegion range= new ReusableRegion();
+		for (Iterator it= toBeDrawn.iterator(); it.hasNext();) {
+			List layer= (List) it.next();
 
-			for (Iterator e = decorations.iterator(); e.hasNext();) {
+			for (Iterator e = layer.iterator(); e.hasNext();) {
 				Map.Entry entry= (Map.Entry)e.next();
 
-				Annotation a= (Annotation)entry.getKey();
 				Decoration pp = (Decoration)entry.getValue();
-				if (a.isMarkedDeleted() || pp.fPainter == fgNullDrawer || pp.fPainter instanceof NullStrategy || skip(a)) {
-					e.remove();
-					continue;
-				}
-
-				maxLayer= Math.max(maxLayer, pp.fLayer + 1);	// dynamically update layer maximum
-				if (pp.fLayer != layer)	// wrong layer: defer until later
-					continue;
-				
-				e.remove(); // handled - don't bother any longer in other layers
-
 				Position p= pp.fPosition;
-				if (p.overlapsWith(vOffset, vLength)) {
+				IDocument document= fSourceViewer.getDocument();
+				try {
 
-					IDocument document= fSourceViewer.getDocument();
-					try {
+					int startLine= document.getLineOfOffset(p.getOffset());
+					int lastInclusive= Math.max(p.getOffset(), p.getOffset() + p.getLength() - 1);
+					int endLine= document.getLineOfOffset(lastInclusive);
 
-						int startLine= document.getLineOfOffset(p.getOffset());
-						int lastInclusive= Math.max(p.getOffset(), p.getOffset() + p.getLength() - 1);
-						int endLine= document.getLineOfOffset(lastInclusive);
-
-						for (int i= startLine; i <= endLine; i++) {
-							int lineOffset= document.getLineOffset(i);
-							int paintStart= Math.max(lineOffset, p.getOffset());
-							String lineDelimiter= document.getLineDelimiter(i);
-							int delimiterLength= lineDelimiter != null ? lineDelimiter.length() : 0;
-							int paintLength= Math.min(lineOffset + document.getLineLength(i) - delimiterLength, p.getOffset() + p.getLength()) - paintStart;
-							if (paintLength >= 0 && overlapsWith(paintStart, paintLength, vOffset, vLength)) {
-								// otherwise inside a line delimiter
-								range.setOffset(paintStart);
-								range.setLength(paintLength);
-								IRegion widgetRange= getWidgetRange(range);
-								if (widgetRange != null)
-									pp.fPainter.draw(a, gc, fTextWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
+					for (int i= startLine; i <= endLine; i++) {
+						int lineOffset= document.getLineOffset(i);
+						int paintStart= Math.max(lineOffset, p.getOffset());
+						String lineDelimiter= document.getLineDelimiter(i);
+						int delimiterLength= lineDelimiter != null ? lineDelimiter.length() : 0;
+						int paintLength= Math.min(lineOffset + document.getLineLength(i) - delimiterLength, p.getOffset() + p.getLength()) - paintStart;
+						if (paintLength >= 0 && overlapsWith(paintStart, paintLength, vOffset, vLength)) {
+							// otherwise inside a line delimiter
+							range.setOffset(paintStart);
+							range.setLength(paintLength);
+							IRegion widgetRange= getWidgetRange(range);
+							if (widgetRange != null) {
+								Annotation a= (Annotation)entry.getKey();
+								pp.fPainter.draw(a, gc, fTextWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
 							}
 						}
-
-					} catch (BadLocationException x) {
 					}
+
+				} catch (BadLocationException x) {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Computes the model (document) region that is covered by the paint event's clipping region. If
+	 * <code>event</code> is <code>null</code>, the model range covered by the visible editor
+	 * area (viewport) is returned.
+	 * 
+	 * @param event the paint event or <code>null</code> to use the entire viewport
+	 * @return the model region comprised by either the paint event's clipping region or the
+	 *         viewport
+	 * @since 3.2
+	 */
+	IRegion computeClippingRegion(PaintEvent event) {
+		if (event == null) {
+			// trigger a repaint of the entire viewport
+			int vOffset= getInclusiveTopIndexStartOffset();
+			if (vOffset == -1)
+				return null;
+			
+			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17147
+			int vLength= getExclusiveBottomIndexEndOffset() - vOffset;
+			
+			return new Region(vOffset, vLength);
+		}
+		
+		int widgetOffset;
+		try {
+			int widgetClippingStartOffset= fTextWidget.getOffsetAtLocation(new Point(0, event.y));
+			int firstWidgetLine= fTextWidget.getLineAtOffset(widgetClippingStartOffset);
+			widgetOffset= fTextWidget.getOffsetAtLine(firstWidgetLine);
+		} catch (IllegalArgumentException x) {
+			// should not happen
+			widgetOffset= 0;
+		}
+		
+		int widgetEndOffset;
+		try {
+			int widgetClippingEndOffset= fTextWidget.getOffsetAtLocation(new Point(0, event.y + event.height));
+			int lastWidgetLine= fTextWidget.getLineAtOffset(widgetClippingEndOffset);
+			widgetEndOffset= fTextWidget.getOffsetAtLine(lastWidgetLine + 1);
+		} catch (IllegalArgumentException x) {
+			// happens if the editor is not "full", eg. the last line of the document is visible in the editor
+			// in that case, simply use the last character
+			widgetEndOffset= fTextWidget.getCharCount();
+		}
+		
+		IRegion clippingRegion= getModelRange(new Region(widgetOffset, widgetEndOffset - widgetOffset));
+		
+		return clippingRegion;
 	}
 
 	/**
@@ -1272,6 +1336,28 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		return null;
 	}
 
+	/**
+	 * Returns the model region that corresponds to the given region in the
+	 * viewer's text widget.
+	 *
+	 * @param p the region in the viewer's widter
+	 * @return the corresponding document region
+	 * @since 3.2
+	 */
+	private IRegion getModelRange(IRegion p) {
+		if (p == null || p.getOffset() == Integer.MAX_VALUE)
+			return null;
+
+		if (fSourceViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+			return extension.widgetRange2ModelRange(p);
+		}
+		
+		IRegion region= fSourceViewer.getVisibleRegion();
+		int offset= region.getOffset() + p.getOffset();
+		return new Region(offset, p.getLength());
+	}
+	
 	/**
 	 * Checks whether the intersection of the given text ranges
 	 * is empty or not.
