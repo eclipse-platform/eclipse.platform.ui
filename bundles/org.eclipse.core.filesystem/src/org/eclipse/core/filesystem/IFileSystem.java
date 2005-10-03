@@ -15,18 +15,19 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * This is the main interface to a single file system.  A file system instance
- * uses a particular URI scheme. 
+ * This is the main interface to a single file system.  Each file system instance
+ * manages interaction with all files in the backing store represented by a 
+ * particular URI scheme.
  * <p>
  * File systems are registered using the "filesystems" extension point.
  * </p>
- *
  * <p>
  * This interface is not intended to be implemented by clients.  File system
  * implementations must subclass {@link FileSystem} rather than implementing
  * this interface directly.
  * </p>
  * 
+ * @see FileSystemCore#getFileSystem(String)
  * @since 3.2
  */
 public interface IFileSystem extends IAdaptable {
@@ -71,7 +72,7 @@ public interface IFileSystem extends IAdaptable {
 	 * <p>
 	 * This is a convenience method for file systems that do not make use
 	 * of the authority {@link java.net.URI} component, such as a host or user 
-	 * information. The provided path argument is supplied as the path component 
+	 * information. The provided path argument is interpreted as the path component 
 	 * of the file system's {@link java.net.URI}.
 	 * </p>
 	 * 

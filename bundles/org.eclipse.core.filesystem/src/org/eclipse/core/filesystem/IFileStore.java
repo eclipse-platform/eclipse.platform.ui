@@ -167,12 +167,16 @@ public interface IFileStore extends IAdaptable {
 	 * when IFileInfo#exists() is called, but all other information will assume default 
 	 * values.
 	 * 
-	 * @param options bit-wise or of option flag constants ().
+	 * @param options bit-wise or of option flag constants (none are currently applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @return A structure containing information about this file.
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>Problems occurred while contacting the file system.</li>
+	 * </ul>
 	 */
-	public abstract IFileInfo fetchInfo(int options, IProgressMonitor monitor);
+	public abstract IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns a child store with the provided name whose parent is
@@ -227,6 +231,10 @@ public interface IFileStore extends IAdaptable {
 	 * }
 	 * return false;
 	 * </code>
+	 * <p>
+	 * This is a handle only method; this test works regardless of whether
+	 * this store or the parameter store exists.
+	 * </p>
 	 * 
 	 * @param other The store to test for parentage.
 	 * @return <code>true</code> if this store is a parent of the provided
@@ -345,7 +353,13 @@ public interface IFileStore extends IAdaptable {
 	 * certain parts of the file information structure can be written using this
 	 * method, as specified by the option flags.  Other changed information
 	 * in the provided info will be ignored.  This method has no effect when no 
-	 * option flags are provided.
+	 * option flags are provided.  The following example sets the last modified
+	 * time for a file store, leaving other values unchanged:
+	 * <pre>
+	 *    IFileInfo info = FileSystemCore#createFileInfo();
+	 *    info.setLastModified(System.currentTimeMillis());
+	 *    store.putInfo(info, IFileStoreConstants.SET_LAST_MODIFIED, monitor);
+	 * </pre>
 	 * <p>
 	 * The {@link IFileStoreConstants#SET_ATTRIBUTES} update flag controls 
 	 * whether the file's attributes are changed.  When this flag is specified,
@@ -372,6 +386,7 @@ public interface IFileStore extends IAdaptable {
 	 * <ul>
 	 * <li> This store does not exist.</li>
 	 * </ul>
+	 * @see FileSystemCore#createFileInfo()
 	 */
 	public abstract void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException;
 

@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.runtime.*;
 
@@ -48,8 +49,7 @@ public class NullFileStore extends FileStore {
 	}
 
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) {
-		IFileInfo result = FileSystemCore.createFileInfo();
-		result.setName(getName());
+		FileInfo result = new FileInfo(getName());
 		result.setExists(false);
 		return result;
 	}

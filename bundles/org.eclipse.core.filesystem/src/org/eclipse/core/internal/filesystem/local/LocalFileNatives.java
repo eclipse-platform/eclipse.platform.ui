@@ -11,7 +11,8 @@
 package org.eclipse.core.internal.filesystem.local;
 
 import java.io.File;
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.internal.filesystem.Messages;
 import org.eclipse.core.internal.filesystem.Policy;
 import org.eclipse.core.runtime.IStatus;
@@ -50,8 +51,8 @@ abstract class LocalFileNatives {
 		return false; // not supported
 	}
 
-	public static IFileInfo fetchFileInfo(String fileName) {
-		IFileInfo info = FileSystemCore.createFileInfo();
+	public static FileInfo fetchFileInfo(String fileName) {
+		FileInfo info = new FileInfo();
 		if (isUnicode)
 			internalGetFileInfoW(fileName.toCharArray(), info);
 		else

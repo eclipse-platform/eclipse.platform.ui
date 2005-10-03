@@ -17,6 +17,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * not cause corresponding changes to any file on disk, and changes to files
  * on disk are not reflected in this object. At best, an IFileInfo represents a snapshot
  * of the state of a file at a particular moment in time.
+ * <p>
+ * This interface is not intended to be implemented by clients.  File store
+ * implementations should use the concrete class {@link org.eclipse.core.filesystem.provider.FileStore}
+ * </p>
  * 
  * @see IFileStore#fetchInfo(int, IProgressMonitor)
  * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
@@ -40,7 +44,7 @@ public interface IFileInfo extends Comparable {
 	 * @param attribute The attribute to retrieve the value for
 	 * @return the value of the specified attribute for this file.
 	 */
-	public boolean getAttribute(int attribute);
+	public abstract boolean getAttribute(int attribute);
 
 	/**
 	 * Returns the last modified time for this file, or {@link IFileStoreConstants#NONE}
@@ -91,16 +95,8 @@ public interface IFileInfo extends Comparable {
 	 * @param attribute The attribute to set the value for
 	 * @param value the value of the specified attribute for this file.
 	 */
-	public void setAttribute(int attribute, boolean value);
+	public abstract void setAttribute(int attribute, boolean value);
 	
-	/**
-	 * Sets whether this file or directory exists.
-	 * 
-	 * @param value <code>true</code> if this file exists, and <code>false</code>
-	 * otherwise.
-	 */
-	public void setExists(boolean value);
-
 	/**
 	 * Sets the last modified time for this file.  A value of {@link IFileStoreConstants#NONE}
 	 * indicates the file does not exist or the last modified time could not be computed.
@@ -108,19 +104,4 @@ public interface IFileInfo extends Comparable {
 	 * @param time the last modified time for this file, or {@link IFileStoreConstants#NONE}
 	 */
 	public abstract void setLastModified(long time);
-
-	/**
-	 * Sets the length of this file. A value of {@link IFileStoreConstants#NONE}
-	 * indicates the file does not exist, is a directory, or the length could not be computed.
-	 * 
-	 * @param length the length of this file, or {@link IFileStoreConstants#NONE}
-	 */
-	public abstract void setLength(long length);
-	
-	/**
-	 * Sets the name of this file.
-	 * 
-	 * @param name The file name
-	 */
-	public void setName(String name);
 }

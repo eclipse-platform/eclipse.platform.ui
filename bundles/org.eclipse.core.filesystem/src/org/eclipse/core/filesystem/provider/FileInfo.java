@@ -7,24 +7,43 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.internal.filesystem;
+package org.eclipse.core.filesystem.provider;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStoreConstants;
 
 /**
- * 
+ * This class should be used by file system providers in their implementation
+ * of API methods that return {@link IFileInfo} objects.
+ * <p>
+ * This class is not intended to be subclassed.
+ * </p>
+ * @since 3.2
  */
 public class FileInfo implements IFileInfo, IFileStoreConstants {
 	/**
 	 * Internal attribute indicating if the file exists.
 	 */
 	private static final int ATTRIBUTE_EXISTS = 1 << 16;
-	
+
+	/**
+	 * Bit field of file attributes
+	 */
 	private int attributes = 0;
 
+	/**
+	 * The last modified time.
+	 */
 	private long lastModified = IFileStoreConstants.NONE;
+	
+	/**
+	 * The file length.
+	 */
 	private long length = IFileStoreConstants.NONE;
+	
+	/**
+	 * The file name.
+	 */
 	private String name = ""; //$NON-NLS-1$
 
 	/**
@@ -34,10 +53,29 @@ public class FileInfo implements IFileInfo, IFileStoreConstants {
 		super();
 	}
 
+	/**
+	 * Creates a new file information object. All values except the file name
+	 * will have default values.
+	 * 
+	 * @param name The name of this file
+	 */
+	public FileInfo(String name) {
+		super();
+	}
+
+	/**
+	 * Convenience method to clear a masked region of the attributes bit field.
+	 * 
+	 * @param mask The mask to be cleared
+	 */
 	private void clear(int mask) {
 		attributes &= ~mask;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	public int compareTo(Object o) {
 		return name.compareTo(((FileInfo) o).name);
 	}
@@ -103,6 +141,16 @@ public class FileInfo implements IFileInfo, IFileStoreConstants {
 			clear(attribute);
 	}
 
+	/**
+	 * Sets whether this file or directory exists.
+	 * 
+	 * @param value <code>true</code> if this file exists, and <code>false</code>
+	 * otherwise.
+	 */
+	public void setExists(boolean value) {
+		setAttribute(ATTRIBUTE_EXISTS, value);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileInfo#setLastModified(long)
 	 */
@@ -110,20 +158,27 @@ public class FileInfo implements IFileInfo, IFileStoreConstants {
 		lastModified = value;
 	}
 
+	/**
+	 * Sets the length of this file. A value of {@link IFileStoreConstants#NONE}
+	 * indicates the file does not exist, is a directory, or the length could not be computed.
+	 * 
+	 * @param value the length of this file, or {@link IFileStoreConstants#NONE}
+	 */
 	public void setLength(long value) {
 		this.length = value;
 	}
 
+	/**
+	 * Sets the name of this file.
+	 * 
+	 * @param name The file name
+	 */
 	public void setName(String name) {
 		if (name == null)
 			throw new IllegalArgumentException();
 		this.name = name;
 	}
 
-	public void setExists(boolean value) {
-		setAttribute(ATTRIBUTE_EXISTS, value);
-	}
-	
 	/**
 	 * For debugging purposes only.
 	 */

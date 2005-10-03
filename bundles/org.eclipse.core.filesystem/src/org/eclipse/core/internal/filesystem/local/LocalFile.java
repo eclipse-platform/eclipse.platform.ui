@@ -12,6 +12,7 @@ package org.eclipse.core.internal.filesystem.local;
 import java.io.*;
 import java.net.URI;
 import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.internal.filesystem.Messages;
 import org.eclipse.core.internal.filesystem.Policy;
@@ -38,6 +39,11 @@ public class LocalFile extends FileStore {
 		return ATTRIBUTE_READ_ONLY;
 	}
 
+	/**
+	 * Creates a new local file.
+	 * 
+	 * @param file The file this local file represents
+	 */
 	public LocalFile(File file) {
 		this.file = file;
 		this.filePath = file.getAbsolutePath();
@@ -104,15 +110,14 @@ public class LocalFile extends FileStore {
 
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) {
 		if (LocalFileNatives.usingNatives()) {
-			IFileInfo info = LocalFileNatives.fetchFileInfo(filePath);
+			FileInfo info = LocalFileNatives.fetchFileInfo(filePath);
 			//natives don't set the file name on all platforms
 			if (info.getName().length() == 0)
 				info.setName(file.getName());
 			return info;
 		}
 		//in-lined non-native implementation
-		IFileInfo info = FileSystemCore.createFileInfo();
-		info.setName(file.getName());
+		FileInfo info = new FileInfo(file.getName());
 		final long lastModified = file.lastModified();
 		info.setLastModified(lastModified);
 		info.setExists(lastModified > 0);

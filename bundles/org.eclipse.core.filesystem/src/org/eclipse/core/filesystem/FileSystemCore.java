@@ -10,8 +10,10 @@
 package org.eclipse.core.filesystem;
 
 import java.net.URI;
-import org.eclipse.core.internal.filesystem.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.filesystem.provider.FileInfo;
+import org.eclipse.core.internal.filesystem.InternalFileSystemCore;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This class is the main entry point for clients of the file system API.  This

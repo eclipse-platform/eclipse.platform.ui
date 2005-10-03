@@ -266,13 +266,17 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 * Subclasses may override this method.
 	 */
 	public IFileInfo fetchInfo() {
-		return fetchInfo(IFileStoreConstants.NONE, null);
+		try {
+			return fetchInfo(IFileStoreConstants.NONE, null);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#fetchInfo(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public abstract IFileInfo fetchInfo(int options, IProgressMonitor monitor);
+	public abstract IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#getChild(java.lang.String)
