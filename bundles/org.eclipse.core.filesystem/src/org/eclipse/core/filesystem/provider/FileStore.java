@@ -119,7 +119,9 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 
 	/**
 	 * The default implementation of {@link IFileStore#childInfos(int, IProgressMonitor)}.
-	 * Subclasses may override.
+	 * Subclasses should override this method where a more efficient implementation
+	 * is possible.  This default implementation calls {@link #fetchInfo()} on each
+	 * child, which will result in a file system call for each child.
 	 */
 	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) {
 		IFileStore[] childStores = childStores(options, monitor);
