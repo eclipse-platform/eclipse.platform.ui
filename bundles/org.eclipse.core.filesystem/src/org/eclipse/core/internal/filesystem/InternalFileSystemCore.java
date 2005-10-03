@@ -103,7 +103,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	public IFileStore getStore(URI uri) throws CoreException {
 		final String scheme = uri.getScheme();
 		if (scheme == null)
-			throw new IllegalArgumentException("Must specify a URI scheme: " + uri); //$NON-NLS-1$
+			Policy.error(IFileStoreConstants.ERROR_INTERNAL, "Must specify a URI scheme: " + uri);
 		return getFileSystem(scheme).getStore(uri);
 	}
 

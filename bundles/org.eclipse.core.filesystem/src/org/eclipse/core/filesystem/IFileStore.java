@@ -178,6 +178,28 @@ public interface IFileStore extends IAdaptable {
 	 */
 	public abstract IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException;
 
+	
+	/**
+	 * Returns a child of this store as specified by the provided path.  The
+	 * path is treated as relative to this store.  This is equivalent to
+	 * <pre>
+	 *    IFileStore result = this;
+	 *    for (int i = 0; i < path.segmentCount(); i++) {
+	 *       result = result.getChild(path.segment(i));
+	 *    return result;
+	 * </pre>
+	 * </p>
+	 * <p>
+	 * This is a handle-only method; a child is provided regardless
+	 * of whether this store or the child store exists, or whether this store
+	 * represents a directory or not.
+	 * </p>
+	 * 
+	 * @param path The path of the child store to return
+	 * @return A child file store.
+	 */
+	public abstract IFileStore getChild(IPath path);
+
 	/**
 	 * Returns a child store with the provided name whose parent is
 	 * this store.  This is a handle-only method; a child is provided regardless
@@ -195,7 +217,7 @@ public interface IFileStore extends IAdaptable {
 	 * @return The file system this store belongs to.
 	 */
 	public abstract IFileSystem getFileSystem();
-	
+
 	/**
 	 * Returns the name of this store.  This is a handle-only method; the name
 	 * is returned regardless of whether this store exists.

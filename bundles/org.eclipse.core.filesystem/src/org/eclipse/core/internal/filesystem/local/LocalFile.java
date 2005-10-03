@@ -126,6 +126,10 @@ public class LocalFile extends FileStore {
 		info.setAttribute(ATTRIBUTE_READ_ONLY, file.exists() && !file.canWrite());
 		return info;
 	}
+	
+	public IFileStore getChild(IPath path) {
+		return new LocalFile(new File(file, path.toOSString()));
+	}
 
 	public IFileStore getChild(String name) {
 		return new LocalFile(new File(file, name));

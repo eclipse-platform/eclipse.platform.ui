@@ -65,6 +65,8 @@ public class Policy {
 		final Bundle bundle = Platform.getBundle(PI_FILE_SYSTEM); //$NON-NLS-1$
 		if (bundle == null)
 			return;
+		if (message == null)
+			message = ""; //$NON-NLS-1$
 		Platform.getLog(bundle).log(new Status(severity, PI_FILE_SYSTEM, 1, message, t));
 	}
 

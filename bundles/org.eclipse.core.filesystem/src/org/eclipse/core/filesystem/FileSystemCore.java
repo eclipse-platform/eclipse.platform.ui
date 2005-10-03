@@ -76,6 +76,18 @@ public class FileSystemCore {
 		return InternalFileSystemCore.getInstance().getNullFileSystem();
 	}
 	
+	/**
+	 * Returns the file store corresponding to the provided URI.
+	 * 
+	 * @param uri The URI of the file store to return
+	 * @return The file store
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>There is no registered file system for the given URI scheme.</li>
+	 * <li>The URI syntax was not in the appropriate form for that scheme.</li>
+	 * <li>There was a failure initializing the file system.</li>
+	 * </ul>
+	 */
 	public static IFileStore getStore(URI uri) throws CoreException {
 		return InternalFileSystemCore.getInstance().getStore(uri);
 	}

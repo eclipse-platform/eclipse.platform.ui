@@ -280,6 +280,17 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 */
 	public abstract IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException;
 
+	/**
+	 * The default implementation of {@link IFileStore#getChild(IPath)}.
+	 * Subclasses may override.
+	 */
+	public IFileStore getChild(IPath path) {
+		IFileStore result = this;
+		for (int i = 0, imax = path.segmentCount(); i < imax; i++)
+			result = result.getChild(path.segment(i));
+		return result;
+	} 
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#getChild(java.lang.String)
 	 */
