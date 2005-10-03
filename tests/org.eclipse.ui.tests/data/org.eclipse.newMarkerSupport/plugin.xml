@@ -25,8 +25,6 @@
             name="Filter 3">
          <selectedType markerId="org.eclipse.core.resources.problemmarker"/>
       </problemFilter>
-      <viewMapping
-            markerId="org.eclipse.core.resources.problemmarker"
-            viewId="org.eclipse.ui.tests.components.MissingDependencyView"/>
+  
    </extension>
 </plugin>

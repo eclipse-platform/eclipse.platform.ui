@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -32,8 +31,6 @@ public class MarkerSupportTests extends DynamicTestCase {
 
 	static final String PROBLEM_MARKER = "org.eclipse.core.resources.problemmarker";
 
-	static final String TEST_VIEW = "org.eclipse.ui.tests.components.MissingDependencyView";
-
 	/**
 	 * @param testName
 	 */
@@ -45,37 +42,16 @@ public class MarkerSupportTests extends DynamicTestCase {
 		assertFalse(hasFilter(FILTER1));
 		assertFalse(hasFilter(FILTER2));
 		assertFalse(hasFilter(FILTER3));
-		assertFalse(hasTestViewMapping());
 		getBundle();
 		assertTrue(hasFilter(FILTER1));
 		assertTrue(hasFilter(FILTER2));
 		assertTrue(hasFilter(FILTER3));
-		assertTrue(hasTestViewMapping());
 		removeBundle();
 		assertFalse(hasFilter(FILTER1));
 		assertFalse(hasFilter(FILTER2));
 		assertFalse(hasFilter(FILTER3));
-		assertFalse(hasTestViewMapping());
 	}
 
-	/**
-	 * @return
-	 */
-	private boolean hasTestViewMapping() {
-
-		Collection ids = MarkerSupportRegistry.getInstance().getViews(
-				PROBLEM_MARKER);
-		if (ids == null)
-			return false;
-		Iterator views = ids.iterator();
-
-		while (views.hasNext()) {
-			String element = (String) views.next();
-			if (element.equals(TEST_VIEW))
-				return true;
-		}
-		return false;
-	}
 
 	public boolean hasFilter(String id) {
 		Iterator filters = MarkerSupportRegistry.getInstance()

@@ -143,30 +143,6 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
       </complexType>
    </element>
 
-   <element name="viewMapping">
-      <annotation>
-         <documentation>
-            A viewMapping is the specification of a mapping of a markerType to a view. This view will open when the Open In option is selected in a marker view.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="viewId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The id of the view that will open on this type of marker.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="markerId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The id of the marker that this view is registered for. If there are children of this marker this view will be avialable to them as well.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
