@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
+import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
 /**
  * Test the loading and unloading of problem filters.
  * 
- * @since 3.1
+ * @since 3.2
  */
-public class ProblemFilterTests extends DynamicTestCase {
+public class MarkerSupportTests extends DynamicTestCase {
 
 	public static final String FILTER1 = "filter1";
 
@@ -29,10 +30,14 @@ public class ProblemFilterTests extends DynamicTestCase {
 
 	public static final String FILTER3 = "filter3";
 
+	static final String PROBLEM_MARKER = "org.eclipse.core.resources.problemmarker";
+
+	static final String TEST_VIEW = "org.eclipse.ui.tests.components.MissingDependencyView";
+
 	/**
 	 * @param testName
 	 */
-	public ProblemFilterTests(String testName) {
+	public MarkerSupportTests(String testName) {
 		super(testName);
 	}
 
@@ -40,14 +45,36 @@ public class ProblemFilterTests extends DynamicTestCase {
 		assertFalse(hasFilter(FILTER1));
 		assertFalse(hasFilter(FILTER2));
 		assertFalse(hasFilter(FILTER3));
+		assertFalse(hasTestViewMapping());
 		getBundle();
 		assertTrue(hasFilter(FILTER1));
 		assertTrue(hasFilter(FILTER2));
 		assertTrue(hasFilter(FILTER3));
+		assertTrue(hasTestViewMapping());
 		removeBundle();
 		assertFalse(hasFilter(FILTER1));
 		assertFalse(hasFilter(FILTER2));
 		assertFalse(hasFilter(FILTER3));
+		assertFalse(hasTestViewMapping());
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean hasTestViewMapping() {
+
+		Collection ids = MarkerSupportRegistry.getInstance().getViews(
+				PROBLEM_MARKER);
+		if (ids == null)
+			return false;
+		Iterator views = ids.iterator();
+
+		while (views.hasNext()) {
+			String element = (String) views.next();
+			if (element.equals(TEST_VIEW))
+				return true;
+		}
+		return false;
 	}
 
 	public boolean hasFilter(String id) {
@@ -85,10 +112,12 @@ public class ProblemFilterTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getInstallLocation()
 	 */
 	protected String getInstallLocation() {
-		return "data/org.eclipse.newProblemFilter";
+		return "data/org.eclipse.newMarkerSupport";
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getDeclaringNamespace()
 	 */
 	protected String getDeclaringNamespace() {
