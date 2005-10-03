@@ -101,7 +101,7 @@ public/*final*/class WorkbenchImages {
      * the workbench plug-in). This is a helper method that creates the image
      * descriptor and passes it to the main <code>declareImage</code> method.
      * 
-     * @param symbolicName the symbolic name of the image
+     * @param key the symbolic name of the image
      * @param path the path of the image file relative to the base of the workbench
      * plug-ins install directory
      * @param shared <code>true</code> if this is a shared image, and
