@@ -83,15 +83,18 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.MarkerTransfer;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.preferences.ViewPreferencesAction;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
-import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
 /**
@@ -119,10 +122,12 @@ public abstract class MarkerView extends TableView {
 	private static final String TAG_ID = "id"; //$NON-NLS-1$
 
 	private static final String TAG_FILTERS_SECTION = "filters"; //$NON-NLS-1$
-	
+
 	private static final String TAG_FILTER_ENTRY = "filter"; //$NON-NLS-1$
 
-	private static final String MENU_FILTERS_GROUP = "group.filter";//$NON-NLS-1$ 
+	private static final String MENU_FILTERS_GROUP = "group.filter";//$NON-NLS-1$
+
+	private static final String MENU_SHOW_IN_GROUP = "group.showIn";//$NON-NLS-1$
 
 	// Section from a 3.1 or earlier workbench
 	private static final String OLD_FILTER_SECTION = "filter"; //$NON-NLS-1$
@@ -202,8 +207,6 @@ public abstract class MarkerView extends TableView {
 
 	protected SelectionProviderAction openAction;
 
-	protected SelectionProviderAction showInNavigatorAction;
-
 	protected SelectionProviderAction deleteAction;
 
 	protected SelectionProviderAction selectAllAction;
@@ -238,6 +241,8 @@ public abstract class MarkerView extends TableView {
 	private RestartableJob refreshJob = null;
 
 	private MenuManager filtersMenu;
+
+	private MenuManager showInMenu;
 
 	private void internalRefresh(IProgressMonitor monitor)
 			throws InvocationTargetException {
@@ -388,8 +393,8 @@ public abstract class MarkerView extends TableView {
 	}
 
 	/**
-	 * Update for filter changes. Save the preference and
-	 * clear the enabled cache.
+	 * Update for filter changes. Save the preference and clear the enabled
+	 * cache.
 	 */
 	void updateForFilterChanges() {
 
@@ -397,7 +402,8 @@ public abstract class MarkerView extends TableView {
 
 		MarkerFilter[] filters = getUserFilters();
 		for (int i = 0; i < filters.length; i++) {
-			IMemento child = memento.createChild(TAG_FILTER_ENTRY,filters[i].getName());
+			IMemento child = memento.createChild(TAG_FILTER_ENTRY, filters[i]
+					.getName());
 			filters[i].saveFilterSettings(child);
 		}
 
@@ -411,7 +417,7 @@ public abstract class MarkerView extends TableView {
 		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(
 				getFiltersPreferenceName(), writer.toString());
 		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
-		
+
 		clearEnabledFilters();
 	}
 
@@ -517,9 +523,33 @@ public abstract class MarkerView extends TableView {
 		});
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
 	public Object getAdapter(Class adaptable) {
 		if (adaptable.equals(IContextProvider.class))
 			return contextProvider;
+		if (adaptable.equals(IShowInSource.class)) {
+			return new IShowInSource() {
+				public ShowInContext getShowInContext() {
+					ISelection selection = getSelectionProvider()
+							.getSelection();
+					if (!(selection instanceof IStructuredSelection))
+						return null;
+					IStructuredSelection structured = (IStructuredSelection) selection;
+					Iterator markerIterator = structured.iterator();
+					List newSelection = new ArrayList();
+					while (markerIterator.hasNext()) {
+						IMarker element = (IMarker) markerIterator.next();
+						newSelection.add(element.getResource());
+					}
+					return new ShowInContext(getViewerInput(), new StructuredSelection(newSelection));
+				}
+
+			};
+		}
 		return super.getAdapter(adaptable);
 	}
 
@@ -559,9 +589,9 @@ public abstract class MarkerView extends TableView {
 			selectAllAction.dispose();
 			deleteAction.dispose();
 			revealAction.dispose();
-			showInNavigatorAction.dispose();
 			propertiesAction.dispose();
 			clipboard.dispose();
+			showInMenu.dispose();
 		}
 	}
 
@@ -582,8 +612,7 @@ public abstract class MarkerView extends TableView {
 		pasteAction.setPastableTypes(getMarkerTypes());
 		deleteAction = new ActionRemoveMarker(this, getSelectionProvider());
 		selectAllAction = new ActionSelectAll(viewer);
-		showInNavigatorAction = new ShowInNavigatorAction(getViewSite()
-				.getPage(), getSelectionProvider());
+
 		propertiesAction = new ActionMarkerProperties(this,
 				getSelectionProvider());
 
@@ -718,7 +747,7 @@ public abstract class MarkerView extends TableView {
 		if (manager == null)
 			return;
 		manager.add(openAction);
-		manager.add(showInNavigatorAction);
+		createShowInMenu(manager);
 		manager.add(new Separator());
 		manager.add(copyAction);
 		pasteAction.updateEnablement();
@@ -1085,7 +1114,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Clear the cache of enabled filters.
-	 *
+	 * 
 	 */
 	void clearEnabledFilters() {
 		enabledFilters = null;
@@ -1242,7 +1271,7 @@ public abstract class MarkerView extends TableView {
 
 		if (enabledFilters == null) {
 			Collection filters = findEnabledFilters();
-			
+
 			enabledFilters = new MarkerFilter[filters.size()];
 			filters.toArray(enabledFilters);
 		}
@@ -1252,6 +1281,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Find the filters enabled in the view.
+	 * 
 	 * @return Collection of MarkerFilter
 	 */
 	protected Collection findEnabledFilters() {
@@ -1266,6 +1296,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Get all of the filters applied to the receiver.
+	 * 
 	 * @return MarkerFilter[]
 	 */
 	MarkerFilter[] getAllFilters() {
@@ -1284,5 +1315,29 @@ public abstract class MarkerView extends TableView {
 		filtersMenu = new MenuManager(MarkerMessages.filtersSubMenu_title);
 		refreshFilterMenu();
 		menu.appendToGroup(MENU_FILTERS_GROUP, filtersMenu);
+	}
+
+	/**
+	 * Create the show in menu if there is a single selection.
+	 * 
+	 * @param menu
+	 */
+	void createShowInMenu(IMenuManager menu) {
+		ISelection selection = getSelectionProvider().getSelection();
+		if (!(selection instanceof IStructuredSelection))
+			return;
+
+		IStructuredSelection structured = (IStructuredSelection) selection;
+		if (structured.size() != 1)
+			return;
+
+		menu.add(new Separator(MENU_SHOW_IN_GROUP));
+		// Don't add in the filters until they are set
+		showInMenu = new MenuManager(IDEWorkbenchMessages.Workbench_showIn);
+		showInMenu.add(ContributionItemFactory.VIEWS_SHOW_IN
+				.create(getViewSite().getWorkbenchWindow()));
+
+		menu.appendToGroup(MENU_SHOW_IN_GROUP, showInMenu);
+
 	}
 }

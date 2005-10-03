@@ -2,9 +2,6 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -37,6 +34,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private static final String ID = "id"; //$NON-NLS-1$
 
 	private static final Object INFO = "INFO";//$NON-NLS-1$
+	
+	private static final Object WARNING = "WARNING";//$NON-NLS-1$
 
 	private static final String MARKER_ID = "markerId"; //$NON-NLS-1$
 
@@ -65,98 +64,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static MarkerSupportRegistry singleton;
 
-	private static final Object VIEW_MAPPING = "viewMapping";//$NON-NLS-1$
-
-	private static final Object WARNING = "WARNING";//$NON-NLS-1$
-
-	private static final String VIEW_ID = "viewId";//$NON-NLS-1$
-
-	/**
-	 * The ViewMapping is the marker view pairing represenation.
-	 * 
-	 * @since 3.1
-	 * 
-	 */
-	private class ViewMapping {
-		String markerId;
-
-		private Collection viewIds;
-
-		Collection definitions = new HashSet();
-
-		/**
-		 * Create a new instance of the receiver.
-		 * 
-		 * @param marker
-		 */
-		ViewMapping(String marker) {
-			markerId = marker;
-		}
-
-		/**
-		 * Get the ids of the views associated with the receiver.
-		 * 
-		 * @return Collection
-		 */
-		Collection getViewIds() {
-			if (viewIds == null) {
-				viewIds = new ArrayList();
-				Iterator definitionIterator = definitions.iterator();
-				while (definitionIterator.hasNext()) {
-					ViewMappingDefinition element = (ViewMappingDefinition) definitionIterator
-							.next();
-					viewIds.add(element.viewId);
-				}
-			}
-			return viewIds;
-		}
-
-		/**
-		 * Remove the definition and clear the view ids.
-		 * 
-		 * @param definition
-		 */
-		void remove(ViewMappingDefinition definition) {
-			definitions.remove(definition);
-			viewIds = null;
-		}
-
-		/**
-		 * Add the definition and clear the view ids.
-		 * 
-		 * @param definition
-		 */
-		void add(ViewMappingDefinition definition) {
-			definitions.add(definition);
-			viewIds = null;
-		}
-	}
-
-	/**
-	 * The ViewMappingDefinition is the defining object that can get added or
-	 * removed with extension changes.
-	 * 
-	 * @since 3.1
-	 * 
-	 */
-	private class ViewMappingDefinition {
-		String markerId;
-
-		String viewId;
-
-		/**
-		 * Create a new instance of the receiver.
-		 * 
-		 * @param marker
-		 * @param view
-		 *            id of the view.
-		 */
-		ViewMappingDefinition(String marker, String view) {
-			markerId = marker;
-			viewId = view;
-		}
-	}
-
 	/**
 	 * Get the instance of the registry.
 	 * 
@@ -169,8 +76,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	}
 
 	private Collection registeredFilters = new ArrayList();
-
-	private Hashtable filterToViewMappings = new Hashtable();
 
 	/**
 	 * Create a new instance of the receiver and read the registry.
@@ -211,12 +116,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				tracker.registerObject(extension, filter,
 						IExtensionTracker.REF_STRONG);
 
-				continue;
-			}
-			if (element.getName().equals(VIEW_MAPPING)) {
-				ViewMappingDefinition definition = buildViewMapping(element);
-				tracker.registerObject(extension, definition,
-						IExtensionTracker.REF_STRONG);
 				continue;
 			}
 		}
@@ -347,34 +246,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	}
 
-	/**
-	 * Build all a view mappings from the extension.
-	 * 
-	 * @param element
-	 *            the element to build the mapping from.
-	 * @return ViewMappingDefinition
-	 */
-	private ViewMappingDefinition buildViewMapping(IConfigurationElement element) {
-		String markerId = element.getAttribute(MARKER_ID);
-		String viewId = element.getAttribute(VIEW_ID);
-
-		ViewMappingDefinition definition = new ViewMappingDefinition(markerId,
-				viewId);
-
-		ViewMapping mapping;
-		if (filterToViewMappings.containsKey(markerId)) {
-			mapping = (ViewMapping) filterToViewMappings.get(markerId);
-		} else {
-			mapping = new ViewMapping(markerId);
-			filterToViewMappings.put(markerId, mapping);
-		}
-
-		mapping.add(definition);
-
-		return definition;
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -385,28 +256,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof ProblemFilter)
 				registeredFilters.remove(objects[i]);
-			if (objects[i] instanceof ViewMappingDefinition) {
-				ViewMappingDefinition definition = (ViewMappingDefinition) objects[i];
-				if (filterToViewMappings.containsKey(definition.markerId)) {
-					((ViewMapping) filterToViewMappings
-							.get(definition.markerId)).remove(definition);
-				}
-			}
 		}
 
-	}
-
-	/**
-	 * Return the views associated with markerId.
-	 * @param markerId
-	 * @return Collection
-	 */
-	public Collection getViews(String markerId) {
-		if(filterToViewMappings.containsKey(markerId)){
-			return ((ViewMapping) filterToViewMappings.get(markerId)).getViewIds();
-		}
-		return null;
-			
 	}
 
 }
