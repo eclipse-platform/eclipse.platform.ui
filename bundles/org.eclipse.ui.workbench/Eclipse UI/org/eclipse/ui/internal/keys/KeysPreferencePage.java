@@ -58,6 +58,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -710,31 +712,24 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData.widthHint = 300;
 		textTriggerSequence.setLayoutData(gridData);
 		textTriggerSequence.addModifyListener(new ModifyListener() {
-
 			public void modifyText(ModifyEvent e) {
 				update();
 			}
 		});
 		textTriggerSequence.addFocusListener(new FocusListener() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
-			 */
 			public void focusGained(FocusEvent e) {
-				PlatformUI.getWorkbench().getContextSupport()
-						.setKeyFilterEnabled(false);
+				bindingService.setKeyFilterEnabled(false);
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
-			 */
 			public void focusLost(FocusEvent e) {
-				PlatformUI.getWorkbench().getContextSupport()
-						.setKeyFilterEnabled(true);
+				bindingService.setKeyFilterEnabled(true);
+			}
+		});
+		textTriggerSequence.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (!bindingService.isKeyFilterEnabled()) {
+					bindingService.setKeyFilterEnabled(true);
+				}
 			}
 		});
 
