@@ -34,8 +34,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -61,10 +59,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class ResourceListSelectionDialog extends SelectionDialog {
 	
 	private static final String DIALOG_SETTINGS_SECTION = "ResourceListSelectionDialogSettings"; //$NON-NLS-1$
-    private static final String DIALOG_ORIGIN_X = "DIALOG_X_ORIGIN"; //$NON-NLS-1$
-    private static final String DIALOG_ORIGIN_Y = "DIALOG_Y_ORIGIN"; //$NON-NLS-1$
-    private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
-    private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
     
     Text pattern;
 
@@ -102,10 +96,6 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
     private boolean allowUserToToggleDerived;
     
-    private Point initialLocation;
-    
-    private Point initialSize;
-
     static class ResourceDescriptor implements Comparable {
         String label;
 
@@ -408,7 +398,6 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      * @see org.eclipse.jface.window.Window#close()
      */
     public boolean close() {
-    	saveDialogSettings(getShell());
         boolean result = super.close();
         labelProvider.dispose();
         return result;
@@ -431,8 +420,6 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      */
     protected Control createDialogArea(Composite parent) {
 
-		retrieveDialogSettings();
-		
         Composite dialogArea = (Composite) super.createDialogArea(parent);
         Label l = new Label(dialogArea, SWT.NONE);
         l.setText(IDEWorkbenchMessages.ResourceSelectionDialog_label);
@@ -960,105 +947,19 @@ public class ResourceListSelectionDialog extends SelectionDialog {
     	}
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
-     * 
-     * @since 3.2
-     */
-	protected Point getInitialLocation(Point initialSize) {
-		
-		Point result= super.getInitialLocation(initialSize);
-		if (initialLocation != null) {
-			result.x = initialLocation.x;
-			result.y = initialLocation.y;
-			Rectangle display = getShell().getDisplay().getClientArea();
-			int x2 = result.x + initialSize.x;
-			if (x2  > display.width) {
-				result.x -= x2 - display.width; 
-			}
-			int y2 = result.y + initialSize.y;
-			if (y2 > display.height) {
-				result.y -= y2 - display.height; 
-			}
-		}
-		return result;
-	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#getInitialSize()
+	/* (non-Javadoc)
+     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
      * 
      * @since 3.2
      */
-	protected Point getInitialSize() {
-		Point result= super.getInitialSize();
-		if (initialSize != null) {
-			result.x= Math.max(result.x, initialSize.x);
-			result.y= Math.max(result.y, initialSize.y);
-			Rectangle display= getShell().getDisplay().getClientArea();
-			result.x= Math.min(result.x, display.width);
-			result.y= Math.min(result.y, display.height);
-		}
-		return result;
-	}
-	
-    /**
-     * Gets the dialog settings section for this dialog, and creates it if
-     * it does not exist yet.
-     * 
-     * @param dialogSettingsSectionName the section name of this dialog's dialog settings.
-     * 
-     * @since 3.2
-     */
-    private IDialogSettings getDialogSettings(String dialogSettingsSectionName) {
+	protected IDialogSettings getDialogBoundsSettings() {
         IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
-        IDialogSettings section = settings.getSection(dialogSettingsSectionName);
+        IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
         if (section == null) {
-            section = settings.addNewSection(dialogSettingsSectionName);
+            section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
         } 
         return section;
-    }
-    
-    /**
-     * Saves the location and dimensions of the shell in the
-     * IDE dialog settings.
-     * 
-     * @param shell The shell whose geometry is to be stored
-     * 
-     * @since 3.2
-     */
-    private void saveDialogSettings(Shell shell) {
-        Point shellLocation = shell.getLocation();
-        Point shellSize = shell.getSize();
-        IDialogSettings settings = getDialogSettings(DIALOG_SETTINGS_SECTION);
-        settings.put(DIALOG_ORIGIN_X, shellLocation.x);
-        settings.put(DIALOG_ORIGIN_Y, shellLocation.y);
-        settings.put(DIALOG_WIDTH, shellSize.x);
-        settings.put(DIALOG_HEIGHT, shellSize.y);        
-    }
-    
-    /**
-     * Retrieves the initial location and dimensions of the shell in the
-     * IDE dialog settings.
-     * 
-     * @since 3.2
-     */
-    private void retrieveDialogSettings() {
-        IDialogSettings settings = getDialogSettings(DIALOG_SETTINGS_SECTION);
-		try {
-			int x = settings.getInt(DIALOG_ORIGIN_X); 
-			int y = settings.getInt(DIALOG_ORIGIN_Y); 
-			initialLocation = new Point(x, y);
-		} catch (NumberFormatException e) {
-			initialLocation = null;
-		}
-		try {
-			int width = settings.getInt(DIALOG_WIDTH); 
-			int height = settings.getInt(DIALOG_HEIGHT);
-			initialSize = new Point(width, height);
-
-		} catch (NumberFormatException e) {
-			initialSize = null;
-		}
-    }
-
+	}
 }
+    
