@@ -1257,7 +1257,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 *         viewport
 	 * @since 3.2
 	 */
-	IRegion computeClippingRegion(PaintEvent event) {
+	private IRegion computeClippingRegion(PaintEvent event) {
 		if (event == null) {
 			// trigger a repaint of the entire viewport
 			int vOffset= getInclusiveTopIndexStartOffset();
@@ -1291,7 +1291,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			widgetEndOffset= fTextWidget.getCharCount();
 		}
 		
-		IRegion clippingRegion= getModelRange(new Region(widgetOffset, widgetEndOffset - widgetOffset));
+		IRegion clippingRegion= getModelRange(widgetOffset, widgetEndOffset - widgetOffset);
 		
 		return clippingRegion;
 	}
@@ -1340,22 +1340,22 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * Returns the model region that corresponds to the given region in the
 	 * viewer's text widget.
 	 *
-	 * @param p the region in the viewer's widter
+	 * @param offset the offset in the viewer's widget 
+	 * @param length the length in the viewer's widget
 	 * @return the corresponding document region
 	 * @since 3.2
 	 */
-	private IRegion getModelRange(IRegion p) {
-		if (p == null || p.getOffset() == Integer.MAX_VALUE)
+	private IRegion getModelRange(int offset, int length) {
+		if (offset == Integer.MAX_VALUE)
 			return null;
 
 		if (fSourceViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
-			return extension.widgetRange2ModelRange(p);
+			return extension.widgetRange2ModelRange(new Region(offset, length));
 		}
 		
 		IRegion region= fSourceViewer.getVisibleRegion();
-		int offset= region.getOffset() + p.getOffset();
-		return new Region(offset, p.getLength());
+		return new Region(region.getOffset() + offset, length);
 	}
 	
 	/**
