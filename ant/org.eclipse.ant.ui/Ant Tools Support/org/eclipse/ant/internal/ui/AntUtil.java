@@ -482,6 +482,10 @@ public final class AntUtil {
 		}
 		// format is file:F:L: where F is file path, and L is line number
 		int index = path.lastIndexOf(':');
+		if (index == -1) {
+			//incorrect format
+			return null;
+		}
 		if (index == path.length() - 1) {
 			// remove trailing ':'
 			path = path.substring(0, index);
@@ -489,15 +493,16 @@ public final class AntUtil {
 		}
 		// split file and line number
 		String fileName = path.substring(0, index);
-		IFile file = getFileForLocation(fileName, buildFileParent);
-		if (file != null) {
-			try {
-				String lineNumber = path.substring(index + 1);
-				int line = Integer.parseInt(lineNumber);
+		try {
+			String lineNumber = path.substring(index + 1);
+			int line = Integer.parseInt(lineNumber);
+			IFile file = getFileForLocation(fileName, buildFileParent);
+			if (file != null) {
 				return new FileLink(file, null, -1, -1, line);
-			} catch (NumberFormatException e) {
 			}
+		} catch (NumberFormatException e) {
 		}
+		
 		return null;
 	}
 
