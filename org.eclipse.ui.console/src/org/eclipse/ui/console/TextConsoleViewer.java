@@ -26,6 +26,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -58,6 +59,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * <p>
  * Clients may subclass this class.
  * </p>
+ * 
  * @since 3.1
  */
 public class TextConsoleViewer extends SourceViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener {
@@ -75,41 +77,62 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     private int consoleWidth = -1;
 
     private TextConsole console;
-    
+
     private IPropertyChangeListener propertyChangeListener;
-    
+
     private IDocumentListener documentListener = new IDocumentListener() {
         public void documentAboutToBeChanged(DocumentEvent event) {
         }
+
         public void documentChanged(DocumentEvent event) {
             updateLinks(event.fOffset);
         }
     };
-    
-    WorkbenchJob revealJob = new WorkbenchJob("Reveal End of Document"){//$NON-NLS-1$
+
+    WorkbenchJob revealJob = new WorkbenchJob("Reveal End of Document") {//$NON-NLS-1$
         public IStatus runInUIThread(IProgressMonitor monitor) {
             StyledText textWidget = getTextWidget();
             if (textWidget != null) {
                 int lineCount = textWidget.getLineCount();
-                textWidget.setTopIndex(lineCount-1);
+                textWidget.setTopIndex(lineCount - 1);
             }
             return Status.OK_STATUS;
+        }
+    };
+    
+    private IPositionUpdater positionUpdater = new IPositionUpdater() {
+        public void update(DocumentEvent event) {
+            try {
+                Position[] positions = getDocument().getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+                for (int i = 0; i < positions.length; i++) {
+                    Position position = positions[i];
+                    if (position.offset == event.fOffset && position.length<=event.fLength) {
+                        position.delete();
+                    }
+                    if (position.isDeleted) {
+                        getDocument().removePosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, position);
+                    }
+                }
+            } catch (BadPositionCategoryException e) {
+            }
         }
     };
 
     /**
      * Constructs a new viewer in the given parent for the specified console.
      * 
-     * @param parent containing widget
-     * @param console text console
+     * @param parent
+     *            containing widget
+     * @param console
+     *            text console
      */
     public TextConsoleViewer(Composite parent, TextConsole console) {
         super(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
         this.console = console;
-        
+
         IDocument document = console.getDocument();
         setDocument(document);
-        
+
         StyledText styledText = getTextWidget();
         styledText.setDoubleClickEnabled(true);
         styledText.addLineStyleListener(this);
@@ -117,19 +140,21 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
         styledText.setEditable(true);
         setFont(console.getFont());
         styledText.addMouseTrackListener(this);
-        
+
         ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
         propertyChangeListener = new HyperlinkColorChangeListener();
         colorRegistry.addListener(propertyChangeListener);
-        
+
         revealJob.setSystem(true);
         document.addDocumentListener(documentListener);
+        document.addPositionUpdater(positionUpdater);
     }
 
     /**
      * Sets the tab width used by this viewer.
      * 
-     * @param tabWidth the tab width used by this viewer
+     * @param tabWidth
+     *            the tab width used by this viewer
      */
     public void setTabWidth(int tabWidth) {
         StyledText styledText = getTextWidget();
@@ -142,11 +167,12 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     /**
      * Sets the font used by this viewer.
      * 
-     * @param font the font used by this viewer
+     * @param font
+     *            the font used by this viewer
      */
     public void setFont(Font font) {
         StyledText styledText = getTextWidget();
-        Font oldFont = styledText.getFont(); 
+        Font oldFont = styledText.getFont();
         if (oldFont == font) {
             return;
         }
@@ -159,8 +185,8 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
      * Positions the cursor at the end of the document.
      */
     protected void revealEndOfDocument() {
-        revealJob.schedule(50);        
-    } 
+        revealJob.schedule(50);
+    }
 
     /*
      * (non-Javadoc)
@@ -173,7 +199,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
             ArrayList ranges = new ArrayList();
             int offset = event.lineOffset;
             int length = event.lineText.length();
-            
+
             StyleRange[] partitionerStyles = ((IConsoleDocumentPartitioner) document.getDocumentPartitioner()).getStyleRanges(event.lineOffset, event.lineText.length());
             if (partitionerStyles != null) {
                 for (int i = 0; i < partitionerStyles.length; i++) {
@@ -192,24 +218,24 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
                         Position position = overlap[i];
                         StyleRange linkRange = new StyleRange(position.offset, position.length, color, null);
                         linkRange.underline = true;
-                        override(ranges, linkRange);                    
+                        override(ranges, linkRange);
                     }
                 }
             } catch (BadPositionCategoryException e) {
             }
-            
+
             if (ranges.size() > 0) {
                 event.styles = (StyleRange[]) ranges.toArray(new StyleRange[ranges.size()]);
             }
         }
     }
-    
+
     private void override(List ranges, StyleRange newRange) {
         if (ranges.isEmpty()) {
             ranges.add(newRange);
             return;
         }
-        
+
         int start = newRange.start;
         int end = start + newRange.length;
         for (int i = 0; i < ranges.size(); i++) {
@@ -218,94 +244,97 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
             if (end <= existingRange.start || start >= rEnd) {
                 continue;
             }
-            
-            if (start < existingRange.start && end>existingRange.start) {
+
+            if (start < existingRange.start && end > existingRange.start) {
                 start = existingRange.start;
             }
-            
-            if (start >= existingRange.start && end <=rEnd) {
+
+            if (start >= existingRange.start && end <= rEnd) {
                 existingRange.length = start - existingRange.start;
                 ranges.add(++i, newRange);
                 if (end != rEnd) {
-                    ranges.add(++i, new StyleRange(end, rEnd-end-1, existingRange.foreground, existingRange.background));                    
+                    ranges.add(++i, new StyleRange(end, rEnd - end - 1, existingRange.foreground, existingRange.background));
                 }
                 return;
             } else if (start >= existingRange.start && start < rEnd) {
-                existingRange.length = start-existingRange.start;
+                existingRange.length = start - existingRange.start;
                 ranges.add(++i, newRange);
             } else if (end >= rEnd) {
                 ranges.remove(i);
             } else {
-                ranges.add(++i, new StyleRange(end+1, rEnd-end+1, existingRange.foreground, existingRange.background));
+                ranges.add(++i, new StyleRange(end + 1, rEnd - end + 1, existingRange.foreground, existingRange.background));
             }
         }
     }
-	/**
-	 * Binary search for the positions overlapping the given range
-	 *
-	 * @param offset the offset of the range
-	 * @param length the length of the range
-	 * @param positions the positions to search
-	 * @return the positions overlapping the given range, or <code>null</code>
-	 */
-	private Position[] findPosition(int offset, int length, Position[] positions) {
-		
-		if (positions.length == 0)
-			return null;
-			
-		int rangeEnd = offset + length;
-		int left= 0;
-		int right= positions.length - 1;
-		int mid= 0;
-		Position position= null;
-		
-		while (left < right) {
-			
-			mid= (left + right) / 2;
-				
-			position= positions[mid];
-			if (rangeEnd < position.getOffset()) {
-				if (left == mid)
-					right= left;
-				else
-					right= mid -1;
-			} else if (offset > (position.getOffset() + position.getLength() - 1)) {
-				if (right == mid)
-					left= right;
-				else
-					left= mid  +1;
-			} else {
-				left= right= mid;
-			}
-		}
-		
-		
-		List list = new ArrayList();
-		int index = left - 1;
-		if (index >= 0) {
-			position= positions[index];
-			while (index >= 0 && (position.getOffset() + position.getLength()) > offset) {
-				index--;
-				if (index > 0) {
-					position= positions[index];
-				}
-			}
-		}
-		index++;
-		position= positions[index];
-		while (index < positions.length && (position.getOffset() < rangeEnd)) {
-			list.add(position);
-			index++;
-			if (index < positions.length) {
-				position= positions[index];
-			}
-		}
-		
-		if (list.isEmpty()) {
-			return null;
-		}
-		return (Position[])list.toArray(new Position[list.size()]);
-	}    
+
+    /**
+     * Binary search for the positions overlapping the given range
+     * 
+     * @param offset
+     *            the offset of the range
+     * @param length
+     *            the length of the range
+     * @param positions
+     *            the positions to search
+     * @return the positions overlapping the given range, or <code>null</code>
+     */
+    private Position[] findPosition(int offset, int length, Position[] positions) {
+
+        if (positions.length == 0)
+            return null;
+
+        int rangeEnd = offset + length;
+        int left = 0;
+        int right = positions.length - 1;
+        int mid = 0;
+        Position position = null;
+
+        while (left < right) {
+
+            mid = (left + right) / 2;
+
+            position = positions[mid];
+            if (rangeEnd < position.getOffset()) {
+                if (left == mid)
+                    right = left;
+                else
+                    right = mid - 1;
+            } else if (offset > (position.getOffset() + position.getLength() - 1)) {
+                if (right == mid)
+                    left = right;
+                else
+                    left = mid + 1;
+            } else {
+                left = right = mid;
+            }
+        }
+
+        List list = new ArrayList();
+        int index = left - 1;
+        if (index >= 0) {
+            position = positions[index];
+            while (index >= 0 && (position.getOffset() + position.getLength()) > offset) {
+                index--;
+                if (index > 0) {
+                    position = positions[index];
+                }
+            }
+        }
+        index++;
+        position = positions[index];
+        while (index < positions.length && (position.getOffset() < rangeEnd)) {
+            list.add(position);
+            index++;
+            if (index < positions.length) {
+                position = positions[index];
+            }
+        }
+
+        if (list.isEmpty()) {
+            return null;
+        }
+        return (Position[]) list.toArray(new Position[list.size()]);
+    }
 
     /*
      * (non-Javadoc)
@@ -343,7 +372,8 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     /**
      * Notification a hyperlink has been entered.
      * 
-     * @param link the link that was entered
+     * @param link
+     *            the link that was entered
      */
     protected void linkEntered(IHyperlink link) {
         Control control = getTextWidget();
@@ -360,7 +390,8 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     /**
      * Notification a link was exited.
      * 
-     * @param link the link that was exited
+     * @param link
+     *            the link that was exited
      */
     protected void linkExited(IHyperlink link) {
         link.linkExited();
@@ -448,9 +479,11 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     }
 
     /**
-     * Returns the hyperlink at the specified offset, or <code>null</code> if none.
+     * Returns the hyperlink at the specified offset, or <code>null</code> if
+     * none.
      * 
-     * @param offset offset at which a hyperlink has been requested
+     * @param offset
+     *            offset at which a hyperlink has been requested
      * @return hyperlink at the specified offset, or <code>null</code> if none
      */
     public IHyperlink getHyperlink(int offset) {
@@ -505,10 +538,11 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     }
 
     /**
-     * Sets the console to have a fixed character width. Use -1 to indicate that a fixed
-     * width should not be used.
+     * Sets the console to have a fixed character width. Use -1 to indicate that
+     * a fixed width should not be used.
      * 
-     * @param width fixed characater width of the console, or -1 
+     * @param width
+     *            fixed characater width of the console, or -1
      */
     public void setConsoleWidth(int width) {
         if (consoleWidth != width) {
@@ -533,31 +567,32 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
         IDocument document = getDocument();
         if (document != null) {
             document.removeDocumentListener(documentListener);
+            document.removePositionUpdater(positionUpdater);
         }
 
         StyledText styledText = getTextWidget();
         styledText.removeLineStyleListener(this);
         styledText.removeLineBackgroundListener(this);
         styledText.removeMouseTrackListener(this);
-        
+
         handCursor = null;
         textCursor = null;
         hyperlink = null;
         console = null;
-        
+
         ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
         colorRegistry.removeListener(propertyChangeListener);
     }
-    
+
     class HyperlinkColorChangeListener implements IPropertyChangeListener {
-		public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty().equals(JFacePreferences.ACTIVE_HYPERLINK_COLOR) || event.getProperty().equals(JFacePreferences.HYPERLINK_COLOR)) {
-				getTextWidget().redraw();
-			}
-		}
-    	
+        public void propertyChange(PropertyChangeEvent event) {
+            if (event.getProperty().equals(JFacePreferences.ACTIVE_HYPERLINK_COLOR) || event.getProperty().equals(JFacePreferences.HYPERLINK_COLOR)) {
+                getTextWidget().redraw();
+            }
+        }
+
     }
-    
+
     /*
      * work around to memory leak in TextViewer$WidgetCommand
      */
@@ -580,7 +615,8 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
             int bottom = top + lines;
 
             // two lines at the top and the bottom should always be left
-            // if window is smaller than 5 lines, always center position is chosen
+            // if window is smaller than 5 lines, always center position is
+            // chosen
             int bufferZone = 2;
             if (startLine >= top + bufferZone && startLine <= bottom - bufferZone && endLine >= top + bufferZone && endLine <= bottom - bufferZone) {
 
