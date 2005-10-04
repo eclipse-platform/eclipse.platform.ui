@@ -46,7 +46,7 @@ public class HyperlinkManager implements Listener, KeyListener, MouseListener, M
 	/**
 	 * Detection strategy.
 	 */
-	private static final class DETECTION_STRATEGY {
+	public static final class DETECTION_STRATEGY {
 
 		String fName;
 
