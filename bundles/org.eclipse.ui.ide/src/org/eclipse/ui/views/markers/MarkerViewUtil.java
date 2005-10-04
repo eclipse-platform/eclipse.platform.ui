@@ -29,7 +29,9 @@ public class MarkerViewUtil {
 	 * that can be used to supply the String for the path rather than
 	 * using the path of the underlying resource.
 	 * @see IMarker#getAttribute(java.lang.String)
-	 * @since 3.1
+	 * @since 3.2
+	 * <strong>NOTE:</strong>This API is experimental and subject to
+	 * change in the 3.2 stream.
 	 */
 	public static final String PATH_ATTRIBUTE = "org.eclipse.ui.views.markers.path";//$NON-NLS-1$
 	
@@ -38,7 +40,9 @@ public class MarkerViewUtil {
 	 * that can be used to supply the String for the name rather than
 	 * using the name of the underlying resource.
 	 * @see IMarker#getAttribute(java.lang.String)
-	 * @since 3.1
+	 * @since 3.2
+	 * <strong>NOTE:</strong>This API is experimental and subject to
+	 * change in the 3.2 stream.
 	 */
 	public static final String NAME_ATTRIBUTE = "org.eclipse.ui.views.markers.name";//$NON-NLS-1$
 
@@ -71,6 +75,7 @@ public class MarkerViewUtil {
      *   <code>false</code> to only show the marker if the view is already showing 
      * @return <code>true</code> if the marker was successfully shown,
      *   <code>false</code> if not
+     *   
      */
     public static boolean showMarker(IWorkbenchPage page, IMarker marker,
             boolean showView) {
