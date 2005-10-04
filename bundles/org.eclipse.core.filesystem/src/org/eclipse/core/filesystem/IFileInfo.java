@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @see IFileStore#fetchInfo(int, IProgressMonitor)
  * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
- * @since 3.2
+ * @since 1.0
  */
 public interface IFileInfo extends Comparable {
 

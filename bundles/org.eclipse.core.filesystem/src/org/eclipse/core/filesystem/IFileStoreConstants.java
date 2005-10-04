@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Clients may implement this interface.
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  */
 public interface IFileStoreConstants {
 

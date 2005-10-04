@@ -18,7 +18,7 @@ import org.eclipse.core.filesystem.IFileStoreConstants;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * @since 3.2
+ * @since 1.0
  */
 public class FileInfo implements IFileInfo, IFileStoreConstants {
 	/**

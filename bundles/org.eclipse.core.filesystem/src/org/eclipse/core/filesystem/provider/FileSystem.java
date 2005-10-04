@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.PlatformObject;
  * <p>
  * Clients may subclass this class.
  * </p>
- * @since 3.2
+ * @since 1.0
  */
 public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	private String scheme;

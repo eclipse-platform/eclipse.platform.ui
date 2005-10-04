@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IPath;
  * </p>
  * 
  * @see FileSystemCore#getFileSystem(String)
- * @since 3.2
+ * @since 1.0
  */
 public interface IFileSystem extends IAdaptable {
 

@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.*;
  * this interface directly.
  * </p>
  * 
- * @since 3.2
+ * @since 1.0
  */
 public interface IFileStore extends IAdaptable {
 

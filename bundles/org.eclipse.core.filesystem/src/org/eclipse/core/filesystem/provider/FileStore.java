@@ -24,7 +24,7 @@ import org.eclipse.osgi.util.NLS;
  * <p>
  * Clients may subclass this class.
  * </p>
- * @since 3.2
+ * @since 1.0
  */
 public abstract class FileStore extends PlatformObject implements IFileStoreConstants, IFileStore {
 	/**

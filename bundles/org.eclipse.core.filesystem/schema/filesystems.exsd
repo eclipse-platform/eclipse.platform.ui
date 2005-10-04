@@ -77,7 +77,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         3.2
+         org.eclipse.core.filesystem 1.0
       </documentation>
    </annotation>
 
