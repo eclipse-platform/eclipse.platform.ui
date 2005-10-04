@@ -42,6 +42,8 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
 
         createShowUserDialogPref(composite);
         createStickyCyclePref(composite);
+        createHeapStatusPref(composite);
+        
         createOpenModeGroup(composite);
 
         applyDialogFont(composite);

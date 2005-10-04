@@ -254,6 +254,7 @@ public class HeapStatus extends Composite {
         menuMgr.add(new SetMarkAction());
         menuMgr.add(new ClearMarkAction());
         menuMgr.add(new ShowMaxAction());
+        menuMgr.add(new CloseHeapStatusAction());
 //        if (isKyrsoftViewAvailable()) {
 //        	menuMgr.add(new ShowKyrsoftViewAction());
 //        }
@@ -478,6 +479,20 @@ public class HeapStatus extends Composite {
         public void run() {
             prefStore.setValue(IHeapStatusConstants.PREF_SHOW_MAX, isChecked());
         }
+    }
+    
+    class CloseHeapStatusAction extends Action{
+    	
+    	CloseHeapStatusAction(){
+    		super(WorkbenchMessages.WorkbenchWindow_close );
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.jface.action.IAction#run()
+    	 */
+    	public void run(){
+    		dispose();
+    	}
     }
 
 //    /**

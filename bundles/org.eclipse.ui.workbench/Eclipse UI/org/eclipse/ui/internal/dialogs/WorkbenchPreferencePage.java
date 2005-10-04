@@ -27,12 +27,16 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Generic workbench main preference page.
@@ -57,6 +61,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
     private boolean openAfterDelay;
 
+	private Button showHeapStatusButton;
+
     /*
      * (non-Javadoc)
      * 
@@ -71,8 +77,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
         Composite composite = createComposite(parent);
 
-        createShowUserDialogPref(composite);
-        createStickyCyclePref(composite);
+        createButtons(composite);
 
         createSpace(composite);
         createOpenModeGroup(composite);
@@ -81,6 +86,16 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
         return composite;
     }
+
+    /**
+     * Create the buttons at the top of the preference page.
+     * @param composite
+     */
+	protected void createButtons(Composite composite) {
+		createShowUserDialogPref(composite);
+        createStickyCyclePref(composite);
+        createHeapStatusPref(composite);
+	}
 
     /**
      * Create the widget for the user dialog preference.
@@ -94,6 +109,20 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         showUserDialogButton.setSelection(WorkbenchPlugin.getDefault()
                 .getPreferenceStore().getBoolean(
                         IPreferenceConstants.RUN_IN_BACKGROUND));
+    }
+    
+    /**
+     * Create the widget for the heap status preference.
+     * 
+     * @param composite
+     */
+    protected void createHeapStatusPref(Composite composite) {
+        showHeapStatusButton = new Button(composite, SWT.CHECK);
+        showHeapStatusButton.setText(WorkbenchMessages.WorkbenchPreference_HeapStatusButton);
+        showHeapStatusButton.setToolTipText(WorkbenchMessages.WorkbenchPreference_HeapStatusButtonToolTip);
+        
+        showHeapStatusButton.setSelection(PrefUtil.getAPIPreferenceStore().getBoolean(
+                        IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR));
     }
 
     /**
@@ -306,6 +335,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
                 .getDefaultBoolean(IPreferenceConstants.STICKY_CYCLE));
         showUserDialogButton.setSelection(store.getDefaultBoolean(
                 IPreferenceConstants.RUN_IN_BACKGROUND));
+        showHeapStatusButton.setSelection(PrefUtil.getAPIPreferenceStore().getDefaultBoolean(
+                IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR));
 		
         super.performDefaults();
     }
@@ -325,7 +356,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY, openAfterDelay);
         store.setValue(IPreferenceConstants.RUN_IN_BACKGROUND,
                 showUserDialogButton.getSelection());
-
+        PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, showHeapStatusButton.getSelection());
+        updateHeapStatus(showHeapStatusButton.getSelection());
+        
         int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK
                 : OpenStrategy.DOUBLE_CLICK;
         if (openOnSingleClick) {
@@ -338,7 +371,22 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         }
         OpenStrategy.setOpenMethod(singleClickMethod);
 
-        WorkbenchPlugin.getDefault().savePluginPreferences();
+        PrefUtil.savePrefs();
         return true;
     }
+
+	/**
+	 * Show or hide the heap status based on selection.
+	 * @param selection
+	 */
+	private void updateHeapStatus(boolean selection) {
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			IWorkbenchWindow window = windows[i];
+			if(window instanceof WorkbenchWindow){
+				((WorkbenchWindow) window).showHeapStatus(selection);
+			}
+		}
+		
+	}
 }

@@ -3160,4 +3160,20 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			perspectiveSwitcher.addReorderListener(listener);
 	}
 
+	/**
+	 * @param selection
+	 */
+	public void showHeapStatus(boolean selection) {
+		if(selection){
+			createHeapStatus(getShell());
+			updateLayoutDataForContents();
+			getShell().layout();
+		}
+		else{
+			heapStatus.dispose();
+			heapStatus = null;
+		}
+		
+	}
+
 }
