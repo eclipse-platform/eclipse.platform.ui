@@ -23,6 +23,24 @@ import org.eclipse.ui.views.markers.internal.MarkerView;
  * Utility class for showing markers in the marker views.
  */
 public class MarkerViewUtil {
+	
+	/**
+	 * The PATH_ATTRIBUTE is the tag for the attribute on a marker 
+	 * that can be used to supply the String for the path rather than
+	 * using the path of the underlying resource.
+	 * @see IMarker#getAttribute(java.lang.String)
+	 * @since 3.1
+	 */
+	public static final String PATH_ATTRIBUTE = "org.eclipse.ui.views.markers.path";//$NON-NLS-1$
+	
+	/**
+	 * The NAME_ATTRIBUTE is the tag for the attribute on a marker 
+	 * that can be used to supply the String for the name rather than
+	 * using the name of the underlying resource.
+	 * @see IMarker#getAttribute(java.lang.String)
+	 * @since 3.1
+	 */
+	public static final String NAME_ATTRIBUTE = "org.eclipse.ui.views.markers.name";//$NON-NLS-1$
 
     /**
      * Returns the id of the view used to show markers of the

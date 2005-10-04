@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -22,64 +20,89 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.views.markers.MarkerViewUtil;
 
+/**
+ * The Util class is the class of general utilities used
+ * by the marker support.
+ *
+ */
 public final class Util {
 	
 	static String EMPTY_STRING = "";//$NON-NLS-1$
 	static String TWO_LINE_FEED = "\n\n";//$NON-NLS-1$
 	static String LINE_FEED_AND_TAB = "\n\t";//$NON-NLS-1$
 
-	public static String getString(ResourceBundle resourceBundle, String key)
-			throws IllegalArgumentException {
-		if (resourceBundle == null || key == null)
-			throw new IllegalArgumentException();
-
-		String value = key;
-
-		try {
-			value = resourceBundle.getString(key);
-		} catch (MissingResourceException eMissingResource) {
-			IDEWorkbenchPlugin.log(eMissingResource.getMessage(), StatusUtil
-					.newStatus(IStatus.ERROR, eMissingResource.getMessage(),
-							eMissingResource));
-		}
-
-		return value != null ? value.trim() : null;
-	}
-
+	/**
+	 * Get the propery called property from the marker.
+	 * If it is not found return the empty string.
+	 * @param property
+	 * @param marker
+	 * @return String
+	 */
 	public static String getProperty(String property, IMarker marker) {
 		if (marker == null)
-			return ""; //$NON-NLS-1$
+			return EMPTY_STRING;
 		try {
 			Object obj = marker.getAttribute(property);
 			if (obj != null)
 				return obj.toString();
-			return ""; //$NON-NLS-1$
+			return EMPTY_STRING;
 		} catch (CoreException e) {
-			return ""; //$NON-NLS-1$
+			log(e);
+			return EMPTY_STRING;
 		}
 	}
 
+	/** 
+	 *  Get the human readable creation time from the timestamp
+	 * @param timestamp
+	 * @return String
+	 */
 	public static String getCreationTime(long timestamp) {
 		return DateFormat.getDateTimeInstance(DateFormat.LONG,
 				DateFormat.MEDIUM).format(new Date(timestamp));
 	}
 
+	/**
+	 * Get the human readable creation time from the marker.
+	 * @param marker
+	 * @return String
+	 */
 	public static String getCreationTime(IMarker marker) {
 		try {
 			return getCreationTime(marker.getCreationTime());
 		} catch (CoreException e) {
-			return ""; //$NON-NLS-1$
+			log(e);
+			return EMPTY_STRING;
 		}
 	}
 
+	/**
+	 * Get the name of the container. If the marker has the
+	 * MarkerViewUtil#PATH_ATTRIBUTE set use that. Otherwise
+	 * use the path of the parent resource.
+	 * @param marker
+	 * @return String
+	 */
 	public static String getContainerName(IMarker marker) {
+		
+		try{
+			Object pathAttribute = marker.getAttribute(MarkerViewUtil.PATH_ATTRIBUTE);
+		
+			if(pathAttribute != null)
+				return pathAttribute.toString();
+		}
+		catch (CoreException exception){
+			//Log the exception and fall back.
+			log(exception);
+		}
+		
 		IPath path = marker.getResource().getFullPath();
 		int n = path.segmentCount() - 1; // n is the number of segments in
 											// container, not path
 		if (n <= 0)
-			return ""; //$NON-NLS-1$
+			return Util.EMPTY_STRING;
 		int len = 0;
 		for (int i = 0; i < n; ++i)
 			len += path.segment(i).length();
@@ -95,10 +118,41 @@ public final class Util {
 		return sb.toString();
 	}
 
+	/**
+	 * Log the exception.
+	 * @param exception
+	 */
+	private static void log(CoreException exception) {
+		IDEWorkbenchPlugin.getDefault().getLog().log(exception.getStatus());
+	}
+
+	/**
+	 * Get the name of the element. If the marker has the
+	 * MarkerViewUtil#NAME_ATTRIBUTE set use that. Otherwise
+	 * use the name of the resource.
+	 * @param marker
+	 * @return String
+	 */
 	public static String getResourceName(IMarker marker) {
+		
+		try{
+			Object nameAttribute = marker.getAttribute(MarkerViewUtil.NAME_ATTRIBUTE);
+		
+			if(nameAttribute != null)
+				return nameAttribute.toString();
+		}
+		catch (CoreException exception){
+			log(exception);
+		}
+		
 		return marker.getResource().getName();
 	}
 
+	/**
+	 * Return whether or not the marker is editable.
+	 * @param marker
+	 * @return boolean <code>true</code> if it is editable
+	 */
 	public static boolean isEditable(IMarker marker) {
 		if (marker == null) {
 			return false;

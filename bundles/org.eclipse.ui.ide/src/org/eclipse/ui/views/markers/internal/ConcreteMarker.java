@@ -74,7 +74,7 @@ public class ConcreteMarker {
         clearCache();
 
         description = Util.getProperty(IMarker.MESSAGE, marker);
-        resourceName = marker.getResource().getName();
+        resourceName = Util.getResourceName(marker);
         inFolder = Util.getContainerName(marker);
         line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
         try {

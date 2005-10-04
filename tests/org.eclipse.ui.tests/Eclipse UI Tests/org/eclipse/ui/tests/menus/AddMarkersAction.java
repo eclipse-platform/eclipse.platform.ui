@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.texteditor.MarkerUtilities;
+import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 /**
  * @since 3.1
@@ -46,8 +47,8 @@ public class AddMarkersAction implements IWorkbenchWindowActionDelegate {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void init(IWorkbenchWindow window) {
-        this.window = window;
+    public void init(IWorkbenchWindow workbenchWindow) {
+        this.window = workbenchWindow;
     }
 
     /* (non-Javadoc)
@@ -60,6 +61,8 @@ public class AddMarkersAction implements IWorkbenchWindowActionDelegate {
 	        for (int i = 0; i < 1000; i++) {
 	            attribs.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_ERROR));
 	            attribs.put(IMarker.MESSAGE, "this is a test " + i);
+	            attribs.put(MarkerViewUtil.NAME_ATTRIBUTE , "Test Name " + i);
+	            attribs.put(MarkerViewUtil.PATH_ATTRIBUTE , "Test Path " + i);
 	            MarkerUtilities.createMarker(root, attribs, IMarker.PROBLEM);
 	        }
         } catch (CoreException e) {

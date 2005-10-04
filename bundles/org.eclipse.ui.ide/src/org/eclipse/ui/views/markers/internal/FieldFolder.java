@@ -19,12 +19,10 @@ import org.eclipse.swt.graphics.Image;
  */
 public class FieldFolder implements IField {
 
-    private String description;
-
-    private Image image;
-
+    /**
+     * Create a new instance of the receiver.
+     */
     public FieldFolder() {
-        description = MarkerMessages.description_folder;
     }
 
     /*
@@ -32,7 +30,7 @@ public class FieldFolder implements IField {
      * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
      */
     public String getDescription() {
-        return description;
+        return MarkerMessages.description_folder;
     }
 
     /*
@@ -40,7 +38,7 @@ public class FieldFolder implements IField {
      * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
      */
     public Image getDescriptionImage() {
-        return image;
+        return null;
     }
 
     /*
@@ -48,7 +46,7 @@ public class FieldFolder implements IField {
      * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
      */
     public String getColumnHeaderText() {
-        return description;
+        return MarkerMessages.description_folder;
     }
 
     /*
@@ -56,7 +54,7 @@ public class FieldFolder implements IField {
      * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
      */
     public Image getColumnHeaderImage() {
-        return image;
+        return null;
     }
 
     /*
@@ -65,7 +63,7 @@ public class FieldFolder implements IField {
      */
     public String getValue(Object obj) {
         if (obj == null || !(obj instanceof ConcreteMarker)) {
-            return ""; //$NON-NLS-1$
+            return Util.EMPTY_STRING;
         }
         ConcreteMarker marker = (ConcreteMarker) obj;
         return marker.getFolder();
