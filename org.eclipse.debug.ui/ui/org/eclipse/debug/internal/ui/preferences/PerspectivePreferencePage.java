@@ -196,8 +196,11 @@ public class PerspectivePreferencePage extends PreferencePage implements
 					if (perspective.equals(DebugPreferencesMessages.PerspectivePreferencePage_4)) {
 						perspective = IDebugUIConstants.PERSPECTIVE_NONE;
 					}// end if
-					fPmanager.setLaunchPerspective(typekey, modekey, perspective);
 				}// end if
+				else {
+					perspective = IDebugUIConstants.PERSPECTIVE_NONE;
+				}//end else
+				fPmanager.setLaunchPerspective(typekey, modekey, perspective);
 			}// end for
 		}// end for
 		store.setValue(LAST_SELECTED_CONFIGTYPE, fCurrentType.getName());
@@ -217,6 +220,8 @@ public class PerspectivePreferencePage extends PreferencePage implements
 	 */
 	private void restoreState() {
 		String xml = getPreferenceStore().getString(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES);
+//	bug 111485	in case a new plugin offers a launch type between invocations, do this prior to setting them to saved states
+		setDefaultPerspectives();
 		if (xml != null && xml.length() > 0) {
 			try {
 				Element root = null;
@@ -237,13 +242,15 @@ public class PerspectivePreferencePage extends PreferencePage implements
 							String type = element.getAttribute(PerspectiveManager.ATTR_TYPE_ID);
 							ILaunchConfigurationType typeobj = fLManager.getLaunchConfigurationType(type);
 							String mode = element.getAttribute(PerspectiveManager.ATTR_MODE_ID);
-							String perspective = fPmanager.getLaunchPerspective(typeobj, mode);
-							HashMap map = (HashMap) fTypeInformationMapping.get(typeobj);
-							if(map == null) {
-								map = new HashMap();
+							if(typeobj != null) {
+								String perspective = fPmanager.getLaunchPerspective(typeobj, mode);
+								HashMap map = (HashMap) fTypeInformationMapping.get(typeobj);
+								if(map == null) {
+									map = new HashMap();
+								}//end if
+								map.put(mode, (perspective != null ? perspective : IDebugUIConstants.PERSPECTIVE_NONE));
+								fTypeInformationMapping.put(typeobj, map);
 							}//end if
-							map.put(mode, (perspective != null ? perspective : IDebugUIConstants.PERSPECTIVE_NONE));
-							fTypeInformationMapping.put(typeobj, map);
 						}// end if
 					}// end if
 				}// end for
@@ -252,9 +259,6 @@ public class PerspectivePreferencePage extends PreferencePage implements
 			catch (SAXException e) {DebugUIPlugin.log(e);}
 			catch (IOException e) {DebugUIPlugin.log(e);}
 		}// end if
-		else {
-			setDefaultPerspectives();
-		}// end else
 		perspec.load();
 		suspend.load();
 		TreeItem item = findLastSelected(getPreferenceStore().getString(LAST_SELECTED_CONFIGTYPE));
