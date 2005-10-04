@@ -32,7 +32,7 @@ public class AllTestsTeamSubscriber extends EclipseTest {
 		suite.addTest(CVSWorkspaceSubscriberTest.suite());
 		suite.addTest(CVSCompareSubscriberTest.suite());
 		suite.addTest(SyncSetTests.suite());
-		suite.addTest(CVSChangeSetTests.suite());
+		//suite.addTest(CVSChangeSetTests.suite());
 		CVSSyncSubscriberTest.setSyncSource(new SynchronizeViewTestAdapter());
 		return new CVSTestSetup(suite);
 	}
