@@ -81,7 +81,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 
 	private boolean hasReadQuadrant;
 
-	private String objectClass;
+	private String[] objectClasses;
 
 	LightweightDecoratorDefinition(String identifier,
 			IConfigurationElement element) {
@@ -145,10 +145,9 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 	}
 
 	/**
-	 * Return whether or not this represents a 
-	 * declarative decorator.
-	 * @return boolean <code>true</code> if this is 
-	 * declarative
+	 * Return whether or not this represents a declarative decorator.
+	 * 
+	 * @return boolean <code>true</code> if this is declarative
 	 */
 	private boolean isDeclarative() {
 		return definingElement.getAttribute(DecoratorDefinition.ATT_CLASS) == null;
@@ -224,6 +223,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 	}
 
 	/**
+	 * Decorate the element using the decoration to store the result.
 	 * @param element
 	 * @param decoration
 	 */
@@ -231,11 +231,23 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 		try {
 			// Internal decorator might be null so be prepared
 			ILightweightLabelDecorator currentDecorator = internalGetDecorator();
-			if (isAdaptable())
-				element = LegacyResourceSupport.getAdapter(element,
-						getObjectClass());
-			if (currentDecorator != null && element != null)
-				currentDecorator.decorate(element, decoration);
+			if(currentDecorator == null)
+				return;
+			
+			if (isAdaptable()) {
+				String[] classes = getObjectClasses();
+				for (int i = 0; i < classes.length; i++) {
+					String className = classes[i];
+					Object adapted = LegacyResourceSupport.getAdapter(element,
+							className);
+					if (adapted != null)
+						currentDecorator.decorate(adapted, decoration);					
+				}				
+			}
+			else{
+				if (currentDecorator != null && element != null)
+					currentDecorator.decorate(element, decoration);
+			}
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 		}
@@ -285,14 +297,15 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 	}
 
 	/**
-	 * Get the object class to which this decorator is registered.
+	 * Get the object classes to which this decorator is registered.
 	 * 
-	 * @return the object class to which this decorator is registered
+	 * @return String [] the object classes to which this decorator is
+	 *         registered
 	 */
-	public String getObjectClass() {
-		if (objectClass == null)// Make sure we have read the enablement
+	public String[] getObjectClasses() {
+		if (objectClasses == null)// Make sure we have read the enablement
 			getEnablement();
-		return objectClass;
+		return objectClasses;
 	}
 
 	/*
@@ -304,21 +317,23 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 		super.initializeEnablement();
 		ActionExpression expression = getEnablement();
 		if (expression != null)
-			objectClass = expression.extractObjectClass();
+			objectClasses = expression.extractObjectClasses();
 
 		// If the class is null set it to Object
-		if (objectClass == null) {
-			objectClass = Object.class.getName();
+		if (objectClasses == null) {
+			objectClasses = new String[] {Object.class.getName()};
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean newState) {
 		super.setEnabled(newState);
-		if(isDeclarative())
-			DeclarativeDecorator.setEnabledBy(getId(),getEnablement());
+		if (isDeclarative())
+			DeclarativeDecorator.setEnabledBy(getId(), getEnablement());
 	}
 
 }

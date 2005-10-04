@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -231,14 +232,15 @@ public class ActionExpression {
         }
 
         /**
-         * Extract the object class test from the expression. This allows clients
+         * Extract the object class tests from the expression. This allows clients
          * (e.g. the decorator manager) to handle object class testing in a
-         * more optimized way. This method removes the objectClass test from the 
-         * expression and returns the object class. The expression is not changed and a 
+         * more optimized way. This method extracts the objectClass test from the 
+         * expression and returns the object classes. The expression is not changed and a 
          * <code>null</code> is returned if no object class is found.
-         * @return the object class or <code>null</code> if none was found.
+         * @return String[] the object class  names or <code>null</code> 
+         * 		if none was found.
          */
-        public String extractObjectClass() {
+        public String[] extractObjectClasses() {
             return null;
         }
         
@@ -302,18 +304,30 @@ public class ActionExpression {
             }
             return false;
         }
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.internal.ActionExpression.AbstractExpression#extractObjectClass()
+        /* 
+         * (non-Javadoc)
+         * @see org.eclipse.ui.internal.ActionExpression.AbstractExpression#extractObjectClasses()
          */
-        public String extractObjectClass() {
+        public String[] extractObjectClasses() {
             Iterator iterator = list.iterator();
+            List classNames = null;
             while (iterator.hasNext()) {
                 AbstractExpression next = (AbstractExpression) iterator.next();
-                String objectClass = next.extractObjectClass();
-                if (objectClass != null)
-                    return objectClass;
+                String[] objectClasses = next.extractObjectClasses();
+                if (objectClasses != null){
+                	if(classNames == null)
+                		classNames = new ArrayList();
+                    for (int i = 0; i < objectClasses.length; i++) {
+						classNames.add(objectClasses[i]);						
+					}
+                }
             }
-            return null;
+            if(classNames == null)
+            	return null;
+            
+            String[] returnValue = new String[classNames.size()];
+            classNames.toArray(returnValue);
+            return returnValue;
         }
         
        
@@ -393,16 +407,12 @@ public class ActionExpression {
             return child.isEnabledForExpression(object, expressionType);
         }
 
-        /**
-         * Extract the object class test from the expression. This allows clients
-         * (e.g. the decorator manager) to handle object class testing in a
-         * more optimized way. This method removes the objectClass test from the 
-         * expression and returns the object class. The expression is not changed and a 
-         * <code>null</code> is returned if no object class is found.
-         * @return the object class or <code>null</code> if none was found.
+        /*
+         * (non-Javadoc)
+         * @see org.eclipse.ui.internal.ActionExpression.AbstractExpression#extractObjectClasses()
          */
-        public String extractObjectClass() {
-            return child.extractObjectClass();
+        public String[] extractObjectClasses() {
+            return child.extractObjectClasses();
         }
         
      
@@ -685,12 +695,13 @@ public class ActionExpression {
             return false;
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.internal.ActionExpression.AbstractExpression#extractObjectClass()
-         */
-        public String extractObjectClass() {
+       /*
+        * (non-Javadoc)
+        * @see org.eclipse.ui.internal.ActionExpression.AbstractExpression#extractObjectClasses()
+        */
+        public String[] extractObjectClasses() {
             extracted = true;
-            return className;
+            return new String[] {className};
         }
     }
 
@@ -776,7 +787,7 @@ public class ActionExpression {
      * <code>null</code> is returned if no object class is found.
      * @return the object class or <code>null</code> if none was found.
      */
-    public String extractObjectClass() {
-        return root.extractObjectClass();
+    public String[] extractObjectClasses() {
+        return root.extractObjectClasses();
     }
 }

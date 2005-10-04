@@ -98,14 +98,17 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
         return lightweightDefinitions;
     }
 
-    /*
+    /**
      * Register the decorators as object contributions so
      * that adaptable lookup can occur.
      */
     private void buildContributors() {
         for (int i = 0; i < lightweightDefinitions.length; i++) {
             LightweightDecoratorDefinition decorator = lightweightDefinitions[i];
-            registerContributor(decorator, getTargetType(decorator));
+            String[] types = getTargetTypes(decorator);
+            for (int j = 0; j < types.length; j++) {
+            	 registerContributor(decorator,types[j]);				
+			}           
         }
     }
     
@@ -124,19 +127,22 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
                     oldDefs.length);
             lightweightDefinitions[oldDefs.length] = decorator;
             // no reset - handled in the DecoratorManager
-            registerContributor(decorator, getTargetType(decorator));
+            String[] types = getTargetTypes(decorator);
+            for (int i = 0; i < types.length; i++) {
+            	registerContributor(decorator,types[i]);				
+			}            
             return true;
         }
         return false;
     }
     
     /**
-     * Get the name of the type that a decorator is registered for.
+     * Get the name of the types that a decorator is registered for.
      * @param decorator
-     * @return String
+     * @return String[]
      */
-    private String getTargetType(LightweightDecoratorDefinition decorator) {
-        return decorator.getObjectClass();
+    private String[] getTargetTypes(LightweightDecoratorDefinition decorator) {
+        return decorator.getObjectClasses();
     }
 
     /**
@@ -155,7 +161,11 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
 							lightweightDefinitions = new LightweightDecoratorDefinition[lightweightDefinitions.length - 1],
 							idx);
             // no reset - handled in the DecoratorManager
-            unregisterContributor(decorator, getTargetType(decorator));
+            String [] types = getTargetTypes(decorator);
+            for (int i = 0; i < types.length; i++) {
+            	unregisterContributor(decorator,types[i]);
+				
+			}            
             return true;
         }
         return false;    	
