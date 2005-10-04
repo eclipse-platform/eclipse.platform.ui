@@ -14,24 +14,6 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -46,9 +28,34 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -68,7 +75,7 @@ public class OleEditor extends EditorPart {
 
     /**
      * The resource listener updates the receiver when
-     * a change has occured.
+     * a change has occurred.
      */
     private IResourceChangeListener resourceListener = new IResourceChangeListener() {
 
@@ -220,18 +227,11 @@ public class OleEditor extends EditorPart {
 
         initializeWorkbenchMenus();
 
-        // Set the input file.
-        IFile file = ResourceUtil.getFile(getEditorInput());
-        if (file != null) {
-            setResource(file);
-            resource.getWorkspace().addResourceChangeListener(resourceListener);
-        }
-
         createClientSite();
     }
 
     /**
-     * Create the client site for the reciever
+     * Create the client site for the receiver
      */
 
     private void createClientSite() {
@@ -257,7 +257,7 @@ public class OleEditor extends EditorPart {
 
     private void deactivateClient(IWorkbenchPart part) {
         //Check the client active flag. Set it to false when we have deactivated
-        //to prevent multiple deactivations.
+        //to prevent multiple de-activations.
         if (part == this && clientActive) {
             if (clientSite != null)
                 clientSite.deactivateInPlaceClient();
@@ -282,9 +282,11 @@ public class OleEditor extends EditorPart {
      * @see IWorkbenchPart#dispose
      */
     public void dispose() {
-        if (resource != null)
-            resource.getWorkspace().removeResourceChangeListener(
+        if (resource != null) {
+            ResourcesPlugin.getWorkspace().removeResourceChangeListener(
                     resourceListener);
+            resource = null;
+        }
 
         //can dispose the title image because it was created in init
         if (oleTitleImage != null) {
@@ -433,26 +435,15 @@ public class OleEditor extends EditorPart {
      */
     public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
-        // Check input.
-        IFile file = ResourceUtil.getFile(input);
-        if (file == null)
-            throw new PartInitException(OleMessages.format(
-                    "OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
-
-        //Cannot create this with a file and no physical location
-        if (file.getLocation() == null
-                || !(new File(file.getLocation().toOSString()).exists()))
-            throw new PartInitException(
-                    OleMessages
-                            .format(
-                                    "OleEditor.noFileInput", new Object[] { file.getLocation() })); //$NON-NLS-1$
+    	
+    	validatePathEditorInput(input);
 
         // Save input.
         setSite(site);
-        setInput(input);
+        setInputWithNotify(input);
 
         // Update titles.
-        setTitle(input.getName());
+        setPartName(input.getName());
         setTitleToolTip(input.getToolTipText());
         ImageDescriptor desc = input.getImageDescriptor();
         if (desc != null) {
@@ -464,7 +455,31 @@ public class OleEditor extends EditorPart {
         site.getPage().addPartListener(partListener);
 
     }
+    
+    /**
+     * Validates the given input
+     * 
+     * @param input the editor input to validate
+     * @throws PartInitException if the editor input is not OK
+     */
+    private boolean validatePathEditorInput(IEditorInput input) throws PartInitException {
+        // Check input type.
+        if (!(input instanceof IPathEditorInput))
+            throw new PartInitException(OleMessages.format(
+                    "OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
+        
+        IPath path= ((IPathEditorInput)input).getPath();
 
+        //Cannot create this with a file and no physical location
+        if (path == null
+                || !(new File(path.toOSString()).exists()))
+            throw new PartInitException(
+                    OleMessages
+                            .format(
+                                    "OleEditor.noFileInput", new Object[] { path.toOSString() })); //$NON-NLS-1$
+        return true;
+    }
+    
     /**
      *	Initialize the workbench menus for proper merging
      */
@@ -472,7 +487,7 @@ public class OleEditor extends EditorPart {
         //If there was an OLE Error or nothing has been created yet
         if (clientFrame == null || clientFrame.isDisposed())
             return;
-        // Get the browser menubar.  If one does not exist then
+        // Get the browser menu bar.  If one does not exist then
         // create it.
         Shell shell = clientFrame.getShell();
         Menu menuBar = shell.getMenuBar();
@@ -636,13 +651,23 @@ public class OleEditor extends EditorPart {
         }
     }
 
-    /**
-     * Set the file resource that this object is displaying
-     * @param file
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.part.EditorPart#setInputWithNotify(org.eclipse.ui.IEditorInput)
      */
-    protected void setResource(IFile file) {
-        resource = file;
-        source = new File(file.getLocation().toOSString());
+    protected void setInputWithNotify(IEditorInput input) {
+    	if (input instanceof IPathEditorInput)
+    		source = new File(((IPathEditorInput)input).getPath().toOSString());
+    	
+        if (input instanceof IFileEditorInput) {
+        	if (resource == null)
+        		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener);
+        	resource = ((IFileEditorInput)input).getFile();
+        } else if (resource != null) {
+        	ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
+        	resource = null;
+        }
+        
+        super.setInputWithNotify(input);
     }
 
     /**
@@ -665,10 +690,9 @@ public class OleEditor extends EditorPart {
     private void sourceChanged(IFile newFile) {
 
         FileEditorInput newInput = new FileEditorInput(newFile);
-        setInput(newInput);
-        setResource(newFile);
+        setInputWithNotify(newInput);
         sourceChanged = true;
-        setTitle(newInput.getName());
+        setPartName(newInput.getName());
 
     }
 
