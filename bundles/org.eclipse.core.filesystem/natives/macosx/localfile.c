@@ -38,7 +38,7 @@ static jbyte* getUTF8ByteArray(JNIEnv *env, jcharArray target) {
 	CFStringRef sr= CFStringCreateWithCharacters(kCFAllocatorDefault, temp, n); 
 	CFIndex argStringSize= CFStringGetMaximumSizeForEncoding(n, kCFStringEncodingUTF8) + 1;
 	jbyte *result= (jbyte*) calloc(argStringSize, sizeof(jbyte));
-	CFStringGetCString(sr, result, argStringSize, kCFStringEncodingUTF8);
+	CFStringGetCString(sr, (char*) result, argStringSize, kCFStringEncodingUTF8);
 	CFRelease(sr);
 	
 	(*env)->ReleaseCharArrayElements(env, target, temp, 0);
@@ -143,7 +143,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	jint code;
 
 	/* get stat */
-	char *name= getUTF8ByteArray(env, target);
+	char *name= (char*) getUTF8ByteArray(env, target);
 	code = stat(name, &info);
 	free(name);
 
@@ -175,8 +175,8 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	struct stat info;
 	struct utimbuf ut;
 	int code;
-	char *sourceFile= getUTF8ByteArray(env, source);
-	char *destinationFile= getUTF8ByteArray(env, destination);
+	char *sourceFile= (char*) getUTF8ByteArray(env, source);
+	char *destinationFile= (char*) getUTF8ByteArray(env, destination);
 
 	code= stat(sourceFile, &info);
 	if (code != 0) goto fail;
@@ -235,7 +235,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	/* get the current permissions */
 	jbyte *name = getUTF8ByteArray(env, target);
     struct stat info;
-	int result= stat(name, &info);
+	int result= stat((char*)name, &info);
 	if (result != 0) goto fail;
 
 	/* create the mask for the relevant bits */
@@ -270,14 +270,14 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	/* call chmod & chflags syscalls in correct order */
 	if (readOnly) {
 		if (mask != oldmask)
-			result |= chmod(name, mask);
+			result |= chmod((char*)name, mask);
 		if (flags != info.st_flags)
-			result |= chflags(name, flags);
+			result |= chflags((char*)name, flags);
 	} else {
 		if (flags != info.st_flags)
-			result |= chflags(name, flags);
+			result |= chflags((char*)name, flags);
 		if (mask != oldmask)
-			result |= chmod(name, mask);
+			result |= chmod((char*)name, mask);
 	}	
 
 fail:	
