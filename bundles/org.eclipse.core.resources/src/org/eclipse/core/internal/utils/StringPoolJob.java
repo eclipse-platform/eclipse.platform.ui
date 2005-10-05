@@ -87,12 +87,13 @@ public class StringPoolJob extends Job {
 		final ISchedulingRule rule = MultiRule.combine(rules);
 		long start = -1;
 		int savings = 0;
+		final IJobManager jobManager = Platform.getJobManager();
 		try {
-			Platform.getJobManager().beginRule(rule, monitor);
+			jobManager.beginRule(rule, monitor);
 			start = System.currentTimeMillis();
 			savings = shareStrings(toRun, monitor);
 		} finally {
-			Platform.getJobManager().endRule(rule);
+			jobManager.endRule(rule);
 		}
 		if (start > 0) {
 			lastDuration = System.currentTimeMillis() - start;
