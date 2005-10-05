@@ -35,7 +35,7 @@ package org.eclipse.core.runtime;
  *  	public Class[] getAdapterList() {
  *  		return new Class[] { com.example.acme.Sticky.class };
  *  	}
- *  	public Object getAdapter(Object adaptableObject, adapterType) {
+ *  	public Object getAdapter(Object adaptableObject, Class adapterType) {
  *  		IResource res = (IResource) adaptableObject;
  *  		QualifiedName key = new QualifiedName(&quot;com.example.acme&quot;, &quot;sticky-note&quot;);
  *  		try {
