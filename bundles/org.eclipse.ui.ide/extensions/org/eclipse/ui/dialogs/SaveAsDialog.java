@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.osgi.util.NLS;
@@ -32,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 
@@ -46,7 +48,10 @@ import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
  * @see org.eclipse.ui.dialogs.ContainerGenerator
  */
 public class SaveAsDialog extends TitleAreaDialog {
-    private IFile originalFile = null;
+	
+	private static final String DIALOG_SETTINGS_SECTION = "SaveAsDialogSettings"; //$NON-NLS-1$
+	
+	private IFile originalFile = null;
 
     private String originalName = null;
 
@@ -276,4 +281,18 @@ public class SaveAsDialog extends TitleAreaDialog {
 
         return true;
     }
+    
+	/* (non-Javadoc)
+     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
+     * 
+     * @since 3.2
+     */
+	protected IDialogSettings getDialogBoundsSettings() {
+        IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
+        IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+        if (section == null) {
+            section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+        } 
+        return section;
+	}
 }
