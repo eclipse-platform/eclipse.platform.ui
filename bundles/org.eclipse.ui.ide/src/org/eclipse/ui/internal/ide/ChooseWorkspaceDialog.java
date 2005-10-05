@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
@@ -42,7 +43,10 @@ import org.eclipse.swt.widgets.Shell;
  * A dialog that prompts for a directory to use as a workspace.
  */
 public class ChooseWorkspaceDialog extends TitleAreaDialog {
-    private ChooseWorkspaceData launchData;
+	
+	private static final String DIALOG_SETTINGS_SECTION = "ChooseWorkspaceDialogSettings"; //$NON-NLS-1$
+	
+	private ChooseWorkspaceData launchData;
 
     private Combo text;
 
@@ -305,4 +309,21 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         text.setText(text.getItemCount() > 0 ? text.getItem(0) : launchData
                 .getInitialDefault());
     }
+    
+	/* (non-Javadoc)
+     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
+     * 
+     * @since 3.2
+     */
+	protected IDialogSettings getDialogBoundsSettings() {
+		// These settings will only be consulted if the dialog is created
+		// with centerOnMonitor = false.
+        IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
+        IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+        if (section == null) {
+            section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+        } 
+        return section;
+	}
+
 }
