@@ -16,9 +16,13 @@ import org.eclipse.core.internal.utils.*;
 
 public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolParticipant {
 
+	// well known Integer values
+	protected static final Integer INTEGER_ONE = new Integer(1);
+	protected static final Integer INTEGER_TWO = new Integer(2);
+	protected static final Integer INTEGER_ZERO = new Integer(0);
+	
 	//
 	protected static final long UNDEFINED_ID = -1;
-
 	/** The store of attributes for this marker. */
 	protected Map attributes = null;
 
@@ -32,30 +36,49 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	protected String type = null;
 
 	/**
-	 * Returns whether the given object is a valid attribute value.
+	 * Returns whether the given object is a valid attribute value. Returns
+	 * either the attribute or an equal canonical substitute.
 	 */
-	protected static void checkValidAttribute(Object value) {
-		boolean isString = value instanceof String;
-		Assert.isTrue(value == null || isString|| value instanceof Integer || value instanceof Boolean);
-		
-		if (!isString)
-			return;
-		//we cannot write attributes whose UTF encoding exceeds 65535 bytes.
-		String valueString = (String)value;
-		//optimized test based on maximum 3 bytes per character
-		if (valueString.length() < 21000)
-			return;
-		byte[] bytes;
-		try {
-			bytes = valueString.getBytes(("UTF-8"));//$NON-NLS-1$
-		} catch (UnsupportedEncodingException uee) {
-			//cannot validate further
-			return;
+	protected static Object checkValidAttribute(Object value) {
+		if (value == null)
+			return null;
+		if (value instanceof String) {
+			//we cannot write attributes whose UTF encoding exceeds 65535 bytes.
+			String valueString = (String) value;
+			//optimized test based on maximum 3 bytes per character
+			if (valueString.length() < 21000)
+				return value;
+			byte[] bytes;
+			try {
+				bytes = valueString.getBytes(("UTF-8"));//$NON-NLS-1$
+			} catch (UnsupportedEncodingException uee) {
+				//cannot validate further
+				return value;
+			}
+			if (bytes.length > 65535) {
+				String msg = "Marker property value is too long: " + valueString.substring(0, 10000); //$NON-NLS-1$
+				Assert.isTrue(false, msg);
+			}
+			return value;
 		}
-		if (bytes.length > 65535) { 
-			String msg = "Marker property value is too long: " + valueString.substring(0, 10000); //$NON-NLS-1$
-			Assert.isTrue(false, msg);
+		if (value instanceof Boolean) {
+			//return canonical boolean
+			return ((Boolean) value).booleanValue() ? Boolean.TRUE : Boolean.FALSE;
 		}
+		if (value instanceof Integer) {
+			//replace common integers with canonical values
+			switch (((Integer) value).intValue()) {
+				case 0 :
+					return INTEGER_ZERO;
+				case 1 :
+					return INTEGER_ONE;
+				case 2 :
+					return INTEGER_TWO;
+			}
+			return value;
+		}
+		//if we got here, it's an invalid attribute value type
+		throw new IllegalArgumentException();
 	}
 
 	public MarkerInfo() {
@@ -117,7 +140,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	}
 
 	public void setAttribute(String attributeName, Object value) {
-		checkValidAttribute(value);
+		value = checkValidAttribute(value);
 		if (attributes == null) {
 			if (value == null)
 				return;

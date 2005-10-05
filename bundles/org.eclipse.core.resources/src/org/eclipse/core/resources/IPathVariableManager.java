@@ -11,6 +11,7 @@
 
 package org.eclipse.core.resources;
 
+import java.net.URI;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -107,6 +108,25 @@ public interface IPathVariableManager {
 	 * @see IPathVariableChangeListener
 	 */
 	public void removeChangeListener(IPathVariableChangeListener listener);
+
+	/**
+	 * Resolves a relative <code>URI</code> object potentially containing a
+	 * variable reference as its first segment, replacing the variable reference
+	 * (if any) with the variable's value (which is a concrete absolute URI).
+	 * If the given URI is absolute or has a non- <code>null</code> device then
+	 * no variable substitution is done and that URI is returned as is.  If the
+	 * given URI is relative and has a <code>null</code> device, but the first
+	 * segment does not correspond to a defined variable, then the URI is
+	 * returned as is.
+	 * <p>
+	 * If the given URI is <code>null</code> then <code>null</code> will be
+	 * returned.  In all other cases the result will be non-<code>null</code>.
+	 * </p>
+	 * 
+	 * @param uri  the URI to be resolved
+	 * @return the resolved URI or <code>null</code>
+	 */
+	public URI resolveURI(URI uri);
 
 	/**
 	 * Resolves a relative <code>IPath</code> object potentially containing a

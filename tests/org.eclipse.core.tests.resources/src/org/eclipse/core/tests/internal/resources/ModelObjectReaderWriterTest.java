@@ -64,7 +64,6 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		ProjectDescriptionReader reader = new ProjectDescriptionReader();
 		IPath root = getWorkspace().getRoot().getLocation();
 		IPath location = root.append("ModelObjectWriterTest2.pbs");
-		String defaultCharset = "ISO-1234-5";
 		/* test write */
 		ProjectDescription description = new ProjectDescription();
 		description.setLocation(location);
@@ -92,7 +91,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		InputSource in = new InputSource(input);
 		ProjectDescription description2 = reader.read(in);
 		assertTrue("1.1", description.getName().equals(description2.getName()));
-		assertTrue("1.2", location.equals(description.getLocation()));
+		assertEquals("1.2", location, description.getLocation());
 
 		ICommand[] commands2 = description2.getBuildSpec();
 		assertEquals("2.00", 2, commands2.length);

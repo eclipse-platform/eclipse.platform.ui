@@ -26,7 +26,6 @@ public class PageStore implements Observer {
 	private int numberOfFileReads;
 	private int numberOfFileWrites;
 	private int numberOfReads;
-	private int numberOfWrites;
 	private int numberOfCacheHits;
 	private Map modifiedPages;
 	private Map acquiredPages;
@@ -136,7 +135,6 @@ public class PageStore implements Observer {
 		numberOfFileReads = 0;
 		numberOfFileWrites = 0;
 		numberOfReads = 0;
-		numberOfWrites = 0;
 		numberOfCacheHits = 0;
 		/* apply any outstanding transaction by reading the log file and applying it */
 		modifiedPages = LogReader.getModifiedPages(this);

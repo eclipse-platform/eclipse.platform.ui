@@ -13,6 +13,8 @@ package org.eclipse.core.internal.localstore;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
+import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.indexing.*;
 import org.eclipse.core.internal.properties.IndexedStoreWrapper;
 import org.eclipse.core.internal.resources.*;
@@ -32,7 +34,7 @@ public class HistoryStore implements IHistoryStore {
 
 	public HistoryStore(Workspace workspace, IPath location, int limit) {
 		this.workspace = workspace;
-		this.blobStore = new BlobStore(location, limit);
+		this.blobStore = new BlobStore(FileSystemCore.getLocalFileSystem().getStore(location), limit);
 		this.store = new IndexedStoreWrapper(location.append(INDEX_FILE));
 	}
 
@@ -41,7 +43,7 @@ public class HistoryStore implements IHistoryStore {
 	 *
 	 * @param key key prefix on which to perform search.  This is assumed to be
 	 *      a path only unless the flag includeLastModTime is true.
-	 * @param visitOnPartialMatch indicates whether visitor's definined behavior is to be invoked
+	 * @param visitOnPartialMatch indicates whether visitor's defined behavior is to be invoked
 	 *		on partial or full key matches.  Partial key matches are not supported on keys which
 	 *      contain a last modified time.
 	 * @param includeLastModTime indicates if the key includes a last modified
@@ -73,7 +75,7 @@ public class HistoryStore implements IHistoryStore {
 
 				// if the last character of the key is a path
 				// separator or if the next character in the match
-				// is a path separater then visit since it is a child
+				// is a path separator then visit since it is a child
 				// based on path segment matching.
 				byte b = storedKey[key.length];
 				if (key[key.length - 1] == 47 || b == 47) {
@@ -122,7 +124,7 @@ public class HistoryStore implements IHistoryStore {
 				// end of the byte, check to see if there are any empty bits
 				// in the middle.  If so, reorganize the counters so we maintain
 				// the ordering of the states but use up the least number
-				// of bits (i.e., de-fragment the bitset).
+				// of bits (i.e., de-fragment the bit set).
 				if (nextBit > Byte.MAX_VALUE) {
 					if (bits.cardinality() < Byte.MAX_VALUE) {
 						// We know we have some clear bits.
@@ -197,11 +199,11 @@ public class HistoryStore implements IHistoryStore {
 	}
 
 	/**
-	 * @see IHistoryStore#addState(IPath, File, long, boolean)
+	 * @see IHistoryStore#addState(IPath, IFileStore, long, boolean)
 	 */
-	public IFileState addState(IPath key, java.io.File localFile, long lastModified, boolean moveContents) {
+	public IFileState addState(IPath key, IFileStore localFile, long lastModified, boolean moveContents) {
 		if (Policy.DEBUG_HISTORY)
-			System.out.println("History: Adding state for key: " + key + ", file: " + localFile + ", timestamp: " + lastModified + ", size: " + localFile.length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			System.out.println("History: Adding state for key: " + key + ", file: " + localFile + ", timestamp: " + lastModified + ", size: " + localFile.fetchInfo().getLength()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (!isValid(localFile))
 			return null;
 		UniversalUniqueIdentifier uuid = null;
@@ -281,7 +283,7 @@ public class HistoryStore implements IHistoryStore {
 	}
 
 	/**
-	 * @see IHistoryStore#copyHistory(IResource, IResource)
+	 * @see IHistoryStore#copyHistory(IResource, IResource, boolean)
 	 * @since  2.1
 	 */
 	public void copyHistory(final IResource sourceResource, final IResource destinationResource, boolean moving) {
@@ -388,7 +390,7 @@ public class HistoryStore implements IHistoryStore {
 	 * @see IHistoryStore#exists(IFileState)
 	 */
 	public boolean exists(IFileState target) {
-		return blobStore.fileFor(((FileState) target).getUUID()).exists();
+		return blobStore.fileFor(((FileState) target).getUUID()).fetchInfo().exists();
 	}
 
 	/**
@@ -433,12 +435,13 @@ public class HistoryStore implements IHistoryStore {
 	 * @return <code>true</code> if this file should be added to the history
 	 * 	store and <code>false</code> otherwise
 	 */
-	private boolean isValid(java.io.File localFile) {
+	private boolean isValid(IFileStore localFile) {
 		WorkspaceDescription description = workspace.internalGetDescription();
-		boolean result = localFile.length() <= description.getMaxFileStateSize();
+		long length = localFile.fetchInfo().getLength();
+		boolean result = length <= description.getMaxFileStateSize();
 		if (Policy.DEBUG_HISTORY && !result)
-			System.out.println("History: Ignoring file (too large). File: " + localFile.getAbsolutePath() + //$NON-NLS-1$
-					", size: " + localFile.length() + //$NON-NLS-1$
+			System.out.println("History: Ignoring file (too large). File: " + localFile.toString() + //$NON-NLS-1$
+					", size: " + length + //$NON-NLS-1$
 					", max: " + description.getMaxFileStateSize()); //$NON-NLS-1$
 		return result;
 	}
@@ -610,6 +613,8 @@ public class HistoryStore implements IHistoryStore {
 	 * @see IHistoryStore#getFileFor(IFileState)
 	 */
 	public File getFileFor(IFileState state) {
-		return state instanceof FileState ? blobStore.fileFor(((FileState) state).getUUID()) : null;
+		if (!(state instanceof FileState))
+			return null;
+		return new java.io.File(blobStore.fileFor(((FileState) state).getUUID()).toString());
 	}
 }

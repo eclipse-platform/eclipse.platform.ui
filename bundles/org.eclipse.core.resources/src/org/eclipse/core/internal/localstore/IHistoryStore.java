@@ -13,6 +13,7 @@ package org.eclipse.core.internal.localstore;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Set;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.IManager;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IResource;
@@ -47,10 +48,10 @@ public interface IHistoryStore extends IManager {
 	 * TODO: should this method take a progress monitor?
 	 * 
 	 * TODO: look at #getFileFor(). Is there a case where we wouldn't want to
-	 * copy over the file atttributes to the local history? If we did that here then
+	 * copy over the file attributes to the local history? If we did that here then
 	 * we wouldn't have to have that other API.
 	 */
-	public IFileState addState(IPath key, File localFile, long lastModified, boolean moveContents);
+	public IFileState addState(IPath key, IFileStore localFile, long lastModified, boolean moveContents);
 
 	/**
 	 * Returns the paths of all files with entries in this history store at or below

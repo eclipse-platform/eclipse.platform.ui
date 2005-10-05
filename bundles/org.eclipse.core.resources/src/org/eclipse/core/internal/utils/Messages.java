@@ -64,25 +64,17 @@ public class Messages extends NLS {
 	// localstore
 	public static String localstore_copying;
 	public static String localstore_copyProblem;
-	public static String localstore_couldNotCreateFolder;
 	public static String localstore_couldnotDelete;
-	public static String localstore_couldnotDeleteReadOnly;
-	public static String localstore_couldNotLoadLibrary;
 	public static String localstore_couldNotMove;
 	public static String localstore_couldNotRead;
 	public static String localstore_couldNotWrite;
 	public static String localstore_couldNotWriteReadOnly;
 	public static String localstore_deleteProblem;
-	public static String localstore_deleteProblemDuringMove;
 	public static String localstore_deleting;
-	public static String localstore_failedMove;
 	public static String localstore_failedReadDuringWrite;
 	public static String localstore_fileExists;
 	public static String localstore_fileNotFound;
 	public static String localstore_locationUndefined;
-	public static String localstore_moving;
-	public static String localstore_notAFile;
-	public static String localstore_readOnlyParent;
 	public static String localstore_refreshing;
 	public static String localstore_refreshingRoot;
 	public static String localstore_resourceExists;
@@ -147,7 +139,6 @@ public class Messages extends NLS {
 	public static String resources_copyNotMet;
 	public static String resources_copyProblem;
 	public static String resources_couldnotDelete;
-	public static String resources_couldnotReadUserSettings;
 	public static String resources_create;
 	public static String resources_creating;
 	public static String resources_deleteMeta;
@@ -181,7 +172,6 @@ public class Messages extends NLS {
 	public static String resources_flushingContentDescriptionCache;
 	public static String resources_folderOverFile;
 	public static String resources_format;
-	public static String resources_getResourceAttributesFailed;
 	public static String resources_initHook;
 	public static String resources_initTeamHook;
 	public static String resources_initValidator;
@@ -253,7 +243,6 @@ public class Messages extends NLS {
 	public static String resources_savingEncoding;
 	public static String resources_setDesc;
 	public static String resources_setLocal;
-	public static String resources_setResourceAttributesFailed;
 	public static String resources_settingCharset;
 	public static String resources_settingContents;
 	public static String resources_settingDefaultCharsetContainer;
@@ -281,7 +270,6 @@ public class Messages extends NLS {
 	// utils
 	public static String utils_clone;
 	public static String utils_failed;
-	public static String utils_noElements;
 	public static String utils_null;
 	public static String utils_stringJobName;
 	public static String utils_wrongLength;

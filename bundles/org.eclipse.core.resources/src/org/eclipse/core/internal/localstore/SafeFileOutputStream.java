@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.localstore;
 
 import java.io.*;
+import org.eclipse.core.internal.utils.FileUtil;
 
 /**
  * This class should be used when there's a file already in the
@@ -113,16 +114,8 @@ public class SafeFileOutputStream extends OutputStream {
 				destination.write(buffer, 0, bytesRead);
 			}
 		} finally {
-			try {
-				source.close();
-			} catch (IOException e) {
-				// ignore
-			}
-			try {
-				destination.close();
-			} catch (IOException e) {
-				// ignore
-			}
+			FileUtil.safeClose(source);
+			FileUtil.safeClose(destination);
 		}
 	}
 

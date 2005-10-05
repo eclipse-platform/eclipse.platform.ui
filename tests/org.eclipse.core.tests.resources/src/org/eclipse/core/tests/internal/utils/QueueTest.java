@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.utils;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 import junit.framework.*;
 import org.eclipse.core.internal.utils.Queue;
 
@@ -34,9 +34,9 @@ public class QueueTest extends TestCase {
 			queue.add(String.valueOf(i));
 
 		/* assert elements are correct */
-		Enumeration elements = queue.elements();
+		Iterator elements = queue.iterator();
 		for (int i = 0; i < 10; i++)
-			assertTrue("1.0", elements.nextElement().equals(String.valueOf(i)));
+			assertTrue("1.0", elements.next().equals(String.valueOf(i)));
 
 		/* add and remove elements */
 		queue = new Queue(5, false);
@@ -48,11 +48,11 @@ public class QueueTest extends TestCase {
 			queue.add(String.valueOf(i));
 
 		/* assert elements are correct */
-		elements = queue.elements();
+		elements = queue.iterator();
 		for (int i = 4; i < 5; i++)
-			assertTrue("2.0", elements.nextElement().equals(String.valueOf(i)));
+			assertTrue("2.0", elements.next().equals(String.valueOf(i)));
 		for (int i = 0; i < 10; i++)
-			assertTrue("2.1", elements.nextElement().equals(String.valueOf(i)));
+			assertTrue("2.1", elements.next().equals(String.valueOf(i)));
 	}
 
 	public void testGrow() {

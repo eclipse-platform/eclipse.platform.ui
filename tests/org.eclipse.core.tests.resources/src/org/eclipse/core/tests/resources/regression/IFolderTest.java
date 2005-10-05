@@ -12,7 +12,6 @@ package org.eclipse.core.tests.resources.regression;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -47,7 +46,7 @@ public class IFolderTest extends ResourceTest {
 
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!CoreFileSystemLibrary.usingNatives())
+		if (!usingNatives())
 			return;
 
 		// Only run this test on Linux for now since Windows lets you create

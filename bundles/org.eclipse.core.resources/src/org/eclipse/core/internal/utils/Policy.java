@@ -13,50 +13,51 @@ package org.eclipse.core.internal.utils;
 import java.util.Date;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.Bundle;
 
 public class Policy {
-	public static final long MAX_BUILD_DELAY = 1000;
-	public static final long MIN_BUILD_DELAY = 100;
-
 	public static final boolean buildOnCancel = false;
-	public static int opWork = 99;
-	public static int endOpWork = 1;
-	public static final int totalWork = 100;
-
 	//general debug flag for the plugin
 	public static boolean DEBUG = false;
+
+	public static boolean DEBUG_AUTO_REFRESH = false;
+	public static boolean DEBUG_BUILD_DELTA = false;
 	//debug constants
 	public static boolean DEBUG_BUILD_FAILURE = false;
-	public static boolean DEBUG_NEEDS_BUILD = false;
 	public static boolean DEBUG_BUILD_INVOKING = false;
-	public static boolean DEBUG_BUILD_DELTA = false;
-	public static boolean DEBUG_BUILD_STACK = false;
-	public static boolean DEBUG_NATURES = false;
-	public static boolean DEBUG_HISTORY = false;
-	public static boolean DEBUG_PREFERENCES = false;
-	public static boolean DEBUG_STRINGS = false;
 
+	public static boolean DEBUG_BUILD_STACK = false;
+	public static boolean DEBUG_CONTENT_TYPE = false;
+	public static boolean DEBUG_CONTENT_TYPE_CACHE = false;
+	public static boolean DEBUG_HISTORY = false;
+	public static boolean DEBUG_NATURES = false;
+	public static boolean DEBUG_NEEDS_BUILD = false;
+	public static boolean DEBUG_PREFERENCES = false;
 	// Get timing information for restoring data
 	public static boolean DEBUG_RESTORE = false;
 	public static boolean DEBUG_RESTORE_MARKERS = false;
-	public static boolean DEBUG_RESTORE_SYNCINFO = false;
-	public static boolean DEBUG_RESTORE_TREE = false;
-	public static boolean DEBUG_RESTORE_METAINFO = false;
-	public static boolean DEBUG_RESTORE_SNAPSHOTS = false;
 	public static boolean DEBUG_RESTORE_MASTERTABLE = false;
 
+	public static boolean DEBUG_RESTORE_METAINFO = false;
+	public static boolean DEBUG_RESTORE_SNAPSHOTS = false;
+	public static boolean DEBUG_RESTORE_SYNCINFO = false;
+	public static boolean DEBUG_RESTORE_TREE = false;
 	// Get timing information for saving and snapshoting data
 	public static boolean DEBUG_SAVE = false;
 	public static boolean DEBUG_SAVE_MARKERS = false;
-	public static boolean DEBUG_SAVE_SYNCINFO = false;
-	public static boolean DEBUG_SAVE_TREE = false;
-	public static boolean DEBUG_SAVE_METAINFO = false;
 	public static boolean DEBUG_SAVE_MASTERTABLE = false;
 
-	public static boolean DEBUG_AUTO_REFRESH = false;
-	public static boolean DEBUG_CONTENT_TYPE = false;
-	public static boolean DEBUG_CONTENT_TYPE_CACHE = false;
-	
+	public static boolean DEBUG_SAVE_METAINFO = false;
+	public static boolean DEBUG_SAVE_SYNCINFO = false;
+	public static boolean DEBUG_SAVE_TREE = false;
+	public static boolean DEBUG_STRINGS = false;
+	public static int endOpWork = 1;
+	public static final long MAX_BUILD_DELAY = 1000;
+
+	public static final long MIN_BUILD_DELAY = 100;
+	public static int opWork = 99;
+	public static final int totalWork = 100;
+
 	static {
 		//init debug options
 		if (ResourcesPlugin.getPlugin().isDebugging()) {
@@ -88,7 +89,7 @@ public class Policy {
 			DEBUG_SAVE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save")); //$NON-NLS-1$ 
 
 			DEBUG_AUTO_REFRESH = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/refresh")); //$NON-NLS-1$
-			
+
 			DEBUG_CONTENT_TYPE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/contenttype")); //$NON-NLS-1$
 			DEBUG_CONTENT_TYPE_CACHE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/contenttype/cache")); //$NON-NLS-1$ 
 		}
@@ -97,6 +98,33 @@ public class Policy {
 	public static void checkCanceled(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			throw new OperationCanceledException();
+	}
+
+	/**
+	 * Print a debug message to the console. 
+	 * Pre-pend the message with the current date and the name of the current thread.
+	 */
+	public static void debug(String message) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(new Date(System.currentTimeMillis()));
+		buffer.append(" - ["); //$NON-NLS-1$
+		buffer.append(Thread.currentThread().getName());
+		buffer.append("] "); //$NON-NLS-1$
+		buffer.append(message);
+		System.out.println(buffer.toString());
+	}
+
+	public static void log(int severity, String message) {
+		log(severity, message, null);
+	}
+
+	public static void log(int severity, String message, Throwable t) {
+		final Bundle bundle = Platform.getBundle(ResourcesPlugin.PI_RESOURCES);
+		if (bundle == null)
+			return;
+		if (message == null)
+			message = ""; //$NON-NLS-1$
+		Platform.getLog(bundle).log(new Status(severity, ResourcesPlugin.PI_RESOURCES, 1, message, t));
 	}
 
 	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
@@ -119,17 +147,4 @@ public class Policy {
 		return new SubProgressMonitor(monitor, ticks, style);
 	}
 
-	/**
-	 * Print a debug message to the console. 
-	 * Pre-pend the message with the current date and the name of the current thread.
-	 */
-	public static void debug(String message) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(new Date(System.currentTimeMillis()));
-		buffer.append(" - ["); //$NON-NLS-1$
-		buffer.append(Thread.currentThread().getName());
-		buffer.append("] "); //$NON-NLS-1$
-		buffer.append(message);
-		System.out.println(buffer.toString());
-	}
 }

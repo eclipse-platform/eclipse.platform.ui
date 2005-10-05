@@ -14,13 +14,15 @@ import java.io.File;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.tests.harness.CancelingProgressMonitor;
+import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
-public class IResourceTest extends ResourceTest {
+public class IResourceTest extends ResourceTest implements IFileStoreConstants {
 	protected static final Boolean[] FALSE_AND_TRUE = new Boolean[] {Boolean.FALSE, Boolean.TRUE};
 	protected static IPath[] interestingPaths;
 	protected static IResource[] interestingResources;
@@ -29,40 +31,40 @@ public class IResourceTest extends ResourceTest {
 	protected static final IProgressMonitor[] PROGRESS_MONITORS = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
 
 	/**
-	 * Resource exists in both filesystem and workspace, but has been changed
-	 * in the filesystem since the last sync. This only applies to files.
+	 * Resource exists in both file system and workspace, but has been changed
+	 * in the file system since the last sync. This only applies to files.
 	 */
 	protected static final int S_CHANGED = 3;
 
 	/**
-	 * Resource does not exist in filesystem or workspace. */
+	 * Resource does not exist in file system or workspace. */
 	protected static final int S_DOES_NOT_EXIST = 4;
 
 	/**
 	 * Resource is a file in the workspace, but has been converted to a folder
-	 * in the filesystem.
+	 * in the file system.
 	 */
 	protected static final int S_FILE_TO_FOLDER = 6;
 
 	/**
-	 * Resource exists in the filesystem only. It has been added to the
-	 * filesystem manually since the last local refresh.
+	 * Resource exists in the file system only. It has been added to the
+	 * file system manually since the last local refresh.
 	 */
 	protected static final int S_FILESYSTEM_ONLY = 1;
 
 	/**
 	 * Resource is a folder in the workspace, but has been converted to a file
-	 * in the filesystem.
+	 * in the file system.
 	 */
 	protected static final int S_FOLDER_TO_FILE = 5;
 
 	/**
-	 * Resource exists in the filesytem and workspace, and is in sync */
+	 * Resource exists in the file system and workspace, and is in sync */
 	protected static final int S_UNCHANGED = 2;
 
 	/**
 	 * Resource only exists in the workspace. It has been deleted from the
-	 * filesystem manually
+	 * file system manually
 	 */
 	protected static final int S_WORKSPACE_ONLY = 0;
 	protected static final Boolean[] TRUE_AND_FALSE = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
@@ -146,7 +148,7 @@ public class IResourceTest extends ResourceTest {
 		return new TestSuite(IResourceTest.class);
 
 //		TestSuite suite = new TestSuite();
-//		suite.addTest(new IResourceTest("testAccept2"));
+//		suite.addTest(new IResourceTest("testAttributeArchive"));
 //		return suite;
 	}
 
@@ -194,7 +196,7 @@ public class IResourceTest extends ResourceTest {
 		ensureOutOfSync(unsynchronized[0]);
 		unsynchronizedResources.add(unsynchronized[0]);
 
-		//filesystem only
+		//file system only
 		unsynchronized = buildResources(root, new String[] {"1/1/2/2/1"});
 		ensureExistsInFileSystem(unsynchronized);
 		unsynchronizedResources.add(unsynchronized[0]);
@@ -265,7 +267,7 @@ public class IResourceTest extends ResourceTest {
 			ensureDoesNotExistInWorkspace(changedTarget);
 		ensureExistsInWorkspace(interestingResources, true);
 	}
-
+	
 	/**
 	 * Returns an array of all projects in the given resource array. */
 	protected IProject[] getProjects(IResource[] resources) {
@@ -360,27 +362,6 @@ public class IResourceTest extends ResourceTest {
 		return true;
 	}
 
-	private void setArchive(IResource resource, boolean value) throws CoreException {
-		ResourceAttributes attributes = resource.getResourceAttributes();
-		assertNotNull("setAchive for null attributes", attributes);
-		attributes.setArchive(value);
-		resource.setResourceAttributes(attributes);
-	}
-
-	private void setExecutable(IResource resource, boolean value) throws CoreException {
-		ResourceAttributes attributes = resource.getResourceAttributes();
-		assertNotNull("setExecutable for null attributes", attributes);
-		attributes.setExecutable(value);
-		resource.setResourceAttributes(attributes);
-	}
-
-	private void setReadOnly(IResource resource, boolean value) throws CoreException {
-		ResourceAttributes attributes = resource.getResourceAttributes();
-		assertNotNull("setReadOnly for null attributes", attributes);
-		attributes.setReadOnly(value);
-		resource.setResourceAttributes(attributes);
-	}
-
 	protected void setUp() throws Exception {
 		super.setUp();
 		IWorkspaceDescription description = getWorkspace().getDescription();
@@ -442,7 +423,7 @@ public class IResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Sets up the workspace and filesystem for this test. */
+	 * Sets up the workspace and file system for this test. */
 	protected void setupBeforeState(IResource receiver, IResource target, int state, int depth, boolean addVerifier) throws CoreException {
 		if (addVerifier) {
 			/* install the verifier */
@@ -505,8 +486,7 @@ public class IResourceTest extends ResourceTest {
 			case S_FOLDER_TO_FILE :
 				ensureExistsInWorkspace(target, true);
 				ensureDoesNotExistInFileSystem(target);
-				IPath location = target.getLocation();
-				createFileInFileSystem(location);
+				ensureExistsInFileSystem(target);
 				if (addVerifier) {
 					verifier.reset();
 					// we only get a delta if the receiver of refreshLocal
@@ -634,7 +614,7 @@ public class IResourceTest extends ResourceTest {
 	 * This method tests the IResource.refreshLocal() operation */
 	public void testAddLocalProject() throws CoreException {
 		/**
-		 * Add a project in the filesystem, but not in the workspace */
+		 * Add a project in the file system, but not in the workspace */
 
 		IProject project1 = getWorkspace().getRoot().getProject("Project");
 		project1.create(getMonitor());
@@ -643,111 +623,17 @@ public class IResourceTest extends ResourceTest {
 		IProject project2 = getWorkspace().getRoot().getProject("NewProject");
 
 		IPath projectPath = project1.getLocation().removeLastSegments(1).append("NewProject");
-		projectPath.toFile().mkdirs();
-
-		project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
-		project2.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
-	}
-
-	public void testAttributeArchive() {
-		// archive bit only implemented on windows
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
-			return;
-		IProject project = getWorkspace().getRoot().getProject("Project");
-		IFile file = project.getFile("target");
-		ensureExistsInWorkspace(file, getRandomContents());
-
 		try {
-			// file 
-			// bit is set already for a new file
-			assertTrue("1.0", file.getResourceAttributes().isArchive());
-			setArchive(file, false);
-			assertTrue("1.2", !file.getResourceAttributes().isArchive());
-			setArchive(file, true);
-			assertTrue("1.4", file.getResourceAttributes().isArchive());
-
-			// folder
-			// bit is not set already for a new folder
-			assertTrue("2.0", !project.getResourceAttributes().isArchive());
-			setArchive(project, true);
-			assertTrue("2.2", project.getResourceAttributes().isArchive());
-			setArchive(project, false);
-			assertTrue("2.4", !project.getResourceAttributes().isArchive());
-		} catch (CoreException e1) {
-			fail("2.99", e1);
-		}
-
-		/* remove trash */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("3.0", e);
-		}
-	}
-
-	public void testAttributeExecutable() {
-		// executable bit not implemented on windows
-		if (Platform.getOS().equals(Platform.OS_WIN32))
-			return;
-		IProject project = getWorkspace().getRoot().getProject("Project");
-		IFile file = project.getFile("target");
-		ensureExistsInWorkspace(file, getRandomContents());
-
-		try {
-			// file
-			assertTrue("1.0", !file.getResourceAttributes().isExecutable());
-			setExecutable(file, true);
-			assertTrue("1.2", file.getResourceAttributes().isExecutable());
-			setExecutable(file, false);
-			assertTrue("1.4", !file.getResourceAttributes().isExecutable());
-
-			// folder
-			//folder is executable initially
-			assertTrue("2.0", project.getResourceAttributes().isExecutable());
-			setExecutable(project, false);
-			assertTrue("2.2", !project.getResourceAttributes().isExecutable());
-			setExecutable(project, true);
-			assertTrue("2.4", project.getResourceAttributes().isExecutable());
-		} catch (CoreException e1) {
-			fail("2.99", e1);
-		}
-
-		/* remove trash */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("3.0", e);
-		}
-	}
-
-	public void testAttributeReadOnly() {
-		IProject project = getWorkspace().getRoot().getProject("Project");
-		IFile file = project.getFile("target");
-		ensureExistsInWorkspace(file, getRandomContents());
-
-		try {
-			// file
-			assertTrue("1.0", !file.getResourceAttributes().isReadOnly());
-			setReadOnly(file, true);
-			assertTrue("1.2", file.getResourceAttributes().isReadOnly());
-			setReadOnly(file, false);
-			assertTrue("1.4", !file.getResourceAttributes().isReadOnly());
-
-			// folder
-			assertTrue("2.0", !project.getResourceAttributes().isReadOnly());
-			setReadOnly(project, true);
-			assertTrue("2.2", project.getResourceAttributes().isReadOnly());
-			setReadOnly(project, false);
-			assertTrue("2.4", !project.getResourceAttributes().isReadOnly());
-		} catch (CoreException e1) {
-			fail("2.99", e1);
-		}
-
-		/* remove trash */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("3.0", e);
+			projectPath.toFile().mkdirs();
+	
+			project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			project2.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			assertTrue("1.1", project1.exists());
+			assertTrue("1.2", project1.isSynchronized(IResource.DEPTH_INFINITE));
+			assertTrue("1.3", !project2.exists());
+			assertTrue("1.4", project2.isSynchronized(IResource.DEPTH_INFINITE));
+		} finally {
+			Workspace.clear(projectPath.toFile());
 		}
 	}
 
@@ -885,7 +771,10 @@ public class IResourceTest extends ResourceTest {
 
 			public boolean shouldFail(Object[] args, int count) {
 				Boolean force = (Boolean) args[0];
+				IProgressMonitor monitor = (IProgressMonitor) args[1];
 				IResource resource = (IResource) args[2];
+				if (monitor instanceof CancelingProgressMonitor)
+					return false;
 				if (force.booleanValue() || !resource.exists())
 					return false;
 				if (resource.getType() == IResource.PROJECT) {
@@ -1497,7 +1386,7 @@ public class IResourceTest extends ResourceTest {
 			project.open(getMonitor());
 			ensureDoesNotExistInWorkspace(topFolder);
 			ensureDoesNotExistInWorkspace(topFile);
-			createFileInFileSystem(fileLocation);
+			createFileInFileSystem(FileSystemCore.getFileSystem(IFileStoreConstants.SCHEME_FILE).getStore(fileLocation));
 			folderLocation.toFile().mkdirs();
 			topFolder.createLink(folderLocation, IResource.NONE, getMonitor());
 			topFile.createLink(fileLocation, IResource.NONE, getMonitor());
@@ -1525,7 +1414,7 @@ public class IResourceTest extends ResourceTest {
 			IPath variableFileLocation = new Path(variableName).append("/VarFileName");
 			ensureDoesNotExistInWorkspace(topFolder);
 			ensureDoesNotExistInWorkspace(topFile);
-			createFileInFileSystem(varMan.resolvePath(variableFileLocation));
+			createFileInFileSystem(FileSystemCore.getFileSystem(IFileStoreConstants.SCHEME_FILE).getStore(varMan.resolvePath(variableFileLocation)));
 			varMan.resolvePath(variableFolderLocation).toFile().mkdirs();
 			topFolder.createLink(variableFolderLocation, IResource.NONE, getMonitor());
 			topFile.createLink(variableFileLocation, IResource.NONE, getMonitor());
@@ -1737,7 +1626,7 @@ public class IResourceTest extends ResourceTest {
 	public void testReadOnly() {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!CoreFileSystemLibrary.usingNatives())
+		if (!usingNatives())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");
@@ -1847,7 +1736,7 @@ public class IResourceTest extends ResourceTest {
 	 * This method tests the IResource.refreshLocal() operation */
 	public void testRefreshWithMissingParent() throws CoreException {
 		/**
-		 * Add a folder and file to the filesystem. Call refreshLocal on the
+		 * Add a folder and file to the file system. Call refreshLocal on the
 		 * file, when neither of them exist in the workspace.
 		 */
 		IProject project1 = getWorkspace().getRoot().getProject("Project");

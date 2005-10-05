@@ -178,13 +178,9 @@ public class IProjectTest extends AbstractBuilderTest {
 		location.toFile().mkdirs();
 
 		// create in file-system
-		try {
-			location.append(folder.getName()).toFile().mkdirs();
-			createFileInFileSystem(location.append(folder.getName()).append(file2.getName()));
-			createFileInFileSystem(location.append(file1.getName()));
-		} catch (CoreException e) {
-			fail("0.0", e);
-		}
+		location.append(folder.getName()).toFile().mkdirs();
+		createFileInFileSystem(location.append(folder.getName()).append(file2.getName()));
+		createFileInFileSystem(location.append(file1.getName()));
 
 		// create
 		try {

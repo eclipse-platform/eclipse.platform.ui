@@ -180,22 +180,8 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 	 * 	- RL_NOT_IN_SYNC - the resource is not in-sync with file system
 	 * 	- RL_UNKNOWN - couldn't determine the sync status for this resource 
 	 */
-	protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int level) throws CoreException {
-		boolean existsInWorkspace = node.existsInWorkspace();
-		if (!existsInWorkspace) {
-			if (!CoreFileSystemLibrary.isCaseSensitive() && level == 0) {
-				// do we have any alphabetic variants in the workspace?
-				IResource variant = target.findExistingResourceVariant(target.getFullPath());
-				if (variant != null)
-					return RL_UNKNOWN;
-			}
-			// do we have a gender variant in the workspace?
-			IResource genderVariant = workspace.getRoot().findMember(target.getFullPath());
-			if (genderVariant != null)
-				return RL_UNKNOWN;
-		}
-
-		if (existsInWorkspace) {
+	protected int synchronizeExistence(UnifiedTreeNode node, Resource target) throws CoreException {
+		if (node.existsInWorkspace()) {
 			if (!node.existsInFileSystem()) {
 				//non-local files are always in sync
 				if (target.isLocal(IResource.DEPTH_ZERO)) {
@@ -206,6 +192,10 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 				return RL_IN_SYNC;
 			}
 		} else {
+			// do we have a gender variant in the workspace?
+			IResource genderVariant = workspace.getRoot().findMember(target.getFullPath());
+			if (genderVariant != null)
+				return RL_UNKNOWN;
 			if (node.existsInFileSystem()) {
 				Container parent = (Container) target.getParent();
 				if (!parent.exists()) {
@@ -215,6 +205,16 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 				}
 				if (!target.getName().equals(node.getLocalName()))
 					return RL_IN_SYNC;
+				if (!Workspace.caseSensitive && node.getLevel() == 0) {
+					// do we have any alphabetic variants in the workspace?
+					IResource variant = target.findExistingResourceVariant(target.getFullPath());
+					if (variant != null) {
+						deleteResource(node, ((Resource)variant));
+						createResource(node, target);
+						resourceChanged = true;
+						return RL_NOT_IN_SYNC;
+					}
+				}
 				createResource(node, target);
 				resourceChanged = true;
 				return RL_NOT_IN_SYNC;
@@ -234,7 +234,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 				target = (Resource) genderVariant;
 		}
 		if (target.getType() == IResource.FILE) {
-			if (!node.isFile()) {
+			if (node.isFolder()) {
 				fileToFolder(node, target);
 				resourceChanged = true;
 				return false;
@@ -276,7 +276,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 					return true;
 				}
 				/* compare file last modified */
-				if (targetType == IResource.FILE && node.isFile()) {
+				if (targetType == IResource.FILE && !node.isFolder()) {
 					ResourceInfo info = target.getResourceInfo(false, false);
 					if (info != null && info.getLocalSyncInfo() == node.getLastModified())
 						return true;
@@ -287,7 +287,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 					errors.merge(new ResourceStatus(IResourceStatus.INVALID_RESOURCE_NAME, message));
 					return false;
 				}
-				int state = synchronizeExistence(node, target, node.getLevel());
+				int state = synchronizeExistence(node, target);
 				if (state == RL_IN_SYNC || state == RL_NOT_IN_SYNC) {
 					if (targetType == IResource.FILE) {
 						try {

@@ -122,7 +122,7 @@ public interface IMarker extends IAdaptable {
 
 	/** 
 	 * Severity marker attribute.  A number from the set of error, warning and info
-	 * severities defined by the plaform.
+	 * severities defined by the platform.
 	 *
 	 * @see #SEVERITY_ERROR
 	 * @see #SEVERITY_WARNING

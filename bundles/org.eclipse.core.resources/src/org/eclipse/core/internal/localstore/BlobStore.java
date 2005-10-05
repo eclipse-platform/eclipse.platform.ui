@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import java.io.File;
 import java.io.InputStream;
-import java.util.*;
-import org.eclipse.core.internal.resources.ResourceException;
-import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
+import java.util.Iterator;
+import java.util.Set;
+import org.eclipse.core.filesystem.*;
+import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.util.NLS;
 
 /**
  * Blob store which maps UUIDs to blobs on disk. The UUID is mapped
@@ -26,8 +24,7 @@ import org.eclipse.osgi.util.NLS;
  * the blobs are split among 255 directories with the names 00 to FF.
  */
 public class BlobStore {
-	protected File storeLocation;
-	protected FileSystemStore localStore;
+	protected IFileStore localStore;
 
 	/** Limits the range of directories' names. */
 	protected byte mask;
@@ -41,29 +38,24 @@ public class BlobStore {
 	 * This number must be power of 2 and do not exceed 256. The location
 	 * should be an existing valid directory.
 	 */
-	public BlobStore(IPath location, int limit) {
-		Assert.isNotNull(location);
-		Assert.isTrue(!location.equals(Path.EMPTY));
-		storeLocation = location.toFile();
-		Assert.isTrue(storeLocation.isDirectory());
+	public BlobStore(IFileStore store, int limit) {
+		Assert.isNotNull(store);
+		localStore = store;
+		Assert.isTrue(localStore.fetchInfo().isDirectory());
 		Assert.isTrue(limit == 256 || limit == 128 || limit == 64 || limit == 32 || limit == 16 || limit == 8 || limit == 4 || limit == 2 || limit == 1);
 		mask = (byte) (limit - 1);
-		localStore = new FileSystemStore();
 	}
 
-	public UniversalUniqueIdentifier addBlob(File target, boolean moveContents) throws CoreException {
+	public UniversalUniqueIdentifier addBlob(IFileStore target, boolean moveContents) throws CoreException {
 		UniversalUniqueIdentifier uuid = new UniversalUniqueIdentifier();
-		File dir = folderFor(uuid);
-		if (!dir.exists())
-			if (!dir.mkdirs()) {
-				String message = NLS.bind(Messages.localstore_couldNotCreateFolder, dir.getAbsolutePath());
-				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(dir.getAbsolutePath()), message, null);
-			}
-		File destination = fileFor(uuid);
+		IFileStore dir = folderFor(uuid);
+		if (!dir.fetchInfo().exists())
+			dir.mkdir(IFileStoreConstants.NONE, null);
+		IFileStore destination = fileFor(uuid);
 		if (moveContents)
-			localStore.move(target, destination, true, null);
+			target.move(destination, IFileStoreConstants.NONE, null);
 		else
-			localStore.copy(target, destination, IResource.DEPTH_ZERO, null);
+			target.copy(destination, IFileStoreConstants.NONE, null);
 		return uuid;
 	}
 
@@ -94,22 +86,15 @@ public class BlobStore {
 	}
 
 	/**
-	 * Deletes a blobFile. If the file does not exist, do nothing.
-	 * 
-	 * Note: This method used to delete empty dirs but this part was
-	 * removed for performance reasons.
+	 * Deletes a blobFile.
 	 */
-	protected boolean delete(File blobFile) {
-		CoreFileSystemLibrary.setReadOnly(blobFile.getAbsolutePath(), false);
-		return blobFile.delete();
-	}
-
-	/**
-	 * Deletes a blobFile. Returns true if the blob was deleted.
-	 */
-	public boolean deleteBlob(UniversalUniqueIdentifier uuid) {
+	public void deleteBlob(UniversalUniqueIdentifier uuid) {
 		Assert.isNotNull(uuid);
-		return delete(fileFor(uuid));
+		try {
+			fileFor(uuid).delete(IFileStoreConstants.NONE, null);
+		} catch (CoreException e) {
+			//ignore
+		}
 	}
 
 	/**
@@ -120,25 +105,24 @@ public class BlobStore {
 			deleteBlob((UniversalUniqueIdentifier) i.next());
 	}
 
-	public File fileFor(UniversalUniqueIdentifier uuid) {
-		File root = folderFor(uuid);
-		return new File(root, bytesToHexString(uuid.toBytes()));
+	public IFileStore fileFor(UniversalUniqueIdentifier uuid) {
+		IFileStore root = folderFor(uuid);
+		return root.getChild(bytesToHexString(uuid.toBytes()));
 	}
 
 	/**
 	 * Find out the name of the directory that fits better to this UUID.
 	 */
-	public File folderFor(UniversalUniqueIdentifier uuid) {
+	public IFileStore folderFor(UniversalUniqueIdentifier uuid) {
 		byte hash = hashUUIDbytes(uuid);
 		hash &= mask; // limit the range of the directory
 		String dirName = Integer.toHexString(hash + (128 & mask)); // +(128 & mask) makes sure 00h is the lower value
-		File dir = new File(storeLocation, dirName);
-		return dir;
+		return localStore.getChild(dirName);
 	}
 
 	public InputStream getBlob(UniversalUniqueIdentifier uuid) throws CoreException {
-		File blobFile = fileFor(uuid);
-		return localStore.read(blobFile);
+		IFileStore blobFile = fileFor(uuid);
+		return blobFile.openInputStream(IFileStoreConstants.NONE, null);
 	}
 
 	/**

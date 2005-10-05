@@ -30,7 +30,7 @@ public class AllTests extends TestCase {
 		suite.addTest(CopyTest.suite());
 		suite.addTest(DeleteTest.suite());
 		suite.addTest(FileSystemResourceManagerTest.suite());
-		suite.addTest(FileSystemStoreTest.suite());
+		suite.addTest(FileStoreTest.suite());
 		suite.addTest(HistoryBucketTest.suite());
 		suite.addTest(HistoryStoreTest.suite());
 		suite.addTest(HistoryStoreConversionTest.suite());

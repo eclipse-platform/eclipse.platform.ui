@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
-import java.util.Enumeration;
+import java.util.*;
 
 /**
  * A Queue of objects.
@@ -74,21 +74,21 @@ public class Queue {
 		return elements[index];
 	}
 
-	public Enumeration elements() {
+	public Iterator iterator() {
 		/**/
 		if (isEmpty())
-			return EmptyEnumeration.getEnumeration();
+			return Collections.EMPTY_LIST.iterator();
 
 		/* if head < tail we can use the same array */
 		if (head <= tail)
-			return new ArrayEnumeration(elements, head, tail - 1);
+			return new ArrayIterator(elements, head, tail - 1);
 
 		/* otherwise we need to create a new array */
 		Object[] newElements = new Object[size()];
 		int end = (elements.length - head);
 		System.arraycopy(elements, head, newElements, 0, end);
 		System.arraycopy(elements, 0, newElements, end, tail);
-		return new ArrayEnumeration(newElements);
+		return new ArrayIterator(newElements);
 	}
 
 	public Object get(Object o) {
@@ -201,11 +201,11 @@ public class Queue {
 		sb.append('[');
 		int count = 0;
 		if (!isEmpty()) {
-			Enumeration it = elements();
+			Iterator it = iterator();
 			//only print a fixed number of elements to prevent debugger from choking
 			while (count < 100) {
-				sb.append(it.nextElement());
-				if (it.hasMoreElements())
+				sb.append(it.next());
+				if (it.hasNext())
 					sb.append(',').append(' ');
 				else
 					break;

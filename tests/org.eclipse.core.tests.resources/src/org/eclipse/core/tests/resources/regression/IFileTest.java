@@ -12,7 +12,6 @@ package org.eclipse.core.tests.resources.regression;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -41,7 +40,7 @@ public class IFileTest extends ResourceTest {
 	/**
 	 * Bug states that the error code in the CoreException which is thrown when
 	 * you try to create a file in a read-only folder on Linux should be 
-	 * FAILED_WRITE_LOCAL.
+	 * ERROR_WRITE.
 	 */
 	public void testBug25658() {
 
@@ -53,7 +52,7 @@ public class IFileTest extends ResourceTest {
 
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!CoreFileSystemLibrary.usingNatives())
+		if (!usingNatives())
 			return;
 
 		// Don't test this on Windows
@@ -88,7 +87,7 @@ public class IFileTest extends ResourceTest {
 
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!CoreFileSystemLibrary.usingNatives())
+		if (!usingNatives())
 			return;
 
 		// Only run this test on Linux for now since Windows lets you create

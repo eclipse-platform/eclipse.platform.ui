@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.Container;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.IResource;
@@ -26,9 +27,10 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 
 	protected void createResource(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.createResource(node, target);
-		if (node.getLocalLocation() == null)
+		IFileStore store = node.getStore();
+		if (store == null)
 			return;
-		IResource[] aliases = workspace.getAliasManager().computeAliases(target, new Path(node.getLocalLocation()));
+		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
 			for (int i = 0; i < aliases.length; i++)
 				super.createResource(node, (Resource) aliases[i]);
@@ -36,9 +38,10 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 
 	protected void deleteResource(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.deleteResource(node, target);
-		if (node.getLocalLocation() == null)
+		IFileStore store = node.getStore();
+		if (store == null)
 			return;
-		IResource[] aliases = workspace.getAliasManager().computeAliases(target, new Path(node.getLocalLocation()));
+		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
 			for (int i = 0; i < aliases.length; i++)
 				super.deleteResource(node, (Resource) aliases[i]);
@@ -46,9 +49,10 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 
 	protected void resourceChanged(UnifiedTreeNode node, Resource target) {
 		super.resourceChanged(node, target);
-		if (node.getLocalLocation() == null)
+		IFileStore store = node.getStore();
+		if (store == null)
 			return;
-		IResource[] aliases = workspace.getAliasManager().computeAliases(target, new Path(node.getLocalLocation()));
+		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
 			for (int i = 0; i < aliases.length; i++)
 				super.resourceChanged(node, (Resource) aliases[i]);
@@ -56,9 +60,10 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 
 	protected void fileToFolder(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.fileToFolder(node, target);
-		if (node.getLocalLocation() == null)
+		IFileStore store = node.getStore();
+		if (store == null)
 			return;
-		IResource[] aliases = workspace.getAliasManager().computeAliases(target, new Path(node.getLocalLocation()));
+		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
 			for (int i = 0; i < aliases.length; i++)
 				super.fileToFolder(node, (Resource) aliases[i]);
@@ -66,9 +71,10 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 
 	protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.folderToFile(node, target);
-		if (node.getLocalLocation() == null)
+		IFileStore store = node.getStore();
+		if (store == null)
 			return;
-		IResource[] aliases = workspace.getAliasManager().computeAliases(target, new Path(node.getLocalLocation()));
+		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
 			for (int i = 0; i < aliases.length; i++)
 				super.folderToFile(node, (Resource) aliases[i]);

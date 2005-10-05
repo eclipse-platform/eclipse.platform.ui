@@ -13,13 +13,13 @@ package org.eclipse.core.tests.internal.localstore;
 import java.io.IOException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
 public class CaseSensitivityTest extends LocalStoreTest {
-	private boolean isCaseSensitive = CoreFileSystemLibrary.isCaseSensitive();
+	private boolean isCaseSensitive = Workspace.caseSensitive;
 
 	public CaseSensitivityTest() {
 		super();

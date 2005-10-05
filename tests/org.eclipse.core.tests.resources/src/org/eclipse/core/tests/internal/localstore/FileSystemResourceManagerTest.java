@@ -13,7 +13,7 @@ package org.eclipse.core.tests.internal.localstore;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -82,7 +82,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 	public void testCreateFile() throws Throwable {
 		/* initialize common objects */
 		IProject project = projects[0];
-		IFile file = project.getFile("foo");
+		File file = (File)project.getFile("foo");
 		/* common contents */
 		String originalContent = "this string should not be equal the other";
 
@@ -94,7 +94,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		}
 		assertTrue("1.2", file.exists());
 		assertTrue("1.3", file.isLocal(IResource.DEPTH_ZERO));
-		assertEquals("1.4", CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
+		assertEquals("1.4", file.getStore().fetchInfo().getLastModified(), file.getResourceInfo(false, false).getLocalSyncInfo());
 		try {
 			assertTrue("1.5", compareContent(getContents(originalContent), getLocalManager().read(file, true, null)));
 		} catch (CoreException e) {
@@ -413,27 +413,27 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 	public void testWriteProject() throws Throwable {
 		/* initialize common objects */
 		final IProject project = projects[0];
-
-		final IPath location = getLocalManager().locationFor(project);
+		IFile dotProject = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+		final IFileStore fileStore = ((Resource)project).getStore();
 		// create project and then delete from file system
 		// wrap in runnable to prevent snapshot from occurring in the middle.
 		getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ensureDoesNotExistInFileSystem(project);
-				assertTrue("2.1", !location.toFile().isDirectory());
+				assertTrue("2.1", !fileStore.fetchInfo().isDirectory());
 				//write project in a runnable, otherwise tree will be locked
 				((Project) project).writeDescription(IResource.FORCE);
 			}
 		}, null);
-		assertTrue("2.2", location.toFile().isDirectory());
-		long lastModified = CoreFileSystemLibrary.getLastModified(getLocalManager().getDescriptionLocationFor(project).toOSString());
+		assertTrue("2.2", fileStore.fetchInfo().isDirectory());
+		long lastModified = ((Resource)dotProject).getStore().fetchInfo().getLastModified();
 		assertEquals("2.3", lastModified, ((Resource) project).getResourceInfo(false, false).getLocalSyncInfo());
 	}
 
 	protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor pm) throws CoreException {
-				getLocalManager().write(file, getLocalManager().locationFor(file), contents, force, false, false, null);
+				getLocalManager().write(file, contents, force, false, false, null);
 			}
 		};
 		getWorkspace().run(operation, null);

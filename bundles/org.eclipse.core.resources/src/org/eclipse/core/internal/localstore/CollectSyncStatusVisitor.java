@@ -22,12 +22,19 @@ import org.eclipse.osgi.util.NLS;
 //
 /**
  * Visits a unified tree, and collects local sync information in 
- * a multistatus.  At the end of the visit, the resource tree will NOT
- * be synchronized with the filesystem, but all discrepancies between
+ * a multi-status.  At the end of the visit, the resource tree will NOT
+ * be synchronized with the file system, but all discrepancies between
  * the two will be recorded in the returned status.
  */
 public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 	protected List affectedResources;
+	/**
+	 * Determines how to treat cases where the resource is missing from
+	 * the local file system.  When performing a deletion with force=false,
+	 * we don't care about files that are out of sync because they do not
+	 * exist in the file system.
+	 */
+	private boolean ignoreLocalDeletions = false;
 	protected MultiStatus status;
 
 	/**
@@ -51,7 +58,8 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 	}
 
 	protected void deleteResource(UnifiedTreeNode node, Resource target) {
-		changed(target);
+		if (!ignoreLocalDeletions)
+			changed(target);
 	}
 
 	protected void fileToFolder(UnifiedTreeNode node, Resource target) {
@@ -64,7 +72,7 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 
 	/**
 	 * Returns the list of resources that were not synchronized with
-	 * the local filesystem.
+	 * the local file system.
 	 */
 	public List getAffectedResources() {
 		return affectedResources;
@@ -87,5 +95,13 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 
 	protected void resourceChanged(UnifiedTreeNode node, Resource target) {
 		changed(target);
+	}
+
+	/**
+	 * Instructs this visitor to ignore changes due to local deletions
+	 * in the file system.
+	 */
+	public void setIgnoreLocalDeletions(boolean value) {
+		this.ignoreLocalDeletions = value;
 	}
 }

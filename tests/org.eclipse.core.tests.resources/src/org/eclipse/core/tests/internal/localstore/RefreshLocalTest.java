@@ -13,7 +13,7 @@ package org.eclipse.core.tests.internal.localstore;
 import java.io.File;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -259,14 +259,15 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 
 		/* test changes of a child (child is file) */
 		file = project.getFile("file");
+		IFileStore fileStore = ((Resource)file).getStore();
 		ensureExistsInWorkspace(file, true);
 		assertTrue("4.1", file.exists());
 		assertTrue("4.2", file.isLocal(IResource.DEPTH_ZERO));
-		assertEquals("4.3", CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
+		assertEquals("4.3", fileStore.fetchInfo().getLastModified(), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
 		ensureOutOfSync(file);
-		assertTrue("4.4", ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo() != CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()));
+		assertTrue("4.4", ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo() !=  fileStore.fetchInfo().getLastModified());
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		assertEquals("4.5", CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
+		assertEquals("4.5",  fileStore.fetchInfo().getLastModified(), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
 		ensureDoesNotExistInWorkspace(file);
 		ensureDoesNotExistInFileSystem(file);
 	}
@@ -277,7 +278,6 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 
 		/* test root deletion */
 		IFile file = project.getFile("file");
-		File target = file.getLocation().toFile();
 		ensureExistsInWorkspace(file, true);
 		ensureDoesNotExistInFileSystem(file);
 		assertTrue("1.0", file.exists());
@@ -286,7 +286,7 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 
 		/* test root and children creation */
 		IFolder folder = project.getFolder("folder");
-		target = folder.getLocation().toFile();
+		IFileStore target = ((Resource)folder).getStore();
 		createTree(getTree(target));
 		assertTrue("2.0", !folder.exists());
 		folder.refreshLocal(IResource.DEPTH_INFINITE, null);

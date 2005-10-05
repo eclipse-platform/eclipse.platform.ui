@@ -13,9 +13,9 @@ package org.eclipse.core.internal.resources;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.*;
 import org.eclipse.core.internal.events.*;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.refresh.RefreshManager;
@@ -33,7 +33,8 @@ import org.xml.sax.InputSource;
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
 	// whether the resources plugin is in debug mode.
 	public static boolean DEBUG = false;
-	protected static final String REFRESH_ON_STARTUP = "-refresh"; //$NON-NLS-1$
+	public static final boolean caseSensitive = Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new java.io.File("a").compareTo(new java.io.File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
+
 	protected WorkspacePreferences description;
 	protected LocalMetaArea localMetaArea;
 	protected boolean openFlag = false;
@@ -105,6 +106,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * Job that performs periodic string pool canonicalization.
 	 */
 	private StringPoolJob stringPoolJob;
+	
+	/**
+	 * Helper class for performing validation of resource names and locations.
+	 */
+	protected  final LocationValidator locationValidator = new LocationValidator(this);
 
 	public Workspace() {
 		super();
@@ -265,7 +271,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return result;
 	}
-
+	
 	/**
 	 * Deletes all the files and directories from the given root down, except for 
 	 * the root itself.
@@ -433,7 +439,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// ... from "fullProjectOrder.projects"...		
 		// Set<IProject> keepers
 		Set keepers = new HashSet(Arrays.asList(projects));
-		// List<IProject> p
+		// List<IProject> projects
 		List reducedProjects = new ArrayList(fullProjectOrder.projects.length);
 		for (int i = 0; i < fullProjectOrder.projects.length; i++) {
 			IProject project = fullProjectOrder.projects[i];
@@ -446,7 +452,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		reducedProjects.toArray(p1);
 
 		// ... and from "fullProjectOrder.knots"		
-		// List<IProject[]> k
+		// List<IProject[]> knots
 		List reducedKnots = new ArrayList(fullProjectOrder.knots.length);
 		for (int i = 0; i < fullProjectOrder.knots.length; i++) {
 			IProject[] knot = fullProjectOrder.knots[i];
@@ -635,12 +641,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// get/set the node id from the source's resource info so we can later put it in the
 		// info for the destination resource. This will help us generate the proper deltas,
 		// indicating a move rather than a add/delete
-		long nodeid = ((Resource) source).getResourceInfo(true, false).getNodeId();
-		newInfo.setNodeId(nodeid);
+		newInfo.setNodeId(sourceInfo.getNodeId());
 
-		// preserve local sync info
-		ResourceInfo oldInfo = ((Resource) source).getResourceInfo(true, false);
-		newInfo.setFlags(newInfo.getFlags() | (oldInfo.getFlags() & M_LOCAL_EXISTS));
+		// preserve local sync info but not location info
+		newInfo.setFlags(newInfo.getFlags() | (sourceInfo.getFlags() & M_LOCAL_EXISTS));
+		newInfo.setFileStoreRoot(null);
 
 		// forget content-related caching flags
 		newInfo.clear(M_CONTENT_CACHE);
@@ -649,8 +654,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (source.isLinked()) {
 			LinkDescription linkDescription;
 			if ((updateFlags & IResource.SHALLOW) != 0) {
-				//for shallow move the destination is also a linked resource
+				//for shallow move the destination is a linked resource with the same location
 				newInfo.set(ICoreConstants.M_LINK);
+				newInfo.setFileStoreRoot(sourceInfo.getFileStoreRoot());
 				linkDescription = new LinkDescription(destinationResource, source.getRawLocation());
 			} else {
 				//for deep move the destination is not a linked resource
@@ -902,7 +908,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				// check for a programming error on using beginOperation/endOperation
 				Assert.isTrue(workManager.getPreparedOperationDepth() > 0, "Mismatched begin/endOperation"); //$NON-NLS-1$
 
-				// At this time we need to rebalance the nested operations. It is necessary because
+				// At this time we need to re-balance the nested operations. It is necessary because
 				// build() and snapshot() should not fail if they are called.
 				workManager.rebalanceNestedOperations();
 
@@ -1210,7 +1216,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// can only have one defined at a time. log a warning, disable validation, but continue with
 		// the #setContents (e.g. don't throw an exception)
 		if (configs.length > 1) {
-			//XXX: shoud provide a meaningful status code
+			//XXX: should provide a meaningful status code
 			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_oneValidator, null);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 			return;
@@ -1224,7 +1230,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} catch (CoreException e) {
 			//ignore the failure if we are shutting down (expected since extension
 			//provider plugin has probably already shut down
-			if (canCreateExtensions()) {//$NON-NLS-1$
+			if (canCreateExtensions()) {
 				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_initValidator, e);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
@@ -1247,7 +1253,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 			// can only have one defined at a time. log a warning
 			if (configs.length > 1) {
-				//XXX: shoud provide a meaningful status code
+				//XXX: should provide a meaningful status code
 				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_oneHook, null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 				return;
@@ -1260,7 +1266,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			} catch (CoreException e) {
 				//ignore the failure if we are shutting down (expected since extension
 				//provider plugin has probably already shut down
-				if (canCreateExtensions()) {//$NON-NLS-1$
+				if (canCreateExtensions()) {
 					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_initHook, e);
 					ResourcesPlugin.getPlugin().getLog().log(status);
 				}
@@ -1288,7 +1294,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 			// can only have one defined at a time. log a warning
 			if (configs.length > 1) {
-				//XXX: shoud provide a meaningful status code
+				//XXX: should provide a meaningful status code
 				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_oneTeamHook, null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 				return;
@@ -1301,7 +1307,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			} catch (CoreException e) {
 				//ignore the failure if we are shutting down (expected since extension
 				//provider plugin has probably already shut down
-				if (canCreateExtensions()) {//$NON-NLS-1$
+				if (canCreateExtensions()) {
 					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_initTeamHook, e);
 					ResourcesPlugin.getPlugin().getLog().log(status);
 				}
@@ -1342,24 +1348,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	public boolean isOpen() {
 		return openFlag;
-	}
-
-	/**
-	 * Returns true if the given file system locations overlap. If "bothDirections" is true,
-	 * this means they are the same, or one is a proper prefix of the other.  If "bothDirections"
-	 * is false, this method only returns true if the locations are the same, or the first location
-	 * is a prefix of the second.  Returns false if the locations do not overlap
-	 * Does the right thing with respect to case insensitive platforms.
-	 */
-	protected boolean isOverlapping(IPath location1, IPath location2, boolean bothDirections) {
-		IPath one = location1;
-		IPath two = location2;
-		// If we are on a case-insensitive file system then convert to all lowercase.
-		if (!CoreFileSystemLibrary.isCaseSensitive()) {
-			one = new Path(location1.toOSString().toLowerCase());
-			two = new Path(location2.toOSString().toLowerCase());
-		}
-		return one.isPrefixOf(two) || (bothDirections && two.isPrefixOf(one));
 	}
 
 	/* (non-Javadoc)
@@ -1508,7 +1496,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	/* package */
 	void move(Resource source, IPath destination, int depth, int updateFlags, boolean keepSyncInfo) throws CoreException {
 		// overlay the tree at the destination path, preserving any important info
-		// in any already existing resource infos
+		// in any already existing resource information
 		copyTree(source, destination, depth, updateFlags, keepSyncInfo);
 		source.fixupAfterMoveSource();
 	}
@@ -1781,7 +1769,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public void setDescription(IWorkspaceDescription value) {
 		// if both the old and new description's build orders are null, leave the
 		// workspace's build order slot because it is caching the computed order.
-		// Otherwise, set the slot to null to force recomputation or building from the description.
+		// Otherwise, set the slot to null to force recomputing or building from the description.
 		WorkspaceDescription newDescription = (WorkspaceDescription) value;
 		String[] newOrder = newDescription.getBuildOrder(false);
 		if (description.getBuildOrder(false) != null || newOrder != null)
@@ -1950,138 +1938,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @see IWorkspace#validateLinkLocation(IResource, IPath)
 	 */
 	public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation) {
-		String message;
-		//check if resource linking is disabled
-		if (ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {
-			message = NLS.bind(Messages.links_workspaceVeto, resource.getName());
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
-		}
-		//check that the resource has a project as its parent
-		IContainer parent = resource.getParent();
-		if (parent == null || parent.getType() != IResource.PROJECT) {
-			message = NLS.bind(Messages.links_parentNotProject, resource.getName());
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
-		}
-		if (!parent.isAccessible()) {
-			message = NLS.bind(Messages.links_parentNotAccessible, resource.getFullPath());
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
-		}
-		IPath location = getPathVariableManager().resolvePath(unresolvedLocation);
-		//check nature veto
-		String[] natureIds = ((Project) parent).internalGetDescription().getNatureIds();
-
-		IStatus result = getNatureManager().validateLinkCreation(natureIds);
-		if (!result.isOK())
-			return result;
-		//check team provider veto
-		if (resource.getType() == IResource.FILE)
-			result = getTeamHook().validateCreateLink((IFile) resource, IResource.NONE, location);
-		else
-			result = getTeamHook().validateCreateLink((IFolder) resource, IResource.NONE, location);
-		if (!result.isOK())
-			return result;
-		if (location.isEmpty()) {
-			message = Messages.links_noPath;
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
-		}
-		//check the standard path name restrictions
-		int segmentCount = location.segmentCount();
-		for (int i = 0; i < segmentCount; i++) {
-			result = validateName(location.segment(i), resource.getType());
-			if (!result.isOK())
-				return result;
-		}
-		//if the location doesn't have a device, see if the OS will assign one
-		if (location.isAbsolute() && location.getDevice() == null)
-			location = new Path(location.toFile().getAbsolutePath());
-		// test if the given location overlaps the platform metadata location
-		IPath testLocation = getMetaArea().getLocation();
-		if (isOverlapping(location, testLocation, true)) {
-			message = NLS.bind(Messages.links_invalidLocation, location.toOSString());
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
-		}
-		//test if the given path overlaps the location of the given project
-		testLocation = resource.getProject().getLocation();
-		if (testLocation != null && isOverlapping(location, testLocation, false)) {
-			message = NLS.bind(Messages.links_locationOverlapsProject, location.toOSString());
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
-		}
-		//warnings (all errors must be checked before all warnings)
-		//check that the location is absolute
-		if (!location.isAbsolute()) {
-			//we know there is at least one segment, because of previous isEmpty check
-			message = NLS.bind(Messages.pathvar_undefined, location.toOSString(), location.segment(0));
-			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED_WARNING, resource.getFullPath(), message);
-		}
-		// Iterate over each known project and ensure that the location does not
-		// conflict with any project locations or linked resource locations
-		IProject[] projects = getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
-			// since we are iterating over the project in the workspace, we
-			// know that they have been created before and must have a description
-			IProjectDescription desc = ((Project) project).internalGetDescription();
-			testLocation = desc.getLocation();
-			if (testLocation != null && isOverlapping(location, testLocation, true)) {
-				message = NLS.bind(Messages.links_overlappingResource, location.toOSString());
-				return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
-			}
-			//iterate over linked resources and check for overlap
-			if (!project.isOpen())
-				continue;
-			IResource[] children = null;
-			try {
-				children = project.members();
-			} catch (CoreException e) {
-				//ignore projects that cannot be accessed
-			}
-			if (children == null)
-				continue;
-			for (int j = 0; j < children.length; j++) {
-				if (children[j].isLinked()) {
-					testLocation = children[j].getLocation();
-					if (testLocation != null && isOverlapping(location, testLocation, true)) {
-						message = NLS.bind(Messages.links_overlappingResource, location.toOSString());
-						return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
-					}
-				}
-			}
-		}
-		return Status.OK_STATUS;
+		return locationValidator.validateLinkLocation(resource, unresolvedLocation);
 	}
 
 	/* (non-Javadoc)
 	 * @see IWorkspace#validateName(String, int)
 	 */
 	public IStatus validateName(String segment, int type) {
-		String message;
-
-		/* segment must not be null */
-		if (segment == null) {
-			message = Messages.resources_nameNull;
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-		}
-
-		// cannot be an empty string
-		if (segment.length() == 0) {
-			message = Messages.resources_nameEmpty;
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-		}
-
-		/* test invalid characters */
-		char[] chars = OS.INVALID_RESOURCE_CHARACTERS;
-		for (int i = 0; i < chars.length; i++)
-			if (segment.indexOf(chars[i]) != -1) {
-				message = NLS.bind(Messages.resources_invalidCharInName, String.valueOf(chars[i]), segment);
-				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-			}
-
-		/* test invalid OS names */
-		if (!OS.isNameValid(segment)) {
-			message = NLS.bind(Messages.resources_invalidName, segment);
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-		}
-		return Status.OK_STATUS;
+		return locationValidator.validateName(segment, type);
 	}
 
 	/* (non-Javadoc)
@@ -2095,158 +1959,22 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @see IWorkspace#validatePath(String, int)
 	 */
 	public IStatus validatePath(String path, int type) {
-		/* path must not be null */
-		if (path == null) {
-			String message = Messages.resources_pathNull;
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-		}
-		return validatePath(Path.fromOSString(path), type, false);
-	}
-
-	/**
-	 * Validates that the given workspace path is valid for the given type.  If 
-	 * <code>lastSegmentOnly</code> is true, it is assumed that all segments except
-	 * the last one have previously been validated.  This is an optimization for validating
-	 * a leaf resource when it is known that the parent exists (and thus its parent path
-	 * must already be valid).
-	 */
-	public IStatus validatePath(IPath path, int type, boolean lastSegmentOnly) {
-		String message;
-
-		/* path must not be null */
-		if (path == null) {
-			message = Messages.resources_pathNull;
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-		}
-
-		/* path must not have a device separator */
-		if (path.getDevice() != null) {
-			message = NLS.bind(Messages.resources_invalidCharInPath, String.valueOf(IPath.DEVICE_SEPARATOR), path);
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-		}
-
-		/* path must not be the root path */
-		if (path.isRoot()) {
-			message = Messages.resources_invalidRoot;
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-		}
-
-		/* path must be absolute */
-		if (!path.isAbsolute()) {
-			message = NLS.bind(Messages.resources_mustBeAbsolute, path);
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-		}
-
-		/* validate segments */
-		int numberOfSegments = path.segmentCount();
-		if ((type & IResource.PROJECT) != 0) {
-			if (numberOfSegments == ICoreConstants.PROJECT_SEGMENT_LENGTH) {
-				return validateName(path.segment(0), IResource.PROJECT);
-			} else if (type == IResource.PROJECT) {
-				message = NLS.bind(Messages.resources_projectPath, path);
-				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-			}
-		}
-		if ((type & (IResource.FILE | IResource.FOLDER)) != 0) {
-			if (numberOfSegments < ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH) {
-				message = NLS.bind(Messages.resources_resourcePath, path);
-				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-			}
-			int fileFolderType = type &= ~IResource.PROJECT;
-			int segmentCount = path.segmentCount();
-			if (lastSegmentOnly)
-				return validateName(path.segment(segmentCount - 1), fileFolderType);
-			IStatus status = validateName(path.segment(0), IResource.PROJECT);
-			if (!status.isOK())
-				return status;
-			// ignore first segment (the project)
-			for (int i = 1; i < segmentCount; i++) {
-				status = validateName(path.segment(i), fileFolderType);
-				if (!status.isOK())
-					return status;
-			}
-			return Status.OK_STATUS;
-		}
-		message = NLS.bind(Messages.resources_invalidPath, path);
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		return locationValidator.validatePath(path, type);
 	}
 
 	/* (non-Javadoc)
 	 * @see IWorkspace#validateProjectLocation(IProject, IPath)
 	 */
-	public IStatus validateProjectLocation(IProject context, IPath unresolvedLocation) {
-		String message;
-		// the default default is ok for all projects
-		if (unresolvedLocation == null) {
-			return Status.OK_STATUS;
-		}
-		//check the standard path name restrictions
-		IPath location = getPathVariableManager().resolvePath(unresolvedLocation);
-		int segmentCount = location.segmentCount();
-		for (int i = 0; i < segmentCount; i++) {
-			IStatus result = validateName(location.segment(i), IResource.PROJECT);
-			if (!result.isOK())
-				return result;
-		}
-		//check that the location is absolute
-		if (!location.isAbsolute()) {
-			if (location.segmentCount() > 0)
-				message = NLS.bind(Messages.pathvar_undefined, location.toOSString(), location.segment(0));
-			else
-				message = Messages.links_noPath;
-			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED, null, message);
-		}
-		//if the location doesn't have a device, see if the OS will assign one
-		if (location.getDevice() == null)
-			location = new Path(location.toFile().getAbsolutePath());
-		// test if the given location overlaps the default default location
-		IPath defaultDefaultLocation = Platform.getLocation();
-		if (isOverlapping(location, defaultDefaultLocation, true)) {
-			message = NLS.bind(Messages.resources_overlapWorkspace, location.toOSString(), defaultDefaultLocation.toOSString());
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-		}
-		// Iterate over each known project and ensure that the location does not
-		// conflict with any of their already defined locations.
-		IProject[] projects = getRoot().getProjects();
-		for (int j = 0; j < projects.length; j++) {
-			IProject project = projects[j];
-			// since we are iterating over the project in the workspace, we
-			// know that they have been created before and must have a description
-			IProjectDescription desc = ((Project) project).internalGetDescription();
-			IPath definedLocalLocation = desc.getLocation();
-			// if the project uses the default location then continue
-			if (definedLocalLocation == null)
-				continue;
-			//tolerate locations being the same if this is the project being tested
-			if (project.equals(context) && definedLocalLocation.equals(location))
-				continue;
-			if (isOverlapping(location, definedLocalLocation, true)) {
-				message = NLS.bind(Messages.resources_overlapProject, location.toOSString(), project.getName());
-				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-			}
-		}
-		//if this project exists and has linked resources, the project location cannot overlap
-		//the locations of any linked resources in that project
-		if (context.exists() && context.isOpen()) {
-			IResource[] children = null;
-			try {
-				children = context.members();
-			} catch (CoreException e) {
-				//ignore projects that cannot be accessed
-			}
-			if (children != null) {
-				for (int i = 0; i < children.length; i++) {
-					if (children[i].isLinked()) {
-						IPath testLocation = children[i].getLocation();
-						if (testLocation != null && isOverlapping(testLocation, location, false)) {
-							message = NLS.bind(Messages.links_locationOverlapsLink, location.toOSString());
-							return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, context.getFullPath(), message);
-						}
-					}
-				}
-			}
-		}
-		return Status.OK_STATUS;
+	public IStatus validateProjectLocation(IProject context, IPath location) {
+		return locationValidator.validateProjectLocation(context, location);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.resources.IWorkspace#validateProjectLocation(org.eclipse.core.resources.IProject, java.net.URI)
+	 */
+	public IStatus validateProjectLocationURI(IProject project, URI location) {
+		return locationValidator.validateProjectLocationURI(project, location);
 	}
 
 	/**
@@ -2285,4 +2013,5 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (!status[0].isOK())
 			throw new ResourceException(status[0]);
 	}
+
 }

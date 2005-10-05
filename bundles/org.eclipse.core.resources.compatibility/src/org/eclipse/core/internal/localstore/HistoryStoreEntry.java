@@ -139,13 +139,13 @@ public class HistoryStoreEntry implements ILocalStoreConstants {
 		// Get beginning portion of key.
 		byte[] keyPrefix = keyPrefixToBytes(path, lastModified);
 		// Byte array to hold full key. The count value is 1 byte in length.
-		byte[] key = new byte[keyPrefix.length + 1];
+		byte[] keyBytes = new byte[keyPrefix.length + 1];
 		// Copy all values into full key.
 		int destPosition = 0;
-		System.arraycopy(keyPrefix, 0, key, destPosition, keyPrefix.length);
+		System.arraycopy(keyPrefix, 0, keyBytes, destPosition, keyPrefix.length);
 		destPosition += keyPrefix.length;
-		key[destPosition] = count;
-		return key;
+		keyBytes[destPosition] = count;
+		return keyBytes;
 	}
 
 	/**

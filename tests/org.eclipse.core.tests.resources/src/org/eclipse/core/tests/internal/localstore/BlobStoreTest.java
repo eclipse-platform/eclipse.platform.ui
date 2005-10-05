@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import java.io.*;
+import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.localstore.BlobStore;
-import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 //
 public class BlobStoreTest extends LocalStoreTest {
@@ -34,10 +35,7 @@ public class BlobStoreTest extends LocalStoreTest {
 
 	public void testConstructor() {
 		/* build scenario */
-		IPath path = getWorkspace().getRoot().getLocation().append("blobstore");
-		File temp = path.toFile();
-		temp.mkdirs();
-		assertTrue("0.1", temp.isDirectory());
+		IFileStore root = createStore();
 
 		/* null location */
 		boolean ok = false;
@@ -48,19 +46,10 @@ public class BlobStoreTest extends LocalStoreTest {
 		}
 		assertTrue("1.1", ok);
 
-		/* empty location */
+		/* nonexistent location */
 		ok = false;
 		try {
-			new BlobStore(Path.EMPTY, 128);
-		} catch (RuntimeException e) {
-			ok = true;
-		}
-		assertTrue("2.1", ok);
-
-		/* inexisting location */
-		ok = false;
-		try {
-			new BlobStore(new Path("../this/path/should/not/be/a/folder"), 128);
+			new BlobStore(FileSystemCore.getLocalFileSystem().getStore(new Path("../this/path/should/not/be/a/folder")), 128);
 		} catch (RuntimeException e) {
 			ok = true;
 		}
@@ -69,69 +58,75 @@ public class BlobStoreTest extends LocalStoreTest {
 		/* invalid limit values */
 		ok = false;
 		try {
-			new BlobStore(path, 0);
+			new BlobStore(root, 0);
 		} catch (RuntimeException e) {
 			ok = true;
 		}
 		assertTrue("4.1", ok);
 		ok = false;
 		try {
-			new BlobStore(path, -1);
+			new BlobStore(root, -1);
 		} catch (RuntimeException e) {
 			ok = true;
 		}
 		assertTrue("4.2", ok);
 		ok = false;
 		try {
-			new BlobStore(path, 35);
+			new BlobStore(root, 35);
 		} catch (RuntimeException e) {
 			ok = true;
 		}
 		assertTrue("4.3", ok);
 		ok = false;
 		try {
-			new BlobStore(path, 512);
+			new BlobStore(root, 512);
 		} catch (RuntimeException e) {
 			ok = true;
 		}
 		assertTrue("4.4", ok);
 	}
 
+	private IFileStore createStore() {
+		IFileStore root = getTempStore();
+		try {
+			root.mkdir(IFileStoreConstants.NONE, null);
+		} catch (CoreException e1) {
+			fail("createStore.99", e1);
+		}
+		IFileInfo info = root.fetchInfo();
+		assertTrue("createStore.1", info.exists());
+		assertTrue("createStore.2", info.isDirectory());
+		return root;
+	}
+
 	public void testDeleteBlob() {
 		/* initialize common objects */
-		IPath path = getWorkspace().getRoot().getLocation().append("blobstore");
-		File root = path.toFile();
-		root.mkdirs();
-		assertTrue("1.1", root.isDirectory());
-		BlobStore store = new BlobStore(path, 64);
+		IFileStore root = createStore();
+		BlobStore store = new BlobStore(root, 64);
 
 		/* delete blob that does not exist */
-		assertTrue("2.1", !store.deleteBlob(new UniversalUniqueIdentifier()));
+		UniversalUniqueIdentifier uuid = new UniversalUniqueIdentifier();
+		assertTrue("2.1", !store.fileFor(uuid).fetchInfo().exists());
+		store.deleteBlob(uuid);
+		assertTrue("2.2", !store.fileFor(uuid).fetchInfo().exists());
 
 		/* delete existing blob */
-		File target = new File(root, "target");
-		UniversalUniqueIdentifier uuid = null;
+		IFileStore target = root.getChild("target");
 		try {
 			createFile(target, "bla bla bla");
 			uuid = store.addBlob(target, true);
-		} catch (IOException e) {
-			fail("4.0", e);
 		} catch (CoreException e) {
 			fail("4.1", e);
 		}
-		assertTrue("4.3", store.deleteBlob(uuid));
-
-		/* remove trash */
-		Workspace.clear(root);
+		assertTrue("4.2", store.fileFor(uuid).fetchInfo().exists());
+		store.deleteBlob(uuid);
+		assertTrue("4.3", !store.fileFor(uuid).fetchInfo().exists());
 	}
 
 	public void testGetBlob() {
 		/* initialize common objects */
-		IPath path = getWorkspace().getRoot().getLocation().append("blobstore");
-		File root = path.toFile();
-		root.mkdirs();
-		assertTrue("1.1", root.isDirectory());
-		BlobStore store = new BlobStore(path, 64);
+		IFileStore root = createStore();
+		BlobStore store = new BlobStore(root, 64);
 
 		/* null UUID */
 		boolean ok = false;
@@ -145,14 +140,12 @@ public class BlobStoreTest extends LocalStoreTest {
 		assertTrue("2.1", ok);
 
 		/* get existing blob */
-		File target = new File(root, "target");
+		IFileStore target = root.getChild("target");
 		UniversalUniqueIdentifier uuid = null;
 		String content = "nothing important........tnatropmi gnihton";
 		try {
 			createFile(target, content);
 			uuid = store.addBlob(target, true);
-		} catch (IOException e) {
-			fail("3.0", e);
 		} catch (CoreException e) {
 			fail("3.1", e);
 		}
@@ -163,28 +156,20 @@ public class BlobStoreTest extends LocalStoreTest {
 			fail("3.4", e);
 		}
 		assertTrue("4.1", compareContent(getContents(content), input));
-
-		/* remove trash */
-		Workspace.clear(root);
 	}
 
 	public void testSetBlob() {
 		/* initialize common objects */
-		IPath path = getWorkspace().getRoot().getLocation().append("blobstore");
-		File root = path.toFile();
-		root.mkdirs();
-		assertTrue("1.1", root.isDirectory());
-		BlobStore store = new BlobStore(path, 64);
+		IFileStore root = createStore();
+		BlobStore store = new BlobStore(root, 64);
 
 		/* normal conditions */
-		File target = new File(root, "target");
+		IFileStore target = root.getChild("target");
 		UniversalUniqueIdentifier uuid = null;
 		String content = "nothing important........tnatropmi gnihton";
 		try {
 			createFile(target, content);
 			uuid = store.addBlob(target, true);
-		} catch (IOException e) {
-			fail("2.0", e);
 		} catch (CoreException e) {
 			fail("2.1", e);
 		}
@@ -195,8 +180,5 @@ public class BlobStoreTest extends LocalStoreTest {
 			fail("2.4", e);
 		}
 		assertTrue("2.5", compareContent(getContents(content), input));
-
-		/* remove trash */
-		Workspace.clear(root);
 	}
 }

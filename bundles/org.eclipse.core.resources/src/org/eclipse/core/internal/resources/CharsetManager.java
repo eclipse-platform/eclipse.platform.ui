@@ -98,7 +98,7 @@ public class CharsetManager implements IManager {
 			} finally {
 				monitor.done();
 			}
-			return result; //$NON-NLS-1$
+			return result;
 		}
 
 		/* (non-Javadoc)

@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class ProjectDescription extends ModelObject implements IProjectDescription {
 	private static final ICommand[] EMPTY_COMMAND_ARRAY = new ICommand[0];
@@ -39,7 +43,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	protected HashMap linkDescriptions = null;
 
 	// fields
-	protected IPath location = null;
+	protected URI location = null;
 	protected String[] natures = EMPTY_STRING_ARRAY;
 	protected IProject[] staticRefs = EMPTY_PROJECT_ARRAY;
 
@@ -164,10 +168,24 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return linkDescriptions;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see IProjectDescription#getLocation()
+	 * @deprecated
 	 */
 	public IPath getLocation() {
+		if (location == null)
+			return null;
+		final String scheme = location.getScheme();
+		// null scheme represents path variable
+		if (scheme == null || IFileStoreConstants.SCHEME_FILE.equals(scheme))
+			return new Path(location.getSchemeSpecificPart());
+		throw new RuntimeException("Project is not in the local file system: " + location); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see IProjectDescription#getLocationURI()
+	 */
+	public URI getLocationURI() {
 		return location;
 	}
 
@@ -320,7 +338,11 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setLocation(IPath)
 	 */
-	public void setLocation(IPath location) {
+	public void setLocation(IPath path) {
+		this.location = path == null ? null : FileUtil.toURI(path);
+	}
+	
+	public void setLocationURI(URI location) {
 		this.location = location;
 	}
 

@@ -12,7 +12,6 @@ package org.eclipse.core.tests.resources;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
@@ -43,8 +42,10 @@ public class IWorkspaceTest extends ResourceTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(IWorkspaceTest.class);
-		return suite;
+		return new TestSuite(IWorkspaceTest.class);
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new IWorkspaceTest("testValidateProjectLocation"));
+//		return suite;
 	}
 
 	protected void setUp() throws Exception {
@@ -867,7 +868,7 @@ public class IWorkspaceTest extends ResourceTest {
 	public void testValidateEdit() {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!CoreFileSystemLibrary.usingNatives())
+		if (!usingNatives())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IFile file = project.getFile("myfile.txt");
@@ -1057,15 +1058,15 @@ public class IWorkspaceTest extends ResourceTest {
 		assertTrue("5.5", !(workspace.validateProjectLocation(project, platformLocation.append("foo")).isOK()));
 
 		//can overlap platform directory on another device
-		IPath anotherDevice = platformLocation.setDevice("nowear:");
-		assertTrue("6.1", workspace.validateProjectLocation(project, new Path("nowear:", "/")).isOK());
+		IPath anotherDevice = platformLocation.setDevice("u:");
+		assertTrue("6.1", workspace.validateProjectLocation(project, new Path("u:", "/")).isOK());
 		if (WINDOWS)
-			assertTrue("6.2", workspace.validateProjectLocation(project, new Path("nowear:", "\\")).isOK());
+			assertTrue("6.2", workspace.validateProjectLocation(project, new Path("u:", "\\")).isOK());
 		assertTrue("6.4", workspace.validateProjectLocation(project, anotherDevice).isOK());
 		assertTrue("6.5", workspace.validateProjectLocation(project, anotherDevice.append("foo")).isOK());
 
 		//cannot be a relative path
-		assertTrue("7.1", !workspace.validateProjectLocation(project, new Path("nowear:", "")).isOK());
+		assertTrue("7.1", !workspace.validateProjectLocation(project, new Path("u:", "")).isOK());
 		assertTrue("7.2", !workspace.validateProjectLocation(project, new Path("c:")).isOK());
 		assertTrue("7.3", !workspace.validateProjectLocation(project, new Path("c:foo")).isOK());
 		assertTrue("7.4", !workspace.validateProjectLocation(project, new Path("foo/bar")).isOK());
@@ -1114,7 +1115,7 @@ public class IWorkspaceTest extends ResourceTest {
 			assertTrue("9.1", !workspace.validateProjectLocation(project, openProjectLocation).isOK());
 			assertTrue("9.2", !workspace.validateProjectLocation(project, closedProjectLocation).isOK());
 
-			//for an existing project, it cannot overlap itself, but it its own location is valid
+			//for an existing project, it cannot overlap itself, but its own location is valid
 			assertTrue("9.3", workspace.validateProjectLocation(open, openProjectLocation).isOK());
 			assertTrue("9.4", !workspace.validateProjectLocation(open, openProjectLocation.append("sub")).isOK());
 
@@ -1130,7 +1131,7 @@ public class IWorkspaceTest extends ResourceTest {
 			assertTrue("10.4", workspace.validateProjectLocation(project, linkLocation).isOK());
 
 		} catch (CoreException e) {
-			fail("9.99", e);
+			fail("10.99", e);
 		} finally {
 			Workspace.clear(linkLocation.toFile());
 			//make sure we clean up project directories

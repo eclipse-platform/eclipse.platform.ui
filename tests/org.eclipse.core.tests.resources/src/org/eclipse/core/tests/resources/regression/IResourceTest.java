@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import java.io.IOException;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -582,15 +581,11 @@ public class IResourceTest extends ResourceTest {
 
 		final String newContents = "some other contents";
 		try {
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				fail("3.99", e);
-			}
-			createFileInFileSystem(target.getLocation(), getContents(newContents));
-		} catch (IOException e) {
-			fail("3.0", e);
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			fail("3.99", e);
 		}
+		createFileInFileSystem(target.getLocation(), getContents(newContents));
 
 		final boolean[] failed = new boolean[1];
 		IResourceChangeListener listener = new IResourceChangeListener() {

@@ -12,7 +12,6 @@ package org.eclipse.core.tests.resources.regression;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -236,7 +235,7 @@ public class IWorkspaceTest extends ResourceTest {
 			IPath twoLocation = oneLocation.removeLastSegments(1).append(oneLocation.lastSegment().toLowerCase());
 
 			IStatus result = getWorkspace().validateProjectLocation(two, twoLocation);
-			if (CoreFileSystemLibrary.isCaseSensitive()) {
+			if (Workspace.caseSensitive) {
 				assertTrue("1.0", result.isOK());
 			} else {
 				assertTrue("1.1", !result.isOK());

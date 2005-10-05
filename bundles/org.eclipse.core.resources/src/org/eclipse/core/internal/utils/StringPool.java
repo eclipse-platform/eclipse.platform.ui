@@ -29,7 +29,7 @@ public final class StringPool {
 	private final HashMap map = new HashMap();
 
 	/**
-	 * Creaetes a new string pool.
+	 * Creates a new string pool.
 	 */
 	public StringPool() {
 		super();

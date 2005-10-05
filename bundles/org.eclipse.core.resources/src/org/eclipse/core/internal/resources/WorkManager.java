@@ -142,7 +142,7 @@ public class WorkManager implements IManager {
 	}
 
 	/**
-	 * This method can only be safelly called from inside a workspace
+	 * This method can only be safely called from inside a workspace
 	 * operation. Should NOT be called from outside a
 	 * prepareOperation/endOperation block.
 	 */
@@ -168,7 +168,7 @@ public class WorkManager implements IManager {
 	}
 	
 	/**
-	 * This method can only be safelly called from inside a workspace
+	 * This method can only be safely called from inside a workspace
 	 * operation. Should NOT be called from outside a
 	 * prepareOperation/endOperation block.
 	 */
@@ -177,7 +177,7 @@ public class WorkManager implements IManager {
 	}
 
 	/**
-	 * This method can only be safelly called from inside a workspace
+	 * This method can only be safely called from inside a workspace
 	 * operation. Should NOT be called from outside a
 	 * prepareOperation/endOperation block.
 	 */
@@ -186,7 +186,7 @@ public class WorkManager implements IManager {
 	}
 
 	/**
-	 * This method can only be safelly called from inside a workspace
+	 * This method can only be safely called from inside a workspace
 	 * operation. Should NOT be called from outside a
 	 * prepareOperation/endOperation block.
 	 */
@@ -196,7 +196,7 @@ public class WorkManager implements IManager {
 
 	/**
 	 * Returns true if the nested operation depth is the same as the prepared
-	 * operation depth, and false otherwise. This method can only be safelly
+	 * operation depth, and false otherwise. This method can only be safely
 	 * called from inside a workspace operation. Should NOT be called from
 	 * outside a prepareOperation/endOperation block.
 	 */
@@ -205,7 +205,7 @@ public class WorkManager implements IManager {
 	}
 
 	/**
-	 * This method can only be safelly called from inside a workspace
+	 * This method can only be safely called from inside a workspace
 	 * operation. Should NOT be called from outside a
 	 * prepareOperation/endOperation block.
 	 */
@@ -216,7 +216,7 @@ public class WorkManager implements IManager {
 	/**
 	 * Used to make things stable again after an operation has failed between a
 	 * workspace.prepareOperation() and workspace.beginOperation(). This method
-	 * can only be safelly called from inside a workspace operation. Should NOT
+	 * can only be safely called from inside a workspace operation. Should NOT
 	 * be called from outside a prepareOperation/endOperation block.
 	 */
 	public void rebalanceNestedOperations() {

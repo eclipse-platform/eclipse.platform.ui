@@ -11,8 +11,10 @@
 
 package org.eclipse.core.tests.resources;
 
+import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.FileSystemHelper;
@@ -26,6 +28,7 @@ import org.eclipse.core.tests.harness.FileSystemHelper;
 public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 
 	private final static String VARIABLE_NAME = "ROOT";
+	private final ArrayList toDelete = new ArrayList();
 
 	public LinkedResourceWithPathVariableTest() {
 		super();
@@ -41,12 +44,17 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 
 	protected void setUp() throws Exception {
 		IPath base = super.getRandomLocation();
+		toDelete.add(base);
 		getWorkspace().getPathVariableManager().setValue(VARIABLE_NAME, base);
 		super.setUp();
 	}
 
 	protected void tearDown() throws Exception {
 		getWorkspace().getPathVariableManager().setValue(VARIABLE_NAME, null);
+		IPath [] paths = (IPath[]) toDelete.toArray(new IPath[0]);
+		toDelete.clear();
+		for (int i = 0; i < paths.length; i++) 
+			Workspace.clear(paths[i].toFile());
 		super.tearDown();
 	}
 
@@ -66,6 +74,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 			}
 			path = FileSystemHelper.computeRandomLocation(parent);
 		}
+		toDelete.add(pathVars.resolvePath(path));
 		return path;
 	}
 
@@ -227,7 +236,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		//try to create a sub-file
 		try {
 			destination.create(getRandomContents(), IResource.NONE, getMonitor());
-			//shoudl fail
+			//should fail
 			fail("3.7");
 		} catch (CoreException e) {
 			//expected
@@ -306,7 +315,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		assertTrue("1.2", getWorkspace().validateLinkLocation(testFolder, folderLocation).getSeverity() == IStatus.WARNING);
 		assertTrue("1.3", getWorkspace().validateLinkLocation(testFile, fileLocation).getSeverity() == IStatus.WARNING);
 
-		//should suceed with ALLOW_MISSING_LOCAL
+		//should succeed with ALLOW_MISSING_LOCAL
 		try {
 			testFile.createLink(fileLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
 		} catch (CoreException e) {
@@ -352,7 +361,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 			//should fail
 		}
 
-		//refresh local should suceed
+		//refresh local should succeed
 		try {
 			testFile.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 			testFolder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
@@ -373,7 +382,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 			fail("6.0");
 		}
 
-		//delete should suceed
+		//delete should succeed
 		try {
 			testFile.delete(IResource.NONE, getMonitor());
 			testFolder.delete(IResource.NONE, getMonitor());
@@ -416,7 +425,9 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 
 		// changes the variable value - the file location will change
 		try {
-			manager.setValue(VARIABLE_NAME, super.getRandomLocation());
+			IPath newLocation = super.getRandomLocation();
+			toDelete.add(newLocation);
+			manager.setValue(VARIABLE_NAME, newLocation);
 		} catch (CoreException e) {
 			fail("2.2", e);
 		}
@@ -434,7 +445,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		// the location is different - does not exist anymore
 		assertDoesNotExistInFileSystem("3.3", file);
 
-		// successfuly changes resource's contents (using IResource.FORCE)
+		// successfully changes resource's contents (using IResource.FORCE)
 		try {
 			file.setContents(getContents("contents in different location"), IResource.FORCE, getMonitor());
 		} catch (CoreException e) {

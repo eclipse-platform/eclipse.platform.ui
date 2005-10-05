@@ -14,9 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
@@ -81,9 +83,9 @@ public class Bug_32076 extends ResourceTest {
 				// success							
 			}
 
-			// the source parent is out-of-sync
-			assertTrue("3.0", !sourceParent.isSynchronized(IResource.DEPTH_INFINITE));
-			// the target parent is in-sync
+			// the source parent is in sync
+			assertTrue("3.0", sourceParent.isSynchronized(IResource.DEPTH_INFINITE));
+			// the target parent is in sync
 			assertTrue("3.1", destinationParent.isSynchronized(IResource.DEPTH_INFINITE));
 
 			// file has been copied to destination
@@ -99,7 +101,8 @@ public class Bug_32076 extends ResourceTest {
 			}
 
 			// non-removable file has been moved (but not in file system - they are out-of-sync)
-			assertTrue("4.1", !sourceFile.exists());
+			assertTrue("4.1", sourceFile.exists());
+			assertTrue("4.2", sourceFile.isSynchronized(IResource.DEPTH_ZERO));
 
 			// refresh the source parent 
 			try {
@@ -108,7 +111,7 @@ public class Bug_32076 extends ResourceTest {
 				fail("4.4");
 			}
 
-			// non-removable file now reappear in the resource tree
+			// file is still found in source tree
 			assertTrue("4.7", sourceFile.exists());
 
 		} finally {
@@ -137,7 +140,7 @@ public class Bug_32076 extends ResourceTest {
 			IFolder destinationParent = project.getFolder("destination_parent");
 			IFolder folder = sourceParent.getFolder("folder");
 			IFolder destinationFolder = destinationParent.getFolder(folder.getName());
-			// this file will be made irremovable
+			// this file will be made un-removable
 			IFile file1 = folder.getFile("file1.txt");
 			// but not this one
 			IFile file2 = folder.getFile("file2.txt");
@@ -171,8 +174,8 @@ public class Bug_32076 extends ResourceTest {
 				// success										
 			}
 
-			// the source parent is out-of-sync
-			assertTrue("3.0", !sourceParent.isSynchronized(IResource.DEPTH_INFINITE));
+			// the source parent is in sync
+			assertTrue("3.0", sourceParent.isSynchronized(IResource.DEPTH_INFINITE));
 			// the target parent is in-sync
 			assertTrue("3.1", destinationParent.isSynchronized(IResource.DEPTH_INFINITE));
 
@@ -190,9 +193,10 @@ public class Bug_32076 extends ResourceTest {
 				fail("3.8", e);
 			}
 
-			// non-removable resources have been moved (but not in file system - they are out-of-sync)
-			assertTrue("4.1", !folder.exists());
-			assertTrue("4.2", !file1.exists());
+			// non-removable resources still exist in source
+			assertTrue("4.1", folder.exists());
+			assertTrue("4.2", file1.exists());
+			//this file should be successfully moved
 			assertTrue("4.3", !file2.exists());
 
 			// refresh the source parent 
@@ -202,7 +206,7 @@ public class Bug_32076 extends ResourceTest {
 				fail("4.4");
 			}
 
-			// non-removable resources now reappear in the resource tree
+			// non-removable resources still in source tree
 			assertTrue("4.6", folder.exists());
 			assertTrue("4.7", file1.exists());
 			assertTrue("4.8", !file2.exists());
@@ -231,7 +235,7 @@ public class Bug_32076 extends ResourceTest {
 			IWorkspace workspace = getWorkspace();
 			sourceProject = workspace.getRoot().getProject("SourceProject");
 			destinationProject = workspace.getRoot().getProject("DestinationProject");
-			// this file will be made irremovable
+			// this file will be made un-removable
 			IFile file1 = sourceProject.getFile("file1.txt");
 			// but not this one
 			IFile file2 = sourceProject.getFile("file2.txt");
@@ -267,9 +271,10 @@ public class Bug_32076 extends ResourceTest {
 
 			// the source does not exist
 			assertTrue("3.0", !sourceProject.exists());
+			assertTrue("3.1", sourceProject.isSynchronized(IResource.DEPTH_INFINITE));
 			// the target exists and is in sync
-			assertTrue("3.1", destinationProject.exists());
-			assertTrue("3.2", destinationProject.isSynchronized(IResource.DEPTH_INFINITE));
+			assertTrue("3.2", destinationProject.exists());
+			assertTrue("3.3", destinationProject.isSynchronized(IResource.DEPTH_INFINITE));
 
 			// resources have been copied to destination
 			assertTrue("3.4", destinationProject.getFile(file1.getProjectRelativePath()).exists());
@@ -283,8 +288,6 @@ public class Bug_32076 extends ResourceTest {
 			} catch (CoreException e) {
 				fail("3.8", e);
 			}
-
-			assertTrue("4.0", !sourceProject.exists());
 
 			assertTrue("5.0", workspace.getRoot().isSynchronized(IResource.DEPTH_INFINITE));
 
@@ -304,10 +307,10 @@ public class Bug_32076 extends ResourceTest {
 	}
 
 	public void testFileBugOnLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
 			return;
 
-		IPath roFolderLocation = null;
+		IFileStore roFolderStore = null;
 		IProject project = null;
 		try {
 			IWorkspace workspace = getWorkspace();
@@ -315,13 +318,13 @@ public class Bug_32076 extends ResourceTest {
 			IFolder sourceParent = project.getFolder("source_parent");
 			IFolder roFolder = sourceParent.getFolder("sub-folder");
 			IFolder destinationParent = project.getFolder("destination_parent");
-			// this file will be made irremovable
+			// this file will be made un-removable
 			IFile sourceFile = roFolder.getFile("file.txt");
 			IFile destinationFile = destinationParent.getFile("file.txt");
 
 			ensureExistsInWorkspace(new IResource[] {sourceFile, destinationParent}, true);
 
-			roFolderLocation = roFolder.getLocation();
+			roFolderStore = ((Resource)roFolder).getStore();
 
 			// add a marker to a file to ensure the move operation is not losing anything
 			String attributeKey = getRandomString();
@@ -376,19 +379,18 @@ public class Bug_32076 extends ResourceTest {
 			assertTrue("4.7", sourceFile.exists());
 
 		} finally {
-			if (roFolderLocation != null)
-				CoreFileSystemLibrary.setReadOnly(roFolderLocation.toOSString(), false);
+			if (roFolderStore != null)
+				setReadOnly(roFolderStore, false);
 			if (project != null)
 				ensureDoesNotExistInFileSystem(project);
 		}
 	}
 
 	public void testFolderBugOnLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
 			return;
 
-		IPath roFolderLocation = null;
-		IPath destinationROFolderLocation = null;
+		IFileStore roFolderLocation = null, destinationROFolderLocation = null;
 		IProject project = null;
 		try {
 			IWorkspace workspace = getWorkspace();
@@ -403,8 +405,8 @@ public class Bug_32076 extends ResourceTest {
 
 			ensureExistsInWorkspace(new IResource[] {file1, file2, destinationParent}, true);
 
-			roFolderLocation = roFolder.getLocation();
-			destinationROFolderLocation = destinationROFolder.getLocation();
+			roFolderLocation = ((Resource)roFolder).getStore();
+			destinationROFolderLocation = ((Resource)destinationROFolder).getStore();
 
 			// add a marker to a file to ensure the move operation is not losing anything
 			String attributeKey = getRandomString();
@@ -473,26 +475,26 @@ public class Bug_32076 extends ResourceTest {
 
 		} finally {
 			if (roFolderLocation != null)
-				CoreFileSystemLibrary.setReadOnly(roFolderLocation.toOSString(), false);
+				setReadOnly(roFolderLocation, false);
 			if (destinationROFolderLocation != null)
-				CoreFileSystemLibrary.setReadOnly(destinationROFolderLocation.toOSString(), false);
+				setReadOnly(destinationROFolderLocation, false);
 			if (project != null)
 				ensureDoesNotExistInFileSystem(project);
 		}
 	}
 
 	public void testProjectBugOnLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
 			return;
 
-		IProject sourceProject = null;
+		IWorkspace workspace = getWorkspace();
+		IProject sourceProject = workspace.getRoot().getProject("SourceProject");
 		IProject destinationProject = null;
-		IPath projectLocationParent = getRandomLocation();
+		IFileStore projectParentStore = getTempStore();
+		IFileStore projectStore = projectParentStore.getChild(sourceProject.getName());
 		try {
-			IWorkspace workspace = getWorkspace();
-			sourceProject = workspace.getRoot().getProject("SourceProject");
 			IProjectDescription sourceDescription = workspace.newProjectDescription(sourceProject.getName());
-			sourceDescription.setLocation(projectLocationParent.append(sourceProject.getName()));
+			sourceDescription.setLocationURI(projectStore.toURI());
 
 			destinationProject = workspace.getRoot().getProject("DestinationProject");
 			IProjectDescription destinationDescription = workspace.newProjectDescription(destinationProject.getName());
@@ -527,7 +529,7 @@ public class Bug_32076 extends ResourceTest {
 			}
 
 			// mark sub-folder as read-only so its immediate children cannot be removed on Linux
-			assertTrue("0.7", CoreFileSystemLibrary.setReadOnly(projectLocationParent.toOSString(), true));
+			setReadOnly(projectParentStore, true);
 
 			try {
 				sourceProject.move(destinationDescription, IResource.FORCE, getMonitor());
@@ -554,16 +556,15 @@ public class Bug_32076 extends ResourceTest {
 				fail("3.8", e);
 			}
 			// project's content area still exists in file system
-			assertTrue("4.0", projectLocationParent.append(sourceProject.getName()).toFile().exists());
+			assertTrue("4.0", projectStore.fetchInfo().exists());
 
 			assertTrue("5.0", workspace.getRoot().isSynchronized(IResource.DEPTH_INFINITE));
 
 		} finally {
-			CoreFileSystemLibrary.setReadOnly(projectLocationParent.toOSString(), false);
-			ensureDoesNotExistInFileSystem(projectLocationParent.toFile());
+			setReadOnly(projectParentStore, false);
+			ensureDoesNotExistInFileSystem(sourceProject);
 			if (destinationProject != null)
 				ensureDoesNotExistInFileSystem(destinationProject);
 		}
 	}
-
 }

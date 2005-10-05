@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.Map;
+import org.eclipse.core.internal.localstore.FileStoreRoot;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.IElementTreeData;
 import org.eclipse.core.resources.IResource;
@@ -26,6 +27,11 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * and the character set generation count in the higher two bytes.
 	 */
 	protected volatile int charsetAndContentId = 0;
+
+	/**
+	 * The file system root that this resource is stored in
+	 */
+	protected FileStoreRoot fileStoreRoot;
 
 	/** Set of flags which reflect various states of the info (used, derived, ...). */
 	protected int flags = 0;
@@ -60,7 +66,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	protected ObjectMap sessionProperties = null;
 
 	/** 
-	 * The table of sync infos. 
+	 * The table of sync information. 
 	 * <p>
 	 * This field is declared as the implementing class rather than the
 	 * interface so we ensure that we get it right since we are making certain
@@ -119,6 +125,10 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 
 	public int getContentId() {
 		return charsetAndContentId & LOWER;
+	}
+
+	public FileStoreRoot getFileStoreRoot() {
+		return fileStoreRoot;
 	}
 
 	/** 
@@ -298,11 +308,15 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	protected void setBits(int mask, int start, int value) {
 		int baseMask = mask >> start;
 		int newValue = (value & baseMask) << start;
-		// thread safety: (guarantee atomicity)
+		// thread safety: (guarantee atomic assignment)
 		int temp = flags;
 		temp &= ~mask;
 		temp |= newValue;
 		flags = temp;
+	}
+
+	public void setFileStoreRoot(FileStoreRoot fileStoreRoot) {
+		this.fileStoreRoot = fileStoreRoot;
 	}
 
 	/** 

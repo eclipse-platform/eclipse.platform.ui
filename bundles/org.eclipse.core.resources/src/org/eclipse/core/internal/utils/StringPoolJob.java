@@ -97,7 +97,7 @@ public class StringPoolJob extends Job {
 		if (start > 0) {
 			lastDuration = System.currentTimeMillis() - start;
 			if (Policy.DEBUG_STRINGS)
-				Policy.debug("String sharing saved " + savings + " bytes in: " + lastDuration); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Policy.debug("String sharing saved " + savings + " bytes in: " + lastDuration); //$NON-NLS-1$ //$NON-NLS-2$ 
 		}
 		//throttle frequency if it takes too long
 		long scheduleDelay = Math.max(RESCHEDULE_DELAY, lastDuration*100);

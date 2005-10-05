@@ -13,6 +13,8 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.utils.*;
@@ -125,9 +127,9 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	 */
 	class LazyFileInputStream extends InputStream {
 		private InputStream actual;
-		private IPath target;
+		private IFileStore target;
 
-		LazyFileInputStream(IPath target) {
+		LazyFileInputStream(IFileStore target) {
 			this.target = target;
 		}
 
@@ -143,12 +145,16 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			actual.close();
 		}
 
-		private void ensureOpened() throws FileNotFoundException {
+		private void ensureOpened() throws IOException {
 			if (actual != null)
 				return;
 			if (target == null)
 				throw new FileNotFoundException();
-			actual = new FileInputStream(target.toFile());
+			try {
+				actual = target.openInputStream(IFileStoreConstants.NONE, null);
+			} catch (CoreException e) {
+				throw new IOException(e.getMessage());
+			}
 		}
 
 		public int read() throws IOException {
@@ -388,7 +394,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		if (Policy.DEBUG_CONTENT_TYPE)
 			Policy.debug("reading contents of " + file); //$NON-NLS-1$		
 		// tries to obtain a description for this file contents
-		InputStream contents = new LazyFileInputStream(file.getLocation());
+		InputStream contents = new LazyFileInputStream(file.getStore());
 		try {
 			IContentTypeMatcher matcher = getContentTypeMatcher((Project) file.getProject());
 			return matcher.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);

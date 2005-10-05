@@ -35,7 +35,7 @@ public final class Assert {
 	 * not <code>true</code>, an <code>IllegalArgumentException</code>
 	 * is thrown.
 	 *
-	 * @param expression the outcode of the check
+	 * @param expression the outcome of the check
 	 * @return <code>true</code> if the check passes (does not return
 	 *    if the check fails)
 	 * @exception IllegalArgumentException if the legality test failed
@@ -49,7 +49,7 @@ public final class Assert {
 	 * is thrown.
 	 * The given message is included in that exception, to aid debugging.
 	 *
-	 * @param expression the outcode of the check
+	 * @param expression the outcome of the check
 	 * @param message the message to include in the exception
 	 * @return <code>true</code> if the check passes (does not return
 	 *    if the check fails)
@@ -87,7 +87,7 @@ public final class Assert {
 	/** Asserts that the given boolean is <code>true</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.
 	 *
-	 * @param expression the outcode of the check
+	 * @param expression the outcome of the check
 	 * @return <code>true</code> if the check passes (does not return
 	 *    if the check fails)
 	 */
@@ -99,7 +99,7 @@ public final class Assert {
 	 * is not the case, some kind of unchecked exception is thrown.
 	 * The given message is included in that exception, to aid debugging.
 	 *
-	 * @param expression the outcode of the check
+	 * @param expression the outcome of the check
 	 * @param message the message to include in the exception
 	 * @return <code>true</code> if the check passes (does not return
 	 *    if the check fails)

@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
@@ -23,6 +22,9 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Tests regression of bug 25457.  In this case, attempting to move a project
  * that is only a case change, where the move fails due to another handle being
  * open on a file in the hierarchy, would cause deletion of the source.
+ * 
+ * Note: this is similar to Bug_32076, which deals with failure to move in
+ * the non case-change scenario.
  */
 public class Bug_25457 extends ResourceTest {
 	public static Test suite() {
@@ -45,7 +47,8 @@ public class Bug_25457 extends ResourceTest {
 		IFile sourceFile = source.getFile("file.txt");
 		IFile destFile = source.getFile("File.txt");
 		ensureExistsInWorkspace(source, true);
-		ensureExistsInWorkspace(sourceFile, true);
+		final String content = getRandomString();
+		ensureExistsInWorkspace(sourceFile, content);
 
 		//open a stream in the source to cause the rename to fail
 		InputStream stream = null;
@@ -62,22 +65,22 @@ public class Bug_25457 extends ResourceTest {
 			} catch (CoreException e1) {
 				//should fail
 			}
-			//ensure source still exists
-			assertTrue("2.0", source.exists());
-			assertTrue("2.1", sourceFile.exists());
-
-			//ensure destination file does not exist
-			assertTrue("2.2", !destFile.exists());
-
 		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					fail("9.99", e);
-				}
-			}
+			assertClose(stream);
 		}
+		//ensure source still exists and has same content
+		assertTrue("2.0", source.exists());
+		assertTrue("2.1", sourceFile.exists());
+		try {
+			stream = sourceFile.getContents();
+			assertTrue("2.2", compareContent(stream, new ByteArrayInputStream(content.getBytes())));
+		} catch (CoreException e) {
+			fail("3.99", e);
+		} finally {
+			assertClose(stream);
+		}
+		//ensure destination file does not exist
+		assertTrue("2.3", !destFile.exists());
 	}
 
 	public void testFolder() {
@@ -118,13 +121,7 @@ public class Bug_25457 extends ResourceTest {
 			assertTrue("2.4", !destFile.exists());
 
 		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					fail("9.99", e);
-				}
-			}
+			assertClose(stream);
 		}
 	}
 
@@ -154,23 +151,16 @@ public class Bug_25457 extends ResourceTest {
 			} catch (CoreException e1) {
 				//should fail
 			}
-			//ensure source still exists
-			assertTrue("2.0", source.exists());
-			assertTrue("2.1", sourceFile.exists());
+			//ensure source does not exist
+			assertTrue("2.0", !source.exists());
+			assertTrue("2.1", !sourceFile.exists());
 
 			//ensure destination does not exist
-			assertTrue("2.2", !destination.exists());
-			assertTrue("2.3", !destFile.exists());
+			assertTrue("2.2", destination.exists());
+			assertTrue("2.3", destFile.exists());
 
 		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					fail("9.99", e);
-				}
-			}
+			assertClose(stream);
 		}
-
 	}
 }

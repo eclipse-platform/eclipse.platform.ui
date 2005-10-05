@@ -12,6 +12,8 @@ package org.eclipse.core.internal.resources;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.localstore.HistoryStore2;
 import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.properties.IPropertyManager;
@@ -61,7 +63,8 @@ public class ResourcesCompatibilityHelper {
 			throw (Error) target;
 		}
 		// default to new version
-		return new HistoryStore2((Workspace) ResourcesPlugin.getWorkspace(), location, limit);
+		IFileStore store = FileSystemCore.getLocalFileSystem().getStore(location);
+		return new HistoryStore2((Workspace) ResourcesPlugin.getWorkspace(), store, limit);
 	}
 
 	public static IHistoryStore createHistoryStore(IPath location, int limit, boolean newImpl, boolean convert, boolean rename) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {

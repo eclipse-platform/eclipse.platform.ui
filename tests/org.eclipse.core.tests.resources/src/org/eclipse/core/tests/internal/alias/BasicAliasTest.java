@@ -166,6 +166,7 @@ public class BasicAliasTest extends ResourceTest {
 			assertTrue("3.0", !link.exists());
 			assertTrue("3.1", movedLink.exists());
 			assertEquals("3.2", location, movedLink.getLocation());
+			assertTrue("3.3", movedLink.isSynchronized(IResource.DEPTH_INFINITE));
 
 			//now copy the moved link
 			IFolder copiedLink = project.getFolder("CopiedLink");
@@ -556,12 +557,14 @@ public class BasicAliasTest extends ResourceTest {
 			assertDoesNotExistInWorkspace("1.2", lChildOverlap);
 			assertExistsInWorkspace("1.3", destination);
 			assertOverlap("1.4", lChildLinked, lChildOverlap);
+			assertTrue("1.5", lChildLinked.isSynchronized(IResource.DEPTH_INFINITE));
+			assertTrue("1.6", destination.isSynchronized(IResource.DEPTH_INFINITE));
 
 			destination.move(lChildLinked.getFullPath(), IResource.NONE, getMonitor());
-			assertExistsInWorkspace("1.5", lChildLinked);
-			assertExistsInWorkspace("1.6", lChildOverlap);
-			assertDoesNotExistInWorkspace("1.7", destination);
-			assertOverlap("1.8", lChildLinked, lChildOverlap);
+			assertExistsInWorkspace("2.1", lChildLinked);
+			assertExistsInWorkspace("2.2", lChildOverlap);
+			assertDoesNotExistInWorkspace("2.3", destination);
+			assertOverlap("2.4", lChildLinked, lChildOverlap);
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}

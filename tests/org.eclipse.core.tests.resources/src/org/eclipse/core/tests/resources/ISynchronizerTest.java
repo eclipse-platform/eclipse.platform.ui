@@ -77,8 +77,11 @@ public class ISynchronizerTest extends ResourceTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ISynchronizerTest.class);
-		return suite;
+		return new TestSuite(ISynchronizerTest.class);
+
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new ISynchronizerTest("testMoveResource2"));
+//		return suite;
 	}
 
 	public void tearDown() throws Exception {
@@ -396,11 +399,11 @@ public class ISynchronizerTest extends ResourceTest {
 		}
 
 		// setup
-		IResource[] resources = buildResources(getWorkspace().getRoot(), new String[] {"/Foo", "/Foo/file.txt"});
-		IProject sourceProject = (IProject) resources[0];
-		IFile sourceFile = (IFile) resources[1];
+		IResource[] toTest = buildResources(getWorkspace().getRoot(), new String[] {"/Foo", "/Foo/file.txt"});
+		IProject sourceProject = (IProject) toTest[0];
+		IFile sourceFile = (IFile) toTest[1];
 		// create in workspace
-		ensureExistsInWorkspace(resources, true);
+		ensureExistsInWorkspace(toTest, true);
 
 		// register partner and add sync info
 		synchronizer.add(qname);
@@ -466,7 +469,6 @@ public class ISynchronizerTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("7.3", e);
 		}
-
 	}
 
 	public void testRegistration() {

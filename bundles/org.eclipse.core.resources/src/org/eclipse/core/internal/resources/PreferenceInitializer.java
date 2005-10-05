@@ -29,7 +29,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public static final boolean PREF_AUTO_BUILDING_DEFAULT = true;
 	public static final String PREF_BUILD_ORDER_DEFAULT = ""; //$NON-NLS-1$
 	public static final int PREF_MAX_BUILD_ITERATIONS_DEFAULT = 10;
-	public static final boolean PREF_DEFAULT_BUILD_ORDER_DEFAULT = true; //$NON-NLS-1$
+	public static final boolean PREF_DEFAULT_BUILD_ORDER_DEFAULT = true;
 	public final static long PREF_SNAPSHOT_INTERVAL_DEFAULT = 5 * 60 * 1000l; // 5 min
 	public static final int PREF_OPERATIONS_PER_SNAPSHOT_DEFAULT = 100;
 	public static final long PREF_FILE_STATE_LONGEVITY_DEFAULT = 7 * 24 * 3600 * 1000l; // 7 days

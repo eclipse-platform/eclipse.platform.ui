@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.net.URI;
 import java.util.*;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
@@ -132,7 +134,7 @@ public class Project extends Container implements IProject {
 	 * Checks validity of the given project description.
 	 */
 	protected void checkDescription(IProject project, IProjectDescription desc, boolean moving) throws CoreException {
-		IPath location = desc.getLocation();
+		URI location = desc.getLocationURI();
 		if (location == null)
 			return;
 		String message = Messages.resources_invalidProjDesc;
@@ -146,15 +148,12 @@ public class Project extends Container implements IProject {
 			// of the new description. Otherwise both locations aren't null and they are equal so ignore validation.
 			IPath sourceLocation = internalGetDescription().getLocation();
 			if (sourceLocation == null || !sourceLocation.equals(location))
-				status.merge(workspace.validateProjectLocation(project, location));
+				status.merge(workspace.validateProjectLocationURI(project, location));
 		} else
 			// otherwise continue on like before
-			status.merge(workspace.validateProjectLocation(project, location));
+			status.merge(workspace.validateProjectLocationURI(project, location));
 		if (!status.isOK())
 			throw new ResourceException(status);
-		//try infer the device if there isn't one (windows)
-		if (location.isAbsolute())
-			desc.setLocation(new Path(location.toFile().getAbsolutePath()));
 	}
 
 	/* (non-Javadoc)
@@ -232,9 +231,9 @@ public class Project extends Container implements IProject {
 	}
 
 	protected void copyMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
-		java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
-		java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
-		getLocalManager().getStore().copy(oldMetaArea, newMetaArea, IResource.DEPTH_INFINITE, monitor);
+		IFileStore oldMetaArea = FileSystemCore.getFileSystem(IFileStoreConstants.SCHEME_FILE).getStore(workspace.getMetaArea().locationFor(source));
+		IFileStore newMetaArea = FileSystemCore.getFileSystem(IFileStoreConstants.SCHEME_FILE).getStore(workspace.getMetaArea().locationFor(destination));
+		oldMetaArea.copy(newMetaArea, IFileStoreConstants.NONE, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -265,12 +264,16 @@ public class Project extends Container implements IProject {
 					desc = (ProjectDescription) ((ProjectDescription) description).clone();
 				}
 				desc.setName(getName());
-				info.setDescription(desc);
+				internalSetDescription(desc, false);
 				// see if there potentially are already contents on disk
-				boolean hasContent = getLocalManager().locationFor(this).toFile().exists();
+				final boolean hasSavedDescription = getLocalManager().hasSavedDescription(this);
+				boolean hasContent = hasSavedDescription;
+				//if there is no project description, there might still be content on disk
+				if (!hasSavedDescription)
+					hasContent = getLocalManager().hasSavedContent(this);
 				try {
 					// look for a description on disk
-					if (getLocalManager().hasSavedProject(this)) {
+					if (hasSavedDescription) {
 						updateDescription();
 						//make sure the .location file is written
 						workspace.getMetaArea().writePrivateDescription(this);
@@ -628,6 +631,7 @@ public class Project extends Container implements IProject {
 	void internalSetDescription(IProjectDescription value, boolean incrementContentId) {
 		ProjectInfo info = (ProjectInfo) getResourceInfo(false, true);
 		info.setDescription((ProjectDescription) value);
+		getLocalManager().setLocation(this, info, value.getLocationURI());
 		if (incrementContentId) {
 			info.incrementContentId();
 			//if the project is not accessible, stamp will be null and should remain null
@@ -660,7 +664,7 @@ public class Project extends Container implements IProject {
 	 * @see IResource#isLocal(int)
 	 */
 	public boolean isLocal(int depth) {
-		// the flags parm is ignored for projects so pass anything
+		// the flags parameter is ignored for projects so pass anything
 		return isLocal(-1, depth);
 	}
 
@@ -745,7 +749,7 @@ public class Project extends Container implements IProject {
 				message = Messages.resources_moveProblem;
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 				WorkManager workManager = workspace.getWorkManager();
-				ResourceTree tree = new ResourceTree(workManager.getLock(), status, updateFlags);
+				ResourceTree tree = new ResourceTree(getLocalManager(), workManager.getLock(), status, updateFlags);
 				IMoveDeleteHook hook = workspace.getMoveDeleteHook();
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_MOVE, this, destination, updateFlags));
 				int depth = 0;
@@ -926,7 +930,7 @@ public class Project extends Container implements IProject {
 				//If the file is missing, we want to write the new description then throw an exception.
 				boolean hadSavedDescription = true;
 				if (((updateFlags & IResource.FORCE) == 0)) {
-					hadSavedDescription = getLocalManager().hasSavedProject(this);
+					hadSavedDescription = getLocalManager().hasSavedDescription(this);
 					if (hadSavedDescription && !getLocalManager().isDescriptionSynchronized(this)) {
 						String message = NLS.bind(Messages.resources_projectDescSync, getName());
 						throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, getFullPath(), message, null);

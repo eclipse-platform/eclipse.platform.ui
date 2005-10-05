@@ -11,30 +11,30 @@
 package org.eclipse.core.internal.localstore;
 
 import java.io.*;
+import java.net.URI;
 import java.util.*;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.resources.File;
-import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.xml.sax.InputSource;
 
 /**
  * Manages the synchronization between the workspace's view and the file system.  
  */
-public class FileSystemResourceManager implements ICoreConstants, IManager {
+public class FileSystemResourceManager implements ICoreConstants, IManager, IFileStoreConstants {
 
-	protected Workspace workspace;
 	/**
 	 * The history store is initialized lazily - always use the accessor method
 	 */
 	protected IHistoryStore _historyStore;
-	protected FileSystemStore localStore;
+	protected Workspace workspace;
 
 	public FileSystemResourceManager(Workspace workspace) {
 		this.workspace = workspace;
-		localStore = new FileSystemStore();
 	}
 
 	/**
@@ -111,6 +111,21 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return toReturn;
 	}
 
+	/* (non-javadoc)
+	 * @see IResource.getResourceAttributes
+	 */
+	public ResourceAttributes attributes(IResource resource) {
+		IFileStore store = getStore(resource);
+		IFileInfo fileInfo = store.fetchInfo();
+		if (!fileInfo.exists())
+			return null;
+		ResourceAttributes attributes = new ResourceAttributes();
+		attributes.setReadOnly(fileInfo.getAttribute(ATTRIBUTE_READ_ONLY));
+		attributes.setArchive(fileInfo.getAttribute(ATTRIBUTE_ARCHIVE));
+		attributes.setExecutable(fileInfo.getAttribute(ATTRIBUTE_EXECUTABLE));
+		return attributes;
+	}
+
 	/**
 	 * Returns a container for the given file system location or null if there
 	 * is no mapping for this path. If the path has only one segment, then an 
@@ -129,13 +144,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			int totalWork = ((Resource) target).countResources(IResource.DEPTH_INFINITE, false);
 			String title = NLS.bind(Messages.localstore_copying, target.getFullPath());
 			monitor.beginTask(title, totalWork);
-			// use locationFor() instead of getLocation() to avoid null 
-			IPath location = locationFor(destination);
-			if (location == null) {
-				String message = NLS.bind(Messages.localstore_locationUndefined, target.getFullPath());
-				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
-			}
-			if (location.toFile().exists()) {
+			IFileStore destinationStore = getStore(destination);
+			if (destinationStore.fetchInfo().exists()) {
 				String message = NLS.bind(Messages.localstore_resourceExists, destination.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, null);
 			}
@@ -150,11 +160,12 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		}
 	}
 
-	public void delete(IResource target, boolean force, boolean convertToPhantom, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	public void delete(IResource target, int flags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			Resource resource = (Resource) target;
 			int totalWork = resource.countResources(IResource.DEPTH_INFINITE, false);
+			boolean force = (flags & IResource.FORCE) != 0;
 			if (!force)
 				totalWork *= 2;
 			String title = NLS.bind(Messages.localstore_deleting, resource.getFullPath());
@@ -168,6 +179,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				sub.beginTask("", 1000); //$NON-NLS-1$
 				try {
 					CollectSyncStatusVisitor refreshVisitor = new CollectSyncStatusVisitor(Messages.localstore_deleteProblem, sub);
+					refreshVisitor.setIgnoreLocalDeletions(true);
 					tree.accept(refreshVisitor, IResource.DEPTH_INFINITE);
 					status.merge(refreshVisitor.getSyncStatus());
 					skipList = refreshVisitor.getAffectedResources();
@@ -175,7 +187,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 					sub.done();
 				}
 			}
-			DeleteVisitor deleteVisitor = new DeleteVisitor(skipList, force, convertToPhantom, keepHistory, monitor);
+			DeleteVisitor deleteVisitor = new DeleteVisitor(skipList, flags, monitor);
 			tree.accept(deleteVisitor, IResource.DEPTH_INFINITE);
 			status.merge(deleteVisitor.getStatus());
 			if (!status.isOK())
@@ -183,6 +195,80 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		} finally {
 			monitor.done();
 		}
+	}
+
+	/**
+	 * Returns true if the description on disk is different from the given byte array,
+	 * and false otherwise.
+	 */
+	private boolean descriptionChanged(IFile descriptionFile, byte[] newContents) {
+		InputStream stream = null;
+		try {
+			stream = new BufferedInputStream(descriptionFile.getContents(true));
+			int newLength = newContents.length;
+			byte[] oldContents = new byte[newLength];
+			int read = stream.read(oldContents);
+			if (read != newLength)
+				return true;
+			//if the stream still has bytes available, then the description is changed
+			if (stream.read() >= 0)
+				return true;
+			return !Arrays.equals(newContents, oldContents);
+		} catch (Exception e) {
+			System.out.println(e);
+			//if we failed to compare, just write the new contents
+		} finally {
+			FileUtil.safeClose(stream);
+		}
+		return true;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public int doGetEncoding(IFileStore store) throws CoreException {
+		InputStream input = null;
+		try {
+			input = store.openInputStream(NONE, null);
+			int first = input.read();
+			int second = input.read();
+			if (first == -1 || second == -1)
+				return IFile.ENCODING_UNKNOWN;
+			first &= 0xFF;//converts unsigned byte to int
+			second &= 0xFF;
+			//look for the UTF-16 Byte Order Mark (BOM)
+			if (first == 0xFE && second == 0xFF)
+				return IFile.ENCODING_UTF_16BE;
+			if (first == 0xFF && second == 0xFE)
+				return IFile.ENCODING_UTF_16LE;
+			int third = (input.read() & 0xFF);
+			if (third == -1)
+				return IFile.ENCODING_UNKNOWN;
+			//look for the UTF-8 BOM
+			if (first == 0xEF && second == 0xBB && third == 0xBF)
+				return IFile.ENCODING_UTF_8;
+			return IFile.ENCODING_UNKNOWN;
+		} catch (IOException e) {
+			String message = NLS.bind(Messages.localstore_couldNotRead, store.toString());
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, message, e);
+		} finally {
+			FileUtil.safeClose(input);
+		}
+	}
+
+	/**
+	 * Optimized sync check for files.  Returns true if the file exists and is in sync, and false
+	 * otherwise.  The intent is to let the default implementation handle the complex
+	 * cases like gender change, case variants, etc.
+	 */
+	public boolean fastIsSynchronized(File target) {
+		ResourceInfo info = target.getResourceInfo(false, false);
+		if (target.exists(target.getFlags(info), true)) {
+			IFileInfo fileInfo= getStore(target).fetchInfo();
+			if (!fileInfo.isDirectory() && info.getLocalSyncInfo() == fileInfo.getLastModified())
+				return true;
+		}
+		return false;
 	}
 
 	/**
@@ -196,34 +282,16 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	}
 
 	/**
-	 * The project description file is the only metadata file stored outside the
-	 * metadata area.  It is stored as a file directly under the project location.
-	 * Returns null if the project location could not be resolved.
-	 */
-	public IPath getDescriptionLocationFor(IProject target) {
-		IPath projectLocation = locationFor(target);
-		return projectLocation == null ? null : projectLocation.append(IProjectDescription.DESCRIPTION_FILE_NAME);
-	}
-
-	/**
 	 * @deprecated
 	 */
 	public int getEncoding(File target) throws CoreException {
 		// thread safety: (the location can be null if the project for this file does not exist)
-		IPath location = locationFor(target);
-		if (location == null)
-			((Project) target.getProject()).checkExists(NULL_FLAG, true);
-		//location can be null if based on an undefined variable
-		if (location == null) {
-			String message = NLS.bind(Messages.localstore_locationUndefined, target.getFullPath());
+		IFileStore store = getStore(target);
+		if (!store.fetchInfo().exists()) {
+			String message = NLS.bind(Messages.localstore_fileNotFound, store.toString());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
-		java.io.File localFile = location.toFile();
-		if (!localFile.exists()) {
-			String message = NLS.bind(Messages.localstore_fileNotFound, localFile.getAbsolutePath());
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
-		}
-		return getStore().getEncoding(localFile);
+		return doGetEncoding(store);
 	}
 
 	public IHistoryStore getHistoryStore() {
@@ -235,21 +303,94 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return _historyStore;
 	}
 
+	/** 
+	 * Returns the real name of the resource on disk. Returns null if no local
+	 * file exists by that name.  This is useful when dealing with
+	 * case insensitive file systems.
+	 */
+	public String getLocalName(IFileStore target) {
+		IFileStore parent = target.getParent();
+		try {
+			String[] list = parent.childNames(NONE, null);
+			String targetName = target.getName();
+			for (int i = 0; i < list.length; i++)
+				if (targetName.equalsIgnoreCase(list[i]))
+					return list[i];
+		} catch (CoreException e) {
+			//fall through and treat non-accessible directory as non-existent directory
+		}
+		return null;
+	}
+
 	protected IPath getProjectDefaultLocation(IProject project) {
 		return Platform.getLocation().append(project.getFullPath());
 	}
 
-	public FileSystemStore getStore() {
-		return localStore;
+	/**
+	 * Never returns null
+	 * @param target
+	 * @return The file store for this resource
+	 */
+	public IFileStore getStore(IResource target) {
+		return getStoreRoot(target).createStore(target.getFullPath());
+	}
+
+	/**
+	 * Returns the file store root for the provided resource. Never returns null.
+	 */
+	private FileStoreRoot getStoreRoot(IResource target) {
+		ResourceInfo info = workspace.getResourceInfo(target.getFullPath(), true, false);
+		FileStoreRoot root;
+		if (info != null) {
+			root = info.getFileStoreRoot();
+			if (root != null && root.isValid())
+				return root;
+		}
+		final IContainer parent = target.getParent();
+		if (parent == null) {
+			//this is the root, so we know where this must be located
+			//initialize root location
+			info = workspace.getResourceInfo(Path.ROOT, false, true);
+			setLocation(workspace.getRoot(), info, FileUtil.toURI(Platform.getLocation()));
+			return info.getFileStoreRoot();
+		}
+		root = getStoreRoot(parent);
+		if (info != null)
+			info.setFileStoreRoot(root);
+		return root;
 	}
 
 	protected Workspace getWorkspace() {
 		return workspace;
 	}
 
-	public boolean hasSavedProject(IProject project) {
-		IPath location = getDescriptionLocationFor(project);
-		return location == null ? false : location.toFile().exists();
+	/**
+	 * Returns whether the project has any local content on disk.
+	 */
+	public boolean hasSavedContent(IProject project) {
+		return getStore(project).fetchInfo().exists();
+	}
+
+	/**
+	 * Returns whether the project has a project description file on disk.
+	 */
+	public boolean hasSavedDescription(IProject project) {
+		return getStore(project).getChild(IProjectDescription.DESCRIPTION_FILE_NAME).fetchInfo().exists();
+	}
+
+	/**
+	 * Initializes the file store for a resource.
+	 * 
+	 * @param target The resource to initialize the file store for.
+	 * @param location the File system location of this resource on disk
+	 * @return The file store for the provided resource
+	 */
+	private IFileStore initializeStore(IResource target, URI location) {
+		FileStoreRoot root = new FileStoreRoot(location, target.getFullPath());
+		IFileStore store = root.createStore(target.getFullPath());
+		ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
+		info.setFileStoreRoot(root);
+		return store;
 	}
 
 	/**
@@ -260,12 +401,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * because it was unchanged
 	 */
 	public boolean internalWrite(IProject target, IProjectDescription description, int updateFlags, boolean hasPublicChanges, boolean hasPrivateChanges) throws CoreException {
-		IPath location = locationFor(target);
-		if (location == null) {
-			String message = NLS.bind(Messages.localstore_locationUndefined, target.getFullPath());
-			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
-		}
-		getStore().writeFolder(location.toFile());
 		//write the project's private description to the metadata area
 		if (hasPrivateChanges)
 			getWorkspace().getMetaArea().writePrivateDescription(target);
@@ -314,36 +449,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	}
 
 	/**
-	 * Returns true if the description on disk is different from the given byte array,
-	 * and false otherwise.
-	 */
-	private boolean descriptionChanged(IFile descriptionFile, byte[] newContents) {
-		InputStream stream = null;
-		try {
-			stream = new BufferedInputStream(descriptionFile.getContents());
-			int newLength = newContents.length;
-			byte[] oldContents = new byte[newLength];
-			int read = stream.read(oldContents);
-			if (read != newLength)
-				return true;
-			//if the stream still has bytes available, then the description is changed
-			if (stream.read() >= 0)
-				return true;
-			return !Arrays.equals(newContents, oldContents);
-		} catch (Exception e) {
-			//if we failed to compare, just write the new contents
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e1) {
-				//ignore failure to close the file
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Returns true if the given project's description is synchronized with
 	 * the project description file on disk, and false otherwise.
 	 */
@@ -355,11 +460,11 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		ResourceInfo projectInfo = ((Resource) target).getResourceInfo(false, false);
 		if (projectInfo == null)
 			return false;
-		return projectInfo.getLocalSyncInfo() == CoreFileSystemLibrary.getLastModified(descriptionFile.getLocation().toOSString());
+		return projectInfo.getLocalSyncInfo() == getStore(descriptionFile).fetchInfo().getLastModified();
 	}
 
 	/* (non-Javadoc)
-	 * Returns true if the given resource is synchronized with the filesystem
+	 * Returns true if the given resource is synchronized with the file system
 	 * to the given depth.  Returns false otherwise.
 	 * 
 	 * @see IResource#isSynchronized(int)
@@ -400,14 +505,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return true;
 	}
 
-	public void link(Resource target, IPath localLocation) {
-		//resource already exists when linking -- just need to update sync info
-		long lastModified = 0;
-		//a relative path means location is relative to an undefined variable
-		if (localLocation.isAbsolute())
-			lastModified = CoreFileSystemLibrary.getLastModified(localLocation.toFile().getAbsolutePath());
+	public void link(Resource target, URI location) {
+		IFileStore store = initializeStore(target, location);
 		ResourceInfo info = target.getResourceInfo(false, true);
-		//clear modification stamp for resource whose local contents don't exist
+		long lastModified = store.fetchInfo().getLastModified();
 		if (lastModified == 0)
 			info.clearModificationStamp();
 		updateLocalSync(info, lastModified);
@@ -419,7 +520,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 */
 	public IPath locationFor(IResource target) {
 		//note: this method is a critical performance path,
-		//code may be inlined to prevent method calls
+		//code may be in-lined to prevent method calls
 		switch (target.getType()) {
 			case IResource.ROOT :
 				return Platform.getLocation();
@@ -465,6 +566,18 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		}
 	}
 
+	public void move(IResource source, IFileStore destination, int flags, IProgressMonitor monitor) throws CoreException {
+		IFileStore sourceStore = getStore(source);
+		int storeFlags = 0;
+		if ((flags & IResource.FORCE) != 0)
+			storeFlags &= OVERWRITE;
+		sourceStore.move(destination, storeFlags, monitor);
+	}
+
+	public void move(IResource source, IResource destination, int flags, IProgressMonitor monitor) throws CoreException {
+		move(source, getStore(destination), flags, monitor);
+	}
+
 	/**
 	 * Returns a resource path to the given local location. Returns null if
 	 * it is not under a project's location.
@@ -484,49 +597,25 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return null;
 	}
 
-	/**
-	 * Optimized sync check for files.  Returns true if the file exists and is in sync, and false
-	 * otherwise.  The intent is to let the default implementation handle the complex
-	 * cases like gender change, case variants, etc.
-	 */
-	public boolean fastIsSynchronized(File target) {
-		ResourceInfo info = target.getResourceInfo(false, false);
-		if (target.exists(target.getFlags(info), true)) {
-			IPath location = target.getLocation();
-			if (location != null) {
-				long stat = CoreFileSystemLibrary.getStat(location.toString());
-				if (CoreFileSystemLibrary.isFile(stat) && info.getLocalSyncInfo() == CoreFileSystemLibrary.getLastModified(stat))
-					return true;
-			}
-		}
-		return false;
-	}
-
 	public InputStream read(IFile target, boolean force, IProgressMonitor monitor) throws CoreException {
-		// thread safety: (the location can be null if the project for this file does not exist)
-		IPath location = locationFor(target);
-		if (location == null)
+		IFileStore store = getStore(target);
+		final IFileInfo fileInfo = store.fetchInfo();
+		if (!fileInfo.exists()) {
+			// thread safety: (the location can be null if the project for this file does not exist)
 			((Project) target.getProject()).checkExists(NULL_FLAG, true);
-		//location can be null if based on an undefined variable
-		if (location == null) {
-			String message = NLS.bind(Messages.localstore_locationUndefined, target.getFullPath());
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
-		}
-		java.io.File localFile = location.toFile();
-		if (!localFile.exists()) {
-			String message = NLS.bind(Messages.localstore_fileNotFound, localFile.getAbsolutePath());
+			String message = NLS.bind(Messages.localstore_fileNotFound, store.toString());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
 		if (!force) {
 			ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
 			int flags = ((Resource) target).getFlags(info);
 			((Resource) target).checkExists(flags, true);
-			if (CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath()) != info.getLocalSyncInfo()) {
+			if (fileInfo.getLastModified() != info.getLocalSyncInfo()) {
 				String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
 				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 			}
 		}
-		return getStore().read(localFile);
+		return store.openInputStream(NONE, monitor);
 	}
 
 	/**
@@ -541,26 +630,26 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 */
 	public ProjectDescription read(IProject target, boolean creation) throws CoreException {
 		//read the project location if this project is being created
-		IPath projectLocation = null;
+		URI projectLocation = null;
 		ProjectDescription privateDescription = null;
 		if (creation) {
 			privateDescription = new ProjectDescription();
 			getWorkspace().getMetaArea().readPrivateDescription(target, privateDescription);
-			projectLocation = privateDescription.getLocation();
+			projectLocation = privateDescription.getLocationURI();
 		} else {
 			IProjectDescription description = ((Project) target).internalGetDescription();
-			if (description != null && description.getLocation() != null) {
-				projectLocation = description.getLocation();
+			if (description != null && description.getLocationURI() != null) {
+				projectLocation = description.getLocationURI();
 			}
 		}
 		final boolean isDefaultLocation = projectLocation == null;
 		if (isDefaultLocation) {
-			projectLocation = getProjectDefaultLocation(target);
+			projectLocation = FileUtil.toURI(getProjectDefaultLocation(target));
 		}
-		IPath descriptionPath = workspace.getPathVariableManager().resolvePath(projectLocation).append(IProjectDescription.DESCRIPTION_FILE_NAME);
+		IFileStore projectStore = initializeStore(target, projectLocation);
+		IFileStore descriptionStore = projectStore.getChild(IProjectDescription.DESCRIPTION_FILE_NAME);
 		ProjectDescription description = null;
-
-		if (!descriptionPath.toFile().exists()) {
+		if (!descriptionStore.fetchInfo().exists()) {
 			//try the legacy location in the meta area
 			description = getWorkspace().getMetaArea().readOldDescription(target);
 			if (description == null) {
@@ -571,11 +660,15 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		}
 		//hold onto any exceptions until after sync info is updated, then throw it
 		ResourceException error = null;
+		InputStream in = null;
 		try {
-			description = new ProjectDescriptionReader().read(descriptionPath);
-		} catch (IOException e) {
+			in = new BufferedInputStream(descriptionStore.openInputStream(NONE, null));
+			description = new ProjectDescriptionReader().read(new InputSource(in));
+		} catch (CoreException e) {
 			String msg = NLS.bind(Messages.resources_readProjectMeta, target.getName());
 			error = new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e);
+		} finally {
+			FileUtil.safeClose(in);
 		}
 		if (error == null && description == null) {
 			String msg = NLS.bind(Messages.resources_readProjectMeta, target.getName());
@@ -585,11 +678,11 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			//don't trust the project name in the description file
 			description.setName(target.getName());
 			if (!isDefaultLocation)
-				description.setLocation(projectLocation);
+				description.setLocationURI(projectLocation);
 			if (creation && privateDescription != null)
 				description.setDynamicReferences(privateDescription.getDynamicReferences(false));
 		}
-		long lastModified = CoreFileSystemLibrary.getLastModified(descriptionPath.toOSString());
+		long lastModified = descriptionStore.fetchInfo().getLastModified();
 		IFile descriptionFile = target.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 		//don't get a mutable copy because we might be in restore which isn't an operation
 		//it doesn't matter anyway because local sync info is not included in deltas
@@ -648,7 +741,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	}
 
 	/**
-	 * Synchronizes the entire workspace with the local filesystem.
+	 * Synchronizes the entire workspace with the local file system.
 	 * The current implementation does this by synchronizing each of the
 	 * projects currently in the workspace.  A better implementation may
 	 * be possible.
@@ -697,16 +790,45 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * @see IResouce.setLocalTimeStamp
 	 */
 	public long setLocalTimeStamp(IResource target, ResourceInfo info, long value) throws CoreException {
-		IPath location = target.getLocation();
-		if (location == null) {
-			String message = NLS.bind(Messages.localstore_locationUndefined, target.getFullPath());
-			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
-		}
-		java.io.File localFile = location.toFile();
-		localFile.setLastModified(value);
-		long actualValue = CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath());
+		IFileStore store = getStore(target);
+		IFileInfo fileInfo = store.fetchInfo();
+		fileInfo.setLastModified(value);
+		store.putInfo(fileInfo, SET_LAST_MODIFIED, null);
+		//actual value may be different depending on file system granularity
+		fileInfo = store.fetchInfo();
+		long actualValue = fileInfo.getLastModified();
 		updateLocalSync(info, actualValue);
 		return actualValue;
+	}
+
+	/**
+	 * The storage location for a resource has changed; update the location.
+	 * @param target
+	 * @param info
+	 * @param location
+	 */
+	public void setLocation(IResource target, ResourceInfo info, URI location) {
+		FileStoreRoot oldRoot = info.getFileStoreRoot();
+		if (location != null) {
+			info.setFileStoreRoot(new FileStoreRoot(location, target.getFullPath()));
+		} else {
+			//project is in default location so clear the store root
+			info.setFileStoreRoot(null);
+		}
+		if (oldRoot != null)
+			oldRoot.setValid(false);
+	}
+
+	/* (non-javadoc)
+	 * @see IResource.setResourceAttributes
+	 */
+	public void setResourceAttributes(IResource resource, ResourceAttributes attributes) throws CoreException {
+		IFileStore store = getStore(resource);
+		IFileInfo fileInfo = FileSystemCore.createFileInfo();
+		fileInfo.setAttribute(ATTRIBUTE_READ_ONLY, attributes.isReadOnly());
+		fileInfo.setAttribute(ATTRIBUTE_EXECUTABLE, attributes.isExecutable());
+		fileInfo.setAttribute(ATTRIBUTE_ARCHIVE, attributes.isArchive());
+		store.putInfo(fileInfo, SET_ATTRIBUTES, null);
 	}
 
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
@@ -736,24 +858,18 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * has NOT changed since last synchronization, otherwise a CoreException
 	 * is thrown.
 	 */
-	public void write(IFile target, IPath location, InputStream content, boolean force, boolean keepHistory, boolean append, IProgressMonitor monitor) throws CoreException {
+	public void write(IFile target, InputStream content, boolean force, boolean keepHistory, boolean append, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(null);
 		try {
-			//location can be null if based on an undefined variable
-			if (location == null) {
-				String message = NLS.bind(Messages.localstore_locationUndefined, target.getFullPath());
-				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
-			}
-			final String locationString = location.toOSString();
-			long stat = CoreFileSystemLibrary.getStat(locationString);
-			if (CoreFileSystemLibrary.isReadOnly(stat)) {
+			IFileStore store = getStore(target);
+			IFileInfo fileInfo = store.fetchInfo();
+			if (fileInfo.isReadOnly()) {
 				String message = NLS.bind(Messages.localstore_couldNotWriteReadOnly, target.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 			}
-			long lastModified = CoreFileSystemLibrary.getLastModified(stat);
-			final java.io.File localFile = new java.io.File(locationString);
+			long lastModified = fileInfo.getLastModified();
 			if (force) {
-				if (append && !target.isLocal(IResource.DEPTH_ZERO) && !localFile.exists()) {
+				if (append && !target.isLocal(IResource.DEPTH_ZERO) && !fileInfo.exists()) {
 					// force=true, local=false, existsInFileSystem=false
 					String message = NLS.bind(Messages.resources_mustBeLocal, target.getFullPath());
 					throw new ResourceException(IResourceStatus.RESOURCE_NOT_LOCAL, target.getFullPath(), message, null);
@@ -767,7 +883,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 						throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 					}
 				} else {
-					if (localFile.exists()) {
+					if (fileInfo.exists()) {
 						String message = NLS.bind(Messages.localstore_resourceExists, target.getFullPath());
 						throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
 					}
@@ -778,20 +894,20 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				}
 			}
 			// add entry to History Store.
-			if (keepHistory && localFile.exists())
+			if (keepHistory && fileInfo.exists())
 				//never move to the history store, because then the file is missing if write fails
-				getHistoryStore().addState(target.getFullPath(), location.toFile(), lastModified, false);
-			getStore().write(localFile, content, append, monitor);
+				getHistoryStore().addState(target.getFullPath(), store, lastModified, false);
+			if (!fileInfo.exists())
+				store.getParent().mkdir(NONE, null);
+			int options = append ? APPEND : NONE;
+			OutputStream out = store.openOutputStream(options, Policy.subMonitorFor(monitor, 0));
+			FileUtil.transferStreams(content, out, store.toString(), monitor);
 			// get the new last modified time and stash in the info
-			lastModified = CoreFileSystemLibrary.getLastModified(locationString);
+			lastModified = store.fetchInfo().getLastModified();
 			ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
 			updateLocalSync(info, lastModified);
 		} finally {
-			try {
-				content.close();
-			} catch (IOException e) {
-				// ignore
-			}
+			FileUtil.safeClose(content);
 		}
 	}
 
@@ -800,27 +916,21 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * target's location.
 	 */
 	public void write(IFolder target, boolean force, IProgressMonitor monitor) throws CoreException {
-		IPath location = locationFor(target);
-		//location can be null if based on an undefined variable
-		if (location == null) {
-			String message = NLS.bind(Messages.localstore_locationUndefined, target.getFullPath());
-			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
-		}
-		java.io.File file = location.toFile();
+		IFileStore store = getStore(target);
 		if (!force) {
-			if (file.isDirectory()) {
+			IFileInfo fileInfo = store.fetchInfo();
+			if (fileInfo.isDirectory()) {
 				String message = NLS.bind(Messages.localstore_resourceExists, target.getFullPath());
 				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
 			}
-			if (file.exists()) {
+			if (fileInfo.exists()) {
 				String message = NLS.bind(Messages.localstore_fileExists, target.getFullPath());
 				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 			}
 		}
-		getStore().writeFolder(file);
-		long lastModified = CoreFileSystemLibrary.getLastModified(file.getAbsolutePath());
+		store.mkdir(NONE, null);
 		ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
-		updateLocalSync(info, lastModified);
+		updateLocalSync(info, store.fetchInfo().getLastModified());
 	}
 
 	/**
@@ -833,7 +943,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		//if the project location cannot be resolved, we don't know if a description file exists or not
 		if (location == null)
 			return;
-		getStore().writeFolder(location.toFile());
+		IFileStore projectStore = getStore(target);
+		projectStore.mkdir(NONE, null);
 		//can't do anything if there's no description
 		IProjectDescription desc = ((Project) target).internalGetDescription();
 		if (desc == null)
@@ -842,18 +953,18 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		getWorkspace().getMetaArea().writePrivateDescription(target);
 
 		//write the file that represents the project description
-		java.io.File file = location.append(IProjectDescription.DESCRIPTION_FILE_NAME).toFile();
-		FileOutputStream fout = null;
+		IFileStore fileStore = projectStore.getChild(IProjectDescription.DESCRIPTION_FILE_NAME);
+		OutputStream out = null;
 		try {
-			fout = new FileOutputStream(file);
-			new ModelObjectWriter().write(desc, fout);
+			out = fileStore.openOutputStream(NONE, null);
+			new ModelObjectWriter().write(desc, out);
 		} catch (IOException e) {
 			String msg = NLS.bind(Messages.resources_writeMeta, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), msg, e);
 		} finally {
-			if (fout != null) {
+			if (out != null) {
 				try {
-					fout.close();
+					out.close();
 				} catch (IOException e) {
 					// ignore failure to close stream
 				}
@@ -861,22 +972,5 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		}
 		//for backwards compatibility, ensure the old .prj file is deleted
 		getWorkspace().getMetaArea().clearOldDescription(target);
-	}
-
-	/** 
-	 * Returns the real name of the resource on disk. Returns null if no local
-	 * file exists by that name.  This is useful when dealing with
-	 * case insensitive file systems.
-	 */
-	public String getLocalName(java.io.File target) {
-		java.io.File root = target.getParentFile();
-		String[] list = root.list();
-		if (list == null)
-			return null;
-		String targetName = target.getName();
-		for (int i = 0; i < list.length; i++)
-			if (targetName.equalsIgnoreCase(list[i]))
-				return list[i];
-		return null;
 	}
 }

@@ -43,11 +43,7 @@ public class Bug_44106 extends ResourceTest {
 		// create the file/folder that we are going to link to
 		IPath linkDestFolder = getTempDir().append(getUniqueString());
 		IPath linkDestFile = linkDestFolder.append(getUniqueString());
-		try {
-			createFileInFileSystem(linkDestFile);
-		} catch (CoreException e) {
-			fail("0.0", e);
-		}
+		createFileInFileSystem(linkDestFile);
 		assertTrue("0.1", linkDestFolder.toFile().exists());
 		assertTrue("0.2", linkDestFile.toFile().exists());
 
@@ -103,11 +99,7 @@ public class Bug_44106 extends ResourceTest {
 			return;
 		// create the file/folder that we are going to link to
 		IPath linkDestFile = getTempDir().append(getUniqueString());
-		try {
-			createFileInFileSystem(linkDestFile);
-		} catch (CoreException e) {
-			fail("0.0", e);
-		}
+		createFileInFileSystem(linkDestFile);
 		assertTrue("0.1", linkDestFile.toFile().exists());
 
 		// create some resources in the workspace
@@ -159,11 +151,7 @@ public class Bug_44106 extends ResourceTest {
 			return;
 		// create the file/folder that we are going to link to
 		IPath linkDestFile = getTempDir().append(getUniqueString());
-		try {
-			createFileInFileSystem(linkDestFile);
-		} catch (CoreException e) {
-			fail("0.0", e);
-		}
+		createFileInFileSystem(linkDestFile);
 		assertTrue("0.1", linkDestFile.toFile().exists());
 
 		// create some resources in the workspace

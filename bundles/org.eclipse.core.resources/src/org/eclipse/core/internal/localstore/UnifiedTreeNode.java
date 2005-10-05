@@ -10,32 +10,30 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import java.util.Enumeration;
+import java.util.Iterator;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 
 public class UnifiedTreeNode implements ILocalStoreConstants {
 	protected IResource resource;
 	protected UnifiedTreeNode child;
 	protected UnifiedTree tree;
-	protected long stat;
+	protected IFileStore store;
+	protected IFileInfo fileInfo;
 	protected boolean existsWorkspace;
 
-	//the location of the resource in the local file system, if any
-	protected String localLocation;
-	protected String localName;
-
-	public UnifiedTreeNode(UnifiedTree tree, IResource resource, long stat, String localLocation, String localName, boolean existsWorkspace) {
+	public UnifiedTreeNode(UnifiedTree tree, IResource resource, IFileStore store, IFileInfo fileInfo, boolean existsWorkspace) {
 		this.tree = tree;
 		this.resource = resource;
-		this.stat = stat;
+		this.store = store;
+		this.fileInfo = fileInfo;
 		this.existsWorkspace = existsWorkspace;
-		this.localLocation = localLocation;
-		this.localName = localName;
 	}
 
 	public boolean existsInFileSystem() {
-		return isFile() || isFolder();
+		return fileInfo != null && fileInfo.exists();
 	}
 
 	public boolean existsInWorkspace() {
@@ -45,7 +43,7 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 	/**
 	 * Returns an Enumeration of UnifiedResourceNode.
 	 */
-	public Enumeration getChildren() throws CoreException {
+	public Iterator getChildren() {
 		return tree.getChildren(this);
 	}
 
@@ -54,7 +52,12 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 	}
 
 	public long getLastModified() {
-		return CoreFileSystemLibrary.getLastModified(stat);
+		if (fileInfo != null)
+			return fileInfo.getLastModified();
+		if (getStore() == null)
+			return 0;
+		fileInfo = store.fetchInfo();
+		return fileInfo == null ? 0 : fileInfo.getLastModified();
 	}
 
 	public int getLevel() {
@@ -62,30 +65,34 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 	}
 
 	/**
-	 * Returns the local location of this resource.  May be null.
+	 * Returns the local store of this resource.  May be null.
 	 */
-	public String getLocalLocation() {
-		return localLocation != null ? localLocation : tree.getLocalLocation(resource);
+	public IFileStore getStore() {
+		//initialize store lazily, because it is not always needed
+		if (store == null)
+			store = ((Resource)resource).getStore();
+		return store;
 	}
 
 	/**
-	 * Gets the name of this node in the local filesystem.
+	 * Gets the name of this node in the local file system.
 	 * @return Returns a String
 	 */
 	public String getLocalName() {
-		return localName;
+		return fileInfo == null ? null : fileInfo.getName();
 	}
 
 	public IResource getResource() {
 		return resource;
 	}
 
-	public boolean isFile() {
-		return CoreFileSystemLibrary.isFile(stat);
-	}
-
 	public boolean isFolder() {
-		return CoreFileSystemLibrary.isFolder(stat);
+		if (fileInfo != null)
+			return fileInfo.isDirectory();
+		if (getStore() == null)
+			return false;
+		fileInfo = store.fetchInfo();
+		return fileInfo == null ? false : fileInfo.isDirectory();
 	}
 
 	public void setExistsWorkspace(boolean exists) {
@@ -112,13 +119,12 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 	/**
 	 * Reuses this object by assigning all new values for the fields.
 	 */
-	public void reuse(UnifiedTree aTree, IResource aResource, long aStat, String aLocalLocation, String aLocalName, boolean existsInWorkspace) {
+	public void reuse(UnifiedTree aTree, IResource aResource, IFileStore aStore, IFileInfo info, boolean existsInWorkspace) {
 		this.tree = aTree;
 		this.child = null;
 		this.resource = aResource;
-		this.stat = aStat;
+		this.store = aStore;
+		this.fileInfo = info;
 		this.existsWorkspace = existsInWorkspace;
-		this.localLocation = aLocalLocation;
-		this.localName = aLocalName;
 	}
 }

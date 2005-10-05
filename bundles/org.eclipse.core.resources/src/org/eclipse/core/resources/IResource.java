@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import java.net.URI;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
@@ -888,7 +889,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 *
 	 * @param type the type of marker to consider, or <code>null</code> to indicate all types
-	 * @param includeSubtypes whether or not to consider subtypes of the given type
+	 * @param includeSubtypes whether or not to consider sub-types of the given type
 	 * @param depth how far to recurse (see <code>IResource.DEPTH_* </code>)
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -971,7 +972,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * are no matching markers.
 	 *
 	 * @param type the type of marker to consider, or <code>null</code> to indicate all types
-	 * @param includeSubtypes whether or not to consider subtypes of the given type
+	 * @param includeSubtypes whether or not to consider sub-types of the given type
 	 * @param depth how far to recurse (see <code>IResource.DEPTH_* </code>)
 	 * @return an array of markers
 	 * @exception CoreException if this method fails. Reasons include:
@@ -1082,14 +1083,62 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * or a file or folder below such a project, this method returns
 	 * <code>null</code>.
 	 * </p>
+	 * <p>
+	 * This method fails if called on a resource that is not stored in the local
+	 * file system.  For such resources {@link #getLocationURI()} should
+	 * be used instead.
+	 * </p>
 	 * 
 	 * @return the absolute path of this resource in the local file system,
 	 *  or <code>null</code> if no path can be determined
 	 * @see #getRawLocation()
+	 * @see #getLocationURI()
 	 * @see  IProjectDescription#setLocation(IPath)
 	 * @see Platform#getLocation()
 	 */
 	public IPath getLocation();
+
+	/**
+	 * Returns the absolute URI of this resource, 
+	 * or <code>null</code> if no URI can be determined.
+	 * <p>
+	 * If this resource is the workspace root, this method returns
+	 * the absolute location of the platform working area.
+	 * </p><p>
+	 * If this resource is a project that exists in the workspace, this method
+	 * returns the URI to the project's local content area. This is true regardless
+	 * of whether the project is open or closed. This value will be null in the case
+	 * where the location is relative to an undefined workspace path variable.
+	 * </p><p>
+	 * If this resource is a linked resource under a project that is open, this
+	 * method returns the resolved URI to the linked resource's local contents.
+	 * This value will be null in the case where the location is relative to an
+	 * undefined workspace path variable.
+	 * </p><p>
+	 * If this resource is a file or folder under a project that exists, or a
+	 * linked resource under a closed project, this method returns a (non-
+	 * <code>null</code>) URI computed from the location of the project's local
+	 * content area and the project- relative path of the file or folder. This is
+	 * true regardless of whether the file or folders exists, or whether the project
+	 * is open or closed. In the case of linked resources, the location of a linked resource
+	 * within a closed project is computed from the location of the
+	 * project's local content area and the project-relative path of the resource. If the
+	 * linked resource resides in an open project then its location is computed
+	 * according to the link.
+	 * </p><p>
+	 * If this resource is a project that does not exist in the workspace,
+	 * or a file or folder below such a project, this method returns
+	 * <code>null</code>.
+	 * </p>
+	 * 
+	 * @return the absolute URI of this resource,
+	 *  or <code>null</code> if no URI can be determined
+	 * @see #getRawLocation()
+	 * @see  IProjectDescription#setLocation(IPath)
+	 * @see Platform#getLocation()
+	 * @see java.net.URI
+	 */
+	public URI getLocationURI();
 
 	/**
 	 * Returns a marker handle with the given id on this resource.
@@ -1122,7 +1171,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li>creating a non-project resource (changes from <code>NULL_STAMP</code>)</li>
 	 * <li>changing the contents of a file</li>
 	 * <li><code>touch</code>ing a resource</li>
-	 * <li>setting the atttributes of a project presented in a project description</li>
+	 * <li>setting the attributes of a project presented in a project description</li>
 	 * <li>deleting a resource (changes to <code>NULL_STAMP</code>)</li>
 	 * <li>moving a resource (source changes to <code>NULL_STAMP</code>,
 	 destination changes from <code>NULL_STAMP</code>)</li>
@@ -1456,14 +1505,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * A resource is considered to be in sync if all of the following 
 	 * conditions are true:
 	 * <ul>
-	 * <li>The resource exists in both the workspace and the filesystem.</li>
-	 * <li>The timestamp in the filesystem has not changed since the 
+	 * <li>The resource exists in both the workspace and the file system.</li>
+	 * <li>The timestamp in the file system has not changed since the 
 	 * last synchronization.</li>
 	 * <li>The resource in the workspace is of the same type as the corresponding
-	 * file in the filesystem (they are either both files or both folders).</li>
+	 * file in the file system (they are either both files or both folders).</li>
 	 * </ul>
 	 *  A resource is also considered to be in sync if it is missing from both
-	 * the workspace and the filesystem.  In all other cases the resource is
+	 * the workspace and the file system.  In all other cases the resource is
 	 * considered to be out of sync.
 	 * </p>
 	 * <p>
@@ -1992,7 +2041,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * or otherwise truncated, so the actual recorded time stamp that is returned may
 	 * not be the same as the supplied value.
 	 * 
-	 * @param value a time stamp in millseconds.
+	 * @param value a time stamp in milliseconds.
 	 * @return a local file system time stamp.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -2049,8 +2098,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public void setReadOnly(boolean readOnly);
 	
 	/**
-	 * Sets this resource with the given extended attributues. This sets the
-	 * attributes in the file system. Only attributes that are suported by
+	 * Sets this resource with the given extended attributes. This sets the
+	 * attributes in the file system. Only attributes that are supported by
 	 * the underlying file system will be set. 
 	 * <p>
 	 * Sample usage: <br>

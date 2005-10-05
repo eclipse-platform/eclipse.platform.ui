@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.utils.Messages;
@@ -26,17 +28,10 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	protected MultiStatus status;
 	protected List skipList;
 
-	/**
-	 * Flag to indicate if resources are going to be removed
-	 * from the workspace or converted into phantoms
-	 */
-	protected boolean convertToPhantom;
-
-	public DeleteVisitor(List skipList, boolean force, boolean convertToPhantom, boolean keepHistory, IProgressMonitor monitor) {
+	public DeleteVisitor(List skipList, int flags, IProgressMonitor monitor) {
 		this.skipList = skipList;
-		this.force = force;
-		this.convertToPhantom = convertToPhantom;
-		this.keepHistory = keepHistory;
+		this.force = (flags & IResource.FORCE) != 0;
+		this.keepHistory = (flags & IResource.KEEP_HISTORY) != 0;
 		this.monitor = monitor;
 		status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.localstore_deleteProblem, null);
 	}
@@ -48,43 +43,38 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 		Resource target = (Resource) node.getResource();
 		try {
 			deleteLocalFile = deleteLocalFile && !target.isLinked() && node.existsInFileSystem();
-			java.io.File localFile = deleteLocalFile ? new java.io.File(node.getLocalLocation()) : null;
-			// if it is a folder in the file system, delete its children first
-			if (target.getType() == IResource.FOLDER) {
-				// if this file is a POSIX symbolic link then deleting the local file before the recursion will
-				// keep its contents from being deleted on the filesystem.
-				if (localFile != null)
-					localFile.delete();
-				for (Enumeration children = node.getChildren(); children.hasMoreElements();)
-					delete((UnifiedTreeNode) children.nextElement(), deleteLocalFile, shouldKeepHistory);
-				node.removeChildrenFromTree();
-				delete(node.existsInWorkspace() ? target : null, localFile);
-				return;
-			}
+			IFileStore localFile = deleteLocalFile ? node.getStore() : null;
 			if (shouldKeepHistory) {
 				IHistoryStore store = target.getLocalManager().getHistoryStore();
-				store.addState(target.getFullPath(), localFile, node.getLastModified(), true);
+				recursiveKeepHistory(store, node);
 			}
-			delete(node.existsInWorkspace() ? target : null, localFile);
+			node.removeChildrenFromTree();
+			//delete from disk
+			if (localFile != null && !target.isLinked())
+				localFile.delete(IFileStoreConstants.NONE, Policy.subMonitorFor(monitor, 1));
+			else
+				monitor.worked(1);
+			//delete from tree
+			if (target != null && node.existsInWorkspace())
+				target.deleteResource(true, status);
 		} catch (CoreException e) {
 			status.add(e.getStatus());
-		} finally {
-			monitor.worked(1);
+			//	delete might have been partly successful, so refresh to ensure in sync
+			try {
+				target.refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (CoreException e1) {
+				//ignore secondary failure - we are just trying to cleanup from first failure
+			}
 		}
 	}
 
-	//XXX: in which situation would delete be called with (null, null)? It happens (see bug 29445), but why?
-	protected void delete(Resource target, java.io.File localFile) {
-		if (target != null) {
-			try {
-				if (localFile != null && !target.isLinked())
-					target.getLocalManager().getStore().delete(localFile);
-				target.deleteResource(convertToPhantom, status);
-			} catch (CoreException e) {
-				status.add(e.getStatus());
-			}
-		} else if (localFile != null)
-			localFile.delete();
+	private void recursiveKeepHistory(IHistoryStore store, UnifiedTreeNode node) {
+		if (node.isFolder()) {
+			for (Iterator children = node.getChildren(); children.hasNext();)
+				recursiveKeepHistory(store, (UnifiedTreeNode) children.next());
+		} else {
+			store.addState(node.getResource().getFullPath(), node.getStore(), node.getLastModified(), true);
+		}
 	}
 
 	protected boolean equals(IResource one, IResource another) {

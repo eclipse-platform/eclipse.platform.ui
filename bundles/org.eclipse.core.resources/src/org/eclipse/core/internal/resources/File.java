@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
@@ -46,7 +46,7 @@ public class File extends Resource implements IFile {
 				ResourceInfo info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
 				workspace.beginOperation(true);
-				internalSetContents(content, getLocalManager().locationFor(this), force, keepHistory, true, Policy.subMonitorFor(monitor, Policy.opWork));
+				internalSetContents(content, force, keepHistory, true, Policy.subMonitorFor(monitor, Policy.opWork));
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
@@ -111,38 +111,33 @@ public class File extends Resource implements IFile {
 				parent.checkAccessible(getFlags(info));
 
 				workspace.beginOperation(true);
-				IPath location = getLocalManager().locationFor(this);
-				//location can be null if based on an undefined variable
-				if (location == null) {
-					message = NLS.bind(Messages.localstore_locationUndefined, getFullPath());
-					throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, getFullPath(), message, null);
-				}
-				java.io.File localFile = location.toFile();
+				IFileStore store = getStore();
+				IFileInfo localInfo = store.fetchInfo();
 				if (force) {
-					if (!CoreFileSystemLibrary.isCaseSensitive()) {
-						if (localFile.exists()) {
-							String name = getLocalManager().getLocalName(localFile);
-							if (name == null || localFile.getName().equals(name)) {
+					if (!Workspace.caseSensitive) {
+						if (localInfo.exists()) {
+							String name = getLocalManager().getLocalName(store);
+							if (name == null || localInfo.getName().equals(name)) {
 								delete(true, null);
 							} else {
 								// The file system is not case sensitive and there is already a file
 								// under this location.
-								message = NLS.bind(Messages.resources_existsLocalDifferentCase, location.removeLastSegments(1).append(name).toOSString());
+								message = NLS.bind(Messages.resources_existsLocalDifferentCase, new Path(store.toString()).removeLastSegments(1).append(name).toOSString());
 								throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), message, null);
 							}
 						}
 					}
 				} else {
-					if (localFile.exists()) {
+					if (localInfo.exists()) {
 						//return an appropriate error message for case variant collisions
-						if (!CoreFileSystemLibrary.isCaseSensitive()) {
-							String name = getLocalManager().getLocalName(localFile);
-							if (name != null && !localFile.getName().equals(name)) {
-								message = NLS.bind(Messages.resources_existsLocalDifferentCase, location.removeLastSegments(1).append(name).toOSString());
+						if (!Workspace.caseSensitive) {
+							String name = getLocalManager().getLocalName(store);
+							if (name != null && !localInfo.getName().equals(name)) {
+								message = NLS.bind(Messages.resources_existsLocalDifferentCase, new Path(store.toString()).removeLastSegments(1).append(name).toOSString());
 								throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), message, null);
 							}
 						}
-						message = NLS.bind(Messages.resources_fileExists, localFile.getAbsolutePath());
+						message = NLS.bind(Messages.resources_fileExists, store.toString());
 						throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), message, null);
 					}
 				}
@@ -152,11 +147,11 @@ public class File extends Resource implements IFile {
 				boolean local = content != null;
 				if (local) {
 					try {
-						internalSetContents(content, location, force, false, false, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100));
+						internalSetContents(content, force, false, false, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100));
 					} catch (CoreException e) {
 						// a problem happened creating the file on disk, so delete from the workspace and disk
 						workspace.deleteResource(this);
-						localFile.delete();
+						store.delete(IFileStoreConstants.NONE, null);
 						throw e; // rethrow
 					}
 				}
@@ -320,16 +315,16 @@ public class File extends Resource implements IFile {
 		return FILE;
 	}
 
-	protected void internalSetContents(InputStream content, IPath location, boolean force, boolean keepHistory, boolean append, IProgressMonitor monitor) throws CoreException {
+	protected void internalSetContents(InputStream content, boolean force, boolean keepHistory, boolean append, IProgressMonitor monitor) throws CoreException {
 		if (content == null)
 			content = new ByteArrayInputStream(new byte[0]);
-		getLocalManager().write(this, location, content, force, keepHistory, append, monitor);
+		getLocalManager().write(this, content, force, keepHistory, append, monitor);
 		ResourceInfo info = getResourceInfo(false, true);
 		info.incrementContentId();
 		info.clear(M_CONTENT_CACHE);
 		workspace.updateModificationStamp(info);
 		updateMetadataFiles();
-		workspace.getAliasManager().updateAliases(this, location, IResource.DEPTH_ZERO, monitor);
+		workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_ZERO, monitor);
 	}
 
 	/**
@@ -367,7 +362,7 @@ public class File extends Resource implements IFile {
 				ResourceInfo info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
 				workspace.beginOperation(true);
-				internalSetContents(content, getLocalManager().locationFor(this), force, keepHistory, false, Policy.subMonitorFor(monitor, Policy.opWork));
+				internalSetContents(content, force, keepHistory, false, Policy.subMonitorFor(monitor, Policy.opWork));
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;

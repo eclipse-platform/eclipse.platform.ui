@@ -95,7 +95,7 @@ public class IProjectTest extends IResourceTest {
 
 	/**
 	 * Create a solution in an open workspace. Don't open the solution.
-	 * Contruct a project handle & check its initial state.
+	 * Construct a project handle & check its initial state.
 	 * Try creating the project in the unopened solution.
 	 * Set/get comment & owner after creating the project but before opening. Is this proper?
 	 * Open the solution.
@@ -125,7 +125,7 @@ public class IProjectTest extends IResourceTest {
 		// Create a project handle. 
 		IProject proj = wb.getRoot().getProject(PROJECT);
 
-		// Inspection methods with meaninful results invoked on a handle for a nonexistent project
+		// Inspection methods with meaningful results invoked on a handle for a nonexistent project
 		assertTrue("1.1", !proj.exists());
 		assertTrue("1.2", proj.getWorkspace().equals(wb));
 		assertTrue("1.4", proj.getType() == IResource.PROJECT);

@@ -12,8 +12,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.net.URI;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.events.LifecycleEvent;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.utils.*;
@@ -264,11 +265,11 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * Helper method that considers case insensitive file systems.
 	 */
 	protected void checkDoesNotExist() throws CoreException {
-		// should consider getting the ResourceInfo as a paramenter to reduce tree lookups
+		// should consider getting the ResourceInfo as a parameter to reduce tree lookups
 
 		//first check the tree for an exact case match
 		checkDoesNotExist(getFlags(getResourceInfo(false, false)), false);
-		if (CoreFileSystemLibrary.isCaseSensitive()) {
+		if (Workspace.caseSensitive) {
 			return;
 		}
 		//now look for a matching case variant in the tree
@@ -358,7 +359,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		Resource dest = workspace.newResource(destination, destinationType);
 
 		// check if we are only changing case
-		IResource variant = CoreFileSystemLibrary.isCaseSensitive() ? null : findExistingResourceVariant(destination);
+		IResource variant = Workspace.caseSensitive ? null : findExistingResourceVariant(destination);
 		if (variant == null || !this.equals(variant))
 			dest.checkDoesNotExist();
 
@@ -417,7 +418,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @exception CoreException if the path is not valid
 	 */
 	public void checkValidPath(IPath toValidate, int type, boolean lastSegmentOnly) throws CoreException {
-		IStatus result = workspace.validatePath(toValidate, type, lastSegmentOnly);
+		IStatus result = workspace.locationValidator.validatePath(toValidate, type, lastSegmentOnly);
 		if (!result.isOK())
 			throw new ResourceException(result);
 	}
@@ -588,10 +589,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 				workspace.beginOperation(true);
 				// resolve any variables used in the location path
-				IPath resolvedLocation = workspace.getPathVariableManager().resolvePath(localLocation);
 				ResourceInfo info = workspace.createResource(this, false);
 				info.set(M_LINK);
-				getLocalManager().link(this, resolvedLocation);
+				getLocalManager().link(this, FileUtil.toURI(localLocation));
 				monitor.worked(Policy.opWork * 5 / 100);
 				//save the location in the project description
 				Project project = (Project) getProject();
@@ -657,12 +657,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				if (!exists())
 					return;
 				workspace.beginOperation(true);
-				IPath originalLocation = getLocation();
+				final IFileStore originalStore = getStore();
 				boolean wasLinked = isLinked();
 				message = Messages.resources_deleteProblem;
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 				WorkManager workManager = workspace.getWorkManager();
-				ResourceTree tree = new ResourceTree(workManager.getLock(), status, updateFlags);
+				ResourceTree tree = new ResourceTree(workspace.getFileSystemManager(), workManager.getLock(), status, updateFlags);
 				int depth = 0;
 				try {
 					depth = workManager.beginUnprotected();
@@ -683,7 +683,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				//update any aliases of this resource
 				//note that deletion of a linked resource cannot affect other resources
 				if (!wasLinked)
-					workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
+					workspace.getAliasManager().updateAliases(this, originalStore, IResource.DEPTH_INFINITE, monitor);
 				//make sure the rule factory is cleared on project deletion
 				if (getType() == PROJECT)
 					((Rules) workspace.getRuleFactory()).setRuleFactory((IProject) this, null);
@@ -736,15 +736,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (exists())
 			getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
 		// if this is a linked resource, remove the entry from the project description
-		if (isLinked()) {
-			//pre-delete notification to internal infrastructure
+		final boolean wasLinked = isLinked();
+		//pre-delete notification to internal infrastructure
+		if (wasLinked)
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_DELETE, this));
-			Project project = (Project) getProject();
-			ProjectDescription description = project.internalGetDescription();
-			description.setLinkLocation(getName(), null);
-			project.internalSetDescription(description, true);
-			project.writeDescription(IResource.FORCE);
-		}
 
 		// check if we deleted a preferences file 
 		ProjectPreferences.deleted(this);
@@ -755,6 +750,16 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			convertToPhantom();
 		else
 			workspace.deleteResource(this);
+
+		//update project description for linked resource
+		if (wasLinked) {
+			Project project = (Project) getProject();
+			ProjectDescription description = project.internalGetDescription();
+			description.setLinkLocation(getName(), null);
+			project.internalSetDescription(description, true);
+			project.writeDescription(IResource.FORCE);
+		}
+
 		// Delete properties after the resource is deleted from the tree. See bug 84584.
 		CoreException err = null;
 		try {
@@ -883,6 +888,15 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/* (non-Javadoc)
+	 * @see IResource#getLocation()
+	 */
+	public URI getLocationURI() {
+		//todo this can be optimized to avoid create the store object
+		// see the code in FileStoreRoot
+		return getStore().toURI();
+	}
+
+	/* (non-Javadoc)
 	 * @see IResource#getMarker(long)
 	 */
 	public IMarker getMarker(long id) {
@@ -962,11 +976,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#getResourceAttributes()
 	 */
 	public ResourceAttributes getResourceAttributes() {
-		// get the attributes
-		IPath location = getLocation();
-		if (location == null)
-			return null;
-		return CoreFileSystemLibrary.getResourceAttributes(location.toOSString());
+		return getLocalManager().attributes(this);
 	}
 
 	/**
@@ -987,6 +997,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		checkAccessible(flags);
 		checkLocal(flags, DEPTH_ZERO);
 		return info.getSessionProperty(key);
+	}
+	
+	public IFileStore getStore() {
+		return getLocalManager().getStore(this);
 	}
 
 	/* (non-Javadoc)
@@ -1121,10 +1135,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @deprecated
 	 */
 	public boolean isReadOnly() {
-		IPath location = getLocation();
-		if (location == null)
-			return false;
-		return CoreFileSystemLibrary.isReadOnly(location.toOSString());
+		final ResourceAttributes attributes = getResourceAttributes();
+		return attributes == null ? false : attributes.isReadOnly();
 	}
 
 	/* (non-Javadoc)
@@ -1196,11 +1208,11 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				// and assert for programming errors. See checkMoveRequirements for more information.
 				assertMoveRequirements(destination, getType(), updateFlags);
 				workspace.beginOperation(true);
-				IPath originalLocation = getLocation();
+				IFileStore originalStore = getStore();
 				message = Messages.resources_moveProblem;
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 				WorkManager workManager = workspace.getWorkManager();
-				ResourceTree tree = new ResourceTree(workManager.getLock(), status, updateFlags);
+				ResourceTree tree = new ResourceTree(workspace.getFileSystemManager(), workManager.getLock(), status, updateFlags);
 				boolean success = false;
 				int depth = 0;
 				try {
@@ -1213,8 +1225,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				tree.makeInvalid();
 				//update any aliases of this resource and the destination
 				if (success) {
-					workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
-					workspace.getAliasManager().updateAliases(destResource, destResource.getLocation(), IResource.DEPTH_INFINITE, monitor);
+					workspace.getAliasManager().updateAliases(this, originalStore, IResource.DEPTH_INFINITE, monitor);
+					workspace.getAliasManager().updateAliases(destResource, destResource.getStore(), IResource.DEPTH_INFINITE, monitor);
 				}
 				if (!tree.getStatus().isOK())
 					throw new ResourceException(tree.getStatus());
@@ -1325,9 +1337,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @deprecated
 	 */
 	public void setReadOnly(boolean readonly) {
-		IPath location = getLocation();
-		if (location != null)
-			CoreFileSystemLibrary.setReadOnly(location.toOSString(), readonly);
+		ResourceAttributes attributes = new ResourceAttributes();
+		attributes.setReadOnly(readonly);
+		try {
+			setResourceAttributes(attributes);
+		} catch (CoreException e) {
+			//failure is not an option
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1338,12 +1354,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		int flags = getFlags(info);
 		checkAccessible(flags);
 		checkLocal(flags, DEPTH_ZERO);
-		IPath location = getLocation();
-		if (location == null) {
-			String message = NLS.bind(Messages.localstore_locationUndefined, getFullPath());
-			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), message, null);
-		}
-		CoreFileSystemLibrary.setResourceAttributes(location.toOSString(), attributes);
+		getLocalManager().setResourceAttributes(this, attributes);
 	}
 
 	/* (non-Javadoc)
@@ -1459,7 +1470,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/**
 	 * Returns whether the derived flag is set in the given resource info flags.
 	 * 
-	 * @param flags resource info flags (bitwuise or of M_* constants)
+	 * @param flags resource info flags (bitwise or of M_* constants)
 	 * @return <code>true</code> if the derived flag is set, and <code>false</code>
 	 *    if the derived flag is not set or if the flags are <code>NULL_FLAG</code>
 	 */

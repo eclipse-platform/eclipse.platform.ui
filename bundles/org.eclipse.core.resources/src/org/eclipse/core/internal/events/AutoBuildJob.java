@@ -194,7 +194,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				return canceled();
 		}
 		//if the system is shutting down, don't build
-		if (systemBundle.getState() == Bundle.STOPPING) //$NON-NLS-1$
+		if (systemBundle.getState() == Bundle.STOPPING)
 			return Status.OK_STATUS;
 		try {
 			doBuild(monitor);

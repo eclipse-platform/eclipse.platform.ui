@@ -13,7 +13,6 @@ package org.eclipse.core.tests.resources.regression;
 import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -144,7 +143,7 @@ public class Bug_26294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteOpenProjectLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
 			return;
 
 		IProject project = null;
@@ -287,7 +286,7 @@ public class Bug_26294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteClosedProjectLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
 			return;
 
 		IProject project = null;
@@ -419,7 +418,7 @@ public class Bug_26294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteFolderLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
 			return;
 
 		IProject project = null;

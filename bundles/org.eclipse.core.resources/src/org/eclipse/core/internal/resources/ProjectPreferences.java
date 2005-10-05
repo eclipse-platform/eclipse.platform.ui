@@ -351,12 +351,7 @@ public class ProjectPreferences extends EclipsePreferences {
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
 		} finally {
-			if (input != null)
-				try {
-					input.close();
-				} catch (IOException e) {
-					// ignore
-				}
+			FileUtil.safeClose(input);
 		}
 		convertFromProperties(this, fromDisk, true);
 	}
@@ -378,12 +373,7 @@ public class ProjectPreferences extends EclipsePreferences {
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
 		} finally {
-			if (input != null)
-				try {
-					input.close();
-				} catch (IOException e) {
-					// ignore
-				}
+			FileUtil.safeClose(input);
 		}
 		return result;
 	}
@@ -573,7 +563,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < members.length; i++) {
 			IResource resource = members[i];
-			if (resource.getType() == IResource.FILE && resource.getFullPath().getFileExtension().equals(PREFS_FILE_EXTENSION))
+			if (resource.getType() == IResource.FILE && PREFS_FILE_EXTENSION.equals(resource.getFullPath().getFileExtension()))
 				result.add(resource.getFullPath().removeFileExtension().lastSegment());
 		}
 		return (String[]) result.toArray(EMPTY_STRING_ARRAY);

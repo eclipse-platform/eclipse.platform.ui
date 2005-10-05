@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
@@ -22,9 +24,6 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 
 	/** root destination */
 	protected IResource rootDestination;
-
-	/** root destination local location */
-	protected IPath rootDestinationLocalLocation;
 
 	/** reports progress */
 	protected IProgressMonitor monitor;
@@ -47,9 +46,11 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 	/** visitor to refresh unsynchronized nodes */
 	protected RefreshLocalVisitor refreshLocalVisitor;
 
+	private FileSystemResourceManager localManager;
+
 	public CopyVisitor(IResource rootSource, IResource destination, int updateFlags, IProgressMonitor monitor) {
+		this.localManager = ((Resource)rootSource).getLocalManager();
 		this.rootDestination = destination;
-		this.rootDestinationLocalLocation = destination.getLocation();
 		this.updateFlags = updateFlags;
 		this.isDeep = (updateFlags & IResource.SHALLOW) == 0;
 		this.force = (updateFlags & IResource.FORCE) != 0;
@@ -73,30 +74,19 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 				destination.createLink(source.getRawLocation(), updateFlags & IResource.ALLOW_MISSING_LOCAL, null);
 				return false;
 			}
-			if (destination.getType() == IResource.FOLDER) {
-				((IFolder) destination).create(updateFlags, true, null);
-				CoreFileSystemLibrary.copyAttributes(node.getLocalLocation(), destination.getLocation().toOSString(), false);
-				return true;
-			}
-			((IFile) destination).create(((IFile) source).getContents(false), updateFlags, null);
-			// update the destination timestamp on disk
-			long lastModified = node.getLastModified();
-			ResourceInfo destinationInfo = destination.getResourceInfo(false, true);
-			destinationInfo.setLocalSyncInfo(lastModified);
-			//if it's a deep copy of a link, need to clear the linked flag
-			destinationInfo.clear(ICoreConstants.M_LINK);
-			IPath destinationLocation = destination.getLocation();
-			destinationLocation.toFile().setLastModified(lastModified);
+			IFileStore sourceStore = node.getStore();
+			IFileStore destinationStore = destination.getStore();
+			sourceStore.copy(destinationStore, IFileStoreConstants.SHALLOW, Policy.monitorFor(null));
+			//create the destination in the workspace
+			ResourceInfo info = localManager.getWorkspace().createResource(destination, false);
+			localManager.updateLocalSync(info, destinationStore.fetchInfo().getLastModified());
+			localManager.getHistoryStore().copyHistory(source, destination, false);
 			//update timestamps on aliases
-			//XXX: this will update aliases twice because setContents above will also do it
-			getWorkspace().getAliasManager().updateAliases(destination, destinationLocation, IResource.DEPTH_ZERO, monitor);
-			// update file attributes
-			CoreFileSystemLibrary.copyAttributes(node.getLocalLocation(), destinationLocation.toOSString(), false);
-			destination.getLocalManager().getHistoryStore().copyHistory(source, destination, false);
+			getWorkspace().getAliasManager().updateAliases(destination, destinationStore, IResource.DEPTH_ZERO, monitor);
 		} catch (CoreException e) {
 			status.add(e.getStatus());
 		}
-		return false;
+		return true;
 	}
 
 	protected boolean copyProperties(Resource target, Resource destination) {
@@ -155,7 +145,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 		int work = 1;
 		try {
 			//location can be null if based on an undefined variable
-			if (node.getLocalLocation() == null) {
+			if (node.getStore() == null) {
 				//should still be a best effort copy
 				IPath path = node.getResource().getFullPath();
 				String message = NLS.bind(Messages.localstore_locationUndefined, path);

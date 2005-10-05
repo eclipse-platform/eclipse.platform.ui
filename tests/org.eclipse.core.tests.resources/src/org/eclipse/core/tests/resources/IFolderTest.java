@@ -12,7 +12,6 @@ package org.eclipse.core.tests.resources;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -289,7 +288,7 @@ public class IFolderTest extends ResourceTest {
 	public void testReadOnlyFolderCopy() throws Exception {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!CoreFileSystemLibrary.usingNatives())
+		if (!usingNatives())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFolder source = project.getFolder("Folder1");

@@ -12,6 +12,7 @@
 package org.eclipse.core.resources;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -1476,11 +1477,39 @@ public interface IWorkspace extends IAdaptable {
 	 * @return a status object with code <code>IStatus.OK</code> if the given
 	 * location is valid as the project content location, otherwise a status
 	 * object indicating what is wrong with the location
-	 * @see IProjectDescription#getLocation()
+	 * @see IProjectDescription#getLocationURI()
 	 * @see IProjectDescription#setLocation(IPath)
 	 * @see IStatus#OK
 	 */
 	public IStatus validateProjectLocation(IProject project, IPath location);
+
+	/**
+	 * Validates the given URI as the location of the given project.
+	 * The location must be either an absolute URI, or a relative URI
+	 * whose first segment is the name of a defined workspace path variable.
+	 * A project location must obey the following rules:
+	 * <ul>
+	 * <li>must not overlap with another open or closed project</li>
+	 * <li>must not overlap with the platform's working directory</li>
+	 * <li>must not be the same as or a child of the location of any existing
+	 * linked resource in the given project</li>
+	 * </ul>
+	 * </p>
+	 * <p>
+	 * Note: this method does not consider whether files or directories exist in
+	 * the file system at the specified path.
+	 * 
+	 * @param project the project to validate the location for
+	 * @param location the location of the project contents on disk
+	 * @return a status object with code <code>IStatus.OK</code> if the given
+	 * location is valid as the project content location, otherwise a status
+	 * object indicating what is wrong with the location
+	 * @see IProjectDescription#getLocationURI()
+	 * @see IProjectDescription#setLocationURI(URI)
+	 * @see IStatus#OK
+	 * @since 3.2
+	 */
+	public IStatus validateProjectLocationURI(IProject project, URI location);
 
 	/**
 	 * Returns the path variable manager for this workspace.

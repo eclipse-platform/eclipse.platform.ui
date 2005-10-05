@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
@@ -23,28 +24,23 @@ public class Folder extends Container implements IFolder {
 		super(path, container);
 	}
 
-	protected void assertCreateRequirements(IPath location, int updateFlags) throws CoreException {
+	protected void assertCreateRequirements(IFileStore store, IFileInfo localInfo, int updateFlags) throws CoreException {
 		checkDoesNotExist();
 		Container parent = (Container) getParent();
 		ResourceInfo info = parent.getResourceInfo(false, false);
 		parent.checkAccessible(getFlags(info));
-		if (location == null) {
-			String message = NLS.bind(Messages.localstore_locationUndefined, getFullPath());
-			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), message, null);
-		}
 
-		java.io.File localFile = location.toFile();
 		final boolean force = (updateFlags & IResource.FORCE) != 0;
-		if (!force && localFile.exists()) {
+		if (!force && localInfo.exists()) {
 			//return an appropriate error message for case variant collisions
-			if (!CoreFileSystemLibrary.isCaseSensitive()) {
-				String name = getLocalManager().getLocalName(localFile);
-				if (name != null && !localFile.getName().equals(name)) {
-					String msg = NLS.bind(Messages.resources_existsLocalDifferentCase, location.removeLastSegments(1).append(name).toOSString());
+			if (!Workspace.caseSensitive) {
+				String name = getLocalManager().getLocalName(store);
+				if (name != null && !store.getName().equals(name)) {
+					String msg = NLS.bind(Messages.resources_existsLocalDifferentCase, new Path(store.toString()).removeLastSegments(1).append(name).toOSString());
 					throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 				}
 			}
-			String msg = NLS.bind(Messages.resources_fileExists, localFile.getAbsolutePath());
+			String msg = NLS.bind(Messages.resources_fileExists, store.toString());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
 		}
 	}
@@ -86,22 +82,22 @@ public class Folder extends Container implements IFolder {
 			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 			try {
 				workspace.prepareOperation(rule, monitor);
-				IPath location = getLocalManager().locationFor(this);
-				assertCreateRequirements(location, updateFlags);
+				IFileStore store = getStore();
+				IFileInfo localInfo = store.fetchInfo();
+				assertCreateRequirements(store, localInfo, updateFlags);
 				workspace.beginOperation(true);
-				java.io.File localFile = location.toFile();
-				if (force && !CoreFileSystemLibrary.isCaseSensitive() && localFile.exists()) {
-					String name = getLocalManager().getLocalName(localFile);
-					if (name == null || localFile.getName().equals(name)) {
+				if (force && !Workspace.caseSensitive && localInfo.exists()) {
+					String name = getLocalManager().getLocalName(store);
+					if (name == null || localInfo.getName().equals(name)) {
 						delete(true, null);
 					} else {
 						// The file system is not case sensitive and a case variant exists at this location
-						String msg = NLS.bind(Messages.resources_existsLocalDifferentCase, location.removeLastSegments(1).append(name).toOSString());
+						String msg = NLS.bind(Messages.resources_existsLocalDifferentCase, new Path(store.toString()).removeLastSegments(1).append(name).toOSString());
 						throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 					}
 				}
 				internalCreate(force, local, Policy.subMonitorFor(monitor, Policy.opWork));
-				workspace.getAliasManager().updateAliases(this, getLocation(), IResource.DEPTH_ZERO, monitor);
+				workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_ZERO, monitor);
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;

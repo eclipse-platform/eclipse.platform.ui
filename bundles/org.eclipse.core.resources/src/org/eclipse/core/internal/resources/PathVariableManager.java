@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.net.URI;
 import java.util.*;
 import org.eclipse.core.internal.events.PathVariableChangeEvent;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -22,10 +24,10 @@ import org.eclipse.osgi.util.NLS;
  */
 public class PathVariableManager implements IPathVariableManager, IManager {
 
-	private Set listeners;
-	private Preferences preferences;
-
 	static final String VARIABLE_PREFIX = "pathvariable."; //$NON-NLS-1$
+	private Set listeners;
+
+	private Preferences preferences;
 
 	/**
 	 * Constructor for the class.
@@ -36,47 +38,21 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
-	 * Note that if a user changes the key in the preferences file to be invalid
-	 * and then calls #getValue using that key, they will get the value back for
-	 * that. But then if they try and call #setValue using the same key it will throw
-	 * an exception. We may want to revisit this behaviour in the future.
-	 * 
-	 * @see org.eclipse.core.resources.IPathVariableManager#getValue(String)
+	 * @see org.eclipse.core.resources.
+	 * IPathVariableManager#addChangeListener(IPathVariableChangeListener)
 	 */
-	public IPath getValue(String varName) {
-		String key = getKeyForName(varName);
-		String value = preferences.getString(key);
-		return value.length() == 0 ? null : Path.fromPortableString(value);
+	public void addChangeListener(IPathVariableChangeListener listener) {
+		listeners.add(listener);
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.IPathVariableManager#setValue(String, IPath)
+	 * Throws a runtime exception if the given name is not valid as a path
+	 * variable name.
 	 */
-	public void setValue(String varName, IPath newValue) throws CoreException {
-		checkIsValidName(varName);
-		//if the location doesn't have a device, see if the OS will assign one
-		if (newValue != null && newValue.isAbsolute() && newValue.getDevice() == null)
-			newValue = new Path(newValue.toFile().getAbsolutePath());
-		checkIsValidValue(newValue);
-		int eventType;
-		// read previous value and set new value atomically in order to generate the right event		
-		synchronized (this) {
-			IPath currentValue = getValue(varName);
-			boolean variableExists = currentValue != null;
-			if (!variableExists && newValue == null)
-				return;
-			if (variableExists && currentValue.equals(newValue))
-				return;
-			if (newValue == null) {
-				preferences.setToDefault(getKeyForName(varName));
-				eventType = IPathVariableChangeEvent.VARIABLE_DELETED;
-			} else {
-				preferences.setValue(getKeyForName(varName), newValue.toPortableString());
-				eventType = variableExists ? IPathVariableChangeEvent.VARIABLE_CHANGED : IPathVariableChangeEvent.VARIABLE_CREATED;
-			}
-		}
-		// notify listeners from outside the synchronized block to avoid deadlocks
-		fireVariableChangeEvent(varName, newValue, eventType);
+	private void checkIsValidName(String name) throws CoreException {
+		IStatus status = validateName(name);
+		if (!status.isOK())
+			throw new CoreException(status);
 	}
 
 	/**
@@ -87,23 +63,6 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		IStatus status = validateValue(newValue);
 		if (!status.isOK())
 			throw new CoreException(status);
-	}
-
-	/**
-	 * Return a key to use in the Preferences.
-	 */
-	private String getKeyForName(String varName) {
-		return VARIABLE_PREFIX + varName;
-	}
-
-	/**
-	 * @see org.eclipse.core.resources.IPathVariableManager#resolvePath(IPath)
-	 */
-	public IPath resolvePath(IPath path) {
-		if (path == null || path.segmentCount() == 0 || path.isAbsolute() || path.getDevice() != null)
-			return path;
-		IPath value = getValue(path.segment(0));
-		return value == null ? path : value.append(path.removeFirstSegments(1));
 	}
 
 	/**
@@ -144,6 +103,13 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
+	 * Return a key to use in the Preferences.
+	 */
+	private String getKeyForName(String varName) {
+		return VARIABLE_PREFIX + varName;
+	}
+
+	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariableNames()
 	 */
 	public String[] getPathVariableNames() {
@@ -167,11 +133,24 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.
-	 * IPathVariableManager#addChangeListener(IPathVariableChangeListener)
+	 * Note that if a user changes the key in the preferences file to be invalid
+	 * and then calls #getValue using that key, they will get the value back for
+	 * that. But then if they try and call #setValue using the same key it will throw
+	 * an exception. We may want to revisit this behaviour in the future.
+	 * 
+	 * @see org.eclipse.core.resources.IPathVariableManager#getValue(String)
 	 */
-	public void addChangeListener(IPathVariableChangeListener listener) {
-		listeners.add(listener);
+	public IPath getValue(String varName) {
+		String key = getKeyForName(varName);
+		String value = preferences.getString(key);
+		return value.length() == 0 ? null : Path.fromPortableString(value);
+	}
+
+	/**
+	 * @see org.eclipse.core.resources.IPathVariableManager#isDefined(String)
+	 */
+	public boolean isDefined(String varName) {
+		return getValue(varName) != null;
 	}
 
 	/**
@@ -183,10 +162,67 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.IPathVariableManager#isDefined(String)
+	 * @see org.eclipse.core.resources.IPathVariableManager#resolvePath(IPath)
 	 */
-	public boolean isDefined(String varName) {
-		return getValue(varName) != null;
+	public IPath resolvePath(IPath path) {
+		if (path == null || path.segmentCount() == 0 || path.isAbsolute() || path.getDevice() != null)
+			return path;
+		IPath value = getValue(path.segment(0));
+		return value == null ? path : value.append(path.removeFirstSegments(1));
+	}
+
+	public URI resolveURI(URI uri) {
+		if (uri == null || uri.isAbsolute())
+			return uri;
+		IPath raw = new Path(uri.getSchemeSpecificPart());
+		IPath resolved = resolvePath(raw);
+		return raw == resolved ? uri : FileUtil.toURI(resolved);
+	}
+
+	/**
+	 * @see org.eclipse.core.resources.IPathVariableManager#setValue(String, IPath)
+	 */
+	public void setValue(String varName, IPath newValue) throws CoreException {
+		checkIsValidName(varName);
+		//if the location doesn't have a device, see if the OS will assign one
+		if (newValue != null && newValue.isAbsolute() && newValue.getDevice() == null)
+			newValue = new Path(newValue.toFile().getAbsolutePath());
+		checkIsValidValue(newValue);
+		int eventType;
+		// read previous value and set new value atomically in order to generate the right event		
+		synchronized (this) {
+			IPath currentValue = getValue(varName);
+			boolean variableExists = currentValue != null;
+			if (!variableExists && newValue == null)
+				return;
+			if (variableExists && currentValue.equals(newValue))
+				return;
+			if (newValue == null) {
+				preferences.setToDefault(getKeyForName(varName));
+				eventType = IPathVariableChangeEvent.VARIABLE_DELETED;
+			} else {
+				preferences.setValue(getKeyForName(varName), newValue.toPortableString());
+				eventType = variableExists ? IPathVariableChangeEvent.VARIABLE_CHANGED : IPathVariableChangeEvent.VARIABLE_CREATED;
+			}
+		}
+		// notify listeners from outside the synchronized block to avoid deadlocks
+		fireVariableChangeEvent(varName, newValue, eventType);
+	}
+
+	/**
+	 * @see org.eclipse.core.internal.resources.IManager#shutdown(IProgressMonitor)
+	 */
+	public void shutdown(IProgressMonitor monitor) {
+		// The preferences for this plug-in are saved in the Plugin.shutdown
+		// method so we don't have to do it here.
+	}
+
+	/**
+	 * @see org.eclipse.core.internal.resources.IManager#startup(IProgressMonitor)
+	 */
+	public void startup(IProgressMonitor monitor) {
+		// since we are accessing the preference store directly, we don't
+		// need to do any setup here.
 	}
 
 	/**
@@ -224,31 +260,5 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		return Status.OK_STATUS;
-	}
-
-	/**
-	 * Throws a runtime exception if the given name is not valid as a path
-	 * variable name.
-	 */
-	private void checkIsValidName(String name) throws CoreException {
-		IStatus status = validateName(name);
-		if (!status.isOK())
-			throw new CoreException(status);
-	}
-
-	/**
-	 * @see org.eclipse.core.internal.resources.IManager#startup(IProgressMonitor)
-	 */
-	public void startup(IProgressMonitor monitor) {
-		// since we are accessing the preference store directly, we don't
-		// need to do any setup here.
-	}
-
-	/**
-	 * @see org.eclipse.core.internal.resources.IManager#shutdown(IProgressMonitor)
-	 */
-	public void shutdown(IProgressMonitor monitor) {
-		// The preferences for this plug-in are saved in the Plugin.shutdown
-		// method so we don't have to do it here.
 	}
 }

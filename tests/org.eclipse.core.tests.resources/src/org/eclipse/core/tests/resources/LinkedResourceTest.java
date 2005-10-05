@@ -27,7 +27,7 @@ import org.eclipse.core.tests.harness.FussyProgressMonitor;
  * This test supports both variable-based and non-variable-based locations.
  * Although the method used for creating random locations
  * <code>ResourceTest#getRandomLocation()</code> never returns variable-
- * based paths, this method is overriden in the derived class
+ * based paths, this method is overwritten in the derived class
  * <code>LinkedResourceWithPathVariable</code> to always return variable-based
  * paths.
  * 
@@ -124,7 +124,7 @@ public class LinkedResourceTest extends ResourceTest {
 
 	/**
 	 * Tests creation of a linked resource whose corresponding file system
-	 * path does not exist. This should suceed but no operations will be
+	 * path does not exist. This should succeed but no operations will be
 	 * available on the resulting resource.
 	 */
 	public void testAllowMissingLocal() {
@@ -140,7 +140,7 @@ public class LinkedResourceTest extends ResourceTest {
 			//should fail
 		}
 
-		//now try to create with the flag (should suceed)
+		//now try to create with the flag (should succeed)
 		try {
 			folder.createLink(location, IResource.ALLOW_MISSING_LOCAL, getMonitor());
 		} catch (CoreException e) {
@@ -148,13 +148,13 @@ public class LinkedResourceTest extends ResourceTest {
 		}
 		assertEquals("1.2", resolvePath(location), folder.getLocation());
 		assertTrue("1.3", !resolvePath(location).toFile().exists());
-		//getting children should suceed (and be empty)
+		//getting children should succeed (and be empty)
 		try {
 			assertEquals("1.4", 0, folder.members().length);
 		} catch (CoreException e) {
 			fail("1.5", e);
 		}
-		//delete should suceed
+		//delete should succeed
 		try {
 			folder.delete(IResource.NONE, getMonitor());
 		} catch (CoreException e) {
@@ -196,11 +196,7 @@ public class LinkedResourceTest extends ResourceTest {
 		//create local folder that will be blocked
 		ensureExistsInFileSystem(nonExistingFolderInExistingProject);
 		IFile blockedFile = nonExistingFolderInExistingProject.getFile("BlockedFile");
-		try {
-			createFileInFileSystem(blockedFile.getLocation(), getRandomContents());
-		} catch (IOException e) {
-			fail("1.0", e);
-		}
+		createFileInFileSystem(blockedFile.getLocation(), getRandomContents());
 		try {
 			//link the folder elsewhere
 			nonExistingFolderInExistingProject.createLink(existingLocation, IResource.NONE, getMonitor());
@@ -266,11 +262,7 @@ public class LinkedResourceTest extends ResourceTest {
 			fail("0.99", e);
 		}
 		ensureDoesNotExistInFileSystem(resolvedLocation.toFile());
-		try {
-			createFileInFileSystem(resolvedLocation, getRandomContents());
-		} catch (IOException e) {
-			fail("1.99", e);
-		}
+		createFileInFileSystem(resolvedLocation, getRandomContents());
 		try {
 			folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 		} catch (CoreException e) {
@@ -345,7 +337,7 @@ public class LinkedResourceTest extends ResourceTest {
 					return true;
 				if (destination.exists())
 					return true;
-				//passed all failure cases so it should suceed
+				//passed all failure cases so it should succeed
 				return false;
 			}
 
@@ -427,7 +419,7 @@ public class LinkedResourceTest extends ResourceTest {
 					return true;
 				if (destination.exists())
 					return true;
-				//passed all failure case so it should suceed
+				//passed all failure case so it should succeed
 				return false;
 			}
 
@@ -460,7 +452,7 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Tests copying a linked file resource that doesn't exist in the filesystem
+	 * Tests copying a linked file resource that doesn't exist in the file system
 	 */
 	public void testCopyMissingFile() {
 		IPath location = getRandomLocation();
@@ -489,7 +481,7 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Tests copying a linked folder that doesn't exist in the filesystem
+	 * Tests copying a linked folder that doesn't exist in the file system
 	 */
 	public void testCopyMissingFolder() {
 		IPath location = getRandomLocation();
@@ -523,7 +515,7 @@ public class LinkedResourceTest extends ResourceTest {
 		IFolder linkedFolder = nonExistingFolderInExistingProject;
 		try {
 			try {
-				createFileInFileSystem(resolvePath(fileLocation));
+				createFileInFileSystem(resolvePath(fileLocation), getRandomContents());
 				linkedFolder.createLink(existingLocation, IResource.NONE, getMonitor());
 				linkedFile.createLink(fileLocation, IResource.NONE, getMonitor());
 			} catch (CoreException e) {
@@ -585,7 +577,7 @@ public class LinkedResourceTest extends ResourceTest {
 				fail("6.4", e);
 			}
 			//test copy project when linked resources don't exist with force=true
-			//this should mostly suceed, but still throw an exception indicating
+			//this should mostly succeed, but still throw an exception indicating
 			//a resource could not be copied because its location was missing
 			try {
 				destination.delete(IResource.NONE, getMonitor());
@@ -729,7 +721,7 @@ public class LinkedResourceTest extends ResourceTest {
 		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
 		Object[][] inputs = new Object[][] {interestingResources, interestingLocations, monitors};
 		new TestPerformer("LinkedResourceTest.testLinkFile") {
-			protected static final String CANCELED = "cancelled";
+			protected static final String CANCELED = "canceled";
 
 			public void cleanUp(Object[] args, int count) {
 				super.cleanUp(args, count);
@@ -784,7 +776,7 @@ public class LinkedResourceTest extends ResourceTest {
 				//The corresponding location in the local file system is occupied by a directory (as opposed to a file)
 				if (resolvedLocation.toFile().isDirectory())
 					return true;
-				//passed all failure case so it should suceed
+				//passed all failure case so it should succeed
 				return false;
 			}
 
@@ -815,7 +807,7 @@ public class LinkedResourceTest extends ResourceTest {
 		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
 		Object[][] inputs = new Object[][] {interestingResources, interestingLocations, monitors};
 		new TestPerformer("LinkedResourceTest.testLinkFolder") {
-			protected static final String CANCELED = "cancelled";
+			protected static final String CANCELED = "canceled";
 
 			public void cleanUp(Object[] args, int count) {
 				super.cleanUp(args, count);
@@ -869,7 +861,7 @@ public class LinkedResourceTest extends ResourceTest {
 				//The corresponding location in the local file system is occupied by a file (as opposed to a directory)
 				if (resolvePath(location).toFile().isFile())
 					return true;
-				//passed all failure case so it should suceed
+				//passed all failure case so it should succeed
 				return false;
 			}
 
@@ -938,7 +930,7 @@ public class LinkedResourceTest extends ResourceTest {
 		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
 		Object[][] inputs = new Object[][] {destinationResources, deepCopy, monitors};
 		new TestPerformer("LinkedResourceTest.testMoveFile") {
-			protected static final String CANCELED = "cancelled";
+			protected static final String CANCELED = "canceled";
 
 			public void cleanUp(Object[] args, int count) {
 				super.cleanUp(args, count);
@@ -979,7 +971,7 @@ public class LinkedResourceTest extends ResourceTest {
 					return true;
 				if (destination.exists())
 					return true;
-				//passed all failure case so it should suceed
+				//passed all failure case so it should succeed
 				return false;
 			}
 
@@ -1016,7 +1008,7 @@ public class LinkedResourceTest extends ResourceTest {
 		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
 		Object[][] inputs = new Object[][] {sourceResources, destinationResources, monitors};
 		new TestPerformer("LinkedResourceTest.testMoveFolder") {
-			protected static final String CANCELED = "cancelled";
+			protected static final String CANCELED = "canceled";
 
 			public void cleanUp(Object[] args, int count) {
 				super.cleanUp(args, count);
@@ -1056,7 +1048,7 @@ public class LinkedResourceTest extends ResourceTest {
 					return true;
 				if (destination.exists())
 					return true;
-				//passed all failure case so it should suceed
+				//passed all failure case so it should succeed
 				return false;
 			}
 
@@ -1077,7 +1069,7 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Tests moving a linked file resource that doesn't exist in the filesystem
+	 * Tests moving a linked file resource that doesn't exist in the file system
 	 */
 	public void testMoveMissingFile() {
 		IPath location = getRandomLocation();
@@ -1106,7 +1098,7 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Tests moving a linked folder that doesn't exist in the filesystem
+	 * Tests moving a linked folder that doesn't exist in the file system
 	 */
 	public void testMoveMissingFolder() {
 		IPath location = getRandomLocation();

@@ -407,13 +407,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (Policy.DEBUG_SAVE) {
 			switch (kind) {
 				case ISaveContext.FULL_SAVE :
-					System.out.println(DEBUG_FULL_SAVE + DEBUG_START ); //$NON-NLS-1$
+					System.out.println(DEBUG_FULL_SAVE + DEBUG_START );
 					break;
 				case ISaveContext.SNAPSHOT :
-					System.out.println(DEBUG_SNAPSHOT + DEBUG_START); //$NON-NLS-1$ 
+					System.out.println(DEBUG_SNAPSHOT + DEBUG_START);
 					break;
 				case ISaveContext.PROJECT_SAVE :
-					System.out.println(DEBUG_PROJECT_SAVE + project.getFullPath() + DEBUG_START); //$NON-NLS-1$ 
+					System.out.println(DEBUG_PROJECT_SAVE + project.getFullPath() + DEBUG_START);
 					break;
 			}
 		}
@@ -703,7 +703,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			if (projects[i].isAccessible())
 				markerManager.restore(projects[i], generateDeltas, monitor);
 		if (Policy.DEBUG_RESTORE_MARKERS) {
-			System.out.println("Restore Markers for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.out.println("Restore Markers for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ 
 		}
 	}
 
@@ -824,7 +824,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					WorkspaceTreeReader reader = WorkspaceTreeReader.getReader(workspace, input.readInt());
 					complete = reader.readSnapshotTree(input, complete, monitor);
 				} finally {
-					input.close();
+					FileUtil.safeClose(input);
 					//reader returned an immutable tree, but since we're inside
 					//an operation, we must return an open tree
 					lastSnap = complete;
@@ -867,7 +867,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			if (projects[i].isAccessible())
 				synchronizer.restore(projects[i], monitor);
 		if (Policy.DEBUG_RESTORE_SYNCINFO) {
-			System.out.println("Restore SyncInfo for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.out.println("Restore SyncInfo for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -1093,7 +1093,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws CoreException {
 		long start = System.currentTimeMillis();
 		//if there is nothing on disk, write the description
-		if (!workspace.getFileSystemManager().hasSavedProject(project)) {
+		if (!workspace.getFileSystemManager().hasSavedDescription(project)) {
 			workspace.getFileSystemManager().writeSilently(project);
 			String msg = NLS.bind(Messages.resources_missingProjectMetaRepaired, project.getName());
 			return new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, project.getFullPath(), msg);

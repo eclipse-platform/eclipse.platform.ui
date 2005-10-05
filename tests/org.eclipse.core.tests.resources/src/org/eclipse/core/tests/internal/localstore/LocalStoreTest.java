@@ -11,6 +11,7 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.*;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
@@ -18,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.resources.ResourceTest;
 
-public abstract class LocalStoreTest extends ResourceTest {
+public abstract class LocalStoreTest extends ResourceTest implements IFileStoreConstants {
 	// test configuration attributes
 	protected static int numberOfProjects = 3;
 	protected static int numberOfProperties = 5;
@@ -66,39 +67,50 @@ public abstract class LocalStoreTest extends ResourceTest {
 	 * Create a file with random content. If a resource exists in the same path,
 	 * the resource is deleted.
 	 */
-	protected void createFile(File target, String content) throws IOException {
-		Workspace.clear(target);
+	protected void createFile(IFileStore target, String content) throws CoreException {
+		target.delete(NONE, null);
 		InputStream input = new ByteArrayInputStream(content.getBytes());
-		FileOutputStream output = new FileOutputStream(target);
-		transferData(input, output);
-		assertTrue(target.isFile());
+		transferData(input, target.openOutputStream(NONE, null));
+		IFileInfo info = target.fetchInfo();
+		assertTrue(info.exists() && !info.isDirectory());
 	}
 
-	protected void createNode(File node) throws IOException {
+	/**
+	 * Create a file with random content. If a resource exists in the same path,
+	 * the resource is deleted.
+	 */
+	protected void createIOFile(java.io.File target, String content) throws IOException {
+		target.delete();
+		InputStream input = new ByteArrayInputStream(content.getBytes());
+		transferData(input, new FileOutputStream(target));
+		assertTrue(target.exists() && !target.isDirectory());
+	}
+
+	protected void createNode(IFileStore node) throws CoreException {
 		char type = node.getName().charAt(0);
 		if (type == 'd')
-			node.mkdirs();
+			node.mkdir(NONE, null);
 		else {
 			InputStream input = getRandomContents();
-			FileOutputStream output = new FileOutputStream(node);
+			OutputStream output = node.openOutputStream(NONE, null);
 			transferData(input, output);
 		}
 	}
 
-	protected void createTree(File[] tree) throws IOException {
+	protected void createTree(IFileStore[] tree) throws CoreException {
 		for (int i = 0; i < tree.length; i++)
 			createNode(tree[i]);
 	}
 
 	/**
-	 * The returned arry will have at least the specified size.
+	 * The returned array will have at least the specified size.
 	 */
 	protected byte[] getBigContents(int size) {
 		return getBigString(size).getBytes();
 	}
 
 	/**
-	 * The returned arry will have at least the specified size.
+	 * The returned array will have at least the specified size.
 	 */
 	protected String getBigString(int size) {
 		StringBuffer sb = new StringBuffer();
@@ -111,14 +123,14 @@ public abstract class LocalStoreTest extends ResourceTest {
 		return ((Workspace) getWorkspace()).getFileSystemManager();
 	}
 
-	protected File[] getTree(File root) {
+	protected IFileStore[] getTree(IFileStore root) {
 		return getTree(root, getTreeElements());
 	}
 
-	protected File[] getTree(File root, String[] elements) {
-		File[] tree = new File[elements.length];
+	protected IFileStore[] getTree(IFileStore root, String[] elements) {
+		IFileStore[] tree = new IFileStore[elements.length];
 		for (int i = 0; i < elements.length; i++)
-			tree[i] = new File(root, elements[i]);
+			tree[i] = root.getChild(elements[i]);
 		return tree;
 	}
 
@@ -155,7 +167,6 @@ public abstract class LocalStoreTest extends ResourceTest {
 	}
 
 	protected void tearDown() throws Exception {
-		getWorkspace().getRoot().delete(true, true, getMonitor());
 		super.tearDown();
 	}
 
@@ -177,15 +188,13 @@ public abstract class LocalStoreTest extends ResourceTest {
 		}
 	}
 
-	protected boolean verifyNode(File node) {
+	protected boolean verifyNode(IFileStore node) {
 		char type = node.getName().charAt(0);
-		if (type == 'd')
-			return true == node.isDirectory();
-		else
-			return true == node.isFile();
+		//if the name starts with d it must be a directory
+		return (type == 'd') == node.fetchInfo().isDirectory();
 	}
 
-	protected boolean verifyTree(File[] tree) {
+	protected boolean verifyTree(IFileStore[] tree) {
 		for (int i = 0; i < tree.length; i++)
 			if (!verifyNode(tree[i]))
 				return false;
