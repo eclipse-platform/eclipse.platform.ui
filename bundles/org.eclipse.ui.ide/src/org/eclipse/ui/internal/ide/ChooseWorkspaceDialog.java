@@ -316,8 +316,12 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      * @since 3.2
      */
 	protected IDialogSettings getDialogBoundsSettings() {
-		// These settings will only be consulted if the dialog is created
-		// with centerOnMonitor = false.
+		// If we were explicitly instructed to center on the monitor, then
+		// do not provide any settings for retrieving a different location or, worse,
+		// saving the centered location.
+		if (centerOnMonitor) 
+			return null;
+		
         IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
         if (section == null) {
