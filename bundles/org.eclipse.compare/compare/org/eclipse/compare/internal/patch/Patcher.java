@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,17 +37,17 @@ public class Patcher {
 	private static final boolean DEBUG= false;
 	
 	private static final String DEV_NULL= "/dev/null"; //$NON-NLS-1$
-	
-	private static final String REJECT_FILE_EXTENSION= ".rej"; //$NON-NLS-1$
-	
-	private static final String MARKER_TYPE= "org.eclipse.compare.rejectedPatchMarker";	//$NON-NLS-1$
+
+	static protected final String REJECT_FILE_EXTENSION= ".rej"; //$NON-NLS-1$
+
+	static protected final String MARKER_TYPE= "org.eclipse.compare.rejectedPatchMarker"; //$NON-NLS-1$
 
 	// diff formats
-//	private static final int CONTEXT= 0;
-//	private static final int ED= 1;
-//	private static final int NORMAL= 2;
-//	private static final int UNIFIED= 3;
-	
+	//	private static final int CONTEXT= 0;
+	//	private static final int ED= 1;
+	//	private static final int NORMAL= 2;
+	//	private static final int UNIFIED= 3;
+
 	// we recognize the following date/time formats
 	private static DateFormat[] DATE_FORMATS= new DateFormat[] {
 		new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy"), //$NON-NLS-1$
@@ -56,7 +56,8 @@ public class Patcher {
 	};
 		
 	private String fName;
-	private Diff[] fDiffs;
+	protected Diff[] fDiffs;
+	private IResource fTarget;
 	// patch options
 	private int fStripPrefixSegments;
 	private int fFuzz;
@@ -125,7 +126,7 @@ public class Patcher {
 	/*
 	 * Returns <code>true</code> if new value differs from old.
 	 */
-	boolean setReversed(boolean reverse) {
+	public boolean setReversed(boolean reverse) {
 		if (fReverse != reverse) {
 			fReverse= reverse;
 			
@@ -149,19 +150,15 @@ public class Patcher {
 	}
 		
 	//---- parsing patch files
-		
-	public void parse(BufferedReader reader) throws IOException {
+
+	public void parse(LineReader lr, String line) throws IOException {
 		List diffs= new ArrayList();
-		String line= null;
 		boolean reread= false;
 		String diffArgs= null;
 		String fileName= null;
-		
-		LineReader lr= new LineReader(reader);
-		if (!"carbon".equals(SWT.getPlatform()))	//$NON-NLS-1$
-			lr.ignoreSingleCR();
-		
+
 		// read leading garbage
+		reread= line!=null;
 		while (true) {
 			if (!reread)
 				line= lr.readLine();
@@ -200,8 +197,8 @@ public class Patcher {
 	/*
 	 * Returns the next line that does not belong to this diff
 	 */
-	private String readUnifiedDiff(List diffs, LineReader reader, String line, String args, String fileName) throws IOException {
-								
+	protected String readUnifiedDiff(List diffs, LineReader reader, String line, String args, String fileName) throws IOException {
+
 		String[] oldArgs= split(line.substring(4));
 
 		// read info about new file
@@ -741,18 +738,18 @@ public class Patcher {
 		return hunk.fNewLength - hunk.fOldLength;
 	}
 
-	public void applyAll(IResource target, IProgressMonitor pm, Shell shell, String title) throws CoreException {
-		
+	public void applyAll(IProgressMonitor pm, Shell shell, String title) throws CoreException {
+
 		final int WORK_UNIT= 10;
 		
 		int i;
 		
 		IFile singleFile= null;	// file to be patched
 		IContainer container= null;
-		if (target instanceof IContainer)
-			container= (IContainer) target;
-		else if (target instanceof IFile) {
-			singleFile= (IFile) target;
+		if (fTarget instanceof IContainer)
+			container= (IContainer) fTarget;
+		else if (fTarget instanceof IFile) {
+			singleFile= (IFile) fTarget;
 			container= singleFile.getParent();
 		} else {
 			Assert.isTrue(false);
@@ -901,8 +898,8 @@ public class Patcher {
 	/*
 	 * Converts the string into bytes and stores them in the given file.
 	 */
-	private void store(String contents, IFile file, IProgressMonitor pm) throws CoreException {
-		
+	protected void store(String contents, IFile file, IProgressMonitor pm) throws CoreException {
+
 		byte[] bytes;
 		try {
 			bytes= contents.getBytes(Utilities.getCharset(file));
@@ -931,7 +928,7 @@ public class Patcher {
 	/*
 	 * Concatenates all strings found in the given List.
 	 */
-	private String createString(List lines) {
+	protected String createString(List lines) {
 		StringBuffer sb= new StringBuffer();
 		Iterator iter= lines.iterator();
 		if (fPreserveLineDelimiters) {
@@ -973,7 +970,7 @@ public class Patcher {
 	 * Ensures that a file with the given path exists in
 	 * the given container. Folder are created as necessary.
 	 */
-	private IFile createPath(IContainer container, IPath path) throws CoreException {
+	protected IFile createPath(IContainer container, IPath path) throws CoreException {
 		if (path.segmentCount() > 1) {
 			IFolder f= container.getFolder(path.uptoSegment(1));
 			if (!f.exists())
@@ -1080,5 +1077,61 @@ public class Patcher {
 				shift+= doPatch(hunk, lines, shift);
 		}
 		return shift;
+	}
+
+	public IResource getTarget() {
+		return fTarget;
+	}
+
+	public void setTarget(IResource target) {
+		fTarget= target;
+	}
+
+	/**
+	 * Iterates through all of the resources contained in the Patch Wizard target
+	 * and looks to for a match to the passed in file 
+	 * @param path
+	 * @return IFile which matches the passed in path or null if none found
+	 */
+	public IFile existsInTarget(IPath path) {
+		if (fTarget instanceof IFile) { // special case
+			IFile file= (IFile) fTarget;
+			if (matches(file.getFullPath(), path))
+				return file;
+		} else if (fTarget instanceof IContainer) {
+			IContainer c= (IContainer) fTarget;
+			if (c.exists(path))
+				return c.getFile(path);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns true if path completely matches the end of fullpath
+	 * @param fullpath 
+	 * @param path 
+	 * @return true if path matches, false otherwise
+	 */
+	private boolean matches(IPath fullpath, IPath path) {
+		for (IPath p= fullpath; path.segmentCount()<=p.segmentCount(); p= p.removeFirstSegments(1)) {
+			if (p.equals(path))
+				return true;
+		}
+		return false;
+	}
+
+	public int calculatePrefixSegmentCount() {
+		//Update prefix count - go through all of the diffs and find the smallest
+		//path segment contained in all diffs.
+		int length= 99;
+		if (fDiffs!=null)
+			for (int i= 0; i<fDiffs.length; i++) {
+				Diff diff= fDiffs[i];
+				if (diff.fOldPath!=null)
+					length= Math.min(length, diff.fOldPath.segmentCount());
+				if (diff.fNewPath!=null)
+					length= Math.min(length, diff.fNewPath.segmentCount());
+			}
+		return length;
 	}
 }

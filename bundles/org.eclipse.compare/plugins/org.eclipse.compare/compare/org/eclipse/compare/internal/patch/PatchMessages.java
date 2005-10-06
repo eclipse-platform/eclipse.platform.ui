@@ -37,19 +37,25 @@ public final class PatchMessages extends NLS {
 	public static String InputPatchPage_FileButton_text;
 	public static String InputPatchPage_ChooseFileButton_text;
 	public static String InputPatchPage_UseClipboardButton_text;
+	public static String InputPatchPage_UseWorkspaceButton_text;
+	public static String InputPatchPage_WorkspaceSelectPatch_text;
 	public static String InputPatchPage_NothingSelected_message;
 	public static String InputPatchPage_ClipboardIsEmpty_message;
 	public static String InputPatchPage_NoTextInClipboard_message;
 	public static String InputPatchPage_CouldNotReadClipboard_message;
 	public static String InputPatchPage_CannotLocatePatch_message;
 	public static String InputPatchPage_NoFileName_message;
+	public static String InputPatchPage_FileSelectedNotPatch_message;
 	public static String InputPatchPage_SelectPatchFileDialog_title;
 	public static String InputPatchPage_PatchFileNotFound_message;
 	public static String InputPatchPage_ParseError_message;
 	public static String InputPatchPage_Clipboard_title;
 	public static String InputPatchPage_PatchFile_title;
+	public static String InputPatchPage_WorkspacePatch_title;
 	public static String InputPatchPage_NoDiffsFound_format;
 	public static String InputPatchPage_SingleFileError_format;
+	public static String PatchTargetPage_title;
+	public static String PatchTargetPage_message;
 	public static String PreviewPatchPage_title;
 	public static String PreviewPatchPage_message;
 	public static String PreviewPatchPage_Left_title;
@@ -74,4 +80,11 @@ public final class PatchMessages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, PatchMessages.class);
 	}
+
+	public static String Diff_2Args;
+	public static String PreviewPatchPage_MatchProjects;
+	public static String PreviewPatchPage_RetargetPatch;
+	public static String PreviewPatchPage_SelectProject;
+	public static String PreviewPatchPage_Target;
+	public static String PreviewPatchLabelDecorator_ProjectDoesNotExist;
 }

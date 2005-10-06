@@ -593,4 +593,11 @@ public class Utilities {
 			}
 		}
 	}
+
+	public static IResource getResource(ISelection selection) {
+		IResource[] resources = getResources(selection);
+		if (resources.length > 0)
+			return resources[0];
+		return null;
+	}
 }

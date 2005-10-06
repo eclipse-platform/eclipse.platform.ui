@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,65 +12,61 @@ package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.Wizard;
-
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.ExceptionHandler;
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
-
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-import org.eclipse.compare.internal.*;
+/* package */class PatchWizard extends Wizard {
 
-
-/* package */ class PatchWizard extends Wizard {
-	
 	// dialog store id constants
 	private final static String DIALOG_SETTINGS_KEY= "PatchWizard"; //$NON-NLS-1$
 
 	private boolean fHasNewDialogSettings;
 	
 	private InputPatchPage fPatchWizardPage;
-	
-	private Patcher fPatcher;
-	private IResource fTarget;
 
-		
+	private WorkspacePatcher fPatcher;
+
 	/*
 	 * Creates a wizard for applying a patch file to the workspace.
 	 */
-	/* package */ PatchWizard(ISelection selection) {
-		
-		setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.gif"));	//$NON-NLS-1$
-		setWindowTitle(PatchMessages.PatchWizard_title); 
+	/* package */PatchWizard(ISelection selection) {
 
-		setTargets(Utilities.getResources(selection));
+		setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.gif")); //$NON-NLS-1$
+		setWindowTitle(PatchMessages.PatchWizard_title);
 
-		fPatcher= new Patcher();
-				
+		fPatcher= new WorkspacePatcher();
+		setTarget(Utilities.getResource(selection));
+
 		IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
-		if (section == null)
+		if (section==null)
 			fHasNewDialogSettings= true;
 		else {
 			fHasNewDialogSettings= false;
 			setDialogSettings(section);
-		}	
+		}
 	}
-	
-	Patcher getPatcher() {
+
+	WorkspacePatcher getPatcher() {
 		return fPatcher;
 	}
 	
 	IResource getTarget() {
-		return fTarget;
+		return fPatcher.getTarget();
 	}
-	
-	void setTargets(IResource[] targets) {
-		if (targets != null && targets.length > 0)
-			fTarget= targets[0];	// right now we can only deal with a single selection
+
+	void setTarget(IResource target) {
+		fPatcher.setTarget(target);
 	}
 	
 	/* (non-Javadoc)
@@ -80,6 +76,7 @@ import org.eclipse.compare.internal.*;
 		super.addPages();
 		
 		addPage(fPatchWizardPage= new InputPatchPage(this));
+		addPage(new PatchTargetPage(this));
 		addPage(new PreviewPatchPage(this));
 	}
 	
@@ -98,10 +95,20 @@ import org.eclipse.compare.internal.*;
 		fPatcher.setName(fPatchWizardPage.getPatchName());
 
 		try {
-			WorkspaceModifyOperation op= new WorkspaceModifyOperation(fTarget.getProject()) {
+			//Create scheduling rule based on the type of patch - single or workspace
+			ISchedulingRule scheduleRule= null;
+			if (fPatcher.isWorkspacePatch()) {
+				//workspace patch
+				scheduleRule= new MultiRule(fPatcher.getTargetProjects());
+			} else {
+				//single patch
+				scheduleRule= getTarget();
+			}
+
+			WorkspaceModifyOperation op= new WorkspaceModifyOperation(scheduleRule) {
 				protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
-						fPatcher.applyAll(getTarget(), monitor, getShell(), PatchMessages.PatchWizard_title); 
+						fPatcher.applyAll(monitor, getShell(), PatchMessages.PatchWizard_title);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}

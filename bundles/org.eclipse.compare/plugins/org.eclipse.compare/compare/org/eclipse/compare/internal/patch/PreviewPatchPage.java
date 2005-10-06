@@ -10,35 +10,71 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ImageDescriptor;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-
-import org.eclipse.compare.*;
-import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.compare.internal.DiffImage;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.CompareViewerSwitchingPane;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.Splitter;
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.structuremergeviewer.*;
-
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckable;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
  * Shows the parsed patch file and any mismatches
@@ -75,170 +111,270 @@ import org.eclipse.compare.structuremergeviewer.*;
 			return UTF_16;
 		}
 	}
-		
+
+	class RetargetPatchDialog extends Dialog {
+
+		protected TreeViewer rpTreeViewer;
+		protected DiffProject rpSelectedProject;
+		protected IProject rpTargetProject;
+
+		public RetargetPatchDialog(Shell shell, ISelection selection) {
+			super(shell);
+			setShellStyle(getShellStyle()|SWT.RESIZE);
+			if (selection instanceof IStructuredSelection) {
+				rpSelectedProject= (DiffProject) ((IStructuredSelection) selection).getFirstElement();
+			}
+		}
+
+		protected Control createDialogArea(Composite parent) {
+			Composite composite= (Composite) super.createDialogArea(parent);
+
+			initializeDialogUnits(parent);
+
+			getShell().setText(PatchMessages.PreviewPatchPage_RetargetPatch);
+
+			GridLayout layout= new GridLayout();
+			layout.numColumns= 1;
+			composite.setLayout(layout);
+			final GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
+			composite.setLayoutData(data);
+
+			//add controls to composite as necessary
+			Label label= new Label(composite, SWT.LEFT|SWT.WRAP);
+			label.setText(NLS.bind(PatchMessages.Diff_2Args, new String[] {PatchMessages.PreviewPatchPage_SelectProject, rpSelectedProject.getName()}));
+			final GridData data2= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+			label.setLayoutData(data2);
+
+			rpTreeViewer= new TreeViewer(composite, SWT.BORDER);
+			GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
+			gd.widthHint= 0;
+			gd.heightHint= 0;
+			rpTreeViewer.getTree().setLayoutData(gd);
+
+			rpTreeViewer.setContentProvider(new RetargetPatchContentProvider());
+			rpTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
+			rpTreeViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
+			rpTreeViewer.setInput(ResourcesPlugin.getWorkspace());
+			rpTreeViewer.setSelection(new StructuredSelection(rpSelectedProject.getProject()));
+
+			setupListeners();
+
+			return parent;
+		}
+
+		protected void okPressed() {
+			rpSelectedProject.setProject(rpTargetProject);
+			super.okPressed();
+		}
+
+		void setupListeners() {
+			rpTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent event) {
+					IStructuredSelection s= (IStructuredSelection) event.getSelection();
+					Object obj= s.getFirstElement();
+					if (obj instanceof IProject)
+						rpTargetProject= (IProject) obj;
+				}
+			});
+
+			rpTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+				public void doubleClick(DoubleClickEvent event) {
+					ISelection s= event.getSelection();
+					if (s instanceof IStructuredSelection) {
+						Object item= ((IStructuredSelection) s).getFirstElement();
+						if (rpTreeViewer.getExpandedState(item))
+							rpTreeViewer.collapseToLevel(item, 1);
+						else
+							rpTreeViewer.expandToLevel(item, 1);
+					}
+				}
+			});
+
+		}
+
+		protected Point getInitialSize() {
+			final Point size= super.getInitialSize();
+			size.x= convertWidthInCharsToPixels(75);
+			size.y+= convertHeightInCharsToPixels(20);
+			return size;
+		}
+	}
+
+	class RetargetPatchContentProvider extends BaseWorkbenchContentProvider {
+		//Never show closed projects
+		boolean showClosedProjects= false;
+
+		public Object[] getChildren(Object element) {
+			if (element instanceof IWorkspace) {
+				// check if closed projects should be shown
+				IProject[] allProjects= ((IWorkspace) element).getRoot().getProjects();
+				if (showClosedProjects)
+					return allProjects;
+
+				ArrayList accessibleProjects= new ArrayList();
+				for (int i= 0; i<allProjects.length; i++) {
+					if (allProjects[i].isOpen()) {
+						accessibleProjects.add(allProjects[i]);
+					}
+				}
+				return accessibleProjects.toArray();
+			}
+
+			if (element instanceof IProject) {
+				return new Object[0];
+			}
+			return super.getChildren(element);
+		}
+	}
+
 	private PatchWizard fPatchWizard;
-	
-	private Tree fTree;
+
+	private ContainerCheckedTreeViewer fTreeViewer;
 	private Combo fStripPrefixSegments;
 	private CompareViewerSwitchingPane fHunkViewer;
 	private Button fIgnoreWhitespaceButton;
 	private Button fReversePatchButton;
 	private Text fFuzzField;
-	
-	private Image[] fImages= new Image[6];	
+	private Button fMatchProject;
+
+	private Object inputElement;
 	private CompareConfiguration fCompareConfiguration;
-	
-	
+
+	protected boolean pageRecalculate= true;
+	protected final static String PREVIEWPATCHPAGE_NAME= "PreviewPatchPage"; //$NON-NLS-1$
+
 	/* package */ PreviewPatchPage(PatchWizard pw) {
-		super("PreviewPatchPage",	//$NON-NLS-1$ 
-			PatchMessages.PreviewPatchPage_title, null); 
-		
-		setMessage(PatchMessages.PreviewPatchPage_message);	
-		
+		super(PREVIEWPATCHPAGE_NAME, PatchMessages.PreviewPatchPage_title, null);
+
+		setMessage(PatchMessages.PreviewPatchPage_message);
+
 		fPatchWizard= pw;
 		//setPageComplete(false);
-		
-		int w= 16;
-		
-		ImageDescriptor addId= CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif");	//$NON-NLS-1$
-		ImageDescriptor delId= CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif");	//$NON-NLS-1$
 
-		ImageDescriptor errId= CompareUIPlugin.getImageDescriptor("ovr16/error_ov.gif");	//$NON-NLS-1$
-		Image errIm= errId.createImage();
-		
-		fImages[0]= new DiffImage(null, null, w).createImage();
-		fImages[1]= new DiffImage(null, addId, w).createImage();
-		fImages[2]= new DiffImage(null, delId, w).createImage();
-
-		fImages[3]= new DiffImage(errIm, null, w).createImage();
-		fImages[4]= new DiffImage(errIm, addId, w).createImage();
-		fImages[5]= new DiffImage(errIm, delId, w).createImage();
-		
 		fCompareConfiguration= new CompareConfiguration();
-		
+
 		fCompareConfiguration.setLeftEditable(false);
-		fCompareConfiguration.setLeftLabel(PatchMessages.PreviewPatchPage_Left_title); 
-		
+		fCompareConfiguration.setLeftLabel(PatchMessages.PreviewPatchPage_Left_title);
+
 		fCompareConfiguration.setRightEditable(false);
-		fCompareConfiguration.setRightLabel(PatchMessages.PreviewPatchPage_Right_title); 
+		fCompareConfiguration.setRightLabel(PatchMessages.PreviewPatchPage_Right_title);
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared in WizardPage
 	 */
 	public void setVisible(boolean visible) {
-		if (visible)
+		if (visible) {
 			buildTree();
+			updateTree();
+		}
 		super.setVisible(visible);
 	}
 
-	Image getImage(Diff diff) {
-		if (diff.fMatches) {
-			switch (diff.getType()) {
-			case Differencer.ADDITION:
-				return fImages[1];
-			case Differencer.DELETION:
-				return fImages[2];
-			}
-			return fImages[0];
-		}
-		switch (diff.getType()) {
-		case Differencer.ADDITION:
-			return fImages[4];
-		case Differencer.DELETION:
-			return fImages[5];
-		}
-		return fImages[3];
-	}
-	
-	Image getImage(Hunk hunk) {
-		if (hunk.fMatches)
-			return fImages[0];
-		return fImages[3];
-	}
-	
 	public void createControl(Composite parent) {
 
 		Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL|GridData.HORIZONTAL_ALIGN_FILL));
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICompareContextIds.PATCH_PREVIEW_WIZARD_PAGE);
 
 		setControl(composite);
-		
+
 		buildPatchOptionsGroup(composite);
-		
+
 		Splitter splitter= new Splitter(composite, SWT.VERTICAL);
 		splitter.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL
 					| GridData.VERTICAL_ALIGN_FILL | GridData.GRAB_VERTICAL));
 
-		
 		// top pane showing diffs and hunks in a check box tree 
-		fTree= new Tree(splitter, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		createTreeViewer(splitter);
+
+		// bottom pane showing hunks in compare viewer 
+		fHunkViewer= new CompareViewerSwitchingPane(splitter, SWT.BORDER|SWT.FLAT) {
+			protected Viewer getViewer(Viewer oldViewer, Object input) {
+				return CompareUI.findContentViewer(oldViewer, (ICompareInput) input, this, fCompareConfiguration);
+			}
+		};
 		GridData gd= new GridData();
 		gd.verticalAlignment= GridData.FILL;
 		gd.horizontalAlignment= GridData.FILL;
 		gd.grabExcessHorizontalSpace= true;
 		gd.grabExcessVerticalSpace= true;
-		fTree.setLayoutData(gd);
-				
-		// bottom pane showing hunks in compare viewer 
-		fHunkViewer= new CompareViewerSwitchingPane(splitter, SWT.BORDER | SWT.FLAT) {
-			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				return CompareUI.findContentViewer(oldViewer, (ICompareInput)input, this, fCompareConfiguration);
-			}
-		};
-		gd= new GridData();
-		gd.verticalAlignment= GridData.FILL;
-		gd.horizontalAlignment= GridData.FILL;
-		gd.grabExcessHorizontalSpace= true;
-		gd.grabExcessVerticalSpace= true;
 		fHunkViewer.setLayoutData(gd);
-		
-		// register listeners
-		
-		fTree.addSelectionListener(
-			new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					TreeItem ti= (TreeItem) e.item;
-					Object data= e.item.getData();
-					if (e.detail == SWT.CHECK) {
-						boolean checked= ti.getChecked();
-						if (data instanceof Hunk) {
-							Hunk hunk= (Hunk) data;
-							checked= checked && hunk.fMatches;
-							//hunk.setEnabled(checked);
-							ti.setChecked(checked);
-							updateGrayedState(ti);
-						} else if (data instanceof Diff) {
-							updateCheckedState(ti);
-						}
-					} else {
-						if (data instanceof Hunk)
-							PreviewPatchPage.this.fHunkViewer.setInput(createInput((Hunk)data));
-						else
-							PreviewPatchPage.this.fHunkViewer.setInput(null);
-					}
-				}
-			}
-		);
-		fTree.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (fImages != null) {
-					for (int i= 0; i < fImages.length; i++) {
-						if (fImages[i] == null)
-							fImages[i].dispose();
-					}
-					fImages= null;
-				}
+
+		//create Match Project button
+		fMatchProject= new Button(composite, SWT.PUSH);
+		gd= new GridData();
+		gd.verticalAlignment= GridData.BEGINNING;
+		gd.horizontalAlignment= GridData.END;
+		fMatchProject.setLayoutData(gd);
+
+		fMatchProject.setText(PatchMessages.PreviewPatchPage_MatchProjects);
+		fMatchProject.setEnabled(false);
+		fMatchProject.setVisible(false);
+		fMatchProject.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				final RetargetPatchDialog dialog= new RetargetPatchDialog(getShell(), fTreeViewer.getSelection());
+				dialog.open();
+				updateTree();
 			}
 		});
+
 		// creating tree's content
 		buildTree();
-		Dialog.applyDialogFont(composite);		
+		Dialog.applyDialogFont(composite);
 	}
-	
+
+	private void createTreeViewer(Splitter splitter) {
+		fTreeViewer= new ContainerCheckedTreeViewer(splitter, SWT.BORDER);
+		fTreeViewer.setContentProvider(new BaseWorkbenchContentProvider());
+		fTreeViewer.setLabelProvider(new DecoratingLabelProvider(new WorkbenchLabelProvider(), new PreviewPatchLabelDecorator()));
+		fTreeViewer.setSorter(new WorkbenchViewerSorter());
+		fTreeViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				Object obj = event.getElement();
+				ICheckable checked = event.getCheckable();
+				DiffProject proj = null;
+				if (obj instanceof DiffProject){
+					proj = (DiffProject) obj;
+				} else if (obj instanceof Diff){
+					proj = ((Diff) obj).getProject();
+				} else if (obj instanceof Hunk){
+					Diff diff = (Diff) ((Hunk) obj).getParent(null);
+					proj = diff.getProject();
+				}
+				if (proj!= null &&
+				   !proj.getProject().exists()){
+					checked.setChecked(obj, false);
+				}
+				updateEnablements();
+			}
+		});
+
+		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
+				Object obj= sel.getFirstElement();
+
+				if (obj instanceof Hunk) {
+					PreviewPatchPage.this.fHunkViewer.setInput(createInput((Hunk) obj));
+				} else
+					PreviewPatchPage.this.fHunkViewer.setInput(null);
+
+				fMatchProject.setEnabled(false);
+				//See if we need to enable match project button
+				if (fPatchWizard.getPatcher().isWorkspacePatch()&&obj instanceof DiffProject) {
+					fMatchProject.setEnabled(true);
+				}
+
+			}
+
+		});
+		fTreeViewer.setInput(null);
+	}
+
 	/*
 	 *	Create the group for setting various patch options
 	 */
@@ -247,130 +383,129 @@ import org.eclipse.compare.structuremergeviewer.*;
 		GridLayout gl;
 		GridData gd;
 		Label l;
-				
-		final Patcher patcher= fPatchWizard.getPatcher();
-		
+
+		final WorkspacePatcher patcher= fPatchWizard.getPatcher();
+
 		Group group= new Group(parent, SWT.NONE);
-		group.setText(PatchMessages.PreviewPatchPage_PatchOptions_title); 
+		group.setText(PatchMessages.PreviewPatchPage_PatchOptions_title);
 		gl= new GridLayout(); gl.numColumns= 4; gl.marginHeight= 0;
 		group.setLayout(gl);
-		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-	
+		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.GRAB_HORIZONTAL));
+
 		// 1st row
-		
+
 		Composite pair= new Composite(group, SWT.NONE);
 		gl= new GridLayout(); gl.numColumns= 2; gl.marginHeight= gl.marginWidth= 0;
 		pair.setLayout(gl);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		pair.setLayoutData(gd);
-		
-			l= new Label(pair, SWT.NONE);
-			l.setText(PatchMessages.PreviewPatchPage_IgnoreSegments_text); 
-			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
-			l.setLayoutData(gd);
 
-			fStripPrefixSegments= new Combo(pair, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
-			int prefixCnt= patcher.getStripPrefixSegments();
-			String prefix= Integer.toString(prefixCnt);
-			fStripPrefixSegments.add(prefix);
-			fStripPrefixSegments.setText(prefix);
-			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_END);
-			fStripPrefixSegments.setLayoutData(gd);
-		
+		l= new Label(pair, SWT.NONE);
+		l.setText(PatchMessages.PreviewPatchPage_IgnoreSegments_text);
+		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER|GridData.HORIZONTAL_ALIGN_BEGINNING|GridData.GRAB_HORIZONTAL);
+		l.setLayoutData(gd);
+
+		fStripPrefixSegments= new Combo(pair, SWT.DROP_DOWN|SWT.READ_ONLY|SWT.SIMPLE);
+		int prefixCnt= patcher.getStripPrefixSegments();
+		String prefix= Integer.toString(prefixCnt);
+		fStripPrefixSegments.add(prefix);
+		fStripPrefixSegments.setText(prefix);
+		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER|GridData.HORIZONTAL_ALIGN_END);
+		fStripPrefixSegments.setLayoutData(gd);
+
 		addSpacer(group);
-		
+
 		fReversePatchButton= new Button(group, SWT.CHECK);
-		fReversePatchButton.setText(PatchMessages.PreviewPatchPage_ReversePatch_text); 
-		
+		fReversePatchButton.setText(PatchMessages.PreviewPatchPage_ReversePatch_text);
+
 		addSpacer(group);
-		
+
 		// 2nd row
 		pair= new Composite(group, SWT.NONE);
 		gl= new GridLayout(); gl.numColumns= 3; gl.marginHeight= gl.marginWidth= 0;
 		pair.setLayout(gl);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		pair.setLayoutData(gd);
-	
-			l= new Label(pair, SWT.NONE);
-			l.setText(PatchMessages.PreviewPatchPage_FuzzFactor_text); 
-			l.setToolTipText(PatchMessages.PreviewPatchPage_FuzzFactor_tooltip); 
-			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
-			l.setLayoutData(gd);
-						
-			fFuzzField= new Text(pair, SWT.BORDER);
-			fFuzzField.setText("2"); //$NON-NLS-1$
+
+		l= new Label(pair, SWT.NONE);
+		l.setText(PatchMessages.PreviewPatchPage_FuzzFactor_text);
+		l.setToolTipText(PatchMessages.PreviewPatchPage_FuzzFactor_tooltip);
+		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER|GridData.HORIZONTAL_ALIGN_BEGINNING|GridData.GRAB_HORIZONTAL);
+		l.setLayoutData(gd);
+
+		fFuzzField= new Text(pair, SWT.BORDER);
+		fFuzzField.setText("2"); //$NON-NLS-1$
 			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_END); gd.widthHint= 30;
-			fFuzzField.setLayoutData(gd);
-	
-			Button b= new Button(pair, SWT.PUSH);
-			b.setText(PatchMessages.PreviewPatchPage_GuessFuzz_text);	
+		fFuzzField.setLayoutData(gd);
+
+		Button b= new Button(pair, SWT.PUSH);
+		b.setText(PatchMessages.PreviewPatchPage_GuessFuzz_text);
 			b.addSelectionListener(
 				new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						int fuzz= guessFuzzFactor(patcher);
-						if (fuzz >= 0)
-							fFuzzField.setText(Integer.toString(fuzz));
-					}
+			public void widgetSelected(SelectionEvent e) {
+				int fuzz= guessFuzzFactor(patcher);
+				if (fuzz>=0)
+					fFuzzField.setText(Integer.toString(fuzz));
+			}
 				}
 			);
-			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER);
-			b.setLayoutData(gd);
-		
+		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER);
+		b.setLayoutData(gd);
+
 		addSpacer(group);
-		
+
 		fIgnoreWhitespaceButton= new Button(group, SWT.CHECK);
-		fIgnoreWhitespaceButton.setText(PatchMessages.PreviewPatchPage_IgnoreWhitespace_text); 
-		
+		fIgnoreWhitespaceButton.setText(PatchMessages.PreviewPatchPage_IgnoreWhitespace_text);
+
 		addSpacer(group);
-				
+
 		// register listeners
-			
-		if (fStripPrefixSegments != null) 
+
+		if (fStripPrefixSegments!=null)
 			fStripPrefixSegments.addSelectionListener(
 				new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						if (patcher.setStripPrefixSegments(getStripPrefixSegments()))
-							updateTree();
-					}
+				public void widgetSelected(SelectionEvent e) {
+					if (patcher.setStripPrefixSegments(getStripPrefixSegments()))
+						updateTree();
+				}
 				}
 			);
 		fReversePatchButton.addSelectionListener(
 			new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (patcher.setReversed(fReversePatchButton.getSelection()))
-						updateTree();
-				}
+			public void widgetSelected(SelectionEvent e) {
+				if (patcher.setReversed(fReversePatchButton.getSelection()))
+					updateTree();
+			}
 			}
 		);
 		fIgnoreWhitespaceButton.addSelectionListener(
 			new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (patcher.setIgnoreWhitespace(fIgnoreWhitespaceButton.getSelection()))
-						updateTree();
-				}
+			public void widgetSelected(SelectionEvent e) {
+				if (patcher.setIgnoreWhitespace(fIgnoreWhitespaceButton.getSelection()))
+					updateTree();
+			}
 			}
 		);
-		
+
 		fFuzzField.addModifyListener(
 			new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					if (patcher.setFuzz(getFuzzFactor()))
-						updateTree();
-				}
+			public void modifyText(ModifyEvent e) {
+				if (patcher.setFuzz(getFuzzFactor()))
+					updateTree();
 			}
-		);
+		});
 	}
-	
-	private int guessFuzzFactor(final Patcher patcher) {
+
+	private int guessFuzzFactor(final WorkspacePatcher patcher) {
 		final int strip= getStripPrefixSegments();
 		final int[] result= new int[1];
 		try {
 			PlatformUI.getWorkbench().getProgressService().run(true, true,
 			//TimeoutContext.run(true, GUESS_TIMEOUT, getControl().getShell(),
-				new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) {
-						result[0]= guess(patcher, monitor, strip);
-					}
+					new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) {
+							result[0]= guess(patcher, monitor, strip);
+						}
 				}
 			);
 			return result[0];
@@ -381,54 +516,54 @@ import org.eclipse.compare.structuremergeviewer.*;
 		}
 		return -1;
 	}
-	
-	private int guess(Patcher patcher, IProgressMonitor pm, int strip) {
-		
+
+	private int guess(WorkspacePatcher patcher, IProgressMonitor pm, int strip) {
+
 		Diff[] diffs= patcher.getDiffs();
-		if (diffs == null || diffs.length <= 0)
+		if (diffs==null||diffs.length<=0)
 			return -1;
-		
+
 		// now collect files and determine "work"
 		IFile[] files= new IFile[diffs.length];
 		int work= 0;
-		for (int i= 0; i < diffs.length; i++) {
+		for (int i= 0; i<diffs.length; i++) {
 			Diff diff= diffs[i];
-			if (diff == null)
+			if (diff==null)
 				continue;
-			if (diff.getType() != Differencer.ADDITION) {
+			if (diff.getType()!=Differencer.ADDITION) {
 				IPath p= diff.fOldPath;
-				if (strip > 0 && strip < p.segmentCount())
+				if (strip>0&&strip<p.segmentCount())
 					p= p.removeFirstSegments(strip);
 				IFile file= existsInSelection(p);
-				if (file != null) {
+				if (file!=null) {
 					files[i]= file;
 					work+= diff.fHunks.size();
 				}
-			}	
+			}
 		}
-		
+
 		// do the "work"
 		int[] fuzzRef= new int[1];
-		String format= PatchMessages.PreviewPatchPage_GuessFuzzProgress_format;	
-		pm.beginTask(PatchMessages.PreviewPatchPage_GuessFuzzProgress_text, work);	
+		String format= PatchMessages.PreviewPatchPage_GuessFuzzProgress_format;
+		pm.beginTask(PatchMessages.PreviewPatchPage_GuessFuzzProgress_text, work);
 		try {
 			int fuzz= 0;
-			for (int i= 0; i < diffs.length; i++) {
+			for (int i= 0; i<diffs.length; i++) {
 				Diff d= diffs[i];
 				IFile file= files[i];
-				if (d != null && file != null) {
+				if (d!=null&&file!=null) {
 					List lines= patcher.load(file, false);
 					String name= d.getPath().lastSegment();
 					Iterator iter= d.fHunks.iterator();
 					int shift= 0;
 					for (int hcnt= 1; iter.hasNext(); hcnt++) {
-						pm.subTask(MessageFormat.format(format, new String[] { name, Integer.toString(hcnt) } ));
+						pm.subTask(MessageFormat.format(format, new String[] {name, Integer.toString(hcnt)}));
 						Hunk h= (Hunk) iter.next();
 						shift= patcher.calculateFuzz(h, lines, shift, pm, fuzzRef);
 						int f= fuzzRef[0];
-						if (f == -1)	// cancel
+						if (f==-1) // cancel
 							return -1;
-						if (f > fuzz)
+						if (f>fuzz)
 							fuzz= f;
 						pm.worked(1);
 					}
@@ -439,301 +574,187 @@ import org.eclipse.compare.structuremergeviewer.*;
 			pm.done();
 		}
 	}
-	
+
 	ICompareInput createInput(Hunk hunk) {
-		
+
 		String[] lines= hunk.fLines;
 		StringBuffer left= new StringBuffer();
 		StringBuffer right= new StringBuffer();
-		
-		for (int i= 0; i < lines.length; i++) {
+
+		for (int i= 0; i<lines.length; i++) {
 			String line= lines[i];
 			String rest= line.substring(1);
 			switch (line.charAt(0)) {
-			case ' ':
-				left.append(rest);
-				right.append(rest);
-				break;
-			case '-':
-				left.append(rest);
-				break;
-			case '+':
-				right.append(rest);
-				break;
+				case ' ' :
+					left.append(rest);
+					right.append(rest);
+					break;
+				case '-' :
+					left.append(rest);
+					break;
+				case '+' :
+					right.append(rest);
+					break;
 			}
 		}
-		
+
 		Diff diff= hunk.fParent;
 		IPath path= diff.getPath();
 		String type= path.getFileExtension();
-		
+
 		return new DiffNode(new HunkInput(type, left.toString()), new HunkInput(type, right.toString()));
-	}		
-	
-	/**
-	 * Builds a tree from list of Diffs.
-	 * As a side effect it calculates the maximum number of segments
-	 * in all paths.
-	 */
-	private void buildTree() {
-		setPageComplete(true);
-		if (fTree != null && !fTree.isDisposed()) {
-			fTree.removeAll();
-			fHunkViewer.setInput(null);
-			
-			int length= 99;
-			
-			Diff[] diffs= fPatchWizard.getPatcher().getDiffs();			
-			if (diffs != null) {
-				for (int i= 0; i < diffs.length; i++) {
-					Diff diff= diffs[i];
-					TreeItem d= new TreeItem(fTree, SWT.NULL);
-					d.setData(diff);
-					d.setImage(getImage(diff));
-					
-					if (diff.fOldPath != null)
-						length= Math.min(length, diff.fOldPath.segmentCount());
-					if (diff.fNewPath != null)
-						length= Math.min(length, diff.fNewPath.segmentCount());
-					
-					java.util.List hunks= diff.fHunks;
-					java.util.Iterator iter= hunks.iterator();
-					while (iter.hasNext()) {
-						Hunk hunk= (Hunk) iter.next();
-						TreeItem h= new TreeItem(d, SWT.NULL);
-						h.setData(hunk);
-						h.setText(hunk.getDescription());
-					}
-				}
-			}
-			if (fStripPrefixSegments != null && length != 99)
-				for (int i= 1; i < length; i++)
-					fStripPrefixSegments.add(Integer.toString(i));
-		}
-		
-		updateTree();
 	}
-	
+
 	private IFile existsInSelection(IPath path) {
-		IResource target= fPatchWizard.getTarget();
-		if (target instanceof IFile) {	// special case
-			IFile file= (IFile) target;
-			if (matches(file.getFullPath(), path))
-				return file;
-		} else if (target instanceof IContainer) {
-			IContainer c= (IContainer) target;
-			if (c.exists(path))
-				return c.getFile(path);
-		}
-		return null;
+		return fPatchWizard.getPatcher().existsInTarget(path);
 	}
-	
-	/*
-	 * Returns true if path completely matches the end of fullpath
-	 */
-	private boolean matches(IPath fullpath, IPath path) {
-		
-		for (IPath p= fullpath; path.segmentCount() <= p.segmentCount(); p= p.removeFirstSegments(1)) {
-			if (p.equals(path))
-				return true;
+
+	private void buildTree() {
+
+		inputElement= fPatchWizard.getPatcher();
+
+		//Update prefix count - go through all of the diffs and find the smallest
+		//path segment contained in all diffs.
+		int length= 99;
+		if (fStripPrefixSegments!=null&&pageRecalculate) {
+			length= fPatchWizard.getPatcher().calculatePrefixSegmentCount();
+			if (length!=99) {
+				for (int k= 1; k<length; k++)
+					fStripPrefixSegments.add(Integer.toString(k));
+				pageRecalculate= false;
+			}
 		}
-		return false;
+
+		fTreeViewer.setInput(inputElement);
 	}
-	
+
 	/**
 	 * Updates label and checked state of tree items.
 	 */
 	private void updateTree() {
-		if (fTree == null || fTree.isDisposed())
+
+		if (fTreeViewer==null)
 			return;
+
 		int strip= getStripPrefixSegments();
-		TreeItem[] children= fTree.getItems();
-		for (int i= 0; i < children.length; i++) {
-			TreeItem item= children[i];
-			Diff diff= (Diff) item.getData();
-			diff.fMatches= false;
-			String error= null;
-			
-			boolean create= false;	
-			IFile file= null;
-			if (diff.getType() == Differencer.ADDITION) {
-				IPath p= diff.fNewPath;
-				if (strip > 0 && strip < p.segmentCount())
-					p= p.removeFirstSegments(strip);
-				file= existsInSelection(p);
-				if (file == null) {
-					diff.fMatches= true;
-				} else {
-					// file already exists
-					error= PatchMessages.PreviewPatchPage_FileExists_error; 
-				}
-				create= true;
-			} else {
-				IPath p= diff.fOldPath;
-				if (strip > 0 && strip < p.segmentCount())
-					p= p.removeFirstSegments(strip);
-				file= existsInSelection(p);
-				diff.fMatches= false;
-				if (file != null) {
-					if (file.isReadOnly()) {
-						// file is readonly
-						error= PatchMessages.PreviewPatchPage_FileIsReadOnly_error; 
-						file= null;
-					} else {
-						diff.fMatches= true;
-					}
-				} else {
-					// file doesn't exist
-					error= PatchMessages.PreviewPatchPage_FileDoesNotExist_error; 
-				}
-			}
-			
-			ArrayList failedHunks= new ArrayList();
-			Patcher patcher= fPatchWizard.getPatcher();
-			patcher.setFuzz(getFuzzFactor());
-			if (error == null)
-				patcher.apply(diff, file, create, failedHunks);
-
-			if (failedHunks.size() > 0)
-				diff.fRejected= fPatchWizard.getPatcher().getRejected(failedHunks);
-			
-			int checkedSubs= 0;	// counts checked hunk items
-			TreeItem[] hunkItems= item.getItems();
-			for (int h= 0; h < hunkItems.length; h++) {
-				Hunk hunk= (Hunk) hunkItems[h].getData();
-				boolean failed= failedHunks.contains(hunk);
-				String hunkError= null;
-				if (failed)
-					hunkError= PatchMessages.PreviewPatchPage_NoMatch_error; 
-
-				boolean check= !failed;
-				hunkItems[h].setChecked(check);
-				if (check)
-					checkedSubs++;
-
-				String hunkLabel= hunk.getDescription();
-				if (hunkError != null)
-					hunkLabel+= "   " + hunkError; //$NON-NLS-1$
-				hunkItems[h].setText(hunkLabel);
-				hunkItems[h].setImage(getImage(hunk));
-			}
-			
-			String label= diff.getDescription(strip);
-			if (error != null)
-				label+= "    " + error; //$NON-NLS-1$
-			item.setText(label);
-			item.setImage(getImage(diff));
-			item.setChecked(checkedSubs > 0);
-			boolean gray= (checkedSubs > 0 &&  checkedSubs < hunkItems.length);
-			item.setGrayed(gray);
-			item.setExpanded(gray);
-		}
-		setPageComplete(updateModel());
-	}
-	
-	/*
-	 * Updates the gray state of the given diff and the checked state of its children.
-	 */
-	private void updateCheckedState(TreeItem diffItem) {
-		boolean checked= diffItem.getChecked();
-		// check whether we can enable all hunks
-		TreeItem[] hunks= diffItem.getItems();
-		int checkedCount= 0;
-		for (int i= 0; i < hunks.length; i++) {
-			Hunk hunk= (Hunk) hunks[i].getData();
-			if (checked) {
-				if (hunk.fMatches) {
-					hunks[i].setChecked(true);
-					checkedCount++;
+		//Get the elements from the content provider
+		BaseWorkbenchContentProvider contentProvider= (BaseWorkbenchContentProvider) fTreeViewer.getContentProvider();
+		Object[] projects= contentProvider.getElements(inputElement);
+		ArrayList hunksToCheck= new ArrayList();
+		//Iterate through projects and call reset on each project
+		for (int j= 0; j<projects.length; j++) {
+			if (projects[j] instanceof DiffProject) {
+				DiffProject project= (DiffProject) projects[j];
+				hunksToCheck.addAll(project.reset(fPatchWizard.getPatcher(), strip, getFuzzFactor()));
+				for (Iterator iter= project.fDiffs.iterator(); iter.hasNext();) {
+					Diff diff= (Diff) iter.next();
+					fTreeViewer.update(diff, null);
 				}
 			} else {
-				hunks[i].setChecked(false);
+				if (projects[j] instanceof Diff) {
+					Diff diff= (Diff) projects[j];
+					hunksToCheck.addAll(diff.reset(fPatchWizard.getPatcher(), strip, getFuzzFactor()));
+					fTreeViewer.update(diff, null);
+				}
 			}
 		}
-		diffItem.setGrayed(checkedCount > 0 && checkedCount < hunks.length);
-		diffItem.setChecked(checkedCount > 0);
-		
-		setPageComplete(updateModel());
+		fTreeViewer.refresh();
+		fTreeViewer.setCheckedElements(hunksToCheck.toArray());
+		updateEnablements();
 	}
-	
-	/*
-	 * Updates the gray state of the given items parent.
-	 */
-	private void updateGrayedState(TreeItem hunk) {
-		TreeItem diff= hunk.getParentItem();
-		TreeItem[] hunks= diff.getItems();
-		int checked= 0;
-		for (int i= 0; i < hunks.length; i++)
-			if (hunks[i].getChecked())
-				checked++;
-		diff.setChecked(checked > 0);
-		diff.setGrayed(checked > 0 && checked < hunks.length);
-		
-		setPageComplete(updateModel());
-	}
-	
+
 	private void addSpacer(Composite parent) {
 		Label label= new Label(parent, SWT.NONE);
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= 20;
 		label.setLayoutData(gd);
 	}
-	
+
 	private int getStripPrefixSegments() {
 		int stripPrefixSegments= 0;
-		if (fStripPrefixSegments != null) {
+		if (fStripPrefixSegments!=null) {
 			String s= fStripPrefixSegments.getText();
 			try {
 				stripPrefixSegments= Integer.parseInt(s);
-			} catch(NumberFormatException ex) {
+			} catch (NumberFormatException ex) {
 				// silently ignored
 			}
 		}
 		return stripPrefixSegments;
 	}
-	
+
 	private int getFuzzFactor() {
 		int fuzzFactor= 0;
-		if (fFuzzField != null) {
+		if (fFuzzField!=null) {
 			String s= fFuzzField.getText();
 			try {
 				fuzzFactor= Integer.parseInt(s);
-			} catch(NumberFormatException ex) {
+			} catch (NumberFormatException ex) {
 				// silently ignored
 			}
 		}
 		return fuzzFactor;
 	}
-	
-	public boolean updateModel() {
+
+	/**
+	 * Makes sure that at least one hunk is checked off in the tree before
+	 * allowing the patch to be applied.
+	 */
+	/* private */void updateEnablements() {
 		boolean atLeastOneIsEnabled= false;
-		if (fTree != null && !fTree.isDisposed()) {
-			TreeItem [] diffItems= fTree.getItems();
-			for (int i= 0; i < diffItems.length; i++) {
-				TreeItem diffItem= diffItems[i];
-				Object data= diffItem.getData();
-				if (data instanceof Diff) {
-					Diff diff= (Diff) data;
-					boolean b= diffItem.getChecked();
-					diff.setEnabled(b);
-					if (b) {
-						TreeItem [] hunkItems= diffItem.getItems();
-						for (int j= 0; j < hunkItems.length; j++) {
-							TreeItem hunkItem= hunkItems[j];
-							data= hunkItem.getData();
-							if (data instanceof Hunk) {
-								Hunk hunk= (Hunk) data;
-								b= hunkItem.getChecked();
-								hunk.setEnabled(b);
-								if (b) {
-									atLeastOneIsEnabled= true;
-								}
-							}
-						}
+		if (fTreeViewer!=null) {
+			BaseWorkbenchContentProvider contentProvider= (BaseWorkbenchContentProvider) fTreeViewer.getContentProvider();
+			Object[] projects= contentProvider.getElements(inputElement);
+			//Iterate through projects
+			for (int j= 0; j<projects.length; j++) {
+				if (projects[j] instanceof DiffProject) {
+					DiffProject project= (DiffProject) projects[j];
+					//Iterate through project diffs
+					Object[] diffs= project.getChildren(project);
+					for (int i= 0; i<diffs.length; i++) {
+						Diff diff= (Diff) diffs[i];
+						atLeastOneIsEnabled= updateEnablement(atLeastOneIsEnabled, diff);
 					}
+				} else if (projects[j] instanceof Diff) {
+					Diff diff= (Diff) projects[j];
+					atLeastOneIsEnabled= updateEnablement(atLeastOneIsEnabled, diff);
 				}
 			}
 		}
+
+		//Check to see if Match Project button should be visible
+		fMatchProject.setVisible(fPatchWizard.getPatcher().isWorkspacePatch());
+
+		setPageComplete(atLeastOneIsEnabled);
+	}
+
+	private boolean updateEnablement(boolean atLeastOneIsEnabled, Diff diff) {
+		boolean checked= fTreeViewer.getChecked(diff);
+		diff.setEnabled(checked);
+		if (checked) {
+			Object[] hunkItems= diff.getChildren(diff);
+			for (int h= 0; h<hunkItems.length; h++) {
+				Hunk hunk= (Hunk) hunkItems[h];
+				checked= fTreeViewer.getChecked(hunk);
+				hunk.setEnabled(checked);
+				if (checked) {
+					//For workspace patch: before setting enabled flag, make sure that the project
+					//that contains this hunk actually exists in the workspace. This is to guard against the 
+					//case of having a new file in a patch that is being applied to a project that
+					//doesn't currently exist.
+					boolean projectExists= true;
+					DiffProject project= (DiffProject)diff.getParent(null);
+					if (project!= null){
+						projectExists=project.getProject().exists();
+					}
+					if (projectExists)
+						atLeastOneIsEnabled= true;
+				}
+
+			}
+		}
+	
 		return atLeastOneIsEnabled;
 	}
+
 }

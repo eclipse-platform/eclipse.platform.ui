@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,19 +12,24 @@ package org.eclipse.compare.internal.patch;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+
 /**
  * A Hunk describes a range of changed lines and some context lines.
  */
-/* package */ class Hunk {
-	
+/* package */ class Hunk implements IWorkbenchAdapter, IAdaptable {
+
 	Diff fParent;
 	int fOldStart, fOldLength;
 	int fNewStart, fNewLength;
 	String[] fLines;
 	boolean fMatches= false;
 	private boolean fIsEnabled= true;
-	
-	
+	boolean fHunkProblem= false;
+
 	/* package */ Hunk(Diff parent, int[] oldRange, int[] newRange, List lines) {
 		
 		fParent= parent;
@@ -128,5 +133,36 @@ import java.util.List;
 		sb.append(Integer.toString(fNewLength));
 		sb.append(" @@"); //$NON-NLS-1$
 		return sb.toString();
+	}
+
+	void reset(boolean problemEncountered) {
+		fHunkProblem= problemEncountered;
+	}
+
+	//IWorkbenchAdapter methods
+	public Object[] getChildren(Object o) {
+		return new Object[0];
+	}
+
+	public ImageDescriptor getImageDescriptor(Object object) {
+		return null;
+	}
+
+	public String getLabel(Object o) {
+		String label= getDescription();
+		if (this.fHunkProblem)
+			return NLS.bind(PatchMessages.Diff_2Args, new String[] {label, PatchMessages.PreviewPatchPage_NoMatch_error});
+		return label;
+	}
+
+	public Object getParent(Object o) {
+		return fParent;
+	}
+
+	//IAdaptable methods
+	public Object getAdapter(Class adapter) {
+		if (adapter == IWorkbenchAdapter.class)
+			return this;
+		return null;
 	}
 }
