@@ -20,4 +20,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.compare,
  org.eclipse.ui.workbench.texteditor
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
