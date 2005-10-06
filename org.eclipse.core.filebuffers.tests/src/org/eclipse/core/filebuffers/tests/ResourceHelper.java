@@ -12,7 +12,6 @@ package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -105,7 +104,7 @@ public class ResourceHelper {
 	private static IFile createFile(IFile file, String name, String contents) throws CoreException {
 		if (contents == null)
 			contents= "";
-		InputStream inputStream= new StringBufferInputStream(contents);
+		InputStream inputStream= new java.io.StringBufferInputStream(contents);
 		file.create(inputStream, true, NULL_MONITOR);
 		return file;
 	}

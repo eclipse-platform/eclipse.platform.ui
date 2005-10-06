@@ -835,8 +835,8 @@ public abstract class FileBufferFunctions extends TestCase {
 
 				fileBuffer= fManager.getTextFileBuffer(fPath);
 				if (modifyUnderlyingFile()) {
-					assertTrue(listener.count == 1);
-					assertTrue(listener.buffer == fileBuffer);
+					assertSame(listener.buffer, fileBuffer);
+					assertEquals(1, listener.count);
 				}
 
 			} finally {
