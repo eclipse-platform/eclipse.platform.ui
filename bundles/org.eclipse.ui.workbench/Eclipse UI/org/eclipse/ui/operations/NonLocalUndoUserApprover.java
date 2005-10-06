@@ -200,7 +200,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		// The operation affects more than just our element.  Find out if
 		// we should proceed, cancel, or discard the undo.
 		MessageDialog dialog = new MessageDialog(part.getSite().getShell(), part.getEditorInput().getName(),
-				null, message, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
+				null, message, MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
                         discardButton, IDialogConstants.CANCEL_LABEL }, 0); // yes is the default
         int answer = dialog.open();
 		switch (answer) {
