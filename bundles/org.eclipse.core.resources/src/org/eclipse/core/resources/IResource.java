@@ -1137,6 +1137,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see  IProjectDescription#setLocation(IPath)
 	 * @see Platform#getLocation()
 	 * @see java.net.URI
+	 * @since 3.2
 	 */
 	public URI getLocationURI();
 

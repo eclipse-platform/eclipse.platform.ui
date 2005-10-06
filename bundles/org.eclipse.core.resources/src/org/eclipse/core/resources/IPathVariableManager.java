@@ -125,6 +125,7 @@ public interface IPathVariableManager {
 	 * 
 	 * @param uri  the URI to be resolved
 	 * @return the resolved URI or <code>null</code>
+	 * @since 3.2
 	 */
 	public URI resolveURI(URI uri);
 
