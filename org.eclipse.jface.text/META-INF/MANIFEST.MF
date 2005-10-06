@@ -30,4 +30,4 @@ Require-Bundle:
  org.eclipse.swt,
  org.eclipse.jface,
  org.eclipse.core.commands
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

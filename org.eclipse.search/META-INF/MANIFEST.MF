@@ -24,5 +24,5 @@ Require-Bundle:
  org.eclipse.jface.text,
  org.eclipse.ui.editors,
  org.eclipse.core.runtime.compatibility
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Plugin-Class: org.eclipse.search.internal.ui.SearchPlugin
