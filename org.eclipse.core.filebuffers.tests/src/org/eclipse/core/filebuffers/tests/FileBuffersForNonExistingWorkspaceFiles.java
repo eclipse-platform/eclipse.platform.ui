@@ -12,9 +12,13 @@ package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
 
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
+
+import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 
@@ -45,12 +49,9 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
 	protected void setReadOnly(boolean state) throws Exception {
-		File file= FileBuffers.getSystemFileAtLocation(getPath());
-		if (state)
-			file.setReadOnly();
-		else {
-			// FIXME: no Java API to remove read-only flag
-		}
+		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
+		assertNotNull(fileStore);
+		fileStore.fetchInfo().setAttribute(IFileStoreConstants.ATTRIBUTE_READ_ONLY, state);
 	}
 
 	/*
