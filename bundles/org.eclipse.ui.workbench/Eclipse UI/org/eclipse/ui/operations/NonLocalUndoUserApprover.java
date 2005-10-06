@@ -204,12 +204,14 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
                         discardButton, IDialogConstants.CANCEL_LABEL }, 0); // yes is the default
         int answer = dialog.open();
 		switch (answer) {
+		case 0:
+			return Status.OK_STATUS;
 		case 1:
 			return IOperationHistory.OPERATION_INVALID_STATUS;
-		case 2:
-			return Status.CANCEL_STATUS;
 		default:
-			return Status.OK_STATUS;
+			// Cancel by default to include ESC key and shell close,
+			// which return SWT.DEFAULT, and any other unexpected return codes
+			return Status.CANCEL_STATUS;
 		}
 	}
 
