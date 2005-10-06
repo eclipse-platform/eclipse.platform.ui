@@ -13,11 +13,17 @@ package org.eclipse.core.filebuffers;
 
 import java.io.File;
 
+import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 
 
 /**
@@ -114,18 +120,38 @@ public final class FileBuffers {
 	 * </p>
 	 *
 	 * @param location the location
-	 * @return the {@link File} in the local file system for the given location
+	 * @return the {@link IFileStore} in the local file system for the given location
+	 * @since 3.2
 	 */
-	public static File getSystemFileAtLocation(IPath location) {
+	public static IFileStore getFileStoreAtLocation(IPath location) {
 		if (location == null)
 			return null;
 
 		IFile file= getWorkspaceFileAtLocation(location);
-		if (file != null) {
-			IPath path= file.getLocation();
-			return path.toFile();
+		try {
+			if (file != null)
+				return FileSystemCore.getStore(file.getLocationURI());
+		} catch (CoreException e) {
+			//fall through and assume it is a local file
 		}
-
-		return location.toFile();
+		return FileSystemCore.getLocalFileSystem().getStore(location);
 	}
+	
+	/**
+	 * Returns the file in the local file system for the given location.
+	 * <p>
+	 * The location is either a full path of a workspace resource or an
+	 * absolute path in the local file system.
+	 * </p>
+	 *
+	 * @param location the location
+	 * @return the {@link File} in the local file system for the given location
+	 * @deprecated As of 3.2, replaced by {@link #getFileStoreAtLocation(IPath)}
+	 */
+	public static File getSystemFileAtLocation(IPath location) {
+		IFileStore store= getFileStoreAtLocation(location);
+		if (store != null && store.getFileSystem().getScheme().equals(IFileStoreConstants.SCHEME_FILE))
+			return new File(store.toURI());
+		return null;
+	}	
 }

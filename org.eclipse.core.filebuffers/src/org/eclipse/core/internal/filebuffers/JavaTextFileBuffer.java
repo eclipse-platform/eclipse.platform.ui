@@ -12,16 +12,16 @@ package org.eclipse.core.internal.filebuffers;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -171,25 +171,24 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		return STATUS_ERROR;
 	}
 
-	private InputStream getFileContents(File file, IProgressMonitor monitor) {
+	private InputStream getFileContents(IFileStore file, IProgressMonitor monitor) {
 		try {
 			if (file != null)
-				return new FileInputStream(file);
-		} catch (FileNotFoundException e) {
+				return file.openInputStream(IFileStoreConstants.NONE, null);
+		} catch (CoreException e) {
 		}
 		return null;
 	}
 
 	private void setFileContents(InputStream stream, boolean overwrite, IProgressMonitor monitor) {
 		try {
-			OutputStream out= new FileOutputStream(fFile, false);
-
+			OutputStream out= fFileStore.openOutputStream(IFileStoreConstants.NONE, null);
 			try {
-				byte[] buffer = new byte[8192];
+				byte[] buffer= new byte[8192];
 				while (true) {
-					int bytesRead = -1;
+					int bytesRead= -1;
 					try {
-						bytesRead = stream.read(buffer);
+						bytesRead= stream.read(buffer);
 					} catch (IOException e) {
 					}
 					if (bytesRead == -1)
@@ -212,7 +211,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 					}
 				}
 			}
-		} catch (FileNotFoundException e) {
+		} catch (CoreException e) {
 		}
 	}
 
@@ -229,7 +228,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		try {
 			original= fManager.createEmptyDocument(getLocation());
 			cacheEncodingState(monitor);
-			setDocumentContent(original, fFile, fEncoding, monitor);
+			setDocumentContent(original, fFileStore, fEncoding, monitor);
 		} catch (CoreException x) {
 			fStatus= x.getStatus();
 		}
@@ -260,8 +259,8 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			if (replaceContents)
 				fManager.fireBufferContentReplaced(this);
 
-			if (fFile != null)
-				fSynchronizationStamp= fFile.lastModified();
+			if (fFileStore != null)
+				fSynchronizationStamp= fFileStore.fetchInfo().getLastModified();
 
 			if (fAnnotationModel instanceof IPersistableAnnotationModel) {
 				IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
@@ -286,7 +285,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @since 3.1
 	 */
 	public IContentType getContentType () throws CoreException {
-		if (fFile == null)
+		if (fFileStore == null)
 			return null;
 
 		InputStream stream= null;
@@ -294,7 +293,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			if (isDirty()) {
 				Reader reader= new DocumentReader(getDocument());
 				try {
-					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), NO_PROPERTIES);
+					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(reader, fFileStore.getName(), NO_PROPERTIES);
 					if (desc != null && desc.getContentType() != null)
 						return desc.getContentType();
 				} finally {
@@ -305,13 +304,13 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 					}
 				}
 			}
-			stream= new FileInputStream(fFile);
-			IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), NO_PROPERTIES);
+			stream= fFileStore.openInputStream(IFileStoreConstants.NONE, null);
+			IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFileStore.getName(), NO_PROPERTIES);
 			if (desc != null && desc.getContentType() != null)
 				return desc.getContentType();
 			return null;
 		} catch (IOException x) {
-			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.FileBuffer_error_queryContentDescription, fFile.getPath()), x));
+			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.FileBuffer_error_queryContentDescription, fFileStore.toString()), x));
 		} finally {
 			try {
 				if (stream != null)
@@ -344,7 +343,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		try {
 			fDocument= fManager.createEmptyDocument(getLocation());
 			cacheEncodingState(monitor);
-			setDocumentContent(fDocument, fFile, fEncoding, monitor);
+			setDocumentContent(fDocument, fFileStore, fEncoding, monitor);
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(getLocation());
 			fStatus= x.getStatus();
@@ -373,11 +372,11 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		fEncoding= fExplicitEncoding;
 		fHasBOM= false;
 
-		InputStream stream= getFileContents(fFile, monitor);
+		InputStream stream= getFileContents(fFileStore, monitor);
 		if (stream != null) {
 			try {
 				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
+				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFileStore.getName(), options);
 				if (description != null) {
 					fHasBOM= description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
 					if (fEncoding == null)
@@ -417,8 +416,8 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				bytes= bytesWithBOM;
 			}
 
-
-			if (fFile != null && fFile.exists()) {
+			IFileInfo fileInfo= fFileStore == null ? null : fFileStore.fetchInfo();
+			if (fileInfo != null && fileInfo.exists()) {
 
 				if (!overwrite)
 					checkSynchronizationState();
@@ -429,7 +428,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				// we are already inside an operation, so the delta is sent AFTER we have added the listener
 				setFileContents(stream, overwrite, monitor);
 				// set synchronization stamp to know whether the file synchronizer must become active
-				fSynchronizationStamp= fFile.lastModified();
+				fSynchronizationStamp= fFileStore.fetchInfo().getLastModified();
 
 				if (fAnnotationModel instanceof IPersistableAnnotationModel) {
 					IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
@@ -438,30 +437,24 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 
 			} else {
 
-				fFile= FileBuffers.getSystemFileAtLocation(getLocation());
-				fFile.getParentFile().mkdirs();
+				fFileStore= FileBuffers.getFileStoreAtLocation(getLocation());
+				fFileStore.getParent().mkdir(IFileStoreConstants.NONE, null);
+				OutputStream out= fFileStore.openOutputStream(IFileStoreConstants.NONE, null);
 				try {
-					FileOutputStream out= new FileOutputStream(fFile);
-					try {
-						out.write(bytes);
-						out.flush();
-					} catch (IOException x) {
-						IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, x.getLocalizedMessage(), x);
-						throw new CoreException(s);
-					} finally {
-						try {
-							out.close();
-						} catch (IOException x) {
-						}
-					}
-
-					// set synchronization stamp to know whether the file synchronizer must become active
-					fSynchronizationStamp= fFile.lastModified();
-
-				} catch (FileNotFoundException x) {
+					out.write(bytes);
+					out.flush();
+				} catch (IOException x) {
 					IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, x.getLocalizedMessage(), x);
 					throw new CoreException(s);
+				} finally {
+					try {
+						out.close();
+					} catch (IOException x) {
+					}
 				}
+
+				// set synchronization stamp to know whether the file synchronizer must become active
+				fSynchronizationStamp= fFileStore.fetchInfo().getLastModified();
 
 			}
 
@@ -477,12 +470,12 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		if (fExplicitEncoding != null)
 			return fExplicitEncoding;
 
-		if (fFile != null) {
+		if (fFileStore != null) {
 			// Probe content
 			Reader reader= new DocumentReader(fDocument);
 			try {
 				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
+				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFileStore.getName(), options);
 				if (description != null) {
 					String encoding= description.getCharset();
 					if (encoding != null)
@@ -516,7 +509,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @param monitor the progress monitor
 	 * @exception CoreException if the given stream can not be read
 	 */
-	private void setDocumentContent(IDocument document, File file, String encoding, IProgressMonitor monitor) throws CoreException {
+	private void setDocumentContent(IDocument document, IFileStore file, String encoding, IProgressMonitor monitor) throws CoreException {
 		InputStream contentStream= getFileContents(file, monitor);
 		if (contentStream == null)
 			return;

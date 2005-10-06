@@ -10,74 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-
-import org.osgi.framework.Bundle;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.IFileBuffer;
-import org.eclipse.core.filebuffers.IFileBufferListener;
-import org.eclipse.core.filebuffers.IFileBufferManager;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import java.util.*;
+import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
-
-import org.eclipse.ui.internal.editors.text.NLSUtility;
-import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
-import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
-
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.editors.text.*;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.IDocumentProviderExtension;
-import org.eclipse.ui.texteditor.IDocumentProviderExtension2;
-import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
-import org.eclipse.ui.texteditor.IDocumentProviderExtension4;
-import org.eclipse.ui.texteditor.IElementStateListener;
-import org.eclipse.ui.texteditor.IElementStateListenerExtension;
-import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
+import org.eclipse.ui.texteditor.*;
+import org.osgi.framework.Bundle;
 
 
 /**
@@ -880,8 +834,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	public boolean isDeleted(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)  {
-			File file= getSystemFile(info);
-			return file == null ? true : !file.exists();
+			IFileStore fileStore= getFileStore(info);
+			return fileStore == null ? true : !fileStore.fetchInfo().exists();
 		}
 		return getParentProvider().isDeleted(element);
 	}
@@ -1184,10 +1138,23 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	}
 
 	/**
+	 * Returns the file store denoted by the given info.
+	 *
+	 * @param info the element's file info object
+	 * @return the {@link IFileStore} for the given file info
+	 * @since 3.2
+	 */
+	protected IFileStore getFileStore(FileInfo info)  {
+		IPath path= info.fTextFileBuffer.getLocation();
+		return FileBuffers.getFileStoreAtLocation(path);
+	}
+	
+	/**
 	 * Returns the system file denoted by the given info.
 	 *
 	 * @param info the element's file info object
-	 * @return the system for the given file info
+	 * @return the system file for the given file info
+	 * @deprecated As of 3.2, replaced by {@link #getFileStore(FileInfo)}
 	 */
 	protected File getSystemFile(FileInfo info)  {
 		IPath path= info.fTextFileBuffer.getLocation();
@@ -1202,8 +1169,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @return <code>true</code> iff read-only
 	 */
 	protected boolean isSystemFileReadOnly(FileInfo info)  {
-		File file= getSystemFile(info);
-		return file != null && file.exists() ? !file.canWrite() : false;
+		IFileStore fileStore= getFileStore(info);
+		if (fileStore == null)
+			return false;
+		IFileInfo fileInfo= fileStore.fetchInfo();
+		return fileInfo.exists() && fileInfo.isReadOnly();
 	}
 
 	/**

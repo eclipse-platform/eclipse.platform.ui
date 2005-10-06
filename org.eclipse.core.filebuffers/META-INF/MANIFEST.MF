@@ -13,5 +13,6 @@ Export-Package:
 Require-Bundle: 
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
- org.eclipse.text
+ org.eclipse.text,
+ org.eclipse.core.filesystem
 Eclipse-AutoStart: true

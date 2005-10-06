@@ -10,16 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
-import java.io.File;
+import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.IFileInfo;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
@@ -29,6 +22,15 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 
@@ -473,9 +475,13 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModificationStamp()
 	 */
 	public long getModificationStamp() {
-		File file= FileBuffers.getSystemFileAtLocation(getLocation());
-		if (file != null && file.exists())
-			return file.lastModified();
+		try {
+			IFileInfo info= FileSystemCore.getStore(fFile.getLocationURI()).fetchInfo();
+			if (info.exists())
+				return info.getLastModified();
+		} catch (CoreException e) {
+			//fall through below and return null stamp
+		}
 		return IResource.NULL_STAMP;
 	}
 
@@ -504,8 +510,12 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#isCommitable()
 	 */
 	public boolean isCommitable() {
-		File file= FileBuffers.getSystemFileAtLocation(getLocation());
-		return file.exists() && file.canWrite();
+		try {
+			IFileInfo info= FileSystemCore.getStore(fFile.getLocationURI()).fetchInfo();
+			return info.exists() && !info.isReadOnly();
+		} catch (CoreException e) {
+			return false;
+		}
 	}
 
 	/*

@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -178,18 +181,21 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			return !strict;
 		}
 
-		File externalFile= FileBuffers.getSystemFileAtLocation(location);
+		IFileStore externalFile= FileBuffers.getFileStoreAtLocation(location);
 		if (externalFile != null) {
-			if (externalFile.exists()) {
-				FileInputStream is= null;
+			IFileInfo fileInfo= externalFile.fetchInfo();
+			if (fileInfo.exists()) {
+				InputStream is= null;
 				try {
-					is= new FileInputStream(externalFile);
+					is= externalFile.openInputStream(IFileStoreConstants.NONE, null);
 					IContentDescription description= manager.getDescriptionFor(is, externalFile.getName(), IContentDescription.ALL);
 					if (description != null) {
 						IContentType type= description.getContentType();
 						if (type != null)
 							return type.isKindOf(text);
 					}
+				} catch (CoreException ex) {
+					// ignore: API specification tells return true if content type can't be determined
 				} catch (IOException ex) {
 					// ignore: API specification tells return true if content type can't be determined
 				} finally {

@@ -10,15 +10,17 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
-import java.io.File;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 
@@ -30,7 +32,7 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	/** The location */
 	protected IPath fLocation;
 	/** The element for which the info is stored */
-	protected File fFile;
+	protected IFileStore fFileStore;
 	/** How often the element has been connected */
 	protected int fReferenceCount;
 	/** Can the element be saved */
@@ -60,12 +62,13 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
 		fLocation= location;
-		File file= FileBuffers.getSystemFileAtLocation(location);
-		if (file.exists())
-			fFile= file;
+		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(location);
+		IFileInfo info= fileStore.fetchInfo();
+		if (info.exists())
+			fFileStore= fileStore;
 		initializeFileBufferContent(monitor);
-		if (fFile != null)
-			fSynchronizationStamp= fFile.lastModified();
+		if (fFileStore != null)
+			fSynchronizationStamp= info.getLastModified();
 
 		addFileBufferContentListeners();
 	}
@@ -226,7 +229,7 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModificationStamp()
 	 */
 	public long getModificationStamp() {
-		return fFile != null ? fFile.lastModified() : IResource.NULL_STAMP;
+		return fFileStore != null ? fFileStore.fetchInfo().getLastModified() : IResource.NULL_STAMP;
 	}
 
 	/*
@@ -254,8 +257,8 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#isCommitable()
 	 */
 	public boolean isCommitable() {
-		File file= FileBuffers.getSystemFileAtLocation(getLocation());
-		return file.exists() && file.canWrite();
+		IFileInfo info= fFileStore.fetchInfo();
+		return info.exists() && !info.isReadOnly();
 	}
 
 	/*
