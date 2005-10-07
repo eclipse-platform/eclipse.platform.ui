@@ -38,7 +38,7 @@ public interface IFileInfo extends Comparable {
 
 	/**
 	 * Returns the value of the specified attribute for this file.  The attribute
-	 * must be one of the <code>IFileStoreConstants#ATTRIBUTE_*</code>
+	 * must be one of the <code>EFS#ATTRIBUTE_*</code>
 	 * constants.
 	 * 
 	 * @param attribute The attribute to retrieve the value for
@@ -47,18 +47,18 @@ public interface IFileInfo extends Comparable {
 	public abstract boolean getAttribute(int attribute);
 
 	/**
-	 * Returns the last modified time for this file, or {@link IFileStoreConstants#NONE}
+	 * Returns the last modified time for this file, or {@link EFS#NONE}
 	 * if the file does not exist or the last modified time could not be computed.
 	 * 
-	 * @return the last modified time for this file, or {@link IFileStoreConstants#NONE}
+	 * @return the last modified time for this file, or {@link EFS#NONE}
 	 */
 	public abstract long getLastModified();
 
 	/**
-	 * Returns the length of this file, or {@link IFileStoreConstants#NONE}
+	 * Returns the length of this file, or {@link EFS#NONE}
 	 * if the file does not exist, is a directory, or the length could not be computed.
 	 * 
-	 * @return the length of this file, or {@link IFileStoreConstants#NONE}
+	 * @return the length of this file, or {@link EFS#NONE}
 	 */
 	public abstract long getLength();
 
@@ -84,12 +84,13 @@ public interface IFileInfo extends Comparable {
 	 * 
 	 * @return <code>true</code> if this file is read only, and <code>false</code>
 	 * otherwise.
+	 * @deprecated Use getAttribute(EFS.ATTRIBUTE_READ_ONLY) instead.
 	 */
 	public abstract boolean isReadOnly();
 
 	/**
 	 * Sets the value of the specified attribute for this file info.  The attribute
-	 * must be one of the <code>IFileStoreConstants#ATTRIBUTE_*</code>
+	 * must be one of the <code>EFS#ATTRIBUTE_*</code>
 	 * constants.
 	 * </p>
 	 * <p>
@@ -103,14 +104,14 @@ public interface IFileInfo extends Comparable {
 	public abstract void setAttribute(int attribute, boolean value);
 	
 	/**
-	 * Sets the last modified time for this file.  A value of {@link IFileStoreConstants#NONE}
+	 * Sets the last modified time for this file.  A value of {@link EFS#NONE}
 	 * indicates the file does not exist or the last modified time could not be computed.
 	 * <p>
 	 * Users must call {@link IFileStore#putInfo(IFileInfo, int, IProgressMonitor)}
 	 * before changes made to this info take effect in an underlying file.
 	 * </p>
 	 * 
-	 * @param time the last modified time for this file, or {@link IFileStoreConstants#NONE}
+	 * @param time the last modified time for this file, or {@link EFS#NONE}
 	 */
 	public abstract void setLastModified(long time);
 }

@@ -34,7 +34,7 @@ public class FileSystemCore {
 	 * @return an empty file information object.
 	 */
 	public static IFileInfo createFileInfo() {
-		return new FileInfo();
+		return EFS.createFileInfo();
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class FileSystemCore {
 	 * </ul>
 	 */
 	public static IFileSystem getFileSystem(String scheme) throws CoreException {
-		return InternalFileSystemCore.getInstance().getFileSystem(scheme);
+		return EFS.getFileSystem(scheme);
 	}
 	
 	/**
@@ -58,7 +58,7 @@ public class FileSystemCore {
 	 * @return The local file system
 	 */
 	public static IFileSystem getLocalFileSystem() {
-		return InternalFileSystemCore.getInstance().getLocalFileSystem();
+		return EFS.getLocalFileSystem();
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class FileSystemCore {
 	 * @return The null file system
 	 */
 	public static IFileSystem getNullFileSystem() {
-		return InternalFileSystemCore.getInstance().getNullFileSystem();
+		return EFS.getNullFileSystem();
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class FileSystemCore {
 	 * </ul>
 	 */
 	public static IFileStore getStore(URI uri) throws CoreException {
-		return InternalFileSystemCore.getInstance().getStore(uri);
+		return EFS.getStore(uri);
 	}
 
 	/**

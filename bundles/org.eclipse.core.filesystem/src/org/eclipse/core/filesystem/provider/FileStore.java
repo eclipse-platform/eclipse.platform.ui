@@ -26,7 +26,7 @@ import org.eclipse.osgi.util.NLS;
  * </p>
  * @since 1.0
  */
-public abstract class FileStore extends PlatformObject implements IFileStoreConstants, IFileStore {
+public abstract class FileStore extends PlatformObject implements IFileStore {
 	/**
 	 * Singleton buffer created to avoid buffer creations in the
 	 * transferStreams method.  Used as an optimization, based on the assumption
@@ -98,7 +98,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 						bytesRead = source.read(buffer);
 					} catch (IOException e) {
 						String msg = NLS.bind(Messages.failedReadDuringWrite, path);
-						Policy.error(ERROR_READ, msg, e);
+						Policy.error(EFS.ERROR_READ, msg, e);
 					}
 					if (bytesRead == -1)
 						break;
@@ -106,7 +106,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 						destination.write(buffer, 0, bytesRead);
 					} catch (IOException e) {
 						String msg = NLS.bind(Messages.couldNotWrite, path);
-						Policy.error(ERROR_WRITE, msg, e);
+						Policy.error(EFS.ERROR_WRITE, msg, e);
 					}
 					monitor.worked(1);
 				}
@@ -157,7 +157,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	public void copy(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		Policy.checkCanceled(monitor);
-		final IFileInfo sourceInfo = fetchInfo(NONE, null);
+		final IFileInfo sourceInfo = fetchInfo(EFS.NONE, null);
 		if (sourceInfo.isDirectory())
 			copyDirectory(sourceInfo, destination, options, monitor);
 		else
@@ -171,7 +171,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 * @param sourceInfo The current file information for the source of the move
 	 * @param destination The destination of the copy.
 	 * @param options bit-wise or of option flag constants (
-	 * {@link IFileStoreConstants#OVERWRITE} or {@link IFileStoreConstants#SHALLOW}).
+	 * {@link EFS#OVERWRITE} or {@link EFS#SHALLOW}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -183,12 +183,12 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 */
 	protected void copyDirectory(IFileInfo sourceInfo, IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		try {
-			IFileStore[] children = childStores(NONE, null);
+			IFileStore[] children = childStores(EFS.NONE, null);
 			monitor.beginTask(NLS.bind(Messages.copying, toString()), children.length);
 			// create directory
-			destination.mkdir(NONE, Policy.subMonitorFor(monitor, 0));
+			destination.mkdir(EFS.NONE, Policy.subMonitorFor(monitor, 0));
 
-			if ((options & SHALLOW) != 0)
+			if ((options & EFS.SHALLOW) != 0)
 				return;
 			// copy children
 			for (int i = 0; i < children.length; i++)
@@ -205,7 +205,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 * @param sourceInfo The current file information for the source of the move
 	 * @param destination The destination of the copy.
 	 * @param options bit-wise or of option flag constants (
-	 * {@link IFileStoreConstants#OVERWRITE} or {@link IFileStoreConstants#SHALLOW}).
+	 * {@link EFS#OVERWRITE} or {@link EFS#SHALLOW}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -217,8 +217,8 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 */
 	protected void copyFile(IFileInfo sourceInfo, IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		try {
-			if ((options & OVERWRITE) == 0 && destination.fetchInfo().exists())
-				Policy.error(IFileStoreConstants.ERROR_EXISTS, NLS.bind(Messages.fileExists, destination));
+			if ((options & EFS.OVERWRITE) == 0 && destination.fetchInfo().exists())
+				Policy.error(EFS.ERROR_EXISTS, NLS.bind(Messages.fileExists, destination));
 			long length = sourceInfo.getLength();
 			int totalWork;
 			if (length == -1)
@@ -230,9 +230,9 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 			InputStream in = null;
 			OutputStream out = null;
 			try {
-				destination.getParent().mkdir(NONE, null);
-				in = openInputStream(NONE, Policy.subMonitorFor(monitor, 0));
-				out = destination.openOutputStream(NONE, Policy.subMonitorFor(monitor, 0));
+				destination.getParent().mkdir(EFS.NONE, null);
+				in = openInputStream(EFS.NONE, Policy.subMonitorFor(monitor, 0));
+				out = destination.openOutputStream(EFS.NONE, Policy.subMonitorFor(monitor, 0));
 				transferStreams(in, out, sourcePath, monitor);
 				transferAttributes(sourceInfo, destination);
 			} catch (CoreException e) {
@@ -240,7 +240,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 				safeClose(out);
 				//if we failed to write, try to cleanup the half written file
 				if (!destination.fetchInfo(0, null).exists())
-					destination.delete(NONE, null);
+					destination.delete(EFS.NONE, null);
 				throw e;
 			}
 		} finally {
@@ -259,7 +259,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 *    reporting and cancellation are not desired
 	 */
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
-		Policy.error(IFileStoreConstants.ERROR_DELETE, NLS.bind(Messages.noImplDelete, toString()));
+		Policy.error(EFS.ERROR_DELETE, NLS.bind(Messages.noImplDelete, toString()));
 	}
 
 	/**
@@ -269,7 +269,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 */
 	public IFileInfo fetchInfo() {
 		try {
-			return fetchInfo(IFileStoreConstants.NONE, null);
+			return fetchInfo(EFS.NONE, null);
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}
@@ -348,7 +348,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 *    reporting and cancellation are not desired
 	 */
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException {
-		Policy.error(IFileStoreConstants.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
+		Policy.error(EFS.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
 		return null;//can't get here
 	}
 
@@ -362,11 +362,11 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 		try {
 			monitor.beginTask(NLS.bind(Messages.moving, destination.toString()), 100);
 			copy(destination, options, Policy.subMonitorFor(monitor, 70));
-			delete(NONE, Policy.subMonitorFor(monitor, 30));
+			delete(EFS.NONE, Policy.subMonitorFor(monitor, 30));
 		} catch (CoreException e) {
 			//throw new error to indicate failure occurred during a move
 			String message = NLS.bind(Messages.couldNotMove, toString());
-			Policy.error(ERROR_WRITE, message, e);
+			Policy.error(EFS.ERROR_WRITE, message, e);
 		} finally {
 			monitor.done();
 		}
@@ -387,7 +387,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 *    reporting and cancellation are not desired
 	 */
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
-		Policy.error(IFileStoreConstants.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
+		Policy.error(EFS.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
 		return null;//can't get here
 	}
 
@@ -401,7 +401,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	 *    reporting and cancellation are not desired
 	 */
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
-		Policy.error(IFileStoreConstants.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
+		Policy.error(EFS.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
 	}
 
 	/**
@@ -421,7 +421,7 @@ public abstract class FileStore extends PlatformObject implements IFileStoreCons
 	public abstract URI toURI();
 
 	private void transferAttributes(IFileInfo sourceInfo, IFileStore destination) throws CoreException {
-		int options = IFileStoreConstants.SET_ATTRIBUTES | IFileStoreConstants.SET_LAST_MODIFIED;
+		int options = EFS.SET_ATTRIBUTES | EFS.SET_LAST_MODIFIED;
 		destination.putInfo(sourceInfo, options, null);
 	}
 }

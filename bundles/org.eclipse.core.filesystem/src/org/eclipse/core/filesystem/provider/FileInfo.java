@@ -9,8 +9,8 @@
  **********************************************************************/
 package org.eclipse.core.filesystem.provider;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 
 /**
  * This class should be used by file system providers in their implementation
@@ -20,7 +20,7 @@ import org.eclipse.core.filesystem.IFileStoreConstants;
  * </p>
  * @since 1.0
  */
-public class FileInfo implements IFileInfo, IFileStoreConstants {
+public class FileInfo implements IFileInfo {
 	/**
 	 * Internal attribute indicating if the file exists.
 	 */
@@ -34,12 +34,12 @@ public class FileInfo implements IFileInfo, IFileStoreConstants {
 	/**
 	 * The last modified time.
 	 */
-	private long lastModified = IFileStoreConstants.NONE;
+	private long lastModified = EFS.NONE;
 	
 	/**
 	 * The file length.
 	 */
-	private long length = IFileStoreConstants.NONE;
+	private long length = EFS.NONE;
 	
 	/**
 	 * The file name.
@@ -116,11 +116,11 @@ public class FileInfo implements IFileInfo, IFileStoreConstants {
 	 * @see org.eclipse.core.filesystem.IFileInfo#isDirectory()
 	 */
 	public boolean isDirectory() {
-		return isSet(ATTRIBUTE_DIRECTORY);
+		return isSet(EFS.ATTRIBUTE_DIRECTORY);
 	}
 
 	public boolean isReadOnly() {
-		return isSet(ATTRIBUTE_READ_ONLY);
+		return isSet(EFS.ATTRIBUTE_READ_ONLY);
 	}
 
 	private boolean isSet(long mask) {
@@ -159,10 +159,10 @@ public class FileInfo implements IFileInfo, IFileStoreConstants {
 	}
 
 	/**
-	 * Sets the length of this file. A value of {@link IFileStoreConstants#NONE}
+	 * Sets the length of this file. A value of {@link EFS#NONE}
 	 * indicates the file does not exist, is a directory, or the length could not be computed.
 	 * 
-	 * @param value the length of this file, or {@link IFileStoreConstants#NONE}
+	 * @param value the length of this file, or {@link EFS#NONE}
 	 */
 	public void setLength(long value) {
 		this.length = value;

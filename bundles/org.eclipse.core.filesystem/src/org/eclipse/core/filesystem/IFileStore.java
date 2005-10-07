@@ -97,7 +97,7 @@ public interface IFileStore extends IAdaptable {
 	 * exceptions are recorded but other files will continue to be copied if possible.
 	 * 
 	 * <p>
-	 * The {@link IFileStoreConstants#OVERWRITE} option flag indicates how
+	 * The {@link EFS#OVERWRITE} option flag indicates how
 	 * this method deals with files that already exist at the copy destination. If
 	 * the <code>OVERWRITE</code> flag is present, then existing files at the
 	 * destination are overwritten with the corresponding files from the source
@@ -106,7 +106,7 @@ public interface IFileStore extends IAdaptable {
 	 * what files could not be copied.
 	 * </p>
 	 * <p>
-	 * The {@link IFileStoreConstants#SHALLOW} option flag indicates how
+	 * The {@link EFS#SHALLOW} option flag indicates how
 	 * this method deals with copying of directories. If the <code>SHALLOW</code> 
 	 * flag is present, then a directory will be copied but the files and directories
 	 * within it will not.  When this flag is not present, all child directories and files
@@ -115,7 +115,7 @@ public interface IFileStore extends IAdaptable {
 	 * 
 	 * @param destination The destination of the copy.
 	 * @param options bit-wise or of option flag constants (
-	 * {@link IFileStoreConstants#OVERWRITE} or {@link IFileStoreConstants#SHALLOW}).
+	 * {@link EFS#OVERWRITE} or {@link EFS#SHALLOW}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -150,7 +150,7 @@ public interface IFileStore extends IAdaptable {
 	 * system.
 	 * <p>
 	 * This is a convenience method, fully equivalent to 
-	 * <code>fetchInfo(IFileStoreConstants.NONE, null)</code>.
+	 * <code>fetchInfo(EFS.NONE, null)</code>.
 	 * </p>
 	 * @return A structure containing information about this file.
 	 * @see #fetchInfo(int, IProgressMonitor)
@@ -268,21 +268,21 @@ public interface IFileStore extends IAdaptable {
 	 * Creates and returns a new directory.  If the directory already exists,
 	 * this method has no effect.
 	 * <p>
-	 * The {@link IFileStoreConstants#SHALLOW} option flag indicates how
+	 * The {@link EFS#SHALLOW} option flag indicates how
 	 * this method deals with creation when the parent directory does not exist.
 	 * If the <code>SHALLOW</code> flag is present, this method will fail if
 	 * the parent directory does not exist.  When the flag is not present, all
 	 * necessary parent directories are also created.
 	 * </p>
 	 * 
-	 * @param options bit-wise or of option flag constants ({@link IFileStoreConstants#SHALLOW}).
+	 * @param options bit-wise or of option flag constants ({@link EFS#SHALLOW}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @return The created directory
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>The directory could not be created</li>
-	 * <li>The {@link IFileStoreConstants#SHALLOW} option flag was
+	 * <li>The {@link EFS#SHALLOW} option flag was
 	 * specified and the parent of this directory does not exist.</li>
 	 * </ul>
 	 */
@@ -294,7 +294,7 @@ public interface IFileStore extends IAdaptable {
 	 * exceptions are recorded but other files will continue to be moved if possible.
 	 * 
 	 * <p>
-	 * The {@link IFileStoreConstants#OVERWRITE} option flag indicates how
+	 * The {@link EFS#OVERWRITE} option flag indicates how
 	 * this method deals with files that already exist at the move destination. If
 	 * the <code>OVERWRITE</code> flag is present, then existing files at the
 	 * destination are overwritten with the corresponding files from the source
@@ -305,13 +305,13 @@ public interface IFileStore extends IAdaptable {
 	 * 
 	 * @param destination The destination of the move.
 	 * @param options bit-wise or of option flag constants 
-	 * ({@link IFileStoreConstants#OVERWRITE}).
+	 * ({@link EFS#OVERWRITE}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This store does not exist.</li>
-	 * <li> The {@link IFileStoreConstants#OVERWRITE} flag is not specified and a file of the
+	 * <li> The {@link EFS#OVERWRITE} flag is not specified and a file of the
 	 * same name already exists at the destination.</li>
 	 * </ul>
 	 */
@@ -350,7 +350,7 @@ public interface IFileStore extends IAdaptable {
 	 * wrapper should be used, or some other form of content buffering.
 	 * </p>
 	 * <p>
-	 * The {@link IFileStoreConstants#APPEND} update flag controls where
+	 * The {@link EFS#APPEND} update flag controls where
 	 * output is written to the file.  If this flag is specified, content written
 	 * to the stream will be appended to the end of the file.  If this flag is
 	 * not specified, the contents of the existing file, if any, is truncated to zero
@@ -358,7 +358,7 @@ public interface IFileStore extends IAdaptable {
 	 * </p>
 	 * 
 	 * @param options bit-wise or of option flag constants (
-	 * {@link IFileStoreConstants#APPEND}).
+	 * {@link EFS#APPEND}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @return An output stream on the contents of this file.
@@ -380,18 +380,18 @@ public interface IFileStore extends IAdaptable {
 	 * <pre>
 	 *    IFileInfo info = FileSystemCore#createFileInfo();
 	 *    info.setLastModified(System.currentTimeMillis());
-	 *    store.putInfo(info, IFileStoreConstants.SET_LAST_MODIFIED, monitor);
+	 *    store.putInfo(info, EFS.SET_LAST_MODIFIED, monitor);
 	 * </pre>
 	 * <p>
-	 * The {@link IFileStoreConstants#SET_ATTRIBUTES} update flag controls 
+	 * The {@link EFS#SET_ATTRIBUTES} update flag controls 
 	 * whether the file's attributes are changed.  When this flag is specified,
-	 * the <code>IFileStoreConstants#ATTRIBUTE_*</code> values, with
-	 * the exception of <code>IFileStoreConstants#ATTRIBUTE_DIRECTORY</code>
+	 * the <code>EFS#ATTRIBUTE_*</code> values, with
+	 * the exception of <code>EFS#ATTRIBUTE_DIRECTORY</code>
 	 * are set for this file. When this flag is not specified, changed attributes
 	 * on the provided file info are ignored.
 	 * </p>
 	 * <p>
-	 * The {@link IFileStoreConstants#SET_LAST_MODIFIED} update flag controls 
+	 * The {@link EFS#SET_LAST_MODIFIED} update flag controls 
 	 * whether the file's last modified time is changed.  When this flag is specified,
 	 * the last modified time for the file in the underlying file system is updated
 	 * to the value in the provided info object.  Due to the different granularities
@@ -401,7 +401,7 @@ public interface IFileStore extends IAdaptable {
 	 * 
 	 * @param info The file information instance containing the values to set.
 	 * @param options bit-wise or of option flag constants (
-	 * {@link IFileStoreConstants#SET_ATTRIBUTES} or {@link IFileStoreConstants#SET_LAST_MODIFIED}).
+	 * {@link EFS#SET_ATTRIBUTES} or {@link EFS#SET_LAST_MODIFIED}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @exception CoreException if this method fails. Reasons include:
