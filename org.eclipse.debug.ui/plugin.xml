@@ -923,6 +923,16 @@
                menubarPath="additions"
                style="push"
                tooltip="%SelectCodepagesAction.label"/>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.SwitchMemoryBlockAction"
+               disabledIcon="icons/full/dlcl16/memoryreset_tsk.gif"
+               helpContextId="switchMemoryBlockAction_context"
+               hoverIcon="icons/full/elcl16/memoryreset_tsk.gif"
+               icon="icons/full/elcl16/memoryreset_tsk.gif"
+               id="org.eclipse.debug.ui.switchMemoryBlock"
+               label="%switchMemoryBlock.label"
+               toolbarPath="switchMonitorGroup"
+               tooltip="%switchMemoryBlock.label"/>
       </viewContribution>
    </extension>
    <extension
@@ -1787,6 +1797,11 @@ M4 = Platform-specific fourth key
        categoryId="org.eclipse.debug.ui.category.run"
        name="%ActionDefinition.removeAllBreakpoints.name"
        id="org.eclipse.debug.ui.commands.RemoveAllBreakpoints"/>
+ <command
+       categoryId="org.eclipse.debug.ui.category.run"
+       description="%toggleMemoryMonitorsPane.description"
+       id="org.eclipse.debug.ui.commands.toggleMemoryMonitorsPane"
+       name="%toggleMemoryMonitorsPane.label"/>
    </extension>
    <extension point="org.eclipse.ui.bindings">
      <key
@@ -1877,6 +1892,11 @@ M4 = Platform-specific fourth key
              contextId="org.eclipse.debug.ui.memoryview"
              schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
              sequence="M1+M3+M"/>
+       <key
+             commandId="org.eclipse.debug.ui.commands.toggleMemoryMonitorsPane"
+             contextId="org.eclipse.debug.ui.memoryview"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+T"/>             
   	</extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">

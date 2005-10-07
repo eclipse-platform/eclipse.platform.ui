@@ -82,6 +82,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private static final String VISIBILITY_PREF = IInternalDebugUIConstants.ID_MEMORY_VIEW+".viewPanesVisibility"; //$NON-NLS-1$
 	private static final String ID_MEMORY_VIEW_CONTEXT = "org.eclipse.debug.ui.memoryview"; //$NON-NLS-1$
 	private static final String ID_ADD_MEMORY_BLOCK_COMMAND = "org.eclipse.debug.ui.commands.addMemoryMonitor"; //$NON-NLS-1$
+	private static final String ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND = "org.eclipse.debug.ui.commands.toggleMemoryMonitorsPane"; //$NON-NLS-1$
 	
 	private String[] defaultVisiblePaneIds ={MemoryBlocksTreeViewPane.PANE_ID, IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1};
 		
@@ -95,6 +96,10 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private IContextActivation fContext;
 	
 	private Set fRegisteredMemoryBlocks = new HashSet();
+	
+	private AbstractHandler fAddHandler;
+	private AbstractHandler fToggleMonitorsHandler;
+	
 	private IMemoryBlockListener fMemoryBlockListener = new IMemoryBlockListener() {
 
 		public void memoryBlocksAdded(IMemoryBlock[] memory) {
@@ -105,7 +110,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			// clean up registered memory blocks
 			unRegisterMemoryBlocks(memory);
 		}};
-	private AbstractHandler fAddHandler;
 		
 	class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener
 	{
@@ -339,6 +343,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		// restore view pane after finishing creating all the view panes
 		restoreView();
 	}
+
 	
     public void activated() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -348,7 +353,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		if (commandSupport != null && contextSupport != null)
 		{
 			fContext = contextSupport.activateContext(ID_MEMORY_VIEW_CONTEXT);
-			Command command = commandSupport.getCommand(ID_ADD_MEMORY_BLOCK_COMMAND);
+			Command addCommand = commandSupport.getCommand(ID_ADD_MEMORY_BLOCK_COMMAND);
 			
 			// dynamically change handler on Add Memory Monitor command based
 			// on which Memory View is active
@@ -366,7 +371,23 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 							return null;
 						}};
 			}
-			command.setHandler(fAddHandler);
+			addCommand.setHandler(fAddHandler);
+			
+			final MemoryView view = this;
+			Command toggleCommand = commandSupport.getCommand(ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND);
+			if (fToggleMonitorsHandler == null)
+			{
+				fToggleMonitorsHandler = new AbstractHandler() {
+					public Object execute(ExecutionEvent event) throws ExecutionException {
+						ToggleMemoryMonitorsAction action = new ToggleMemoryMonitorsAction();
+						action.init(view);
+						action.run();
+						action.dispose();
+						return null;
+					}
+				};
+			}
+			toggleCommand.setHandler(fToggleMonitorsHandler);
 		}
     }
     
@@ -381,6 +402,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			// 	remove handler
 			Command command = commandSupport.getCommand(ID_ADD_MEMORY_BLOCK_COMMAND);
 			command.setHandler(null);
+			
+			Command toggleCommand = commandSupport.getCommand(ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND);
+			toggleCommand.setHandler(null);
 			
 			if (fContext != null)
 				contextSupport.deactivateContext(fContext);
@@ -441,6 +465,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		{
 			renderingViewMgr.add(renderingActions[i]);
 		}
+		
 		ToolBar renderingToolbar = renderingViewMgr.createControl(renderingViewForm);
 		renderingViewForm.setTopRight(renderingToolbar);
 		
@@ -478,6 +503,12 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		fSyncService.shutdown();
 		
 		fRegisteredMemoryBlocks.clear();
+		
+		if (fAddHandler != null)
+			fAddHandler.dispose();
+		
+		if (fToggleMonitorsHandler != null)
+			fToggleMonitorsHandler.dispose();
 		
 		super.dispose();
 	}
@@ -705,4 +736,5 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	{
 		return fRegisteredMemoryBlocks.contains(memoryBlock);
 	}
+	
 }

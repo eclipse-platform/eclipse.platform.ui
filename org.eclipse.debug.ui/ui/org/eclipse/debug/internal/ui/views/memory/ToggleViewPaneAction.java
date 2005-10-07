@@ -10,18 +10,24 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
  * @since 3.1
  */
-abstract public class ToggleViewPaneAction  extends Action implements IViewActionDelegate {
+abstract public class ToggleViewPaneAction  extends Action implements IViewActionDelegate, IActionDelegate2, IPropertyChangeListener {
 
 	MemoryView fView;
+	IAction fAction;
 	
 
 	/* (non-Javadoc)
@@ -50,6 +56,13 @@ abstract public class ToggleViewPaneAction  extends Action implements IViewActio
 			action.setChecked(false);
 		
 	}
+	
+	public void run() {
+		if (fView == null)
+			return;
+		
+		fView.showViewPane(!fView.isViewPaneVisible(getPaneId()), getPaneId());
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
@@ -60,6 +73,29 @@ abstract public class ToggleViewPaneAction  extends Action implements IViewActio
 		else
 			action.setChecked(false);
 	}
+
+	public void dispose() {
+		DebugUITools.getPreferenceStore().removePropertyChangeListener(this);
+	}
+
+	public void init(IAction action) {
+		fAction = action;
+		DebugUITools.getPreferenceStore().addPropertyChangeListener(this);
+	}
+
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
+	}
+
+	public void propertyChange(PropertyChangeEvent event) {
+		if (fView != null && fAction != null)
+		{
+			if (fView.isViewPaneVisible(getPaneId()))
+				fAction.setChecked(true);
+			else
+				fAction.setChecked(false);
+		}
+	}
 	
-	abstract public String getPaneId();
+	abstract public String getPaneId();	
 }
