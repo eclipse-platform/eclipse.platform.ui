@@ -3161,17 +3161,22 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	}
 
 	/**
+	 * Show the heap status
 	 * @param selection
 	 */
 	public void showHeapStatus(boolean selection) {
 		if(selection){
-			createHeapStatus(getShell());
-			updateLayoutDataForContents();
-			getShell().layout();
+				if(heapStatus == null){
+					createHeapStatus(getShell());
+					updateLayoutDataForContents();
+					getShell().layout();
+			}
 		}
 		else{
-			heapStatus.dispose();
-			heapStatus = null;
+			if(heapStatus != null){
+				heapStatus.dispose();
+				heapStatus = null;
+			}
 		}
 		
 	}
