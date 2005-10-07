@@ -13,6 +13,7 @@ package org.eclipse.core.tests.runtime.jobs;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.*;
@@ -64,10 +65,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	protected int scheduledJobs;
 
 	public static Test suite() {
-		return new TestSuite(IJobManagerTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IJobManagerTest("testJobFamilyJoinShouldSchedule"));
-		//		return suite;
+//		return new TestSuite(IJobManagerTest.class);
+				TestSuite suite = new TestSuite();
+				suite.addTest(new IJobManagerTest("testJobFamilyCancel"));
+				return suite;
 	}
 
 	public IJobManagerTest() {
@@ -298,11 +299,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			//assign half the jobs to the first family, the other half to the second family
 			if (i % 2 == 0)
 				jobs[i] = new FamilyTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
-
 			else
 				/*if(i%2 == 1)*/
 				jobs[i] = new FamilyTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
-
 			jobs[i].setRule(rule);
 			jobs[i].schedule();
 		}
@@ -1641,7 +1640,16 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			sleep(100);
 			Thread.yield();
 			//sanity test to avoid hanging tests
-			assertTrue("Timeout waiting for job to start", i++ < 1000);
+			if (i++ >= 1000) {
+				//extra debugging for bug 109898
+				System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****"); 
+				Job[] jobs = Platform.getJobManager().find(null);
+				for (int j = 0; j < jobs.length; j++) {
+					System.out.println("" + jobs[j].getClass().getName() + " state: " + JobManager.printState(jobs[j].getState())); 
+				}
+				System.out.println("**** END DUMP JOB MANAGER INFORMATION ****"); 
+				assertTrue("Timeout waiting for job to start. Job: " + job + ", state: " + job.getState(), false);
+			}
 		}
 	}
 }
