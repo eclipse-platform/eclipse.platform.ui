@@ -1802,6 +1802,11 @@ M4 = Platform-specific fourth key
        description="%toggleMemoryMonitorsPane.description"
        id="org.eclipse.debug.ui.commands.toggleMemoryMonitorsPane"
        name="%toggleMemoryMonitorsPane.label"/>
+ <command
+       categoryId="org.eclipse.debug.ui.category.run"
+       description="%nextMemoryBlockCommand.description"
+       id="org.eclipse.debug.ui.commands.nextMemoryBlock"
+       name="%nextMemoryBlockCommand.label"/>
    </extension>
    <extension point="org.eclipse.ui.bindings">
      <key
@@ -1896,7 +1901,12 @@ M4 = Platform-specific fourth key
              commandId="org.eclipse.debug.ui.commands.toggleMemoryMonitorsPane"
              contextId="org.eclipse.debug.ui.memoryview"
              schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-             sequence="M1+T"/>             
+             sequence="M1+T"/>
+       <key
+             commandId="org.eclipse.debug.ui.commands.nextMemoryBlock"
+             contextId="org.eclipse.debug.ui.memoryview"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+M3+N"/>             
   	</extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">

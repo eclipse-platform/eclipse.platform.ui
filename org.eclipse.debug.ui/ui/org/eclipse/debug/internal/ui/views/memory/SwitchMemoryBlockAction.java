@@ -54,6 +54,8 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
 		public void run() {
+			if (fView == null)
+				return;
 			
 			// tell the view to switch memory block
 			fView.getSite().getSelectionProvider().setSelection(new StructuredSelection(fMemoryblock));
@@ -178,6 +180,14 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	}
 
 	public void run(IAction action) {
+		switchToNext();
+	}
+
+	public void run() {
+		switchToNext();
+	}
+
+	private void switchToNext() {		
 		IAdaptable context = DebugUITools.getDebugContext();
 		if (context instanceof IDebugElement)
 		{
@@ -219,14 +229,18 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	}
 
 	public void dispose() {
-		fMenuCreator.dispose();
+		if (fMenuCreator != null)
+			fMenuCreator.dispose();
 	}
 
 	public void runWithEvent(IAction action, Event event) {
-		run(action);
+		switchToNext();
 	}
 
 	private IMemoryBlock getCurrentMemoryBlock() {
+		if (fView == null)
+			return null;
+		
 		ISelection memBlkSelection = fView.getSite().getSelectionProvider().getSelection();
 		IMemoryBlock memoryBlock = null;
 		

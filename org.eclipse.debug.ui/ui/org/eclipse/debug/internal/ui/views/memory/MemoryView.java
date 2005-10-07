@@ -83,6 +83,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private static final String ID_MEMORY_VIEW_CONTEXT = "org.eclipse.debug.ui.memoryview"; //$NON-NLS-1$
 	private static final String ID_ADD_MEMORY_BLOCK_COMMAND = "org.eclipse.debug.ui.commands.addMemoryMonitor"; //$NON-NLS-1$
 	private static final String ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND = "org.eclipse.debug.ui.commands.toggleMemoryMonitorsPane"; //$NON-NLS-1$
+	private static final String ID_NEXT_MEMORY_BLOCK_COMMAND = "org.eclipse.debug.ui.commands.nextMemoryBlock"; //$NON-NLS-1$
 	
 	private String[] defaultVisiblePaneIds ={MemoryBlocksTreeViewPane.PANE_ID, IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1};
 		
@@ -99,6 +100,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	
 	private AbstractHandler fAddHandler;
 	private AbstractHandler fToggleMonitorsHandler;
+	private AbstractHandler fNextMemoryBlockHandler;
 	
 	private IMemoryBlockListener fMemoryBlockListener = new IMemoryBlockListener() {
 
@@ -110,6 +112,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			// clean up registered memory blocks
 			unRegisterMemoryBlocks(memory);
 		}};
+
 		
 	class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener
 	{
@@ -360,27 +363,26 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			if (fAddHandler == null)
 			{
 				fAddHandler = new AbstractHandler() {
-						public Object execute(ExecutionEvent event) throws ExecutionException {
-							IAdaptable context = DebugUITools.getDebugContext();
-							if (context != null && MemoryViewUtil.isValidSelection(new StructuredSelection(context)))
-							{
-								AddMemoryBlockAction action = new AddMemoryBlockAction(MemoryView.this);
-								action.run();
-								action.dispose();
-							}
-							return null;
-						}};
+					public Object execute(ExecutionEvent event) throws ExecutionException {
+						IAdaptable context = DebugUITools.getDebugContext();
+						if (context != null && MemoryViewUtil.isValidSelection(new StructuredSelection(context)))
+						{
+							AddMemoryBlockAction action = new AddMemoryBlockAction(MemoryView.this);
+							action.run();
+							action.dispose();
+						}
+						return null;
+					}};
 			}
 			addCommand.setHandler(fAddHandler);
 			
-			final MemoryView view = this;
 			Command toggleCommand = commandSupport.getCommand(ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND);
 			if (fToggleMonitorsHandler == null)
 			{
 				fToggleMonitorsHandler = new AbstractHandler() {
 					public Object execute(ExecutionEvent event) throws ExecutionException {
 						ToggleMemoryMonitorsAction action = new ToggleMemoryMonitorsAction();
-						action.init(view);
+						action.init(MemoryView.this);
 						action.run();
 						action.dispose();
 						return null;
@@ -388,6 +390,22 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 				};
 			}
 			toggleCommand.setHandler(fToggleMonitorsHandler);
+			
+			Command nextMemoryBlockCommand = commandSupport.getCommand(ID_NEXT_MEMORY_BLOCK_COMMAND);
+			if (nextMemoryBlockCommand != null) {
+				fNextMemoryBlockHandler = new AbstractHandler() {
+
+					public Object execute(ExecutionEvent event)
+							throws ExecutionException {
+						SwitchMemoryBlockAction action = new SwitchMemoryBlockAction();
+						action.init(MemoryView.this);
+						action.run();
+						action.dispose();
+						return null;
+					}
+				};
+				nextMemoryBlockCommand.setHandler(fNextMemoryBlockHandler);
+			}
 		}
     }
     
@@ -509,6 +527,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		
 		if (fToggleMonitorsHandler != null)
 			fToggleMonitorsHandler.dispose();
+		
+		if (fNextMemoryBlockHandler != null)
+			fNextMemoryBlockHandler.dispose();
 		
 		super.dispose();
 	}
