@@ -14,14 +14,19 @@ package org.eclipse.ui.views.markers.internal;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.dialogs.MarkerResolutionSelectionDialog;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * This action displays a list of resolutions for the selected marker
@@ -30,17 +35,17 @@ import org.eclipse.ui.ide.IDE;
  */
 public class ActionResolveMarker extends SelectionProviderAction {
 
-	private IWorkbenchPart part;
+	private MarkerView view;
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param part
+	 * @param markerView
 	 * @param provider
 	 */
-	public ActionResolveMarker(IWorkbenchPart part, ISelectionProvider provider) {
+	public ActionResolveMarker(MarkerView markerView, ISelectionProvider provider) {
 		super(provider, MarkerMessages.resolveMarkerAction_title);
-		this.part = part;
 		setEnabled(false);
+		view = markerView;
 	}
 
 	/**
@@ -50,44 +55,52 @@ public class ActionResolveMarker extends SelectionProviderAction {
 		if (!isEnabled()) {
 			return;
 		}
-		Iterator markers = getStructuredSelection().toList().iterator();
-
-		if (!markers.hasNext()) {
-			return;
-		}
-		while (markers.hasNext()) {
-			IMarker marker = (IMarker) markers.next();
-			IMarkerResolution[] resolutions = getResolutions(marker);
-			if (resolutions.length == 0) {
-				MessageDialog.openInformation(part.getSite().getShell(),
-						MarkerMessages.resolveMarkerAction_dialogTitle,
-						MarkerMessages.resolveMarkerAction_noResolutionsLabel);
-				return;
-			}
-			IMarkerResolution resolution = resolutions[0];
-			if (resolutions.length > 1) {
-				MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(
-						part.getSite().getShell(), resolutions);
-				d.open();
+		final MarkerResolutionWizard[] wizard = new MarkerResolutionWizard[1];
+		
+		Job processingJob = new Job(MarkerMessages.ActionResolveMarker_CalculatingJob ){
+			protected IStatus run(IProgressMonitor monitor) {
 				
-				Object[] result = d.getResult();
-				if (result == null || result.length == 0)
-					return;
-				resolution = (IMarkerResolution) result[0];
+				Object[] selection = getStructuredSelection().toArray();
+
+				if (selection.length == 0) {
+					return Status.CANCEL_STATUS;
+				}
+				IMarker[] markers = new IMarker[selection.length];
+				System.arraycopy(selection, 0, markers, 0, markers.length);
+				
+				try {
+					wizard[0] = new MarkerResolutionWizard(markers,MarkerList.compute(view.getMarkerTypes()));
+					wizard[0].determinePages(monitor);
+				} catch (CoreException e) {
+					return e.getStatus();
+				}
+				return Status.OK_STATUS;
 			}
-			resolution.run(marker);
-		}
-
-	}
-
-	/**
-	 * Returns the resolutions for the given marker.
-	 * 
-	 * @param marker the marker for which to obtain resolutions
-	 * @return IMarkerResolution[] the resolutions for the selected marker
-	 */
-	private IMarkerResolution[] getResolutions(IMarker marker) {
-		return IDE.getMarkerHelpRegistry().getResolutions(marker);
+		};
+	
+		processingJob.addJobChangeListener(new JobChangeAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void done(IJobChangeEvent event) {
+				
+				WorkbenchJob dialogJob = new WorkbenchJob(MarkerMessages.ActionResolveMarker_OpenWizardJob){
+					/* (non-Javadoc)
+					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+					 */
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						(new WizardDialog(view.getSite().getShell(),wizard[0])).open();
+						return Status.OK_STATUS;
+					}
+				};
+				dialogJob.setSystem(true);
+				dialogJob.schedule();
+				
+			}
+		});
+		
+		processingJob.setUser(true);
+		processingJob.schedule();
 	}
 
 	/*

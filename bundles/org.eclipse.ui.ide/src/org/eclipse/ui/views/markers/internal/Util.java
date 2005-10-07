@@ -19,23 +19,33 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 /**
- * The Util class is the class of general utilities used
- * by the marker support.
- *
+ * The Util class is the class of general utilities used by the marker support.
+ * 
  */
 public final class Util {
-	
+
 	static String EMPTY_STRING = "";//$NON-NLS-1$
+
 	static String TWO_LINE_FEED = "\n\n";//$NON-NLS-1$
+
 	static String LINE_FEED_AND_TAB = "\n\t";//$NON-NLS-1$
 
+	private static final String IMAGE_ERROR_PATH = "obj16/error_tsk.gif"; //$NON-NLS-1$
+
+	private static final String IMAGE_WARNING_PATH = "obj16/warn_tsk.gif"; //$NON-NLS-1$
+
+	private static final String IMAGE_INFO_PATH = "obj16/info_tsk.gif"; //$NON-NLS-1$
+
 	/**
-	 * Get the propery called property from the marker.
-	 * If it is not found return the empty string.
+	 * Get the propery called property from the marker. If it is not found
+	 * return the empty string.
+	 * 
 	 * @param property
 	 * @param marker
 	 * @return String
@@ -54,8 +64,9 @@ public final class Util {
 		}
 	}
 
-	/** 
-	 *  Get the human readable creation time from the timestamp
+	/**
+	 * Get the human readable creation time from the timestamp
+	 * 
 	 * @param timestamp
 	 * @return String
 	 */
@@ -66,6 +77,7 @@ public final class Util {
 
 	/**
 	 * Get the human readable creation time from the marker.
+	 * 
 	 * @param marker
 	 * @return String
 	 */
@@ -80,27 +92,28 @@ public final class Util {
 
 	/**
 	 * Get the name of the container. If the marker has the
-	 * MarkerViewUtil#PATH_ATTRIBUTE set use that. Otherwise
-	 * use the path of the parent resource.
+	 * MarkerViewUtil#PATH_ATTRIBUTE set use that. Otherwise use the path of the
+	 * parent resource.
+	 * 
 	 * @param marker
 	 * @return String
 	 */
 	public static String getContainerName(IMarker marker) {
-		
-		try{
-			Object pathAttribute = marker.getAttribute(MarkerViewUtil.PATH_ATTRIBUTE);
-		
-			if(pathAttribute != null)
+
+		try {
+			Object pathAttribute = marker
+					.getAttribute(MarkerViewUtil.PATH_ATTRIBUTE);
+
+			if (pathAttribute != null)
 				return pathAttribute.toString();
-		}
-		catch (CoreException exception){
-			//Log the exception and fall back.
+		} catch (CoreException exception) {
+			// Log the exception and fall back.
 			log(exception);
 		}
-		
+
 		IPath path = marker.getResource().getFullPath();
 		int n = path.segmentCount() - 1; // n is the number of segments in
-											// container, not path
+		// container, not path
 		if (n <= 0)
 			return Util.EMPTY_STRING;
 		int len = 0;
@@ -120,6 +133,7 @@ public final class Util {
 
 	/**
 	 * Log the exception.
+	 * 
 	 * @param exception
 	 */
 	private static void log(CoreException exception) {
@@ -128,28 +142,30 @@ public final class Util {
 
 	/**
 	 * Get the name of the element. If the marker has the
-	 * MarkerViewUtil#NAME_ATTRIBUTE set use that. Otherwise
-	 * use the name of the resource.
+	 * MarkerViewUtil#NAME_ATTRIBUTE set use that. Otherwise use the name of the
+	 * resource.
+	 * 
 	 * @param marker
 	 * @return String
 	 */
 	public static String getResourceName(IMarker marker) {
-		
-		try{
-			Object nameAttribute = marker.getAttribute(MarkerViewUtil.NAME_ATTRIBUTE);
-		
-			if(nameAttribute != null)
+
+		try {
+			Object nameAttribute = marker
+					.getAttribute(MarkerViewUtil.NAME_ATTRIBUTE);
+
+			if (nameAttribute != null)
 				return nameAttribute.toString();
-		}
-		catch (CoreException exception){
+		} catch (CoreException exception) {
 			log(exception);
 		}
-		
+
 		return marker.getResource().getName();
 	}
 
 	/**
 	 * Return whether or not the marker is editable.
+	 * 
 	 * @param marker
 	 * @return boolean <code>true</code> if it is editable
 	 */
@@ -168,15 +184,52 @@ public final class Util {
 
 	/**
 	 * Return an error status for the given exception.
+	 * 
 	 * @param exception
 	 * @return IStatus
 	 */
 	public static IStatus errorStatus(Throwable exception) {
+		String message = exception.getLocalizedMessage();
+		if(message == null)
+			message = EMPTY_STRING;
 		return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
-				IStatus.ERROR, exception.getLocalizedMessage(), exception);
+				IStatus.ERROR,message , exception);
 	}
 
 	private Util() {
 		super();
+	}
+
+	/**
+	 * Get the image for the severity if it can be identified.
+	 * 
+	 * @param severity
+	 * @return Image or <code>null</code>
+	 */
+	public static Image getImage(int severity) {
+
+		if (severity == IMarker.SEVERITY_ERROR) {
+			return getIDEImage(IMAGE_ERROR_PATH);
+		}
+		if (severity == IMarker.SEVERITY_WARNING) {
+			return getIDEImage(IMAGE_WARNING_PATH);
+		}
+		if (severity == IMarker.SEVERITY_INFO) {
+			return getIDEImage(IMAGE_INFO_PATH);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the IDE image at path.
+	 * 
+	 * @param path
+	 * @return Image
+	 */
+	private static Image getIDEImage(String path) {
+		return JFaceResources.getResources().createImageWithDefault(
+				IDEWorkbenchPlugin.getIDEImageDescriptor(path));
+
 	}
 }

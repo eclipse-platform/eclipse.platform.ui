@@ -238,4 +238,20 @@ public class MarkerMessages extends NLS{
 	
 	public static String FieldMessage_NullMessage;
 	public static String FieldMessage_WrongType;
+	
+	public static String ActionResolveMarker_CalculatingJob;
+	public static String ActionResolveMarker_OpenWizardJob;
+	
+	public static String MarkerResolutionPage_Title;
+	public static String MarkerResolutionPage_Description;
+	public static String MarkerResolutionPage_Problems_List_Title;
+	public static String MarkerResolutionPage_Resolutions_List_Title;
+	public static String MarkerResolutionPage_NoMatchMessage;
+	public static String MarkerResolutionPage_CannotFixTitle;
+	public static String MarkerResolutionPage_CannotFixMessage;
+	public static String MarkerResolutionPage_NoResolutionsMessage;
+	
+	public static String MarkerResolutionWizard_Title;
+	public static String MarkerResolutionWizard_CalculatingTask;
+	public static String MarkerResolutionWizard_WorkingSubTask;
 }

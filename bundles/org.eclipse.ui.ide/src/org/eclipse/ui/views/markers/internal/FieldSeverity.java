@@ -11,22 +11,13 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * The FieldSeverity is the field for setting severities.
  *
  */
 public class FieldSeverity implements IField {
-
-    private static final String IMAGE_ERROR_PATH = "obj16/error_tsk.gif"; //$NON-NLS-1$
-
-    private static final String IMAGE_WARNING_PATH = "obj16/warn_tsk.gif"; //$NON-NLS-1$
-
-    private static final String IMAGE_INFO_PATH = "obj16/info_tsk.gif"; //$NON-NLS-1$
 
     private String description;
 
@@ -86,29 +77,9 @@ public class FieldSeverity implements IField {
             return null;
         }
 
-        int severity = ((ProblemMarker) obj).getSeverity();
-        if (severity == IMarker.SEVERITY_ERROR) {
-            return getIDEImage(IMAGE_ERROR_PATH);
-        }
-        if (severity == IMarker.SEVERITY_WARNING) {
-            return getIDEImage(IMAGE_WARNING_PATH);
-        }
-        if (severity == IMarker.SEVERITY_INFO) {
-            return getIDEImage(IMAGE_INFO_PATH);
-        }
-        return null;
+       return Util.getImage(((ProblemMarker) obj).getSeverity());
     }
-    /**
-	 * Get the IDE image at path.
-	 * @param path
-	 * @return Image
-	 */
-	private Image getIDEImage(String path){
-		return JFaceResources.getResources().createImageWithDefault(
-				IDEWorkbenchPlugin
-						.getIDEImageDescriptor(path));
-		
-	}
+ 
 
     /*
      *  (non-Javadoc)
