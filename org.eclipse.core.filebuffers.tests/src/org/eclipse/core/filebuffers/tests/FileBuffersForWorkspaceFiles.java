@@ -38,7 +38,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  */
 public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	
-	private static final boolean USE_ECLIPSE_FS= true;
+	private static final boolean USE_ECLIPSE_FS= false;
 
 	protected IPath createPath(IProject project) throws Exception {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
