@@ -13,6 +13,8 @@
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="image"/>
+            <element ref="categoryImage"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -93,6 +95,33 @@
                <documentation>
                   The particular scenario in which this block of icons apply.  For example, it may be desirable to have different icons when the command is displayed as a toolbar drop-down item.
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="categoryImage">
+      <annotation>
+         <documentation>
+            The image to associate with a particular category of commands.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="categoryId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The identifier of the category with which the image should be associated.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The path to the icon which should be used.  This might appear beside the category whenever it is displayed to the user (e.g., keys preference page).
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
