@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -342,6 +343,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		});
 
 		projectsList.setInput(this);
+		projectsList.setSorter(new ViewerSorter());
 		createSelectionButtons(listComposite);
 
 	}
