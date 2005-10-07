@@ -117,13 +117,7 @@ public final class CommandImageManager {
 	 *         <code>null</code>.
 	 */
 	public final ImageDescriptor getImageDescriptor(final String commandId) {
-		final ImageDescriptor descriptor = getImageDescriptor(commandId,
-				TYPE_DEFAULT, null);
-		if (descriptor == null) {
-			return ImageDescriptor.getMissingImageDescriptor();
-		}
-
-		return descriptor;
+		return getImageDescriptor(commandId, TYPE_DEFAULT, null);
 	}
 
 	/**

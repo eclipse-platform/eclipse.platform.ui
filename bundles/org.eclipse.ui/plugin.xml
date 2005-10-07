@@ -730,6 +730,31 @@
    </extension>
    
    <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.ui.edit.copy"
+            icon="icons/full/etool16/copy_edit.gif" />
+      <image
+            commandId="org.eclipse.ui.edit.cut"
+            icon="icons/full/etool16/cut_edit.gif" />
+      <image
+            commandId="org.eclipse.ui.edit.delete"
+            icon="icons/full/etool16/delete_edit.gif" />
+      <image
+            commandId="org.eclipse.ui.edit.paste"
+            icon="icons/full/etool16/paste_edit.gif" />
+      <image
+            commandId="org.eclipse.ui.file.print"
+            icon="icons/full/etool16/print_edit.gif" />
+      <image
+            commandId="org.eclipse.ui.edit.undo"
+            icon="icons/full/etool16/undo_edit.gif" />
+      <image
+            commandId="org.eclipse.ui.edit.redo"
+            icon="icons/full/etool16/redo_edit.gif" />
+   </extension>
+   
+   <extension
          point="org.eclipse.ui.views">
       <category
             name="%Views.Category.Basic"

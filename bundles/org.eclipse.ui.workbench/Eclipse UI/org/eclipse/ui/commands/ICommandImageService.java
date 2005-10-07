@@ -63,7 +63,7 @@ public interface ICommandImageService {
 	 * 
 	 * @param commandId
 	 *            The identifier to find; must not be <code>null</code>.
-	 * @return An image appropriate for the given command; never
+	 * @return An image appropriate for the given command; may be
 	 *         <code>null</code>.
 	 */
 	public ImageDescriptor getImageDescriptor(String commandId);

@@ -43,6 +43,9 @@
 
    <element name="image">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="commandId"/>
+         </appInfo>
          <documentation>
             The images to associate with a particular command.
          </documentation>
@@ -111,18 +114,18 @@
       <documentation>
          &lt;pre&gt;
 &lt;extension
-	point=&quot;org.eclipse.ui.commandsImages&quot;&gt;
-	&lt;image
-		commandId=&quot;ProfileLast&quot;
-		hoverIcon=&quot;icons/full/etool16/profile.gif&quot;
-		disabledIcon=&quot;icons/full/dtool16/profile.gif&quot;
-		icon=&quot;icons/full/etool16/profile.gif&quot; /&gt;
-	&lt;image
-		commandId=&quot;ProfileLast&quot;
-		hoverIcon=&quot;icons/full/etool16/history.gif&quot;
-		disabledIcon=&quot;icons/full/dtool16/history.gif&quot;
-		icon=&quot;icons/full/etool16/history.gif&quot;
-		imageStyle=&quot;toolbar&quot; /&gt;
+ point=&quot;org.eclipse.ui.commandsImages&quot;&gt;
+ &lt;image
+  commandId=&quot;ProfileLast&quot;
+  hoverIcon=&quot;icons/full/etool16/profile.gif&quot;
+  disabledIcon=&quot;icons/full/dtool16/profile.gif&quot;
+  icon=&quot;icons/full/etool16/profile.gif&quot; /&gt;
+ &lt;image
+  commandId=&quot;ProfileLast&quot;
+  hoverIcon=&quot;icons/full/etool16/history.gif&quot;
+  disabledIcon=&quot;icons/full/dtool16/history.gif&quot;
+  icon=&quot;icons/full/etool16/history.gif&quot;
+  imageStyle=&quot;toolbar&quot; /&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
       </documentation>
