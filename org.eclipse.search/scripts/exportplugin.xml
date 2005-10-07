@@ -1,7 +1,6 @@
 <project name="org.eclipse.search" default="export" basedir="..">
 	<target name="init">
 		<tstamp/>
-		<property name="tempdir" value="../../tmp" />
 		<property name="destdir" value="../../plugin-export" />
 		<property name="plugin"  value="org.eclipse.search" />
 		<property name="plugin_version"  value="_3.1.0" />
@@ -14,24 +13,19 @@
 	</target>
 
 	<target name="export" depends="build">
-		<delete dir="${tempdir}" />
-		<mkdir dir="${tempdir}" />
 		<mkdir dir="${destdir}" />
 		<delete file="${destjar}" />
-		<zip zipfile="${tempdir}/src.zip">
-		    <fileset dir="search" />
-		    <fileset dir="new search" />
-  		</zip>		
 		<zip zipfile="${destjar}">
 			<fileset dir=".">
 			  <include name="plugin.xml" />
 			  <include name="plugin.properties" />
 			  <include name="icons/**"/>
 			  <include name="META-INF/**" />
+			  <include name="schema/**" />
 			</fileset>
 			<fileset dir="bin" />
-			<fileset file="${tempdir}/src.zip" />
+		    <zipfileset dir="search" prefix="src" />
+		    <zipfileset dir="new search" prefix="src" />
 		</zip>
-		<delete file="${tempdir}/src.zip" />
 	</target>
 </project>
