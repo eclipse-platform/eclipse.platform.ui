@@ -88,9 +88,14 @@ public interface IFileInfo extends Comparable {
 	public abstract boolean isReadOnly();
 
 	/**
-	 * Sets the value of the specified attribute for this file.  The attribute
+	 * Sets the value of the specified attribute for this file info.  The attribute
 	 * must be one of the <code>IFileStoreConstants#ATTRIBUTE_*</code>
 	 * constants.
+	 * </p>
+	 * <p>
+	 * Users must call {@link IFileStore#putInfo(IFileInfo, int, IProgressMonitor)}
+	 * before changes made to this info take effect in an underlying file.
+	 * </p>
 	 * 
 	 * @param attribute The attribute to set the value for
 	 * @param value the value of the specified attribute for this file.
@@ -100,6 +105,10 @@ public interface IFileInfo extends Comparable {
 	/**
 	 * Sets the last modified time for this file.  A value of {@link IFileStoreConstants#NONE}
 	 * indicates the file does not exist or the last modified time could not be computed.
+	 * <p>
+	 * Users must call {@link IFileStore#putInfo(IFileInfo, int, IProgressMonitor)}
+	 * before changes made to this info take effect in an underlying file.
+	 * </p>
 	 * 
 	 * @param time the last modified time for this file, or {@link IFileStoreConstants#NONE}
 	 */
