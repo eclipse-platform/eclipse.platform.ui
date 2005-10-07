@@ -150,7 +150,7 @@ public final class FileBuffers {
 	 */
 	public static File getSystemFileAtLocation(IPath location) {
 		IFileStore store= getFileStoreAtLocation(location);
-		if (store != null && store.getFileSystem().getScheme().equals(IFileStoreConstants.SCHEME_FILE))
+		if (store != null && IFileStoreConstants.SCHEME_FILE.equals(store.getFileSystem().getScheme()))
 			return new File(store.toURI());
 		return null;
 	}	
