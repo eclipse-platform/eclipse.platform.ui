@@ -14,15 +14,14 @@ import java.io.File;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.filesystem.FileSystemCore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.CancelingProgressMonitor;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
-public class IResourceTest extends ResourceTest implements IFileStoreConstants {
+public class IResourceTest extends ResourceTest {
 	protected static final Boolean[] FALSE_AND_TRUE = new Boolean[] {Boolean.FALSE, Boolean.TRUE};
 	protected static IPath[] interestingPaths;
 	protected static IResource[] interestingResources;
@@ -1386,7 +1385,7 @@ public class IResourceTest extends ResourceTest implements IFileStoreConstants {
 			project.open(getMonitor());
 			ensureDoesNotExistInWorkspace(topFolder);
 			ensureDoesNotExistInWorkspace(topFile);
-			createFileInFileSystem(FileSystemCore.getFileSystem(IFileStoreConstants.SCHEME_FILE).getStore(fileLocation));
+			createFileInFileSystem(EFS.getFileSystem(EFS.SCHEME_FILE).getStore(fileLocation));
 			folderLocation.toFile().mkdirs();
 			topFolder.createLink(folderLocation, IResource.NONE, getMonitor());
 			topFile.createLink(fileLocation, IResource.NONE, getMonitor());
@@ -1414,7 +1413,7 @@ public class IResourceTest extends ResourceTest implements IFileStoreConstants {
 			IPath variableFileLocation = new Path(variableName).append("/VarFileName");
 			ensureDoesNotExistInWorkspace(topFolder);
 			ensureDoesNotExistInWorkspace(topFile);
-			createFileInFileSystem(FileSystemCore.getFileSystem(IFileStoreConstants.SCHEME_FILE).getStore(varMan.resolvePath(variableFileLocation)));
+			createFileInFileSystem(EFS.getFileSystem(EFS.SCHEME_FILE).getStore(varMan.resolvePath(variableFileLocation)));
 			varMan.resolvePath(variableFolderLocation).toFile().mkdirs();
 			topFolder.createLink(variableFolderLocation, IResource.NONE, getMonitor());
 			topFile.createLink(variableFileLocation, IResource.NONE, getMonitor());

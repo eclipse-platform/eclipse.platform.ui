@@ -53,12 +53,12 @@ public class LocalFileSystem extends FileSystem {
 	 * @see org.eclipse.core.filesystem.IFileSystem#attributes()
 	 */
 	public int attributes() {
-		int attributes = IFileStoreConstants.ATTRIBUTE_READ_ONLY;
+		int attributes = EFS.ATTRIBUTE_READ_ONLY;
 		String os = Platform.getOS();
 		if (os.equals(Platform.OS_WIN32))
-			attributes |= IFileStoreConstants.ATTRIBUTE_ARCHIVE;
+			attributes |= EFS.ATTRIBUTE_ARCHIVE;
 		else
-			attributes |= IFileStoreConstants.ATTRIBUTE_EXECUTABLE;
+			attributes |= EFS.ATTRIBUTE_EXECUTABLE;
 
 		return attributes;
 	}

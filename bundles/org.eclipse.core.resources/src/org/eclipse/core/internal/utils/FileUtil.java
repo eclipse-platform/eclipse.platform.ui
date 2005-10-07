@@ -12,7 +12,7 @@ package org.eclipse.core.internal.utils;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.eclipse.core.filesystem.IFileStoreConstants;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
@@ -75,7 +75,7 @@ public class FileUtil {
 				pathBuf.append('/').append('/');
 			pathBuf.append(filePath);
 			try {
-				return new URI(IFileStoreConstants.SCHEME_FILE, null, pathBuf.toString(), null);
+				return new URI(EFS.SCHEME_FILE, null, pathBuf.toString(), null);
 			} catch (URISyntaxException e) {
 				IllegalArgumentException iae = new IllegalArgumentException();
 				iae.initCause(e);

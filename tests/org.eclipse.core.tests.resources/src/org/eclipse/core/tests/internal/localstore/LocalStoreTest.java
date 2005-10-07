@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.resources.ResourceTest;
 
-public abstract class LocalStoreTest extends ResourceTest implements IFileStoreConstants {
+public abstract class LocalStoreTest extends ResourceTest {
 	// test configuration attributes
 	protected static int numberOfProjects = 3;
 	protected static int numberOfProperties = 5;
@@ -68,9 +68,9 @@ public abstract class LocalStoreTest extends ResourceTest implements IFileStoreC
 	 * the resource is deleted.
 	 */
 	protected void createFile(IFileStore target, String content) throws CoreException {
-		target.delete(NONE, null);
+		target.delete(EFS.NONE, null);
 		InputStream input = new ByteArrayInputStream(content.getBytes());
-		transferData(input, target.openOutputStream(NONE, null));
+		transferData(input, target.openOutputStream(EFS.NONE, null));
 		IFileInfo info = target.fetchInfo();
 		assertTrue(info.exists() && !info.isDirectory());
 	}
@@ -89,10 +89,10 @@ public abstract class LocalStoreTest extends ResourceTest implements IFileStoreC
 	protected void createNode(IFileStore node) throws CoreException {
 		char type = node.getName().charAt(0);
 		if (type == 'd')
-			node.mkdir(NONE, null);
+			node.mkdir(EFS.NONE, null);
 		else {
 			InputStream input = getRandomContents();
-			OutputStream output = node.openOutputStream(NONE, null);
+			OutputStream output = node.openOutputStream(EFS.NONE, null);
 			transferData(input, output);
 		}
 	}

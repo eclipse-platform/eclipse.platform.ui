@@ -151,7 +151,7 @@ public class File extends Resource implements IFile {
 					} catch (CoreException e) {
 						// a problem happened creating the file on disk, so delete from the workspace and disk
 						workspace.deleteResource(this);
-						store.delete(IFileStoreConstants.NONE, null);
+						store.delete(EFS.NONE, null);
 						throw e; // rethrow
 					}
 				}

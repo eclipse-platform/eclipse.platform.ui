@@ -363,7 +363,7 @@ public abstract class ResourceTest extends CoreTest {
 
 	protected void clear(IFileStore store) {
 		try {
-			store.delete(IFileStoreConstants.NONE, null);
+			store.delete(EFS.NONE, null);
 		} catch (CoreException e) {
 			fail("IResourceTest#clear.99", e);
 		}
@@ -440,8 +440,8 @@ public abstract class ResourceTest extends CoreTest {
 	public void createFileInFileSystem(IFileStore file) {
 		OutputStream output = null;
 		try {
-			file.getParent().mkdir(IFileStoreConstants.NONE, null);
-			output = file.openOutputStream(IFileStoreConstants.NONE, null);
+			file.getParent().mkdir(EFS.NONE, null);
+			output = file.openOutputStream(EFS.NONE, null);
 			output.write(getRandomString().getBytes("UTF8"));
 		} catch (IOException e) {
 			fail("ResourceTest#createFileInFileSystem.1", e);
@@ -561,7 +561,7 @@ public abstract class ResourceTest extends CoreTest {
 			ensureExistsInFileSystem((IFile) resource);
 		else {
 			try {
-				((Resource)resource).getStore().mkdir(IFileStoreConstants.NONE, null);
+				((Resource)resource).getStore().mkdir(EFS.NONE, null);
 			} catch (CoreException e) {
 				fail("ensureExistsInFileSystem.1", e);
 			}
@@ -705,7 +705,7 @@ public abstract class ResourceTest extends CoreTest {
 	 * the test is completed.
 	 */
 	protected IFileStore getTempStore() {
-		IFileStore store = FileSystemCore.getLocalFileSystem().getStore(FileSystemHelper.getRandomLocation(getTempDir()));
+		IFileStore store = EFS.getLocalFileSystem().getStore(FileSystemHelper.getRandomLocation(getTempDir()));
 		storesToDelete.add(store);
 		return store;
 	}
@@ -883,9 +883,9 @@ public abstract class ResourceTest extends CoreTest {
 	protected void setReadOnly(IFileStore target, boolean value) {
 		assertTrue("setReadOnly.1", usingNatives());
 		IFileInfo fileInfo = target.fetchInfo();
-		fileInfo.setAttribute(IFileStoreConstants.ATTRIBUTE_READ_ONLY, value);
+		fileInfo.setAttribute(EFS.ATTRIBUTE_READ_ONLY, value);
 		try {
-			target.putInfo(fileInfo, IFileStoreConstants.SET_ATTRIBUTES, null);
+			target.putInfo(fileInfo, EFS.SET_ATTRIBUTES, null);
 		} catch (CoreException e) {
 			fail("ResourceTest#setReadOnly", e);
 		}

@@ -13,8 +13,7 @@ package org.eclipse.core.internal.localstore;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
-import org.eclipse.core.filesystem.FileSystemCore;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.indexing.*;
 import org.eclipse.core.internal.properties.IndexedStoreWrapper;
 import org.eclipse.core.internal.resources.*;
@@ -34,7 +33,7 @@ public class HistoryStore implements IHistoryStore {
 
 	public HistoryStore(Workspace workspace, IPath location, int limit) {
 		this.workspace = workspace;
-		this.blobStore = new BlobStore(FileSystemCore.getLocalFileSystem().getStore(location), limit);
+		this.blobStore = new BlobStore(EFS.getLocalFileSystem().getStore(location), limit);
 		this.store = new IndexedStoreWrapper(location.append(INDEX_FILE));
 	}
 

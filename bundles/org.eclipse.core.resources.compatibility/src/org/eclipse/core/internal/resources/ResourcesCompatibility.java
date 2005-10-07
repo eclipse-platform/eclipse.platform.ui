@@ -11,8 +11,7 @@
 
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.filesystem.FileSystemCore;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.properties.*;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -40,7 +39,7 @@ public class ResourcesCompatibility {
 		if (!newImpl)
 			// keep using the old history store
 			return new HistoryStore(workspace, location, limit);
-		IFileStore store = FileSystemCore.getLocalFileSystem().getStore(location);
+		IFileStore store = EFS.getLocalFileSystem().getStore(location);
 		HistoryStore2 newHistoryStore = new HistoryStore2(workspace, store, limit);
 		if (!convert)
 			// do not try to convert - return as it is

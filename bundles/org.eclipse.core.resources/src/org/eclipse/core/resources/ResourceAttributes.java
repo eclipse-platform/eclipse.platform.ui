@@ -12,8 +12,7 @@
 
 package org.eclipse.core.resources;
 
-import org.eclipse.core.filesystem.FileSystemCore;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 
 /**
  * This class represents platform specific attributes of files.
@@ -44,9 +43,9 @@ public class ResourceAttributes {
 	 * @return A resource attributes object
 	 */
 	public static ResourceAttributes fromFile(java.io.File file) {
-		IFileStore store = FileSystemCore.getLocalFileSystem().getStore(file.toURI());
+		IFileStore store = EFS.getLocalFileSystem().getStore(file.toURI());
 		ResourceAttributes attributes = new ResourceAttributes();
-		attributes.setReadOnly(store.fetchInfo().isReadOnly());
+		attributes.setReadOnly(store.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY));
 		return attributes;
 	}
 

@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.util.Hashtable;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.resources.Resource;
@@ -41,7 +42,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 			IFileStore child = folder.getChild("fsFile" + i);
 			OutputStream out = null;
 			try {
-				out = child.openOutputStream(NONE, null);
+				out = child.openOutputStream(EFS.NONE, null);
 				out.write("contents".getBytes());
 			} finally {
 				try {
@@ -74,7 +75,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		createFiles(folder, set);
 		for (int i = 0; i < limit; i++) {
 			IFileStore child = folder.getChild("fsFolder" + i);
-			child.mkdir(NONE, null);
+			child.mkdir(EFS.NONE, null);
 			set.put(child.toString(), "");
 			if (i < (limit / 2))
 				createFiles(child, set);

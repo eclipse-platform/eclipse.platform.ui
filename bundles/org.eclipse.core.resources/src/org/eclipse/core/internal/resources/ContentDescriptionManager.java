@@ -13,8 +13,8 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.utils.*;
@@ -151,7 +151,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			if (target == null)
 				throw new FileNotFoundException();
 			try {
-				actual = target.openInputStream(IFileStoreConstants.NONE, null);
+				actual = target.openInputStream(EFS.NONE, null);
 			} catch (CoreException e) {
 				throw new IOException(e.getMessage());
 			}

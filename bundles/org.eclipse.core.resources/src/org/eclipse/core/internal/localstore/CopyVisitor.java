@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
@@ -76,7 +76,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 			}
 			IFileStore sourceStore = node.getStore();
 			IFileStore destinationStore = destination.getStore();
-			sourceStore.copy(destinationStore, IFileStoreConstants.SHALLOW, Policy.monitorFor(null));
+			sourceStore.copy(destinationStore, EFS.SHALLOW, Policy.monitorFor(null));
 			//create the destination in the workspace
 			ResourceInfo info = localManager.getWorkspace().createResource(destination, false);
 			localManager.updateLocalSync(info, destinationStore.fetchInfo().getLastModified());

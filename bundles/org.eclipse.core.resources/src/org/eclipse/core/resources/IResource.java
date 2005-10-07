@@ -1970,7 +1970,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <p>
 	 * If a resource or any of its ancestors is marked as derived, a team 
 	 * provider should assume that the resource is not under version and
-	 * configuration management <it>by default</it>. That is, the resource
+	 * configuration management <i>by default</i>. That is, the resource
 	 * should only be stored in a team repository if the user explicitly indicates
 	 * that this resource is worth saving.
 	 * </p>

@@ -290,7 +290,7 @@ class ResourceTree implements IResourceTree {
 
 			// Try to delete the file from the file system.
 			try {
-				fileStore.delete(IFileStoreConstants.NONE, Policy.subMonitorFor(monitor, Policy.totalWork / 4));
+				fileStore.delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork / 4));
 				// If the file was successfully deleted from the file system the
 				// workspace tree should be updated accordingly.
 				deletedFile(file);
@@ -392,7 +392,7 @@ class ResourceTree implements IResourceTree {
 		//Check if there are any undiscovered children of the project on disk other than description file
 		String[] children;
 		try {
-			children = projectStore.childNames(IFileStoreConstants.NONE, null);
+			children = projectStore.childNames(EFS.NONE, null);
 		} catch (CoreException e) {
 			//treat failure to access the directory as a non-existent directory
 			children = new String[0];
@@ -409,7 +409,7 @@ class ResourceTree implements IResourceTree {
 			//the .project have may have been recreated on disk automatically by snapshot
 			IFileStore dotProject = projectStore.getChild(IProjectDescription.DESCRIPTION_FILE_NAME);
 			try {
-				dotProject.delete(IFileStoreConstants.NONE, null);
+				dotProject.delete(EFS.NONE, null);
 			} catch (CoreException e) {
 				failed(e.getStatus());
 			}
@@ -426,7 +426,7 @@ class ResourceTree implements IResourceTree {
 
 		//children are deleted, so now delete the parent
 		try {
-			projectStore.delete(IFileStoreConstants.NONE, null);
+			projectStore.delete(EFS.NONE, null);
 			deletedProject(project);
 			// Indicate that the delete was successful.
 			return true;
@@ -627,11 +627,11 @@ class ResourceTree implements IResourceTree {
 					// log the status but don't return until we try and move the rest of the resource info
 					failed(status);
 				}
-				final IFileSystem fileSystem = FileSystemCore.getLocalFileSystem();
+				final IFileSystem fileSystem = EFS.getLocalFileSystem();
 				IFileStore oldMetaArea = fileSystem.getStore(workspace.getMetaArea().locationFor(source));
 				IFileStore newMetaArea = fileSystem.getStore(workspace.getMetaArea().locationFor(destination));
 				try {
-					oldMetaArea.move(newMetaArea, IFileStoreConstants.NONE, new NullProgressMonitor());
+					oldMetaArea.move(newMetaArea, EFS.NONE, new NullProgressMonitor());
 				} catch (CoreException e) {
 					String message = NLS.bind(Messages.resources_moveMeta, oldMetaArea, newMetaArea);
 					IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, destination.getFullPath(), message, e);
@@ -720,7 +720,7 @@ class ResourceTree implements IResourceTree {
 			// should already have a location assigned to it.
 			if (destLocation == null)
 				destLocation = Platform.getLocation().append(destDescription.getName());
-			IFileStore destStore = FileSystemCore.getFileSystem(IFileStoreConstants.SCHEME_FILE).getStore(destLocation);
+			IFileStore destStore = EFS.getFileSystem(EFS.SCHEME_FILE).getStore(destLocation);
 
 			// Move the contents on disk.
 			localManager.move(source, destStore, flags, monitor);
@@ -825,9 +825,9 @@ class ResourceTree implements IResourceTree {
 					if (project.isOpen()) {
 						//use force because we already checked for synchronization above
 						localManager.delete(project, flags & IResource.FORCE, Policy.subMonitorFor(monitor, Policy.totalWork * 3 / 4));
-						projectStore.delete(IFileStoreConstants.NONE, null);
+						projectStore.delete(EFS.NONE, null);
 					} else {
-						projectStore.delete(IFileStoreConstants.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 3 / 4));
+						projectStore.delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 3 / 4));
 					}
 				} catch (CoreException ce) {
 					message = NLS.bind(Messages.localstore_couldnotDelete, project.getFullPath());

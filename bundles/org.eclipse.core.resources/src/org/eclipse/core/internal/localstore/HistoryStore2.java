@@ -70,7 +70,7 @@ public class HistoryStore2 implements IHistoryStore {
 	public HistoryStore2(Workspace workspace, IFileStore store, int limit) {
 		this.workspace = workspace;
 		try {
-			store.mkdir(IFileStoreConstants.NONE, null);
+			store.mkdir(EFS.NONE, null);
 		} catch (CoreException e) {
 			//ignore the failure here because there is no way to surface it.
 			//any attempt to write to the store will throw an appropriate exception

@@ -62,7 +62,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 		final HashMap registry = getFileSystemRegistry();
 		Object result = registry.get(scheme);
 		if (result == null)
-			Policy.error(IFileStoreConstants.ERROR_INTERNAL, NLS.bind("No file system is defined for scheme: {0}", scheme));
+			Policy.error(EFS.ERROR_INTERNAL, NLS.bind("No file system is defined for scheme: {0}", scheme));
 		if (result instanceof IFileSystem)
 			return (IFileSystem)result;
 		try {
@@ -86,7 +86,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	 */
 	public IFileSystem getLocalFileSystem() {
 		try {
-			return getFileSystem(IFileStoreConstants.SCHEME_FILE);
+			return getFileSystem(EFS.SCHEME_FILE);
 		} catch (CoreException e) {
 			//the local file system is always present
 			throw new Error(e);
@@ -103,7 +103,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	public IFileStore getStore(URI uri) throws CoreException {
 		final String scheme = uri.getScheme();
 		if (scheme == null)
-			Policy.error(IFileStoreConstants.ERROR_INTERNAL, "Must specify a URI scheme: " + uri);
+			Policy.error(EFS.ERROR_INTERNAL, "Must specify a URI scheme: " + uri);
 		return getFileSystem(scheme).getStore(uri);
 	}
 
@@ -114,7 +114,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	private synchronized HashMap getFileSystemRegistry() {
 		if (fileSystems == null) {
 			fileSystems = new HashMap();
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(IFileStoreConstants.PI_FILE_SYSTEM, IFileStoreConstants.PT_FILE_SYSTEMS);
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(EFS.PI_FILE_SYSTEM, EFS.PT_FILE_SYSTEMS);
 			IExtension[] extensions = point.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
@@ -135,7 +135,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 	 */
 	public void registryChanged(IRegistryChangeEvent event) {
-		IExtensionDelta[] changes = event.getExtensionDeltas(IFileStoreConstants.PI_FILE_SYSTEM, IFileStoreConstants.PT_FILE_SYSTEMS);
+		IExtensionDelta[] changes = event.getExtensionDeltas(EFS.PI_FILE_SYSTEM, EFS.PT_FILE_SYSTEMS);
 		if (changes.length == 0)
 			return;
 		synchronized (this) {
@@ -146,7 +146,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 
 	public IFileSystem getNullFileSystem() {
 		try {
-			return getFileSystem(IFileStoreConstants.SCHEME_NULL);
+			return getFileSystem(EFS.SCHEME_NULL);
 		} catch (CoreException e) {
 			//the local file system is always present
 			throw new Error(e);

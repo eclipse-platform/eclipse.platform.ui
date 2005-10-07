@@ -10,7 +10,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.net.URI;
-import org.eclipse.core.filesystem.IFileStoreConstants;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
@@ -59,7 +59,7 @@ public class LocationValidator {
 		String scheme2 = location2.getScheme();
 		if (!scheme1.equals(scheme2))
 			return false;
-		if (IFileStoreConstants.SCHEME_FILE.equals(scheme1) && IFileStoreConstants.SCHEME_FILE.equals(scheme2))
+		if (EFS.SCHEME_FILE.equals(scheme1) && EFS.SCHEME_FILE.equals(scheme2))
 			return isOverlapping(new Path(location1.getSchemeSpecificPart()), new Path(location2.getSchemeSpecificPart()), bothDirections);
 		String string1 = location1.toString();
 		String string2 = location2.toString();
@@ -311,7 +311,7 @@ public class LocationValidator {
 			return Status.OK_STATUS;
 		//check the standard path name restrictions
 		URI location = workspace.getPathVariableManager().resolveURI(unresolvedLocation);
-		if (IFileStoreConstants.SCHEME_FILE.equals(location.getScheme())) {
+		if (EFS.SCHEME_FILE.equals(location.getScheme())) {
 			IPath pathPart = new Path(location.getSchemeSpecificPart());
 			int segmentCount = pathPart.segmentCount();
 			for (int i = 0; i < segmentCount; i++) {

@@ -50,12 +50,12 @@ public class BlobStore {
 		UniversalUniqueIdentifier uuid = new UniversalUniqueIdentifier();
 		IFileStore dir = folderFor(uuid);
 		if (!dir.fetchInfo().exists())
-			dir.mkdir(IFileStoreConstants.NONE, null);
+			dir.mkdir(EFS.NONE, null);
 		IFileStore destination = fileFor(uuid);
 		if (moveContents)
-			target.move(destination, IFileStoreConstants.NONE, null);
+			target.move(destination, EFS.NONE, null);
 		else
-			target.copy(destination, IFileStoreConstants.NONE, null);
+			target.copy(destination, EFS.NONE, null);
 		return uuid;
 	}
 
@@ -91,7 +91,7 @@ public class BlobStore {
 	public void deleteBlob(UniversalUniqueIdentifier uuid) {
 		Assert.isNotNull(uuid);
 		try {
-			fileFor(uuid).delete(IFileStoreConstants.NONE, null);
+			fileFor(uuid).delete(EFS.NONE, null);
 		} catch (CoreException e) {
 			//ignore
 		}
@@ -122,7 +122,7 @@ public class BlobStore {
 
 	public InputStream getBlob(UniversalUniqueIdentifier uuid) throws CoreException {
 		IFileStore blobFile = fileFor(uuid);
-		return blobFile.openInputStream(IFileStoreConstants.NONE, null);
+		return blobFile.openInputStream(EFS.NONE, null);
 	}
 
 	/**

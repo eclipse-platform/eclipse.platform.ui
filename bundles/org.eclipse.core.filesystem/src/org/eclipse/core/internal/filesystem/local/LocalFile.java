@@ -35,8 +35,8 @@ public class LocalFile extends FileStore {
 
 	private static int attributes(File aFile) {
 		if (!aFile.exists() || aFile.canWrite())
-			return NONE;
-		return ATTRIBUTE_READ_ONLY;
+			return EFS.NONE;
+		return EFS.ATTRIBUTE_READ_ONLY;
 	}
 
 	/**
@@ -60,9 +60,9 @@ public class LocalFile extends FileStore {
 	 */
 	private void checkReadOnlyParent(File target, Throwable exception) throws CoreException {
 		File parent = target.getParentFile();
-		if (parent != null && (attributes(parent) & ATTRIBUTE_READ_ONLY) != 0) {
+		if (parent != null && (attributes(parent) & EFS.ATTRIBUTE_READ_ONLY) != 0) {
 			String message = NLS.bind(Messages.readOnlyParent, target.getAbsolutePath());
-			Policy.error(ERROR_PARENT_READ_ONLY, message, exception);
+			Policy.error(EFS.ERROR_PARENT_READ_ONLY, message, exception);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class LocalFile extends FileStore {
 				}
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.couldNotRead, source.getAbsolutePath());
-				Policy.error(ERROR_READ, message, e);
+				Policy.error(EFS.ERROR_READ, message, e);
 			}
 		}
 		//fall through to super implementation
@@ -96,7 +96,7 @@ public class LocalFile extends FileStore {
 		//TODO add progress
 		monitor = Policy.monitorFor(monitor);
 		String message = Messages.deleteProblem;
-		MultiStatus result = new MultiStatus(Policy.PI_FILE_SYSTEM, ERROR_DELETE, message, null);
+		MultiStatus result = new MultiStatus(Policy.PI_FILE_SYSTEM, EFS.ERROR_DELETE, message, null);
 		internalDelete(file, filePath, result);
 		if (!result.isOK())
 			throw new CoreException(result);
@@ -122,8 +122,8 @@ public class LocalFile extends FileStore {
 		info.setLastModified(lastModified);
 		info.setExists(lastModified > 0);
 		info.setLength(file.length());
-		info.setAttribute(ATTRIBUTE_DIRECTORY, file.isDirectory());
-		info.setAttribute(ATTRIBUTE_READ_ONLY, file.exists() && !file.canWrite());
+		info.setAttribute(EFS.ATTRIBUTE_DIRECTORY, file.isDirectory());
+		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, file.exists() && !file.canWrite());
 		return info;
 	}
 	
@@ -188,17 +188,17 @@ public class LocalFile extends FileStore {
 			} catch (Exception e) {
 				// we caught a runtime exception so log it
 				String message = NLS.bind(Messages.couldnotDelete, target.getAbsolutePath());
-				status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, ERROR_DELETE, message, e));
+				status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, EFS.ERROR_DELETE, message, e));
 				return false;
 			}
 		}
 		//if we got this far, we failed
 		String message = null;
-		if (fetchInfo().isReadOnly())
+		if (fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY))
 			message = NLS.bind(Messages.couldnotDeleteReadOnly, target.getAbsolutePath());
 		else
 			message = NLS.bind(Messages.couldnotDelete, target.getAbsolutePath());
-		status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, ERROR_DELETE, message, null));
+		status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, EFS.ERROR_DELETE, message, null));
 		return false;
 	}
 
@@ -219,7 +219,7 @@ public class LocalFile extends FileStore {
 	}
 
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException {
-		boolean shallow = (options & SHALLOW) != 0;
+		boolean shallow = (options & EFS.SHALLOW) != 0;
 		//must be a directory
 		if (shallow)
 			file.mkdir();
@@ -228,7 +228,7 @@ public class LocalFile extends FileStore {
 		if (!file.isDirectory()) {
 			checkReadOnlyParent(file, null);
 			String message = NLS.bind(Messages.couldNotCreateFolder, filePath);
-			Policy.error(ERROR_WRITE, message);
+			Policy.error(EFS.ERROR_WRITE, message);
 		}
 		return this;
 	}
@@ -240,7 +240,7 @@ public class LocalFile extends FileStore {
 		}
 		File source = file;
 		File destination = ((LocalFile) destFile).file;
-		boolean overwrite = (options & OVERWRITE) != 0;
+		boolean overwrite = (options & EFS.OVERWRITE) != 0;
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(NLS.bind(Messages.moving, source.getAbsolutePath()), 10);
@@ -252,11 +252,11 @@ public class LocalFile extends FileStore {
 				sourceEqualsDest = source.getCanonicalFile().equals(destination.getCanonicalFile());
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.couldNotMove, source.getAbsolutePath());
-				Policy.error(ERROR_WRITE, message, e);
+				Policy.error(EFS.ERROR_WRITE, message, e);
 			}
 			if (!sourceEqualsDest && !overwrite && destination.exists()) {
 				String message = NLS.bind(Messages.fileExists, destination.getAbsolutePath());
-				Policy.error(ERROR_EXISTS, message);
+				Policy.error(EFS.ERROR_EXISTS, message);
 			}
 			if (source.renameTo(destination)) {
 				// double-check to ensure we really did move
@@ -266,16 +266,16 @@ public class LocalFile extends FileStore {
 					if (destination.exists()) {
 						// couldn't delete the source so remove the destination and throw an error
 						// XXX: if we fail deleting the destination, the destination (root) may still exist
-						new LocalFile(destination).delete(NONE, null);
+						new LocalFile(destination).delete(EFS.NONE, null);
 						String message = NLS.bind(Messages.couldnotDelete, source.getAbsolutePath());
-						Policy.error(ERROR_DELETE, message);
+						Policy.error(EFS.ERROR_DELETE, message);
 					}
 					// source exists but destination doesn't so try to copy below
 				} else {
 					if (!destination.exists()) {
 						// neither the source nor the destination exist. this is REALLY bad
 						String message = NLS.bind(Messages.failedMove, source.getAbsolutePath(), destination.getAbsolutePath());
-						Policy.error(ERROR_WRITE, message);
+						Policy.error(EFS.ERROR_WRITE, message);
 					}
 					//the move was successful
 					monitor.worked(10);
@@ -285,7 +285,7 @@ public class LocalFile extends FileStore {
 			// for some reason renameTo didn't work
 			if (sourceEqualsDest) {
 				String message = NLS.bind(Messages.couldNotMove, source.getAbsolutePath());
-				Policy.error(ERROR_WRITE, message, null);
+				Policy.error(EFS.ERROR_WRITE, message, null);
 			}
 			// fall back to default implementation
 			super.move(destFile, options, Policy.subMonitorFor(monitor, 10));
@@ -307,7 +307,7 @@ public class LocalFile extends FileStore {
 				message = NLS.bind(Messages.notAFile, filePath);
 			else
 				message = NLS.bind(Messages.couldNotRead, filePath);
-			Policy.error(ERROR_READ, message, e);
+			Policy.error(EFS.ERROR_READ, message, e);
 			return null;
 		} finally {
 			monitor.done();
@@ -318,7 +318,7 @@ public class LocalFile extends FileStore {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(null, 1);
-			return new FileOutputStream(file, (options & APPEND) != 0);
+			return new FileOutputStream(file, (options & EFS.APPEND) != 0);
 		} catch (FileNotFoundException e) {
 			checkReadOnlyParent(file, e);
 			String message;
@@ -327,7 +327,7 @@ public class LocalFile extends FileStore {
 				message = NLS.bind(Messages.notAFile, path);
 			else
 				message = NLS.bind(Messages.couldNotWrite, path);
-			Policy.error(ERROR_WRITE, message, e);
+			Policy.error(EFS.ERROR_WRITE, message, e);
 			return null;
 		} finally {
 			monitor.done();
@@ -335,17 +335,17 @@ public class LocalFile extends FileStore {
 	}
 
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
-		if ((options & SET_ATTRIBUTES) != 0) {
+		if ((options & EFS.SET_ATTRIBUTES) != 0) {
 			if (LocalFileNatives.usingNatives()) {
 				LocalFileNatives.setFileInfo(filePath, info, options);
 			} else {
 				//non-native implementation
-				if (info.isReadOnly())
+				if (info.getAttribute(EFS.ATTRIBUTE_READ_ONLY))
 					file.setReadOnly();
 			}
 		}
 		//native does not currently set last modified
-		if ((options & SET_LAST_MODIFIED) != 0)
+		if ((options & EFS.SET_LAST_MODIFIED) != 0)
 			file.setLastModified(info.getLastModified());
 	}
 

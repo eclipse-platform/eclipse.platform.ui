@@ -10,8 +10,7 @@
 package org.eclipse.core.internal.localstore;
 
 import java.net.URI;
-import org.eclipse.core.filesystem.FileSystemCore;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -49,11 +48,11 @@ public class FileStoreRoot {
 		IPath childPath = workspacePath.removeFirstSegments(chop);
 		IFileStore rootStore;
 		try {
-			rootStore = FileSystemCore.getStore(variableManager.resolveURI(root));
+			rootStore = EFS.getStore(variableManager.resolveURI(root));
 		} catch (CoreException e) {
 			//handles case where resource location cannot be resolved
 			//such as unresolved path variable or invalid file system scheme
-			return FileSystemCore.getNullFileSystem().getStore(workspacePath);
+			return EFS.getNullFileSystem().getStore(workspacePath);
 		}
 		if (childPath.segmentCount() == 0)
 			return rootStore;

@@ -12,8 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.eclipse.core.filesystem.FileSystemCore;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.localstore.HistoryStore2;
 import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.properties.IPropertyManager;
@@ -63,7 +62,7 @@ public class ResourcesCompatibilityHelper {
 			throw (Error) target;
 		}
 		// default to new version
-		IFileStore store = FileSystemCore.getLocalFileSystem().getStore(location);
+		IFileStore store = EFS.getLocalFileSystem().getStore(location);
 		return new HistoryStore2((Workspace) ResourcesPlugin.getWorkspace(), store, limit);
 	}
 

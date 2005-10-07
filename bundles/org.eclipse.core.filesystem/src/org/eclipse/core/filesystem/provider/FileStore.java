@@ -302,7 +302,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 */
 	public IFileSystem getFileSystem() {
 		try {
-			return FileSystemCore.getFileSystem(toURI().getScheme());
+			return EFS.getFileSystem(toURI().getScheme());
 		} catch (CoreException e) {
 			//this will only happen if toURI() has been incorrectly implemented
 			throw new RuntimeException(e);

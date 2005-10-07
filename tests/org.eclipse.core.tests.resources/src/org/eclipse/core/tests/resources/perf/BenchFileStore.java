@@ -69,13 +69,13 @@ public class BenchFileStore extends ResourceTest {
 	}
 
 	protected void createStores() throws CoreException {
-		existingStore = FileSystemCore.getFileSystem(IFileStoreConstants.SCHEME_FILE).getStore(getRandomLocation());
+		existingStore = EFS.getFileSystem(EFS.SCHEME_FILE).getStore(getRandomLocation());
 		try {
-			existingStore.openOutputStream(IFileStoreConstants.NONE, null).close();
+			existingStore.openOutputStream(EFS.NONE, null).close();
 		} catch (IOException e) {
 			fail("BenchFileStore.createStores", e);
 		}
-		nonexistingStore = FileSystemCore.getFileSystem(IFileStoreConstants.SCHEME_FILE).getStore(getRandomLocation());
+		nonexistingStore = EFS.getFileSystem(EFS.SCHEME_FILE).getStore(getRandomLocation());
 	}
 
 	protected void deleteFiles() {
@@ -83,7 +83,7 @@ public class BenchFileStore extends ResourceTest {
 	}
 
 	protected void deleteStores() throws CoreException {
-		existingStore.delete(IFileStoreConstants.NONE, null);
+		existingStore.delete(EFS.NONE, null);
 	}
 
 	public void testFileExists() {

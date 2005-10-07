@@ -12,8 +12,8 @@ package org.eclipse.core.internal.localstore;
 
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.utils.Messages;
@@ -51,7 +51,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 			node.removeChildrenFromTree();
 			//delete from disk
 			if (localFile != null && !target.isLinked())
-				localFile.delete(IFileStoreConstants.NONE, Policy.subMonitorFor(monitor, 1));
+				localFile.delete(EFS.NONE, Policy.subMonitorFor(monitor, 1));
 			else
 				monitor.worked(1);
 			//delete from tree

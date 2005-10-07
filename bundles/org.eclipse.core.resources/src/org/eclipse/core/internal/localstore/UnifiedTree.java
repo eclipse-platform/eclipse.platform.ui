@@ -285,7 +285,7 @@ public class UnifiedTree {
 	protected IFileInfo[] getLocalList(UnifiedTreeNode node) {
 		IFileInfo[] list;
 		try {
-			list = node.getStore().childInfos(IFileStoreConstants.NONE, null);
+			list = node.getStore().childInfos(EFS.NONE, null);
 		} catch (CoreException e) {
 			//treat failure to access the directory as a non-existent directory
 			return null;
