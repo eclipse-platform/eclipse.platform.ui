@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import java.io.File;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -18,9 +19,12 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.jface.text.Assert;
+
+import org.eclipse.ui.editors.text.ILocationProvider;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.editors.text.ILocationProvider;
 
 /**
  * @since 3.1
@@ -29,12 +33,13 @@ public class NonExistingFileEditorInput implements IEditorInput, ILocationProvid
 
 	private static int fgNonExisting= 0;
 
-	private File fFile;
+	private IFileStore fFileStore;
 	private String fName;
 
-	public NonExistingFileEditorInput(File file, String namePrefix) {
-		super();
-		fFile= file;
+	public NonExistingFileEditorInput(IFileStore fileStore, String namePrefix) {
+		Assert.isNotNull(fileStore);
+		Assert.isTrue(IFileStoreConstants.SCHEME_FILE.equals(fileStore.getFileSystem().getScheme()));
+		fFileStore= fileStore;
 		++fgNonExisting;
 		fName= namePrefix + " " + fgNonExisting; //$NON-NLS-1$
 	}
@@ -88,8 +93,8 @@ public class NonExistingFileEditorInput implements IEditorInput, ILocationProvid
 	 */
 	public IPath getPath(Object element) {
 		if (element instanceof NonExistingFileEditorInput) {
-			NonExistingFileEditorInput input= (NonExistingFileEditorInput) element;
-			return Path.fromOSString(input.fFile.getAbsolutePath());
+			NonExistingFileEditorInput input= (NonExistingFileEditorInput)element;
+			return new Path(input.fFileStore.toURI().getPath());
 		}
 		return null;
 	}
@@ -103,7 +108,7 @@ public class NonExistingFileEditorInput implements IEditorInput, ILocationProvid
 
 		if (o instanceof NonExistingFileEditorInput) {
 			NonExistingFileEditorInput input = (NonExistingFileEditorInput) o;
-			return fFile.equals(input.fFile);
+			return fFileStore.equals(input.fFileStore);
 		}
 
 		return false;
@@ -113,6 +118,6 @@ public class NonExistingFileEditorInput implements IEditorInput, ILocationProvid
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return fFile.hashCode();
+		return fFileStore.hashCode();
 	}
 }

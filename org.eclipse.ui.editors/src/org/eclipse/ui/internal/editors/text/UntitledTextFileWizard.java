@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import java.io.File;
+import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.IPath;
 
@@ -48,32 +49,32 @@ public class UntitledTextFileWizard extends Wizard implements INewWizard {
 		fWindow= null;
 	}
 
-	private File queryFile() {
+	private IFileStore queryFileStore() {
 		IPath stateLocation= EditorsPlugin.getDefault().getStateLocation();
 		IPath path= stateLocation.append("/_" + new Object().hashCode()); //$NON-NLS-1$
-		return new File(path.toOSString());
+		return FileSystemCore.getLocalFileSystem().getStore(path);
 	}
 
-	private String getEditorId(File file) {
+	private String getEditorId(IFileStore fileStore) {
 		IWorkbench workbench= fWindow.getWorkbench();
 		IEditorRegistry editorRegistry= workbench.getEditorRegistry();
-		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(file.getName());
+		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(fileStore.getName());
 		if (descriptor != null)
 			return descriptor.getId();
 		return EditorsUI.DEFAULT_TEXT_EDITOR_ID;
 	}
 
-	private IEditorInput createEditorInput(File file) {
-		return new NonExistingFileEditorInput(file, TextEditorMessages.NewTextEditorAction_namePrefix);
+	private IEditorInput createEditorInput(IFileStore fileStore) {
+		return new NonExistingFileEditorInput(fileStore, TextEditorMessages.NewTextEditorAction_namePrefix);
 	}
 
 	/*
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		File file= queryFile();
-		IEditorInput input= createEditorInput(file);
-		String editorId= getEditorId(file);
+		IFileStore fileStore= queryFileStore();
+		IEditorInput input= createEditorInput(fileStore);
+		String editorId= getEditorId(fileStore);
 		IWorkbenchPage page= fWindow.getActivePage();
 		try {
 			page.openEditor(input, editorId);
