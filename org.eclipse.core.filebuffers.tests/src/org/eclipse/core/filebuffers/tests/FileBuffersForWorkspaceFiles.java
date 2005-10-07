@@ -11,6 +11,17 @@
 package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.osgi.framework.Bundle;
+
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -18,21 +29,17 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.core.filebuffers.FileBuffers;
 
 import org.eclipse.jface.text.source.IAnnotationModel;
-
-import org.osgi.framework.Bundle;
 
 /**
  * FileBuffersForWorkspaceFiles
  */
 public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	
+	private static final boolean USE_ECLIPSE_FS= true;
+
 	protected IPath createPath(IProject project) throws Exception {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
 		IFile file= ResourceHelper.createFile(folder, "WorkspaceFile", "content");
@@ -85,6 +92,24 @@ public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#modifyUnderlyingFile()
 	 */
 	protected boolean modifyUnderlyingFile() throws Exception {
+		if (USE_ECLIPSE_FS) {
+			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
+			assertTrue(fileStore.fetchInfo().exists());
+			OutputStream out= fileStore.openOutputStream(IFileStoreConstants.NONE, null);
+			try {
+				out.write(new String("Changed content of workspace file").getBytes());
+				out.flush();
+			} catch (IOException x) {
+				fail();
+			} finally {
+				out.close();
+			}
+			fileStore.fetchInfo().setLastModified(1000);
+			IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
+			iFile.refreshLocal(IResource.DEPTH_INFINITE, null);
+			return true;
+		}
+		
 		File file= FileBuffers.getSystemFileAtLocation(getPath());
 		FileTool.write(file.getAbsolutePath(), new StringBuffer("Changed content of workspace file"));
 		file.setLastModified(1000);
