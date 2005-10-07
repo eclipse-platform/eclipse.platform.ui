@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,15 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
+
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
@@ -66,11 +64,9 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 */
 	interface IElementFilter {
 
-		void filterElements(Collection elements, IProgressMonitor monitor)
-	            throws InterruptedException;
+		void filterElements(Collection elements) throws InterruptedException;
 
-	    void filterElements(Object[] elements, IProgressMonitor monitor)
-	            throws InterruptedException;
+	    void filterElements(Object[] elements) throws InterruptedException;
 	}
 
 
@@ -316,34 +312,27 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * @param parentLabel the parent label
 	 * @param addAll a boolean to indicate if the checked state store needs to be queried
 	 * @param filter the filter being used on the data
-	 * @param monitor the progress monitor or <code>null</code> that the cancel is polled for
 	 * @throws InterruptedException in case of interruption
 	 */
-	private void findAllSelectedListElements(Object treeElement, String parentLabel, boolean addAll, IElementFilter filter, IProgressMonitor monitor) throws InterruptedException {
+	private void findAllSelectedListElements(Object treeElement, String parentLabel, boolean addAll, IElementFilter filter) throws InterruptedException {
 
 		String fullLabel= null;
-		if (monitor != null && monitor.isCanceled())
-			return;
-		if (monitor != null) {
-			fullLabel= getFullLabel(treeElement, parentLabel);
-			monitor.subTask(fullLabel);
-		}
-
+	
 		if (addAll)
-			filter.filterElements(listContentProvider.getElements(treeElement), monitor);
+			filter.filterElements(listContentProvider.getElements(treeElement));
 		else { //Add what we have stored
 			if (checkedStateStore.containsKey(treeElement))
-				filter.filterElements((Collection) checkedStateStore.get(treeElement), monitor);
+				filter.filterElements((Collection) checkedStateStore.get(treeElement));
 		}
 
 		Object[] treeChildren= treeContentProvider.getChildren(treeElement);
 		for (int i= 0; i < treeChildren.length; i++) {
 			Object child= treeChildren[i];
 			if (addAll)
-				findAllSelectedListElements(child, fullLabel, true, filter, monitor);
+				findAllSelectedListElements(child, fullLabel, true, filter);
 			else { //Only continue for those with checked state
 				if (checkedStateStore.containsKey(child))
-					findAllSelectedListElements(child, fullLabel, whiteCheckedTreeItems.contains(child), filter, monitor);
+					findAllSelectedListElements(child, fullLabel, whiteCheckedTreeItems.contains(child), filter);
 			}
 
 		}
@@ -381,14 +370,13 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * return null
 	 *
 	 * @param filter - the filter for the data
-	 * @param monitor IProgressMonitor or null
 	 * @throws InterruptedException in case of interruption
 	 */
-	private void getAllCheckedListItems(IElementFilter filter, IProgressMonitor monitor) throws InterruptedException {
+	private void getAllCheckedListItems(IElementFilter filter) throws InterruptedException {
 		//Iterate through the children of the root as the root is not in the store
 		Object[] children= treeContentProvider.getChildren(root);
 		for (int i= 0; i < children.length; ++i) {
-			findAllSelectedListElements(children[i], null, whiteCheckedTreeItems.contains(children[i]), filter, monitor);
+			findAllSelectedListElements(children[i], null, whiteCheckedTreeItems.contains(children[i]), filter);
 		}
 	}
 
@@ -404,11 +392,11 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 		IElementFilter passThroughFilter= new IElementFilter() {
 
-			public void filterElements(Collection elements, IProgressMonitor monitor) throws InterruptedException {
+			public void filterElements(Collection elements) throws InterruptedException {
 				returnValue.addAll(elements);
 			}
 
-			public void filterElements(Object[] elements, IProgressMonitor monitor) throws InterruptedException {
+			public void filterElements(Object[] elements) throws InterruptedException {
 				for (int i= 0; i < elements.length; i++) {
 					returnValue.add(elements[i]);
 				}
@@ -416,7 +404,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		};
 
 		try {
-			getAllCheckedListItems(passThroughFilter, null);
+			getAllCheckedListItems(passThroughFilter);
 		} catch (InterruptedException exception) {
 			return new ArrayList();
 		}
@@ -443,29 +431,6 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		}
 
 		return result;
-	}
-
-	/**
-	 * Get the full label of the treeElement (its name and its parent's name).
-	 *
-	 * @param treeElement - the element being exported
-	 * @param parentLabel - the label of the parent, can be null
-	 * @return String
-	 */
-	private String getFullLabel(Object treeElement, String parentLabel) {
-		String parentName= parentLabel;
-
-		if (parentLabel == null)
-			parentName= ""; //$NON-NLS-1$
-
-		if (parentName.length() > 0 && (!parentName.endsWith(File.separator))) {
-			parentName+= File.separatorChar;
-		}
-
-		String elementText= treeLabelProvider.getText(treeElement);
-		if (elementText == null)
-			return parentName;
-		return parentName + elementText;
 	}
 
 	/**
@@ -667,7 +632,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 			return;
 		}
 
-		// ie.- if not an item deselection
+		// i.e.- if not an item deselection
 		if (selectedElement != currentTreeSelection)
 			populateListViewer(selectedElement);
 
