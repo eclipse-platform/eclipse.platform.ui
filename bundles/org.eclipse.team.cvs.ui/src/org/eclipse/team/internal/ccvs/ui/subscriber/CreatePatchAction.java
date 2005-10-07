@@ -37,7 +37,7 @@ public class CreatePatchAction extends CVSParticipantAction {
 
 	public void runOperation() {
         final SyncInfoSet set = getSyncInfoSet();
-        GenerateDiffFileWizard.run(getConfiguration().getSite().getPart(), set.getResources());
+        GenerateDiffFileWizard.run(getConfiguration().getSite().getPart(), set.getResources(), false);
     }
 	
 	/*

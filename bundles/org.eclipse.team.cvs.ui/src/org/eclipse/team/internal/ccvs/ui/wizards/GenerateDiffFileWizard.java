@@ -58,19 +58,21 @@ import org.eclipse.ui.part.PageBook;
  */
 public class GenerateDiffFileWizard extends Wizard {
 	
-	//temp falg for enabling workspace patches
-	public final static String WORKSPACEPATCH_FLAG = "workspacePatch"; //$NON-NLS-1$
 	//The initial size of this wizard.
     private final static int INITIAL_WIDTH = 300;
     private final static int INITIAL_HEIGHT = 350;
    
-	public static void run(IWorkbenchPart part, final IResource[] resources) {
+	public static void run(IWorkbenchPart part, final IResource[] resources, boolean unifiedSelectionEnabled) {
 		final String title = CVSUIMessages.GenerateCVSDiff_title; 
-		final GenerateDiffFileWizard wizard = new GenerateDiffFileWizard(part,resources);
+		final GenerateDiffFileWizard wizard = new GenerateDiffFileWizard(part,resources, unifiedSelectionEnabled);
 		wizard.setWindowTitle(title);
 		WizardDialog dialog = new WizardDialog(part.getSite().getShell(), wizard);
 		dialog.setMinimumPageSize(INITIAL_WIDTH, INITIAL_HEIGHT);
 		dialog.open();
+	}
+	
+	public static void run(IWorkbenchPart part, final IResource[] resources) {
+		GenerateDiffFileWizard.run(part,resources,true);
 	}
 	
     /**
@@ -940,16 +942,7 @@ public class GenerateDiffFileWizard extends Wizard {
             
             unified_selectionRelativeOption = new Button(unifiedGroup, SWT.RADIO);
             unified_selectionRelativeOption.setText(CVSUIMessages.GenerateDiffFileWizard_8);
-            
-            //temp disable if workspacePatch flag not set and default to selection 
-            if (!Boolean.getBoolean(GenerateDiffFileWizard.WORKSPACEPATCH_FLAG)){
-            	unified_selectionRelativeOption.setSelection(true);
-            	unified_workspaceRelativeOption.setSelection(false);
-            	unified_workspaceRelativeOption.setEnabled(false);
-            	unified_projectRelativeOption.setEnabled(false);
-            	unified_selectionRelativeOption.setEnabled(false);
-            }
-            
+              
             Dialog.applyDialogFont(parent);
             
             //add listeners
@@ -986,6 +979,10 @@ public class GenerateDiffFileWizard extends Wizard {
 				contextDiffOption.setEnabled(false);
 				regularDiffOption.setEnabled(false);
 			}
+			
+			//temporary until we figure out best way to fix synchronize view selection
+			if (!unifiedSelectionEnabled)
+        		unified_selectionRelativeOption.setEnabled(false);
 		}
 
         private void calculatePatchRoot(){
@@ -1077,6 +1074,10 @@ public class GenerateDiffFileWizard extends Wizard {
         	unified_workspaceRelativeOption.setEnabled(enabled);
         	unified_projectRelativeOption.setEnabled(enabled);
         	unified_selectionRelativeOption.setEnabled(enabled);
+        	
+        	//temporary until we figure out best way to fix synchronize view selection
+        	if (!unifiedSelectionEnabled)
+        		unified_selectionRelativeOption.setEnabled(false);
         }
     }
  
@@ -1142,14 +1143,17 @@ public class GenerateDiffFileWizard extends Wizard {
     private final DefaultValuesStore defaultValuesStore;
 	private final IWorkbenchPart part;
   
+	//temporary until we figure out best way to fix synchronize view selection
+	protected boolean unifiedSelectionEnabled;
 	
-    public GenerateDiffFileWizard(IWorkbenchPart part, IResource[] resources) {
+    public GenerateDiffFileWizard(IWorkbenchPart part, IResource[] resources, boolean unifiedSelectionEnabled) {
         super();
 		this.part = part;
         this.resources = resources;
         setWindowTitle(CVSUIMessages.GenerateCVSDiff_title); 
         initializeDefaultPageImageDescriptor();
         defaultValuesStore= new DefaultValuesStore();
+        this.unifiedSelectionEnabled=unifiedSelectionEnabled;
     }
     
     public void addPages() {

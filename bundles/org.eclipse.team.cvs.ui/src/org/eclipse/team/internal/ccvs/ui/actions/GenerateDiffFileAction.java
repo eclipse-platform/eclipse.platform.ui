@@ -102,11 +102,7 @@ public class GenerateDiffFileAction extends WorkspaceTraversalAction{
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForMultipleResources()
 	 */
 	protected boolean isEnabledForMultipleResources() {
-		if(Boolean.getBoolean(GenerateDiffFileWizard.WORKSPACEPATCH_FLAG)){ 
 			return true;
-		}
-		
-		return false;
 	}
 
 	/**
