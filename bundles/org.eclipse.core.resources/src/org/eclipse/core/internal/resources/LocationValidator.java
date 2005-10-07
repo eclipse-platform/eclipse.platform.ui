@@ -65,6 +65,18 @@ public class LocationValidator {
 		String string2 = location2.toString();
 		return string1.startsWith(string2) || (bothDirections && string2.startsWith(string1));
 	}
+	
+	/**
+	 * Returns a string representation of a URI suitable for displaying to an end user.
+	 */
+	private String toString(URI uri) {
+		try {
+			return EFS.getStore(uri).toString();
+		} catch (CoreException e) {
+			//there is no store defined, so the best we can do is the URI toString.
+			return uri.toString();
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see IWorkspace#validateLinkLocation(IResource, IPath)
@@ -324,7 +336,7 @@ public class LocationValidator {
 		if (!location.isAbsolute()) {
 			IPath pathPart = new Path(location.getSchemeSpecificPart());
 			if (pathPart.segmentCount() > 0)
-				message = NLS.bind(Messages.pathvar_undefined, location.toString(), pathPart.segment(0));
+				message = NLS.bind(Messages.pathvar_undefined, toString(location), pathPart.segment(0));
 			else
 				message = Messages.links_noPath;
 			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED, null, message);
@@ -332,7 +344,7 @@ public class LocationValidator {
 		// test if the given location overlaps the default default location
 		IPath defaultDefaultLocation = Platform.getLocation();
 		if (isOverlapping(location, defaultDefaultLocation.toFile().toURI(), true)) {
-			message = NLS.bind(Messages.resources_overlapWorkspace, location.toString(), defaultDefaultLocation.toOSString());
+			message = NLS.bind(Messages.resources_overlapWorkspace, toString(location), defaultDefaultLocation.toOSString());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		// Iterate over each known project and ensure that the location does not
@@ -351,7 +363,7 @@ public class LocationValidator {
 			if (project.equals(context) && definedLocalLocation.equals(location))
 				continue;
 			if (isOverlapping(location, definedLocalLocation, true)) {
-				message = NLS.bind(Messages.resources_overlapProject, location.toString(), project.getName());
+				message = NLS.bind(Messages.resources_overlapProject, toString(location), project.getName());
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 		}
@@ -369,7 +381,7 @@ public class LocationValidator {
 					if (children[i].isLinked()) {
 						URI testLocation = children[i].getLocationURI();
 						if (testLocation != null && isOverlapping(testLocation, location, false)) {
-							message = NLS.bind(Messages.links_locationOverlapsLink, location.toString());
+							message = NLS.bind(Messages.links_locationOverlapsLink, toString(location));
 							return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, context.getFullPath(), message);
 						}
 					}
