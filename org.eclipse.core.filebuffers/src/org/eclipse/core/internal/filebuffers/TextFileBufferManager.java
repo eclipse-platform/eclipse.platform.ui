@@ -257,24 +257,24 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath)
 	 */
 	public IDocument createEmptyDocument(IPath location) {
-		Assert.isNotNull(location);
-		location= FileBuffers.normalizeLocation(location);
-
 		final IDocument[] runnableResult= new IDocument[1];
-		final IDocumentFactory factory= fRegistry.getDocumentFactory(location);
-		if (factory != null) {
-			ISafeRunnable runnable= new ISafeRunnable() {
-				public void run() throws Exception {
-					runnableResult[0]= factory.createDocument();
-				}
-				public void handleException(Throwable t) {
-					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
-					FileBuffersPlugin.getDefault().getLog().log(status);
-					if (t instanceof VirtualMachineError)
-						throw (VirtualMachineError)t;
-				}
-			};
-			Platform.run(runnable);
+		if (location != null) {
+			location= FileBuffers.normalizeLocation(location);
+			final IDocumentFactory factory= fRegistry.getDocumentFactory(location);
+			if (factory != null) {
+				ISafeRunnable runnable= new ISafeRunnable() {
+					public void run() throws Exception {
+						runnableResult[0]= factory.createDocument();
+					}
+					public void handleException(Throwable t) {
+						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
+						FileBuffersPlugin.getDefault().getLog().log(status);
+						if (t instanceof VirtualMachineError)
+							throw (VirtualMachineError)t;
+					}
+				};
+				Platform.run(runnable);
+			}
 		}
 		final IDocument document;
 		if (runnableResult[0] != null)
