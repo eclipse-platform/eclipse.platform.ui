@@ -11,8 +11,10 @@
 
 package org.eclipse.ant.internal.ui.debug.model;
 
+import java.io.File;
 import java.text.MessageFormat;
 
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.preferences.AntObjectLabelProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -25,6 +27,12 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.IFileStore;
+
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
@@ -140,7 +148,15 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 			return new FileEditorInput((IFile)((ILineBreakpoint)element).getMarker().getResource());
 		}
         if (element instanceof LocalFileStorage) {
-            return new JavaFileEditorInput(((LocalFileStorage)element).getFile());
+        	File file= ((LocalFileStorage)element).getFile();
+        	IFileStore fileStore;
+			try {
+				fileStore = FileSystemCore.getStore(file.toURI());
+				return new JavaFileEditorInput(fileStore);
+			} catch (CoreException e) {
+				AntUIPlugin.log(e);
+				return null;
+			}
         }
 		return null;
 	}
