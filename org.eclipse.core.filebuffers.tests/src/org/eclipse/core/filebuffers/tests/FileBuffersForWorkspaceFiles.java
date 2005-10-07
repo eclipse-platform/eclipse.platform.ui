@@ -106,6 +106,7 @@ public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 			}
 			fileStore.fetchInfo().setLastModified(1000);
 			IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
+			assertTrue(iFile.exists() && iFile.getFullPath().equals(getPath()));
 			iFile.refreshLocal(IResource.DEPTH_INFINITE, null);
 			return true;
 		}
