@@ -137,6 +137,7 @@ public interface IProductConstants {
 	 * during the development of Eclipse 3.2.
 	 * </p>
      * @since 3.2 <b>EXPERIMENTAL</b>
+     * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
      */
     public static final String STARTUP_PROGRESS_RECT = "startupProgressRect"; //$NON-NLS-1$
 
@@ -153,6 +154,7 @@ public interface IProductConstants {
 	 * during the development of Eclipse 3.2.
 	 * </p>
      * @since 3.2 <b>EXPERIMENTAL</b>
+     * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
      */
     public static final String STARTUP_MESSAGE_RECT = "startupMessageRect"; //$NON-NLS-1$
 
@@ -169,6 +171,7 @@ public interface IProductConstants {
 	 * during the development of Eclipse 3.2.
 	 * </p>
      * @since 3.2 <b>EXPERIMENTAL</b>
+     * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
      */
     public static final String STARTUP_FOREGROUND_COLOR = "startupForegroundColor"; //$NON-NLS-1$
 
