@@ -43,11 +43,6 @@ public final class CommandImageManager {
 	public static final int TYPE_HOVER = 2;
 
 	/**
-	 * The map of category identifiers (<code>String</code>) to images (<code>ImageDescriptor</code>).
-	 */
-	private final Map categoryImagesById = new HashMap();
-
-	/**
 	 * The map of command identifiers (<code>String</code>) to images. The
 	 * images are an array indexed by type. The values in the array are either
 	 * an <code>ImageDescriptor</code> or a <code>Map</code> of style (<code>String</code>)
@@ -106,41 +101,10 @@ public final class CommandImageManager {
 	}
 
 	/**
-	 * Binds a particular image path to a category id.
-	 * 
-	 * @param categoryId
-	 *            The identifier of the category to which the image should be
-	 *            bound; must not be <code>null</code>.
-	 * @param url
-	 *            The URL to the image. Should not be <code>null</code>.
-	 */
-	public final void bind(final String categoryId, final URL url) {
-		final ImageDescriptor descriptor = ImageDescriptor.createFromURL(url);
-		categoryImagesById.put(categoryId, descriptor);
-	}
-
-	/**
 	 * Removes all of the images from this manager.
 	 */
 	public final void clear() {
 		imagesById.clear();
-		categoryImagesById.clear();
-	}
-
-	/**
-	 * Retrieves the image associated with the given category.
-	 * 
-	 * @param categoryId
-	 *            The identifier to find; must not be <code>null</code>.
-	 * @return An image appropriate for the given category; never
-	 *         <code>null</code>.
-	 */
-	public final ImageDescriptor getCategoryImageDescriptor(
-			final String categoryId) {
-		if (categoryId == null)
-			throw new NullPointerException();
-
-		return (ImageDescriptor) categoryImagesById.get(categoryId);
 	}
 
 	/**

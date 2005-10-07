@@ -752,26 +752,6 @@
       <image
             commandId="org.eclipse.ui.edit.redo"
             icon="icons/full/etool16/redo_edit.gif" />
-      <!-- TODO These need their own icons
-      <categoryImage
-            categoryId="org.eclipse.ui.category.file" 
-            icon="icons/full/etool16/print_edit.gif" />
-      <categoryImage
-            categoryId="org.eclipse.ui.category.edit"
-            icon="icons/full/etool16/print_edit.gif" />
-      <categoryImage
-            categoryId="org.eclipse.ui.category.navigate"
-            icon="icons/full/etool16/print_edit.gif" />
-      <categoryImage
-            categoryId="org.eclipse.ui.category.window"
-            icon="icons/full/etool16/print_edit.gif" />
-      <categoryImage
-            categoryId="org.eclipse.ui.category.help"
-            icon="icons/full/etool16/print_edit.gif" />
-      <categoryImage
-            categoryId="org.eclipse.ui.category.views"
-            icon="icons/full/etool16/print_edit.gif" />
-       -->
    </extension>
    
    <extension

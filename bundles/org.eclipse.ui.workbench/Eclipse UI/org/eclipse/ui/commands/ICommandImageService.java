@@ -58,16 +58,6 @@ public interface ICommandImageService {
 	public static final int TYPE_HOVER = CommandImageManager.TYPE_HOVER;
 
 	/**
-	 * Retrieves the image associated with the given category.
-	 * 
-	 * @param categoryId
-	 *            The identifier to find; must not be <code>null</code>.
-	 * @return An image appropriate for the given category; may be
-	 *         <code>null</code>.
-	 */
-	public ImageDescriptor getCategoryImageDescriptor(String categoryId);
-
-	/**
 	 * Retrieves the default image associated with the given command in the
 	 * default style.
 	 * 

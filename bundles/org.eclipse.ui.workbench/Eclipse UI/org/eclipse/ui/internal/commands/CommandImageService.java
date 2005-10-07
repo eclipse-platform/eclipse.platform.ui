@@ -63,11 +63,6 @@ public final class CommandImageService implements ICommandImageService {
 		this.commandService = commandService;
 	}
 
-	public final ImageDescriptor getCategoryImageDescriptor(
-			final String categoryId) {
-		return commandImageManager.getCategoryImageDescriptor(categoryId);
-	}
-
 	public final ImageDescriptor getImageDescriptor(final String commandId) {
 		return commandImageManager.getImageDescriptor(commandId);
 	}
