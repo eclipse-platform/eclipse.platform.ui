@@ -2,7 +2,6 @@
 	<target name="init">
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
-		<property name="tempdir" value="../../tmp" />
 		<property name="plugin"  value="org.eclipse.ui.workbench.texteditor" />
 		<property name="plugin_version"  value="_3.1.0" />
 		<property name="dest"  value="${destdir}/${plugin}${plugin_version}" />
@@ -14,23 +13,18 @@
 	</target>
 
 	<target name="export" depends="build">
-		<delete dir="${tempdir}" />
-		<mkdir dir="${tempdir}" />
 		<mkdir dir="${destdir}" />
 		<delete file="${destjar}" />
-		<zip zipfile="${tempdir}/src.zip">
-		    <fileset dir="src" />
-  		</zip>		
 		<zip zipfile="${destjar}">
 			<fileset dir=".">
 			  <include name="plugin.xml" />
 			  <include name="plugin.properties" />
 			  <include name="META-INF/**" />
 			  <include name="icons/**" />
+			  <include name="schema/**" />
+			  <include name="src/**" />
 			</fileset>
 			<fileset dir="bin" />
-			<fileset file="${tempdir}/src.zip" />
 		</zip>
-		<delete dir="${tempdir}" />
 	</target>
 </project>
