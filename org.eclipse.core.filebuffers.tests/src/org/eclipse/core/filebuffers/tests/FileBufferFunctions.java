@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
-import java.io.File;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import junit.framework.TestCase;
+
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.IPath;
 
@@ -94,9 +97,12 @@ public abstract class FileBufferFunctions extends TestCase {
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
 			assertTrue(fileBuffer.isSynchronized());
-			File file= FileBuffers.getSystemFileAtLocation(fPath);
-			boolean modified= file.setLastModified(1000);
-			assertEquals(modified, !fileBuffer.isSynchronized());
+			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(fPath);
+			IFileInfo fileInfo= fileStore.fetchInfo();
+			fileInfo.setLastModified(1000);
+			fileStore.putInfo(fileInfo, IFileStoreConstants.SET_LAST_MODIFIED, null);
+			long lastModified= fileStore.fetchInfo().getLastModified();
+			assertTrue(lastModified == IFileStoreConstants.NONE || !fileBuffer.isSynchronized());
 			
 		} finally {
 			fManager.disconnect(fPath, null);
@@ -152,13 +158,14 @@ public abstract class FileBufferFunctions extends TestCase {
 		fManager.connect(fPath, null);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
-			File file= FileBuffers.getSystemFileAtLocation(fPath);
-			
 			long modificationStamp= fileBuffer.getModificationStamp();
-			assertEquals(modificationStamp != IResource.NULL_STAMP, file.exists());
-			boolean modified= file.setLastModified(1000);
-			assertEquals(modified, modificationStamp != fileBuffer.getModificationStamp());
-			
+			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(fPath);
+			IFileInfo fileInfo= fileStore.fetchInfo();
+			assertEquals(modificationStamp != IResource.NULL_STAMP, fileInfo.exists());
+			fileInfo.setLastModified(1000);
+			fileStore.putInfo(fileInfo, IFileStoreConstants.SET_LAST_MODIFIED, null);
+			long lastModified= fileStore.fetchInfo().getLastModified();
+			assertTrue(lastModified == IFileStoreConstants.NONE || modificationStamp != fileBuffer.getModificationStamp());
 		} finally {
 			fManager.disconnect(fPath, null);
 		}		
@@ -177,8 +184,10 @@ public abstract class FileBufferFunctions extends TestCase {
 			String originalContent= document.get();
 			document.replace(document.getLength(), 0, "appendix");
 			// invalidate synchronization state
-			File file= FileBuffers.getSystemFileAtLocation(fPath);
-			file.setLastModified(1000);
+			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(fPath);
+			IFileInfo fileInfo= fileStore.fetchInfo();
+			fileInfo.setLastModified(1000);
+			fileStore.putInfo(fileInfo, IFileStoreConstants.SET_LAST_MODIFIED, null);
 			//revert
 			fileBuffer.revert(null);
 			// check assertions

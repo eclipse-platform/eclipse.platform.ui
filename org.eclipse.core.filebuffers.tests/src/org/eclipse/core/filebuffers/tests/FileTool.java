@@ -31,6 +31,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+
 
 public class FileTool {
 	
@@ -222,6 +224,11 @@ public class FileTool {
 			} catch (IOException e) {
 			}
 		}
+	}
+	
+	public static void delete(IPath path) throws CoreException {
+		File file= FileBuffers.getSystemFileAtLocation(path);
+		delete(file);
 	}
 	
 	public static void delete(File file) throws CoreException {

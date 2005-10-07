@@ -11,8 +11,14 @@
 package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.osgi.framework.Bundle;
+
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -39,9 +45,8 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		File file= FileBuffers.getSystemFileAtLocation(getPath());
-		FileTool.delete(file);
-		file= fExternalFile;
+		FileTool.delete(getPath());
+		File file= fExternalFile;
 		FileTool.delete(file); // externalResources/linkedFolderTarget/FileInLinkedFolder
 		file= file.getParentFile();
 		FileTool.delete(file); // externalResources/linkedFolderTarget
@@ -109,9 +114,22 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#modifyUnderlyingFile()
 	 */
 	protected boolean modifyUnderlyingFile() throws Exception {
-		File file= FileBuffers.getSystemFileAtLocation(getPath());
-		FileTool.write(file.getAbsolutePath(), new StringBuffer("Changed content of file in linked folder"));
-		file.setLastModified(1000);
+		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
+		assertTrue(fileStore.fetchInfo().exists());
+		OutputStream out= fileStore.openOutputStream(IFileStoreConstants.NONE, null);
+		try {
+			out.write(new String("Changed content of file in linked folder").getBytes());
+			out.flush();
+		} catch (IOException x) {
+			fail();
+		} finally {
+			out.close();
+		}
+		IFileInfo fileInfo= fileStore.fetchInfo();
+		fileInfo.setLastModified(1000);
+		fileStore.putInfo(fileInfo, IFileStoreConstants.SET_LAST_MODIFIED, null);
+
+		
 		IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		iFile.refreshLocal(IResource.DEPTH_INFINITE, null);
 		return true;

@@ -31,9 +31,8 @@ public class FileBuffersForExternalFiles extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		File file= FileBuffers.getSystemFileAtLocation(getPath());
-		FileTool.delete(file);
-		FileTool.delete(file.getParentFile());
+		FileTool.delete(getPath());
+		FileTool.delete(FileBuffers.getSystemFileAtLocation(getPath()).getParentFile());
 		super.tearDown();
 	}
 	

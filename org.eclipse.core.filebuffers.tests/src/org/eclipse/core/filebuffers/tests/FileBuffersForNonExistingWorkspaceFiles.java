@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
-import java.io.File;
-
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileStoreConstants;
 
@@ -31,8 +29,7 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		File file= FileBuffers.getSystemFileAtLocation(getPath());
-		FileTool.delete(file);
+		FileTool.delete(getPath());
 		super.tearDown();
 	}
 	

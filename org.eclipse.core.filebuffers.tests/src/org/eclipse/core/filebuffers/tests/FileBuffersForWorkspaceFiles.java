@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileStoreConstants;
 
@@ -38,8 +38,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  */
 public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	
-	private static final boolean USE_ECLIPSE_FS= false;
-
 	protected IPath createPath(IProject project) throws Exception {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
 		IFile file= ResourceHelper.createFile(folder, "WorkspaceFile", "content");
@@ -92,29 +90,22 @@ public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#modifyUnderlyingFile()
 	 */
 	protected boolean modifyUnderlyingFile() throws Exception {
-		if (USE_ECLIPSE_FS) {
-			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
-			assertTrue(fileStore.fetchInfo().exists());
-			OutputStream out= fileStore.openOutputStream(IFileStoreConstants.NONE, null);
-			try {
-				out.write(new String("Changed content of workspace file").getBytes());
-				out.flush();
-			} catch (IOException x) {
-				fail();
-			} finally {
-				out.close();
-			}
-			fileStore.fetchInfo().setLastModified(1000);
-			IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
-			assertTrue(iFile.exists() && iFile.getFullPath().equals(getPath()));
-			iFile.refreshLocal(IResource.DEPTH_INFINITE, null);
-			return true;
+		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
+		assertTrue(fileStore.fetchInfo().exists());
+		OutputStream out= fileStore.openOutputStream(IFileStoreConstants.NONE, null);
+		try {
+			out.write(new String("Changed content of workspace file").getBytes());
+			out.flush();
+		} catch (IOException x) {
+			fail();
+		} finally {
+			out.close();
 		}
-		
-		File file= FileBuffers.getSystemFileAtLocation(getPath());
-		FileTool.write(file.getAbsolutePath(), new StringBuffer("Changed content of workspace file"));
-		file.setLastModified(1000);
+		IFileInfo fileInfo= fileStore.fetchInfo();
+		fileInfo.setLastModified(1000);
+		fileStore.putInfo(fileInfo, IFileStoreConstants.SET_LAST_MODIFIED, null);
 		IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
+		assertTrue(iFile.exists() && iFile.getFullPath().equals(getPath()));
 		iFile.refreshLocal(IResource.DEPTH_INFINITE, null);
 		return true;
 	}
