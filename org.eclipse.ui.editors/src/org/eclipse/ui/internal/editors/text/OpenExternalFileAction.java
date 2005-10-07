@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -20,6 +18,11 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
+import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -120,10 +123,11 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 			int numberOfFilesNotFound= 0;
 			StringBuffer notFound= new StringBuffer();
 			for (int i= 0; i < names.length; i++) {
-				File file= new File(fFilterPath + File.separator + names[i]);
-				if (file.isFile() && file.exists()) {
-					IEditorInput input= createEditorInput(file);
-					String editorId= getEditorId(file);
+				IFileStore fileStore= FileSystemCore.getLocalFileSystem().getStore(new Path(fFilterPath));
+				fileStore= fileStore.getChild(names[i]);
+				if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
+					IEditorInput input= createEditorInput(fileStore);
+					String editorId= getEditorId(fileStore);
 					IWorkbenchPage page= fWindow.getActivePage();
 					try {
 						page.openEditor(input, editorId);
@@ -133,7 +137,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 				} else {
 					if (++numberOfFilesNotFound > 1)
 						notFound.append('\n');
-					notFound.append(file.getName());
+					notFound.append(fileStore.getName());
 				}
 			}
 
@@ -149,7 +153,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	 * XXX: Requested a helper to get the correct editor descriptor
 	 *		see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=110203
 	 */
-	private String getEditorId(File file) {
+	private String getEditorId(IFileStore file) {
 		IWorkbench workbench= fWindow.getWorkbench();
 		IEditorRegistry editorRegistry= workbench.getEditorRegistry();
 		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(file.getName(), getContentType(file));
@@ -168,15 +172,18 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 		return EditorsUI.DEFAULT_TEXT_EDITOR_ID;
 	}
 
-	private IContentType getContentType (File file) {
-		if (file == null)
+	private IContentType getContentType (IFileStore fileStore) {
+		if (fileStore == null)
 			return null;
 
 		InputStream stream= null;
 		try {
-			stream= new FileInputStream(file);
-			return Platform.getContentTypeManager().findContentTypeFor(stream, file.getName());
+			stream= fileStore.openInputStream(IFileStoreConstants.NONE, null);
+			return Platform.getContentTypeManager().findContentTypeFor(stream, fileStore.getName());
 		} catch (IOException x) {
+			EditorsPlugin.log(x);
+			return null;
+		} catch (CoreException x) {
 			EditorsPlugin.log(x);
 			return null;
 		} finally {
@@ -189,17 +196,16 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 		}
 	}
 
-	private IEditorInput createEditorInput(File file) {
-		IFile workspaceFile= getWorkspaceFile(file);
+	private IEditorInput createEditorInput(IFileStore fileStore) {
+		IFile workspaceFile= getWorkspaceFile(fileStore);
 		if (workspaceFile != null)
 			return new FileEditorInput(workspaceFile);
-		return new JavaFileEditorInput(file);
+		return new JavaFileEditorInput(fileStore);
 	}
 
-	private IFile getWorkspaceFile(File file) {
+	private IFile getWorkspaceFile(IFileStore fileStore) {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IPath location= Path.fromOSString(file.getAbsolutePath());
-		IFile[] files= workspace.getRoot().findFilesForLocation(location);
+		IFile[] files= workspace.getRoot().findFilesForLocation(new Path(fileStore.toURI().getPath()));
 		files= filterNonExistentFiles(files);
 		if (files == null || files.length == 0)
 			return null;

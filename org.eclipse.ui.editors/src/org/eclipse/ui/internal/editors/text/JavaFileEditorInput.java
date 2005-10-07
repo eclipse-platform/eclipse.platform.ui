@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import java.io.File;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+
+import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.editors.text.ILocationProvider;
 
@@ -64,19 +67,20 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
 		}
 	}
 
-	private File fFile;
+	private IFileStore fFileStore;
 	private WorkbenchAdapter fWorkbenchAdapter= new WorkbenchAdapter();
 
-	public JavaFileEditorInput(File file) {
-		super();
-		fFile= file;
+	public JavaFileEditorInput(IFileStore fileStore) {
+		Assert.isNotNull(fileStore);
+		Assert.isTrue(IFileStoreConstants.SCHEME_FILE.equals(fileStore.getFileSystem().getScheme()));
+		fFileStore= fileStore;
 		fWorkbenchAdapter= new WorkbenchAdapter();
 	}
 	/*
 	 * @see org.eclipse.ui.IEditorInput#exists()
 	 */
 	public boolean exists() {
-		return fFile.exists();
+		return fFileStore.fetchInfo().exists();
 	}
 
 	/*
@@ -90,7 +94,7 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
 	 * @see org.eclipse.ui.IEditorInput#getName()
 	 */
 	public String getName() {
-		return fFile.getName();
+		return fFileStore.getName();
 	}
 
 	/*
@@ -104,7 +108,7 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
-		return fFile.getAbsolutePath();
+		return fFileStore.toString();
 	}
 
 	/*
@@ -122,10 +126,9 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
 	 * @see org.eclipse.ui.editors.text.ILocationProvider#getPath(java.lang.Object)
 	 */
 	public IPath getPath(Object element) {
-		if (element instanceof JavaFileEditorInput) {
-			JavaFileEditorInput input= (JavaFileEditorInput) element;
-			return Path.fromOSString(input.fFile.getAbsolutePath());
-		}
+		if (element instanceof JavaFileEditorInput)
+			return ((JavaFileEditorInput)element).getPath();
+		
 		return null;
 	}
 
@@ -134,7 +137,7 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
      * @since 3.1
      */
     public IPath getPath() {
-        return Path.fromOSString(fFile.getAbsolutePath());
+    	return new Path(fFileStore.toURI().getPath());
     }
 
 	/*
@@ -146,7 +149,7 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
 
 		if (o instanceof JavaFileEditorInput) {
 			JavaFileEditorInput input= (JavaFileEditorInput) o;
-			return fFile.equals(input.fFile);
+			return fFileStore.equals(input.fFileStore);
 		}
 
         if (o instanceof IPathEditorInput) {
@@ -161,6 +164,6 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return fFile.hashCode();
+		return fFileStore.hashCode();
 	}
 }
