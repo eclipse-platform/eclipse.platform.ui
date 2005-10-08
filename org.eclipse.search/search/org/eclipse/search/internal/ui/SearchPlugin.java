@@ -15,14 +15,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -31,28 +25,29 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
 
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.search.ui.IContextMenuConstants;
-import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
+
+import org.osgi.framework.BundleContext;
 
 /**
  * The plug-in runtime class for Search plug-in
@@ -78,14 +73,14 @@ public class SearchPlugin extends AbstractUIPlugin {
 	private List fSorterDescriptors;
 	
 
-	public SearchPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public SearchPlugin() {
+		super();
 		Assert.isTrue(fgSearchPlugin == null);
 		fgSearchPlugin= this;
 	}
 
 	/**
-	 * Returns the search plugin instance.
+	 * @return Returns the search plugin instance.
 	 */
 	public static SearchPlugin getDefault() {
 		return fgSearchPlugin;
@@ -100,7 +95,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	
 	/**
 	 * Returns the active workbench window.
-	 * <code>null</code> if the active window is not a workbench window
+	 * @return returns <code>null</code> if the active window is not a workbench window
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		IWorkbenchWindow window= fgSearchPlugin.getWorkbench().getActiveWorkbenchWindow();
@@ -113,8 +108,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 			});
 			return windowRef.window;
 		}
-		else
-			return window;
+		return window;
 	}
 
 	private static class WindowRef {
@@ -146,7 +140,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the shell of the active workbench window.
+	 * @return Returns the shell of the active workbench window.
 	 */
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow window= getActiveWorkbenchWindow();
@@ -163,63 +157,20 @@ public class SearchPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the active workbench window's currrent page.
+	 * @return  Returns the active workbench window's currrent page.
 	 */
 	public static IWorkbenchPage getActivePage() {
 		return getActiveWorkbenchWindow().getActivePage();
 	} 
 
 	/**
-	 * Returns the workbench from which this plugin has been loaded.
+	 * @return Returns the workbench from which this plugin has been loaded.
 	 */	
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	/**
-	 * Activates the search result view in the active page.
-	 * This call has no effect, if the search result view is
-	 * already activated.
-	 *
-	 * @return <code>true</code> if the search result view could be activated
-	 */
-	public static boolean activateSearchResultView() {
 
-		String defaultPerspectiveId= SearchUI.getDefaultPerspectiveId();
-		if (defaultPerspectiveId != null) {
-			IWorkbenchWindow window= window= getActiveWorkbenchWindow();
-			if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
-				try {
-					PlatformUI.getWorkbench().showPerspective(defaultPerspectiveId, window);
-				} catch (WorkbenchException ex) {
-					// show view in current perspective
-				}
-			}
-		}
-
-		try {
-			IViewPart viewPart= getActivePage().findView(SearchUI.SEARCH_RESULT_VIEW_ID);
-			if (viewPart == null || SearchPreferencePage.isViewBroughtToFront()) {
-				return (getActivePage().showView(SearchUI.SEARCH_RESULT_VIEW_ID) != null);
-			}
-			return true;
-		} catch (PartInitException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message); 
-			return false;
-		}	
-	}
-
-	/**
-	 * Returns the search result view of the active workbench window. Returns <code>
-	 * null</code> if the active workbench window doesn't have any search result
-	 * view.
-	 */
-	public static ISearchResultView getSearchResultView() {
-		IViewPart part= getActivePage().findView(SearchUI.SEARCH_RESULT_VIEW_ID);
-		if (part instanceof ISearchResultView)
-			return (ISearchResultView) part;
-		return null;	
-	}
 
 	static boolean setAutoBuilding(boolean state) {
 		IWorkspaceDescription workspaceDesc= getWorkspace().getDescription();
@@ -236,31 +187,42 @@ public class SearchPlugin extends AbstractUIPlugin {
 		}
 		return isAutobuilding;
 	}
-
+	
 	/**
-	 * Shuts down this plug-in.
+	 * This method is called upon plug-in activation
+	 * @param context 
+	 * @throws Exception 
 	 */
-	public void shutdown() throws CoreException {
-		InternalSearchUI.shutdown();
-		getWorkspace().removeResourceChangeListener(SearchManager.getDefault());
-		super.shutdown();
-		fgSearchPlugin = null;
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 	}
 
 	/**
-	 * Returns all search pages contributed to the workbench.
+	 * This method is called when the plug-in is stopped
+	 * @param context 
+	 * @throws Exception 
+	 */
+	public void stop(BundleContext context) throws Exception {
+		InternalSearchUI.shutdown();
+		getWorkspace().removeResourceChangeListener(SearchManager.getDefault());
+		super.stop(context);
+		fgSearchPlugin= null;
+	}
+
+	/**
+	 * @return Returns all search pages contributed to the workbench.
 	 */
 	public List getSearchPageDescriptors() {
 		if (fPageDescriptors == null) {
-			IPluginRegistry registry= Platform.getPluginRegistry();
-			IConfigurationElement[] elements= registry.getConfigurationElementsFor(NewSearchUI.PLUGIN_ID, SEARCH_PAGE_EXTENSION_POINT);
+			IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(NewSearchUI.PLUGIN_ID, SEARCH_PAGE_EXTENSION_POINT);
 			fPageDescriptors= createSearchPageDescriptors(elements);
 		}	
 		return fPageDescriptors;
 	} 
 
 	/**
-	 * Returns all search pages contributed to the workbench.
+	 * @param pageId the page id
+	 * @return Returns all search pages contributed to the workbench.
 	 */
 	public List getEnabledSearchPageDescriptors(String pageId) {
 		Iterator iter= getSearchPageDescriptors().iterator();
@@ -274,10 +236,11 @@ public class SearchPlugin extends AbstractUIPlugin {
 	} 
 
 	/**
-	 * Returns the help context ID for the Search view
+	 * @return Returns the help context ID for the Search view
 	 * as provided by the current search page extension.
 	 * 
 	 * @since 3.0
+	 * @deprecated old search
 	 */
 	public String getSearchViewHelpContextId() {
 		Search currentSearch= SearchManager.getDefault().getCurrentSearch();
@@ -290,8 +253,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 					String helpId= desc.getSearchViewHelpContextId();
 					if (helpId == null)
 						return ISearchHelpContextIds.SEARCH_VIEW;
-					else
-						return desc.getSearchViewHelpContextId();
+					return desc.getSearchViewHelpContextId();
 				}
 			}
 		}
@@ -300,6 +262,8 @@ public class SearchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Creates all necessary search page nodes.
+	 * @param elements the configuration elements
+	 * @return the created SearchPageDescriptor
 	 */
 	private List createSearchPageDescriptors(IConfigurationElement[] elements) {
 		List result= new ArrayList(5);
@@ -315,12 +279,11 @@ public class SearchPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns all sorters contributed to the workbench.
+	 * @return Returns all sorters contributed to the workbench.
 	 */
 	public List getSorterDescriptors() {
 		if (fSorterDescriptors == null) {
-			IPluginRegistry registry= Platform.getPluginRegistry();
-			IConfigurationElement[] elements= registry.getConfigurationElementsFor(SearchUI.PLUGIN_ID, SORTER_EXTENSION_POINT);
+			IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(NewSearchUI.PLUGIN_ID, SORTER_EXTENSION_POINT);
 			fSorterDescriptors= createSorterDescriptors(elements);
 		}	
 		return fSorterDescriptors;
@@ -328,6 +291,8 @@ public class SearchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Creates all necessary sorter description nodes.
+	 * @param elements the configuration elements
+	 * @return the created SorterDescriptor
 	 */
 	private List createSorterDescriptors(IConfigurationElement[] elements) {
 		List result= new ArrayList(5);
@@ -338,9 +303,20 @@ public class SearchPlugin extends AbstractUIPlugin {
 		}
 		return result;
 	}
+	
+	public IDialogSettings getDialogSettingsSection(String name) {
+		IDialogSettings dialogSettings= getDialogSettings();
+		IDialogSettings section= dialogSettings.getSection(name);
+		if (section == null) {
+			section= dialogSettings.addNewSection(name);
+		}
+		return section;
+	}
+	
 
 	/**
 	 * Log status to platform log
+	 * @param status the status to log
 	 */	
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
@@ -351,11 +327,12 @@ public class SearchPlugin extends AbstractUIPlugin {
 	}
 	
 	public static String getID() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return NewSearchUI.PLUGIN_ID;
 	}
 
 	/**
 	 * Creates the Search plugin standard groups in a context menu.
+	 * @param menu the menu to create in
 	 */
 	public static void createStandardGroups(IMenuManager menu) {
 		if (!menu.isEmpty())

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.search; singleton:=true
 Bundle-Version: 3.1.0
-Bundle-Activator: org.eclipse.core.internal.compatibility.PluginActivator
+Bundle-Activator: org.eclipse.search.internal.ui.SearchPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.search.internal.core;x-internal:=true,
@@ -16,13 +16,11 @@ Export-Package: org.eclipse.search.internal.core;x-internal:=true,
  org.eclipse.search2.internal.ui;x-internal:=true,
  org.eclipse.search2.internal.ui.basic.views;x-internal:=true,
  org.eclipse.search2.internal.ui.text;x-internal:=true
-Require-Bundle: 
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.jface.text,
- org.eclipse.ui.editors,
- org.eclipse.core.runtime.compatibility
+ org.eclipse.ui.editors
 Eclipse-LazyStart: true
-Plugin-Class: org.eclipse.search.internal.ui.SearchPlugin

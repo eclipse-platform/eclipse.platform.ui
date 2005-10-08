@@ -10,10 +10,19 @@
  *******************************************************************************/
 package org.eclipse.search.ui;
 
+import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+
 import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 
 /**
  * The central class for access to the Search Plug-in's User Interface. 
@@ -102,7 +111,28 @@ public final class SearchUI {
 	 * @deprecated Use {@link NewSearchUI#activateSearchResultView()} instead.
 	 */
 	public static boolean activateSearchResultView() {
-		return SearchPlugin.activateSearchResultView();	
+		String defaultPerspectiveId= SearchUI.getDefaultPerspectiveId();
+		if (defaultPerspectiveId != null) {
+			IWorkbenchWindow window= SearchPlugin.getActiveWorkbenchWindow();
+			if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
+				try {
+					PlatformUI.getWorkbench().showPerspective(defaultPerspectiveId, window);
+				} catch (WorkbenchException ex) {
+					// show view in current perspective
+				}
+			}
+		}
+
+		try {
+			IViewPart viewPart= SearchPlugin.getActivePage().findView(SearchUI.SEARCH_RESULT_VIEW_ID);
+			if (viewPart == null || SearchPreferencePage.isViewBroughtToFront()) {
+				return (SearchPlugin.getActivePage().showView(SearchUI.SEARCH_RESULT_VIEW_ID) != null);
+			}
+			return true;
+		} catch (PartInitException ex) {
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message); 
+			return false;
+		}	
 	}		
 
 	/**
@@ -118,7 +148,8 @@ public final class SearchUI {
 	 */
 	public static void openSearchDialog(IWorkbenchWindow window, String pageId) {
 		NewSearchUI.openSearchDialog(window, pageId);
-	}		
+	}
+	
 
 	/**
 	 * Returns the search result view of the active page of the
@@ -129,7 +160,10 @@ public final class SearchUI {
 	 * @deprecated Use {@link NewSearchUI#getSearchResultView()} instead.
 	 */
 	public static ISearchResultView getSearchResultView() {
-		return SearchPlugin.getSearchResultView();	
+		IViewPart part= SearchPlugin.getActivePage().findView(SearchUI.SEARCH_RESULT_VIEW_ID);
+		if (part instanceof ISearchResultView)
+			return (ISearchResultView) part;
+		return null;	
 	}
 
 	/**
