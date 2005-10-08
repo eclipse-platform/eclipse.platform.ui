@@ -26,14 +26,14 @@ import org.eclipse.search.ui.ISearchResult;
  * Invoke the resource creation wizard selection Wizard.
  * This action will retarget to the active view.
  */
-class ShowSearchesAction extends Action {
+class ShowSearchHistoryDialogAction extends Action {
 	private SearchView fSearchView;
 
 
 	/*
 	 *	Create a new instance of this class
 	 */
-	public ShowSearchesAction(SearchView searchView) {
+	public ShowSearchHistoryDialogAction(SearchView searchView) {
 		super(SearchMessages.ShowSearchesAction_label); 
 		setToolTipText(SearchMessages.ShowSearchesAction_tooltip); 
 		fSearchView= searchView;
@@ -49,7 +49,7 @@ class ShowSearchesAction extends Action {
 			input.add(search);
 		}
 		
-		SearchesDialog dlg= new SearchesDialog(SearchPlugin.getActiveWorkbenchShell(),input);
+		SearchHistorySelectionDialog dlg= new SearchHistorySelectionDialog(SearchPlugin.getActiveWorkbenchShell(),input);
 		
 		ISearchResult current= fSearchView.getCurrentSearchResult();
 		if (current != null) {

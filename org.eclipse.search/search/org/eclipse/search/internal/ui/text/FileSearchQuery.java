@@ -110,10 +110,10 @@ public class FileSearchQuery implements ISearchQuery {
 			return Messages.format(SearchMessages.FileSearchQuery_singularLabel_fileNameSearch, args); 
 		}
 		if (fSearchString.length() > 0) {
-			Object[] args= { fSearchString, new Integer(nMatches), fScope.getDescription() }; //$NON-NLS-1$
+			Object[] args= { fSearchString, new Integer(nMatches), fScope.getDescription() };
 			return Messages.format(SearchMessages.FileSearchQuery_pluralPattern, args); 
 		}
-		Object[] args= { fScope.getFileNamePatternDescription(), new Integer(nMatches), fScope.getDescription() }; //$NON-NLS-1$
+		Object[] args= { fScope.getFileNamePatternDescription(), new Integer(nMatches), fScope.getDescription() };
 		return Messages.format(SearchMessages.FileSearchQuery_pluralPattern_fileNameSearch, args); 
 	}
 

@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -43,13 +44,14 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 
 import org.eclipse.search.ui.ISearchResult;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ListContentProvider;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
 /**
  * Dialog that shows a list of items with icon and label.
  */
-public class SearchesDialog extends SelectionDialog {
+public class SearchHistorySelectionDialog extends SelectionDialog {
 	
 	private static final int REMOVE_ID= IDialogConstants.CLIENT_ID+1;
 	private static final int WIDTH_IN_CHARACTERS= 55;
@@ -87,12 +89,28 @@ public class SearchesDialog extends SelectionDialog {
 		}
 	}
 
-	public SearchesDialog(Shell parent, List input) {
+	public SearchHistorySelectionDialog(Shell parent, List input) {
 		super(parent);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setTitle(SearchMessages.SearchesDialog_title);  
 		setMessage(SearchMessages.SearchesDialog_message); 
 		fInput= input;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+	 */
+	protected IDialogSettings getDialogBoundsSettings() {
+		return SearchPlugin.getDefault().getDialogSettingsSection("DialogBounds_SearchHistorySelectionDialog"); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
+	 */
+	protected int getDialogBoundsStrategy() {
+		return DIALOG_PERSISTSIZE;
+	}
+	
 	
 	/*
 	 * Overrides method from Dialog

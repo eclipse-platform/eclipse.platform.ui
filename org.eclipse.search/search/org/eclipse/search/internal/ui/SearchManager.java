@@ -44,6 +44,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 /**
  * Manage search results
+ * 	@deprecated old search
  */
 public class SearchManager implements IResourceChangeListener {
 
@@ -75,8 +76,7 @@ public class SearchManager implements IResourceChangeListener {
 	ArrayList getCurrentResults() {
 		if (fCurrentSearch == null)
 			return new ArrayList(0);
-		else
-			return (ArrayList)fCurrentSearch.getResults();
+		return (ArrayList)fCurrentSearch.getResults();
 	}
 
 	public Search getCurrentSearch() {
@@ -235,7 +235,7 @@ public class SearchManager implements IResourceChangeListener {
 		// update viewers
 		iter= fListeners.iterator();
 		if (display != null && !display.isDisposed()) {
-			final Viewer visibleViewer= ((SearchResultView)SearchPlugin.getSearchResultView()).getViewer();
+			final Viewer visibleViewer= ((SearchResultView)SearchUI.getSearchResultView()).getViewer();
 			while (iter.hasNext()) {
 				final SearchResultViewer viewer= (SearchResultViewer)iter.next();
 				display.syncExec(new Runnable() {
@@ -263,8 +263,7 @@ public class SearchManager implements IResourceChangeListener {
 	int getCurrentItemCount() {
 		if (fCurrentSearch != null)
 			return fCurrentSearch.getItemCount();
-		else
-			return 0;
+		return 0;
 	}
 
 	void removeAllResults() {
@@ -285,7 +284,7 @@ public class SearchManager implements IResourceChangeListener {
 		Iterator iter= fListeners.iterator();
 		Display display= getDisplay();
 		if (display != null && !display.isDisposed()) {
-			final Viewer visibleViewer= ((SearchResultView)SearchPlugin.getSearchResultView()).getViewer();
+			final Viewer visibleViewer= ((SearchResultView)SearchUI.getSearchResultView()).getViewer();
 			while (iter.hasNext()) {
 				final SearchResultViewer viewer= (SearchResultViewer)iter.next();
 				display.syncExec(new Runnable() {

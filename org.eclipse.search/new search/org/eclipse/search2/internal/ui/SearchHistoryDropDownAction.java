@@ -27,7 +27,7 @@ import org.eclipse.search.ui.ISearchResult;
 
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
-class SearchDropDownAction extends Action implements IMenuCreator {
+class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 
 
 	public static final int RESULTS_IN_DROP_DOWN= 10;
@@ -35,7 +35,7 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	private Menu fMenu;
 	private SearchView fSearchView;
 	
-	public SearchDropDownAction(SearchView searchView) {
+	public SearchHistoryDropDownAction(SearchView searchView) {
 		setText(SearchMessages.SearchDropDownAction_label); 
 		setToolTipText(SearchMessages.SearchDropDownAction_tooltip); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HISTORY);
@@ -102,6 +102,6 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public void run() {
-		new ShowSearchesAction(fSearchView).run();
+		new ShowSearchHistoryDialogAction(fSearchView).run();
 	}
 }

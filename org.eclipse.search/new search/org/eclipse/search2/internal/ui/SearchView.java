@@ -70,7 +70,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private HashMap fPagesToParts;
 	private HashMap fSearchViewStates;
 	private SearchPageRegistry fSearchViewPageService;
-	private SearchDropDownAction fSearchesDropDownAction;
+	private SearchHistoryDropDownAction fSearchesDropDownAction;
 	private ISearchResult fCurrentSearch;
 	private DummyPart fDefaultPart;
 	private SearchAgainAction fSearchAgainAction;
@@ -331,13 +331,13 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private void initializeToolBar() {
 		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
 		createToolBarGroups(tbm);
-		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fCancelAction); //$NON-NLS-1$
-		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchesDropDownAction); //$NON-NLS-1$
+		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fCancelAction);
+		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchesDropDownAction);
 		getViewSite().getActionBars().updateActionBars();
 	}
 		
 	private void createActions() {
-		fSearchesDropDownAction= new SearchDropDownAction(this);
+		fSearchesDropDownAction= new SearchHistoryDropDownAction(this);
 		fSearchesDropDownAction.setEnabled(InternalSearchUI.getInstance().getSearchManager().getQueries().length != 0);
 		fSearchAgainAction= new SearchAgainAction(this);
 		// hackery to get the shortcut to show up
@@ -405,7 +405,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	public void saveState(IMemento memento) {
 		for (Iterator pages = fPagesToParts.keySet().iterator(); pages.hasNext(); ) {
 			ISearchResultPage page = (ISearchResultPage) pages.next();
-			IMemento child= memento.createChild(MEMENTO_TYPE, page.getID()); //$NON-NLS-1$
+			IMemento child= memento.createChild(MEMENTO_TYPE, page.getID());
 			page.saveState(child);
 		}
 	}

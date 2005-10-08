@@ -59,7 +59,7 @@ public class FileLabelProvider extends LabelProvider {
 
 	public String getText(Object element) {
 		if (!(element instanceof IResource))
-			return null; //$NON-NLS-1$
+			return null;
 
 		IResource resource= (IResource)element;
 		String text= null;
@@ -103,7 +103,7 @@ public class FileLabelProvider extends LabelProvider {
 
 	public Image getImage(Object element) {
 		if (!(element instanceof IResource))
-			return null; //$NON-NLS-1$
+			return null;
 
 		IResource resource= (IResource)element;
 		Image image= fLabelProvider.getImage(resource);

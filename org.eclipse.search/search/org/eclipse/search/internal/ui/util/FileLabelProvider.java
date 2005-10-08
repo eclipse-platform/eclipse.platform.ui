@@ -28,7 +28,9 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 
 import org.eclipse.search.internal.ui.SearchMessages;
 
-
+/**
+ * @deprecated Old search view
+ */
 public class FileLabelProvider extends LabelProvider {
 		
 	public static final int SHOW_LABEL= 1;

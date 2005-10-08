@@ -942,10 +942,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @param tbm the tool bar manager representing the view's toolbar
 	 */
 	protected void fillToolbar(IToolBarManager tbm) {
-		tbm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction); //$NON-NLS-1$
-		tbm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction); //$NON-NLS-1$
-		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveSelectedMatches); //$NON-NLS-1$
-		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction); //$NON-NLS-1$
+		tbm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction);
+		tbm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction);
+		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveSelectedMatches);
+		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction);
 		IActionBars actionBars = getSite().getActionBars();
 		getSite().getWorkbenchWindow();
 		if (actionBars != null) {

@@ -22,7 +22,7 @@ public class SetLayoutAction extends Action {
 	public SetLayoutAction(AbstractTextSearchViewPage page, String label, String tooltip, int layout) {
 		super(label,  IAction.AS_RADIO_BUTTON);
 		fPage= page;
-		setToolTipText(tooltip); //$NON-NLS-1$
+		setToolTipText(tooltip);
 		fLayout= layout;
 	}
 	

@@ -40,7 +40,7 @@ public class OpenFileSearchPageAction implements IWorkbenchWindowActionDelegate 
 			logErrorMessage("Could not open the search dialog - for some reason the window handle was null"); //$NON-NLS-1$
 			return;
 		}
-		NewSearchUI.openSearchDialog(fWindow, TEXT_SEARCH_PAGE_ID); //$NON-NLS-1$
+		NewSearchUI.openSearchDialog(fWindow, TEXT_SEARCH_PAGE_ID);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
