@@ -157,6 +157,13 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		initializeMarkers(entries);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+	 */
+	protected IDialogSettings getDialogBoundsSettings() {
+		return SearchPlugin.getDefault().getDialogSettingsSection("DialogBounds_ReplaceDialog2"); //$NON-NLS-1$
+	}
+		
 	private FileSearchQuery getQuery() {
 		return (FileSearchQuery) fPage.getInput().getQuery();
 	}
@@ -750,7 +757,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	public static SubjectControlContentAssistant createContentAssistant(boolean isFind) {
 		final SubjectControlContentAssistant contentAssistant= new SubjectControlContentAssistant();
 		
-		contentAssistant.setRestoreCompletionProposalSize(SearchPlugin.getDefault().getDialogSettings()); //$NON-NLS-1$
+		contentAssistant.setRestoreCompletionProposalSize(SearchPlugin.getDefault().getDialogSettings());
 		
 		IContentAssistProcessor processor= new RegExContentAssistProcessor(isFind);
 		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);

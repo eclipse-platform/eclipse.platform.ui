@@ -279,7 +279,7 @@ public abstract class ExtendedDialogWindow extends Dialog implements IRunnableCo
 	//---- UI state save and restoring ---------------------------------------------
 	
 	private void restoreUIState(HashMap state) {
-		restoreEnableState(fCancelButton, state); //$NON-NLS-1$
+		restoreEnableState(fCancelButton, state);
 		for (Iterator actionButtons = fActionButtons.iterator(); actionButtons.hasNext(); ) {
 			Button button = (Button) actionButtons.next();
 			restoreEnableState(button, state);
@@ -301,7 +301,7 @@ public abstract class ExtendedDialogWindow extends Dialog implements IRunnableCo
 	
 	private HashMap saveUIState(boolean keepCancelEnabled) {
 		HashMap savedState= new HashMap(10);
-		saveEnableStateAndSet(fCancelButton, savedState, keepCancelEnabled); //$NON-NLS-1$
+		saveEnableStateAndSet(fCancelButton, savedState, keepCancelEnabled);
 		for (Iterator actionButtons = fActionButtons.iterator(); actionButtons.hasNext(); ) {
 			Button button = (Button) actionButtons.next();
 			saveEnableStateAndSet(button, savedState, false);
