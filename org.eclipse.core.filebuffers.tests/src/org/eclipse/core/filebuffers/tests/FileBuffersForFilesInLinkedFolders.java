@@ -16,9 +16,9 @@ import java.io.OutputStream;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -116,7 +116,7 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 	protected boolean modifyUnderlyingFile() throws Exception {
 		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
 		assertTrue(fileStore.fetchInfo().exists());
-		OutputStream out= fileStore.openOutputStream(IFileStoreConstants.NONE, null);
+		OutputStream out= fileStore.openOutputStream(EFS.NONE, null);
 		try {
 			out.write(new String("Changed content of file in linked folder").getBytes());
 			out.flush();
@@ -127,7 +127,7 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 		}
 		IFileInfo fileInfo= fileStore.fetchInfo();
 		fileInfo.setLastModified(1000);
-		fileStore.putInfo(fileInfo, IFileStoreConstants.SET_LAST_MODIFIED, null);
+		fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 
 		
 		IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());

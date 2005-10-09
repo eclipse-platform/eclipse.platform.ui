@@ -18,9 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -187,7 +187,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			if (fileInfo.exists()) {
 				InputStream is= null;
 				try {
-					is= externalFile.openInputStream(IFileStoreConstants.NONE, null);
+					is= externalFile.openInputStream(EFS.NONE, null);
 					IContentDescription description= manager.getDescriptionFor(is, externalFile.getName(), IContentDescription.ALL);
 					if (description != null) {
 						IContentType type= description.getContentType();

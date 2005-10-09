@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.FileSystemCore;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -178,7 +178,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 
 		InputStream stream= null;
 		try {
-			stream= fileStore.openInputStream(IFileStoreConstants.NONE, null);
+			stream= fileStore.openInputStream(EFS.NONE, null);
 			return Platform.getContentTypeManager().findContentTypeFor(stream, fileStore.getName());
 		} catch (IOException x) {
 			EditorsPlugin.log(x);

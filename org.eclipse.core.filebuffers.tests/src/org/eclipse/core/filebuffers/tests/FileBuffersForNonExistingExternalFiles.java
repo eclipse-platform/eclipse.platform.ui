@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -45,7 +45,7 @@ public class FileBuffersForNonExistingExternalFiles extends FileBufferFunctions 
 	protected void setReadOnly(boolean state) throws Exception {
 		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
 		assertNotNull(fileStore);
-		fileStore.fetchInfo().setAttribute(IFileStoreConstants.ATTRIBUTE_READ_ONLY, state);
+		fileStore.fetchInfo().setAttribute(EFS.ATTRIBUTE_READ_ONLY, state);
 	}
 
 	/*

@@ -13,9 +13,9 @@ package org.eclipse.core.filebuffers;
 
 import java.io.File;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.FileSystemCore;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
 
 import org.eclipse.core.runtime.CoreException;
@@ -150,7 +150,7 @@ public final class FileBuffers {
 	 */
 	public static File getSystemFileAtLocation(IPath location) {
 		IFileStore store= getFileStoreAtLocation(location);
-		if (store != null && IFileStoreConstants.SCHEME_FILE.equals(store.getFileSystem().getScheme()))
+		if (store != null && EFS.SCHEME_FILE.equals(store.getFileSystem().getScheme()))
 			return new File(store.toURI());
 		return null;
 	}	

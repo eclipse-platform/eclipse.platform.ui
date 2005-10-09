@@ -19,9 +19,9 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -174,7 +174,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	private InputStream getFileContents(IFileStore file, IProgressMonitor monitor) {
 		try {
 			if (file != null)
-				return file.openInputStream(IFileStoreConstants.NONE, null);
+				return file.openInputStream(EFS.NONE, null);
 		} catch (CoreException e) {
 		}
 		return null;
@@ -182,7 +182,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 
 	private void setFileContents(InputStream stream, boolean overwrite, IProgressMonitor monitor) {
 		try {
-			OutputStream out= fFileStore.openOutputStream(IFileStoreConstants.NONE, null);
+			OutputStream out= fFileStore.openOutputStream(EFS.NONE, null);
 			try {
 				byte[] buffer= new byte[8192];
 				while (true) {
@@ -304,7 +304,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 					}
 				}
 			}
-			stream= fFileStore.openInputStream(IFileStoreConstants.NONE, null);
+			stream= fFileStore.openInputStream(EFS.NONE, null);
 			IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFileStore.getName(), NO_PROPERTIES);
 			if (desc != null && desc.getContentType() != null)
 				return desc.getContentType();
@@ -438,8 +438,8 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			} else {
 
 				fFileStore= FileBuffers.getFileStoreAtLocation(getLocation());
-				fFileStore.getParent().mkdir(IFileStoreConstants.NONE, null);
-				OutputStream out= fFileStore.openOutputStream(IFileStoreConstants.NONE, null);
+				fFileStore.getParent().mkdir(EFS.NONE, null);
+				OutputStream out= fFileStore.openOutputStream(EFS.NONE, null);
 				try {
 					out.write(bytes);
 					out.flush();

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -72,7 +72,7 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
 
 	public JavaFileEditorInput(IFileStore fileStore) {
 		Assert.isNotNull(fileStore);
-		Assert.isTrue(IFileStoreConstants.SCHEME_FILE.equals(fileStore.getFileSystem().getScheme()));
+		Assert.isTrue(EFS.SCHEME_FILE.equals(fileStore.getFileSystem().getScheme()));
 		fFileStore= fileStore;
 		fWorkbenchAdapter= new WorkbenchAdapter();
 	}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.FileSystemCore;
 import org.eclipse.core.filesystem.IFileInfo;
 
@@ -512,7 +513,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	public boolean isCommitable() {
 		try {
 			IFileInfo info= FileSystemCore.getStore(fFile.getLocationURI()).fetchInfo();
-			return info.exists() && !info.isReadOnly();
+			return info.exists() && !info.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 		} catch (CoreException e) {
 			return false;
 		}

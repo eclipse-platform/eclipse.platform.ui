@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
@@ -258,7 +259,7 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	 */
 	public boolean isCommitable() {
 		IFileInfo info= fFileStore.fetchInfo();
-		return info.exists() && !info.isReadOnly();
+		return info.exists() && !info.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 	}
 
 	/*

@@ -15,9 +15,9 @@ import java.io.PrintWriter;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileStoreConstants;
 
 import org.eclipse.core.runtime.IPath;
 
@@ -100,9 +100,9 @@ public abstract class FileBufferFunctions extends TestCase {
 			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(fPath);
 			IFileInfo fileInfo= fileStore.fetchInfo();
 			fileInfo.setLastModified(1000);
-			fileStore.putInfo(fileInfo, IFileStoreConstants.SET_LAST_MODIFIED, null);
+			fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 			long lastModified= fileStore.fetchInfo().getLastModified();
-			assertTrue(lastModified == IFileStoreConstants.NONE || !fileBuffer.isSynchronized());
+			assertTrue(lastModified == EFS.NONE || !fileBuffer.isSynchronized());
 			
 		} finally {
 			fManager.disconnect(fPath, null);
@@ -163,9 +163,9 @@ public abstract class FileBufferFunctions extends TestCase {
 			IFileInfo fileInfo= fileStore.fetchInfo();
 			assertEquals(modificationStamp != IResource.NULL_STAMP, fileInfo.exists());
 			fileInfo.setLastModified(1000);
-			fileStore.putInfo(fileInfo, IFileStoreConstants.SET_LAST_MODIFIED, null);
+			fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 			long lastModified= fileStore.fetchInfo().getLastModified();
-			assertTrue(lastModified == IFileStoreConstants.NONE || modificationStamp != fileBuffer.getModificationStamp());
+			assertTrue(lastModified == EFS.NONE || modificationStamp != fileBuffer.getModificationStamp());
 		} finally {
 			fManager.disconnect(fPath, null);
 		}		
@@ -187,7 +187,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(fPath);
 			IFileInfo fileInfo= fileStore.fetchInfo();
 			fileInfo.setLastModified(1000);
-			fileStore.putInfo(fileInfo, IFileStoreConstants.SET_LAST_MODIFIED, null);
+			fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 			//revert
 			fileBuffer.revert(null);
 			// check assertions
