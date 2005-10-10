@@ -13,9 +13,6 @@ package org.eclipse.ui.texteditor.templates;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,16 +35,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.text.templates.ContextTypeRegistry;
-import org.eclipse.jface.text.templates.Template;
-import org.eclipse.jface.text.templates.TemplateContextType;
-import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
-import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
-import org.eclipse.jface.text.templates.persistence.TemplateStore;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -71,6 +65,18 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
+
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.templates.ContextTypeRegistry;
+import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.TemplateContextType;
+import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
+import org.eclipse.jface.text.templates.persistence.TemplateStore;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
@@ -623,12 +629,13 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		if (path == null)
 			return;
+		
+		IFileStore fileStore= FileSystemCore.getLocalFileSystem().getStore(new Path(path));
 
 		try {
 			TemplateReaderWriter reader= new TemplateReaderWriter();
-			File file= new File(path);
-			if (file.exists()) {
-				InputStream input= new BufferedInputStream(new FileInputStream(file));
+			if (fileStore.fetchInfo().exists()) {
+				InputStream input= new BufferedInputStream(fileStore.openInputStream(EFS.NONE, null));
 				try {
 					TemplatePersistenceData[] datas= reader.read(input, null);
 					for (int i= 0; i < datas.length; i++) {
@@ -636,9 +643,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 						fTemplateStore.add(data);
 					}
 				} finally {
-					try {
-						input.close();
-					} catch (IOException x) {
+					if (input != null) {
+						try {
+							input.close();
+						} catch (IOException x) {
+							// ignore
+						}
 					}
 				}
 			}
@@ -647,10 +657,10 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			fTableViewer.setAllChecked(false);
 			fTableViewer.setCheckedElements(getEnabledTemplates());
 
-		} catch (FileNotFoundException e) {
-			openReadErrorDialog(e);
+		} catch (CoreException e) {
+			openReadErrorDialog();
 		} catch (IOException e) {
-			openReadErrorDialog(e);
+			openReadErrorDialog();
 		}
 	}
 
@@ -675,46 +685,49 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		if (path == null)
 			return;
 
-		File file= new File(path);
+		IFileStore fileStore= FileSystemCore.getLocalFileSystem().getStore(new Path(path));
+		IFileInfo fileInfo= fileStore.fetchInfo();
 
-		if (file.isHidden()) {
+		if (new File(fileStore.toURI()).isHidden()) {
 			String title= TextEditorTemplateMessages.TemplatePreferencePage_export_error_title;
-			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_hidden, file.getAbsolutePath());
+			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_hidden, fileStore.toString());
 			MessageDialog.openError(getShell(), title, message);
 			return;
 		}
 
-		if (file.exists() && !file.canWrite()) {
+		if (fileInfo.exists() && fileInfo.getAttribute(EFS.ATTRIBUTE_READ_ONLY)) {
 			String title= TextEditorTemplateMessages.TemplatePreferencePage_export_error_title;
-			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_canNotWrite, file.getAbsolutePath());
+			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_canNotWrite, fileStore.toString());
 			MessageDialog.openError(getShell(), title, message);
 			return;
 		}
 
-		if (!file.exists() || confirmOverwrite(file)) {
+		if (!fileInfo.exists() || confirmOverwrite(fileStore)) {
 			OutputStream output= null;
 			try {
-				output= new BufferedOutputStream(new FileOutputStream(file));
+				output= new BufferedOutputStream(fileStore.openOutputStream(EFS.NONE, null));
 				TemplateReaderWriter writer= new TemplateReaderWriter();
 				writer.save(templates, output);
-				output.close();
+			} catch (CoreException e) {
+				openWriteErrorDialog();
 			} catch (IOException e) {
+				openWriteErrorDialog();
+			} finally {
 				if (output != null) {
 					try {
 						output.close();
-					} catch (IOException e2) {
+					} catch (IOException e) {
 						// ignore
 					}
 				}
-				openWriteErrorDialog(e);
 			}
 		}
 	}
 
-	private boolean confirmOverwrite(File file) {
+	private boolean confirmOverwrite(IFileStore fileStore) {
 		return MessageDialog.openQuestion(getShell(),
 			TextEditorTemplateMessages.TemplatePreferencePage_export_exists_title,
-			NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_exists_message, file.getAbsolutePath()));
+			NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_exists_message, fileStore.toString()));
 	}
 
 	private void remove() {
@@ -788,7 +801,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		try {
 			fTemplateStore.save();
 		} catch (IOException e) {
-			openWriteErrorDialog(e);
+			openWriteErrorDialog();
 		}
 
 		return super.performOk();
@@ -810,19 +823,19 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		try {
 			fTemplateStore.load();
 		} catch (IOException e) {
-			openReadErrorDialog(e);
+			openReadErrorDialog();
 			return false;
 		}
 		return super.performCancel();
 	}
 
-	private void openReadErrorDialog(Exception e) {
+	private void openReadErrorDialog() {
 		String title= TextEditorTemplateMessages.TemplatePreferencePage_error_read_title;
 		String message= TextEditorTemplateMessages.TemplatePreferencePage_error_read_message;
 		MessageDialog.openError(getShell(), title, message);
 	}
 
-	private void openWriteErrorDialog(Exception e) {
+	private void openWriteErrorDialog() {
 		String title= TextEditorTemplateMessages.TemplatePreferencePage_error_write_title;
 		String message= TextEditorTemplateMessages.TemplatePreferencePage_error_write_message;
 		MessageDialog.openError(getShell(), title, message);

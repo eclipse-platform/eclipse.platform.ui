@@ -20,5 +20,6 @@ Export-Package:
 Require-Bundle: 
  org.eclipse.core.runtime,
  org.eclipse.jface.text,
+ org.eclipse.core.filesystem,
  org.eclipse.ui
 Eclipse-LazyStart: true
