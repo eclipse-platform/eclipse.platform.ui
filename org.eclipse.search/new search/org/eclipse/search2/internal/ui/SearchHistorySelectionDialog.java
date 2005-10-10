@@ -108,7 +108,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
 	 */
 	protected int getDialogBoundsStrategy() {
-		return DIALOG_PERSISTSIZE;
+		return 0x0002; // TODO: change to DIALOG_PERSISTSIZE;
 	}
 	
 	
