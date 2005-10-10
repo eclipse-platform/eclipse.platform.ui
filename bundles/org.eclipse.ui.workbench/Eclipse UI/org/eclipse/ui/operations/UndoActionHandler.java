@@ -45,6 +45,8 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 		super(site, context);
         setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
                 .getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
+        setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+                .getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_DISABLED));
 	}
 
 	void flush() {

@@ -44,7 +44,8 @@ public final class RedoActionHandler extends OperationHistoryActionHandler {
 		super(site, context);
 		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
-
+		setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_DISABLED));
 	}
 
 	void flush() {

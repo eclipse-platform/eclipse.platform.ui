@@ -839,6 +839,7 @@ public class WorkbenchMessages extends NLS {
 	// Undo/Redo Support
 	
 	public static String Operations_undoRedoCommand;
+	public static String Operations_undoRedoCommandDisabled;
 	public static String Operations_undoProblem;
 	public static String Operations_redoProblem;
 	public static String Operations_undoInfo;

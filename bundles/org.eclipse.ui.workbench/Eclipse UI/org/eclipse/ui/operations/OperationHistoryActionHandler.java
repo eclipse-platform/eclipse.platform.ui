@@ -311,7 +311,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			// Refer all other requests to the part itself.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=108144
 			IWorkbenchPart part = site.getPart();
-			if (part != null) 
+			if (part != null)
 				return part.getAdapter(adapter);
 		}
 		return null;
@@ -367,10 +367,16 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	public void update() {
 		boolean enabled = shouldBeEnabled();
 		String text = getCommandString();
+		String tooltipText;
 		if (enabled) {
+			tooltipText = NLS.bind(
+					WorkbenchMessages.Operations_undoRedoCommand, text,
+					getOperation().getLabel());
 			text = NLS.bind(WorkbenchMessages.Operations_undoRedoCommand, text,
 					shortenText(getOperation().getLabel()));
 		} else {
+			tooltipText = NLS.bind(
+					WorkbenchMessages.Operations_undoRedoCommandDisabled, text);
 			/*
 			 * if there is nothing to do and we are pruning the history, flush
 			 * the history of this context.
@@ -379,6 +385,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				flush();
 		}
 		setText(text);
+		setToolTipText(tooltipText);
 		setEnabled(enabled);
 	}
 
