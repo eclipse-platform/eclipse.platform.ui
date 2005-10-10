@@ -143,7 +143,7 @@ public class DialogSettings implements IDialogSettings {
      * Method declared on IDialogSettings.
      */
     public boolean getBoolean(String key) {
-        return new Boolean((String) items.get(key)).booleanValue();
+        return Boolean.valueOf((String) items.get(key)).booleanValue();
     }
 
     /* (non-Javadoc)
