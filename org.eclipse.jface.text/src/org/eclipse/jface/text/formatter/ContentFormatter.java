@@ -306,7 +306,7 @@ public class ContentFormatter implements IContentFormatter {
 	 * all content types as is called only once per formatting session.
 	 *
 	 * @param strategy the formatting strategy to register, or <code>null</code> to remove an existing one
-	 * @param contentType the content type under which to register, or <code>null</code> for all content types
+	 * @param contentType the content type under which to register
 	 */
 	public void setFormattingStrategy(IFormattingStrategy strategy, String contentType) {
 
