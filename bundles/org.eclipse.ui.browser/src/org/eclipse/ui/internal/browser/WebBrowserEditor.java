@@ -70,9 +70,6 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 		
 		int style = 0;
 		if (input == null || input.isLocationBarLocal()) {
-			cutAction = new TextAction(webBrowser, TextAction.CUT);
-			copyAction = new TextAction(webBrowser, TextAction.COPY);
-			pasteAction = new TextAction(webBrowser, TextAction.PASTE);
 			style += BrowserViewer.LOCATION_BAR;
 		}
 		if (input == null || input.isToolbarLocal()) {
@@ -82,6 +79,12 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 		
 		webBrowser.setURL(initialURL);
 		webBrowser.setContainer(this);
+		
+		if (input == null || input.isLocationBarLocal()) {
+			cutAction = new TextAction(webBrowser, TextAction.CUT);
+			copyAction = new TextAction(webBrowser, TextAction.COPY);
+			pasteAction = new TextAction(webBrowser, TextAction.PASTE);
+		}
 		
 		if (!lockName) {
 			PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
@@ -173,19 +176,21 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			IPath path = pei.getPath();
 			URL url = null;
 			try {
-				if (path != null && path.toFile().exists())
+				if (path != null)
 					url = path.toFile().toURL();
+				initialURL = url.toExternalForm();
 			} catch (Exception e) {
 				Trace.trace(Trace.SEVERE, "Error getting URL to file"); //$NON-NLS-1$
 			}
-			initialURL = url.toExternalForm();
 			if (webBrowser != null) {
-				webBrowser.setURL(initialURL);
+				if (initialURL != null)
+					webBrowser.setURL(initialURL);
 				site.getWorkbenchWindow().getActivePage().activate(this);
 			}
 			
 			setPartName(path.lastSegment());
-			setTitleToolTip(url.getFile());
+			if (url != null)
+				setTitleToolTip(url.getFile());
 
 			Image oldImage = image;
 			ImageDescriptor id = ImageResource.getImageDescriptor(ImageResource.IMG_INTERNAL_BROWSER);
