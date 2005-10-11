@@ -162,6 +162,13 @@ jboolean convertFindDataToFileInfo(JNIEnv *env, WIN32_FIND_DATA info, jobject fi
 	    if (mid == 0) return JNI_FALSE;
 	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_ARCHIVE, JNI_TRUE);
     }
+
+	// hidden?
+	if (info.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) {
+	    mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
+	    if (mid == 0) return JNI_FALSE;
+	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_HIDDEN, JNI_TRUE);
+    }
 	return JNI_TRUE;
 }
 
@@ -221,6 +228,13 @@ jboolean convertFindDataWToFileInfo(JNIEnv *env, WIN32_FIND_DATAW info, jobject 
 	    mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
 	    if (mid == 0) return JNI_FALSE;
 	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_ARCHIVE, JNI_TRUE);
+    }
+
+	// hidden?
+	if (info.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) {
+	    mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
+	    if (mid == 0) return JNI_FALSE;
+	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_HIDDEN, JNI_TRUE);
     }
     return JNI_TRUE;
 }
@@ -394,6 +408,9 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
     /* find out if we need to set the archive bit */
     archive = (*env)->CallBooleanMethod(env, obj, mid, ATTRIBUTE_ARCHIVE);
 
+    /* find out if we need to set the hidden bit */
+    hidden = (*env)->CallBooleanMethod(env, obj, mid, ATTRIBUTE_HIDDEN);
+
 	targetFile = getByteArray(env, target);
 	attributes = GetFileAttributes(targetFile);
 	if (attributes == (DWORD)-1) goto fail;
@@ -406,6 +423,10 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 		attributes = attributes | FILE_ATTRIBUTE_ARCHIVE;
 	else
 		attributes = attributes & ~FILE_ATTRIBUTE_ARCHIVE;
+	if (hidden)
+		attributes = attributes | FILE_ATTRIBUTE_HIDDEN;
+	else
+		attributes = attributes & ~FILE_ATTRIBUTE_HIDDEN;
 	
 	success = SetFileAttributes(targetFile, attributes);
 
@@ -428,7 +449,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	int success = JNI_FALSE;
 	DWORD attributes;
     jclass cls;
-    jboolean readOnly, archive;
+    jboolean readOnly, hidden, archive;
 
     /* find out if we need to set the readonly bit */
     cls = (*env)->GetObjectClass(env, obj);
@@ -438,6 +459,9 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 
     /* find out if we need to set the archive bit */
     archive = (*env)->CallBooleanMethod(env, obj, mid, ATTRIBUTE_ARCHIVE);
+
+    /* find out if we need to set the hidden bit */
+    hidden = (*env)->CallBooleanMethod(env, obj, mid, ATTRIBUTE_HIDDEN);
 
 	targetFile = getCharArray(env, target);
 	attributes = GetFileAttributesW(targetFile);
@@ -451,6 +475,10 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 		attributes = attributes | FILE_ATTRIBUTE_ARCHIVE;
 	else
 		attributes = attributes & ~FILE_ATTRIBUTE_ARCHIVE;
+	if (hidden)
+		attributes = attributes | FILE_ATTRIBUTE_HIDDEN;
+	else
+		attributes = attributes & ~FILE_ATTRIBUTE_HIDDEN;
 	
 	success = SetFileAttributesW(targetFile, attributes);
 

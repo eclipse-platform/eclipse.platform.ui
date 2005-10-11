@@ -135,17 +135,39 @@ public class EFS {
 	 * @see IFileInfo#setAttribute(int, boolean)
 	 */
 	public static final int ATTRIBUTE_ARCHIVE = 1 << 3;
-	
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;4) indicating that a
+	 * file is hidden.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 */
+	public static final int ATTRIBUTE_HIDDEN = 1 << 4;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;5) indicating that a
+	 * file is a symbolic link.
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 */
+	public static final int ATTRIBUTE_LINK = 1 << 5;
+
 	/**
 	 * Scheme constant (value "file") indicating the local file system scheme.
-	 * @see FileSystemCore#getLocalFileSystem()
+	 * @see EFS#getLocalFileSystem()
 	 */
 	public static final String SCHEME_FILE = "file"; //$NON-NLS-1$
 
 	
 	/**
 	 * Scheme constant (value "null") indicating the null file system scheme.
-	 * @see FileSystemCore#getNullFileSystem()
+	 * @see EFS#getNullFileSystem()
 	 */
 	public static final String SCHEME_NULL = "null"; //$NON-NLS-1$
 

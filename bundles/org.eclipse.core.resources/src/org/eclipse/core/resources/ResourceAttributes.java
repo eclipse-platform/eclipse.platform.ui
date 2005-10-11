@@ -12,7 +12,8 @@
 
 package org.eclipse.core.resources;
 
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.internal.utils.FileUtil;
 
 /**
  * This class represents platform specific attributes of files.
@@ -29,9 +30,7 @@ import org.eclipse.core.filesystem.*;
  * @since 3.1
  */
 public class ResourceAttributes {
-	private boolean executable = false;
-	private boolean readOnly = false;
-	private boolean archive = false;
+	private int attributes;
 
 	/**
 	 * Creates a new resource attributes instance with attributes
@@ -43,10 +42,7 @@ public class ResourceAttributes {
 	 * @return A resource attributes object
 	 */
 	public static ResourceAttributes fromFile(java.io.File file) {
-		IFileStore store = EFS.getLocalFileSystem().getStore(file.toURI());
-		ResourceAttributes attributes = new ResourceAttributes();
-		attributes.setReadOnly(store.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY));
-		return attributes;
+		return FileUtil.fileInfoToAttributes(EFS.getLocalFileSystem().getStore(file.toURI()).fetchInfo());
 	}
 
 	/**
@@ -64,7 +60,7 @@ public class ResourceAttributes {
 	 * @see #setArchive(boolean)
 	 */
 	public boolean isArchive() {
-		return archive;
+		return (attributes & EFS.ATTRIBUTE_ARCHIVE) != 0;
 	}
 
 	/**
@@ -75,7 +71,19 @@ public class ResourceAttributes {
 	 * @see #setExecutable(boolean)
 	 */
 	public boolean isExecutable() {
-		return executable;
+		return (attributes & EFS.ATTRIBUTE_EXECUTABLE) != 0;
+	}
+
+	/**
+	 * Returns whether this ResourceAttributes object is marked hidden.
+	 *
+	 * @return <code>true</code> if this resource is marked hidden, 
+	 *		<code>false</code> otherwise
+	 * @see #setHidden(boolean)
+	 * @since 3.2
+	 */
+	public boolean isHidden() {
+		return (attributes & EFS.ATTRIBUTE_HIDDEN) != 0;
 	}
 
 	/**
@@ -86,7 +94,7 @@ public class ResourceAttributes {
 	 * @see #setReadOnly(boolean)
 	 */
 	public boolean isReadOnly() {
-		return readOnly;
+		return (attributes & EFS.ATTRIBUTE_READ_ONLY) != 0;
 	}
 
 	/**
@@ -97,7 +105,17 @@ public class ResourceAttributes {
 	 * @see #isArchive()
 	 */
 	public void setArchive(boolean archive) {
-		this.archive = archive;
+		set(EFS.ATTRIBUTE_ARCHIVE, archive);
+	}
+
+	/** 
+	 * Clears all of the bits indicated by the mask.
+	 */
+	private void set(int mask, boolean value) {
+		if (value)
+			attributes |= mask;
+		else
+			attributes &= ~mask;
 	}
 
 	/**
@@ -108,7 +126,19 @@ public class ResourceAttributes {
 	 * @see #isExecutable()
 	 */
 	public void setExecutable(boolean executable) {
-		this.executable = executable;
+		set(EFS.ATTRIBUTE_EXECUTABLE, executable);
+	}
+
+	/**
+	 * Sets or unsets whether this ResourceAttributes object is marked hidden
+	 *
+	 * @param hidden <code>true</code> to set it to be marked hidden,
+	 *		<code>false</code> to unset
+	 * @see #isHidden()
+	 * @since 3.2
+	 */
+	public void setHidden(boolean hidden) {
+		set(EFS.ATTRIBUTE_HIDDEN, hidden);
 	}
 
 	/**
@@ -119,7 +149,7 @@ public class ResourceAttributes {
 	 * @see #isReadOnly()
 	 */
 	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
+		set(EFS.ATTRIBUTE_READ_ONLY, readOnly);
 	}
 
 	/**
@@ -127,6 +157,6 @@ public class ResourceAttributes {
 	 * for debugging purposes only.
 	 */
 	public String toString() {
-		return "ResourceAttributes(readOnly=" + readOnly + ",executable=" + executable + ",archive=" + archive + ')'; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return "ResourceAttributes(" + attributes + ')'; //$NON-NLS-1$
 	}
 }

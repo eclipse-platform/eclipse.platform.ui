@@ -119,11 +119,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		IFileInfo fileInfo = store.fetchInfo();
 		if (!fileInfo.exists())
 			return null;
-		ResourceAttributes attributes = new ResourceAttributes();
-		attributes.setReadOnly(fileInfo.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
-		attributes.setArchive(fileInfo.getAttribute(EFS.ATTRIBUTE_ARCHIVE));
-		attributes.setExecutable(fileInfo.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
-		return attributes;
+		return FileUtil.fileInfoToAttributes(fileInfo);
 	}
 
 	/**
@@ -823,12 +819,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * @see IResource.setResourceAttributes
 	 */
 	public void setResourceAttributes(IResource resource, ResourceAttributes attributes) throws CoreException {
-		IFileStore store = getStore(resource);
-		IFileInfo fileInfo = EFS.createFileInfo();
-		fileInfo.setAttribute(EFS.ATTRIBUTE_READ_ONLY, attributes.isReadOnly());
-		fileInfo.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, attributes.isExecutable());
-		fileInfo.setAttribute(EFS.ATTRIBUTE_ARCHIVE, attributes.isArchive());
-		store.putInfo(fileInfo, EFS.SET_ATTRIBUTES, null);
+		getStore(resource).putInfo(FileUtil.attributesToFileInfo(attributes), EFS.SET_ATTRIBUTES, null);
 	}
 
 	public void shutdown(IProgressMonitor monitor) throws CoreException {

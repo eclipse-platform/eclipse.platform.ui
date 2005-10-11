@@ -124,6 +124,7 @@ public class LocalFile extends FileStore {
 		info.setLength(file.length());
 		info.setAttribute(EFS.ATTRIBUTE_DIRECTORY, file.isDirectory());
 		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, file.exists() && !file.canWrite());
+		info.setAttribute(EFS.ATTRIBUTE_HIDDEN, file.isHidden());
 		return info;
 	}
 	

@@ -13,8 +13,10 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
@@ -28,6 +30,34 @@ public class FileUtil {
 	 * that multiple writes won't happen in a given instance of FileStore.
 	 */
 	private static final byte[] buffer = new byte[8192];
+
+	/**
+	 * Converts a ResourceAttributes object into an IFileInfo object.
+	 * @param attributes The resource attributes
+	 * @return The file info
+	 */
+	public static IFileInfo attributesToFileInfo(ResourceAttributes attributes) {
+		IFileInfo fileInfo = EFS.createFileInfo();
+		fileInfo.setAttribute(EFS.ATTRIBUTE_READ_ONLY, attributes.isReadOnly());
+		fileInfo.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, attributes.isExecutable());
+		fileInfo.setAttribute(EFS.ATTRIBUTE_ARCHIVE, attributes.isArchive());
+		fileInfo.setAttribute(EFS.ATTRIBUTE_HIDDEN, attributes.isHidden());
+		return fileInfo;
+	}
+
+	/**
+	 * Converts an IFileInfo object into a ResourceAttributes object.
+	 * @param fileInfo The file info
+	 * @return The resource attributes
+	 */
+	public static ResourceAttributes fileInfoToAttributes(IFileInfo fileInfo) {
+		ResourceAttributes attributes = new ResourceAttributes();
+		attributes.setReadOnly(fileInfo.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+		attributes.setArchive(fileInfo.getAttribute(EFS.ATTRIBUTE_ARCHIVE));
+		attributes.setExecutable(fileInfo.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
+		attributes.setHidden(fileInfo.getAttribute(EFS.ATTRIBUTE_HIDDEN));
+		return attributes;
+	}
 
 	/**
 	 * Closes a stream and ignores any resulting exception. This is useful
