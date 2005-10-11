@@ -13,9 +13,12 @@ package org.eclipse.ui.internal.editors.text;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.core.resources.IStorage;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -25,12 +28,13 @@ import org.eclipse.ui.editors.text.ILocationProvider;
 
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * @since 3.0
  */
-public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider {
+public class JavaFileEditorInput implements IPathEditorInput, IStorageEditorInput, ILocationProvider {
 
 	/**
 	 * The workbench adapter which simply provides the label.
@@ -166,4 +170,13 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
 	public int hashCode() {
 		return fFileStore.hashCode();
 	}
+
+	/*
+	 * @see org.eclipse.ui.IStorageEditorInput#getStorage()
+	 * @since 3.2
+	 */
+	public IStorage getStorage() throws CoreException {
+		return new JavaFileStorage(fFileStore);
+	}
+
 }
