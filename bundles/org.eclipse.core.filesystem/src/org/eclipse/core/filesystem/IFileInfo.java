@@ -39,10 +39,13 @@ public interface IFileInfo extends Comparable {
 	/**
 	 * Returns the value of the specified attribute for this file.  The attribute
 	 * must be one of the <code>EFS#ATTRIBUTE_*</code>
-	 * constants.
+	 * constants. Returns <code>false</code> if this file does not exist,
+	 * could not be accessed, or the provided attribute does not apply to this
+	 * file system.
 	 * 
 	 * @param attribute The attribute to retrieve the value for
 	 * @return the value of the specified attribute for this file.
+	 * @see IFileSystem#attributes()
 	 */
 	public abstract boolean getAttribute(int attribute);
 
@@ -79,19 +82,9 @@ public interface IFileInfo extends Comparable {
 	public abstract boolean isDirectory();
 
 	/**
-	 * Returns whether this file is read only.  This is a convenience method,
-	 * fully equivalent to <code>getAttribute(ATTRIBUTE_READ_ONLY)</code>
-	 * 
-	 * @return <code>true</code> if this file is read only, and <code>false</code>
-	 * otherwise.
-	 * @deprecated Use getAttribute(EFS.ATTRIBUTE_READ_ONLY) instead.
-	 */
-	public abstract boolean isReadOnly();
-
-	/**
 	 * Sets the value of the specified attribute for this file info.  The attribute
-	 * must be one of the <code>EFS#ATTRIBUTE_*</code>
-	 * constants.
+	 * must be one of the <code>EFS#ATTRIBUTE_*</code> constants.  
+	 * Note that not all attributes are applicable in a given file system.
 	 * </p>
 	 * <p>
 	 * Users must call {@link IFileStore#putInfo(IFileInfo, int, IProgressMonitor)}
@@ -100,6 +93,7 @@ public interface IFileInfo extends Comparable {
 	 * 
 	 * @param attribute The attribute to set the value for
 	 * @param value the value of the specified attribute for this file.
+	 * @see IFileSystem#attributes()
 	 */
 	public abstract void setAttribute(int attribute, boolean value);
 	

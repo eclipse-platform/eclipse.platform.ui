@@ -15,10 +15,9 @@
  <plugin id="org.eclipse.core.filesystem.win32.x86" fragment="true" />
 
  <package name="org.eclipse.core.filesystem">
-   <type name="FileSystemCore" subclass="false"/>
+   <type name="EFS" subclass="false"/>
    <type name="IFileInfo" implement="false" />
    <type name="IFileStore" implement="false" />
-   <type name="IFileStoreConstants" implement="false" />
    <type name="IFileSystem" implement="false" />
  </package>
  <package name="org.eclipse.core.resources.provider">
