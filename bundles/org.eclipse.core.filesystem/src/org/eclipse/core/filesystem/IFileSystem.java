@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
  * this interface directly.
  * </p>
  * 
- * @see FileSystemCore#getFileSystem(String)
+ * @see EFS#getFileSystem(String)
  * @since 1.0
  */
 public interface IFileSystem extends IAdaptable {
