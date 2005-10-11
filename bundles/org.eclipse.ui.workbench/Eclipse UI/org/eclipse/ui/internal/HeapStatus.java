@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janicyak - brockj@tpg.com.au - Fix for Bug 11142 
+ *     		[HeapStatus] Heap status is updated too frequently
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
