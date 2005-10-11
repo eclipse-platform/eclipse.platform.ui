@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class UITestHelper extends TestCase {
+public class UITestHelper {
 	private static class PreferenceDialogWrapper extends PreferenceDialog {
 		public PreferenceDialogWrapper(Shell parentShell, PreferenceManager manager) {
 			super(parentShell, manager);
