@@ -7,14 +7,9 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -36,7 +31,7 @@ import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.ide.IDE;
 
 /**
- * MarkerResolutionPage is ths page for marker resolution wizards.
+ * MarkerResolutionPage is the page for marker resolution wizards.
  * 
  * @since 3.2
  */
@@ -232,110 +227,67 @@ public class MarkerResolutionPage extends WizardPage {
 	}
 
 	/**
-	 * Finish the page. Return <code>true</code> if the save was successful.
-	 * 
-	 * @return boolean
+	 * Get a runnable for running the end of the operation.
+	 * @return IRunnableWithProgress
 	 */
-	public boolean performFinish() {
-		ISelection selected = resolutionsList.getSelection();
-		if (!(selected instanceof IStructuredSelection))
-			return false;
-
-		IMarkerResolution resolution = (IMarkerResolution) ((IStructuredSelection) selected)
-				.getFirstElement();
-		for (Iterator iter = markers.iterator(); iter.hasNext();) {
-			IMarker marker = (IMarker) iter.next();
-			IMarkerResolution[] newResolutions = IDE
-			.getMarkerHelpRegistry().getResolutions(marker);
-			
-			if(newResolutions.length == 0){
-				MessageDialog
-				.openInformation(
-						getShell(),
-						MarkerMessages.MarkerResolutionPage_CannotFixTitle,
-						NLS
-								.bind(
-										MarkerMessages.MarkerResolutionPage_NoResolutionsMessage,
-										getDescription(marker)));
-				return true;
-			}
-				
-			IMarkerResolution matching = getResolutionMatching(resolution, newResolutions);
-			if (matching == null) {
-				MessageDialog
-						.openInformation(
-								getShell(),
-								MarkerMessages.MarkerResolutionPage_CannotFixTitle,
-								NLS
-										.bind(
-												MarkerMessages.MarkerResolutionPage_NoMatchMessage,
-												getDescription(marker)));
-				return true;
-			}
-			IStatus runStatus = safeRun(marker, matching);
-			if (runStatus.getCode() == IStatus.ERROR) {
-				ErrorDialog
-						.openError(
-								getShell(),
-								MarkerMessages.MarkerResolutionPage_CannotFixTitle,
-								NLS
-										.bind(
-												MarkerMessages.MarkerResolutionPage_CannotFixMessage,
-												getDescription(marker)),
-								runStatus);
-				return false;
-			}
-
-		}
-		return true;
-	}
-
-	private IStatus safeRun(final IMarker marker,
-			final IMarkerResolution matching) {
-		final IStatus[] returnStatus = { Status.OK_STATUS };
-
-		ISafeRunnable runnable = new ISafeRunnable() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+	public IRunnableWithProgress getCompletionRunnable() {
+		return new IRunnableWithProgress() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
-			public void run() throws Exception {
-				getContainer().run(false, true, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor){
 
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-					 */
-					public void run(IProgressMonitor monitor) {
-						monitor
-								.beginTask(NLS
-										.bind(
-												MarkerMessages.MarkerResolutionPage_CannotFixMessage,
-												getDescription(marker)), 100);
-						monitor.worked(25);
-						matching.run(marker);
-						monitor.done();
+				ISelection selected = resolutionsList.getSelection();
+				if (!(selected instanceof IStructuredSelection))
+					return;
 
+				IMarkerResolution resolution = (IMarkerResolution) ((IStructuredSelection) selected)
+						.getFirstElement();
+				monitor.beginTask(NLS.bind(
+						MarkerMessages.MarkerResolutionPage_Fixing, resolution
+								.getLabel()), markers.size() + 1);
+				monitor.worked(1);
+				for (Iterator iter = markers.iterator(); iter.hasNext();) {
+
+					IMarker marker = (IMarker) iter.next();
+					IMarkerResolution[] newResolutions = IDE
+							.getMarkerHelpRegistry().getResolutions(marker);
+
+					if (newResolutions.length == 0) {
+						MessageDialog
+								.openInformation(
+										getShell(),
+										MarkerMessages.MarkerResolutionPage_CannotFixTitle,
+										NLS
+												.bind(
+														MarkerMessages.MarkerResolutionPage_NoResolutionsMessage,
+														getDescription(marker)));
+						return;
 					}
-				});
 
-			}
+					IMarkerResolution matching = getResolutionMatching(
+							resolution, newResolutions);
+					if (matching == null) {
+						MessageDialog
+								.openInformation(
+										getShell(),
+										MarkerMessages.MarkerResolutionPage_CannotFixTitle,
+										NLS
+												.bind(
+														MarkerMessages.MarkerResolutionPage_NoMatchMessage,
+														getDescription(marker)));
+						return;
+					}
+					matching.run(marker);
+					monitor.worked(1);
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-			 */
-			public void handleException(Throwable exception) {
-				returnStatus[0] = Util.errorStatus(exception);
+				}
+				monitor.done();
+
 			}
 		};
-		SafeRunnable.run(runnable);
-
-		return returnStatus[0];
 	}
+
 
 	/**
 	 * Return the choice whose label matches allChoices.

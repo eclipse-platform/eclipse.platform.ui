@@ -39,10 +39,12 @@ public class ActionResolveMarker extends SelectionProviderAction {
 
 	/**
 	 * Create a new instance of the receiver.
+	 * 
 	 * @param markerView
 	 * @param provider
 	 */
-	public ActionResolveMarker(MarkerView markerView, ISelectionProvider provider) {
+	public ActionResolveMarker(MarkerView markerView,
+			ISelectionProvider provider) {
 		super(provider, MarkerMessages.resolveMarkerAction_title);
 		setEnabled(false);
 		view = markerView;
@@ -56,10 +58,13 @@ public class ActionResolveMarker extends SelectionProviderAction {
 			return;
 		}
 		final MarkerResolutionWizard[] wizard = new MarkerResolutionWizard[1];
-		
-		Job processingJob = new Job(MarkerMessages.ActionResolveMarker_CalculatingJob ){
-			protected IStatus run(IProgressMonitor monitor) {
-				
+
+
+		Job processingJob = new WorkbenchJob(
+				MarkerMessages.ActionResolveMarker_CalculatingJob) {
+
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+
 				Object[] selection = getStructuredSelection().toArray();
 
 				if (selection.length == 0) {
@@ -67,38 +72,46 @@ public class ActionResolveMarker extends SelectionProviderAction {
 				}
 				IMarker[] markers = new IMarker[selection.length];
 				System.arraycopy(selection, 0, markers, 0, markers.length);
-				
+
 				try {
-					wizard[0] = new MarkerResolutionWizard(markers,MarkerList.compute(view.getMarkerTypes()));
+					wizard[0] = new MarkerResolutionWizard(markers, MarkerList
+							.compute(view.getMarkerTypes()));
 					wizard[0].determinePages(monitor);
 				} catch (CoreException e) {
 					return e.getStatus();
 				}
 				return Status.OK_STATUS;
 			}
+
 		};
-	
-		processingJob.addJobChangeListener(new JobChangeAdapter(){
-			/* (non-Javadoc)
+
+		processingJob.addJobChangeListener(new JobChangeAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				
-				WorkbenchJob dialogJob = new WorkbenchJob(MarkerMessages.ActionResolveMarker_OpenWizardJob){
-					/* (non-Javadoc)
+
+				WorkbenchJob dialogJob = new WorkbenchJob(
+						MarkerMessages.ActionResolveMarker_OpenWizardJob) {
+					/*
+					 * (non-Javadoc)
+					 * 
 					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 					 */
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						(new WizardDialog(view.getSite().getShell(),wizard[0])).open();
+						(new WizardDialog(view.getSite().getShell(), wizard[0]))
+								.open();
 						return Status.OK_STATUS;
 					}
 				};
 				dialogJob.setSystem(true);
 				dialogJob.schedule();
-				
+
 			}
 		});
-		
+
 		processingJob.setUser(true);
 		processingJob.schedule();
 	}

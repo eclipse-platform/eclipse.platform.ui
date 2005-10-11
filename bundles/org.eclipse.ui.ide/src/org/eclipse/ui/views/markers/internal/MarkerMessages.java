@@ -242,6 +242,7 @@ public class MarkerMessages extends NLS{
 	public static String ActionResolveMarker_CalculatingJob;
 	public static String ActionResolveMarker_OpenWizardJob;
 	
+	public static String MarkerResolutionPage_Fixing;
 	public static String MarkerResolutionPage_Title;
 	public static String MarkerResolutionPage_Description;
 	public static String MarkerResolutionPage_Problems_List_Title;
@@ -254,4 +255,5 @@ public class MarkerMessages extends NLS{
 	public static String MarkerResolutionWizard_Title;
 	public static String MarkerResolutionWizard_CalculatingTask;
 	public static String MarkerResolutionWizard_WorkingSubTask;
+	public static String MarkerResolutionWizard_FixingTask;
 }

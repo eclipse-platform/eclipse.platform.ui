@@ -11,6 +11,7 @@ package org.eclipse.ui.views.markers.internal;
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,6 +20,8 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
@@ -157,12 +160,34 @@ public class MarkerResolutionWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		IWizardPage[] pages = getPages();
-		for (int i = 0; i < pages.length; i++) {
-			MarkerResolutionPage page = (MarkerResolutionPage) pages[i];
-			if (!(page.isPageComplete() && page.performFinish()))
-				return false;
+		final IWizardPage[] pages = getPages();
+		
+		IRunnableWithProgress doneRunnable = new IRunnableWithProgress(){
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				
+				monitor.beginTask(MarkerMessages.MarkerResolutionWizard_FixingTask, (pages.length + 1) * 100);
+				monitor.worked(100);
+				
+				for (int i = 0; i < pages.length; i++) {
+					MarkerResolutionPage page = (MarkerResolutionPage) pages[i];
+					if (!monitor.isCanceled() && page.isPageComplete())
+						page.getCompletionRunnable().run( new SubProgressMonitor(monitor,100,SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+					else
+						monitor.worked(100);
+				}
+				monitor.done();
+				
+			}
+		};
+		
+		try {
+			getContainer().run(false, true, doneRunnable);
+		} catch (InvocationTargetException e) {
+			return false;
+		} catch (InterruptedException e) {
+			return false;
 		}
+		
 		return true;
 	}
 
