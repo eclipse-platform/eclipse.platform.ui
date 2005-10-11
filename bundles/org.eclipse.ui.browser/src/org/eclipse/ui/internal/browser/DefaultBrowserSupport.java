@@ -38,7 +38,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			public void update(Observable o, Object arg) {
 				// TODO I am not sure what we should do here
 				// The preferences have changed so maybe we should
-				// close the opened browser in addition to clearing
+				// close the opened browsers in addition to clearing
 				// the table
 				browserIdMap.clear();
 			}
@@ -130,7 +130,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		if (webBrowser instanceof InternalBrowserInstance) {
 			// we should only share internal browsers within one
 			// workbench window. Each workbench window can have
-			// a shared browser with the same id.
+			// a shared browser with the same id
 			IWorkbenchWindow window = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow();
 			Integer key = getWindowKey(window);
@@ -141,7 +141,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			}
 			wmap.put(key, webBrowser);
 		} else {
-			// External and system browsers are shared
+			// external and system browsers are shared
 			// for the entire workbench
 			browserIdMap.put(browserId, webBrowser);
 		}

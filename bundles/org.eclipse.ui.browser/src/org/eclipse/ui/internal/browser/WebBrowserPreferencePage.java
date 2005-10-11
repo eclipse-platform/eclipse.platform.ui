@@ -81,6 +81,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	protected Label location;
 
 	protected Label parameters;
+	
+	protected IBrowserDescriptor checkedBrowser;
 
 	class BrowserContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
@@ -224,10 +226,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				checkNewDefaultBrowser(e.getElement());
-				IBrowserDescriptor browser = (IBrowserDescriptor) e
-						.getElement();
-				BrowserManager.getInstance().setCurrentWebBrowser(browser);
-
+				checkedBrowser = (IBrowserDescriptor) e.getElement();
+				
 				// if no other browsers are checked, don't allow the single one
 				// currently checked to become unchecked, and lose a current
 				// browser. That is, don't permit unchecking if no other item
@@ -242,10 +242,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		// is not a current browser, but the first item exists, use that instead.
 		// This will work currently until workbench shutdown, because current
 		// browser is not yet persisted.
-		IBrowserDescriptor browser = BrowserManager.getInstance()
-				.getCurrentWebBrowser();
-		if (browser != null)
-			tableViewer.setChecked(browser, true);
+		checkedBrowser = BrowserManager.getInstance().getCurrentWebBrowser();
+		if (checkedBrowser != null)
+			tableViewer.setChecked(checkedBrowser, true);
 		else {
 			Object obj = tableViewer.getElementAt(0);
 			if (obj != null)
@@ -305,14 +304,11 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 							// list, typically, the internal browser, which
 							// cannot be
 							// deleted, and be current
-							BrowserManager manager = BrowserManager
-									.getInstance();
-							if (browser2 == manager.getCurrentWebBrowser()) {
+							BrowserManager manager = BrowserManager.getInstance();
+							if (browser2 == checkedBrowser) {
 								if (manager.browsers.size() > 0) {
-									IBrowserDescriptor wb = (IBrowserDescriptor) manager.browsers
-											.get(0);
-									manager.setCurrentWebBrowser(wb);
-									tableViewer.setChecked(wb, true);
+									checkedBrowser = (IBrowserDescriptor) manager.browsers.get(0);
+									tableViewer.setChecked(checkedBrowser, true);
 								}
 							}
 						} catch (Exception ex) {
@@ -347,10 +343,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 				if (dialog.open() == Window.CANCEL)
 					return;
 				tableViewer.refresh();
-				IBrowserDescriptor cbrowser = BrowserManager.getInstance()
-					.getCurrentWebBrowser();
-				if (cbrowser != null)
-					tableViewer.setChecked(cbrowser, true);
+				if (checkedBrowser != null)
+					tableViewer.setChecked(checkedBrowser, true);
 			}
 		});
 
@@ -392,12 +386,10 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 					// list, typically, the internal browser, which cannot be
 					// deleted, and be current
 					BrowserManager manager = BrowserManager.getInstance();
-					if (browser2 == manager.getCurrentWebBrowser()) {
+					if (browser2 == checkedBrowser) {
 						if (manager.browsers.size() > 0) {
-							IBrowserDescriptor wb = (IBrowserDescriptor) manager.browsers
-									.get(0);
-							manager.setCurrentWebBrowser(wb);
-							tableViewer.setChecked(wb, true);
+							checkedBrowser = (IBrowserDescriptor) manager.browsers.get(0);
+							tableViewer.setChecked(checkedBrowser, true);
 						}
 					}
 				} catch (Exception ex) {
@@ -470,19 +462,16 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 				}
 				tableViewer.refresh();
 				
-				IBrowserDescriptor cbrowser = BrowserManager.getInstance()
-					.getCurrentWebBrowser();
-				if (cbrowser != null)
-					tableViewer.setChecked(cbrowser, true);
+				if (checkedBrowser != null)
+					tableViewer.setChecked(checkedBrowser, true);
 			}
 		});
 
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				checkNewDefaultBrowser(e.getElement());
-				IBrowserDescriptor browser2 = (IBrowserDescriptor) e
+				checkedBrowser = (IBrowserDescriptor) e
 						.getElement();
-				BrowserManager.getInstance().setCurrentWebBrowser(browser2);
 			}
 		});
 
@@ -602,9 +591,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		BrowserManager.getInstance().setupDefaultBrowsers();
 		tableViewer.refresh();
 		
-		IBrowserDescriptor wb = BrowserManager.getInstance().getCurrentWebBrowser();
-		if (wb != null)
-			tableViewer.setChecked(wb, true);
+		checkedBrowser = BrowserManager.getInstance().getCurrentWebBrowser();
+		if (checkedBrowser != null)
+			tableViewer.setChecked(checkedBrowser, true);
 		
 		super.performDefaults();
 	}
@@ -619,6 +608,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		else
 			choice = WebBrowserPreference.EXTERNAL;
 		WebBrowserPreference.setBrowserChoice(choice);
+		if (checkedBrowser != null)
+			BrowserManager.getInstance().setCurrentWebBrowser(checkedBrowser);
 
 		return true;
 	}

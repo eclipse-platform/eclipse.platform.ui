@@ -39,26 +39,22 @@ public class BrowserManager extends Observable {
 			instance = new BrowserManager();
 		return instance;
 	}
-	
+
 	private BrowserManager() {
 		pcl = new Preferences.IPropertyChangeListener() {
 			public void propertyChange(Preferences.PropertyChangeEvent event) {
-				if (ignorePreferenceChanges)
-					return;
 				String property = event.getProperty();
-				if (property.equals("browsers")) { //$NON-NLS-1$
+				if (!ignorePreferenceChanges && property.equals("browsers")) { //$NON-NLS-1$
 					loadBrowsers();
 				}
-				else if (property.equals(WebBrowserPreference.PREF_BROWSER_CHOICE)) {
-					setChanged();
-					notifyObservers();
-				}
+				setChanged();
+				notifyObservers();
 			}
 		};
 		
 		WebBrowserUIPlugin.getInstance().getPluginPreferences().addPropertyChangeListener(pcl);
 	}
-	
+
 	protected static void safeDispose() {
 		if (instance == null)
 			return;
@@ -80,7 +76,7 @@ public class BrowserManager extends Observable {
 			loadBrowsers();
 		return new ArrayList(browsers);
 	}
-	
+
 	protected void loadBrowsers() {
 		Trace.trace(Trace.FINEST, "Loading web browsers"); //$NON-NLS-1$
 		
