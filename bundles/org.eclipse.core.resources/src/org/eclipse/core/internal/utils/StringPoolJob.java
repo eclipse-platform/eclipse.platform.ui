@@ -13,6 +13,7 @@ package org.eclipse.core.internal.utils;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.osgi.framework.Bundle;
 
 /**
  * Performs string sharing passes on all string pool participants registered
@@ -27,6 +28,8 @@ public class StringPoolJob extends Job {
 	 * rule required when running it.
 	 */
 	private Map participants = Collections.synchronizedMap(new HashMap(10));
+
+	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 
 	public StringPoolJob() {
 		super(Messages.utils_stringJobName);
@@ -76,6 +79,10 @@ public class StringPoolJob extends Job {
 	 * Method declared on Job
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
+		//if the system is shutting down, don't build
+		if (systemBundle.getState() == Bundle.STOPPING)
+			return Status.OK_STATUS;
+
 		//copy current participants to handle concurrent additions and removals to map
 		Map.Entry[] entries = (Map.Entry[]) participants.entrySet().toArray(new Map.Entry[0]);
 		ISchedulingRule[] rules = new ISchedulingRule[entries.length];

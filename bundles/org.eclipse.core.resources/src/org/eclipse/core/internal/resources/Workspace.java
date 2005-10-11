@@ -327,6 +327,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			monitor.subTask(msg);
 			//this operation will never end because the world is going away
 			try {
+				stringPoolJob.cancel();
 				//shutdown save manager now so a last snapshot can be taken before we close
 				//note: you can't call #save() from within a nested operation
 				saveManager.shutdown(null);
