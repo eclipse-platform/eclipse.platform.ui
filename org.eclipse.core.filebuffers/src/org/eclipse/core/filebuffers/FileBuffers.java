@@ -14,7 +14,6 @@ package org.eclipse.core.filebuffers;
 import java.io.File;
 
 import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.FileSystemCore;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
 
@@ -130,11 +129,11 @@ public final class FileBuffers {
 		IFile file= getWorkspaceFileAtLocation(location);
 		try {
 			if (file != null)
-				return FileSystemCore.getStore(file.getLocationURI());
+				return EFS.getStore(file.getLocationURI());
 		} catch (CoreException e) {
 			//fall through and assume it is a local file
 		}
-		return FileSystemCore.getLocalFileSystem().getStore(location);
+		return EFS.getLocalFileSystem().getStore(location);
 	}
 	
 	/**

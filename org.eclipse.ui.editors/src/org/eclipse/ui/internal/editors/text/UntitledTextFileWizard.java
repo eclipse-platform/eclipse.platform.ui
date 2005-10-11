@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.IPath;
@@ -52,7 +52,7 @@ public class UntitledTextFileWizard extends Wizard implements INewWizard {
 	private IFileStore queryFileStore() {
 		IPath stateLocation= EditorsPlugin.getDefault().getStateLocation();
 		IPath path= stateLocation.append("/_" + new Object().hashCode()); //$NON-NLS-1$
-		return FileSystemCore.getLocalFileSystem().getStore(path);
+		return EFS.getLocalFileSystem().getStore(path);
 	}
 
 	private String getEditorId(IFileStore fileStore) {

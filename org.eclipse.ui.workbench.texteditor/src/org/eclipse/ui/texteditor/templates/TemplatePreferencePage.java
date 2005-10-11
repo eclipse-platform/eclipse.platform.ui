@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.FileSystemCore;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
@@ -630,7 +629,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		if (path == null)
 			return;
 		
-		IFileStore fileStore= FileSystemCore.getLocalFileSystem().getStore(new Path(path));
+		IFileStore fileStore= EFS.getLocalFileSystem().getStore(new Path(path));
 
 		try {
 			TemplateReaderWriter reader= new TemplateReaderWriter();
@@ -685,7 +684,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		if (path == null)
 			return;
 
-		IFileStore fileStore= FileSystemCore.getLocalFileSystem().getStore(new Path(path));
+		IFileStore fileStore= EFS.getLocalFileSystem().getStore(new Path(path));
 		IFileInfo fileInfo= fileStore.fetchInfo();
 
 		if (new File(fileStore.toURI()).isHidden()) {

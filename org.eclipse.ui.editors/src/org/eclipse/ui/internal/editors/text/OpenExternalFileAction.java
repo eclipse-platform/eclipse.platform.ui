@@ -19,7 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
 import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.FileSystemCore;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.CoreException;
@@ -123,7 +122,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 			int numberOfFilesNotFound= 0;
 			StringBuffer notFound= new StringBuffer();
 			for (int i= 0; i < names.length; i++) {
-				IFileStore fileStore= FileSystemCore.getLocalFileSystem().getStore(new Path(fFilterPath));
+				IFileStore fileStore= EFS.getLocalFileSystem().getStore(new Path(fFilterPath));
 				fileStore= fileStore.getChild(names[i]);
 				if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
 					IEditorInput input= createEditorInput(fileStore);
