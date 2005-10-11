@@ -52,6 +52,9 @@ public class HeapStatus extends Composite {
 	private int updateInterval;
 	private boolean showMax;
     private long totalMem;
+    private long prevTotalMem = -1L;
+    private long prevUsedMem = -1L;
+    private boolean hasChanged;
     private long usedMem;
     private long mark = -1;
     // start with 12x12
@@ -65,9 +68,12 @@ public class HeapStatus extends Composite {
         public void run() {
             if (!isDisposed()) {
                 updateStats();
-                updateToolTip();
                 adjustPosition();
-                redraw();
+                if (hasChanged) {
+                    updateToolTip();
+                    redraw();
+                    hasChanged = false;
+                }
                 getDisplay().timerExec(updateInterval, this);
             }
         }
@@ -424,6 +430,16 @@ public class HeapStatus extends Composite {
         totalMem = runtime.totalMemory();
         long freeMem = runtime.freeMemory();
         usedMem = totalMem - freeMem;
+        // Compare the numbers to within approximately 1Mb
+        if ((prevUsedMem >> 20) != (usedMem >> 20)) {
+            prevUsedMem = usedMem;
+            this.hasChanged = true;
+        }
+        
+        if (prevTotalMem != totalMem) {
+            prevTotalMem = totalMem;
+            this.hasChanged = true;
+        }
     }
 
     private void updateToolTip() {
@@ -478,9 +494,10 @@ public class HeapStatus extends Composite {
         
         public void run() {
             prefStore.setValue(IHeapStatusConstants.PREF_SHOW_MAX, isChecked());
+            redraw();
         }
     }
-    
+
     class CloseHeapStatusAction extends Action{
     	
     	CloseHeapStatusAction(){
