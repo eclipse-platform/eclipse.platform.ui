@@ -3,7 +3,6 @@ package org.eclipse.ui.views.markers.internal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -241,15 +240,16 @@ public class MarkerResolutionPage extends WizardPage {
 				if (!(selected instanceof IStructuredSelection))
 					return;
 
+				Object[] checked = markersTable.getCheckedElements();
 				IMarkerResolution resolution = (IMarkerResolution) ((IStructuredSelection) selected)
 						.getFirstElement();
 				monitor.beginTask(NLS.bind(
 						MarkerMessages.MarkerResolutionPage_Fixing, resolution
-								.getLabel()), markers.size() + 1);
+								.getLabel()), checked.length + 1);
 				monitor.worked(1);
-				for (Iterator iter = markers.iterator(); iter.hasNext();) {
-
-					IMarker marker = (IMarker) iter.next();
+				
+				for (int i = 0; i < checked.length; i++) {
+					IMarker marker = (IMarker) checked[i];
 					IMarkerResolution[] newResolutions = IDE
 							.getMarkerHelpRegistry().getResolutions(marker);
 
@@ -281,6 +281,7 @@ public class MarkerResolutionPage extends WizardPage {
 					matching.run(marker);
 					monitor.worked(1);
 
+				
 				}
 				monitor.done();
 
