@@ -320,7 +320,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	}
 
 	/**
-	 * Removes this entry from any list it belongs to.  Returns the receivelar.
+	 * Removes this entry from any list it belongs to.  Returns the receiver.
 	 */
 	final InternalJob remove() {
 		if (next != null)
