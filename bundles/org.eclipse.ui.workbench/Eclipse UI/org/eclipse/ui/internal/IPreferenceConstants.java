@@ -120,15 +120,6 @@ public interface IPreferenceConstants {
     // Boolean; true = EditorList displays full path
     public static final String EDITORLIST_DISPLAY_FULL_NAME = "EDITORLIST_DISPLAY_FULL_NAME"; //$NON-NLS-1$
 
-    // Show the shortcut bar in workbench windows
-    public static final String SHOW_SHORTCUT_BAR = "SHOW_SHORTCUT_BAR"; //$NON-NLS-1$
-
-    // Show the status line in workbench windows
-    public static final String SHOW_STATUS_LINE = "SHOW_STATUS_LINE"; //$NON-NLS-1$
-
-    // Show the toolbar in workbench windows
-    public static final String SHOW_TOOL_BAR = "SHOW_TOOL_BAR"; //$NON-NLS-1$
-
     /**
      * <p>
      * The key for the preference indicating which tab is selected in the keys

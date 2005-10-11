@@ -73,9 +73,6 @@ public class WorkbenchPreferenceInitializer extends
 		node.putInt(IPreferenceConstants.EDITORLIST_SORT_CRITERIA,
 				IPreferenceConstants.EDITORLIST_NAME_SORT); // Name Sort
 		node.putBoolean(IPreferenceConstants.COLOR_ICONS, true);
-		node.putBoolean(IPreferenceConstants.SHOW_SHORTCUT_BAR, true);
-		node.putBoolean(IPreferenceConstants.SHOW_STATUS_LINE, true);
-		node.putBoolean(IPreferenceConstants.SHOW_TOOL_BAR, true);
 		node.putInt(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB, 0);
 		node.putBoolean(IPreferenceConstants.MULTI_KEY_ASSIST, true);
 		node.putInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, 1000);
