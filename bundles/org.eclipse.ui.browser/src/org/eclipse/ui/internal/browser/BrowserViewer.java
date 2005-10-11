@@ -328,7 +328,7 @@ public class BrowserViewer extends Composite {
         // shell within the browser area thereby maintaining the session.
         browser.addOpenWindowListener(new OpenWindowListener() {
             public void open(WindowEvent event) {
-                Shell shell2 = new Shell(getDisplay());
+                Shell shell2 = new Shell(getShell());
                 shell2.setLayout(new FillLayout());
                 shell2.setText(Messages.viewWebBrowserTitle);
                 shell2.setImage(getShell().getImage());
