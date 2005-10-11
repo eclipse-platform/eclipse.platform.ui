@@ -20,7 +20,7 @@ public class AllTests {
 		suite.addTestSuite(ExistenceTestCase.class);
 		suite.addTestSuite(InternalBrowserViewTestCase.class);
 		suite.addTestSuite(InternalBrowserEditorTestCase.class);
-		suite.addTestSuite(ExternalBrowserTestCase.class);
+		//suite.addTestSuite(ExternalBrowserTestCase.class);
 		
 		suite.addTestSuite(DialogsTestCase.class);
 		suite.addTestSuite(PreferencesTestCase.class);
