@@ -88,7 +88,10 @@ public class RefactoringWizardOpenOperation {
 	 * refactoring dialog is opened. 
 	 * <p>
 	 * The methods ensures that the workspace lock is held while the condition checking, 
-	 * change creation and change execution is performed. 
+	 * change creation and change execution is performed. Clients can't make any assumption
+	 * about the thread in which these steps are executed. However, that framework makes
+	 * sure that the workspace lock is transfer to the thread in which the execution 
+	 * takes place. 
 	 * </p>
 	 * @param parent the parent shell for the dialog or <code>null</code> if the dialog
 	 *  is a top level dialog
