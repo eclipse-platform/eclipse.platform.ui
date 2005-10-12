@@ -12,7 +12,12 @@ package org.eclipse.jface.text.source;
 
 /**
  * Describes a range of lines.
- *
+ * <p>
+ * Note that the number of lines is 1-based, e.g. <code>getStartLine() + getNumberOfLines()</code>
+ * computes the first line <em>after</em> the range, and a range with
+ * <code>getNumberOfLines() == 0</code> is empty.
+ * </p>
+ * 
  * @since 3.0
  */
 public interface ILineRange {
