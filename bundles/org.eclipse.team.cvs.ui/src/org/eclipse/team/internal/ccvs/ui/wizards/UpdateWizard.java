@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.internal.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.core.CVSTag;

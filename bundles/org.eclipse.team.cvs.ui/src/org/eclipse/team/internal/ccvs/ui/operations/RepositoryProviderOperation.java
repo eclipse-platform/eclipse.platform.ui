@@ -12,9 +12,9 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.util.*;
 
-import org.eclipse.core.internal.resources.mapping.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.action.IAction;

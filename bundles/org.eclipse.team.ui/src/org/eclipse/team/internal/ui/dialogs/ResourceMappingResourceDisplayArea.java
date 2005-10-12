@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ui.dialogs;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.core.internal.resources.mapping.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;

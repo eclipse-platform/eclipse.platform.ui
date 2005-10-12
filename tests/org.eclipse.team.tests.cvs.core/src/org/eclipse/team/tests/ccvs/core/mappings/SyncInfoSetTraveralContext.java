@@ -12,9 +12,9 @@ package org.eclipse.team.tests.ccvs.core.mappings;
 
 import java.util.*;
 
-import org.eclipse.core.internal.resources.mapping.RemoteResourceMappingContext;
-import org.eclipse.core.internal.resources.mapping.ResourceTraversal;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.RemoteResourceMappingContext;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.*;

@@ -15,8 +15,8 @@ import java.util.*;
 
 import junit.framework.Test;
 
-import org.eclipse.core.internal.resources.mapping.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;

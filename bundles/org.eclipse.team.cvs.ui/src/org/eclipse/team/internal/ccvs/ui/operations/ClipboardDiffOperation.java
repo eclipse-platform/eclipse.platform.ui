@@ -13,7 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import org.eclipse.core.internal.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.dnd.*;
