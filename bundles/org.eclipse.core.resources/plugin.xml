@@ -143,7 +143,7 @@
        <factory
             class="org.eclipse.core.internal.resources.mapping.ResourceAdapterFactory"
             adaptableType="org.eclipse.core.resources.IResource">
-            <adapter type="org.eclipse.core.internal.resources.mapping.ResourceMapping"/>
+            <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
        </factory>
    </extension>
 

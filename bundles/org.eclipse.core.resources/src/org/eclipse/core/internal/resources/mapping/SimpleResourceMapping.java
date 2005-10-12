@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class SimpleResourceMapping extends ResourceMapping {
 	private final IResource resource;
-	private ResourceTraversal[] traversals;
+	private org.eclipse.core.resources.mapping.ResourceTraversal[] traversals;
 
 	public SimpleResourceMapping(IResource resource) {
 		this.resource = resource;
@@ -45,9 +45,9 @@ public class SimpleResourceMapping extends ResourceMapping {
 	/* (non-Javadoc)
 	 * Method declared on ResourceMapping.
 	 */
-	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
+	public org.eclipse.core.resources.mapping.ResourceTraversal[] getTraversals(org.eclipse.core.resources.mapping.ResourceMappingContext context, IProgressMonitor monitor) {
 		if (traversals == null) {
-			traversals = new ResourceTraversal[] {new ResourceTraversal(new IResource[] {resource}, IResource.DEPTH_INFINITE, IResource.NONE)};
+			traversals = new org.eclipse.core.resources.mapping.ResourceTraversal[] {new org.eclipse.core.resources.mapping.ResourceTraversal(new IResource[] {resource}, IResource.DEPTH_INFINITE, IResource.NONE)};
 		}
 		return traversals;
 	}

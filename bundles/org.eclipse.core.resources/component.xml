@@ -42,6 +42,8 @@
    <type name="ResourceAttributes" subclass="false"/>
    <type name="ResourcesPlugin" subclass="false" instantiate="false" />
  </package>
+ <package name="org.eclipse.core.resources.mapping">
+ </package>
  <package name="org.eclipse.core.resources.refresh">
    <type name="IRefreshResult" implement="false" />
  </package>
