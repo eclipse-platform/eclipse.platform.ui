@@ -86,7 +86,10 @@ public class RefactoringWizardOpenOperation {
 	 * a message dialog is opened containing the corresponding status message. No wizard 
 	 * dialog is opened in this situation. If the condition checking passes then the 
 	 * refactoring dialog is opened. 
-	 * 
+	 * <p>
+	 * The methods ensures that the workspace lock is held while the condition checking, 
+	 * change creation and change execution is performed. 
+	 * </p>
 	 * @param parent the parent shell for the dialog or <code>null</code> if the dialog
 	 *  is a top level dialog
 	 * @param dialogTitle the dialog title of the message box presenting the failed
