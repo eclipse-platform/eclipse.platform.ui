@@ -22,7 +22,7 @@ import org.osgi.service.prefs.Preferences;
  * accessing the root of the preference store node hierarchy, and importing/exporting
  * preferences.
  * <p>
- * The default-default preference search look-up order as defined by the plaform
+ * The default-default preference search look-up order as defined by the platform
  * is: project, instance, configuration, default.
  * </p><p>
  * This interface is not intended to be implemented by clients.
@@ -42,7 +42,7 @@ public interface IPreferencesService {
 	 * </p>
 	 * @param key the preference key
 	 * @param defaultValue the default value
-	 * @param nodes the list of nodes to search, or <core>null</code>
+	 * @param nodes the list of nodes to search, or <code>null</code>
 	 * @return the stored preference value or the specified default value 
 	 * @see org.osgi.service.prefs.Preferences
 	 */
@@ -409,11 +409,11 @@ public interface IPreferencesService {
 	 * Exports all preferences for the given preference node and all its children to the specified
 	 * output stream. It is the responsibility of the client to close the given output stream.
 	 * <p>
-	 * If the given export list is <code>null</code> then all preferences for all subnodes
+	 * If the given export list is <code>null</code> then all preferences for all sub-nodes
 	 * of the given node are exported to the given stream. Otherwise the export list is
 	 * consulted before exporting each preference value. If there is a string match then
 	 * the preference is not exported. The exclusion can also occur at a per-node level. 
-	 * Wildcards are <em>not</em> accepted in the excludes list as a basic String compare
+	 * Wild cards are <em>not</em> accepted in the excludes list as a basic String compare
 	 * is done. The basic algorithm is similar to the following:
 	 * <pre>
 	 * String fullPath = node.absolutePath() + '/' + key;
@@ -469,7 +469,7 @@ public interface IPreferencesService {
 	 * </p>
 	 * 
 	 * @param preferences the preferences to apply globally
-	 * @return status object indicating sucess or failure
+	 * @return status object indicating success or failure
 	 * @throws IllegalArgumentException if the preferences are <code>null</code>
 	 * @throws CoreException if there are problems applying the preferences
 	 * @see PreferenceModifyListener
