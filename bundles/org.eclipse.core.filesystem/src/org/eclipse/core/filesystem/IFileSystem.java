@@ -34,10 +34,7 @@ public interface IFileSystem extends IAdaptable {
 
 	/**
 	 * Returns the file attributes supported by this file system.  This value
-	 * is a bit mask of the <code>IFileStoreConstants.ATTRIBUTE_</code>
-	 * constants.  All file systems are assumed to support the attribute
-	 * <code>IFileStoreConstants.ATTRIBUTE_DIRECTORY</code>, so
-	 * this attribute does not need to be specified here.
+	 * is a bit mask of the <code>EFS.ATTRIBUTE_*</code> constants.
 	 * 
 	 * @return the file attributes supported by this file system.
 	 */
