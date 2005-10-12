@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Clients implement this interface to provide context to a 
- * particular scope. Instances of implementions of this interface are 
+ * particular scope. Instances of implementations of this interface are 
  * passed to the {@link IPreferencesService} for use in 
  * preference searching.
  * <p>
@@ -38,7 +38,7 @@ public interface IScopeContext {
 	 * Return the preferences node that contains the preferences for the
 	 * given qualifier or <code>null</code> if the node cannot be determined.
 	 * The given qualifier must not be <code>null</code> but may be a path 
-	 * to a subnode within the scope.
+	 * to a sub-node within the scope.
 	 * <p>
 	 * An example of a qualifier in Eclipse 2.1 would be the plug-in identifier that 
 	 * the preference is associated with (e.g. the "org.eclipse.core.resources" 
@@ -62,9 +62,9 @@ public interface IScopeContext {
 	 * preferences defined in this scope.
 	 * <p>
 	 * Implementors may return <code>null</code> if the location is not known,
-	 * is unavailable, or is unapplicable to this scope.
+	 * is unavailable, or is not applicable to this scope.
 	 * </p>
-	 * @return a writable location in the filesystem or <code>null</code>
+	 * @return a writable location in the file system or <code>null</code>
 	 */
 	public IPath getLocation();
 }
