@@ -39,17 +39,17 @@ public class ResourceAttributeTest extends ResourceTest {
 		resource.setResourceAttributes(attributes);
 	}
 
-	private void setHidden(IResource resource, boolean value) throws CoreException {
-		ResourceAttributes attributes = resource.getResourceAttributes();
-		assertNotNull("setHidden for null attributes", attributes);
-		attributes.setHidden(value);
-		resource.setResourceAttributes(attributes);
-	}
-
 	private void setExecutable(IResource resource, boolean value) throws CoreException {
 		ResourceAttributes attributes = resource.getResourceAttributes();
 		assertNotNull("setExecutable for null attributes", attributes);
 		attributes.setExecutable(value);
+		resource.setResourceAttributes(attributes);
+	}
+
+	private void setHidden(IResource resource, boolean value) throws CoreException {
+		ResourceAttributes attributes = resource.getResourceAttributes();
+		assertNotNull("setHidden for null attributes", attributes);
+		attributes.setHidden(value);
 		resource.setResourceAttributes(attributes);
 	}
 
@@ -96,40 +96,6 @@ public class ResourceAttributeTest extends ResourceTest {
 		}
 	}
 
-	public void testAttributeHidden() {
-		// hidden bit only implemented on windows
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
-			return;
-		IProject project = getWorkspace().getRoot().getProject("Project");
-		IFile file = project.getFile("target");
-		ensureExistsInWorkspace(file, getRandomContents());
-
-		try {
-			// file 
-			assertTrue("1.0", !file.getResourceAttributes().isHidden());
-			setHidden(file, true);
-			assertTrue("1.2", file.getResourceAttributes().isHidden());
-			setHidden(file, false);
-			assertTrue("1.4", !file.getResourceAttributes().isHidden());
-
-			// folder
-			assertTrue("2.0", !project.getResourceAttributes().isHidden());
-			setHidden(project, true);
-			assertTrue("2.2", project.getResourceAttributes().isHidden());
-			setHidden(project, false);
-			assertTrue("2.4", !project.getResourceAttributes().isHidden());
-		} catch (CoreException e1) {
-			fail("2.99", e1);
-		}
-
-		/* remove trash */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("3.0", e);
-		}
-	}
-
 	public void testAttributeExecutable() {
 		// executable bit not implemented on windows
 		if (Platform.getOS().equals(Platform.OS_WIN32))
@@ -153,6 +119,40 @@ public class ResourceAttributeTest extends ResourceTest {
 			assertTrue("2.2", !project.getResourceAttributes().isExecutable());
 			setExecutable(project, true);
 			assertTrue("2.4", project.getResourceAttributes().isExecutable());
+		} catch (CoreException e1) {
+			fail("2.99", e1);
+		}
+
+		/* remove trash */
+		try {
+			project.delete(true, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+	}
+
+	public void testAttributeHidden() {
+		// hidden bit only implemented on windows
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
+			return;
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFile file = project.getFile("target");
+		ensureExistsInWorkspace(file, getRandomContents());
+
+		try {
+			// file 
+			assertTrue("1.0", !file.getResourceAttributes().isHidden());
+			setHidden(file, true);
+			assertTrue("1.2", file.getResourceAttributes().isHidden());
+			setHidden(file, false);
+			assertTrue("1.4", !file.getResourceAttributes().isHidden());
+
+			// folder
+			assertTrue("2.0", !project.getResourceAttributes().isHidden());
+			setHidden(project, true);
+			assertTrue("2.2", project.getResourceAttributes().isHidden());
+			setHidden(project, false);
+			assertTrue("2.4", !project.getResourceAttributes().isHidden());
 		} catch (CoreException e1) {
 			fail("2.99", e1);
 		}
