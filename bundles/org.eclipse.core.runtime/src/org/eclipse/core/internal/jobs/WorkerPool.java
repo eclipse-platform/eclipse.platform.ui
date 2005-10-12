@@ -121,7 +121,7 @@ class WorkerPool {
 	}
 
 	/**
-	 * Notfication that a job has been added to the queue. Wake a worker,
+	 * Notification that a job has been added to the queue. Wake a worker,
 	 * creating a new worker if necessary. The provided job may be null.
 	 */
 	protected synchronized void jobQueued(InternalJob job) {
@@ -217,7 +217,7 @@ class WorkerPool {
 			if (job != null) {
 				//if this job has a rule, then we are essentially acquiring a lock
 				if ((job.getRule() != null) && !(job instanceof ThreadJob)) {
-					//don't need to reaquire locks because it was not recorded in the graph
+					//don't need to re-aquire locks because it was not recorded in the graph
 					//that this thread waited to get this rule
 					manager.getLockManager().addLockThread(Thread.currentThread(), job.getRule());
 				}

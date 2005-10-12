@@ -116,7 +116,7 @@ public class JobManager implements IJobManager {
 	public static void debug(String msg) {
 		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
 		if (DEBUG_TIMING) {
-			//lazy init to avoid overhead when not debugging
+			//lazy initialize to avoid overhead when not debugging
 			if (DEBUG_FORMAT == null)
 				DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
 			DEBUG_FORMAT.format(new Date(), msgBuf, new FieldPosition(0));
@@ -922,7 +922,7 @@ public class JobManager implements IJobManager {
 			if (oldPriority == newPriority)
 				return;
 			job.internalSetPriority(newPriority);
-			//if the job is waiting to run, reshuffle the queue
+			//if the job is waiting to run, re-shuffle the queue
 			if (job.getState() == Job.WAITING) {
 				long oldStart = job.getStartTime();
 				job.setStartTime(oldStart + (delayFor(newPriority) - delayFor(oldPriority)));
@@ -965,7 +965,7 @@ public class JobManager implements IJobManager {
 				case Job.SLEEPING :
 					//update the job wake time
 					job.setStartTime(InternalJob.T_INFINITE);
-					//change state again to reshuffle the sleep queue
+					//change state again to re-shuffle the sleep queue
 					changeState(job, Job.SLEEPING);
 					return true;
 				case Job.NONE :
@@ -1106,7 +1106,7 @@ public class JobManager implements IJobManager {
 		//call the pool outside sync block to avoid deadlock
 		pool.jobQueued(job);
 
-		//only notify of wakeup if immediate
+		//only notify of wake up if immediate
 		if (delay == 0)
 			jobListeners.awake((Job) job);
 	}
