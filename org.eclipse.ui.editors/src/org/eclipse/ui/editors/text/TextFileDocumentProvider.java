@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
@@ -1224,7 +1225,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		if (fileStore == null)
 			return false;
 		IFileInfo fileInfo= fileStore.fetchInfo();
-		return fileInfo.exists() && fileInfo.isReadOnly();
+		return fileInfo.exists() && fileInfo.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 	}
 
 	/**
