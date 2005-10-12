@@ -89,6 +89,9 @@ public abstract class ResourceManager {
      * @throws DeviceResourceException if unable to allocate the Image
      */
     public final Image createImage(ImageDescriptor descriptor) throws DeviceResourceException {
+    	// Assertion added to help diagnose client bugs.  See bug #83711 and bug #90454.
+    	Assert.isNotNull(descriptor);
+    	
         return (Image)create(descriptor);
     }
     
