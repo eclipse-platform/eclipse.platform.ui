@@ -17,184 +17,209 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
- * A layout for a table.
- * Call <code>addColumnData</code> to add columns.
+ * A layout for a table. Call <code>addColumnData</code> to add columns.
  */
 public class TableLayout extends Layout {
 
 	/**
-	 * The number of extra pixels taken as horizontal trim by the table column. 
+	 * The number of extra pixels taken as horizontal trim by the table column.
 	 * To ensure there are N pixels available for the content of the column,
 	 * assign N+COLUMN_TRIM for the column width.
 	 * 
 	 * @since 3.1
 	 */
 	private static int COLUMN_TRIM = "carbon".equals(SWT.getPlatform()) ? 24 : 3; //$NON-NLS-1$
-		
-	
-    /**
-     * The list of column layout data (element type:
-     *  <code>ColumnLayoutData</code>).
-     */
-    private List columns = new ArrayList();
 
-    /**
-     * Indicates whether <code>layout</code> has yet to be called.
-     */
-    private boolean firstTime = true;
+	/**
+	 * The list of column layout data (element type:
+	 * <code>ColumnLayoutData</code>).
+	 */
+	private List columns = new ArrayList();
 
-    /**
-     * Creates a new table layout.
-     */
-    public TableLayout() {
-    }
+	/**
+	 * Indicates whether <code>layout</code> has yet to be called.
+	 */
+	private boolean firstTime = true;
 
-    /**
-     * Adds a new column of data to this table layout.
-     *
-     * @param data the column layout data
-     */
-    public void addColumnData(ColumnLayoutData data) {
-        columns.add(data);
-    }
+	/**
+	 * Creates a new table layout.
+	 */
+	public TableLayout() {
+	}
 
-    /* (non-Javadoc)
-     * Method declared on Layout.
-     */
-    public Point computeSize(Composite c, int wHint, int hHint, boolean flush) {
-        if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-            return new Point(wHint, hHint);
+	/**
+	 * Adds a new column of data to this table layout.
+	 * 
+	 * @param data
+	 *            the column layout data
+	 */
+	public void addColumnData(ColumnLayoutData data) {
+		columns.add(data);
+	}
 
-        Table table = (Table) c;
-        // To avoid recursions.
-        table.setLayout(null);
-        // Use native layout algorithm
-        Point result = table.computeSize(wHint, hHint, flush);
-        table.setLayout(this);
+	/*
+	 * (non-Javadoc) Method declared on Layout.
+	 */
+	public Point computeSize(Composite c, int wHint, int hHint, boolean flush) {
+		if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
+			return new Point(wHint, hHint);
 
-        int width = 0;
-        int size = columns.size();
-        for (int i = 0; i < size; ++i) {
-            ColumnLayoutData layoutData = (ColumnLayoutData) columns.get(i);
-            if (layoutData instanceof ColumnPixelData) {
-                ColumnPixelData col = (ColumnPixelData) layoutData;
-                width += col.width;
+		Table table = (Table) c;
+		// To avoid recursions.
+		table.setLayout(null);
+		// Use native layout algorithm
+		Point result = table.computeSize(wHint, hHint, flush);
+		table.setLayout(this);
+
+		int width = 0;
+		int size = columns.size();
+		for (int i = 0; i < size; ++i) {
+			ColumnLayoutData layoutData = (ColumnLayoutData) columns.get(i);
+			if (layoutData instanceof ColumnPixelData) {
+				ColumnPixelData col = (ColumnPixelData) layoutData;
+				width += col.width;
 				if (col.addTrim) {
 					width += COLUMN_TRIM;
 				}
-            } else if (layoutData instanceof ColumnWeightData) {
-                ColumnWeightData col = (ColumnWeightData) layoutData;
-                width += col.minimumWidth;
-            } else {
-                Assert.isTrue(false, "Unknown column layout data");//$NON-NLS-1$
-            }
-        }
-        if (width > result.x)
-            result.x = width;
-        return result;
-    }
+			} else if (layoutData instanceof ColumnWeightData) {
+				ColumnWeightData col = (ColumnWeightData) layoutData;
+				width += col.minimumWidth;
+			} else {
+				Assert.isTrue(false, "Unknown column layout data");//$NON-NLS-1$
+			}
+		}
+		if (width > result.x)
+			result.x = width;
+		return result;
+	}
 
-    /* (non-Javadoc)
-     * Method declared on Layout.
-     */
-    public void layout(Composite c, boolean flush) {
-        // Only do initial layout.  Trying to maintain proportions when resizing is too hard,
-        // causes lots of widget flicker, causes scroll bars to appear and occasionally stick around (on Windows),
-        // requires hooking column resizing as well, and may not be what the user wants anyway.
-        if (!firstTime)
-            return;
+	/*
+	 * (non-Javadoc) Method declared on Layout.
+	 */
+	public void layout(Composite c, boolean flush) {
+		// Only do initial layout. Trying to maintain proportions when resizing
+		// is too hard,
+		// causes lots of widget flicker, causes scroll bars to appear and
+		// occasionally stick around (on Windows),
+		// requires hooking column resizing as well, and may not be what the
+		// user wants anyway.
+		if (!firstTime)
+			return;
 
-        Table table = (Table) c;
-        int width = table.getClientArea().width;
+		int width = c.getClientArea().width;
 
-        // XXX: Layout is being called with an invalid value the first time
-        // it is being called on Linux. This method resets the
-        // Layout to null so we make sure we run it only when
-        // the value is OK.
-        if (width <= 1)
-            return;
+		// XXX: Layout is being called with an invalid value the first time
+		// it is being called on Linux. This method resets the
+		// Layout to null so we make sure we run it only when
+		// the value is OK.
+		if (width <= 1)
+			return;
 
-        TableColumn[] tableColumns = table.getColumns();
-        int size = Math.min(columns.size(), tableColumns.length);
-        int[] widths = new int[size];
-        int fixedWidth = 0;
-        int numberOfWeightColumns = 0;
-        int totalWeight = 0;
+		Item[] tableColumns = getColumns(c);
+		int size = Math.min(columns.size(), tableColumns.length);
+		int[] widths = new int[size];
+		int fixedWidth = 0;
+		int numberOfWeightColumns = 0;
+		int totalWeight = 0;
 
-        // First calc space occupied by fixed columns
-        for (int i = 0; i < size; i++) {
-            ColumnLayoutData col = (ColumnLayoutData) columns.get(i);
-            if (col instanceof ColumnPixelData) {
+		// First calc space occupied by fixed columns
+		for (int i = 0; i < size; i++) {
+			ColumnLayoutData col = (ColumnLayoutData) columns.get(i);
+			if (col instanceof ColumnPixelData) {
 				ColumnPixelData cpd = (ColumnPixelData) col;
-                int pixels = cpd.width;
+				int pixels = cpd.width;
 				if (cpd.addTrim) {
 					pixels += COLUMN_TRIM;
 				}
-                widths[i] = pixels;
-                fixedWidth += pixels;
-            } else if (col instanceof ColumnWeightData) {
-                ColumnWeightData cw = (ColumnWeightData) col;
-                numberOfWeightColumns++;
-                // first time, use the weight specified by the column data, otherwise use the actual width as the weight
-                // int weight = firstTime ? cw.weight : tableColumns[i].getWidth();
-                int weight = cw.weight;
-                totalWeight += weight;
-            } else {
-                Assert.isTrue(false, "Unknown column layout data");//$NON-NLS-1$
-            }
-        }
+				widths[i] = pixels;
+				fixedWidth += pixels;
+			} else if (col instanceof ColumnWeightData) {
+				ColumnWeightData cw = (ColumnWeightData) col;
+				numberOfWeightColumns++;
+				// first time, use the weight specified by the column data,
+				// otherwise use the actual width as the weight
+				// int weight = firstTime ? cw.weight :
+				// tableColumns[i].getWidth();
+				int weight = cw.weight;
+				totalWeight += weight;
+			} else {
+				Assert.isTrue(false, "Unknown column layout data");//$NON-NLS-1$
+			}
+		}
 
-        // Do we have columns that have a weight
-        if (numberOfWeightColumns > 0) {
-            // Now distribute the rest to the columns with weight.
-            int rest = width - fixedWidth;
-            int totalDistributed = 0;
-            for (int i = 0; i < size; ++i) {
-                ColumnLayoutData col = (ColumnLayoutData) columns.get(i);
-                if (col instanceof ColumnWeightData) {
-                    ColumnWeightData cw = (ColumnWeightData) col;
-                    // calculate weight as above
-                    // int weight = firstTime ? cw.weight : tableColumns[i].getWidth();
-                    int weight = cw.weight;
-                    int pixels = totalWeight == 0 ? 0 : weight * rest
-                            / totalWeight;
-                    if (pixels < cw.minimumWidth)
-                        pixels = cw.minimumWidth;
-                    totalDistributed += pixels;
-                    widths[i] = pixels;
-                }
-            }
+		// Do we have columns that have a weight
+		if (numberOfWeightColumns > 0) {
+			// Now distribute the rest to the columns with weight.
+			int rest = width - fixedWidth;
+			int totalDistributed = 0;
+			for (int i = 0; i < size; ++i) {
+				ColumnLayoutData col = (ColumnLayoutData) columns.get(i);
+				if (col instanceof ColumnWeightData) {
+					ColumnWeightData cw = (ColumnWeightData) col;
+					// calculate weight as above
+					// int weight = firstTime ? cw.weight :
+					// tableColumns[i].getWidth();
+					int weight = cw.weight;
+					int pixels = totalWeight == 0 ? 0 : weight * rest
+							/ totalWeight;
+					if (pixels < cw.minimumWidth)
+						pixels = cw.minimumWidth;
+					totalDistributed += pixels;
+					widths[i] = pixels;
+				}
+			}
 
-            // Distribute any remaining pixels to columns with weight.
-            int diff = rest - totalDistributed;
-            for (int i = 0; diff > 0; ++i) {
-                if (i == size)
-                    i = 0;
-                ColumnLayoutData col = (ColumnLayoutData) columns.get(i);
-                if (col instanceof ColumnWeightData) {
-                    ++widths[i];
-                    --diff;
-                }
-            }
-        }
+			// Distribute any remaining pixels to columns with weight.
+			int diff = rest - totalDistributed;
+			for (int i = 0; diff > 0; ++i) {
+				if (i == size)
+					i = 0;
+				ColumnLayoutData col = (ColumnLayoutData) columns.get(i);
+				if (col instanceof ColumnWeightData) {
+					++widths[i];
+					--diff;
+				}
+			}
+		}
 
-        //	System.out.print("Width: " + width);
-        //	int total = 0;
-        //	for (int i = 0; i < widths.length; i++) {
-        //		System.out.print(" " + widths[i]);
-        //		total += widths[i];
-        //	}
-        //	System.out.println(" Total: " + total);
+		firstTime = false;
 
-        firstTime = false;
+		for (int i = 0; i < size; i++) {
+			setWidth(tableColumns[i], widths[i]);
+		}
+	}
 
-        for (int i = 0; i < size; i++) {
-            tableColumns[i].setWidth(widths[i]);
-        }
-    }
+	/**
+	 * Set the width of the item.
+	 * 
+	 * @param item
+	 * @param width
+	 */
+	private void setWidth(Item item, int width) {
+		if (item instanceof TreeColumn)
+			((TreeColumn) item).setWidth(width);
+		else
+			((TableColumn) item).setWidth(width);
+
+	}
+
+	/**
+	 * Return the columns for the receiver.
+	 * 
+	 * @param composite
+	 * @return Item[]
+	 */
+	private Item[] getColumns(Composite composite) {
+		if (composite instanceof Tree)
+			return ((Tree) composite).getColumns();
+		return ((Table) composite).getColumns();
+	}
 }
