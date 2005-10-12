@@ -93,6 +93,13 @@ jboolean convertStatToFileInfo (JNIEnv *env, struct stat info, jobject fileInfo)
 	    if (mid == 0) return JNI_FALSE;
 	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_EXECUTABLE, JNI_TRUE);
     }
+
+	// sym link?
+//    if ((info.st_mode & S_IFLNK) == S_IFLNK) {
+//	    mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
+//	    if (mid == 0) return JNI_FALSE;
+//	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_LINK, JNI_TRUE);
+//    }
 	return JNI_TRUE;
 }
 
