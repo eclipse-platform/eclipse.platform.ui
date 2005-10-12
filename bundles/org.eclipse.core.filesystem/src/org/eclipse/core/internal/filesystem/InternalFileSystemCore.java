@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * The class manages internal implementation of methods on FileSystemCore.
+ * The class manages internal implementation of methods on EFS.
  * This includes maintaining a list of file system extensions.
  */
 public class InternalFileSystemCore implements IRegistryChangeListener {
@@ -50,7 +50,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 
 	
 	/**
-	 * Implements the method FileSystemCore#getFileSystem(String)
+	 * Implements the method EFS#getFileSystem(String)
 	 * 
 	 * @param scheme The URI scheme of the file system
 	 * @return The file system
@@ -80,7 +80,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	}
 
 	/**
-	 * Implements the method FileSystemCore#getLocalFileSystem()
+	 * Implements the method EFS#getLocalFileSystem()
 	 * 
 	 * @return The local file system
 	 */
@@ -94,7 +94,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	}
 
 	/**
-	 * Implements the method FileSystemCore#getStore(URI)
+	 * Implements the method EFS#getStore(URI)
 	 * 
 	 * @param uri The URI of the store to retrieve
 	 * @return The file store corresponding to the given URI

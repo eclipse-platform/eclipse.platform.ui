@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * The null file system.
- * @see FileSystemCore#getNullFileSystem()
+ * @see EFS#getNullFileSystem()
  */
 public class NullFileSystem extends FileSystem {
 

@@ -378,7 +378,7 @@ public interface IFileStore extends IAdaptable {
 	 * option flags are provided.  The following example sets the last modified
 	 * time for a file store, leaving other values unchanged:
 	 * <pre>
-	 *    IFileInfo info = FileSystemCore#createFileInfo();
+	 *    IFileInfo info = EFS#createFileInfo();
 	 *    info.setLastModified(System.currentTimeMillis());
 	 *    store.putInfo(info, EFS.SET_LAST_MODIFIED, monitor);
 	 * </pre>
@@ -408,7 +408,7 @@ public interface IFileStore extends IAdaptable {
 	 * <ul>
 	 * <li> This store does not exist.</li>
 	 * </ul>
-	 * @see FileSystemCore#createFileInfo()
+	 * @see EFS#createFileInfo()
 	 */
 	public abstract void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException;
 
@@ -423,11 +423,11 @@ public interface IFileStore extends IAdaptable {
 
 	/**
 	 * Returns a URI instance corresponding to this store.  The resulting URI,
-	 * when passed to {@link FileSystemCore#getStore(URI)}, will return a store equal
+	 * when passed to {@link EFS#getStore(URI)}, will return a store equal
 	 * to this instance.
 	 * 
 	 * @return A URI corresponding to this store.
-	 * @see FileSystemCore#getStore(URI)
+	 * @see EFS#getStore(URI)
 	 */
 	public abstract URI toURI();
 }
