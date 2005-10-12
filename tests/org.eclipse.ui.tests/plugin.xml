@@ -1542,7 +1542,7 @@
             id="org.eclipse.ui.tests.decorators.resourceMappingDescorator">
          <enablement>
             <objectClass
-                  name="org.eclipse.core.internal.resources.mapping.ResourceMapping">
+                  name="org.eclipse.core.resources.mapping.ResourceMapping">
             </objectClass>
          </enablement>
          <description>
@@ -2343,7 +2343,7 @@
        <factory
              class="org.eclipse.ui.tests.menus.ObjectContributionClasses"
              adaptableType="org.eclipse.ui.tests.menus.ObjectContributionClasses$IModelElement">
-          <adapter type="org.eclipse.core.internal.resources.mapping.ResourceMapping"/>
+          <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
        </factory>
     </extension>
     
@@ -2418,7 +2418,7 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.core.internal.resources.mapping.ResourceMapping"
+            objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
             adaptable="true"
             id="adatableObjectContributions">
          <action

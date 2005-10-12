@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
-import org.eclipse.core.internal.resources.mapping.ResourceMapping;
-import org.eclipse.core.internal.resources.mapping.ResourceMappingContext;
-import org.eclipse.core.internal.resources.mapping.ResourceTraversal;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IProgressMonitor;

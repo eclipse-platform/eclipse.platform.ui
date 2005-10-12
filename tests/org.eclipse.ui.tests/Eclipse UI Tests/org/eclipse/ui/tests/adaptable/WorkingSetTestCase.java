@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.adaptable;
 
-import org.eclipse.core.internal.resources.mapping.ResourceMapping;
-import org.eclipse.core.internal.resources.mapping.ResourceTraversal;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.QualifiedName;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
-import org.eclipse.core.internal.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 
 public class TestResourceMappingDecoratorContributor extends
         TestAdaptableDecoratorContributor {

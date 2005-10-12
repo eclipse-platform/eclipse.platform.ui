@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
-import org.eclipse.core.internal.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;

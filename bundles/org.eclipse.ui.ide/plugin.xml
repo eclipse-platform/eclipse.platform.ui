@@ -820,7 +820,7 @@
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
             namespace="org.eclipse.ui.ide"
-            type="org.eclipse.core.internal.resources.mapping.ResourceMapping"
+            type="org.eclipse.core.resources.mapping.ResourceMapping"
             class="org.eclipse.ui.internal.ide.model.ProjectPersistentPropertyTester"
             properties="projectPersistentProperty"
             id="org.eclipse.ui.ide.mappingProjectPersistentPropertyTester"/>
@@ -871,7 +871,7 @@
        <factory
             class="org.eclipse.ui.internal.ide.model.WorkingSetAdapterFactory"
             adaptableType="org.eclipse.ui.IWorkingSet">
-            <adapter type="org.eclipse.core.internal.resources.mapping.ResourceMapping"/>
+            <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
        </factory>
    </extension>
    
