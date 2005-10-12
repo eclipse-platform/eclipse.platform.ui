@@ -12,7 +12,7 @@ package org.eclipse.ant.internal.ui;
 
 import java.io.File;
 
-import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.CoreException;
@@ -49,7 +49,7 @@ public class ExternalHyperlink implements IHyperlink {
     	IEditorInput input;
     	IFileStore fileStore;
 		try {
-			fileStore= FileSystemCore.getStore(fFile.toURI());
+			fileStore= EFS.getStore(fFile.toURI());
 			input = new JavaFileEditorInput(fileStore);
 		} catch (CoreException e) {
 			// unable to link

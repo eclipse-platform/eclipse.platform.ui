@@ -28,7 +28,7 @@ import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.core.filesystem.FileSystemCore;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.CoreException;
@@ -151,7 +151,7 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
         	File file= ((LocalFileStorage)element).getFile();
         	IFileStore fileStore;
 			try {
-				fileStore = FileSystemCore.getStore(file.toURI());
+				fileStore = EFS.getStore(file.toURI());
 				return new JavaFileEditorInput(fileStore);
 			} catch (CoreException e) {
 				AntUIPlugin.log(e);
