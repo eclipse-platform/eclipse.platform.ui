@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -177,16 +176,6 @@ public class Resources {
 		}
 	}
 
-	public static String[] getLocationOSStrings(IResource[] resources) {
-		List result= new ArrayList(resources.length);
-		for (int i= 0; i < resources.length; i++) {
-			IPath location= resources[i].getLocation();
-			if (location != null)
-				result.add(location.toOSString());
-		}
-		return (String[]) result.toArray(new String[result.size()]);
-	}
-	
 	public static boolean isReadOnly(IResource resource) {
 		ResourceAttributes resourceAttributes = resource.getResourceAttributes();
 		if (resourceAttributes == null)  // not supported on this platform for this resource 
