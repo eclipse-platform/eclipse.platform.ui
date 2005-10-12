@@ -144,17 +144,6 @@ public class EFS {
 	public static final int ATTRIBUTE_HIDDEN = 1 << 4;
 
 	/**
-	 * Attribute constant (value 1 &lt;&lt;5) indicating that a
-	 * file is a symbolic link.
-	 * 
-	 * @see IFileStore#fetchInfo()
-	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
-	 * @see IFileInfo#getAttribute(int)
-	 * @see IFileInfo#setAttribute(int, boolean)
-	 */
-	public static final int ATTRIBUTE_LINK = 1 << 5;
-
-	/**
 	 * Scheme constant (value "file") indicating the local file system scheme.
 	 * @see EFS#getLocalFileSystem()
 	 */
