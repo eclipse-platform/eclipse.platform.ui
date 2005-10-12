@@ -222,15 +222,24 @@ public class MarkerManager implements IManager {
 	 */
 	public IMarker[] findMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) {
 		ArrayList result = new ArrayList();
+		doFindMarkers(target, result, type, includeSubtypes, depth);
+		if (result.size() == 0)
+			return NO_MARKERS;
+		return (IMarker[]) result.toArray(new IMarker[result.size()]);
+	}
+
+	/**
+	 * Fills the provided list with all markers of the specified type on the given target, 
+	 * with option to search the target's children.
+	 * Passing <code>null</code> for the type specifies a match
+	 * for all types (i.e., <code>null</code> is a wildcard.
+	 */
+	public void doFindMarkers(IResource target, ArrayList result, final String type, final boolean includeSubtypes, int depth) {
 		//optimize the deep searches with an element tree visitor
 		if (depth == IResource.DEPTH_INFINITE && target.getType() != IResource.FILE)
 			visitorFindMarkers(target.getFullPath(), result, type, includeSubtypes);
 		else
 			recursiveFindMarkers(target.getFullPath(), result, type, includeSubtypes, depth);
-		if (result.size() == 0) {
-			return NO_MARKERS;
-		}
-		return (IMarker[]) result.toArray(new IMarker[result.size()]);
 	}
 
 	public long getChangeId() {

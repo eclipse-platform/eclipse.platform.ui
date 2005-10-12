@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
+import java.util.ArrayList;
+import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -28,13 +29,13 @@ import org.eclipse.core.runtime.CoreException;
  * </p>
 
  * @see org.eclipse.core.resources.IResource
- * @since 3.1
+ * @since 3.2
  */
 public class ResourceTraversal {
 
-	private int depth;
-	private int flags;
-	private IResource[] resources;
+	private final int depth;
+	private final int flags;
+	private final IResource[] resources;
 
 	/**
 	 * Creates a new resource traversal.
@@ -44,6 +45,8 @@ public class ResourceTraversal {
 	 * that are passed to the <code>IResource#accept</code> method.
 	 */
 	public ResourceTraversal(IResource[] resources, int depth, int flags) {
+		if (resources == null)
+			throw new NullPointerException();
 		this.resources = resources;
 		this.depth = depth;
 		this.flags = flags;
@@ -60,10 +63,44 @@ public class ResourceTraversal {
 	 * </ul>
 	 */
 	public void accept(IResourceVisitor visitor) throws CoreException {
+		for (int i = 0, imax = resources.length; i < imax; i++)
+			resources[i].accept(visitor, depth, flags);
+	}
+
+	/**
+	 * Efficient implementation of {@link #findMarkers(String, boolean)}, not
+	 * available to clients because underlying non-API methods are used that
+	 * may change.
+	 */
+	void doFindMarkers(ArrayList result, String type, boolean includeSubtypes) throws CoreException {
+		MarkerManager markerMan = ((Workspace) ResourcesPlugin.getWorkspace()).getMarkerManager();
 		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			resource.accept(visitor, depth, flags);
+			Resource resource = (Resource)resources[i];
+			resource.checkAccessible(resource.getFlags(resource.getResourceInfo(false, false)));
+			markerMan.doFindMarkers(resource, result, type, includeSubtypes, depth);
 		}
+	}
+
+	/**
+	 * Returns all markers of the specified type on the resources in this traversal.
+	 * If <code>includeSubtypes</code> is <code>false</code>, only markers 
+	 * whose type exactly matches the given type are returned.  Returns an empty 
+	 * array if there are no matching markers.
+	 *
+	 * @param type the type of marker to consider, or <code>null</code> to indicate all types
+	 * @param includeSubtypes whether or not to consider sub-types of the given type
+	 * @return an array of markers
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> A resource in this traversal does not exist.</li>
+	 * </ul>
+	 */
+	public IMarker[] findMarkers(String type, boolean includeSubtypes) throws CoreException {
+		if (resources.length== 0)
+			return new IMarker[0];
+		ArrayList result = new ArrayList();
+		doFindMarkers(result, type, includeSubtypes);
+		return (IMarker[]) result.toArray(new IMarker[result.size()]);
 	}
 
 	/**

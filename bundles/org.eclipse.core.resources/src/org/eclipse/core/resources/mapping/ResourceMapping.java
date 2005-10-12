@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
+import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -33,9 +34,57 @@ import org.eclipse.core.runtime.*;
 
  * @see IResource
  * @see ResourceTraversal
- * @since 3.1
+ * @since 3.2
  */
 public abstract class ResourceMapping extends PlatformObject {
+
+	/**
+	 * Accepts the given visitor for the resources in this mapping.
+	 * The visitor's {@link IResourceVisitor#visit} method is called for each resource
+	 * in this mapping. 
+	 * 
+	 * @param context the traversal context
+	 * @param visitor the visitor
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> A resource in this mapping does not exist.</li>
+	 * <li> The visitor failed with this exception.</li>
+	 * </ul>
+	 */
+	public void accept(ResourceMappingContext context, IResourceVisitor visitor, IProgressMonitor monitor) throws CoreException {
+		ResourceTraversal[] traversals = getTraversals(context, monitor);
+		for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+			traversal.accept(visitor);
+		}
+	}
+
+	/**
+	 * Returns all markers of the specified type on the resources in this mapping.
+	 * If <code>includeSubtypes</code> is <code>false</code>, only markers 
+	 * whose type exactly matches the given type are returned.  Returns an empty 
+	 * array if there are no matching markers.
+	 *
+	 * @param context the traversal context
+	 * @param type the type of marker to consider, or <code>null</code> to indicate all types
+	 * @param includeSubtypes whether or not to consider sub-types of the given type
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
+	 * @return an array of markers
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> A resource in this mapping does not exist.</li>
+	 * </ul>
+	 */
+	public IMarker[] findMarkers(ResourceMappingContext context, String type, boolean includeSubtypes, IProgressMonitor monitor) throws CoreException {
+		final ResourceTraversal[] traversals = getTraversals(context, monitor);
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < traversals.length; i++)
+			traversals[i].doFindMarkers(result, type, includeSubtypes);
+		return (IMarker[]) result.toArray(new IMarker[result.size()]);
+	}
 
 	/**
 	 * Returns the application model element associated with this
@@ -63,7 +112,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * <p>
 	 * Subclasses should, when possible, include
 	 * all resources that are or may be members of the model element. 
-     * For instance, a model element should return the same list of
+	 * For instance, a model element should return the same list of
 	 * resources regardless of the existence of the files on the file system.
 	 * For example, if a logical resource called "form" maps to "/p1/form.xml"
 	 * and "/p1/form.java" then whether form.xml or form.java existed, they
@@ -92,27 +141,4 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * @exception CoreException if the traversals could not be obtained.
 	 */
 	public abstract ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException;
-
-    /**
-	 * Accepts the given visitor for the resources in this mapping.
-	 * The visitor's {@link IResourceVisitor#visit} method is called for each resource
-	 * in this mapping. 
-	 * 
-     * @param context the traversal context
-	 * @param visitor the visitor
-	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *    reporting is not desired
-	 * @exception CoreException if this method fails. Reasons include:
-	 * <ul>
-	 * <li> This resource does not exist.</li>
-	 * <li> The visitor failed with this exception.</li>
-	 * </ul>
-	 */
-    public void accept(ResourceMappingContext context, IResourceVisitor visitor, IProgressMonitor monitor) throws CoreException {
-        ResourceTraversal[] traversals = getTraversals(context, monitor);
-        for (int i = 0; i < traversals.length; i++) {
-            ResourceTraversal traversal = traversals[i];
-            traversal.accept(visitor);
-        }
-    }
 }
