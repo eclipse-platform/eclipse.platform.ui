@@ -67,7 +67,6 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * whose type exactly matches the given type are returned.  Returns an empty 
 	 * array if there are no matching markers.
 	 *
-	 * @param context the traversal context
 	 * @param type the type of marker to consider, or <code>null</code> to indicate all types
 	 * @param includeSubtypes whether or not to consider sub-types of the given type
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -78,8 +77,8 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * <li> A resource in this mapping does not exist.</li>
 	 * </ul>
 	 */
-	public IMarker[] findMarkers(ResourceMappingContext context, String type, boolean includeSubtypes, IProgressMonitor monitor) throws CoreException {
-		final ResourceTraversal[] traversals = getTraversals(context, monitor);
+	public IMarker[] findMarkers(String type, boolean includeSubtypes, IProgressMonitor monitor) throws CoreException {
+		final ResourceTraversal[] traversals = getTraversals(ResourceMappingContext.LOCAL_CONTEXT, monitor);
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < traversals.length; i++)
 			traversals[i].doFindMarkers(result, type, includeSubtypes);
