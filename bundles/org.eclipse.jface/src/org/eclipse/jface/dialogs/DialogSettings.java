@@ -404,6 +404,7 @@ public class DialogSettings implements IDialogSettings {
                 }
             }
             out.endTag(TAG_LIST);
+            attributes.clear();
         }
         for (Iterator i = sections.values().iterator(); i.hasNext();) {
             ((DialogSettings) i.next()).save(out);
