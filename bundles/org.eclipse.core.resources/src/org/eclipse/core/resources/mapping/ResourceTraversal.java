@@ -40,17 +40,6 @@ public class ResourceTraversal {
 	 * Creates a new resource traversal.
 	 * @param resources The resources in the traversal
 	 * @param depth The traversal depth
-	 * 
-	 * @deprecated Use {@link #ResourceTraversal(IResource[], int, int)} instead.
-	 */
-	public ResourceTraversal(IResource[] resources, int depth) {
-		this(resources, depth, 0);
-	}
-
-	/**
-	 * Creates a new resource traversal.
-	 * @param resources The resources in the traversal
-	 * @param depth The traversal depth
 	 * @param flags the flags for this traversal. The traversal flags match those
 	 * that are passed to the <code>IResource#accept</code> method.
 	 */
