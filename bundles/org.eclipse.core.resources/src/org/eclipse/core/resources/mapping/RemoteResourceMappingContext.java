@@ -21,8 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * model element when obtaining a set of traversals for a model element. This
  * allows the model element to query the remote state of a resource in order to
  * determine if there are resources that exist remotely but do not exist locally
- * that should be included in the traversal. The traversals should also be as 
- * as possible to allow for optimization of remote operations.
+ * that should be included in the traversal. 
  * <p>
  * This class may be subclassed by clients.
  * </p>
@@ -53,15 +52,15 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * from the local contents and these remote contents would be fetched as part of the
      * operation associated with the context. 
      * For instance, when updating the workspace to the latest remote state,
-     * this method would only return <code>true</code> if the remote contentd have changed
+     * this method would only return <code>true</code> if the remote contents have changed
      * since the last time the contents where updated. However, if replace the local contents,
-     * the methdo would return <code>true</code> if either the remote contents or the lcoal contents 
+     * the method would return <code>true</code> if either the remote contents or the local contents 
      * have changed.
      * <p>
      * This can be used by clients to determine if
      * they need to fetch the remote contents in order to determine if the
      * resources that constitute the model element are different in another
-     * location. If the lcoa file exists and the remote file does not, then
+     * location. If the local file exists and the remote file does not, then
      * the contents will be said to differ (i.e. <code>true</code> is returned).
      * </p>
      * 
@@ -73,7 +72,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * @exception CoreException if the contents could not be compared. Reasons include:
      * <ul>
      * <li>The corresponding remote resource is not a container
-     *    (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
+     *    (status code will be {@link IResourceStatus#RESOURCE_WRONG_TYPE}).</li>
      * </ul>
      */
     public abstract boolean contentDiffers(IFile file, IProgressMonitor monitor) throws CoreException;
@@ -126,7 +125,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * @exception CoreException if the members could not be fetched. Reasons include:
      * <ul>
      * <li>The corresponding remote resource is not a container
-     *    (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
+     *    (status code will be {@link IResourceStatus#RESOURCE_WRONG_TYPE}).</li>
      * </ul>
      */
     public abstract IResource[] fetchMembers(IContainer container, IProgressMonitor monitor) throws CoreException;
@@ -142,9 +141,9 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * It is up to implementors to decide, based on the provided traversals, how to efficiently
      * perform the refresh. In the ideal case, calls to {@link #contentDiffers} and {@link #fetchMembers}
      * would not need to contact the server after a call to a refresh with appropriate traversals. Also, ideally, 
-     * if {@link #FILE_CONTENTS_REQUIRED} is on of the flags, then the contents for these files will be chached as efficiently
+     * if {@link #FILE_CONTENTS_REQUIRED} is on of the flags, then the contents for these files will be cached as efficiently
      * as possible so that calls to {@link #fetchContents} will also not need to contact the server. This may
-     * not be possible for all context providers, so clients cannot assume that the above mentioed methods will not
+     * not be possible for all context providers, so clients cannot assume that the above mentioned methods will not
      * be long running. It is still advisably for clients to call {@link #refresh} with as much details
      * as possible since, in the case where a provider is optimized performance will be much better.
      * </p>
@@ -152,7 +151,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * @param traversals the resource traversals which indicate which resources are to be refreshed
      * @param flags additional refresh behavior. For instance, if <code>FILE_CONTENTS_REQUIRED</code> 
      *      is one of the flags, this indicates that the client will be accessing the contents of
-     *      the files covered by the traversals. <code>NONE</code> shoudl be used when no additional
+     *      the files covered by the traversals. <code>NONE</code> should be used when no additional
      *      behavior is required
      * @param monitor a progress monitor, or <code>null</code> if progress
      *    reporting is not desired

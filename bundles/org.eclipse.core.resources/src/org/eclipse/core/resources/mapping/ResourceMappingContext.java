@@ -20,7 +20,7 @@ package org.eclipse.core.resources.mapping;
  * (represented by the singleton {@link #LOCAL_CONTEXT}),
  * and {@link RemoteResourceMappingContext}. Implementors of {@link ResourceMapping}
  * should not assume that these are the only valid contexts (in order to allow future 
- * extensibility). Therefore, if the provided context is not of one of the above mentioed types,
+ * extensibility). Therefore, if the provided context is not of one of the above mentioned types,
  * the implementor can assume that the context is a local context.
  * </p>
  * <p>

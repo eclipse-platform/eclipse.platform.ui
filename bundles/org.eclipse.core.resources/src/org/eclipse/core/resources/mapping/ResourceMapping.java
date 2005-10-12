@@ -64,7 +64,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * Subclasses should, when possible, include
 	 * all resources that are or may be members of the model element. 
      * For instance, a model element should return the same list of
-	 * resources regardless of the existance of the files on the file system.
+	 * resources regardless of the existence of the files on the file system.
 	 * For example, if a logical resource called "form" maps to "/p1/form.xml"
 	 * and "/p1/form.java" then whether form.xml or form.java existed, they
 	 * should be returned by this method.
@@ -73,7 +73,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * resources that may constitute the element without accessing the state of
 	 * the model element in another location (e.g. a repository). This method is
 	 * provided with a context which, when provided, gives access to
-	 * the members of correcponding remote containers and the contenst of
+	 * the members of corresponding remote containers and the contents of
 	 * corresponding remote files. This gives the model element the opportunity
 	 * to deduce what additional resources should be included in the traversal.
 	 * </p>
