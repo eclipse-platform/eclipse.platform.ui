@@ -24,8 +24,8 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -37,7 +37,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class ProblemView extends MarkerView {
 
 	private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
-			new ColumnPixelData(16, false, true), new ColumnPixelData(200),
+			new ColumnPixelData(40, false, true), new ColumnPixelData(200),
 			new ColumnPixelData(75), new ColumnPixelData(150),
 			new ColumnPixelData(60) };
 
@@ -146,9 +146,12 @@ public class ProblemView extends MarkerView {
 				getSelectionProvider());
 	}
 
-	protected void createColumns(Table table) {
-		super.createColumns(table);
-		TableColumn[] columns = table.getColumns();
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.TableView#createColumns(org.eclipse.swt.widgets.Tree)
+	 */
+	protected void createColumns(Tree tree) {
+		super.createColumns(tree);
+		TreeColumn[] columns = tree.getColumns();
 
 		if (columns != null && columns.length >= 1)
 			columns[0].setResizable(false);

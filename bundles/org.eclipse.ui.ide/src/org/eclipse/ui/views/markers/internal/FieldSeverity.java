@@ -65,7 +65,7 @@ public class FieldSeverity implements IField {
      * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
      */
     public String getValue(Object obj) {
-        return "" + ((ProblemMarker) obj).getSeverity(); //$NON-NLS-1$
+        return Util.EMPTY_STRING;
     }
 
     /*

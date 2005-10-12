@@ -55,7 +55,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -70,7 +70,7 @@ import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
@@ -603,7 +603,7 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#createActions()
 	 */
 	protected void createActions() {
-		TableViewer viewer = getViewer();
+		TreeViewer viewer = getViewer();
 		revealAction = new ActionRevealMarker(this, getSelectionProvider());
 		openAction = new ActionOpenMarker(this, getSelectionProvider());
 		copyAction = new ActionCopyMarker(this, getSelectionProvider());
@@ -1150,7 +1150,7 @@ public abstract class MarkerView extends TableView {
 	 */
 	public void setSelection(IStructuredSelection structuredSelection,
 			boolean reveal) {
-		TableViewer viewer = getViewer();
+		TreeViewer viewer = getViewer();
 
 		List newSelection = new ArrayList(structuredSelection.size());
 
@@ -1251,9 +1251,9 @@ public abstract class MarkerView extends TableView {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				// Ensure that the view hasn't been disposed
-				Table table = getTable();
+				Tree tree = getTree();
 
-				if (table != null && !table.isDisposed()) {
+				if (tree != null && !tree.isDisposed()) {
 					updateStatusMessage();
 					updateTitle();
 				}

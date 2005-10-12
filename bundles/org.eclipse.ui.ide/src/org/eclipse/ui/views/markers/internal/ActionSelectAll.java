@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -22,7 +23,7 @@ public class ActionSelectAll extends SelectionProviderAction {
     /**
      * @param provider
      */
-    public ActionSelectAll(TableViewer provider) {
+    public ActionSelectAll(ISelectionProvider provider) {
         super(provider, MarkerMessages.selectAllAction_title);
         setEnabled(true);
     }

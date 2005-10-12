@@ -22,8 +22,9 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Contains a queue of changes to be applied to a particular TableViewer.
@@ -106,17 +107,17 @@ final class DeferredQueue {
     /**
      * pointer to the viewer being populated.
      */
-    private TableViewer viewer;
+    private TableView view;
 
     private boolean hasPendingChanges = false;
 
     /**
      * Constructs a new DeferredQueue.
      * 
-     * @param viewer
+     * @param view
      */
-    public DeferredQueue(TableViewer viewer) {
-        this.viewer = viewer;
+    public DeferredQueue(TableView view) {
+        this.view = view;
     }
 
     /**
@@ -237,7 +238,7 @@ final class DeferredQueue {
         Collection result = SortUtil.removeFirst(pendingChanges,
                 maximumToChange);
 
-        viewer.update(result.toArray(), null);
+        view.getViewer().update(result.toArray(), null);
 
         return result.size();
     }
@@ -271,17 +272,36 @@ final class DeferredQueue {
             visibleItems.removeAll(result);
         }
 
+        TreeViewer viewer = view.getViewer();
+        	
         viewer.remove(result.toArray());
 
         if (lastDirty) {
-            lastVisible = viewer
-                    .getElementAt(viewer.getTable().getItemCount() - 1);
+            lastVisible =  getElementAt(viewer,viewer.getTree().getItemCount() - 1);
         }
 
         return result.size();
     }
 
     /**
+     * Get the element in viewer at index of the root.
+     * @param viewer
+     * @param index
+     * @return Object
+     */
+    private Object getElementAt(TreeViewer viewer, int index) {
+    	
+    	Tree tree = viewer.getTree();
+    	
+    	if (index >= 0 && index < tree.getItemCount()) {
+			TreeItem i = tree.getItem(index);
+			if (i != null)
+				return i.getData();
+		}
+		return null;
+	}
+
+	/**
      * Applies the next set of insertions into the middle of the queue.
      * 
      * @param maximumToInsert
@@ -301,14 +321,8 @@ final class DeferredQueue {
         // We manually compute the insertion position because setting a sorter on 
         // the viewer would force a refresh, which can be very slow with a large number
         // of items.
-
-        Iterator iter = result.iterator();
-        while (iter.hasNext()) {
-            Object element = iter.next();
-
-            int insertionPos = getInsertPosition(element);
-            viewer.insert(element, insertionPos);
-        }
+        TreeViewer viewer = view.getViewer();
+        viewer.add(view.getViewerInput(), result.toArray());
 
         return result.size();
     }
@@ -339,7 +353,7 @@ final class DeferredQueue {
             visibleItems.addAll(result);
         }
 
-        viewer.add(result.toArray());
+        view.getViewer().add(view.getViewerInput(),result.toArray());
 
         return result.size();
     }
@@ -441,14 +455,14 @@ final class DeferredQueue {
      * @return
      */
     private int getInsertPosition(Object element) {
-        Table table = viewer.getTable();
+        Tree tree = view.getViewer().getTree();
         if (sortOrder == null)
-            return table.getItemCount();
-        int count = table.getItemCount();
+            return tree.getItemCount();
+        int count = tree.getItemCount();
         int min = 0, max = count - 1;
         while (min <= max) {
             int mid = (min + max) / 2;
-            Object data = table.getItem(mid).getData();
+            Object data = tree.getItem(mid).getData();
             int compare = sortOrder.compare(data, element);
             if (compare == 0) {
                 // find first item > element
@@ -457,7 +471,7 @@ final class DeferredQueue {
                     if (mid >= count) {
                         break;
                     }
-                    data = table.getItem(mid).getData();
+                    data = tree.getItem(mid).getData();
                     compare = sortOrder.compare(data, element);
                 }
                 return mid;
@@ -539,8 +553,8 @@ final class DeferredQueue {
      * 
      * @return the TableViewer that is being modified.
      */
-    public TableViewer getViewer() {
-        return viewer;
+    public TreeViewer getViewer() {
+        return view.getViewer();
     }
 
     /**
@@ -604,5 +618,13 @@ final class DeferredQueue {
     public Comparator getSorter() {
         return sortOrder;
     }
+
+	/**
+	 * Return the view for the receiver.
+	 * @return TableView
+	 */
+	public TableView getView() {
+		return view;
+	}
 
 }

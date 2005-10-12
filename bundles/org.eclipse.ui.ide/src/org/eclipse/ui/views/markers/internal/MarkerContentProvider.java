@@ -22,8 +22,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
@@ -45,7 +45,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * </p>
  *
  */
-class TableContentProvider implements IStructuredContentProvider {
+class MarkerContentProvider implements ITreeContentProvider {
 
     // NLS strings
     private static final String TABLE_SYNCHRONIZATION = 
@@ -73,7 +73,7 @@ class TableContentProvider implements IStructuredContentProvider {
     private Job disableUpdatesJob = new WorkbenchJob(TABLE_SYNCHRONIZATION) {
         public IStatus runInUIThread(IProgressMonitor monitor) {
             if (controlExists()) {
-                getViewer().getTable().setRedraw(false);
+                getViewer().getTree().setRedraw(false);
             }
 
             return Status.OK_STATUS;
@@ -86,7 +86,7 @@ class TableContentProvider implements IStructuredContentProvider {
     private Job enableUpdatesJob = new WorkbenchJob(TABLE_SYNCHRONIZATION) {
         public IStatus runInUIThread(IProgressMonitor monitor) {
             if (controlExists()) {
-                getViewer().getTable().setRedraw(true);
+                getViewer().getTree().setRedraw(true);
             }
 
             return Status.OK_STATUS;
@@ -164,15 +164,15 @@ class TableContentProvider implements IStructuredContentProvider {
      * Creates a new TableContentProvider that will control the contents of the given
      * viewer. 
      * 
-     * @param viewer
+     * @param view
      * @param description user-readable string that will be included in progress monitors
      * @param service IWorkbenchSiteProgressService or <code>null</null>
      * 	 the service that this content provider will inform of 
      * 	updates.
      */
-    public TableContentProvider(TableViewer viewer, String description,
+    public MarkerContentProvider(TableView view, String description,
             IWorkbenchSiteProgressService service) {
-        this.queues = new DeferredQueue(viewer);
+        this.queues = new DeferredQueue(view);
         this.description = description;
 
         uiJob = new WidgetRefreshJob(UPDATING_TABLE_WIDGET);
@@ -249,7 +249,7 @@ class TableContentProvider implements IStructuredContentProvider {
      */
     private void resync() {
         if (controlExists()) {
-            int count = queues.getViewer().getTable().getItemCount();
+            int count = queues.getViewer().getTree().getItemCount();
             if (count != queues.countVisibleItems()) {
                 queues.getViewer().refresh();
             }
@@ -280,7 +280,7 @@ class TableContentProvider implements IStructuredContentProvider {
      * 
      * @return the TableViewer being populated by this content provider
      */
-    private TableViewer getViewer() {
+    private TreeViewer getViewer() {
         return queues.getViewer();
     }
 
@@ -452,5 +452,34 @@ class TableContentProvider implements IStructuredContentProvider {
         }
 
         return result;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+     */
+    public Object[] getChildren(Object parentElement) {
+    	return getElements(parentElement);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+     */
+    public Object getParent(Object element) {
+    	if(element instanceof ConcreteMarker){
+    		Object[] elements = queues.getVisibleItems();
+    		for (int i = 0; i < elements.length; i++) {
+				if(elements[i].equals(element))
+					return queues.getView().getViewerInput();				
+			}
+    	}
+    	return null;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+     */
+    public boolean hasChildren(Object element) {
+    	return queues.getView().getViewerInput().equals(element);
+    		
     }
 }

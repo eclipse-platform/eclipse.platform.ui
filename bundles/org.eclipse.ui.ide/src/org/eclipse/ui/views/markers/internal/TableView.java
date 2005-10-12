@@ -30,7 +30,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -43,8 +44,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -60,7 +61,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
  */
 public abstract class TableView extends ViewPart {
 
-    private TableContentProvider content;
+    private MarkerContentProvider content;
 
     private static final String TAG_COLUMN_WIDTH = "columnWidth"; //$NON-NLS-1$
 
@@ -68,7 +69,7 @@ public abstract class TableView extends ViewPart {
 
     private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 
-    private TableViewer viewer;
+    private TreeViewer viewer;
 
     private IMemento memento;
 
@@ -118,9 +119,9 @@ public abstract class TableView extends ViewPart {
     public void createPartControl(Composite parent) {
         parent.setLayout(new FillLayout());
 
-        viewer = new TableViewer(createTable(parent));
-        createColumns(viewer.getTable());
-        content = new TableContentProvider(viewer, 
+        viewer = new TreeViewer(createTree(parent));
+        createColumns(viewer.getTree());
+        content = new MarkerContentProvider(this, 
         		NLS.bind(
         				MarkerMessages.TableView_populating, 
         				getTitle()), 
@@ -203,14 +204,15 @@ public abstract class TableView extends ViewPart {
     }
 
     /**
-     * Creates the table control.
+     * Create the main tree control
+     * @param parent
+     * @return Tree
      */
-    protected Table createTable(Composite parent) {
-        Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
+    protected Tree createTree(Composite parent) {
+    	Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
                 | SWT.FULL_SELECTION);
-        table.setLinesVisible(true);
-        table.setFont(parent.getFont());
-        return table;
+        tree.setLinesVisible(true);
+        return tree;
     }
     
     public ColumnPixelData[] getSavedColumnData() {
@@ -244,19 +246,21 @@ public abstract class TableView extends ViewPart {
      * widget hasn't been created yet or its columns haven't been initialized yet. (Note that
      * TableLayout only initializes the column widths after the first layout, so it is possible for
      * the widget to exist but have all its columns incorrectly set to zero width - see bug 86329)
+    
+     * @return ColumnPixelData
      */
     public ColumnPixelData[] getColumnData() {
         ColumnPixelData[] defaultData = getSavedColumnData();
         
-        Table table = getTable();
+        Tree tree = getTree();
         
-        if (table != null && (table.isDisposed() || table.getBounds().width == 0)) {
-            table = null;
+        if (tree != null && (tree.isDisposed() || tree.getBounds().width == 0)) {
+        	tree = null;
         }
         
-        TableColumn[] column = null;
-        if (table != null) {
-            column = table.getColumns();
+        TreeColumn[] column = null;
+        if (tree != null) {
+            column = tree.getColumns();
         }
         
         ColumnPixelData[] result = new ColumnPixelData[defaultData.length];
@@ -267,7 +271,7 @@ public abstract class TableView extends ViewPart {
             int width = defaultData[i].width;
             
             if (column != null && i < column.length) {
-                TableColumn col = column[i];
+                TreeColumn col = column[i];
                 
                 if (col.getWidth() > 0) {
                     width = col.getWidth();
@@ -280,16 +284,21 @@ public abstract class TableView extends ViewPart {
         return result;
     }
     
-    protected void createColumns(final Table table) {
+    /**
+     * Create the columns in the tree.
+     * @param tree
+     */
+    protected void createColumns(final Tree tree) {
         SelectionListener headerListener = getHeaderListener();
         TableLayout layout = new TableLayout();
-        table.setLayout(layout);
-        table.setHeaderVisible(true);
+        tree.setLayout(layout);
+        tree.setHeaderVisible(true);
+        
         final IField[] fields = getVisibleFields();
         ColumnLayoutData[] columnWidths = getSavedColumnData();
         for (int i = 0; i < fields.length; i++) {
             layout.addColumnData(columnWidths[i]);
-            TableColumn tc = new TableColumn(table, SWT.NONE, i);
+            TreeColumn tc = new TreeColumn(tree, SWT.NONE, i);
             tc.setText(fields[i].getColumnHeaderText());
             tc.setImage(fields[i].getColumnHeaderImage());
             tc.addSelectionListener(headerListener);
@@ -350,7 +359,7 @@ public abstract class TableView extends ViewPart {
      * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
      */
     public void setFocus() {
-        TableViewer viewer = getViewer();
+        Viewer viewer = getViewer();
         if (viewer != null && !viewer.getControl().isDisposed()) {
 
             viewer.getControl().setFocus();
@@ -390,18 +399,20 @@ public abstract class TableView extends ViewPart {
 
     protected abstract IDialogSettings getDialogSettings();
 
-    protected TableViewer getViewer() {
+    /**
+     * Return the viewer.
+     * @return TreeViewer
+     */
+    protected TreeViewer getViewer() {
         return viewer;
     }
     
-    protected Table getTable() {
-        TableViewer v = getViewer();
-        
-        if (v == null) {
-            return null;
-        }
-        
-        return v.getTable();
+    /**
+     * Return the tree for the receiver.
+     * @return Tree
+     */
+    protected Tree getTree() {
+        return getViewer().getTree();
     }
 
     protected SelectionListener getHeaderListener() {
@@ -412,8 +423,8 @@ public abstract class TableView extends ViewPart {
              */
             public void widgetSelected(SelectionEvent e) {
 
-                int column = getViewer().getTable().indexOf(
-                        (TableColumn) e.widget);
+                int column = getViewer().getTree().indexOf(
+                        (TreeColumn) e.widget);
                 if (column == getSorter().getTopPriority())
                     getSorter().reverseTopPriority();
                 else {
@@ -437,7 +448,7 @@ public abstract class TableView extends ViewPart {
 
         viewer.setSorter(getSorter());
 
-        final TableViewer viewer = getViewer();
+        final TreeViewer viewer = getViewer();
         if (viewer == null) {
             return;
         }

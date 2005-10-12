@@ -22,8 +22,8 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.PlatformUI;
@@ -31,6 +31,10 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+/**
+ * The BookmarkView is the marker view for bookmarks.
+ *
+ */
 public class BookmarkView extends MarkerView {
 
 	private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
@@ -95,15 +99,15 @@ public class BookmarkView extends MarkerView {
 		super.createPartControl(parent);
 
 		// TODO: Check for possible reliance on IMarker
-		TableViewer tableViewer = getViewer();
-		CellEditor cellEditors[] = new CellEditor[tableViewer.getTable()
+		TreeViewer treeViewer = getViewer();
+		CellEditor cellEditors[] = new CellEditor[treeViewer.getTree()
 				.getColumnCount()];
-		CellEditor descriptionCellEditor = new TextCellEditor(tableViewer
-				.getTable());
+		CellEditor descriptionCellEditor = new TextCellEditor(treeViewer
+				.getTree());
 		cellEditors[0] = descriptionCellEditor;
-		tableViewer.setCellEditors(cellEditors);
-		tableViewer.setCellModifier(cellModifier);
-		tableViewer.setColumnProperties(TABLE_COLUMN_PROPERTIES);
+		treeViewer.setCellEditors(cellEditors);
+		treeViewer.setCellModifier(cellModifier);
+		treeViewer.setColumnProperties(TABLE_COLUMN_PROPERTIES);
 
 		cellEditorActionHandler = new CellEditorActionHandler(getViewSite()
 				.getActionBars());

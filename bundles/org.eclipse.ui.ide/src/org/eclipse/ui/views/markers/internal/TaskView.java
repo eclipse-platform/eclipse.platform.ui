@@ -27,18 +27,21 @@ import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+/**
+ * The TaskView is the view for displaying task markers.
+ */
 public class TaskView extends MarkerView {
 
     private static final String COMPLETION = "completion"; //$NON-NLS-1$
@@ -135,10 +138,10 @@ public class TaskView extends MarkerView {
     public void createPartControl(Composite parent) {
         super.createPartControl(parent);
 
-        TableViewer tableViewer = getViewer();
-        CellEditor cellEditors[] = new CellEditor[tableViewer.getTable()
+        TreeViewer treeViewer = getViewer();
+        CellEditor cellEditors[] = new CellEditor[treeViewer.getTree()
                 .getColumnCount()];
-        cellEditors[0] = new CheckboxCellEditor(tableViewer.getTable());
+        cellEditors[0] = new CheckboxCellEditor(treeViewer.getTree());
 
         String[] priorities = new String[] {
                 MarkerMessages.priority_high,
@@ -146,14 +149,14 @@ public class TaskView extends MarkerView {
                 MarkerMessages.priority_low
         };
 
-        cellEditors[1] = new ComboBoxCellEditor(tableViewer.getTable(),
+        cellEditors[1] = new ComboBoxCellEditor(treeViewer.getTree(),
                 priorities, SWT.READ_ONLY);
-        CellEditor descriptionCellEditor = new TextCellEditor(tableViewer
-                .getTable());
+        CellEditor descriptionCellEditor = new TextCellEditor(treeViewer
+                .getTree());
         cellEditors[2] = descriptionCellEditor;
-        tableViewer.setCellEditors(cellEditors);
-        tableViewer.setCellModifier(cellModifier);
-        tableViewer.setColumnProperties(TABLE_COLUMN_PROPERTIES);
+        treeViewer.setCellEditors(cellEditors);
+        treeViewer.setCellModifier(cellModifier);
+        treeViewer.setColumnProperties(TABLE_COLUMN_PROPERTIES);
 
         cellEditorActionHandler = new CellEditorActionHandler(getViewSite()
                 .getActionBars());
@@ -203,9 +206,12 @@ public class TaskView extends MarkerView {
         propertiesAction = new ActionTaskProperties(this, selProvider);
     }
 
-    protected void createColumns(Table table) {
-        super.createColumns(table);
-        TableColumn[] columns = table.getColumns();
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.TableView#createColumns(org.eclipse.swt.widgets.Tree)
+     */
+    protected void createColumns(Tree tree) {
+        super.createColumns(tree);
+        TreeColumn[] columns = tree.getColumns();
 
         if (columns != null && columns.length >= 1) {
             columns[0].setResizable(false);
