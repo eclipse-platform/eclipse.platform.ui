@@ -56,7 +56,7 @@ public class LocalFileSystem extends FileSystem {
 		int attributes = EFS.ATTRIBUTE_READ_ONLY;
 		String os = Platform.getOS();
 		if (os.equals(Platform.OS_WIN32))
-			attributes |= EFS.ATTRIBUTE_ARCHIVE;
+			attributes |= EFS.ATTRIBUTE_ARCHIVE | EFS.ATTRIBUTE_HIDDEN;
 		else
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE;
 
