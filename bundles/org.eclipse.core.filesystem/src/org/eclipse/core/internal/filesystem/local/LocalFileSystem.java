@@ -54,12 +54,12 @@ public class LocalFileSystem extends FileSystem {
 	 */
 	public int attributes() {
 		int attributes = EFS.ATTRIBUTE_READ_ONLY;
-		String os = Platform.getOS();
-		if (os.equals(Platform.OS_WIN32))
+		//intern so we can compare with constants using identity
+		String os = Platform.getOS().intern();
+		if (os == Platform.OS_WIN32)
 			attributes |= EFS.ATTRIBUTE_ARCHIVE | EFS.ATTRIBUTE_HIDDEN;
-		else
+		else if (os == Platform.OS_LINUX || os == Platform.OS_MACOSX)
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE;
-
 		return attributes;
 	}
 

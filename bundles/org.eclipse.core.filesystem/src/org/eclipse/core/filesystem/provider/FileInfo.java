@@ -22,6 +22,11 @@ import org.eclipse.core.filesystem.IFileInfo;
  */
 public class FileInfo implements IFileInfo {
 	/**
+	 * Internal attribute indicating if the file is a directory
+	 */
+	private static final int ATTRIBUTE_DIRECTORY = 1 << 0;
+	
+	/**
 	 * Internal attribute indicating if the file exists.
 	 */
 	private static final int ATTRIBUTE_EXISTS = 1 << 16;
@@ -116,11 +121,7 @@ public class FileInfo implements IFileInfo {
 	 * @see org.eclipse.core.filesystem.IFileInfo#isDirectory()
 	 */
 	public boolean isDirectory() {
-		return isSet(EFS.ATTRIBUTE_DIRECTORY);
-	}
-
-	public boolean isReadOnly() {
-		return isSet(EFS.ATTRIBUTE_READ_ONLY);
+		return isSet(ATTRIBUTE_DIRECTORY);
 	}
 
 	private boolean isSet(long mask) {
@@ -140,6 +141,20 @@ public class FileInfo implements IFileInfo {
 		else
 			clear(attribute);
 	}
+	
+	/**
+	 * Sets whether this is a file or directory.
+	 * 
+	 * @param value <code>true</code> if this is a directory, and <code>false</code>
+	 * if this is a file.
+	 */
+	public void setDirectory(boolean value) {
+		if (value)
+			set(ATTRIBUTE_DIRECTORY);
+		else
+			clear(ATTRIBUTE_DIRECTORY);
+	}
+	
 
 	/**
 	 * Sets whether this file or directory exists.
@@ -148,7 +163,10 @@ public class FileInfo implements IFileInfo {
 	 * otherwise.
 	 */
 	public void setExists(boolean value) {
-		setAttribute(ATTRIBUTE_EXISTS, value);
+		if (value)
+			set(ATTRIBUTE_EXISTS);
+		else
+			clear(ATTRIBUTE_EXISTS);
 	}
 
 	/* (non-Javadoc)

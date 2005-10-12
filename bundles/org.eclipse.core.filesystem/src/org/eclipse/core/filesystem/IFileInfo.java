@@ -73,8 +73,8 @@ public interface IFileInfo extends Comparable {
 	public abstract String getName();
 
 	/**
-	 * Returns whether this file is a directory.  This is a convenience method,
-	 * fully equivalent to <code>getAttribute(ATTRIBUTE_DIRECTORY)</code>
+	 * Returns whether this file is a directory, or <code>false</code> if this
+	 * file does not exist.
 	 * 
 	 * @return <code>true</code> if this file is a directory, and <code>false</code>
 	 * otherwise.

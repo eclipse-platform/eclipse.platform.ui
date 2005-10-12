@@ -119,10 +119,15 @@ public class LocalFile extends FileStore {
 		//in-lined non-native implementation
 		FileInfo info = new FileInfo(file.getName());
 		final long lastModified = file.lastModified();
+		if (lastModified <= 0) {
+			//if the file doesn't exist, all other attributes should be default values
+			info.setExists(false);
+			return info;
+		}
 		info.setLastModified(lastModified);
-		info.setExists(lastModified > 0);
+		info.setExists(true);
 		info.setLength(file.length());
-		info.setAttribute(EFS.ATTRIBUTE_DIRECTORY, file.isDirectory());
+		info.setDirectory(file.isDirectory());
 		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, file.exists() && !file.canWrite());
 		info.setAttribute(EFS.ATTRIBUTE_HIDDEN, file.isHidden());
 		return info;
