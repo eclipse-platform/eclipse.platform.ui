@@ -30,7 +30,7 @@ package org.eclipse.core.resources.mapping;
  * 
  * @see ResourceMapping
  * @see RemoteResourceMappingContext
- * @since 3.1
+ * @since 3.2
  */
 public class ResourceMappingContext {
 	

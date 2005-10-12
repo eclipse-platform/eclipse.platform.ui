@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @see ResourceMapping
  * @see ResourceMappingContext
- * @since 3.1
+ * @since 3.2
  */
 public abstract class RemoteResourceMappingContext extends ResourceMappingContext {
 
