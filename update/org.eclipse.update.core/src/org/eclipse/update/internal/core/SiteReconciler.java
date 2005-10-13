@@ -29,7 +29,7 @@ public class SiteReconciler extends ModelObject {
 	/**
 	 * 
 	 */
-	public SiteReconciler(SiteLocal siteLocal) {
+	public SiteReconciler(LocalSite siteLocal) {
 //		this.siteLocal = siteLocal;
 	}
 

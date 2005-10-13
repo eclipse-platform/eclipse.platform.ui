@@ -93,8 +93,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		setCurrent(false);
 		
 		if (newLocation == null) {
-			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(SiteLocal.CONFIG_FILE, now);
-			newLocation = UpdateManagerUtils.getURL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(), newFileName, null);
+			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(LocalSite.CONFIG_FILE, now);
+			newLocation = UpdateManagerUtils.getURL(((LocalSite)SiteManager.getLocalSite()).getLocationURL(), newFileName, null);
 		}
 		setLocationURLString(newLocation.toExternalForm());
 		

@@ -25,12 +25,12 @@ import org.osgi.service.packageadmin.*;
 public class SiteStatusAnalyzer {
 
 	private static List allConfiguredFeatures; /*VersionedIdentifier */
-	private SiteLocal siteLocal;
+	private LocalSite siteLocal;
 
 	/**
 	 * 
 	 */
-	public SiteStatusAnalyzer(SiteLocal siteLocal) {
+	public SiteStatusAnalyzer(LocalSite siteLocal) {
 		this.siteLocal = siteLocal;
 	}
 

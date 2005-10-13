@@ -118,7 +118,7 @@ public class SiteLocalParser {
 		config.resolve(url, site.getResourceBundleURL());
 
 		// add the config
-		((SiteLocal)site).addConfiguration((InstallConfiguration)config);
+		((LocalSite)site).addConfiguration((InstallConfiguration)config);
 
 		// DEBUG:		
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {

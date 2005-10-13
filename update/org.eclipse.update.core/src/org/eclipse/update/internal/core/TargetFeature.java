@@ -9,9 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.*;
+import org.eclipse.update.core.Feature;
+import org.eclipse.update.core.IFeatureContentConsumer;
+import org.eclipse.update.core.Utilities;
 
 /**
  * 

@@ -15,17 +15,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.update.internal.core.IStatusCodes;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.UpdateCore;
 
-public class HttpResponse implements IResponse {
+public class HttpResponse extends AbstractResponse {
 	/**
 	 * Monitored InputStream.  Upon IOException, discards
 	 * connection so it is not resused.
@@ -104,15 +101,15 @@ public class HttpResponse implements IResponse {
 
 	}
 	
-	private static final long POLLING_INTERVAL = 200;
-
 	protected URL url;
 	protected InputStream in;
-	protected URLConnection connection;
 	protected long lastModified;
 	protected long offset;
 
 	protected HttpResponse(URL url) {
+		if (url.toString().endsWith("site.xml")) {
+			System.out.println("OPET");
+		}
         this.url = url;
 	}
 
@@ -217,42 +214,6 @@ public class HttpResponse implements IResponse {
 		return lastModified;
 	}
 
-	private InputStream openStreamWithCancel(
-		URLConnection urlConnection,
-		IProgressMonitor monitor)
-		throws IOException, CoreException, TooManyOpenConnectionsException  {
-
-		ConnectionThreadManager.StreamRunnable runnable =
-			new ConnectionThreadManager.StreamRunnable(urlConnection);
-		Thread t = ConnectionThreadManagerFactory.getConnectionManager().getConnectionThread(
-				runnable);
-		t.start();
-		InputStream is = null;
-		try {
-			for (;;) {
-				if (monitor.isCanceled()) {
-					runnable.disconnect();
-                    connection = null;
-					break;
-				}
-				if (runnable.getInputStream() != null) {
-					is = runnable.getInputStream();
-					break;
-				}
-				if (runnable.getIOException() != null) 
-					throw runnable.getIOException();
-				if (runnable.getException() != null) 
-						throw new CoreException(new Status(IStatus.ERROR,
-															UpdateCore.getPlugin().getBundle().getSymbolicName(), 
-															IStatus.OK,
-															runnable.getException().getMessage(), 
-															runnable.getException()));
-				}
-				t.join(POLLING_INTERVAL);
-		} catch (InterruptedException e) {
-		}
-		return is;
-	}
 	public void setOffset(long offset) {
 		this.offset = offset;
 	}

@@ -78,7 +78,7 @@ public class InternalSiteManager {
 
 		if (localSite == null) {
 			try {
-				localSite = SiteLocal.internalGetLocalSite();
+				localSite = LocalSite.internalGetLocalSite();
 			} catch (CoreException e) {
 				exceptionOccured = e;
 				throw e;
