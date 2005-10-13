@@ -269,7 +269,11 @@ public final class ParameterizedCommand implements Comparable {
 		}
 
 		try {
-			return getName().compareTo(command.getName());
+			final int compareTo = getName().compareTo(command.getName());
+			if (compareTo == 0) {
+				return getId().compareTo(command.getId());
+			}
+			return compareTo;
 		} catch (final NotDefinedException e) {
 			throw new Error(
 					"Concurrent modification of a command's defined state"); //$NON-NLS-1$
