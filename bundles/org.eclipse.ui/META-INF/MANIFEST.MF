@@ -13,4 +13,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt;visibility:=reexport,
  org.eclipse.jface;visibility:=reexport,
  org.eclipse.ui.workbench;visibility:=reexport
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

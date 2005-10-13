@@ -12,4 +12,4 @@ Export-Package: org.eclipse.ui.internal.presentations;x-internal:=true,
  org.eclipse.ui.internal.presentations.r21.widgets;x-internal:=true
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

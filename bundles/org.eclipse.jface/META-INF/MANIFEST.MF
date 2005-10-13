@@ -30,4 +30,4 @@ Export-Package: org.eclipse.jface,
 Require-Bundle: org.eclipse.swt;visibility:=reexport,
  org.eclipse.core.commands;visibility:=reexport,
  org.eclipse.core.runtime
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

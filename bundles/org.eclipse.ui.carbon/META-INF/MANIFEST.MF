@@ -7,5 +7,5 @@ Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.ui;bundle-version="[3.1.0,4.0.0)"
 Bundle-Localization: fragment-carbon
 Export-Package: org.eclipse.ui.carbon
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Eclipse-PlatformFilter: (osgi.ws=carbon)
