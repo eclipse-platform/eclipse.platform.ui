@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IContributorResourceAdapter;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.internal.ide.IContributorResourceAdapter2;
+import org.eclipse.ui.ide.IContributorResourceAdapter2;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**

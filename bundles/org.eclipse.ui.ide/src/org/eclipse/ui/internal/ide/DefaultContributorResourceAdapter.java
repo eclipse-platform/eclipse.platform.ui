@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IContributorResourceAdapter;
+import org.eclipse.ui.ide.IContributorResourceAdapter2;
 
 /**
  * The DefaultContributorResourceAdapter is the default
