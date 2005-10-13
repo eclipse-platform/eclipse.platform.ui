@@ -31,10 +31,14 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -72,6 +76,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISelectionListener;
@@ -136,7 +141,7 @@ public abstract class MarkerView extends TableView {
 	// before the busy testing started
 	private int preBusyMarkers = 0;
 
-	protected IResource[] focusResources;
+	protected Object[] focusElements;
 
 	private Clipboard clipboard;
 
@@ -859,12 +864,21 @@ public abstract class MarkerView extends TableView {
 	protected void focusSelectionChanged(IWorkbenchPart part,
 			ISelection selection) {
 
-		List resources = new ArrayList();
+		List selectedElements = new ArrayList();
 		if (part instanceof IEditorPart) {
 			IEditorPart editor = (IEditorPart) part;
 			IFile file = ResourceUtil.getFile(editor.getEditorInput());
-			if (file != null) {
-				resources.add(file);
+			if (file == null) {
+				IEditorInput editorInput = editor.getEditorInput();
+				if(editorInput != null ){
+					Object mapping = 
+						editorInput.getAdapter(ResourceMapping.class);
+					if(mapping != null)
+						selectedElements.add(mapping);
+				}
+			}
+			else{
+				selectedElements.add(file);
 			}
 		} else {
 			if (selection instanceof IStructuredSelection) {
@@ -885,44 +899,83 @@ public abstract class MarkerView extends TableView {
 
 						IResource resource = taskListResourceAdapter
 								.getAffectedResource((IAdaptable) object);
-						if (resource != null) {
-							resources.add(resource);
+						if (resource == null) {
+							Object mapping = ((IAdaptable) object).getAdapter(ResourceMapping.class);
+							if(mapping != null)
+								selectedElements.add(mapping);
+						}
+						else
+							selectedElements.add(resource);
 						}
 					}
 				}
 			}
-		}
-
-		IResource[] focus = new IResource[resources.size()];
-		resources.toArray(focus);
-		updateFocusResource(focus);
+		updateFocusMarkers(selectedElements.toArray());		
 	}
 
 	/**
 	 * Update the focus resources of the filters.
 	 * 
-	 * @param resources
+	 * @param elements
 	 */
-	protected final void updateFilterSelection(IResource[] resources) {
+	protected final void updateFilterSelection(Object[] elements) {
 
+		Collection resourceCollection = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
+			if(elements[i] instanceof IResource)
+				resourceCollection.add(elements[i]);
+			else
+				addResources(resourceCollection, ((ResourceMapping) elements[i]));
+		}
+		
+		IResource[] resources = new IResource[resourceCollection.size()];
+		resourceCollection.toArray(resources);
+		
 		for (int i = 0; i < markerFilters.length; i++) {
 			markerFilters[i].setFocusResource(resources);
 		}
 	}
 
+	/**
+	 * Add the resources for the mapping to resources.
+	 * @param resources
+	 * @param mapping
+	 */
+	private void addResources(Collection resources, ResourceMapping mapping) {
+		try {
+			ResourceTraversal[] traversals = 
+				mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, new NullProgressMonitor());
+			for (int i = 0; i < traversals.length; i++) {
+				ResourceTraversal traversal = traversals[i];
+				IResource[]  result = traversal.getResources();
+				for (int j = 0; j < result.length; j++) {
+					resources.add(result[j]);					
+				}
+			}
+		} catch (CoreException e) {
+			IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+			return;
+		}
+		
+	}
+
 	protected abstract String getStaticContextId();
 
-	void updateFocusResource(IResource[] resources) {
-		boolean updateNeeded = updateNeeded(focusResources, resources);
+	/**
+	 * Update the focus markers for the supplied elements.
+	 * @param elements
+	 */
+	void updateFocusMarkers(Object[] elements) {
+		boolean updateNeeded = updateNeeded(focusElements, elements);
 		if (updateNeeded) {
-			focusResources = resources;
-			updateFilterSelection(resources);
+			focusElements = elements;
+			updateFilterSelection(elements);
 			refresh();
 		}
 	}
 
-	private boolean updateNeeded(IResource[] oldResources,
-			IResource[] newResources) {
+	private boolean updateNeeded(Object[] oldElements,
+			Object[] newElements) {
 		// determine if an update if refiltering is required
 		MarkerFilter[] filters = getEnabledFilters();
 		boolean updateNeeded = false;
@@ -935,20 +988,20 @@ public abstract class MarkerView extends TableView {
 					|| onResource == MarkerFilter.ON_WORKING_SET) {
 				continue;
 			}
-			if (newResources == null || newResources.length < 1) {
+			if (newElements == null || newElements.length < 1) {
 				continue;
 			}
-			if (oldResources == null || oldResources.length < 1) {
+			if (oldElements == null || oldElements.length < 1) {
 				return true;
 			}
-			if (Arrays.equals(oldResources, newResources)) {
+			if (Arrays.equals(oldElements, newElements)) {
 				continue;
 			}
 			if (onResource == MarkerFilter.ON_ANY_IN_SAME_CONTAINER) {
 				Collection oldProjects = MarkerFilter
-						.getProjectsAsCollection(oldResources);
+						.getProjectsAsCollection(oldElements);
 				Collection newProjects = MarkerFilter
-						.getProjectsAsCollection(newResources);
+						.getProjectsAsCollection(newElements);
 
 				if (oldProjects.size() == newProjects.size()) {
 					if (newProjects.containsAll(oldProjects))

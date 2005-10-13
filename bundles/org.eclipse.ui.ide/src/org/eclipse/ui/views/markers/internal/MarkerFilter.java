@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -424,11 +425,24 @@ public class MarkerFilter implements Cloneable{
 		return (IProject[]) projects.toArray(new IProject[projects.size()]);
 	}
 
-	static Collection getProjectsAsCollection(IResource[] resources) {
+	/**
+	 * Return the projects for the elements.
+	 * @param elements collection of IResource or IResourceMapping
+	 * @return Collection of IProject
+	 */
+	static Collection getProjectsAsCollection(Object[] elements) {
 		HashSet projects = new HashSet();
 
-		for (int idx = 0; idx < resources.length; idx++) {
-			projects.add(resources[idx].getProject());
+		for (int idx = 0; idx < elements.length; idx++) {
+			if(elements[idx] instanceof IResource)
+				projects.add(((IResource)elements[idx]).getProject());
+			else{
+				IProject[] mappingProjects = (((ResourceMapping)elements[idx]).getProjects());
+				for (int i = 0; i < mappingProjects.length; i++) {
+					projects.add(mappingProjects[i]);					
+				}
+			}
+				
 		}
 
 		return projects;
