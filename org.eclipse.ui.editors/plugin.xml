@@ -690,6 +690,32 @@
             highlightPreferenceKey="spellingIndicationHighlighting"
             highlightPreferenceValue="false">
       </specification>
+      
+      <!-- annotate (blame) annotations -->
+      <specification
+            annotationType="org.eclipse.ui.workbench.texteditor.blameAnnotation"
+            colorPreferenceValue="88,88,22"
+            isGoToPreviousNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isblameAnnotationGoToPreviousNavigationTarget"
+            showInNextPrevDropdownToolbarAction="false"
+            isGoToNextNavigationTarget="false"
+            isGoToNextNavigationTargetKey="isblameAnnotationGoToNextNavigationTarget"
+            colorPreferenceKey="blameAnnotationIndicationColor"
+            showInNextPrevDropdownToolbarActionKey="showblameAnnotationInNextPrevDropdownToolbarAction"
+            contributesToHeader="false"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="4"
+            label="Annotate Information"
+            textPreferenceValue="false"
+            textPreferenceKey="blameAnnotationIndication"
+            overviewRulerPreferenceKey="blameAnnotationIndicationInOverviewRuler"
+            verticalRulerPreferenceKey="blameAnnotationIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            includeOnPreferencePage="false"
+            highlightPreferenceKey="blameAnnotationIndicationHighlighting"
+            highlightPreferenceValue="true">
+      </specification>
+      
    </extension>
    
    <extension

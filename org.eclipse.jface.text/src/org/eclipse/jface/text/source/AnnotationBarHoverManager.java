@@ -120,7 +120,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.addKeyListener(this);
 				
 				fDisplay= fSubjectControl.getDisplay();
-				if (!fDisplay.isDisposed())
+				if (!fDisplay.isDisposed() && fHideOnMouseWheel)
 					fDisplay.addFilter(SWT.MouseWheel, this);
 			}
 		}
@@ -155,7 +155,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.removeKeyListener(this);
 			}
 			
-			if (fDisplay != null && !fDisplay.isDisposed())
+			if (fDisplay != null && !fDisplay.isDisposed() && fHideOnMouseWheel)
 				fDisplay.removeFilter(SWT.MouseWheel, this);
 			fDisplay= null;
 			
@@ -288,6 +288,10 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @since 3.0
 	 */
 	protected boolean fAllowMouseExit= false;
+	/**
+	 * since 3.2
+	 */
+	private boolean fHideOnMouseWheel;
 
 	/**
 	 * Creates an annotation hover manager with the given parameters. In addition,
@@ -432,7 +436,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			int rangeBottomLine= getWidgetLineNumber(lineRange.getStartLine() + lineRange.getNumberOfLines() - 1);
 			int bottomDelta= Math.max(rangeBottomLine - bottomLine, 0);
 
-			return new LineRange(lineRange.getStartLine() + topDelta, lineRange.getNumberOfLines() - bottomDelta);
+			return new LineRange(lineRange.getStartLine() + topDelta, lineRange.getNumberOfLines() - bottomDelta - topDelta);
 
 		} catch (BadLocationException x) {
 		}
@@ -659,6 +663,12 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			IAnnotationHoverExtension extension= (IAnnotationHoverExtension) hover;
 			allowMouseExit= extension.canHandleMouseCursor();
 		}
+		boolean hideOnMouseWheel= true;
+		if (hover instanceof IAnnotationHoverExtension2) {
+			IAnnotationHoverExtension2 extension= (IAnnotationHoverExtension2) hover;
+			hideOnMouseWheel= !extension.canHandleMouseWheel();
+		}
+		fHideOnMouseWheel= hideOnMouseWheel;
 
 		if (allowMouseExit) {
 			fAllowMouseExit= true;

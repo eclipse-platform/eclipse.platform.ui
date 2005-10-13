@@ -672,14 +672,23 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 			if (d != null) {
 				d.asyncExec(new Runnable() {
 					public void run() {
-						Iterator e= fDecorators.iterator();
-						while (e.hasNext()) {
-							IVerticalRulerColumn column= (IVerticalRulerColumn) e.next();
-							column.redraw();
-						}
+						immediateUpdate();
 					}
 				});
 			}
+		}
+	}
+	
+	/**
+	 * Immediately redraws the entire ruler (without async posting). 
+	 *
+	 * @since 3.2
+	 */
+	void immediateUpdate() {
+		Iterator e= fDecorators.iterator();
+		while (e.hasNext()) {
+			IVerticalRulerColumn column= (IVerticalRulerColumn) e.next();
+			column.redraw();
 		}
 	}
 

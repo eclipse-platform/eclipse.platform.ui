@@ -14,6 +14,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
+import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -24,32 +32,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.commands.operations.IOperationApprover;
-import org.eclipse.core.commands.operations.IUndoContext;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.AnnotateRulerColumn;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.ChangeRulerColumn;
@@ -77,6 +64,24 @@ import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
+import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
+import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IStorageEditorInput;
@@ -86,12 +91,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
-import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
-import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.part.IShowInSource;
@@ -216,6 +215,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	protected boolean fIsUpdatingMarkerViews= false;
+	/**
+	 * The annotate ruler column if any, <code>null</code> otherwise.
+	 * @since 3.2
+	 */
+	private AnnotateRulerColumn fAnnotateRulerColumn;
 
 	/**
 	 * Creates a new text editor.
@@ -853,7 +857,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	protected CompositeRuler createCompositeRuler() {
 		CompositeRuler ruler= new CompositeRuler();
-		ruler.addDecorator(0, new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, getAnnotationAccess()));
+		ruler.addDecorator(0, createAnnotationRulerColumn(ruler));
 
 		if (isLineNumberRulerVisible())
 			ruler.addDecorator(1, createLineNumberRulerColumn());
@@ -861,6 +865,36 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			ruler.addDecorator(1, createChangeRulerColumn());
 
 		return ruler;
+	}
+
+	/**
+	 * Creates the annotate ruler column upon request. Note the difference between
+	 * {@link #createAnnotationRulerColumn(CompositeRuler)} and this method: the annotate ruler
+	 * column displays change information received from a team provider, while the annotation ruler
+	 * displays icons for text annotations.
+	 * <p>
+	 * Subclasses may extend or re-implement.
+	 * </p>
+	 * <p>
+	 * XXX This API is provisional and may change any time during the development of eclipse 3.2.
+	 * </p>
+	 * 
+	 * @return the annotate ruler column
+	 * @since 3.2
+	 */
+	protected AnnotateRulerColumn createAnnotateRulerColumn() {
+		return new AnnotateRulerColumn(getSharedColors());
+	}
+
+	/**
+	 * Creates the annotation ruler column. Subclasses may re-implement or extend.
+	 * 
+	 * @param ruler the composite ruler that the column will be added
+	 * @return an annotation ruler column
+	 * @since 3.2
+	 */
+	protected IVerticalRulerColumn createAnnotationRulerColumn(CompositeRuler ruler) {
+		return new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, getAnnotationAccess());
 	}
 
 	/*
@@ -1260,9 +1294,22 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				}
 			};
 		}
+		
+		if (AnnotateRulerColumn.class.equals(adapter)) {
+			return getAnnotateColumn();
+		}
 	
 		return super.getAdapter(adapter);
 	
+	}
+
+	private AnnotateRulerColumn getAnnotateColumn() {
+		if (fAnnotateRulerColumn == null) {
+			fAnnotateRulerColumn= createAnnotateRulerColumn();
+			fAnnotateRulerColumn.setModel(getVerticalRuler().getModel());
+			((CompositeRuler) getVerticalRuler()).addDecorator(2, fAnnotateRulerColumn);
+		}
+		return fAnnotateRulerColumn;
 	}
 
 	/*
@@ -1312,6 +1359,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				fIsChangeInformationShown= false;
 			} else
 				showChangeInformation(false);
+		}
+		
+		if (fAnnotateRulerColumn != null) {
+			fAnnotateRulerColumn.setAnnotateInfo(null);
+			((CompositeRuler) getVerticalRuler()).removeDecorator(2);
+			fAnnotateRulerColumn= null;
 		}
 
 		super.doSetInput(input);
