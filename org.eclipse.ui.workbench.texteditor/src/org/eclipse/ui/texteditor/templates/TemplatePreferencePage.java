@@ -12,7 +12,6 @@ package org.eclipse.ui.texteditor.templates;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -687,7 +686,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		IFileStore fileStore= EFS.getLocalFileSystem().getStore(new Path(path));
 		IFileInfo fileInfo= fileStore.fetchInfo();
 
-		if (new File(fileStore.toURI()).isHidden()) {
+		if (fileInfo.getAttribute(EFS.ATTRIBUTE_HIDDEN)) {
 			String title= TextEditorTemplateMessages.TemplatePreferencePage_export_error_title;
 			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_hidden, fileStore.toString());
 			MessageDialog.openError(getShell(), title, message);
