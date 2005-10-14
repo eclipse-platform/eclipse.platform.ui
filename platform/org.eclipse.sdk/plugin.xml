@@ -11,13 +11,13 @@
           <property name="preferenceCustomization" value="plugin_customization.ini"/>
           <property
                 name="startupForegroundColor"
-                value="FFFFFF"/>
+                value="C8D5EA"/>
           <property
                 name="startupMessageRect"
-                value="7,240,441,20"/>
+                value="7,220,441,20"/>
           <property
                 name="startupProgressRect"
-                value="7,220,441,15"/> 
+                value="0,280,455,15"/> 
       </product> 
     </extension> 
 
