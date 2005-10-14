@@ -164,6 +164,8 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			
 			if (fDisplay != null && !fDisplay.isDisposed() && fHasWheelFilter)
 				fDisplay.removeFilter(SWT.MouseWheel, this);
+			fHasWheelFilter= false;
+			
 			fDisplay= null;
 			
 		}
