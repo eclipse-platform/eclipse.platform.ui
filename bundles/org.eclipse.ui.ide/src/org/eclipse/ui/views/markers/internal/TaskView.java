@@ -12,7 +12,6 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
@@ -241,9 +240,6 @@ public class TaskView extends MarkerView {
         return ROOT_TYPES;
     }
 
-    protected Object getViewerInput() {
-        return ResourcesPlugin.getWorkspace().getRoot();
-    }
 
     protected IField[] getVisibleFields() {
         return VISIBLE_FIELDS;

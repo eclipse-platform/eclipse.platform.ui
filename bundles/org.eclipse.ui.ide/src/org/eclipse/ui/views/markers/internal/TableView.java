@@ -12,9 +12,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.Arrays;
-import java.util.Collection;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -32,7 +30,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -55,27 +52,22 @@ import org.eclipse.ui.preferences.ViewPreferencesAction;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
- * The TableView is a view that generically implements
- * views with tables.
- *
+ * The TableView is a view that generically implements views with tables.
+ * 
  */
 public abstract class TableView extends ViewPart {
 
-    private MarkerContentProvider content;
+	private static final String TAG_COLUMN_WIDTH = "columnWidth"; //$NON-NLS-1$
 
-    private static final String TAG_COLUMN_WIDTH = "columnWidth"; //$NON-NLS-1$
+	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
 
-    private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
+	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 
-    private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
+	private TreeViewer viewer;
 
-    private TreeViewer viewer;
+	private IMemento memento;
 
-    private IMemento memento;
-
-    private ISelectionProvider selectionProvider = new SelectionProviderAdapter();
-
-    private TableSorter sorter;
+	private ISelectionProvider selectionProvider = new SelectionProviderAdapter();
 
 	private IAction sortAction;
 
@@ -83,460 +75,469 @@ public abstract class TableView extends ViewPart {
 
 	private IAction preferencesAction;
 
-    /* (non-Javadoc)
-     * Method declared on IViewPart.
-     */
-    public void init(IViewSite site, IMemento memento) throws PartInitException {
-        super.init(site, memento);
-        this.memento = memento;
-    }
+	private MarkerTreeContentProvider contentProvider;
 
-    /**
-     * 
-     */
-    void haltTableUpdates() {
-        content.cancelPendingChanges();
-    }
+	/*
+	 * (non-Javadoc) Method declared on IViewPart.
+	 */
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		this.memento = memento;
+	}
 
-    void change(Collection toRefresh) {
-        content.change(toRefresh);
-    }
+	/**
+	 * 
+	 */
+//	void haltTableUpdates() {
+//		content.cancelPendingChanges();
+//	}
 
-    void setContents(Collection contents, IProgressMonitor mon) {
-        content.set(contents, mon);
-    }
+//	void change(Collection toRefresh) {
+//		content.change(toRefresh);
+//	}
 
-    protected ISelectionProvider getSelectionProvider() {
-        return selectionProvider;
-    }
+//	void setContents(Collection contents, IProgressMonitor mon) {
+//		content.set(contents, mon);
+//	}
 
-    abstract protected void viewerSelectionChanged(
-            IStructuredSelection selection);
+	protected ISelectionProvider getSelectionProvider() {
+		return selectionProvider;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-     */
-    public void createPartControl(Composite parent) {
-        parent.setLayout(new FillLayout());
+	abstract protected void viewerSelectionChanged(
+			IStructuredSelection selection);
 
-        viewer = new TreeViewer(createTree(parent));
-        createColumns(viewer.getTree());
-        content = new MarkerContentProvider(this, 
-        		NLS.bind(
-        				MarkerMessages.TableView_populating, 
-        				getTitle()), 
-        		getProgressService());
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		parent.setLayout(new FillLayout());
 
-        viewer.setContentProvider(content);
+		viewer = new TreeViewer(createTree(parent));
+		createColumns(viewer.getTree());
 
-        viewer.setLabelProvider(new TableViewLabelProvider(getVisibleFields()));
+		contentProvider = new MarkerTreeContentProvider(getSite());
 
-        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent event) {
-                IStructuredSelection selection = (IStructuredSelection) event
-                        .getSelection();
-                viewerSelectionChanged(selection);
-            }
-        });
+		viewer.setContentProvider(contentProvider);
 
-        setSorter(getSorter());
+		viewer.setLabelProvider(new TableViewLabelProvider(getVisibleFields()));
 
-        //create the actions before the input is set on the viewer but after the 
-        //sorter and filter are set so the actions will be enabled correctly.
-        createActions();
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) event
+						.getSelection();
+				viewerSelectionChanged(selection);
+			}
+		});
 
-        viewer.setInput(getViewerInput());
+		viewer.setSorter(buildSorter());
 
-        viewer.setSelection(restoreSelection(memento));
+		// create the actions before the input is set on the viewer but after
+		// the
+		// sorter and filter are set so the actions will be enabled correctly.
+		createActions();
 
-        Scrollable scrollable = (Scrollable) viewer.getControl();
-        ScrollBar bar = scrollable.getVerticalBar();
-        if (bar != null) {
-            bar.setSelection(restoreVerticalScrollBarPosition(memento));
-        }
-        bar = scrollable.getHorizontalBar();
-        if (bar != null) {
-            bar.setSelection(restoreHorizontalScrollBarPosition(memento));
-        }
+		viewer.setInput(createViewerInput());
 
-        MenuManager mgr = initContextMenu();
-        Menu menu = mgr.createContextMenu(viewer.getControl());
-        viewer.getControl().setMenu(menu);
-        getSite().registerContextMenu(mgr, getSelectionProvider());
+		viewer.setSelection(restoreSelection(memento));
 
-        getSite().setSelectionProvider(getSelectionProvider());
+		Scrollable scrollable = (Scrollable) viewer.getControl();
+		ScrollBar bar = scrollable.getVerticalBar();
+		if (bar != null) {
+			bar.setSelection(restoreVerticalScrollBarPosition(memento));
+		}
+		bar = scrollable.getHorizontalBar();
+		if (bar != null) {
+			bar.setSelection(restoreHorizontalScrollBarPosition(memento));
+		}
 
-        IActionBars actionBars = getViewSite().getActionBars();
-        initMenu(actionBars.getMenuManager());
-        initToolBar(actionBars.getToolBarManager());
-        
-       registerGlobalActions(getViewSite().getActionBars());
+		MenuManager mgr = initContextMenu();
+		Menu menu = mgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
+		getSite().registerContextMenu(mgr, getSelectionProvider());
 
-        viewer.addOpenListener(new IOpenListener() {
-            public void open(OpenEvent event) {
-                handleOpenEvent(event);
-            }
-        });
-        viewer.getControl().addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                handleKeyPressed(e);
-            }
-        });
-    }
+		getSite().setSelectionProvider(getSelectionProvider());
 
-    /**
-     * @param selection
-     */
-    protected void setSelection(IStructuredSelection selection) {
-        getSelectionProvider().setSelection(selection);
-    }
+		IActionBars actionBars = getViewSite().getActionBars();
+		initMenu(actionBars.getMenuManager());
+		initToolBar(actionBars.getToolBarManager());
 
-    /**
-     * @param sorter2
-     */
-    void setSorter(TableSorter sorter2) {
-        TableSorter newSorter = new TableSorter(sorter2);
+		registerGlobalActions(getViewSite().getActionBars());
 
-        sorter = newSorter;
-        content.setSorter(newSorter);
-        newSorter.saveState(getDialogSettings());
-        sorterChanged();
-    }
+		viewer.addOpenListener(new IOpenListener() {
+			public void open(OpenEvent event) {
+				handleOpenEvent(event);
+			}
+		});
+		viewer.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				handleKeyPressed(e);
+			}
+		});
+	}
 
-    /**
-     * Create the main tree control
-     * @param parent
-     * @return Tree
-     */
-    protected Tree createTree(Composite parent) {
-    	Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
-                | SWT.FULL_SELECTION);
-        tree.setLinesVisible(true);
-        return tree;
-    }
-    
-    public ColumnPixelData[] getSavedColumnData() {
-        ColumnPixelData[] defaultData = getDefaultColumnLayouts();
-        
-        ColumnPixelData[] result = new ColumnPixelData[defaultData.length];
-        for (int i = 0; i < defaultData.length; i++) {
-            ColumnPixelData data = result[i];
-            int width = defaultData[i].width;
-            ColumnPixelData defaultPixelData = defaultData[i];
-           
-            // non-resizable columns are always left at their default width
-            if (defaultPixelData.resizable) {
-                if (memento != null) {
-                    Integer widthInt = memento.getInteger(TAG_COLUMN_WIDTH + i);
-                    
-                    if (widthInt != null && widthInt.intValue() > 0) {
-                        width = widthInt.intValue();
-                    }
-                }
-            }
-            
-            result[i] = new ColumnPixelData(width, defaultPixelData.resizable, defaultPixelData.addTrim); 
-        }
-        
-        return result;
-    }
-    
-    /**
-     * Return the column sizes from the actual widget. Returns the saved column sizes if the
-     * widget hasn't been created yet or its columns haven't been initialized yet. (Note that
-     * TableLayout only initializes the column widths after the first layout, so it is possible for
-     * the widget to exist but have all its columns incorrectly set to zero width - see bug 86329)
-    
-     * @return ColumnPixelData
-     */
-    public ColumnPixelData[] getColumnData() {
-        ColumnPixelData[] defaultData = getSavedColumnData();
-        
-        Tree tree = getTree();
-        
-        if (tree != null && (tree.isDisposed() || tree.getBounds().width == 0)) {
-        	tree = null;
-        }
-        
-        TreeColumn[] column = null;
-        if (tree != null) {
-            column = tree.getColumns();
-        }
-        
-        ColumnPixelData[] result = new ColumnPixelData[defaultData.length];
-        for (int i = 0; i < defaultData.length; i++) {
-            ColumnPixelData data = result[i];
+	/**
+	 * Create the viewer input for the receiver.
+	 * @return Object
+	 */
+	abstract Object createViewerInput();
 
-            ColumnPixelData defaultPixelData = defaultData[i];
-            int width = defaultData[i].width;
-            
-            if (column != null && i < column.length) {
-                TreeColumn col = column[i];
-                
-                if (col.getWidth() > 0) {
-                    width = col.getWidth();
-                }
-            }
-            
-            result[i] = new ColumnPixelData(width, defaultPixelData.resizable, defaultPixelData.addTrim); 
-        }
-        
-        return result;
-    }
-    
-    /**
-     * Create the columns in the tree.
-     * @param tree
-     */
-    protected void createColumns(final Tree tree) {
-        SelectionListener headerListener = getHeaderListener();
-        TableLayout layout = new TableLayout();
-        tree.setLayout(layout);
-        tree.setHeaderVisible(true);
-        
-        final IField[] fields = getVisibleFields();
-        ColumnLayoutData[] columnWidths = getSavedColumnData();
-        for (int i = 0; i < fields.length; i++) {
-            layout.addColumnData(columnWidths[i]);
-            TreeColumn tc = new TreeColumn(tree, SWT.NONE, i);
-            tc.setText(fields[i].getColumnHeaderText());
-            tc.setImage(fields[i].getColumnHeaderImage());
-            tc.addSelectionListener(headerListener);
-        }
-    }
+	/**
+	 * @param selection
+	 */
+	protected void setSelection(IStructuredSelection selection) {
+		getSelectionProvider().setSelection(selection);
+	}
 
-    /**
-     * Create the actions for the receiver.
-     */
-    protected void createActions() {
-        if (getSortDialog() != null) {
-           sortAction = new TableSortAction(this, getSortDialog());
-        }
-    }
+	/**
+	 * @param sorter2
+	 */
+	void setSorter(TableSorter sorter2) {
+		TableSorter newSorter = new TableSorter(sorter2);
+		viewer.setSorter(newSorter);
+		newSorter.saveState(getDialogSettings());
+		viewer.refresh();
+	}
 
-    protected MenuManager initContextMenu() {
-        MenuManager mgr = new MenuManager();
-        mgr.setRemoveAllWhenShown(true);
-        mgr.addMenuListener(new IMenuListener() {
-            public void menuAboutToShow(IMenuManager mgr) {
+	/**
+	 * Create the main tree control
+	 * 
+	 * @param parent
+	 * @return Tree
+	 */
+	protected Tree createTree(Composite parent) {
+		Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
+				| SWT.FULL_SELECTION);
+		tree.setLinesVisible(true);
+		return tree;
+	}
 
-                getViewer().cancelEditing();
-                fillContextMenu(mgr);
-            }
-        });
-        return mgr;
-    }
+	public ColumnPixelData[] getSavedColumnData() {
+		ColumnPixelData[] defaultData = getDefaultColumnLayouts();
 
-    protected abstract void initToolBar(IToolBarManager tbm);
+		ColumnPixelData[] result = new ColumnPixelData[defaultData.length];
+		for (int i = 0; i < defaultData.length; i++) {
+			ColumnPixelData data = result[i];
+			int width = defaultData[i].width;
+			ColumnPixelData defaultPixelData = defaultData[i];
 
-    /**
-     * Init the menu for the receiver.
-     * @param menu
-     */
-    protected void initMenu(IMenuManager menu) {
-        if (sortAction != null)
-            menu.add(sortAction);
-        addDropDownContributions(menu);
-        if (filtersAction != null)
-            menu.add(filtersAction);
-        if (preferencesAction != null)
-            menu.add(preferencesAction);
-    }
+			// non-resizable columns are always left at their default width
+			if (defaultPixelData.resizable) {
+				if (memento != null) {
+					Integer widthInt = memento.getInteger(TAG_COLUMN_WIDTH + i);
 
-    /**
-     * Add any extra contributions to the drop down.
-     * @param menu
-     */
-    void addDropDownContributions(IMenuManager menu) {
-		//Do nothing by default.
+					if (widthInt != null && widthInt.intValue() > 0) {
+						width = widthInt.intValue();
+					}
+				}
+			}
+
+			result[i] = new ColumnPixelData(width, defaultPixelData.resizable,
+					defaultPixelData.addTrim);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Return the column sizes from the actual widget. Returns the saved column
+	 * sizes if the widget hasn't been created yet or its columns haven't been
+	 * initialized yet. (Note that TableLayout only initializes the column
+	 * widths after the first layout, so it is possible for the widget to exist
+	 * but have all its columns incorrectly set to zero width - see bug 86329)
+	 * 
+	 * @return ColumnPixelData
+	 */
+	public ColumnPixelData[] getColumnData() {
+		ColumnPixelData[] defaultData = getSavedColumnData();
+
+		Tree tree = getTree();
+
+		if (tree != null && (tree.isDisposed() || tree.getBounds().width == 0)) {
+			tree = null;
+		}
+
+		TreeColumn[] column = null;
+		if (tree != null) {
+			column = tree.getColumns();
+		}
+
+		ColumnPixelData[] result = new ColumnPixelData[defaultData.length];
+		for (int i = 0; i < defaultData.length; i++) {
+			ColumnPixelData data = result[i];
+
+			ColumnPixelData defaultPixelData = defaultData[i];
+			int width = defaultData[i].width;
+
+			if (column != null && i < column.length) {
+				TreeColumn col = column[i];
+
+				if (col.getWidth() > 0) {
+					width = col.getWidth();
+				}
+			}
+
+			result[i] = new ColumnPixelData(width, defaultPixelData.resizable,
+					defaultPixelData.addTrim);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Create the columns in the tree.
+	 * 
+	 * @param tree
+	 */
+	protected void createColumns(final Tree tree) {
+		SelectionListener headerListener = getHeaderListener();
+		TableLayout layout = new TableLayout();
+		tree.setLayout(layout);
+		tree.setHeaderVisible(true);
+
+		final IField[] fields = getVisibleFields();
+		ColumnLayoutData[] columnWidths = getSavedColumnData();
+		for (int i = 0; i < fields.length; i++) {
+			layout.addColumnData(columnWidths[i]);
+			TreeColumn tc = new TreeColumn(tree, SWT.NONE, i);
+			tc.setText(fields[i].getColumnHeaderText());
+			tc.setImage(fields[i].getColumnHeaderImage());
+			tc.addSelectionListener(headerListener);
+		}
+	}
+
+	/**
+	 * Create the actions for the receiver.
+	 */
+	protected void createActions() {
+		if (getSortDialog() != null) {
+			sortAction = new TableSortAction(this, getSortDialog());
+		}
+	}
+
+	protected MenuManager initContextMenu() {
+		MenuManager mgr = new MenuManager();
+		mgr.setRemoveAllWhenShown(true);
+		mgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager mgr) {
+
+				getViewer().cancelEditing();
+				fillContextMenu(mgr);
+			}
+		});
+		return mgr;
+	}
+
+	protected abstract void initToolBar(IToolBarManager tbm);
+
+	/**
+	 * Init the menu for the receiver.
+	 * 
+	 * @param menu
+	 */
+	protected void initMenu(IMenuManager menu) {
+		if (sortAction != null)
+			menu.add(sortAction);
+		addDropDownContributions(menu);
+		if (filtersAction != null)
+			menu.add(filtersAction);
+		if (preferencesAction != null)
+			menu.add(preferencesAction);
+	}
+
+	/**
+	 * Add any extra contributions to the drop down.
+	 * 
+	 * @param menu
+	 */
+	void addDropDownContributions(IMenuManager menu) {
+		// Do nothing by default.
 	}
 
 	protected abstract void registerGlobalActions(IActionBars actionBars);
 
-    protected abstract void fillContextMenu(IMenuManager manager);
+	protected abstract void fillContextMenu(IMenuManager manager);
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-     */
-    public void setFocus() {
-        Viewer viewer = getViewer();
-        if (viewer != null && !viewer.getControl().isDisposed()) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
+	 */
+	public void setFocus() {
+		Viewer viewer = getViewer();
+		if (viewer != null && !viewer.getControl().isDisposed()) {
 
-            viewer.getControl().setFocus();
-        }
-    }
+			viewer.getControl().setFocus();
+		}
+	}
 
-    protected TableSorter getSorter() {
-        if (sorter == null) {
-            int[] priorities = new int[getFields().length];
-            int[] directions = new int[getFields().length];
-            for (int i = 0; i < getFields().length; i++) {
-                priorities[i] = i;
-            }
-            Arrays.fill(directions, TableSorter.ASCENDING);
-            sorter = new TableSorter(getFields(), priorities, directions);
-            sorter.restoreState(getDialogSettings());
-        }
-        return sorter;
-    }
+	/**
+	 * Build a sorter from the default settings.
+	 * @return TableSorter
+	 */
+	protected TableSorter buildSorter() {
 
-    //protected abstract ITableViewContentProvider getContentProvider();
+		int[] priorities = new int[getFields().length];
+		int[] directions = new int[getFields().length];
+		for (int i = 0; i < getFields().length; i++) {
+			priorities[i] = i;
+		}
+		Arrays.fill(directions, TableSorter.ASCENDING);
+		TableSorter sorter = new TableSorter(getFields(), priorities,
+				directions);
+		sorter.restoreState(getDialogSettings());
 
-    protected IField[] getFields() {
-        IField[] vProps = getVisibleFields();
-        IField[] hProps = getHiddenFields();
-        IField[] fields = new IField[vProps.length + hProps.length];
-        System.arraycopy(vProps, 0, fields, 0, vProps.length);
-        System.arraycopy(hProps, 0, fields, vProps.length, hProps.length);
-        return fields;
-    }
+		return sorter;
+	}
 
-    protected abstract Object getViewerInput();
+	// protected abstract ITableViewContentProvider getContentProvider();
 
-    protected abstract IField[] getVisibleFields();
+	protected IField[] getFields() {
+		IField[] vProps = getVisibleFields();
+		IField[] hProps = getHiddenFields();
+		IField[] fields = new IField[vProps.length + hProps.length];
+		System.arraycopy(vProps, 0, fields, 0, vProps.length);
+		System.arraycopy(hProps, 0, fields, vProps.length, hProps.length);
+		return fields;
+	}
 
-    protected abstract IField[] getHiddenFields();
+	protected abstract IField[] getVisibleFields();
 
-    protected abstract IDialogSettings getDialogSettings();
+	protected abstract IField[] getHiddenFields();
 
-    /**
-     * Return the viewer.
-     * @return TreeViewer
-     */
-    protected TreeViewer getViewer() {
-        return viewer;
-    }
-    
-    /**
-     * Return the tree for the receiver.
-     * @return Tree
-     */
-    protected Tree getTree() {
-        return getViewer().getTree();
-    }
+	protected abstract IDialogSettings getDialogSettings();
 
-    protected SelectionListener getHeaderListener() {
-        return new SelectionAdapter() {
-            /**
-             * Handles the case of user selecting the
-             * header area.
-             */
-            public void widgetSelected(SelectionEvent e) {
+	/**
+	 * Return the viewer.
+	 * 
+	 * @return TreeViewer
+	 */
+	protected TreeViewer getViewer() {
+		return viewer;
+	}
 
-                int column = getViewer().getTree().indexOf(
-                        (TreeColumn) e.widget);
-                if (column == getSorter().getTopPriority())
-                    getSorter().reverseTopPriority();
-                else {
-                    getSorter().setTopPriority(column);
-                }
-                setSorter(getSorter());
-            }
-        };
-    }
+	/**
+	 * Return the tree for the receiver.
+	 * 
+	 * @return Tree
+	 */
+	protected Tree getTree() {
+		return getViewer().getTree();
+	}
 
-    protected abstract ColumnPixelData[] getDefaultColumnLayouts();
+	protected SelectionListener getHeaderListener() {
+		return new SelectionAdapter() {
+			/**
+			 * Handles the case of user selecting the header area.
+			 */
+			public void widgetSelected(SelectionEvent e) {
 
-    protected TableSortDialog getSortDialog() {
-        if (getSorter() != null) {
-            return new TableSortDialog(getSite(), getSorter());
-        }
-        return null;
-    }
+				TableSorter sorter = (TableSorter) viewer.getSorter();
+				int column = getViewer().getTree().indexOf(
+						(TreeColumn) e.widget);
+				if (column == sorter.getTopPriority())
+					sorter.reverseTopPriority();
+				else {
+					sorter.setTopPriority(column);
+				}
+				viewer.refresh();
+			}
+		};
+	}
 
-    protected void sorterChanged() {
+	protected abstract ColumnPixelData[] getDefaultColumnLayouts();
 
-        viewer.setSorter(getSorter());
-
-        final TreeViewer viewer = getViewer();
-        if (viewer == null) {
-            return;
-        }
-
-        getSite().getShell().getDisplay().asyncExec(new Runnable() {
-            public void run() {
-                viewer.getControl().setRedraw(false);
-                viewer.refresh(false);
-                viewer.getControl().setRedraw(true);
-            }
-        });
-    }
-
-    protected abstract void handleKeyPressed(KeyEvent event);
-
-    protected abstract void handleOpenEvent(OpenEvent event);
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
-     */
-    public void saveState(IMemento memento) {
-        super.saveState(memento);
-
-        ColumnPixelData[] data = getColumnData();
-        
-        for (int i = 0; i < data.length; i++) {
-            ColumnPixelData data2 = data[i];
-            
-            memento.putInteger(TAG_COLUMN_WIDTH + i, data2.width);
-        }
-
-        saveSelection(memento);
-
-        //save vertical position
-        Scrollable scrollable = (Scrollable) viewer.getControl();
-        ScrollBar bar = scrollable.getVerticalBar();
-        int position = (bar != null) ? bar.getSelection() : 0;
-        memento.putInteger(TAG_VERTICAL_POSITION, position);
-        //save horizontal position
-        bar = scrollable.getHorizontalBar();
-        position = (bar != null) ? bar.getSelection() : 0;
-        memento.putInteger(TAG_HORIZONTAL_POSITION, position);
-    }
-
-    protected abstract void saveSelection(IMemento memento);
-
-    protected abstract IStructuredSelection restoreSelection(IMemento memento);
-
-    private int restoreVerticalScrollBarPosition(IMemento memento) {
-        if (memento == null) {
-            return 0;
-        }
-        Integer position = memento.getInteger(TAG_VERTICAL_POSITION);
-        return (position == null) ? 0 : position.intValue();
-    }
-
-    private int restoreHorizontalScrollBarPosition(IMemento memento) {
-        if (memento == null) {
-            return 0;
-        }
-        Integer position = memento.getInteger(TAG_HORIZONTAL_POSITION);
-        return (position == null) ? 0 : position.intValue();
-    }
-
-    /**
-     * Get the IWorkbenchSiteProgressService for the receiver.
-     * @return IWorkbenchSiteProgressService or <code>null</code>.
-     */
-    protected IWorkbenchSiteProgressService getProgressService() {
-        IWorkbenchSiteProgressService service = null;
-        Object siteService = getSite().getAdapter(
-                IWorkbenchSiteProgressService.class);
-        if (siteService != null)
-            service = (IWorkbenchSiteProgressService) siteService;
-        return service;
-    }
-
-    /**
-     * Set the filters action.
-     * @param action
-     */
-	void setFilterAction(FiltersAction action) {
-		filtersAction = action;
+	/**
+	 * Return a sort dialog for the receiver.
+	 * @return TableSortDialog
+	 */
+	protected TableSortDialog getSortDialog() {
+		return new TableSortDialog(getSite(),(TableSorter) viewer.getSorter());
 		
 	}
-	
+
+	protected abstract void handleKeyPressed(KeyEvent event);
+
+	protected abstract void handleOpenEvent(OpenEvent event);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+
+		ColumnPixelData[] data = getColumnData();
+
+		for (int i = 0; i < data.length; i++) {
+			ColumnPixelData data2 = data[i];
+
+			memento.putInteger(TAG_COLUMN_WIDTH + i, data2.width);
+		}
+
+		saveSelection(memento);
+
+		// save vertical position
+		Scrollable scrollable = (Scrollable) viewer.getControl();
+		ScrollBar bar = scrollable.getVerticalBar();
+		int position = (bar != null) ? bar.getSelection() : 0;
+		memento.putInteger(TAG_VERTICAL_POSITION, position);
+		// save horizontal position
+		bar = scrollable.getHorizontalBar();
+		position = (bar != null) ? bar.getSelection() : 0;
+		memento.putInteger(TAG_HORIZONTAL_POSITION, position);
+	}
+
+	protected abstract void saveSelection(IMemento memento);
+
+	protected abstract IStructuredSelection restoreSelection(IMemento memento);
+
+	private int restoreVerticalScrollBarPosition(IMemento memento) {
+		if (memento == null) {
+			return 0;
+		}
+		Integer position = memento.getInteger(TAG_VERTICAL_POSITION);
+		return (position == null) ? 0 : position.intValue();
+	}
+
+	private int restoreHorizontalScrollBarPosition(IMemento memento) {
+		if (memento == null) {
+			return 0;
+		}
+		Integer position = memento.getInteger(TAG_HORIZONTAL_POSITION);
+		return (position == null) ? 0 : position.intValue();
+	}
+
+	/**
+	 * Get the IWorkbenchSiteProgressService for the receiver.
+	 * 
+	 * @return IWorkbenchSiteProgressService or <code>null</code>.
+	 */
+	protected IWorkbenchSiteProgressService getProgressService() {
+		IWorkbenchSiteProgressService service = null;
+		Object siteService = getSite().getAdapter(
+				IWorkbenchSiteProgressService.class);
+		if (siteService != null)
+			service = (IWorkbenchSiteProgressService) siteService;
+		return service;
+	}
+
+	/**
+	 * Set the filters action.
+	 * 
+	 * @param action
+	 */
+	void setFilterAction(FiltersAction action) {
+		filtersAction = action;
+
+	}
+
 	/**
 	 * Return the filter action for the receiver.
+	 * 
 	 * @return IAction
 	 */
 	IAction getFilterAction() {
@@ -545,6 +546,7 @@ public abstract class TableView extends ViewPart {
 
 	/**
 	 * Return the preferences action.
+	 * 
 	 * @return IAction
 	 */
 	IAction getPreferencesAction() {
@@ -553,10 +555,29 @@ public abstract class TableView extends ViewPart {
 
 	/**
 	 * Set the preferences action.
+	 * 
 	 * @param preferencesAction
 	 */
 	void setPreferencesAction(ViewPreferencesAction preferencesAction) {
 		this.preferencesAction = preferencesAction;
 	}
+
+	/**
+	 * Get the content provider
+	 * @return MarkerTreeContentProvider
+	 */
+	MarkerTreeContentProvider getContentProvider() {
+		return contentProvider;
+	}
+
+	/**
+	 * Return the input to the viewer.
+	 * @return Object
+	 */
+	public Object getViewerInput() {
+		return getViewer().getInput();
+	}
+
+
 
 }

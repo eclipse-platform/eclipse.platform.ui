@@ -13,6 +13,7 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * The message field is the field for the description
@@ -76,6 +77,9 @@ public class FieldMessage implements IField {
 
 		if (obj instanceof ConcreteMarker)
 			return ((ConcreteMarker) obj).getDescription();
+		
+		if(obj instanceof IWorkbenchAdapter)
+			return ((IWorkbenchAdapter) obj).getLabel(obj);
 		
 		return NLS.bind(MarkerMessages.FieldMessage_WrongType,obj.toString());
 	}

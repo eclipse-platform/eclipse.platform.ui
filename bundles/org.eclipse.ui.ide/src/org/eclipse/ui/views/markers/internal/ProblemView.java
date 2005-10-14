@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -95,7 +94,6 @@ public class ProblemView extends MarkerView {
 
 	private ActionResolveMarker resolveMarkerAction;
 
-	private TableSorter sorter;
 
 	/**
 	 * Return a new instance of the receiver.
@@ -175,15 +173,13 @@ public class ProblemView extends MarkerView {
 		return ROOT_TYPES;
 	}
 
-	protected TableSorter getSorter() {
-		if (sorter == null)
-			sorter = new TableSorter(getFields(), DEFAULT_PRIORITIES,
-					DEFAULT_DIRECTIONS);
-		return sorter;
-	}
 
-	protected Object getViewerInput() {
-		return ResourcesPlugin.getWorkspace().getRoot();
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.TableView#buildSorter()
+	 */
+	protected TableSorter buildSorter() {
+		return  new TableSorter(getFields(), DEFAULT_PRIORITIES,
+					DEFAULT_DIRECTIONS);
 	}
 
 	protected IField[] getVisibleFields() {

@@ -14,11 +14,11 @@ package org.eclipse.ui.views.markers.internal;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,10 +39,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
@@ -53,7 +50,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -108,16 +104,6 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
  */
 public abstract class MarkerView extends TableView {
 
-	private static final String WAITING_FOR_WORKSPACE_CHANGES_TO_FINISH = MarkerMessages.MarkerView_waiting_on_changes;
-
-	private static final String SEARCHING_FOR_MARKERS = MarkerMessages.MarkerView_searching_for_markers;
-
-	private static final String REFRESHING_MARKER_COUNTS = MarkerMessages.MarkerView_refreshing_counts;
-
-	private static final String QUEUEING_VIEWER_UPDATES = MarkerMessages.MarkerView_queueing_updates;
-
-	private static final String FILTERING_ON_MARKER_LIMIT = MarkerMessages.MarkerView_18;
-
 	private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
 
 	private static final String TAG_MARKER = "marker"; //$NON-NLS-1$
@@ -137,6 +123,58 @@ public abstract class MarkerView extends TableView {
 	// Section from a 3.1 or earlier workbench
 	private static final String OLD_FILTER_SECTION = "filter"; //$NON-NLS-1$
 
+	private class UpdateJob extends WorkbenchJob {
+
+		private Collection pendingMarkerUpdates = Collections
+				.synchronizedSet(new HashSet());
+
+		private boolean refreshAll = false;
+
+		UpdateJob() {
+			super("Update the table");
+		}
+
+		/**
+		 * Refresh the changed list.
+		 * 
+		 * @param changed
+		 */
+		void refresh(MarkerList changed) {
+			if (refreshAll)
+				return;
+			pendingMarkerUpdates.addAll(changed.asList());
+		}
+
+		/**
+		 * Refresh all markers
+		 */
+		void refreshAll() {
+			refreshAll = true;
+			pendingMarkerUpdates.clear();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			if (refreshAll) {
+				getViewer().refresh();
+			} else {
+				Object[] markers = pendingMarkerUpdates.toArray();
+				for (int i = 0; i < markers.length; i++) {
+					getViewer().refresh(markers[i], true);
+				}
+			}
+			pendingMarkerUpdates.clear();
+			refreshAll = false;
+			return Status.OK_STATUS;
+		}
+	}
+
+	private UpdateJob updateJob = new UpdateJob();
+
 	// A private field for keeping track of the number of markers
 	// before the busy testing started
 	private int preBusyMarkers = 0;
@@ -147,33 +185,43 @@ public abstract class MarkerView extends TableView {
 
 	IResourceChangeListener resourceListener = new IResourceChangeListener() {
 		public void resourceChanged(IResourceChangeEvent event) {
+			
 			String[] markerTypes = getMarkerTypes();
-
-			boolean refreshNeeded = false;
-
+			Collection changedMarkers = new ArrayList();
+			boolean addedOrRemoved = false;
+			
 			for (int idx = 0; idx < markerTypes.length; idx++) {
 				IMarkerDelta[] markerDeltas = event.findMarkerDeltas(
 						markerTypes[idx], true);
-				List changes = new ArrayList(markerDeltas.length);
+				for (int i = 0; i < markerDeltas.length; i++) {
+					IMarkerDelta delta = markerDeltas[i];
+					int kind = delta.getKind();
 
-				examineDelta(markerDeltas, changes);
-
-				if (markerDeltas.length != changes.size()) {
-					refreshNeeded = true;
+					if (kind == IResourceDelta.CHANGED) {
+						changedMarkers.add(delta.getMarker());
+					}
+					else
+						addedOrRemoved = true;
 				}
 
-				MarkerList changed = currentMarkers.findMarkers(changes);
-				changed.refresh();
-
-				change(changed.asList());
 			}
 
-			// Refresh everything if markers were added or removed
-			if (refreshNeeded) {
+			// Refresh the whole thing if anything was added or removed
+			if (addedOrRemoved) {
 				markerCountDirty = true;
-				refresh();
+				updateJob.refreshAll();
+				getProgressService().schedule(updateJob);
+			} else {
+				MarkerList changed = getCurrentMarkers().findMarkers(changedMarkers);
+				if(changed.asList().isEmpty())
+					return;
+				
+				changed.refresh();				
+				updateJob.refresh(changed);
+				getProgressService().schedule(updateJob);
 			}
 		}
+
 	};
 
 	private class ContextProvider implements IContextProvider {
@@ -224,8 +272,6 @@ public abstract class MarkerView extends TableView {
 		}
 	};
 
-	private MarkerList currentMarkers = new MarkerList();
-
 	private int totalMarkers = 0;
 
 	private boolean markerCountDirty = true;
@@ -243,117 +289,19 @@ public abstract class MarkerView extends TableView {
 	 * changes to be reflected in the UI.
 	 */
 
-	private RestartableJob refreshJob = null;
+	private Job refreshJob = null;
 
 	private MenuManager filtersMenu;
 
 	private MenuManager showInMenu;
 
-	private void internalRefresh(IProgressMonitor monitor)
-			throws InvocationTargetException {
-		int markerLimit = getMarkerLimit();
-		monitor.beginTask(MarkerMessages.MarkerView_19, markerLimit == -1 ? 60
-				: 100);
-
-		haltTableUpdates();
-		IJobManager jobMan = Platform.getJobManager();
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-
-		try {
-			monitor.subTask(WAITING_FOR_WORKSPACE_CHANGES_TO_FINISH);
-
-			jobMan.beginRule(root, monitor);
-
-			if (monitor.isCanceled()) {
-				return;
-			}
-
-			monitor.subTask(SEARCHING_FOR_MARKERS);
-			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
-			MarkerList markerList = MarkerList.compute(getEnabledFilters(),
-					subMonitor, true);
-
-			if (monitor.isCanceled()) {
-				return;
-			}
-			if (markerCountDirty) {
-				monitor.subTask(REFRESHING_MARKER_COUNTS);
-				totalMarkers = MarkerList.compute(getMarkerTypes()).length;
-				markerCountDirty = false;
-			}
-
-			currentMarkers = markerList;
-
-		} catch (CoreException e) {
-			throw new InvocationTargetException(e);
-		} finally {
-			jobMan.endRule(root);
-		}
-
-		if (monitor.isCanceled()) {
-			return;
-		}
-
-		// Exit immediately if the markers have changed in the meantime.
-
-		Collection markers = Arrays.asList(currentMarkers.toArray());
-
-		if (markerLimit != -1) {
-
-			monitor.subTask(FILTERING_ON_MARKER_LIMIT);
-			SubProgressMonitor mon = new SubProgressMonitor(monitor, 40);
-
-			markers = SortUtil.getFirst(markers, getSorter(), markerLimit, mon);
-			if (monitor.isCanceled())
-				return;
-			currentMarkers = new MarkerList(markers);
-		}
-
-		monitor.subTask(QUEUEING_VIEWER_UPDATES);
-
-		SubProgressMonitor sub = new SubProgressMonitor(monitor, 50);
-		setContents(markers, sub);
-		if (monitor.isCanceled())
-			return;
-
-		uiJob.schedule();
-		try {
-			uiJob.join();
-		} catch (InterruptedException e) {
-			uiJob.cancel();
-			monitor.done();
-		} finally {
-			if (monitor.isCanceled()) {
-				uiJob.cancel();
-			}
-		}
-
-		monitor.done();
-	}
-
 	/**
-	 * Causes the view to re-sync its contents with the workspace. Note that
-	 * changes will be scheduled in a background job, and may not take effect
-	 * immediately.
+	 * Get the current markers for the receiver.
+	 * 
+	 * @return MarkerList
 	 */
-	protected void refresh() {
-
-		if (uiJob == null)
-			createUIJob();
-
-		if (refreshJob == null) {
-
-			refreshJob = new RestartableJob(NLS.bind(
-					MarkerMessages.MarkerView_refreshTitle, getTitle()),
-					new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException {
-							internalRefresh(monitor);
-						}
-					}, getProgressService());
-		}
-
-		refreshJob.restart();
+	protected MarkerList getCurrentMarkers() {
+		return ((MarkerAdapter) getViewerInput()).getCurrentMarkers();
 	}
 
 	/*
@@ -511,7 +459,7 @@ public abstract class MarkerView extends TableView {
 				.getPage().getSelection());
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
 				resourceListener);
-		refresh();
+		getViewer().refresh();
 
 		// Set help on the view itself
 		getViewer().getControl().addHelpListener(new HelpListener() {
@@ -550,7 +498,8 @@ public abstract class MarkerView extends TableView {
 						IMarker element = (IMarker) markerIterator.next();
 						newSelection.add(element.getResource());
 					}
-					return new ShowInContext(getViewerInput(), new StructuredSelection(newSelection));
+					return new ShowInContext(getViewer().getInput(),
+							new StructuredSelection(newSelection));
 				}
 
 			};
@@ -561,6 +510,10 @@ public abstract class MarkerView extends TableView {
 	protected void viewerSelectionChanged(IStructuredSelection selection) {
 
 		Object[] rawSelection = selection.toArray();
+
+		if (rawSelection.length == 0
+				|| !(rawSelection[0] instanceof ConcreteMarker))
+			return;
 
 		IMarker[] markers = new IMarker[rawSelection.length];
 
@@ -596,9 +549,9 @@ public abstract class MarkerView extends TableView {
 			revealAction.dispose();
 			propertiesAction.dispose();
 			clipboard.dispose();
-			
+
 		}
-		if(showInMenu != null)
+		if (showInMenu != null)
 			showInMenu.dispose();
 	}
 
@@ -656,7 +609,7 @@ public abstract class MarkerView extends TableView {
 				markerEnablementPreferenceName, markerLimitPreferenceName,
 				MarkerMessages.MarkerPreferences_DialogTitle);
 		if (dialog.open() == Window.OK)
-			refresh();
+			getViewer().refresh();
 
 	}
 
@@ -666,13 +619,6 @@ public abstract class MarkerView extends TableView {
 	 * @return String
 	 */
 	abstract String getMarkerLimitPreferenceName();
-
-	/**
-	 * Get the name of the marker limit preference.
-	 * 
-	 * @return String
-	 */
-	abstract String getMarkerEnablementPreferenceName();
 
 	abstract String[] getMarkerTypes();
 
@@ -847,7 +793,8 @@ public abstract class MarkerView extends TableView {
 				if (resource != null) {
 					IMarker marker = resource.findMarker(id);
 					if (marker != null)
-						selectionList.add(currentMarkers.getMarker(marker));
+						selectionList
+								.add(getCurrentMarkers().getMarker(marker));
 				}
 			} catch (CoreException e) {
 			}
@@ -870,14 +817,13 @@ public abstract class MarkerView extends TableView {
 			IFile file = ResourceUtil.getFile(editor.getEditorInput());
 			if (file == null) {
 				IEditorInput editorInput = editor.getEditorInput();
-				if(editorInput != null ){
-					Object mapping = 
-						editorInput.getAdapter(ResourceMapping.class);
-					if(mapping != null)
+				if (editorInput != null) {
+					Object mapping = editorInput
+							.getAdapter(ResourceMapping.class);
+					if (mapping != null)
 						selectedElements.add(mapping);
 				}
-			}
-			else{
+			} else {
 				selectedElements.add(file);
 			}
 		} else {
@@ -900,17 +846,17 @@ public abstract class MarkerView extends TableView {
 						IResource resource = taskListResourceAdapter
 								.getAffectedResource((IAdaptable) object);
 						if (resource == null) {
-							Object mapping = ((IAdaptable) object).getAdapter(ResourceMapping.class);
-							if(mapping != null)
+							Object mapping = ((IAdaptable) object)
+									.getAdapter(ResourceMapping.class);
+							if (mapping != null)
 								selectedElements.add(mapping);
-						}
-						else
+						} else
 							selectedElements.add(resource);
-						}
 					}
 				}
 			}
-		updateFocusMarkers(selectedElements.toArray());		
+		}
+		updateFocusMarkers(selectedElements.toArray());
 	}
 
 	/**
@@ -922,15 +868,16 @@ public abstract class MarkerView extends TableView {
 
 		Collection resourceCollection = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
-			if(elements[i] instanceof IResource)
+			if (elements[i] instanceof IResource)
 				resourceCollection.add(elements[i]);
 			else
-				addResources(resourceCollection, ((ResourceMapping) elements[i]));
+				addResources(resourceCollection,
+						((ResourceMapping) elements[i]));
 		}
-		
+
 		IResource[] resources = new IResource[resourceCollection.size()];
 		resourceCollection.toArray(resources);
-		
+
 		for (int i = 0; i < markerFilters.length; i++) {
 			markerFilters[i].setFocusResource(resources);
 		}
@@ -938,31 +885,34 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Add the resources for the mapping to resources.
+	 * 
 	 * @param resources
 	 * @param mapping
 	 */
 	private void addResources(Collection resources, ResourceMapping mapping) {
 		try {
-			ResourceTraversal[] traversals = 
-				mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, new NullProgressMonitor());
+			ResourceTraversal[] traversals = mapping.getTraversals(
+					ResourceMappingContext.LOCAL_CONTEXT,
+					new NullProgressMonitor());
 			for (int i = 0; i < traversals.length; i++) {
 				ResourceTraversal traversal = traversals[i];
-				IResource[]  result = traversal.getResources();
+				IResource[] result = traversal.getResources();
 				for (int j = 0; j < result.length; j++) {
-					resources.add(result[j]);					
+					resources.add(result[j]);
 				}
 			}
 		} catch (CoreException e) {
 			IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
 			return;
 		}
-		
+
 	}
 
 	protected abstract String getStaticContextId();
 
 	/**
 	 * Update the focus markers for the supplied elements.
+	 * 
 	 * @param elements
 	 */
 	void updateFocusMarkers(Object[] elements) {
@@ -970,12 +920,11 @@ public abstract class MarkerView extends TableView {
 		if (updateNeeded) {
 			focusElements = elements;
 			updateFilterSelection(elements);
-			refresh();
+			getContentProvider().refresh();
 		}
 	}
 
-	private boolean updateNeeded(Object[] oldElements,
-			Object[] newElements) {
+	private boolean updateNeeded(Object[] oldElements, Object[] newElements) {
 		// determine if an update if refiltering is required
 		MarkerFilter[] filters = getEnabledFilters();
 		boolean updateNeeded = false;
@@ -1017,33 +966,9 @@ public abstract class MarkerView extends TableView {
 		return updateNeeded;
 	}
 
-	/**
-	 * Returns the marker limit or -1 if unlimited
-	 * 
-	 * @return int
-	 */
-	private int getMarkerLimit() {
-
-		// If limits are enabled return it. Otherwise return -1
-		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
-				getMarkerEnablementPreferenceName())) {
-			return IDEWorkbenchPlugin.getDefault().getPreferenceStore().getInt(
-					getMarkerLimitPreferenceName());
-
-		}
-		return -1;
-
-	}
-
-	private boolean withinMarkerLimit(int toTest) {
-		int limit = getMarkerLimit();
-
-		return (limit == -1 || toTest <= limit);
-	}
-
 	void updateTitle() {
-		String status = ""; //$NON-NLS-1$
-		int filteredCount = currentMarkers.getItemCount();
+		String status = Util.EMPTY_STRING;
+		int filteredCount = getCurrentMarkers().getItemCount();
 		int totalCount = getTotalMarkers();
 		if (filteredCount == totalCount) {
 			status = NLS.bind(MarkerMessages.filter_itemsMessage, new Integer(
@@ -1106,9 +1031,10 @@ public abstract class MarkerView extends TableView {
 			message = updateSummaryVisible();
 		} else if (selection.size() == 1) {
 			// Use the Message attribute of the marker
-			ConcreteMarker marker = (ConcreteMarker) selection
-					.getFirstElement();
-			message = marker.getDescription();
+			Object first = selection.getFirstElement();
+			if (first instanceof ConcreteMarker) {
+				message = ((ConcreteMarker) first).getDescription();
+			}
 		} else if (selection.size() > 1) {
 			// Show stats on only those items in the selection
 			message = updateSummarySelected(selection);
@@ -1154,7 +1080,7 @@ public abstract class MarkerView extends TableView {
 
 			updateForFilterChanges();
 			refreshFilterMenu();
-			refresh();
+			getViewer().refresh();
 		}
 	}
 
@@ -1210,8 +1136,8 @@ public abstract class MarkerView extends TableView {
 		for (Iterator i = structuredSelection.iterator(); i.hasNext();) {
 			Object next = i.next();
 			if (next instanceof IMarker) {
-				ConcreteMarker marker = currentMarkers
-						.getMarker((IMarker) next);
+				ConcreteMarker marker = getCurrentMarkers().getMarker(
+						(IMarker) next);
 				if (marker != null) {
 					newSelection.add(marker);
 				}
@@ -1222,21 +1148,8 @@ public abstract class MarkerView extends TableView {
 			viewer.setSelection(new StructuredSelection(newSelection), reveal);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.TableView#setContents(java.util.Collection)
-	 */
-	void setContents(Collection contents, IProgressMonitor mon) {
-		if (withinMarkerLimit(contents.size())) {
-			super.setContents(contents, mon);
-		} else {
-			super.setContents(Collections.EMPTY_LIST, mon);
-		}
-	}
-
 	protected MarkerList getVisibleMarkers() {
-		return currentMarkers;
+		return getCurrentMarkers();
 	}
 
 	/**
@@ -1264,18 +1177,7 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.markers.internal.TableView#sorterChanged()
 	 */
 	protected void sorterChanged() {
-		refresh();
-	}
-
-	private static void examineDelta(IMarkerDelta[] deltas, List changes) {
-		for (int idx = 0; idx < deltas.length; idx++) {
-			IMarkerDelta delta = deltas[idx];
-			int kind = delta.getKind();
-
-			if (kind == IResourceDelta.CHANGED) {
-				changes.add(deltas[idx].getMarker());
-			}
-		}
+		getViewer().refresh();
 	}
 
 	/*
@@ -1394,5 +1296,79 @@ public abstract class MarkerView extends TableView {
 
 		menu.appendToGroup(MENU_SHOW_IN_GROUP, showInMenu);
 
+	}
+
+	/**
+	 * Refresh the marker counts
+	 * 
+	 * @param monitor
+	 */
+	void refreshMarkerCounts(IProgressMonitor monitor) {
+		if (markerCountDirty) {
+			monitor.subTask(MarkerMessages.MarkerView_refreshing_counts);
+			try {
+				totalMarkers = MarkerList.compute(getMarkerTypes()).length;
+			} catch (CoreException e) {
+				IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+				return;
+			}
+			markerCountDirty = false;
+		}
+
+	}
+
+	/**
+	 * Schedule an update of the summary counts.
+	 */
+	public void scheduleCountUpdate() {
+		if (uiJob == null)
+			createUIJob();
+
+		uiJob.schedule();
+		try {
+			uiJob.join();
+		} catch (InterruptedException e) {
+			return;
+		}
+	}
+
+	/**
+	 * Returns the marker limit or -1 if unlimited
+	 * 
+	 * @return int
+	 */
+	int getMarkerLimit() {
+
+		// If limits are enabled return it. Otherwise return -1
+		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
+				getMarkerEnablementPreferenceName())) {
+			return IDEWorkbenchPlugin.getDefault().getPreferenceStore().getInt(
+					getMarkerLimitPreferenceName());
+
+		}
+		return -1;
+
+	}
+
+	private boolean withinMarkerLimit(int toTest) {
+		int limit = getMarkerLimit();
+
+		return (limit == -1 || toTest <= limit);
+	}
+
+	/**
+	 * Get the name of the marker limit preference.
+	 * 
+	 * @return String
+	 */
+	abstract String getMarkerEnablementPreferenceName();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.TableView#createViewerInput()
+	 */
+	Object createViewerInput() {
+		return new MarkerAdapter(this);
 	}
 }
