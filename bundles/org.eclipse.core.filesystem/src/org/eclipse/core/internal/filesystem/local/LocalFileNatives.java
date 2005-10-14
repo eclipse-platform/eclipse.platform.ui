@@ -43,6 +43,10 @@ abstract class LocalFileNatives {
 	/**
 	 * Copies file attributes from source to destination. The copyLastModified attribute
 	 * indicates whether the lastModified attribute should be copied.
+	 * @param source 
+	 * @param destination 
+	 * @param copyLastModified 
+	 * @return <code>true</code> for success, and <code>false</code> otherwise.
 	 */
 	public static boolean copyAttributes(String source, String destination, boolean copyLastModified) {
 		if (hasNatives)
@@ -51,6 +55,10 @@ abstract class LocalFileNatives {
 		return false; // not supported
 	}
 
+	/**
+	 * @param fileName
+	 * @return The file info
+	 */
 	public static FileInfo fetchFileInfo(String fileName) {
 		FileInfo info = new FileInfo();
 		if (isUnicode)
@@ -101,6 +109,10 @@ abstract class LocalFileNatives {
 	 * be called if <code>isUnicode</code> is <code>false</code>). */
 	private static final native boolean internalSetFileInfoW(char[] fileName, IFileInfo attribute, int options);
 
+	/**
+	 * @return <code>true</code> if this file system is case-sensitive, and
+	 * <code>false</code> otherwise.
+	 */
 	public static boolean isCaseSensitive() {
 		return caseSensitive;
 	}
@@ -111,6 +123,11 @@ abstract class LocalFileNatives {
 		Policy.log(IStatus.INFO, message);
 	}
 
+	/**
+	 * @param fileName
+	 * @param info
+	 * @param options
+	 */
 	public static void setFileInfo(String fileName, IFileInfo info, int options) {
 		if (isUnicode)
 			internalSetFileInfoW(fileName.toCharArray(), info, options);
@@ -121,6 +138,8 @@ abstract class LocalFileNatives {
 	/**
 	 * Return <code>true</code> if we have found the core library and are using it for
 	 * our file-system calls, and <code>false</code> otherwise.
+	 * @return <code>true</code> if native library is available, and <code>false</code>
+	 * otherwise.
 	 */
 	public static boolean usingNatives() {
 		return hasNatives;
