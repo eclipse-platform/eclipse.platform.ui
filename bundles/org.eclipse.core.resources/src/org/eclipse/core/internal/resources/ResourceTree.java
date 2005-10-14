@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.net.URI;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
@@ -72,26 +73,6 @@ class ResourceTree implements IResourceTree {
 	}
 
 	/**
-	 * Add this resource and all child files to the local history. Only adds content for
-	 * resources of type <code>IResource.FILE</code>.
-	 */
-	private void addToLocalHistory(IResource root, int depth) {
-		IResourceVisitor visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) {
-				if (resource.getType() == IResource.FILE)
-					addToLocalHistory((IFile) resource);
-				return true;
-			}
-		};
-		try {
-			root.accept(visitor, depth, false);
-		} catch (CoreException e) {
-			// We want to ignore any exceptions thrown by the history store because
-			// they aren't enough to fail the operation as a whole. 
-		}
-	}
-
-	/**
 	 * @see IResourceTree#computeTimestamp(IFile)
 	 */
 	public long computeTimestamp(IFile file) {
@@ -100,11 +81,21 @@ class ResourceTree implements IResourceTree {
 			lock.acquire();
 			if (!file.getProject().exists())
 				return NULL_TIMESTAMP;
-			IFileInfo fileInfo = localManager.getStore(file).fetchInfo();
-			return fileInfo.exists() ? fileInfo.getLastModified() : NULL_TIMESTAMP;
+			return internalComputeTimestamp(file);
 		} finally {
 			lock.release();
 		}
+	}
+
+	/**
+	 * Returns the local timestamp for a file.
+	 * 
+	 * @param file
+	 * @return The local file system timestamp
+	 */
+	private long internalComputeTimestamp(IFile file) {
+		IFileInfo fileInfo = localManager.getStore(file).fetchInfo();
+		return fileInfo.exists() ? fileInfo.getLastModified() : NULL_TIMESTAMP;
 	}
 
 	/**
@@ -442,11 +433,13 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * Return <code>true</code> if there is a change in the content area for the project.
 	 */
-	private boolean isContentChange(IProject project, IProjectDescription destinationDescription) {
-		IProjectDescription sourceDescription = ((Project) project).internalGetDescription();
-		if (sourceDescription.getLocation() == null || destinationDescription.getLocation() == null)
+	private boolean isContentChange(IProject project, IProjectDescription destDescription) {
+		IProjectDescription srcDescription = ((Project) project).internalGetDescription();
+		URI srcLocation = srcDescription.getLocationURI();
+		URI destLocation = destDescription.getLocationURI();
+		if (srcLocation == null || destLocation == null)
 			return true;
-		return !sourceDescription.getLocation().equals(destinationDescription.getLocation());
+		return !srcLocation.equals(destLocation);
 	}
 
 	/**
@@ -711,16 +704,17 @@ class ResourceTree implements IResourceTree {
 			String message = NLS.bind(Messages.resources_moving, source.getFullPath());
 			monitor.beginTask(message, 10);
 			IProjectDescription srcDescription = source.getDescription();
+			URI srcLocation = srcDescription.getLocationURI();
+			URI destLocation = destDescription.getLocationURI();
 			// If the locations are the same (and non-default) then there is nothing to do.
-			if (srcDescription.getLocation() != null && srcDescription.getLocation().equals(destDescription))
+			if (srcLocation != null && srcLocation.equals(destLocation))
 				return;
 
-			IPath destLocation = destDescription.getLocation();
 			// Use the default area if necessary for the destination. The source project
 			// should already have a location assigned to it.
 			if (destLocation == null)
-				destLocation = Platform.getLocation().append(destDescription.getName());
-			IFileStore destStore = EFS.getFileSystem(EFS.SCHEME_FILE).getStore(destLocation);
+				destLocation = Platform.getLocation().append(destDescription.getName()).toFile().toURI();
+			IFileStore destStore = EFS.getStore(destLocation);
 
 			// Move the contents on disk.
 			localManager.move(source, destStore, flags, monitor);
@@ -908,7 +902,7 @@ class ResourceTree implements IResourceTree {
 					return;
 			}
 			movedFile(source, destination);
-			updateMovedFileTimestamp(destination, computeTimestamp(destination));
+			updateMovedFileTimestamp(destination, internalComputeTimestamp(destination));
 			if (failedDeletingSource) {
 				//recreate source file to ensure we are not out of sync
 				try {
@@ -933,7 +927,7 @@ class ResourceTree implements IResourceTree {
 		try {
 			lock.acquire();
 			String message = NLS.bind(Messages.resources_moving, source.getFullPath());
-			monitor.subTask(message);
+			monitor.beginTask(message, 100);
 
 			// These pre-conditions should all be ok but just in case...
 			if (!source.exists() || destination.exists() || !destination.getParent().isAccessible())
@@ -949,11 +943,7 @@ class ResourceTree implements IResourceTree {
 				failed(status);
 				return;
 			}
-
-			// keep history
-			boolean keepHistory = (flags & IResource.KEEP_HISTORY) != 0;
-			if (keepHistory)
-				addToLocalHistory(source, IResource.DEPTH_INFINITE);
+			monitor.worked(20);
 
 			//for linked resources, nothing needs to be moved in the file system
 			boolean isDeep = (flags & IResource.SHALLOW) == 0;
@@ -968,7 +958,7 @@ class ResourceTree implements IResourceTree {
 			boolean failedDeletingSource = false;
 			try {
 				destStore = localManager.getStore(destination);
-				localManager.move(source, destStore, flags, monitor);
+				localManager.move(source, destStore, flags, Policy.subMonitorFor(monitor, 60));
 			} catch (CoreException e) {
 				failed(e.getStatus());
 				// did the fail occur after copying to the destination?
@@ -978,6 +968,7 @@ class ResourceTree implements IResourceTree {
 					return;
 			}
 			movedFolderSubtree(source, destination);
+			monitor.worked(20);
 			updateTimestamps(destination, isDeep);
 			if (failedDeletingSource) {
 				//the move could have been partially successful, so refresh to ensure we are in sync
@@ -1082,20 +1073,19 @@ class ResourceTree implements IResourceTree {
 	private void updateTimestamps(IResource root, final boolean isDeep) {
 		IResourceVisitor visitor = new IResourceVisitor() {
 			public boolean visit(IResource resource) {
-				boolean isLinked = resource.isLinked();
-				if (isLinked && !isDeep)
-					//don't need to visit children because they didn't move
-					return false;
-				if (resource.getType() == IResource.FILE) {
-					IFile file = (IFile) resource;
-					updateMovedFileTimestamp(file, computeTimestamp(file));
-				} else {
-					if (isLinked) {
+				if (resource.isLinked()) {
+					if (isDeep) {
 						//clear the linked resource bit, if any
 						ResourceInfo info = ((Resource) resource).getResourceInfo(false, true);
 						info.clear(ICoreConstants.M_LINK);
 					}
+					return true;
 				}
+				//only needed if underlying file system does not preserve timestamps
+//				if (resource.getType() == IResource.FILE) {
+//					IFile file = (IFile) resource;
+//					updateMovedFileTimestamp(file, computeTimestamp(file));
+//				}
 				return true;
 			}
 		};
