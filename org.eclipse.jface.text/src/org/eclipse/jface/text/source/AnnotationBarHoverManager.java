@@ -74,6 +74,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		/** The information control. */
 		private IInformationControl fInformationControlToClose;
 		/**
+		 * <code>true</code> if a wheel handler is installed.
+		 * @since 3.2
+		 */
+		private boolean fHasWheelFilter= false;
+		/**
 		 * The cached display.
 		 * @since 3.2
 		 */
@@ -120,8 +125,10 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.addKeyListener(this);
 				
 				fDisplay= fSubjectControl.getDisplay();
-				if (!fDisplay.isDisposed() && fHideOnMouseWheel)
+				if (!fDisplay.isDisposed() && fHideOnMouseWheel) {
+					fHasWheelFilter= true;
 					fDisplay.addFilter(SWT.MouseWheel, this);
+				}
 			}
 		}
 
@@ -155,7 +162,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.removeKeyListener(this);
 			}
 			
-			if (fDisplay != null && !fDisplay.isDisposed() && fHideOnMouseWheel)
+			if (fDisplay != null && !fDisplay.isDisposed() && fHasWheelFilter)
 				fDisplay.removeFilter(SWT.MouseWheel, this);
 			fDisplay= null;
 			
@@ -289,9 +296,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 */
 	protected boolean fAllowMouseExit= false;
 	/**
-	 * since 3.2
+	 * Whether we should hide the over on mouse wheel action.
+	 * 
+	 * @since 3.2
 	 */
-	private boolean fHideOnMouseWheel;
+	private boolean fHideOnMouseWheel= true;
 
 	/**
 	 * Creates an annotation hover manager with the given parameters. In addition,
