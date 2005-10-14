@@ -44,6 +44,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -67,8 +69,12 @@ import org.eclipse.jface.text.TextEvent;
  * @since 3.2
  */
 public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVerticalRulerInfo, IVerticalRulerInfoExtension {
-	/** Debug mode */
-	private static final boolean DEBUG= false;
+	/**
+	 * Tells whether this class is in debug mode.
+	 * @since 3.0
+	 */
+	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text.source/debug/AnnotateRulerColumn"));  //$NON-NLS-1$//$NON-NLS-2$
+	
 	
 	private static final class AnnotateAnnotation extends Annotation {
 		public AnnotateAnnotation(String text) {
