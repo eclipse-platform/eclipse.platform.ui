@@ -154,11 +154,6 @@ public interface IImportExportConstants {
 	public static final String TYPENAME = "org.eclipse.jdt.debug.core.typeName"; //$NON-NLS-1$
 	
 	/**
-	 * The typename for a method attribute
-	 */
-	public static final String METHODNAME = "org.eclipse.jdt.debug.core.methodName"; //$NON-NLS-1$
-	
-	/**
 	 * the charstart attribute from a marker
 	 */
 	public static final String CHARSTART = "charStart"; //$NON-NLS-1$

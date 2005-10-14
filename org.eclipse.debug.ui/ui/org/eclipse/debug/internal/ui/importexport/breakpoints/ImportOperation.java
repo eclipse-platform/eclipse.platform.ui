@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -25,7 +26,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -48,6 +48,8 @@ public class ImportOperation implements IRunnableWithProgress {
 	private boolean fOverwriteAll = false;
 	private File fInputfile = null;
 	private boolean fCreateWorkingSets = false;
+	private ArrayList added = new ArrayList();
+	private final BreakpointManager manager = (BreakpointManager)DebugPlugin.getDefault().getBreakpointManager();
 	
 	/**
 	 * The default constructor
@@ -94,8 +96,7 @@ public class ImportOperation implements IRunnableWithProgress {
 								//create a marker, we must do each one, as a straight copy set values as Objects, destroying
 								//the actual value types that they are.
 								node = nodes[i].getChild(IImportExportConstants.IE_NODE_MARKER);
-								IMarker marker = findGeneralMarker(resource, 
-										node.getString(IMarker.LINE_NUMBER), 
+								IMarker marker = findGeneralMarker(resource, node.getString(IMarker.LINE_NUMBER), 
 										node.getString(IImportExportConstants.IE_NODE_TYPE), 
 										node.getString(IImportExportConstants.TYPENAME),
 										node.getInteger(IImportExportConstants.CHARSTART));
@@ -105,6 +106,7 @@ public class ImportOperation implements IRunnableWithProgress {
 									restoreBreakpoint(marker, nodes[i]);
 								}//end if
 								else {
+									//we found it, do the overwrite if allowed or drop out
 									if(fOverwriteAll) {
 										marker.setAttributes(null);
 										restoreBreakpoint(marker, nodes[i]);
@@ -117,6 +119,7 @@ public class ImportOperation implements IRunnableWithProgress {
 							return;
 						}//end else
 					}//end for
+					manager.addBreakpoints((IBreakpoint[])added.toArray(new IBreakpoint[added.size()]));
 				}//end try
 				catch(FileNotFoundException e) {DebugPlugin.log(e);}
 				catch(CoreException e){DebugPlugin.log(e);}
@@ -134,7 +137,6 @@ public class ImportOperation implements IRunnableWithProgress {
 	 * @param node the memento to get the restore information from
 	 */
 	private void restoreBreakpoint(IMarker marker, IMemento node) {
-		BreakpointManager manager = (BreakpointManager)DebugPlugin.getDefault().getBreakpointManager();
 		IMemento[] childnodes = null;
 		IMemento child = null;
 		try {
@@ -172,16 +174,8 @@ public class ImportOperation implements IRunnableWithProgress {
 			breakpoint.setEnabled(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_ENABLED)).booleanValue());
 			breakpoint.setPersisted(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_PERSISTANT)).booleanValue());
 			breakpoint.setRegistered(Boolean.valueOf(node.getString(IImportExportConstants.IE_BP_REGISTERED)).booleanValue());
-		//if the breakpoint does not already exist ignore the need to prompt, just add it
-			IBreakpoint existing = breakpointExists(breakpoint);
-			if(existing == null) {
-				manager.addBreakpoint(breakpoint);
-			}//end if
-			else {
-				existing.setMarker(marker);
-				manager.fireBreakpointChanged(existing);
-				breakpoint = existing;
-			}//end else
+			//bug fix 110080
+			added.add(breakpoint);
 			if(fCreateWorkingSets) {
 				String[] names = workingsets.split("\\"+IImportExportConstants.DELIMITER); //$NON-NLS-1$
 				for(int m = 1; m < names.length; m++) {
@@ -207,7 +201,7 @@ public class ImportOperation implements IRunnableWithProgress {
 		if(!setContainsBreakpoint(set, (IBreakpoint)element)) {
 			IAdaptable[] elements = set.getElements();
 			IAdaptable[] newElements = new IAdaptable[elements.length + 1];
-			newElements[newElements.length-1] = (IBreakpoint)element;
+			newElements[newElements.length-1] = element;
 			System.arraycopy(elements, 0, newElements, 0, elements.length);
 			set.setElements(newElements);
 		}//end if
@@ -228,32 +222,6 @@ public class ImportOperation implements IRunnableWithProgress {
 		}//end for
 		return false;
 	}//end setContainsBreakpoint
-	
-	/**
-	 * This method is used internally to search the pre-existing listing of breakpoints to find a 
-	 * non-specific one
-	 *
-	 * @param breakpoint the breakpoint to search for
-	 * @return IBreakpoint the breakpoint if found or null otherwise
-	 */
-	private IBreakpoint breakpointExists(IBreakpoint breakpoint) {
-		IMarker marker = breakpoint.getMarker();
-		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
-		try {
-			Integer value = (Integer)marker.getAttribute(IMarker.LINE_NUMBER);
-			String typename = marker.getAttribute(IImportExportConstants.TYPENAME).toString(); 
-			String type = marker.getType();
-			Integer charstart = (Integer)marker.getAttribute(IImportExportConstants.CHARSTART);
-			IMarker localmarker = findGeneralMarker(marker.getResource(),
-					(value != null ? value.toString() : null),
-					type, 
-					typename,
-					charstart);
-			return (localmarker != null ? manager.getBreakpoint(localmarker) : null);
-		}//end try
-		catch(CoreException e) {DebugPlugin.log(e);} 
-		return null;
-	}//end breakpointExists
 	
 	/**
 	 * This method is used internally to find a non-specific marker on a given resource.
