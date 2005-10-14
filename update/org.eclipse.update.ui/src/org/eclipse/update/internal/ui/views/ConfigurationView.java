@@ -32,7 +32,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.SiteLocal;
+import org.eclipse.update.internal.core.LocalSite;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -1200,7 +1200,7 @@ public class ConfigurationView
 
 }
 
-class LocalSiteWorkbenchAdapter extends SiteLocal implements IWorkbenchAdapter {
+class LocalSiteWorkbenchAdapter extends LocalSite implements IWorkbenchAdapter {
 	
 	private ILocalSite localSite;
 	
