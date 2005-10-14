@@ -131,7 +131,7 @@ public abstract class MarkerView extends TableView {
 		private boolean refreshAll = false;
 
 		UpdateJob() {
-			super("Update the table");
+			super(MarkerMessages.MarkerView_queueing_updates);
 		}
 
 		/**
