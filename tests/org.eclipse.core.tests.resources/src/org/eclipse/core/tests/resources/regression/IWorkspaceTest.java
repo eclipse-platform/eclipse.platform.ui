@@ -83,45 +83,6 @@ public class IWorkspaceTest extends ResourceTest {
 			fail("2.20", e);
 		}
 
-		// test folder (force = true)
-		IFolder folder2 = project.getFolder("second folder");
-		IFile file2 = folder.getFile("file2.txt");
-		allResources = new IResource[] {file1, folder, folder2, file2};
-		try {
-			folder.create(true, true, getMonitor());
-			folder2.create(true, true, getMonitor());
-			file2.create(getRandomContents(), true, getMonitor());
-			file2.setContents(getRandomContents(), true, true, getMonitor());
-			file2.setContents(getRandomContents(), true, true, getMonitor());
-			getWorkspace().move(new IResource[] {folder}, folder2.getFullPath(), true, getMonitor());
-			folder.create(true, true, getMonitor());
-			file2.create(getRandomContents(), true, getMonitor());
-			IFileState[] states = file2.getHistory(getMonitor());
-			assertEquals("3.0", 3, states.length);
-			getWorkspace().delete(allResources, true, getMonitor());
-			project.clearHistory(getMonitor());
-		} catch (CoreException e) {
-			fail("3.20", e);
-		}
-
-		// test folder (force = false)
-		try {
-			folder.create(true, true, getMonitor());
-			folder2.create(true, true, getMonitor());
-			file2.create(getRandomContents(), true, getMonitor());
-			file2.setContents(getRandomContents(), true, true, getMonitor());
-			file2.setContents(getRandomContents(), true, true, getMonitor());
-			getWorkspace().move(new IResource[] {folder}, folder2.getFullPath(), false, getMonitor());
-			folder.create(true, true, getMonitor());
-			file2.create(getRandomContents(), true, getMonitor());
-			IFileState[] states = file2.getHistory(getMonitor());
-			assertEquals("4.0", 3, states.length);
-			getWorkspace().delete(allResources, true, getMonitor());
-			project.clearHistory(getMonitor());
-		} catch (CoreException e) {
-			fail("4.20", e);
-		}
-
 		try {
 			project.delete(true, getMonitor());
 		} catch (CoreException e) {
