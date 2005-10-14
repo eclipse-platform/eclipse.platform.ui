@@ -61,7 +61,7 @@ public class TestFeatureDisable extends StandaloneManagerTestCase {
 	}
 
 	public void testFeatureStatus() throws Exception {
-		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
+		File localFile = new File(((LocalSite)SiteManager.getLocalSite()).getLocationURL().getFile());
 		System.out.println(localFile.getAbsolutePath());
 		assertTrue(localFile.exists());
 		File configFile = getLatestConfigurationFile(localFile);

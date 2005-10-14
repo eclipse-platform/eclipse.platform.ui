@@ -222,7 +222,7 @@ public class TestInstall extends UpdateManagerTestCase {
 //	public void testInstall() throws Exception {
 //
 //		// cleanup local files...
-//		URL localURL = ((SiteLocal) SiteManager.getLocalSite()).getLocationURL();
+//		URL localURL = ((LocalSite) SiteManager.getLocalSite()).getLocationURL();
 //		File localFile = new File(localURL.getFile());
 //		UpdateManagerUtils.removeFromFileSystem(localFile);
 //		InstallRegistry.cleanup();

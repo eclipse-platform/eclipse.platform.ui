@@ -31,7 +31,7 @@ public class TestRevert extends UpdateManagerTestCase {
 	public void testSimpleRevertInstall() throws Exception {
 
 		// cleanup
-		SiteLocal siteLocal = ((SiteLocal)SiteManager.getLocalSite());
+		LocalSite siteLocal = ((LocalSite)SiteManager.getLocalSite());
 		File localFile = new File(siteLocal.getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		InternalSiteManager.localSite=null;		
@@ -78,7 +78,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		
 		// check
 		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
-		File file = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
+		File file = new File(((LocalSite)SiteManager.getLocalSite()).getLocationURL().getFile());
 		assertTrue("new configuration does not exist", file.exists());
 		
 		
@@ -111,14 +111,14 @@ public class TestRevert extends UpdateManagerTestCase {
 		// cleanup
 		localFile = new File(siteLocal.getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
+		localFile = new File(((LocalSite)SiteManager.getLocalSite()).getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);				
 		UpdateManagerUtils.removeFromFileSystem(file);	
 		time = ""+newConfig.getCreationDate().getTime();
-		file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),"DefaultConfig"+time+".xml").getFile());	
+		file = new File(new URL(((LocalSite)SiteManager.getLocalSite()).getLocationURL(),"DefaultConfig"+time+".xml").getFile());	
 		UpdateManagerUtils.removeFromFileSystem(file);	
 		time = ""+newConfig2.getCreationDate().getTime();
-		file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),"DefaultConfig"+time+".xml").getFile());	
+		file = new File(new URL(((LocalSite)SiteManager.getLocalSite()).getLocationURL(),"DefaultConfig"+time+".xml").getFile());	
 		UpdateManagerUtils.removeFromFileSystem(file);	
 	}
 

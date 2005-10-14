@@ -180,12 +180,12 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 	public void testInstall() throws Exception {
 
 		// cleanup local files...
-		SiteLocal siteLocal = ((SiteLocal) SiteManager.getLocalSite());
+		LocalSite siteLocal = ((LocalSite) SiteManager.getLocalSite());
 		File localFile = new File(siteLocal.getLocationURL().getFile());
 		//if (!localFile.exists()) fail("LocalSite file doesn't exist ->"+localFile.getAbsolutePath()+"<-");
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		/*
-		localFile = new File(localFile,SiteLocal.SITE_LOCAL_FILE);
+		localFile = new File(localFile,LocalSite.SITE_LOCAL_FILE);
 		if (!localFile.exists()) fail("LocalSite.xml doesn't exist:"+localFile);
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 		*/
@@ -301,7 +301,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 //					+ Site.DEFAULT_PLUGIN_PATH
 //					+ "org.eclipse.update.core.tests.feature1.plugin2_5.0.0");
 //		UpdateManagerUtils.removeFromFileSystem(file);
-//		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
+//		File localFile = new File(((LocalSite)SiteManager.getLocalSite()).getLocationURL().getFile());
 //		UpdateManagerUtils.removeFromFileSystem(localFile);
 //
 //	}

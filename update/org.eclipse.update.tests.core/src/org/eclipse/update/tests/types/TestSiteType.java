@@ -14,7 +14,11 @@ import java.io.File;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.*;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.Site;
+import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.core.FeaturePackagedContentProvider;
 import org.eclipse.update.internal.core.SiteURLContentProvider;
 import org.eclipse.update.tests.UpdateManagerTestCase;

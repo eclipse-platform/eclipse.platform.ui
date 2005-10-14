@@ -33,7 +33,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 	}
 
 	private void addConfigSite(int policy, URL url,String[] listOfPlugins) throws Exception {
-		String xmlFile = ((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile();
+		String xmlFile = ((LocalSite)SiteManager.getLocalSite()).getLocationURL().getFile();
 		UpdateManagerUtils.removeFromFileSystem(new File(xmlFile));		
 		InternalSiteManager.localSite=null;
 		// get new config object
@@ -63,7 +63,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		addConfigSite(policy,url, plugins);
 
 		ILocalSite local = SiteManager.getLocalSite();
-		((SiteLocal)local).setStamp(0);
+		((LocalSite)local).setStamp(0);
 		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfiguredSites();
 		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
@@ -90,7 +90,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		addConfigSite(policy,url, plugins);
 		
 		ILocalSite local = SiteManager.getLocalSite();
-		((SiteLocal)local).setStamp(0);		
+		((LocalSite)local).setStamp(0);		
 		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfiguredSites();
 		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
@@ -119,7 +119,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		String[] plugins = new String[]{};
 		addConfigSite(policy,url, plugins);
 		ILocalSite local = SiteManager.getLocalSite();
-		((SiteLocal)local).setStamp(0);		
+		((LocalSite)local).setStamp(0);		
 		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfiguredSites();
 		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
@@ -147,7 +147,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		String[] plugins = new String[]{};
 		addConfigSite(policy,url, plugins);
 		ILocalSite local = SiteManager.getLocalSite();
-		((SiteLocal)local).setStamp(0);		
+		((LocalSite)local).setStamp(0);		
 		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfiguredSites();
 		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
