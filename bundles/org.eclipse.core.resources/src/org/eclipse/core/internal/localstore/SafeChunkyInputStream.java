@@ -49,22 +49,24 @@ public class SafeChunkyInputStream extends InputStream {
 	}
 
 	protected void buildChunk() throws IOException {
-		if (nextByteInBuffer + ILocalStoreConstants.CHUNK_DELIMITER_SIZE > bufferLength)
-			shiftAndFillBuffer();
-		int end = find(ILocalStoreConstants.END_CHUNK, nextByteInBuffer, bufferLength, true);
-		if (end != -1) {
-			accumulate(buffer, nextByteInBuffer, end);
-			nextByteInBuffer = end + ILocalStoreConstants.CHUNK_DELIMITER_SIZE;
-			return;
+		//read buffer loads of data until an entire chunk is accumulated
+		while (true) {
+			if (nextByteInBuffer + ILocalStoreConstants.CHUNK_DELIMITER_SIZE > bufferLength)
+				shiftAndFillBuffer();
+			int end = find(ILocalStoreConstants.END_CHUNK, nextByteInBuffer, bufferLength, true);
+			if (end != -1) {
+				accumulate(buffer, nextByteInBuffer, end);
+				nextByteInBuffer = end + ILocalStoreConstants.CHUNK_DELIMITER_SIZE;
+				return;
+			}
+			accumulate(buffer, nextByteInBuffer, bufferLength);
+			bufferLength = input.read(buffer);
+			nextByteInBuffer = 0;
+			if (bufferLength == -1) {
+				endOfFile = true;
+				return;
+			}
 		}
-		accumulate(buffer, nextByteInBuffer, bufferLength);
-		bufferLength = input.read(buffer);
-		nextByteInBuffer = 0;
-		if (bufferLength == -1) {
-			endOfFile = true;
-			return;
-		}
-		buildChunk();
 	}
 
 	public void close() throws IOException {
