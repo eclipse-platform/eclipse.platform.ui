@@ -72,6 +72,8 @@ import org.eclipse.jface.text.TextUtilities;
 class CompletionProposalPopup implements IContentAssistListener {
 	/**
 	 * Set to <code>true</code> to use a Table with SWT.VIRTUAL.
+	 * XXX: This is a workaround for: https://bugs.eclipse.org/bugs/show_bug.cgi?id=90321 
+	 * 		More details see also: https://bugs.eclipse.org/bugs/show_bug.cgi?id=98585#c36
 	 * @since 3.1
 	 */
 	private static final boolean USE_VIRTUAL= !Platform.WS_MOTIF.equals(Platform.getWS());
