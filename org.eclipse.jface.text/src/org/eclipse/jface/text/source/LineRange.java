@@ -11,7 +11,7 @@
 package org.eclipse.jface.text.source;
 
 /**
- * Default implementation of {@link LineRange}.
+ * Default implementation of {@link ILineRange}.
  *
  * @since 3.0
  */
