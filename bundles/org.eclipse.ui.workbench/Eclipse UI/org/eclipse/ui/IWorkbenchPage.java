@@ -687,32 +687,35 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
     public IViewPart showView(String viewId) throws PartInitException;
 
     /**
-     * Shows a view in this page with the given id and secondary id.  The behaviour of this method 
-     * varies based on the supplied mode. If <code>VIEW_ACTIVATE</code> is supplied, the view is 
-     * focus.  If <code>VIEW_VISIBLE</code> is supplied, then it is made visible but not given 
-     * focus. Finally, if <code>VIEW_CREATE</code> is supplied the view is created and will only be 
-     * made visible if it is not created in a folder that already contains visible views.
-     * <p>
-     * This allows multiple instances of a particular view to be created.
-     * They are disambiguated using the secondary id.
-     * If a secondary id is given, the view must allow multiple instances by
-     * having specified allowMultiple="true" in its extension.
-     * </p>
-     *   
-     * @param viewId
-     *            the id of the view extension to use
-     * @param secondaryId
-     *            the secondary id to use, or <code>null</code> for no secondary id 
-     * @param mode
-     * 			  the activation mode.  Must be {@link #VIEW_ACTIVATE}, 
-     * 			  {@link #VIEW_VISIBLE} or {@link #VIEW_CREATE}
-     * @return a view
-     * @exception PartInitException
-     *                if the view could not be initialized
-     * @exception IllegalArgumentException
-     * 				  if the supplied mode is not valid
-     * @since 3.0
-     */
+	 * Shows a view in this page with the given id and secondary id. The
+	 * behaviour of this method varies based on the supplied mode. If
+	 * <code>VIEW_ACTIVATE</code> is supplied, the view is focus. If
+	 * <code>VIEW_VISIBLE</code> is supplied, then it is made visible but not
+	 * given focus. Finally, if <code>VIEW_CREATE</code> is supplied the view
+	 * is created and will only be made visible if it is not created in a folder
+	 * that already contains visible views.
+	 * <p>
+	 * This allows multiple instances of a particular view to be created. They
+	 * are disambiguated using the secondary id. If a secondary id is given, the
+	 * view must allow multiple instances by having specified
+	 * allowMultiple="true" in its extension.
+	 * </p>
+	 * 
+	 * @param viewId
+	 *            the id of the view extension to use
+	 * @param secondaryId
+	 *            the secondary id to use, or <code>null</code> for no
+	 *            secondary id
+	 * @param mode
+	 *            the activation mode. Must be {@link #VIEW_ACTIVATE},
+	 *            {@link #VIEW_VISIBLE} or {@link #VIEW_CREATE}
+	 * @return a view
+	 * @exception PartInitException
+	 *                if the view could not be initialized
+	 * @exception IllegalArgumentException
+	 *                if the supplied mode is not valid
+	 * @since 3.0
+	 */
     public IViewPart showView(String viewId, String secondaryId, int mode)
             throws PartInitException;
 
