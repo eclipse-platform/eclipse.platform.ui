@@ -48,9 +48,7 @@ public class BlobStore {
 
 	public UniversalUniqueIdentifier addBlob(IFileStore target, boolean moveContents) throws CoreException {
 		UniversalUniqueIdentifier uuid = new UniversalUniqueIdentifier();
-		IFileStore dir = folderFor(uuid);
-		if (!dir.fetchInfo().exists())
-			dir.mkdir(EFS.NONE, null);
+		folderFor(uuid).mkdir(EFS.NONE, null);
 		IFileStore destination = fileFor(uuid);
 		if (moveContents)
 			target.move(destination, EFS.NONE, null);
