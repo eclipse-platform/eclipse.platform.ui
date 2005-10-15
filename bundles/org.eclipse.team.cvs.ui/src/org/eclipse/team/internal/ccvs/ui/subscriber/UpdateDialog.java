@@ -45,7 +45,7 @@ public class UpdateDialog extends SyncInfoSetDetailsDialog {
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, YES, IDialogConstants.YES_LABEL, true);
+		createButton(parent, YES, IDialogConstants.YES_LABEL, false);
 		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, true);
 		super.createButtonsForButtonBar(parent);
 	}
