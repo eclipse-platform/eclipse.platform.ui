@@ -1313,10 +1313,10 @@
 <!-- ********** New Project Wizard ************** --> 
    <extension
          point="org.eclipse.ui.newWizards">
-         <category name="%newWizardCategoryName" id="org.eclipse.team.cvs.ui">
+         <category name="%newWizardCategoryName" id="org.eclipse.team.cvs.ui.newWizards">
          </category>
       <wizard
-      		category="org.eclipse.team.cvs.ui"
+            category="org.eclipse.team.cvs.ui.newWizards"
             icon="$nl$/icons/full/etool16/newconnect_wiz.gif"
             name="%newProjectCheckoutWizard"
             class="org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard"
@@ -1331,10 +1331,13 @@
    <!-- ********** Import Wizard ************** --> 
    <extension
          point="org.eclipse.ui.importWizards">
+      <category name="%newWizardCategoryName" id="org.eclipse.team.cvs.ui.importWizards">
+      </category>
       <wizard
             icon="$nl$/icons/full/etool16/newconnect_wiz.gif"
             name="%newProjectCheckoutWizard"
             class="org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard"
+            category="org.eclipse.team.cvs.ui.importWizards"
             id="org.eclipse.team.cvs.ui.newProjectCheckout">
             <description> 
               %newProjectCheckoutWizardDescription

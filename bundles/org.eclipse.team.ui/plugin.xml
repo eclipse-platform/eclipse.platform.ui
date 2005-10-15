@@ -158,13 +158,26 @@
          </perspectiveShortcut>
       </perspectiveExtension>
    </extension>
+   
+<!-- ********** New Project Wizard ************** --> 
+   <extension
+         point="org.eclipse.ui.newWizards">
+         <category name="%Team" id="org.eclipse.team.ui.newWizards">
+         </category>
+   </extension>
 <!-- ****************** Import Wizards ********************* -->
    <extension
          point="org.eclipse.ui.importWizards">
+      <category
+            name="%Team"
+            id="org.eclipse.team.ui.importWizards">
+      </category>
+         
       <wizard
             name="%ProjectSetImportWizard.name"
             icon="$nl$/icons/full/obj/import_projectset.gif"
             class="org.eclipse.team.internal.ui.wizards.ProjectSetImportWizard"
+            category="org.eclipse.team.ui.importWizards"
             id="org.eclipse.team.ui.ProjectSetImportWizard">
          <description>
             %ProjectSetImportWizard.description
@@ -177,10 +190,15 @@
 <!-- ****************** Export Wizards ********************* -->
    <extension
          point="org.eclipse.ui.exportWizards">
+      <category
+            name="%Team"
+            id="org.eclipse.team.ui.exportWizards">
+      </category>
       <wizard
             name="%ProjectSetExportWizard.name"
             icon="$nl$/icons/full/obj/export_projectset.gif"
             class="org.eclipse.team.internal.ui.wizards.ProjectSetExportWizard"
+            category="org.eclipse.team.ui.exportWizards"
             id="org.eclipse.team.ui.ProjectSetExportWizard">
          <description>
             %ProjectSetExportWizard.description
