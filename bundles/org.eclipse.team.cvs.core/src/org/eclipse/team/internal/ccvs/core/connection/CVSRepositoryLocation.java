@@ -336,7 +336,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				// errorMessage = CVSMessages.CVSRepositoryLocation_parsingOptionsUsername;
 				if (hmOptions.containsKey("username")) user = hmOptions.get("username").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 				// errorMessage = CVSMessages.CVSRepositoryLocation_parsingOptionsPassword;
-				if (hmOptions.containsKey("password")) user = hmOptions.get("password").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+				if (hmOptions.containsKey("password")) password = hmOptions.get("password").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			// Get the host (and port)
