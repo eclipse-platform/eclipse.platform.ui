@@ -80,6 +80,9 @@
                   the name of the class that implements the testing methods. The class must be public and extend
 &lt;samp&gt;org.eclipse.core.expressions.PropertyTester&lt;/samp&gt; with a public 0-argument constructor.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.expressions.PropertyTester"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
