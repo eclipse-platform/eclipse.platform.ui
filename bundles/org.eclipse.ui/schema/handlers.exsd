@@ -30,7 +30,7 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="handler"/>
+            <element ref="handler" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -127,7 +127,7 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
    <element name="class">
       <complexType>
          <choice>
-            <element ref="parameter"/>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="class" type="string">
             <annotation>

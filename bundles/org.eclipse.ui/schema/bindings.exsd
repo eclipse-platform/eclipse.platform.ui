@@ -27,8 +27,8 @@ A scheme is a group of these bindings into a set that the end user can select.  
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="scheme"/>
-            <element ref="key"/>
+            <element ref="scheme" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="key" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -120,7 +120,7 @@ It is possible for schemes to inherit bindings from a parent scheme.  This is in
       </annotation>
       <complexType>
          <choice>
-            <element ref="parameter"/>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="sequence" type="string" use="required">
             <annotation>

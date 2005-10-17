@@ -15,13 +15,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="activeKeyConfiguration"/>
-            <element ref="category"/>
-            <element ref="command"/>
-            <element ref="keyBinding"/>
-            <element ref="keyConfiguration"/>
-            <element ref="context"/>
-            <element ref="scope"/>
+            <element ref="activeKeyConfiguration" minOccurs="0" maxOccurs="1"/>
+            <element ref="category" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="command" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="keyBinding" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="keyConfiguration" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="context" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="scope" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string">
             <annotation>
@@ -127,7 +127,7 @@ This element has been replaced with a preference.  If your application needs to 
       </annotation>
       <complexType>
          <choice>
-            <element ref="commandParameter"/>
+            <element ref="commandParameter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="defaultHandler" minOccurs="0" maxOccurs="1"/>
          </choice>
          <attribute name="category" type="string">
@@ -469,9 +469,9 @@ This element has been replaced with a preference.  If your application needs to 
          </documentation>
       </annotation>
       <complexType>
-         <choice>
-            <element ref="values"/>
-         </choice>
+         <sequence>
+            <element ref="values" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -517,7 +517,7 @@ This element has been replaced with a preference.  If your application needs to 
       </annotation>
       <complexType>
          <choice>
-            <element ref="parameter"/>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -564,7 +564,7 @@ This element has been replaced with a preference.  If your application needs to 
       </annotation>
       <complexType>
          <choice>
-            <element ref="parameter"/>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="class" type="string" use="required">
             <annotation>

@@ -219,11 +219,11 @@ A group can contain menus, items and other groups.
          <sequence>
             <element ref="order" minOccurs="0" maxOccurs="1"/>
             <choice>
-               <element ref="menubar" minOccurs="0" maxOccurs="1"/>
-               <element ref="popup" minOccurs="0" maxOccurs="1"/>
-               <element ref="part" minOccurs="0" maxOccurs="1"/>
-               <element ref="toolbar" minOccurs="0" maxOccurs="1"/>
-               <element ref="statusline" minOccurs="0" maxOccurs="1"/>
+               <element ref="menubar"/>
+               <element ref="popup"/>
+               <element ref="part"/>
+               <element ref="toolbar"/>
+               <element ref="statusline"/>
             </choice>
          </sequence>
          <attribute name="mnemonic" type="string">
@@ -326,7 +326,7 @@ Allows modifications to be applied to existing elements.  This has the capacity 
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
+         <choice>
             <element ref="not"/>
             <element ref="or"/>
             <element ref="and"/>
@@ -339,7 +339,7 @@ Allows modifications to be applied to existing elements.  This has the capacity 
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
-         </sequence>
+         </choice>
          <attribute name="checkEnabled" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
