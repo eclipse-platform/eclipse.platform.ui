@@ -73,7 +73,6 @@ public class ExportFileSystemOperationTest extends DataTransferTestCase implemen
         File root = new File(localDirectory);
         if (root.exists()){
         	deleteDirectory(root);
-        	root.delete();
         }
         try {
             project.delete(true, true, null);

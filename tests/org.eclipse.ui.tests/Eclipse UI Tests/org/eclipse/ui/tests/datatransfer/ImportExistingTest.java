@@ -74,7 +74,6 @@ public class ImportExistingTest extends DataTransferTestCase {
 			File root = new File(dataLocation);
 			if (root.exists()){
 				deleteDirectory(root);
-				root.delete();
 			}
 		}
 		dataLocation = null;	// reset for next test

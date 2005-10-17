@@ -18,28 +18,20 @@ public abstract class DataTransferTestCase extends UITestCase {
 	 */
 	protected void deleteDirectory(File directory){
 		if (directory.exists()){
-			if (directory.isDirectory()){
-				File[] filesAndDirs = directory.listFiles();
-				if (filesAndDirs != null){
-					for (int i = 0; i < filesAndDirs.length; i++){
-						File f = filesAndDirs[i];
-						if (f.isDirectory()){
-							deleteDirectory(f);
-							if (!f.delete())
-								fail("Could not delete " + f.getAbsolutePath());
-						}
-						else{
-							if (!f.delete())
-								fail("Could not delete " + f.getAbsolutePath());
-						}
-					}
-				}
-			}
-			else{
-				if (!directory.delete())
-					fail("Could not delete " + directory.getAbsolutePath());
-			}
-		}		
+	        File[] children = directory.listFiles();
+	        if (children != null){
+		        for (int i = 0; i < children.length; i++) {
+		            if (children[i].isDirectory()){
+		                deleteDirectory(children[i]);
+		            }
+		            else{
+		                if (!children[i].delete())
+		                	fail("Could not delete " + children[i].getAbsolutePath());
+		            }
+		        }
+	        }
+	        if (!directory.delete())
+	        	fail("Could not delete " + directory.getAbsolutePath());
+		}
 	}
-
 }
