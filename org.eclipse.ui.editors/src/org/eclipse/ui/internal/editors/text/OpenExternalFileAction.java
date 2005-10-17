@@ -132,6 +132,8 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 						page.openEditor(input, editorId);
 					} catch (PartInitException e) {
 						EditorsPlugin.log(e.getStatus());
+						String msg= MessageFormat.format(TextEditorMessages.OpenExternalFileAction_message_errorOnOpen, new Object[] { fileStore.getName() });
+						MessageDialog.openError(fWindow.getShell(), TextEditorMessages.OpenExternalFileAction_title, msg);
 					}
 				} else {
 					if (++numberOfFilesNotFound > 1)
