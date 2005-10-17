@@ -66,6 +66,7 @@ public class FileInfo implements IFileInfo {
 	 */
 	public FileInfo(String name) {
 		super();
+		this.name = name;
 	}
 
 	/**
@@ -75,6 +76,19 @@ public class FileInfo implements IFileInfo {
 	 */
 	private void clear(int mask) {
 		attributes &= ~mask;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			//we know this object is cloneable
+			return null;
+		}
 	}
 
 	/*

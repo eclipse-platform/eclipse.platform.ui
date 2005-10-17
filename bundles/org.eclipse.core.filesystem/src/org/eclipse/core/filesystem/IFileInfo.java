@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
  * @since 1.0
  */
-public interface IFileInfo extends Comparable {
+public interface IFileInfo extends Comparable, Cloneable {
 
 	/**
 	 * Returns whether this file or directory exists.
@@ -96,7 +96,7 @@ public interface IFileInfo extends Comparable {
 	 * @see IFileSystem#attributes()
 	 */
 	public abstract void setAttribute(int attribute, boolean value);
-	
+
 	/**
 	 * Sets the last modified time for this file.  A value of {@link EFS#NONE}
 	 * indicates the file does not exist or the last modified time could not be computed.
