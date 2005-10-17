@@ -210,5 +210,11 @@
 
 <extension point="org.eclipse.core.runtime.preferences">
 	<modifier class="org.eclipse.core.tests.internal.resources.ProjectPreferenceModifyListener"/>
+</extension>
+<extension
+      point="org.eclipse.core.filesystem.filesystems">
+   <filesystem scheme="ram">
+      <run class="org.eclipse.core.tests.internal.filesystem.ram.MemoryFileSystem"/>
+   </filesystem>
 </extension>            
 </plugin>
