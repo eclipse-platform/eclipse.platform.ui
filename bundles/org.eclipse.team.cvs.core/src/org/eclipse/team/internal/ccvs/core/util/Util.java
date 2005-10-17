@@ -507,10 +507,6 @@ public class Util {
 			} else if(parentTag != null){
 				tag = new CVSTag(tag.getName(), parentTag.getType());
 			}
-		} else {
-			// if a file doesn't have tag info, very possible for example
-			// when the file is in HEAD, use the parents.
-			tag = parentTag;
 		}
 		
 		return tag;						
