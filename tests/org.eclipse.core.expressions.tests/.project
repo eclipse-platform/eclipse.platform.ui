@@ -3,10 +3,6 @@
 	<name>org.eclipse.core.expressions.tests</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.expressions</project>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.junit</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

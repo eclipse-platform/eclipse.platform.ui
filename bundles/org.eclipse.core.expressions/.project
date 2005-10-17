@@ -3,7 +3,6 @@
 	<name>org.eclipse.core.expressions</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.runtime.compatibility</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
