@@ -3,10 +3,6 @@
 	<name>org.eclipse.jface.text</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.jface</project>
-		<project>org.eclipse.swt</project>
-		<project>org.eclipse.text</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

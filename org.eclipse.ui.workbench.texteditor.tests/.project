@@ -3,8 +3,6 @@
 	<name>org.eclipse.ui.workbench.texteditor.tests</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.jface.text</project>
-		<project>org.eclipse.ui.workbench.texteditor</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

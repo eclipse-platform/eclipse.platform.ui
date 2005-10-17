@@ -3,13 +3,6 @@
 	<name>org.eclipse.ui.examples.javaeditor</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.filebuffers</project>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.jface.text</project>
-		<project>org.eclipse.ui</project>
-		<project>org.eclipse.ui.editors</project>
-		<project>org.eclipse.ui.views</project>
-		<project>org.eclipse.ui.workbench.texteditor</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
