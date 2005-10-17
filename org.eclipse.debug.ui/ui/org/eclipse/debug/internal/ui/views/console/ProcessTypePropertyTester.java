@@ -26,16 +26,15 @@ public class ProcessTypePropertyTester extends PropertyTester {
      * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
      */
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-        boolean testPassed = false;
         if (receiver instanceof TextConsole) {
             TextConsole console = (TextConsole) receiver;
             IProcess process = (IProcess) console.getAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS);
             if (process != null) {
                 String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
-                testPassed = (type != null && type.equals(expectedValue));
-            }
-        }
-        return testPassed;
-    }
+                return (type != null && type.equals(expectedValue));
+            }//end if
+        }//end if
+        return false;
+    }//end test
 
-}
+}//end class

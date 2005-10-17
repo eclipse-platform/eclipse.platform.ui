@@ -200,7 +200,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 				if (mode.equals(fMode)) {
 					String category = ext.getCategory();
 					// NOTE: category can be null
-					if (!categories.contains(category)) {
+					if (categories!= null && !categories.contains(category)) {
 						categories.add(category);
 					}
 					populateMenuItem(mode, ext, menu, accelerator++);
