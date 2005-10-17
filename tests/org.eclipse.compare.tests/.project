@@ -2,14 +2,7 @@
 <projectDescription>
 	<name>org.eclipse.compare.tests</name>
 	<comment></comment>
-	<projects>
-		<project>org.eclipse.compare</project>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.jdt.junit</project>
-		<project>org.eclipse.jface</project>
-		<project>org.eclipse.jface.text</project>
-		<project>org.junit</project>
-	</projects>
+	<projects></projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
