@@ -681,10 +681,13 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	
 	/**
 	 * Immediately redraws the entire ruler (without async posting). 
+	 * <p>
+	 * XXX This API is provisional and may change any time during the development of eclipse 3.2.
+	 * </p>
 	 *
 	 * @since 3.2
 	 */
-	void immediateUpdate() {
+	public void immediateUpdate() {
 		Iterator e= fDecorators.iterator();
 		while (e.hasNext()) {
 			IVerticalRulerColumn column= (IVerticalRulerColumn) e.next();

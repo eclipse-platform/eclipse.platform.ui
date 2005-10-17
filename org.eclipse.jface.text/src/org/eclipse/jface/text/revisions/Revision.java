@@ -1,13 +1,26 @@
-package org.eclipse.jface.text.source;
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.jface.text.revisions;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.swt.graphics.RGB;
+
+import org.eclipse.jface.text.source.ILineRange;
+
 
 /**
- * Describes a revision to an annotated document. A revision consists of one ore more
- * {@link ChangeRegion}s.
+ * Describes a revision of a document. A revision consists of one ore more {@link ILineRange}s.
  * <p>
  * Clients may subclass.
  * </p>
@@ -17,13 +30,13 @@ import java.util.List;
  * 
  * @since 3.2
  */
-public abstract class AnnotateRevision {
+public abstract class Revision {
 	final List fChangeRegions= new ArrayList();
 	
 	/**
 	 * Creates a new revision.
 	 */
-	protected AnnotateRevision() {
+	protected Revision() {
 	}
 	
 	/**
@@ -44,12 +57,11 @@ public abstract class AnnotateRevision {
 	public abstract Object getHoverInfo();
 
 	/**
-	 * Returns the id of the committer of this revision. The id is used to show
-	 * revisions by the same committer in the same color.
+	 * Returns the color definition to be used for this revision.
 	 * 
-	 * @return the id of the committer of this revision
+	 * @return the RGB color description for this revision
 	 */
-	public abstract String getCommitterId();
+	public abstract RGB getColor();
 
 	/**
 	 * Returns the unique (within the document id of this revision.

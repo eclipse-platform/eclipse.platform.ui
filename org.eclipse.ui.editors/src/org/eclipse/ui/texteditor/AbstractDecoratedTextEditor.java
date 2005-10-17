@@ -36,7 +36,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.AnnotateRulerColumn;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
+import org.eclipse.jface.text.revisions.RevisionRulerColumn;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.ChangeRulerColumn;
@@ -216,10 +217,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	protected boolean fIsUpdatingMarkerViews= false;
 	/**
-	 * The annotate ruler column if any, <code>null</code> otherwise.
+	 * The revision ruler column if any, <code>null</code> otherwise.
 	 * @since 3.2
 	 */
-	private AnnotateRulerColumn fAnnotateRulerColumn;
+	private IRevisionRulerColumn fRevisionRulerColumn;
 
 	/**
 	 * Creates a new text editor.
@@ -868,10 +869,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/**
-	 * Creates the annotate ruler column upon request. Note the difference between
-	 * {@link #createAnnotationRulerColumn(CompositeRuler)} and this method: the annotate ruler
-	 * column displays change information received from a team provider, while the annotation ruler
-	 * displays icons for text annotations.
+	 * Creates the revision ruler column.
 	 * <p>
 	 * Subclasses may extend or re-implement.
 	 * </p>
@@ -882,8 +880,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @return the annotate ruler column
 	 * @since 3.2
 	 */
-	protected AnnotateRulerColumn createAnnotateRulerColumn() {
-		return new AnnotateRulerColumn(getSharedColors());
+	protected RevisionRulerColumn createRevisionRulerColumn() {
+		return new RevisionRulerColumn(getSharedColors());
 	}
 
 	/**
@@ -1295,21 +1293,29 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			};
 		}
 		
-		if (AnnotateRulerColumn.class.equals(adapter)) {
-			return getAnnotateColumn();
+		if (RevisionRulerColumn.class.equals(adapter)) {
+			return getRevisionColumn();
 		}
 	
 		return super.getAdapter(adapter);
 	
 	}
 
-	private AnnotateRulerColumn getAnnotateColumn() {
-		if (fAnnotateRulerColumn == null) {
-			fAnnotateRulerColumn= createAnnotateRulerColumn();
-			fAnnotateRulerColumn.setModel(getVerticalRuler().getModel());
-			((CompositeRuler) getVerticalRuler()).addDecorator(2, fAnnotateRulerColumn);
+	/**
+	 * Returns the revision ruler column of this editor, creating one if needed.
+	 * <p>
+	 * XXX This API is provisional and may change any time during the development of eclipse 3.2.
+	 * </p>
+	 * 
+	 * @return the revision ruler column of this editor
+	 */
+	public IRevisionRulerColumn getRevisionColumn() {
+		if (fRevisionRulerColumn == null) {
+			fRevisionRulerColumn= createRevisionRulerColumn();
+			fRevisionRulerColumn.setModel(getVerticalRuler().getModel());
+			((CompositeRuler) getVerticalRuler()).addDecorator(2, fRevisionRulerColumn);
 		}
-		return fAnnotateRulerColumn;
+		return fRevisionRulerColumn;
 	}
 
 	/*
@@ -1361,10 +1367,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				showChangeInformation(false);
 		}
 		
-		if (fAnnotateRulerColumn != null) {
-			fAnnotateRulerColumn.setAnnotateInfo(null);
+		if (fRevisionRulerColumn != null) {
+			fRevisionRulerColumn.setRevisionInformation(null);
 			((CompositeRuler) getVerticalRuler()).removeDecorator(2);
-			fAnnotateRulerColumn= null;
+			fRevisionRulerColumn= null;
 		}
 
 		super.doSetInput(input);

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.text.source;
+package org.eclipse.jface.text.revisions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -44,8 +46,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -58,9 +58,25 @@ import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.IAnnotationHoverExtension;
+import org.eclipse.jface.text.source.IAnnotationHoverExtension2;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.jface.text.source.IAnnotationModelListener;
+import org.eclipse.jface.text.source.IChangeRulerColumn;
+import org.eclipse.jface.text.source.ILineDiffer;
+import org.eclipse.jface.text.source.ILineRange;
+import org.eclipse.jface.text.source.ISharedTextColors;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.source.IVerticalRulerListener;
+import org.eclipse.jface.text.source.LineRange;
 
 /**
- * A vertical ruler column displaying line numbers and serving as a UI for quick diff.
+ * A vertical ruler column capable of displaying revision (aka. annotate) information..
  * Clients instantiate and configure object of this class.
  * <p>
  * XXX This API is provisional and may change any time during the development of eclipse 3.2.
@@ -68,21 +84,17 @@ import org.eclipse.jface.text.TextEvent;
  *
  * @since 3.2
  */
-public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVerticalRulerInfo, IVerticalRulerInfoExtension {
-	/**
-	 * Tells whether this class is in debug mode.
-	 * @since 3.0
-	 */
-	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text.source/debug/AnnotateRulerColumn"));  //$NON-NLS-1$//$NON-NLS-2$
+public final class RevisionRulerColumn implements IRevisionRulerColumn {
+	/** Tells whether this class is in debug mode. */
+	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text.source/debug/RevisionRulerColumn"));  //$NON-NLS-1$//$NON-NLS-2$
 	
-	
-	private static final class AnnotateAnnotation extends Annotation {
-		public AnnotateAnnotation(String text) {
-			super("org.eclipse.ui.workbench.texteditor.blameAnnotation", false, text); //$NON-NLS-1$
+	private static final class RevisionAnnotation extends Annotation {
+		public RevisionAnnotation(String text) {
+			super("org.eclipse.ui.workbench.texteditor.revisionAnnotation", false, text); //$NON-NLS-1$
 		}
 	}
 	
-	private final class AnnotateHover implements IAnnotationHover, IAnnotationHoverExtension, IAnnotationHoverExtension2 {
+	private final class RevisionHover implements IAnnotationHover, IAnnotationHoverExtension, IAnnotationHoverExtension2 {
 		/*
 		 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
 		 */
@@ -130,39 +142,46 @@ public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVertica
 	}
 
 	private final class ColorTool {
+		private static final double MAX_SHADING= 0.8;
+		private static final double MIN_SHADING= 0.1;
+		private static final double FOCUS_COLOR_SHADING= 0.9;
 		
 		private List fRevisions= new ArrayList();
 		
-		public void setInfo(AnnotateInfo info) {
+		public void setInfo(RevisionInformation info) {
 			if (info == null)
 				return;
 			List revisions= new ArrayList();
 			for (Iterator it= info.fRevisions.iterator(); it.hasNext();) {
-				AnnotateRevision revision= (AnnotateRevision) it.next();
+				Revision revision= (Revision) it.next();
 				revisions.add(new Long(computeAge(revision)));
 			}
 			Collections.sort(revisions);
 			fRevisions= revisions;
 		}
 		
-		private RGB adaptColorToAge(AnnotateRevision revision, RGB rgb, boolean focus) {
+		private RGB adaptColorToAge(Revision revision, RGB rgb, boolean focus) {
 			long age= computeAge(revision);
-			double scale= 0.8 - (double) fRevisions.indexOf(new Long(age)) / fRevisions.size();
+			// relative age: newest is 0, oldest is 1
+			double relativeAge= (double) fRevisions.indexOf(new Long(age)) / (fRevisions.size() - 1);
 			
-			return getShadedColor(rgb, scale, focus);
+			return getShadedColor(rgb, 1 - relativeAge, focus);
 		}
 		
 		private RGB getShadedColor(RGB color, double scale, boolean focus) {
+			Assert.isLegal(scale >= 0.0);
+			Assert.isLegal(scale <= 1.0);
 			RGB background= fBackground == null ? new RGB(255, 255, 255) : fBackground.getRGB();
 			
 			if (focus) {
-				if (scale < 0.5) {
+				scale -= FOCUS_COLOR_SHADING;
+				if (scale < 0) {
 					background= new RGB(255 - background.red, 255 - background.green, 255 - background.blue);
-					scale= 0.6 - scale;
-				} else {
-					scale -= 0.4;
+					scale= -scale;
 				}
 			}
+			
+			scale= (MAX_SHADING - MIN_SHADING) * scale + MIN_SHADING;
 
 			return interpolate(color, background, scale);
 		}
@@ -184,12 +203,12 @@ public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVertica
 			);
 		}
 		
-		private long computeAge(AnnotateRevision revision) {
+		private long computeAge(Revision revision) {
 			return revision.getDate().getTime();
 		}
 		
-		public RGB getColor(AnnotateRevision revision, boolean focus) {
-			RGB rgb= fCommitterColors.getCommitterRGB(revision);
+		public RGB getColor(Revision revision, boolean focus) {
+			RGB rgb= revision.getColor();
 			rgb= adaptColorToAge(revision, rgb, focus);
 			return rgb;
 		}
@@ -299,18 +318,6 @@ public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVertica
 		}
 	}
 	
-	static class Hunk {
-		public final int line;
-		public final int delta;
-		public final int changed;
-		public Hunk(int line, int delta, int changed) {
-			Assert.isLegal(line >= 0);
-			this.line= line;
-			this.delta= delta;
-			this.changed= changed;
-		}
-	}
-	
 	/** This column's parent ruler */
 	private CompositeRuler fParentRuler;
 	/** Cached text viewer */
@@ -332,31 +339,30 @@ public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVertica
 	/** The ruler's annotation model. */
 	private IAnnotationModel fAnnotationModel;
 	/** The ruler's hover */
-	private IAnnotationHover fHover= new AnnotateHover();
+	private IAnnotationHover fHover= new RevisionHover();
 	/** The internal listener */
 	private AnnotationListener fAnnotationListener= new AnnotationListener();
 	/** The width of the change ruler column. */
 	private int fWidth= 8;
-	private AnnotateInfo fAnnotateInfo;
+	private RevisionInformation fRevisionInfo;
 	private ArrayList fChangeRegions= null;
 	private final ISharedTextColors fSharedColors;
-	private ICommitterColors fCommitterColors= new DefaultCommitterColors();
 	private final ColorTool fColorTool= new ColorTool();
 	private List fAnnotations= new ArrayList();
 	private MouseHandler fMouseHandler;
 	private int fFocusLine= -1;
 	private ChangeRegion fFocusRegion= null;
-	private AnnotateRevision fFocusRevision= null;
+	private Revision fFocusRevision= null;
 	private boolean fIsOverviewShowing= false;
 	private boolean fWheelHandlerInstalled= false;
 	private ILineDiffer fLineDiffer= null;
 
 	/**
-	 * Creates a new annotate ruler column.
+	 * Creates a new revision ruler column.
 	 * 
 	 * @param sharedColors the colors to look up RGBs
 	 */
-	public AnnotateRulerColumn(ISharedTextColors sharedColors) {
+	public RevisionRulerColumn(ISharedTextColors sharedColors) {
 		Assert.isNotNull(sharedColors);
 		fSharedColors= sharedColors;
 	}
@@ -540,9 +546,20 @@ public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVertica
 		
 		if (region.fRevision == fFocusRevision) {
 			gc.setForeground(lookupColor(region.fRevision, true));
-			fillGradientRectangle(gc, box);
+			paintHighlight(gc, box);
 		} else {
 			gc.fillRectangle(box);
+		}
+	}
+
+	private void paintHighlight(GC gc, Rectangle box) {
+		boolean fillGradient= false;
+		if (fillGradient) {
+			fillGradientRectangle(gc, box);
+		} else {
+			// simple box
+			gc.fillRectangle(box); // background
+			gc.drawRectangle(box.x, box.y, box.width - 1, box.height - 1); // highlight box
 		}
 	}
 
@@ -574,7 +591,7 @@ public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVertica
 		}
 	}
 	
-	private Color lookupColor(AnnotateRevision revision, boolean focus) {
+	private Color lookupColor(Revision revision, boolean focus) {
 		return fSharedColors.getColor(fColorTool.getColor(revision, focus));
 	}
 	
@@ -624,11 +641,11 @@ public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVertica
 	}
 
 	private List getRegionCache() {
-		if (fChangeRegions == null && fAnnotateInfo != null) {
+		if (fChangeRegions == null && fRevisionInfo != null) {
 			ArrayList regions= new ArrayList();
 			// flatten
-			for (Iterator revisions= fAnnotateInfo.fRevisions.iterator(); revisions.hasNext();) {
-				AnnotateRevision revision= (AnnotateRevision) revisions.next();
+			for (Iterator revisions= fRevisionInfo.fRevisions.iterator(); revisions.hasNext();) {
+				Revision revision= (Revision) revisions.next();
 				regions.addAll(revision.fChangeRegions);
 			}
 			
@@ -861,29 +878,17 @@ public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVertica
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * Sets the annotate information.
-	 * 
-	 * @param info the new annotate information, or <code>null</code> to reset the ruler
+	/*
+	 * @see org.eclipse.jface.text.revisions.IRevisionRulerColumn#setRevisionInformation(org.eclipse.jface.text.revisions.RevisionInformation)
 	 */
-	public void setAnnotateInfo(AnnotateInfo info) {
-		fAnnotateInfo= info;
+	public void setRevisionInformation(RevisionInformation info) {
+		fRevisionInfo= info;
 		fChangeRegions= null;
 		updateFocusRegion(null);
 		fColorTool.setInfo(info);
 		postRedraw();
 	}
 	
-	/**
-	 * Sets a committer color lookup. 
-	 * 
-	 * @param colors a lookup for committer colors.
-	 */
-	public void setCommitterColors(ICommitterColors colors) {
-		Assert.isLegal(colors != null);
-		fCommitterColors= colors;
-	}
-
 	private Rectangle computeBoxBounds(ChangeRegion region, int y_shift) {
 		ILineRange widgetRange= modelLinesToWidgetLines(region.fLines);
 		if (widgetRange == null)
@@ -895,7 +900,7 @@ public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVertica
 		return new Rectangle(0, y, getWidth(), height);
 	}
 	
-	private void showOverviewAnnotations(AnnotateRevision revision) {
+	private void showOverviewAnnotations(Revision revision) {
 		if (fAnnotationModel == null)
 			return;
 		
@@ -907,7 +912,7 @@ public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVertica
 					ChangeRegion region= (ChangeRegion) it.next();
 					IRegion charRegion= toCharRegion(region.fLines);
 					Position position= new Position(charRegion.getOffset(), charRegion.getLength());
-					Annotation annotation= new AnnotateAnnotation(revision.getId());
+					Annotation annotation= new RevisionAnnotation(revision.getId());
 					added.put(annotation, position);
 				} catch (BadLocationException x) {
 					// ignore - document was changed, show no annotations
@@ -968,12 +973,12 @@ public final class AnnotateRulerColumn implements IVerticalRulerColumn, IVertica
 	private void onFocusRegionChanged(ChangeRegion previousRegion, ChangeRegion nextRegion) {
 		if (DEBUG) System.out.println("region: " + previousRegion+ " > " + nextRegion); //$NON-NLS-1$ //$NON-NLS-2$
 		fFocusRegion= nextRegion;
-		AnnotateRevision revision= nextRegion == null ? null : nextRegion.fRevision;
+		Revision revision= nextRegion == null ? null : nextRegion.fRevision;
 		if (fFocusRevision != revision)
 			onFocusRevisionChanged(fFocusRevision, revision);
 	}
 	
-	private void onFocusRevisionChanged(AnnotateRevision previousRevision, AnnotateRevision nextRevision) {
+	private void onFocusRevisionChanged(Revision previousRevision, Revision nextRevision) {
 		if (DEBUG) System.out.println("revision: " + previousRevision+ " > " + nextRevision); //$NON-NLS-1$ //$NON-NLS-2$
 		fFocusRevision= nextRevision;
 		uninstallWheelHandler();

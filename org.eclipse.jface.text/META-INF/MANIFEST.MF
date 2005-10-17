@@ -18,6 +18,7 @@ Export-Package:
  org.eclipse.jface.text.link,
  org.eclipse.jface.text.presentation,
  org.eclipse.jface.text.reconciler,
+ org.eclipse.jface.text.revisions,
  org.eclipse.jface.text.rules,
  org.eclipse.jface.text.source,
  org.eclipse.jface.text.source.projection,

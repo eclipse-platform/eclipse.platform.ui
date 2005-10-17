@@ -691,28 +691,28 @@
             highlightPreferenceValue="false">
       </specification>
       
-      <!-- annotate (blame) annotations -->
+      <!-- revision annotations -->
       <specification
-            annotationType="org.eclipse.ui.workbench.texteditor.blameAnnotation"
+            annotationType="org.eclipse.ui.workbench.texteditor.revisionAnnotation"
             colorPreferenceValue="88,88,22"
             isGoToPreviousNavigationTarget="false"
-            isGoToPreviousNavigationTargetKey="isblameAnnotationGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTargetKey="isRevisionAnnotationGoToPreviousNavigationTarget"
             showInNextPrevDropdownToolbarAction="false"
             isGoToNextNavigationTarget="false"
-            isGoToNextNavigationTargetKey="isblameAnnotationGoToNextNavigationTarget"
-            colorPreferenceKey="blameAnnotationIndicationColor"
-            showInNextPrevDropdownToolbarActionKey="showblameAnnotationInNextPrevDropdownToolbarAction"
+            isGoToNextNavigationTargetKey="isRevisionAnnotationGoToNextNavigationTarget"
+            colorPreferenceKey="revisionAnnotationIndicationColor"
+            showInNextPrevDropdownToolbarActionKey="showRevisionAnnotationInNextPrevDropdownToolbarAction"
             contributesToHeader="false"
             overviewRulerPreferenceValue="true"
             presentationLayer="4"
-            label="Annotate Information"
+            label="%revisionInfo.label"
             textPreferenceValue="false"
-            textPreferenceKey="blameAnnotationIndication"
-            overviewRulerPreferenceKey="blameAnnotationIndicationInOverviewRuler"
-            verticalRulerPreferenceKey="blameAnnotationIndicationInVerticalRuler"
+            textPreferenceKey="revisionAnnotationIndication"
+            overviewRulerPreferenceKey="revisionAnnotationIndicationInOverviewRuler"
+            verticalRulerPreferenceKey="revisionAnnotationIndicationInVerticalRuler"
             verticalRulerPreferenceValue="false"
             includeOnPreferencePage="false"
-            highlightPreferenceKey="blameAnnotationIndicationHighlighting"
+            highlightPreferenceKey="revisionAnnotationIndicationHighlighting"
             highlightPreferenceValue="true">
       </specification>
       

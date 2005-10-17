@@ -53,6 +53,9 @@
    <type name="ImageUtilities" subclass="false" instantiate="false"/>
  </package>
 
+ <package name="org.eclipse.jface.text.revisions">
+ </package>
+
  <package name="org.eclipse.jface.text.source.projection">
    <type name="AnnotationBag" subclass="false"/>
    <type name="ProjectionAnnotationModel" subclass="false"/>

@@ -6,5 +6,5 @@ org.eclipse.jface.text/debug/AnnotationPainter= false
 # Prints debug information related to AbstractContentAssistSubjectAdapter and its subclasses
 org.eclipse.jface.text/debug/ContentAssistSubjectAdapters= false
 
-# Prints debug information related to AnnotateRulerColumn
-org.eclipse.jface.text.source/debug/AnnotateRulerColumn= false
+# Prints debug information related to RevisionRulerColumn
+org.eclipse.jface.text.source/debug/RevisionRulerColumn= false
