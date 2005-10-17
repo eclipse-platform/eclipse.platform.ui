@@ -25,7 +25,6 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -65,11 +64,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 	protected String getTaskName() {
 		ICVSRemoteFolder[] remoteFolders = getRemoteFolders();
 		String localFolderName = ""; //$NON-NLS-1$
-		try {
-			localFolderName = getLocalFolder().getIResource().getFullPath().toString();
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-		}
+		localFolderName = getLocalFolder().getIResource().getFullPath().toString();
 		return NLS.bind(CVSUIMessages.CheckoutIntoOperation_taskname, new String[] { new Integer(remoteFolders.length).toString(), localFolderName });  
 	}
 
@@ -307,7 +302,8 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 	private boolean promptToOverwrite(ICVSFolder folder) {
 		return promptToOverwrite(
 			CVSUIMessages.CheckoutOperation_confirmOverwrite,  
-			NLS.bind(CVSUIMessages.CheckoutIntoOperation_overwriteMessage, new String[] { folder.getName() })); 
+			NLS.bind(CVSUIMessages.CheckoutIntoOperation_overwriteMessage, new String[] { folder.getName() }),
+			folder.getIResource()); 
 	}
 	
 	private IStatus scrubFolder(ICVSFolder folder, IProgressMonitor monitor) throws CVSException {
@@ -427,13 +423,8 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getSchedulingRule()
 	 */
 	protected ISchedulingRule getSchedulingRule() {
-		try {
-			// Use the project of the target folder as the scheduling rule
-			return getLocalFolder().getIResource().getProject();
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-			return null;
-		}
+		// Use the project of the target folder as the scheduling rule
+		return getLocalFolder().getIResource().getProject();
 	}
 
 }

@@ -282,14 +282,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 		reset();
 		IResource[] files = new IResource[cvsFiles.length];
 		for (int i = 0; i < cvsFiles.length; i++) {
-			try {
-				files[i] = cvsFiles[i].getIResource();
-			} catch (CVSException e) {
-				// In practive, this error shold not occur.
-				// It may if there is an existing folder with a name that matches the file
-				// but this is bad in general when using CVS
-				CVSUIPlugin.log(e);
-			}
+			files[i] = cvsFiles[i].getIResource();
 		}
 		treeInput.setResources(files);
 		// kludge to avoid auto-selection of first element

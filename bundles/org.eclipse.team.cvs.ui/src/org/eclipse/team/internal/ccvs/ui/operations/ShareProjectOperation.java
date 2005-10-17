@@ -180,7 +180,7 @@ public class ShareProjectOperation extends CVSOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getShell()
 	 */
-	protected Shell getShell() {
+	public Shell getShell() {
 		return shell;
 	}
 	

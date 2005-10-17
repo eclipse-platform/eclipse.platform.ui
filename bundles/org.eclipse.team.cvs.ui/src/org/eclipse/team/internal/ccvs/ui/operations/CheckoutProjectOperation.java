@@ -422,7 +422,8 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		if (project.exists()) {
 			if (!promptToOverwrite(
 					CVSUIMessages.CheckoutOperation_confirmOverwrite,  
-					NLS.bind(CVSUIMessages.CheckoutOperation_thisResourceExists, new String[] { project.getName(), getRemoteModuleName(remoteFolder) }))) { 
+					NLS.bind(CVSUIMessages.CheckoutOperation_thisResourceExists, new String[] { project.getName(), getRemoteModuleName(remoteFolder) }),
+					project)) { 
 				return false;
 			}
 		}
@@ -447,7 +448,8 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			try {
 				return (promptToOverwrite(
 						CVSUIMessages.CheckoutOperation_confirmOverwrite,  
-						NLS.bind(CVSUIMessages.CheckoutOperation_thisExternalFileExists, new String[] { localLocation.getCanonicalPath(), getRemoteModuleName(remoteFolder) }))); 
+						NLS.bind(CVSUIMessages.CheckoutOperation_thisExternalFileExists, new String[] { localLocation.getCanonicalPath(), getRemoteModuleName(remoteFolder) }),
+						project)); 
 			} catch (IOException e) {
 				CVSUIPlugin.log(CVSException.wrapException(e));
 			}

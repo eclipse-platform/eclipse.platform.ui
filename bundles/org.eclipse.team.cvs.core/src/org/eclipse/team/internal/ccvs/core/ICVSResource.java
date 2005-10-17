@@ -94,7 +94,7 @@ public interface ICVSResource {
 	 * 
 	 * @return the IResource that corresponds to the CVS resource
 	 */
-	public IResource getIResource() throws CVSException;
+	public IResource getIResource();
 	
 	/**
 	 * Answers the local relative path from the given ancestor to the receiver.

@@ -164,7 +164,7 @@ public abstract class RemoteResource extends CachedResourceVariant implements IC
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSResource#getIResource()
 	 */
-	public IResource getIResource() throws CVSException {
+	public IResource getIResource() {
 		return null;
 	}
 	

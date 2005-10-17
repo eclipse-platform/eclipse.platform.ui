@@ -14,11 +14,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.console.CVSOutputConsole;
+import org.eclipse.team.internal.ui.dialogs.MultipleYesNoPrompter;
 import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -35,7 +36,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * This class is the abstract superclass for CVS operations. It provides
  * error handling, prompting and other UI.
  */
-public abstract class CVSOperation extends TeamOperation {
+public abstract class CVSOperation extends TeamOperation implements IShellProvider {
 
 	private int statusCount;
 
@@ -46,9 +47,8 @@ public abstract class CVSOperation extends TeamOperation {
 	protected static final IStatus OK = Status.OK_STATUS; 
 	
 	private Shell shell;
-	
-	// instance variable used to indicate behavior while prompting for overwrite
-	private boolean confirmOverwrite = true;
+
+	private MultipleYesNoPrompter prompter;
 	
 	protected CVSOperation(IWorkbenchPart part) {
 		super(part);
@@ -90,7 +90,6 @@ public abstract class CVSOperation extends TeamOperation {
 	protected void startOperation() {
 		statusCount = 0;
 		resetErrors();
-		confirmOverwrite = true;
 	}
 	
 	protected void endOperation() throws CVSException {
@@ -219,56 +218,20 @@ public abstract class CVSOperation extends TeamOperation {
 	/**
 	 * This method prompts the user to overwrite an existing resource. It uses the
 	 * <code>involvesMultipleResources</code> to determine what buttons to show.
+	 * @param resource 
 	 * @param project
 	 * @return
 	 */
-	protected boolean promptToOverwrite(final String title, final String msg) {
-		if (!confirmOverwrite) {
-			return true;
-		}
-		final String buttons[];
-		if (involvesMultipleResources()) {
-			buttons = new String[] {
-				IDialogConstants.YES_LABEL, 
-				IDialogConstants.YES_TO_ALL_LABEL, 
-				IDialogConstants.NO_LABEL, 
-				IDialogConstants.CANCEL_LABEL};
+	protected boolean promptToOverwrite(final String title, final String message, IResource resource) {
+		if (prompter == null) {
+			prompter = new MultipleYesNoPrompter(this, title, involvesMultipleResources(), false);
 		} else {
-			buttons = new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL};
-		}	
-		final Shell displayShell = getShell();
-		if (displayShell == null) {
-			// We couldn't get a shell (perhaps due to shutdown)
-			return false;
+			prompter.setTitle(title);
 		}
-
-		// run in syncExec because callback is from an operation,
-		// which is probably not running in the UI thread.
-		final int[] code = new int[] {0};
-		displayShell.getDisplay().syncExec(
-			new Runnable() {
-				public void run() {
-					MessageDialog dialog = 
-						new MessageDialog(displayShell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
-					dialog.open();
-					code[0] = dialog.getReturnCode();
-				}
-			});
-		if (involvesMultipleResources()) {
-			switch (code[0]) {
-				case 0://Yes
-					return true;
-				case 1://Yes to all
-					confirmOverwrite = false; 
-					return true;
-				case 2://No
-					return false;
-				case 3://Cancel
-				default:
-					throw new OperationCanceledException();
-			}
-		} else {
-			return code[0] == 0;
+		try {
+			return prompter.shouldInclude(message);
+		} catch (InterruptedException e) {
+			throw new OperationCanceledException();
 		}
 	}
 
@@ -318,7 +281,7 @@ public abstract class CVSOperation extends TeamOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.actions.TeamOperation#getShell()
 	 */
-	protected Shell getShell() {
+	public Shell getShell() {
 		// Use the shell assigned to the operation if possible
 		if (shell != null && !shell.isDisposed()) {
 			return shell;

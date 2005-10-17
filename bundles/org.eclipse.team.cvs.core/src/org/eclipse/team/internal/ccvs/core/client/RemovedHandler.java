@@ -64,13 +64,9 @@ class RemovedHandler extends ResponseHandler {
 	}
 
     private String getPath(ICVSFile file) {
-        try {
-            IResource resource = file.getIResource();
-            if (resource != null) {
-                return resource.getFullPath().toString();
-            }
-        } catch (CVSException e) {
-            // Ignore
+        IResource resource = file.getIResource();
+        if (resource != null) {
+            return resource.getFullPath().toString();
         }
         try {
             return file.getRepositoryRelativePath();

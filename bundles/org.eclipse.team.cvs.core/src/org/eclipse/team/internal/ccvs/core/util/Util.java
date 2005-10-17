@@ -522,13 +522,9 @@ public class Util {
 	 * @return
 	 */
 	public static String getFullestPath(ICVSResource resource) {
-		try {
-			IResource local = resource.getIResource();
-			if (local != null) {
-				return local.getFullPath().toString();
-			}
-		} catch (CVSException e) {
-			// Ignore and try the next method;
+		IResource local = resource.getIResource();
+		if (local != null) {
+			return local.getFullPath().toString();
 		}
 		try {
 			String remotePath = resource.getRepositoryRelativePath();

@@ -140,14 +140,10 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		document = provider.getDocument(editor.getEditorInput());
 
 		setPartName(NLS.bind(CVSUIMessages.CVSAnnotateView_showFileAnnotation, (new Object[] {cvsResource.getName()}))); 
-		try {
-			IResource localResource = cvsResource.getIResource();
-			if (localResource != null) {
-				setTitleToolTip(localResource.getFullPath().toString());
-			} else {
-				setTitleToolTip(cvsResource.getName());
-			}
-		} catch (CVSException e) {
+		IResource localResource = cvsResource.getIResource();
+		if (localResource != null) {
+			setTitleToolTip(localResource.getFullPath().toString());
+		} else {
 			setTitleToolTip(cvsResource.getName());
 		}
 		
