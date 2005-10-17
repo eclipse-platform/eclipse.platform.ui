@@ -103,14 +103,17 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     private IPositionUpdater positionUpdater = new IPositionUpdater() {
         public void update(DocumentEvent event) {
             try {
-                Position[] positions = getDocument().getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-                for (int i = 0; i < positions.length; i++) {
-                    Position position = positions[i];
-                    if (position.offset == event.fOffset && position.length<=event.fLength) {
-                        position.delete();
-                    }
-                    if (position.isDeleted) {
-                        getDocument().removePosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, position);
+                IDocument document = getDocument();
+                if (document != null) {
+                    Position[] positions = document.getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+                    for (int i = 0; i < positions.length; i++) {
+                        Position position = positions[i];
+                        if (position.offset == event.fOffset && position.length<=event.fLength) {
+                            position.delete();
+                        }
+                        if (position.isDeleted) {
+                            document.removePosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, position);
+                        }
                     }
                 }
             } catch (BadPositionCategoryException e) {
