@@ -282,6 +282,7 @@ public interface IFileStore extends IAdaptable {
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>The directory could not be created</li>
+	 * <li>A file already exists with this name that is not a directory</li>
 	 * <li>The {@link EFS#SHALLOW} option flag was
 	 * specified and the parent of this directory does not exist.</li>
 	 * </ul>
