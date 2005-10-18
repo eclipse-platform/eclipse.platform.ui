@@ -27,7 +27,6 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage"
             class="org.eclipse.ltk.internal.ui.refactoring.history.WorkInProgressPreferencePage"
             id="org.eclipse.ltk.ui.refactoring.work.in.progress"
             name="Work in Progress"/>
