@@ -42,6 +42,8 @@ public final class Util {
 
 	private static final String IMAGE_INFO_PATH = "obj16/info_tsk.gif"; //$NON-NLS-1$
 
+	static final MarkerNode[] EMPTY_MARKER_ARRAY = new MarkerNode[0];
+
 	/**
 	 * Get the propery called property from the marker. If it is not found
 	 * return the empty string.
@@ -232,4 +234,24 @@ public final class Util {
 				IDEWorkbenchPlugin.getIDEImageDescriptor(path));
 
 	}
+
+	/**
+	 * Return the text for severity
+	 * @param severity
+	 */
+	public static String getCategoryText(int severity) {
+		if (severity == IMarker.SEVERITY_ERROR) {
+			return MarkerMessages.propertiesDialog_errorLabel;
+		}
+		if (severity == IMarker.SEVERITY_WARNING) {
+			return MarkerMessages.propertiesDialog_warningLabel;
+		}
+		if (severity == IMarker.SEVERITY_INFO) {
+			return MarkerMessages.propertiesDialog_infoLabel;
+		}
+
+		return EMPTY_STRING;
+		
+	}
+	
 }

@@ -88,8 +88,15 @@ public class FieldResource implements IField {
         ConcreteMarker marker1 = (ConcreteMarker) obj1;
         ConcreteMarker marker2 = (ConcreteMarker) obj2;
 
-        return marker1.getResourceNameKey().compareTo(
-                marker2.getResourceNameKey());
+        return marker1.getResourceName().compareTo(
+                marker2.getResourceName());
     }
+
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getCategoryValue(java.lang.Object)
+	 */
+	public String getCategoryValue(Object obj) {
+		return getValue(obj);
+	}
 
 }

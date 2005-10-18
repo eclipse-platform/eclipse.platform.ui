@@ -283,14 +283,6 @@ public abstract class MarkerView extends TableView {
 	// A cache of the enabled filters
 	private MarkerFilter[] enabledFilters = null;
 
-	/**
-	 * This job is scheduled whenever a filter or resource change occurs. It
-	 * computes the new set of markers and schedules a UI Job to cause the
-	 * changes to be reflected in the UI.
-	 */
-
-	private Job refreshJob = null;
-
 	private MenuManager filtersMenu;
 
 	private MenuManager showInMenu;
@@ -920,7 +912,7 @@ public abstract class MarkerView extends TableView {
 		if (updateNeeded) {
 			focusElements = elements;
 			updateFilterSelection(elements);
-			getContentProvider().refresh();
+			getViewer().refresh();
 		}
 	}
 
@@ -931,6 +923,8 @@ public abstract class MarkerView extends TableView {
 
 		for (int i = 0; i < filters.length; i++) {
 			MarkerFilter filter = filters[i];
+			if(!filter.isEnabled())
+				continue;
 
 			int onResource = filter.getOnResource();
 			if (onResource == MarkerFilter.ON_ANY
@@ -1350,12 +1344,6 @@ public abstract class MarkerView extends TableView {
 
 	}
 
-	private boolean withinMarkerLimit(int toTest) {
-		int limit = getMarkerLimit();
-
-		return (limit == -1 || toTest <= limit);
-	}
-
 	/**
 	 * Get the name of the marker limit preference.
 	 * 
@@ -1370,5 +1358,21 @@ public abstract class MarkerView extends TableView {
 	 */
 	Object createViewerInput() {
 		return new MarkerAdapter(this);
+	}
+
+	/**
+	 * Return whether or not we are showing the hierarchal or flat mode
+	 * @return <code>true</code> if hierarchal mode is being shown
+	 */
+	public boolean isHierarchalMode() {		
+		return false;
+	}
+
+	/**
+	 * Return the TableSorter
+	 * @return TableSorter
+	 */
+	public TableSorter getTableSorter() {
+		return (TableSorter) getViewer().getSorter();
 	}
 }

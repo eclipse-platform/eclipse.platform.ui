@@ -15,11 +15,19 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * The TableViewLabelProvider is the content provider for marker views.
+ *
+ */
 public class TableViewLabelProvider extends LabelProvider implements
-        ITableLabelProvider {
+        ITableLabelProvider{
 
     IField[] fields;
 
+    /**
+     * Create a neew instance of the receiver.
+     * @param fields
+     */
     public TableViewLabelProvider(IField[] fields) {
         this.fields = fields;
     }
@@ -43,5 +51,8 @@ public class TableViewLabelProvider extends LabelProvider implements
         }
         return fields[columnIndex].getValue(element);
     }
+
+    
+    
 
 }

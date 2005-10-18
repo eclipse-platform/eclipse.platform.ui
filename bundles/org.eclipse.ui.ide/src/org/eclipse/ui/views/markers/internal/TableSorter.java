@@ -169,10 +169,19 @@ public class TableSorter extends ViewerSorter implements Comparator {
     }
 
     public int compare(Viewer viewer, Object e1, Object e2) {
-        return compare(e1, e2, 0);
+        return compare(e1, e2, 0,true);
     }
 
-    protected int compare(Object obj1, Object obj2, int depth) {
+    /**
+     * Compare obj1 and obj2 at depth. If continueSearching continue
+     * searching below depth to continue the comparison.
+     * @param obj1
+     * @param obj2
+     * @param depth
+     * @param continueSearching
+     * @return int
+     */
+    protected int compare(Object obj1, Object obj2, int depth, boolean continueSearching) {
         if (depth >= priorities.length) {
             return 0;
         }
@@ -180,8 +189,8 @@ public class TableSorter extends ViewerSorter implements Comparator {
         int column = priorities[depth];
         IField property = fields[column];
         int result = property.compare(obj1, obj2);
-        if (result == 0)
-            return compare(obj1, obj2, depth + 1);
+        if (result == 0 && continueSearching)
+            return compare(obj1, obj2, depth + 1,continueSearching);
         return result * directions[column];
     }
 

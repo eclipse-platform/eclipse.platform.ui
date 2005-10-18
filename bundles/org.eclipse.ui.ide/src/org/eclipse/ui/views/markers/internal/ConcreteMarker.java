@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
  * in the problems view). This marker class stores the fields in the most efficient form
  * for sorting and display, but necessarily removes some generality from IMarker.
  */
-public class ConcreteMarker {
+public class ConcreteMarker extends MarkerNode{
 
     private String description;
 
@@ -50,6 +50,8 @@ public class ConcreteMarker {
      * Cache for the marker ID.
      */
 	private long id = -1L;
+
+	private MarkerNode markerCategory;
 
     public ConcreteMarker(IMarker toCopy) {
         marker = toCopy;
@@ -101,6 +103,9 @@ public class ConcreteMarker {
         return type;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.MarkerNode#getDescription()
+     */
     public String getDescription() {
         return description;
     }
@@ -170,4 +175,34 @@ public class ConcreteMarker {
     public int hashCode() {
         return getMarker().hashCode();
     }
+
+	/**
+	 * Set the category the receiver is in.
+	 * @param category
+	 */
+	public void setCategory(MarkerNode category) {
+		markerCategory = category;
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getChildren()
+	 */
+	public MarkerNode[] getChildren() {
+		return Util.EMPTY_MARKER_ARRAY;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getParent()
+	 */
+	public MarkerNode getParent() {
+		return markerCategory;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#isConcrete()
+	 */
+	public boolean isConcrete() {
+		return true;
+	}
 }

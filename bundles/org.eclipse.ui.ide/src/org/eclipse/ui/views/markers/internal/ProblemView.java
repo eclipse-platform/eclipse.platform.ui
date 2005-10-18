@@ -36,18 +36,18 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class ProblemView extends MarkerView {
 
 	private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
-			new ColumnPixelData(40, false, true), new ColumnPixelData(200),
-			new ColumnPixelData(75), new ColumnPixelData(150),
-			new ColumnPixelData(60) };
+			new ColumnPixelData(getCategoryWidth()), new ColumnPixelData(16),
+			new ColumnPixelData(200), new ColumnPixelData(75),
+			new ColumnPixelData(150), new ColumnPixelData(60) };
 
 	// Direction constants - use the ones on TableSorter to stay sane
 	private final static int ASCENDING = TableSorter.ASCENDING;
 
 	private final static int DESCENDING = TableSorter.DESCENDING;
 
-	private final IField[] VISIBLE_FIELDS = { new FieldSeverity(),
-			new FieldMessage(), new FieldResource(), new FieldFolder(),
-			new FieldLineNumber() };
+	private final IField[] VISIBLE_FIELDS = { new FieldCategory(),
+			new FieldSeverity(), new FieldMessage(), new FieldResource(),
+			new FieldFolder(), new FieldLineNumber() };
 
 	private final IField[] HIDDEN_FIELDS = { new FieldCreationTime(),
 	// Add the marker ID so the table sorter won't reduce
@@ -63,30 +63,26 @@ public class ProblemView extends MarkerView {
 	// TableSorter, we use the method TableView.getFields() as it is
 	// inherited and we don't override it. TableView.getFields() will
 	// return VISIBLE_FIELDS and then HIDDEN_FIELDS
-	private final static int SEVERITY = 0;
 
-	private final static int DESCRIPTION = 1;
+	private final static int CATEGORY = 0;
 
-	private final static int RESOURCE = 2;
+	private final static int SEVERITY = 1;
 
-	private final static int FOLDER = 3;
+	private final static int DESCRIPTION = 2;
 
-	private final static int LOCATION = 4;
+	private final static int RESOURCE = 3;
 
-	private final static int CREATION_TIME = 5;
+	private final static int FOLDER = 4;
 
-	private final static int MARKER_ID = 6;
+	private final static int LOCATION = 5;
 
-	private final static int[] DEFAULT_PRIORITIES = { SEVERITY, FOLDER,
-			RESOURCE, LOCATION, DESCRIPTION, CREATION_TIME, MARKER_ID };
+	private final static int CREATION_TIME = 6;
 
-	private final static int[] DEFAULT_DIRECTIONS = { DESCENDING, // severity
-			ASCENDING, // folder
-			ASCENDING, // resource
-			ASCENDING, // location
-			ASCENDING, // description
-			ASCENDING, // creation time
-			ASCENDING, }; // marker id
+	private final static int MARKER_ID = 7;
+
+	private final int[] DEFAULT_PRIORITIES = getDefaultPriorities();
+
+	private final int[] DEFAULT_DIRECTIONS = getDefaultDirections();
 
 	private final static String[] ROOT_TYPES = { IMarker.PROBLEM };
 
@@ -94,12 +90,53 @@ public class ProblemView extends MarkerView {
 
 	private ActionResolveMarker resolveMarkerAction;
 
-
 	/**
 	 * Return a new instance of the receiver.
 	 */
 	public ProblemView() {
 		super();
+	}
+
+	/**
+	 * Get the default directions for the receiver.
+	 * 
+	 * @return int[]
+	 */
+	private int[] getDefaultDirections() {
+		return new int[] { ASCENDING,// category
+					DESCENDING, // severity
+					ASCENDING, // folder
+					ASCENDING, // resource
+					ASCENDING, // location
+					ASCENDING, // description
+					ASCENDING, // creation time
+					ASCENDING // marker id
+		};
+		
+	}
+
+	/**
+	 * Get the default priorities for the receiver.
+	 * 
+	 * @return int []
+	 */
+	private int[] getDefaultPriorities() {
+		if (isHierarchalMode())
+			return new int[] { CATEGORY, SEVERITY, FOLDER, RESOURCE, LOCATION,
+					DESCRIPTION, CREATION_TIME, MARKER_ID };
+		return new int[] { SEVERITY, FOLDER, RESOURCE, LOCATION, DESCRIPTION,
+				CREATION_TIME, MARKER_ID, CATEGORY };
+	}
+
+	/**
+	 * Return the width of the category field.
+	 * 
+	 * @return int
+	 */
+	private int getCategoryWidth() {
+		if (isHierarchalMode())
+			return 150;
+		return 0;
 	}
 
 	public void dispose() {
@@ -144,7 +181,9 @@ public class ProblemView extends MarkerView {
 				getSelectionProvider());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#createColumns(org.eclipse.swt.widgets.Tree)
 	 */
 	protected void createColumns(Tree tree) {
@@ -173,13 +212,14 @@ public class ProblemView extends MarkerView {
 		return ROOT_TYPES;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#buildSorter()
 	 */
 	protected TableSorter buildSorter() {
-		return  new TableSorter(getFields(), DEFAULT_PRIORITIES,
-					DEFAULT_DIRECTIONS);
+		return new TableSorter(getFields(), DEFAULT_PRIORITIES,
+				DEFAULT_DIRECTIONS);
 	}
 
 	protected IField[] getVisibleFields() {
@@ -239,7 +279,7 @@ public class ProblemView extends MarkerView {
 
 	protected String getStaticContextId() {
 		// TODO this context is missing - add it
-		return PlatformUI.PLUGIN_ID + ".problem_view_context"; //$NON-NLS-1$
+		return PlatformUI.PLUGIN_ID + ".problem_view_context";//$NON-NLS-1$
 	}
 
 	/*
@@ -322,5 +362,14 @@ public class ProblemView extends MarkerView {
 		}
 		return allFilters;
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#isHierarchalMode()
+	 */
+	public boolean isHierarchalMode() {
+		return false;
 	}
 }

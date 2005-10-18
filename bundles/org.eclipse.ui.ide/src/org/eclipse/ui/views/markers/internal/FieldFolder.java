@@ -92,4 +92,11 @@ public class FieldFolder implements IField {
         return marker1.getFolderKey().compareTo(marker2.getFolderKey());
     }
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getCategoryValue(java.lang.Object)
+	 */
+	public String getCategoryValue(Object obj) {
+		return getValue(obj);
+	}
+
 }
