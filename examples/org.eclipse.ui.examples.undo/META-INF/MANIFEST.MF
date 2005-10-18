@@ -8,5 +8,5 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jface.text
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Bundle-Vendor: %Plugin.providerName
