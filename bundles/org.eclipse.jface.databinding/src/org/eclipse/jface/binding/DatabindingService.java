@@ -17,40 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.binding.internal.DerivedUpdatableValue;
-import org.eclipse.jface.binding.internal.ValueBinding;
+import org.eclipse.jface.binding.internal.*;
 
 /**
  * @since 3.2
  */
 public class DatabindingService {
-
-	protected static class CollectionChangeListener implements IChangeListener {
-
-		IUpdatableCollection source, target;
-
-		/**
-		 * @param source
-		 * @param target
-		 */
-		public CollectionChangeListener(IUpdatableCollection source,
-				IUpdatableCollection target) {
-			this.source = source;
-			this.target = target;
-		}
-
-		public void handleChange(IChangeEvent changeEvent) {
-			if (changeEvent.getUpdatable() == source) {
-				int row = changeEvent.getPosition();
-				if (changeEvent.getChangeType() == IChangeEvent.CHANGE)
-					target.setElement(row, changeEvent.getNewValue());
-				else if (changeEvent.getChangeType() == IChangeEvent.ADD)
-					target.addElement(changeEvent.getNewValue(), row);
-				else if (changeEvent.getChangeType() == IChangeEvent.REMOVE)
-					target.removeElement(row);
-			}
-		}
-	}
 
 	private static class Pair {
 
@@ -237,22 +209,8 @@ public class DatabindingService {
 
 		}
 
-		// Start listening, giving that target the ability to "refresh" as we
-		// set
-		// it up with model values
-		targetCollection.addChangeListener(new CollectionChangeListener(
-				targetCollection, modelCollection));
-		modelCollection.addChangeListener(new CollectionChangeListener(
-				modelCollection, targetCollection));
-
-		// Remove old, if any
-		while (targetCollection.getSize() > 0)
-			targetCollection.removeElement(0);
-
-		// Set the target List with the content of the Model List
-		for (int i = 0; i < modelCollection.getSize(); i++) {
-			targetCollection.addElement(modelCollection.getElement(i), i);
-		}
+		CollectionBinding binding = new CollectionBinding(this, targetCollection, modelCollection, converter, validator);
+		binding.updateTargetFromModel();
 
 	}
 

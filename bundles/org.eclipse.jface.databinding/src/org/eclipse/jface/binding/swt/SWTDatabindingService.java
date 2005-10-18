@@ -40,6 +40,9 @@ import org.eclipse.swt.widgets.Text;
  *
  */
 public class SWTDatabindingService extends DatabindingService {
+	
+	public static String  JFACE_VIEWER_CONTENT = "content";
+	public static String  JFACE_VIEWER_SELECTION = "selection";
 
 	private final int validatePolicy;
 
@@ -105,8 +108,11 @@ public class SWTDatabindingService extends DatabindingService {
 
 		addUpdatableFactory(AbstractListViewer.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				return new UpdatableCollectionViewer(
-						(AbstractListViewer) object);
+				if (attribute.equals(JFACE_VIEWER_SELECTION))
+					return new StructuredViewerUpdatableValue((AbstractListViewer) object, (String) attribute);
+				else if (attribute.equals(JFACE_VIEWER_CONTENT))
+				    return new UpdatableCollectionViewer((AbstractListViewer) object);
+				return null;
 			}
 		});
 
