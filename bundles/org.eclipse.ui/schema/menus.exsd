@@ -120,7 +120,7 @@ A menu can only contain groups.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="label" type="string" use="required">
+         <attribute name="label" type="string">
             <annotation>
                <documentation>
                   The human-readable text to associate with this menu.
@@ -195,20 +195,6 @@ A group can contain menus, items and other groups.
       </complexType>
    </element>
 
-   <element name="toolbar">
-      <annotation>
-         <documentation>
-            An element within a location.  If unqualified, this indicates the top-level cool bar or tool bar.  If this is qualified with a &lt;code&gt;part&lt;/code&gt; element, then this indicates that part&apos;s tool bar.
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="menuLocation" minOccurs="0" maxOccurs="1"/>
-            <element ref="groupLocation" minOccurs="0" maxOccurs="1"/>
-         </sequence>
-      </complexType>
-   </element>
-
    <element name="location">
       <annotation>
          <documentation>
@@ -219,11 +205,9 @@ A group can contain menus, items and other groups.
          <sequence>
             <element ref="order" minOccurs="0" maxOccurs="1"/>
             <choice>
-               <element ref="menubar"/>
-               <element ref="popup"/>
+               <element ref="bar"/>
                <element ref="part"/>
-               <element ref="toolbar"/>
-               <element ref="statusline"/>
+               <element ref="popup"/>
             </choice>
          </sequence>
          <attribute name="mnemonic" type="string">
@@ -246,16 +230,37 @@ A group can contain menus, items and other groups.
       </complexType>
    </element>
 
-   <element name="menubar">
+   <element name="bar">
       <annotation>
          <documentation>
-            An element within a location.  If unqualified, this indicates the top-level menu bar.  If this is qualified with a &lt;code&gt;part&lt;/code&gt; element, then this indicates that part&apos;s menu.
+            A leaf element within a location.  This can be the menu bar, the tool bar or the status line.  If unqualified, this indicates the top-level menu bar, tool bar or status line.  If this is qualified with a &lt;code&gt;part&lt;/code&gt; element, then this indicates that part&apos;s menu, tool bar or status line.
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="menuLocation" minOccurs="0" maxOccurs="1"/>
-         </sequence>
+         <attribute name="type" use="required">
+            <annotation>
+               <documentation>
+                  What type of bar to contribute to.  This can be &lt;code&gt;menu&lt;/code&gt;, &lt;code&gt;tool&lt;/code&gt; or &lt;code&gt;status&lt;/code&gt;.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="menu">
+                  </enumeration>
+                  <enumeration value="tool">
+                  </enumeration>
+                  <enumeration value="status">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="path" type="string">
+            <annotation>
+               <documentation>
+                  The path from the root of the bar, including menus and groups.  This path uses &lt;code&gt;&apos;/&apos;&lt;/code&gt; as a separator character.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -302,20 +307,6 @@ Allows modifications to be applied to existing elements.  This has the capacity 
                </documentation>
             </annotation>
          </attribute>
-      </complexType>
-   </element>
-
-   <element name="statusline">
-      <annotation>
-         <documentation>
-            An element within a location.  If unqualified, this indicates the top-level status line.
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="menuLocation" minOccurs="0" maxOccurs="1"/>
-            <element ref="groupLocation" minOccurs="0" maxOccurs="1"/>
-         </sequence>
       </complexType>
    </element>
 
@@ -389,6 +380,16 @@ An action set has a name and a unique identifier.  It is also possible to specif
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A longer human-readable description of the action set.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -404,11 +405,10 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="popup" minOccurs="0" maxOccurs="1"/>
-            <element ref="toolbar" minOccurs="0" maxOccurs="1"/>
-            <element ref="menubar" minOccurs="0" maxOccurs="1"/>
-         </sequence>
+         <choice>
+            <element ref="popup"/>
+            <element ref="part"/>
+         </choice>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
@@ -420,48 +420,6 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
             <annotation>
                <documentation>
                   The class of the part.  This can be a superclass, interface or superinterface of the part, and it will still match.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="popup">
-      <annotation>
-         <documentation>
-            An element within a location.  If unqualified, this indicates all popup menus (controlled only by the visibility element).  If this is qualified with a &lt;code&gt;part&lt;/code&gt; element, then this indicates that part&apos;s menu.
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="groupLocation" minOccurs="0" maxOccurs="1"/>
-            <element ref="menuLocation" minOccurs="0" maxOccurs="1"/>
-         </sequence>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  The identifier of the popup menu.  If none is provided, then it applies to all popup menus.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="menuLocation">
-      <annotation>
-         <documentation>
-            A reference to a menu within a location.  This is used to select the menu in which the element will appear.
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="groupLocation" minOccurs="0" maxOccurs="1"/>
-            <element ref="menuLocation" minOccurs="0" maxOccurs="1"/>
-         </sequence>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The identifier of the menu to which this element refers.
                </documentation>
             </annotation>
          </attribute>
@@ -486,23 +444,6 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
             <annotation>
                <documentation>
                   The type of element to which this reference refers.  This is only required if there are elements of different types with the same id.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="groupLocation">
-      <annotation>
-         <documentation>
-            A reference to a group within a location.  This is used to select the group in which the element will appear.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The identifier of the group to which this element refers.
                </documentation>
             </annotation>
          </attribute>
@@ -604,6 +545,30 @@ In the event of conflicts, Eclipse will chose an arbitrary order.  The only guar
       </complexType>
    </element>
 
+   <element name="popup">
+      <annotation>
+         <documentation>
+            Part of a location.  It indicates that the menu, group, item or widget should appear in the popup menu.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  The identifier of the popup menu.  If none is specified, then it will appear in all popup menus.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string">
+            <annotation>
+               <documentation>
+                  The path within the popup menu to place the element.  If not specified, then this is added to the &quot;additions&quot; group.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -627,9 +592,7 @@ A basic menu definition looks like this.
  label=&quot;%Folding.label&quot;&gt;
  &lt;location mnemonic=&quot;%Folding.label.mnemonic&quot;&gt;
   &lt;part id=&quot;AntEditor&quot;&gt;
-   &lt;popup id=&quot;#RulerContext&quot;&gt;
-    &lt;groupLocation id=&quot;rest&quot; /&gt;
-   &lt;/popup&gt;
+   &lt;popup id=&quot;#RulerContext&quot; path=&quot;rest&quot; /&gt;
   &lt;/part&gt;
  &lt;/location&gt;
 &lt;/menu&gt;
@@ -643,9 +606,7 @@ In this example, the plug-in developer is contributing to all parts who subclass
  label=&quot;Text Commands&quot;&gt;
  &lt;location mnemonic=&quot;X&quot;&gt;
   &lt;part class=&quot;AbstractTextEditor&quot;&gt;
-   &lt;popup id=&quot;#RulerContext&quot;&gt;
-    &lt;groupLocation id=&quot;rest&quot; /&gt;
-   &lt;/popup&gt;
+   &lt;popup id=&quot;#RulerContext&quot; path=&quot;rest&quot; /&gt;
   &lt;/part&gt;
  &lt;/location&gt;
 &lt;/menu&gt;
@@ -659,11 +620,7 @@ To define a dynamic menu, the &lt;code&gt;dynamic&lt;/code&gt; element is used. 
  label=&quot;%DynamicMenu.label&quot;&gt;
  &lt;dynamic class=&quot;DynamicMenu&quot; /&gt;
  &lt;location mnemonic=&quot;%mnemonic&quot;&gt;
-  &lt;menubar&gt;
-   &lt;menuLocation id=&quot;org.eclipse.ui.run&quot;&gt;
-    &lt;groupLocation id=&quot;runGroup&quot; /&gt;
-   &lt;/menuLocation&gt;
-  &lt;/menunbar&gt;
+  &lt;menubar path=&quot;org.eclipse.ui.run/runGroup&quot; /&gt;
  &lt;/location&gt;
 &lt;/menu&gt;
 &lt;/pre&gt;
@@ -686,18 +643,14 @@ Within a menu, it is possible to define logical groups.  These logical groups ca
 &lt;pre&gt;
 &lt;group id=&quot;com.mycompany.myplugin.stepGroup&quot;&gt;
  &lt;location&gt;
-  &lt;menubar&gt;
-   &lt;menuLocation id=&quot;org.eclipse.ui.run&quot; /&gt;
-  &lt;/menubar&gt;
+  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
 &lt;/group&gt;
 &lt;group
  id=&quot;com.mycompany.myplugin.stepIntoGroup&quot;
  separatorsVisible=&quot;false&quot; &gt;
  &lt;location&gt;
-  &lt;menubar&gt;
-   &lt;menuLocation id=&quot;org.eclipse.ui.run&quot; /&gt;
-  &lt;/menubar&gt;
+  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
 &lt;/group&gt;
 &lt;/pre&gt;
@@ -709,11 +662,7 @@ Groups can be declared to be dynamic, in the same way as menus.
  id=&quot;com.mycompany.myplugin.runHistory&quot;&gt;
  &lt;dynamic class=&quot;DynamicRunHistoryGroup&quot; /&gt;
  &lt;location&gt;
-  &lt;menubar&gt;
-   &lt;menuLocation id=&quot;org.eclipse.ui.run&quot;&gt;
-    &lt;groupLocation id=&quot;runGroup&quot; /&gt;
-   &lt;/menuLocation&gt;
-  &lt;/menubar&gt;
+  &lt;menubar path=&quot;org.eclipse.ui.run/runGroup&quot; /&gt;
  &lt;/location&gt;
 &lt;/group&gt;
 &lt;/pre&gt;
@@ -725,24 +674,16 @@ It is possible to place menus, group, items and widgets in multiple locations.
  id=&quot;com.mycompany.myplugin.ToggleStepFilters&quot;
  commandId=&quot;com.mycompany.myplugin.ToggleStepFilters&quot;&gt;
  &lt;location mnemonic=&quot;%mnemonic&quot;&gt;
-  &lt;menubar&gt;
-   &lt;menuLocation id=&quot;org.eclipse.ui.run&quot;&gt;
-    &lt;groupLocation id=&quot;emptyStepGroup&quot; /&gt;
-   &lt;/menuLocation&gt;
-  &lt;/menubar&gt;
+  &lt;menubar path=&quot;org.eclipse.ui.run/emptyStepGroup&quot; /&gt;
  &lt;/location&gt;
  &lt;location&gt;
   &lt;part id=&quot;org.eclipse.debug.ui.DebugView&quot;&gt;
-   &lt;toolbar&gt;
-    &lt;groupLocation id=&quot;renderGroup&quot; /&gt;
-   &lt;/toolbar&gt;
+   &lt;toolbar path=&quot;renderGroup&quot; /&gt;
   &lt;/part&gt;
  &lt;/location&gt;
  &lt;location mnemonic=&quot;%mnemonic&quot;&gt;
   &lt;part id=&quot;org.eclipse.debug.ui.DebugView&quot;&gt;
-   &lt;popup&gt;
-    &lt;groupLocation id=&quot;renderGroup&quot; /&gt;
-   &lt;/popup&gt;
+   &lt;popup path=&quot;renderGroup&quot; /&gt;
   &lt;/part&gt;
  &lt;/location&gt;
 &lt;/item&gt;
@@ -755,9 +696,7 @@ If the popup element is specified with no id and no parent part element, then it
  id=&quot;com.mycompany.myplugin.ObjectContribution&quot;
  commandId=&quot;com.mycompany.myplugin.ObjectContribution&quot;&gt;
  &lt;location&gt;
-  &lt;popup&gt;
-   &lt;groupLocation id=&quot;additions&quot; /&gt;
-  &lt;/popup&gt;
+  &lt;popup path=&quot;additions&quot; /&gt;
  &lt;/location&gt;
 &lt;/item&gt;
 &lt;/pre&gt;
@@ -770,9 +709,7 @@ Sometimes, you might want to control the visibility of an item.  While normally 
  commandId=&quot;com.mycompany.myplugin.ConvertToWatchExpression&quot;&gt;
  &lt;location mnemonic=&quot;%mnemonic&quot;&gt;
   &lt;part id=&quot;org.eclipse.debug.ui.DebugView&quot;&gt;
-   &lt;popup&gt;
-    &lt;groupLocation id=&quot;additions&quot; /&gt;
-   &lt;/popup&gt;
+   &lt;popup path=&quot;additions&quot; /&gt;
   &lt;/part&gt;
  &lt;/location&gt;
  &lt;visibleWhen&gt;
@@ -796,9 +733,7 @@ The most common case is simply to make something visible when its handler is ena
  commandId=&quot;com.mycompany.myplugin.compareWithPatch&quot;&gt;
  &lt;location mnemonic=&quot;%mnemonic&quot;&gt;
   &lt;part id=&quot;MyPart&quot;&gt;
-   &lt;popup&gt;
-    &lt;groupLocation id=&quot;additions&quot; /&gt;
-   &lt;/popup&gt;
+   &lt;popup path=&quot;additions&quot; /&gt;
   &lt;/part&gt;
  &lt;/location&gt;
  &lt;visibleWhen checkEnabled=&quot;true&quot; /&gt;
@@ -812,9 +747,7 @@ Any item associated with a command can include parameter values.  If the paramet
  id=&quot;com.mycompany.myplugin.RunHistory&quot;
  commandId=&quot;com.mycompany.myplugin.RunHistory&quot;&gt;
  &lt;location&gt;
-  &lt;menubar&gt;
-   &lt;menuLocation id=&quot;org.eclipse.ui.run&quot; /&gt;
-  &lt;/menubar&gt;
+  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
  &lt;parameter name=&quot;index&quot; value=&quot;1&quot; /&gt;
 &lt;/item&gt;
@@ -828,9 +761,7 @@ It also possible to specify relative ordering.  This is done using the order att
  commandId=&quot;com.mycompany.myplugin.MyFirstCommand&quot;&gt;
  &lt;location&gt;
   &lt;order position=&quot;start&quot; /&gt;
-  &lt;menubar&gt;
-   &lt;menuLocation id=&quot;org.eclipse.ui.run&quot; /&gt;
-  &lt;/menubar&gt;
+  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
 &lt;/item&gt;
 &lt;item
@@ -838,9 +769,7 @@ It also possible to specify relative ordering.  This is done using the order att
  commandId=&quot;com.mycompany.myplugin.MySecondCommand&quot;&gt;
  &lt;location&gt;
   &lt;order position=&quot;after&quot; relativeTo=&quot;com.mycompany.myplugin.MyFirstItem&quot; /&gt;
-  &lt;menubar&gt;
-   &lt;menuLocation id=&quot;org.eclipse.ui.run&quot; /&gt;
-  &lt;/menubar&gt;
+  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
 &lt;/item&gt;
 &lt;/pre&gt;
@@ -852,18 +781,14 @@ If you require direct access to the widgets (e.g., for rendering a combo box), t
  id=&quot;com.mycompany.myplugin.MyComboBoxSimple&quot;
  class=&quot;com.mycompany.myplugin.MyComboBox&quot; /&gt;
  &lt;location&gt;
-  &lt;toolbar&gt;
-   &lt;groupLocation id=&quot;myGroup&quot;&gt;
-  &lt;/toolbar&gt;
+  &lt;toolbar path=&quot;myGroup&quot;&gt;
  &lt;/location&gt;
 &lt;/widget&gt;
 &lt;widget
  id=&quot;com.mycompany.myplugin.MyComboBoxParameterized1&quot;
  class=&quot;com.mycompany.myplugin.MyComboBox:a,b,c&quot;&gt;
  &lt;location&gt;
-  &lt;toolbar&gt;
-   &lt;groupLocation id=&quot;myGroup&quot; /&gt;
-  &lt;/toolbar&gt;
+  &lt;toolbar path=&quot;myGroup&quot; /&gt;
  &lt;/location&gt;
 &lt;/widget&gt;
 &lt;widget
@@ -874,9 +799,7 @@ If you require direct access to the widgets (e.g., for rendering a combo box), t
   &lt;parameter name=&quot;editable&quot; value=&quot;false&quot; /&gt;
  &lt;/class&gt;
  &lt;location&gt;
-  &lt;toolbar&gt;
-   &lt;groupLocation id=&quot;myGroup&quot; /&gt;
-  &lt;/toolbar&gt;
+  &lt;toolbar pathd=&quot;myGroup&quot; /&gt;
  &lt;/location&gt;
 &lt;/widget&gt;
 &lt;/pre&gt;
@@ -888,11 +811,7 @@ The most complex contribution is probably the tool bar item with a drop-down men
  id=&quot;com.mycompany.myplugin.ToolBarDropDown&quot;
  commandId=&quot;com.mycompany.myplugin.ClickCommand&quot;&gt;
  &lt;location imageStyle=&quot;toolbar&quot;&gt;
-  &lt;toolbar&gt;
-   &lt;groupLocation id=&quot;launchActionSet&quot;&gt;
-    &lt;groupLocation id=&quot;debug&quot; /&gt;
-   &lt;/groupLocation&gt;
-  &lt;/toolbar&gt;
+  &lt;toolbar path=&quot;launchActionSet/debug&quot; /&gt;
  &lt;/location&gt;
 &lt;/item&gt;
 &lt;menu
@@ -923,9 +842,7 @@ It is possible to add an existing menu element of any kind (i.e., menu, group, i
 &lt;modification&gt;
  &lt;reference id=&quot;SomeoneElse&apos;sMenu&quot; type=&quot;menu&quot;&gt;
  &lt;location&gt;
-  &lt;menubar&gt;
-   &lt;menuLocation id=&quot;org.eclipse.ui.run&quot; /&gt;
-  &lt;/menubar&gt;
+  &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
 &lt;/modification&gt;
 &lt;/pre&gt;
