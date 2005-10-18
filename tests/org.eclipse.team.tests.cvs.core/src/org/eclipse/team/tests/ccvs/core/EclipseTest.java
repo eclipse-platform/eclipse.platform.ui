@@ -416,7 +416,7 @@ public class EclipseTest extends ResourceTest {
 		
 		RemoteFolder remote = new RemoteFolder(null, repository, sourceModule == null ? project.getName() : sourceModule, tag);
 		executeHeadless(new CheckoutSingleProjectOperation(null, remote, project, null, false /* the project is not preconfigured */) {
-			public boolean promptToOverwrite(String title, String msg) {
+			public boolean promptToOverwrite(String title, String msg, IResource resource) {
 				return true;
 			}
 		});
