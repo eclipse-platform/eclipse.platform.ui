@@ -29,6 +29,7 @@
    <extension-point id="importWizards" name="%ExtPoint.importWizards" schema="schema/importWizards.exsd"/>
    <extension-point id="intro" name="%ExtPoint.intro" schema="schema/intro.exsd"/>
    <extension-point id="keywords" name="%ExtPoint.keywords" schema="schema/keywords.exsd"/>
+   <extension-point id="menus" name="%ExtPoint.menus" schema="schema/menus.exsd"/>
    <extension-point id="newWizards" name="%ExtPoint.newWizards" schema="schema/newWizards.exsd"/>
    <extension-point id="perspectiveExtensions" name="%ExtPoint.perspectiveExtensions" schema="schema/perspectiveExtensions.exsd"/>
    <extension-point id="perspectives" name="%ExtPoint.perspectives" schema="schema/perspectives.exsd"/>
