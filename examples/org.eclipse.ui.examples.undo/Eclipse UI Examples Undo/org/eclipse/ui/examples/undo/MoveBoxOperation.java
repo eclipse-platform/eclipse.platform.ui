@@ -79,14 +79,14 @@ public class MoveBoxOperation extends BoxOperation {
 		stringBuffer.append(new Integer(origin.x).toString());
 		stringBuffer.append(", "); //$NON-NLS-1$
 		stringBuffer.append(new Integer(origin.y).toString());
-		stringBuffer.append(')'); //$NON-NLS-1$
+		stringBuffer.append(')');
 		stringBuffer.append(", "); //$NON-NLS-1$
 		stringBuffer.append("("); //$NON-NLS-1$
 		stringBuffer.append(new Integer(target.x).toString());
 		stringBuffer.append(", "); //$NON-NLS-1$
 		stringBuffer.append(new Integer(target.y).toString());
-		stringBuffer.append(')'); //$NON-NLS-1$
-		stringBuffer.append(']'); //$NON-NLS-1$
+		stringBuffer.append(')');
+		stringBuffer.append(']');
 		return stringBuffer.toString();
 	}
 
