@@ -288,6 +288,85 @@
                toolbarPath="workingSets"/>
       </actionSet>
    </extension>
+   
+   
+   <!-- TODO Replacement for the above actionSet extension point.  This is just
+   to help me with writing the parser for the menus extension point.  This is
+   likely not in its final form.  (Note: the handlers are missing) -->
+   <extension
+   		point="org.eclipse.ui.commandImages">
+   		<image
+   			commandId="org.eclipse.ui.navigate.goToResource"
+            icon="icons/full/elcl16/gotoobj_tsk.gif" />
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <actionSet
+            label="%NavigateActionSet.label"
+            description="%NavigateActionSet.description"
+            visible="false"
+            id="org.eclipse.ui.NavigateActionSet">
+            <reference id="goToResource" />
+            <reference id="org.eclipse.ui.OpenWorkspaceFile" />
+      </actionSet>
+      
+      <item
+      		commandId="org.eclipse.ui.navigate.goToResource"
+            id="goToResource">
+            <location mnemonic="%GoToResourceItem.mnemonic">
+            	<bar type="menu" path="navigate/goTo" />
+            </location>
+      </item>
+      <item
+      		commandId="org.eclipse.ui.navigate.openResource"
+            id="org.eclipse.ui.OpenWorkspaceFile">
+			<location mnemonic="%OpenResourceItem.mnemonic">
+				<bar type="menu" path="navigate/open.ext2" />
+			</location>
+	  </item>
+	  
+      <actionSet
+            label="%KeyBindingActionSet.label"
+            visible="true"
+            id="org.eclipse.ui.actionSet.keyBindings">
+            <reference id="org.eclipse.ui.actions.showKeyAssistHandler" />
+      </actionSet>
+      
+      <item
+            id="org.eclipse.ui.actions.showKeyAssistHandler"
+            commandId="org.eclipse.ui.window.showKeyAssist">
+            <location>
+				<bar type="menu" path="help/group.assist" />
+            </location>
+      </item>
+      
+      <actionSet
+            label="%WorkingSetsActionSet.label"
+            description="%WorkingSetsActionSet.description"
+            visible="false"
+            id="org.eclipse.ui.WorkingSetActionSet">
+            <reference id="selectWorkingSets" />
+      </actionSet>
+      
+      <item
+           commandId="org.eclipse.ui.navigate.selectWorkingSets"
+           id="selectWorkingSets"
+           menuId="selectWorkingSets.pulldown">
+           <location>
+           		<bar type="menu" path="window/additions" />
+           </location>
+           <location>
+           		<bar type="tool" path="workingSets" />
+           </location>
+      </item>
+      
+      <menu
+      		id="selectWorkingSets.pulldown">
+      		<dynamic class="org.eclipse.ui.menus.DynamicActionMenu:org.eclipse.ui.internal.actions.SelectWorkingSetsAction" />
+      </menu>
+   </extension>
+   
+   
    <extension
          point="org.eclipse.ui.decorators">
       <decorator

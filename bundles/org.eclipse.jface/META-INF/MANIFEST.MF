@@ -29,5 +29,6 @@ Export-Package: org.eclipse.jface,
  org.eclipse.jface.wizard.images
 Require-Bundle: org.eclipse.swt;visibility:=reexport,
  org.eclipse.core.commands;visibility:=reexport,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.core.expressions
 Eclipse-LazyStart: true

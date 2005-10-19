@@ -3,6 +3,7 @@
 	<name>org.eclipse.jface</name>
 	<comment></comment>
 	<projects>
+		<project>org.eclipse.core.expressions</project>
 		<project>org.eclipse.core.runtime.compatibility</project>
 		<project>org.eclipse.swt</project>
 	</projects>
