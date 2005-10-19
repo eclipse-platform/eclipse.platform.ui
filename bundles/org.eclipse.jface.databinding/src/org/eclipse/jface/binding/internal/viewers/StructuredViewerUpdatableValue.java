@@ -13,6 +13,7 @@ package org.eclipse.jface.binding.internal.viewers;
 
 import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.UpdatableValue;
+import org.eclipse.jface.binding.swt.SWTBindingConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -22,11 +23,9 @@ import org.eclipse.jface.viewers.StructuredViewer;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class StructuredViewerUpdatableValue extends UpdatableValue {
-
-	public static final String SELECTION = "selection";
 
 	private final StructuredViewer viewer;
 
@@ -42,7 +41,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 			String attribute) {
 		this.viewer = viewer;
 		this.attribute = attribute;
-		if (attribute.equals(SELECTION)) {
+		if (attribute.equals(SWTBindingConstants.SELECTION)) {
 			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (!updating) {
@@ -58,7 +57,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 	public void setValue(Object value) {
 		try {
 			updating = true;
-			if (attribute.equals(SELECTION)) {
+			if (attribute.equals(SWTBindingConstants.SELECTION)) {
 				viewer.setSelection(value == null ? StructuredSelection.EMPTY
 						: new StructuredSelection(value));
 			}
@@ -68,7 +67,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 	}
 
 	public Object getValue() {
-		if (attribute.equals(SELECTION)) {
+		if (attribute.equals(SWTBindingConstants.SELECTION)) {
 			ISelection selection = viewer.getSelection();
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection sel = (IStructuredSelection) selection;
@@ -81,7 +80,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		if (attribute.equals(SELECTION)) {
+		if (attribute.equals(SWTBindingConstants.SELECTION)) {
 			return Object.class;
 		} else {
 			throw new AssertionError("unexpected attribute");

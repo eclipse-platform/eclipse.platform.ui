@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.UpdatableValue;
+import org.eclipse.jface.binding.swt.SWTBindingConstants;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Combo;
@@ -25,16 +26,6 @@ import org.eclipse.swt.widgets.Combo;
  *
  */
 public class ComboUpdatableValue extends UpdatableValue {
-
-	/**
-	 * 
-	 */
-	public static final String TEXT = "text"; //$NON-NLS-1$
-
-	/**
-	 * 
-	 */
-	public static final String ITEMS = "items"; //$NON-NLS-1$
 
 	private final Combo combo;
 
@@ -49,7 +40,7 @@ public class ComboUpdatableValue extends UpdatableValue {
 	public ComboUpdatableValue(Combo combo, String attribute) {
 		this.combo = combo;
 		this.attribute = attribute;
-		if (attribute.equals(TEXT)) {
+		if (attribute.equals(SWTBindingConstants.TEXT)) {
 			combo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
@@ -57,7 +48,7 @@ public class ComboUpdatableValue extends UpdatableValue {
 					}
 				}
 			});
-		} else if (!attribute.equals(ITEMS)) {
+		} else if (!attribute.equals(SWTBindingConstants.ITEMS)) {
 			throw new IllegalArgumentException();
 		}
 	}
@@ -65,10 +56,10 @@ public class ComboUpdatableValue extends UpdatableValue {
 	public void setValue(Object value) {
 		try {
 			updating = true;
-			if (attribute.equals(TEXT)) {
+			if (attribute.equals(SWTBindingConstants.TEXT)) {
 				String stringValue = (String) value;
 				combo.setText(stringValue);
-			} else if (attribute.equals(ITEMS)) {
+			} else if (attribute.equals(SWTBindingConstants.ITEMS)) {
 				List listValue = (List) value;
 				combo.setItems((String[]) listValue
 						.toArray(new String[listValue.size()]));
@@ -79,9 +70,9 @@ public class ComboUpdatableValue extends UpdatableValue {
 	}
 
 	public Object getValue() {
-		if (attribute.equals(TEXT)) {
+		if (attribute.equals(SWTBindingConstants.TEXT)) {
 			return combo.getText();
-		} else if (attribute.equals(ITEMS)) {
+		} else if (attribute.equals(SWTBindingConstants.ITEMS)) {
 			return Arrays.asList(combo.getItems());
 		} else {
 			throw new AssertionError("unexpected attribute");
@@ -89,9 +80,9 @@ public class ComboUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		if (attribute.equals(TEXT)) {
+		if (attribute.equals(SWTBindingConstants.TEXT)) {
 			return String.class;
-		} else if (attribute.equals(ITEMS)) {
+		} else if (attribute.equals(SWTBindingConstants.ITEMS)) {
 			return List.class;
 		} else {
 			throw new AssertionError("unexpected attribute");

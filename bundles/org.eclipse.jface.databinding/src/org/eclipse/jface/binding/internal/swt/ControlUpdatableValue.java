@@ -11,6 +11,7 @@
 package org.eclipse.jface.binding.internal.swt;
 
 import org.eclipse.jface.binding.UpdatableValue;
+import org.eclipse.jface.binding.swt.SWTBindingConstants;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -19,7 +20,6 @@ import org.eclipse.swt.widgets.Control;
  */
 public class ControlUpdatableValue extends UpdatableValue {
 
-	private static final String ENABLED = "enabled"; //$NON-NLS-1$
 	private final Control control;
 
 	/**
@@ -28,7 +28,7 @@ public class ControlUpdatableValue extends UpdatableValue {
 	 */
 	public ControlUpdatableValue(Control control, String attribute) {
 		this.control = control;
-		if (!attribute.equals(ENABLED)) {
+		if (!attribute.equals(SWTBindingConstants.ENABLED)) {
 			throw new IllegalArgumentException();
 		}
 	}

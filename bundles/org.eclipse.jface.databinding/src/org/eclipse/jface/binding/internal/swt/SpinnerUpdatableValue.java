@@ -13,26 +13,12 @@ package org.eclipse.jface.binding.internal.swt;
 
 import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.UpdatableValue;
+import org.eclipse.jface.binding.swt.SWTBindingConstants;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Spinner;
 
 public class SpinnerUpdatableValue extends UpdatableValue {
-
-	/**
-	 * 
-	 */
-	public static final String SELECTION = "selection"; //$NON-NLS-1$
-
-	/**
-	 * 
-	 */
-	public static final String MAX = "max"; //$NON-NLS-1$
-
-	/**
-	 * 
-	 */
-	public static final String MIN = "min"; //$NON-NLS-1$
 
 	private final Spinner spinner;
 
@@ -47,7 +33,7 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 	public SpinnerUpdatableValue(Spinner spinner, String attribute) {
 		this.spinner = spinner;
 		this.attribute = attribute;
-		if (attribute.equals(SELECTION)) {
+		if (attribute.equals(SWTBindingConstants.SELECTION)) {
 			spinner.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
@@ -55,7 +41,8 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 					}
 				}
 			});
-		} else if (!attribute.equals(MIN) && !attribute.equals(MAX)) {
+		} else if (!attribute.equals(SWTBindingConstants.MIN)
+				&& !attribute.equals(SWTBindingConstants.MAX)) {
 			throw new IllegalArgumentException();
 		}
 	}
@@ -64,11 +51,11 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 		try {
 			updating = true;
 			int intValue = ((Integer) value).intValue();
-			if (attribute.equals(SELECTION)) {
+			if (attribute.equals(SWTBindingConstants.SELECTION)) {
 				spinner.setSelection(intValue);
-			} else if (attribute.equals(MIN)) {
+			} else if (attribute.equals(SWTBindingConstants.MIN)) {
 				spinner.setMinimum(intValue);
-			} else if (attribute.equals(MAX)) {
+			} else if (attribute.equals(SWTBindingConstants.MAX)) {
 				spinner.setMaximum(intValue);
 			}
 		} finally {
@@ -78,11 +65,11 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 
 	public Object getValue() {
 		int value;
-		if (attribute.equals(SELECTION)) {
+		if (attribute.equals(SWTBindingConstants.SELECTION)) {
 			value = spinner.getSelection();
-		} else if (attribute.equals(MIN)) {
+		} else if (attribute.equals(SWTBindingConstants.MIN)) {
 			value = spinner.getMinimum();
-		} else if (attribute.equals(MAX)) {
+		} else if (attribute.equals(SWTBindingConstants.MAX)) {
 			value = spinner.getMaximum();
 		} else {
 			throw new AssertionError("unexpected attribute");

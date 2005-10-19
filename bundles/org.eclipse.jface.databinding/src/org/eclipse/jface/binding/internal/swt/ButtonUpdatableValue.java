@@ -13,59 +13,59 @@ package org.eclipse.jface.binding.internal.swt;
 
 import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.UpdatableValue;
-import org.eclipse.jface.binding.swt.SWTBindingConstants;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * @since 3.2
- *
+ * 
  */
-public class TableUpdatableValue extends UpdatableValue {
+public class ButtonUpdatableValue extends UpdatableValue {
 
-	private final Table table;
+	private final Button button;
 
 	private boolean updating = false;
 
-	/**
-	 * @param table
-	 * @param attribute
-	 */
-	public TableUpdatableValue(Table table, String attribute) {
-		this.table = table;
-		if (attribute.equals(SWTBindingConstants.SELECTION)) {
-			table.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {
-					if (!updating) {
-						fireChangeEvent(IChangeEvent.CHANGE, null, null);
-					}
-				}
+	private Listener updateListener = new Listener() {
+		public void handleEvent(Event event) {
+			if (!updating) {
+				fireChangeEvent(IChangeEvent.CHANGE, null, new Boolean(button
+						.getSelection()));
+			}
+		}
+	};
 
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelected(e);
-				}
-			});
-		} else {
-			throw new IllegalArgumentException();
+	/**
+	 * @param text
+	 * @param updatePolicy
+	 * @param validatePolicy
+	 */
+	public ButtonUpdatableValue(Button button, int updatePolicy) {
+		this.button = button;
+		if (updatePolicy != SWT.None) {
+			button.addListener(SWT.Selection, updateListener);
+			button.addListener(SWT.DefaultSelection, updateListener);
 		}
 	}
 
 	public void setValue(Object value) {
 		try {
 			updating = true;
-			table.setSelection(((Integer) value).intValue());
+			button.setSelection(value == null ? false : ((Boolean) value)
+					.booleanValue()); //$NON-NLS-1$
 		} finally {
 			updating = false;
 		}
 	}
 
 	public Object getValue() {
-		return new Integer(table.getSelectionIndex());
+		return new Boolean(button.getSelection());
 	}
 
 	public Class getValueType() {
-		return Integer.class;
+		return String.class;
 	}
 
 }

@@ -13,6 +13,7 @@ package org.eclipse.jface.binding.swt;
 import org.eclipse.jface.binding.DatabindingService;
 import org.eclipse.jface.binding.IUpdatable;
 import org.eclipse.jface.binding.IUpdatableFactory;
+import org.eclipse.jface.binding.internal.swt.ButtonUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.ComboUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.ControlUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.LabelUpdatableValue;
@@ -28,6 +29,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -37,12 +39,13 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class SWTDatabindingService extends DatabindingService {
-	
-	public static String  JFACE_VIEWER_CONTENT = "content";
-	public static String  JFACE_VIEWER_SELECTION = "selection";
+
+	public static String JFACE_VIEWER_CONTENT = "content";
+
+	public static String JFACE_VIEWER_SELECTION = "selection";
 
 	private final int validatePolicy;
 
@@ -72,46 +75,77 @@ public class SWTDatabindingService extends DatabindingService {
 		super.registerValueFactories();
 		addUpdatableFactory(Control.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				return new ControlUpdatableValue((Control) object,
-						(String) attribute);
+				if (attribute.equals(SWTBindingConstants.ENABLED)) {
+					return new ControlUpdatableValue((Control) object,
+							(String) attribute);
+				}
+				return null;
 			}
 		});
 		addUpdatableFactory(Spinner.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				return new SpinnerUpdatableValue((Spinner) object,
-						(String) attribute);
+				if (attribute.equals(SWTBindingConstants.SELECTION)
+						|| attribute.equals(SWTBindingConstants.MIN)
+						|| attribute.equals(SWTBindingConstants.MAX)) {
+					return new SpinnerUpdatableValue((Spinner) object,
+							(String) attribute);
+				}
+				return null;
 			}
 		});
 		addUpdatableFactory(Text.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				return new TextUpdatableValue((Text) object, SWT.Modify,
-						SWT.Modify);
+				if (attribute.equals(SWTBindingConstants.TEXT)) {
+					return new TextUpdatableValue((Text) object, SWT.Modify,
+							SWT.Modify);
+				}
+				return null;
 			}
 		});
 		addUpdatableFactory(Label.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				return new LabelUpdatableValue((Label) object);
+				if (attribute.equals(SWTBindingConstants.TEXT)) {
+					return new LabelUpdatableValue((Label) object);
+				}
+				return null;
+			}
+		});
+		addUpdatableFactory(Button.class, new IUpdatableFactory() {
+			public IUpdatable createUpdatable(Object object, Object attribute) {
+				if (attribute.equals(SWTBindingConstants.SELECTION)) {
+					return new ButtonUpdatableValue((Button) object, SWT.Selection);
+				}
+				return null;
 			}
 		});
 		addUpdatableFactory(Combo.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				return new ComboUpdatableValue((Combo) object,
-						(String) attribute);
+				if (attribute.equals(SWTBindingConstants.TEXT)
+						|| attribute.equals(SWTBindingConstants.SELECTION)) {
+					return new ComboUpdatableValue((Combo) object,
+							(String) attribute);
+				}
+				return null;
 			}
 		});
 		addUpdatableFactory(StructuredViewer.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				return new StructuredViewerUpdatableValue(
-						(StructuredViewer) object, (String) attribute);
+				if (attribute.equals(SWTBindingConstants.SELECTION)) {
+					return new StructuredViewerUpdatableValue(
+							(StructuredViewer) object, (String) attribute);
+				}
+				return null;
 			}
 		});
 
 		addUpdatableFactory(AbstractListViewer.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
 				if (attribute.equals(JFACE_VIEWER_SELECTION))
-					return new StructuredViewerUpdatableValue((AbstractListViewer) object, (String) attribute);
+					return new StructuredViewerUpdatableValue(
+							(AbstractListViewer) object, (String) attribute);
 				else if (attribute.equals(JFACE_VIEWER_CONTENT))
-				    return new UpdatableCollectionViewer((AbstractListViewer) object);
+					return new UpdatableCollectionViewer(
+							(AbstractListViewer) object);
 				return null;
 			}
 		});
@@ -124,7 +158,8 @@ public class SWTDatabindingService extends DatabindingService {
 
 		addUpdatableFactory(Table.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				return new TableUpdatableValue((Table) object, (String) attribute);
+				return new TableUpdatableValue((Table) object,
+						(String) attribute);
 			}
 		});
 	}
