@@ -8,12 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- *  Created Oct 14, 2005 by Gili Mendel
- * 
- *  $RCSfile: IUpdatableFactory.java,v $
- *  $Revision: 1.2 $  $Date: 2005/10/18 17:30:52 $ 
- */
 
 package org.eclipse.jface.binding;
 

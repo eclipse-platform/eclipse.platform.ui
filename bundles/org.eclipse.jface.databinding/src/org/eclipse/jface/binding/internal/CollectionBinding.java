@@ -1,6 +1,3 @@
-package org.eclipse.jface.binding.internal;
-
-
 /*******************************************************************************
  * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -11,24 +8,22 @@ package org.eclipse.jface.binding.internal;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- *  Created Oct 18, 2005 by Gili Mendel
- * 
- *  $RCSfile: $
- *  $Revision: $  $Date: $ 
- */
- 
+package org.eclipse.jface.binding.internal;
 
-
-import org.eclipse.jface.binding.*;
- 
+import org.eclipse.jface.binding.DatabindingService;
+import org.eclipse.jface.binding.IChangeEvent;
+import org.eclipse.jface.binding.IChangeListener;
+import org.eclipse.jface.binding.IConverter;
+import org.eclipse.jface.binding.IUpdatable;
+import org.eclipse.jface.binding.IUpdatableCollection;
+import org.eclipse.jface.binding.IValidator;
 
 /**
  * 
- *
+ * 
  */
 public class CollectionBinding implements IChangeListener {
-	
+
 	private final DatabindingService context;
 
 	private final IUpdatableCollection target;
@@ -38,7 +33,6 @@ public class CollectionBinding implements IChangeListener {
 	private final IConverter converter;
 
 	private final IValidator validator;
-	
 
 	/**
 	 * @param context
@@ -47,8 +41,8 @@ public class CollectionBinding implements IChangeListener {
 	 * @param converter
 	 * @param validator
 	 */
-	public CollectionBinding(DatabindingService context, 
-			IUpdatableCollection target,IUpdatableCollection model, 
+	public CollectionBinding(DatabindingService context,
+			IUpdatableCollection target, IUpdatableCollection model,
 			IConverter converter, IValidator validator) {
 		super();
 		this.context = context;
@@ -56,44 +50,45 @@ public class CollectionBinding implements IChangeListener {
 		this.model = model;
 		this.converter = converter;
 		this.validator = validator;
-		
+
 		initialize();
 	}
-	
+
 	private void initialize() {
 		target.addChangeListener(this);
-		model.addChangeListener(this);		
+		model.addChangeListener(this);
 	}
 
-
 	public void handleChange(IChangeEvent changeEvent) {
-		IUpdatable notifier =  changeEvent.getUpdatable();
+		IUpdatable notifier = changeEvent.getUpdatable();
 		if (notifier == target) {
 			if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
 				// we are notified of a pending change, do validation
 				// and
 				// veto the change if it is not valid
-	            //TODO verify
+				// TODO verify
 			} else {
 				// the target (usually a widget) has changed, validate
 				// the
 				// value and update the source
-				//TODO validation
+				// TODO validation
 				update(model, changeEvent);
 			}
-		} else if (notifier == model){
-			//TODO validation
+		} else if (notifier == model) {
+			// TODO validation
 			update(target, changeEvent);
-		}			
+		}
 	}
 
 	/**
 	 * Update the collection from the event.
-	 * @param needsUpdate IUpdatable to be updated
-	 * @param event 
+	 * 
+	 * @param needsUpdate
+	 *            IUpdatable to be updated
+	 * @param event
 	 */
 	public void update(IUpdatableCollection needsUpdate, IChangeEvent event) {
-		int row = event.getPosition();	
+		int row = event.getPosition();
 		if (event.getChangeType() == IChangeEvent.CHANGE)
 			needsUpdate.setElement(row, event.getNewValue());
 		else if (event.getChangeType() == IChangeEvent.ADD)
@@ -101,7 +96,6 @@ public class CollectionBinding implements IChangeListener {
 		else if (event.getChangeType() == IChangeEvent.REMOVE)
 			needsUpdate.removeElement(row);
 	}
-	
 
 	/**
 	 * Copy model's element into the target
@@ -110,12 +104,11 @@ public class CollectionBinding implements IChangeListener {
 		// Remove old, if any
 		while (target.getSize() > 0)
 			target.removeElement(0);
-		
+
 		// Set the target List with the content of the Model List
 		for (int i = 0; i < model.getSize(); i++) {
 			target.addElement(model.getElement(i), i);
 		}
 	}
-
 
 }

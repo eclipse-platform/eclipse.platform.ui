@@ -8,10 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- *  $RCSfile: TextBinding.java,v $
- *  $Revision: 1.3 $  $Date: 2005/10/18 17:38:36 $ 
- */
 package org.eclipse.jface.examples.binding.javabean;
 
 import org.eclipse.jface.binding.BindingException;
