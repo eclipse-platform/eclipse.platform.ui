@@ -124,8 +124,8 @@ public final class PerformRefactoringSessionOperation implements IWorkspaceRunna
 				final RefactoringDescriptor descriptor= fRefactoringDescriptors[index];
 				if (!descriptor.isUnknown()) {
 					final Refactoring refactoring= factory.createRefactoring(descriptor);
-					if (refactoring instanceof IInitializableRefactoringObject) {
-						final IInitializableRefactoringObject object= (IInitializableRefactoringObject) refactoring;
+					if (refactoring instanceof IInitializableRefactoringComponent) {
+						final IInitializableRefactoringComponent object= (IInitializableRefactoringComponent) refactoring;
 						final RefactoringArguments arguments= factory.createArguments(descriptor);
 						if (arguments != null) {
 							final RefactoringStatus status= object.initialize(arguments);

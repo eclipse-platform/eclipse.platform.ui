@@ -15,7 +15,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 /**
- * Interface for refactoring objects which can be initialized by refactoring
+ * Interface for refactoring components which can be initialized by refactoring
  * arguments.
  * <p>
  * This interface is intended to be implemented by clients.
@@ -26,10 +26,10 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
  * 
  * @since 3.2
  */
-public interface IInitializableRefactoringObject {
+public interface IInitializableRefactoringComponent {
 
 	/**
-	 * Initializes the refactoring object with the refactoring arguments.
+	 * Initializes the refactoring component with the refactoring arguments.
 	 * 
 	 * @param arguments
 	 *            the refactoring arguments
