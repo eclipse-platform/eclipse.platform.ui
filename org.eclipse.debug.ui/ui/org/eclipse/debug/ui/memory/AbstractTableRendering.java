@@ -72,16 +72,22 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -194,6 +200,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	private int fPageSize;
 	private NextPageAction fNextAction;
 	private PrevPageAction fPrevAction;
+
+	private Shell fToolTipShell;
 	
 	private class EventHandleLock
 	{
@@ -654,6 +662,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		createTableViewer(fPageBook);
 		
 		fTableViewer.getTable().redraw();
+		createToolTip();
 		
 		return fPageBook;
 	}
@@ -1056,6 +1065,10 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		TableItem row = cursor.getRow();
 		int col = cursor.getColumn();
 		
+		return getAddressFromTableItem(row, col);
+	}
+
+	private BigInteger getAddressFromTableItem(TableItem row, int col) {
 		if (row == null)
 			return null;
 		
@@ -2034,6 +2047,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				syncService.removePropertyChangeListener(this);
 			
 			DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+			
+			fToolTipShell.dispose();
 			
 			super.dispose();
 
@@ -3183,6 +3198,186 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	private void setSelectedAddress(BigInteger address)
 	{
 		fSelectedAddress = address;
+	}
+	
+	/**
+	 * Setup the viewer so it supports hovers to show the offset of each field
+	 */
+	private void createToolTip() {
+		
+		fToolTipShell = new Shell(fTableViewer.getTable().getDisplay().getActiveShell(), SWT.ON_TOP | SWT.RESIZE );
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 1;
+		gridLayout.marginWidth = 2;
+		gridLayout.marginHeight = 0;
+		fToolTipShell.setLayout(gridLayout);
+		fToolTipShell.setBackground(fTableViewer.getTable().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		
+		final Control toolTipControl = createToolTipControl(fToolTipShell);
+		
+		if (toolTipControl == null)
+		{
+			// if client decide not to use tooltip support
+			fToolTipShell.dispose();
+			return;
+		}
+		
+		MouseTrackAdapter listener = new MouseTrackAdapter(){
+			
+			private TableItem fTooltipItem = null;
+			private int fCol = -1;
+			
+			public void mouseExit(MouseEvent e){
+				fToolTipShell.setVisible(false);
+				fTooltipItem = null;
+			}
+			
+			public void mouseHover(MouseEvent e){
+				
+				Point hoverPoint = new Point(e.x, e.y);
+				Control control = null;
+				
+				if (e.widget instanceof Control)
+					control = (Control)e.widget;
+				
+				if (control == null)
+					return;
+				
+				hoverPoint = control.toDisplay(hoverPoint);
+				TableItem item = getItem(hoverPoint);
+				int column = getColumn(hoverPoint);
+				
+				//Only if there is a change in hover
+				if(this.fTooltipItem != item || fCol != column){
+					
+					//Keep Track of the latest hover
+					fTooltipItem = item;
+					fCol = column;
+					
+					if(item != null){
+						toolTipAboutToShow(toolTipControl, fTooltipItem, column);
+						
+						//Setting location of the tooltip
+						Rectangle shellBounds = fToolTipShell.getBounds();
+						shellBounds.x = hoverPoint.x;
+						shellBounds.y = hoverPoint.y + item.getBounds(0).height;
+						
+						fToolTipShell.setBounds(shellBounds);
+						fToolTipShell.pack();
+						
+						fToolTipShell.setVisible(true);
+					}
+					else {
+						fToolTipShell.setVisible(false);
+					}
+				}
+			}
+		};
+		
+		fTableViewer.getTable().addMouseTrackListener(listener);
+		fTableCursor.addMouseTrackListener(listener);
+	}
+	
+	/**
+	 * Bug with table widget,BUG 113015, the widget is not able to return the correct
+	 * table item if SWT.FULL_SELECTION is not on when the table is created.
+	 * Created the following function to work around the problem.
+	 * We can remove this method when the bug is fixed.
+	 * @param point
+	 * @return the table item where the point is located, return null if the item cannot be located.
+	 */
+	private TableItem getItem(Point point)
+	{
+		TableItem[] items = fTableViewer.getTable().getItems();
+		for (int i=0; i<items.length; i++)
+		{
+			Point start = new Point(items[i].getBounds(0).x, items[i].getBounds(0).y);
+			start = fTableViewer.getTable().toDisplay(start);
+			Point end = new Point(start.x + items[i].getBounds(0).width, start.y + items[i].getBounds(0).height);
+			
+			if (start.y < point.y && point.y < end.y)
+				return items[i];
+		}
+		return null;
+	}
+	
+	/**
+	 * Method for figuring out which column the point is located.
+	 * @param point
+	 * @return the column index where the point is located, return -1 if column is not found.
+	 */
+	private int getColumn(Point point)
+	{
+		int colCnt = fTableViewer.getTable().getColumnCount();
+		TableItem item = fTableViewer.getTable().getItem(0);
+		for (int i=0; i<colCnt; i++)
+		{
+			Point start = new Point(item.getBounds(i).x, item.getBounds(i).y);
+			start = fTableViewer.getTable().toDisplay(start);
+			Point end = new Point(start.x + item.getBounds(i).width, start.y + item.getBounds(i).height);
+			
+			if (start.x < point.x && end.x > point.x)
+				return i;
+		}
+		return -1;
+	}
+
+	/**
+	 * @param shell
+	 * @return the tooltip control to be displayed
+	 */
+	protected Control createToolTipControl(Composite composite) {
+		Control fToolTipLabel = new Label(composite, SWT.NONE);
+		fToolTipLabel.setForeground(fTableViewer.getTable().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+		fToolTipLabel.setBackground(fTableViewer.getTable().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		fToolTipLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL |
+				GridData.VERTICAL_ALIGN_CENTER));
+		return fToolTipLabel;
+	}
+	
+	/**
+	 * Called when the tool tip is about to show in this rendering.
+	 * Clients who overrides <code>createTooltipControl</code> may need to
+	 * also override this method to ensure that the tooltip shows up properly
+	 * in their customized control.
+	 * @param toolTipControl - the control for displaying the tooltip
+	 * @param item - the table item where the mouse is pointing.
+	 * @param col - the column at which the mouse is pointing.
+	 */
+	protected void toolTipAboutToShow(Control toolTipControl, TableItem item, int col)
+	{
+		if (toolTipControl instanceof Label)
+		{
+			BigInteger address = getAddressFromTableItem(item, col);
+			if (address != null)
+			{
+				Object data = item.getData();
+				if (data instanceof TableRenderingLine && col > 0)
+				{
+					TableRenderingLine line = (TableRenderingLine)data;
+					int start = (col-1)*getBytesPerColumn();
+					int end = start + getBytesPerColumn();
+					MemoryByte[] bytes = line.getBytes(start, end);
+					
+					String str = getToolTipString(address, bytes);
+					
+					if (str != null)
+						((Label)toolTipControl).setText(str);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @param address
+	 * @param bytes
+	 * @return the tooltip string for the memory bytes located at the specified address
+	 */
+	protected String getToolTipString(BigInteger address, MemoryByte[] bytes)
+	{
+		StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
+		buf.append(address.toString(16).toUpperCase());
+		return buf.toString();
 	}
 
 	
