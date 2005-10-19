@@ -510,6 +510,9 @@ public class DatabindingService {
 	 */
 	private IUpdatable primCreateUpdatable(Class clazz, Object object,
 			Object featureID) throws BindingException {
+		
+//TODO:  Object will never get used,
+//		 need to also work this level implements before going up the hierarchy see AdapterManager.computeClassOrder
 		IUpdatableFactory factory = null;
 		while (factory == null && clazz != Object.class) {
 			factory = (IUpdatableFactory) updatableFactories.get(clazz);
@@ -519,6 +522,11 @@ public class DatabindingService {
 		IUpdatable result = null;
 		if (factory != null) {
 			result = factory.createUpdatable(object, featureID);
+			// It is possible that this (class) level's factory can not provide
+			// an Updatable for featureID
+			if (result == null) {
+				result = primCreateUpdatable(clazz, object, featureID);
+			}
 		}
 		if (result == null && parent != null) {
 			result = parent.createUpdatable(object, featureID);
