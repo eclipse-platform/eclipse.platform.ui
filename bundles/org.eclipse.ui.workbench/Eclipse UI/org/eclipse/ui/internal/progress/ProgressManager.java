@@ -1185,8 +1185,16 @@ public class ProgressManager extends ProgressProvider implements
     private void setUserInterfaceActive(boolean active) {
         IWorkbench workbench = PlatformUI.getWorkbench();
         Shell[] shells = workbench.getDisplay().getShells();
-        for (int i = 0; i < shells.length; i++) {
-            shells[i].setEnabled(active);
+        if (active) {
+	        for (int i = 0; i < shells.length; i++) {
+	            shells[i].setEnabled(active);
+	        }
+        }
+        else {
+        	// Deactive shells in reverse order
+	        for (int i = shells.length-1; i >= 0; i--) {
+	            shells[i].setEnabled(active);
+	        }
         }
     }
 
