@@ -31,6 +31,11 @@ public interface SWTBindingConstants {
 	 * Applies to Spinner
 	 */
 	public static final String MAX = "max"; //$NON-NLS-1$
+	
+	/**
+	 * Applies to Viewers
+	 */
+	public static final String CONTENT = "content"; //$NON-NLS-1$
 
 
 }
