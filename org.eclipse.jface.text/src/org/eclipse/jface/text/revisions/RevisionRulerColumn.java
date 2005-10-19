@@ -75,6 +75,9 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.IVerticalRulerListener;
 import org.eclipse.jface.text.source.LineRange;
 
+import org.eclipse.jface.internal.text.revisions.ChangeRegion;
+import org.eclipse.jface.internal.text.revisions.DiffApplier;
+
 /**
  * A vertical ruler column capable of displaying revision (aka. annotate) information..
  * Clients instantiate and configure object of this class.
@@ -129,7 +132,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		 */
 		public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleNumberOfLines) {
 			ChangeRegion region= getChangeRegion(lineRange.getStartLine());
-			return region == null ? null : region.fRevision.getHoverInfo();
+			return region == null ? null : region.getRevision().getHoverInfo();
 		}
 
 		/*
@@ -143,7 +146,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 
 	private final class ColorTool {
 		private static final double MAX_SHADING= 0.8;
-		private static final double MIN_SHADING= 0.1;
+		private static final double MIN_SHADING= 0.3;
 		private static final double FOCUS_COLOR_SHADING= 0.9;
 		
 		private List fRevisions= new ArrayList();
@@ -313,6 +316,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
 		 */
 		public void modelChanged(IAnnotationModel model) {
+			// TODO incremental
 			fChangeRegions= null;
 			postRedraw();
 		}
@@ -437,11 +441,6 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 	 */
 	private void handleDispose() {
 
-		if (fAnnotationModel != null) {
-			fAnnotationModel.removeAnnotationModelListener(fAnnotationListener);
-			fAnnotationModel= null;
-		}
-		
 		if (fLineDiffer != null) {
 			((IAnnotationModel) fLineDiffer).removeAnnotationModelListener(fAnnotationListener);
 			fLineDiffer= null;
@@ -538,17 +537,23 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 	}
 
 	private void paintChangeRegion(ChangeRegion region, GC gc, int y_shift, int lineheight) {
-		Rectangle box= computeBoxBounds(region, y_shift);
-		if (box == null)
-			return;
+		Revision revision= region.getRevision();
+		gc.setBackground(lookupColor(revision, false));
+		if (revision == fFocusRevision)
+			gc.setForeground(lookupColor(revision, true));
 		
-		gc.setBackground(lookupColor(region.fRevision, false));
-		
-		if (region.fRevision == fFocusRevision) {
-			gc.setForeground(lookupColor(region.fRevision, true));
-			paintHighlight(gc, box);
-		} else {
-			gc.fillRectangle(box);
+		List ranges= region.getAdjustedRanges();
+		for (Iterator it= ranges.iterator(); it.hasNext();) {
+			ILineRange range= (ILineRange) it.next();
+			Rectangle box= computeBoxBounds(range, y_shift);
+			if (box == null)
+				return;
+			
+			if (revision == fFocusRevision)
+				paintHighlight(gc, box);
+			else
+				gc.fillRectangle(box);
+			
 		}
 	}
 
@@ -595,6 +600,13 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		return fSharedColors.getColor(fColorTool.getColor(revision, focus));
 	}
 	
+	/**
+	 * Returns the change region that contains the given line in one of its adjusted lien ranges, or
+	 * <code>null</code> if there is none.
+	 * 
+	 * @param line the line of interest
+	 * @return the corresponding <code>ChangeRegion</code> or <code>null</code>
+	 */
 	private ChangeRegion getChangeRegion(int line) {
 		List regions= getRegionCache();
 		
@@ -603,18 +615,19 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		
 		for (Iterator it= regions.iterator(); it.hasNext();) {
 			ChangeRegion region= (ChangeRegion) it.next();
-			if (contains(region.fLines, line))
+			if (contains(region.getAdjustedRanges(), line))
 				return region;
 		}
 		
 		// line may be right after the last region
 		ChangeRegion lastRegion= (ChangeRegion) regions.get(regions.size() - 1);
-		if (line == lastRegion.fLines.getStartLine() + lastRegion.fLines.getNumberOfLines())
+		if (line == end(lastRegion.getAdjustedCoverage()))
 			return lastRegion;
 		return null;
 	}
 
 	/**
+	 * Returns the sublist of all <code>ChangeRegion</code>s that intersect with the given lines.
 	 * 
 	 * @param lines the model based lines of interest
 	 * @return elementType: ChangeRegion
@@ -623,12 +636,14 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		List regions= getRegionCache();
 
 		// return the interesting subset
+		int end= end(lines);
 		int first= -1, last= -1;
 		for (int i= 0; i < regions.size(); i++) {
 			ChangeRegion region= (ChangeRegion) regions.get(i);
-			if (first == -1 && intersects(region.fLines, lines))
+			int coverageEnd= end(region.getAdjustedCoverage());
+			if (first == -1 && coverageEnd > lines.getStartLine())
 				first= i;
-			if (intersects(region.fLines, lines)) {
+			if (first != -1 && coverageEnd > end) {
 				last= i;
 			}
 		}
@@ -655,9 +670,13 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 					ChangeRegion r1= (ChangeRegion) o1;
 					ChangeRegion r2= (ChangeRegion) o2;
 					
-					return r1.fLines.getStartLine() - r2.fLines.getStartLine();
+					// sort order is unaffected by diff information
+					return r1.getOriginalRange().getStartLine() - r2.getOriginalRange().getStartLine();
 				}
 			});
+			
+			if (fLineDiffer != null)
+				new DiffApplier().applyDiff(regions, fLineDiffer, fCachedTextViewer.getDocument().getNumberOfLines());
 			
 			fChangeRegions= regions;
 		}
@@ -668,12 +687,21 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		return fChangeRegions;
 	}
 
-	private final boolean contains(ILineRange range, int line) {
-		return range.getStartLine() <= line && range.getStartLine() + range.getNumberOfLines() > line;
+	private static final boolean contains(ILineRange range, int line) {
+		return range.getStartLine() <= line && end(range) > line;
 	}
 
-	private final boolean intersects(ILineRange one, ILineRange two) {
-		return one.getStartLine() < two.getStartLine() + two.getNumberOfLines() && two.getStartLine() < one.getStartLine() + one.getNumberOfLines();
+	private static final boolean contains(List ranges, int line) {
+		for (Iterator it= ranges.iterator(); it.hasNext();) {
+			ILineRange range= (ILineRange) it.next();
+			if (contains(range, line))
+				return true;
+		}
+		return false;
+	}
+	
+	private static int end(ILineRange one) {
+		return one.getStartLine() + one.getNumberOfLines();
 	}
 	
 	/**
@@ -733,7 +761,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		int widgetEndLine= -1;
 		if (fCachedTextViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
-			int modelEndLine= range.getStartLine() + range.getNumberOfLines();
+			int modelEndLine= end(range);
 			for (int modelLine= range.getStartLine(); modelLine < modelEndLine; modelLine++) {
 				int widgetLine= extension.modelLine2WidgetLine(modelLine);
 				if (widgetLine != -1) {
@@ -749,7 +777,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 				int visibleStartLine= document.getLineOfOffset(region.getOffset());
 				int visibleEndLine= document.getLineOfOffset(region.getOffset() + region.getLength());
 				widgetStartLine= Math.max(0, range.getStartLine() - visibleStartLine);
-				widgetEndLine= Math.max(visibleEndLine, range.getStartLine() + range.getNumberOfLines() - 1);
+				widgetEndLine= Math.max(visibleEndLine, end(range) - 1);
 			} catch (BadLocationException x) {
 				x.printStackTrace();
 				// ignore and return null
@@ -889,8 +917,8 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		postRedraw();
 	}
 	
-	private Rectangle computeBoxBounds(ChangeRegion region, int y_shift) {
-		ILineRange widgetRange= modelLinesToWidgetLines(region.fLines);
+	private Rectangle computeBoxBounds(ILineRange range, int y_shift) {
+		ILineRange widgetRange= modelLinesToWidgetLines(range);
 		if (widgetRange == null)
 			return null;
 		int lineHeight= fCachedTextWidget.getLineHeight();
@@ -908,14 +936,17 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		if (revision != null && fIsOverviewShowing) {
 			added= new HashMap();
 			for (Iterator it= revision.fChangeRegions.iterator(); it.hasNext();) {
-				try {
-					ChangeRegion region= (ChangeRegion) it.next();
-					IRegion charRegion= toCharRegion(region.fLines);
-					Position position= new Position(charRegion.getOffset(), charRegion.getLength());
-					Annotation annotation= new RevisionAnnotation(revision.getId());
-					added.put(annotation, position);
-				} catch (BadLocationException x) {
-					// ignore - document was changed, show no annotations
+				ChangeRegion region= (ChangeRegion) it.next();
+				for (Iterator regions= region.getAdjustedRanges().iterator(); regions.hasNext();) {
+					ILineRange range= (ILineRange) regions.next();
+					try {
+						IRegion charRegion= toCharRegion(range);
+						Position position= new Position(charRegion.getOffset(), charRegion.getLength());
+						Annotation annotation= new RevisionAnnotation(revision.getId());
+						added.put(annotation, position);
+					} catch (BadLocationException x) {
+						// ignore - document was changed, show no annotations
+					}
 				}
 			}
 		}
@@ -944,7 +975,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 	private IRegion toCharRegion(ILineRange lines) throws BadLocationException {
 		IDocument document= fCachedTextViewer.getDocument();
 		int offset= document.getLineOffset(lines.getStartLine());
-		int nextLine= lines.getStartLine() + lines.getNumberOfLines();
+		int nextLine= end(lines);
 		int endOffset;
 		if (nextLine >= document.getNumberOfLines())
 			endOffset= document.getLength();
@@ -973,7 +1004,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 	private void onFocusRegionChanged(ChangeRegion previousRegion, ChangeRegion nextRegion) {
 		if (DEBUG) System.out.println("region: " + previousRegion+ " > " + nextRegion); //$NON-NLS-1$ //$NON-NLS-2$
 		fFocusRegion= nextRegion;
-		Revision revision= nextRegion == null ? null : nextRegion.fRevision;
+		Revision revision= nextRegion == null ? null : nextRegion.getRevision();
 		if (fFocusRevision != revision)
 			onFocusRevisionChanged(fFocusRevision, revision);
 	}
@@ -1017,26 +1048,34 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		ILineRange nextWidgetRange= null;
 		ILineRange last= null;
 		if (up) {
-			for (Iterator it= fFocusRevision.fChangeRegions.iterator(); it.hasNext();) {
+			outer: for (Iterator it= fFocusRevision.fChangeRegions.iterator(); it.hasNext();) {
 				ChangeRegion region= (ChangeRegion) it.next();
-				ILineRange widgetRange= modelLinesToWidgetLines(region.fLines);
-				if (contains(region.fLines, documentHoverLine)) {
-					nextWidgetRange= last;
-					break;
+				for (Iterator regions= region.getAdjustedRanges().iterator(); regions.hasNext();) {
+					ILineRange range= (ILineRange) regions.next();
+
+					ILineRange widgetRange= modelLinesToWidgetLines(range);
+					if (contains(range, documentHoverLine)) {
+						nextWidgetRange= last;
+						break outer;
+					}
+					if (widgetRange != null)
+						last= widgetRange;
 				}
-				if (widgetRange != null)
-					last= widgetRange;
 			}
 		} else {
-			for (ListIterator it= fFocusRevision.fChangeRegions.listIterator(fFocusRevision.fChangeRegions.size()); it.hasPrevious();) {
+			outer: for (ListIterator it= fFocusRevision.fChangeRegions.listIterator(fFocusRevision.fChangeRegions.size()); it.hasPrevious();) {
 				ChangeRegion region= (ChangeRegion) it.previous();
-				ILineRange widgetRange= modelLinesToWidgetLines(region.fLines);
-				if (contains(region.fLines, documentHoverLine)) {
-					nextWidgetRange= last;
-					break;
+				for (ListIterator regions= region.getAdjustedRanges().listIterator(region.getAdjustedRanges().size()); regions.hasPrevious();) {
+					ILineRange range= (ILineRange) regions.previous();
+					
+					ILineRange widgetRange= modelLinesToWidgetLines(range);
+					if (contains(range, documentHoverLine)) {
+						nextWidgetRange= last;
+						break outer;
+					}
+					if (widgetRange != null)
+						last= widgetRange;
 				}
-				if (widgetRange != null)
-					last= widgetRange;
 			}
 		}
 		

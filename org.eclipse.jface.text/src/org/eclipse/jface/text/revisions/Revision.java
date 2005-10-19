@@ -18,6 +18,8 @@ import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.text.source.ILineRange;
 
+import org.eclipse.jface.internal.text.revisions.ChangeRegion;
+
 
 /**
  * Describes a revision of a document. A revision consists of one ore more {@link ILineRange}s.

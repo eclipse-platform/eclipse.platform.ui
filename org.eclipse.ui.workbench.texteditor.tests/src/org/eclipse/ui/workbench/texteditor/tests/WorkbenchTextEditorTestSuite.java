@@ -14,6 +14,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ui.workbench.texteditor.quickdiff.tests.DiffTestSuite;
+import org.eclipse.ui.workbench.texteditor.tests.revisions.ChangeRegionTest;
+import org.eclipse.ui.workbench.texteditor.tests.revisions.DiffApplierTest;
+import org.eclipse.ui.workbench.texteditor.tests.revisions.RangeTest;
 
 /**
  * Test Suite for org.eclipse.ui.workbench.texteditor.
@@ -28,6 +31,9 @@ public class WorkbenchTextEditorTestSuite extends TestSuite {
 		suite.addTest(DiffTestSuite.suite());
 		suite.addTest(FindReplaceDialogTest.suite());
         suite.addTest(HippieCompletionTest.suite());
+        suite.addTest(RangeTest.suite());
+        suite.addTest(ChangeRegionTest.suite());
+        suite.addTest(DiffApplierTest.suite());
 		//$JUnit-END$
 		return suite;
 	}
