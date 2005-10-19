@@ -111,5 +111,6 @@ public class ValueBinding implements IChangeListener {
 	 */
 	public void updateTargetFromModel() {
 		target.setValue(converter.convertModelToTarget(model.getValue()));
+		validateTarget();
 	}
 }
