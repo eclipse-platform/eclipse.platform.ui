@@ -645,6 +645,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 				first= i;
 			if (first != -1 && coverageEnd > end) {
 				last= i;
+				break;
 			}
 		}
 		if (first == -1)
