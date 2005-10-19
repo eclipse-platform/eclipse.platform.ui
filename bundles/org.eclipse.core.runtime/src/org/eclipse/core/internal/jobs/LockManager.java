@@ -13,7 +13,6 @@ package org.eclipse.core.internal.jobs;
 import java.util.HashMap;
 import java.util.Stack;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.LockListener;
@@ -167,10 +166,11 @@ public class LockManager {
 	private static void handleException(Throwable e) {
 		IStatus status;
 		if (e instanceof CoreException) {
-			status = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, Messages.jobs_internalError, e);
+			//logged message should not be translated
+			status = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, "LockManager.handleException", e); //$NON-NLS-1$
 			((MultiStatus) status).merge(((CoreException) e).getStatus());
 		} else {
-			status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, Messages.jobs_internalError, e);
+			status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, "LockManager.handleException", e); //$NON-NLS-1$
 		}
 		InternalPlatform.getDefault().log(status);
 	}

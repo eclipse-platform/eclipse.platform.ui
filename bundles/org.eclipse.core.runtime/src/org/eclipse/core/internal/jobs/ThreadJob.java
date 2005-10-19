@@ -126,8 +126,8 @@ class ThreadJob extends Job {
 		try {
 			return monitor.isCanceled();
 		} catch (RuntimeException e) {
-			String msg = Messages.jobs_internalError;
-			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, msg, e);
+			//logged message should not be translated
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, "ThreadJob.isCanceled", e); //$NON-NLS-1$
 			InternalPlatform.getDefault().log(status);
 		}
 		return false;
