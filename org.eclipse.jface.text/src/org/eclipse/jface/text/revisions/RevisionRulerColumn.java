@@ -778,7 +778,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 				int visibleStartLine= document.getLineOfOffset(region.getOffset());
 				int visibleEndLine= document.getLineOfOffset(region.getOffset() + region.getLength());
 				widgetStartLine= Math.max(0, range.getStartLine() - visibleStartLine);
-				widgetEndLine= Math.max(visibleEndLine, end(range) - 1);
+				widgetEndLine= Math.min(visibleEndLine, end(range) - 1);
 			} catch (BadLocationException x) {
 				x.printStackTrace();
 				// ignore and return null
