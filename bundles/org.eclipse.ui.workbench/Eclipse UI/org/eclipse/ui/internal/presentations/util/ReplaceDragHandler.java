@@ -54,7 +54,7 @@ public class ReplaceDragHandler extends TabDragHandler {
 
             // If we're dragging over the title area, treat this as a drop in the last
             // tab position.
-            if (titleArea.contains(location)) {
+            if (titleArea.contains(location) && tabFolder.getItemCount() > 0) {
                 int dragOverIndex = tabFolder.getItemCount();
                 AbstractTabItem lastTab = tabFolder.getItem(dragOverIndex - 1);
 
