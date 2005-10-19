@@ -798,6 +798,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			fireModelChanged(ame);
 			fUpdateNeeded= false;
 		}
+		
+		// notify waiters
+		notifyAll();
 	}
 
 	/**
