@@ -519,11 +519,6 @@ public class DatabindingService {
 		IUpdatable result = null;
 		if (factory != null) {
 			result = factory.createUpdatable(object, featureID);
-			// It is possible that this (class) level's factory can not provide
-			// an Updatable for featureID
-			if (result == null) {
-				result = createUpdatable(clazz, featureID);
-			}
 		}
 		if (result == null && parent != null) {
 			result = parent.createUpdatable(object, featureID);
