@@ -10,32 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jface.binding.swt;
 
-import org.eclipse.jface.binding.DatabindingService;
-import org.eclipse.jface.binding.IUpdatable;
-import org.eclipse.jface.binding.IUpdatableFactory;
-import org.eclipse.jface.binding.internal.swt.ButtonUpdatableValue;
-import org.eclipse.jface.binding.internal.swt.ComboUpdatableValue;
-import org.eclipse.jface.binding.internal.swt.ControlUpdatableValue;
-import org.eclipse.jface.binding.internal.swt.LabelUpdatableValue;
-import org.eclipse.jface.binding.internal.swt.SpinnerUpdatableValue;
-import org.eclipse.jface.binding.internal.swt.TableUpdatableValue;
-import org.eclipse.jface.binding.internal.swt.TextUpdatableValue;
-import org.eclipse.jface.binding.internal.viewers.StructuredViewerUpdatableValue;
-import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableCollection;
-import org.eclipse.jface.binding.internal.viewers.UpdatableCollectionViewer;
-import org.eclipse.jface.viewers.AbstractListViewer;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.binding.*;
+import org.eclipse.jface.binding.internal.swt.*;
+import org.eclipse.jface.binding.internal.viewers.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 /**
  * @since 3.2
@@ -120,11 +102,10 @@ public class SWTDatabindingService extends DatabindingService {
 		});
 		addUpdatableFactory(Combo.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.TEXT)
-						|| attribute.equals(SWTBindingConstants.SELECTION)) {
-					return new ComboUpdatableValue((Combo) object,
-							(String) attribute);
-				}
+				if (attribute.equals(SWTBindingConstants.TEXT) ||
+					attribute.equals(SWTBindingConstants.SELECTION))
+				    return new ComboUpdatableValue((Combo) object, (String) attribute);
+			//	else if (attribute.equals())
 				return null;
 			}
 		});
@@ -140,12 +121,10 @@ public class SWTDatabindingService extends DatabindingService {
 
 		addUpdatableFactory(AbstractListViewer.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(JFACE_VIEWER_SELECTION))
-					return new StructuredViewerUpdatableValue(
-							(AbstractListViewer) object, (String) attribute);
-				else if (attribute.equals(JFACE_VIEWER_CONTENT))
-					return new UpdatableCollectionViewer(
-							(AbstractListViewer) object);
+				if (attribute.equals(SWTBindingConstants.SELECTION))
+					return new StructuredViewerUpdatableValue((AbstractListViewer) object, (String) attribute);
+				else if (attribute.equals(SWTBindingConstants.CONTENT))
+				    return new UpdatableCollectionViewer((AbstractListViewer) object);
 				return null;
 			}
 		});
