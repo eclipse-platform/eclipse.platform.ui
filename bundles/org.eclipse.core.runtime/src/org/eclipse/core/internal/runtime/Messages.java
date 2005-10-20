@@ -160,7 +160,6 @@ public class Messages extends NLS {
 	public static String preferences_missingClassAttribute;
 	public static String preferences_missingScopeAttribute;
 	public static String preferences_removedNode;
-	public static String preferences_removeExported;
 	public static String preferences_saveException;
 	public static String preferences_saveProblems;
 	public static String preferences_validate;
