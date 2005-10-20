@@ -1634,10 +1634,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		openFlag = true;
 		if (crashed || refreshRequested()) {
 			try {
-				getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-			} catch (CoreException e) {
-				//don't fail entire open if refresh failed, just report as warning
-				return e.getStatus();
+				refreshManager.refresh(getRoot());
 			} catch (RuntimeException e) {
 				//don't fail entire open if refresh failed, just report as warning
 				return new ResourceStatus(IResourceStatus.INTERNAL_ERROR, Path.ROOT, Messages.resources_errorMultiRefresh, e);
