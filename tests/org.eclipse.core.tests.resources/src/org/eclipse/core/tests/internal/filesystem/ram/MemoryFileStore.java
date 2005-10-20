@@ -66,7 +66,7 @@ public class MemoryFileStore extends FileStore {
 	}
 
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
-		return TREE.openOutputStream(path);
+		return TREE.openOutputStream(path, options);
 	}
 
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
@@ -75,7 +75,7 @@ public class MemoryFileStore extends FileStore {
 
 	public URI toURI() {
 		try {
-			return new URI(MemoryFileSystem.SCHEME_RAM, path.toPortableString(), null);
+			return new URI(MemoryFileSystem.SCHEME_MEMORY, path.toPortableString(), null);
 		} catch (URISyntaxException e) {
 			//should not happen
 			throw new RuntimeException(e);

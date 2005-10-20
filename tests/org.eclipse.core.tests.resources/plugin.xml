@@ -213,7 +213,7 @@
 </extension>
 <extension
       point="org.eclipse.core.filesystem.filesystems">
-   <filesystem scheme="ram">
+   <filesystem scheme="mem">
       <run class="org.eclipse.core.tests.internal.filesystem.ram.MemoryFileSystem"/>
    </filesystem>
 </extension>            

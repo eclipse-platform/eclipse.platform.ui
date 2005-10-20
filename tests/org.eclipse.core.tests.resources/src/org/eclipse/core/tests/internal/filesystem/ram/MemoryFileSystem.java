@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Path;
  * A test file system that keeps everything in memory.
  */
 public class MemoryFileSystem extends FileSystem {
-	public static final String SCHEME_RAM = "ram";
+	public static final String SCHEME_MEMORY = "mem";
 
 	public MemoryFileSystem() {
 		super();
