@@ -11,6 +11,7 @@ package org.eclipse.core.tests.resources;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -119,6 +120,51 @@ public class ResourceAttributeTest extends ResourceTest {
 			assertTrue("2.2", !project.getResourceAttributes().isExecutable());
 			setExecutable(project, true);
 			assertTrue("2.4", project.getResourceAttributes().isExecutable());
+		} catch (CoreException e1) {
+			fail("2.99", e1);
+		}
+
+		/* remove trash */
+		try {
+			project.delete(true, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+	}
+
+	/**
+	 * When the executable bit is cleared on a folder, it effectively
+	 * causes the children of that folder to be removed from the
+	 * workspace because the folder contents can no longer be listed.
+	 * A refresh should happen automatically when the executable
+	 * bit on a folder is changed. See bug 109979 for details.
+	 */
+	public void testRefreshExecutableOnFolder() {
+		// only test on platforms that implement the executable bit
+		if ((EFS.getLocalFileSystem().attributes() & EFS.ATTRIBUTE_EXECUTABLE) == 0)
+			return;
+		IProject project = getWorkspace().getRoot().getProject("testRefreshExecutableOnFolder");
+		IFolder folder = project.getFolder("folder");
+		IFile file = folder.getFile("file");
+		ensureExistsInWorkspace(file, getRandomContents());
+
+		try {
+			//folder is executable initially and the file should exist
+			assertTrue("1.0", project.getResourceAttributes().isExecutable());
+			assertTrue("1.1", file.exists());
+			
+			setExecutable(folder, false);
+			waitForRefresh();
+			
+			boolean wasExecutable = folder.getResourceAttributes().isExecutable();
+			boolean fileExists = file.exists();
+
+			//set the folder executable before asserting anything, otherwise cleanup will fail
+			setExecutable(folder, true);
+
+			assertTrue("2.1", !wasExecutable);
+			assertTrue("2.2", !fileExists);
+			
 		} catch (CoreException e1) {
 			fail("2.99", e1);
 		}

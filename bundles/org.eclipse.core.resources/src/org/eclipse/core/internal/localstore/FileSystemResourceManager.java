@@ -819,7 +819,15 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * @see IResource.setResourceAttributes
 	 */
 	public void setResourceAttributes(IResource resource, ResourceAttributes attributes) throws CoreException {
-		getStore(resource).putInfo(FileUtil.attributesToFileInfo(attributes), EFS.SET_ATTRIBUTES, null);
+		IFileStore store = getStore(resource);
+		//when the executable bit is changed on a folder a refresh is required
+		boolean refresh = false;
+		if (resource instanceof IContainer && ((store.getFileSystem().attributes() & EFS.ATTRIBUTE_EXECUTABLE) != 0))
+			refresh = store.fetchInfo().getAttribute(EFS.ATTRIBUTE_EXECUTABLE) != attributes.isExecutable();
+		store.putInfo(FileUtil.attributesToFileInfo(attributes), EFS.SET_ATTRIBUTES, null);
+		//must refresh in the background because we are not inside an operation
+		if (refresh)
+			workspace.getRefreshManager().refresh(resource);
 	}
 
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
