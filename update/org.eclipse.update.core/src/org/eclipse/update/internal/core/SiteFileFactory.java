@@ -9,15 +9,35 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.*;
-import java.net.*;
 
-import org.eclipse.core.runtime.*;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.model.*;
-import org.xml.sax.*;
+import org.eclipse.update.core.BaseSiteFactory;
+import org.eclipse.update.core.ContentReference;
+import org.eclipse.update.core.Feature;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.JarContentReference;
+import org.eclipse.update.core.PluginEntry;
+import org.eclipse.update.core.Site;
+import org.eclipse.update.core.SiteContentProvider;
+import org.eclipse.update.core.SiteFeatureReferenceModel;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.model.ArchiveReferenceModel;
+import org.eclipse.update.core.model.InvalidSiteTypeException;
+import org.eclipse.update.core.model.SiteModel;
+import org.eclipse.update.core.model.SiteModelFactory;
+import org.eclipse.update.internal.model.BundleManifest;
+import org.eclipse.update.internal.model.DefaultPluginParser;
+import org.xml.sax.SAXException;
 
 public class SiteFileFactory extends BaseSiteFactory {
 

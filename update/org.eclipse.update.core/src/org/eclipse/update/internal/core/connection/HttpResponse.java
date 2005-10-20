@@ -107,9 +107,6 @@ public class HttpResponse extends AbstractResponse {
 	protected long offset;
 
 	protected HttpResponse(URL url) {
-		if (url.toString().endsWith("site.xml")) {
-			System.out.println("OPET");
-		}
         this.url = url;
 	}
 
