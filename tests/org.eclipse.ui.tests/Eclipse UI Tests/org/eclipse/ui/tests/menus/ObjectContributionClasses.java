@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.ui.IContributorResourceAdapter;
-import org.eclipse.ui.internal.ide.IContributorResourceAdapter2;
+import org.eclipse.ui.ide.IContributorResourceAdapter2;
 
 public class ObjectContributionClasses implements IAdapterFactory {
 	
