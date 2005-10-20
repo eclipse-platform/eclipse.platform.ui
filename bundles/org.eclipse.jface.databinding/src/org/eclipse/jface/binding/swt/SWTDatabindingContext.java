@@ -14,6 +14,7 @@ import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IUpdatable;
 import org.eclipse.jface.binding.IUpdatableFactory;
 import org.eclipse.jface.binding.internal.swt.ButtonUpdatableValue;
+import org.eclipse.jface.binding.internal.swt.ComboUpdatableCollection;
 import org.eclipse.jface.binding.internal.swt.ComboUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.ControlUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.LabelUpdatableValue;
@@ -124,12 +125,14 @@ public class SWTDatabindingContext extends DatabindingContext {
 				return null;
 			}
 		});
+		//TODO: need to support CCombo as well.
 		addUpdatableFactory(Combo.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
 				if (attribute.equals(SWTBindingConstants.TEXT) ||
 					attribute.equals(SWTBindingConstants.SELECTION))
 				    return new ComboUpdatableValue((Combo) object, (String) attribute);
-			//	else if (attribute.equals())
+			    else if (attribute.equals(SWTBindingConstants.ITEMS))
+			    	return new ComboUpdatableCollection((Combo)object, (String)attribute);
 				return null;
 			}
 		});
