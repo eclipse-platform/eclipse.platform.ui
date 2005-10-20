@@ -271,4 +271,21 @@ public class MarkerList {
         }
         return markerCounts;
     }
+
+    /**
+     * Get the array that is the internal representation of the marker list
+     * without making a copy.
+     * @return Object[]
+     */
+	public Object[] getArray() {
+		return markers;
+	}
+
+	/**
+	 * Get the size of the receiver.
+	 * @return int
+	 */
+	public int getSize() {
+		return getArray().length;
+	}
 }

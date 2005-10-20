@@ -12,7 +12,6 @@ package org.eclipse.ui.views.markers.internal;
  *******************************************************************************/
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -66,12 +65,13 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 			end = endIndex;
 			fieldIndex = fieldNumber;
 			parent = parentCategory;
-			
+
 			TableSorter sorter = view.getTableSorter();
 			int prioritySlot = sorter.getPriorities()[fieldIndex];
 			IField field = sorter.getFields()[prioritySlot];
-			
-			name = field.getCategoryValue(markerAdapter.lastMarkers.toArray()[startIndex]);
+
+			name = field
+					.getCategoryValue(markerAdapter.lastMarkers.toArray()[startIndex]);
 		}
 
 		/*
@@ -83,35 +83,26 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 
 			if (children == null) {
 
+				if (view.getTableSorter().getFields().length >= fieldIndex) {
+					children = buildHierarchy(markerAdapter.lastMarkers, start,
+							end, fieldIndex + 1, this);
+					if (children != null)// De we find any?
+						return children;
+				}
+
+				// We are at the leaf
+
 				ConcreteMarker[] allMarkers = markerAdapter.lastMarkers
 						.toArray();
-				if (getDisplayedDepth() <= fieldIndex) {
-					// Are we at the leaf?
-
-					children = new MarkerNode[end - start + 1];
-					System.arraycopy(allMarkers, start, children, 0, end
-							- start + 1);
-					for (int i = 0; i < children.length; i++) {
-						((ConcreteMarker) children[i]).setCategory(this);
-
-					}
-				} else {
-					children = buildHierarchy(allMarkers, start, end,
-							fieldIndex + 1, this);
-
+				children = new MarkerNode[end - start + 1];
+				System.arraycopy(allMarkers, start, children, 0, end - start
+						+ 1);
+				for (int i = 0; i < children.length; i++) {
+					((ConcreteMarker) children[i]).setCategory(this);
 				}
 			}
 			return children;
 
-		}
-
-		/**
-		 * Return how deep we want to categorize.
-		 * 
-		 * @return int
-		 */
-		private int getDisplayedDepth() {
-			return 2;
 		}
 
 		/*
@@ -201,33 +192,32 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 
 			// Exit immediately if the markers have changed in the meantime.
 
-			Collection markers = Arrays.asList(lastMarkers.toArray());
-
 			if (markerLimit != -1) {
 
 				monitor.subTask(MarkerMessages.MarkerView_18);
 				SubProgressMonitor mon = new SubProgressMonitor(monitor, 40);
 
-				markers = SortUtil.getFirst(markers, (TableSorter) view
+				lastMarkers = SortUtil.getFirst(lastMarkers, (TableSorter) view
 						.getViewer().getSorter(), markerLimit, mon);
 				if (monitor.isCanceled())
 					return;
 			}
 
 			monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
-			ConcreteMarker[] nodes = new ConcreteMarker[markers.size()];
-			markers.toArray(nodes);
 
+			SubProgressMonitor sub = new SubProgressMonitor(monitor, 50);
 			if (view.isHierarchalMode()) {
-				view.getTableSorter().sort(view.getViewer(), nodes);
-				collector.add(buildHierarchy(nodes, 0, nodes.length - 1, 1,
-						null), new SubProgressMonitor(monitor, 50));// skip the
-																	// first
-																	// field
-																	// (category)
+				view.getTableSorter().sort(view.getViewer(), lastMarkers);
+
+				MarkerCategory[] categories = buildHierarchy(lastMarkers, 0,
+						lastMarkers.getSize() - 1, 0, null);
+
+				if (categories == null)// Just add the markers
+					collector.add(lastMarkers.toArray(), sub);
+				else
+					collector.add(categories, sub);
 			} else
-				collector.add(markers.toArray(), new SubProgressMonitor(
-						monitor, 50));
+				collector.add(lastMarkers.toArray(), sub);
 
 			if (monitor.isCanceled())
 				return;
@@ -260,43 +250,64 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 	 *            the start index in the markers
 	 * @param end
 	 *            the last index to check
-	 * @param fieldIndex -
+	 * @param sortIndex -
 	 *            the parent of the field
 	 * @param parent
-	 * @return Object[]
+	 * @return MarkerCategory[] or <code>null</code> if we are at the bottom
+	 *         of the tree
 	 */
-	MarkerNode[] buildHierarchy(ConcreteMarker[] markers, int start, int end,
-			int fieldIndex, MarkerCategory parent) {
+	MarkerCategory[] buildHierarchy(MarkerList markers, int start, int end,
+			int sortIndex, MarkerCategory parent) {
 		TableSorter sorter = view.getTableSorter();
+
+		if (sortIndex >= sorter.getFields().length)
+			return null;// Are we out of categories?
+		
+		//Do we ever sort by this one?
+		if(isNotCategoryField(sorter,sortIndex))
+			return buildHierarchy(markers, start, end, sortIndex + 1, parent);
+
 		Collection categories = new ArrayList();
 
 		Object previous = null;
 		int categoryStart = start;
+
+		Object[] elements = markers.getArray();
+
 		for (int i = start; i <= end; i++) {
 
 			if (previous != null) {
-				MarkerNode next = markers[i];
-
 				// Are we at a category boundary?
-				if (sorter.compare(previous, next, fieldIndex, false) != 0) {
+				if (sorter.compare(previous, elements[i], sortIndex, false) != 0) {
 					categories.add(new MarkerCategory(this, categoryStart,
-							i - 1, fieldIndex, parent));
+							i - 1, sortIndex, parent));
 					categoryStart = i;
 				}
 			}
-			previous = markers[i];
+			previous = elements[i];
 
 		}
 
-		if(end > categoryStart){
-			categories.add(new MarkerCategory(this, start, end, fieldIndex,
-					parent));
+		if (end >= categoryStart) {
+			categories.add(new MarkerCategory(this, categoryStart, end,
+					sortIndex, parent));
 		}
-		
-		MarkerNode[] nodes = new MarkerNode[categories.size()];
+
+		// Flatten single categories
+		if (categories.size() == 1) {
+			return buildHierarchy(markers, start, end, sortIndex + 1, parent);
+		}
+		MarkerCategory[] nodes = new MarkerCategory[categories.size()];
 		categories.toArray(nodes);
 		return nodes;
 
+	}
+
+	private boolean isNotCategoryField(TableSorter sorter, int sortIndex) {
+		IField [] fields = sorter.getFields();
+		int fieldIndex = sorter.getPriorities()[sortIndex];
+		return !fields[fieldIndex].isCategoryField();
+		
 	}
 
 	/*
@@ -354,12 +365,11 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 	}
 
 	/**
-	 * Get the current list of markers.
-	 * 
+	 * Return the current list of markers.
 	 * @return MarkerList
 	 */
-	MarkerList getCurrentMarkers() {
+	public MarkerList getCurrentMarkers() {
 		return lastMarkers;
-
 	}
+
 }

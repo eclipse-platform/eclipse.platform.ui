@@ -379,13 +379,14 @@ public abstract class TableView extends ViewPart {
 	 */
 	protected TableSorter buildSorter() {
 
-		int[] priorities = new int[getFields().length];
-		int[] directions = new int[getFields().length];
-		for (int i = 0; i < getFields().length; i++) {
+		IField[] sortingFields = getSortingFields();
+		int[] priorities = new int[sortingFields.length];
+		int[] directions = new int[sortingFields.length];
+		for (int i = 0; i < sortingFields.length; i++) {
 			priorities[i] = i;
 		}
 		Arrays.fill(directions, TableSorter.ASCENDING);
-		TableSorter sorter = new TableSorter(getFields(), priorities,
+		TableSorter sorter = new TableSorter(sortingFields, priorities,
 				directions);
 		sorter.restoreState(getDialogSettings());
 
@@ -394,18 +395,9 @@ public abstract class TableView extends ViewPart {
 
 	// protected abstract ITableViewContentProvider getContentProvider();
 
-	protected IField[] getFields() {
-		IField[] vProps = getVisibleFields();
-		IField[] hProps = getHiddenFields();
-		IField[] fields = new IField[vProps.length + hProps.length];
-		System.arraycopy(vProps, 0, fields, 0, vProps.length);
-		System.arraycopy(hProps, 0, fields, vProps.length, hProps.length);
-		return fields;
-	}
+	protected abstract IField[] getSortingFields();
 
 	protected abstract IField[] getVisibleFields();
-
-	protected abstract IField[] getHiddenFields();
 
 	protected abstract IDialogSettings getDialogSettings();
 

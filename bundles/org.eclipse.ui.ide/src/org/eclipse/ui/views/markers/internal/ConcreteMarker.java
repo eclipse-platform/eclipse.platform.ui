@@ -36,7 +36,6 @@ public class ConcreteMarker extends MarkerNode{
 
     private CollationKey resourceNameKey;
 
-    private CollationKey inFolderKey;
 
     private int line;
 
@@ -53,6 +52,8 @@ public class ConcreteMarker extends MarkerNode{
 
 	private MarkerNode markerCategory;
 
+	private String shortFolder;
+
     public ConcreteMarker(IMarker toCopy) {
         marker = toCopy;
         refresh();
@@ -66,7 +67,6 @@ public class ConcreteMarker extends MarkerNode{
     public void clearCache() {
         resourceNameKey = null;
         descriptionKey = null;
-        inFolderKey = null;
     }
 
     /**
@@ -78,6 +78,7 @@ public class ConcreteMarker extends MarkerNode{
         description = Util.getProperty(IMarker.MESSAGE, marker);
         resourceName = Util.getResourceName(marker);
         inFolder = Util.getContainerName(marker);
+        shortFolder = null;
         line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
         try {
             creationTime = marker.getCreationTime();
@@ -139,13 +140,6 @@ public class ConcreteMarker extends MarkerNode{
         return inFolder;
     }
 
-    public CollationKey getFolderKey() {
-        if (inFolderKey == null) {
-            inFolderKey = Collator.getInstance().getCollationKey(inFolder);
-        }
-        return inFolderKey;
-    }
-
     public long getCreationTime() {
         return creationTime;
     }
@@ -204,5 +198,15 @@ public class ConcreteMarker extends MarkerNode{
 	 */
 	public boolean isConcrete() {
 		return true;
+	}
+
+	/**
+	 * Return the short name for the folder.
+	 * @return String
+	 */
+	public String getShortFolder() {
+		if(shortFolder == null)
+			shortFolder = Util.getShortContainerName(marker);
+		return shortFolder;
 	}
 }

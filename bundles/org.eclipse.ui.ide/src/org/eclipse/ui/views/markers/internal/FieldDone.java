@@ -15,6 +15,10 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
+/**
+ * FieldDone is the field for the done marker in tasks.
+ *
+ */
 public class FieldDone implements IField {
 
 	static final String DESCRIPTION_IMAGE_PATH = "obj16/header_complete.gif"; //$NON-NLS-1$
@@ -134,6 +138,13 @@ public class FieldDone implements IField {
 	 */
 	public String getCategoryValue(Object obj) {
 		return getValue(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
+	 */
+	public boolean isCategoryField() {
+		return false;
 	}
 
 }

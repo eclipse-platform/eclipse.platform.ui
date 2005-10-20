@@ -17,16 +17,18 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -35,24 +37,21 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class ProblemView extends MarkerView {
 
-	private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
-			new ColumnPixelData(getCategoryWidth()), new ColumnPixelData(16),
-			new ColumnPixelData(200), new ColumnPixelData(75),
-			new ColumnPixelData(150), new ColumnPixelData(60) };
-
 	// Direction constants - use the ones on TableSorter to stay sane
 	private final static int ASCENDING = TableSorter.ASCENDING;
 
 	private final static int DESCENDING = TableSorter.DESCENDING;
 
-	private final IField[] VISIBLE_FIELDS = { new FieldCategory(),
+	private final IField[] VISIBLE_FIELDS = { new FieldHierarchy(),
 			new FieldSeverity(), new FieldMessage(), new FieldResource(),
 			new FieldFolder(), new FieldLineNumber() };
 
-	private final IField[] HIDDEN_FIELDS = { new FieldCreationTime(),
-	// Add the marker ID so the table sorter won't reduce
+	private final IField[] SORTING_FIELDS = { new FieldSeverity(),
+			new FieldMessage(), new FieldResource(), new FieldFolder(),
+			new FieldLineNumber(), new FieldCreationTime(),
+			// Add the marker ID so the table sorter won't reduce
 			// errors on the same line bug 82502
-			new FieldId() };
+			new FieldId(), new FieldProject(), new FieldMarkerType() };
 
 	// Field Tags
 	// These tags MUST occur in the same order as the VISIBLE_FIELDS +
@@ -64,25 +63,23 @@ public class ProblemView extends MarkerView {
 	// inherited and we don't override it. TableView.getFields() will
 	// return VISIBLE_FIELDS and then HIDDEN_FIELDS
 
-	private final static int CATEGORY = 0;
+	private final static int SEVERITY = 0;
 
-	private final static int SEVERITY = 1;
+	private final static int DESCRIPTION = 1;
 
-	private final static int DESCRIPTION = 2;
+	private final static int RESOURCE = 2;
 
-	private final static int RESOURCE = 3;
+	private final static int FOLDER = 3;
 
-	private final static int FOLDER = 4;
+	private final static int LOCATION = 4;
 
-	private final static int LOCATION = 5;
+	private final static int CREATION_TIME = 5;
 
-	private final static int CREATION_TIME = 6;
+	private final static int MARKER_ID = 6;
 
-	private final static int MARKER_ID = 7;
+	private final static int PROJECT = 7;
 
-	private final int[] DEFAULT_PRIORITIES = getDefaultPriorities();
-
-	private final int[] DEFAULT_DIRECTIONS = getDefaultDirections();
+	private final static int MARKER_TYPE = 8;
 
 	private final static String[] ROOT_TYPES = { IMarker.PROBLEM };
 
@@ -90,11 +87,14 @@ public class ProblemView extends MarkerView {
 
 	private ActionResolveMarker resolveMarkerAction;
 
+	private boolean hierarchalMode = false;
+
 	/**
 	 * Return a new instance of the receiver.
 	 */
 	public ProblemView() {
 		super();
+		hierarchalMode = true;
 	}
 
 	/**
@@ -103,16 +103,17 @@ public class ProblemView extends MarkerView {
 	 * @return int[]
 	 */
 	private int[] getDefaultDirections() {
-		return new int[] { ASCENDING,// category
-					DESCENDING, // severity
-					ASCENDING, // folder
-					ASCENDING, // resource
-					ASCENDING, // location
-					ASCENDING, // description
-					ASCENDING, // creation time
-					ASCENDING // marker id
+		return new int[] { DESCENDING, // severity
+				ASCENDING, // folder
+				ASCENDING, // resource
+				ASCENDING, // location
+				ASCENDING, // description
+				ASCENDING, // creation time
+				ASCENDING, // marker id
+				ASCENDING, // project
+				ASCENDING // marker type
 		};
-		
+
 	}
 
 	/**
@@ -122,10 +123,10 @@ public class ProblemView extends MarkerView {
 	 */
 	private int[] getDefaultPriorities() {
 		if (isHierarchalMode())
-			return new int[] { CATEGORY, SEVERITY, FOLDER, RESOURCE, LOCATION,
-					DESCRIPTION, CREATION_TIME, MARKER_ID };
+			return new int[] { MARKER_TYPE, PROJECT, SEVERITY, FOLDER,
+					RESOURCE, DESCRIPTION, LOCATION, CREATION_TIME, MARKER_ID };
 		return new int[] { SEVERITY, FOLDER, RESOURCE, LOCATION, DESCRIPTION,
-				CREATION_TIME, MARKER_ID, CATEGORY };
+				CREATION_TIME, MARKER_ID, MARKER_TYPE, PROJECT };
 	}
 
 	/**
@@ -146,8 +147,25 @@ public class ProblemView extends MarkerView {
 		super.dispose();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.TableView#getSortingFields()
+	 */
+	protected IField[] getSortingFields() {
+		return SORTING_FIELDS;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.TableView#getDefaultColumnLayouts()
+	 */
 	protected ColumnPixelData[] getDefaultColumnLayouts() {
-		return DEFAULT_COLUMN_LAYOUTS;
+		return new ColumnPixelData[] { new ColumnPixelData(getCategoryWidth()),
+				new ColumnPixelData(16), new ColumnPixelData(200),
+				new ColumnPixelData(75), new ColumnPixelData(150),
+				new ColumnPixelData(60) };
 	}
 
 	/*
@@ -184,28 +202,11 @@ public class ProblemView extends MarkerView {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.views.markers.internal.TableView#createColumns(org.eclipse.swt.widgets.Tree)
-	 */
-	protected void createColumns(Tree tree) {
-		super.createColumns(tree);
-		TreeColumn[] columns = tree.getColumns();
-
-		if (columns != null && columns.length >= 1)
-			columns[0].setResizable(false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#fillContextMenuAdditions(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenuAdditions(IMenuManager manager) {
 		manager.add(new Separator());
 		manager.add(resolveMarkerAction);
-	}
-
-	protected IField[] getHiddenFields() {
-		return HIDDEN_FIELDS;
 	}
 
 	protected String[] getRootTypes() {
@@ -218,10 +219,16 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.TableView#buildSorter()
 	 */
 	protected TableSorter buildSorter() {
-		return new TableSorter(getFields(), DEFAULT_PRIORITIES,
-				DEFAULT_DIRECTIONS);
+
+		return new TableSorter(getSortingFields(), getDefaultPriorities(),
+				getDefaultDirections());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.TableView#getVisibleFields()
+	 */
 	protected IField[] getVisibleFields() {
 		return VISIBLE_FIELDS;
 	}
@@ -370,6 +377,110 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#isHierarchalMode()
 	 */
 	public boolean isHierarchalMode() {
-		return false;
+		return false;//hierarchalMode;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#addDropDownContributions(org.eclipse.jface.action.IMenuManager)
+	 */
+	void addDropDownContributions(IMenuManager menu) {
+		
+	//	menu.add(getFlatAction());
+	//	menu.add(getHierarchalAction());
+		super.addDropDownContributions(menu);
+	}
+
+	/**
+	 * Return the action for setting hierarchal mode.
+	 * 
+	 * @return IAction
+	 */
+	private IAction getHierarchalAction() {
+		IAction hierarchalAction = new Action() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#getStyle()
+			 */
+			public int getStyle() {
+				return AS_RADIO_BUTTON;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#getText()
+			 */
+			public String getText() {
+				return MarkerMessages.ProblemView_hierarchyMenu;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#getImageDescriptor()
+			 */
+			public ImageDescriptor getImageDescriptor() {
+				return IDEInternalWorkbenchImages
+						.getImageDescriptor(IDEInternalWorkbenchImages.IMG_LCL_HIERARCHICAL_LAYOUT);
+			}
+
+			public void run() {
+				hierarchalMode = true;
+				getViewer().refresh();
+			}
+
+		};
+
+		hierarchalAction.setChecked(hierarchalMode);
+		return hierarchalAction;
+	}
+
+	/**
+	 * Return the action for showing the flat layout.
+	 * 
+	 * @return IAction
+	 */
+	private IAction getFlatAction() {
+		IAction flatAction = new Action() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#getStyle()
+			 */
+			public int getStyle() {
+				return AS_RADIO_BUTTON;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#getText()
+			 */
+			public String getText() {
+				return MarkerMessages.ProblemView_flatMenu;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#getImageDescriptor()
+			 */
+			public ImageDescriptor getImageDescriptor() {
+				return IDEInternalWorkbenchImages
+						.getImageDescriptor(IDEInternalWorkbenchImages.IMG_LCL_FLAT_LAYOUT);
+			}
+
+			public void run() {
+				hierarchalMode = false;
+				getViewer().refresh();
+			}
+
+		};
+
+		flatAction.setChecked(!hierarchalMode);
+		return flatAction;
 	}
 }

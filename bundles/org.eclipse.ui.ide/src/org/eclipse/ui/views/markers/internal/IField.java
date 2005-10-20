@@ -13,10 +13,14 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * IField is the definition of fields for marker views.
+ *
+ */
 public interface IField {
 
     /**
-     * @return the description of the field.
+     * @return String the description of the field.
      */
     String getDescription();
 
@@ -61,7 +65,13 @@ public interface IField {
     /**
      * Return the category title for the receiver
      * @param obj
-     * @return
+     * @return String
      */
     String getCategoryValue(Object obj);
+    
+    /**
+     * Return whether or not the receiver is being shown in the categories.
+     * @return boolean <code>true</code> if this category should be shown
+     */
+    boolean isCategoryField();
 }

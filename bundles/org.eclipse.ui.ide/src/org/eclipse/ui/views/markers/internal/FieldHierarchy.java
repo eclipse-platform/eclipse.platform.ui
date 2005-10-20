@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.Image;
  * The FieldCategory is the field for the category entries.
  *
  */
-public class FieldCategory implements IField {
+public class FieldHierarchy implements IField {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
@@ -90,6 +90,13 @@ public class FieldCategory implements IField {
 	 */
 	public String getCategoryValue(Object obj) {
 		return getValue(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
+	 */
+	public boolean isCategoryField() {
+		return false;
 	}
 
 }

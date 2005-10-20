@@ -141,8 +141,17 @@ public class BookmarkView extends MarkerView {
 		return settings;
 	}
 
-	protected IField[] getHiddenFields() {
-		return HIDDEN_FIELDS;
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.TableView#getSortingFields()
+	 */
+	protected IField[] getSortingFields() {
+		IField[] visible = getVisibleFields();
+		IField[] all = new IField[visible.length + HIDDEN_FIELDS.length];
+		
+		System.arraycopy(visible, 0, all, 0, visible.length);
+		System.arraycopy(HIDDEN_FIELDS, 0, all, visible.length, HIDDEN_FIELDS.length);
+		
+		return all;
 	}
 
 	protected String[] getRootTypes() {

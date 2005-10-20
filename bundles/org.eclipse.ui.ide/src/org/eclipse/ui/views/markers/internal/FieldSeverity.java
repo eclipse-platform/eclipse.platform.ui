@@ -103,4 +103,11 @@ public class FieldSeverity implements IField {
 		return Util.getCategoryText(((ProblemMarker) obj).getSeverity());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
+	 */
+	public boolean isCategoryField() {
+		return true;
+	}
+
 }

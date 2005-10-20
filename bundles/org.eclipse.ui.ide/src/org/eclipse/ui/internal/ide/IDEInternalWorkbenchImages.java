@@ -157,6 +157,10 @@ public final class IDEInternalWorkbenchImages {
     public final static String IMG_LCL_REMBKMRK_TSK = "IMG_LCL_REMBKMRK_TSK"; //$NON-NLS-1$
 
     public final static String IMG_LCL_SHOWSYNC_RN = "IMG_LCL_SHOWSYNC_RN"; //$NON-NLS-1$
+    
+    public final static String IMG_LCL_FLAT_LAYOUT = "IMG_LCL_FLAT_LAYOUT"; //$NON-NLS-1$
+    
+    public final static String IMG_LCL_HIERARCHICAL_LAYOUT = "IMG_LCL_HIERARCHICAL_LAYOUT"; //$NON-NLS-1$
 
     //wizard images
     public final static String IMG_WIZBAN_NEWPRJ_WIZ = "IMG_WIZBAN_NEWPRJ_WIZ"; //$NON-NLS-1$

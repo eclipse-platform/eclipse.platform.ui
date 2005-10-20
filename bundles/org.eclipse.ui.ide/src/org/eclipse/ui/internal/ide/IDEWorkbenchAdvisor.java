@@ -557,6 +557,13 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         declareWorkbenchImage(ideBundle,
                 IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_BANNER, PATH_OBJECT
                         + "welcome_banner.gif", true); //$NON-NLS-1$
+        
+        declareWorkbenchImage(ideBundle,
+                IDEInternalWorkbenchImages.IMG_LCL_FLAT_LAYOUT, PATH_ELOCALTOOL
+                        + "flatLayout.gif", true); //$NON-NLS-1$
+        declareWorkbenchImage(ideBundle,
+                IDEInternalWorkbenchImages.IMG_LCL_HIERARCHICAL_LAYOUT, PATH_ELOCALTOOL
+                        + "hierarchicalLayout.gif", true); //$NON-NLS-1$
 
         // synchronization indicator objects
         //declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_WBET_STAT, PATH_OVERLAY+"wbet_stat.gif");

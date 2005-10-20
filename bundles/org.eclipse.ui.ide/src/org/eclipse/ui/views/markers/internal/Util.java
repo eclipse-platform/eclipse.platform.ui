@@ -238,6 +238,7 @@ public final class Util {
 	/**
 	 * Return the text for severity
 	 * @param severity
+	 * @return String
 	 */
 	public static String getCategoryText(int severity) {
 		if (severity == IMarker.SEVERITY_ERROR) {
@@ -252,6 +253,27 @@ public final class Util {
 
 		return EMPTY_STRING;
 		
+	}
+
+	/**
+	 * Get the short name for the container
+	 * @param marker
+	 * @return String
+	 */
+	public static String getShortContainerName(IMarker marker) {
+
+		try {
+			Object pathAttribute = marker
+					.getAttribute(MarkerViewUtil.PATH_ATTRIBUTE);
+
+			if (pathAttribute != null)
+				return pathAttribute.toString();
+		} catch (CoreException exception) {
+			// Log the exception and fall back.
+			log(exception);
+		}
+
+		return marker.getResource().getProjectRelativePath().removeLastSegments(1).toOSString();
 	}
 	
 }

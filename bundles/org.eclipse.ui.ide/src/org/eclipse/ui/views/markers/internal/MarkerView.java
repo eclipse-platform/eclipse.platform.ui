@@ -558,7 +558,7 @@ public abstract class MarkerView extends TableView {
 		openAction = new ActionOpenMarker(this, getSelectionProvider());
 		copyAction = new ActionCopyMarker(this, getSelectionProvider());
 		copyAction.setClipboard(clipboard);
-		copyAction.setProperties(getFields());
+		copyAction.setProperties(getSortingFields());
 		pasteAction = new ActionPasteMarker(this, getSelectionProvider());
 		pasteAction.setClipboard(clipboard);
 		pasteAction.setPastableTypes(getMarkerTypes());

@@ -13,12 +13,19 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * FieldId is the field for marker id.
+ *
+ */
 public class FieldId implements IField {
 
     private String description;
 
     private Image image;
 
+    /**
+     * Create a new instance of the receiver.
+     */
     public FieldId() {
         description = MarkerMessages.description_markerId;
     }
@@ -95,6 +102,13 @@ public class FieldId implements IField {
 	 */
 	public String getCategoryValue(Object obj) {
 		return getValue(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
+	 */
+	public boolean isCategoryField() {
+		return false;
 	}
 
 }

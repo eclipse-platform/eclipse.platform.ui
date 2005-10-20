@@ -70,6 +70,8 @@ public class MarkerMessages extends NLS{
 	public static String description_completion;
 	public static String description_markerId;
 	public static String description_category;
+	public static String description_type;
+	public static String description_project;
 
 	public static String label_lineNumber;
 
@@ -257,4 +259,7 @@ public class MarkerMessages extends NLS{
 	public static String MarkerResolutionWizard_CalculatingTask;
 	public static String MarkerResolutionWizard_WorkingSubTask;
 	public static String MarkerResolutionWizard_FixingTask;
+	
+	public static String ProblemView_hierarchyMenu;
+	public static String ProblemView_flatMenu;
 }

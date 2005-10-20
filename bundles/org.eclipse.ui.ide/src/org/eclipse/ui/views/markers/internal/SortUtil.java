@@ -25,24 +25,26 @@ import org.eclipse.core.runtime.IProgressMonitor;
 class SortUtil {
 
     /**
-     * Returns the k smallest items in the given collection. Runs in
+     *  * Returns the k smallest items in the given collection. Runs in
      * O(n) time, average case. The resulting collection is not sorted.
-     *  
-     * @param elements
-     * @param c
-     * @return
+     * @param elements the MarkerList to check
+     * @param c the comparator
+     * @param k the number of items to collect
+     * @param mon the monitor
+     * @return MarkerList
      */
-    public static Collection getFirst(Collection elements, Comparator c, int k,
+    public static MarkerList getFirst(MarkerList elements, Comparator c, int k,
             IProgressMonitor mon) {
-        Collection result = new ArrayList(elements.size());
+    	Collection start = elements.asList();
+        Collection result = new ArrayList(start.size());
 
         mon.beginTask(MarkerMessages.SortUtil_finding_first, 1000); 
 
-        getFirst(result, elements, c, k, mon, 1000);
+        getFirst(result, start, c, k, mon, 1000);
 
         mon.done();
 
-        return result;
+        return new MarkerList(result);
     }
 
     private static void getFirst(Collection result, Collection elements,
@@ -188,7 +190,7 @@ class SortUtil {
      * 
      * @param collection
      * @param numToRemove
-     * @return
+     * @return List
      */
     public static List removeFirst(Collection collection, int numToRemove) {
         int toRemove = Math.min(collection.size(), numToRemove);

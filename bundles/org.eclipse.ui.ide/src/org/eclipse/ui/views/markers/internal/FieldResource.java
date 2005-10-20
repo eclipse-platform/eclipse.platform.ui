@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,19 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * FieldResource is the field for the resource.
+ *
+ */
 public class FieldResource implements IField {
 
     private String description;
 
     private Image image;
 
+    /**
+     * Create a new instance of the receiver.
+     */
     public FieldResource() {
         description = MarkerMessages.description_resource;
     }
@@ -97,6 +104,13 @@ public class FieldResource implements IField {
 	 */
 	public String getCategoryValue(Object obj) {
 		return getValue(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
+	 */
+	public boolean isCategoryField() {
+		return true;
 	}
 
 }

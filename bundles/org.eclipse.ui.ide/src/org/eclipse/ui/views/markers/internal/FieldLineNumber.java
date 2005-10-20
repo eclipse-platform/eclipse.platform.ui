@@ -14,12 +14,19 @@ package org.eclipse.ui.views.markers.internal;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * FieldLineNumber is the field for line numbers.
+ *
+ */
 public class FieldLineNumber implements IField {
 
     private String description;
 
     private Image image;
 
+    /**
+     * Create a new instance of the receiver.
+     */
     public FieldLineNumber() {
         description = MarkerMessages.description_lineNumber;
     }
@@ -104,6 +111,13 @@ public class FieldLineNumber implements IField {
 	 */
 	public String getCategoryValue(Object obj) {
 		return getValue(obj);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
+	 */
+	public boolean isCategoryField() {
+		return false;
 	}
 
 }

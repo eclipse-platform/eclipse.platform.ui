@@ -127,4 +127,11 @@ public class FieldMessage implements IField {
 		return getValue(obj);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
+	 */
+	public boolean isCategoryField() {
+		return false;
+	}
+
 }
