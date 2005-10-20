@@ -180,8 +180,10 @@ public class PerspectiveExtensionReader extends RegistryReader {
             return false;
         }
         if (!VAL_FAST.equals(relationship) && relative == null) {
-            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_RELATIVE);
-            return false;
+            logError(
+					element,
+					"Attribute '" + IWorkbenchRegistryConstants.ATT_RELATIVE + "' not defined.  This attribute is required when " + IWorkbenchRegistryConstants.ATT_RELATIONSHIP + "=\"" + relationship + "\"."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			return false;
         }
 
         // Get the ratio.
