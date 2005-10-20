@@ -118,11 +118,11 @@ public class RefactoringHistoryDialog extends Dialog {
 	private static final String YESTERDAY_FORMAT= "yesterdayFormat"; //$NON-NLS-1$
 
 	/**
-	 * Converts a time stamp to a date representation.
+	 * Converts a time stamp to a date stamp.
 	 * 
 	 * @param stamp
 	 *            the time stamp to convert
-	 * @return the date representation
+	 * @return the date stamp
 	 */
 	private static long stampToDate(final long stamp) {
 		final int ONE_DAY_MS= 24 * 60 * 60 * 1000;
