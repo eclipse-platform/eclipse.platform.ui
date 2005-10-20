@@ -11,14 +11,16 @@
 package org.eclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.IThreadListener;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -41,7 +43,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * @see ISchedulingRule
  * @see org.eclipse.core.resources.IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
  *  */
-public abstract class WorkspaceModifyOperation implements IRunnableWithProgress {
+public abstract class WorkspaceModifyOperation implements IRunnableWithProgress, IThreadListener {
     private ISchedulingRule rule;
 
     /**
@@ -119,5 +121,21 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress 
             throw iteHolder[0];
         }
     }
+	/* (non-Javadoc)
+	 * @see IThreadListener#threadChange(Thread);
+	 */
+	public void threadChange(Thread thread) {
+		//we must make sure we aren't transferring control away from a thread that
+		//already owns a scheduling rule because this is deadlock prone (bug 105491)
+		if (rule == null)
+			return;
+		Job currentJob = Platform.getJobManager().currentJob();
+		if (currentJob == null)
+			return;
+		ISchedulingRule currentRule = currentJob.getRule();
+		if (currentRule == null)
+			return;
+		throw new IllegalStateException("Cannot fork a thread from a thread owning a rule"); //$NON-NLS-1$
+	}
 
 }
