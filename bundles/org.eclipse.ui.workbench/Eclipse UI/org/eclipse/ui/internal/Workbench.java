@@ -1603,7 +1603,7 @@ public final class Workbench implements IWorkbench {
 		        HashSet disabledPlugins = new HashSet(Arrays.asList(getDisabledEarlyActivatedPlugins()));
 				monitor.beginTask(WorkbenchMessages.Workbench_startingPlugins, extensions.length);
 				for (int i = 0; i < extensions.length; ++i) {
-					if (monitor.isCanceled() || !PlatformUI.isWorkbenchRunning()) {
+					if (monitor.isCanceled() || !isRunning()) {
 						return Status.CANCEL_STATUS;
 					}
 					IExtension extension = extensions[i];
