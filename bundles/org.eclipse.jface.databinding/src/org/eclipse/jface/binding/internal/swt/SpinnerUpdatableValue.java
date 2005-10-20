@@ -18,6 +18,10 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Spinner;
 
+/**
+ * @since 3.2
+ *
+ */
 public class SpinnerUpdatableValue extends UpdatableValue {
 
 	private final Spinner spinner;
@@ -43,7 +47,8 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 			});
 		} else if (!attribute.equals(SWTBindingConstants.MIN)
 				&& !attribute.equals(SWTBindingConstants.MAX)) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(
+					"Attribute name not valid: " + attribute); //$NON-NLS-1$
 		}
 	}
 
@@ -64,15 +69,13 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 	}
 
 	public Object getValue() {
-		int value;
+		int value = 0;
 		if (attribute.equals(SWTBindingConstants.SELECTION)) {
 			value = spinner.getSelection();
 		} else if (attribute.equals(SWTBindingConstants.MIN)) {
 			value = spinner.getMinimum();
 		} else if (attribute.equals(SWTBindingConstants.MAX)) {
 			value = spinner.getMaximum();
-		} else {
-			throw new AssertionError("unexpected attribute");
 		}
 		return new Integer(value);
 	}

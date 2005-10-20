@@ -50,7 +50,8 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 				}
 			});
 		} else {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(
+					"Attribute name not valid: " + attribute); //$NON-NLS-1$
 		}
 	}
 
@@ -73,18 +74,15 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 				IStructuredSelection sel = (IStructuredSelection) selection;
 				return sel.getFirstElement();
 			}
-			return null;
-		} else {
-			throw new AssertionError("unexpected attribute");
 		}
+		return null;
 	}
 
 	public Class getValueType() {
 		if (attribute.equals(SWTBindingConstants.SELECTION)) {
 			return Object.class;
-		} else {
-			throw new AssertionError("unexpected attribute");
 		}
+		throw new AssertionError("unexpected attribute"); //$NON-NLS-1$
 	}
 
 }

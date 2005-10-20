@@ -43,9 +43,15 @@ import org.eclipse.swt.widgets.Text;
  */
 public class SWTDatabindingContext extends DatabindingContext {
 
-	public static String JFACE_VIEWER_CONTENT = "content";
+	/**
+	 * 
+	 */
+	public static String JFACE_VIEWER_CONTENT = "content"; //$NON-NLS-1$
 
-	public static String JFACE_VIEWER_SELECTION = "selection";
+	/**
+	 * 
+	 */
+	public static String JFACE_VIEWER_SELECTION = "selection"; //$NON-NLS-1$
 
 	private final int validatePolicy;
 

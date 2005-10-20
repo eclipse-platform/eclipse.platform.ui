@@ -38,9 +38,8 @@ public class ButtonUpdatableValue extends UpdatableValue {
 	};
 
 	/**
-	 * @param text
-	 * @param updatePolicy
-	 * @param validatePolicy
+	 * @param button 
+	 * @param updatePolicy 
 	 */
 	public ButtonUpdatableValue(Button button, int updatePolicy) {
 		this.button = button;

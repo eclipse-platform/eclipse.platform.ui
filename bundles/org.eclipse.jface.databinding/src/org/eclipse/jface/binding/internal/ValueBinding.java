@@ -86,7 +86,7 @@ public class ValueBinding implements IChangeListener {
 				model.setValue(converter.convertTargetToModel(value));
 			} catch (Exception ex) {
 				context.updateValidationError(this,
-						"An error occurred while setting the value.");
+						BindingMessages.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
 			}
 		}
 	}

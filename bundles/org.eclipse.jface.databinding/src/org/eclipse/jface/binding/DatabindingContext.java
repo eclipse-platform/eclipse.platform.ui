@@ -117,7 +117,7 @@ public class DatabindingContext {
 						mdl.getValueType(), isDefaultIdentityConverter());
 			} else
 				throw new BindingException(
-						"Incompatible instances of IUpdatable");
+						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
 		else if (target instanceof IUpdatableCollection)
 			if (model instanceof IUpdatableCollection) {
 				IUpdatableCollection tgt = (IUpdatableCollection) target, mdl = (IUpdatableCollection) model;
@@ -125,7 +125,7 @@ public class DatabindingContext {
 						.getElementType(), isDefaultIdentityConverter());
 			} else
 				throw new BindingException(
-						"Incompatible instances of IUpdatable");
+						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
 
 		bind(target, model, converter);
 	}
@@ -168,14 +168,14 @@ public class DatabindingContext {
 				bind(tgt, mdl, converter, targetValidator);
 			} else
 				throw new BindingException(
-						"Incompatible instances of IUpdatable");
+						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
 		else if (target instanceof IUpdatableCollection)
 			if (model instanceof IUpdatableCollection) {
 				IUpdatableCollection tgt = (IUpdatableCollection) target, mdl = (IUpdatableCollection) model;
 				bind(tgt, mdl, converter, targetValidator);
 			} else
 				throw new BindingException(
-						"Incompatible instances of IUpdatable");
+						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
 	}
 
 	/**
@@ -198,17 +198,15 @@ public class DatabindingContext {
 		// Verify element conversion types
 		Class convertedClass = converter.getTargetType();
 		if (!targetCollection.getElementType().isAssignableFrom(convertedClass)) {
-			throw new BindingException("no converter from "
-					+ convertedClass.getName() + " to "
+			throw new BindingException("no converter from " //$NON-NLS-1$
+					+ convertedClass.getName() + " to " //$NON-NLS-1$
 					+ targetCollection.getElementType().getName());
-
 		}
 		convertedClass = converter.getModelType();
 		if (!modelCollection.getElementType().isAssignableFrom(convertedClass)) {
-			throw new BindingException("no converter from "
-					+ convertedClass.getName() + " to "
+			throw new BindingException("no converter from " //$NON-NLS-1$
+					+ convertedClass.getName() + " to " //$NON-NLS-1$
 					+ modelCollection.getElementType().getName());
-
 		}
 
 		CollectionBinding binding = new CollectionBinding(this,
@@ -340,8 +338,8 @@ public class DatabindingContext {
 	 * Creates an updatable value from the given object and feature ID. This
 	 * method looks up a factory registered for the given object's type. If the
 	 * given object is itself an IUpdatableValue, this method creates a derived
-	 * updatable value. The returned instance will be disposed when this data binding
-	 * context is disposed.
+	 * updatable value. The returned instance will be disposed when this data
+	 * binding context is disposed.
 	 * 
 	 * @param object
 	 *            is the instance we need an updatable for
@@ -357,7 +355,7 @@ public class DatabindingContext {
 			return new DerivedUpdatableValue(this, ((IUpdatableValue) object),
 					featureID);
 		else if (object instanceof IUpdatableCollection)
-			throw new BindingException("TODO: need to implement this"); // TODO:
+			throw new BindingException("TODO: need to implement this"); //$NON-NLS-1$ // TODO:
 
 		IUpdatable result = doCreateUpdatable(object, featureID);
 
@@ -379,7 +377,7 @@ public class DatabindingContext {
 	}
 
 	/**
-	 * @return
+	 * @return the validation message updatable value
 	 */
 	public IUpdatableValue getCombinedValidationMessage() {
 		return combinedValidationMessage;
@@ -408,7 +406,9 @@ public class DatabindingContext {
 		if (converter == null && createIdentity)
 			converter = new IdentityConverter(fromType, toType);
 		else
-			throw new BindingException("no converter");
+			throw new BindingException("no converter from " //$NON-NLS-1$
+					+ fromType.getName() + " to " //$NON-NLS-1$
+					+ toType.getName());
 
 		return converter;
 	}
@@ -479,10 +479,10 @@ public class DatabindingContext {
 	}
 
 	/**
-	 * @param sourceConverter
+	 * @param converter 
 	 * @return the validator
 	 */
-	public IValidator getValidator(IConverter sourceConverter) {
+	public IValidator getValidator(IConverter converter) {
 		return new IValidator() {
 
 			public String isPartiallyValid(Object value) {
@@ -538,8 +538,8 @@ public class DatabindingContext {
 			return parent.doCreateUpdatable(object, featureID);
 		}
 		throw new BindingException(
-				"Couldn't create an updatable value for object=" + object
-						+ ", feature=" + featureID);
+				"Couldn't create an updatable value for object=" + object //$NON-NLS-1$
+						+ ", feature=" + featureID); //$NON-NLS-1$
 	}
 
 	protected void registerConverters() {

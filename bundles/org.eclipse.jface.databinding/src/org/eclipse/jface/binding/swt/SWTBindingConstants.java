@@ -1,5 +1,9 @@
 package org.eclipse.jface.binding.swt;
 
+/**
+ * @since 3.2
+ *
+ */
 public interface SWTBindingConstants {
 
 	/**
