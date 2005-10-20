@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Plugin.name
+Bundle-SymbolicName: org.eclipse.ui.navigator; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: navigator.jar
+Bundle-Activator: org.eclipse.ui.navigator.internal.NavigatorPlugin
+Bundle-Vendor: %Plugin.providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.ui.navigator,
+ org.eclipse.ui.navigator.internal,
+ org.eclipse.ui.navigator.internal.actions,
+ org.eclipse.ui.navigator.internal.deferred,
+ org.eclipse.ui.navigator.internal.dnd,
+ org.eclipse.ui.navigator.internal.extensions,
+ org.eclipse.ui.navigator.internal.filters
+Require-Bundle: org.eclipse.jface,
+ org.eclipse.ui.workbench,
+ org.eclipse.core.resources,
+ org.eclipse.ui.ide,
+ org.eclipse.core.runtime,
+ org.eclipse.ui
+Eclipse-AutoStart: true

@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Common Navigator Tests
+Bundle-SymbolicName: org.eclipse.ui.tests.navigator; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.navigator,
+ org.eclipse.ui.views,
+ org.eclipse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.workbench,
+ org.junit

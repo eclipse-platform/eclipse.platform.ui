@@ -1,0 +1,37 @@
+<project name="PrepareForPII" default="main" basedir=".">
+		
+	<!-- Setup temp variables -->
+	<target name="init">
+		<property name="nlsDir" value="d:/NLS/Corona/0526"/>
+		<property name="plugin" value="org.eclipse.ui.workbench.navigator"/>
+		<property name="plugindir" value="d:/workspaceCorona/${plugin}"/>
+		<property name="outputDir" value="${nlsDir}/${plugin}"/>
+		
+	
+	</target>
+
+	<!-- Create the destination dir -->
+	<target name="nlsDir" depends="init">
+		<mkdir dir="${nlsDir}"/>
+	</target>
+	
+	<!-- Create the destination dir -->
+	<target name="plugindir" depends="nlsDir">
+		<delete dir="${outputDir}"/>
+		<mkdir dir="${outputDir}"/>
+	</target>
+
+	<!-- Move the files to the correct locations in the workspace. -->
+	<target name="main" depends="plugindir">
+		<messageIdGen folderPath = "${plugindir}" componentId = "E" />
+		
+		<copy todir = "${outputDir}/property_files" >
+			 <fileset dir="${plugindir}/property_files">
+           	  <include name="**/*.properties"/>
+  			 </fileset>
+  		</copy>
+  		
+		<copy file="${plugindir}/plugin.properties" todir="${outputDir}"/>
+  		
+	</target>
+</project>

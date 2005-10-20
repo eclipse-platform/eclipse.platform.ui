@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.wst.common.navigator.workbench">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.wst.common.navigator.workbench" id="NavigatorGroup" name="Navigator Group"/>
+      </appInfo>
+      <documentation>
+         The NavigatorGroup Extension allows third parties to contribute a meta-group to the Common Navigator which collects projects with the specified nature.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="navigatorGroup"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="navigatorGroup">
+      <annotation>
+         <documentation>
+            Define a grouping of Projects by Nature in the Navigator.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="displayName" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name to display in the Navigator Group.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  The icon to display for the Navigator Group
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="sortOrder" type="string">
+            <annotation>
+               <documentation>
+                  The order that the item should appear in the list, 0 is the highest (top of the list)
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="natureID" type="string">
+            <annotation>
+               <documentation>
+                  The nature ID of the projects that should be collected under the defined Navigator Group. Projects will be collected based on the first Nature in their list that matches one of the defined groups.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         WTP 6.0.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Navigator Groups should not be referenced by any external API.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

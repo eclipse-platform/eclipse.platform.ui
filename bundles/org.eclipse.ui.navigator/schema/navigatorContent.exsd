@@ -1,0 +1,366 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.wst.common.navigator.views">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.wst.common.navigator.views" id="navigatorContent" name="navigatorContent"/>
+      </appInfo>
+      <documentation>
+         [Enter description of this extension point.]
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="commonExpression.exsd"/>
+
+   <include schemaLocation="emfEnablement.exsd"/>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="navigatorContent"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="navigatorContent">
+      <annotation>
+         <documentation>
+            The root element of the extension schema. Defines information used by the Common Navigator to find available extensions.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="enablement"/>
+         </sequence>
+         <attribute name="contentProvider" type="string">
+            <annotation>
+               <documentation>
+                  Supplies the name of a class which implements org.eclipse.jface.viewers.ITreeContentProvider or org.eclipse.wst.common.navigator.views.INavigatorContentProvider.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="labelProvider" type="string">
+            <annotation>
+               <documentation>
+                  Supplies the name of a class which implements org.eclipse.jface.viewers.ILabelProvider or org.eclipse.wst.common.navigator.views.ICommonLabelProvider.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="actionProvider" type="string">
+            <annotation>
+               <documentation>
+                  Supplies the name of a class that implements org.eclipse.wst.common.navigator.views.ICommonActionProvider.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  A unique ID to identify this extension. Used for extension activation and by other extensions that would like to extend the defined extension (e.g. add another ICommonActionProvider)
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="openListener" type="string">
+            <annotation>
+               <documentation>
+                  Supplies the name of a class that implements org.eclipse.jface.views.OpenListener or org.eclipse.wst.common.navigator.views.ICommonOpenListener.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="priority">
+            <annotation>
+               <documentation>
+                  Indicates the relative priority of this extension to other extensions. Used by the Common Navigator to handle sorting and organization of the contributed content from this extension in relation to content from other extensions. Defaults to &quot;normal&quot;
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="lowest">
+                  </enumeration>
+                  <enumeration value="lower">
+                  </enumeration>
+                  <enumeration value="low">
+                  </enumeration>
+                  <enumeration value="normal">
+                  </enumeration>
+                  <enumeration value="high">
+                  </enumeration>
+                  <enumeration value="higher">
+                  </enumeration>
+                  <enumeration value="highest">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Specify a display name for the Content Extension
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="enabledByDefault" type="boolean">
+            <annotation>
+               <documentation>
+                  Indicates whether the current extension will be enabled by default. True will enable the extension, False will disable the extension. Users can later choose to override this value.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  A plugin-relative path to an icon for use when displaying the metadata about the content extension to the user.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="sorter" type="string">
+            <annotation>
+               <documentation>
+                  Indicates the name of class which implements java.util.Comparator that knows how to sort the items supported by this extension. If the extension enables on types that it does not provide, but understands, it may be called upon to sort items that it did not contribute.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="enablement">
+      <annotation>
+         <documentation>
+            This element is used to define the enablement for the extension. 
+Objects which are accepted by the expression will cause the extension to be invoked.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="objectState"/>
+            <element ref="pluginState"/>
+            <element ref="systemProperty"/>
+         </choice>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contentProvider">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="filterProvider">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.wst.common.navigator.internal.views.filters.ExtensionFilterProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="linkWithEditorHandler">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.wst.common.navigator.internal.provisional.views.ILinkHelper"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="actionProvider">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="labelProvider">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ILabeltProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="sorter">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="java.util.Comparator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension-point id="navigatorContent" name="%ExtPoint.navigatorContent" schema="schema/navigatorContent.exsd"/>
+   <extension-point id="navigatorViewer" name="%ExtPoint.navigatorViewer" schema="schema/navigatorViewer.exsd"/>
+   <extension-point id="commonFilter" name="%ExtPoint.commonFilter" schema="schema/commonFilter.exsd"/>
+   <extension-point id="dropHandler" name="%ExtPoint.dropHandler" schema="schema/dropHandler.exsd"/>
+   <extension-point id="thirdPartyFilterProvider" name="%ExtPoint.thirdPartyFilterProvider"/>
+   <extension-point id="linkHelper" name="Link Helper" schema="schema/linkHelper.exsd"/>
+   <extension-point id="actionProvider" name="Common Action Provider" schema="schema/actionProvider.exsd"/>
+ 
+   <extension
+         point="org.eclipse.ui.dropActions">
+      <action
+            class="org.eclipse.ui.navigator.internal.dnd.PluginDropAction"
+            id="org.eclipse.ui.navigator.internal.dnd.PluginDropAction">
+      </action>
+   </extension>
+   
+
+
+</plugin>
