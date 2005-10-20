@@ -75,7 +75,9 @@ public class DatabindingContextTest extends TestCase {
 		Mocks.reset(updatableValueRMock);
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.getValue();
+		validatorMock.isValid(null);
 		Mocks.startChecking(updatableValueRMock);
+		Mocks.startChecking(validatorMock);
 		dbc.bind(settableValue1, updatableValueRMock, identityConverter,
 				validatorMock);
 		Mocks.verify(updatableValueRMock);
@@ -84,7 +86,10 @@ public class DatabindingContextTest extends TestCase {
 	public void testBindValueTarget() {
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.setValue(null);
+		updatableValueRMock.getValue();
+		validatorMock.isValid(null);
 		Mocks.startChecking(updatableValueRMock);
+		Mocks.startChecking(validatorMock);
 		dbc.bind(updatableValueRMock, settableValue2, identityConverter,
 				validatorMock);
 	}

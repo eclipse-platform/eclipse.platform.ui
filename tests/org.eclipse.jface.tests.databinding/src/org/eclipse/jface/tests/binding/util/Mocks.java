@@ -149,9 +149,13 @@ public class Mocks {
 		}
 
 		public void verify() {
-			if (previousCallHistory == null && currentCallHistory.size() == 0) {
-				// mock object was not used at all
-				return;
+			if (previousCallHistory == null) {
+				if(currentCallHistory.size() == 0) {
+					// mock object was not used at all
+					return;
+				} else {
+					throw new AssertionFailedError("unexpected");
+				}
 			}
 			if (ordered) {
 				int numMissingCalls = previousCallHistory.size()
