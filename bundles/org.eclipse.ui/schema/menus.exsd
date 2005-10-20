@@ -522,7 +522,7 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
             <annotation>
                <documentation>
                   &lt;p&gt;
-This attribute accepts the following values: &lt;code&gt;start&lt;/code&gt; (put the element at the beginning of the container); &lt;/code&gt;end&lt;/code&gt; (put the element at the end of its container); &lt;code&gt;after&lt;/code&gt; (put the element after the sibling element whose id matches &lt;code&gt;ref&lt;/code&gt;); and, &lt;code&gt;before&lt;/code&gt; (put the element before the sibling element whose id matches &lt;code&gt;ref&lt;/code&gt;).  Relative ordering can be applied to any type of menu element.
+This attribute accepts the following values: &lt;code&gt;start&lt;/code&gt; (put the element at the beginning of the container); &lt;code&gt;end&lt;/code&gt; (put the element at the end of its container); &lt;code&gt;after&lt;/code&gt; (put the element after the sibling element whose id matches &lt;code&gt;ref&lt;/code&gt;); and, &lt;code&gt;before&lt;/code&gt; (put the element before the sibling element whose id matches &lt;code&gt;ref&lt;/code&gt;).  Relative ordering can be applied to any type of menu element.
 &lt;/p&gt;
 &lt;p&gt;
 In the event of conflicts, Eclipse will chose an arbitrary order.  The only guarantee is that, in the event of a conflict, the order will remain the same as long as the following holds:
@@ -549,7 +549,7 @@ In the event of conflicts, Eclipse will chose an arbitrary order.  The only guar
          <attribute name="relativeTo" type="string">
             <annotation>
                <documentation>
-                  The identifier of the element to which this position is relative.  This value is required if the &lt;code&gt;position&lt;/code&gt; is &lt;code&gt;before&lt;/code&gt; or &lt;/code&gt;after&lt;/code&gt;.
+                  The identifier of the element to which this position is relative.  This value is required if the &lt;code&gt;position&lt;/code&gt; is &lt;code&gt;before&lt;/code&gt; or &lt;code&gt;after&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -851,7 +851,7 @@ It is possible to add an existing menu element of any kind (i.e., menu, group, i
 &lt;/p&gt;
 &lt;pre&gt;
 &lt;modification&gt;
- &lt;reference id=&quot;SomeoneElse&apos;sMenu&quot; type=&quot;menu&quot;&gt;
+ &lt;reference id=&quot;SomeoneElsesMenu&quot; type=&quot;menu&quot;&gt;
  &lt;location&gt;
   &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
