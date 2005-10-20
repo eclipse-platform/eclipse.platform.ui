@@ -17,7 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.binding.internal.*;
+import org.eclipse.jface.binding.internal.CollectionBinding;
+import org.eclipse.jface.binding.internal.DerivedUpdatableValue;
+import org.eclipse.jface.binding.internal.ValueBinding;
 
 /**
  * @since 3.2
@@ -209,7 +211,8 @@ public class DatabindingService {
 
 		}
 
-		CollectionBinding binding = new CollectionBinding(this, targetCollection, modelCollection, converter, validator);
+		CollectionBinding binding = new CollectionBinding(this,
+				targetCollection, modelCollection, converter, validator);
 		binding.updateTargetFromModel();
 
 	}
@@ -335,9 +338,10 @@ public class DatabindingService {
 
 	/**
 	 * Creates an updatable value from the given object and feature ID. This
-	 * method looks up a factory registered for the given object's type. I the
+	 * method looks up a factory registered for the given object's type. If the
 	 * given object is itself an IUpdatableValue, this method creates a derived
-	 * updatable value.
+	 * updatable value. The returned instance will be disposed when this data binding
+	 * context is disposed.
 	 * 
 	 * @param object
 	 *            is the instance we need an updatable for
@@ -355,7 +359,13 @@ public class DatabindingService {
 		else if (object instanceof IUpdatableCollection)
 			throw new BindingException("TODO: need to implement this"); // TODO:
 
-		return primCreateUpdatable(object.getClass(), object, featureID);
+		IUpdatable result = doCreateUpdatable(object, featureID);
+
+		if (result != null) {
+			createdUpdatables.add(result);
+		}
+
+		return result;
 	}
 
 	/**
@@ -494,12 +504,9 @@ public class DatabindingService {
 
 	/**
 	 * 
-	 * This create an adaptable for Object, using clazz and its supers for
-	 * factories.
+	 * This returns an adaptable for the given object. Does not remember the
+	 * created updatable for later disposal (this is done in createUpdatable()).
 	 * 
-	 * @param clazz
-	 *            is the root class from which to look for registered updatable
-	 *            factories
 	 * @param object
 	 *            is the instance we need an updatable for
 	 * @param featureID
@@ -508,32 +515,27 @@ public class DatabindingService {
 	 * @throws BindingException
 	 * 
 	 */
-	private IUpdatable primCreateUpdatable(Class clazz, Object object,
-			Object featureID) throws BindingException {
-		
-//TODO:  Object will never get used,
-//		 need to also work this level implements before going up the hierarchy see AdapterManager.computeClassOrder
+	protected IUpdatable doCreateUpdatable(Object object, Object featureID)
+			throws BindingException {
+
+		// TODO: Object will never get used,
+		// need to also work this level implements before going up the hierarchy
+		// see AdapterManager.computeClassOrder
+		Class clazz = object.getClass();
 		IUpdatableFactory factory = null;
-		while (factory == null && clazz != Object.class) {
+		IUpdatable result = null;
+		while (result == null && clazz != null) {
 			factory = (IUpdatableFactory) updatableFactories.get(clazz);
+			if (factory != null) {
+				result = factory.createUpdatable(object, featureID);
+			}
 			clazz = clazz.getSuperclass();
 		}
 
-		IUpdatable result = null;
-		if (factory != null) {
-			result = factory.createUpdatable(object, featureID);
-			// It is possible that this (class) level's factory can not provide
-			// an Updatable for featureID
-			if (result == null) {
-				result = primCreateUpdatable(clazz, object, featureID);
-			}
-		}
-		if (result == null && parent != null) {
-			result = parent.createUpdatable(object, featureID);
-		}
 		if (result != null) {
-			createdUpdatables.add(result);
 			return result;
+		} else if (parent != null) {
+			return parent.doCreateUpdatable(object, featureID);
 		}
 		throw new BindingException(
 				"Couldn't create an updatable value for object=" + object
