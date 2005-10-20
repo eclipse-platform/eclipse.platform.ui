@@ -502,7 +502,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 
 	/**
 	 * Returns whether this command has a handler, and whether this handler is
-	 * also handled.
+	 * also handled and enabled.
 	 * 
 	 * @return <code>true</code> if the command is handled; <code>false</code>
 	 *         otherwise.
@@ -517,7 +517,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 
 	/**
 	 * Returns whether this command has a handler, and whether this handler is
-	 * also enabled.
+	 * also handled.
 	 * 
 	 * @return <code>true</code> if the command is handled; <code>false</code>
 	 *         otherwise.
@@ -638,7 +638,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 	}
 
 	/**
-	 * Makes this scheme become undefined. This has the side effect of changing
+	 * Makes this command become undefined. This has the side effect of changing
 	 * the name and description to <code>null</code>. Notification is sent to
 	 * all listeners.
 	 */
