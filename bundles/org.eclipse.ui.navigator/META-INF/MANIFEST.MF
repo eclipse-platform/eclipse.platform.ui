@@ -20,4 +20,4 @@ Require-Bundle: org.eclipse.jface,
  org.eclipse.ui.ide,
  org.eclipse.core.runtime,
  org.eclipse.ui
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
