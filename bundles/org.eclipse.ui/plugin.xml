@@ -14,7 +14,7 @@
    <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets.exsd"/>
    <extension-point id="bindings" name="%ExtPoint.bindings" schema="schema/bindings.exsd"/>
    <extension-point id="commands" name="%ExtPoint.commands" schema="schema/commands.exsd"/>
-   <extension-point id="commandImages" name="%ExtPoint.commandImages" schema="schema/commandImagess.exsd"/>
+   <extension-point id="commandImages" name="%ExtPoint.commandImages" schema="schema/commandImages.exsd"/>
    <extension-point id="contexts" name="%ExtPoint.contexts" schema="schema/contexts.exsd"/>
    <extension-point id="handlers" name="%ExtPoint.handlers" schema="schema/handlers.exsd"/>
    <extension-point id="decorators" name="%ExtPoint.decorators" schema="schema/decorators.exsd"/>
