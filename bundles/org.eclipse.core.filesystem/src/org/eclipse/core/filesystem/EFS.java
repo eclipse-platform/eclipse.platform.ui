@@ -93,13 +93,6 @@ public class EFS {
 	public static final int SET_LAST_MODIFIED = 1 << 11;
 
 	/**
-	 * @deprecated To be removed before I20051018
-	 */
-	public static final int ATTRIBUTE_DIRECTORY= 1 << 0;
-
-	//note that "1 << 0" is reserved as the directory attribute that is not API
-	
-	/**
 	 * Attribute constant (value 1 &lt;&lt;1) indicating that a
 	 * file is read only.
 	 * 
