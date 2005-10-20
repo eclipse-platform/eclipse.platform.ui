@@ -16,8 +16,9 @@ package org.eclipse.ui.part;
  * of bytes. When the drop occurs, the data is interpreted by an action defined
  * in the specified extension.
  * <p>
- * The workbench will automatically create instances of this class as required.
- * It is not intended to be instantiated or subclassed by clients.
+ * Clients using PluginTransfer should create an instance to contain the
+ * drop data.
+ * It is not intended to be subclassed by clients.
  * </p>
  */
 public class PluginTransferData {
