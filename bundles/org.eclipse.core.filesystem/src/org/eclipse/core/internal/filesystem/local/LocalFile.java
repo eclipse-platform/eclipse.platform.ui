@@ -233,8 +233,8 @@ public class LocalFile extends FileStore {
 			file.mkdirs();
 		if (!file.isDirectory()) {
 			checkReadOnlyParent(file, null);
-			String message = NLS.bind(Messages.couldNotCreateFolder, filePath);
-			Policy.error(EFS.ERROR_WRITE, message);
+			String message = NLS.bind(Messages.failedCreateWrongType, filePath);
+			Policy.error(EFS.ERROR_WRONG_TYPE, message);
 		}
 		return this;
 	}
