@@ -306,8 +306,8 @@
             description="%NavigateActionSet.description"
             visible="false"
             id="org.eclipse.ui.NavigateActionSet">
-            <reference id="goToResource" />
-            <reference id="org.eclipse.ui.OpenWorkspaceFile" />
+            <reference id="goToResource" type="item" />
+            <reference id="org.eclipse.ui.OpenWorkspaceFile" type="item" />
       </actionSet>
       
       <item
@@ -329,7 +329,7 @@
             label="%KeyBindingActionSet.label"
             visible="true"
             id="org.eclipse.ui.actionSet.keyBindings">
-            <reference id="org.eclipse.ui.actions.showKeyAssistHandler" />
+            <reference id="org.eclipse.ui.actions.showKeyAssistHandler" type="item" />
       </actionSet>
       
       <item
@@ -345,7 +345,7 @@
             description="%WorkingSetsActionSet.description"
             visible="false"
             id="org.eclipse.ui.WorkingSetActionSet">
-            <reference id="selectWorkingSets" />
+            <reference id="selectWorkingSets" type="item" />
       </actionSet>
       
       <item

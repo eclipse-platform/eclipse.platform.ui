@@ -439,7 +439,7 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="type">
+         <attribute name="type" use="required">
             <annotation>
                <documentation>
                   The type of element to which this reference refers.  This is only required if there are elements of different types with the same id.
