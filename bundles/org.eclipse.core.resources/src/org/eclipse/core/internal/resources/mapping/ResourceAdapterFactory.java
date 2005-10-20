@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.resources.mapping;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IAdapterFactory;
 
 /**
@@ -24,9 +25,6 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 	 * Method declared on IAdapterFactory
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (adapterType == org.eclipse.core.resources.mapping.ResourceMapping.class && adaptableObject instanceof IResource) {
-			return new SimpleResourceMapping((IResource) adaptableObject);
-		}
 		if (adapterType == ResourceMapping.class && adaptableObject instanceof IResource) {
 			return new SimpleResourceMapping((IResource) adaptableObject);
 		}
@@ -37,6 +35,6 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 	 * Method declared on IAdapterFactory
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] {org.eclipse.core.resources.mapping.ResourceMapping.class, ResourceMapping.class};
+		return new Class[] {ResourceMapping.class};
 	}
 }
