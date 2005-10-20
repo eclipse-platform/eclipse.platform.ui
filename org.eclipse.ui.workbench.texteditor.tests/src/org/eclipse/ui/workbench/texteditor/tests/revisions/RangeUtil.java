@@ -47,4 +47,15 @@ class RangeUtil extends Assert {
 		assertEquals(1, actual.size());
 		RangeUtil.assertEqualRange(expected, (ILineRange) actual.get(0));
 	}
+
+	static void assertEqualRanges(List expected, List actual) {
+		assertEquals(expected.size(), actual.size());
+		Iterator it1= expected.iterator();
+		Iterator it2= actual.iterator();
+		while (it1.hasNext()) {
+			ILineRange r1= (ILineRange) it1.next();
+			ILineRange r2= (ILineRange) it2.next();
+			assertEqualRange(r1, r2);
+		}
+	}
 }

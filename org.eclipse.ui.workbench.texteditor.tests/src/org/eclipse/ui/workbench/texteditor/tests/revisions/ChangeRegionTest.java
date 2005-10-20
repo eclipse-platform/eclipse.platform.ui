@@ -91,28 +91,28 @@ public class ChangeRegionTest extends TestCase {
 		ChangeRegion r= new ChangeRegion(fRevision, new LineRange(12, 3));
 		List before= RangeUtil.deepClone(r.getAdjustedRanges());
 		r.adjustTo(new Hunk(16, 3, 2));
-		assertEquals(before, r.getAdjustedRanges());
-		assertEquals(before.get(0), r.getAdjustedCoverage());
+		RangeUtil.assertEqualRanges(before, r.getAdjustedRanges());
+		RangeUtil.assertEqualRange((ILineRange) before.get(0), r.getAdjustedCoverage());
 		
 		r= new ChangeRegion(fRevision, new LineRange(12, 3));
 		before= RangeUtil.deepClone(r.getAdjustedRanges());
 		r.adjustTo(new Hunk(16, -33, 2));
-		assertEquals(before, r.getAdjustedRanges());
-		assertEquals(before.get(0), r.getAdjustedCoverage());
+		RangeUtil.assertEqualRanges(before, r.getAdjustedRanges());
+		RangeUtil.assertEqualRange((ILineRange) before.get(0), r.getAdjustedCoverage());
 	}
 
 	public void testHunkRightAfter() throws Exception {
 		ChangeRegion r= new ChangeRegion(fRevision, new LineRange(12, 3));
 		List before= RangeUtil.deepClone(r.getAdjustedRanges());
 		r.adjustTo(new Hunk(15, 3, 2));
-		assertEquals(before, r.getAdjustedRanges());
-		assertEquals(before.get(0), r.getAdjustedCoverage());
+		RangeUtil.assertEqualRanges(before, r.getAdjustedRanges());
+		RangeUtil.assertEqualRange((ILineRange) before.get(0), r.getAdjustedCoverage());
 		
 		r= new ChangeRegion(fRevision, new LineRange(12, 3));
 		before= RangeUtil.deepClone(r.getAdjustedRanges());
 		r.adjustTo(new Hunk(15, -3, 2));
-		assertEquals(before, r.getAdjustedRanges());
-		assertEquals(before.get(0), r.getAdjustedCoverage());
+		RangeUtil.assertEqualRanges(before, r.getAdjustedRanges());
+		RangeUtil.assertEqualRange((ILineRange) before.get(0), r.getAdjustedCoverage());
 	}
 	
 	public void testHunkBefore() throws Exception {
