@@ -15,7 +15,6 @@ import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.UpdatableValue;
 import org.eclipse.jface.binding.swt.SWTBindingConstants;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Combo;
 
 /**
@@ -24,12 +23,10 @@ import org.eclipse.swt.widgets.Combo;
  */
 public class ComboUpdatableValue extends UpdatableValue {
 
-	
-
 	/**
 	 * 
 	 */
-	
+
 	private final Combo combo;
 
 	private final String attribute;
@@ -45,8 +42,9 @@ public class ComboUpdatableValue extends UpdatableValue {
 		this.attribute = attribute;
 		if (attribute.equals(SWTBindingConstants.CONTENT))
 			attribute = SWTBindingConstants.TEXT;
-		
-		if (attribute.equals(SWTBindingConstants.TEXT)) {
+
+		if (attribute.equals(SWTBindingConstants.TEXT) || 
+			attribute.equals(SWTBindingConstants.SELECTION)) {
 			combo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
@@ -54,20 +52,6 @@ public class ComboUpdatableValue extends UpdatableValue {
 					}
 				}
 			});
-		} else if (attribute.equals(SWTBindingConstants.SELECTION)) {
-			combo.addSelectionListener(new SelectionListener() {
-				private void fireIfNeeded() {
-					if (!updating) {												
-							fireChangeEvent(IChangeEvent.CHANGE, null, null);						
-					}
-				}
-				public void widgetDefaultSelected(SelectionEvent e) {
-					fireIfNeeded();
-				}			
-				public void widgetSelected(SelectionEvent e) {
-					fireIfNeeded();			
-				}			
-			});			
 		}
 		else
 			throw new IllegalArgumentException();
@@ -79,18 +63,18 @@ public class ComboUpdatableValue extends UpdatableValue {
 			if (attribute.equals(SWTBindingConstants.TEXT)) {
 				String stringValue = (String) value;
 				combo.setText(stringValue);
-			} else if (attribute.equals(SWTBindingConstants.SELECTION)) {
-				Object items[] = combo.getItems();
+			}
+			else if (attribute.equals(SWTBindingConstants.SELECTION)) {
+				String items[] = combo.getItems();
 				int index = -1;
-				if (items!=null && value != null) {
+				if (items != null && value != null) {
 					for (int i = 0; i < items.length; i++) {
 						if (value.equals(items[i])) {
 							index = i;
 							break;
 						}
 					}
-					if (index>=0)
-					    combo.setSelection(new Point(index, index));
+					combo.select(index); // -1 will not "unselect"
 				}
 			}
 		} finally {
@@ -101,22 +85,20 @@ public class ComboUpdatableValue extends UpdatableValue {
 	public Object getValue() {
 		if (attribute.equals(SWTBindingConstants.TEXT)) {
 			return combo.getText();
-		} else if (attribute.equals(SWTBindingConstants.SELECTION)) {
-			//TODO not thread safe
+		}
+		else if (attribute.equals(SWTBindingConstants.SELECTION)) {
 			int index = combo.getSelectionIndex();
-			if (index>=0)
-				return combo.getItem(index);	
+			if (index >= 0)
+				return combo.getItem(index);
 			return null;
-		} else 
-			throw new AssertionError("unexpected attribute");  //$NON-NLS-1$
-		
+		}
+		else
+			throw new AssertionError("unexpected attribute"); //$NON-NLS-1$
+
 	}
 
 	public Class getValueType() {
-		if (attribute.equals(SWTBindingConstants.TEXT) ||
-			attribute.equals(SWTBindingConstants.SELECTION)) {
-			return String.class;
-		}
+		if (attribute.equals(SWTBindingConstants.TEXT) || attribute.equals(SWTBindingConstants.SELECTION)) { return String.class; }
 		throw new AssertionError("unexpected attribute"); //$NON-NLS-1$
 	}
 
