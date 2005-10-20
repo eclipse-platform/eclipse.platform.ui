@@ -13,16 +13,16 @@ package org.eclipse.jface.tests.binding;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.binding.BindingException;
-import org.eclipse.jface.binding.DatabindingService;
+import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IConverter;
 import org.eclipse.jface.binding.IUpdatableValue;
 import org.eclipse.jface.binding.IValidator;
 import org.eclipse.jface.binding.SettableValue;
 import org.eclipse.jface.tests.binding.util.Mocks;
 
-public class DatabindingServiceTest extends TestCase {
+public class DatabindingContextTest extends TestCase {
 
-	DatabindingService dbs;
+	DatabindingContext dbc;
 
 	IUpdatableValue updatableValueRMock;
 
@@ -57,7 +57,7 @@ public class DatabindingServiceTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		dbs = new DatabindingService();
+		dbc = new DatabindingContext();
 		updatableValueRMock = (IUpdatableValue) Mocks
 				.createRelaxedMock(IUpdatableValue.class);
 		validatorMock = (IValidator) Mocks.createMock(IValidator.class);
@@ -76,7 +76,7 @@ public class DatabindingServiceTest extends TestCase {
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.getValue();
 		Mocks.startChecking(updatableValueRMock);
-		dbs.bind(settableValue1, updatableValueRMock, identityConverter,
+		dbc.bind(settableValue1, updatableValueRMock, identityConverter,
 				validatorMock);
 		Mocks.verify(updatableValueRMock);
 	}
@@ -85,14 +85,14 @@ public class DatabindingServiceTest extends TestCase {
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.setValue(null);
 		Mocks.startChecking(updatableValueRMock);
-		dbs.bind(updatableValueRMock, settableValue2, identityConverter,
+		dbc.bind(updatableValueRMock, settableValue2, identityConverter,
 				validatorMock);
 	}
 
 	public void testBindValuePropagation() throws BindingException {
 		settableValue1.setValue(o1);
 		settableValue2.setValue(o2);
-		dbs.bind(settableValue1, settableValue2);
+		dbc.bind(settableValue1, settableValue2);
 		assertEquals(o2, settableValue1.getValue());
 		settableValue1.setValue(o1);
 		assertEquals(o2, settableValue2.getValue());

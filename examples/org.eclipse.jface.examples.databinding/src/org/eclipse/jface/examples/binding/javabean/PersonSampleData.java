@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.binding.javabean;
 
-import org.eclipse.jface.binding.DatabindingService;
+import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IUpdatable;
 import org.eclipse.jface.binding.IUpdatableFactory;
-import org.eclipse.jface.binding.swt.SWTDatabindingService;
+import org.eclipse.jface.binding.swt.SWTDatabindingContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
@@ -27,10 +27,10 @@ public class PersonSampleData {
 	 * @param aControl
 	 * @return the data binding service
 	 */
-	public static DatabindingService getSWTtoJavaBeanDatabindingService(
+	public static DatabindingContext getSWTtoJavaBeanDatabindingContext(
 			Control aControl) {
 
-		DatabindingService dbs = new SWTDatabindingService(aControl,
+		DatabindingContext dbc = new SWTDatabindingContext(aControl,
 				SWT.FocusOut, SWT.FocusOut);
 
 		IUpdatableFactory emfValueFactory = new IUpdatableFactory() {
@@ -38,9 +38,9 @@ public class PersonSampleData {
 				return new JavaBeanUpdatableValue(object, (String) attribute);
 			}
 		};
-		dbs.addUpdatableFactory(Person.class, emfValueFactory);
+		dbc.addUpdatableFactory(Person.class, emfValueFactory);
 
-		return dbs;
+		return dbc;
 
 	}
 

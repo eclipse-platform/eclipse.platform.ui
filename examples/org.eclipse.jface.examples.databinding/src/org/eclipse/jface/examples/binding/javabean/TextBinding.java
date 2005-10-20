@@ -11,7 +11,7 @@
 package org.eclipse.jface.examples.binding.javabean;
 
 import org.eclipse.jface.binding.BindingException;
-import org.eclipse.jface.binding.DatabindingService;
+import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class TextBinding extends Composite {
 
-	private DatabindingService dbs;
+	private DatabindingContext dbc;
 
 	private Group group = null;
 
@@ -64,21 +64,21 @@ public class TextBinding extends Composite {
 	}
 
 	private void bind() throws BindingException {
-		dbs = PersonSampleData.getSWTtoJavaBeanDatabindingService(this);
+		dbc = PersonSampleData.getSWTtoJavaBeanDatabindingContext(this);
 
 		Person person = new Person();
 		person.setAge(35);
 		person.setFirstName("John");
 		person.setLastName("Doe");
 
-		dbs.bind(txtDescription, "text", person, "firstName");
-		dbs.bind(txtDescription_1, "text", person, "firstName");
+		dbc.bind(txtDescription, "text", person, "firstName");
+		dbc.bind(txtDescription_1, "text", person, "firstName");
 
-		dbs.bind(txtName, "text", person, "lastName");
-		dbs.bind(txtName_1, "text", person, "lastName");
+		dbc.bind(txtName, "text", person, "lastName");
+		dbc.bind(txtName_1, "text", person, "lastName");
 
-		dbs.bind(txtLocation, "text", person, "age");
-		dbs.bind(txtLocation_1, "text", person, "age");
+		dbc.bind(txtLocation, "text", person, "age");
+		dbc.bind(txtLocation_1, "text", person, "age");
 
 	}
 

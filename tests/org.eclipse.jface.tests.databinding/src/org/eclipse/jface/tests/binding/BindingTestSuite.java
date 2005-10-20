@@ -25,6 +25,6 @@ public class BindingTestSuite extends TestSuite {
 
 	public BindingTestSuite() {
 		addTestSuite(UpdatableTest.class);
-		addTestSuite(DatabindingServiceTest.class);
+		addTestSuite(DatabindingContextTest.class);
 	}
 }

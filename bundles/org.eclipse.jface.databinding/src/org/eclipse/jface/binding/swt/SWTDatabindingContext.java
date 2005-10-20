@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.binding.swt;
 
-import org.eclipse.jface.binding.DatabindingService;
+import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IUpdatable;
 import org.eclipse.jface.binding.IUpdatableFactory;
 import org.eclipse.jface.binding.internal.swt.ButtonUpdatableValue;
@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
  * @since 3.2
  * 
  */
-public class SWTDatabindingService extends DatabindingService {
+public class SWTDatabindingContext extends DatabindingContext {
 
 	public static String JFACE_VIEWER_CONTENT = "content";
 
@@ -59,7 +59,7 @@ public class SWTDatabindingService extends DatabindingService {
 	 * @param updatePolicy
 	 *            one of SWT.Modify, SWT.FocusOut, or SWT.None
 	 */
-	public SWTDatabindingService(Control control, int validatePolicy,
+	public SWTDatabindingContext(Control control, int validatePolicy,
 			int updatePolicy) {
 		super();
 		this.validatePolicy = validatePolicy;

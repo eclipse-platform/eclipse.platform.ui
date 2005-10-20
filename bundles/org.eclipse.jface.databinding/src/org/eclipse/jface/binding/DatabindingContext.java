@@ -24,7 +24,7 @@ import org.eclipse.jface.binding.internal.ValueBinding;
 /**
  * @since 3.2
  */
-public class DatabindingService {
+public class DatabindingContext {
 
 	private static class Pair {
 
@@ -58,7 +58,7 @@ public class DatabindingService {
 
 	private boolean defaultIdentityConverter = true;
 
-	private DatabindingService parent;
+	private DatabindingContext parent;
 
 	private List partialValidationMessages = new ArrayList();
 
@@ -76,14 +76,14 @@ public class DatabindingService {
 	/**
 	 * 
 	 */
-	public DatabindingService() {
+	public DatabindingContext() {
 		this(null);
 	}
 
 	/**
 	 * @param parent
 	 */
-	public DatabindingService(DatabindingService parent) {
+	public DatabindingContext(DatabindingContext parent) {
 		this.parent = parent;
 		registerValueFactories();
 		registerConverters();

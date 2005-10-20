@@ -11,7 +11,7 @@
 package org.eclipse.jface.binding.internal;
 
 import org.eclipse.jface.binding.BindingException;
-import org.eclipse.jface.binding.DatabindingService;
+import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.IUpdatableValue;
@@ -19,7 +19,7 @@ import org.eclipse.jface.binding.UpdatableValue;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class DerivedUpdatableValue extends UpdatableValue {
 
@@ -36,16 +36,16 @@ public class DerivedUpdatableValue extends UpdatableValue {
 
 	private IUpdatableValue innerUpdatableValue;
 
-	private DatabindingService databindingService;
+	private DatabindingContext databindingContext;
 
 	/**
-	 * @param databindingService
+	 * @param databindingContext
 	 * @param outerUpdatableValue
 	 * @param feature
 	 */
-	public DerivedUpdatableValue(DatabindingService databindingService,
+	public DerivedUpdatableValue(DatabindingContext databindingContext,
 			final IUpdatableValue outerUpdatableValue, Object feature) {
-		this.databindingService = databindingService;
+		this.databindingContext = databindingContext;
 		this.feature = feature;
 		updateInnerUpdatableValue(outerUpdatableValue);
 		IChangeListener outerChangeListener = new IChangeListener() {
@@ -68,7 +68,7 @@ public class DerivedUpdatableValue extends UpdatableValue {
 			innerUpdatableValue = null;
 		} else {
 			try {
-				this.innerUpdatableValue = (IUpdatableValue) databindingService
+				this.innerUpdatableValue = (IUpdatableValue) databindingContext
 						.createUpdatable(currentOuterValue, feature);
 			} catch (BindingException e) {
 				// TODO Auto-generated catch block
@@ -97,7 +97,7 @@ public class DerivedUpdatableValue extends UpdatableValue {
 			innerUpdatableValue.dispose();
 		}
 		currentOuterValue = null;
-		databindingService = null;
+		databindingContext = null;
 		feature = null;
 		innerUpdatableValue = null;
 		innerChangeListener = null;

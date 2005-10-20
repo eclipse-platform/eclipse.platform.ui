@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.binding.internal;
 
-import org.eclipse.jface.binding.DatabindingService;
+import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.IConverter;
@@ -23,7 +23,7 @@ import org.eclipse.jface.binding.IValidator;
  */
 public class ValueBinding implements IChangeListener {
 
-	private final DatabindingService context;
+	private final DatabindingContext context;
 
 	private final IUpdatableValue target;
 
@@ -40,7 +40,7 @@ public class ValueBinding implements IChangeListener {
 	 * @param converter
 	 * @param validator
 	 */
-	public ValueBinding(DatabindingService context, IUpdatableValue target,
+	public ValueBinding(DatabindingContext context, IUpdatableValue target,
 			IUpdatableValue model, IConverter converter, IValidator validator) {
 		super();
 		this.context = context;
