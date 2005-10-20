@@ -56,7 +56,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
         }
 
         public IResource getAdaptedResource(IAdaptable adaptable) {
-            // Woring sets don't adapt to IResource
+            // Working sets don't adapt to IResource
             return null;
         }
         
@@ -162,7 +162,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
                 }
             }
             if (resourceAdapter instanceof IContributorResourceAdapter) {
-                // Next, use the resource adapter to get a resource and then get the mappng for that resource
+                // Next, use the resource adapter to get a resource and then get the mapping for that resource
                 IResource resource = ((IContributorResourceAdapter)resourceAdapter).getAdaptedResource(element);
                 if (resource != null) {
                     Object mapping = internalGetAdapter(resource, ResourceMapping.class);
@@ -182,7 +182,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
             if (adapted != null)
                 return adapted;
         }
-        // Fallback to the aadapter manager in case the object doesn't
+        // Fallback to the adapter manager in case the object doesn't
         // implement getAdapter or in the case where the implementation 
         // doesn't consult the manager
         return Platform.getAdapterManager().getAdapter(o, adapter);
