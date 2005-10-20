@@ -81,7 +81,7 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
 	public static final String NEW_KEYS_PREFERENCE_PAGE = "newKeysPreferencePage"; //$NON-NLS-1$
 
     /**
-	 * Factory ID for the Editors preference page.
+	 * Factory ID for the Perspectives preference page.
 	 */
     public static final String PERSPECTIVES_PREFERENCE_PAGE = "perspectivesPreferencePage"; //$NON-NLS-1$
 
