@@ -270,19 +270,32 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
     	});
     	importList.getViewer().addDoubleClickListener(new IDoubleClickListener(){
         	public void doubleClick(DoubleClickEvent event) {
-        		listDoubleClicked(event.getViewer().getSelection());
+        		treeDoubleClicked(event);
         	}
         });
     	return importComp;
     }
     
-    /*
+    /**
      * Method to call when an item in one of the lists is double-clicked.
-     * Shows the first page of the selected wizard.
+     * Shows the first page of the selected wizard or expands a collapsed
+     * tree.
+     * @param event
      */
-    private void listDoubleClicked(ISelection selection){
-    	listSelectionChanged(selection);
-        getContainer().showPage(getNextPage());    	
+    private void treeDoubleClicked(DoubleClickEvent event){
+    	ISelection selection = event.getViewer().getSelection();
+	    IStructuredSelection ss = (IStructuredSelection) selection;
+    	listSelectionChanged(ss);
+		
+		Object element = ss.getFirstElement();
+		TreeViewer v = (TreeViewer)event.getViewer();
+		if (v.isExpandable(element)) {
+		    v.setExpandedState(element, !v.getExpandedState(element));
+		} else if (element instanceof WorkbenchWizardElement) {
+			if (canFlipToNextPage())
+				getContainer().showPage(getNextPage());
+		}    	
+        getContainer().showPage(getNextPage());   			
     }
     /*
      * Method to call whenever the selected tab has changes.
@@ -373,7 +386,7 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
     	});
         exportList.getViewer().addDoubleClickListener(new IDoubleClickListener(){
         	public void doubleClick(DoubleClickEvent event) {
-        		listDoubleClicked(event.getViewer().getSelection());
+        		treeDoubleClicked(event);
         	}
         });
         return exportComp;
