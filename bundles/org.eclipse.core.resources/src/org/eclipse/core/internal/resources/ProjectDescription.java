@@ -179,7 +179,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		// null scheme represents path variable
 		if (scheme == null || EFS.SCHEME_FILE.equals(scheme))
 			return new Path(location.getSchemeSpecificPart());
-		throw new RuntimeException("Project is not in the local file system: " + location); //$NON-NLS-1$
+		return null;
 	}
 
 	/* (non-Javadoc)

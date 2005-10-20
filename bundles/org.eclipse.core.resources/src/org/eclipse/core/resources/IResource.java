@@ -1081,12 +1081,9 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p><p>
 	 * If this resource is a project that does not exist in the workspace,
 	 * or a file or folder below such a project, this method returns
-	 * <code>null</code>.
-	 * </p>
-	 * <p>
-	 * This method fails if called on a resource that is not stored in the local
-	 * file system.  For such resources {@link #getLocationURI()} should
-	 * be used instead.
+	 * <code>null</code>.  This method also returns <code>null</code> if called 
+	 * on a resource that is not stored in the local file system.  For such resources 
+	 * {@link #getLocationURI()} should be used instead.
 	 * </p>
 	 * 
 	 * @return the absolute path of this resource in the local file system,
