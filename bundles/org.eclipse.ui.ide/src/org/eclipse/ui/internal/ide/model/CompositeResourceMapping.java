@@ -10,17 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 /**
  * A resource mapping that contains child mappings which are used to obtain the traversals
@@ -87,5 +80,9 @@ public class CompositeResourceMapping extends ResourceMapping {
             monitor.done();
         }
     }
+
+	public String getModelProviderId() {
+		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
+	}
 
 }
