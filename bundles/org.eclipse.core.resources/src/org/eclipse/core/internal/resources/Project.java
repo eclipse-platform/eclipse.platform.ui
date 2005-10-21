@@ -601,11 +601,10 @@ public class Project extends Container implements IProject {
 		workspace.copyTree(this, destination.getFullPath(), IResource.DEPTH_ZERO, IResource.NONE, false);
 		getPropertyManager().copy(this, destination, IResource.DEPTH_ZERO);
 
-		//clear instantiated builders and natures because they reference the project handle
 		ProjectInfo info = (ProjectInfo) ((Resource) destination).getResourceInfo(false, true);
-		info.clearNaturesAndBuilders();
 
-		//clear session properties and markers for the new project, because they shouldn't be copied.
+		//clear properties, markers, and description for the new project, because they shouldn't be copied.
+		info.description = null;
 		info.setMarkers(null);
 		info.clearSessionProperties();
 	}

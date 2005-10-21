@@ -31,11 +31,13 @@ public class ProjectInfo extends ResourceInfo {
 	protected IContentTypeMatcher matcher = null;
 
 	/**
-	 * Discards any instantiated nature and builder instances associated with
-	 * this project info.
+	 * Discards any stale state on this project after it has been moved.  Builder
+	 * instances must be cleared because they reference the old project handle.
 	 */
-	public synchronized void clearNaturesAndBuilders() {
+	public synchronized void fixupAfterMove() {
 		natures = null;
+		// note that the property store instance will be recreated lazily
+		propertyStore = null;
 		if (description != null) {
 			ICommand[] buildSpec = description.getBuildSpec(false);
 			for (int i = 0; i < buildSpec.length; i++)

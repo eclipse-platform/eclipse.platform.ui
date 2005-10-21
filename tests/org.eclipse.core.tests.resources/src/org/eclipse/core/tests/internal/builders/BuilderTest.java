@@ -377,6 +377,55 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("11.99", e);
 		}
 	}
+	
+	/**
+	 * Tests that when a project is copied, the copied project has a full build
+	 * but the source project does not.
+	 */
+	public void testCopyProject() {
+		IWorkspace workspace = getWorkspace();
+		// Create some resource handles
+		IProject proj1 = workspace.getRoot().getProject("testCopyProject" + 1);
+		IProject proj2 = workspace.getRoot().getProject("testCopyProject" + 2);
+		try {
+			// Turn auto-building on
+			setAutoBuilding(true);
+			// Create some resources
+			proj1.create(getMonitor());
+			proj1.open(getMonitor());
+			ensureDoesNotExistInWorkspace(proj2);
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		// Create and set a build spec for project one
+		try {
+			IProjectDescription desc = proj1.getDescription();
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
+			proj1.setDescription(desc, getMonitor());
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		waitForBuild();
+		SortBuilder.getInstance().reset();
+		try {
+			IProjectDescription desc = proj1.getDescription();
+			desc.setName(proj2.getName());
+			proj1.copy(desc, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.99", e);
+		}
+		waitForBuild();
+		SortBuilder builder = SortBuilder.getInstance();
+		assertEquals("4.0", proj2, builder.getProject());
+
+		//builder 2 should have done a full build
+		builder.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+		builder.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
+		builder.addExpectedLifecycleEvent("Build0");
+		builder.assertLifecycleEvents("4.4");
+		assertTrue("4.5", builder.wasFullBuild());
+
+	}
 
 	/**
 	 * Tests the lifecycle of a builder.

@@ -643,10 +643,7 @@ class ResourceTree implements IResourceTree {
 				}
 
 				// Clear stale state on the destination project.
-				ProjectInfo info = (ProjectInfo) destination.getResourceInfo(false, true);
-				info.clearNaturesAndBuilders();
-				// note that the property store instance will be recreated lazily
-				info.setPropertyStore(null);
+				((ProjectInfo) destination.getResourceInfo(false, true)).fixupAfterMove();
 
 				// Generate marker deltas.
 				try {

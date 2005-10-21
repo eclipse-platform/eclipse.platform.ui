@@ -53,8 +53,9 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 
 	public Object clone() {
 		ProjectDescription clone = (ProjectDescription) super.clone();
-		//don't want the clone to have access to our internal link locations table
+		//don't want the clone to have access to our internal link locations table or builders
 		clone.linkDescriptions = null;
+		clone.buildSpec = getBuildSpec(true);
 		return clone;
 	}
 
