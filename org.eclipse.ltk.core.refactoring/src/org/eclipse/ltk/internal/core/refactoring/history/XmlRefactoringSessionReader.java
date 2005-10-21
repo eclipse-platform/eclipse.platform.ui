@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 
+import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 import org.xml.sax.Attributes;
@@ -51,11 +52,17 @@ final class XmlRefactoringSessionReader extends DefaultHandler implements IRefac
 	/** The comment of the refactoring session, or <code>null</code> */
 	private String fComment= null;
 
+	/** The time stamp, or <code>-1</code> */
+	private long fStamp= -1;
+
 	/**
 	 * The current list of refactoring descriptors, or <code>null</code>
 	 * (element type: <code>RefactoringDescriptor</code>)
 	 */
 	private List fRefactoringDescriptors= null;
+
+	/** The refactoring descriptor, or <code>null</code> */
+	private RefactoringDescriptor fRefactoringDescriptor= null;
 
 	/** The current version of the refactoring script, or <code>null</code> */
 	private String fVersion= null;
@@ -103,17 +110,16 @@ final class XmlRefactoringSessionReader extends DefaultHandler implements IRefac
 	/**
 	 * @inheritDoc
 	 */
-	public RefactoringSessionDescriptor readSession(final Object input) throws CoreException {
+	public RefactoringDescriptor readDescriptor(Object input, long stamp) throws CoreException {
+		Assert.isLegal(stamp >= 0);
+		fStamp= stamp;
 		if (input instanceof InputSource) {
 			try {
 				final InputSource source= (InputSource) input;
 				source.setSystemId("/"); //$NON-NLS-1$
 				createParser(SAXParserFactory.newInstance()).parse(source, this);
-				if (fRefactoringDescriptors != null && fVersion != null) {
-					final RefactoringSessionDescriptor descriptor= new RefactoringSessionDescriptor((RefactoringDescriptor[]) fRefactoringDescriptors.toArray(new RefactoringDescriptor[fRefactoringDescriptors.size()]), fVersion, fComment);
-					fRefactoringDescriptors= null;
-					fVersion= null;
-					fComment= null;
+				if (fRefactoringDescriptor != null) {
+					final RefactoringDescriptor descriptor= fRefactoringDescriptor;
 					return descriptor;
 				}
 			} catch (IOException exception) {
@@ -122,41 +128,90 @@ final class XmlRefactoringSessionReader extends DefaultHandler implements IRefac
 				throw createCoreException(exception);
 			} catch (SAXException exception) {
 				throw createCoreException(exception);
+			} finally {
+				fRefactoringDescriptors= null;
+				fRefactoringDescriptor= null;
+				fVersion= null;
+				fComment= null;
+				fStamp= -1;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public RefactoringSessionDescriptor readSession(final Object input) throws CoreException {
+		fStamp= -1;
+		if (input instanceof InputSource) {
+			try {
+				final InputSource source= (InputSource) input;
+				source.setSystemId("/"); //$NON-NLS-1$
+				createParser(SAXParserFactory.newInstance()).parse(source, this);
+				if (fRefactoringDescriptors != null && fVersion != null) {
+					final RefactoringSessionDescriptor descriptor= new RefactoringSessionDescriptor((RefactoringDescriptor[]) fRefactoringDescriptors.toArray(new RefactoringDescriptor[fRefactoringDescriptors.size()]), fVersion, fComment);
+					return descriptor;
+				}
+			} catch (IOException exception) {
+				throw createCoreException(exception);
+			} catch (ParserConfigurationException exception) {
+				throw createCoreException(exception);
+			} catch (SAXException exception) {
+				throw createCoreException(exception);
+			} finally {
+				fRefactoringDescriptors= null;
+				fRefactoringDescriptor= null;
+				fVersion= null;
+				fComment= null;
+				fStamp= -1;
 			}
 		}
 		return null;
 	}
 
 	public void startElement(final String uri, final String localName, final String qualifiedName, final Attributes attributes) throws SAXException {
-		if (XmlRefactoringSessionTransformer.ELEMENT_REFACTORING.equals(qualifiedName)) {
+		if (IXmlRefactoringConstants.ELEMENT_REFACTORING.equals(qualifiedName)) {
 			final int length= attributes.getLength();
 			final Map map= new HashMap(length);
 			String id= ""; //$NON-NLS-1$
+			String stamp= ""; //$NON-NLS-1$
 			String description= ""; //$NON-NLS-1$
 			String comment= null;
 			String project= null;
 			for (int index= 0; index < length; index++) {
 				final String name= attributes.getQName(index);
 				final String value= attributes.getValue(index);
-				if (XmlRefactoringSessionTransformer.ATTRIBUTE_ID.equals(name))
+				if (IXmlRefactoringConstants.ATTRIBUTE_ID.equals(name))
 					id= value;
-				else if (XmlRefactoringSessionTransformer.ATTRIBUTE_DESCRIPTION.equals(name))
+				else if (IXmlRefactoringConstants.ATTRIBUTE_STAMP.equals(name))
+					stamp= value;
+				else if (IXmlRefactoringConstants.ATTRIBUTE_DESCRIPTION.equals(name))
 					description= value;
-				else if (XmlRefactoringSessionTransformer.ATTRIBUTE_COMMENT.equals(name))
+				else if (IXmlRefactoringConstants.ATTRIBUTE_COMMENT.equals(name))
 					comment= value;
-				else if (XmlRefactoringSessionTransformer.ATTRIBUTE_PROJECT.equals(name))
+				else if (IXmlRefactoringConstants.ATTRIBUTE_PROJECT.equals(name))
 					project= value;
 				else if (!"".equals(name) && !"".equals(value)) //$NON-NLS-1$//$NON-NLS-2$
 					map.put(name, value);
 			}
+			try {
+				final long time= Long.valueOf(stamp).longValue();
+				if (time == fStamp) {
+					fRefactoringDescriptor= new RefactoringDescriptor(id, project, description, comment, map);
+					fRefactoringDescriptor.setTimeStamp(time);
+				}
+			} catch (NumberFormatException exception) {
+				// Do nothing
+			}
 			if (fRefactoringDescriptors == null)
 				fRefactoringDescriptors= new ArrayList();
 			fRefactoringDescriptors.add(new RefactoringDescriptor(id, project, description, comment, map));
-		} else if (XmlRefactoringSessionTransformer.ELEMENT_SESSION.equals(qualifiedName)) {
-			final String version= attributes.getValue(XmlRefactoringSessionTransformer.ATTRIBUTE_VERSION);
+		} else if (IXmlRefactoringConstants.ELEMENT_SESSION.equals(qualifiedName)) {
+			final String version= attributes.getValue(IXmlRefactoringConstants.ATTRIBUTE_VERSION);
 			if (version != null && !"".equals(version)) //$NON-NLS-1$
 				fVersion= version;
-			fComment= attributes.getValue(XmlRefactoringSessionTransformer.ATTRIBUTE_COMMENT);
+			fComment= attributes.getValue(IXmlRefactoringConstants.ATTRIBUTE_COMMENT);
 		}
 	}
 }

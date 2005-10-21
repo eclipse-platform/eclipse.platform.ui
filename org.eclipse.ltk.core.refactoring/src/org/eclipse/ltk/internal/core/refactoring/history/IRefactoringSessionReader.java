@@ -12,11 +12,12 @@ package org.eclipse.ltk.internal.core.refactoring.history;
 
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 
 /**
- * Interface for objects which read a refactoring session descriptor from
- * externalized data.
+ * Interface for objects which read refactoring information from externalized
+ * data.
  * <p>
  * This interface is intended to be implemented by clients.
  * </p>
@@ -27,6 +28,19 @@ import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
  * @since 3.2
  */
 public interface IRefactoringSessionReader {
+
+	/**
+	 * Reads a refactoring from the specified input object.
+	 * 
+	 * @param input
+	 *            the input object
+	 * @param stamp
+	 *            the time stamp of the refactoring
+	 * @return a corresponding refactoring descriptor, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while reading form the input
+	 */
+	public RefactoringDescriptor readDescriptor(Object input, long stamp) throws CoreException;
 
 	/**
 	 * Reads a refactoring session from the specified input object.
