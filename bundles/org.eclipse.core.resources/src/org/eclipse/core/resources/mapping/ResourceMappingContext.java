@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
-
 /**
  * A resource mapping context is provided to a resource mapping when traversing
  * the resources of the mapping. The type of context may determine what resources
@@ -33,7 +32,7 @@ package org.eclipse.core.resources.mapping;
  * @since 3.2
  */
 public class ResourceMappingContext {
-	
+
 	/**
 	 * This resource mapping context is used to indicate that the operation
 	 * that is requesting the traversals is performing a local operation.

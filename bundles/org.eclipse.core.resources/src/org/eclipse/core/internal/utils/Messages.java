@@ -80,6 +80,11 @@ public class Messages extends NLS {
 	public static String localstore_resourceExists;
 	public static String localstore_resourceIsOutOfSync;
 
+	// resource mappings and models
+	public static String mapping_invalidDef;
+	public static String mapping_wrongType;
+	public static String mapping_noIdentifier;
+
 	// internal.resources
 	public static String natures_duplicateNature;
 	public static String natures_hasCycle;
@@ -295,4 +300,5 @@ public class Messages extends NLS {
 		// initialize resource bundles
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
+
 }

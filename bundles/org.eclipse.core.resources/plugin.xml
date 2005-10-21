@@ -9,6 +9,7 @@
    <extension-point id="moveDeleteHook" name="%hookName" schema="schema/moveDeleteHook.exsd"/>
    <extension-point id="teamHook" name="%teamHookName" schema="schema/teamHook.exsd"/>
    <extension-point id="refreshProviders" name="%refreshProvidersName" schema="schema/refreshProviders.exsd"/>
+   <extension-point id="modelProviders" name="%modelProviders" schema="schema/modelProviders.exsd"/>
 
 	<extension id="preferences" point="org.eclipse.core.runtime.preferences" name="%preferencesExtPtName">
 		<scope name="project" class="org.eclipse.core.internal.resources.ProjectPreferences"/>
@@ -146,5 +147,13 @@
             <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
        </factory>
    </extension>
+      <extension
+            id="modelProvider"
+            name="File System Resource Model"
+            point="org.eclipse.core.resources.modelProviders">
+         <modelProvider
+               class="org.eclipse.core.resources.mapping.ResourceModelProvider"
+               name="File System Resource Model"/>
+      </extension>
 
 </plugin>

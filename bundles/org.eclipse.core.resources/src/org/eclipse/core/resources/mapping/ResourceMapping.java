@@ -11,6 +11,7 @@
 package org.eclipse.core.resources.mapping;
 
 import java.util.ArrayList;
+import org.eclipse.core.internal.resources.mapping.ModelProviderManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -62,6 +63,14 @@ public abstract class ResourceMapping extends PlatformObject {
 	}
 
 	/**
+	 * Override equals to compare the model objects of the
+	 * mapping in order to determine equality.
+	 */
+	public boolean equals(Object obj) {
+		return obj.equals(getModelObject());
+	}
+
+	/**
 	 * Returns all markers of the specified type on the resources in this mapping.
 	 * If <code>includeSubtypes</code> is <code>false</code>, only markers 
 	 * whose type exactly matches the given type are returned.  Returns an empty 
@@ -93,6 +102,27 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * resource mapping.
 	 */
 	public abstract Object getModelObject();
+
+	/**
+	 * Return the model provider for the model object
+	 * of this resource mapping. The model provider is obtained
+	 * using the id returned from <code>getModelProviderId()</code>.
+	 * @return the model provider
+	 */
+	public final ModelProvider getModelProvider() {
+		try {
+			return ModelProviderManager.getDefault().getModelProvider(getModelProviderId());
+		} catch (CoreException e) {
+			throw new IllegalStateException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Return the id of the model provider that generated this resource
+	 * mapping
+	 * @return the model provider id
+	 */
+	public abstract String getModelProviderId();
 
 	/**
 	 * Returns the projects that contain the resources that constitute this 
@@ -140,4 +170,11 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * @exception CoreException if the traversals could not be obtained.
 	 */
 	public abstract ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Override hashCode to use the model object.
+	 */
+	public int hashCode() {
+		return getModelObject().hashCode();
+	}
 }

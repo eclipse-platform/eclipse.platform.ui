@@ -84,6 +84,14 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PT_REFRESH_PROVIDERS = "refreshProviders"; //$NON-NLS-1$
 
 	/**
+	 * Simple identifier constant (value <code>"modelProviders"</code>)
+	 * for the model providers extension point.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String PT_MODEL_PROVIDERS = "modelProviders"; //$NON-NLS-1$
+	
+	/**
 	 * Constant identifying the job family identifier for the background autobuild job.
 	 * 
 	 * @see IJobManager#join(Object, IProgressMonitor)

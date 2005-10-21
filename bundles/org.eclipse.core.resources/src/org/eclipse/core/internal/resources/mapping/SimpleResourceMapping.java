@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 3.1
  */
 public class SimpleResourceMapping extends ResourceMapping {
+	public static final String MODEL_PROVIDER = ResourceModelProvider.MODEL_PROVIDER_ID;
 	private final IResource resource;
 	private ResourceTraversal[] traversals;
 
@@ -34,6 +35,10 @@ public class SimpleResourceMapping extends ResourceMapping {
 	 */
 	public Object getModelObject() {
 		return resource;
+	}
+
+	public String getModelProviderId() {
+		return MODEL_PROVIDER;
 	}
 
 	/* (non-Javadoc)

@@ -68,6 +68,34 @@ public class ResourceTraversal {
 	}
 
 	/**
+	 * Return whether the given resource is contained in or
+	 * covered by this traversal.
+	 * @param resource the resource to be tested
+	 * @return whether the resource is contained in this traversal
+	 */
+	public boolean contains(IResource resource) {
+		for (int i = 0; i < resources.length; i++) {
+			IResource member = resources[i];
+			if (contains(member, resource)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean contains(IResource resource, IResource child) {
+		if (resource.equals(child))
+			return true;
+		if (child.getParent().equals(resource)) {
+			return true;
+		}
+		if (getDepth() == IResource.DEPTH_INFINITE) {
+			return resource.getFullPath().isPrefixOf(child.getFullPath());
+		}
+		return false;
+	}
+
+	/**
 	 * Efficient implementation of {@link #findMarkers(String, boolean)}, not
 	 * available to clients because underlying non-API methods are used that
 	 * may change.
@@ -75,7 +103,7 @@ public class ResourceTraversal {
 	void doFindMarkers(ArrayList result, String type, boolean includeSubtypes) throws CoreException {
 		MarkerManager markerMan = ((Workspace) ResourcesPlugin.getWorkspace()).getMarkerManager();
 		for (int i = 0; i < resources.length; i++) {
-			Resource resource = (Resource)resources[i];
+			Resource resource = (Resource) resources[i];
 			resource.checkAccessible(resource.getFlags(resource.getResourceInfo(false, false)));
 			markerMan.doFindMarkers(resource, result, type, includeSubtypes, depth);
 		}
@@ -96,7 +124,7 @@ public class ResourceTraversal {
 	 * </ul>
 	 */
 	public IMarker[] findMarkers(String type, boolean includeSubtypes) throws CoreException {
-		if (resources.length== 0)
+		if (resources.length == 0)
 			return new IMarker[0];
 		ArrayList result = new ArrayList();
 		doFindMarkers(result, type, includeSubtypes);
