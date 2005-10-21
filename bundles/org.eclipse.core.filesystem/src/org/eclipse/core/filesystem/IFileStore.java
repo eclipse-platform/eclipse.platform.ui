@@ -366,6 +366,7 @@ public interface IFileStore extends IAdaptable {
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>This store represents a directory.</li>
+	 * <li>The parent of this store does not exist.</li>
 	 * </ul>
 	 */
 	public abstract OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException;
