@@ -100,26 +100,6 @@ public final class Category extends NamedHandleObject {
 				descriptionChanged, nameChanged));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.common.HandleObject#equals(java.lang.Object)
-	 */
-	public boolean equals(Object object) {
-		if (!(object instanceof Command))
-			return false;
-
-		final Category castedObject = (Category) object;
-		
-		if (!Util.equals(defined, castedObject.defined))
-			return false;
-		if (!Util.equals(description, castedObject.description))
-			return false;
-		if (!Util.equals(id, castedObject.id))
-			return false;
-		return Util.equals(name, castedObject.name);
-	}
-
 	/**
 	 * Notifies the listeners for this category that it has changed in some way.
 	 * 

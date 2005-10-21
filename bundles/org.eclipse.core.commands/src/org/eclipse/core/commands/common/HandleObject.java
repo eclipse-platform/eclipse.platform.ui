@@ -99,14 +99,28 @@ public abstract class HandleObject {
 
     /**
      * Tests whether this object is equal to another object. A handle object is
-     * only equal to another handle object with the same properties.
+     * only equal to another handle object with the same id and the same class.
      * 
      * @param object
      *            The object with which to compare; may be <code>null</code>.
      * @return <code>true</code> if the objects are equal; <code>false</code>
      *         otherwise.
      */
-    public abstract boolean equals(final Object object);
+	public boolean equals(final Object object) {
+		// Check if they're the same.
+		if (object == this) {
+			return true;
+		}
+
+		// Check if they're the same type.
+		if (!(object instanceof HandleObject))
+			return false;
+
+		// Check each property in turn.
+		final HandleObject handle= (HandleObject) object;
+		return Util.equals(id, handle.id)
+				&& (this.getClass() == handle.getClass());
+	}
 
     /**
      * Returns the identifier for this command.

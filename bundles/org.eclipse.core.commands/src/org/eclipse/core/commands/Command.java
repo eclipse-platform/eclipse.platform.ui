@@ -246,30 +246,6 @@ public final class Command extends NamedHandleObject implements Comparable {
 	}
 
 	/**
-	 * Tests whether this command is equal to another object. A command is only
-	 * equal to another command with the same parameters.
-	 * 
-	 * @param object
-	 *            The object with which to compare; may be <code>null</code>.
-	 * @return <code>true</code> if the commands are equal; <code>false</code>
-	 *         otherwise.
-	 */
-	public final boolean equals(final Object object) {
-		// Check if they're the same.
-		if (object == this) {
-			return true;
-		}
-
-		// Check if they're the same type.
-		if (!(object instanceof Command))
-			return false;
-
-		// Check each property in turn.
-		final Command command = (Command) object;
-		return Util.equals(id, command.id);
-	}
-
-	/**
      * Executes this command by delegating to the current handler, if any. If
      * the debugging flag is set, then this method prints information about
      * which handler is selected for performing this command.

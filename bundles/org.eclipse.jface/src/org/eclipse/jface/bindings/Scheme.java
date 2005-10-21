@@ -162,32 +162,6 @@ public final class Scheme extends NamedHandleObject implements Comparable {
     }
 
     /**
-     * Tests whether this scheme is equal to another object. A scheme is only
-     * equal to another scheme with the same properties.
-     * 
-     * @param object
-     *            The object with which to compare; may be <code>null</code>.
-     * @return <code>true</code> if the schemes are equal; <code>false</code>
-     *         otherwise.
-     */
-    public final boolean equals(final Object object) {
-        if (!(object instanceof Scheme))
-            return false;
-
-        final Scheme castedObject = (Scheme) object;
-
-        if (!(defined == castedObject.defined))
-	        return false;
-        if (!Util.equals(description, castedObject.description))
-		    return false;
-        if (!Util.equals(id, castedObject.id))
-	        return false;
-	    if (!Util.equals(name, castedObject.name))
-	        return false;
-	    return Util.equals(parentId, castedObject.parentId);
-    }
-
-    /**
      * Notifies all listeners that this scheme has changed. This sends the given
      * event to all of the listeners, if any.
      * 
