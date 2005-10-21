@@ -37,13 +37,13 @@ import org.eclipse.jface.menus.SWidget;
  */
 public interface IMenuService {
 
-	public static final String TYPE_MENU = "menu"; //$NON-NLS-1$
+	public static final int TYPE_MENU = 0;
 
-	public static final String TYPE_GROUP = "group"; //$NON-NLS-1$
+	public static final int TYPE_GROUP = 1;
 
-	public static final String TYPE_ITEM = "item"; //$NON-NLS-1$
+	public static final int TYPE_ITEM = 2;
 
-	public static final String TYPE_WIDGET = "widget"; //$NON-NLS-1$
+	public static final int TYPE_WIDGET = 3;
 
 	/**
 	 * Retrieves the group with the given identifier. If no such group exists,
@@ -104,7 +104,7 @@ public interface IMenuService {
 	 * @return A menu element of the given type with the given identifier,
 	 *         either defined or undefined.
 	 */
-	public MenuElement getMenuElement(String elementId, String type);
+	public MenuElement getMenuElement(String elementId, int type);
 
 	/**
 	 * <p>
