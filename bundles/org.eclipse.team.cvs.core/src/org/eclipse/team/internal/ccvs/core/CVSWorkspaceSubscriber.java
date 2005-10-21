@@ -13,36 +13,18 @@ package org.eclipse.team.internal.ccvs.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamStatus;
+import org.eclipse.team.core.*;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.core.variants.IResourceVariantTree;
-import org.eclipse.team.core.variants.PersistantResourceVariantByteStore;
-import org.eclipse.team.core.variants.ResourceVariantByteStore;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.core.variants.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTreeBuilder;
-import org.eclipse.team.internal.ccvs.core.syncinfo.CVSBaseResourceVariantTree;
-import org.eclipse.team.internal.ccvs.core.syncinfo.CVSDescendantResourceVariantByteStore;
-import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 
 /**
@@ -277,16 +259,33 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	 */
 	public void updateRemote(CVSTeamProvider provider, ICVSFolder folder, boolean recurse, IProgressMonitor monitor) throws TeamException {
 		try {
-			monitor.beginTask(null, 100);
+			monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 			IResource resource = folder.getIResource();
 			if (resource != null) {
-				ICVSResource tree = RemoteFolderTreeBuilder.buildBaseTree(
-						(CVSRepositoryLocation)provider.getRemoteLocation(), 
-						folder, 
-						null, 
+				ICVSResource tree = buildBaseTree(
+						resource, 
+						false, 
 						Policy.subMonitorFor(monitor, 50));
 				setRemote(resource, (IResourceVariant)tree, Policy.subMonitorFor(monitor, 50));
 			}
+		} finally {
+			monitor.done();
+		}
+	}
+	
+	public ICVSRemoteResource buildBaseTree(IResource resource, boolean immutable, IProgressMonitor monitor) throws TeamException {
+		try {
+			monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+			return ((CVSResourceVariantTree)getBaseTree()).buildTree(null, resource, immutable, monitor);
+		} finally {
+			monitor.done();
+		}
+	}
+
+	public ICVSRemoteResource buildRemoteTree(IResource resource, boolean immutable, IProgressMonitor monitor) throws TeamException {
+		try {
+			monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+			return ((CVSResourceVariantTree)getRemoteTree()).buildTree(null, resource, immutable, monitor);
 		} finally {
 			monitor.done();
 		}

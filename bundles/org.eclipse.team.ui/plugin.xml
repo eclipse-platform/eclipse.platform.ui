@@ -314,6 +314,11 @@
             class="org.eclipse.team.internal.ui.TeamAdapterFactory">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
+      <factory
+            adaptableType="org.eclipse.core.resources.mapping.ModelProvider"
+            class="org.eclipse.team.internal.ui.TeamAdapterFactory">
+         <adapter type="org.eclipse.team.internal.ui.mapping.INavigatorContentExtensionFactory"/>
+      </factory>
    </extension>
 
 </plugin>

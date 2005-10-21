@@ -132,7 +132,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		return newInfo.getBytes();
 	}
 	
-	/* package */ RemoteFile(RemoteFolder parent, byte[] syncBytes) throws CVSException {
+	public RemoteFile(RemoteFolder parent, byte[] syncBytes) throws CVSException {
 		this(parent, Update.STATE_NONE, syncBytes);
 	}
 	

@@ -48,11 +48,10 @@ public class SyncInfoSetTraveralContext extends RemoteResourceMappingContext {
     /* (non-Javadoc)
      * @see org.eclipse.core.resources.mapping.ITraversalContext#fetchContents(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public IStorage fetchContents(IFile file, IProgressMonitor monitor) throws CoreException {
+    public IStorage fetchRemoteContents(IFile file, IProgressMonitor monitor) throws CoreException {
         SyncInfo info = getSyncInfo(file);
-        //TODO: Speced to throw an exception when remote doesn't exist
         if (info == null)
-            return file;
+            return null;
         IResourceVariant remote = info.getRemote();
         if (remote == null)
             return null;
@@ -72,5 +71,36 @@ public class SyncInfoSetTraveralContext extends RemoteResourceMappingContext {
     public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
         // Do nothing
     }
+
+	public boolean isThreeWay() {
+		for (Iterator iter = set.iterator(); iter.hasNext();) {
+			SyncInfo info = (SyncInfo) iter.next();
+			return info.getComparator().isThreeWay();
+		}
+		return true;
+	}
+
+	public boolean hasRemoteChange(IResource resource, IProgressMonitor monitor) throws CoreException {
+		SyncInfo info = set.getSyncInfo(resource);
+		int direction = SyncInfo.getDirection(info.getKind());
+		return direction == SyncInfo.INCOMING || direction == SyncInfo.CONFLICTING;
+	}
+
+	public boolean hasLocalChange(IResource resource, IProgressMonitor monitor) throws CoreException {
+		SyncInfo info = set.getSyncInfo(resource);
+		int direction = SyncInfo.getDirection(info.getKind());
+		return direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING;
+
+	}
+
+	public IStorage fetchBaseContents(IFile file, IProgressMonitor monitor) throws CoreException {
+        SyncInfo info = getSyncInfo(file);
+        if (info == null)
+            return null;
+        IResourceVariant base = info.getBase();
+        if (base == null)
+            return null;
+        return base.getStorage(monitor);
+	}
 
 }

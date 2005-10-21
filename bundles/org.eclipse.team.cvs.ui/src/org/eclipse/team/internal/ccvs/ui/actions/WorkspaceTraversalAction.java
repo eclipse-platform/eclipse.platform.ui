@@ -15,13 +15,17 @@ import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.core.subscribers.SubscriberResourceMappingContext;
+import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
+import org.eclipse.team.internal.ui.mapping.SimpleResourceMappingOperationInput;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.ui.PlatformUI;
 
 
@@ -38,9 +42,37 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
      * within a CVS managed project
      */
     protected ResourceMapping[] getCVSResourceMappings() {
-        return getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
+        ResourceMapping[] selectedMappings = getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
+        try {
+			IResourceMappingOperationInput input = new ResourceMappingOperationInput(selectedMappings, ResourceMappingContext.LOCAL_CONTEXT);
+			input.buildInput(new NullProgressMonitor());
+			if (input.hasAdditionalMappings()) {
+				ResourceMapping[] allMappings = input.getInputMappings();
+				return showAllMappings(selectedMappings, allMappings);
+			}
+		} catch (CoreException e) {
+			CVSUIPlugin.log(e);
+		}
+		return selectedMappings;
     }
     
+    private ResourceMapping[] showAllMappings(final ResourceMapping[] selectedMappings, final ResourceMapping[] allMappings) {
+        final boolean[] canceled = new boolean[] { false };
+        getShell().getDisplay().syncExec(new Runnable() {
+            public void run() {
+                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", selectedMappings, new TeamViewerContext(allMappings));
+                int result = dialog.open();
+                canceled[0] = result != Dialog.OK;
+            }
+        
+        });
+        
+        if (canceled[0]) {
+            return new ResourceMapping[0];
+        }
+        return allMappings;
+    }
+
     protected static IResource[] getRootTraversalResources(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
         List result = new ArrayList();
         for (int i = 0; i < mappings.length; i++) {
@@ -68,7 +100,15 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
         return getResourcesToCompare(getCVSResourceMappings(), subscriber);
     }
     
-    public static IResource[] getResourcesToCompare(final ResourceMapping[] mappings, final Subscriber subscriber) throws InvocationTargetException {
+    protected ResourceMappingContext getResourceMappingContext() {
+		return SubscriberResourceMappingContext.getCompareContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+	}
+
+	protected SimpleResourceMappingOperationInput getOperationInput() {
+		return new SimpleResourceMappingOperationInput(getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext());
+	}
+
+	public static IResource[] getResourcesToCompare(final ResourceMapping[] mappings, final Subscriber subscriber) throws InvocationTargetException {
         // Determine what resources need to be synchronized.
         // Use a resource mapping context to include any relevant remote resources
         final IResource[][] resources = new IResource[][] { null };

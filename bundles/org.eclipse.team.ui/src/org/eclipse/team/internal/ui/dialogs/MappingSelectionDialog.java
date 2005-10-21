@@ -54,7 +54,7 @@ public abstract class MappingSelectionDialog extends DetailsDialog implements IP
      */
     private void createMappingSelectionArea(Composite parent) {
         Composite composite = createComposite(parent);
-        mappingArea = new ResourceMappingSelectionArea(mappings);
+        mappingArea = new ResourceMappingSelectionArea(mappings, true, true);
         mappingArea.setDescription(getMultipleMappingsMessage());
         mappingArea.addPropertyChangeListener(this);
         mappingArea.createArea(composite);

@@ -352,4 +352,40 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 		}
 		return false;
 	}
+	
+	
+	public ICVSRemoteResource buildTree(RemoteFolderTree parent, IResource resource, boolean immutable, IProgressMonitor monitor) throws TeamException {
+		
+		Policy.checkCanceled(monitor);
+		
+		byte[] remoteBytes = getByteStore().getBytes(resource);
+		if (remoteBytes == null) {
+			// There is no remote handle for this resource
+			return null;
+		}
+		
+		if (resource.getType() == IResource.FILE) {
+			if (immutable) {
+				remoteBytes = ResourceSyncInfo.setTag(remoteBytes, new CVSTag(ResourceSyncInfo.getRevision(remoteBytes), CVSTag.VERSION));
+			}
+			if (parent == null) {
+				return (ICVSRemoteResource)getResourceVariant(resource);
+			}
+			return new RemoteFile(parent, remoteBytes);
+		} else {
+			RemoteFolderTree remote = RemoteFolderTree.fromBytes(parent, resource, remoteBytes);
+			IResource[] members = members(resource);
+			List children = new ArrayList();
+			for (int i = 0; i < members.length; i++) {
+				IResource member = members[i];
+				ICVSRemoteResource child = buildTree(remote, member, immutable, monitor);
+				if (child != null)
+					children.add(child);
+			}
+			
+			// Add the children to the remote folder tree
+			remote.setChildren((ICVSRemoteResource[])children.toArray(new ICVSRemoteResource[children.size()]));
+			return remote;
+		}
+	}
 }

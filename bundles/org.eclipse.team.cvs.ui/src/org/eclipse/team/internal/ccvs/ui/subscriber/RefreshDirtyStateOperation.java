@@ -10,29 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInfoFilter;
-import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.*;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.*;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -54,7 +46,7 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
         monitor.beginTask(null, 200);
 		IProject project = infos[0].getLocal().getProject();
 		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
-        ensureBaseContentsCached(folder, infos, Policy.subMonitorFor(monitor, 100));
+        ensureBaseContentsCached(project, infos, Policy.subMonitorFor(monitor, 100));
 		folder.run(new ICVSRunnable() {
 			public void run(IProgressMonitor monitor) throws CVSException {
 				monitor.beginTask(null, infos.length * 100);
@@ -74,71 +66,15 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
         monitor.done();
 	}
 	
-	private void ensureBaseContentsCached(ICVSFolder project, SyncInfo[] infos, IProgressMonitor monitor) throws CVSException {
-        ICVSRepositoryLocation location = getRemoteLocation(project);
-        if (location == null) return;
-        monitor.beginTask(null, 100);
-        SyncInfo[] needContents = getBaseFilesWithUncachedContents(infos, Policy.subMonitorFor(monitor, 10));
-        if (needContents.length == 0) return;
-        RemoteFolderTree tree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location , project, null, Policy.subMonitorFor(monitor, 20));
-        ICVSFile[] files = getFilesToUpdate(tree, infos);
-        replaceContents(location, tree, files, Policy.subMonitorFor(monitor, 70));
-        monitor.done();
-    }
-
-    private ICVSFile[] getFilesToUpdate(RemoteFolderTree tree, SyncInfo[] infos) throws CVSException {
-        List newFiles = new ArrayList();
-        for (int i = 0; i < infos.length; i++) {
-            SyncInfo info = infos[i];
-            ICVSFile file = tree.getFile(info.getLocal().getProjectRelativePath().toString());
-            newFiles.add(file);
-        }
-
-        return (ICVSFile[]) newFiles.toArray(new ICVSFile[newFiles.size()]);
-    }
-
-    private void replaceContents(ICVSRepositoryLocation location, ICVSFolder project, ICVSFile[] files, IProgressMonitor monitor) throws CVSException {
-        monitor.beginTask(null, 100);
-        Session session = new Session(location, project, false);
-        try {
-            session.open(Policy.subMonitorFor(monitor, 10));
-            IStatus execute = Command.UPDATE.execute(
-                    session,
-                    Command.NO_GLOBAL_OPTIONS, 
-                    new LocalOption[] { Update.IGNORE_LOCAL_CHANGES }, 
-                    files,
-                    null,
-                    Policy.subMonitorFor(monitor, 90));
-            if (execute.getCode() == CVSStatus.SERVER_ERROR) {
-                throw new CVSServerException(execute);
-            }
-        } finally {
-            session.close();
-        }
-        
-    }
-
-    private SyncInfo[] getBaseFilesWithUncachedContents(SyncInfo[] infos, IProgressMonitor monitor) {
-        List files = new ArrayList();
-        for (int i = 0; i < infos.length; i++) {
-            SyncInfo info = infos[i];
-            IResourceVariant base = info.getBase();
-            if (base instanceof RemoteFile) {
-                RemoteFile remote = (RemoteFile) base;
-                if (!remote.isContentsCached()) {
-                    files.add(info);
-                }
-            }
-        }
-        return (SyncInfo[]) files.toArray(new SyncInfo[files.size()]);
-    }
-
-    private ICVSRepositoryLocation getRemoteLocation(ICVSFolder project) throws CVSException {
-        FolderSyncInfo info = project.getFolderSyncInfo();
-        if (info == null) {
-            return null;
-        }
-        return KnownRepositories.getInstance().getRepository(info.getRoot());
+	private void ensureBaseContentsCached(IProject project, SyncInfo[] infos, IProgressMonitor monitor) throws CVSException {
+		try {
+			new CacheBaseContentsOperation(getPart(), new ResourceMapping[] { (ResourceMapping)project.getAdapter(ResourceMapping.class) },
+					new SyncInfoTree(infos), true).run(monitor);
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch (InterruptedException e) {
+			throw new OperationCanceledException();
+		}
     }
     
     protected String getErrorTitle() {

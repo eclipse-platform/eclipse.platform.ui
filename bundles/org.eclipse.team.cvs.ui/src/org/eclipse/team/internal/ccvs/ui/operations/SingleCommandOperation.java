@@ -39,7 +39,7 @@ public abstract class SingleCommandOperation extends RepositoryProviderOperation
 		Session session = new Session(getRemoteLocation(provider), getLocalRoot(provider), true /* output to console */);
 		session.open(Policy.subMonitorFor(monitor, 10), isServerModificationOperation());
 		try {
-			IStatus status = executeCommand(session, provider, getCVSArguments(resources), recurse, Policy.subMonitorFor(monitor, 90));
+			IStatus status = executeCommand(session, provider, getCVSArguments(session, resources), recurse, Policy.subMonitorFor(monitor, 90));
 			if (isReportableError(status)) {
 			    throw new CVSException(status);
             }
@@ -48,7 +48,15 @@ public abstract class SingleCommandOperation extends RepositoryProviderOperation
 		}
 	}
 
-    /* (non-Javadoc)
+	protected final ICVSResource[] getCVSArguments(IResource[] resources) {
+		return super.getCVSArguments(resources);
+	}
+		
+    protected ICVSResource[] getCVSArguments(Session session, IResource[] resources) {
+		return getCVSArguments(resources);
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#execute(org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation.ICVSTraversal, org.eclipse.core.runtime.IProgressMonitor)
      */
     protected void execute(CVSTeamProvider provider, ICVSTraversal entry, IProgressMonitor monitor) throws CVSException, InterruptedException {

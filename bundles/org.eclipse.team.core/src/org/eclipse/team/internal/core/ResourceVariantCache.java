@@ -240,5 +240,12 @@ public class ResourceVariantCache {
 	public String getName() {
 		return name;
 	}
+	
+	/*
+	 * Method used for testing only
+	 */
+	public ResourceVariantCacheEntry[] getEntries() {
+		return (ResourceVariantCacheEntry[]) cacheEntries.values().toArray(new ResourceVariantCacheEntry[cacheEntries.size()]);
+	}
 
 }

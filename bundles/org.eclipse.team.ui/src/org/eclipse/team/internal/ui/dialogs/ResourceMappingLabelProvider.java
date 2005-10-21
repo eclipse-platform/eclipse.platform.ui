@@ -1,0 +1,48 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.internal.ui.dialogs;
+
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+
+public class ResourceMappingLabelProvider extends LabelProvider {
+	WorkbenchLabelProvider provider = new WorkbenchLabelProvider();
+	public String getText(Object element) {
+        String text = provider.getText(element);
+        if (text != null && text.length() > 0)
+            return text;
+		if (element instanceof ResourceMapping) {
+			ResourceMapping mapping = (ResourceMapping) element;
+			text = provider.getText(mapping.getModelObject());
+			if (text != null && text.length() > 0)
+				return text;
+		}
+		return super.getText(element);
+	}
+	public Image getImage(Object element) {
+        Image image = provider.getImage(element);
+        if (image != null)
+            return image;
+		if (element instanceof ResourceMapping) {
+			ResourceMapping mapping = (ResourceMapping) element;
+			image = provider.getImage(mapping.getModelObject());
+			if (image != null)
+				return image;
+		}
+		return super.getImage(element);
+	}
+    public void dispose() {
+        provider.dispose();
+        super.dispose();
+    }
+}

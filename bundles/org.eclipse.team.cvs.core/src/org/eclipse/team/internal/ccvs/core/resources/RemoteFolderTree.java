@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -18,6 +19,9 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 
 /**
  * Whereas the RemoteFolder class provides access to a remote hierarchy using
@@ -26,12 +30,23 @@ import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
  */
 public class RemoteFolderTree extends RemoteFolder  {
 	
+	public static RemoteFolderTree fromBytes(RemoteFolderTree parent, IResource local, byte[] bytes) throws CVSException {
+		Assert.isNotNull(bytes);
+		Assert.isTrue(local.getType() != IResource.FILE);
+		FolderSyncInfo syncInfo = FolderSyncInfo.getFolderSyncInfo(bytes);
+		return new RemoteFolderTree(parent, local.getName(), KnownRepositories.getInstance().getRepository(syncInfo.getRoot()), syncInfo.getRepository(), syncInfo.getTag(), syncInfo.getIsStatic());
+	}
+	
 	public RemoteFolderTree(RemoteFolder parent, ICVSRepositoryLocation repository, String repositoryRelativePath, CVSTag tag) {
 		super(parent, repository, repositoryRelativePath, tag);
 	}
 	
 	public RemoteFolderTree(RemoteFolder parent, String name, ICVSRepositoryLocation repository, String repositoryRelativePath, CVSTag tag) {
-		super(parent, name, repository, repositoryRelativePath, tag, false);
+		this(parent, name, repository, repositoryRelativePath, tag, false);
+	}
+
+	public RemoteFolderTree(RemoteFolder parent, String name, ICVSRepositoryLocation repository, String repositoryRelativePath, CVSTag tag, boolean isStatic) {
+		super(parent, name, repository, repositoryRelativePath, tag, isStatic);
 	}
 
 	/* 

@@ -24,6 +24,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * The resulting mapper will return the workspace root as the model
  * object.
  * 
+ * TODO: The ability to wrap multiple resources in a single mapping
+ * should be provided by the resources plugin.
+ * 
  * @since 3.1
  */
 public final class WorkspaceResourceMapper extends ResourceMapping {

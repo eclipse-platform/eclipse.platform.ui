@@ -11,7 +11,9 @@
 package org.eclipse.team.internal.ui;
 
 import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.team.internal.ui.mapping.INavigatorContentExtensionFactory;
 import org.eclipse.team.internal.ui.synchronize.DiffNodeWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -27,6 +29,9 @@ public class TeamAdapterFactory implements IAdapterFactory {
 		if(adaptableObject instanceof DiffNode && adapterType == IWorkbenchAdapter.class) {
 			return diffNodeAdapter;
 		}
+		if (adaptableObject instanceof ModelProvider && adapterType == INavigatorContentExtensionFactory.class) {
+			return new ResourceNavigatorContentExtensionFactory();
+		}
 		return null;
 	}
 
@@ -35,6 +40,6 @@ public class TeamAdapterFactory implements IAdapterFactory {
 	 */
 	public Class[] getAdapterList() {
 		// TODO Auto-generated method stub
-		return new Class[] {IWorkbenchAdapter.class};
+		return new Class[] {IWorkbenchAdapter.class, INavigatorContentExtensionFactory.class};
 	}
 }

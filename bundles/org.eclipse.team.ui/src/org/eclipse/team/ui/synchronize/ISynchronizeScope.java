@@ -11,6 +11,7 @@
 package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
@@ -34,6 +35,14 @@ public interface ISynchronizeScope {
      * @since 3.1
 	 */
 	public static final String NAME = "prop_name"; //$NON-NLS-1$
+	
+	/**
+	 * Property used to indicate that the roots of the scope have
+	 * not changes but the resources covered by the scope have.
+	 * @see ISynchronizeScope#contains(IResource)
+     * @since 3.2
+	 */
+	public static final String CONTAINMENT = "prop_containment"; //$NON-NLS-1$
 	
 	/**
 	 * Return the name of the scope
@@ -71,4 +80,20 @@ public interface ISynchronizeScope {
 	 * Dispose of the scope when it is no longer needed.
 	 */
 	public void dispose();
+	
+	/**
+	 * Return whether the given resource is contained in this scope.
+	 * @param resource the resource to be tested
+	 * @return whether the given resource is contained in this scope
+	 * 
+	 * @since 3.2
+	 */
+	public boolean contains(IResource resource);
+
+	/**
+	 * 
+	 * @return
+	 * @since 3.2
+	 */
+	public ResourceMapping[] getResourceMappings();
 }

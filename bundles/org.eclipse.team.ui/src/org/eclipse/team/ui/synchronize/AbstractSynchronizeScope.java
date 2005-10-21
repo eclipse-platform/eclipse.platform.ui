@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
@@ -162,5 +167,30 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	 */
 	protected void init(IMemento memento) {
 		// Do nothing by default
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeScope#contains(org.eclipse.core.resources.IResource)
+	 */
+	public boolean contains(IResource resource) {
+		IResource[] roots = getRoots();
+		IPath resourcePath = resource.getFullPath();
+		for (int i = 0; i < roots.length; i++) {
+			IResource root = roots[i];
+			if (root.getFullPath().isPrefixOf(resourcePath)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public ResourceMapping[] getResourceMappings() {
+		List result = new ArrayList();
+		IResource[] roots = getRoots();
+		for (int i = 0; i < roots.length; i++) {
+			IResource resource = roots[i];
+			result.add(resource.getAdapter(ResourceMapping.class));
+		}
+		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
 	}
 }

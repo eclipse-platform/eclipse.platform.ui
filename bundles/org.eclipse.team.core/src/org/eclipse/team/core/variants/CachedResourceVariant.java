@@ -151,7 +151,7 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * <p>
 	 * This method is not intended to be overridden by clients.
 	 */
-	protected boolean isContentsCached() {
+	public boolean isContentsCached() {
 		if (isContainer() || !isHandleCached()) {
 			return false;
 		}

@@ -833,15 +833,19 @@ public class EclipseTest extends ResourceTest {
 	}
 	
 	protected void setContentsAndEnsureModified(IFile file) throws CoreException, TeamException {
-		setContentsAndEnsureModified(file, getRandomContents().toString());
+		setContentsAndEnsureModified(file, getRandomContents());
 	}
 	
 	protected void setContentsAndEnsureModified(IFile file, String contents) throws CoreException, CVSException {
+		if (contents == null) contents ="";
+		setContentsAndEnsureModified(file, new ByteArrayInputStream(contents.getBytes()));
+	}
+	
+	protected void setContentsAndEnsureModified(IFile file, InputStream stream) throws CoreException, CVSException {
 		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
 		int count = 0;
-		if (contents == null) contents ="";
 		do {
-			file.setContents(new ByteArrayInputStream(contents.getBytes()), false, false, null);
+			file.setContents(stream, false, false, null);
 			assertTrue("Timestamp granularity is too small. Increase test wait factor", count <= CVSTestSetup.WAIT_FACTOR);
 			if (!cvsFile.isModified(null)) {
 				waitMsec(1500);
