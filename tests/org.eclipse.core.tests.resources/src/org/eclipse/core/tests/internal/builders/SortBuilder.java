@@ -39,40 +39,35 @@ public class SortBuilder extends TestBuilder {
 	protected static final ArrayList allInstances = new ArrayList();
 
 	/**
-	 * Whether the last build was full, auto or incremental
-	 */
-	private int triggerForLastBuild = -1;
-
-	/**
-	 * Whether the last build provided a null delta.
-	 */
-	private boolean wasDeltaNull = false;
-	/**
-	 * List of the resources that were in the last delta, if any.
-	 */
-	protected final ArrayList changedResources = new ArrayList();
-
-	private boolean requestForgetState = false;
-
-	/**
 	 * Build command parameters.
 	 */
 	public static String SORT_ORDER = "SortOrder";
+
 	public static String ASCENDING = "Ascending";
 	public static String DESCENDING = "Descending";
-	public static String SORTED_FOLDER = "SortedFolder";
-	public static String UNSORTED_FOLDER = "UnsortedFolder";
 
+	public static String SORTED_FOLDER = "SortedFolder";
+
+	public static String UNSORTED_FOLDER = "UnsortedFolder";
 	/**
 	 * Default folders
 	 */
 	public static String DEFAULT_SORTED_FOLDER = "SortedFolder";
 	public static String DEFAULT_UNSORTED_FOLDER = "UnsortedFolder";
+	/**
+	 * Whether the last build was full, auto or incremental
+	 */
+	private int triggerForLastBuild = -1;
+	/**
+	 * Whether the last build provided a null delta.
+	 */
+	private boolean wasDeltaNull = false;
 
-	public SortBuilder() {
-		singleton = this;
-		allInstances.add(this);
-	}
+	/**
+	 * List of the resources that were in the last delta, if any.
+	 */
+	protected final ArrayList changedResources = new ArrayList();
+	private boolean requestForgetState = false;
 
 	/**
 	 * Returns all instances of the SortBuilder that have ever been instantiated.
@@ -83,38 +78,19 @@ public class SortBuilder extends TestBuilder {
 	}
 
 	/**
-	 * Implemements the inherited abstract method in
-	 * <code>BaseBuilder</code>.
-	 * @see BaseBuilder#build(IResourceDelta,int,IProgressMonitor)
+	 * Returns the most recently created instance.
 	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		arguments = args;
-		super.build(kind, args, monitor);
-		triggerForLastBuild = kind;
-		IResourceDelta delta = getDelta(getProject());
-		recordChangedResources(delta);
-		wasDeltaNull = delta == null;
+	public static SortBuilder getInstance() {
+		return singleton;
+	}
 
-		if (delta == null || kind == IncrementalProjectBuilder.FULL_BUILD) {
-			fullBuild();
-		} else {
-			try {
-				incrementalBuild(delta);
-			} catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, "tests", IResourceStatus.BUILD_FAILED, "Incremental build failed due to internal error", e));
-			}
-		}
-		//forget last built state if requested to do so
-		if (requestForgetState) {
-			requestForgetState = false;
-			forgetLastBuiltState();
-		}
-		String project = (String) arguments.get(INTERESTING_PROJECT);
-		if (project != null) {
-			return new IProject[] {getProject().getWorkspace().getRoot().getProject(project)};
-		} else {
-			return new IProject[0];
-		}
+	public static void resetSingleton() {
+		singleton = null;
+	}
+
+	public SortBuilder() {
+		singleton = this;
+		allInstances.add(this);
 	}
 
 	/**
@@ -150,6 +126,41 @@ public class SortBuilder extends TestBuilder {
 
 		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
 		sortedFile.setContents(bis, true, false, null);
+	}
+
+	/**
+	 * Implemements the inherited abstract method in
+	 * <code>BaseBuilder</code>.
+	 * @see BaseBuilder#build(IResourceDelta,int,IProgressMonitor)
+	 */
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+		arguments = args;
+		super.build(kind, args, monitor);
+		triggerForLastBuild = kind;
+		IResourceDelta delta = getDelta(getProject());
+		recordChangedResources(delta);
+		wasDeltaNull = delta == null;
+
+		if (delta == null || kind == IncrementalProjectBuilder.FULL_BUILD) {
+			fullBuild();
+		} else {
+			try {
+				incrementalBuild(delta);
+			} catch (Exception e) {
+				throw new CoreException(new Status(IStatus.ERROR, "tests", IResourceStatus.BUILD_FAILED, "Incremental build failed due to internal error", e));
+			}
+		}
+		//forget last built state if requested to do so
+		if (requestForgetState) {
+			requestForgetState = false;
+			forgetLastBuiltState();
+		}
+		String project = (String) arguments.get(INTERESTING_PROJECT);
+		if (project != null) {
+			return new IProject[] {getProject().getWorkspace().getRoot().getProject(project)};
+		} else {
+			return new IProject[0];
+		}
 	}
 
 	/**
@@ -276,17 +287,6 @@ public class SortBuilder extends TestBuilder {
 	}
 
 	/**
-	 * Returns the most recently created instance.
-	 */
-	public static SortBuilder getInstance() {
-		return singleton;
-	}
-	
-	public static void resetSingleton() {
-		singleton = null;
-	}
-
-	/**
 	 * Returns the folder under which sorted resources are found.
 	 * @return IFolder
 	 */
@@ -362,32 +362,6 @@ public class SortBuilder extends TestBuilder {
 	}
 
 	/**
-	 * Remember all resources that appeared in the delta.
-	 */
-	private void recordChangedResources(IResourceDelta delta) throws CoreException {
-		changedResources.clear();
-		if (delta == null)
-			return;
-		delta.accept(new IResourceDeltaVisitor() {
-			/*
-			 * @see IResourceDeltaVisitor#visit(IResourceDelta)
-			 */
-			public boolean visit(IResourceDelta delta) throws CoreException {
-				changedResources.add(delta.getResource());
-				return true;
-			}
-		});
-	}
-
-	/**
-	 * Requests that the next invocation of build() will call
-	 * forgetLastBuiltState().
-	 */
-	public void requestForgetLastBuildState() {
-		requestForgetState = true;
-	}
-
-	/**
 	 * Sorts the specified bytes in either ascending or descending order.
 	 * @param bytes
 	 * @param start position of first byte
@@ -418,6 +392,32 @@ public class SortBuilder extends TestBuilder {
 	}
 
 	/**
+	 * Remember all resources that appeared in the delta.
+	 */
+	private void recordChangedResources(IResourceDelta delta) throws CoreException {
+		changedResources.clear();
+		if (delta == null)
+			return;
+		delta.accept(new IResourceDeltaVisitor() {
+			/*
+			 * @see IResourceDeltaVisitor#visit(IResourceDelta)
+			 */
+			public boolean visit(IResourceDelta delta) throws CoreException {
+				changedResources.add(delta.getResource());
+				return true;
+			}
+		});
+	}
+
+	/**
+	 * Requests that the next invocation of build() will call
+	 * forgetLastBuiltState().
+	 */
+	public void requestForgetLastBuildState() {
+		requestForgetState = true;
+	}
+
+	/**
 	 * Swaps the specified bytes in the given byte array.
 	 * @param bytes
 	 * @param pos1 the position of the first byte
@@ -427,6 +427,10 @@ public class SortBuilder extends TestBuilder {
 		byte temp = bytes[pos1];
 		bytes[pos1] = bytes[pos2];
 		bytes[pos2] = temp;
+	}
+
+	public String toString() {
+		return "SortBuilder(" + getProject() + ')';
 	}
 
 	public boolean wasAutoBuild() {
