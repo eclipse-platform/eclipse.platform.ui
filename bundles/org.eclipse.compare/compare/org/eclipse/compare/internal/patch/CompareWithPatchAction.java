@@ -13,6 +13,29 @@ package org.eclipse.compare.internal.patch;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
+import org.eclipse.compare.internal.BaseCompareAction;
+import org.eclipse.compare.internal.ComparePreferencePage;
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.ExceptionHandler;
+import org.eclipse.compare.internal.ListContentProvider;
+import org.eclipse.compare.internal.ListDialog;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -21,32 +44,29 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.WizardDialog;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-
 import org.eclipse.ui.IEditorPart;
-
-import org.eclipse.compare.internal.*;
 
 
 public class CompareWithPatchAction extends BaseCompareAction {
 
 	static class PatchWizardDialog extends WizardDialog {
 	
+		private static final String PATCH_WIZARD_SETTINGS_SECTION = "PatchWizard"; //$NON-NLS-1$
+
 		PatchWizardDialog(Shell parent, IWizard wizard) {
 			super(parent, wizard);
 			
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			setMinimumPageSize(700, 500);
+		}
+		
+		protected IDialogSettings getDialogBoundsSettings() {
+	        IDialogSettings settings = CompareUIPlugin.getDefault().getDialogSettings();
+	        IDialogSettings section = settings.getSection(PATCH_WIZARD_SETTINGS_SECTION);
+	        if (section == null) {
+	            section = settings.addNewSection(PATCH_WIZARD_SETTINGS_SECTION);
+	        } 
+	        return section;
 		}
 	}
 	

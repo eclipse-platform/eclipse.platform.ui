@@ -45,7 +45,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		setWindowTitle(PatchMessages.PatchWizard_title);
 
 		fPatcher= new WorkspacePatcher();
-		setTarget(Utilities.getResource(selection));
+		setTarget(Utilities.getFirstResource(selection));
 
 		IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY);

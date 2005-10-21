@@ -159,7 +159,9 @@ public class Diff implements IWorkbenchAdapter, IAdaptable {
 			if (hunkFailed)
 				this.fMatches= false;
 			hunk.reset(hunkFailed);
-			if (!hunkFailed && projectExistsInWorkspace)
+			//If the hunk can be applied and the project exists in the workspace and
+			//there are no problems with the hunk's containing diff, then check the hunk
+			if (!hunkFailed && projectExistsInWorkspace && !fDiffProblem)
 				hunksToCheck.add(hunk);
 		}
 		return hunksToCheck;
@@ -251,6 +253,28 @@ public class Diff implements IWorkbenchAdapter, IAdaptable {
 		if (adapter == IWorkbenchAdapter.class)
 			return this;
 		return null;
+	}
+	
+	protected boolean getDiffProblem() {
+		return fDiffProblem;
+	}
+
+	/**
+	 * Returns whether this Diff has any problems
+	 * @return true if this Diff or any of its children Hunks have a problem, false if it doesn't
+	 */
+	protected boolean containsProblems() {
+
+		if (fDiffProblem)
+			return true;
+
+		for (Iterator iter = fHunks.iterator(); iter.hasNext();) {
+			Hunk element = (Hunk) iter.next();
+			if (element.getHunkProblem()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

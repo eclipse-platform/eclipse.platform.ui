@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.Utilities;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -30,6 +31,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -40,6 +42,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -48,11 +52,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.views.navigator.ResourceSorter;
+
+
 
 /* package */ class InputPatchPage extends WizardPage {
 
@@ -64,6 +71,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 	private final static String PAGE_NAME= "PatchWizardPage1"; //$NON-NLS-1$  
 	private final static String STORE_PATCH_FILES_ID= PAGE_NAME+".PATCH_FILES"; //$NON-NLS-1$
 	private final static String STORE_INPUT_METHOD_ID= PAGE_NAME+".INPUT_METHOD"; //$NON-NLS-1$
+	private final static String STORE_WORKSPACE_PATH_ID= PAGE_NAME+".WORKSPACE_PATH"; //$NON-NLS-1$
 	//patch input constants
 	protected final static int CLIPBOARD= 1;
 	protected final static int FILE= 2;
@@ -85,12 +93,33 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 	private PatchWizard fPatchWizard;
 
+	private ActivationListener fActivationListener = new ActivationListener();
+	
 	protected final static String INPUTPATCHPAGE_NAME= "InputPatchPage"; //$NON-NLS-1$
-
+	
+	class ActivationListener extends ShellAdapter {
+		public void shellActivated(ShellEvent e) {
+			//Allow error messages if the selected input actually has something selected in it
+			fShowError=true;
+			switch(getInputMethod()){
+				case FILE:
+				fShowError = (fPatchFileNameField.getText() != "");  //$NON-NLS-1$
+				break;
+			    
+				case WORKSPACE:
+				fShowError = (!fTreeViewer.getSelection().isEmpty());
+				break;
+				
+			}
+			updateWidgetEnablements();
+		}
+	}
+	
+	
 	InputPatchPage(PatchWizard pw) {
 		super(INPUTPATCHPAGE_NAME, PatchMessages.InputPatchPage_title, null);
 		fPatchWizard= pw;
-		setMessage(PatchMessages.InputPatchPage_message); 
+		setMessage(PatchMessages.InputPatchPage_message);
 	}
 	
 	/*
@@ -115,10 +144,20 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 		setControl(composite);
 
 		buildPatchFileGroup(composite);
-
-		restoreWidgetValues();
-
+		
+		//see if there are any better options presently selected
+		if(!adjustToCurrentTarget()){
+			//get the persisted values
+			restoreWidgetValues();
+		}
+		
+		//No error for dialog opening
+		fShowError=false;
+		clearErrorMessage();
 		updateWidgetEnablements();
+		
+		Shell shell= getShell();
+		shell.addShellListener(fActivationListener);
 		
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICompareContextIds.PATCH_INPUT_WIZARD_PAGE);
@@ -282,9 +321,24 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 		addWorkspaceControls(parent);
 
 		// Add listeners
+		fUseClipboardButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (!fUseClipboardButton.getSelection())
+					return;
+				
+				clearErrorMessage();
+				fShowError= true;
+				updateWidgetEnablements();
+			}
+		});
+		
 		fUsePatchFileButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fShowError= true;
+				if (!fUsePatchFileButton.getSelection())
+					return;
+				//If there is anything typed in at all
+				clearErrorMessage();
+				fShowError = (fPatchFileNameField.getText() != ""); //$NON-NLS-1$
 				int state= getInputMethod();
 				setEnablePatchFile(state==FILE);
 				setEnableWorkspacePatch(state==WORKSPACE);
@@ -299,19 +353,26 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 		});
 		fPatchFileNameField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				clearErrorMessage();
 				fShowError= true;
 				updateWidgetEnablements();
 			}
 		});
 		fPatchFileBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				clearErrorMessage();
+				fShowError= true;
 				handlePatchFileBrowseButtonPressed();
 				updateWidgetEnablements();
 			}
 		});
 		fUseWorkspaceButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fShowError= true;
+				if (!fUseWorkspaceButton.getSelection())
+					return;
+				clearErrorMessage();
+				//If there is anything typed in at all
+				fShowError = (!fTreeViewer.getSelection().isEmpty());
 				int state= getInputMethod();
 				setEnablePatchFile(state==FILE);
 				setEnableWorkspacePatch(state==WORKSPACE);
@@ -321,6 +382,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
+				clearErrorMessage();
 				updateWidgetEnablements();
 			}
 		});
@@ -328,9 +390,18 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 	private void addWorkspaceControls(Composite composite) {
 
-		new Label(composite, SWT.LEFT).setText(PatchMessages.InputPatchPage_WorkspaceSelectPatch_text);
-
-		fTreeViewer= new TreeViewer(composite, SWT.BORDER);
+	
+		Composite newComp = new Composite(composite, SWT.NONE);
+		GridLayout layout= new GridLayout(1, false);
+		layout.marginWidth = 15;
+		layout.marginHeight = 0;
+		layout.marginLeft = 5;
+		newComp.setLayout(layout);
+		newComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+			
+		new Label(newComp, SWT.LEFT).setText(PatchMessages.InputPatchPage_WorkspaceSelectPatch_text);
+		
+		fTreeViewer= new TreeViewer(newComp, SWT.BORDER);
 		final GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint= 0;
 		gd.heightHint= 0;
@@ -338,9 +409,10 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 		fTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
 		fTreeViewer.setContentProvider(new WorkbenchContentProvider());
-		fTreeViewer.setSorter(new WorkbenchViewerSorter());
+		fTreeViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
 		fTreeViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
 	}
+
 
 	/**
 	 * Updates the enable state of this page's controls.
@@ -495,7 +567,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 	 */
 	private void restoreWidgetValues() {
 
-		int inputMethod= CLIPBOARD;
+		int inputMethod= FILE;
 
 		IDialogSettings settings= getDialogSettings();
 		if (settings != null) {
@@ -517,6 +589,33 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 			String patchFilePath= settings.get(STORE_PATCH_FILES_ID);
 			if (patchFilePath != null)
 				setSourceName(patchFilePath);
+			
+			//If the previous apply patch was used with a clipboard, we need to check
+			//if there is a valid patch on the clipboard. This will be done in adjustToCurrentTarget()
+			//so just set it to FILE now and, if there exists a patch on the clipboard, then clipboard
+			//will be selected automatically
+			if (inputMethod == CLIPBOARD){
+				inputMethod=FILE;
+				fPatchFileNameField.deselectAll();
+			}
+			
+			//set the workspace patch selection
+			String workspaceSetting = settings.get(STORE_WORKSPACE_PATH_ID);
+			if (workspaceSetting != null && !workspaceSetting.equals("")){ //$NON-NLS-1$
+				//See if this resource still exists in the workspace
+				IPath path = new Path(workspaceSetting);
+				IFile targetFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+				if (fTreeViewer != null && targetFile.exists()){
+					fTreeViewer.expandToLevel(targetFile, 0);
+					fTreeViewer.setSelection(new StructuredSelection(targetFile));
+				} 
+			} else {
+				//check to see if the current input is set to workspace - if it is switch it
+				//back to clipboard since there is no corresponding element to go along with 
+				//the tree viewer
+				if (inputMethod == WORKSPACE)
+					inputMethod=FILE;
+			}
 		}
 
 		// set radio buttons state
@@ -541,24 +640,135 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 	
 			sourceNames= addToHistory(sourceNames, getPatchFilePath());
 			settings.put(STORE_PATCH_FILES_ID, sourceNames);
+			
+			//save the workspace selection
+			settings.put(STORE_WORKSPACE_PATH_ID, getWorkspacePath());
+			
 		}
 	}
 	
-	// static helpers
+	private String getWorkspacePath() {
+		if (fTreeViewer != null){
+			IResource[] resources= Utilities.getResources(fTreeViewer.getSelection());
+			if (resources.length > 0){
+				IResource patchFile= resources[0];
+				return patchFile.getFullPath().toString();
+			}
+			
+		}
+		return ""; //$NON-NLS-1$
+	}
 
+	// static helpers
+	
+	/**
+	 * Checks to see if the file that has been selected for Apply Patch
+	 * is actually a patch
+	 * @return true if the file selected to run Apply Patch on in the workspace is a patch file
+	 * or if the clipboard contains a patch
+	 */
+	private boolean adjustToCurrentTarget() {
+		//Readjust selection if there is a patch selected in the workspace or on the clipboard
+		//Check workspace first
+		IResource patchTarget = fPatchWizard.getTarget();
+		if (patchTarget instanceof IFile) {
+			Reader reader = null;
+			try {
+				try {
+					reader = new FileReader(patchTarget.getRawLocation().toFile());
+				} catch (FileNotFoundException ex) {/*silently ignored*/
+				} catch (NullPointerException nex) {/*silently ignored*/
+				}
+
+				if (isPatchFile(reader)) {
+					//Set choice to workspace
+					setInputButtonState(WORKSPACE);
+					if (fTreeViewer != null && patchTarget.exists()) {
+						fTreeViewer.expandToLevel(patchTarget, 0);
+						fTreeViewer.setSelection(new StructuredSelection(patchTarget));
+					}
+					return true;
+				}
+			} finally {
+				if (reader != null) {
+					try {
+						reader.close();
+					} catch (IOException x) {/*silently ignored*/
+					}
+				}
+			}
+		} else {
+			//check out clipboard contents
+			Reader reader = null;
+			Control c = getControl();
+			if (c != null) {
+				Clipboard clipboard = new Clipboard(c.getDisplay());
+				Object o = clipboard.getContents(TextTransfer.getInstance());
+				clipboard.dispose();
+				try {
+					if (o instanceof String) {
+						reader = new StringReader((String) o);
+						if (isPatchFile(reader)) {
+							setInputButtonState(CLIPBOARD);
+							return true;
+						}
+					}
+				} finally {
+					if (reader != null) {
+						try {
+							reader.close();
+						} catch (IOException x) {/*silently ignored*/
+						}
+					}
+				}
+			}
+		}
+		return false;
+	} 
+	
+	
+
+	private boolean isPatchFile(Reader reader){
+		  WorkspacePatcher patcher= ((PatchWizard) getWizard()).getPatcher();
+			
+			try {
+				patcher.parse(new BufferedReader(reader));
+			} catch (IOException ex) {return false;}
+			
+			Diff[] diffs= patcher.getDiffs();
+			if (diffs == null || diffs.length == 0) {
+				return false;
+			}
+			
+		return true;
+	}
+	
+	/*
+	 * Clears the dialog message box
+	 */
+	private void  clearErrorMessage(){
+		setErrorMessage(null);
+	}
+	
 	private void setInputButtonState(int state) {
 
 		switch (state) {
 			case CLIPBOARD :
 				fUseClipboardButton.setSelection(true);
+				fUsePatchFileButton.setSelection(false);
+				fUseWorkspaceButton.setSelection(false);
 				break;
 
 			case FILE :
+				fUseClipboardButton.setSelection(false);
 				fUsePatchFileButton.setSelection(true);
+				fUseWorkspaceButton.setSelection(false);
 				break;
 
 			case WORKSPACE :
-				fUsePatchFileButton.setSelection(true);
+				fUseClipboardButton.setSelection(false);
+				fUsePatchFileButton.setSelection(false);
+				fUseWorkspaceButton.setSelection(true);
 				break;
 		}
 

@@ -14,9 +14,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.DocumentManager;
-import org.eclipse.compare.internal.patch.WorkspacePatcher;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -358,39 +356,5 @@ public final class CompareUI {
 		DocumentManager.remove(document);
 	}
 	
-	/**
-	 * Returns a string that must be the first line of a workspace patch (a multi-project patch 
-	 * that is understood by the Apply Patch wizard). Each project to be included in the patch
-	 * must be prefixed by the line obtained from the <code>getWorkspacePatchProjectHeader()</code>.
-	 * This snippet outlines how the a workspace patch is to be created:
-	 * <pre>
-	 *  //Write out workspace patch header
-	 *  stream.println(CompareUI.getWorkspacePatchHeader());
-	 *  for (int i=0; i<projects.length; i++){
-	 *    //Write out project header
-	 *    stream.println(CompareUI.getWorkspacePatchProjectHeader(projects[i]);
-	 *    //Write out patches in Unified Diff format
-	 *  }
-	 *  </pre>
-	 * @return String
-	 * @see CompareUI#getWorkspacePatchProjectHeader(IProject)
-	 * @since 3.2
-	 */
-	public static String getWorkspacePatchHeader() {
-		return WorkspacePatcher.MULTIPROJECTPATCH_HEADER+" "+WorkspacePatcher.MULTIPROJECTPATCH_VERSION; //$NON-NLS-1$
-	}
-
-	/**
-	 * Returns the project header that must appear before any patches that apply to that
-	 * project. All patches that are encountered after this header and before the next header
-	 * are understood to belong the the project.
-	 * @param project project to be patched
-	 * @return String
-	 * @see CompareUI#getWorkspacePatchHeader()
-	 * @since 3.2
-	 */
-	public static String getWorkspacePatchProjectHeader(IProject project) {
-		return WorkspacePatcher.MULTIPROJECTPATCH_PROJECT+" "+ project.getName(); //$NON-NLS-1$
-	}
 }
 

@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /***
  * This page only shows up if the user is trying to apply
@@ -141,7 +141,7 @@ public class PatchTargetPage extends WizardPage {
 		fPatchTargets = new CheckboxTreeViewer(tree);
 		fPatchTargets.setLabelProvider(new WorkbenchLabelProvider());
 		fPatchTargets.setContentProvider(new WorkbenchContentProvider());
-		fPatchTargets.setSorter(new WorkbenchViewerSorter());
+		fPatchTargets.setSorter(new ResourceSorter(ResourceSorter.NAME));
 		fPatchTargets.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		
 		PatchWizard pw = (PatchWizard) getWizard();
@@ -154,7 +154,7 @@ public class PatchTargetPage extends WizardPage {
 		// register listeners
 		fPatchTargets.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				fPatchWizard.setTarget(Utilities.getResource(event.getSelection()));
+				fPatchWizard.setTarget(Utilities.getFirstResource(event.getSelection()));
 				updateWidgetEnablements();
 			}
 		});

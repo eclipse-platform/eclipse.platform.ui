@@ -338,11 +338,31 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 				DiffProject proj = null;
 				if (obj instanceof DiffProject){
 					proj = (DiffProject) obj;
+					// Check to see if any of the Diffs contained by the DiffProject
+					// have their diff problems set
+					Object[] diffs = proj.getChildren(null);
+					for (int i= 0; i<diffs.length; i++) {
+					if (((Diff) diffs[i]).containsProblems()){
+						checked.setChecked(obj, false);
+							break;
+						}
+					}
 				} else if (obj instanceof Diff){
 					proj = ((Diff) obj).getProject();
+					// If Diff has any diff problems set, at least one hunk underneath 
+					// does not match - so don't allow entire tree to be checked
+					if (((Diff) obj).containsProblems()){
+						checked.setChecked(obj, false);
+					}
 				} else if (obj instanceof Hunk){
 					Diff diff = (Diff) ((Hunk) obj).getParent(null);
 					proj = diff.getProject();
+					// Check to see if this hunk has any problems OR
+					// if its parent has any problems
+					if( diff.getDiffProblem() ||
+						((Hunk) obj).getHunkProblem()){
+						checked.setChecked(obj, false);
+					}
 				}
 				if (proj!= null &&
 				   !proj.getProject().exists()){

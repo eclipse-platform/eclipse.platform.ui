@@ -165,4 +165,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 			return this;
 		return null;
 	}
+	
+	protected boolean getHunkProblem() {
+		return fHunkProblem;
+	}
 }

@@ -63,5 +63,9 @@
    <type name= "StructureDiffViewer" subclass="false"/>
  </package>
  
+ <package name="org.eclipse.compare.patch">
+   <type name= "WorkspacePatcherUI" subclass="false" instantiate="false"/>
+ </package>
+ 
  <component-depends unrestricted="true"/>
 </component>

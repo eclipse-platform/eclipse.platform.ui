@@ -594,7 +594,7 @@ public class Utilities {
 		}
 	}
 
-	public static IResource getResource(ISelection selection) {
+	public static IResource getFirstResource(ISelection selection) {
 		IResource[] resources = getResources(selection);
 		if (resources.length > 0)
 			return resources[0];
