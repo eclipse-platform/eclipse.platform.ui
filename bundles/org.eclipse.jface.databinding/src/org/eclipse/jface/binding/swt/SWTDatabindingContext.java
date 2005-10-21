@@ -13,6 +13,7 @@ package org.eclipse.jface.binding.swt;
 import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IUpdatable;
 import org.eclipse.jface.binding.IUpdatableFactory;
+import org.eclipse.jface.binding.IUpdatableFactory2;
 import org.eclipse.jface.binding.internal.swt.ButtonUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.ComboUpdatableCollection;
 import org.eclipse.jface.binding.internal.swt.ComboUpdatableValue;
@@ -23,6 +24,7 @@ import org.eclipse.jface.binding.internal.swt.TableUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.TextUpdatableValue;
 import org.eclipse.jface.binding.internal.viewers.StructuredViewerUpdatableValue;
 import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableCollection;
+import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableTable;
 import org.eclipse.jface.binding.internal.viewers.UpdatableCollectionViewer;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -120,19 +122,22 @@ public class SWTDatabindingContext extends DatabindingContext {
 		addUpdatableFactory(Button.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
 				if (attribute.equals(SWTBindingConstants.SELECTION)) {
-					return new ButtonUpdatableValue((Button) object, SWT.Selection);
+					return new ButtonUpdatableValue((Button) object,
+							SWT.Selection);
 				}
 				return null;
 			}
 		});
-		//TODO: need to support CCombo as well.
+		// TODO: need to support CCombo as well.
 		addUpdatableFactory(Combo.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.TEXT) ||
-					attribute.equals(SWTBindingConstants.SELECTION))
-				    return new ComboUpdatableValue((Combo) object, (String) attribute);
-			    else if (attribute.equals(SWTBindingConstants.ITEMS))
-			    	return new ComboUpdatableCollection((Combo)object, (String)attribute);
+				if (attribute.equals(SWTBindingConstants.TEXT)
+						|| attribute.equals(SWTBindingConstants.SELECTION))
+					return new ComboUpdatableValue((Combo) object,
+							(String) attribute);
+				else if (attribute.equals(SWTBindingConstants.ITEMS))
+					return new ComboUpdatableCollection((Combo) object,
+							(String) attribute);
 				return null;
 			}
 		});
@@ -149,16 +154,22 @@ public class SWTDatabindingContext extends DatabindingContext {
 		addUpdatableFactory(AbstractListViewer.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
 				if (attribute.equals(SWTBindingConstants.SELECTION))
-					return new StructuredViewerUpdatableValue((AbstractListViewer) object, (String) attribute);
+					return new StructuredViewerUpdatableValue(
+							(AbstractListViewer) object, (String) attribute);
 				else if (attribute.equals(SWTBindingConstants.CONTENT))
-				    return new UpdatableCollectionViewer((AbstractListViewer) object);
+					return new UpdatableCollectionViewer(
+							(AbstractListViewer) object);
 				return null;
 			}
 		});
 
 		addUpdatableFactory(TableViewer.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
-				return new TableViewerUpdatableCollection((TableViewer) object);
+				if (attribute.equals(SWTBindingConstants.CONTENT)) {
+					return new TableViewerUpdatableCollection(
+							(TableViewer) object);
+				}
+				return null;
 			}
 		});
 
@@ -166,6 +177,17 @@ public class SWTDatabindingContext extends DatabindingContext {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
 				return new TableUpdatableValue((Table) object,
 						(String) attribute);
+			}
+		});
+
+		// new stuff
+		addUpdatableFactory2(new IUpdatableFactory2() {
+			public IUpdatable createUpdatable(Object description) {
+				if (description instanceof TableViewer) {
+					return new TableViewerUpdatableTable(
+							(TableViewer) description);
+				}
+				return null;
 			}
 		});
 	}

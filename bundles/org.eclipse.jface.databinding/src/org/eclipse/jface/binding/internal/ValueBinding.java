@@ -12,7 +12,6 @@ package org.eclipse.jface.binding.internal;
 
 import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IChangeEvent;
-import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.IConverter;
 import org.eclipse.jface.binding.IUpdatableValue;
 import org.eclipse.jface.binding.IValidator;
@@ -21,9 +20,7 @@ import org.eclipse.jface.binding.IValidator;
  * @since 3.2
  * 
  */
-public class ValueBinding implements IChangeListener {
-
-	private final DatabindingContext context;
+public class ValueBinding extends Binding {
 
 	private final IUpdatableValue target;
 
@@ -42,8 +39,7 @@ public class ValueBinding implements IChangeListener {
 	 */
 	public ValueBinding(DatabindingContext context, IUpdatableValue target,
 			IUpdatableValue model, IConverter converter, IValidator validator) {
-		super();
-		this.context = context;
+		super(context);
 		this.target = target;
 		this.model = model;
 		this.converter = converter;

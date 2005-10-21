@@ -17,8 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.binding.internal.Binding;
 import org.eclipse.jface.binding.internal.CollectionBinding;
 import org.eclipse.jface.binding.internal.DerivedUpdatableValue;
+import org.eclipse.jface.binding.internal.TableBinding;
 import org.eclipse.jface.binding.internal.ValueBinding;
 
 /**
@@ -72,6 +74,8 @@ public class DatabindingContext {
 
 	private SettableValue combinedValidationMessage = new SettableValue(
 			String.class, ""); //$NON-NLS-1$
+
+	private List factories2 = new ArrayList();
 
 	/**
 	 * 
@@ -479,7 +483,7 @@ public class DatabindingContext {
 	}
 
 	/**
-	 * @param converter 
+	 * @param converter
 	 * @return the validator
 	 */
 	public IValidator getValidator(IConverter converter) {
@@ -646,6 +650,124 @@ public class DatabindingContext {
 			validationSettableMessage.setValueAndNotify(((Pair) listOfPairs
 					.get(listOfPairs.size() - 1)).b);
 		}
+	}
+
+	/**
+	 * Binds targetUpdatable and modelUpdatable using converter and validator as
+	 * specified in bindSpec. If bindSpec is null, a default converter and
+	 * validator is used.
+	 * 
+	 * @param targetUpdatable
+	 * @param modelUpdatable
+	 * @param bindSpec
+	 *            the bind spec, or null
+	 * @throws BindingException
+	 */
+	public void bind2(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
+			IBindSpec bindSpec) throws BindingException {
+		Binding binding;
+		if (targetUpdatable instanceof IUpdatableTable) {
+			if (modelUpdatable instanceof IUpdatableTable) {
+				binding = new TableBinding(this,
+						(IUpdatableTable) targetUpdatable,
+						(IUpdatableTable) modelUpdatable,
+						(ITableBindSpec) bindSpec);
+			} else {
+				throw new BindingException("incompatible updatables"); //$NON-NLS-1$
+			}
+		} else {
+			throw new BindingException("not yet implemented"); //$NON-NLS-1$
+		}
+		targetUpdatable.addChangeListener(binding);
+		modelUpdatable.addChangeListener(binding);
+		binding.updateTargetFromModel();
+	}
+
+	/**
+	 * Convenience method to bind createUpdatable2(targetDescription) and
+	 * modelUpdatable.
+	 * 
+	 * @param targetDescription
+	 * @param modelUpdatable
+	 * @param bindSpec
+	 *            the bind spec, or null
+	 * @throws BindingException
+	 */
+	public void bind2(Object targetDescription, IUpdatable modelUpdatable,
+			IBindSpec bindSpec) throws BindingException {
+		bind2(createUpdatable2(targetDescription), modelUpdatable, bindSpec);
+	}
+
+	/**
+	 * Convenience method to bind targetUpdatable and
+	 * createUpdatable2(modelDescription).
+	 * 
+	 * @param targetUpdatable
+	 * @param modelDescription
+	 * @param bindSpec
+	 *            the bind spec, or null
+	 * @throws BindingException
+	 */
+	public void bind2(IUpdatable targetUpdatable, Object modelDescription,
+			IBindSpec bindSpec) throws BindingException {
+		bind2(targetUpdatable, createUpdatable2(modelDescription), bindSpec);
+	}
+
+	/**
+	 * Convenience method to bind createUpdatable2(targetDescription) and
+	 * createUpdatable2(modelDescription).
+	 * 
+	 * @param targetDescription
+	 * @param modelDescription
+	 * @param bindSpec
+	 *            the bind spec, or null
+	 * @throws BindingException
+	 */
+	public void bind2(Object targetDescription, Object modelDescription,
+			IBindSpec bindSpec) throws BindingException {
+		bind2(createUpdatable2(targetDescription),
+				createUpdatable2(modelDescription), bindSpec);
+	}
+
+	/**
+	 * Convenience method to bind createUpdatable2(new
+	 * PropertyDescription(targetObject, targetPropertyID)) and
+	 * createUpdatable2(new PropertyDescription(modelObject, modelPropertyID))
+	 * 
+	 * @param targetObject
+	 * @param targetPropertyID
+	 * @param modelObject
+	 * @param modelPropertyID
+	 * @param bindSpec
+	 *            the bind spec, or null
+	 * @throws BindingException
+	 */
+	public void bind2(Object targetObject, Object targetPropertyID,
+			Object modelObject, Object modelPropertyID, IBindSpec bindSpec)
+			throws BindingException {
+		bind2(createUpdatable2(new PropertyDescription(targetObject,
+				targetPropertyID)), createUpdatable2(new PropertyDescription(
+				modelObject, modelPropertyID)), bindSpec);
+	}
+
+	public IUpdatable createUpdatable2(Object description)
+			throws BindingException {
+		for (int i = factories2.size() - 1; i >= 0; i--) {
+			IUpdatableFactory2 factory = (IUpdatableFactory2) factories2.get(i);
+			IUpdatable result = factory.createUpdatable(description);
+			if (result != null) {
+				return result;
+			}
+		}
+		if (parent != null) {
+			return parent.createUpdatable2(description);
+		}
+		throw new BindingException("could not find updatable for " //$NON-NLS-1$
+				+ description);
+	}
+
+	public void addUpdatableFactory2(IUpdatableFactory2 updatableFactory) {
+		factories2.add(updatableFactory);
 	}
 
 }
