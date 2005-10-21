@@ -16,25 +16,22 @@ package org.eclipse.core.commands.common;
  * An event fired from a <code>NamedHandleObject</code>. This provides
  * notification of changes to the defined state, the name and the description.
  * </p>
+ * 
+ * @since 3.1
  */
-public abstract class AbstractNamedHandleEvent extends AbstractBitSetEvent {
-
-	/**
-	 * The bit used to represent whether the category has changed its defined
-	 * state.
-	 */
-	protected static final int CHANGED_DEFINED = 1;
+public abstract class AbstractNamedHandleEvent extends
+		AbstractHandleObjectEvent {
 
 	/**
 	 * The bit used to represent whether the category has changed its
 	 * description.
 	 */
-	protected static final int CHANGED_DESCRIPTION = 1 << 1;
+	protected static final int CHANGED_DESCRIPTION = 1 << LAST_BIT_USED;
 
 	/**
 	 * The bit used to represent whether the category has changed its name.
 	 */
-	protected static final int CHANGED_NAME = 1 << 2;
+	protected static final int CHANGED_NAME = 1 << LAST_BIT_USED;
 
 	/**
 	 * The last used bit so that subclasses can add more properties.
@@ -53,25 +50,14 @@ public abstract class AbstractNamedHandleEvent extends AbstractBitSetEvent {
 	 */
 	protected AbstractNamedHandleEvent(final boolean definedChanged,
 			final boolean descriptionChanged, final boolean nameChanged) {
+		super(definedChanged);
 
-		if (definedChanged) {
-			changedValues |= CHANGED_DEFINED;
-		}
 		if (descriptionChanged) {
 			changedValues |= CHANGED_DESCRIPTION;
 		}
 		if (nameChanged) {
 			changedValues |= CHANGED_NAME;
 		}
-	}
-
-	/**
-	 * Returns whether or not the defined property changed.
-	 * 
-	 * @return <code>true</code>, iff the defined property changed.
-	 */
-	public final boolean isDefinedChanged() {
-		return ((changedValues & CHANGED_DEFINED) != 0);
 	}
 
 	/**
