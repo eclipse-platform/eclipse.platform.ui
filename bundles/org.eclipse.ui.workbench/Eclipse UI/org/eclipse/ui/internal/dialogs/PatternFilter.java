@@ -61,16 +61,7 @@ public class PatternFilter extends ViewerFilter {
      * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
     public boolean select(Viewer viewer, Object parentElement, Object element) {
-        Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
-                .getContentProvider()).getChildren(element);
-        if ((children != null) && (children.length > 0))
-            return filter(viewer, element, children).length > 0;
-
-        String labelText = ((ILabelProvider) ((StructuredViewer) viewer)
-                .getLabelProvider()).getText(element);
-        if(labelText == null)
-        	return false;
-        return match(labelText);
+        return isElementMatch(viewer, element);
     }
     
     /**
@@ -106,9 +97,46 @@ public class PatternFilter extends ViewerFilter {
      * Answers whether the given String matches the pattern.
      * 
      * @param string the String to test
+     * 
      * @return whether the string matches the pattern
      */
     protected boolean match(String string) {
         return matcher.match(string);
+    }
+    
+    /**
+     * Answers whether the given Object should be selected in 
+     * the filtered control.
+     * 
+     * @param element
+     * @return true if this element should be auto selected
+     */
+    protected boolean isElementSelectable(Object element){
+    	return element != null;
+    }
+    
+    /**
+     * Answers whether the given element in the given viewer matches
+     * the filter pattern.  This is a default implementation that will 
+     * match any entry in the tree based on whether the provided filter 
+     * text matches the text of the given element's text.  Subclasses 
+     * should override this method.
+     * 
+     * @param viewer the tree viewer in which the element resides
+     * @param element the element in the tree to check for a match
+     * 
+     * @return true if the element matches the filter pattern
+     */
+    protected boolean isElementMatch(Viewer viewer, Object element){
+        Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
+                .getContentProvider()).getChildren(element);
+        if ((children != null) && (children.length > 0))
+            return filter(viewer, element, children).length > 0;
+
+        String labelText = ((ILabelProvider) ((StructuredViewer) viewer)
+                .getLabelProvider()).getText(element);
+        if(labelText == null)
+        	return false;
+        return match(labelText);   	
     }
 }

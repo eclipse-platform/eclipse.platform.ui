@@ -11,33 +11,15 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.text.BreakIterator;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 
 /**
- * A class which handles filtering preferences nodes based on a supplied
+ * Abstract class that handles filtering items based on a supplied
  * matching string.
  * 
  * @since 3.1
  * 
  */
-public class PatternItemFilter extends PatternFilter {
-
-	/**
-	 * this cache is needed because
-	 * WorkbenchPreferenceExtensionNode.getKeywordLabels() is expensive. When it
-	 * tracks keyword changes effectivly than this cache can be removed.
-	 */
-	private Map keywordCache = new HashMap();
-
+public abstract class PatternItemFilter extends PatternFilter {
 	protected boolean matchItem;
 
 	/**
@@ -49,52 +31,7 @@ public class PatternItemFilter extends PatternFilter {
 		super();
 		matchItem = isMatchItem;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
-	 *      java.lang.Object, java.lang.Object)
-	 */
-	public boolean select(Viewer viewer, Object parentElement, Object element) {
-
-		ITreeContentProvider contentProvider = (ITreeContentProvider) ((TreeViewer) viewer)
-				.getContentProvider();
-
-		IPreferenceNode node = (IPreferenceNode) element;
-		Object[] children = contentProvider.getChildren(node);
-		String text = node.getLabelText();
-
-		if(wordMatches(text))
-			return true;
-		
-		if (matchItem) {
-
-			// Will return true if any subnode of the element matches the search
-			if (filter(viewer, element, children).length > 0)
-				return true;
-		}
-
-		if (node instanceof WorkbenchPreferenceExtensionNode) {
-			WorkbenchPreferenceExtensionNode workbenchNode = (WorkbenchPreferenceExtensionNode) node;
-
-			Collection keywordCollection = (Collection) keywordCache.get(node);
-			if (keywordCollection == null) {
-				keywordCollection = workbenchNode.getKeywordLabels();
-				keywordCache.put(node, keywordCollection);
-			}
-			if (keywordCollection.isEmpty())
-				return false;
-			Iterator keywords = keywordCollection.iterator();
-			while (keywords.hasNext()) {
-				if (wordMatches((String) keywords.next()))
-					return true;
-			}
-		}
-		return false;
-
-	}
-
+	
 	/**
 	 * Return whether or not if any of the words in text satisfy the
 	 * match critera.
@@ -102,7 +39,9 @@ public class PatternItemFilter extends PatternFilter {
 	 * @return boolean <code>true</code> if one of the words in text 
 	 * satisifes the match criteria.
 	 */
-	private boolean wordMatches(String text) {
+	protected boolean wordMatches(String text) {
+		if (text == null)
+			return false;
 		
 		//If the whole text matches we are all set
 		if(match(text))

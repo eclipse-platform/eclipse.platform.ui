@@ -34,7 +34,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -57,7 +56,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public abstract class FilteredPreferenceDialog extends PreferenceDialog implements IWorkbenchPreferenceContainer{
 
-	protected FilteredComboTree filteredTree;
+	protected FilteredTree filteredTree;
 
 	private Object pageData;
 	
@@ -108,9 +107,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
-		PatternItemFilter filter = new PatternItemFilter(true); 
+		PatternFilter filter = new PreferencePatternFilter(true); 
 		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
-		filteredTree = new FilteredComboTree(parent, styleBits, filter);
+		filteredTree = new FilteredTree(parent, styleBits, filter);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -123,10 +122,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		
 		//if the tree has only one or zero pages, make the combo area disable
 		if(hasAtMostOnePage(tree)){
-			filteredTree.getFilterCombo().setEnabled(false);
-			filteredTree.getFilterCombo().setSelection(new Point(0,0));
-		}
-		
+			filteredTree.getFilterControl().setEnabled(false);
+		}		
 		
 		tree.addFilter(new CapabilityFilter());
 

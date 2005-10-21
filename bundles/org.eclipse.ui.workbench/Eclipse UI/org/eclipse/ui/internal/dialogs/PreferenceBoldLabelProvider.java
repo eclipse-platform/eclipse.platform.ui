@@ -1,9 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.preference.PreferenceLabelProvider;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.graphics.Font;
 
 /**
@@ -13,42 +21,21 @@ import org.eclipse.swt.graphics.Font;
 public class PreferenceBoldLabelProvider extends PreferenceLabelProvider
 		implements IFontProvider {
 
-	
-	private FilteredComboTree comboTree;
+	private FilteredTree filterTree;
 
-	PreferenceBoldLabelProvider(FilteredComboTree comboTree) {
-		this.comboTree = comboTree;
+	PreferenceBoldLabelProvider(FilteredTree filterTree) {
+		this.filterTree = filterTree;
 	}
+
 	/**
 	 * Using "false" to construct the filter so that this filter can filter
 	 * supernodes of a matching node
 	 */
-	PatternItemFilter filterForBoldElements = new PatternItemFilter(false);
+	PatternFilter filterForBoldElements = new PreferencePatternFilter(false);
 
 	public Font getFont(Object element) {
-
-		String filterText = comboTree.getFilterControlText();
-
-		// Do nothing if it's empty string
-		if (!(filterText.equals("") || filterText.equals(comboTree.getInitialText()))) {//$NON-NLS-1$
-
-			boolean initial = comboTree.getInitialText() != null
-					&& filterText.equals(comboTree.getInitialText());
-			if (initial) {
-				filterForBoldElements.setPattern(null);
-			} else {
-				filterForBoldElements.setPattern(filterText);
-			}
-
-			ITreeContentProvider contentProvider = (ITreeContentProvider) comboTree.getViewer()
-					.getContentProvider();
-			Object parent = contentProvider.getParent(element);
-
-			if (filterForBoldElements.select(comboTree.getViewer(), parent, element)) {
-				return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
-			}
-		}
-		return null;
+		return FilteredTree.getBoldFont(element, filterTree,
+				filterForBoldElements);
 	}
 
 }

@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -56,7 +57,7 @@ public class ShowViewDialog extends Dialog implements
     private static final String STORE_SELECTED_VIEW_ID = DIALOG_SETTING_SECTION_NAME
             + ".STORE_SELECTED_VIEW_ID"; //$NON-NLS-1$    
 
-    private TreeViewer tree;
+    private FilteredTree filteredTree;
 
     private Button okButton;
 
@@ -135,9 +136,9 @@ public class ShowViewDialog extends Dialog implements
         Composite composite = (Composite) super.createDialogArea(parent);
         composite.setFont(parent.getFont());
 
-        createViewer(composite);
+        createFilteredTreeViewer(composite);
 
-        layoutTopControl(tree.getControl());
+        layoutTopControl(filteredTree.getViewer().getControl());
 
         // Restore the last state
         restoreWidgetValues();
@@ -147,21 +148,54 @@ public class ShowViewDialog extends Dialog implements
     }
 
     /**
-     * Create a new viewer in the parent.
+     * Create a new filtered tree viewer in the parent.
      * 
      * @param parent the parent <code>Composite</code>.
      */
-    private void createViewer(Composite parent) {
-        tree = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
-                | SWT.BORDER);
-        tree.setLabelProvider(new ViewLabelProvider());
-        tree.setContentProvider(new ViewContentProvider());
-        tree.setSorter(new ViewSorter((ViewRegistry) viewReg));
-        tree.setInput(viewReg);
-        tree.addSelectionChangedListener(this);
-        tree.addDoubleClickListener(this);
-        tree.getTree().setFont(parent.getFont());
-    }
+    private void createFilteredTreeViewer(Composite parent) {
+		PatternItemFilter filter = new ViewPatternFilter(true);
+		int styleBits = SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
+		filteredTree = new FilteredTree(parent, styleBits, filter);
+		TreeViewer treeViewer = filteredTree.getViewer();
+		treeViewer.setLabelProvider(new ViewLabelProvider());
+		treeViewer.setContentProvider(new ViewContentProvider());
+		treeViewer.setSorter(new ViewSorter((ViewRegistry) viewReg));
+		treeViewer.setInput(viewReg);
+		treeViewer.addSelectionChangedListener(this);
+		treeViewer.addDoubleClickListener(this);
+		treeViewer.addFilter(new CapabilityFilter());
+
+		filteredTree.setBackground(parent.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
+		filteredTree
+				.setInitialText(WorkbenchMessages.WorkbenchPreferenceDialog_FilterMessage);
+
+		// if the tree has only one or zero views, make the combo area disable
+		if (hasAtMostOneView(filteredTree.getViewer())) {
+			filteredTree.getFilterControl().setEnabled(false);
+		}
+
+		applyDialogFont(filteredTree);
+	}
+
+	/**
+	 * Return whether or not there are less than two views in the list.
+	 * 
+	 * @param tree
+	 * @return <code>true</code> if there are less than two views in the list.
+	 */
+	private boolean hasAtMostOneView(TreeViewer tree) {
+		ITreeContentProvider contentProvider = (ITreeContentProvider) tree
+				.getContentProvider();
+		Object[] children = contentProvider.getElements(tree.getInput());
+
+		if (children.length <= 1) {
+			if (children.length == 0)
+				return true;
+			return !contentProvider.hasChildren(children[0]);
+		}
+		return false;
+	}
 
     /*
      * (non-Javadoc)
@@ -171,8 +205,8 @@ public class ShowViewDialog extends Dialog implements
     public void doubleClick(DoubleClickEvent event) {
         IStructuredSelection s = (IStructuredSelection) event.getSelection();
         Object element = s.getFirstElement();
-        if (tree.isExpandable(element)) {
-            tree.setExpandedState(element, !tree.getExpandedState(element));
+        if (filteredTree.getViewer().isExpandable(element)) {
+            filteredTree.getViewer().setExpandedState(element, !filteredTree.getViewer().getExpandedState(element));
         } else if (viewDescs.length > 0) {
             saveWidgetValues();
             setReturnCode(OK);
@@ -236,13 +270,13 @@ public class ShowViewDialog extends Dialog implements
         }
 
         if (!categoriesToExpand.isEmpty())
-            tree.setExpandedElements(categoriesToExpand.toArray());
+            filteredTree.getViewer().setExpandedElements(categoriesToExpand.toArray());
         
         String selectedViewId = settings.get(STORE_SELECTED_VIEW_ID);
         if (selectedViewId != null) {
             IViewDescriptor viewDesc = reg.find(selectedViewId);
             if (viewDesc != null) {
-                tree.setSelection(new StructuredSelection(viewDesc), true);
+                filteredTree.getViewer().setSelection(new StructuredSelection(viewDesc), true);
             }
         }
     }
@@ -255,7 +289,7 @@ public class ShowViewDialog extends Dialog implements
         IDialogSettings settings = getDialogSettings();
 
         // Collect the ids of the all expanded categories
-        Object[] expandedElements = tree.getExpandedElements();
+        Object[] expandedElements = filteredTree.getViewer().getExpandedElements();
         String[] expandedCategoryIds = new String[expandedElements.length];
         for (int i = 0; i < expandedElements.length; ++i)
             expandedCategoryIds[i] = ((IViewCategory) expandedElements[i]).getId();
