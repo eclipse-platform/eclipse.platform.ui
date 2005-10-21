@@ -94,8 +94,9 @@ public abstract class ViewPart extends WorkbenchPart implements IViewPart {
         return (IViewSite) getSite();
     }
 
+    
     /* (non-Javadoc)
-     * Initializes this view at the given view site.
+     * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite)
      */
     public void init(IViewSite site) throws PartInitException {
         setSite(site);
@@ -103,22 +104,27 @@ public abstract class ViewPart extends WorkbenchPart implements IViewPart {
         setDefaultContentDescription();
     }
 
-    /* (non-Javadoc)
-     * Initializes this view with the given view site.  A memento is passed to
-     * the view which contains a snapshot of the views state from a previous
-     * session.  Where possible, the view should try to recreate that state
-     * within the part controls.
-     * <p>
-     * This implementation will ignore the memento and initialize the view in
-     * a fresh state.  Subclasses may override the implementation to perform any
-     * state restoration as needed.
+    /* 
+     * (non-Javadoc)
+     * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
      */
     public void init(IViewSite site, IMemento memento) throws PartInitException {
+    	/*
+    	* Initializes this view with the given view site.  A memento is passed to
+        * the view which contains a snapshot of the views state from a previous
+        * session.  Where possible, the view should try to recreate that state
+        * within the part controls.
+        * <p>
+        * This implementation will ignore the memento and initialize the view in
+        * a fresh state.  Subclasses may override the implementation to perform any
+        * state restoration as needed.
+        */
         init(site);
     }
 
+  
     /* (non-Javadoc)
-     * Method declared on IViewPart.
+     * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
      */
     public void saveState(IMemento memento) {
         // do nothing
