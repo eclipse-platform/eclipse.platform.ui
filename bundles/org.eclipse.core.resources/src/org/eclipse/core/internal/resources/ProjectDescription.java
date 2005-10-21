@@ -53,8 +53,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 
 	public Object clone() {
 		ProjectDescription clone = (ProjectDescription) super.clone();
-		//don't want the clone to have access to our internal link locations
-		// table
+		//don't want the clone to have access to our internal link locations table
 		clone.linkDescriptions = null;
 		return clone;
 	}
@@ -85,7 +84,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	/**
-	 * Returns the union of the description's static and dyamic project references,
+	 * Returns the union of the description's static and dynamic project references,
 	 * with duplicates omitted. The calculation is optimized by caching the result
 	 */
 	public IProject[] getAllReferences(boolean makeCopy) {
