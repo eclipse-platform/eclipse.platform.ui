@@ -27,6 +27,11 @@ import org.eclipse.core.runtime.*;
  * @since 3.2
  */
 public abstract class ModelProvider extends PlatformObject {
+	
+	/**
+	 * The model provider id of the Resources model.
+	 */
+	public static final String RESOURCE_MODEL_PROVIDER_ID = "org.eclipse.core.resources.modelProvider"; //$NON-NLS-1$
 
 	private IModelProviderDescriptor descriptor;
 

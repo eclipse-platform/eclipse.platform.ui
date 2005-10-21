@@ -152,7 +152,7 @@
             name="File System Resource Model"
             point="org.eclipse.core.resources.modelProviders">
          <modelProvider
-               class="org.eclipse.core.resources.mapping.ResourceModelProvider"
+               class="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"
                name="File System Resource Model"/>
       </extension>
 
