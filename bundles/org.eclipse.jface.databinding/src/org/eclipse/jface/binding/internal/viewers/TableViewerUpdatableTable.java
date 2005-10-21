@@ -169,6 +169,7 @@ public class TableViewerUpdatableTable extends Updatable implements
 	public void removeElement(int index) {
 		Object element = elements.remove(index);
 		viewer.remove(element);
+		labels.remove(index);
 	}
 
 	public void setElement(int index, Object element) {

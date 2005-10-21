@@ -22,6 +22,7 @@ import org.eclipse.jface.binding.internal.swt.LabelUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.SpinnerUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.TableUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.TextUpdatableValue;
+import org.eclipse.jface.binding.internal.viewers.AbstractListViewerUpdatableTable;
 import org.eclipse.jface.binding.internal.viewers.StructuredViewerUpdatableValue;
 import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableCollection;
 import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableTable;
@@ -186,6 +187,9 @@ public class SWTDatabindingContext extends DatabindingContext {
 				if (description instanceof TableViewer) {
 					return new TableViewerUpdatableTable(
 							(TableViewer) description);
+				} else if (description instanceof AbstractListViewer) {
+					return new AbstractListViewerUpdatableTable(
+							(AbstractListViewer) description);
 				}
 				return null;
 			}

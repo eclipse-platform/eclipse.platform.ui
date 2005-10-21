@@ -48,7 +48,7 @@ public class ButtonUpdatableValue extends UpdatableValue {
 
 	public void setValue(Object value, IChangeListener listenerToOmit) {
 		button.setSelection(value == null ? false : ((Boolean) value)
-				.booleanValue()); //$NON-NLS-1$
+				.booleanValue());
 		fireChangeEvent(listenerToOmit, IChangeEvent.CHANGE, null, new Boolean(
 				button.getSelection()));
 	}
