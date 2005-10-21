@@ -365,7 +365,6 @@ public interface IFileStore extends IAdaptable {
 	 * @return An output stream on the contents of this file.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> This store does not exist.</li>
 	 * <li>This store represents a directory.</li>
 	 * </ul>
 	 */
