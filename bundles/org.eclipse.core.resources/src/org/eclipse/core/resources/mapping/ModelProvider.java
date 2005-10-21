@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.*;
  * 
  * TODO: include xml snippet
  * 
+ * <p>
+ * This class may be subclassed by clients.
+ * </p>
  * @see org.eclipse.core.resources.mapping.ResourceMapping
  * @since 3.2
  */
