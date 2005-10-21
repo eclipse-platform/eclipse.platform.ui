@@ -13,9 +13,11 @@ package org.eclipse.jface.binding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.binding.internal.Binding;
 import org.eclipse.jface.binding.internal.CollectionBinding;
@@ -55,6 +57,8 @@ public class DatabindingContext {
 	private Map converters = new HashMap();
 
 	private Map updatableFactories = new HashMap(50);
+	
+	private Map interfacesLookup = new HashMap(50);
 
 	private List createdUpdatables = new ArrayList();
 
@@ -506,6 +510,30 @@ public class DatabindingContext {
 		return defaultIdentityConverter;
 	}
 
+	private void getInterfacesOrder(Class[] interfaces, List order, Set seen) {	
+		List newBees = new ArrayList(interfaces.length);
+		for (int i = 0; i < interfaces.length; i++) 			
+			if (seen.add(interfaces[i])) {
+				order.add(interfaces[i]);
+				newBees.add(interfaces[i]);
+			}			
+		
+		for (Iterator it = newBees.iterator(); it.hasNext();)
+			getInterfacesOrder(((Class) it.next()).getInterfaces(), order, seen);
+		
+	}
+	
+	private List getInterfacesOrder(Class clazz) {
+		List interfaces = (List) interfacesLookup.get(clazz);
+		if (interfaces!=null) return interfaces;
+		
+		Class[] ifcs = clazz.getInterfaces();
+		interfaces = new ArrayList(ifcs.length);
+		getInterfacesOrder(ifcs, interfaces, new HashSet(4));
+		interfacesLookup.put(clazz, interfaces);
+		return interfaces;
+	}
+	
 	/**
 	 * 
 	 * This returns an adaptable for the given object. Does not remember the
@@ -522,16 +550,24 @@ public class DatabindingContext {
 	protected IUpdatable doCreateUpdatable(Object object, Object featureID)
 			throws BindingException {
 
-		// TODO: Object will never get used,
-		// need to also work this level implements before going up the hierarchy
-		// see AdapterManager.computeClassOrder
+
 		Class clazz = object.getClass();
 		IUpdatableFactory factory = null;
-		IUpdatable result = null;
-		while (result == null && clazz != null) {
+		IUpdatable result = null;		
+		while (result == null && clazz != null) {			
 			factory = (IUpdatableFactory) updatableFactories.get(clazz);
 			if (factory != null) {
 				result = factory.createUpdatable(object, featureID);
+			}						
+			if (result==null) {
+				//	Traverse the interfaces.
+				for (Iterator iter = getInterfacesOrder(clazz).iterator(); iter.hasNext();) {
+					factory = (IUpdatableFactory) updatableFactories.get(iter.next());
+					if (factory != null) {
+						result = factory.createUpdatable(object, featureID);
+						if (result!=null) break;
+					}							
+				}
 			}
 			clazz = clazz.getSuperclass();
 		}
