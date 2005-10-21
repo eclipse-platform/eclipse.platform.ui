@@ -12,7 +12,7 @@ package org.eclipse.jface.binding;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public abstract class ConditionalUpdatableValue extends UpdatableValue {
 
@@ -20,7 +20,7 @@ public abstract class ConditionalUpdatableValue extends UpdatableValue {
 
 	IChangeListener changeListener = new IChangeListener() {
 		public void handleChange(IChangeEvent changeEvent) {
-			fireChangeEvent(IChangeEvent.CHANGE, null, null);
+			fireChangeEvent(null, IChangeEvent.CHANGE, null, null);
 		}
 	};
 
@@ -32,7 +32,7 @@ public abstract class ConditionalUpdatableValue extends UpdatableValue {
 		innerUpdatableValue.addChangeListener(changeListener);
 	}
 
-	public void setValue(Object value) {
+	public void setValue(Object value, IChangeListener listenerToOmit) {
 		throw new UnsupportedOperationException();
 	}
 

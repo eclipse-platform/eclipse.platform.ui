@@ -32,7 +32,7 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 			combo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
-						fireChangeEvent(IChangeEvent.CHANGE, null, null);
+						fireChangeEvent(null, IChangeEvent.CHANGE, null, null);
 					}
 				}
 			});

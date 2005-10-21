@@ -12,6 +12,7 @@
 package org.eclipse.jface.binding.internal.swt;
 
 import org.eclipse.jface.binding.IChangeEvent;
+import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.UpdatableValue;
 import org.eclipse.jface.binding.swt.SWTBindingConstants;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,7 +39,7 @@ public class TableUpdatableValue extends UpdatableValue {
 			table.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
 					if (!updating) {
-						fireChangeEvent(IChangeEvent.CHANGE, null, null);
+						fireChangeEvent(null, IChangeEvent.CHANGE, null, null);
 					}
 				}
 
@@ -51,7 +52,7 @@ public class TableUpdatableValue extends UpdatableValue {
 		}
 	}
 
-	public void setValue(Object value) {
+	public void setValue(Object value, IChangeListener listenerToOmit) {
 		try {
 			updating = true;
 			table.setSelection(((Integer) value).intValue());

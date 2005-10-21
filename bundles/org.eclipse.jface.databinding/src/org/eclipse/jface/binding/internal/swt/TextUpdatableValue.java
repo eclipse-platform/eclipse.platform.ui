@@ -12,6 +12,7 @@
 package org.eclipse.jface.binding.internal.swt;
 
 import org.eclipse.jface.binding.IChangeEvent;
+import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.UpdatableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.VerifyEvent;
@@ -33,7 +34,7 @@ public class TextUpdatableValue extends UpdatableValue {
 	private Listener validateListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (!updating) {
-				fireChangeEvent(IChangeEvent.CHANGE, null, text.getText());
+				fireChangeEvent(null, IChangeEvent.CHANGE, null, text.getText());
 			}
 		}
 	};
@@ -41,7 +42,7 @@ public class TextUpdatableValue extends UpdatableValue {
 	private Listener updateListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (!updating) {
-				fireChangeEvent(IChangeEvent.CHANGE, null, text.getText());
+				fireChangeEvent(null, IChangeEvent.CHANGE, null, text.getText());
 			}
 		}
 	};
@@ -62,7 +63,7 @@ public class TextUpdatableValue extends UpdatableValue {
 					String currentText = TextUpdatableValue.this.text.getText();
 					String newText = currentText.substring(0, e.start) + e.text
 							+ currentText.substring(e.end);
-					IChangeEvent changeEvent = fireChangeEvent(
+					IChangeEvent changeEvent = fireChangeEvent(null, 
 							IChangeEvent.VERIFY, currentText, newText);
 					if (changeEvent.getVeto()) {
 						e.doit = false;
@@ -72,13 +73,15 @@ public class TextUpdatableValue extends UpdatableValue {
 		});
 	}
 
-	public void setValue(Object value) {
+	public void setValue(Object value, IChangeListener listenerToOmit) {
+		String oldValue = text.getText();
 		try {
 			updating = true;
 			text.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
 		} finally {
 			updating = false;
 		}
+		fireChangeEvent(listenerToOmit, IChangeEvent.CHANGE, oldValue, text.getText());
 	}
 
 	public Object getValue() {

@@ -61,7 +61,7 @@ public class TableViewerUpdatableTable extends Updatable implements
 			String[] strings = (String[]) labels.get(row);
 			String oldValue = strings[column];
 			strings[column] = (String) value;
-			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, row);
+			fireChangeEvent(null, ChangeEvent.CHANGE, oldValue, value, row);
 			viewer.update(element, null);
 		}
 	}

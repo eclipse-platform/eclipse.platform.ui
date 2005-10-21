@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * @since 3.2
- *
+ * 
  */
 abstract public class Updatable implements IUpdatable {
 
@@ -31,16 +31,21 @@ abstract public class Updatable implements IUpdatable {
 		changeListeners.remove(changeListener);
 	}
 
-	protected IChangeEvent fireChangeEvent(int changeType, Object oldValue,
-			Object newValue) {
-		return fireChangeEvent(changeType, oldValue, newValue, 0);
+	protected IChangeEvent fireChangeEvent(IChangeListener listenerToOmit,
+			int changeType, Object oldValue, Object newValue) {
+		return fireChangeEvent(listenerToOmit, changeType, oldValue, newValue,
+				0);
 	}
 
-	protected IChangeEvent fireChangeEvent(int changeType, Object oldValue, Object newValue, int position) {
-		ChangeEvent changeEvent = new ChangeEvent(this, changeType, oldValue, newValue, position);
-		IChangeListener[] listeners = (IChangeListener[]) changeListeners.toArray(new IChangeListener[changeListeners.size()]);
+	protected IChangeEvent fireChangeEvent(IChangeListener listenerToOmit,
+			int changeType, Object oldValue, Object newValue, int position) {
+		ChangeEvent changeEvent = new ChangeEvent(this, changeType, oldValue,
+				newValue, position);
+		IChangeListener[] listeners = (IChangeListener[]) changeListeners
+				.toArray(new IChangeListener[changeListeners.size()]);
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].handleChange(changeEvent);
+			if (listeners[i] != listenerToOmit)
+				listeners[i].handleChange(changeEvent);
 		}
 		return changeEvent;
 	}

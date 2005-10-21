@@ -21,12 +21,18 @@ public interface IUpdatableValue extends IUpdatable {
 	 * Sets the value of this updatable value to the given object, which must be
 	 * an instance of the value type returned by getValueType(). If the value
 	 * type is an object type, then the given value may be </code>null</code>.
+	 * Change listeners will be notified of this change with the exception of
+	 * the given listener. If the given listener is null, all listeners will be
+	 * notified.
 	 * 
 	 * TODO we probably need to be able to veto a change. Maybe returning a
 	 * status?
-	 * @param value 
+	 * 
+	 * @param value
+	 * @param listenerToOmit
+	 *            the listener to ignore, or null.
 	 */
-	public void setValue(Object value);
+	public void setValue(Object value, IChangeListener listenerToOmit);
 
 	/**
 	 * Returns the current value, which must be an instance of the value type

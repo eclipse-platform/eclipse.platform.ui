@@ -25,7 +25,7 @@ public class DerivedUpdatableValue extends UpdatableValue {
 
 	private IChangeListener innerChangeListener = new IChangeListener() {
 		public void handleChange(IChangeEvent changeEvent) {
-			fireChangeEvent(changeEvent.getChangeType(), changeEvent
+			fireChangeEvent(null, changeEvent.getChangeType(), changeEvent
 					.getOldValue(), changeEvent.getNewValue());
 		}
 	};
@@ -52,7 +52,7 @@ public class DerivedUpdatableValue extends UpdatableValue {
 			public void handleChange(IChangeEvent changeEvent) {
 				Object oldValue = getValue();
 				updateInnerUpdatableValue(outerUpdatableValue);
-				fireChangeEvent(IChangeEvent.CHANGE, oldValue, getValue());
+				fireChangeEvent(null, IChangeEvent.CHANGE, oldValue, getValue());
 			}
 		};
 		outerUpdatableValue.addChangeListener(outerChangeListener);
@@ -78,8 +78,8 @@ public class DerivedUpdatableValue extends UpdatableValue {
 		}
 	}
 
-	public void setValue(Object value) {
-		innerUpdatableValue.setValue(value);
+	public void setValue(Object value, IChangeListener listenerToOmit) {
+		innerUpdatableValue.setValue(value, innerChangeListener);
 	}
 
 	public Object getValue() {

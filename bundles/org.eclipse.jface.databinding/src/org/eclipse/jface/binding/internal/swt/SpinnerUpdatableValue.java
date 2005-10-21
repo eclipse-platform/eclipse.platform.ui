@@ -12,6 +12,7 @@
 package org.eclipse.jface.binding.internal.swt;
 
 import org.eclipse.jface.binding.IChangeEvent;
+import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.UpdatableValue;
 import org.eclipse.jface.binding.swt.SWTBindingConstants;
 import org.eclipse.swt.events.ModifyEvent;
@@ -20,7 +21,7 @@ import org.eclipse.swt.widgets.Spinner;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class SpinnerUpdatableValue extends UpdatableValue {
 
@@ -41,7 +42,7 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 			spinner.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
-						fireChangeEvent(IChangeEvent.CHANGE, null, null);
+						fireChangeEvent(null, IChangeEvent.CHANGE, null, null);
 					}
 				}
 			});
@@ -52,17 +53,26 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 		}
 	}
 
-	public void setValue(Object value) {
+	public void setValue(Object value, IChangeListener listenerToOmit) {
+		int oldValue;
+		int newValue;
 		try {
 			updating = true;
-			int intValue = ((Integer) value).intValue();
+			newValue = ((Integer) value).intValue();
 			if (attribute.equals(SWTBindingConstants.SELECTION)) {
-				spinner.setSelection(intValue);
+				oldValue = spinner.getSelection();
+				spinner.setSelection(newValue);
 			} else if (attribute.equals(SWTBindingConstants.MIN)) {
-				spinner.setMinimum(intValue);
+				oldValue = spinner.getMinimum();
+				spinner.setMinimum(newValue);
 			} else if (attribute.equals(SWTBindingConstants.MAX)) {
-				spinner.setMaximum(intValue);
+				oldValue = spinner.getMaximum();
+				spinner.setMaximum(newValue);
+			} else {
+				throw new AssertionError("invalid attribute name"); //$NON-NLS-1$
 			}
+			fireChangeEvent(listenerToOmit, IChangeEvent.CHANGE, new Integer(
+					oldValue), new Integer(newValue));
 		} finally {
 			updating = false;
 		}

@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class CountingUpdatableValue extends UpdatableValue {
 
@@ -35,13 +35,13 @@ public class CountingUpdatableValue extends UpdatableValue {
 		updatableList.addChangeListener(new IChangeListener() {
 
 			public void handleChange(IChangeEvent changeEvent) {
-				fireChangeEvent(IChangeEvent.CHANGE, null, null);
+				fireChangeEvent(null, IChangeEvent.CHANGE, null, null);
 			}
 		});
 	}
 
-	public void setValue(Object value) {
-		// ignore
+	public void setValue(Object value, IChangeListener listenerToOmit) {
+		throw new UnsupportedOperationException();
 	}
 
 	public Object getValue() {

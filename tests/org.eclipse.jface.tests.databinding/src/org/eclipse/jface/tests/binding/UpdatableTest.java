@@ -23,11 +23,11 @@ public class UpdatableTest extends TestCase {
 	private static class MyUpdatable extends Updatable {
 		public void fireChange(int changeType, Object oldValue,
 				Object newValue, int position) {
-			fireChangeEvent(changeType, oldValue, newValue, position);
+			fireChangeEvent(null, changeType, oldValue, newValue, position);
 		}
 
 		public void fireChange(int changeType, Object oldValue, Object newValue) {
-			fireChangeEvent(changeType, oldValue, newValue);
+			fireChangeEvent(null, changeType, oldValue, newValue);
 		}
 	}
 
@@ -133,14 +133,14 @@ public class UpdatableTest extends TestCase {
 		changeListenerMock.handleChange(new ChangeEvent(updatable, 0, null,
 				null, 0));
 		changeListenerMock.handleChange(new ChangeEvent(updatable,
-				ChangeEvent.CHANGE, o1, o2, 0));
+				IChangeEvent.CHANGE, o1, o2, 0));
 		changeListenerMock.handleChange(new ChangeEvent(updatable,
-				ChangeEvent.CHANGE, o1, o2, 42));
+				IChangeEvent.CHANGE, o1, o2, 42));
 		Mocks.startChecking(changeListenerMock);
 		updatable.fireChange(0, null, null);
 		updatable.fireChange(0, null, null, 0);
-		updatable.fireChange(ChangeEvent.CHANGE, o1, o2);
-		updatable.fireChange(ChangeEvent.CHANGE, o1, o2, 42);
+		updatable.fireChange(IChangeEvent.CHANGE, o1, o2);
+		updatable.fireChange(IChangeEvent.CHANGE, o1, o2, 42);
 		Mocks.verify(changeListenerMock);
 	}
 

@@ -79,7 +79,7 @@ public class ValueBinding extends Binding {
 		String validationError = doValidateTarget(value);
 		if (validationError == null) {
 			try {
-				model.setValue(converter.convertTargetToModel(value));
+				model.setValue(converter.convertTargetToModel(value), this);
 			} catch (Exception ex) {
 				context.updateValidationError(this,
 						BindingMessages.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
@@ -106,7 +106,7 @@ public class ValueBinding extends Binding {
 	 * 
 	 */
 	public void updateTargetFromModel() {
-		target.setValue(converter.convertModelToTarget(model.getValue()));
+		target.setValue(converter.convertModelToTarget(model.getValue()), this);
 		validateTarget();
 	}
 }

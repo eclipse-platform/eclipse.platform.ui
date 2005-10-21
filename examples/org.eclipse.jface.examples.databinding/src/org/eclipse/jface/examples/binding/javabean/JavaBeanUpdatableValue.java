@@ -15,6 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
 
 import org.eclipse.jface.binding.IChangeEvent;
+import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.UpdatableValue;
 
 public class JavaBeanUpdatableValue extends UpdatableValue {
@@ -80,17 +81,19 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 	private void hookListener() {
 		listener = new PropertyChangeListener() {
 			public void propertyChange(java.beans.PropertyChangeEvent event) {
-				fireChangeEvent(IChangeEvent.CHANGE, event.getOldValue(), event
+				fireChangeEvent(null, IChangeEvent.CHANGE, event.getOldValue(), event
 						.getNewValue());
 			}
 		};
 		// See if the object implements the API for property change listener
 	}
 
-	public void setValue(Object value) {
+	public void setValue(Object value, IChangeListener listenerToOmit) {
 		updating = true;
 		try {
+			Object oldValue = getValue();
 			getSetMethod().invoke(object, new Object[] { value });
+			fireChangeEvent(listenerToOmit, IChangeEvent.CHANGE, oldValue, getValue());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

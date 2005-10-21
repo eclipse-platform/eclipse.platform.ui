@@ -35,18 +35,11 @@ public class SettableValue extends UpdatableValue {
 	public SettableValue(Class type) {
 		this(type, null);
 	}
-
-	public void setValue(Object value) {
+	
+	public void setValue(Object value, IChangeListener listenerToOmit) {
+		Object oldValue = this.value;
 		this.value = value;
-	}
-
-	/**
-	 * @param newValue
-	 */
-	public void setValueAndNotify(Object newValue) {
-		Object oldValue = value;
-		this.value = newValue;
-		fireChangeEvent(IChangeEvent.CHANGE, oldValue, newValue);
+		fireChangeEvent(listenerToOmit, IChangeEvent.CHANGE, oldValue, value);
 	}
 
 	public Object getValue() {

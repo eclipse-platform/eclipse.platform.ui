@@ -153,9 +153,8 @@ public class Mocks {
 				if(currentCallHistory.size() == 0) {
 					// mock object was not used at all
 					return;
-				} else {
-					throw new AssertionFailedError("unexpected");
 				}
+				throw new AssertionFailedError("unexpected");
 			}
 			if (ordered) {
 				int numMissingCalls = previousCallHistory.size()
