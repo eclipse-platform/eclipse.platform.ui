@@ -15,8 +15,6 @@ import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.UpdatableValue;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -46,16 +44,6 @@ public class ButtonUpdatableValue extends UpdatableValue {
 			button.addListener(SWT.Selection, updateListener);
 			button.addListener(SWT.DefaultSelection, updateListener);
 		}
-		button.addSelectionListener(new SelectionListener() {
-
-			public void widgetSelected(SelectionEvent e) {
-				System.out.println("selected"); //$NON-NLS-1$
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				System.out.println("defaultselected"); //$NON-NLS-1$
-			}
-		});
 	}
 
 	public void setValue(Object value, IChangeListener listenerToOmit) {
