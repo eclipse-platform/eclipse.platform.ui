@@ -962,7 +962,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public void setVisible(boolean makeVisible) {
         Control ctrl = getControl();
         
-        if (!SwtUtil.isDisposed(ctrl)) {
+        boolean useShortcut = makeVisible || !isActive;
+        
+        if (!SwtUtil.isDisposed(ctrl) && useShortcut) {
             if (makeVisible == ctrl.getVisible())
                 return;
         }        
