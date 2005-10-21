@@ -27,6 +27,12 @@ import org.eclipse.core.resources.IProject;
  */
 public interface IRefactoringHistory {
 
+	/** The refactoring history file */
+	public static final String NAME_REFACTORING_HISTORY= "refactorings.history"; //$NON-NLS-1$
+
+	/** The refactoring history folder */
+	public static final String NAME_REFACTORINGS_FOLDER= ".refactorings"; //$NON-NLS-1$
+
 	/**
 	 * Adds the specified refactoring history listener to this history.
 	 * <p>
