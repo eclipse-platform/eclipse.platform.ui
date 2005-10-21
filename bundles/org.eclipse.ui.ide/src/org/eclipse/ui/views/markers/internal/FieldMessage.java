@@ -98,7 +98,11 @@ public class FieldMessage implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object obj) {
-		return null;
+		  if (obj == null || !(obj instanceof ProblemMarker)) {
+	            return null;
+	        }
+
+	       return Util.getImage(((ProblemMarker) obj).getSeverity());
 	}
 
 	/*

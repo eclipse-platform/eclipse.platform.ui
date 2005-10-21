@@ -23,12 +23,16 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -43,8 +47,8 @@ public class ProblemView extends MarkerView {
 	private final static int DESCENDING = TableSorter.DESCENDING;
 
 	private final IField[] VISIBLE_FIELDS = { new FieldHierarchy(),
-			new FieldSeverity(), new FieldMessage(), new FieldResource(),
-			new FieldFolder(), new FieldLineNumber() };
+			new FieldMessage(), new FieldResource(), new FieldFolder(),
+			new FieldLineNumber() };
 
 	private final IField[] SORTING_FIELDS = { new FieldSeverity(),
 			new FieldMessage(), new FieldResource(), new FieldFolder(),
@@ -87,14 +91,11 @@ public class ProblemView extends MarkerView {
 
 	private ActionResolveMarker resolveMarkerAction;
 
-	private boolean hierarchalMode = false;
-
 	/**
 	 * Return a new instance of the receiver.
 	 */
 	public ProblemView() {
 		super();
-		hierarchalMode = true;
 	}
 
 	/**
@@ -163,9 +164,8 @@ public class ProblemView extends MarkerView {
 	 */
 	protected ColumnPixelData[] getDefaultColumnLayouts() {
 		return new ColumnPixelData[] { new ColumnPixelData(getCategoryWidth()),
-				new ColumnPixelData(16), new ColumnPixelData(200),
-				new ColumnPixelData(75), new ColumnPixelData(150),
-				new ColumnPixelData(60) };
+				new ColumnPixelData(200), new ColumnPixelData(75),
+				new ColumnPixelData(150), new ColumnPixelData(60) };
 	}
 
 	/*
@@ -377,7 +377,8 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#isHierarchalMode()
 	 */
 	public boolean isHierarchalMode() {
-		return false;//hierarchalMode;
+		return IDEWorkbenchPlugin.getDefault().getPluginPreferences()
+				.getBoolean(IDEInternalPreferences.PROBLEMS_HIERARCHAL_MODE);
 	}
 
 	/*
@@ -386,9 +387,9 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#addDropDownContributions(org.eclipse.jface.action.IMenuManager)
 	 */
 	void addDropDownContributions(IMenuManager menu) {
-		
-	//	menu.add(getFlatAction());
-	//	menu.add(getHierarchalAction());
+
+		menu.add(getFlatAction());
+		menu.add(getHierarchalAction());
 		super.addDropDownContributions(menu);
 	}
 
@@ -427,14 +428,27 @@ public class ProblemView extends MarkerView {
 						.getImageDescriptor(IDEInternalWorkbenchImages.IMG_LCL_HIERARCHICAL_LAYOUT);
 			}
 
-			public void run() {
-				hierarchalMode = true;
-				getViewer().refresh();
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
+			 */
+			public void runWithEvent(Event event) {
+				if (isChecked()) {
+					IDEWorkbenchPlugin
+							.getDefault()
+							.getPluginPreferences()
+							.setValue(
+									IDEInternalPreferences.PROBLEMS_HIERARCHAL_MODE,
+									true);
+					regeneratedLayout();
+					getViewer().refresh();
+				}
 			}
 
 		};
 
-		hierarchalAction.setChecked(hierarchalMode);
+		hierarchalAction.setChecked(isHierarchalMode());
 		return hierarchalAction;
 	}
 
@@ -473,14 +487,43 @@ public class ProblemView extends MarkerView {
 						.getImageDescriptor(IDEInternalWorkbenchImages.IMG_LCL_FLAT_LAYOUT);
 			}
 
-			public void run() {
-				hierarchalMode = false;
-				getViewer().refresh();
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
+			 */
+			public void runWithEvent(Event event) {
+				if (isChecked()) {
+					IDEWorkbenchPlugin
+							.getDefault()
+							.getPluginPreferences()
+							.setValue(
+									IDEInternalPreferences.PROBLEMS_HIERARCHAL_MODE,
+									false);
+					regeneratedLayout() ;
+					getViewer().refresh();
+				}
 			}
 
 		};
 
-		flatAction.setChecked(!hierarchalMode);
+		flatAction.setChecked(!isHierarchalMode());
 		return flatAction;
+	}
+
+	/**
+	 * Resize the category column in the table.
+	 */
+	protected void regeneratedLayout() {
+		TableLayout layout = new TableLayout();
+		getViewer().getTree().setLayout(layout);
+
+		ColumnLayoutData[] columnWidths = getDefaultColumnLayouts();
+		for (int i = 0; i < columnWidths.length; i++) {
+			layout.addColumnData(columnWidths[i]);
+			
+		}
+		getViewer().getTree().layout(true);
+		
 	}
 }

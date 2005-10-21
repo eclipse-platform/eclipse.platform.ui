@@ -374,7 +374,8 @@ public abstract class MarkerView extends TableView {
 	abstract String getFiltersPreferenceName();
 
 	/**
-	 * Restore the filters from the minento.
+	 * Restore the filters from the mimento.
+	 * @param memento
 	 */
 	private void restoreFilters(IMemento memento) {
 
@@ -751,8 +752,11 @@ public abstract class MarkerView extends TableView {
 		IStructuredSelection selection = (IStructuredSelection) getViewer()
 				.getSelection();
 		IMemento selectionMem = memento.createChild(TAG_SELECTION);
-		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
-			ConcreteMarker marker = (ConcreteMarker) iterator.next();
+		for (Iterator iterator = selection.iterator(); iterator.hasNext();){
+			Object next = iterator.next();
+			if(!(next instanceof ConcreteMarker))
+				continue;
+			ConcreteMarker marker = (ConcreteMarker) next;
 			IMemento elementMem = selectionMem.createChild(TAG_MARKER);
 			elementMem.putString(TAG_RESOURCE, marker.getMarker().getResource()
 					.getFullPath().toString());
