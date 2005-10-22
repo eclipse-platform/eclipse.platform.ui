@@ -2447,15 +2447,7 @@
             class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexerTestView"
             category="org.eclipse.ui.examples.components.componentExamples"
             name="Test multiplexer"
-            id="org.eclipse.ui.tests.components.MultiplexerTestView"/>
-        <view
-              category="org.eclipse.ui.tests.resourceTests"
-              class="org.eclipse.ui.tests.markers.ResourceMappingTestView"
-              id="org.eclipse.ui.tests.resourceMappingView"
-              name="Resource Mapping Test"/>
-        <category
-              id="org.eclipse.ui.tests.resourceTests"
-              name="Resource Tests"/>                              
+            id="org.eclipse.ui.tests.components.MultiplexerTestView"/>                              
 
 	</extension>    
     <extension
