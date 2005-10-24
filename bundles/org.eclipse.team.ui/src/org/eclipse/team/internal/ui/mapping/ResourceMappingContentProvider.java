@@ -8,13 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui;
+package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.team.internal.ui.mapping.IResourceMappingContentProvider;
 import org.eclipse.team.ui.mapping.ITeamViewerContext;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 

@@ -14,6 +14,7 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.team.internal.ui.mapping.INavigatorContentExtensionFactory;
+import org.eclipse.team.internal.ui.mapping.ResourceNavigatorContentExtensionFactory;
 import org.eclipse.team.internal.ui.synchronize.DiffNodeWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 

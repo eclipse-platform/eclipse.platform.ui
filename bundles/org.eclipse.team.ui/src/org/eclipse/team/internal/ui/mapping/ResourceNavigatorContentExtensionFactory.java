@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui;
+package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
