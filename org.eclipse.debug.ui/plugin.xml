@@ -925,10 +925,10 @@
                tooltip="%SelectCodepagesAction.label"/>
          <action
                class="org.eclipse.debug.internal.ui.views.memory.SwitchMemoryBlockAction"
-               disabledIcon="icons/full/dlcl16/memoryreset_tsk.gif"
+               disabledIcon="icons/full/dlcl16/display_selected_mb.gif"
                helpContextId="switchMemoryBlockAction_context"
-               hoverIcon="icons/full/elcl16/memoryreset_tsk.gif"
-               icon="icons/full/elcl16/memoryreset_tsk.gif"
+               hoverIcon="icons/full/elcl16/display_selected_mb.gif"
+               icon="icons/full/elcl16/display_selected_mb.gif"
                id="org.eclipse.debug.ui.switchMemoryBlock"
                label="%switchMemoryBlock.label"
                toolbarPath="switchMonitorGroup"

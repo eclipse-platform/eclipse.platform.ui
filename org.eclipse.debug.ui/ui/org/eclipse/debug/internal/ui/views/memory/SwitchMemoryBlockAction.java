@@ -199,23 +199,27 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			if (retrieval != null)
 			{
 				IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
-				IMemoryBlock current = getCurrentMemoryBlock();
-				
-				int next = 0;
-				if (current != null)
+				// only run if there is more than one memory block
+				if (memoryBlocks.length > 1)
 				{
-					for (int i=0; i<memoryBlocks.length; i++)
+					IMemoryBlock current = getCurrentMemoryBlock();
+					
+					int next = 0;
+					if (current != null)
 					{
-						if (memoryBlocks[i] == current)
-							next = i+1;
+						for (int i=0; i<memoryBlocks.length; i++)
+						{
+							if (memoryBlocks[i] == current)
+								next = i+1;
+						}
 					}
+					
+					if (next > memoryBlocks.length-1)
+						next = 0;
+					
+					SwitchToAction switchAction = new SwitchToAction(memoryBlocks[next]);
+					switchAction.run();
 				}
-				
-				if (next > memoryBlocks.length-1)
-					next = 0;
-				
-				SwitchToAction switchAction = new SwitchToAction(memoryBlocks[next]);
-				switchAction.run();
 			}
 		}
 	}
