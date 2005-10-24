@@ -61,8 +61,7 @@ public class ResourceExtender extends PropertyTester {
 		                    IContentDescription description= contentType.getDescriptionFor(reader, IContentDescription.ALL);
 		                    reader.close();
 		                    if (description != null) {
-		                        IContentType type = description.getContentType();
-		                        return type != null && expectedValue.equals(type.getId());
+		                    	return matchesContentType(description.getContentType(), (String)expectedValue);
 		                    }
 		                } catch (FileNotFoundException e) {
 		                    return false;
@@ -94,6 +93,24 @@ public class ResourceExtender extends PropertyTester {
         }
         return false;
     }
+    
+    /**
+     * Returns whether the given type or one of its base types matches the 
+     * given content type identifier.
+     *  
+     * @param type content type or <code>null</code>
+     * @param typeId content type identifier
+     * @return
+     */
+    private boolean matchesContentType(IContentType type, String typeId) {
+        while (type != null) {
+        	if (typeId.equals(type.getId())) {
+        		return true;
+        	}
+        	type = type.getBaseType();
+        }
+        return false;
+    }
 
     /**
      * Returns whether or not the given file's content type matches the
@@ -115,8 +132,7 @@ public class ResourceExtender extends PropertyTester {
             return false;
         }
         if (description != null) {
-            IContentType type = description.getContentType();
-            return type != null && contentType.equals(type.getId());
+        	return matchesContentType(description.getContentType(), contentType);
         }
         return false;
     }
