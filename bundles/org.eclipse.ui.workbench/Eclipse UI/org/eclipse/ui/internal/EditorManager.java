@@ -865,35 +865,22 @@ public class EditorManager implements IExtensionChangeHandler {
         return null;
     }
 
-    /**
-     * Opens a system in place editor on the input.
-     */
-    private IEditorReference openSystemInPlaceEditor(IEditorReference ref,
-            EditorDescriptor desc, IEditorInput input) throws PartInitException {
-        IEditorPart cEditor = ComponentSupport.getSystemInPlaceEditor();
-        if (cEditor == null) {
-            return null;
-        } else {
-            return ref;
-        }
-    }
-
     ImageDescriptor findImage(EditorDescriptor desc, IPath path) {
         if (desc == null) {
             // @issue what should be the default image?
             return ImageDescriptor.getMissingImageDescriptor();
-        } else {
-            if (desc.isOpenExternal() && path != null) {
-                return PlatformUI.getWorkbench().getEditorRegistry()
-                        .getImageDescriptor(path.toOSString());
-            } else {
-                return desc.getImageDescriptor();
-            }
         }
+        
+        if (desc.isOpenExternal() && path != null) {
+        	return PlatformUI.getWorkbench().getEditorRegistry()
+                        .getImageDescriptor(path.toOSString());
+        }
+        	
+        return desc.getImageDescriptor();
     }
 
     /**
-     * @see IPersistablePart
+     * @see org.eclipse.ui.IPersistable
      */
     public IStatus restoreState(IMemento memento) {
         // Restore the editor area workbooks layout/relationship
@@ -904,7 +891,6 @@ public class EditorManager implements IExtensionChangeHandler {
         final String activeWorkbookID[] = new String[1];
         final ArrayList visibleEditors = new ArrayList(5);
         final IEditorReference activeEditor[] = new IEditorReference[1];
-        final ArrayList errorWorkbooks = new ArrayList(1);
 
         IMemento areaMem = memento.getChild(IWorkbenchConstants.TAG_AREA);
         if (areaMem != null) {
