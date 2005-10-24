@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
@@ -185,11 +186,11 @@ public abstract class MarkerView extends TableView {
 
 	IResourceChangeListener resourceListener = new IResourceChangeListener() {
 		public void resourceChanged(IResourceChangeEvent event) {
-			
+
 			String[] markerTypes = getMarkerTypes();
 			Collection changedMarkers = new ArrayList();
 			boolean addedOrRemoved = false;
-			
+
 			for (int idx = 0; idx < markerTypes.length; idx++) {
 				IMarkerDelta[] markerDeltas = event.findMarkerDeltas(
 						markerTypes[idx], true);
@@ -199,8 +200,7 @@ public abstract class MarkerView extends TableView {
 
 					if (kind == IResourceDelta.CHANGED) {
 						changedMarkers.add(delta.getMarker());
-					}
-					else
+					} else
 						addedOrRemoved = true;
 				}
 
@@ -212,11 +212,12 @@ public abstract class MarkerView extends TableView {
 				updateJob.refreshAll();
 				getProgressService().schedule(updateJob);
 			} else {
-				MarkerList changed = getCurrentMarkers().findMarkers(changedMarkers);
-				if(changed.asList().isEmpty())
+				MarkerList changed = getCurrentMarkers().findMarkers(
+						changedMarkers);
+				if (changed.asList().isEmpty())
 					return;
-				
-				changed.refresh();				
+
+				changed.refresh();
 				updateJob.refresh(changed);
 				getProgressService().schedule(updateJob);
 			}
@@ -292,7 +293,7 @@ public abstract class MarkerView extends TableView {
 	 * 
 	 * @return MarkerList
 	 */
-	protected MarkerList getCurrentMarkers() {
+	public MarkerList getCurrentMarkers() {
 		return ((MarkerAdapter) getViewerInput()).getCurrentMarkers();
 	}
 
@@ -375,6 +376,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Restore the filters from the mimento.
+	 * 
 	 * @param memento
 	 */
 	private void restoreFilters(IMemento memento) {
@@ -752,9 +754,9 @@ public abstract class MarkerView extends TableView {
 		IStructuredSelection selection = (IStructuredSelection) getViewer()
 				.getSelection();
 		IMemento selectionMem = memento.createChild(TAG_SELECTION);
-		for (Iterator iterator = selection.iterator(); iterator.hasNext();){
+		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
 			Object next = iterator.next();
-			if(!(next instanceof ConcreteMarker))
+			if (!(next instanceof ConcreteMarker))
 				continue;
 			ConcreteMarker marker = (ConcreteMarker) next;
 			IMemento elementMem = selectionMem.createChild(TAG_MARKER);
@@ -927,7 +929,7 @@ public abstract class MarkerView extends TableView {
 
 		for (int i = 0; i < filters.length; i++) {
 			MarkerFilter filter = filters[i];
-			if(!filter.isEnabled())
+			if (!filter.isEnabled())
 				continue;
 
 			int onResource = filter.getOnResource();
@@ -1366,17 +1368,29 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Return whether or not we are showing the hierarchal or flat mode
+	 * 
 	 * @return <code>true</code> if hierarchal mode is being shown
 	 */
-	public boolean isHierarchalMode() {		
+	public boolean isHierarchalMode() {
 		return false;
 	}
 
 	/**
 	 * Return the TableSorter
+	 * 
 	 * @return TableSorter
 	 */
 	public TableSorter getTableSorter() {
 		return (TableSorter) getViewer().getSorter();
+	}
+
+	public void addUpdateFinishListener(IJobChangeListener listener){
+		updateJob.addJobChangeListener(listener);
+		
+	}
+	
+	public void removeUpdateFinishListener(IJobChangeListener listener){
+		updateJob.removeJobChangeListener(listener);
+		
 	}
 }
