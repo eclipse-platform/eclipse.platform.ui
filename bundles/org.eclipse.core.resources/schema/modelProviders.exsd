@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.core.resources" id="modelProviders" name="Model Providers"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         A model provider serves two purposes. Firstly, it is a means of grouping the resource mappings of a single model together for the purposes of performing operations, display, etc. Also, it provides a means of mapping a set of file system resources to the resource maqppings that describe how a model maps to resources.
       </documentation>
    </annotation>
 
@@ -88,7 +88,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.2
       </documentation>
    </annotation>
 
@@ -97,7 +97,29 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is an example of using the modelProvider extension point. 
+(in file plugin.xml)
+&lt;pre&gt;
+   &lt;extension
+         id=&quot;modelProvider&quot;
+         name=&quot;Library Model Provider&quot;
+         point=&quot;org.eclipse.core.resources.modelProviders&quot;&gt;
+      &lt;modelProvider
+            class=&quot;org.eclipse.examples.library.LibraryModelProvider&quot;
+            name=&quot;Library Model Provider&quot;/&gt;
+      &lt;extends-model id=&quot;org.eclipse.core.resources.modelProvider&quot;/&gt;
+      &lt;enablement&gt;
+           &lt;with variable=&quot;affectedNatures&quot;&gt;
+             &lt;iterate operator=&quot;or&quot;&gt;
+               &lt;equals value=&quot;org.eclipse.team.examples.library.nature&quot;/&gt;
+             &lt;/iterate&gt;
+           &lt;/with&gt;
+           &lt;with variable=&quot;element&quot;&gt;
+   	         &lt;instanceof value=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
+           &lt;/with&gt;
+       &lt;/enablement&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -106,7 +128,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         The value of the class attribute must represent an implementation of &lt;tt&gt;org.eclipse.core.resources.mapping.ModelProvider&lt;/tt&gt;.
       </documentation>
    </annotation>
 
@@ -115,7 +137,9 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         The platform itself does not have any predefined 
+model providers. Particular product installs may include 
+model providers as required.
       </documentation>
    </annotation>
 
@@ -124,7 +148,13 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2005 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Eclipse Public License v1.0 which 
+accompanies 
+this distribution, and is available at 
+&lt;a 
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

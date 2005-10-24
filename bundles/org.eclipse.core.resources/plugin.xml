@@ -149,11 +149,11 @@
    </extension>
       <extension
             id="modelProvider"
-            name="File System Resource Model"
+            name="%resourceModelName"
             point="org.eclipse.core.resources.modelProviders">
          <modelProvider
                class="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"
-               name="File System Resource Model"/>
+               name="%resourceModelName"/>
       </extension>
 
 </plugin>
