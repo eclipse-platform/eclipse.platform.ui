@@ -358,7 +358,12 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * launch configuration when saved. The working copy will
 	 * refer to this launch configuration as its original
 	 * launch configuration.
-	 * 
+	 * <p>
+	 * When a working copy (B) is created from a working copy (A), the newly
+	 * created working copy (B) is initialized with the attributes from
+	 * the first working copy (A). Whenever a working copy is saved, it is written
+	 * back to the original non-working copy configuration.
+	 * </p>
 	 * @return a working copy of this launch configuration
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
