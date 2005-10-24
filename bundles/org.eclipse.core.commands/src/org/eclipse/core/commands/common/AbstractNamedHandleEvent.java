@@ -26,12 +26,12 @@ public abstract class AbstractNamedHandleEvent extends
 	 * The bit used to represent whether the category has changed its
 	 * description.
 	 */
-	protected static final int CHANGED_DESCRIPTION = 1 << LAST_BIT_USED;
+	protected static final int CHANGED_DESCRIPTION = 1 << LAST_BIT_USED_ABSTRACT_HANDLE;
 
 	/**
 	 * The bit used to represent whether the category has changed its name.
 	 */
-	protected static final int CHANGED_NAME = 1 << LAST_BIT_USED;
+	protected static final int CHANGED_NAME = 1 << LAST_BIT_USED_ABSTRACT_HANDLE;
 
 	/**
 	 * The last used bit so that subclasses can add more properties.

@@ -30,7 +30,7 @@ public abstract class AbstractHandleObjectEvent extends AbstractBitSetEvent {
 	/**
 	 * The last used bit so that subclasses can add more properties.
 	 */
-	protected static final int LAST_BIT_USED = CHANGED_DEFINED;
+	protected static final int LAST_BIT_USED_ABSTRACT_HANDLE = CHANGED_DEFINED;
 
 	/**
 	 * Constructs a new instance of <code>AbstractHandleObjectEvent</code>.
