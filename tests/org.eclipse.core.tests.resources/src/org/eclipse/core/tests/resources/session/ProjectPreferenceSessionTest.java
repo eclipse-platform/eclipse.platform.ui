@@ -33,6 +33,10 @@ public class ProjectPreferenceSessionTest extends WorkspaceSessionTest {
 	public ProjectPreferenceSessionTest(String name) {
 		super(name);
 	}
+	
+	protected void tearDown() throws Exception {
+		getWorkspace().save(true, getMonitor());
+	}
 
 	/*
 	 * See bug 91244
