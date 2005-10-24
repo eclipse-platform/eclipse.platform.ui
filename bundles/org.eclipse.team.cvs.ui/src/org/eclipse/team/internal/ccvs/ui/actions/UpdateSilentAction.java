@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -18,8 +19,6 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.mappings.CVSMappingMergeOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.TeamUI;
 
 /**
  * Action that runs an update without prompting the user for a tag.
