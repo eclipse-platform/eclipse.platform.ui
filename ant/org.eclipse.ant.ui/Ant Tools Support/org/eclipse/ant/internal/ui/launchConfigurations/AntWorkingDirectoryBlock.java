@@ -24,6 +24,10 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	
 	private String fDefaultWorkingDirPath;
 
+	/**
+	 * gets the default working dir path
+	 * @return
+	 */
 	public String getDefaultWorkingDirPath() {
 		return fDefaultWorkingDirPath;
 	}
@@ -36,9 +40,8 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 			super.setDefaultWorkingDir();
 			return;
 		}
-		fWorkingDirText.setText(fDefaultWorkingDirPath);
+		setDefaultWorkingDirectoryText(fDefaultWorkingDirPath);
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
@@ -48,19 +51,13 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 		try {
 			try {
 				fDefaultWorkingDirPath= ExternalToolsUtil.getLocation(configuration).removeLastSegments(1).toOSString();
-			} catch (CoreException e) {
-				//no location
 			}
-			
+			catch(CoreException ce){}
 			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
-			fWorkingDirText.setText(""); //$NON-NLS-1$
-			if (wd == null || isSameAsDefault(wd)) {
-				fUseDefaultWorkingDirButton.setSelection(true);
-			} else {
-				fWorkingDirText.setText(wd);
-				fUseDefaultWorkingDirButton.setSelection(false);
+			setDefaultWorkingDir();
+			if (wd != null || !isSameAsDefault(wd)) {
+				setOtherWorkingDirectoryText(wd);
 			}
-			handleUseDefaultWorkingDirButtonSelected();
 		} catch (CoreException e) {
 			setErrorMessage(MessageFormat.format(AntLaunchConfigurationMessages.AntWorkingDirectoryBlock_0, new String[] {e.getStatus().getMessage()}));
 			AntUIPlugin.log(e);
@@ -70,27 +67,15 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	private boolean isSameAsDefault(String workingDir) {
 		return workingDir == null || (workingDir.equals(fDefaultWorkingDirPath) || workingDir.equals(System.getProperty("user.dir"))); //$NON-NLS-1$
 	}
-	
-	public void setEnabled(boolean enabled) {
-		fUseDefaultWorkingDirButton.setEnabled(enabled);
-		boolean def = isDefaultWorkingDirectory();
-		fUseDefaultWorkingDirButton.setSelection(def);
-		enabled = enabled && !def;
-		fWorkingDirText.setEnabled(enabled);
-		fWorkspaceButton.setEnabled(enabled);
-		fFileSystemButton.setEnabled(enabled);
-		fVariablesButton.setEnabled(enabled);
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
-		if (fUseDefaultWorkingDirButton.isEnabled()) { //is this block enabled
-			return super.isValid(config);
-		}
-		setErrorMessage(null);
-		setMessage(null);
-		return true;
+		return super.isValid(config);
+	}//end isValid
+	
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
 	}
 }
