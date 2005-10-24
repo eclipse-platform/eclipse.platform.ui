@@ -316,6 +316,8 @@ public abstract class MergeContext extends SynchronizeOperationContext implement
                 if (status.isOK()) {
                     file.setContents(getTempInputStream(file, output), false, true, monitor);
                     markAsMerged(file, monitor);
+                } else {
+                	status = new MergeStatus(status.getPlugin(), status.getMessage(), new IFile[]{file});
                 }
             } finally {
                 disposeTempOutputStream(file, output);
