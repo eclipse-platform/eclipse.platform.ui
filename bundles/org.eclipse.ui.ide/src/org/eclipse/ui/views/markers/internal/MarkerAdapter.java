@@ -17,6 +17,7 @@ import java.util.Collection;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -155,77 +156,97 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 	 */
 	public void fetchDeferredChildren(Object object,
 			IElementCollector collector, IProgressMonitor monitor) {
+		
+		if(monitor.isCanceled())
+			return;
 
 		if (!view.isHierarchalMode() || object.equals(view.getViewerInput())) {
-
-			int markerLimit = view.getMarkerLimit();
-			monitor.beginTask(MarkerMessages.MarkerView_19,
-					markerLimit == -1 ? 60 : 100);
-			try {
-				monitor.subTask(MarkerMessages.MarkerView_waiting_on_changes);
-
-				if (monitor.isCanceled()) {
-					return;
-				}
-
-				monitor
-						.subTask(MarkerMessages.MarkerView_searching_for_markers);
-				SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,
-						10);
-				lastMarkers = MarkerList.compute(view.getEnabledFilters(),
-						subMonitor, true);
-
-				if (monitor.isCanceled())
-					return;
-
-				view.refreshMarkerCounts(monitor);
-
-			} catch (CoreException e) {
-				IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
-				lastMarkers = new MarkerList();
-				return;
+			try{
+				Platform.getJobManager().beginRule(ResourcesPlugin.getWorkspace().getRoot(), monitor);
+				buildAllMarkers(collector,monitor);
 			}
+			finally{
+				Platform.getJobManager().endRule(ResourcesPlugin.getWorkspace().getRoot());
+			}
+			
+			view.scheduleCountUpdate();
+		} else
+			addChildren(object, collector, monitor);
+	}
+
+	/**
+	 * Build all of the markers in the receiver.
+	 * @param collector
+	 * @param monitor
+	 */
+	private void buildAllMarkers(
+			IElementCollector collector, IProgressMonitor monitor) {
+		int markerLimit = view.getMarkerLimit();
+		monitor.beginTask(MarkerMessages.MarkerView_19,
+				markerLimit == -1 ? 60 : 100);
+		try {
+			monitor.subTask(MarkerMessages.MarkerView_waiting_on_changes);
 
 			if (monitor.isCanceled()) {
 				return;
 			}
 
-			// Exit immediately if the markers have changed in the meantime.
-
-			if (markerLimit != -1) {
-
-				monitor.subTask(MarkerMessages.MarkerView_18);
-				SubProgressMonitor mon = new SubProgressMonitor(monitor, 40);
-
-				lastMarkers = SortUtil.getFirst(lastMarkers, (TableSorter) view
-						.getViewer().getSorter(), markerLimit, mon);
-				if (monitor.isCanceled())
-					return;
-			}
-
-			monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
-
-			SubProgressMonitor sub = new SubProgressMonitor(monitor, 50);
-			if (view.isHierarchalMode()) {
-				view.getTableSorter().sort(view.getViewer(), lastMarkers);
-
-				MarkerCategory[] categories = buildHierarchy(lastMarkers, 0,
-						lastMarkers.getSize() - 1, 0, null);
-
-				if (categories == null)// Just add the markers
-					collector.add(lastMarkers.toArray(), sub);
-				else
-					collector.add(categories, sub);
-			} else
-				collector.add(lastMarkers.toArray(), sub);
+			monitor
+					.subTask(MarkerMessages.MarkerView_searching_for_markers);
+			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,
+					10);
+			lastMarkers = MarkerList.compute(view.getEnabledFilters(),
+					subMonitor, true);
 
 			if (monitor.isCanceled())
 				return;
 
-			monitor.done();
-			view.scheduleCountUpdate();
+			view.refreshMarkerCounts(monitor);
+
+		} catch (CoreException e) {
+			IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+			lastMarkers = new MarkerList();
+			return;
+		}
+
+		if (monitor.isCanceled()) {
+			return;
+		}
+
+		// Exit immediately if the markers have changed in the meantime.
+
+		if (markerLimit != -1) {
+
+			monitor.subTask(MarkerMessages.MarkerView_18);
+			SubProgressMonitor mon = new SubProgressMonitor(monitor, 40);
+
+			lastMarkers = SortUtil.getFirst(lastMarkers, (TableSorter) view
+					.getViewer().getSorter(), markerLimit, mon);
+			if (monitor.isCanceled())
+				return;
+		}
+
+		monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
+
+		SubProgressMonitor sub = new SubProgressMonitor(monitor, 50);
+		if (view.isHierarchalMode()) {
+			view.getTableSorter().sort(view.getViewer(), lastMarkers);
+
+			MarkerCategory[] categories = buildHierarchy(lastMarkers, 0,
+					lastMarkers.getSize() - 1, 0, null);
+
+			if (categories == null)// Just add the markers
+				collector.add(lastMarkers.toArray(), sub);
+			else
+				collector.add(categories, sub);
 		} else
-			addChildren(object, collector, monitor);
+			collector.add(lastMarkers.toArray(), sub);
+
+		if (monitor.isCanceled())
+			return;
+
+		monitor.done();
+		
 	}
 
 	/**
@@ -325,7 +346,7 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
 	 */
 	public ISchedulingRule getRule(Object object) {
-		return ResourcesPlugin.getWorkspace().getRoot();
+		return null;
 	}
 
 	/*
