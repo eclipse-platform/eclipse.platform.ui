@@ -49,8 +49,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
 			IResourceMappingOperationInput input = getOperationInput();
 			input.buildInput(new NullProgressMonitor());
 			if (input.hasAdditionalMappings()) {
-				ResourceMapping[] allMappings = input.getInputMappings();
-				return showAllMappings(selectedMappings, allMappings);
+				return showAllMappings(input);
 			}
 		} catch (CoreException e) {
 			CVSUIPlugin.log(e);
@@ -58,11 +57,11 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
 		return selectedMappings;
     }
     
-    private ResourceMapping[] showAllMappings(final ResourceMapping[] selectedMappings, final ResourceMapping[] allMappings) {
+    private ResourceMapping[] showAllMappings(final IResourceMappingOperationInput input) {
         final boolean[] canceled = new boolean[] { false };
         getShell().getDisplay().syncExec(new Runnable() {
             public void run() {
-                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", selectedMappings, new TeamViewerContext(allMappings));
+                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", input);
                 int result = dialog.open();
                 canceled[0] = result != Dialog.OK;
             }
@@ -72,7 +71,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
         if (canceled[0]) {
             return new ResourceMapping[0];
         }
-        return allMappings;
+        return input.getInputMappings();
     }
 
     protected static IResource[] getRootTraversalResources(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
@@ -107,7 +106,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
 	}
 
 	protected SimpleResourceMappingOperationInput getOperationInput() {
-		return new SimpleResourceMappingOperationInput(getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext());
+		return new ResourceMappingOperationInput(getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext());
 	}
 
 	public static IResource[] getResourcesToCompare(final ResourceMapping[] mappings, final Subscriber subscriber) throws InvocationTargetException {

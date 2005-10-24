@@ -49,11 +49,11 @@ public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 	}
 
 	private SyncInfoTree getSetToMerge(IMergeContext mergeContext) {
-		ResourceMapping[] mappings = input.getMappings(provider);
+		ResourceMapping[] mappings = input.getResourceMappings(provider.getDescriptor().getId());
 		SyncInfoTree result = new SyncInfoTree();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
-			ResourceTraversal[] traversals = input.getTraversal(mapping);
+			ResourceTraversal[] traversals = input.getTraversals(mapping);
 			SyncInfo[] infos = mergeContext.getSyncInfoTree().getSyncInfos(traversals);
 			for (int j = 0; j < infos.length; j++) {
 				SyncInfo info = infos[j];
@@ -66,7 +66,7 @@ public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 	private IStatus covertFilesToMappings(IStatus status, IMergeContext mergeContext) {
 		if (status.getCode() == MergeStatus.CONFLICTS) {
 			// In general, we can't say which mapping failed so return them all
-			return new MergeStatus(status.getPlugin(), status.getMessage(), input.getMappings(provider));
+			return new MergeStatus(status.getPlugin(), status.getMessage(), input.getResourceMappings(provider.getDescriptor().getId()));
 		}
 		return status;
 	}

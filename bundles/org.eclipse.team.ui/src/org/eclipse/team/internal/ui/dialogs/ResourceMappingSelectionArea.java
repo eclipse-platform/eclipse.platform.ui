@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.mapping.ResourceMappingLabelProvider;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 

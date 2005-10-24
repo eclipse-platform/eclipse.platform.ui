@@ -70,7 +70,7 @@ public class SimpleResourceMappingOperationInput implements
 		return combineTraversals((ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]));
 	}
 
-	public ResourceTraversal[] getTraversal(ResourceMapping mapping) {
+	public ResourceTraversal[] getTraversals(ResourceMapping mapping) {
 		return (ResourceTraversal[])mappingToTraversalsMap.get(mapping);
 	}
 
@@ -88,7 +88,7 @@ public class SimpleResourceMappingOperationInput implements
 		monitor.done();
 	}
 	
-	protected static ResourceTraversal[] combineTraversals(ResourceTraversal[] allTraversals) {
+	public static ResourceTraversal[] combineTraversals(ResourceTraversal[] allTraversals) {
 		Set zero = new HashSet();
 		Set shallow = new HashSet();
 		Set deep = new HashSet();
@@ -133,18 +133,19 @@ public class SimpleResourceMappingOperationInput implements
 		return context;
 	}
 
-	public ResourceMapping[] getMappings(ModelProvider provider) {
+	public ResourceMapping[] getResourceMappings(String id) {
 		Set result = new HashSet();
 		ResourceMapping[] mappings = getInputMappings();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
-			if (mapping.getModelProviderId().equals(provider.getDescriptor().getId())) {
+			if (mapping.getModelProviderId().equals(id)) {
 				result.add(mapping);
 			}
 		}
 		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
-	}
 
+	}
+	
 	public ISynchronizeScope asSynchronizationScope() {
 		// TODO Temporary implementation
 		return new ResourceMappingScope("TODO: Need appropriate labels", getInputMappings(), getInputTraversals());

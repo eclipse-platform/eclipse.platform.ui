@@ -12,19 +12,24 @@ package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.team.internal.ui.dialogs.ResourceMappingLabelProvider;
 import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.ui.mapping.*;
 
 public class ResourceNavigatorContentExtensionFactory implements
 		INavigatorContentExtensionFactory {
 
+	private final ModelProvider provider;
+
+	public ResourceNavigatorContentExtensionFactory(ModelProvider provider) {
+		this.provider = provider;
+	}
+
 	public NavigatorContentExtension createProvider(ITeamViewerContext context) {
 		return new NavigatorContentExtension(context) {
 			private ResourceMappingContentProvider resourceMappingContentProvider;
 			public IResourceMappingContentProvider getContentProvider() {
 				if (resourceMappingContentProvider == null)
-					resourceMappingContentProvider = new ResourceMappingContentProvider(getContext(), ModelProvider.RESOURCE_MODEL_PROVIDER_ID);
+					resourceMappingContentProvider = new ResourceMappingContentProvider(getContext(), provider);
 				return resourceMappingContentProvider;
 			}
 			public void dispose() {

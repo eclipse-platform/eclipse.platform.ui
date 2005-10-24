@@ -31,7 +31,7 @@ public class TeamAdapterFactory implements IAdapterFactory {
 			return diffNodeAdapter;
 		}
 		if (adaptableObject instanceof ModelProvider && adapterType == INavigatorContentExtensionFactory.class) {
-			return new ResourceNavigatorContentExtensionFactory();
+			return new ResourceNavigatorContentExtensionFactory((ModelProvider)adaptableObject);
 		}
 		return null;
 	}
@@ -40,7 +40,6 @@ public class TeamAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		// TODO Auto-generated method stub
 		return new Class[] {IWorkbenchAdapter.class, INavigatorContentExtensionFactory.class};
 	}
 }

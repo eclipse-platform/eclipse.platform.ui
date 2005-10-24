@@ -111,7 +111,7 @@ public abstract class ResourceMappingOperation extends TeamOperation {
         final boolean[] canceled = new boolean[] { false };
         getShell().getDisplay().syncExec(new Runnable() {
             public void run() {
-                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", selectedMappings, new TeamViewerContext(allMappings));
+                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", getInput());
                 int result = dialog.open();
                 canceled[0] = result != Dialog.OK;
             }

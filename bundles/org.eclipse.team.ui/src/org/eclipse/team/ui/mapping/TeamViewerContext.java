@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import java.util.*;
+import org.eclipse.core.resources.mapping.*;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.resources.mapping.ResourceMapping;
 
 /**
  * A concrete implementation of the <code>ITeamViewerContext</code>
@@ -29,33 +27,36 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
  */
 public class TeamViewerContext implements ITeamViewerContext {
     
-	private final ResourceMapping[] mappings;
+	private final IResourceMappingOperationInput input;
 
-	public TeamViewerContext(ResourceMapping[] mappings) {
-		this.mappings = mappings;
+	public TeamViewerContext(IResourceMappingOperationInput input) {
+		this.input = input;
 	}
-
-	public ResourceMapping[] getResourceMappings(String modelProviderId) {
-		if (modelProviderId.equals(ALL_MAPPINGS)) {
-			return mappings;
-		}
-		List result = new ArrayList();
-		for (int i = 0; i < mappings.length; i++) {
-			ResourceMapping mapping = mappings[i];
-			if (mapping.getModelProviderId().equals(modelProviderId)) {
-				result.add(mapping);
-			}
-		}
-		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
+	
+	/**
+	 * Return the input used to create this operation context.
+	 * @return the input used to create this operation context
+	 */
+	public IResourceMappingOperationInput getInput() {
+		return input;
 	}
 
 	public ModelProvider[] getModelProviders() {
-		Set providers = new HashSet();
-		for (int i = 0; i < mappings.length; i++) {
-			ResourceMapping mapping = mappings[i];
-			providers.add(mapping.getModelProvider());
-		}
-		return (ModelProvider[]) providers.toArray(new ModelProvider[providers.size()]);
+		return getInput().getModelProviders();
+	}
+
+	public ResourceMapping[] getResourceMappings(String id) {
+		if (id.equals(ALL_MAPPINGS))
+			return getInput().getInputMappings();
+		return getInput().getResourceMappings(id);
+	}
+
+	public ResourceTraversal[] getTraversals() {
+		return getInput().getInputTraversals();
+	}
+
+	public ResourceTraversal[] getTraversals(ResourceMapping mapping) {
+		return getInput().getTraversals(mapping);
 	}
 
 }

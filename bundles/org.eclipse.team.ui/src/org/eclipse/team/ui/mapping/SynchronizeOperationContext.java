@@ -36,15 +36,13 @@ public abstract class SynchronizeOperationContext extends TeamViewerContext impl
 
 	Map properties;
 	ListenerList listeners;
-	private final IResourceMappingOperationInput input;
 	
 	/**
 	 * Create an operation context for the given input.
 	 * @param input the input of the context
 	 */
 	public SynchronizeOperationContext(IResourceMappingOperationInput input) {
-		super(input.getInputMappings());
-		this.input = input;
+		super(input);
 	}
 
 	/* (non-Javadoc)
@@ -109,14 +107,6 @@ public abstract class SynchronizeOperationContext extends TeamViewerContext impl
 			}
 		}
 		properties = null;
-	}
-
-	/**
-	 * Return the input used to create this operation context.
-	 * @return the input used to create this operation context
-	 */
-	public IResourceMappingOperationInput getInput() {
-		return input;
 	}
 	
 }

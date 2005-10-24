@@ -80,7 +80,7 @@ public interface IResourceMappingOperationInput {
 	 * @return the traversals that cover the given resource mapping
 	 * (or <code>null</code> if the mapping is not contained in the input)
 	 */
-	public ResourceTraversal[] getTraversal(ResourceMapping mapping);
+	public ResourceTraversal[] getTraversals(ResourceMapping mapping);
 
 	/**
 	 * Return whether the input has additional mappings added to the
@@ -94,7 +94,7 @@ public interface IResourceMappingOperationInput {
 
 	public ModelProvider[] getModelProviders();
 
-	public ResourceMapping[] getMappings(ModelProvider provider);
-
 	public ISynchronizeScope asSynchronizationScope();
+
+	public ResourceMapping[] getResourceMappings(String id);
 }

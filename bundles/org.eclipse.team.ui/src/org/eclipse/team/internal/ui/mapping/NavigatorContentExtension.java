@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.team.internal.ui.dialogs.ResourceMappingLabelProvider;
 import org.eclipse.team.ui.mapping.ITeamViewerContext;
 
 /**

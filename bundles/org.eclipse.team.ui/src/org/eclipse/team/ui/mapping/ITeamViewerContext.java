@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.*;
 
 /**
  * A context determined by Team providers and passed to model views
@@ -49,5 +48,20 @@ public interface ITeamViewerContext {
 	 * @return a set of resource mappings
 	 */
 	public ResourceMapping[] getResourceMappings(String modelProviderId);
+	
+	/**
+	 * Return the set of traversals that cover the 
+	 * resource mappings in this context.
+	 * @return the complete set of mappings to be operated on
+	 */
+	public ResourceTraversal[] getTraversals();
+	
+	/**
+	 * Return the traversals that cover the given mapping.
+	 * @param mapping a resource mapping being operated on
+	 * @return the traversals that cover the given resource mapping
+	 * (or <code>null</code> if the mapping is not in the context)
+	 */
+	public ResourceTraversal[] getTraversals(ResourceMapping mapping);
 
 }

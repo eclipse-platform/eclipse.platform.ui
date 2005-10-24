@@ -10,29 +10,25 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.dialogs;
 
-import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.ui.mapping.ITeamViewerContext;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.ui.mapping.IResourceMappingOperationInput;
+import org.eclipse.team.ui.mapping.TeamViewerContext;
 
 public class AdditionalMappingsDialog extends DetailsDialog {
 
-    private final ResourceMapping[] selectedMappings;
     private ResourceMappingSelectionArea selectedMappingsArea;
     private ResourceMappingHierarchyArea allMappingsArea;
-	private ITeamViewerContext context;
+	private final IResourceMappingOperationInput input;
 
-    public AdditionalMappingsDialog(Shell parentShell, String dialogTitle, ResourceMapping[] selectedMappings, ITeamViewerContext context) {
+    public AdditionalMappingsDialog(Shell parentShell, String dialogTitle, IResourceMappingOperationInput input) {
         super(parentShell, dialogTitle);
-        this.selectedMappings = selectedMappings;
-        this.context = context;
+		this.input = input;
     }
 
-    protected void createMainDialogArea(Composite parent) {
-        createWrappingLabel(parent, "This dialog shows all the selected elements and all the elements that will be operated on by this operation due to the files in which the elements are stored.");
+	protected void createMainDialogArea(Composite parent) {
+        createWrappingLabel(parent, "Additional elements must be included in the current operation due to the relationship between the selected elements and the files in which they are stored.");
         createSelectedMappingsArea(parent);
         createAllMappingsArea(parent);
     }
@@ -42,7 +38,7 @@ public class AdditionalMappingsDialog extends DetailsDialog {
      */
     private void createSelectedMappingsArea(Composite parent) {
         Composite composite = createComposite(parent);
-        selectedMappingsArea = new ResourceMappingSelectionArea(selectedMappings, false, false);
+        selectedMappingsArea = new ResourceMappingSelectionArea(input.getSeedMappings(), false, false);
         selectedMappingsArea.setDescription("Selected Elements");
         //selectedMappingsArea.addPropertyChangeListener(this);
         selectedMappingsArea.createArea(composite);
@@ -56,7 +52,7 @@ public class AdditionalMappingsDialog extends DetailsDialog {
      */
     private void createAllMappingsArea(Composite parent) {
         Composite composite = createComposite(parent);
-        allMappingsArea = ResourceMappingHierarchyArea.create(context);
+        allMappingsArea = ResourceMappingHierarchyArea.create(new TeamViewerContext(input));
         allMappingsArea.setDescription("All elements to be operated on");
         //allMappingsArea.addPropertyChangeListener(this);
         allMappingsArea.createArea(composite);

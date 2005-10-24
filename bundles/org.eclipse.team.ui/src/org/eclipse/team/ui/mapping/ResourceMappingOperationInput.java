@@ -240,7 +240,7 @@ public class ResourceMappingOperationInput extends SimpleResourceMappingOperatio
 		return combineTraversals((ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]));
 	}
 
-	public ResourceTraversal[] getTraversal(ResourceMapping mapping) {
+	public ResourceTraversal[] getTraversals(ResourceMapping mapping) {
 		return (ResourceTraversal[])targetMappingsToResources.get(mapping);
 	}
 
