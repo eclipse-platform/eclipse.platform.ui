@@ -136,7 +136,7 @@ import org.eclipse.ui.part.PageBook;
 
  * @since 3.1
  */
-public abstract class AbstractTableRendering extends AbstractMemoryRendering implements IPropertyChangeListener{	
+public abstract class AbstractTableRendering extends AbstractMemoryRendering implements IPropertyChangeListener, IResettableMemoryRendering{	
 
 	/**
 	 *  Property identifier for the selected address in a table rendering
@@ -393,7 +393,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				if (isDynamicLoad())
 					reloadTable(getTopVisibleAddress(), false);
 			}
-			topVisibleAddressChanged((BigInteger)value);
+			topVisibleAddressChanged((BigInteger)value, false);
 		}
 		else if (propertyName.equals(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS) && value instanceof BigInteger)
 		{
@@ -453,10 +453,13 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 * Handle top visible address change event from synchronizer
 	 * @param address
 	 */
-	private void topVisibleAddressChanged(final BigInteger address)
+	private void topVisibleAddressChanged(final BigInteger address, boolean force)
 	{
-		// do not handle event if view tab is disabled
-		if (!isVisible())
+		// do not handle event if rendering is not visible
+		// continue to handle event if caller decides to force the rendering
+		// to move to the top visible address even when the rendering
+		// is not visible
+		if (!isVisible() && !force)
 			return;
 		
 		// do not handle event if the base address of the memory
@@ -1508,7 +1511,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 						selectedAddressChanged(selectedAddress);
 					}
 				}
-				topVisibleAddressChanged(topAddress);
+				topVisibleAddressChanged(topAddress, false);
 			}
 		}
 		if (selectedAddress != null) {
@@ -2842,26 +2845,40 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 * The cursor will be moved to the base address of the memory block.
 	 * The table will be positioned to have the base address
 	 * at the top.
+	 * 
+	 * @deprecated use <code>resetRendering</code> to reset this rendering.
 	 */
 	public void reset()
 	{
 		try {
-			BigInteger baseAddress;
-		
-			if (getMemoryBlock() instanceof IMemoryBlockExtension)
-			{
-				baseAddress = ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress();
-			}
-			else
-			{
-				baseAddress = BigInteger.valueOf(getMemoryBlock().getStartAddress());
-			}
-	
-			goToAddress(baseAddress);
-			topVisibleAddressChanged(baseAddress);
+			resetToBaseAddress();
 		} catch (DebugException e) {
-			MemoryViewUtil.openError(DebugUIMessages.AbstractTableRendering_12, DebugUIMessages.AbstractTableRendering_13, e); // 
+			MemoryViewUtil.openError(DebugUIMessages.AbstractTableRendering_12, DebugUIMessages.AbstractTableRendering_13, e); //
 		}
+	}
+	
+	/**
+	 * Reset this rendering to the base address.  
+	 * The cursor will be moved to the base address of the memory block.
+	 * The table will be positioned to have the base address
+	 * at the top.
+	 * @throws DebugException
+	 */
+	private void resetToBaseAddress() throws DebugException
+	{
+		BigInteger baseAddress;
+
+		if (getMemoryBlock() instanceof IMemoryBlockExtension)
+		{
+			baseAddress = ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress();
+		}
+		else
+		{
+			baseAddress = BigInteger.valueOf(getMemoryBlock().getStartAddress());
+		}
+
+		goToAddress(baseAddress);
+		topVisibleAddressChanged(baseAddress, true);
 	}
 	
 	/**
@@ -3199,7 +3216,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	{
 		fSelectedAddress = address;
 	}
-	
+		
 	/**
 	 * Setup the viewer so it supports hovers to show the offset of each field
 	 */
@@ -3335,6 +3352,14 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		return fToolTipLabel;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IResettableMemoryRendering#resetRendering()
+	 */
+	public void resetRendering() throws DebugException {
+		resetToBaseAddress();
+	}
+
 	/**
 	 * Called when the tool tip is about to show in this rendering.
 	 * Clients who overrides <code>createTooltipControl</code> may need to

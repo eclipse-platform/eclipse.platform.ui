@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -29,6 +30,8 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
+import org.eclipse.debug.ui.memory.IResettableMemoryRendering;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -1197,5 +1200,85 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	 */
 	public IMemoryRendering getActiveRendering() {
 		return getTopMemoryTab().getRendering();
+	}
+	
+	/**
+	 * Reset the memory renderings within this view pane.
+	 * @param memoryBlock - reset renderings associated with the given memory block
+	 * @param resetVisible - reset what's currently visible if the parameter is true.
+	 * Otherwise, the view pane will reset all renderings associated with the given 
+	 * memory block.
+	 */
+	public void resetRenderings(IMemoryBlock memoryBlock, boolean resetVisible)
+	{
+		// if we only reset what's visible and the view pane is not visible
+		// do nothing.
+		if (resetVisible && !isVisible())
+			return;
+		
+		if(resetVisible)
+		{
+			IMemoryRendering rendering = getActiveRendering();
+			if (rendering != null)
+			{
+				if (rendering.getMemoryBlock() == memoryBlock)
+				{
+					if (rendering instanceof IResettableMemoryRendering)
+					{
+						IResettableMemoryRendering resettableRendering = (IResettableMemoryRendering)rendering;
+						try {
+							resettableRendering.resetRendering();
+						} catch (DebugException e) {
+							// do not pop up error message
+							// error message is annoying where there are multiple rendering
+							// panes and renderings to reset
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			// get all renderings associated with the given memory block
+			IMemoryRendering[] renderings = fRenderingMgr.getRenderingsFromMemoryBlock(memoryBlock);
+			
+			// back up current synchronization provider
+			IMemoryRendering originalProvider = null;
+			IMemoryRenderingSynchronizationService service = getMemoryRenderingSite().getSynchronizationService();
+			if (service != null)
+				originalProvider = service.getSynchronizationProvider();
+			
+			for (int i=0; i<renderings.length; i++)
+			{
+				if (renderings[i] instanceof IResettableMemoryRendering)
+				{
+					try {
+						
+						// This is done to allow user to select multiple memory monitors and 
+						// reset their renderings.
+						// In this case, a hidden rendering will not be the sync provider to the sync
+						// service.  When the reset happens, the top visible address and selected
+						// address is not updated in the sync service.  When the rendering later
+						// becomes visible, the rendering gets the sync info from the sync service
+						// and will try to sync up with old information, giving user the impression
+						// that the rendering was never reset.  By forcing the rendering that we
+						// are trying to reset as the synchronization provider, we ensure that
+						// the rendering is able to update its sync info even though the rendering
+						// is currently hidden.
+						if (service != null)
+							service.setSynchronizationProvider(renderings[i]);
+						((IResettableMemoryRendering)renderings[i]).resetRendering();
+					} catch (DebugException e) {
+						// do not pop up error message
+						// error message is annoying where there are multiple rendering
+						// panes and renderings to reset
+					}
+				}
+			}
+			
+			// restore synchronization provider
+			if (service != null)
+				service.setSynchronizationProvider(originalProvider);
+		}
 	}
 }

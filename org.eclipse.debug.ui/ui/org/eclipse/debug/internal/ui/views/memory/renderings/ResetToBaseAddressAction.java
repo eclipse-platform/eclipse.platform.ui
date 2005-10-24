@@ -11,9 +11,13 @@
 
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
+import java.lang.reflect.Method;
+
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.jface.action.Action;
 
@@ -42,6 +46,34 @@ public class ResetToBaseAddressAction extends Action {
      * @see org.eclipse.jface.action.IAction#run()
      */
     public void run() {
-        fRendering.reset();
+    	
+    	// check if client has overrode the #reset method
+    	// if client has overrode #reset method, call old method
+    	// otherwise, call new #resetRendering method
+    	// This is done to ensure that client's code will continue to be executed until
+    	// they have migrated to the new #resetRendering API
+    	Class renderingClass = fRendering.getClass();
+    	try {
+			Method method = renderingClass.getMethod("reset", new Class[]{}); //$NON-NLS-1$
+			if (method.getDeclaringClass().equals(AbstractTableRendering.class))
+			{
+				// client has not overrode, call new method
+				try {
+					fRendering.resetRendering();
+				} catch (DebugException e) {
+					MemoryViewUtil.openError(DebugUIMessages.AbstractTableRendering_12, DebugUIMessages.AbstractTableRendering_13, e); //
+				}
+			}
+			else
+			{
+				// call old method
+				fRendering.reset();
+			}
+			
+		} catch (SecurityException e) {
+			fRendering.reset();
+		} catch (NoSuchMethodException e) {
+			fRendering.reset();
+		}
     }
 }

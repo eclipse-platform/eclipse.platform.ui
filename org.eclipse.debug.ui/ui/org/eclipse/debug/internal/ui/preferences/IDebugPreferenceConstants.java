@@ -186,6 +186,32 @@ public interface IDebugPreferenceConstants {
 	 * @since 3.1
 	 */
 	public static final int DEFAULT_PAGE_SIZE = 20;
+	/**
+	 * Preference for defining behavior when resetting a memory monitor.
+	 * Possible values:
+	 * - RESET_AL - reset all renderings regardless if they are visible or not
+	 * - RESET_VISIBLE - reset visible renderings
+	 * 
+	 * @since 3.2
+	 */
+	public static final String PREF_RESET_MEMORY_BLOCK = IDebugUIConstants.PLUGIN_ID + ".reset_memory_block"; //$NON-NLS-1$
+	
+	/**
+	 * Constant to indicate that the memory view will reset all memory renderings when the reset
+	 * memory monitor action is invoked.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String RESET_ALL = IDebugUIConstants.PLUGIN_ID + "resetMemoryBlock.all"; //$NON-NLS-1$
+	
+	
+	/**
+	 * Constant to indicate that the memory view will reset visible memory renderings when
+	 * the reset memory monitor action is invoked
+	 * 
+	 * @since 3.2
+	 */
+	public static final String RESET_VISIBLE = IDebugUIConstants.PLUGIN_ID + "resetMemoryBlock.visible"; //$NON-NLS-1$
 }
 
 

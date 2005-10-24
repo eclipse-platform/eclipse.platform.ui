@@ -213,6 +213,10 @@ public class DebugUIMessages extends NLS {
 	public static String AddMemoryBlocksComposite_2;
 	public static String SwitchMemoryBlockAction_0;
 	public static String SwitchMemoryBlockAction_3;
+	public static String ResetMemoryBlockPreferencePage_0;
+	public static String ResetMemoryBlockPreferencePage_1;
+	public static String ResetMemoryBlockPreferencePage_2;
+	public static String ResetMemoryBlockPreferencePage_3;
 	
 	static {
 		// load message values from bundle file

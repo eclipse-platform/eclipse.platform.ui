@@ -933,6 +933,12 @@
                label="%switchMemoryBlock.label"
                toolbarPath="switchMonitorGroup"
                tooltip="%switchMemoryBlock.label"/>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.ResetMemoryBlockPrefAction"
+               id="org.eclipse.debug.ui.memoryViewPreferencesAction"
+               label="%resetMemoryMonitorPrefAction.label"
+               menubarPath="additions"
+               style="push"/>
       </viewContribution>
    </extension>
    <extension
@@ -1500,6 +1506,17 @@
                icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
                menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"
                id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.add"/>
+      </viewerContribution>
+      <viewerContribution
+            id="org.eclipse.debug.ui.memory.memoryBlockTreeViewPane"
+            targetID="org.eclipse.debug.ui.MemoryView.MemoryBlocksTreeViewPane">
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.ResetMemoryBlockAction"
+               helpContextId="resetMemoryMonitor_context"
+               icon="icons/full/elcl16/memoryreset_tsk.gif"
+               id="org.eclipse.debug.ui.resetMemoryBlock"
+               label="%resetMemoryMonitorAction.label"
+               menubarPath="additions"/>
       </viewerContribution>   
    </extension>   
    <extension
