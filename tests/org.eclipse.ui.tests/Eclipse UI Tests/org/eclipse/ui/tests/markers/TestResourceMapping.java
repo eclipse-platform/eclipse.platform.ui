@@ -26,7 +26,7 @@ public class TestResourceMapping extends ResourceMapping {
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getModelObject()
 	 */
 	public Object getModelObject() {
-		return this;
+		return element;
 	}
 
 	/*
