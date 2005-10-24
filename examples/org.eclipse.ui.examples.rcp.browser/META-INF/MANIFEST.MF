@@ -9,4 +9,4 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
