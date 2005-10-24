@@ -78,14 +78,13 @@ public class ExportOperation implements IRunnableWithProgress {
 				//a generalized (name, value) pairing for attributes each stored as an ATTRIB element
 					root = root.createChild(IImportExportConstants.IE_NODE_MARKER);
 					root.putString(IImportExportConstants.IE_NODE_TYPE, marker.getType());
-					root.putString(IImportExportConstants.TYPENAME, marker.getAttribute(IImportExportConstants.TYPENAME).toString());
 					Object val = marker.getAttribute(IMarker.LINE_NUMBER);
 					root.putString(IMarker.LINE_NUMBER, (val != null) ? val.toString() : null);
 					val = marker.getAttribute(IImportExportConstants.CHARSTART); 
 					root.putString(IImportExportConstants.CHARSTART, (val != null) ? val.toString() : null);
 					for(java.util.Iterator iter = marker.getAttributes().keySet().iterator(); iter.hasNext();) {
 						String iterval = iter.next().toString();
-						if(!iterval.equals(IMarker.LINE_NUMBER) & !iterval.equals(IImportExportConstants.TYPENAME)) {
+						if(!iterval.equals(IMarker.LINE_NUMBER)) {
 							child = root.createChild(IImportExportConstants.IE_NODE_ATTRIB);
 							child.putString(IImportExportConstants.IE_NODE_NAME, iterval);
 							child.putString(IImportExportConstants.IE_NODE_VALUE, marker.getAttribute(iterval).toString());

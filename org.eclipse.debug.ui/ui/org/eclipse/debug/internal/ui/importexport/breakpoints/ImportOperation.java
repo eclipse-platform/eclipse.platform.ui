@@ -97,8 +97,7 @@ public class ImportOperation implements IRunnableWithProgress {
 								//the actual value types that they are.
 								node = nodes[i].getChild(IImportExportConstants.IE_NODE_MARKER);
 								IMarker marker = findGeneralMarker(resource, node.getString(IMarker.LINE_NUMBER), 
-										node.getString(IImportExportConstants.IE_NODE_TYPE), 
-										node.getString(IImportExportConstants.TYPENAME),
+										node.getString(IImportExportConstants.IE_NODE_TYPE),
 										node.getInteger(IImportExportConstants.CHARSTART));
 								//if the marker does not exist, create it, otherwise clear it attributes to be restored
 								if(marker == null) {
@@ -144,7 +143,6 @@ public class ImportOperation implements IRunnableWithProgress {
 			child = node.getChild(IImportExportConstants.IE_NODE_MARKER);
 			marker.setAttribute(IMarker.LINE_NUMBER, child.getInteger(IMarker.LINE_NUMBER));
 			marker.setAttribute(IImportExportConstants.IE_NODE_TYPE, child.getString(IImportExportConstants.IE_NODE_TYPE));
-			marker.setAttribute(IImportExportConstants.TYPENAME, child.getString(IImportExportConstants.TYPENAME));
 			marker.setAttribute(IImportExportConstants.CHARSTART, child.getString(IImportExportConstants.CHARSTART));
 			childnodes = child.getChildren(IImportExportConstants.IE_NODE_ATTRIB);
 			String workingsets = ""; //$NON-NLS-1$
@@ -233,15 +231,14 @@ public class ImportOperation implements IRunnableWithProgress {
 	 * @param typename the typename of the marker
 	 * @return the marker if found, or null
 	 */
-	private IMarker findGeneralMarker(IResource resource, String line, String type, String typename, Integer charstart) {
+	private IMarker findGeneralMarker(IResource resource, String line, String type, Integer charstart) {
 		try {
 			IMarker[] markers = resource.findMarkers(null, false, IResource.DEPTH_ZERO);
-			if(type != null & typename != null) {
+			if(type != null) {
 				for(int i = 0; i < markers.length; i++) {
-					Object localline = markers[i].getAttribute(IMarker.LINE_NUMBER),
-						   localtypename = markers[i].getAttribute(IImportExportConstants.TYPENAME);
+					Object localline = markers[i].getAttribute(IMarker.LINE_NUMBER);
 					String localtype = markers[i].getType();
-					if(type.equals(localtype) & typename.equals(localtypename)) {
+					if(type.equals(localtype)) {
 						if(localline != null & line != null) {
 							if(line.equals(localline.toString())) {
 								//compare their charstarts

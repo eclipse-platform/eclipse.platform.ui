@@ -149,11 +149,6 @@ public interface IImportExportConstants {
 	public static final String EXTENSION = "bkpt";  //$NON-NLS-1$
 	
 	/**
-	 * The typename of the breakpoints
-	 */
-	public static final String TYPENAME = "org.eclipse.jdt.debug.core.typeName"; //$NON-NLS-1$
-	
-	/**
 	 * the charstart attribute from a marker
 	 */
 	public static final String CHARSTART = "charStart"; //$NON-NLS-1$
