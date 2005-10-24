@@ -78,7 +78,7 @@ public class TableBinding extends Binding {
 	private void checkConverterTypes(IConverter converter, Class targetType,
 			Class modelType) throws BindingException {
 		if (!converter.getModelType().isAssignableFrom(modelType)
-				|| !targetType.isAssignableFrom(elementConverter
+				|| !targetType.isAssignableFrom(converter
 						.getTargetType())) {
 			throw new BindingException(
 					"converter from/to types don't match element types"); //$NON-NLS-1$
@@ -113,7 +113,7 @@ public class TableBinding extends Binding {
 			if (changeEvent.getChangeType() == ChangeEvent.CHANGE) {
 				int row = changeEvent.getPosition();
 				modelTable.setElementAndValues(row,
-						targetTable.getElement(row), getConvertedModelValues(
+						targetTable.getElement(row), getConvertedTargetValues(
 								targetTable, valueConverters, row));
 			}
 			// TODO ADD case, REMOVE case
@@ -139,13 +139,24 @@ public class TableBinding extends Binding {
 
 	private Object[] getConvertedModelValues(final IUpdatableTable modelTable,
 			final IConverter[] modelToTargetValueConverters, int index) {
-		Object[] modelValues = modelTable.getValues(index);
-		Object[] convertedValues = new Object[modelToTargetValueConverters.length];
-		for (int i = 0; i < modelToTargetValueConverters.length; i++) {
-			convertedValues[i] = modelToTargetValueConverters[i]
-					.convertModelToTarget(modelValues[i]);
-		}
-		return convertedValues;
+			Object[] modelValues = modelTable.getValues(index);
+			Object[] convertedValues = new Object[modelToTargetValueConverters.length];
+			for (int i = 0; i < modelToTargetValueConverters.length; i++) {
+				convertedValues[i] = modelToTargetValueConverters[i]
+				                                                  .convertModelToTarget(modelValues[i]);
+			}
+			return convertedValues;
 	}
+	
+	private Object[] getConvertedTargetValues(final IUpdatableTable targetTable,
+			final IConverter[] modelToTargetValueConverters, int index) {
+			Object[] targetValues = targetTable.getValues(index);
+			Object[] convertedValues = new Object[modelToTargetValueConverters.length];
+			for (int i = 0; i < modelToTargetValueConverters.length; i++) {
+				convertedValues[i] = modelToTargetValueConverters[i]
+				                                                  .convertTargetToModel(targetValues[i]);
+			}
+			return convertedValues;
+	}	
 
 }
