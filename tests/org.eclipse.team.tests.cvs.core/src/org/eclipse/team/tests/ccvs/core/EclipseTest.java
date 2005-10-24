@@ -844,12 +844,17 @@ public class EclipseTest extends ResourceTest {
 	protected void setContentsAndEnsureModified(IFile file, InputStream stream) throws CoreException, CVSException {
 		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
 		int count = 0;
+		file.setContents(stream, false, false, null);
 		do {
-			file.setContents(stream, false, false, null);
 			assertTrue("Timestamp granularity is too small. Increase test wait factor", count <= CVSTestSetup.WAIT_FACTOR);
 			if (!cvsFile.isModified(null)) {
 				waitMsec(1500);
 				count++;
+				try {
+					file.setContents(new ByteArrayInputStream(getFileContents(file).getBytes()), false, false, null);
+				} catch (IOException e) {
+					throw new CVSException("Error reading file contents", e);
+				}
 			}
 		} while (!cvsFile.isModified(null));
 	}
