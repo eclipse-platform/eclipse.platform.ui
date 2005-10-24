@@ -12,8 +12,7 @@ package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.team.internal.ui.mapping.*;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.mapping.ITeamViewerContext;
 
 public class ResourceNavigatorContentExtensionFactory implements
 		INavigatorContentExtensionFactory {
