@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.views.framelist;
 
-import java.util.ResourceBundle;
 
 /**
  * Utility class which helps with managing messages.
@@ -18,11 +17,6 @@ import java.util.ResourceBundle;
  * outside of this plug-in.
  */
 class FrameListMessages {
-
-    private static final String RESOURCE_BUNDLE = "org.eclipse.ui.views.framelist.messages"; //$NON-NLS-1$
-
-    private static ResourceBundle bundle = ResourceBundle
-            .getBundle(RESOURCE_BUNDLE);
 
     private FrameListMessages() {
         // prevent instantiation of class

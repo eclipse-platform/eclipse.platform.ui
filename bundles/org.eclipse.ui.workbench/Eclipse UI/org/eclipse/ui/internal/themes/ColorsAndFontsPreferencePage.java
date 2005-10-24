@@ -134,28 +134,27 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                     categoryMap.put(categoryId, defintions);
                 }
                 return defintions;
-            } else {
-                ArrayList list = new ArrayList();
-                IHierarchalThemeElementDefinition def = (IHierarchalThemeElementDefinition) parentElement;
-                String id = def.getId();
-                IHierarchalThemeElementDefinition[] defs;
-                if (def instanceof ColorDefinition)
-                    defs = registry.getColors();
-                else
-                    defs = registry.getFonts();
-
-                for (int i = 0; i < defs.length; i++) {
-                    if (id.equals(defs[i].getDefaultsTo())
-                            && ColorsAndFontsPreferencePage
-                                    .equals(
-                                            ((ICategorizedThemeElementDefinition) def)
-                                                    .getCategoryId(),
-                                            ((ICategorizedThemeElementDefinition) defs[i])
-                                                    .getCategoryId()))
-                        list.add(defs[i]);
-                }
-                return list.toArray();
             }
+
+			ArrayList list = new ArrayList();
+			IHierarchalThemeElementDefinition def = (IHierarchalThemeElementDefinition) parentElement;
+			String id = def.getId();
+			IHierarchalThemeElementDefinition[] defs;
+			if (def instanceof ColorDefinition)
+				defs = registry.getColors();
+			else
+				defs = registry.getFonts();
+
+			for (int i = 0; i < defs.length; i++) {
+				if (id.equals(defs[i].getDefaultsTo())
+						&& ColorsAndFontsPreferencePage.equals(
+								((ICategorizedThemeElementDefinition) def)
+										.getCategoryId(),
+								((ICategorizedThemeElementDefinition) defs[i])
+										.getCategoryId()))
+					list.add(defs[i]);
+			}
+			return list.toArray();
         }
 
         private Object[] getCategoryChildren(String categoryId) {
@@ -255,35 +254,35 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
          */
         public boolean hasChildren(Object element) {
             if (element instanceof ThemeElementCategory)
-                return true;
-            else {
-                IHierarchalThemeElementDefinition def = (IHierarchalThemeElementDefinition) element;
-                String id = def.getId();
-                IHierarchalThemeElementDefinition[] defs;
-                if (def instanceof ColorDefinition)
-                    defs = registry.getColors();
-                else
-                    defs = registry.getFonts();
+				return true;
 
-                for (int i = 0; i < defs.length; i++) {
-                    if (id.equals(defs[i].getDefaultsTo())
-                            && ColorsAndFontsPreferencePage
-                                    .equals(
-                                            ((ICategorizedThemeElementDefinition) def)
-                                                    .getCategoryId(),
-                                            ((ICategorizedThemeElementDefinition) defs[i])
-                                                    .getCategoryId()))
+			IHierarchalThemeElementDefinition def = (IHierarchalThemeElementDefinition) element;
+			String id = def.getId();
+			IHierarchalThemeElementDefinition[] defs;
+			if (def instanceof ColorDefinition)
+				defs = registry.getColors();
+			else
+				defs = registry.getFonts();
 
-                        return true;
-                }
+			for (int i = 0; i < defs.length; i++) {
+				if (id.equals(defs[i].getDefaultsTo())
+						&& ColorsAndFontsPreferencePage.equals(
+								((ICategorizedThemeElementDefinition) def)
+										.getCategoryId(),
+								((ICategorizedThemeElementDefinition) defs[i])
+										.getCategoryId()))
 
-            }
+					return true;
+			}
+
             return false;
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-         */
+        /*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
         public Object[] getElements(Object inputElement) {
             ArrayList list = new ArrayList();
             Object[] uncatChildren = getCategoryChildren(null);
@@ -635,11 +634,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
     private CascadingTheme cascadingTheme;
 
-    /**
-     * The largest width so far encountered required to render a given label in it's font.
-     */
-    private int largestFontWidth;
-
     private IPropertyChangeListener themeChangeListener;
 
     private Workbench workbench;
@@ -796,9 +790,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         myApplyDialogFont(descriptionText);
     }
 
-    /**
-     * @param fontControls2
-     */
     private void createFontControl() {
         Composite composite = new Composite(fontControls, SWT.NONE);
         GridLayout layout = new GridLayout(1, false);
@@ -1244,7 +1235,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      */
     public void init(IWorkbench aWorkbench) {
         this.workbench = (Workbench) aWorkbench;
-        setPreferenceStore(aWorkbench.getPreferenceStore());
+        setPreferenceStore(PlatformUI.getPreferenceStore());
 
         final IThemeManager themeManager = aWorkbench.getThemeManager();
 
@@ -1679,8 +1670,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * @param category the category to use.
      */
     private void updateCategorySelection(ThemeElementCategory category) {
-
-        largestFontWidth = 0;
 
         Composite previewControl = (Composite) previewMap.get(category);
         if (previewControl == null) {

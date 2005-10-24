@@ -255,7 +255,6 @@ public abstract class AbstractTableInformationControl {
         table.addMouseMoveListener(new MouseMoveListener() {
             TableItem fLastItem = null;
             int lastY = 0;
-            int lastX = 0;
             int itemHeightdiv4 = table.getItemHeight() / 4;
             int tableHeight = table.getBounds().height;
             Point tableLoc = table.toDisplay(0,0);

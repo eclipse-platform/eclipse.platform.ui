@@ -373,9 +373,9 @@ public class FontRegistry extends ResourceRegistry {
         //first one as it is at least the first choice.
         if (fonts.length > 0)
             return fonts[0];
-        else
-            //Nothing specified 
-            return null;
+        
+        //Nothing specified 
+        return null;
     }
 
     /**
@@ -390,11 +390,10 @@ public class FontRegistry extends ResourceRegistry {
         FontData bestData = bestData(fonts, display);
         if (bestData == null)
             return null;
-        else {
-            FontData[] datas = new FontData[1];
-            datas[0] = bestData;
-            return datas;
-        }
+        
+        FontData[] datas = new FontData[1];
+        datas[0] = bestData;
+        return datas;
     }
     
     /**
@@ -472,8 +471,8 @@ public class FontRegistry extends ResourceRegistry {
             Font font = new Font(null, shell.getFont().getFontData());
             shell.dispose();
             return font;
-        } else
-            return new Font(current, current.getSystemFont().getFontData());
+        }
+		return new Font(current, current.getSystemFont().getFontData());
     }
 
     /**

@@ -23,23 +23,12 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.registry.ActionSetRegistry;
-import org.eclipse.ui.internal.registry.IActionSet;
-import org.eclipse.ui.internal.registry.IActionSetDescriptor;
-import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.registry.WorkingSetRegistryReader;
 import org.eclipse.ui.internal.themes.ColorDefinition;
@@ -205,85 +194,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         registry.addData(data);
     }
 
-    private void revoke(IExtensionPoint extPt, IExtension ext) {
-        String name = extPt.getSimpleIdentifier();
-        
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PERSPECTIVES)) {
-            unloadPerspective(ext);
-            return;
-        }
-
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_WORKINGSETS)) {
-            unloadWorkingSets(ext);
-            return;
-        }
-
-    }
-
-
-    private void unloadPerspective(IExtension ext) {
-        final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
-                IStatus.OK, WorkbenchMessages.ViewFactory_problemsSavingViews, null);
-        IPerspectiveRegistry pReg = WorkbenchPlugin.getDefault()
-                .getPerspectiveRegistry();
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-            if (!elements[i].getName().equals(
-                    IWorkbenchConstants.TAG_PERSPECTIVE))
-                continue;
-            String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
-            if (id == null)
-                continue;
-            IPerspectiveDescriptor desc = pReg.findPerspectiveWithId(id);
-            if (desc == null)
-                continue;
-            ((PerspectiveRegistry) pReg).deletePerspective(desc);
-            IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-            for (int j = 0; j < windows.length; j++) {
-                WorkbenchWindow window = (WorkbenchWindow) windows[j];
-                IWorkbenchPage[] pages = window.getPages();
-                for (int k = 0; k < pages.length; k++) {
-                    //					Perspective persp = ((WorkbenchPage)pages[k]).findPerspective(desc);
-                    //					if (persp == null)
-                    //						return;
-                    //					XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_PERSPECTIVE);
-                    //					result.merge(persp.saveState(memento));
-                    pages[k].closePerspective(desc, true, true);
-                    //((WorkbenchPage)pages[k]).getStateMap().put(id, memento);				
-                }
-            }
-            //((Workbench)workbench).getPerspectiveHistory().removeItem(desc);
-        }
-        if (result.getSeverity() != IStatus.OK) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages.Workbench_problemsSaving,
-                    WorkbenchMessages.Workbench_problemsSavingMsg,
-                    result);
-        }
-    }
-
-    private void restorePerspectiveState(MultiStatus result, String id) {
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        IMemento memento;
-        for (int i = 0; i < windows.length; i++) {
-            WorkbenchWindow window = (WorkbenchWindow) windows[i];
-            IWorkbenchPage[] pages = window.getPages();
-            // count in reverse order since we insert perspectives at the beginning
-            for (int j = pages.length - 1; j >= 0; j--) {
-                memento = (IMemento) ((WorkbenchPage) pages[j]).getStateMap()
-                        .remove(id);
-                if (memento == null)
-                    continue;
-                try {
-                    Perspective persp = new Perspective(null,
-                            ((WorkbenchPage) pages[j]));
-                    result.merge(persp.restoreState(memento));
-                    ((WorkbenchPage) pages[j]).addPerspective(persp);
-                } catch (WorkbenchException e) {
-                }
-            }
-        }
-    }
-
     private void resetCurrentPerspective(Display display) {
         if (changeList.isEmpty())
             return;
@@ -323,63 +233,12 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
     }
 
-
-    private void removeActionSet(WorkbenchPage page, String id) {
-        Perspective persp = page.getActivePerspective();
-        ActionPresentation actionPresentation = ((WorkbenchWindow) page
-                .getWorkbenchWindow()).getActionPresentation();
-        IActionSet[] actionSets = actionPresentation.getActionSets();
-        for (int i = 0; i < actionSets.length; i++) {
-            IActionSetDescriptor desc = ((PluginActionSet) actionSets[i])
-                    .getDesc();
-            if (id.equals(desc.getId())) {
-                PluginActionSetBuilder builder = new PluginActionSetBuilder();
-                builder.removeActionExtensions((PluginActionSet) actionSets[i],
-                        page.getWorkbenchWindow());
-                actionPresentation.removeActionSet(desc);
-            }
-        }
-        if (persp != null)
-            persp.removeActionSet(id);
-    }
-
     private void loadWorkingSets(IExtension ext) {
-        WorkingSetRegistry wReg = (WorkingSetRegistry) WorkbenchPlugin
-                .getDefault().getWorkingSetRegistry();
+        WorkingSetRegistry wReg = WorkbenchPlugin.getDefault()
+				.getWorkingSetRegistry();
         WorkingSetRegistryReader reader = new WorkingSetRegistryReader(wReg);
         IConfigurationElement[] elements = ext.getConfigurationElements();
         for (int i = 0; i < elements.length; i++)
             reader.readElement(elements[i]);
-    }
-
-    private void unloadWorkingSets(IExtension ext) {
-        WorkingSetRegistry wReg = (WorkingSetRegistry) WorkbenchPlugin
-                .getDefault().getWorkingSetRegistry();
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++)
-            wReg.removeWorkingSetDescriptor(elements[i]
-                    .getAttribute(IWorkbenchConstants.TAG_ID));
-    }
-
-    private void stopActionSets(IExtension ext) {
-        ActionSetRegistry aReg = (ActionSetRegistry) WorkbenchPlugin
-                .getDefault().getActionSetRegistry();
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        for (int i = 0; i < windows.length; i++) {
-            WorkbenchWindow window = (WorkbenchWindow) windows[i];
-            IWorkbenchPage[] pages = window.getPages();
-            for (int j = 0; j < pages.length; j++) {
-                for (int k = 0; k < elements.length; k++) {
-                    if (!elements[k].getName().equals(
-                            IWorkbenchConstants.TAG_ACTION_SET))
-                        continue;
-                    String id = elements[k]
-                            .getAttribute(IWorkbenchConstants.TAG_ID);
-                    if (id != null)
-                        ((WorkbenchPage) pages[j]).hideActionSet(id);
-                }
-            }
-        }
     }
 }

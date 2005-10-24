@@ -84,7 +84,7 @@ public class Category extends WorkbenchAdapter {
      * 
      * @param configElement the <code>IConfigurationElement<code> containing
      * 		the ID, label, and optional parent category path.
-     * @throws a <code>WorkbenchException</code> if the ID or label is <code>null</code
+     * @throws WorkbenchException if the ID or label is <code>null</code
      */
     public Category(IConfigurationElement configElement)
             throws WorkbenchException {

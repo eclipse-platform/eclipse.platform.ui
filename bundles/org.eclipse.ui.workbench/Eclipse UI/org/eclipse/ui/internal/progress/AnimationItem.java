@@ -56,16 +56,11 @@ public abstract class AnimationItem {
         }
     };
 
-    //An object used to preven concurrent modification issues
-    private Object windowLock = new Object();
-
     /**
      * Create a new instance of the receiver.
      * 
      * @param workbenchWindow
      *            the window being created
-     * @param manager
-     *            the AnimationManager that will run this item.
      */
     public AnimationItem(WorkbenchWindow workbenchWindow) {
         this.window = workbenchWindow;
@@ -169,7 +164,7 @@ public abstract class AnimationItem {
 
     /**
      * Set the container that will be updated when this runs.
-     * @param animationContainer The animationContainer to set.
+     * @param container The animationContainer to set.
      */
     void setAnimationContainer(IAnimationContainer container) {
         this.animationContainer = container;

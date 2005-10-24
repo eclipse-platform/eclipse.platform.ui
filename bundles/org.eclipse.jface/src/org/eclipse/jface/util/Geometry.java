@@ -262,9 +262,8 @@ public class Geometry {
     public static int getDimension(Rectangle toMeasure, boolean width) {
         if (width) {
             return toMeasure.width;
-        } else {
-            return toMeasure.height;
         }
+		return toMeasure.height;
     }
 
     /**
@@ -437,9 +436,8 @@ public class Geometry {
     public static int getSwtHorizontalOrVerticalConstant(boolean horizontal) {
         if (horizontal) {
             return SWT.HORIZONTAL;
-        } else {
-            return SWT.VERTICAL;
         }
+		return SWT.VERTICAL;
     }
 
     /**

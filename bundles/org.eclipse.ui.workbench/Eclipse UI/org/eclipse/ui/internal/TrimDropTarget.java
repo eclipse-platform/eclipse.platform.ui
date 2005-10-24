@@ -76,8 +76,6 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 
     private WorkbenchWindow window;
 
-    private static final float edgeDockRatio = 0.20f;
-
     public TrimDropTarget(Composite someComposite, WorkbenchWindow theWindow) {
         layout = (TrimLayout) someComposite.getLayout();
         windowComposite = someComposite;

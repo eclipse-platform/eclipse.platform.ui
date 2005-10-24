@@ -287,8 +287,8 @@ public class FontFieldEditor extends FieldEditor {
     public int getNumberOfControls() {
         if (previewer == null)
             return 3;
-        else
-            return 4;
+        
+        return 4;
     }
 
     /**

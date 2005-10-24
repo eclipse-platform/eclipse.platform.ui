@@ -446,45 +446,6 @@ final class DeferredQueue {
     }
 
     /**
-     * Determines the insertion position for the given element in the table. Note
-     * that this is essentially the same as TableViewer.getInsertPosition, but we
-     * need to do it here because if we set a sorter on the TableViewer, this will
-     * force a refresh of the table which can be extremely slow.
-     * 
-     * @param element object whose insertion position is being computed.
-     * @return
-     */
-    private int getInsertPosition(Object element) {
-        Tree tree = view.getViewer().getTree();
-        if (sortOrder == null)
-            return tree.getItemCount();
-        int count = tree.getItemCount();
-        int min = 0, max = count - 1;
-        while (min <= max) {
-            int mid = (min + max) / 2;
-            Object data = tree.getItem(mid).getData();
-            int compare = sortOrder.compare(data, element);
-            if (compare == 0) {
-                // find first item > element
-                while (compare == 0) {
-                    ++mid;
-                    if (mid >= count) {
-                        break;
-                    }
-                    data = tree.getItem(mid).getData();
-                    compare = sortOrder.compare(data, element);
-                }
-                return mid;
-            }
-            if (compare < 0)
-                min = mid + 1;
-            else
-                max = mid - 1;
-        }
-        return min;
-    }
-
-    /**
      * Performs a single update to the viewer. Based on the contents of the pending* queues,
      * items will either be removed, added, or refreshed in the viewer (in that order). This
      * should only be called within a synchronized block, since the various queues shouldn't

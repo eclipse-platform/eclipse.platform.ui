@@ -28,7 +28,6 @@ import org.eclipse.ui.internal.components.framework.Container;
 import org.eclipse.ui.internal.components.framework.FactoryMap;
 import org.eclipse.ui.internal.components.framework.ServiceFactory;
 import org.eclipse.ui.internal.part.components.interfaces.IFocusable;
-import org.eclipse.ui.internal.part.components.services.IActionBarContributor;
 import org.eclipse.ui.internal.part.multiplexer.SiteServices;
 
 /**
@@ -49,7 +48,6 @@ public final class ComponentPart extends Part implements IFocusable {
     private Container adapters;
 	private SiteComposite control;
     private ComponentHandle component;
-    private IActionBarContributor contributor = null;
     
     /**
      * Context that is visible from outside the part (used as a filter -- unless

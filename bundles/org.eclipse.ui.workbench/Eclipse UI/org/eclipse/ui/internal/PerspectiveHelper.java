@@ -69,8 +69,6 @@ public class PerspectiveHelper {
 
     protected ActualDropTarget dropTarget;
     
-    private Perspective perspective;
-    
     private IDragOverListener dragTarget = new IDragOverListener() {
 
         public IDropTarget drag(Control currentControl, Object draggedObject,
@@ -194,7 +192,6 @@ public class PerspectiveHelper {
             ViewSashContainer mainLayout, Perspective perspective) {
         this.page = workbenchPage;
         this.mainLayout = mainLayout;
-        this.perspective = perspective;
         // Determine if reparenting is allowed by checking if some arbitrary
         // Composite supports reparenting. This is used to determine if
         // detached views should be enabled.
@@ -340,14 +337,6 @@ public class PerspectiveHelper {
                         container.replace(placeholder, part);
                 }
             }
-        }
-    }
-    
-    private void zoomOutIfNecessary(LayoutPart part) {
-        // Check if we should really zoom out.
-        if (isZoomed()) {
-    		if (partChangeAffectsZoom(part))
-    			zoomOut();
         }
     }
     
@@ -1012,7 +1001,6 @@ public class PerspectiveHelper {
                     return part;
                 }
                 // check for partial matching pair
-                MatchingPart matchingPart;
                 StringMatcher sm = new StringMatcher(phPrimaryId, true, false);
                 if (sm.match(primaryId)) {
                     sm = new StringMatcher(phSecondaryId, true, false);
@@ -1060,17 +1048,6 @@ public class PerspectiveHelper {
      */
     public boolean isActive() {
         return active;
-    }
-
-    /**
-     * Returns whether the part is a fast view or not
-     */
-    private boolean isFastView(IWorkbenchPartReference ref) {
-        if (ref instanceof IViewReference) {
-            WorkbenchPage page = (WorkbenchPage) ref.getPage();
-            return page.isFastView((IViewReference) ref);
-        }
-        return false;
     }
 
     /**
@@ -1218,7 +1195,7 @@ public class PerspectiveHelper {
     }
 
     /**
-     * @see IPersistablePart
+     * @see org.eclipse.ui.IPersistable
      */
     public IStatus restoreState(IMemento memento) {
         // Restore main window.
@@ -1249,7 +1226,7 @@ public class PerspectiveHelper {
     }
 
     /**
-     * @see IPersistablePart
+     * @see org.eclipse.ui.IPersistable
      */
     public IStatus saveState(IMemento memento) {
         // Persist main window.

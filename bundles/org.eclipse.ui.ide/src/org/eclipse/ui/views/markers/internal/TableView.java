@@ -219,7 +219,6 @@ public abstract class TableView extends ViewPart {
 
 		ColumnPixelData[] result = new ColumnPixelData[defaultData.length];
 		for (int i = 0; i < defaultData.length; i++) {
-			ColumnPixelData data = result[i];
 			int width = defaultData[i].width;
 			ColumnPixelData defaultPixelData = defaultData[i];
 
@@ -266,8 +265,6 @@ public abstract class TableView extends ViewPart {
 
 		ColumnPixelData[] result = new ColumnPixelData[defaultData.length];
 		for (int i = 0; i < defaultData.length; i++) {
-			ColumnPixelData data = result[i];
-
 			ColumnPixelData defaultPixelData = defaultData[i];
 			int width = defaultData[i].width;
 

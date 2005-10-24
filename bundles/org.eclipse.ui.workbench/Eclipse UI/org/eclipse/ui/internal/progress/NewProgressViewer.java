@@ -515,8 +515,6 @@ public class NewProgressViewer extends TreeViewer implements
 
             Assert.isNotNull(info);
 
-            Display display = getDisplay();
-
             iconItem = new Label(this, SWT.NONE);
             iconItem.addListener(SWT.MouseDown, this);
             updateIcon(getJob());
@@ -1192,7 +1190,7 @@ public class NewProgressViewer extends TreeViewer implements
     public NewProgressViewer(Composite parent, int flags) {
         super(parent, flags);
         Tree c = getTree();
-        if (c instanceof Tree)
+        if (c != null)
             c.dispose();
 
         dialogContext = (flags & SWT.BORDER) != 0; // hack to determine context
@@ -1347,7 +1345,6 @@ public class NewProgressViewer extends TreeViewer implements
     }
 
     void doSelection() {
-        boolean changed = false;
         Control[] cs = list.getChildren();
         for (int i = 0; i < cs.length; i++) {
             JobItem ji = (JobItem) cs[i];
@@ -1421,20 +1418,6 @@ public class NewProgressViewer extends TreeViewer implements
      * @see org.eclipse.ui.internal.progress.NewKeptJobs.KeptJobsListener#finished(org.eclipse.ui.internal.progress.JobInfo)
      */
     public void finished(JobTreeElement jte) {
-    }
-
-    private void forcedRemove(final JobTreeElement jte) {
-        if (list != null && !list.isDisposed()) {
-            list.getDisplay().asyncExec(new Runnable() {
-                public void run() {
-                    if (DEBUG)
-						WorkbenchPlugin.log("  forced remove"); //$NON-NLS-1$
-                    JobTreeItem ji = findJobItem(jte, false);
-                    if (ji != null && !ji.isDisposed() && ji.remove())
-                        relayout(true, true);
-                }
-            });
-        }
     }
     
     /**
@@ -1797,10 +1780,6 @@ public class NewProgressViewer extends TreeViewer implements
         boolean clearAll = false;
         JobItem newSel = null;
         Control[] cs = getSortedChildren();
-
-        JobTreeElement element = null;
-        if (newSelection != null)
-            element = newSelection.jobTreeElement;
 
         if (e.type == SWT.KeyDown) { // key
             if (e.keyCode == SWT.ARROW_UP) {

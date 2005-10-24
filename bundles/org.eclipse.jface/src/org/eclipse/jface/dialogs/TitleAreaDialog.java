@@ -603,7 +603,7 @@ public class TitleAreaDialog extends Dialog {
     /**
      * Make the label used for displaying error images visible depending on
      * boolean.
-     * @param visible. If <code>true</code> make the image visible, if
+     * @param visible If <code>true</code> make the image visible, if
      * not then make it not visible.
      */
     private void setImageLabelVisible(boolean visible) {

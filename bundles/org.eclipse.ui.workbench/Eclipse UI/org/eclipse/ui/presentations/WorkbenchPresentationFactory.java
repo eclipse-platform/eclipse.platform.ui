@@ -73,23 +73,25 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
         
         IDynamicPropertyMap workbenchPreferences = result.getPluginPreferences(WorkbenchPlugin.getDefault()); 
         
-        DefaultTabPositionListener tabListener = new DefaultTabPositionListener(
-                workbenchPreferences, 
-                IPreferenceConstants.EDITOR_TAB_POSITION, folder);
-        
-        DefaultMultiTabListener multiTabListener = new DefaultMultiTabListener(workbenchPreferences,
-                IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, folder);
+        new DefaultTabPositionListener(workbenchPreferences,
+				IPreferenceConstants.EDITOR_TAB_POSITION, folder);
 
-        DefaultSimpleTabListener simpleTabListener = new DefaultSimpleTabListener(
-                result.getApiPreferences(),
-                IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, folder);        
+		new DefaultMultiTabListener(workbenchPreferences,
+				IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, folder);
+
+		new DefaultSimpleTabListener(result.getApiPreferences(),
+				IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
+				folder);        
         
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.presentations.AbstractPresentationFactory#createViewPresentation(org.eclipse.swt.widgets.Composite, org.eclipse.ui.presentations.IStackPresentationSite)
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.presentations.AbstractPresentationFactory#createViewPresentation(org.eclipse.swt.widgets.Composite,
+	 *      org.eclipse.ui.presentations.IStackPresentationSite)
+	 */
     public StackPresentation createViewPresentation(Composite parent,
             IStackPresentationSite site) {
         
@@ -108,19 +110,23 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
         DefaultThemeListener themeListener = new DefaultThemeListener(folder, result.getTheme());
         result.getTheme().addListener(themeListener);
         
-        DefaultTabPositionListener tabListener = new DefaultTabPositionListener(
-                result.getPluginPreferences(WorkbenchPlugin.getDefault()), 
-                IPreferenceConstants.VIEW_TAB_POSITION, folder);
-        
-        DefaultSimpleTabListener simpleTabListener = new DefaultSimpleTabListener(result.getApiPreferences(),
-                IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, folder);
+        new DefaultTabPositionListener(result
+				.getPluginPreferences(WorkbenchPlugin.getDefault()),
+				IPreferenceConstants.VIEW_TAB_POSITION, folder);
+
+		new DefaultSimpleTabListener(result.getApiPreferences(),
+				IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
+				folder);
 
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.presentations.AbstractPresentationFactory#createStandaloneViewPresentation(org.eclipse.swt.widgets.Composite, org.eclipse.ui.presentations.IStackPresentationSite, boolean)
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.presentations.AbstractPresentationFactory#createStandaloneViewPresentation(org.eclipse.swt.widgets.Composite,
+	 *      org.eclipse.ui.presentations.IStackPresentationSite, boolean)
+	 */
     public StackPresentation createStandaloneViewPresentation(Composite parent,
             IStackPresentationSite site, boolean showTitle) {
         

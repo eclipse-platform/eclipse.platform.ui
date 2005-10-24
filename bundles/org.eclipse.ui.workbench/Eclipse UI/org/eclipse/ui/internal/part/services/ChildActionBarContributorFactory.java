@@ -29,7 +29,6 @@ public class ChildActionBarContributorFactory implements INestedComponent, IActi
     private IActionBarContributorFactory parent;
     private Map activeBars = new HashMap();
     private boolean active = false;
-    private IPartDescriptor descriptor;
     private IActionBarContributor defaultContributor;
     
     private final class PartMap {
@@ -40,12 +39,11 @@ public class ChildActionBarContributorFactory implements INestedComponent, IActi
         
         IActionBarContributor contributor;
         Part part;
-    };
+    }
     
     public ChildActionBarContributorFactory(IPartDescriptor descr, ISharedContext shared) throws ComponentException {
         IServiceProvider sharedContainer = shared.getSharedComponents();
         this.parent = (IActionBarContributorFactory)sharedContainer.getService(IActionBarContributorFactory.class);
-        this.descriptor = descr;
         this.defaultContributor = parent.getContributor(descr);
     }
     

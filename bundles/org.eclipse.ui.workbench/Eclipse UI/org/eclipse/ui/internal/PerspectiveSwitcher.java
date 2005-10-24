@@ -113,8 +113,6 @@ public class PerspectiveSwitcher {
 
     private int currentLocation = INITIAL;
 
-    private static final int SEPARATOR_LENGTH = 20;
-
     private IPreferenceStore apiPreferenceStore = PrefUtil
             .getAPIPreferenceStore();
 

@@ -91,11 +91,6 @@ public class LazySortedCollection {
             startNode = node;
             direction = dir;
         }
-
-        private void copy(Edge toCopy) {
-            startNode = toCopy.startNode;
-            direction = toCopy.direction;
-        }
         
         private int getStart() {
             return startNode;
@@ -158,14 +153,6 @@ public class LazySortedCollection {
         if (node != -1) {
             parentTree[node] = -1;
         }
-    }
-    
-    private void setNextUnsorted(int parent, int next) {
-        nextUnsorted[parent] = next;
-        if (next != -1) {
-            parentTree[next] = parent;
-        }
-        recomputeTreeSize(parent);
     }
     
     /**
@@ -285,8 +272,6 @@ public class LazySortedCollection {
             treeSize[elementToAdd] = 1;
             return elementToAdd;
         }
-        
-        int addedTreeSize = treeSize[elementToAdd];
         
         // If neither subtree has any children, add a pseudorandom chance of the
         // newly added element becoming the new pivot for this node. Note: instead
@@ -560,36 +545,6 @@ public class LazySortedCollection {
                 parentTree[replacementNode] = parent;
             }
         }
-    }
-    
-    /**
-     * Returns the Edge whose target is the given node
-     * @param targetNode
-     * @return
-     * @since 3.1
-     */
-    private Edge getEdgeTo(int targetNode) {
-        int parent = parentTree[targetNode];
-
-        int direction = DIR_LEFT;
-        
-        if (parent == -1) {
-            if (root == targetNode) {
-                direction = DIR_ROOT;
-            } else if (firstUnusedNode == targetNode){
-                direction = DIR_UNUSED;
-            }
-        } else {
-            if (leftSubTree[parent] == targetNode) {
-                direction = DIR_LEFT;
-            } else if (rightSubTree[parent] == targetNode) {
-                direction = DIR_RIGHT;
-            } else if (nextUnsorted[parent] == targetNode) {
-                direction = DIR_UNSORTED;
-            }
-        }
-        
-        return new Edge(parent, direction);
     }
     
     private void recomputeAncestorTreeSizes(int node) {

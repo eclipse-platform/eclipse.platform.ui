@@ -979,7 +979,6 @@ public final class IDE {
 	 */
 	public static IContentType guessContentType(IFile file) {
 		String fileName = file.getName();
-		String label = fileName + " (guess)"; //$NON-NLS-1$
 		try {
 			UIStats.start(UIStats.CONTENT_TYPE_LOOKUP, fileName);
 			IContentTypeMatcher matcher = file.getProject().getContentTypeMatcher();

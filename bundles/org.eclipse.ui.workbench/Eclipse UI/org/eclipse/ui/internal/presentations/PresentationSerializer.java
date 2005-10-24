@@ -21,8 +21,6 @@ import org.eclipse.ui.presentations.IPresentationSerializer;
  */
 public class PresentationSerializer implements IPresentationSerializer {
 
-    private boolean disposed = false;
-
     private List parts = Collections.EMPTY_LIST;
 
     public PresentationSerializer(List presentableParts) {

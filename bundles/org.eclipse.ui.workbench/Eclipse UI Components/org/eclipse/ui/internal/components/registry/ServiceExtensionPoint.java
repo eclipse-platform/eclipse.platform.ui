@@ -10,16 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.components.registry;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.internal.components.ExecutableExtensionFactory;
 import org.eclipse.ui.internal.components.framework.ClassIdentifier;
-import org.eclipse.ui.internal.components.framework.ComponentFactory;
 
 /**
  * @since 3.1
@@ -46,7 +40,6 @@ public class ServiceExtensionPoint {
         }
     };
     
-    private Map services = new HashMap();
     private ComponentRegistry registry;
     private ExtensionPointManager manager;
     
@@ -72,11 +65,8 @@ public class ServiceExtensionPoint {
             IConfigurationElement element = elements[i];
             
             if (element.getName().equals(ATT_COMPONENT)) {
-            	ClassIdentifier className = getType(element, ATT_IMPLEMENTATION);
             	ClassIdentifier interfaceName = getType(element, ATT_INTERFACE);
                 String scopeId = element.getAttribute("scope"); //$NON-NLS-1$
-                ComponentFactory serviceFactory = null;
-                IPath scopePath = new Path(scopeId);
                                 
                 if (added) {
                     ExecutableExtensionFactory factory = new ExecutableExtensionFactory(element, ATT_IMPLEMENTATION);

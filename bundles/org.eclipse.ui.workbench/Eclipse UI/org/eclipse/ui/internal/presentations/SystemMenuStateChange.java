@@ -22,15 +22,12 @@ public class SystemMenuStateChange extends Action implements
         ISelfUpdatingAction {
     private IStackPresentationSite site;
 
-    private String name;
-
     private int state;
 
     public SystemMenuStateChange(IStackPresentationSite site, String name,
             int state) {
         this.site = site;
         this.state = state;
-        this.name = name;
 
         setText(name);
         update();

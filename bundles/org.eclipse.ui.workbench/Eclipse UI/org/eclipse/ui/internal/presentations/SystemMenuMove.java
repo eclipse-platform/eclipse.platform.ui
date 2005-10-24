@@ -19,8 +19,6 @@ public class SystemMenuMove extends MenuManager {
 
     private IStackPresentationSite stackPresentationSite;
 
-    private String movePart;
-
     private SystemMenuMovePane movePaneAction;
 
     private SystemMenuMoveFolder moveFolderAction;
@@ -35,7 +33,6 @@ public class SystemMenuMove extends MenuManager {
             String partName, boolean assumeActivePart) {
         super(WorkbenchMessages.PartPane_move);
         this.stackPresentationSite = stackPresentationSite;
-        this.movePart = partName;
         this.assumeActivePart = assumeActivePart;
 
         movePaneAction = new SystemMenuMovePane(stackPresentationSite);

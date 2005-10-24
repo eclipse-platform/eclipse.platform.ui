@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -65,8 +64,6 @@ public class DetachedViewTabFolder extends AbstractTabFolder {
     private SizeCache toolbarCache;
     private Cursor dragCursor;
     
-    private static final String FULL_TITLE = "part_title"; //$NON-NLS-1$
-    
     // CTabFolder listener
     private CTabFolder2Adapter expandListener = new CTabFolder2Adapter() {
         /*
@@ -91,22 +88,6 @@ public class DetachedViewTabFolder extends AbstractTabFolder {
         public void handleEvent(Event e) {
             fireEvent(TabFolderEvent.EVENT_TAB_SELECTED, getTab(e.item));
         }
-    };
-    
-    private IPropertyListener systemToolbarListener = new IPropertyListener() {
-
-        public void propertyChanged(Object source, int propId) {
-            Point location;
-            
-            if (propId == TabFolderEvent.EVENT_PANE_MENU) {
-                location = getPaneMenuLocation();
-            } else {
-                location = new Point(0,0);
-            }
-            
-            fireEvent(propId, getSelection(), location);
-        }
-        
     };
 
     private DisposeListener tabDisposeListener = new DisposeListener() {

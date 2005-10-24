@@ -28,7 +28,7 @@ import org.eclipse.swt.dnd.TransferData;
  * <p>
  * When a drag is started, a subset of all <code>TransferDragSourceListeners</code>
  * is generated and stored in a list of <i>active</i> listeners. This subset is
- * calculated by forwarding {@link DragSourceListener#dragStart(DragSourceEvent) to 
+ * calculated by forwarding {@link DragSourceListener#dragStart(DragSourceEvent)} to 
  * every listener, and checking if the {@link DragSourceEvent#doit doit} field is left 
  * set to <code>true</code>.
  * </p> 

@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.views.properties;
 
-import java.util.ResourceBundle;
 
 /**
  * Utility class which helps manage messages.
@@ -19,11 +18,6 @@ import java.util.ResourceBundle;
  * outside of this plug-in.
  */
 class IDEPropertiesMessages {
-    private static final String RESOURCE_BUNDLE = "org.eclipse.ui.views.properties.ideMessages";//$NON-NLS-1$
-
-    private static ResourceBundle bundle = ResourceBundle
-            .getBundle(RESOURCE_BUNDLE);
-
     private IDEPropertiesMessages() {
         // prevent instantiation of class
     }

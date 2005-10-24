@@ -617,10 +617,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 		try {
 			getContainer().run(true, true, new IRunnableWithProgress() {
 
-				ZipLeveledStructureProvider zipCurrentProvider;
-
-				TarLeveledStructureProvider tarCurrentProvider;
-
 				/*
 				 * (non-Javadoc)
 				 * 
@@ -640,17 +636,12 @@ public class WizardProjectsImportPage extends WizardPage implements
 							&& ArchiveFileManipulations.isTarFile(path)) {
 						TarFile sourceTarFile = getSpecifiedTarSourceFile(path);
 						if (sourceTarFile == null) {
-							// Clear out the provider as well
-							this.zipCurrentProvider = null;
-							this.tarCurrentProvider = null;
 							return;
 						}
 
 						TarLeveledStructureProvider provider = ArchiveFileManipulations
 								.getTarStructureProvider(sourceTarFile,
 										getContainer().getShell());
-						this.tarCurrentProvider = provider;
-						this.zipCurrentProvider = null;
 						Object child = provider.getRoot();
 
 						if (!collectProjectFilesFromProvider(files, provider,
@@ -669,17 +660,11 @@ public class WizardProjectsImportPage extends WizardPage implements
 							&& ArchiveFileManipulations.isZipFile(path)) {
 						ZipFile sourceFile = getSpecifiedZipSourceFile(path);
 						if (sourceFile == null) {
-							// Clear out the provider as well
-							this.zipCurrentProvider = null;
-							this.tarCurrentProvider = null;
 							return;
 						}
 						ZipLeveledStructureProvider provider = ArchiveFileManipulations
 								.getZipStructureProvider(sourceFile,
 										getContainer().getShell());
-
-						this.zipCurrentProvider = provider;
-						this.tarCurrentProvider = null;
 						Object child = provider.getRoot();
 
 						if (!collectProjectFilesFromProvider(files, provider,

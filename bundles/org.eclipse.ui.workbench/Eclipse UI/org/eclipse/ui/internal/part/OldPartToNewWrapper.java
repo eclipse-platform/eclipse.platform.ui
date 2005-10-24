@@ -17,7 +17,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistable;
@@ -41,7 +40,6 @@ public abstract class OldPartToNewWrapper implements IFocusable, IAdaptable, IDi
     private IStatusFactory errorContext;
     private Image lastImage = null;
     private IMemento savedState = null;
-    private Composite control;
     
 	private IPropertyListener propertyListener = new IPropertyListener() {
 		public void propertyChanged(Object source, int propId) {
@@ -70,10 +68,9 @@ public abstract class OldPartToNewWrapper implements IFocusable, IAdaptable, IDi
         public void propertyChanged(Object source, int propId) {
             listener.propertyChanged(source, propId);
         }
-    };
+    }
     
     public OldPartToNewWrapper(StandardWorkbenchServices services) {
-        this.control = services.getParentComposite();
         this.nameable = services.getNameable();
         this.savedState = services.getState();
         this.errorContext = services.getStatusFactory();

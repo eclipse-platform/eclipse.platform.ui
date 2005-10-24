@@ -732,16 +732,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         return getControl().getParent();
     }
 
-    private IPresentablePart getPresentablePartAtIndex(int idx) {
-        List presentableParts = getPresentableParts();
-
-        if (idx >= 0 && idx < presentableParts.size()) {
-            return (IPresentablePart) presentableParts.get(idx);
-        }
-
-        return null;
-    }
-
     /**
      * Returns a list of IPresentablePart
      * 
@@ -1271,8 +1261,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
     /**
      * Makes the given part visible in the presentation
-     * 
-     * @param presentablePart
      */
     private void showPart(LayoutPart part, Object cookie) {
 
@@ -1304,8 +1292,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     /**
      * Update the container to show the correct visible tab based on the
      * activation list.
-     * 
-     * @param org.eclipse.ui.internal.ILayoutContainer
      */
     private void updateContainerVisibleTab() {
         LayoutPart[] parts = getChildren();
@@ -1363,11 +1349,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public void showPartList() {
         getPresentation().showPartList();
     }
-
-    /**
-     * @param pane
-     * @return
-     */
+    
     public Control[] getTabList(LayoutPart part) {
         if (part != null) {
             IPresentablePart presentablePart = getPresentablePart(part);

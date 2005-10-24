@@ -37,10 +37,7 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 /**
  * @since 3.1
  */
-public final class PresentablePartFolder implements IPresentablePartList {
-    private final static String TAB_DATA = "part"; //$NON-NLS-1$
-    private final static String BOLD_DATA = "isBold"; //$NON-NLS-1$
-    
+public final class PresentablePartFolder implements IPresentablePartList {    
     private AbstractTabFolder folder;
     private IPresentablePart current;
     //private ProxyControl toolbarProxy;
@@ -154,8 +151,6 @@ public final class PresentablePartFolder implements IPresentablePartList {
 	    IPresentablePart[] result = new IPresentablePart[items.length];
 	    
 	    for (int i = 0; i < items.length; i++) {
-            AbstractTabItem item = items[i];
-            
             result[i] = getPartForTab(items[i]);
             
         }
@@ -169,7 +164,7 @@ public final class PresentablePartFolder implements IPresentablePartList {
      * This is intended to be called by TabOrder and its subclasses.
      *
      * @param part part to add
-     * @param index index to insert at
+     * @param idx index to insert at
      */
     public void insert(IPresentablePart part, int idx) {
         Assert.isTrue(!folder.getControl().isDisposed());
@@ -294,12 +289,6 @@ public final class PresentablePartFolder implements IPresentablePartList {
             folder.setToolbar(newToolbar);
         }        
     }
-
-    private DisposeListener toolbarDisposeListener = new DisposeListener() {
-        public void widgetDisposed(DisposeEvent e) {
-            setToolbar(null);
-        }
-    };
     private boolean isVisible = true;
     
     
@@ -311,8 +300,6 @@ public final class PresentablePartFolder implements IPresentablePartList {
         if (tab == null) {
             return;
         }
-
-        boolean flushToolbar = false;
         
         switch (property) {
         case IPresentablePart.PROP_HIGHLIGHT_IF_BACK:

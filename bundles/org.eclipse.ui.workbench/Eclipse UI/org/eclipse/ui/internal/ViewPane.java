@@ -105,15 +105,6 @@ public class ViewPane extends PartPane {
         super.createControl(parent);
     }
 
-
-    private void recreateToolbars() {
-        // create new toolbars based on the locked vs !locked state
-        createToolBars();
-        // create new toolbars
-        updateActionBars();
-
-    }
-
     /**
      * Create a title bar for the pane.
      * 	- the view icon and title to the far left
@@ -274,8 +265,8 @@ public class ViewPane extends PartPane {
         IViewReference ref = getViewReference();
         if (ref != null)
             return ViewFactory.getKey(ref);
-        else
-            return super.getCompoundId();
+        
+        return super.getCompoundId();
     }
 
     /**

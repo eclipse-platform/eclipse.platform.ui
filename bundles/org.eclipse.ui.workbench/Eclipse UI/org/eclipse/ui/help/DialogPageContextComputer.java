@@ -77,7 +77,7 @@ public class DialogPageContextComputer implements IContextComputer {
     /**
      * Add the contexts for the given control to the context list.
      *
-     * @param event the control from which to obtain the contexts
+     * @param control the control from which to obtain the contexts
      * @param event the help event 
      */
     private void addContextsForControl(Control control, HelpEvent event) {

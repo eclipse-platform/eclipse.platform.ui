@@ -113,7 +113,7 @@ public final class ShowViewHandler extends AbstractHandler {
 	 * 
 	 * @param viewId
 	 *            The view to open; must not be <code>null</code>
-	 * @throws ExecutionException
+	 * @throws PartInitException
 	 *             If the part could not be initialized.
 	 */
 	private final void openView(final String viewId) throws PartInitException {

@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.components.framework;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -91,29 +90,7 @@ import org.eclipse.ui.internal.components.ComponentMessages;
  * 
  * @since 3.1
  */
-public final class Container implements IDisposable, IServiceProvider {    
-	
-    
-    private static class SingleFactoryContext extends ServiceFactory {
-        private ComponentFactory factory;
-        
-        public SingleFactoryContext(ComponentFactory factory) {
-            this.factory = factory;
-        }
-        
-        public ComponentHandle createHandle(Object componentKey, IServiceProvider container) throws ComponentException {
-            return factory.createHandle(container);
-        }
-        
-        public Collection getMissingDependencies() {
-            return Collections.EMPTY_SET;
-        }
-        
-        public boolean hasService(Object componentKey) {
-            return true;
-        }
-        
-    }
+public final class Container implements IDisposable, IServiceProvider {
     
     private static final class ComponentInfo {    
         IDisposable disposable;
@@ -156,12 +133,6 @@ public final class Container implements IDisposable, IServiceProvider {
     private LinkedList inProgress = null;
     
     private ServiceFactory defaultContext;
-    
-    /**
-     * Set this flag once we've verified that our context isn't missing any
-     * dependencies.
-     */
-    private boolean verified = false;
         
     /**
      * Creates a new Container that will create services using the given factory.
@@ -306,10 +277,6 @@ public final class Container implements IDisposable, IServiceProvider {
         } catch (ComponentException e) {
             throw new ComponentException(key, e);
         }
-    }
-
-    private Object getComponentFromFactory(ComponentFactory factory) throws ComponentException {
-        return getComponent(factory, new SingleFactoryContext(factory), this);
     }
     
     /* (non-Javadoc)

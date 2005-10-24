@@ -93,9 +93,9 @@ public abstract class PartSashContainer extends LayoutPart implements
             int total = left + right;
             if (total > 0) {
                 return (float) left / (float) total;
-            } else {
-                return 0.5f;
             }
+            
+            return 0.5f;
         }
     }
 
@@ -255,8 +255,8 @@ public abstract class PartSashContainer extends LayoutPart implements
 
         float ratioForUpperLeftPart;
 
-        if (relativePosition == PageLayout.RIGHT
-                || relativePosition == PageLayout.BOTTOM) {
+        if (relativePosition == IPageLayout.RIGHT
+                || relativePosition == IPageLayout.BOTTOM) {
             ratioForUpperLeftPart = 1.0f - ratioForNewPart;
         } else {
             ratioForUpperLeftPart = ratioForNewPart;
@@ -680,14 +680,6 @@ public abstract class PartSashContainer extends LayoutPart implements
         return children.indexOf(part) >= 0;
     }
 
-    private boolean isRelationshipCompatible(int relationship,
-            boolean isVertical) {
-        if (isVertical)
-            return (relationship == IPageLayout.RIGHT || relationship == IPageLayout.LEFT);
-        else
-            return (relationship == IPageLayout.TOP || relationship == IPageLayout.BOTTOM);
-    }
-
     /**
      * Returns whether this container is zoomed.
      */
@@ -809,8 +801,7 @@ public abstract class PartSashContainer extends LayoutPart implements
      * height are available. Parts can overload this if they have a quantized set of preferred 
      * sizes.
      * 
-     * @param availableWidth available horizontal space (pixels)
-     * @param availableHeight available vertical space (pixels)
+     * @param width available horizontal space (pixels)
      * @return returns a new point where point.x is <= availableWidth and point.y is <= availableHeight
      */
     public int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredParallel) {
@@ -1198,10 +1189,6 @@ public abstract class PartSashContainer extends LayoutPart implements
         }
     }
 
-    /**
-     * @param sourcePart
-     * @return
-     */
     protected abstract PartStack createStack();
 
     public void stack(LayoutPart newPart, ILayoutContainer container) {

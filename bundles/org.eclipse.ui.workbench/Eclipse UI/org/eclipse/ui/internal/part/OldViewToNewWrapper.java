@@ -29,14 +29,12 @@ public class OldViewToNewWrapper extends OldPartToNewWrapper {
 	private IViewSite site;
     private IPartDescriptor descriptor;
     
-    private IViewPart part;
     private IEditorInput editorInput;
     private PartToViewActionBarsAdapter actionBars;
     
     public OldViewToNewWrapper(IViewPart part, IPartActionBars partActionBars, 
             StandardWorkbenchServices services) throws ComponentException {
         super(services);
-    	this.part = part;
 
         actionBars = new PartToViewActionBarsAdapter(partActionBars, 
                 services.getStatusHandler(), services.getStatusFactory());

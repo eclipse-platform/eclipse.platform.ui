@@ -32,13 +32,6 @@ public class ResourceManagerFactory extends ComponentFactory {
         
         LocalResourceManager manager = new LocalResourceManager(registry);
         
-        return new ComponentHandle(manager) {
-            /* (non-Javadoc)
-             * @see org.eclipse.core.component.AbstractComponentHandle#dispose()
-             */
-            public void dispose() {
-                ((LocalResourceManager)getInstance()).dispose();
-            }
-        };
+        return new ComponentHandle(manager);
     }
 }

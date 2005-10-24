@@ -37,8 +37,6 @@ public class RectangleAnimation extends Job {
 
     private Rectangle start;
 
-    private int elapsed;
-
     private int duration;
 
     private long startTime = 0;
@@ -116,8 +114,7 @@ public class RectangleAnimation extends Job {
             shellRegion.dispose();
             shellRegion = new Region(display);
         }
-
-        Rectangle shellBounds = theShell.getBounds();
+        
         Rectangle rect = Geometry.toControl(theShell, newRegion);
         shellRegion.add(rect);
         rect.x += LINE_WIDTH;

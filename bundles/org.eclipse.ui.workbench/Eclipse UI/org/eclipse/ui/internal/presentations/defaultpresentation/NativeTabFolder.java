@@ -47,8 +47,6 @@ public class NativeTabFolder extends AbstractTabFolder {
     private ProxyControl topCenter;
     private SizeCache topCenterCache;
     
-    private static final String FULL_TITLE = "part_title"; //$NON-NLS-1$
-    
     private Listener selectionListener = new Listener() {
         public void handleEvent(Event e) {
             fireEvent(TabFolderEvent.EVENT_TAB_SELECTED, getTab(e.item));

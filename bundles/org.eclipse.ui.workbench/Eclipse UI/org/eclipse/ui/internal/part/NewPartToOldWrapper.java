@@ -54,7 +54,6 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
     private IPartActionBars partActionBars = null;
     private ResourceManager rm;
     private ImageDescriptor currentStatusImageDescriptor = null;
-    private Image currentStatusImage = null;
     
     private final class PartServices implements ISecondaryId, IAdaptable, ISelectionHandler, IStatusHandler {
        		
@@ -105,7 +104,7 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
             }
 		}
 
-    };
+    }
 
     public NewPartToOldWrapper(IPartPropertyProvider provider) {
         super(provider);
@@ -144,7 +143,6 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
         }
         
         disposeStatusImage();
-        currentStatusImage = newImage;
         currentStatusImageDescriptor = image;
         
     }
@@ -152,7 +150,6 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
     private void disposeStatusImage() {
         if (currentStatusImageDescriptor != null) {
             getResources().destroy(currentStatusImageDescriptor);
-            currentStatusImage = null;
             currentStatusImageDescriptor = null;
         }
     }

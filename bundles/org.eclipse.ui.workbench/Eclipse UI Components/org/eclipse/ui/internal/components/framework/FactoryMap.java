@@ -83,11 +83,6 @@ public final class FactoryMap extends ServiceFactory {
      * List of IContainerContext, or null if empty. 
      */
     private List parentContexts = null;
-    
-    /**
-     * List of ContainerInfo, or null if empty
-     */
-    private List registeredContainers = null;
      
     /**
      * Create an empty ContainerContext that does not recognize any types. 
@@ -264,17 +259,6 @@ public final class FactoryMap extends ServiceFactory {
             parentContexts.add(component);
         }
     }
-    
-    private void internalRemoveInstance(ServiceFactory component) {
-        if (parentContexts == null) {
-            return;
-        }
-        
-        parentContexts.remove(component);
-        if (parentContexts.isEmpty()) {
-            parentContexts = null;
-        }
-    }
 
     private void internalAddMapping(Object interface_, Object toMap) {
         if (adapters == null) {
@@ -326,7 +310,7 @@ public final class FactoryMap extends ServiceFactory {
                 
                 for (Iterator iterator = inheritedDeps.iterator(); iterator
                         .hasNext();) {
-                    Object dep = (Object) iterator.next();
+                    Object dep = iterator.next();
                     
                     if (!hasKey(dep, next)) {
                         result.add(dep);

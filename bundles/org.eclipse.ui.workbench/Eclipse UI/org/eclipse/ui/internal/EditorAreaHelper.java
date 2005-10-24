@@ -167,7 +167,7 @@ public class EditorAreaHelper {
     }
 
     public void moveEditor(IEditorPart part, int position) {
-        EditorPane pane = (EditorPane) ((EditorSite) part.getSite()).getPane();
+        /*EditorPane pane = (EditorPane)*/ ((EditorSite) part.getSite()).getPane();
         //TODO commented this out during presentations works
         //pane.getWorkbook().reorderTab(pane, position);
     }

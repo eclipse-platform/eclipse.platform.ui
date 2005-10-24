@@ -85,12 +85,13 @@ public class IntegerFieldEditor extends StringFieldEditor {
         try {
             int number = Integer.valueOf(numberString).intValue();
             if (number >= minValidValue && number <= maxValidValue) {
-                clearErrorMessage();
-                return true;
-            } else {
-                showErrorMessage();
-                return false;
-            }
+				clearErrorMessage();
+				return true;
+			}
+            
+			showErrorMessage();
+			return false;
+			
         } catch (NumberFormatException e1) {
             showErrorMessage();
         }

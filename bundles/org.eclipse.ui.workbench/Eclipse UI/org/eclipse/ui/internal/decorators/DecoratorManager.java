@@ -95,8 +95,6 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
     private final String P_FALSE = "false"; //$NON-NLS-1$
 
-	private LightweightDecoratorListener updateListener;
-
     /**
      * Create a new instance of the receiver and load the
      * settings from the installed plug-ins.

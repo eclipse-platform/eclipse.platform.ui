@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -130,13 +129,6 @@ abstract public class LayoutPart implements ISizeProvider {
 
     public boolean isCompressible() {
         return false;
-    }
-
-    /**
-     * Return the preference store for layout parts.
-     */
-    private IPreferenceStore getPreferenceStore() {
-        return WorkbenchPlugin.getDefault().getPreferenceStore();
     }
 
     /**

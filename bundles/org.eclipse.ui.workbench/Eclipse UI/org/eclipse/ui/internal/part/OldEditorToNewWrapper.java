@@ -34,8 +34,6 @@ import org.eclipse.ui.internal.part.services.NullActionBars;
 public class OldEditorToNewWrapper extends OldPartToNewWrapper {
 	private CompatibilityPartSite site;
 	
-	private IEditorPart part;
-	
     private IActionBarContributor actionBarContributor;
 
 	private final IDirtyHandler dirtyHandler;
@@ -43,7 +41,6 @@ public class OldEditorToNewWrapper extends OldPartToNewWrapper {
 	public OldEditorToNewWrapper(IEditorPart part, StandardWorkbenchServices services, IDirtyHandler dirtyHandler) throws CoreException, ComponentException {
         super(services);
         
-		this.part = part;
 		this.dirtyHandler = dirtyHandler;
         actionBarContributor = services.getActionBarContributorFactory().getContributor(services.getDescriptor());
         

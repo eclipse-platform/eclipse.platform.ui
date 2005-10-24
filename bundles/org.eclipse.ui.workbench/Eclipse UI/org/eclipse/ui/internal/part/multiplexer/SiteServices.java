@@ -29,7 +29,6 @@ import org.osgi.framework.Bundle;
  */
 public class SiteServices implements IServiceProvider, IDisposable {
 
-    private ServiceFactory args;
     private Container container;
     
     private static FactoryMap createContext(ServiceFactory args) {

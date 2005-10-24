@@ -20,14 +20,11 @@ import org.eclipse.ui.internal.misc.Assert;
  * @since 3.0
  */
 public class ViewLayout implements IViewLayout {
-    private PageLayout pageLayout;
-
     private ViewLayoutRec rec;
 
     public ViewLayout(PageLayout pageLayout, ViewLayoutRec rec) {
         Assert.isNotNull(pageLayout);
         Assert.isNotNull(rec);
-        this.pageLayout = pageLayout;
         this.rec = rec;
     }
 

@@ -142,8 +142,6 @@ public class SwtUtil {
 
                 if (bounds.contains(locationToFind)) {
                     if (next instanceof Composite) {
-                        Composite nextComposite = (Composite) next;
-
                         Control result = findControl((Composite) next,
                                 locationToFind);
 

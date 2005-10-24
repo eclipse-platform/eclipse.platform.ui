@@ -31,7 +31,7 @@ public class BooleanPropertyAction extends Action {
      * @param title The displayable name of the action.
      * @param preferenceStore The preference store to propogate changes to
      * @param property The property that is being updated
-     * @throws IllegalArgumentException. Thrown if preferenceStore or
+     * @throws IllegalArgumentException Thrown if preferenceStore or
      * property are <code>null</code>.
      */
     public BooleanPropertyAction(String title,

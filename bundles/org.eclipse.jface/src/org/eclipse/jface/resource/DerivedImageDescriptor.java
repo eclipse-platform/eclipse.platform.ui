@@ -68,7 +68,7 @@ final class DerivedImageDescriptor extends ImageDescriptor {
      * @return a newly allocated Image. Must be disposed by calling image.dispose().
      */
     private final Image internalCreateImage(Device device) {
-        Image originalImage = (Image)original.createImage(device);
+        Image originalImage = original.createImage(device);
         Image result = new Image(device, originalImage, flags);
         original.destroyResource(originalImage);
         return result;

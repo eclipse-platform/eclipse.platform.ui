@@ -538,7 +538,7 @@ class DialogMarkerProperties extends Dialog {
      * Create the marker and report progress
      * to the monitor.
      * @param monitor
-     * @throws a CoreException
+     * @throws CoreException
      */
     private void createMarker(IProgressMonitor monitor) throws CoreException {
         if (resource == null)

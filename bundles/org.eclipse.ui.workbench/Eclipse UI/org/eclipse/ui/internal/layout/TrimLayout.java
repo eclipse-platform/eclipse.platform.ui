@@ -206,9 +206,9 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
         if (horizontally) {
             return data.widthHint == SWT.DEFAULT;
-        } else {
-            return data.heightHint == SWT.DEFAULT;
         }
+        
+        return data.heightHint == SWT.DEFAULT;
     }
 
     private static TrimLayoutData getData(Control control) {
@@ -242,9 +242,9 @@ public class TrimLayout extends Layout implements ICachingLayout {
     private static int getSize(SizeCache toCompute, int hint, boolean width) {
         if (width) {
             return computeSize(toCompute, SWT.DEFAULT, hint).x;
-        } else {
-            return computeSize(toCompute, hint, SWT.DEFAULT).y;
         }
+
+        return computeSize(toCompute, hint, SWT.DEFAULT).y;
     }
 
     /**
@@ -577,24 +577,6 @@ public class TrimLayout extends Layout implements ICachingLayout {
             centerArea.getControl().setBounds(leftOfCenterPane,
                     topOfCenterPane, widthOfCenterPane, heightOfCenterPane);
         }
-    }
-
-    private void flushCaches() {
-        for (int idx = 0; idx < controls.length; idx++) {
-            List ctrl = controls[idx];
-
-            if (ctrl != null) {
-                Iterator iter = ctrl.iterator();
-
-                while (iter.hasNext()) {
-                    SizeCache next = (SizeCache) iter.next();
-
-                    next.flush();
-                }
-            }
-        }
-
-        centerArea.flush();
     }
 
     /**

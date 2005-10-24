@@ -63,10 +63,10 @@ public class ComboBoxCellEditor extends CellEditor {
      * the cell editor has no cell validator.
      * 
      * @since 2.1
-     * @see #setStyle
-     * @see #create
-     * @see #setItems
-     * @see #dispose
+     * @see CellEditor#setStyle
+     * @see CellEditor#create
+     * @see ComboBoxCellEditor#setItems
+     * @see CellEditor#dispose
      */
     public ComboBoxCellEditor() {
         setStyle(defaultStyle);

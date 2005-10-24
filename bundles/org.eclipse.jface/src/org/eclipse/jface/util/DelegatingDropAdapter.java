@@ -366,9 +366,8 @@ public class DelegatingDropAdapter implements DropTargetListener {
                     if (!setCurrentListener(listener, event))
                         event.detail = originalDetail;
                     return;
-                } else {
-                    event.currentDataType = originalDataType;
                 }
+				event.currentDataType = originalDataType;
             }
         }
         setCurrentListener(null, event);

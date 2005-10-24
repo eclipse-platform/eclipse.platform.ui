@@ -55,24 +55,6 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
                     /*
                      * (non-Javadoc)
                      * 
-                     * @see org.eclipse.ui.activities.ITriggerPoint#getName()
-                     */
-                    public String getName() {
-                        return ""; //$NON-NLS-1$
-                    }
-
-                    /*
-                     * (non-Javadoc)
-                     * 
-                     * @see org.eclipse.ui.activities.ITriggerPoint#getDescription()
-                     */
-                    public String getDescription() {
-                        return ""; //$NON-NLS-1$
-                    }
-
-                    /*
-                     * (non-Javadoc)
-                     * 
                      * @see org.eclipse.ui.activities.ITriggerPoint#getStringHint(java.lang.String)
                      */
                     public String getStringHint(String key) {

@@ -58,7 +58,6 @@ public class PresentablePart implements IPresentablePart {
     // for efficency if the presentation is invisible)
     private boolean enableOutputs = true;
     private Rectangle savedBounds = new Rectangle(0,0,0,0);
-    private Rectangle savedToolbarBounds = new Rectangle(0,0,0,0);
     private boolean isVisible = false;
     
     // Saved state (only used when the part is inactive)
@@ -167,9 +166,8 @@ public class PresentablePart implements IPresentablePart {
     public String getName() {
         if (enableOutputs) {
             return getPartReference().getPartName();
-        } else {
-            return name;
-        }
+		}
+		return name;
     }
 
     /* (non-Javadoc)
@@ -184,15 +182,17 @@ public class PresentablePart implements IPresentablePart {
      */
     public String getTitleStatus() {
         if (enableOutputs) {
-            return getPartReference().getContentDescription();   
-        } else {
-            return titleStatus;
-        }
+			return getPartReference().getContentDescription();
+		}
+
+		return titleStatus;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.presentations.IPresentablePart#getTitleImage()
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getTitleImage()
+	 */
     public Image getTitleImage() {
 //        
 //        return PlatformUI.getWorkbench().getSharedImages().getImage(
@@ -200,15 +200,17 @@ public class PresentablePart implements IPresentablePart {
 //        
         if (enableOutputs) {
             return getPartReference().getTitleImage();
-        } else {
-            return PlatformUI.getWorkbench().getSharedImages().getImage(
-                    ISharedImages.IMG_DEF_VIEW);
-        }
+		}
+
+		return PlatformUI.getWorkbench().getSharedImages().getImage(
+				ISharedImages.IMG_DEF_VIEW);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.presentations.IPresentablePart#getTitleToolTip()
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getTitleToolTip()
+	 */
     public String getTitleToolTip() {
         return getPartReference().getTitleToolTip();
     }
@@ -218,37 +220,40 @@ public class PresentablePart implements IPresentablePart {
      */
     public boolean isDirty() {
         if (enableOutputs) {
-            return getPartReference().isDirty();
-        } else {
-            return isDirty;
-        }
+			return getPartReference().isDirty();
+		}
+		return isDirty;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.presentations.IPresentablePart#isBusy()
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.presentations.IPresentablePart#isBusy()
+	 */
     public boolean isBusy() {
         if (enableOutputs) {
-            return part.isBusy();
-        } else {
-            return isBusy;
-        }
+			return part.isBusy();
+		}
+		return isBusy;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.presentations.IPresentablePart#getToolBar()
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getToolBar()
+	 */
     public Control getToolBar() {
         if (enableOutputs) {
-            return getPane().getToolBar();
-        } else {
-            return null;
-        }
+			return getPane().getToolBar();
+		}
+		return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.presentations.IPresentablePart#getMenu()
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getMenu()
+	 */
     public IPartMenu getMenu() {
         boolean hasMenu;
         

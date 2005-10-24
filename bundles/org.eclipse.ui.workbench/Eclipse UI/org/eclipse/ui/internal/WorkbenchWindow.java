@@ -495,8 +495,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         
         // Dispose any unused entries
         Collection entrySet = actionSetHandlersByCommandId.entrySet();
-        
-        Iterator iter = actionSetHandlersByCommandId.entrySet().iterator();
+        Iterator iter = entrySet.iterator();
         
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry)iter.next();
@@ -1332,7 +1331,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      *
      * @return the status line manager, or <code>null</code> if
      *   this window does not have a status line
-     * @see #addStatusLine
+     * @see ApplicationWindow#addStatusLine
      */
     public StatusLineManager getStatusLineManager() {
         return super.getStatusLineManager();
@@ -1350,22 +1349,24 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 .getActionSetRegistry();
         IActionSetDescriptor actionSet = registry.findActionSet(actionSetId);
         if (actionSet != null) {
-            return actionSet.getLabel();
-        } else {
-            if (IWorkbenchActionConstants.TOOLBAR_FILE
-                    .equalsIgnoreCase(actionSetId))
-                return WorkbenchMessages.WorkbenchWindow_FileToolbar;
-            if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE
-                    .equalsIgnoreCase(actionSetId))
-                return WorkbenchMessages.WorkbenchWindow_NavigateToolbar;
-        }
-        return null;
+			return actionSet.getLabel();
+		}
+
+		if (IWorkbenchActionConstants.TOOLBAR_FILE
+				.equalsIgnoreCase(actionSetId))
+			return WorkbenchMessages.WorkbenchWindow_FileToolbar;
+
+		if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE
+				.equalsIgnoreCase(actionSetId))
+			return WorkbenchMessages.WorkbenchWindow_NavigateToolbar;
+		
+		return null;
     }
 
     /**
-     * Unconditionally close this window. Assumes the proper
-     * flags have been set correctly (e.i. closing and updateDisabled)
-     */
+	 * Unconditionally close this window. Assumes the proper flags have been set
+	 * correctly (e.i. closing and updateDisabled)
+	 */
     private boolean hardClose() {
         boolean result;
         try {
@@ -1536,9 +1537,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 null);
     }
 
-    /**
-     * @see IPersistable.
-     */
     public IStatus restoreState(IMemento memento,
             IPerspectiveDescriptor activeDescriptor) {
         Assert.isNotNull(getShell());
@@ -1977,7 +1975,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 }
                 // If a tool bar contribution item already exists for this id then use the old object
                 if (oldItem instanceof ToolBarContributionItem) {
-                    newItem = (ToolBarContributionItem) oldItem;
+                    newItem = oldItem;
                 } else {
                     newItem = new ToolBarContributionItem(new ToolBarManager(
                             coolBarMgr.getStyle()), id);
@@ -2652,31 +2650,31 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
         public WorkbenchPage getNextActive() {
             if (active == null) {
-                if (pageInActivationOrder.isEmpty())
-                    return null;
-                else
-                    return (WorkbenchPage) pageInActivationOrder
-                            .get(pageInActivationOrder.size() - 1);
-            } else {
-                if (pageInActivationOrder.size() < 2)
-                    return null;
-                else
-                    return (WorkbenchPage) pageInActivationOrder
-                            .get(pageInActivationOrder.size() - 2);
-            }
+				if (pageInActivationOrder.isEmpty())
+					return null;
+
+				return (WorkbenchPage) pageInActivationOrder
+						.get(pageInActivationOrder.size() - 1);
+			}
+
+			if (pageInActivationOrder.size() < 2)
+				return null;
+
+			return (WorkbenchPage) pageInActivationOrder
+					.get(pageInActivationOrder.size() - 2);
         }
     }
 
     /**
-     * Returns the unique object that applications use to configure this window.
-     * <p>
-     * IMPORTANT This method is declared package-private to prevent regular
-     * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
-     * hold of the workbench window configurer that would allow them to tamper
-     * with the workbench window. The workbench window configurer is available
-     * only to the application.
-     * </p>
-     */
+	 * Returns the unique object that applications use to configure this window.
+	 * <p>
+	 * IMPORTANT This method is declared package-private to prevent regular
+	 * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
+	 * hold of the workbench window configurer that would allow them to tamper
+	 * with the workbench window. The workbench window configurer is available
+	 * only to the application.
+	 * </p>
+	 */
     /* package - DO NOT CHANGE */
     WorkbenchWindowConfigurer getWindowConfigurer() {
         if (windowConfigurer == null) {

@@ -62,8 +62,6 @@ public class MaximizePartAction extends PageEventAction {
         IWorkbenchPage page = getActivePage();
         if (page != null) {
             if (page instanceof WorkbenchPage) {
-                WorkbenchPage realPage = (WorkbenchPage) page;
-
                 IWorkbenchPartReference partRef = page.getActivePartReference();
 
                 if (partRef != null) {

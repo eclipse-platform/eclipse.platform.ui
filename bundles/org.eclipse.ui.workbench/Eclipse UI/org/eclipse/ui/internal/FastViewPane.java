@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -53,7 +52,7 @@ import org.eclipse.ui.presentations.StackPresentation;
  * Currently, the fast view pane does not own or contain the view. It only controls the view's 
  * position and visibility.  
  * 
- * @see org.ecliplse.ui.internal.FastViewBar
+ * @see org.eclipse.ui.internal.FastViewBar
  */
 public class FastViewPane {
     private int side = SWT.LEFT;
@@ -150,8 +149,6 @@ public class FastViewPane {
                     .getBounds());
 
             WorkbenchPage page = pane.getPage();
-
-            Perspective persp = page.getActivePerspective();
 
             page.hideFastView();
             if (page.isZoomed()) {
@@ -259,8 +256,6 @@ public class FastViewPane {
         }
     };
 
-    private IContributionItem systemMenuContribution;
-
     public void moveSash() {
         final KeyListener listener = new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
@@ -336,8 +331,6 @@ public class FastViewPane {
 
     /**
      * Returns the current fastview size ratio. Returns 0.0 if there is no fastview visible.
-     * 
-     * @return
      */
     public float getCurrentRatio() {
         if (currentPane == null) {
@@ -452,8 +445,6 @@ public class FastViewPane {
 
     /**
      * Updates the position of the resize sash.
-     * 
-     * @param bounds
      */
     private void updateFastViewSashBounds() {
         Rectangle bounds = getBounds();
@@ -476,30 +467,7 @@ public class FastViewPane {
     public void dispose() {
         hideView();
     }
-
-    /**
-     * Returns the bounding rectangle for the currently visible fastview, given the rectangle
-     * in which the fastview can dock. 
-     * 
-     * @param clientArea
-     * @param ratio
-     * @param orientation
-     * @return
-     */
-    private Rectangle getFastViewBounds() {
-        Rectangle clientArea = clientComposite.getClientArea();
-
-        boolean isVertical = !Geometry.isHorizontal(side);
-        int clientSize = Geometry.getDimension(clientArea, isVertical);
-        int viewSize = Math.min(Geometry.getDimension(getBounds(), isVertical),
-                clientSize - minSize);
-
-        return Geometry.getExtrudedEdge(clientArea, viewSize, side);
-    }
-
-    /**
-     * @return
-     */
+    
     private StackPresentation getPresentation() {
         return site.getPresentation();
     }

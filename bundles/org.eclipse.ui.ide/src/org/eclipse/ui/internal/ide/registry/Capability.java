@@ -79,7 +79,7 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
      * @param configElement the <code>IConfigurationElement<code> containing
      * 		the attributes
      * @param reader the <code>CapabilityRegistryReader<code> used to log missing attributes
-     * @throws a <code>WorkbenchException</code> if the ID, nature, or wizard is <code>null</code>
+     * @throws WorkbenchException if the ID, nature, or wizard is <code>null</code>
      */
     public Capability(IConfigurationElement configElement,
             CapabilityRegistryReader reader) throws WorkbenchException {

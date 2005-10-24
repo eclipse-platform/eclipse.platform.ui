@@ -115,21 +115,21 @@ class NativeModifierKeyComparator implements Comparator {
      * @return The rank of this modifier key. This is a non-negative number
      *         where a lower number suggests a higher rank.
      */
-    private final int rankKDE(ModifierKey modifierKey) {
-        if (ModifierKey.ALT.equals(modifierKey)) {
-            return 0;
-        }
-
-        if (ModifierKey.CTRL.equals(modifierKey)) {
-            return 1;
-        }
-
-        if (ModifierKey.SHIFT.equals(modifierKey)) {
-            return 2;
-        }
-
-        return UNKNOWN_KEY;
-    }
+//    private final int rankKDE(ModifierKey modifierKey) {
+//        if (ModifierKey.ALT.equals(modifierKey)) {
+//            return 0;
+//        }
+//
+//        if (ModifierKey.CTRL.equals(modifierKey)) {
+//            return 1;
+//        }
+//
+//        if (ModifierKey.SHIFT.equals(modifierKey)) {
+//            return 2;
+//        }
+//
+//        return UNKNOWN_KEY;
+//    }
 
     /**
      * Provides a ranking for the modifier key based on the modifier key
