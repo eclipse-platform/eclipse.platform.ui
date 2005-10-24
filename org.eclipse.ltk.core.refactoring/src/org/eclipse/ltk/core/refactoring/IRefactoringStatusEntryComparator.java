@@ -23,11 +23,9 @@ package org.eclipse.ltk.core.refactoring;
 public interface IRefactoringStatusEntryComparator {
 
 	/**
-	 * <p>
 	 * Compares two refactoring status entries for order. Returns a negative
 	 * integer, zero, or a positive integer as the first status entry is less
 	 * than, equal to, or greater than the second.
-	 * </p>
 	 * <p>
 	 * The implementor must ensure that <tt>sgn(compare(x, y)) ==
 	 * -sgn(compare(y, x))</tt>
