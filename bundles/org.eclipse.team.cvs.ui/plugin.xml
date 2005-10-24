@@ -1359,5 +1359,15 @@
 		    </description>
 	   </transfer>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.WorkInProgressPage"
+            id="org.eclipse.team.cvs.ui.WorkInProgressPreferences"
+            name="%WorkInProgressPreferencePage.name">
+         <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+      </page>
+   </extension>
    
 </plugin>

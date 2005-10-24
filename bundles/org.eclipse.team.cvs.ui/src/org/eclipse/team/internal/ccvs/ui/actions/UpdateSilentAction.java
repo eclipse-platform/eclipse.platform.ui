@@ -12,9 +12,14 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.mappings.CVSMappingMergeOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.TeamUI;
 
 /**
  * Action that runs an update without prompting the user for a tag.
@@ -38,7 +43,14 @@ public class UpdateSilentAction extends WorkspaceTraversalAction {
     }
     
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-		new UpdateOperation(getTargetPart(), getCVSResourceMappings(), Command.NO_LOCAL_OPTIONS, null /* no tag */).run();
+		//For 3.2 M3 release: check to see if the user wants to perform a model update or just a 
+		//regular update action
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+	    if (store.getBoolean(ICVSUIConstants.PREF_ENABLEMODELUPDATE)){
+	    	new CVSMappingMergeOperation(getTargetPart(),getOperationInput()).run();
+	    } else {
+	    	new UpdateOperation(getTargetPart(), getCVSResourceMappings(), Command.NO_LOCAL_OPTIONS, null /* no tag */).run();
+	    }
 	}
 	
 	public String getId() {

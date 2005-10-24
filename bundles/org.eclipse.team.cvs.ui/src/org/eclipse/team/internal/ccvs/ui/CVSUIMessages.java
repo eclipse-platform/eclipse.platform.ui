@@ -1011,6 +1011,10 @@ public class CVSUIMessages extends NLS {
 	
     public static String OpenChangeSetAction_0;
     public static String OpenChangeSetAction_1;
+    
+    public static String WorkInProgress_EnableModelUpdate;
+    public static String CVSMappingMergeOperation_MergeInfoTitle;
+	public static String CVSMappingMergeOperation_MergeInfoText;
 	
 	static {
 		// load message values from bundle file
