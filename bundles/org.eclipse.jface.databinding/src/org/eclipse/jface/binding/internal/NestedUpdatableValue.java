@@ -21,7 +21,7 @@ import org.eclipse.jface.binding.UpdatableValue;
  * @since 3.2
  * 
  */
-public class DerivedUpdatableValue extends UpdatableValue {
+public class NestedUpdatableValue extends UpdatableValue {
 
 	private IChangeListener innerChangeListener = new IChangeListener() {
 		public void handleChange(IChangeEvent changeEvent) {
@@ -38,15 +38,19 @@ public class DerivedUpdatableValue extends UpdatableValue {
 
 	private DatabindingContext databindingContext;
 
+	private Class featureType;
+
 	/**
 	 * @param databindingContext
 	 * @param outerUpdatableValue
 	 * @param feature
+	 * @param featureType 
 	 */
-	public DerivedUpdatableValue(DatabindingContext databindingContext,
-			final IUpdatableValue outerUpdatableValue, Object feature) {
+	public NestedUpdatableValue(DatabindingContext databindingContext,
+			final IUpdatableValue outerUpdatableValue, Object feature, Class featureType) {
 		this.databindingContext = databindingContext;
 		this.feature = feature;
+		this.featureType = featureType;
 		updateInnerUpdatableValue(outerUpdatableValue);
 		IChangeListener outerChangeListener = new IChangeListener() {
 			public void handleChange(IChangeEvent changeEvent) {
@@ -70,6 +74,14 @@ public class DerivedUpdatableValue extends UpdatableValue {
 			try {
 				this.innerUpdatableValue = (IUpdatableValue) databindingContext
 						.createUpdatable(currentOuterValue, feature);
+				Class innerValueType = innerUpdatableValue.getValueType();
+				if(featureType==null) {
+					featureType = innerValueType;
+				} else {
+					if(!featureType.equals(innerValueType)) {
+						throw new AssertionError("Cannot change value type in a nested updatable value"); //$NON-NLS-1$
+					}
+				}
 			} catch (BindingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -88,7 +100,7 @@ public class DerivedUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		return innerUpdatableValue.getValueType();
+		return featureType;
 	}
 
 	public void dispose() {

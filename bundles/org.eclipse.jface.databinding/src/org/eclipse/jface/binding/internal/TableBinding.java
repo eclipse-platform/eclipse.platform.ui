@@ -1,7 +1,6 @@
 package org.eclipse.jface.binding.internal;
 
 import org.eclipse.jface.binding.BindingException;
-import org.eclipse.jface.binding.ChangeEvent;
 import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.IConverter;
@@ -9,6 +8,10 @@ import org.eclipse.jface.binding.ITableBindSpec;
 import org.eclipse.jface.binding.IUpdatableTable;
 import org.eclipse.jface.binding.IdentityConverter;
 
+/**
+ * @since 3.2
+ * 
+ */
 public class TableBinding extends Binding {
 
 	private final IUpdatableTable targetTable;
@@ -78,8 +81,7 @@ public class TableBinding extends Binding {
 	private void checkConverterTypes(IConverter converter, Class targetType,
 			Class modelType) throws BindingException {
 		if (!converter.getModelType().isAssignableFrom(modelType)
-				|| !targetType.isAssignableFrom(converter
-						.getTargetType())) {
+				|| !targetType.isAssignableFrom(converter.getTargetType())) {
 			throw new BindingException(
 					"converter from/to types don't match element types"); //$NON-NLS-1$
 		}
@@ -110,7 +112,7 @@ public class TableBinding extends Binding {
 
 	public void handleChange(IChangeEvent changeEvent) {
 		if (changeEvent.getUpdatable() == targetTable) {
-			if (changeEvent.getChangeType() == ChangeEvent.CHANGE) {
+			if (changeEvent.getChangeType() == IChangeEvent.CHANGE) {
 				int row = changeEvent.getPosition();
 				modelTable.setElementAndValues(row,
 						targetTable.getElement(row), getConvertedTargetValues(
@@ -118,19 +120,24 @@ public class TableBinding extends Binding {
 			}
 			// TODO ADD case, REMOVE case
 		} else {
-			if (changeEvent.getChangeType() == ChangeEvent.CHANGE) {
+			if (changeEvent.getChangeType() == IChangeEvent.CHANGE) {
 				int row = changeEvent.getPosition();
-				targetTable.setElementAndValues(row, elementConverter
-						.convertModelToTarget(changeEvent.getNewValue()),
-						getConvertedModelValues(modelTable, valueConverters,
-								row));
-			} else if (changeEvent.getChangeType() == ChangeEvent.ADD) {
+				if (row == -1) {
+					// assume that the whole table has changed
+					updateTargetFromModel();
+				} else {
+					targetTable.setElementAndValues(row, elementConverter
+							.convertModelToTarget(changeEvent.getNewValue()),
+							getConvertedModelValues(modelTable,
+									valueConverters, row));
+				}
+			} else if (changeEvent.getChangeType() == IChangeEvent.ADD) {
 				int row = changeEvent.getPosition();
 				targetTable.addElementWithValues(row, elementConverter
 						.convertModelToTarget(changeEvent.getNewValue()),
 						getConvertedModelValues(modelTable, valueConverters,
 								row));
-			} else if (changeEvent.getChangeType() == ChangeEvent.REMOVE) {
+			} else if (changeEvent.getChangeType() == IChangeEvent.REMOVE) {
 				int row = changeEvent.getPosition();
 				targetTable.removeElement(row);
 			}
@@ -139,24 +146,25 @@ public class TableBinding extends Binding {
 
 	private Object[] getConvertedModelValues(final IUpdatableTable modelTable,
 			final IConverter[] modelToTargetValueConverters, int index) {
-			Object[] modelValues = modelTable.getValues(index);
-			Object[] convertedValues = new Object[modelToTargetValueConverters.length];
-			for (int i = 0; i < modelToTargetValueConverters.length; i++) {
-				convertedValues[i] = modelToTargetValueConverters[i]
-				                                                  .convertModelToTarget(modelValues[i]);
-			}
-			return convertedValues;
+		Object[] modelValues = modelTable.getValues(index);
+		Object[] convertedValues = new Object[modelToTargetValueConverters.length];
+		for (int i = 0; i < modelToTargetValueConverters.length; i++) {
+			convertedValues[i] = modelToTargetValueConverters[i]
+					.convertModelToTarget(modelValues[i]);
+		}
+		return convertedValues;
 	}
-	
-	private Object[] getConvertedTargetValues(final IUpdatableTable targetTable,
+
+	private Object[] getConvertedTargetValues(
+			final IUpdatableTable targetTable,
 			final IConverter[] modelToTargetValueConverters, int index) {
-			Object[] targetValues = targetTable.getValues(index);
-			Object[] convertedValues = new Object[modelToTargetValueConverters.length];
-			for (int i = 0; i < modelToTargetValueConverters.length; i++) {
-				convertedValues[i] = modelToTargetValueConverters[i]
-				                                                  .convertTargetToModel(targetValues[i]);
-			}
-			return convertedValues;
-	}	
+		Object[] targetValues = targetTable.getValues(index);
+		Object[] convertedValues = new Object[modelToTargetValueConverters.length];
+		for (int i = 0; i < modelToTargetValueConverters.length; i++) {
+			convertedValues[i] = modelToTargetValueConverters[i]
+					.convertTargetToModel(targetValues[i]);
+		}
+		return convertedValues;
+	}
 
 }

@@ -21,7 +21,8 @@ import java.util.Set;
 
 import org.eclipse.jface.binding.internal.Binding;
 import org.eclipse.jface.binding.internal.CollectionBinding;
-import org.eclipse.jface.binding.internal.DerivedUpdatableValue;
+import org.eclipse.jface.binding.internal.NestedUpdatableTable;
+import org.eclipse.jface.binding.internal.NestedUpdatableValue;
 import org.eclipse.jface.binding.internal.TableBinding;
 import org.eclipse.jface.binding.internal.ValueBinding;
 
@@ -57,7 +58,7 @@ public class DatabindingContext {
 	private Map converters = new HashMap();
 
 	private Map updatableFactories = new HashMap(50);
-	
+
 	private Map interfacesLookup = new HashMap(50);
 
 	private List createdUpdatables = new ArrayList();
@@ -360,8 +361,8 @@ public class DatabindingContext {
 	public IUpdatable createUpdatable(Object object, Object featureID)
 			throws BindingException {
 		if (object instanceof IUpdatableValue)
-			return new DerivedUpdatableValue(this, ((IUpdatableValue) object),
-					featureID);
+			return new NestedUpdatableValue(this, ((IUpdatableValue) object),
+					featureID, null);
 		else if (object instanceof IUpdatableCollection)
 			throw new BindingException("TODO: need to implement this"); //$NON-NLS-1$ // TODO:
 
@@ -507,33 +508,36 @@ public class DatabindingContext {
 	 * @return true if ...
 	 */
 	public boolean isDefaultIdentityConverter() {
+		// TODO BB asks: What is this used for? Nobody calls
+		// setDefaultIdentityConverter...
 		return defaultIdentityConverter;
 	}
 
-	private void getInterfacesOrder(Class[] interfaces, List order, Set seen) {	
+	private void getInterfacesOrder(Class[] interfaces, List order, Set seen) {
 		List newBees = new ArrayList(interfaces.length);
-		for (int i = 0; i < interfaces.length; i++) 			
+		for (int i = 0; i < interfaces.length; i++)
 			if (seen.add(interfaces[i])) {
 				order.add(interfaces[i]);
 				newBees.add(interfaces[i]);
-			}			
-		
+			}
+
 		for (Iterator it = newBees.iterator(); it.hasNext();)
 			getInterfacesOrder(((Class) it.next()).getInterfaces(), order, seen);
-		
+
 	}
-	
+
 	private List getInterfacesOrder(Class clazz) {
 		List interfaces = (List) interfacesLookup.get(clazz);
-		if (interfaces!=null) return interfaces;
-		
+		if (interfaces != null)
+			return interfaces;
+
 		Class[] ifcs = clazz.getInterfaces();
 		interfaces = new ArrayList(ifcs.length);
 		getInterfacesOrder(ifcs, interfaces, new HashSet(4));
 		interfacesLookup.put(clazz, interfaces);
 		return interfaces;
 	}
-	
+
 	/**
 	 * 
 	 * This returns an adaptable for the given object. Does not remember the
@@ -550,23 +554,25 @@ public class DatabindingContext {
 	protected IUpdatable doCreateUpdatable(Object object, Object featureID)
 			throws BindingException {
 
-
 		Class clazz = object.getClass();
 		IUpdatableFactory factory = null;
-		IUpdatable result = null;		
-		while (result == null && clazz != null) {			
+		IUpdatable result = null;
+		while (result == null && clazz != null) {
 			factory = (IUpdatableFactory) updatableFactories.get(clazz);
 			if (factory != null) {
 				result = factory.createUpdatable(object, featureID);
-			}						
-			if (result==null) {
-				//	Traverse the interfaces.
-				for (Iterator iter = getInterfacesOrder(clazz).iterator(); iter.hasNext();) {
-					factory = (IUpdatableFactory) updatableFactories.get(iter.next());
+			}
+			if (result == null) {
+				// Traverse the interfaces.
+				for (Iterator iter = getInterfacesOrder(clazz).iterator(); iter
+						.hasNext();) {
+					factory = (IUpdatableFactory) updatableFactories.get(iter
+							.next());
 					if (factory != null) {
 						result = factory.createUpdatable(object, featureID);
-						if (result!=null) break;
-					}							
+						if (result != null)
+							break;
+					}
 				}
 			}
 			clazz = clazz.getSuperclass();
@@ -621,6 +627,37 @@ public class DatabindingContext {
 	}
 
 	protected void registerValueFactories() {
+		addUpdatableFactory2(new IUpdatableFactory2() {
+			public IUpdatable createUpdatable(Object description)
+					throws BindingException {
+				if (description instanceof PropertyDescription) {
+					PropertyDescription propertyDescription = (PropertyDescription) description;
+					// TODO this should be removed if/when we switch to bind2 completely
+					return DatabindingContext.this.createUpdatable(
+							propertyDescription.getObject(),
+							propertyDescription.getPropertyID());
+				} else if (description instanceof ListDescription) {
+					// ListDescription was not handled already, turn it into a TableDescription and try again
+					ListDescription listDescription = (ListDescription) description;
+					TableDescription tableDescription = new TableDescription(
+							listDescription.getObject(),
+							listDescription.getPropertyID(),
+							new Object[] { listDescription.getLabelPropertyID() });
+					return DatabindingContext.this
+							.createUpdatable2(tableDescription);
+				} else if (description instanceof NestedPropertyDescription) {
+					NestedPropertyDescription propertyDescription = (NestedPropertyDescription) description;
+					return new NestedUpdatableValue(DatabindingContext.this,
+							propertyDescription.getUpdatableValue(),
+							propertyDescription.getPropertyID(),
+							propertyDescription.getPropertyType());
+				} else if (description instanceof NestedTableDescription) {
+					NestedTableDescription tableDescription = (NestedTableDescription) description;
+					return new NestedUpdatableTable(DatabindingContext.this,tableDescription);
+				}
+				return null;
+			}
+		});
 	}
 
 	private void removeValidationListenerAndMessage(List listOfPairs,
@@ -709,7 +746,29 @@ public class DatabindingContext {
 						(IUpdatableTable) modelUpdatable,
 						(ITableBindSpec) bindSpec);
 			} else {
-				throw new BindingException("incompatible updatables"); //$NON-NLS-1$
+				throw new BindingException(
+						"incompatible updatables (target is table, model is not)"); //$NON-NLS-1$
+			}
+		} else if (targetUpdatable instanceof IUpdatableValue) {
+			if (modelUpdatable instanceof IUpdatableValue) {
+				IUpdatableValue target = (IUpdatableValue) targetUpdatable;
+				IUpdatableValue model = (IUpdatableValue) modelUpdatable;
+				IConverter converter = bindSpec == null ? null : bindSpec
+						.getConverter();
+				if (converter == null) {
+					converter = getConverter(target.getValueType(), model
+							.getValueType(), isDefaultIdentityConverter());
+				}
+				IValidator validator = bindSpec == null ? null : bindSpec
+						.getValidator();
+				if (validator == null) {
+					validator = getValidator(converter);
+				}
+				binding = new ValueBinding(this, target, model, converter,
+						validator);
+			} else {
+				throw new BindingException(
+						"incompatible updatables (target is value, model is not)"); //$NON-NLS-1$
 			}
 		} else {
 			throw new BindingException("not yet implemented"); //$NON-NLS-1$

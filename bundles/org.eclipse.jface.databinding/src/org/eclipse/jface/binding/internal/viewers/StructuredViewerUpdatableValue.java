@@ -46,7 +46,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (!updating) {
-						fireChangeEvent(null,IChangeEvent.CHANGE, null, null);
+						fireChangeEvent(null,IChangeEvent.CHANGE, null, getValue());
 					}
 				}
 			});

@@ -12,13 +12,15 @@ package org.eclipse.jface.binding;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public interface IChangeEvent {
 
 	/**
 	 * Change type constant denoting a general change. If the updatable is a
-	 * list, getPosition() returns the index of the changed element.
+	 * list, getPosition() returns the index of the changed element, or -1 if
+	 * more than one element was changed or position of the changed element is
+	 * not known.
 	 */
 	public static final int CHANGE = 1;
 
@@ -86,7 +88,8 @@ public interface IChangeEvent {
 	/**
 	 * If the change event is of type VERIFY, listeners can call this method to
 	 * veto the change.
-	 * @param veto 
+	 * 
+	 * @param veto
 	 */
 	public void setVeto(boolean veto);
 
