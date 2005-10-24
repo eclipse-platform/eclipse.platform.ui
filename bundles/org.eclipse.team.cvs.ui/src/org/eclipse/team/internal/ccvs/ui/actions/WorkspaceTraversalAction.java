@@ -40,11 +40,13 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
      * within a CVS managed project.
      * @return the selected mappings that contain resources 
      * within a CVS managed project
+     * 
+     * @deprecated should use getOperationInput() instead
      */
     protected ResourceMapping[] getCVSResourceMappings() {
         ResourceMapping[] selectedMappings = getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
         try {
-			IResourceMappingOperationInput input = new ResourceMappingOperationInput(selectedMappings, ResourceMappingContext.LOCAL_CONTEXT);
+			IResourceMappingOperationInput input = getOperationInput();
 			input.buildInput(new NullProgressMonitor());
 			if (input.hasAdditionalMappings()) {
 				ResourceMapping[] allMappings = input.getInputMappings();
