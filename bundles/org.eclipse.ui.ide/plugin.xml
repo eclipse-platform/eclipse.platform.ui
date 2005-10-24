@@ -276,7 +276,7 @@
       <actionSet
             label="%WorkingSetsActionSet.label"
             description="%WorkingSetsActionSet.description"
-            visible="false"
+            visible="true"
             id="org.eclipse.ui.WorkingSetActionSet">
          <action
                class="org.eclipse.ui.internal.actions.SelectWorkingSetsAction"

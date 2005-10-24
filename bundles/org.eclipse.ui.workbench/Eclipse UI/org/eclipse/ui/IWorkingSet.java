@@ -109,4 +109,38 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
      * @since 3.1
      */
     public boolean isEditable();
+ 
+    /**
+	 * Returns whether this working set should be shown in user interface
+	 * components that list working sets by name.
+	 * 
+	 * @return <code>true</code> if the working set should be shown in the
+	 *         user interface; otherwise <code>false</code>
+	 * 
+	 * @since 3.2
+	 */
+	public boolean isVisible();
+    
+    /**
+	 * Return the name of this working set, formated for the end user. Often this value is
+	 * the same as the one returned from {@link #getName()}.
+	 * 
+	 * <p>
+	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
+	 * </p>
+	 * 
+	 * @return the name of this working set, formated for the end user
+	 * @since 3.2
+	 */
+    public String getLabel();
+    
+    /**
+	 * Set the name of this working set, formated for the end user.
+	 * 
+	 * <p><em>Please note: This API is experiemental and may change before 3.2 ships.</em></p>
+	 * 
+	 * @param label the unique id for this working set
+	 * @since 3.2
+	 */
+	public void setLabel(String label);
 }

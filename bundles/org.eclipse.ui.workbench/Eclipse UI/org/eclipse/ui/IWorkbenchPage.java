@@ -865,9 +865,14 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
     public IExtensionTracker getExtensionTracker();
     
     /**
-	 * Return the visible working sets for this page. Please note that this array is
-	 * not filtered by activities. Clients should attempt to ensure that any use
-	 * of this method is consistant with the currently enabled activity set.
+	 * Return the visible working sets for this page. Please note that this
+	 * array is not filtered by activities. Clients should attempt to ensure
+	 * that any use of this method is consistant with the currently enabled
+	 * activity set.
+	 * 
+	 * <p>
+	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
+	 * </p>
 	 * 
 	 * @return the visible working sets for this page
 	 * @see IWorkbench#getActivitySupport()
@@ -876,12 +881,32 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	public IWorkingSet[] getWorkingSets();
 
 	/**
-	 * Set the working sets for this page. Any duplicate entries will be
-	 * removed from the array by this method.
+	 * Set the working sets for this page. Any duplicate entries will be removed
+	 * from the array by this method.
+	 * 
+	 * <p>
+	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
+	 * </p>
 	 * 
 	 * @param sets
-	 *            the new working sets for this page
+	 *            the new working sets for this page. The array may be empty,
+	 *            but no element in the array may be <code>null</code>.
 	 * @since 3.2
 	 */
 	public void setWorkingSets(IWorkingSet[] sets);
+	
+	/**
+	 * Return a working set that contains all of the elements contained in the
+	 * array of working sets provided by {@link #getWorkingSets()}. Should this
+	 * array or the underlying elements in any of the working sets change this
+	 * set will be updated.
+	 * 
+	 * <p>
+	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
+	 * </p>
+	 * 
+	 * @return the aggregate working set for this page
+	 * @since 3.2
+	 */
+	public IWorkingSet getAggregateWorkingSet();
 }

@@ -23,10 +23,16 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -34,11 +40,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.AbstractWorkingSetDialog;
+import org.eclipse.ui.internal.dialogs.WorkingSetFilter;
+import org.eclipse.ui.internal.dialogs.WorkingSetLabelProvider;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 
 /**
@@ -78,7 +85,7 @@ public class SelectWorkingSetsAction implements IWorkbenchWindowActionDelegate,
 				newList.add(set);
 			else
 				newList.remove(set);
-			
+
 			window.getActivePage().setWorkingSets(
 					(IWorkingSet[]) newList.toArray(new IWorkingSet[newList
 							.size()]));
@@ -107,9 +114,13 @@ public class SelectWorkingSetsAction implements IWorkbenchWindowActionDelegate,
 			IWorkingSet[] sets = typedSets[i];
 			for (int j = 0; j < sets.length; j++) {
 				IWorkingSet set = sets[j];
+
+				// only add visible sets
+				// if (set.isVisible()) {
 				ActionContributionItem item = new ActionContributionItem(
 						new ToggleWorkingSetAction(set));
 				item.fill(menu, -1);
+				// }
 			}
 			Separator separator = new Separator();
 			separator.fill(menu, -1);
@@ -172,17 +183,12 @@ public class SelectWorkingSetsAction implements IWorkbenchWindowActionDelegate,
 	}
 
 	public void run(IAction action) {
-		IWorkingSetManager manager = window.getWorkbench()
-				.getWorkingSetManager();
-		IWorkingSetSelectionDialog dialog = manager
-				.createWorkingSetSelectionDialog(window.getShell(), false);
-
+		ConfigureWindowWorkingSetsDialog dialog = new ConfigureWindowWorkingSetsDialog(
+				window);
 		if (dialog.open() == Window.OK) {
-			IWorkingSet[] result = dialog.getSelection();
-			if (result != null && result.length > 0) {
-				manager.addRecentWorkingSet(result[0]);
-			}
+
 		}
+
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -226,5 +232,63 @@ public class SelectWorkingSetsAction implements IWorkbenchWindowActionDelegate,
 		}
 		return typedSets;
 	}
+}
 
+class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
+
+	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
+
+    private final static int SIZING_SELECTION_WIDGET_WIDTH = 50;
+    
+	private IWorkbenchWindow window;
+
+	private CheckboxTableViewer viewer;
+
+	protected ConfigureWindowWorkingSetsDialog(IWorkbenchWindow window) {
+		super(window.getShell(), null);
+		this.window = window;
+		setTitle(WorkbenchMessages.WorkingSetSelectionDialog_title_multiSelect);
+		setMessage(WorkbenchMessages.WorkingSetSelectionDialog_message_multiSelect);
+	}
+
+	protected Control createDialogArea(Composite parent) {
+		Composite composite = (Composite) super.createDialogArea(parent);
+		viewer = CheckboxTableViewer.newCheckList(composite, SWT.NONE);
+		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		viewer.setLabelProvider(new WorkingSetLabelProvider());
+		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.addFilter(new WorkingSetFilter(null));
+		viewer.setInput(window.getWorkbench().getWorkingSetManager()
+				.getWorkingSets());
+		viewer.setCheckedElements(window.getActivePage().getWorkingSets());
+
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
+		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
+
+		viewer.getControl().setLayoutData(data);
+
+		addModifyButtons(composite);
+		return composite;
+	}
+
+	protected void okPressed() {
+		Object[] selection = viewer.getCheckedElements();
+		IWorkingSet[] workingSets = new IWorkingSet[selection.length];
+		System.arraycopy(selection, 0, workingSets, 0, selection.length);
+		window.getActivePage().setWorkingSets(workingSets);
+		super.okPressed();
+	}
+
+	protected List getSelectedWorkingSets() {
+		ISelection selection = viewer.getSelection();
+		if (selection instanceof IStructuredSelection)
+			return ((IStructuredSelection) selection).toList();
+		return null;
+	}
+
+	protected void availableWorkingSetsChanged() {
+		viewer.setInput(window.getWorkbench().getWorkingSetManager()
+				.getWorkingSets());
+	}
 }

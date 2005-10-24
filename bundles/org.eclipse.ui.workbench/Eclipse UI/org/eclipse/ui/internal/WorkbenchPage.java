@@ -111,6 +111,7 @@ import org.eclipse.ui.views.IViewRegistry;
 public class WorkbenchPage extends CompatibleWorkbenchPage implements
         IWorkbenchPage {
 	
+	private static final String ATT_AGGREGATE_WORKING_SET_ID = "aggregateWorkingSetId"; //$NON-NLS-1$
 	// editor matching flags
 	public static final int MATCH_NONE = 0;
 	public static final int MATCH_INPUT = 1;
@@ -122,6 +123,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private IAdaptable input;
 
     private IWorkingSet workingSet;
+    
+    private AggregateWorkingSet aggregateWorkingSet;
 
     private Composite composite;
     
@@ -261,6 +264,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
 	};
 	private IWorkingSet[] workingSets = new IWorkingSet[0];
+	private String aggregateWorkingSetId;
 
 	private IExtensionPoint getPerspectiveExtensionPoint() {
 		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
@@ -1540,6 +1544,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         
         if (tracker != null) 
             tracker.close();
+        
+        // if we're destroying a window in a non-shutdown situation then we should
+        // clean up the working set we made.
+        if (!window.getWorkbench().isClosing()) {
+        		if (aggregateWorkingSet != null) {
+        			PlatformUI.getWorkbench().getWorkingSetManager().removeWorkingSet(aggregateWorkingSet);
+        		}
+        }
     }
 
     /**
@@ -2597,6 +2609,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 							.toArray(new IWorkingSet[workingSetList.size()]);
 				}
 	            
+	            aggregateWorkingSetId = memento.getString(ATT_AGGREGATE_WORKING_SET_ID);
+	            
+	            IWorkingSet setWithId = window.getWorkbench().getWorkingSetManager().getWorkingSet(aggregateWorkingSetId);
+	            
+	            // check to see if the set has already been made and assign it if it has
+	            if (setWithId instanceof AggregateWorkingSet)
+	            		aggregateWorkingSet = (AggregateWorkingSet) setWithId;
                 // Restore editor manager.
                 IMemento childMem = memento
                         .getChild(IWorkbenchConstants.TAG_EDITORS);
@@ -2846,6 +2865,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			workingSetMem.createChild(IWorkbenchConstants.TAG_WORKING_SET,
 					workingSets[i].getName());
 		}
+		
+		if (aggregateWorkingSetId != null)
+			memento.putString(ATT_AGGREGATE_WORKING_SET_ID, aggregateWorkingSetId);
 
         navigationHistory.saveState(memento
                 .createChild(IWorkbenchConstants.TAG_NAVIGATION_HISTORY));
@@ -4385,6 +4407,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (newWorkingSets.length > 1) {	
 			Set setOfSets = new HashSet();
 			for (int i = 0; i < newWorkingSets.length; i++) {
+				if (newWorkingSets[i] == null)
+					throw new IllegalArgumentException();
 				setOfSets.add(newWorkingSets[i]);
 			}
 			newWorkingSets = (IWorkingSet[]) setOfSets
@@ -4395,6 +4419,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (!Arrays.equals(oldWorkingSets, newWorkingSets)) {
 			firePropertyChange(CHANGE_WORKING_SETS_REPLACE, oldWorkingSets,
 					newWorkingSets);
+			if (aggregateWorkingSet != null) {
+				aggregateWorkingSet.setComponents(workingSets);
+			}
 		}
 		if (newWorkingSets != null) {
 			WorkbenchPlugin
@@ -4406,5 +4433,28 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					.removePropertyChangeListener(
 							workingSetPropertyChangeListener);
 		}
+	}
+	
+	public IWorkingSet getAggregateWorkingSet() {
+		if (aggregateWorkingSet == null) {
+			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench()
+					.getWorkingSetManager();
+			aggregateWorkingSet = (AggregateWorkingSet) workingSetManager.getWorkingSet(
+							getAggregateWorkingSetId());
+			if (aggregateWorkingSet == null) {
+				aggregateWorkingSet = (AggregateWorkingSet) workingSetManager
+						.createAggregateWorkingSet(getAggregateWorkingSetId(),
+								"Window Working Set", getWorkingSets()); //$NON-NLS-1$
+				workingSetManager.addWorkingSet(aggregateWorkingSet);
+			}
+		}
+		return aggregateWorkingSet;
+	}
+
+	private String getAggregateWorkingSetId() {	
+		if (aggregateWorkingSetId == null) {
+			aggregateWorkingSetId = "Aggregate for window " + System.currentTimeMillis(); //$NON-NLS-1$
+		}
+		return aggregateWorkingSetId;
 	}
 }

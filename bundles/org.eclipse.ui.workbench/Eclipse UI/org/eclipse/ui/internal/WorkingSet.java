@@ -10,23 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * A working set holds a number of IAdaptable elements. 
@@ -36,30 +33,20 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
  * @see org.eclipse.ui.IWorkingSet
  * @since 2.0
  */
-public class WorkingSet implements IAdaptable, IWorkingSet {
-    static final String FACTORY_ID = "org.eclipse.ui.internal.WorkingSetFactory"; //$NON-NLS-1$
-
-    private String name;
-
-    private ArrayList elements;
-
+public class WorkingSet extends AbstractWorkingSet {
     private String editPageId;
-
-    private IMemento workingSetMemento;
     
-    private IWorkingSetManager manager;
-
     /**
      * Creates a new working set.
      * 
      * @param name the name of the new working set. Should not have 
      * 	leading or trailing whitespace.
+     * @param uniqueId the unique id
      * @param element the content of the new working set. 
      * 	May be empty but not <code>null</code>.
      */
-    public WorkingSet(String name, IAdaptable[] elements) {
-        Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
-        this.name = name;
+    public WorkingSet(String name, String uniqueId, IAdaptable[] elements) {
+        super(name, uniqueId);
         internalSetElements(elements);
     }
 
@@ -71,9 +58,8 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
      * @param memento persistence memento containing the elements of  
      * 	the working set.
      */
-    WorkingSet(String name, IMemento memento) {
-        Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
-        this.name = name;
+    WorkingSet(String name, String label, IMemento memento) {
+        super(name, label);
         workingSetMemento = memento;
     }
 
@@ -92,11 +78,9 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
             WorkingSet workingSet = (WorkingSet) object;
             String objectPageId = workingSet.getId();
             String pageId = getId();
-            boolean pageIdEqual = (objectPageId == null && pageId == null)
-                    || (objectPageId != null && objectPageId.equals(pageId));
-            return workingSet.getName().equals(getName())
-                    && workingSet.getElementsArray().equals(getElementsArray())
-                    && pageIdEqual;
+            return Util.equals(workingSet.getLabel(), getLabel())
+                    && Util.equals(workingSet.getElementsArray(), getElementsArray())
+                    && Util.equals(workingSet.getId(), getId());
         }
         return false;
     }
@@ -115,51 +99,6 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
 		return descriptor.isEditable();
 	}
     
-    /**
-     * Returns the receiver if the requested type is either IWorkingSet 
-     * or IPersistableElement.
-     * 
-     * @param adapter the requested type
-     * @return the receiver if the requested type is either IWorkingSet 
-     * 	or IPersistableElement.
-     */
-    public Object getAdapter(Class adapter) {
-        if (adapter == IWorkingSet.class
-                || adapter == IPersistableElement.class) {
-            return this;
-        }
-        return Platform.getAdapterManager().getAdapter(this, adapter);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkingSet
-     */
-    public IAdaptable[] getElements() {
-        ArrayList list = getElementsArray();
-        return (IAdaptable[]) list.toArray(new IAdaptable[list.size()]);
-    }
-
-    /**
-     * Returns the elements array list. Lazily restores the elements from
-     * persistence memento. 
-     * 
-     * @return the elements array list
-     */
-    private ArrayList getElementsArray() {
-        if (elements == null) {
-            restoreWorkingSet();
-            workingSetMemento = null;
-        }
-        return elements;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPersistableElement
-     */
-    public String getFactoryId() {
-        return FACTORY_ID;
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSet
      */
@@ -194,20 +133,13 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
         return descriptor.getIcon();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkingSet
-     */
-    public String getName() {
-        return name;
-    }
-
     /**
      * Returns the hash code.
      * 
      * @return the hash code.
      */
     public int hashCode() {
-        int hashCode = name.hashCode() & getElementsArray().hashCode();
+        int hashCode = getName().hashCode() & getElementsArray().hashCode();
 
         if (editPageId != null) {
             hashCode &= editPageId.hashCode();
@@ -218,7 +150,7 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
     /**
      * Recreates the working set elements from the persistence memento.
      */
-    private void restoreWorkingSet() {
+    void restoreWorkingSet() {
         IMemento[] itemMementos = workingSetMemento
                 .getChildren(IWorkbenchConstants.TAG_ITEM);
         Set items = new HashSet();
@@ -265,7 +197,8 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
             // not been restored
             memento.putMemento(workingSetMemento);
         } else {
-            memento.putString(IWorkbenchConstants.TAG_NAME, name);
+            memento.putString(IWorkbenchConstants.TAG_NAME, getName());
+            memento.putString(IWorkbenchConstants.TAG_LABEL, getLabel());
             memento.putString(IWorkbenchConstants.TAG_EDIT_PAGE_ID, editPageId);
             Iterator iterator = elements.iterator();
             while (iterator.hasNext()) {
@@ -292,22 +225,6 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
         fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null);
     }
 
-    /**
-     * Create a copy of the elements to store in the receiver.
-     * 
-     * @param elements the elements to store a copy of in the 
-     * 	receiver.
-     */
-    private void internalSetElements(IAdaptable[] newElements) {
-        Assert.isNotNull(newElements,
-                "Working set elements array must not be null"); //$NON-NLS-1$
-
-        elements = new ArrayList(newElements.length);
-        for (int i = 0; i < newElements.length; i++) {
-            elements.add(newElements[i]);
-        }
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSet
      */
@@ -315,29 +232,7 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
         editPageId = pageId;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkingSet
-     */
-    public void setName(String newName) {
-        Assert.isNotNull(newName, "Working set name must not be null"); //$NON-NLS-1$
-        
-        name = newName;
-        fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE, null);
-    }
-    
-    public void connect(IWorkingSetManager manager) {
-    	Assert.isTrue(this.manager == null, "A working set can only be connected to one manager"); //$NON-NLS-1$
-    	this.manager= manager;
-    }
-    
-    public void disconnect() {
-    	this.manager= null;
-    }
-    
-    private void fireWorkingSetChanged(String property, Object oldValue) {
-    	AbstractWorkingSetManager receiver= manager != null
-			? (AbstractWorkingSetManager)manager
-			: (AbstractWorkingSetManager)WorkbenchPlugin.getDefault().getWorkingSetManager();
-		receiver.workingSetChanged(this, property, oldValue);
-    }
+	public boolean isVisible() {
+		return true;
+	}
 }

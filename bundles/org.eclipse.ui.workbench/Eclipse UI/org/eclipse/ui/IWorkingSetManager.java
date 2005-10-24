@@ -114,6 +114,31 @@ public interface IWorkingSetManager {
      * @return a new working set with the specified name and content
      */
     public IWorkingSet createWorkingSet(String name, IAdaptable[] elements);
+    
+    /**
+	 * Create a working set that is the union of a collection of other working
+	 * sets. One connected (via
+	 * {@link IWorkingSetManager#addWorkingSet(IWorkingSet)} this working set
+	 * will be automatically updated to reflect the contents of the component
+	 * sets, should they themselves change.
+	 * 
+	 * <p>
+	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
+	 * </p>
+	 * 
+	 * @param name
+	 *            the name of the new working set. Should not have leading or
+	 *            trailing whitespace.
+	 * @param label
+	 *            the user-friendly label the working set
+	 * @param components
+	 *            the component working sets
+	 * @return a new working set with the specified name and content
+	 * 
+	 * @since 3.2
+	 */
+	public IWorkingSet createAggregateWorkingSet(String name, String label,
+			IWorkingSet[] components);
 
     /**
      * Re-creates and returns a working set from the state captured within the 
@@ -254,11 +279,28 @@ public interface IWorkingSetManager {
     public IWorkingSet getWorkingSet(String name);
 
     /**
-     * Returns an array of all working sets stored in the receiver.
-     * 
-     * @return the working sets stored in the receiver
-     */
+	 * Returns an array of all working sets stored in the receiver. Any working
+	 * set whose {@link IWorkingSet#isVisible()} method returns false will not be
+	 * included in this array. For a complete list of working sets please use
+	 * {@link #getAllWorkingSets()}.
+	 * 
+	 * @return the working sets stored in the receiver
+	 */
     public IWorkingSet[] getWorkingSets();
+    
+    /**
+	 * Returns an array of all working sets stored in the receiver including
+	 * those that are marked as being not visible.
+	 * 
+	 * <p>
+	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
+	 * </p>
+	 * 
+	 * @see IWorkingSet#isVisible()
+	 * @return the working sets stored in the receiver
+	 * @since 3.2
+	 */
+    public IWorkingSet[] getAllWorkingSets();
 
     /**
      * Removes the property change listener.

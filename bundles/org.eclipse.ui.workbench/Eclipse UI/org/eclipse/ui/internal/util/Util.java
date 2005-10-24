@@ -28,6 +28,9 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public final class Util {
@@ -532,6 +535,34 @@ public final class Util {
 				list.add(token);
 		}
 		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[list.size()]);
+	}
+
+	/**
+	 * Return the window for the given shell or the currently active window if
+	 * one could not be determined.
+	 * 
+	 * @param shellToCheck
+	 *            the shell to search on
+	 * @return the window for the given shell or the currently active window if
+	 *         one could not be determined
+	 * @since 3.2
+	 */
+	public static IWorkbenchWindow getWorkbenchWindowForShell(Shell shellToCheck) {
+		IWorkbenchWindow workbenchWindow = null;
+		while (workbenchWindow == null && shellToCheck != null) {
+			if (shellToCheck.getData() instanceof IWorkbenchWindow) {
+				workbenchWindow = (IWorkbenchWindow) shellToCheck.getData();
+			} else {
+				shellToCheck = (Shell) shellToCheck.getParent();
+			}
+		}
+
+		if (workbenchWindow == null) {
+			workbenchWindow = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow();
+		}
+
+		return workbenchWindow;
 	}
 	
 }

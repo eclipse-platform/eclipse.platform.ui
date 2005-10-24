@@ -25,6 +25,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkingSetComparator;
@@ -32,6 +34,7 @@ import org.eclipse.ui.internal.WorkingSetMenuContributionItem;
 import org.eclipse.ui.internal.actions.ClearWorkingSetAction;
 import org.eclipse.ui.internal.actions.EditWorkingSetAction;
 import org.eclipse.ui.internal.actions.SelectWorkingSetAction;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * Adds working set filter actions (set / clear / edit)
@@ -59,6 +62,8 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 
     private IMenuListener menuListener;
 
+	private IWorkbenchWindow workbenchWindow;
+
     /**
      * Creates a new instance of the receiver
      * 
@@ -74,14 +79,24 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
         clearWorkingSetAction = new ClearWorkingSetAction(this);
         selectWorkingSetAction = new SelectWorkingSetAction(this, shell);
         editWorkingSetAction = new EditWorkingSetAction(this, shell);
+        
+        workbenchWindow = Util.getWorkbenchWindowForShell(shell);
+		// set the default working set to be that of the window.
+		IWorkbenchPage page = workbenchWindow.getActivePage();
+		if (page == null) {
+			IWorkbenchPage[] pages = workbenchWindow.getPages();
+			if (pages.length > 0)
+				page = pages[0];
+		}
     }
 
     /**
-     * Adds actions for the most recently used working sets to the 
-     * specified menu manager.
-     *  
-     * @param menuManager menu manager to add actions to
-     */
+	 * Adds actions for the most recently used working sets to the specified
+	 * menu manager.
+	 * 
+	 * @param menuManager
+	 *            menu manager to add actions to
+	 */
     private void addMruWorkingSetActions(IMenuManager menuManager) {
         IWorkingSet[] workingSets = PlatformUI.getWorkbench()
                 .getWorkingSetManager().getRecentWorkingSets();
@@ -165,14 +180,24 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
         workingSet = newWorkingSet;
         // Update action
         clearWorkingSetAction.setEnabled(newWorkingSet != null);
-        editWorkingSetAction.setEnabled(newWorkingSet != null);
+        editWorkingSetAction.setEnabled(newWorkingSet != null && newWorkingSet.isEditable());
 
-        // Update viewer
+        firePropertyChange(newWorkingSet, oldWorkingSet);
+    }
+
+    /**
+     * Fire the property change to the updater if there is one available.
+     * 
+     * @param newWorkingSet the new working set
+     * @param oldWorkingSet the previous working set
+     * @since 3.2
+     */
+	private void firePropertyChange(IWorkingSet newWorkingSet, IWorkingSet oldWorkingSet) {
+		// Update viewer
         if (workingSetUpdater != null) {
             workingSetUpdater.propertyChange(new PropertyChangeEvent(this,
                     WorkingSetFilterActionGroup.CHANGE_WORKING_SET,
                     oldWorkingSet, newWorkingSet));
         }
-    }
-
+	}
 }

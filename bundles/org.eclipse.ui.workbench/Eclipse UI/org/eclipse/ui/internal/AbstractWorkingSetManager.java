@@ -52,7 +52,7 @@ import org.osgi.framework.BundleListener;
  */
 public abstract class AbstractWorkingSetManager implements IWorkingSetManager, BundleListener  {
 	
-    private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
+    private SortedSet workingSets = new TreeSet(WorkingSetComparator.INSTANCE);
     private ListenerList propertyChangeListeners = new ListenerList();
     
     /**
@@ -126,12 +126,19 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
      * @see org.eclipse.ui.IWorkingSetManager
      */
     public IWorkingSet createWorkingSet(String name, IAdaptable[] elements) {
-        return new WorkingSet(name, elements);
+        return new WorkingSet(name, name, elements);
     }
+    
+    public IWorkingSet createAggregateWorkingSet(String name, String label,
+			IWorkingSet[] components) {
+		return new AggregateWorkingSet(name, label, components);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkingSetManager
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkingSetManager
+	 */
     public IWorkingSet createWorkingSet(IMemento memento) {
         return restoreWorkingSet(memento);
     }
@@ -149,7 +156,7 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
 
     private void internalAddWorkingSet(IWorkingSet workingSet) {
 		workingSets.add(workingSet);
-        ((WorkingSet)workingSet).connect(this);
+        ((AbstractWorkingSet)workingSet).connect(this);
         addToUpdater(workingSet);
         firePropertyChange(CHANGE_WORKING_SET_ADD, null, workingSet);
 	}
@@ -162,7 +169,7 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
         boolean recentWorkingSetRemoved = recentWorkingSets.remove(workingSet);
         
         if (workingSetRemoved) {
-        	((WorkingSet)workingSet).disconnect();
+        	((AbstractWorkingSet)workingSet).disconnect();
         	removeFromUpdater(workingSet);
             firePropertyChange(CHANGE_WORKING_SET_REMOVE, workingSet, null);
         }
@@ -173,7 +180,17 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
      * @see org.eclipse.ui.IWorkingSetManager
      */
     public IWorkingSet[] getWorkingSets() {
-        return (IWorkingSet[]) workingSets.toArray(new IWorkingSet[workingSets.size()]);
+    		SortedSet visibleSubset = new TreeSet(WorkingSetComparator.INSTANCE);
+    		for (Iterator i = workingSets.iterator(); i.hasNext();) {
+				IWorkingSet workingSet = (IWorkingSet) i.next();
+				if (workingSet.isVisible()) 
+					visibleSubset.add(workingSet);
+			}
+        return (IWorkingSet[]) visibleSubset.toArray(new IWorkingSet[visibleSubset.size()]);
+    }
+    
+    public IWorkingSet[] getAllWorkingSets() {
+    		return (IWorkingSet[]) workingSets.toArray(new IWorkingSet[workingSets.size()]);
     }
 
     /* (non-Javadoc)
@@ -192,7 +209,20 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
         return null;
     }
     
-    //---- recent working set management --------------------------------------
+    public IWorkingSet getWorkingSetByUniqueId(String workingSetId) {
+		if (workingSetId == null || workingSets == null)
+			return null;
+
+		Iterator iter = workingSets.iterator();
+		while (iter.hasNext()) {
+			IWorkingSet workingSet = (IWorkingSet) iter.next();
+			if (workingSetId.equals(workingSet.getLabel()))
+				return workingSet;
+		}
+		return null;
+	}
+    
+    // ---- recent working set management --------------------------------------
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager
@@ -209,6 +239,8 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
      * 	used working sets.
      */
     protected void internalAddRecentWorkingSet(IWorkingSet workingSet) {
+    		if (!workingSet.isVisible())
+    			return;
         recentWorkingSets.remove(workingSet);
         recentWorkingSets.add(0, workingSet);
         if (recentWorkingSets.size() > MRU_SIZE) {
@@ -312,16 +344,39 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
      */
     protected void saveWorkingSetState(IMemento memento) {
         Iterator iterator = workingSets.iterator();
-
+        
+        // break the sets into aggregates and non aggregates.  The aggregates should be saved after the non-aggregates
+        // so that on restoration all necessary aggregate components can be found.
+        
+        ArrayList standardSets = new ArrayList();
+        ArrayList aggregateSets = new ArrayList();
         while (iterator.hasNext()) {
-            IPersistableElement persistable = (IWorkingSet) iterator.next();
+        		IWorkingSet set = (IWorkingSet) iterator.next();
+        		if (set instanceof AggregateWorkingSet) // do we need an isAggregate method?  would it otherwise be useful?
+        			aggregateSets.add(set);
+        		else
+        			standardSets.add(set);
+        }
+
+        saveWorkingSetState(memento, standardSets);
+        saveWorkingSetState(memento, aggregateSets);
+    }
+
+	/**
+	 * @param memento the memento to save to
+	 * @param list the working sets to save
+	 * @since 3.2
+	 */
+	private void saveWorkingSetState(IMemento memento, List list) {
+		for (Iterator i = list.iterator(); i.hasNext();) {
+            IPersistableElement persistable = (IWorkingSet) i.next();
             IMemento workingSetMemento = memento
                     .createChild(IWorkbenchConstants.TAG_WORKING_SET);
             workingSetMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID,
                     persistable.getFactoryId());
             persistable.saveState(workingSetMemento);
         }
-    }
+	}
     
     /**
      * Recreates all working sets from the persistence store
@@ -355,7 +410,7 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
             // if the factory id was not set in the memento
             // then assume that the memento was created using
             // IMemento.saveState, and should be restored using WorkingSetFactory
-            factoryID = WorkingSet.FACTORY_ID;
+            factoryID = AbstractWorkingSet.FACTORY_ID;
         }
         IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(
                 factoryID);
@@ -435,12 +490,13 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
         if (editPageId != null) {
             editPage = registry.getWorkingSetPage(editPageId);
         }
-        if (editPage == null) {
-            editPage = registry.getDefaultWorkingSetPage();
-            if (editPage == null) {
-                return null;
-            }
-        }
+        // the following block kind of defeats IWorkingSet.isEditable() and it
+		// doesn't make sense for there to be a default page in such a case.
+		/*
+		 * if (editPage == null) { editPage =
+		 * registry.getDefaultWorkingSetPage(); if (editPage == null) { return
+		 * null; } }
+		 */
         WorkingSetEditWizard editWizard = new WorkingSetEditWizard(editPage);
         editWizard.setSelection(workingSet);
         return editWizard;

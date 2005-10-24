@@ -289,6 +289,9 @@ public class WorkbenchMessages extends NLS {
 	public static String EditWorkingSetAction_error_nowizard_message;
 	public static String ClearWorkingSetAction_text;
 	public static String ClearWorkingSetAction_toolTip;
+	public static String WindowWorkingSets;
+	public static String NoWorkingSet;
+	public static String SelectedWorkingSets;
 
 	// ==============================================================================
 	// Drill Actions

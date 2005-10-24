@@ -83,7 +83,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
         public String getLabel(Object o) {
             if (o instanceof IWorkingSet) {
                 IWorkingSet set = (IWorkingSet) o;
-                return set.getName();
+                return set.getLabel();
             }
             return null;
         }
