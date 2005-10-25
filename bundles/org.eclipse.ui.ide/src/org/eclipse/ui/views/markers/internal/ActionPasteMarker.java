@@ -27,13 +27,12 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**
  * Pastes one or more bookmark(s) from the clipboard into the bookmark navigator.
  */
-public class ActionPasteMarker extends SelectionProviderAction {
+public class ActionPasteMarker extends MarkerSelectionProviderAction {
 
     private IWorkbenchPart part;
 
@@ -43,6 +42,8 @@ public class ActionPasteMarker extends SelectionProviderAction {
 
     /**
      * Creates the action.
+     * @param part
+     * @param provider
      */
     public ActionPasteMarker(IWorkbenchPart part, ISelectionProvider provider) {
         super(provider, MarkerMessages.pasteAction_title);

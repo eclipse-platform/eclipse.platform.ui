@@ -20,63 +20,74 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.actions.SelectionProviderAction;
 
-public class ActionMarkCompleted extends SelectionProviderAction {
+/**
+ * ActionMarkCompleted is the action for marking task completion.
+ * 
+ */
+public class ActionMarkCompleted extends MarkerSelectionProviderAction {
 
-    /**
-     * @param provider
-     */
-    public ActionMarkCompleted(ISelectionProvider provider) {
-        super(provider, MarkerMessages.markCompletedAction_title);
-        setEnabled(false);
-    }
+	/**
+	 * Create a new instance of the reciever.
+	 * 
+	 * @param provider
+	 */
+	public ActionMarkCompleted(ISelectionProvider provider) {
+		super(provider, MarkerMessages.markCompletedAction_title);
+		setEnabled(false);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    public void run() {
-        try {
-            ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-                public void run(IProgressMonitor monitor) {
-                    for (Iterator iterator = getStructuredSelection()
-                            .iterator(); iterator.hasNext();) {
-                        Object obj = iterator.next();
-                        if (obj instanceof IMarker) {
-                            IMarker marker = (IMarker) obj;
-                            try {
-                                marker.setAttribute(IMarker.DONE, true);
-                            } catch (CoreException e) {
-                            }
-                        }
-                    }
-                }
-            }, null);
-        } catch (CoreException e) {
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	public void run() {
+		try {
+			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    public void selectionChanged(IStructuredSelection selection) {
-        setEnabled(false);
-        if (selection == null || selection.isEmpty()) {
-            return;
-        }
-        for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
-            Object obj = iterator.next();
-            if (!(obj instanceof IMarker)) {
-                return;
-            }
-            IMarker marker = (IMarker) obj;
-            if (!marker.getAttribute(IMarker.USER_EDITABLE, true)) {
-                return;
-            }
-            if (marker.getAttribute(IMarker.DONE, false)) {
-                return;
-            }
-        }
-        setEnabled(true);
-    }
+					IMarker[] markers = getSelectedMarkers();
+					for (int i = 0; i < markers.length; i++) {
+						try {
+							markers[i].setAttribute(IMarker.DONE, true);
+						} catch (CoreException e) {
+							Util.log(e);
+						}
+
+					}
+
+				}
+			}, null);
+		} catch (CoreException e) {
+			Util.log(e);
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+		setEnabled(false);
+		if (selection == null || selection.isEmpty()) {
+			return;
+		}
+		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+			Object obj = iterator.next();
+			if (!(obj instanceof ConcreteMarker)) {
+				return;
+			}
+			IMarker marker = ((ConcreteMarker) obj).getMarker();
+			if (!marker.getAttribute(IMarker.USER_EDITABLE, true)) {
+				return;
+			}
+			if (marker.getAttribute(IMarker.DONE, false)) {
+				return;
+			}
+		}
+		setEnabled(true);
+	}
 }

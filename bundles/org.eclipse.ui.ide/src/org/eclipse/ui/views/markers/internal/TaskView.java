@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -192,12 +191,10 @@ public class TaskView extends MarkerView {
 	protected void createActions() {
 		super.createActions();
 
-		ISelectionProvider selProvider = getSelectionProvider();
-
 		addGlobalTaskAction = new ActionAddGlobalTask(this);
-		deleteCompletedAction = new ActionDeleteCompleted(this, selProvider);
-		markCompletedAction = new ActionMarkCompleted(selProvider);
-		propertiesAction = new ActionTaskProperties(this, selProvider);
+		deleteCompletedAction = new ActionDeleteCompleted(this, getViewer());
+		markCompletedAction = new ActionMarkCompleted(getViewer());
+		propertiesAction = new ActionTaskProperties(this, getViewer());
 	}
 
 	/*

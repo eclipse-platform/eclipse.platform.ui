@@ -143,9 +143,7 @@ public class MarkerMessages extends NLS{
 	public static String errorModifyingTask;
 
 	public static String problemSeverity_description;
-	public static String problem_statusSummaryVisible;
 	public static String problem_statusSummaryBreakdown;
-	public static String problem_statusSummarySelected;
 	public static String marker_statusSummarySelected;
 
 	public static String deleteCompletedAction_title;

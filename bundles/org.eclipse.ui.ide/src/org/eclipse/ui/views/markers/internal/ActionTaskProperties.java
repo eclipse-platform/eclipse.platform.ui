@@ -11,44 +11,49 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.actions.SelectionProviderAction;
 
-public class ActionTaskProperties extends SelectionProviderAction {
+/**
+ * ActionTaskProperties is the action for setting a tasks properties.
+ * 
+ */
+public class ActionTaskProperties extends MarkerSelectionProviderAction {
 
-    private IWorkbenchPart part;
+	private IWorkbenchPart part;
 
-    public ActionTaskProperties(IWorkbenchPart part, ISelectionProvider provider) {
-        super(provider, MarkerMessages.propertiesAction_title);
-        setEnabled(false);
-        this.part = part;
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 * 
+	 * @param part
+	 * @param provider
+	 */
+	public ActionTaskProperties(IWorkbenchPart part, ISelectionProvider provider) {
+		super(provider, MarkerMessages.propertiesAction_title);
+		setEnabled(false);
+		this.part = part;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    public void run() {
-        if (!isEnabled()) {
-            return;
-        }
-        Object obj = getStructuredSelection().getFirstElement();
-        if (!(obj instanceof IMarker)) {
-            return;
-        }
-        IMarker marker = (IMarker) obj;
-        DialogMarkerProperties dialog = new DialogTaskProperties(part.getSite()
-                .getShell());
-        dialog.setMarker(marker);
-        dialog.open();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	public void run() {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    public void selectionChanged(IStructuredSelection selection) {
-        setEnabled(selection != null && selection.size() == 1);
-    }
+		DialogMarkerProperties dialog = new DialogTaskProperties(part.getSite()
+				.getShell());
+		dialog.setMarker(getSelectedMarker());
+		dialog.open();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+		setEnabled(hasSingleConcreteSelection(selection));
+	}
 }

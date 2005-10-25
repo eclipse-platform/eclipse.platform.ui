@@ -14,6 +14,7 @@ package org.eclipse.ui.views.markers.internal;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -551,7 +552,7 @@ public abstract class MarkerView extends TableView {
 		if (adaptable.equals(IShowInSource.class)) {
 			return new IShowInSource() {
 				public ShowInContext getShowInContext() {
-					ISelection selection = getSelectionProvider()
+					ISelection selection = getViewer()
 							.getSelection();
 					if (!(selection instanceof IStructuredSelection))
 						return null;
@@ -559,7 +560,7 @@ public abstract class MarkerView extends TableView {
 					Iterator markerIterator = structured.iterator();
 					List newSelection = new ArrayList();
 					while (markerIterator.hasNext()) {
-						IMarker element = (IMarker) markerIterator.next();
+						ConcreteMarker element = (ConcreteMarker) markerIterator.next();
 						newSelection.add(element.getResource());
 					}
 					return new ShowInContext(getViewer().getInput(),
@@ -571,21 +572,10 @@ public abstract class MarkerView extends TableView {
 		return super.getAdapter(adaptable);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.TableView#viewerSelectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
 	protected void viewerSelectionChanged(IStructuredSelection selection) {
-
-		Object[] rawSelection = selection.toArray();
-
-		if (rawSelection.length == 0
-				|| !(rawSelection[0] instanceof ConcreteMarker))
-			return;
-
-		IMarker[] markers = new IMarker[rawSelection.length];
-
-		for (int idx = 0; idx < rawSelection.length; idx++) {
-			markers[idx] = ((ConcreteMarker) rawSelection[idx]).getMarker();
-		}
-
-		setSelection(new StructuredSelection(markers));
 
 		updateStatusMessage(selection);
 	}
@@ -625,20 +615,19 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#createActions()
 	 */
 	protected void createActions() {
-		TreeViewer viewer = getViewer();
-		revealAction = new ActionRevealMarker(this, getSelectionProvider());
-		openAction = new ActionOpenMarker(this, getSelectionProvider());
-		copyAction = new ActionCopyMarker(this, getSelectionProvider());
+		revealAction = new ActionRevealMarker(this, getViewer());
+		openAction = new ActionOpenMarker(this, getViewer());
+		copyAction = new ActionCopyMarker(this,getViewer());
 		copyAction.setClipboard(clipboard);
 		copyAction.setProperties(getSortingFields());
-		pasteAction = new ActionPasteMarker(this, getSelectionProvider());
+		pasteAction = new ActionPasteMarker(this, getViewer());
 		pasteAction.setClipboard(clipboard);
 		pasteAction.setPastableTypes(getMarkerTypes());
-		deleteAction = new ActionRemoveMarker(this, getSelectionProvider());
-		selectAllAction = new ActionSelectAll(viewer);
+		deleteAction = new ActionRemoveMarker(this, getViewer());
+		selectAllAction = new ActionSelectAll(this);
 
 		propertiesAction = new ActionMarkerProperties(this,
-				getSelectionProvider());
+				getViewer());
 
 		super.createActions();
 
@@ -737,12 +726,12 @@ public abstract class MarkerView extends TableView {
 	 */
 	private void performDragSetData(DragSourceEvent event) {
 		if (MarkerTransfer.getInstance().isSupportedType(event.dataType)) {
-			event.data = ((IStructuredSelection) getSelectionProvider()
-					.getSelection()).toArray();
+			
+			event.data = getSelectedMarkers();
 			return;
 		}
 		if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-			List selection = ((IStructuredSelection) getSelectionProvider()
+			List selection = ((IStructuredSelection) getViewer()
 					.getSelection()).toList();
 			try {
 				IMarker[] markers = new IMarker[selection.size()];
@@ -753,6 +742,21 @@ public abstract class MarkerView extends TableView {
 			} catch (ArrayStoreException e) {
 			}
 		}
+	}
+
+	/**
+	 * Get the array of selected markers.
+	 * @return IMarker[]
+	 */
+	private IMarker[] getSelectedMarkers() {
+		Object[] selection = ((IStructuredSelection) getViewer()
+				.getSelection()).toArray();
+		ArrayList markers = new ArrayList();
+		for (int i = 0; i < selection.length; i++) {
+			if(selection[i] instanceof ConcreteMarker)
+				markers.add(((ConcreteMarker)selection[i]).getMarker());
+		}
+		return (IMarker[]) markers.toArray(new IMarker[markers.size()]);
 	}
 
 	/*
@@ -1118,8 +1122,8 @@ public abstract class MarkerView extends TableView {
 	 */
 	protected String updateSummarySelected(IStructuredSelection selection) {
 		// Show how many items selected
-		return NLS.bind(MarkerMessages.marker_statusSummarySelected,
-				new Integer(selection.size()), "");//$NON-NLS-1$ 
+		return MessageFormat.format(MarkerMessages.marker_statusSummarySelected,
+				new Object[] {new Integer(selection.size())});
 	}
 
 	/**
@@ -1349,7 +1353,7 @@ public abstract class MarkerView extends TableView {
 	 * @param menu
 	 */
 	void createShowInMenu(IMenuManager menu) {
-		ISelection selection = getSelectionProvider().getSelection();
+		ISelection selection = getViewer().getSelection();
 		if (!(selection instanceof IStructuredSelection))
 			return;
 

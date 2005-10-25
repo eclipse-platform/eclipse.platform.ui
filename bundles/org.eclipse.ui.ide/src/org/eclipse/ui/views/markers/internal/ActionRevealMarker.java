@@ -18,47 +18,58 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 
-public class ActionRevealMarker extends SelectionProviderAction {
+/**
+ * ActionRevealMarker is the action for opening the editor on
+ * a marker.
+ *
+ */
+public class ActionRevealMarker extends MarkerSelectionProviderAction {
 
-    protected IWorkbenchPart part;
+	protected IWorkbenchPart part;
 
-    public ActionRevealMarker(IWorkbenchPart part, ISelectionProvider provider) {
-        super(provider, ""); //$NON-NLS-1$
-        this.part = part;
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 * @param part
+	 * @param provider
+	 */
+	public ActionRevealMarker(IWorkbenchPart part, ISelectionProvider provider) {
+		super(provider, Util.EMPTY_STRING); 
+		this.part = part;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    public void run() {
-        IStructuredSelection selection = getStructuredSelection();
-        Object obj = selection.getFirstElement();
-        if (obj == null || !(obj instanceof IMarker))
-            return;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	public void run() {
+		
+		IEditorPart editor = part.getSite().getPage().getActiveEditor();
+		if (editor == null)
+			return;
+		IFile file = ResourceUtil.getFile(editor.getEditorInput());
+		if (file != null) {
+			IMarker marker = getSelectedMarker();
+			if (marker.getResource().equals(file)) {
+				try {
+					IDE.openEditor(part.getSite().getPage(),
+							marker, false);
+				} catch (CoreException e) {
+				}
+			}
+		}
+	}
 
-        IMarker marker = (IMarker) obj;
-        IEditorPart editor = part.getSite().getPage().getActiveEditor();
-        if (editor == null)
-            return;
-        IFile file = ResourceUtil.getFile(editor.getEditorInput());
-        if (file != null) {
-            if (marker.getResource().equals(file)) {
-                try {
-                    IDE.openEditor(part.getSite().getPage(), marker, false);
-                } catch (CoreException e) {
-                }
-            }
-        }
-    }
-
-    public void selectionChanged(IStructuredSelection selection) {
-        setEnabled(selection != null && selection.size() == 1);
-        if (isEnabled()) {
-            run();
-        }
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+		setEnabled(hasSingleConcreteSelection(selection));
+		if (isEnabled()) {
+			run();
+		}
+	}
 }

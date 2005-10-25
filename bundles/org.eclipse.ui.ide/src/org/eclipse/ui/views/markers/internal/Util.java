@@ -138,7 +138,7 @@ public final class Util {
 	 * 
 	 * @param exception
 	 */
-	private static void log(CoreException exception) {
+	public static void log(CoreException exception) {
 		IDEWorkbenchPlugin.getDefault().getLog().log(exception.getStatus());
 	}
 

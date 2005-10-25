@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -33,7 +32,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * 
  * @since 2.0
  */
-public class ActionResolveMarker extends SelectionProviderAction {
+public class ActionResolveMarker extends MarkerSelectionProviderAction {
 
 	private MarkerView view;
 
@@ -54,9 +53,7 @@ public class ActionResolveMarker extends SelectionProviderAction {
 	 * Displays a list of resolutions and performs the selection.
 	 */
 	public void run() {
-		if (!isEnabled()) {
-			return;
-		}
+		
 		final MarkerResolutionWizard[] wizard = new MarkerResolutionWizard[1];
 
 
@@ -65,14 +62,8 @@ public class ActionResolveMarker extends SelectionProviderAction {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
-				Object[] selection = getStructuredSelection().toArray();
-
-				if (selection.length == 0) {
-					return Status.CANCEL_STATUS;
-				}
-				IMarker[] markers = new IMarker[selection.length];
-				System.arraycopy(selection, 0, markers, 0, markers.length);
-
+				IMarker[] markers = getSelectedMarkers();				
+			
 				try {
 					wizard[0] = new MarkerResolutionWizard(markers, MarkerList
 							.compute(view.getMarkerTypes()));
@@ -129,8 +120,8 @@ public class ActionResolveMarker extends SelectionProviderAction {
 		Iterator markers = selection.iterator();
 
 		while (markers.hasNext()) {
-			if (IDE.getMarkerHelpRegistry().hasResolutions(
-					(IMarker) markers.next())) {
+			IMarker next = ((ConcreteMarker)markers.next()).getMarker();
+			if (IDE.getMarkerHelpRegistry().hasResolutions(next)) {
 				setEnabled(true);
 				return;
 			}

@@ -24,7 +24,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -32,7 +31,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 /**
  * Action to open an editor on the selected bookmarks.
  */
-public class ActionOpenMarker extends SelectionProviderAction {
+public class ActionOpenMarker extends MarkerSelectionProviderAction {
 
     private final String IMAGE_PATH = "elcl16/gotoobj_tsk.gif"; //$NON-NLS-1$
 
@@ -40,6 +39,11 @@ public class ActionOpenMarker extends SelectionProviderAction {
 
     protected IWorkbenchPart part;
 
+    /**
+     * Create a new instance of the receiver.
+     * @param part
+     * @param provider
+     */
     public ActionOpenMarker(IWorkbenchPart part, ISelectionProvider provider) {
         super(provider, MarkerMessages.openAction_title);
         this.part = part;
@@ -48,16 +52,11 @@ public class ActionOpenMarker extends SelectionProviderAction {
         setEnabled(false);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.Action#run()
+     */
     public void run() {
-        IStructuredSelection selection = getStructuredSelection();
-        if (selection == null || selection.size() != 1)
-            return;
-
-        Object obj = selection.getFirstElement();
-        if (!(obj instanceof IMarker))
-            return;
-
-        IMarker marker = (IMarker) obj;
+        IMarker marker = getSelectedMarker();
         //optimization: if the active editor has the same input as the selected marker then 
         //RevealMarkerAction would have been run and we only need to activate the editor
         IEditorPart editor = part.getSite().getPage().getActiveEditor();
@@ -104,7 +103,10 @@ public class ActionOpenMarker extends SelectionProviderAction {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+     */
     public void selectionChanged(IStructuredSelection selection) {
-        setEnabled(selection != null && selection.size() == 1);
+        setEnabled(hasSingleConcreteSelection(selection));
     }
 }

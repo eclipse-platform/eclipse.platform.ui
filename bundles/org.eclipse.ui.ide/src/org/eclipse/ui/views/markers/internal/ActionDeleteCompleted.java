@@ -24,9 +24,13 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.actions.SelectionProviderAction;
 
-public class ActionDeleteCompleted extends SelectionProviderAction {
+/**
+ * ActionDeleteCompleted is the action for deleting completed
+ * markers.
+ *
+ */
+public class ActionDeleteCompleted extends MarkerSelectionProviderAction {
 
     private TaskView part;
 

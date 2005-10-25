@@ -11,16 +11,25 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.SelectionProviderAction;
 
+/**
+ * ActionMarkerProperties is the action for opening a properties
+ * dialog.
+ *
+ */
 public class ActionMarkerProperties extends SelectionProviderAction {
 
     private IWorkbenchPart part;
 
+    /**
+     * Create a new instance of the receiver.
+     * @param part
+     * @param provider
+     */
     public ActionMarkerProperties(IWorkbenchPart part,
             ISelectionProvider provider) {
         super(provider, MarkerMessages.propertiesAction_title);
@@ -36,13 +45,13 @@ public class ActionMarkerProperties extends SelectionProviderAction {
             return;
         }
         Object obj = getStructuredSelection().getFirstElement();
-        if (!(obj instanceof IMarker)) {
+        if (!(obj instanceof ConcreteMarker)) {
             return;
         }
-        IMarker marker = (IMarker) obj;
+        ConcreteMarker marker = (ConcreteMarker) obj;
         DialogMarkerProperties dialog = new DialogMarkerProperties(part
                 .getSite().getShell());
-        dialog.setMarker(marker);
+        dialog.setMarker(marker.getMarker());
         dialog.open();
     }
 

@@ -15,12 +15,21 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.actions.SelectionProviderAction;
 
-public class ActionProblemProperties extends SelectionProviderAction {
+/**
+ * ActionProblemProperties is the action for opening the properties
+ * in the problems view.
+ *
+ */
+public class ActionProblemProperties extends MarkerSelectionProviderAction {
 
     private IWorkbenchPart part;
 
+    /**
+     * Create a new instance of the receiver.
+     * @param part
+     * @param provider
+     */
     public ActionProblemProperties(IWorkbenchPart part,
             ISelectionProvider provider) {
         super(provider, MarkerMessages.propertiesAction_title);
@@ -32,14 +41,8 @@ public class ActionProblemProperties extends SelectionProviderAction {
      * @see org.eclipse.jface.action.Action#run()
      */
     public void run() {
-        if (!isEnabled()) {
-            return;
-        }
-        Object obj = getStructuredSelection().getFirstElement();
-        if (!(obj instanceof IMarker)) {
-            return;
-        }
-        IMarker marker = (IMarker) obj;
+ 
+    	IMarker marker = getSelectedMarker();
         DialogMarkerProperties dialog = new DialogProblemProperties(part
                 .getSite().getShell());
         dialog.setMarker(marker);
@@ -50,6 +53,6 @@ public class ActionProblemProperties extends SelectionProviderAction {
      * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
      */
     public void selectionChanged(IStructuredSelection selection) {
-        setEnabled(selection != null && selection.size() == 1);
+        setEnabled(hasSingleConcreteSelection(selection));
     }
 }

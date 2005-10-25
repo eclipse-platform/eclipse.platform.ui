@@ -11,40 +11,46 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.ui.actions.SelectionProviderAction;
 
-public class ActionSelectAll extends SelectionProviderAction {
+/**
+ * The ActionSelectAll is the action for selecting all 
+ * of the entries.
+ *
+ */
+public class ActionSelectAll extends MarkerSelectionProviderAction {
 
-    /**
-     * @param provider
-     */
-    public ActionSelectAll(ISelectionProvider provider) {
-        super(provider, MarkerMessages.selectAllAction_title);
-        setEnabled(true);
-    }
+	private MarkerView view;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    public void run() {
-        TableViewer viewer = (TableViewer) getSelectionProvider();
+	/**
+	 * Create a new instance of the receiver with the supplied
+	 * 
+	 * @param markerView
+	 */
+	public ActionSelectAll(MarkerView markerView) {
+		super(markerView.getViewer(),
+				MarkerMessages.selectAllAction_title);
+		setEnabled(true);
+		view = markerView;
+	}
 
-        Object[] elements = ((IStructuredContentProvider) viewer
-                .getContentProvider()).getElements(viewer.getInput());
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	public void run() {
+		super.getSelectionProvider().setSelection(
+				new StructuredSelection(view.getCurrentMarkers().asList()));
+	}
 
-        StructuredSelection newSelection = new StructuredSelection(elements);
-        super.getSelectionProvider().setSelection(newSelection);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    public void selectionChanged(IStructuredSelection selection) {
-        setEnabled(!selection.isEmpty());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+		setEnabled(!selection.isEmpty());
+	}
 }

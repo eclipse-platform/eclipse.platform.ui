@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -67,8 +66,6 @@ public abstract class TableView extends ViewPart {
 
 	private IMemento memento;
 
-	private ISelectionProvider selectionProvider = new SelectionProviderAdapter();
-
 	private IAction sortAction;
 
 	private IAction filtersAction;
@@ -100,9 +97,6 @@ public abstract class TableView extends ViewPart {
 //		content.set(contents, mon);
 //	}
 
-	protected ISelectionProvider getSelectionProvider() {
-		return selectionProvider;
-	}
 
 	abstract protected void viewerSelectionChanged(
 			IStructuredSelection selection);
@@ -156,9 +150,9 @@ public abstract class TableView extends ViewPart {
 		MenuManager mgr = initContextMenu();
 		Menu menu = mgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(mgr, getSelectionProvider());
+		getSite().registerContextMenu(mgr, getViewer());
 
-		getSite().setSelectionProvider(getSelectionProvider());
+		getSite().setSelectionProvider(getViewer());
 
 		IActionBars actionBars = getViewSite().getActionBars();
 		initMenu(actionBars.getMenuManager());
@@ -185,13 +179,6 @@ public abstract class TableView extends ViewPart {
 	abstract Object createViewerInput();
 
 	/**
-	 * @param selection
-	 */
-	protected void setSelection(IStructuredSelection selection) {
-		getSelectionProvider().setSelection(selection);
-	}
-
-	/**
 	 * @param sorter2
 	 */
 	void setSorter(TableSorter sorter2) {
@@ -214,6 +201,10 @@ public abstract class TableView extends ViewPart {
 		return tree;
 	}
 
+	/**
+	 * Get the pixel data for the columns.
+	 * @return ColumnPixelData[]
+	 */
 	public ColumnPixelData[] getSavedColumnData() {
 		ColumnPixelData[] defaultData = getDefaultColumnLayouts();
 

@@ -194,9 +194,9 @@ public class ProblemView extends MarkerView {
 	protected void createActions() {
 		super.createActions();
 		propertiesAction = new ActionProblemProperties(this,
-				getSelectionProvider());
+				getViewer());
 		resolveMarkerAction = new ActionResolveMarker(this,
-				getSelectionProvider());
+				getViewer());
 	}
 
 	/*
