@@ -7,7 +7,7 @@
       <view
             class="org.eclipse.ui.navigator.CommonNavigator"
             id="org.eclipse.ui.examples.navigator.example1"
-            name="Common Navigator Example"/>
+            name="%Common_Navigator_Example"/>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">

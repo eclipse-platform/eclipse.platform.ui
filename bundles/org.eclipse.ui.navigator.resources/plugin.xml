@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-  <extension-point id="commonWizard" name="Common Wizard" schema="schema/commonWizard.exsd"/>
+  <extension-point id="commonWizard" name="%Common_Wizard" schema="schema/commonWizard.exsd"/>
  
 <!-- Resource Content  -->
    <extension  

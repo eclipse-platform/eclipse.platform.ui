@@ -53,21 +53,21 @@ public class EditorTestHelper {
 		}	
 	}	 
 	
-	public static final String TEXT_EDITOR_ID= "org.eclipse.ui.DefaultTextEditor";
+	public static final String TEXT_EDITOR_ID= "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 	
-	public static final String COMPILATION_UNIT_EDITOR_ID= "org.eclipse.jdt.ui.CompilationUnitEditor";
+	public static final String COMPILATION_UNIT_EDITOR_ID= "org.eclipse.jdt.ui.CompilationUnitEditor"; //$NON-NLS-1$
 	
-	public static final String RESOURCE_PERSPECTIVE_ID= "org.eclipse.ui.resourcePerspective";
+	public static final String RESOURCE_PERSPECTIVE_ID= "org.eclipse.ui.resourcePerspective"; //$NON-NLS-1$
 	
-	public static final String JAVA_PERSPECTIVE_ID= "org.eclipse.jdt.ui.JavaPerspective";
+	public static final String JAVA_PERSPECTIVE_ID= "org.eclipse.jdt.ui.JavaPerspective"; //$NON-NLS-1$
 	
-	public static final String OUTLINE_VIEW_ID= "org.eclipse.ui.views.ContentOutline";
+	public static final String OUTLINE_VIEW_ID= "org.eclipse.ui.views.ContentOutline"; //$NON-NLS-1$
 	
-	public static final String PACKAGE_EXPLORER_VIEW_ID= "org.eclipse.jdt.ui.PackageExplorer";
+	public static final String PACKAGE_EXPLORER_VIEW_ID= "org.eclipse.jdt.ui.PackageExplorer"; //$NON-NLS-1$
 	
-	public static final String NAVIGATOR_VIEW_ID= "org.eclipse.ui.views.ResourceNavigator";
+	public static final String NAVIGATOR_VIEW_ID= "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
 	
-	public static final String INTRO_VIEW_ID= "org.eclipse.ui.internal.introview";
+	public static final String INTRO_VIEW_ID= "org.eclipse.ui.internal.introview"; //$NON-NLS-1$
   
 	public static void closeEditor(IEditorPart editor) {
 		IWorkbenchPartSite site;
@@ -168,8 +168,8 @@ public class EditorTestHelper {
 	
 	public static void joinBackgroundActivities() throws CoreException {
 		// Join Building
-		Logger.global.entering("EditorTestHelper", "joinBackgroundActivities");
-		Logger.global.finer("join builder");
+		Logger.global.entering("EditorTestHelper", "joinBackgroundActivities"); //$NON-NLS-1$ //$NON-NLS-2$
+		Logger.global.finer("join builder"); //$NON-NLS-1$
 		boolean interrupted= true;
 		while (interrupted) {
 			try {
@@ -181,11 +181,11 @@ public class EditorTestHelper {
 		} 
 		// Join jobs
 		joinJobs(0, 0, 500);
-		Logger.global.exiting("EditorTestHelper", "joinBackgroundActivities");
+		Logger.global.exiting("EditorTestHelper", "joinBackgroundActivities"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static boolean joinJobs(long minTime, long maxTime, long intervalTime) {
-		Logger.global.entering("EditorTestHelper", "joinJobs");
+		Logger.global.entering("EditorTestHelper", "joinJobs"); //$NON-NLS-1$ //$NON-NLS-2$
 		runEventQueue(minTime);
 		
 		DisplayHelper helper= new DisplayHelper() {
@@ -194,7 +194,7 @@ public class EditorTestHelper {
 			}
 		};
 		boolean quiet= helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : Long.MAX_VALUE, intervalTime);
-		Logger.global.exiting("EditorTestHelper", "joinJobs", new Boolean(quiet));
+		Logger.global.exiting("EditorTestHelper", "joinJobs", new Boolean(quiet)); //$NON-NLS-1$ //$NON-NLS-2$
 		return quiet;
 	}
 	
