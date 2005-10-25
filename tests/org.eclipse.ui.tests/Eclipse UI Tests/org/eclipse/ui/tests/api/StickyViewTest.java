@@ -10,18 +10,30 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import junit.framework.TestSuite;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.FastViewBar;
 import org.eclipse.ui.internal.FastViewBarContextMenuContribution;
+import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.ViewPane;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 
@@ -29,7 +41,15 @@ import org.eclipse.ui.views.IStickyViewDescriptor;
  * @since 3.0
  */
 public class StickyViewTest extends UITestCase {
-
+	
+	/**
+	 * Allow tests to run just in this class.
+	 * @return the TestSuite to run.
+	 */
+	public static TestSuite suite() {
+		return new TestSuite(StickyViewTest.class);
+	}
+	
     private IWorkbenchWindow window;
 
     private IWorkbenchPage page;
@@ -333,10 +353,82 @@ public class StickyViewTest extends UITestCase {
 		}
 	}
 
+	/**
+	 * Test that the view toolbar visibility matches the presentation
+	 * visibility for a view.
+	 * 
+	 * @throws Throwable on an error
+	 * @since 3.2
+	 */
+	public void testPerspectiveViewToolBarVisible() throws Throwable {
+		IPerspectiveDescriptor perspective = WorkbenchPlugin.getDefault()
+				.getPerspectiveRegistry().findPerspectiveWithId(
+						PerspectiveViewsBug88345.PERSP_ID);
+		page.setPerspective(perspective);
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
-     */
+		IEditorPart editor = null;
+		IEditorRegistry registry = window.getWorkbench().getEditorRegistry();
+		IPerspectiveDescriptor secondPerspective = WorkbenchPlugin.getDefault()
+				.getPerspectiveRegistry().findPerspectiveWithId(
+						SessionPerspective.ID);
+		try {
+			// a view with it's toolbar on the line below the tab
+			page.showView(PerspectiveViewsBug88345.PROP_SHEET_ID);
+			IViewReference viewRef = page
+					.findViewReference(PerspectiveViewsBug88345.PROP_SHEET_ID);
+
+			IProject proj = FileUtil.createProject("TBTest");
+			IFile test01 = FileUtil.createFile("test01.txt", proj);
+
+			WorkbenchPage wpage = (WorkbenchPage) page;
+
+			// make sure the view is active
+			assertNotNull("The view must exist", viewRef.getPart(true));
+			wpage.activate(viewRef.getPart(true));
+			PartSite site = (PartSite) viewRef.getPart(true).getSite();
+			ViewPane pane = (ViewPane) site.getPane();
+
+			assertTrue(pane.isVisible());
+			assertNotNull("This view must have a toolbar", pane.getToolBar());
+			assertTrue(pane.getToolBar().isVisible());
+
+			// open the editor and zoom it.
+			editor = page.openEditor(new FileEditorInput(test01), registry
+					.getDefaultEditor(test01.getName()).getId());
+			assertNotNull("must have my editor", editor);
+
+			IWorkbenchPartReference ref = wpage.getReference(editor);
+			wpage.toggleZoom(ref);
+			assertFalse(pane.isVisible());
+			assertFalse(pane.getToolBar().isVisible());
+
+			// switch to another perspective, and then switch back.
+			page.setPerspective(secondPerspective);
+
+			assertFalse(pane.isVisible());
+			assertFalse(pane.getToolBar().isVisible());
+
+			page.setPerspective(perspective);
+			processEvents();
+
+			// both the view and the toolbar must be not visible
+			assertFalse(pane.isVisible());
+			assertFalse(pane.getToolBar().isVisible());
+
+		} finally {
+			if (editor != null) {
+				page.closeEditor(editor, false);
+			}
+			page.closePerspective(perspective, false, false);
+			page.closePerspective(secondPerspective, false, false);
+		}
+	}
+
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
+	 */
     protected void doSetUp() throws Exception {
         window = openTestWindow();
         page = window.getActivePage();
