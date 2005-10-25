@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.wizards.datatransfer;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
@@ -41,7 +42,8 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 
 public class ExternalProjectImportWizard extends Wizard implements
         IImportWizard {
-    private WizardProjectsImportPage mainPage;
+    private static final String EXTERNAL_PROJECT_SECTION = "ExternalProjectImportWizard";//$NON-NLS-1$
+	private WizardProjectsImportPage mainPage;
 	
     /**
      * Constructor for ExternalProjectImportWizard.
@@ -49,6 +51,15 @@ public class ExternalProjectImportWizard extends Wizard implements
     public ExternalProjectImportWizard() {
         super();
         setNeedsProgressMonitor(true);
+        IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
+        		.getDialogSettings();
+        
+		IDialogSettings wizardSettings = workbenchSettings
+		        .getSection(EXTERNAL_PROJECT_SECTION);
+		if (wizardSettings == null)
+		    wizardSettings = workbenchSettings
+		            .addNewSection(EXTERNAL_PROJECT_SECTION);
+		setDialogSettings(wizardSettings);        
     }
 
     /* (non-Javadoc)

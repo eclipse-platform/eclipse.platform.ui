@@ -30,10 +30,19 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -60,7 +69,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.internal.ide.*;
+import org.eclipse.ui.internal.ide.IDEApplication;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
@@ -161,9 +173,16 @@ public class WizardProjectsImportPage extends WizardPage implements
 		}
 	}
     
+    // dialog store id constant
+    private final static String STORE_COPY_PROJECT_ID = "WizardProjectsImportPage.STORE_COPY_PROJECT_ID"; //$NON-NLS-1$
+	
 	private Text directoryPathField;
 
 	private CheckboxTreeViewer projectsList;
+	
+	private Button copyCheckbox;
+	
+	private boolean copyFiles = false;
 
 	private ProjectRecord[] selectedProjects = new ProjectRecord[0];
 
@@ -184,6 +203,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 	private Button browseDirectoriesButton;
 
 	private Button browseArchivesButton;
+	
+	private IProject[] wsProjects;
 
 	// constant from WizardArchiveFileResourceImportPage1
 	private static final String[] FILE_IMPORT_MASK = {
@@ -242,8 +263,29 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		createProjectsRoot(workArea);
 		createProjectsList(workArea);
+		createOptionsArea(workArea);
+		restoreWidgetValues();
 		Dialog.applyDialogFont(workArea);
 
+	}
+	
+	/**
+	 * Create the area with the extra options.
+	 * @param workArea
+	 */
+	private void createOptionsArea(Composite workArea){
+		Composite optionsGroup = new Composite(workArea, SWT.NONE);
+		optionsGroup.setLayout(new GridLayout());
+		optionsGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		copyCheckbox = new Button(optionsGroup, SWT.CHECK);
+		copyCheckbox.setText(DataTransferMessages.WizardProjectsImportPage_CopyProjectsIntoWorkspace);
+		copyCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		copyCheckbox.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				copyFiles = copyCheckbox.getSelection();
+			}
+		});
 	}
 
 	/**
@@ -289,7 +331,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
-				return selectedProjects;
+				return getValidProjects();
 			}
 
 			/*
@@ -345,7 +387,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 		projectsList.setInput(this);
 		projectsList.setSorter(new ViewerSorter());
 		createSelectionButtons(listComposite);
-
 	}
 
 	/**
@@ -553,6 +594,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 					browseArchivesButton.setEnabled(false);
 					updateProjectsList(directoryPathField.getText());
 					directoryPathField.setFocus();
+					copyCheckbox.setEnabled(true);
 				}
 			}
 		});
@@ -571,6 +613,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 					browseArchivesButton.setEnabled(true);
 					updateProjectsList(archivePathField.getText());
 					archivePathField.setFocus();
+					copyCheckbox.setSelection(true);
+					copyCheckbox.setEnabled(false);
 				}
 			}
 		});
@@ -710,7 +754,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		}
 
 		projectsList.refresh(true);
-		projectsList.setCheckedElements(selectedProjects);
+		projectsList.setCheckedElements(getValidProjects());
 		setPageComplete(selectedProjects.length > 0);
 	}
 
@@ -933,6 +977,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 *         successful.
 	 */
 	public boolean createProjects() {
+		saveWidgetValues();
 		final Object[] selected = projectsList.getCheckedElements();
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -1009,6 +1054,18 @@ public class WizardProjectsImportPage extends WizardPage implements
 			return true;
 		}
 		//import from file system
+		IPath importSource = null;
+		if (copyFiles){
+			// import project from location copying files - use default project location for this workspace
+			importSource = new Path(record.description.getLocationURI().getRawPath());
+			IProjectDescription desc = workspace.newProjectDescription(projectName);
+			desc.setBuildSpec(record.description.getBuildSpec());
+			desc.setNatureIds(record.description.getNatureIds());
+			desc.setDynamicReferences(record.description.getDynamicReferences());
+			desc.setReferencedProjects(record.description.getReferencedProjects());
+			record.description = desc;
+		}
+
 		try {
 			monitor.beginTask(
 					DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask, 
@@ -1022,6 +1079,21 @@ public class WizardProjectsImportPage extends WizardPage implements
 		} finally {
 			monitor.done();
 		}
+
+		// import operation to import project files if copy checkbox is selected
+		if (copyFiles){
+			List filesToImport = new ArrayList();
+			FileSystemStructureProvider provider = FileSystemStructureProvider.INSTANCE;
+			getFilesForProject(filesToImport, provider, importSource.toFile());
+			ImportOperation operation = new ImportOperation(project.getFullPath(), 
+					importSource.toFile(), 
+					FileSystemStructureProvider.INSTANCE, this, filesToImport);
+			operation.setContext(getShell());
+			operation.setOverwriteResources(true);	// need to overwrite .project, .classpath files
+			operation.setCreateContainerStructure(false);
+			operation.run(monitor);				
+		}
+		
 		return true;
 	}
 
@@ -1054,6 +1126,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 	/**
 	 * Execute the passed import operation. Answer a boolean indicating success.
+	 * 
+	 * @return true if the operation executed successfully, false otherwise
 	 */
 	protected boolean executeImportOperation(ImportOperation op) {
 		// initializeOperation(op);
@@ -1129,7 +1203,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 	/**
 	 * Method used for test suite.
-	 * @return A list of all the selected projects by name
+	 * @return ProjectRecord[] an array of all the selected projects by name
 	 */
 	public ProjectRecord[] getProjects() {
 		return selectedProjects;
@@ -1137,7 +1211,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 	/**
 	 * Method used for test suite.
-	 * @return The Import from Directory RadioButton
+	 * @return Button the Import from Directory RadioButton
 	 */
 	public Button getProjectFromDirectoryRadio() {
 		return projectFromDirectoryRadio;
@@ -1145,10 +1219,93 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 	/**
 	 * Method used for test suite.
-	 * @return The CheckboxTreeViewer containing all the projects found 
+	 * @return CheckboxTreeViewer the viewer containing all the projects found 
 	 */
 	public CheckboxTreeViewer getProjectsList() {
 		return projectsList;
 	}
+	
+	/**
+	 * Retrieve all the projects in the current workspace.
+	 * 
+	 * @return IProject[] array of IProject in the current workspace
+	 */
+	private IProject[] getProjectsInWorkspace(){
+		if (wsProjects == null)
+			wsProjects = IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getProjects();
+		return wsProjects;
+	}
 
+	/**
+	 * Get the array of valid project records that can be imported 
+	 * from the source workspace or archive, selected by the user.
+	 * If a project with the same name exists in both the source workspace and the 
+	 * current workspace, it will not appear in the list of projects to import and 
+	 * thus cannot be selected for import.
+	 *   
+	 * @return ProjectRecord[] array of projects that can be imported into the workspace
+	 */
+	private ProjectRecord[] getValidProjects(){
+		List validProjects = new ArrayList();
+		for (int i = 0; i < selectedProjects.length; i++){
+			if (!isProjectInWorkspace(selectedProjects[i].getProjectName()))
+				validProjects.add(selectedProjects[i]);
+		}
+		return (ProjectRecord[]) validProjects.toArray(new ProjectRecord[validProjects.size()]);
+	}
+	
+	/**
+	 * Determine if the project with the given name is in the current workspace.
+	 * 
+	 * @param projectName String the project name to check
+	 * @return boolean true if the project with the given name is in this workspace
+	 */
+	private boolean isProjectInWorkspace(String projectName){
+		if (projectName == null)
+			return false;
+		IProject[] workspaceProjects = getProjectsInWorkspace();
+		for (int i = 0; i <workspaceProjects.length; i++){
+			if (projectName.equals(workspaceProjects[i].getName()))
+				return true;
+		}
+		return false;
+	}
+	
+    /**
+     *	Use the dialog store to restore widget values to the values that they held
+     *	last time this wizard was used to completion.
+     *	
+     *	Method declared public only for use of tests.
+     */	
+    public void restoreWidgetValues() {
+        IDialogSettings settings = getDialogSettings();
+        if (settings != null) {
+            // checkbox	
+            copyCheckbox.setSelection(settings
+                    .getBoolean(STORE_COPY_PROJECT_ID));
+        }
+        copyFiles = copyCheckbox.getSelection();
+    }
+
+    /**
+     * 	Since Finish was pressed, write widget values to the dialog store so that they
+     *	will persist into the next invocation of this wizard page.
+     *
+     *	Method declared public only for use of tests.
+     */
+    public void saveWidgetValues() {
+        IDialogSettings settings = getDialogSettings();
+        if (settings != null) {
+            settings.put(STORE_COPY_PROJECT_ID,
+                    copyCheckbox.getSelection());
+        }
+    }
+
+    /**
+     * Method used for test suite.
+     * @return Button copy checkbox
+     */
+	public Button getCopyCheckbox() {
+		return copyCheckbox;
+	}    
 }
