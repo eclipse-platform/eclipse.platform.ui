@@ -37,7 +37,7 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  */
 public class ResourceMappingContentProvider implements IResourceMappingContentProvider {
 
-	private final ITeamViewerContext context;
+	private ITeamViewerContext context;
 	private final ModelProvider provider;
 	
 	public class ResourceAndDepth extends WorkbenchAdapter implements IAdaptable {
@@ -165,4 +165,11 @@ public class ResourceMappingContentProvider implements IResourceMappingContentPr
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         // Nothing to do
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.mapping.IResourceMappingContentProvider#init(org.eclipse.team.ui.mapping.ITeamViewerContext)
+	 */
+	public void init(ITeamViewerContext context) {
+		this.context = context;
+	}
 }
