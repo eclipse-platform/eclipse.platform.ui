@@ -14,7 +14,6 @@ import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IUpdatable;
 import org.eclipse.jface.binding.IUpdatableFactory;
 import org.eclipse.jface.binding.swt.SWTDatabindingContext;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -30,8 +29,7 @@ public class PersonSampleData {
 	public static DatabindingContext getSWTtoJavaBeanDatabindingContext(
 			Control aControl) {
 
-		DatabindingContext dbc = new SWTDatabindingContext(aControl,
-				SWT.FocusOut, SWT.FocusOut);
+		DatabindingContext dbc = new SWTDatabindingContext(aControl);
 
 		IUpdatableFactory emfValueFactory = new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {

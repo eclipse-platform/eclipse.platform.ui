@@ -49,10 +49,10 @@ public class TextUpdatableValue extends UpdatableValue {
 
 	/**
 	 * @param text
-	 * @param updatePolicy
 	 * @param validatePolicy
+	 * @param updatePolicy
 	 */
-	public TextUpdatableValue(Text text, int updatePolicy, int validatePolicy) {
+	public TextUpdatableValue(Text text, int validatePolicy, int updatePolicy) {
 		this.text = text;
 		if (updatePolicy != SWT.None) {
 			text.addListener(updatePolicy, updateListener);

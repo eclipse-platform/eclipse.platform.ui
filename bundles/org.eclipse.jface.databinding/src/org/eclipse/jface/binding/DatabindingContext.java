@@ -219,7 +219,10 @@ public class DatabindingContext {
 		}
 
 		CollectionBinding binding = new CollectionBinding(this,
-				targetCollection, modelCollection, converter, validator);
+				targetCollection, modelCollection, new BindSpec(converter,
+						validator));
+		targetCollection.addChangeListener(binding);
+		modelCollection.addChangeListener(binding);
 		binding.updateTargetFromModel();
 
 	}
@@ -243,11 +246,13 @@ public class DatabindingContext {
 	 *            values
 	 * @param targetValidator
 	 *            the validator for validating updated target values
+	 * @throws BindingException
 	 */
 	public void bind(final IUpdatableValue target, final IUpdatableValue model,
-			final IConverter converter, final IValidator targetValidator) {
+			final IConverter converter, final IValidator targetValidator)
+			throws BindingException {
 		ValueBinding valueBinding = new ValueBinding(this, target, model,
-				converter, targetValidator);
+				new BindSpec(converter, targetValidator));
 		target.addChangeListener(valueBinding);
 		model.addChangeListener(valueBinding);
 		valueBinding.updateTargetFromModel();
@@ -628,16 +633,18 @@ public class DatabindingContext {
 
 	protected void registerValueFactories() {
 		addUpdatableFactory2(new IUpdatableFactory2() {
-			public IUpdatable createUpdatable(Object description)
+			public IUpdatable createUpdatable(Map properties, Object description)
 					throws BindingException {
 				if (description instanceof PropertyDescription) {
 					PropertyDescription propertyDescription = (PropertyDescription) description;
-					// TODO this should be removed if/when we switch to bind2 completely
+					// TODO this should be removed if/when we switch to bind2
+					// completely
 					return DatabindingContext.this.createUpdatable(
 							propertyDescription.getObject(),
 							propertyDescription.getPropertyID());
 				} else if (description instanceof ListDescription) {
-					// ListDescription was not handled already, turn it into a TableDescription and try again
+					// ListDescription was not handled already, turn it into a
+					// TableDescription and try again
 					ListDescription listDescription = (ListDescription) description;
 					TableDescription tableDescription = new TableDescription(
 							listDescription.getObject(),
@@ -653,7 +660,8 @@ public class DatabindingContext {
 							propertyDescription.getPropertyType());
 				} else if (description instanceof NestedTableDescription) {
 					NestedTableDescription tableDescription = (NestedTableDescription) description;
-					return new NestedUpdatableTable(DatabindingContext.this,tableDescription);
+					return new NestedUpdatableTable(DatabindingContext.this,
+							tableDescription);
 				}
 				return null;
 			}
@@ -753,19 +761,16 @@ public class DatabindingContext {
 			if (modelUpdatable instanceof IUpdatableValue) {
 				IUpdatableValue target = (IUpdatableValue) targetUpdatable;
 				IUpdatableValue model = (IUpdatableValue) modelUpdatable;
-				IConverter converter = bindSpec == null ? null : bindSpec
-						.getConverter();
-				if (converter == null) {
-					converter = getConverter(target.getValueType(), model
-							.getValueType(), isDefaultIdentityConverter());
-				}
-				IValidator validator = bindSpec == null ? null : bindSpec
-						.getValidator();
-				if (validator == null) {
-					validator = getValidator(converter);
-				}
-				binding = new ValueBinding(this, target, model, converter,
-						validator);
+				binding = new ValueBinding(this, target, model, bindSpec);
+			} else {
+				throw new BindingException(
+						"incompatible updatables (target is value, model is not)"); //$NON-NLS-1$
+			}
+		} else if (targetUpdatable instanceof IUpdatableCollection) {
+			if (modelUpdatable instanceof IUpdatableCollection) {
+				IUpdatableCollection target = (IUpdatableCollection) targetUpdatable;
+				IUpdatableCollection model = (IUpdatableCollection) modelUpdatable;
+				binding = new CollectionBinding(this, target, model, bindSpec);
 			} else {
 				throw new BindingException(
 						"incompatible updatables (target is value, model is not)"); //$NON-NLS-1$
@@ -847,9 +852,12 @@ public class DatabindingContext {
 
 	public IUpdatable createUpdatable2(Object description)
 			throws BindingException {
+		Map properties = new HashMap();
+		collectProperties(properties);
 		for (int i = factories2.size() - 1; i >= 0; i--) {
 			IUpdatableFactory2 factory = (IUpdatableFactory2) factories2.get(i);
-			IUpdatable result = factory.createUpdatable(description);
+			IUpdatable result = factory
+					.createUpdatable(properties, description);
 			if (result != null) {
 				return result;
 			}
@@ -859,6 +867,12 @@ public class DatabindingContext {
 		}
 		throw new BindingException("could not find updatable for " //$NON-NLS-1$
 				+ description);
+	}
+
+	protected void collectProperties(Map properties) {
+		if (parent != null) {
+			parent.collectProperties(properties);
+		}
 	}
 
 	public void addUpdatableFactory2(IUpdatableFactory2 updatableFactory) {

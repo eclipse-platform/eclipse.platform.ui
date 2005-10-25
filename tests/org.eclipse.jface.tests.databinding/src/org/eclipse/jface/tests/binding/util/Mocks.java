@@ -150,7 +150,7 @@ public class Mocks {
 
 		public void verify() {
 			if (previousCallHistory == null) {
-				if(currentCallHistory.size() == 0) {
+				if (currentCallHistory.size() == 0) {
 					// mock object was not used at all
 					return;
 				}
@@ -242,7 +242,7 @@ public class Mocks {
 		}
 		MockInvocationHandler mockInvocationHandler = new MockInvocationHandler(
 				ordered, equalityComparator);
-		Object newProxyInstance = Proxy.newProxyInstance(interfaceType
+		Object newProxyInstance = Proxy.newProxyInstance(Mocks.class
 				.getClassLoader(), new Class[] { interfaceType, Mock.class },
 				mockInvocationHandler);
 		return newProxyInstance;

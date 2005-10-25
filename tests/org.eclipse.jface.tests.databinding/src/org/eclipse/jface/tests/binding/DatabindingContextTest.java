@@ -71,7 +71,7 @@ public class DatabindingContextTest extends TestCase {
 		super.tearDown();
 	}
 
-	public void testBindValueModel() {
+	public void testBindValueModel() throws BindingException {
 		Mocks.reset(updatableValueRMock);
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.getValue();
@@ -83,7 +83,7 @@ public class DatabindingContextTest extends TestCase {
 		Mocks.verify(updatableValueRMock);
 	}
 
-	public void testBindValueTarget() {
+	public void testBindValueTarget() throws BindingException {
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.setValue(null, null);
 		updatableValueRMock.getValue();

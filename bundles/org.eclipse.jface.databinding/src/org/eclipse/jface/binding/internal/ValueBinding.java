@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.binding.internal;
 
+import org.eclipse.jface.binding.BindingException;
 import org.eclipse.jface.binding.DatabindingContext;
+import org.eclipse.jface.binding.IBindSpec;
 import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.IConverter;
 import org.eclipse.jface.binding.IUpdatableValue;
@@ -26,9 +28,9 @@ public class ValueBinding extends Binding {
 
 	private final IUpdatableValue model;
 
-	private final IValidator validator;
+	private IValidator validator;
 
-	private final IConverter converter;
+	private IConverter converter;
 
 	/**
 	 * @param context
@@ -36,22 +38,31 @@ public class ValueBinding extends Binding {
 	 * @param model
 	 * @param converter
 	 * @param validator
+	 * @throws BindingException 
 	 */
 	public ValueBinding(DatabindingContext context, IUpdatableValue target,
-			IUpdatableValue model, IConverter converter, IValidator validator) {
+			IUpdatableValue model, IBindSpec bindSpec) throws BindingException {
 		super(context);
 		this.target = target;
 		this.model = model;
-		this.converter = converter;
-		this.validator = validator;
+		converter = bindSpec == null ? null : bindSpec
+				.getConverter();
+		if (converter == null) {
+			converter = context.getConverter(target.getValueType(), model
+					.getValueType(), context.isDefaultIdentityConverter());
+		}
+		validator = bindSpec == null ? null : bindSpec
+				.getValidator();
+		if (validator == null) {
+			validator = context.getValidator(converter);
+		}
 	}
 
 	public void handleChange(IChangeEvent changeEvent) {
 		if (changeEvent.getUpdatable() == target) {
 			if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
 				// we are notified of a pending change, do validation
-				// and
-				// veto the change if it is not valid
+				// and veto the change if it is not valid
 				Object value = changeEvent.getNewValue();
 				String partialValidationError = validator
 						.isPartiallyValid(value);
@@ -62,8 +73,7 @@ public class ValueBinding extends Binding {
 				}
 			} else {
 				// the target (usually a widget) has changed, validate
-				// the
-				// value and update the source
+				// the value and update the source
 				updateModelFromTarget();
 			}
 		} else {
@@ -81,8 +91,8 @@ public class ValueBinding extends Binding {
 			try {
 				model.setValue(converter.convertTargetToModel(value), this);
 			} catch (Exception ex) {
-				context.updateValidationError(this,
-						BindingMessages.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
+				context.updateValidationError(this, BindingMessages
+						.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
 			}
 		}
 	}

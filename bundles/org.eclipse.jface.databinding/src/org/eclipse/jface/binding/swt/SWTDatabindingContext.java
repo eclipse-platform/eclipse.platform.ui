@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.binding.swt;
 
+import java.util.Map;
+
 import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IUpdatable;
 import org.eclipse.jface.binding.IUpdatableFactory;
@@ -25,6 +27,7 @@ import org.eclipse.jface.binding.internal.swt.TextUpdatableValue;
 import org.eclipse.jface.binding.internal.viewers.AbstractListViewerUpdatableTable;
 import org.eclipse.jface.binding.internal.viewers.StructuredViewerUpdatableValue;
 import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableCollection;
+import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableCollectionExtended;
 import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableTable;
 import org.eclipse.jface.binding.internal.viewers.UpdatableCollectionViewer;
 import org.eclipse.jface.viewers.AbstractListViewer;
@@ -57,28 +60,66 @@ public class SWTDatabindingContext extends DatabindingContext {
 	 */
 	public static String JFACE_VIEWER_SELECTION = "selection"; //$NON-NLS-1$
 
-	private final int validatePolicy;
-
-	private final int updatePolicy;
+	/**
+	 * Constant specifiying that validation or update events from UI updatables
+	 * should be triggered early, typically on each keystroke.
+	 */
+	public static final int TIME_EARLY = 1;
 
 	/**
-	 * 
-	 * @param control
-	 * @param validatePolicy
-	 *            one of SWT.Modify, SWT.FocusOut, or SWT.None
-	 * @param updatePolicy
-	 *            one of SWT.Modify, SWT.FocusOut, or SWT.None
+	 * Constant specifiying that validation or update events from UI updatables
+	 * should be triggered late, typically on focus lost.
 	 */
-	public SWTDatabindingContext(Control control, int validatePolicy,
-			int updatePolicy) {
+	public static final int TIME_LATE = 2;
+
+	/**
+	 * Constant specifiying that validation or update events from UI updatables
+	 * should never be triggered. Note that this means that the updatable will
+	 * not track the underlying widget's changes.
+	 */
+	public static final int TIME_NEVER = 3;
+
+	/**
+	 * Key for the validation time property in the properties map (see
+	 * collectProperties) that is passed to IUpdatableFactory2
+	 */
+	public static final String VALIDATION_TIME = "org.eclipse.jface.binding.swt.SWTDatabindingContext.validationTime"; //$NON-NLS-1$
+
+	/**
+	 * Key for the update time property in the properties map (see
+	 * collectProperties) that is passed to IUpdatableFactory2
+	 */
+	public static final String UPDATE_TIME = "org.eclipse.jface.binding.swt.SWTDatabindingContext.updateTime"; //$NON-NLS-1$
+
+	private int validationTime;
+
+	private int updateTime;
+
+	/**
+	 * @param control
+	 * @param validationTime
+	 * @param updateTime
+	 */
+	public SWTDatabindingContext(Control control, int validationTime,
+			int updateTime) {
 		super();
-		this.validatePolicy = validatePolicy;
-		this.updatePolicy = updatePolicy;
+		this.validationTime = validationTime;
+		this.updateTime = updateTime;
 		control.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
 			}
 		});
+	}
+
+	/**
+	 * Creates a data binding context with validationTime==TIME_EARLY and
+	 * updateTime=TIME_LATE.
+	 * 
+	 * @param control
+	 */
+	public SWTDatabindingContext(Control control) {
+		this(control, TIME_EARLY, TIME_LATE);
 	}
 
 	protected void registerValueFactories() {
@@ -183,30 +224,67 @@ public class SWTDatabindingContext extends DatabindingContext {
 
 		// new stuff
 		addUpdatableFactory2(new IUpdatableFactory2() {
-			public IUpdatable createUpdatable(Object description) {
+			public IUpdatable createUpdatable(Map properties, Object description) {
 				if (description instanceof TableViewer) {
 					return new TableViewerUpdatableTable(
 							(TableViewer) description);
 				} else if (description instanceof AbstractListViewer) {
 					return new AbstractListViewerUpdatableTable(
 							(AbstractListViewer) description);
+				} else if (description instanceof Text) {
+					int validatePolicy = getPolicy(properties,
+							SWTDatabindingContext.VALIDATION_TIME, SWT.Modify);
+					int updatePolicy = getPolicy(properties,
+							SWTDatabindingContext.UPDATE_TIME, SWT.FocusOut);
+					return new TextUpdatableValue((Text) description,
+							validatePolicy, updatePolicy);
+				} else if(description instanceof TableViewerDescription) {
+					return new TableViewerUpdatableCollectionExtended((TableViewerDescription) description);
 				}
 				return null;
+			}
+
+			private int getPolicy(Map properties, String propertyName,
+					int defaultPolicy) {
+				int policy = defaultPolicy;
+				Integer time = (Integer) properties.get(propertyName);
+				if (time != null) {
+					switch (time.intValue()) {
+					case SWTDatabindingContext.TIME_EARLY:
+						policy = SWT.Modify;
+						break;
+					case SWTDatabindingContext.TIME_LATE:
+						policy = SWT.FocusOut;
+						break;
+					case SWTDatabindingContext.TIME_NEVER:
+						policy = SWT.None;
+						break;
+					}
+				}
+				return policy;
 			}
 		});
 	}
 
-	/**
-	 * @return the update policy
-	 */
-	public int getUpdatePolicy() {
-		return updatePolicy;
+	public int getUpdateTime() {
+		return updateTime;
 	}
 
-	/**
-	 * @return the validation policy
-	 */
-	public int getValidatePolicy() {
-		return validatePolicy;
+	public void setUpdateTime(int updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public int getValidationTime() {
+		return validationTime;
+	}
+
+	public void setValidationTime(int validationTime) {
+		this.validationTime = validationTime;
+	}
+
+	protected void collectProperties(Map properties) {
+		super.collectProperties(properties);
+		properties.put(VALIDATION_TIME, new Integer(validationTime));
+		properties.put(UPDATE_TIME, new Integer(updateTime));
 	}
 }

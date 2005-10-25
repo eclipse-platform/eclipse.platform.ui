@@ -11,6 +11,7 @@
 package org.eclipse.jface.binding.internal;
 
 import org.eclipse.jface.binding.DatabindingContext;
+import org.eclipse.jface.binding.IBindSpec;
 import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.IConverter;
@@ -22,9 +23,7 @@ import org.eclipse.jface.binding.IValidator;
  * 
  * 
  */
-public class CollectionBinding implements IChangeListener {
-
-	private final DatabindingContext context;
+public class CollectionBinding extends Binding implements IChangeListener {
 
 	private final IUpdatableCollection target;
 
@@ -38,25 +37,16 @@ public class CollectionBinding implements IChangeListener {
 	 * @param context
 	 * @param target
 	 * @param model
-	 * @param converter
-	 * @param validator
+	 * @param bindSpec 
 	 */
 	public CollectionBinding(DatabindingContext context,
 			IUpdatableCollection target, IUpdatableCollection model,
-			IConverter converter, IValidator validator) {
-		super();
-		this.context = context;
+			IBindSpec bindSpec) {
+		super(context);
 		this.target = target;
 		this.model = model;
-		this.converter = converter;
-		this.validator = validator;
-
-		initialize();
-	}
-
-	private void initialize() {
-		target.addChangeListener(this);
-		model.addChangeListener(this);
+		this.converter = bindSpec == null ? null : bindSpec.getConverter();
+		this.validator = bindSpec == null ? null : bindSpec.getValidator();
 	}
 
 	public void handleChange(IChangeEvent changeEvent) {

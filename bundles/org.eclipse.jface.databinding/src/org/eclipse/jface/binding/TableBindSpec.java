@@ -1,15 +1,22 @@
 package org.eclipse.jface.binding;
 
+public class TableBindSpec extends BindSpec implements ITableBindSpec {
 
-public class TableBindSpec implements ITableBindSpec {
-	
 	private IConverter[] columnConverters;
+
 	private IValidator[] columnValidators;
-	public TableBindSpec(IConverter[] columnConverters, IValidator[] columnValidators){
+
+	/**
+	 * @param columnConverters
+	 * @param columnValidators
+	 */
+	public TableBindSpec(IConverter[] columnConverters,
+			IValidator[] columnValidators) {
+		super(null, null);
 		this.columnConverters = columnConverters;
-		if(columnConverters != null){
+		if (columnConverters != null) {
 			for (int i = 0; i < columnConverters.length; i++) {
-				if(columnConverters[i] == null){
+				if (columnConverters[i] == null) {
 					columnConverters[i] = new IdentityConverter(String.class);
 				}
 			}
