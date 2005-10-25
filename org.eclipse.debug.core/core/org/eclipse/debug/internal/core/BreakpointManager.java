@@ -279,7 +279,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * of the workspace until a request is made to retrieve the 
 	 * breakpoints.
 	 */
-	private Vector getBreakpoints0() {
+	private synchronized Vector getBreakpoints0() {
 		if (fBreakpoints == null) {
 			initializeBreakpoints();
 		}
@@ -291,16 +291,18 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	public IBreakpoint[] getBreakpoints(String modelIdentifier) {
 		Vector allBreakpoints= getBreakpoints0();
-		ArrayList temp= new ArrayList(allBreakpoints.size());
-		Iterator breakpoints= allBreakpoints.iterator();
-		while (breakpoints.hasNext()) {
-			IBreakpoint breakpoint= (IBreakpoint) breakpoints.next();
-			String id= breakpoint.getModelIdentifier();
-			if (id != null && id.equals(modelIdentifier)) {
-				temp.add(breakpoint);
+		synchronized (allBreakpoints) {
+			ArrayList temp= new ArrayList(allBreakpoints.size());
+			Iterator breakpoints= allBreakpoints.iterator();
+			while (breakpoints.hasNext()) {
+				IBreakpoint breakpoint= (IBreakpoint) breakpoints.next();
+				String id= breakpoint.getModelIdentifier();
+				if (id != null && id.equals(modelIdentifier)) {
+					temp.add(breakpoint);
+				}
 			}
+			return (IBreakpoint[]) temp.toArray(new IBreakpoint[temp.size()]);
 		}
-		return (IBreakpoint[]) temp.toArray(new IBreakpoint[temp.size()]);
 	}
 
 	/**
