@@ -681,7 +681,18 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				setAction(COPY_ACTION, getAction(DETAIL_COPY_ACTION));
 				getViewSite().getActionBars().updateActionBars();
 				setFocusViewer((Viewer)getDetailViewer());
+				IAction assist = getAction("ContentAssist"); //$NON-NLS-1$
+				getSite().getKeyBindingService().registerAction(assist);
 			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
+			 */
+			public void focusLost(FocusEvent e) {
+				IAction assist = getAction("ContentAssist"); //$NON-NLS-1$
+				getSite().getKeyBindingService().unregisterAction(assist);
+			}
+		
 		});
 		
 		// add a context menu to the detail area
@@ -843,7 +854,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		textAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
 		setAction("ContentAssist", textAction); //$NON-NLS-1$
-		getSite().getKeyBindingService().registerAction(textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.SELECT_ALL);
 		textAction.configureAction(VariablesViewMessages.VariablesView_Select__All_5, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
