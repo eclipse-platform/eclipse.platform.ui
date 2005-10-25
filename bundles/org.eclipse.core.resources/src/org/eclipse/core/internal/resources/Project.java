@@ -542,6 +542,9 @@ public class Project extends Container implements IProject {
 
 				// set the description
 				destination.internalSetDescription(destDesc, false);
+				
+				//create the directory for the new project
+				destination.getStore().mkdir(EFS.NONE, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 
 				// call super.copy for each child (excluding project description file)
 				//make it a best effort copy
@@ -573,7 +576,7 @@ public class Project extends Container implements IProject {
 					}
 					throw e;
 				}
-				monitor.worked(Policy.opWork * 10 / 100);
+				monitor.worked(Policy.opWork * 5 / 100);
 
 				// refresh local
 				monitor.subTask(Messages.resources_updating);

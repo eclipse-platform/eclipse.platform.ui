@@ -121,6 +121,7 @@ public interface IFileStore extends IAdaptable {
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This store does not exist.</li>
+	 * <li> The parent of the destination project does not exist.</li>
 	 * <li> The <code>OVERWRITE</code> flag is not specified and a file of the
 	 * same name already exists at the copy destination.</li>
 	 * </ul>

@@ -230,7 +230,6 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 			InputStream in = null;
 			OutputStream out = null;
 			try {
-				destination.getParent().mkdir(EFS.NONE, null);
 				in = openInputStream(EFS.NONE, Policy.subMonitorFor(monitor, 0));
 				out = destination.openOutputStream(EFS.NONE, Policy.subMonitorFor(monitor, 0));
 				transferStreams(in, out, sourcePath, monitor);
