@@ -320,4 +320,16 @@ public abstract class AbstractConsole implements IConsole {
         return fType;
     }
     
+    /**
+     * Returns the help context identifier for this console, or <code>null</code>
+     * if none. When a non-<code>null</code> value is returned the associated help
+     * will be installed for this console.
+     * 
+     * @return help context id or <code>null</code>
+     * @since 3.2
+     */
+    public String getHelpContextId() {
+    	return null;
+    }
+    
 }

@@ -60,6 +60,7 @@ public interface IDebugHelpContextIds {
 	public static final String EXPRESSION_VIEW = PREFIX + "expression_view_context"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_VIEW = PREFIX + "launch_configuration_view_context"; //$NON-NLS-1$
 	public static final String REGISTERS_VIEW = PREFIX + "registers_view_context"; //$NON-NLS-1$
+	public static final String PROCESS_CONSOLE = PREFIX + "process_console_context";  //$NON-NLS-1$
 	
 	// Preference pages
 	public static final String DEBUG_PREFERENCE_PAGE = PREFIX + "debug_preference_page_context"; //$NON-NLS-1$

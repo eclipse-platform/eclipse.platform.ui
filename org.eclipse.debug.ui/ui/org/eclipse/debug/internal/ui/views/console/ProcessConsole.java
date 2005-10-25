@@ -48,6 +48,7 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -806,5 +807,14 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             return fFile.exists();
         }
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.AbstractConsole#getHelpContextId()
+	 */
+	public String getHelpContextId() {
+		return IDebugHelpContextIds.PROCESS_CONSOLE;
+	}
+    
+    
 
 }

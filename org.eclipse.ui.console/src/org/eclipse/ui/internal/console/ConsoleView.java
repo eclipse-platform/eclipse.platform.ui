@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -26,6 +27,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.AbstractConsole;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
@@ -155,7 +157,8 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	        fStack.add(0,fActiveConsole);
 	        activateParticipants(fActiveConsole);
 	    }
-	    updateTitle();		
+	    updateTitle();	
+	    updateHelp();
 	    // update console actions
 	    if (fPinAction != null) {
 	        fPinAction.update();
@@ -207,6 +210,19 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
                 setContentDescription(console.getName()); 
             }
         }
+    }
+    
+    protected void updateHelp() {
+    	IConsole console = getConsole();
+    	String helpContextId = null;
+		if (console instanceof AbstractConsole) {
+			AbstractConsole abs = (AbstractConsole) console;
+			helpContextId = abs.getHelpContextId();
+		}
+		if (helpContextId == null) {
+			helpContextId = IConsoleHelpContextIds.CONSOLE_VIEW;
+		}
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getPageBook().getParent(), helpContextId);
     }
 
 	/* (non-Javadoc)
