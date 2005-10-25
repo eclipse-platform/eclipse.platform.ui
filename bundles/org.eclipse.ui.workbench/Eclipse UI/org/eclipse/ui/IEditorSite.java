@@ -36,13 +36,13 @@ public interface IEditorSite extends IWorkbenchPartSite {
     public IEditorActionBarContributor getActionBarContributor();
 
     /**
-     * Returns the action bars for this part site. Editors of the same type
-     * share the same action bars. Contributions to the action bars are done
-     * by the <code>IEditorActionBarContributor</code>.
-     *
-     * @return the action bars
-     * @since 2.1
-     */
+	 * Returns the action bars for this part site. Editors of the same type (and
+	 * in the same window) share the same action bars. Contributions to the
+	 * action bars are done by the <code>IEditorActionBarContributor</code>.
+	 * 
+	 * @return the action bars
+	 * @since 2.1
+	 */
     public IActionBars getActionBars();
 
     /**
