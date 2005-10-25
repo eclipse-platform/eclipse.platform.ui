@@ -1,5 +1,6 @@
 package org.eclipse.jface.binding;
 
+
 public class TableBindSpec implements ITableBindSpec {
 	
 	private IConverter[] columnConverters;
@@ -29,6 +30,11 @@ public class TableBindSpec implements ITableBindSpec {
 	}
 
 	public IValidator getValidator() {
+		return null;
+	}
+
+	public IColumn[] getColumns() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
