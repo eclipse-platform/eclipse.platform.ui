@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
+import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.team.ui.mapping.ITeamViewerContext;
 
@@ -28,7 +29,7 @@ import org.eclipse.team.ui.mapping.ITeamViewerContext;
  */
 public interface INavigatorContentExtensionFactory {
 
-	public NavigatorContentExtension createProvider(ITeamViewerContext context);
+	public NavigatorContentExtension createProvider(ModelProvider provider, ITeamViewerContext context);
 	
 	/**
 	 * TODO: Should not need this but I added it to make it work

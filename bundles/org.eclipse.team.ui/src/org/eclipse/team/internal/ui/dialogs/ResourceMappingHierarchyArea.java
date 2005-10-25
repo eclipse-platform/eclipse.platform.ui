@@ -48,11 +48,11 @@ public class ResourceMappingHierarchyArea extends DialogArea {
             this.providers = providers;
         }
 
-        public Object getRoot() {
-        	IResourceMappingContentProvider provider = getSingleProvider();
-        	if (provider != null) {
-				Object root = provider.getRoot();
-        		providerMap.put(root, getNavigatorContentExtension(root));
+        public Object getInput() {
+        	if (providers.size() == 1) {
+        		NavigatorContentExtension nce = getNavigatorContentExtension(this);
+        		Object root = nce.getModelProvider();
+				providerMap.put(root, nce);
 				return root;
         	}
             return this;
@@ -68,7 +68,7 @@ public class ResourceMappingHierarchyArea extends DialogArea {
                	for (Iterator iter = providers.values().iterator(); iter.hasNext();) {
                		NavigatorContentExtension extension = (NavigatorContentExtension) iter.next();
                		IResourceMappingContentProvider provider = extension.getContentProvider();
-                    Object element = provider.getRoot();
+                    Object element = extension.getModelProvider();
                     providerMap.put(element, extension);
                     result.add(element);
                 }
@@ -94,11 +94,11 @@ public class ResourceMappingHierarchyArea extends DialogArea {
         	}
         	if (element == this)
         		return null;
-        	IResourceMappingContentProvider provider = getProvider(element);
-        	if (element == provider.getRoot()) {
+        	NavigatorContentExtension nce = getNavigatorContentExtension(element);
+        	if (element == nce.getModelProvider()) {
         		return this;
         	}
-            return provider.getParent(element);
+            return nce.getContentProvider().getParent(element);
         }
 
 		private NavigatorContentExtension getNavigatorContentExtension(Object element) {
@@ -225,7 +225,7 @@ public class ResourceMappingHierarchyArea extends DialogArea {
 				}
 			}
 			if (factory != null) {
-				NavigatorContentExtension extension = factory.createProvider(context);
+				NavigatorContentExtension extension = factory.createProvider(provider, context);
 				extensions.put(provider, extension);
 			}
 		}
@@ -264,7 +264,7 @@ public class ResourceMappingHierarchyArea extends DialogArea {
     }
 
     private Object getInput() {
-        return getContentProvider().getRoot();
+        return getContentProvider().getInput();
     }
 
     private CompositeContentProvider getContentProvider() {

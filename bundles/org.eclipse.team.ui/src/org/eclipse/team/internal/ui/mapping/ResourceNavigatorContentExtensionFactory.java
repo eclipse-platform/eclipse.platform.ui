@@ -23,8 +23,8 @@ public class ResourceNavigatorContentExtensionFactory implements
 		this.provider = provider;
 	}
 
-	public NavigatorContentExtension createProvider(ITeamViewerContext context) {
-		return new NavigatorContentExtension(context) {
+	public NavigatorContentExtension createProvider(final ModelProvider provider, ITeamViewerContext context) {
+		return new NavigatorContentExtension(provider, context) {
 			private ResourceMappingContentProvider resourceMappingContentProvider;
 			public IResourceMappingContentProvider getContentProvider() {
 				if (resourceMappingContentProvider == null)
