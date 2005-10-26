@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import java.util.Iterator;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -53,17 +51,16 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 	 * Displays a list of resolutions and performs the selection.
 	 */
 	public void run() {
-		
-		final MarkerResolutionWizard[] wizard = new MarkerResolutionWizard[1];
 
+		final MarkerResolutionWizard[] wizard = new MarkerResolutionWizard[1];
 
 		Job processingJob = new WorkbenchJob(
 				MarkerMessages.ActionResolveMarker_CalculatingJob) {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
-				IMarker[] markers = getSelectedMarkers();				
-			
+				IMarker[] markers = getSelectedMarkers();
+
 				try {
 					wizard[0] = new MarkerResolutionWizard(markers, MarkerList
 							.compute(view.getMarkerTypes()));
@@ -113,15 +110,10 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
-		setEnabled(false);
-		if (selection.size() == 0) {
-			return;
-		}
-		Iterator markers = selection.iterator();
+		IMarker[] markers = getSelectedMarkers(selection);
 
-		while (markers.hasNext()) {
-			IMarker next = ((ConcreteMarker)markers.next()).getMarker();
-			if (IDE.getMarkerHelpRegistry().hasResolutions(next)) {
+		for (int i = 0; i < markers.length; i++) {
+			if (IDE.getMarkerHelpRegistry().hasResolutions(markers[i])) {
 				setEnabled(true);
 				return;
 			}

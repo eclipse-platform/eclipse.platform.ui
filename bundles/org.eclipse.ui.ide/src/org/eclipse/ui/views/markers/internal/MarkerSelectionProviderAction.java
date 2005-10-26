@@ -42,7 +42,16 @@ public abstract class MarkerSelectionProviderAction extends SelectionProviderAct
 	 */
 	IMarker[] getSelectedMarkers(){
 		
-		Object[] selection = getStructuredSelection().toArray();
+		return getSelectedMarkers(getStructuredSelection());
+	}
+
+	/**
+	 * Return the selected markers for the structured selection.
+	 * @param structured IStructuredSelection
+	 * @return IMarker[]
+	 */
+	IMarker[] getSelectedMarkers(IStructuredSelection structured) {
+		Object[] selection = structured.toArray();
 		ArrayList markers = new ArrayList();
 		for (int i = 0; i < selection.length; i++) {
 			MarkerNode object =(MarkerNode) selection[i];
