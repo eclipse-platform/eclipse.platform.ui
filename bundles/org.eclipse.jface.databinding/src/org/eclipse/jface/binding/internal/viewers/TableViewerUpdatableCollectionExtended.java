@@ -9,13 +9,13 @@ import org.eclipse.jface.binding.IValidator;
 import org.eclipse.jface.binding.IdentityConverter;
 import org.eclipse.jface.binding.swt.TableViewerDescription;
 import org.eclipse.jface.binding.swt.TableViewerDescription.Column;
-import org.eclipse.jface.binding.swt.TableViewerDescription.ImageAndString;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Item;
 
@@ -46,10 +46,10 @@ public class TableViewerUpdatableCollectionExtended extends
 		public Image getColumnImage(Object element, int columnIndex) {
 			Column column = getColumn(columnIndex);
 			IConverter converter = column.getConverter();
-			if (converter.getTargetType().equals(ImageAndString.class)) {
-				ImageAndString imageAndString = (ImageAndString) getConvertedValue(
+			if (converter.getTargetType().equals(ViewerLabel.class)) {
+				ViewerLabel viewerLabel = (ViewerLabel) getConvertedValue(
 						element, column);
-				return imageAndString.getImage();
+				return viewerLabel.getImage();
 			}
 			return null;
 		}
@@ -58,9 +58,9 @@ public class TableViewerUpdatableCollectionExtended extends
 			Column column = getColumn(columnIndex);
 			Object convertedValue = getConvertedValue(element, column);
 			IConverter converter = column.getConverter();
-			if (converter.getTargetType().equals(ImageAndString.class)) {
-				ImageAndString imageAndString = (ImageAndString) convertedValue;
-				return imageAndString.getString();
+			if (converter.getTargetType().equals(ViewerLabel.class)) {
+				ViewerLabel viewerLabel = (ViewerLabel) convertedValue;
+				return viewerLabel.getText();
 			}
 			return (String) convertedValue;
 		}

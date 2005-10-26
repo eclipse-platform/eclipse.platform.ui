@@ -8,15 +8,8 @@ import org.eclipse.jface.binding.IValidator;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.graphics.Image;
 
 public class TableViewerDescription {
-
-	public static interface ImageAndString {
-		public Image getImage();
-
-		public String getString();
-	}
 
 	public static class Column {
 		private String name;
