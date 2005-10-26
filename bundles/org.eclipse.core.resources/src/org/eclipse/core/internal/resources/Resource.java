@@ -649,7 +649,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = NLS.bind(Messages.resources_deleting, getFullPath());
-			monitor.beginTask(message, Policy.totalWork * 1000);
+			monitor.beginTask("", Policy.totalWork * 1000); //$NON-NLS-1$
+			monitor.subTask(message);
 			final ISchedulingRule rule = workspace.getRuleFactory().deleteRule(this);
 			try {
 				workspace.prepareOperation(rule, monitor);

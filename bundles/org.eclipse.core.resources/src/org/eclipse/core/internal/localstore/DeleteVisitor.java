@@ -20,6 +20,7 @@ import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	protected IProgressMonitor monitor;
@@ -27,13 +28,21 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	protected boolean keepHistory;
 	protected MultiStatus status;
 	protected List skipList;
+	
+	/**
+	 * The number of tickets available on the progress monitor
+	 */
+	private int ticks;
 
-	public DeleteVisitor(List skipList, int flags, IProgressMonitor monitor) {
+	public DeleteVisitor(List skipList, int flags, IProgressMonitor monitor, int ticks) {
 		this.skipList = skipList;
+		this.ticks = ticks;
 		this.force = (flags & IResource.FORCE) != 0;
 		this.keepHistory = (flags & IResource.KEEP_HISTORY) != 0;
 		this.monitor = monitor;
 		status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.localstore_deleteProblem, null);
+		if (keepHistory)
+			ticks *= 2;
 	}
 
 	/**
@@ -50,10 +59,12 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 			}
 			node.removeChildrenFromTree();
 			//delete from disk
+			int work = ticks < 0 ? 0 : ticks;
+			ticks -= work;
 			if (localFile != null && !target.isLinked())
-				localFile.delete(EFS.NONE, Policy.subMonitorFor(monitor, 1));
+				localFile.delete(EFS.NONE, Policy.subMonitorFor(monitor, work));
 			else
-				monitor.worked(1);
+				monitor.worked(work);
 			//delete from tree
 			if (target != null && node.existsInWorkspace())
 				target.deleteResource(true, status);
@@ -70,11 +81,13 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 
 	private void recursiveKeepHistory(IHistoryStore store, UnifiedTreeNode node) {
 		if (node.isFolder()) {
+			monitor.subTask(NLS.bind(Messages.localstore_deleting, node.getResource().getFullPath()));
 			for (Iterator children = node.getChildren(); children.hasNext();)
 				recursiveKeepHistory(store, (UnifiedTreeNode) children.next());
 		} else {
 			store.addState(node.getResource().getFullPath(), node.getStore(), node.getLastModified(), true);
 		}
+		monitor.worked(1);
 	}
 
 	protected boolean equals(IResource one, IResource another) {
@@ -121,8 +134,9 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 			return true;
 		if (shouldSkip(target)) {
 			removeFromSkipList(target);
-			int ticks = target.countResources(IResource.DEPTH_INFINITE, false);
-			monitor.worked(ticks);
+			int skipTicks = target.countResources(IResource.DEPTH_INFINITE, false);
+			monitor.worked(skipTicks);
+			ticks -= skipTicks;
 			return false;
 		}
 		if (isAncestorOfResourceToSkip(target))

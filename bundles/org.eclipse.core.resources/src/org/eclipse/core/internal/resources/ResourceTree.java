@@ -306,7 +306,8 @@ class ResourceTree implements IResourceTree {
 	 */
 	private boolean internalDeleteFolder(IFolder folder, int flags, IProgressMonitor monitor) {
 		String message = NLS.bind(Messages.resources_deleting, folder.getFullPath());
-		monitor.beginTask(message, Policy.totalWork);
+		monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
+		monitor.subTask(message);
 		Policy.checkCanceled(monitor);
 
 		// Do nothing if the folder doesn't exist in the workspace.
