@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.zoom;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.api.MockEditorPart;
-import org.eclipse.ui.tests.util.FileUtil;
 
 /**
  * @since 3.1
@@ -83,38 +78,6 @@ public class ZoomedViewCloseTest extends CloseTest {
         assertZoomed(null);
         assertActive(previousActive);
     }
-    
-	/**
-	 * <p>
-	 * Test: Zoom a view, then open an editor that's inactive.
-	 * </p>
-	 * <p>
-	 * Expected result: The view remains zoomed and active.
-	 * </p>
-	 * 
-	 * @throws Throwable
-	 * 
-	 * @since 3.2
-	 */
-	public void testOpenNonactiveEditorWhileViewZoomed() throws Throwable {
-		page.activate(editor1);
-		zoom(stackedView1);
-
-		IEditorPart editor = null;
-		try {
-			IFile file4 = FileUtil.createFile("Test4.txt", project);
-			editor = page.openEditor(new FileEditorInput(file4),
-					MockEditorPart.ID2, false);
-			assertTrue(editor instanceof MockEditorPart);
-
-			assertZoomed(stackedView1);
-			assertActive(stackedView1);
-		} finally {
-			if (editor!=null) {
-				page.closeEditor(editor, false);
-			}
-		}
-	}
 
     /**
      * <p>Test: Activate an unstacked view, activate a stacked part, then close the active part.</p>

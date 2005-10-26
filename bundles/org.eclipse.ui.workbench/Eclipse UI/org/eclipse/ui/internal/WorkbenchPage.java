@@ -2402,12 +2402,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     private void showEditor(boolean activate, IEditorPart editor) {
-        zoomOutIfNecessary(editor);
         setEditorAreaVisible(true);
-        if (activate)
+        if (activate) {
+            zoomOutIfNecessary(editor);
             activate(editor);
-        else
+        } else {
             bringToTop(editor);
+        }
     }
 
     /**

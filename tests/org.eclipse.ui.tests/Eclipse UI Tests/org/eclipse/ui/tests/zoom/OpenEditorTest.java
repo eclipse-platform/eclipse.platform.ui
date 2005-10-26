@@ -40,8 +40,9 @@ public class OpenEditorTest extends ZoomTestCase {
         
         zoom(stackedView1);
         openEditor(file1, false);
-        Assert.assertTrue(isZoomed());
-        Assert.assertTrue(page.getActivePart() == stackedView1);
+        
+        assertZoomed(stackedView1);
+        assertActive(stackedView1);
     }
     
     /** 
@@ -59,13 +60,13 @@ public class OpenEditorTest extends ZoomTestCase {
     
     /** 
      * <p>Test: Open an existing editor while a view is zoomed. Do not force activation.</p>
-     * <p>Expected result: the page is unzoomed, the view is active</p> 
+     * <p>Expected result: the page remains zoomed, the view is active</p> 
      */
     public void testOpenExistingEditorWhileViewZoomed() {
         zoom(stackedView1);
         openEditor(file1, false);
         
-        assertZoomed(null);
+        assertZoomed(stackedView1);
         assertActive(stackedView1);
     }
 
@@ -123,13 +124,13 @@ public class OpenEditorTest extends ZoomTestCase {
     
     /** 
      * <p>Test: Zoom an editor then open an existing editor in a different stack. Do not force activation.</p>
-     * <p>Expected result: the page is unzoomed and the original editor is active</p> 
+     * <p>Expected result: the page remains zoomed and the original editor is active</p> 
      */
     public void testOpenExistingEditorInOtherStack() {
         zoom(editor3);
         openEditor(file2, false);
         
-        assertZoomed(null);
+        assertZoomed(editor3);
         assertActive(editor3);
     }
 
