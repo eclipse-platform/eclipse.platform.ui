@@ -327,8 +327,9 @@ public final class XMLMemento implements IMemento {
 
     /**
      * Places the element's attributes into the document.
+     * @param copyText true if the first text node should be copied
      */
-    private void putElement(Element element) {
+    private void putElement(Element element, boolean copyText) {
         NamedNodeMap nodeMap = element.getAttributes();
         int size = nodeMap.getLength();
         for (int i = 0; i < size; i++) {
@@ -338,11 +339,17 @@ public final class XMLMemento implements IMemento {
 
         NodeList nodes = element.getChildNodes();
         size = nodes.getLength();
+        // Copy first text node (fixes bug 113659).
+        // Note that text data will be added as the first child (see putTextData)
+        boolean needToCopyText = copyText;
         for (int i = 0; i < size; i++) {
             Node node = nodes.item(i);
             if (node instanceof Element) {
                 XMLMemento child = (XMLMemento) createChild(node.getNodeName());
-                child.putElement((Element) node);
+                child.putElement((Element) node, true);
+            } else if (node instanceof Text && needToCopyText) {
+                putTextData(((Text) node).getData());
+                needToCopyText = false;
             }
         }
     }
@@ -365,7 +372,9 @@ public final class XMLMemento implements IMemento {
      * Method declared in IMemento.
      */
     public void putMemento(IMemento memento) {
-        putElement(((XMLMemento) memento).element);
+    	// Do not copy the element's top level text node (this would overwrite the existing text).
+    	// Text nodes of children are copied.
+        putElement(((XMLMemento) memento).element, false);
     }
 
     /* (non-Javadoc)
