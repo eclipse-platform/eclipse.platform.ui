@@ -24,7 +24,6 @@ import org.eclipse.jface.binding.internal.swt.LabelUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.SpinnerUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.TableUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.TextUpdatableValue;
-import org.eclipse.jface.binding.internal.viewers.AbstractListViewerUpdatableTable;
 import org.eclipse.jface.binding.internal.viewers.StructuredViewerUpdatableValue;
 import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableCollection;
 import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableCollectionExtended;
@@ -229,7 +228,7 @@ public class SWTDatabindingContext extends DatabindingContext {
 					return new TableViewerUpdatableTable(
 							(TableViewer) description);
 				} else if (description instanceof AbstractListViewer) {
-					return new AbstractListViewerUpdatableTable(
+					return new UpdatableCollectionViewer(
 							(AbstractListViewer) description);
 				} else if (description instanceof Text) {
 					int validatePolicy = getPolicy(properties,
@@ -271,18 +270,30 @@ public class SWTDatabindingContext extends DatabindingContext {
 		});
 	}
 
+	/**
+	 * @return the default updateTime
+	 */
 	public int getUpdateTime() {
 		return updateTime;
 	}
 
+	/**
+	 * @param updateTime 
+	 */
 	public void setUpdateTime(int updateTime) {
 		this.updateTime = updateTime;
 	}
 
+	/**
+	 * @return the default validation time
+	 */
 	public int getValidationTime() {
 		return validationTime;
 	}
 
+	/**
+	 * @param validationTime 
+	 */
 	public void setValidationTime(int validationTime) {
 		this.validationTime = validationTime;
 	}
