@@ -12,7 +12,7 @@ package org.eclipse.jface.binding;
 
 /**
  * @since 3.2
- *
+ * @deprecated
  */
 public interface IUpdatableTable extends IUpdatableCollection {
 
