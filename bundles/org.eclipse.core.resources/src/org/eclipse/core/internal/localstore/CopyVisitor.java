@@ -76,11 +76,10 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 			}
 			IFileStore sourceStore = node.getStore();
 			IFileStore destinationStore = destination.getStore();
-			sourceStore.copy(destinationStore, EFS.SHALLOW, Policy.monitorFor(null));
+			sourceStore.copy(destinationStore, EFS.SHALLOW, Policy.subMonitorFor(monitor, 0));
 			//create the destination in the workspace
 			ResourceInfo info = localManager.getWorkspace().createResource(destination, false);
 			localManager.updateLocalSync(info, destinationStore.fetchInfo().getLastModified());
-			localManager.getHistoryStore().copyHistory(source, destination, false);
 			//update timestamps on aliases
 			getWorkspace().getAliasManager().updateAliases(destination, destinationStore, IResource.DEPTH_ZERO, monitor);
 		} catch (CoreException e) {

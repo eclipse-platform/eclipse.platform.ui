@@ -145,6 +145,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				String message = NLS.bind(Messages.localstore_resourceExists, destination.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, null);
 			}
+			getHistoryStore().copyHistory(target, destination, false);
 			CopyVisitor visitor = new CopyVisitor(target, destination, updateFlags, monitor);
 			UnifiedTree tree = new UnifiedTree(target);
 			tree.accept(visitor, IResource.DEPTH_INFINITE);
@@ -163,7 +164,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			int totalWork = resource.countResources(IResource.DEPTH_INFINITE, false);
 			boolean force = (flags & IResource.FORCE) != 0;
 			if (!force)
-				totalWork *= 2;
+				totalWork += 100;
 			String title = NLS.bind(Messages.localstore_deleting, resource.getFullPath());
 			monitor.beginTask(title, totalWork);
 			monitor.subTask(""); //$NON-NLS-1$
@@ -171,7 +172,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			List skipList = null;
 			UnifiedTree tree = new UnifiedTree(target);
 			if (!force) {
-				IProgressMonitor sub = Policy.subMonitorFor(monitor, totalWork / 2);
+				IProgressMonitor sub = Policy.subMonitorFor(monitor, 100);
 				sub.beginTask("", 1000); //$NON-NLS-1$
 				try {
 					CollectSyncStatusVisitor refreshVisitor = new CollectSyncStatusVisitor(Messages.localstore_deleteProblem, sub);
@@ -183,7 +184,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 					sub.done();
 				}
 			}
-			DeleteVisitor deleteVisitor = new DeleteVisitor(skipList, flags, monitor);
+			DeleteVisitor deleteVisitor = new DeleteVisitor(skipList, flags, monitor, totalWork / 2);
 			tree.accept(deleteVisitor, IResource.DEPTH_INFINITE);
 			status.merge(deleteVisitor.getStatus());
 			if (!status.isOK())
