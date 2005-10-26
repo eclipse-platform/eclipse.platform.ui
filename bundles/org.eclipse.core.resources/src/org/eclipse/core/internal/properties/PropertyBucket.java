@@ -183,9 +183,8 @@ public class PropertyBucket extends Bucket {
 
 	public static final byte INDEX = 1;
 
-	private static final String PROPERTIES_FILE_NAME = "properties"; //$NON-NLS-1$
 	public static final byte QNAME = 2;
-
+	
 	/** Version number for the current implementation file's format.
 	 * <p>
 	 * Version 1:
@@ -223,19 +222,29 @@ public class PropertyBucket extends Bucket {
 		return new PropertyEntry(path, existing);
 	}
 
-	protected String getFileName() {
-		return PROPERTIES_FILE_NAME;
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.localstore.Bucket#getIndexFileName()
+	 */
+	protected String getIndexFileName() {
+		return "properties.index"; //$NON-NLS-1$
 	}
-
+	
 	public String getProperty(IPath path, QualifiedName name) {
 		PropertyEntry entry = getEntry(path);
 		if (entry == null)
 			return null;
 		return entry.getProperty(name);
 	}
-
+	
 	protected byte getVersion() {
 		return VERSION;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.localstore.Bucket#getVersionFileName()
+	 */
+	protected String getVersionFileName() {
+		return "properties.version"; //$NON-NLS-1$
 	}
 
 	public void load(String newProjectName, File baseLocation, boolean force) throws CoreException {

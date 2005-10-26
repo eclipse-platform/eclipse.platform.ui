@@ -52,8 +52,12 @@ public class BucketTreeTests extends ResourceTest {
 			super();
 		}
 		
-		protected String getFileName() {
+		protected String getIndexFileName() {
 			return "simple_bucket.index";
+		}
+		
+		protected String getVersionFileName() {
+			return "simple_bucket.version";
 		}
 
 		protected Entry createEntry(IPath path, Object value) {

@@ -135,11 +135,6 @@ public abstract class Bucket {
 	 */
 	static final String INDEXES_DIR_NAME = ".indexes"; //$NON-NLS-1$	
 
-	/** 
-	 * The file extension for bucket index files. 
-	 */
-	private static final String INDEX_FILE_EXT = ".index"; //$NON-NLS-1$
-
 	/**
 	 * Map of the history entries in this bucket. Maps (String -> byte[][]),
 	 * where the key is the path of the object we are storing history for, and
@@ -251,14 +246,19 @@ public abstract class Bucket {
 	}
 
 	/**
-	 * Returns the file name to be used to persist instances of this Bucket implementation.
+	 * Returns the file name used to persist the index for this bucket.
 	 */
-	protected abstract String getFileName();
+	protected abstract String getIndexFileName();
 
 	/**
 	 * Returns the version number for the file format used to persist this bucket.
 	 */
 	protected abstract byte getVersion();
+
+	/**
+	 * Returns the file name to be used to store bucket version information
+	 */
+	protected abstract String getVersionFileName();
 
 	/**
 	 * Loads the contents from a file under the given directory.
@@ -282,7 +282,7 @@ public abstract class Bucket {
 			// previously loaded bucket may not have been saved... save before loading new one
 			save();
 			this.projectName = newProjectName;
-			this.location = new File(baseLocation, getFileName() + INDEX_FILE_EXT);
+			this.location = new File(baseLocation, getIndexFileName());
 			this.entries.clear();
 			if (!this.location.isFile())
 				return;

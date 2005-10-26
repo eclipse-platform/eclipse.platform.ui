@@ -29,10 +29,18 @@ public class BucketTree {
 	public static final int DEPTH_ONE = 1;
 	public static final int DEPTH_ZERO = 0;
 
-	private final static int SEGMENT_LENGTH = 2;
-	private final static long SEGMENT_QUOTA = (long) Math.pow(2, 4 * SEGMENT_LENGTH); // 1 char = 2 ^ 4 = 0x10	
-
-	private static final String VERSION_FILE_EXT = ".version"; //$NON-NLS-1$
+	private final static int SEGMENT_QUOTA = 256; //two hex characters
+	
+	/**
+	 * Store all bucket names to avoid creating garbage when traversing the tree
+	 */
+	private static final char[][] HEX_STRINGS;
+	
+	static {
+		HEX_STRINGS = new char[SEGMENT_QUOTA][];
+		for (int i = 0; i < HEX_STRINGS.length; i++)
+			HEX_STRINGS[i] = Integer.toHexString(i).toCharArray();
+	}
 
 	protected Bucket current;
 
@@ -77,7 +85,7 @@ public class BucketTree {
 	}
 
 	public File getVersionFile() {
-		return new File(locationFor(Path.ROOT), current.getFileName() + VERSION_FILE_EXT);
+		return new File(locationFor(Path.ROOT), current.getVersionFileName());
 	}
 
 	/**
@@ -107,19 +115,21 @@ public class BucketTree {
 	}
 
 	private File locationFor(IPath resourcePath) {
-		IPath baseLocation = workspace.getMetaArea().locationFor(resourcePath);
+		//optimized to avoid string and path creations
+		IPath baseLocation = workspace.getMetaArea().locationFor(resourcePath).removeTrailingSeparator();
 		int segmentCount = resourcePath.segmentCount();
-		baseLocation = baseLocation.append(Bucket.INDEXES_DIR_NAME);
-		// the root or a project
-		if (segmentCount <= 1)
-			return baseLocation.toFile();
-		// a folder or file
-		IPath location = baseLocation;
+		String locationString = baseLocation.toOSString();
+		StringBuffer locationBuffer = new StringBuffer(locationString.length() + Bucket.INDEXES_DIR_NAME.length() + 16);
+		locationBuffer.append(locationString);
+		locationBuffer.append(File.separatorChar);
+		locationBuffer.append(Bucket.INDEXES_DIR_NAME);
 		// the last segment is ignored
-		for (int i = 1; i < segmentCount - 1; i++)
+		for (int i = 1; i < segmentCount - 1; i++) {
 			// translate all segments except the first one (project name)
-			location = location.append(translateSegment(resourcePath.segment(i)));
-		return location.toFile();
+			locationBuffer.append(File.separatorChar);
+			locationBuffer.append(translateSegment(resourcePath.segment(i)));
+		}
+		return new File(locationBuffer.toString());
 	}
 
 	/**
@@ -151,8 +161,8 @@ public class BucketTree {
 		}
 	}
 
-	private String translateSegment(String segment) {
+	private char[] translateSegment(String segment) {
 		// String.hashCode algorithm is API
-		return Long.toHexString(Math.abs(segment.hashCode()) % SEGMENT_QUOTA);
+		return HEX_STRINGS[Math.abs(segment.hashCode()) % SEGMENT_QUOTA];
 	}
 }

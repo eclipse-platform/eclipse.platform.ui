@@ -20,9 +20,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
 public class LocalMetaArea implements ICoreConstants {
-	protected IPath metaAreaLocation;
 	/* package */static final String F_BACKUP_FILE_EXTENSION = ".bak"; //$NON-NLS-1$
 	/* package */static final String F_DESCRIPTION = ".workspace"; //$NON-NLS-1$
+	
 	/* package */static final String F_HISTORY_STORE = ".history"; //$NON-NLS-1$
 	/* package */static final String F_MARKERS = ".markers"; //$NON-NLS-1$
 	/* package */static final String F_OLD_PROJECT = ".prj"; //$NON-NLS-1$
@@ -36,8 +36,17 @@ public class LocalMetaArea implements ICoreConstants {
 	/* package */static final String F_SYNCINFO = ".syncinfo"; //$NON-NLS-1$
 	/* package */static final String F_TREE = ".tree"; //$NON-NLS-1$
 
+	protected final IPath metaAreaLocation;
+
+	/**
+	 * The project location is just stored as an optimization, to avoid recomputing it.
+	 */
+	protected final IPath projectMetaLocation;
+
 	public LocalMetaArea() {
 		super();
+		metaAreaLocation = ResourcesPlugin.getPlugin().getStateLocation();
+		projectMetaLocation = metaAreaLocation.append(F_PROJECTS);
 	}
 
 	/**
@@ -59,7 +68,7 @@ public class LocalMetaArea implements ICoreConstants {
 	 * Creates the meta area root directory.
 	 */
 	public synchronized void createMetaArea() throws CoreException {
-		java.io.File workspaceLocation = getLocation().toFile();
+		java.io.File workspaceLocation = metaAreaLocation.toFile();
 		Workspace.clear(workspaceLocation);
 		if (!workspaceLocation.mkdirs()) {
 			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, workspaceLocation);
@@ -83,27 +92,15 @@ public class LocalMetaArea implements ICoreConstants {
 		return file.removeLastSegments(1).append(file.lastSegment() + F_BACKUP_FILE_EXTENSION);
 	}
 
-	/**
-	 * The project description file is the only metadata file stored outside
-	 * the metadata area. It is stored as a file directly under the project
-	 * location. For backwards compatibility, we also have to check for a
-	 * project file at the old location in the metadata area.
-	 */
-	public IPath getOldDescriptionLocationFor(IProject target) {
-		return locationFor(target).append(F_OLD_PROJECT);
-	}
-
 	public IPath getHistoryStoreLocation() {
-		return getLocation().append(F_HISTORY_STORE);
+		return metaAreaLocation.append(F_HISTORY_STORE);
 	}
 
 	/**
-	 * Returns the local filesystem location which contains the META data for
+	 * Returns the local file system location which contains the META data for
 	 * the resources plugin (i.e., the entire workspace).
 	 */
 	public IPath getLocation() {
-		if (metaAreaLocation == null)
-			metaAreaLocation = ResourcesPlugin.getPlugin().getStateLocation();
 		return metaAreaLocation;
 	}
 
@@ -125,6 +122,20 @@ public class LocalMetaArea implements ICoreConstants {
 		return getMarkersLocationFor(resource).addFileExtension(F_SNAP_EXTENSION);
 	}
 
+	/**
+	 * The project description file is the only metadata file stored outside
+	 * the metadata area. It is stored as a file directly under the project
+	 * location. For backwards compatibility, we also have to check for a
+	 * project file at the old location in the metadata area.
+	 */
+	public IPath getOldDescriptionLocationFor(IProject target) {
+		return locationFor(target).append(F_OLD_PROJECT);
+	}
+
+	public IPath getOldWorkspaceDescriptionLocation() {
+		return metaAreaLocation.append(F_DESCRIPTION);
+	}
+
 	public IPath getPropertyStoreLocation(IResource resource) {
 		int type = resource.getType();
 		Assert.isTrue(type != IResource.FILE && type != IResource.FOLDER);
@@ -132,7 +143,7 @@ public class LocalMetaArea implements ICoreConstants {
 	}
 
 	public IPath getSafeTableLocationFor(String pluginId) {
-		IPath prefix = getLocation().append(F_SAFE_TABLE);
+		IPath prefix = metaAreaLocation.append(F_SAFE_TABLE);
 		// if the plugin is the resources plugin, we return the master table
 		// location
 		if (pluginId.equals(ResourcesPlugin.PI_RESOURCES))
@@ -142,7 +153,7 @@ public class LocalMetaArea implements ICoreConstants {
 	}
 
 	public IPath getSnapshotLocationFor(IResource resource) {
-		return getLocation().append(F_SNAP);
+		return metaAreaLocation.append(F_SNAP);
 	}
 
 	/**
@@ -193,37 +204,75 @@ public class LocalMetaArea implements ICoreConstants {
 		return (Workspace) ResourcesPlugin.getWorkspace();
 	}
 
-	public IPath getOldWorkspaceDescriptionLocation() {
-		return getLocation().append(F_DESCRIPTION);
-	}
-
 	public boolean hasSavedProject(IProject project) {
 		//if there is a location file, then the project exists
 		return getOldDescriptionLocationFor(project).toFile().exists() || locationFor(project).append(F_PROJECT_LOCATION).toFile().exists();
 	}
 
 	public boolean hasSavedWorkspace() {
-		return getLocation().toFile().exists() || getBackupLocationFor(getLocation()).toFile().exists();
+		return metaAreaLocation.toFile().exists() || getBackupLocationFor(metaAreaLocation).toFile().exists();
 	}
 
 	/**
-	 * Returns the local filesystem location in which the meta data for the
+	 * Returns the local file system location in which the meta data for the
 	 * resource with the given path is stored.
 	 */
 	public IPath locationFor(IPath resourcePath) {
 		if (Path.ROOT.equals(resourcePath))
-			return getLocation().append(F_ROOT);
-		return getLocation().append(F_PROJECTS).append(resourcePath.segment(0));
+			return metaAreaLocation.append(F_ROOT);
+		return projectMetaLocation.append(resourcePath.segment(0));
 	}
 
 	/**
-	 * Returns the local filesystem location in which the meta data for the
+	 * Returns the local file system location in which the meta data for the
 	 * given resource is stored.
 	 */
 	public IPath locationFor(IResource resource) {
 		if (resource.getType() == IResource.ROOT)
-			return getLocation().append(F_ROOT);
-		return getLocation().append(F_PROJECTS).append(resource.getProject().getName());
+			return metaAreaLocation.append(F_ROOT);
+		return projectMetaLocation.append(resource.getProject().getName());
+	}
+
+	/**
+	 * Reads and returns the project description for the given project. Returns
+	 * null if there was no project description file on disk. Throws an
+	 * exception if there was any failure to read the project.
+	 */
+	public ProjectDescription readOldDescription(IProject project) throws CoreException {
+		IPath path = getOldDescriptionLocationFor(project);
+		if (!path.toFile().exists())
+			return null;
+		IPath tempPath = getBackupLocationFor(path);
+		ProjectDescription description = null;
+		try {
+			description = new ProjectDescriptionReader().read(path, tempPath);
+		} catch (IOException e) {
+			String msg = NLS.bind(Messages.resources_readMeta, project.getName());
+			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, e);
+		}
+		if (description == null) {
+			String msg = NLS.bind(Messages.resources_readMeta, project.getName());
+			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, null);
+		}
+		return description;
+	}
+
+	/**
+	 * Provides backward compatibility with existing workspaces based on
+	 * descriptions.
+	 */
+	public WorkspaceDescription readOldWorkspace() {
+		IPath path = getOldWorkspaceDescriptionLocation();
+		IPath tempPath = getBackupLocationFor(path);
+		try {
+			WorkspaceDescription oldDescription = (WorkspaceDescription) new WorkspaceDescriptionReader().read(path, tempPath);
+			// if one of those files exist, get rid of them
+			Workspace.clear(path.toFile());
+			Workspace.clear(tempPath.toFile());
+			return oldDescription;
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -277,44 +326,21 @@ public class LocalMetaArea implements ICoreConstants {
 	}
 
 	/**
-	 * Reads and returns the project description for the given project. Returns
-	 * null if there was no project description file on disk. Throws an
-	 * exception if there was any failure to read the project.
+	 * Writes the workspace description to the local meta area. This method is
+	 * synchronized to prevent multiple current write attempts.
+	 * 
+	 * @deprecated should not be called any more - workspace preferences are
+	 *                     now maintained in the plug-in's preferences
 	 */
-	public ProjectDescription readOldDescription(IProject project) throws CoreException {
-		IPath path = getOldDescriptionLocationFor(project);
-		if (!path.toFile().exists())
-			return null;
-		IPath tempPath = getBackupLocationFor(path);
-		ProjectDescription description = null;
-		try {
-			description = new ProjectDescriptionReader().read(path, tempPath);
-		} catch (IOException e) {
-			String msg = NLS.bind(Messages.resources_readMeta, project.getName());
-			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, e);
-		}
-		if (description == null) {
-			String msg = NLS.bind(Messages.resources_readMeta, project.getName());
-			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, null);
-		}
-		return description;
-	}
-
-	/**
-	 * Provides backward compatibility with existing workspaces based on
-	 * descriptions.
-	 */
-	public WorkspaceDescription readOldWorkspace() {
+	public synchronized void write(WorkspaceDescription description) throws CoreException {
 		IPath path = getOldWorkspaceDescriptionLocation();
+		path.toFile().getParentFile().mkdirs();
 		IPath tempPath = getBackupLocationFor(path);
 		try {
-			WorkspaceDescription oldDescription = (WorkspaceDescription) new WorkspaceDescriptionReader().read(path, tempPath);
-			// if one of those files exist, get rid of them
-			Workspace.clear(path.toFile());
-			Workspace.clear(tempPath.toFile());
-			return oldDescription;
+			new ModelObjectWriter().write(description, path, tempPath);
 		} catch (IOException e) {
-			return null;
+			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, path);
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 		}
 	}
 
@@ -354,25 +380,6 @@ public class LocalMetaArea implements ICoreConstants {
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.resources_exSaveProjectLocation, target.getName());
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
-		}
-	}
-
-	/**
-	 * Writes the workspace description to the local meta area. This method is
-	 * synchronized to prevent multiple current write attempts.
-	 * 
-	 * @deprecated should not be called any more - workspace preferences are
-	 *                     now maintained in the plug-in's preferences
-	 */
-	public synchronized void write(WorkspaceDescription description) throws CoreException {
-		IPath path = getOldWorkspaceDescriptionLocation();
-		path.toFile().getParentFile().mkdirs();
-		IPath tempPath = getBackupLocationFor(path);
-		try {
-			new ModelObjectWriter().write(description, path, tempPath);
-		} catch (IOException e) {
-			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, path);
-			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 		}
 	}
 }

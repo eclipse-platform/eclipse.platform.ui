@@ -18,8 +18,6 @@ import org.eclipse.core.runtime.IPath;
 
 public class HistoryBucket extends Bucket {
 
-	private static final String HISTORY_FILE_NAME = "history"; //$NON-NLS-1$
-
 	/**
 	 * A entry in the bucket index. Each entry has one path and a collection
 	 * of states, which by their turn contain a (UUID, timestamp) pair.
@@ -40,12 +38,12 @@ public class HistoryBucket extends Bucket {
 			}
 		};
 
+		// the length of each component of the data array
 		private final static byte[][] EMPTY_DATA = new byte[0][];
 		// the length of a long in bytes
 		private final static int LONG_LENGTH = 8;
 		// the length of a UUID in bytes
 		private final static int UUID_LENGTH = UniversalUniqueIdentifier.BYTES_SIZE;
-		// the length of each component of the data array
 		public final static int DATA_LENGTH = UUID_LENGTH + LONG_LENGTH;
 
 		/**
@@ -289,12 +287,16 @@ public class HistoryBucket extends Bucket {
 		return new HistoryEntry(path, existing);
 	}
 
-	protected String getFileName() {
-		return HISTORY_FILE_NAME;
+	protected String getIndexFileName() {
+		return "history.index"; //$NON-NLS-1$
 	}
-
+	
 	protected byte getVersion() {
 		return VERSION;
+	}
+
+	protected String getVersionFileName() {
+		return "history.version"; //$NON-NLS-1$
 	}
 
 	protected Object readEntryValue(DataInputStream source) throws IOException {

@@ -64,7 +64,7 @@ public class HistoryStore2 implements IHistoryStore {
 
 	private BlobStore blobStore;
 	private Set blobsToRemove = new HashSet();
-	BucketTree tree;
+	final BucketTree tree;
 	private Workspace workspace;
 
 	public HistoryStore2(Workspace workspace, IFileStore store, int limit) {
@@ -176,6 +176,10 @@ public class HistoryStore2 implements IHistoryStore {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.internal.localstore.IHistoryStore#copyHistory(org.eclipse.core.resources.IResource, org.eclipse.core.resources.IResource, boolean)
+	 */
 	public synchronized void copyHistory(IResource sourceResource, IResource destinationResource, boolean moving) {
 		// return early if either of the paths are null or if the source and
 		// destination are the same.
