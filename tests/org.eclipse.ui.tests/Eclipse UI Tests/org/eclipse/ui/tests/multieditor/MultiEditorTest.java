@@ -288,7 +288,7 @@ public class MultiEditorTest extends UITestCase {
 		chewUpEvents();
 
 		// get the outline view part
-		IViewPart outline = window.getActivePage().findView(CONTENT_OUTLINE);
+		IViewPart outline = window.getActivePage().showView(CONTENT_OUTLINE);
 		assertNotNull(outline);
 
 		// find out who is contributing the outline view.
