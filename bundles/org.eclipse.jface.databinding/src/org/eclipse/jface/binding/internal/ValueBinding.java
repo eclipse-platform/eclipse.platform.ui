@@ -31,13 +31,14 @@ public class ValueBinding extends Binding {
 	private IValidator validator;
 
 	private IConverter converter;
+	
+	private boolean updating = false; 
 
 	/**
 	 * @param context
 	 * @param target
 	 * @param model
-	 * @param converter
-	 * @param validator
+	 * @param bindSpec 
 	 * @throws BindingException
 	 */
 	public ValueBinding(DatabindingContext context, IUpdatableValue target,
@@ -57,25 +58,27 @@ public class ValueBinding extends Binding {
 	}
 
 	public void handleChange(IChangeEvent changeEvent) {
-		if (changeEvent.getUpdatable() == target) {
-			if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
-				// we are notified of a pending change, do validation
-				// and veto the change if it is not valid
-				Object value = changeEvent.getNewValue();
-				String partialValidationError = validator
-						.isPartiallyValid(value);
-				context.updatePartialValidationError(this,
-						partialValidationError);
-				if (partialValidationError != null) {
-					changeEvent.setVeto(true);
+		if (!updating) {
+			if (changeEvent.getUpdatable() == target) {
+				if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
+					// we are notified of a pending change, do validation
+					// and veto the change if it is not valid
+					Object value = changeEvent.getNewValue();
+					String partialValidationError = validator
+							.isPartiallyValid(value);
+					context.updatePartialValidationError(this,
+							partialValidationError);
+					if (partialValidationError != null) {
+						changeEvent.setVeto(true);
+					}
+				} else {
+					// the target (usually a widget) has changed, validate
+					// the value and update the source
+					updateModelFromTarget();
 				}
 			} else {
-				// the target (usually a widget) has changed, validate
-				// the value and update the source
-				updateModelFromTarget();
+				updateTargetFromModel();
 			}
-		} else {
-			updateTargetFromModel();
 		}
 	}
 
@@ -88,10 +91,14 @@ public class ValueBinding extends Binding {
 		context.updateValidationError(this, validationError);
 		if (validationError == null) {
 			try {
-				model.setValue(converter.convertTargetToModel(value), this);
+				updating=true;
+				model.setValue(converter.convertTargetToModel(value));
 			} catch (Exception ex) {
 				context.updateValidationError(this, BindingMessages
 						.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
+			}
+			finally {
+				updating = false;
 			}
 		}
 	}
@@ -115,7 +122,13 @@ public class ValueBinding extends Binding {
 	 * 
 	 */
 	public void updateTargetFromModel() {
-		target.setValue(converter.convertModelToTarget(model.getValue()), this);
-		validateTarget();
+		try {
+			updating=true;
+			target.setValue(converter.convertModelToTarget(model.getValue()));
+			validateTarget();
+		}
+		finally {
+			updating=false;
+		}
 	}
 }

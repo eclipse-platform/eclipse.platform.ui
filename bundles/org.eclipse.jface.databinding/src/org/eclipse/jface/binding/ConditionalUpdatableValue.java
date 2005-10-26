@@ -20,7 +20,7 @@ public abstract class ConditionalUpdatableValue extends UpdatableValue {
 
 	IChangeListener changeListener = new IChangeListener() {
 		public void handleChange(IChangeEvent changeEvent) {
-			fireChangeEvent(null, IChangeEvent.CHANGE, null, null);
+			fireChangeEvent(IChangeEvent.CHANGE, null, null);
 		}
 	};
 
@@ -32,7 +32,7 @@ public abstract class ConditionalUpdatableValue extends UpdatableValue {
 		innerUpdatableValue.addChangeListener(changeListener);
 	}
 
-	public void setValue(Object value, IChangeListener listenerToOmit) {
+	public void setValue(Object value) {
 		throw new UnsupportedOperationException();
 	}
 

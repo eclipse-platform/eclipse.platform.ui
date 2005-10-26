@@ -12,7 +12,6 @@
 package org.eclipse.jface.binding.internal.swt;
 
 import org.eclipse.jface.binding.IChangeEvent;
-import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.UpdatableValue;
 import org.eclipse.jface.binding.swt.SWTBindingConstants;
 import org.eclipse.swt.events.ModifyEvent;
@@ -50,7 +49,7 @@ public class ComboUpdatableValue extends UpdatableValue {
 			combo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
-						fireChangeEvent(null, IChangeEvent.CHANGE, null, null);
+						fireChangeEvent(IChangeEvent.CHANGE, null, null);
 					}
 				}
 			});
@@ -58,7 +57,7 @@ public class ComboUpdatableValue extends UpdatableValue {
 			throw new IllegalArgumentException();
 	}
 
-	public void setValue(Object value, IChangeListener listenerToOmit) {
+	public void setValue(Object value) {
 		String oldValue = combo.getText();
 		try {
 			updating = true;
@@ -81,7 +80,7 @@ public class ComboUpdatableValue extends UpdatableValue {
 		} finally {
 			updating = false;
 		}
-		fireChangeEvent(listenerToOmit, IChangeEvent.CHANGE, oldValue, combo
+		fireChangeEvent(IChangeEvent.CHANGE, oldValue, combo
 				.getText());
 	}
 

@@ -12,7 +12,6 @@
 package org.eclipse.jface.binding.internal.swt;
 
 import org.eclipse.jface.binding.IChangeEvent;
-import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.UpdatableValue;
 import org.eclipse.swt.widgets.Label;
 
@@ -31,10 +30,10 @@ public class LabelUpdatableValue extends UpdatableValue {
 		this.label = label;
 	}
 
-	public void setValue(Object value, IChangeListener listenerToOmit) {
+	public void setValue(Object value) {
 		String oldValue = label.getText();
 		label.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
-		fireChangeEvent(listenerToOmit, IChangeEvent.CHANGE, oldValue, label.getText());
+		fireChangeEvent(IChangeEvent.CHANGE, oldValue, label.getText());
 	}
 
 	public Object getValue() {

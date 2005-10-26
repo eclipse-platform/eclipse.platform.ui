@@ -12,7 +12,6 @@
 package org.eclipse.jface.binding.internal.swt;
 
 import org.eclipse.jface.binding.IChangeEvent;
-import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.UpdatableValue;
 import org.eclipse.jface.binding.swt.SWTBindingConstants;
 import org.eclipse.swt.events.ModifyEvent;
@@ -42,7 +41,7 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 			spinner.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
-						fireChangeEvent(null, IChangeEvent.CHANGE, null, null);
+						fireChangeEvent(IChangeEvent.CHANGE, null, null);
 					}
 				}
 			});
@@ -53,7 +52,7 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 		}
 	}
 
-	public void setValue(Object value, IChangeListener listenerToOmit) {
+	public void setValue(Object value) {
 		int oldValue;
 		int newValue;
 		try {
@@ -71,7 +70,7 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 			} else {
 				throw new AssertionError("invalid attribute name"); //$NON-NLS-1$
 			}
-			fireChangeEvent(listenerToOmit, IChangeEvent.CHANGE, new Integer(
+			fireChangeEvent(IChangeEvent.CHANGE, new Integer(
 					oldValue), new Integer(newValue));
 		} finally {
 			updating = false;

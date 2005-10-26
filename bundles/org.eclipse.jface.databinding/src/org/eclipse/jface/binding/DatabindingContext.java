@@ -726,10 +726,10 @@ public class DatabindingContext {
 	private void updateValidationMessage(
 			SettableValue validationSettableMessage, List listOfPairs) {
 		if (listOfPairs.size() == 0) {
-			validationSettableMessage.setValue("", null); //$NON-NLS-1$
+			validationSettableMessage.setValue(""); //$NON-NLS-1$
 		} else {
 			validationSettableMessage.setValue(((Pair) listOfPairs
-					.get(listOfPairs.size() - 1)).b, null);
+					.get(listOfPairs.size() - 1)).b);
 		}
 	}
 

@@ -12,10 +12,7 @@ package org.eclipse.jface.tests.binding;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.binding.ChangeEvent;
-import org.eclipse.jface.binding.IChangeEvent;
-import org.eclipse.jface.binding.IChangeListener;
-import org.eclipse.jface.binding.Updatable;
+import org.eclipse.jface.binding.*;
 import org.eclipse.jface.tests.binding.util.Mocks;
 
 public class UpdatableTest extends TestCase {
@@ -23,11 +20,11 @@ public class UpdatableTest extends TestCase {
 	private static class MyUpdatable extends Updatable {
 		public void fireChange(int changeType, Object oldValue,
 				Object newValue, int position) {
-			fireChangeEvent(null, changeType, oldValue, newValue, position);
+			fireChangeEvent(changeType, oldValue, newValue, position);
 		}
 
 		public void fireChange(int changeType, Object oldValue, Object newValue) {
-			fireChangeEvent(null, changeType, oldValue, newValue);
+			fireChangeEvent(changeType, oldValue, newValue);
 		}
 	}
 

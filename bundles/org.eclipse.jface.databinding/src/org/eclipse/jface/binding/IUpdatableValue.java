@@ -29,10 +29,8 @@ public interface IUpdatableValue extends IUpdatable {
 	 * status?
 	 * 
 	 * @param value
-	 * @param listenerToOmit
-	 *            the listener to ignore, or null.
 	 */
-	public void setValue(Object value, IChangeListener listenerToOmit);
+	public void setValue(Object value);
 
 	/**
 	 * Returns the current value, which must be an instance of the value type

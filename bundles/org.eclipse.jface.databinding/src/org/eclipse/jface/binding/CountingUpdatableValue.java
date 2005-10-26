@@ -35,12 +35,12 @@ public class CountingUpdatableValue extends UpdatableValue {
 		updatableList.addChangeListener(new IChangeListener() {
 
 			public void handleChange(IChangeEvent changeEvent) {
-				fireChangeEvent(null, IChangeEvent.CHANGE, null, null);
+				fireChangeEvent(IChangeEvent.CHANGE, null, null);
 			}
 		});
 	}
 
-	public void setValue(Object value, IChangeListener listenerToOmit) {
+	public void setValue(Object value) {
 		throw new UnsupportedOperationException();
 	}
 

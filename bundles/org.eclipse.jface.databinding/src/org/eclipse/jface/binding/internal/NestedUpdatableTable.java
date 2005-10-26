@@ -25,6 +25,8 @@ public class NestedUpdatableTable extends Updatable implements IUpdatableTable {
 	private Object currentOuterValue;
 
 	private IChangeListener innerChangeListener;
+	
+	private boolean updating=false;
 
 	/**
 	 * @param context
@@ -40,7 +42,8 @@ public class NestedUpdatableTable extends Updatable implements IUpdatableTable {
 		IChangeListener outerChangeListener = new IChangeListener() {
 			public void handleChange(IChangeEvent changeEvent) {
 				updateInnerUpdatableValue(outerUpdatableValue);
-				fireChangeEvent(null, IChangeEvent.CHANGE, null, null, -1);
+				if (!updating)
+				   fireChangeEvent(IChangeEvent.CHANGE, null, null, changeEvent.getPosition());
 			}
 		};
 		outerUpdatableValue.addChangeListener(outerChangeListener);
@@ -95,11 +98,17 @@ public class NestedUpdatableTable extends Updatable implements IUpdatableTable {
 	}
 
 	public void setElementAndValues(int index, Object element, Object[] values) {
-		if (innerUpdatableTable != null) {
-			innerUpdatableTable.setElementAndValues(index, element, values);
-		}
-		throw new AssertionError(
-				"cannot set element and values because current outer value is null"); //$NON-NLS-1$
+		try {
+			updating=true;
+			if (innerUpdatableTable != null) {
+				innerUpdatableTable.setElementAndValues(index, element, values);
+			}
+			throw new AssertionError(
+					"cannot set element and values because current outer value is null"); //$NON-NLS-1$
+			}
+			finally {
+				updating=false;
+			}
 	}
 
 	public int addElementWithValues(int index, Object element, Object[] values) {
@@ -112,11 +121,17 @@ public class NestedUpdatableTable extends Updatable implements IUpdatableTable {
 	}
 
 	public void setValues(int index, Object[] values) {
-		if (innerUpdatableTable != null) {
-			innerUpdatableTable.setValues(index, values);
-		}
-		throw new AssertionError(
-				"cannot set values because current outer value is null"); //$NON-NLS-1$
+		try {
+			updating=true;
+			if (innerUpdatableTable != null) {
+				innerUpdatableTable.setValues(index, values);
+			}
+			throw new AssertionError(
+					"cannot set values because current outer value is null"); //$NON-NLS-1$
+			}
+			finally {
+				updating=false;
+			}
 	}
 
 	public int getSize() {

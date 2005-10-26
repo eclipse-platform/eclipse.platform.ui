@@ -11,7 +11,6 @@
 package org.eclipse.jface.binding.internal.swt;
 
 import org.eclipse.jface.binding.IChangeEvent;
-import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.UpdatableValue;
 import org.eclipse.jface.binding.swt.SWTBindingConstants;
 import org.eclipse.swt.widgets.Control;
@@ -35,10 +34,10 @@ public class ControlUpdatableValue extends UpdatableValue {
 		}
 	}
 
-	public void setValue(Object value, IChangeListener listenerToOmit) {
+	public void setValue(Object value) {
 		boolean oldValue = control.getEnabled();
 		control.setEnabled(((Boolean) value).booleanValue());
-		fireChangeEvent(listenerToOmit, IChangeEvent.CHANGE, new Boolean(oldValue), value);
+		fireChangeEvent(IChangeEvent.CHANGE, new Boolean(oldValue), value);
 	}
 
 	public Object getValue() {

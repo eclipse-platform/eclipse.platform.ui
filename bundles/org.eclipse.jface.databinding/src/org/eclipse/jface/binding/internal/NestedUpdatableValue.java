@@ -23,11 +23,15 @@ import org.eclipse.jface.binding.UpdatableValue;
  * 
  */
 public class NestedUpdatableValue extends UpdatableValue {
+	
+	private boolean updating=false;
 
 	private IChangeListener innerChangeListener = new IChangeListener() {
 		public void handleChange(IChangeEvent changeEvent) {
-			fireChangeEvent(null, changeEvent.getChangeType(), changeEvent
-					.getOldValue(), changeEvent.getNewValue());
+			if (!updating) {
+				fireChangeEvent(changeEvent.getChangeType(), changeEvent
+						.getOldValue(), changeEvent.getNewValue());
+			}
 		}
 	};
 
@@ -57,7 +61,7 @@ public class NestedUpdatableValue extends UpdatableValue {
 			public void handleChange(IChangeEvent changeEvent) {
 				Object oldValue = getValue();
 				updateInnerUpdatableValue(outerUpdatableValue);
-				fireChangeEvent(null, IChangeEvent.CHANGE, oldValue, getValue());
+				fireChangeEvent(IChangeEvent.CHANGE, oldValue, getValue());
 			}
 		};
 		outerUpdatableValue.addChangeListener(outerChangeListener);
@@ -91,8 +95,8 @@ public class NestedUpdatableValue extends UpdatableValue {
 		}
 	}
 
-	public void setValue(Object value, IChangeListener listenerToOmit) {
-		innerUpdatableValue.setValue(value, innerChangeListener);
+	public void setValue(Object value) {
+		innerUpdatableValue.setValue(value);
 	}
 
 	public Object getValue() {
