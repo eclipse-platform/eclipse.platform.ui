@@ -61,7 +61,6 @@ public class ImportExistingTest extends DataTransferTestCase {
 		return DialogCheck.getShell();
 	}
 	
-	
 	protected void doTearDown() throws Exception {
 		super.doTearDown();
 		IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
@@ -261,6 +260,56 @@ public class ImportExistingTest extends DataTransferTestCase {
 				projectNames.add(selectedProjects[i].getProjectName());
 			}
 
+			assertTrue("Not all projects were found correctly in directory", projectNames.containsAll(projects));
+
+			CheckboxTreeViewer projectsList= wpip.getProjectsList();
+			projectsList.setCheckedElements(selectedProjects);
+			wpip.createProjects(); // Try importing all the projects we found
+
+			// "HelloWorld" should be the only project in the workspace
+			workspaceProjects = root.getProjects();
+			if (workspaceProjects.length != 1)
+				fail("Incorrect Number of projects imported");
+			IFolder helloFolder = workspaceProjects[0].getFolder("HelloWorld");
+			if (helloFolder.exists())
+				fail("Project was imported as a folder into itself");
+			
+			verifyProjectInWorkspace(false, workspaceProjects[0]);
+
+		} catch (IOException e) {
+			fail(e.toString());
+		} catch (CoreException e) {
+			fail(e.toString());
+		}
+	}
+	
+	public void testImportSingleDirectoryWithCopy() {
+		IPath wsPath = null;
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			
+			IProject[] workspaceProjects = root.getProjects();
+            for (int i = 0; i < workspaceProjects.length; i++) 
+            	FileUtil.deleteProject(workspaceProjects[i]);
+			
+            dataLocation = copyDataLocation();
+            wsPath = new Path(dataLocation).append(PLUGIN_ID).append(DATA_PATH_PREFIX).append("HelloWorld");
+			WizardProjectsImportPage wpip = getNewWizard();
+			HashSet projects = new HashSet();
+			projects.add("HelloWorld");
+			
+			wpip.getProjectFromDirectoryRadio().setSelection((true));
+			wpip.getCopyCheckbox().setSelection(true);
+			wpip.saveWidgetValues();
+			wpip.restoreWidgetValues();
+
+			wpip.updateProjectsList(wsPath.toOSString());
+			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
 			assertTrue("Not all projects were found correctly in zip", projectNames.containsAll(projects));
 
 			CheckboxTreeViewer projectsList= wpip.getProjectsList();
@@ -274,6 +323,8 @@ public class ImportExistingTest extends DataTransferTestCase {
 			IFolder helloFolder = workspaceProjects[0].getFolder("HelloWorld");
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
+			
+			verifyProjectInWorkspace(true, workspaceProjects[0]);
 
 		} catch (IOException e) {
 			fail(e.toString());
@@ -282,6 +333,28 @@ public class ImportExistingTest extends DataTransferTestCase {
 		}
 	}
 
+	/**
+	 * Verify whether or not the imported project is in the current workspace location
+	 * (i.e. copy projects was true) or in another workspace location (i.e. copy projects
+	 * was false).  This test should only be used when importing from a directory.
+	 * 
+	 * @param inWorkspace
+	 * @param project
+	 */
+	private void verifyProjectInWorkspace(boolean inWorkspace, IProject project){
+		IPath rootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+		IPath projectLocation = project.getLocation();
+		boolean isProjectInWorkspace = rootLocation.isPrefixOf(projectLocation);
+		if (inWorkspace){
+			if (!isProjectInWorkspace)
+				fail(project.getName() + " should be in the workspace location: " + rootLocation.toOSString());
+		}
+		else{
+			if (isProjectInWorkspace)
+				fail(project.getName() + " should not be in the workspace location: " + rootLocation.toOSString());
+		}
+	}
+	
 	/**
 	 * Copies the data to a temporary directory and returns the new location.
 	 * 
@@ -313,32 +386,32 @@ public class ImportExistingTest extends DataTransferTestCase {
 	}
 	
 	private WizardProjectsImportPage getNewWizard(){
-		WizardProjectsImportPage wpip = new WizardProjectsImportPage();
-		
-		Shell shell = getShell();
-		Composite parent = new Composite(shell, SWT.NONE);
-		parent.setLayout(new GridLayout());
-		wpip.createControl(parent);
-		
 		ImportExportWizard wizard = new ImportExportWizard();
 		wizard.init(getWorkbench(), null);
 		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
 		.getDialogSettings();
 		IDialogSettings wizardSettings = workbenchSettings
-		.getSection("ImportExportAction");
+		.getSection("ImportExportTests");
 		if (wizardSettings == null)
 			wizardSettings = workbenchSettings
-			.addNewSection("ImportExportAction");
+			.addNewSection("ImportExportTests");
 		wizard.setDialogSettings(wizardSettings);
 		wizard.setForcePreviousAndNextButtons(true);
 		
-		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		WizardProjectsImportPage wpip = new WizardProjectsImportPage();
+		
+		Shell shell = getShell();
+		
+		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setSize(
 				Math.max(100, dialog.getShell().getSize().x),
 				100);
-		
+
+		Composite parent = new Composite(shell, SWT.NONE);
+		parent.setLayout(new GridLayout());		
 		wpip.setWizard(dialog.getCurrentPage().getWizard());
+		wpip.createControl(parent);
 		return wpip;
 	}
 }
