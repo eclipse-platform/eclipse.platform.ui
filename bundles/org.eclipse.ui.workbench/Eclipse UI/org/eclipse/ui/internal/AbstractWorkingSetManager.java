@@ -490,13 +490,17 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
         if (editPageId != null) {
             editPage = registry.getWorkingSetPage(editPageId);
         }
+ 
         // the following block kind of defeats IWorkingSet.isEditable() and it
 		// doesn't make sense for there to be a default page in such a case.
-		/*
-		 * if (editPage == null) { editPage =
-		 * registry.getDefaultWorkingSetPage(); if (editPage == null) { return
-		 * null; } }
-		 */
+		
+	     if (editPage == null) {
+			editPage = registry.getDefaultWorkingSetPage();
+			if (editPage == null) {
+				return null;
+			}
+		}
+		 
         WorkingSetEditWizard editWizard = new WorkingSetEditWizard(editPage);
         editWizard.setSelection(workingSet);
         return editWizard;
