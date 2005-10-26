@@ -40,9 +40,4 @@ public class TableBindSpec extends BindSpec implements ITableBindSpec {
 		return null;
 	}
 
-	public IColumn[] getColumns() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
