@@ -38,21 +38,19 @@ public class ValueBinding extends Binding {
 	 * @param model
 	 * @param converter
 	 * @param validator
-	 * @throws BindingException 
+	 * @throws BindingException
 	 */
 	public ValueBinding(DatabindingContext context, IUpdatableValue target,
 			IUpdatableValue model, IBindSpec bindSpec) throws BindingException {
 		super(context);
 		this.target = target;
 		this.model = model;
-		converter = bindSpec == null ? null : bindSpec
-				.getConverter();
+		converter = bindSpec == null ? null : bindSpec.getConverter();
 		if (converter == null) {
 			converter = context.getConverter(target.getValueType(), model
 					.getValueType(), context.isDefaultIdentityConverter());
 		}
-		validator = bindSpec == null ? null : bindSpec
-				.getValidator();
+		validator = bindSpec == null ? null : bindSpec.getValidator();
 		if (validator == null) {
 			validator = context.getValidator(converter);
 		}
@@ -87,6 +85,7 @@ public class ValueBinding extends Binding {
 	public void updateModelFromTarget() {
 		Object value = target.getValue();
 		String validationError = doValidateTarget(value);
+		context.updateValidationError(this, validationError);
 		if (validationError == null) {
 			try {
 				model.setValue(converter.convertTargetToModel(value), this);

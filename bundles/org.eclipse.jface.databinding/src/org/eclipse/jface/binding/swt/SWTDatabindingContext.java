@@ -238,8 +238,13 @@ public class SWTDatabindingContext extends DatabindingContext {
 							SWTDatabindingContext.UPDATE_TIME, SWT.FocusOut);
 					return new TextUpdatableValue((Text) description,
 							validatePolicy, updatePolicy);
-				} else if(description instanceof TableViewerDescription) {
-					return new TableViewerUpdatableCollectionExtended((TableViewerDescription) description);
+				} else if (description instanceof Button) {
+					int updatePolicy = getPolicy(properties,
+							SWTDatabindingContext.UPDATE_TIME, SWT.FocusOut);
+					return new ButtonUpdatableValue((Button) description, updatePolicy);
+				} else if (description instanceof TableViewerDescription) {
+					return new TableViewerUpdatableCollectionExtended(
+							(TableViewerDescription) description);
 				}
 				return null;
 			}

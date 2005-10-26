@@ -15,6 +15,7 @@ import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.IUpdatableValue;
+import org.eclipse.jface.binding.PropertyDescription;
 import org.eclipse.jface.binding.UpdatableValue;
 
 /**
@@ -73,7 +74,7 @@ public class NestedUpdatableValue extends UpdatableValue {
 		} else {
 			try {
 				this.innerUpdatableValue = (IUpdatableValue) databindingContext
-						.createUpdatable(currentOuterValue, feature);
+						.createUpdatable2(new PropertyDescription(currentOuterValue, feature));
 				Class innerValueType = innerUpdatableValue.getValueType();
 				if(featureType==null) {
 					featureType = innerValueType;
