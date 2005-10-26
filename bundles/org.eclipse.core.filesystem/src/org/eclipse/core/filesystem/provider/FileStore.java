@@ -183,12 +183,18 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 */
 	protected void copyDirectory(IFileInfo sourceInfo, IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		try {
-			IFileStore[] children = childStores(EFS.NONE, null);
-			monitor.beginTask(NLS.bind(Messages.copying, toString()), children.length);
+			IFileStore[] children = null;
+			int opWork = 1;
+			if ((options & EFS.SHALLOW) == 0) {
+				children = childStores(EFS.NONE, null);
+				opWork += children.length;
+			}
+			monitor.beginTask("", opWork); //$NON-NLS-1$
+			monitor.subTask(NLS.bind(Messages.copying, toString()));
 			// create directory
-			destination.mkdir(EFS.NONE, Policy.subMonitorFor(monitor, 0));
+			destination.mkdir(EFS.NONE, Policy.subMonitorFor(monitor, 1));
 
-			if ((options & EFS.SHALLOW) != 0)
+			if (children == null)
 				return;
 			// copy children
 			for (int i = 0; i < children.length; i++)
