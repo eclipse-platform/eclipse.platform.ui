@@ -92,9 +92,19 @@ public interface IResourceMappingOperationInput {
 	 */
 	public boolean hasAdditionalMappings();
 
+	/**
+	 * Return all the model providers that have mappings in this input.
+	 * @return all the model providers that have mappings in this input
+	 */
 	public ModelProvider[] getModelProviders();
 
+	/**
+	 * Return all the mappings for the given model provider id.
+	 * @param modelProviderId the id of the model provider
+	 * @return all the mappings for the given model provider id
+	 */
+	public ResourceMapping[] getResourceMappings(String modelProviderId);
+	
 	public ISynchronizeScope asSynchronizationScope();
 
-	public ResourceMapping[] getResourceMappings(String id);
 }
