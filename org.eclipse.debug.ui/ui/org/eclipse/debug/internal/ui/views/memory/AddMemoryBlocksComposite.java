@@ -114,7 +114,7 @@ public class AddMemoryBlocksComposite implements ISelectionListener, IDebugEvent
 				length.setLayoutData(data);
 			}		
 
-			Label filler = new Label(composite, SWT.NONE);
+			new Label(composite, SWT.NONE);
 			
 			fExpression = new Combo(composite, SWT.NONE);
 			data = new GridData();
