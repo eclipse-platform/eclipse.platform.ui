@@ -56,7 +56,7 @@ public interface ISynchronizeScope {
 	 * of <code>null</code> indicates that the participant should use
 	 * its default set of resources.
 	 * 
-	 * @return the root resources of <code>null</code>
+	 * @return the root resources or <code>null</code>
 	 */
 	public IResource[] getRoots();
 	
@@ -91,8 +91,9 @@ public interface ISynchronizeScope {
 	public boolean contains(IResource resource);
 
 	/**
+	 * Return the resource mappings that define this scope.
 	 * 
-	 * @return
+	 * @return the resource mappings that define this scope
 	 * @since 3.2
 	 */
 	public ResourceMapping[] getResourceMappings();
