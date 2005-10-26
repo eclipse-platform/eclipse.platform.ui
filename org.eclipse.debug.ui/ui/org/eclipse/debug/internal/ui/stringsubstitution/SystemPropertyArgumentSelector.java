@@ -11,8 +11,8 @@
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
 import org.eclipse.core.variables.IStringVariable;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
@@ -31,7 +31,7 @@ public class SystemPropertyArgumentSelector implements IArgumentSelector {
 		dialog.setElements(System.getProperties().keySet().toArray());
 		dialog.setTitle(StringSubstitutionMessages.SystemPropertyArgumentSelector_0);
 		dialog.setMessage(StringSubstitutionMessages.SystemPropertyArgumentSelector_1);
-		if (dialog.open() == Dialog.OK) {
+		if (dialog.open() == Window.OK) {
 			return (String) dialog.getResult()[0];
 		}
 		return null;
