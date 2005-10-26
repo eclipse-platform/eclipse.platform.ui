@@ -3340,7 +3340,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 
 	/**
-	 * @param shell
+	 * @param composite the given composite
 	 * @return the tooltip control to be displayed
 	 */
 	protected Control createToolTipControl(Composite composite) {
