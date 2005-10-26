@@ -55,6 +55,7 @@ public class SubProgressMonitor extends ProgressMonitorWrapper {
 	private double scale = 0.0;
 	private int nestedBeginTasks = 0;
 	private boolean usedUp = false;
+	private boolean hasSubTask = false;
 	private int style;
 	private String mainTaskLabel;
 
@@ -130,7 +131,9 @@ public class SubProgressMonitor extends ProgressMonitorWrapper {
 		double remaining = parentTicks - sentToParent;
 		if (remaining > 0)
 			super.internalWorked(remaining);
-		subTask(""); //$NON-NLS-1$
+		//clear the sub task if there was one
+		if (hasSubTask)
+			subTask(""); //$NON-NLS-1$
 		sentToParent = 0;
 	}
 
@@ -143,7 +146,6 @@ public class SubProgressMonitor extends ProgressMonitorWrapper {
 		}
 
 		double realWork = scale * work;
-		// System.out.println("Sub monitor: " + realWork);
 		super.internalWorked(realWork);
 		sentToParent += realWork;
 		if (sentToParent >= parentTicks) {
@@ -158,7 +160,7 @@ public class SubProgressMonitor extends ProgressMonitorWrapper {
 		if ((style & SUPPRESS_SUBTASK_LABEL) != 0) {
 			return;
 		}
-
+		hasSubTask = true;
 		String label = name;
 		if ((style & PREPEND_MAIN_LABEL_TO_SUBTASK) != 0 && mainTaskLabel != null && mainTaskLabel.length() > 0) {
 			label = mainTaskLabel + ' ' + label;
