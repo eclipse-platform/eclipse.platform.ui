@@ -11,11 +11,14 @@
 package org.eclipse.update.internal.core;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -35,7 +38,6 @@ import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.IVerificationListener;
 import org.eclipse.update.core.InstallMonitor;
 import org.eclipse.update.core.Utilities;
-import org.eclipse.update.internal.core.connection.ConnectionFactory;
 import org.osgi.framework.Bundle;
 
 public class InstallHandlerProxy implements IInstallHandlerWithFilter {
@@ -59,8 +61,8 @@ public class InstallHandlerProxy implements IInstallHandlerWithFilter {
 		private Bundle updateCore;
 		private Bundle eclipseUI;
 
-		public InstallHandlerClassLoader(URL classpath) {
-			super(new URL[] {classpath});
+		public InstallHandlerClassLoader(URL[] classpath) {
+			super(classpath);
 			updateCore = Platform.getBundle(EXT_PLUGIN);
 			eclipseUI = Platform.getBundle(UI_PLUGIN);
 			if (eclipseUI != null && eclipseUI.getState() != Bundle.ACTIVE) 
@@ -499,8 +501,8 @@ public class InstallHandlerProxy implements IInstallHandlerWithFilter {
 	/*
 	 * get an instance of handler downloaded as part of the feature
 	 */
-	private IInstallHandler getLocalHandler(String lib, String name)
-		throws Exception {
+	private IInstallHandler getLocalHandler(String libs, String name)
+		throws IOException, CoreException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
 		// Get baseline URL for handler (relative to feature.xml). For
 		// features being installed from a server (eg. http protocol)
@@ -518,31 +520,39 @@ public class InstallHandlerProxy implements IInstallHandlerWithFilter {
 
 
 		// determine loader class path
-		URL cp = new URL(base, lib);
+		StringTokenizer libraries = new StringTokenizer(libs, ","); //$NON-NLS-1$
+		URL[] cp = new URL[libraries.countTokens()];
+		for( int token = 0; token < cp.length; token++) {
+			cp[token] = new URL(base, libraries.nextToken());
+		}
 		if (this.type == IInstallHandler.HANDLER_ACTION_UNINSTALL) {
 			// check if we are doing uninstall
 			// ... need to make temp copy of library (being removed)
-			File tempLib = File.createTempFile("tmp", ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
-			tempLib.deleteOnExit();
-			FileOutputStream fos = null;
-			InputStream is = null;
-			try {
-				fos = new FileOutputStream(tempLib);
-				is = ConnectionFactory.get(cp).getInputStream();
-				Utilities.copy(is, fos, null);
-			} finally {
-				if (fos != null)
-					try {
-						fos.close();
-					} catch (Exception e) {
-					}
-				if (is != null)
-					try {
-						is.close();
-					} catch (Exception e) {
-					}
+			URL[] jars = new URL[cp.length];
+			for( int jar = 0; jar < cp.length; jar++) {
+				File tempLib = File.createTempFile("tmp" + jar, ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
+				tempLib.deleteOnExit();
+				FileOutputStream fos = null;
+				InputStream is = null;
+				try {
+					fos = new FileOutputStream(tempLib);
+					is = new FileInputStream(cp[jar].getPath());
+					Utilities.copy(is, fos, null);
+				} finally {
+					if (fos != null)
+						try {
+							fos.close();
+						} catch (Exception e) {
+						}
+					if (is != null)
+						try {
+							is.close();
+						} catch (Exception e) {
+						}
+				}
+				jars[jar] = tempLib.toURL();
 			}
-			cp = tempLib.toURL();
+			cp = jars;
 		}
 
 		// create class loader, load and instantiate handler
