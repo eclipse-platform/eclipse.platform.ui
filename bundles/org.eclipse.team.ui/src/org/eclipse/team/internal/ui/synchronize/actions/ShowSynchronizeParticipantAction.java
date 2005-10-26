@@ -11,15 +11,20 @@
 package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.*;
 
-public class ShowSynchronizeParticipantAction extends Action {
+public class ShowSynchronizeParticipantAction extends Action implements IPropertyChangeListener {
 	
-	private ISynchronizeParticipantReference fPage;
+    private ISynchronizeParticipantReference fPage;
 	private ISynchronizeView fView;
 	
 	public void run() {
@@ -43,6 +48,47 @@ public class ShowSynchronizeParticipantAction extends Action {
 		super(Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, ref.getDisplayName()), Action.AS_RADIO_BUTTON);
 		fPage = ref;
 		fView = view;
-		setImageDescriptor(ref.getDescriptor().getImageDescriptor());
+        setImageDescriptor( new ParticipantOverlay( ref));
+        
+        try {
+          fPage.getParticipant().addPropertyChangeListener( this);
+        } catch( TeamException e) {
+          Utils.handle(e);
+        }
+	}
+    
+	public void propertyChange( PropertyChangeEvent event) {
+      if( AbstractSynchronizeParticipant.P_PINNED.equals( event.getProperty())) {
+        setImageDescriptor(new ParticipantOverlay( fPage));
+      }
+	}
+
+    
+	private static final class ParticipantOverlay extends CompositeImageDescriptor {
+
+		private ImageData overlayData = TeamUIPlugin.getImageDescriptor("ovr/pinned_ovr.gif").getImageData(); //$NON-NLS-1$
+		private ImageData imageData;
+		private ISynchronizeParticipant participant;
+
+		private ParticipantOverlay(ISynchronizeParticipantReference ref) {
+			try {
+				this.participant = ref.getParticipant();
+				this.imageData = ref.getDescriptor().getImageDescriptor().getImageData();
+			} catch (TeamException ex) {
+				TeamUIPlugin.log(ex);
+			}
+		}
+
+		protected void drawCompositeImage(int width, int height) {
+			drawImage(this.imageData, 0, 0);
+			if (this.participant.isPinned()) {
+				drawImage(overlayData, this.imageData.width - overlayData.width, 0);
+			}
+		}
+
+		protected Point getSize() {
+			return new Point(this.imageData.width, this.imageData.height);
+		}
 	}
 }
+
