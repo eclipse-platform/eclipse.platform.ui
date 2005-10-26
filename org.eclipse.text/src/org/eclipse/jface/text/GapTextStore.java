@@ -160,7 +160,7 @@ public class GapTextStore implements ITextStore {
 			return new String(fContent, offset + gapLength , length);
 		}
 
-		StringBuffer buf= new StringBuffer();
+		StringBuffer buf= new StringBuffer(length);
 		buf.append(fContent, offset, fGapStart - offset);
 		buf.append(fContent, fGapEnd, end - fGapStart);
 		return buf.toString();
