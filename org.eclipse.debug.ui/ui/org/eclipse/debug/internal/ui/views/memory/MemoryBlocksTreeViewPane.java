@@ -206,7 +206,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			{	
 				fDebugTarget = (IDebugTarget)inputElement;
 				
-				return (IMemoryBlock[])fMemoryBlocks.toArray(new IMemoryBlock[fMemoryBlocks.size()]);
+				return fMemoryBlocks.toArray(new IMemoryBlock[fMemoryBlocks.size()]);
 			}
 			return new Object[]{inputElement};
 		}

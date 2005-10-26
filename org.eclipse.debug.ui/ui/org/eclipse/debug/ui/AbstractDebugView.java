@@ -235,7 +235,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			if (viewer != null) {
 				IBaseLabelProvider labelProvider = viewer.getLabelProvider();
 				if (labelProvider instanceof IDebugModelPresentation) {
-					return (IDebugModelPresentation)labelProvider;
+					return labelProvider;
 				}
 			}
 		}
