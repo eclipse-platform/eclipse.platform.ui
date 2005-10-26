@@ -9,13 +9,13 @@ import org.eclipse.jface.binding.IValidator;
 import org.eclipse.jface.binding.IdentityConverter;
 import org.eclipse.jface.binding.swt.TableViewerDescription;
 import org.eclipse.jface.binding.swt.TableViewerDescription.Column;
+import org.eclipse.jface.binding.swt.TableViewerDescription.ImageAndString;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Item;
 
@@ -49,7 +49,7 @@ public class TableViewerUpdatableCollectionExtended extends
 			if (converter.getTargetType().equals(ViewerLabel.class)) {
 				ViewerLabel viewerLabel = (ViewerLabel) getConvertedValue(
 						element, column);
-				return viewerLabel.getImage();
+				return imageAndString.getImage();
 			}
 			return null;
 		}
@@ -58,9 +58,9 @@ public class TableViewerUpdatableCollectionExtended extends
 			Column column = getColumn(columnIndex);
 			Object convertedValue = getConvertedValue(element, column);
 			IConverter converter = column.getConverter();
-			if (converter.getTargetType().equals(ViewerLabel.class)) {
-				ViewerLabel viewerLabel = (ViewerLabel) convertedValue;
-				return viewerLabel.getText();
+			if (converter.getTargetType().equals(ImageAndString.class)) {
+				ImageAndString imageAndString = (ImageAndString) convertedValue;
+				return imageAndString.getString();
 			}
 			return (String) convertedValue;
 		}
@@ -188,7 +188,7 @@ public class TableViewerUpdatableCollectionExtended extends
 						Method setter = element
 								.getClass()
 								.getMethod(
-										"set"	+ property.substring(0, 1).toUpperCase(Locale.ENGLISH) + property.substring(1), new Class[] { column.getConverter().getTargetType() }); //$NON-NLS-1$
+										"set"	+ property.substring(0, 1).toUpperCase(Locale.ENGLISH) + property.substring(1), new Class[] { column.getConverter().getModelType() }); //$NON-NLS-1$
 						setter.invoke(element, new Object[] { value });
 						return;
 					} catch (SecurityException e) {
