@@ -22,7 +22,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static WorkbenchNavigatorPlugin plugin;
-	public static String PLUGIN_ID = "org.eclipse.wst.common.navigator.workbench"; //$NON-NLS-1$
+	public static String PLUGIN_ID = "org.eclipse.ui.navigator.resources"; //$NON-NLS-1$
 
 	/**
 	 * Creates a new instance of the receiver

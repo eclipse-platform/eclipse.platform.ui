@@ -4,13 +4,9 @@ import org.eclipse.osgi.util.NLS;
 
 public class CommonNavigatorMessages extends NLS {
 
-	public static String BUNDLE_NAME = "messages.properties"; //$NON-NLS-1$
-	public static String Link_With_Editor_Job_;
-
-	static {
-		NLS.initializeMessages(BUNDLE_NAME, CommonNavigatorMessages.class);
-	}
-
+	private static final String BUNDLE_NAME = "org.eclipse.ui.navigator.internal.navigator_messages.properties"; //$NON-NLS-1$
+	
+	public static String Link_With_Editor_Job_; 
 	public static String NavigatorContentService_0;
 	public static String NavigatorContentService_1;
 	public static String CommonViewer_0;
@@ -40,5 +36,10 @@ public class CommonNavigatorMessages extends NLS {
 	public static String ExtensionFilterViewerRegistry_0;
 	public static String ExtensionFilterViewerRegistry_1;
 	public static String PendingUpdateAdapter_PendingLabel;
+	
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, CommonNavigatorMessages.class);
+	}
+
 
 }

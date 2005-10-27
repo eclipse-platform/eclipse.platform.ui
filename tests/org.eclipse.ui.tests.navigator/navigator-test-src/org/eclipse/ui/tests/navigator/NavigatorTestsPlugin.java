@@ -23,7 +23,7 @@ public class NavigatorTestsPlugin extends AbstractUIPlugin {
 	 * Creates a new instance of the receiver
 	 */
 	public NavigatorTestsPlugin() {
-		super();
+ 		super();
 		plugin = this;
 	}
 

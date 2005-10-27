@@ -13,45 +13,25 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 
 public class TestWorkspace {
-	public static final String TEST_RESOURCE_PROJECT_NAME = "TestResourceProject"; //$NON-NLS-1$
-	
-	private static final String TEST_RESOURCE_PROJECT_TESTDATA = "/testdata/TestResourceProject.zip"; //$NON-NLS-1$
-	
-	public static final String MODULE1_PROJECT_NAME = "module1"; //$NON-NLS-1$
-	
-	private static final String MODULE1_PROJECT_TESTDATA = "/testdata/module1.zip"; //$NON-NLS-1$
+	public static final String TEST_PROJECT_NAME= "Test"; //$NON-NLS-1$
+
+	private static final String TEST_TESTDATA= "/testdata/Test.zip"; //$NON-NLS-1$
+
 
 	public static void init() {
 
 		// setup test resource project
-		ProjectUnzipUtil util = new ProjectUnzipUtil(new Path(
-				TEST_RESOURCE_PROJECT_TESTDATA),
-				new String[] { TEST_RESOURCE_PROJECT_NAME });
+		ProjectUnzipUtil util= new ProjectUnzipUtil(new Path(TEST_TESTDATA), new String[]{TEST_PROJECT_NAME});
 
-		if (!getResourceTestProject().isAccessible()) {
+		if (!getTestProject().isAccessible()) {
 			util.createProjects();
 		} else {
 			util.reset();
 		}
 
-		util = new ProjectUnzipUtil(new Path(
-				MODULE1_PROJECT_TESTDATA),
-				new String[] { MODULE1_PROJECT_NAME });
-
-		if (!getModuleTestProject().isAccessible()) {
-			util.createProjects();
-		} else {
-			util.reset();
-		}	
 	}
 
-	public static IProject getResourceTestProject() {
-		return ResourcesPlugin.getWorkspace().getRoot().getProject(
-				TEST_RESOURCE_PROJECT_NAME);
-	}
-
-	public static IProject getModuleTestProject() {
-		return ResourcesPlugin.getWorkspace().getRoot().getProject(
-				MODULE1_PROJECT_NAME);
+	public static IProject getTestProject() {
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(TEST_PROJECT_NAME);
 	}
 }

@@ -6,9 +6,10 @@
          point="org.eclipse.ui.views">
       <view
             class="org.eclipse.ui.navigator.CommonNavigator"
-            id="org.eclipse.ui.examples.navigator.example1"
+            id="org.eclipse.ui.navigator.resourceContent"
             name="%Common_Navigator_Example"/>
    </extension>
+   <!-- The example uses the already defined Resource extension
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
@@ -25,4 +26,5 @@
          </enablement>
       </navigatorContent>
    </extension> 
+   -->
 </plugin>
