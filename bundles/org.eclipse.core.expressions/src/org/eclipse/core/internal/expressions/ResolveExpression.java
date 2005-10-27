@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.ExpressionInfo;
 
 public class ResolveExpression extends CompositeExpression {
 
@@ -31,6 +32,12 @@ public class ResolveExpression extends CompositeExpression {
 		fArgs= Expressions.getArguments(configElement, ATT_ARGS);
 	}
 	
+	public ResolveExpression(String variable, Object[] args) {
+		Assert.isNotNull(variable);
+		fVariable= variable;
+		fArgs= args;
+	}
+
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object variable= context.resolveVariable(fVariable, fArgs);
 		if (variable == null) {
@@ -39,5 +46,14 @@ public class ResolveExpression extends CompositeExpression {
 				Messages.format(ExpressionMessages.ResolveExpression_variable_not_defined, fVariable))); 
 		}
 		return evaluateAnd(new EvaluationContext(context, variable));
+	}
+	
+	public void collectExpressionInfo(ExpressionInfo info) {
+		ExpressionInfo other= new ExpressionInfo();
+		super.collectExpressionInfo(other);
+		if (other.hasDefaultVariableAccess()) {
+			info.addVariableNameAccess(fVariable);
+		}
+		info.mergeExceptDefaultVariable(other);
 	}
 }

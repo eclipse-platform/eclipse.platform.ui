@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.ExpressionInfo;
 
 public class TestExpression extends Expression {
 
@@ -43,6 +44,13 @@ public class TestExpression extends Expression {
 		fExpectedValue= Expressions.convertArgument(element.getAttribute(ATT_VALUE));
 	}
 	
+	public TestExpression(String namespace, String property, Object[] args, Object expectedValue) {
+		fNamespace= namespace;
+		fProperty= property;
+		fArgs= args;
+		fExpectedValue= expectedValue;
+	}
+	
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object element= context.getDefaultVariable();
 		if (System.class.equals(element)) {
@@ -55,6 +63,10 @@ public class TestExpression extends Expression {
 		if (!property.isInstantiated())
 			return EvaluationResult.NOT_LOADED;
 		return EvaluationResult.valueOf(property.test(element, fArgs, fExpectedValue));
+	}
+
+	public void collectExpressionInfo(ExpressionInfo info) {
+		info.markDefaultVariableAccessed();
 	}
 	
 	//---- Debugging ---------------------------------------------------

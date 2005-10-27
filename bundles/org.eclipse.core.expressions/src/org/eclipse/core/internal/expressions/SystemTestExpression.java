@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.ExpressionInfo;
 
 public class SystemTestExpression extends Expression {
 
@@ -41,6 +42,10 @@ public class SystemTestExpression extends Expression {
 		if (str == null) 
 			return EvaluationResult.FALSE;
 		return EvaluationResult.valueOf(str.equals(fExpectedValue));
+	}
+
+	public void collectExpressionInfo(ExpressionInfo info) {
+		info.markSystemPropertyAccessed();
 	}
 	
 	//---- Debugging ---------------------------------------------------

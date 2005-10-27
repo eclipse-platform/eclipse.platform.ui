@@ -19,9 +19,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.ExpressionInfo;
 
 public abstract class CompositeExpression extends Expression {
-	
+
 	private static final Expression[] EMPTY_ARRAY= new Expression[0]; 
 	
 	protected List fExpressions;
@@ -64,5 +65,14 @@ public abstract class CompositeExpression extends Expression {
 				return result;
 		}
 		return result;
-	}	
+	}
+	
+	public void collectExpressionInfo(ExpressionInfo info) {
+		if (fExpressions == null)
+			return;
+		for (Iterator iter= fExpressions.iterator(); iter.hasNext();) {
+			Expression expression= (Expression)iter.next();
+			expression.collectExpressionInfo(info);
+		}
+	}
 }

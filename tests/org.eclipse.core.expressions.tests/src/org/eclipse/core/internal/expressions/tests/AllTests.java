@@ -19,6 +19,7 @@ public class AllTests {
 		TestSuite suite= new TestSuite("All Expression Language Tests"); //$NON-NLS-1$
 		suite.addTest(PropertyTesterTests.suite());
 		suite.addTest(ExpressionTests.suite());
+		suite.addTest(ExpressionInfoTests.suite());
 		return suite;
 	}
 }

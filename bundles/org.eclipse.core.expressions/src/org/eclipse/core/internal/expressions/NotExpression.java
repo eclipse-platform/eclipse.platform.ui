@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.ExpressionInfo;
 
 public class NotExpression extends Expression {
 
@@ -27,5 +28,9 @@ public class NotExpression extends Expression {
 	
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		return fExpression.evaluate(context).not();
+	}
+	
+	public void collectExpressionInfo(ExpressionInfo info) {
+		fExpression.collectExpressionInfo(info);
 	}
 }

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.ExpressionInfo;
 
 public class WithExpression extends CompositeExpression {
 
@@ -27,6 +28,10 @@ public class WithExpression extends CompositeExpression {
 		Expressions.checkAttribute(ATT_VARIABLE, fVariable);
 	}
 	
+	public WithExpression(String variable) {
+		fVariable= variable;
+	}
+
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object variable= context.getVariable(fVariable);
 		if (variable == null) {
@@ -36,4 +41,13 @@ public class WithExpression extends CompositeExpression {
 		}
 		return evaluateAnd(new EvaluationContext(context, variable));
 	}
+
+	public void collectExpressionInfo(ExpressionInfo info) {
+		ExpressionInfo other= new ExpressionInfo();
+		super.collectExpressionInfo(other);
+		if (other.hasDefaultVariableAccess()) {
+			info.addVariableNameAccess(fVariable);
+		}
+		info.mergeExceptDefaultVariable(other);
+	}	
 }

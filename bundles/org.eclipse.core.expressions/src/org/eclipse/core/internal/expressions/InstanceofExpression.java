@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.ExpressionInfo;
 
 public class InstanceofExpression extends Expression {
 
@@ -37,6 +38,10 @@ public class InstanceofExpression extends Expression {
 	public EvaluationResult evaluate(IEvaluationContext context) {
 		Object element= context.getDefaultVariable();
 		return EvaluationResult.valueOf(Expressions.isInstanceOf(element, fTypeName));
+	}
+	
+	public void collectExpressionInfo(ExpressionInfo info) {
+		info.markDefaultVariableAccessed();
 	}
 	
 	//---- Debugging ---------------------------------------------------

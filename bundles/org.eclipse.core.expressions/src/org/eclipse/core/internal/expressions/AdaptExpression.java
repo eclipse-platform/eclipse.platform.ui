@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.ExpressionInfo;
 
 public class AdaptExpression extends CompositeExpression {
 
@@ -57,4 +58,12 @@ public class AdaptExpression extends CompositeExpression {
 			return EvaluationResult.NOT_LOADED;
 		return evaluateAnd(new DefaultVariable(context, adapted));
 	}
+	
+	public void collectExpressionInfo(ExpressionInfo info) {
+		// Although the default variable is passed to the children of this
+		// expression as an instance of the adapted type it is OK to only
+		// mark a default variable access.
+		info.markDefaultVariableAccessed();
+		super.collectExpressionInfo(info);
+	}	
 }

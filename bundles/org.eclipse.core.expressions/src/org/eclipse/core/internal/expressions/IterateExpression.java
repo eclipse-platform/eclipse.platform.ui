@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.ExpressionInfo;
 
 public class IterateExpression extends CompositeExpression {
 	
@@ -126,5 +127,13 @@ public class IterateExpression extends CompositeExpression {
 				}
 				return result;
 		}
+	}
+
+	public void collectExpressionInfo(ExpressionInfo info) {
+		// Although we access every single variable we only mark the default
+		// variable as accessed since we don't have single variables for the
+		// elements.
+		info.markDefaultVariableAccessed();
+		super.collectExpressionInfo(info);
 	}
 }

@@ -39,6 +39,8 @@ public abstract class Expression {
 		public EvaluationResult evaluate(IEvaluationContext context) {
 			return EvaluationResult.TRUE;
 		}	
+		public void collectExpressionInfo(ExpressionInfo info) {
+		}
 	};
 	
 	/**
@@ -47,7 +49,9 @@ public abstract class Expression {
 	public static final Expression FALSE= new Expression() {
 		public EvaluationResult evaluate(IEvaluationContext context) {
 			return EvaluationResult.FALSE;
-		}	
+		}
+		public void collectExpressionInfo(ExpressionInfo info) {
+		}
 	};
 	
 	/**
@@ -63,4 +67,30 @@ public abstract class Expression {
 	 */
 	public abstract EvaluationResult evaluate(IEvaluationContext context) throws CoreException;
 	
+	/**
+	 * Computes the expression information for the given expression tree.
+	 * <p>
+	 * This is a convenience method for collecting the expression information
+	 * using {@link Expression#collectExpressionInfo(ExpressionInfo)}.
+	 * </p>
+	 * 
+	 * @return the expression information 
+	 */
+	public final ExpressionInfo computeExpressionInfo() {
+		ExpressionInfo result= new ExpressionInfo();
+		collectExpressionInfo(result);
+		return result;
+	}
+	
+	/**
+	 * Collects information about this expression tree. This default
+	 * implementation add the expression's type to the set of misbehaving
+	 * expression types.
+	 * 
+	 * @param info the expression information object used
+	 *  to collect the information
+	 */
+	public void collectExpressionInfo(ExpressionInfo info) {
+		info.addMisBehavingExpressionType(getClass());
+	}
 }

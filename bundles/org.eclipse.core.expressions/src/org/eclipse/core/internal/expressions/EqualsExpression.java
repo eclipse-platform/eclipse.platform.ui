@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.ExpressionInfo;
 
 public class EqualsExpression extends Expression {
 
@@ -35,5 +36,9 @@ public class EqualsExpression extends Expression {
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object element= context.getDefaultVariable();
 		return EvaluationResult.valueOf(element.equals(fExpectedValue));
+	}
+
+	public void collectExpressionInfo(ExpressionInfo info) {
+		info.markDefaultVariableAccessed();
 	}
 }

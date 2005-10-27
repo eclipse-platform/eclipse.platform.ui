@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.ExpressionInfo;
 
 
 public class CountExpression extends Expression {
@@ -82,5 +83,9 @@ public class CountExpression extends Expression {
 				return EvaluationResult.TRUE;
 		}
 		return EvaluationResult.FALSE;
+	}
+
+	public void collectExpressionInfo(ExpressionInfo info) {
+		info.markDefaultVariableAccessed();
 	}
 }
