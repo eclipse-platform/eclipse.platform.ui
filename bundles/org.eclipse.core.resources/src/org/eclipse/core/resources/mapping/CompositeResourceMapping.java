@@ -30,7 +30,7 @@ public final class CompositeResourceMapping extends ResourceMapping {
 	private String providerId;
 
 	/**
-	 * Create a composite mapping that obtains it's traversals from a set of sub-mappings.
+	 * Create a composite mapping that obtains its traversals from a set of sub-mappings.
 	 * @param modelObject the model object for this mapping
 	 * @param mappings the sub-mappings from which the traversals are obtained
 	 */
