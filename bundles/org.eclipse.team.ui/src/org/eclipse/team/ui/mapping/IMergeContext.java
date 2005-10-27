@@ -22,8 +22,10 @@ import org.eclipse.team.core.synchronize.SyncInfoSet;
  * or a model specific synchronization view that supports merging.
  * 
  * TODO: Need to have a story for folder merging
+ * TODO: How are merge/markasMerge changes batched? IWorkspace#run?
  * <p>
- * This interface is not intended to be implemented by clients.
+ * This interface is not intended to be implemented by clients. Clients should
+ * instead subclass {@link MergeContext}.
  *  
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -33,6 +35,7 @@ import org.eclipse.team.core.synchronize.SyncInfoSet;
  * </p>
  * 
  * @see IResourceMappingMerger
+ * @see MergeContext
  * @since 3.2
  */
 public interface IMergeContext extends ISynchronizeOperationContext {
@@ -41,14 +44,19 @@ public interface IMergeContext extends ISynchronizeOperationContext {
 	 * Method that allows the model merger to signal that the file in question
 	 * has been completely merged. Model mergers can call this method if they
 	 * have transfered all changes from a remote file to a local file and wish
-	 * to signal that the merge is done.This will allow repository providers to
+	 * to signal that the merge is done. This will allow repository providers to
 	 * update the synchronization state of the file to reflect that the file is
 	 * up-to-date with the repository.
 	 * <p>
+	 * This method should only be used when remote content in being merged with
+	 * local content. For cases in which either the local file or remote file
+	 * dos not exist, one of the <code>merge</code> methods should be used.
+	 * This is done to accomodate repositories that have special handling
+	 * for file additions and removals.
+	 * </p>
+	 * <p>
 	 * Clients should not implement this interface but should instead subclass 
 	 * MergeContext.
-	 * 
-	 * TODO: How are these batched? IWorkspace#run?
 	 * 
 	 * @see MergeContext
 	 * 
@@ -77,7 +85,7 @@ public interface IMergeContext extends ISynchronizeOperationContext {
 	 * Any resource changes triggered by this merge will be reported through the 
 	 * resource delta mechanism and the sync-info tree associated with this context.
 	 * 
-	 * TODO: How do we handle folder removals generically?
+	 * TODO: How do we handle folder additions/removals generically?
 	 * 
 	 * @see SyncInfoSet#addSyncSetChangedListener(ISyncInfoSetChangeListener)
 	 * @see org.eclipse.core.resources.IWorkspace#addResourceChangeListener(IResourceChangeListener)
@@ -94,19 +102,24 @@ public interface IMergeContext extends ISynchronizeOperationContext {
 	public IStatus merge(SyncInfoSet infos, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Method that can be called by the model merger to attempt a file level
-	 * merge. This is useful for cases where the model merger does not need to
-	 * do any special processing to perform the merge. By default, this method
-	 * attempts to use an appropriate <code>IStreamMerger</code> to perform the
-	 * merge. If a stream merger cannot be found, the text merger is used. If this behavior
-	 * is not desired, sub-classes may override this method.
+	 * Method that can be called by the model merger to attempt a merge of a
+	 * particular resource.
+	 * 
+	 * <p>
+	 * For files, this is useful for cases where the model merger does not need
+	 * to do any special processing to perform the merge. By default, this
+	 * method attempts to use an appropriate <code>IStreamMerger</code> to
+	 * perform the merge on a file. If a stream merger cannot be found, the text
+	 * merger is used. If this behavior is not desired, sub-classes may override
+	 * this method.
 	 * 
 	 * @param file the file to be merged
 	 * @param monitor a progress monitor
 	 * @return a status indicating success or failure. A code of
-	 *         <code>MergeStatus.CONFLICTS</code> indicates that the file contain
-	 *         non-mergable conflicts and must be merged manually.
-	 * @see org.eclipse.team.ui.mapping.IMergeContext#merge(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
+	 *         <code>MergeStatus.CONFLICTS</code> indicates that the file
+	 *         contain non-mergable conflicts and must be merged manually.
+	 * @see org.eclipse.team.ui.mapping.IMergeContext#merge(org.eclipse.core.resources.IFile,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus merge(SyncInfo info, IProgressMonitor monitor);
 	
