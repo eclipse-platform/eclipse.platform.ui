@@ -24,6 +24,15 @@
 	</adapter>
 </extension>
 
+<extension id="pserverssh2" point="org.eclipse.team.cvs.core.connectionmethods">
+	<adapter>
+		<run class="org.eclipse.team.internal.ccvs.ssh2.PServerSSH2Method">
+			<parameter name="trace" value="false"/>
+		</run>
+	</adapter>
+</extension>
+
+
 <!-- =================================================================================== -->
 <!-- Extension Point: Preference page                                                    -->
 <!-- =================================================================================== -->
