@@ -100,7 +100,7 @@ public class FieldSeverity implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getCategoryValue(java.lang.Object)
 	 */
 	public String getCategoryValue(Object obj) {
-		return Util.getCategoryText(((ProblemMarker) obj).getSeverity());
+		return Util.getSeverityText(((ProblemMarker) obj).getSeverity());
 	}
 
 	/* (non-Javadoc)

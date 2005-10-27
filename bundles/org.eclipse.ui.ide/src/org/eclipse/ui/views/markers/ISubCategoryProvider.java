@@ -20,12 +20,13 @@ import org.eclipse.core.resources.IMarker;
  * during the 3.2 development cycle.
  *
  */
-public interface ICategoryProvider {
+public interface ISubCategoryProvider {
 	
 	/**
-	 * Provide the name of the category for the marker.
+	 * Provide the name of the category for the marker. Return <code>null</code> 
+	 * if no category can be determined. 
 	 * @param marker
-	 * @return String
+	 * @return String or  <code>null</code> 
 	 */
 	public String categoryFor(IMarker marker);
 

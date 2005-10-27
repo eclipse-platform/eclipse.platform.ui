@@ -54,7 +54,7 @@ public class RemoveMarkersAction implements IWorkbenchWindowActionDelegate {
         try {
 	        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 	        
-	        IMarker[] markers = root.findMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
+	        IMarker[] markers = root.findMarkers(AddMarkersAction.CATEGORY_TEST_MARKER, false, IResource.DEPTH_ZERO);
 	        
 	        for (int i = 0; i < markers.length; i++) {
 	            String message = (String) markers[i].getAttribute(IMarker.MESSAGE);

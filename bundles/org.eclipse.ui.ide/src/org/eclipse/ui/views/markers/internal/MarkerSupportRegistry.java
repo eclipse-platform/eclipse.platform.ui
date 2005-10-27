@@ -2,11 +2,16 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -15,6 +20,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.views.markers.ISubCategoryProvider;
 
 /**
  * The ProblemFilterRegistryReader is the registry reader for declarative
@@ -62,20 +68,34 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String SEVERITY = "severity";//$NON-NLS-1$
 
+	private static final Object SUB_CATEGORY_PROVIDER = "subCategoryProvider"; //$NON-NLS-1$
+
+	private static final String MARKER_TYPE = "markerType"; //$NON-NLS-1$
+
+	private static final String CLASS = "class";//$NON-NLS-1$
+
 	private static MarkerSupportRegistry singleton;
 
+	//Create a lock so that initiization happens in one thread
+	private static Object creationLock = new Object();
 	/**
 	 * Get the instance of the registry.
 	 * 
 	 * @return ProblemFilterRegistry
 	 */
 	public static MarkerSupportRegistry getInstance() {
-		if (singleton == null)
-			singleton = new MarkerSupportRegistry();
+		if (singleton == null){
+			synchronized (creationLock) {
+				if (singleton == null)//May have been created by blocking thread
+					singleton = new MarkerSupportRegistry();
+			}			
+		}
 		return singleton;
 	}
 
 	private Collection registeredFilters = new ArrayList();
+
+	private HashMap registeredProviders = new HashMap();
 
 	/**
 	 * Create a new instance of the receiver and read the registry.
@@ -118,7 +138,62 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 				continue;
 			}
+			if (element.getName().equals(SUB_CATEGORY_PROVIDER)) {
+				
+				String markerType = element.getAttribute(MARKER_TYPE);
+				ISubCategoryProvider provider = getProvider(element);
+				
+				if(provider != null){
+					Collection providers;
+					if(registeredProviders.containsKey(markerType))
+						providers = (Collection) registeredProviders.get(markerType);
+					else
+						providers = new ArrayList();
+					providers.add(provider);
+					registeredProviders.put(markerType, providers);
+					tracker.registerObject(extension, provider,
+							IExtensionTracker.REF_STRONG);
+				}
+			}
 		}
+	}
+
+	/**
+	 * Create an ICategoryProvider from element.
+	 * @param element
+	 * @return ICategoryProvider
+	 */
+	private ISubCategoryProvider getProvider(final IConfigurationElement element) {
+		
+		final ISubCategoryProvider[] providers = new ISubCategoryProvider[1];
+		final CoreException[] exceptions = new CoreException[1];
+		
+		Platform.run(new ISafeRunnable() {
+			public void run() {
+				try {
+					providers[0] = (ISubCategoryProvider) IDEWorkbenchPlugin
+							.createExtension(element,
+									CLASS);
+				
+				} catch (CoreException exception) {
+					exceptions[0] = exception;
+				}
+			}
+
+			/*
+			 * (non-Javadoc) Method declared on ISafeRunnable.
+			 */
+			public void handleException(Throwable e) {
+				// Do nothing as Core will handle the logging
+			}
+		});
+		
+		if (exceptions[0] != null){
+			Util.log(exceptions[0]);
+			return null;
+		}			
+		
+		return providers[0];
 	}
 
 	/*
@@ -256,8 +331,48 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof ProblemFilter)
 				registeredFilters.remove(objects[i]);
+			
+			Collection keysToRemove = new ArrayList();
+			if (objects[i] instanceof ISubCategoryProvider){
+				Iterator keys = registeredProviders.keySet().iterator();
+				while(keys.hasNext()){
+					String key = (String) keys.next();
+					Collection next = (Collection) registeredProviders.get(key);
+					if(next.contains(objects[i])){
+						next.remove(objects[i]);
+						if(next.isEmpty())
+							keysToRemove.add(key);
+						break;
+					}
+				}
+			}
+				
 		}
 
 	}
+
+	/**
+	 * Get the ICategoryProviders associated with marker. Return
+	 * <code>null</code> if there are none.
+	 * @param marker
+	 * @return ICategoryProvider[] or <code>null</code> 
+	 */
+	public ISubCategoryProvider[] getCategoryProviders(IMarker marker) {
+		Object providers;
+		try {
+			providers = registeredProviders.get(marker.getType());
+		} catch (CoreException e) {
+			Util.log(e);
+			return null;
+		}
+		if(providers == null)
+			return null;
+		Collection providerCollection = (Collection) providers;
+		ISubCategoryProvider[] providerArray = new ISubCategoryProvider[providerCollection.size()];
+		providerCollection.toArray(providerArray);
+		return providerArray;
+	}
+
+
 
 }

@@ -33,7 +33,8 @@ import org.eclipse.ui.views.markers.MarkerViewUtil;
  */
 public class AddMarkersAction implements IWorkbenchWindowActionDelegate {
 
-    private IWorkbenchWindow window;
+    static final String CATEGORY_TEST_MARKER = "org.eclipse.ui.tests.categoryTestMarker";
+	private IWorkbenchWindow window;
 
 
     /* (non-Javadoc)
@@ -63,7 +64,8 @@ public class AddMarkersAction implements IWorkbenchWindowActionDelegate {
 	            attribs.put(IMarker.MESSAGE, "this is a test " + i);
 	            attribs.put(MarkerViewUtil.NAME_ATTRIBUTE , "Test Name " + i);
 	            attribs.put(MarkerViewUtil.PATH_ATTRIBUTE , "Test Path " + i);
-	            MarkerUtilities.createMarker(root, attribs, IMarker.PROBLEM);
+	            attribs.put("category" , "Category " + String.valueOf(i/10));
+	            MarkerUtilities.createMarker(root, attribs, CATEGORY_TEST_MARKER);
 	        }
         } catch (CoreException e) {
             openError(e);

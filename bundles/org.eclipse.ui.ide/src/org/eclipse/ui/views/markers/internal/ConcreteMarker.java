@@ -16,6 +16,7 @@ import java.text.Collator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.views.markers.ISubCategoryProvider;
 
 /**
  * This is a concrete class that stores the same type of information as the IMarkers
@@ -54,6 +55,8 @@ public class ConcreteMarker extends MarkerNode{
 
 	private String shortFolder;
 
+	private String subCategory = Util.EMPTY_STRING;
+
     public ConcreteMarker(IMarker toCopy) {
         marker = toCopy;
         refresh();
@@ -89,11 +92,26 @@ public class ConcreteMarker extends MarkerNode{
         try {
             type = marker.getType();
         } catch (CoreException e1) {
-            type = ""; //$NON-NLS-1$
+            type = Util.EMPTY_STRING; 
         }
         
         // store the marker ID locally
         id = marker.getId();
+        
+        ISubCategoryProvider[] providers =  MarkerSupportRegistry.getInstance().getCategoryProviders(marker);
+        if(providers == null)
+        	subCategory = Util.EMPTY_STRING;
+        else{
+        	for (int i = 0; i < providers.length; i++) {
+				String category = providers[i].categoryFor(marker);
+				if(category != null){
+					subCategory = category;
+					break;
+				}
+				
+			}
+        }
+        	
     }
 
     public IResource getResource() {
@@ -208,5 +226,13 @@ public class ConcreteMarker extends MarkerNode{
 		if(shortFolder == null)
 			shortFolder = Util.getShortContainerName(marker);
 		return shortFolder;
+	}
+
+	/**
+	 * Return the subcategory for the receiver.
+	 * @return String
+	 */
+	public String getSubCategory() {
+		return subCategory ;
 	}
 }

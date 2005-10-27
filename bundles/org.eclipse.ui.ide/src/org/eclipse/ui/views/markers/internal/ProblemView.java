@@ -55,7 +55,7 @@ public class ProblemView extends MarkerView {
 			new FieldLineNumber(), new FieldCreationTime(),
 			// Add the marker ID so the table sorter won't reduce
 			// errors on the same line bug 82502
-			new FieldId(), new FieldProject(), new FieldMarkerType() };
+			new FieldId(), new FieldProject(), new FieldMarkerType(), new FieldSubCategory()};
 
 	// Field Tags
 	// These tags MUST occur in the same order as the VISIBLE_FIELDS +
@@ -84,6 +84,8 @@ public class ProblemView extends MarkerView {
 	private final static int PROJECT = 7;
 
 	private final static int MARKER_TYPE = 8;
+	
+	private final static int SUB_CATEGORY = 9;
 
 	private final static String[] ROOT_TYPES = { IMarker.PROBLEM };
 
@@ -105,6 +107,7 @@ public class ProblemView extends MarkerView {
 	 */
 	private int[] getDefaultDirections() {
 		return new int[] { DESCENDING, // severity
+				ASCENDING, // sub category
 				ASCENDING, // folder
 				ASCENDING, // resource
 				ASCENDING, // location
@@ -124,9 +127,9 @@ public class ProblemView extends MarkerView {
 	 */
 	private int[] getDefaultPriorities() {
 		if (isHierarchalMode())
-			return new int[] { MARKER_TYPE, PROJECT, SEVERITY, FOLDER,
+			return new int[] { MARKER_TYPE, SUB_CATEGORY, PROJECT, SEVERITY, FOLDER,
 					RESOURCE, DESCRIPTION, LOCATION, CREATION_TIME, MARKER_ID };
-		return new int[] { SEVERITY, FOLDER, RESOURCE, LOCATION, DESCRIPTION,
+		return new int[] { SEVERITY, SUB_CATEGORY, FOLDER, RESOURCE, LOCATION, DESCRIPTION,
 				CREATION_TIME, MARKER_ID, MARKER_TYPE, PROJECT };
 	}
 

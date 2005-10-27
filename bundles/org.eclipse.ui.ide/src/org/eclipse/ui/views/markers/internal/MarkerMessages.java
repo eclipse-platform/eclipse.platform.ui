@@ -69,7 +69,7 @@ public class MarkerMessages extends NLS{
 	public static String description_priority;
 	public static String description_completion;
 	public static String description_markerId;
-	public static String description_category;
+	public static String description_subcategory;
 	public static String description_type;
 	public static String description_project;
 

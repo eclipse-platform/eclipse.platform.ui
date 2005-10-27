@@ -13,10 +13,11 @@ package org.eclipse.ui.views.markers.internal;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * The FieldCategory is the field for the category entries.
+ * FieldCategory is the field to support categories
+ * added via ICategoryProvider.
  *
  */
-public class FieldHierarchy implements IField {
+public class FieldSubCategory implements IField {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
@@ -36,6 +37,7 @@ public class FieldHierarchy implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
+		
 		return Util.EMPTY_STRING;
 	}
 
@@ -50,12 +52,9 @@ public class FieldHierarchy implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
 	 */
 	public String getValue(Object obj) {
-		if(obj instanceof MarkerNode){
-			MarkerNode node = (MarkerNode) obj;
-			if(node.isConcrete())
-				return Util.EMPTY_STRING;
-			return node.getDescription();
-		}
+		MarkerNode node = (MarkerNode) obj;
+		if(node.isConcrete())
+			return ((ConcreteMarker) obj).getSubCategory();
 		return Util.EMPTY_STRING;
 	}
 
@@ -70,19 +69,15 @@ public class FieldHierarchy implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object obj1, Object obj2) {
-		if (obj1 == null || obj2 == null || !(obj1 instanceof MarkerNode)
-				|| !(obj2 instanceof MarkerNode)) {
-			return 0;
-		}
+		   if (obj1 == null || obj2 == null || !(obj1 instanceof ConcreteMarker)
+	                || !(obj2 instanceof ConcreteMarker)) {
+	            return 0;
+	        }
 
-		MarkerNode marker1 = (MarkerNode) obj1;
-		MarkerNode marker2 = (MarkerNode) obj2;
-		
-		if(marker1.isConcrete() || marker2.isConcrete())
-			return 0;	
-
-		return marker1.getDescription().compareTo(
-				marker2.getDescription());
+	        ConcreteMarker marker1 = (ConcreteMarker) obj1;
+	        ConcreteMarker marker2 = (ConcreteMarker) obj2;
+	        
+	        return marker1.getSubCategory().compareTo(marker2.getSubCategory());
 	}
 
 	/* (non-Javadoc)
@@ -96,7 +91,7 @@ public class FieldHierarchy implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
 	 */
 	public boolean isCategoryField() {
-		return false;
+		return true;
 	}
 
 }

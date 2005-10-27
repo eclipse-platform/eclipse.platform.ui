@@ -14,7 +14,7 @@
       <complexType>
          <sequence>
             <element ref="problemFilter" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="viewMapping" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="subCategoryProvider" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -138,6 +138,33 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                <documentation>
                   The id of a marker that is enabled by default.
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="subCategoryProvider">
+      <annotation>
+         <documentation>
+            A subCategoryProvider provides a sub category for organizing marker types.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="markerType" type="string">
+            <annotation>
+               <documentation>
+                  The markerType is the id of the marker that this provider will provide categories for.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class is the name of the class that provides the category. It must implement org.eclipse.ui.views.markers.ISubCategoryProvider.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.views.markers.ICategoryProvider"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

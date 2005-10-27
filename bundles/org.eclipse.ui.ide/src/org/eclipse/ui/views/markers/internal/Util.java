@@ -240,7 +240,7 @@ public final class Util {
 	 * @param severity
 	 * @return String
 	 */
-	public static String getCategoryText(int severity) {
+	public static String getSeverityText(int severity) {
 		if (severity == IMarker.SEVERITY_ERROR) {
 			return MarkerMessages.propertiesDialog_errorLabel;
 		}
