@@ -47,7 +47,6 @@ import org.eclipse.team.internal.core.TeamPlugin;
 public class SubscriberResourceMappingContext extends RemoteResourceMappingContext {
     
     private final Subscriber subscriber;
-    private final SyncInfoFilter contentDiffFilter;
     
     // Lists used to keep track of resources that have been refreshed
     private Set shallowRefresh = new HashSet();
@@ -134,7 +133,6 @@ public class SubscriberResourceMappingContext extends RemoteResourceMappingConte
      */
     public SubscriberResourceMappingContext(Subscriber subscriber, SyncInfoFilter contentDiffFilter, boolean autoRefresh) {
         this.subscriber = subscriber;
-        this.contentDiffFilter = contentDiffFilter;
         this.autoRefresh = autoRefresh;
     }
 
