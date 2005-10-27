@@ -29,30 +29,23 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
-import org.eclipse.ui.ISourceProvider;
-import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.sources.ExpressionAuthority;
 
 /**
  * <p>
- * A central authority for resolving conflicts between handlers. This authority
- * listens to a variety of incoming sources, and updates the underlying commands
- * if changes in the active handlers occur.
- * </p>
- * <p>
- * This authority encapsulates all of the handler conflict resolution mechanisms
- * for the workbench. A conflict occurs if two or more handlers are assigned to
- * the same command identifier. To resolve this conflict, the authority
- * considers which source the handler came from.
+ * A central authority for deciding activation of contexts. This authority
+ * listens to a variety of incoming sources, and updates the underlying context
+ * manager if changes occur.
  * </p>
  * 
  * @since 3.1
  */
-final class ContextAuthority implements ISourceProviderListener {
+final class ContextAuthority extends ExpressionAuthority {
 
 	/**
 	 * Whether the context authority should kick into debugging mode. This
@@ -103,13 +96,6 @@ final class ContextAuthority implements ISourceProviderListener {
 	private final IContextService contextService;
 
 	/**
-	 * The collection of source providers used by this authority. This
-	 * collection is consulted whenever a handler is activated. This collection
-	 * only contains instances of <code>ISourceProvider</code>.
-	 */
-	private final Collection providers = new ArrayList();
-
-	/**
 	 * This is a map of shell to a list of activations. When a shell is
 	 * registered, it is added to this map with the list of activation that
 	 * should be submitted when the shell is active. When the shell is
@@ -150,14 +136,12 @@ final class ContextAuthority implements ISourceProviderListener {
 
 	/**
 	 * Activates a context on the workbench. This will add it to a master list.
-	 * If conflicts exist, they will be resolved based on the source priority.
-	 * If conflicts still exist, then no handler becomes active.
 	 * 
 	 * @param activation
 	 *            The activation; must not be <code>null</code>.
 	 */
 	final void activateContext(final IContextActivation activation) {
-		// First we update the handlerActivationsByCommandId map.
+		// First we update the contextActivationsByContextId map.
 		final String contextId = activation.getContextId();
 		final Object value = contextActivationsByContextId.get(contextId);
 		if (value instanceof Collection) {
@@ -180,7 +164,7 @@ final class ContextAuthority implements ISourceProviderListener {
 		} else {
 			contextActivationsByContextId.put(contextId, activation);
 			updateCurrentState();
-			updateContext(contextId, activation.isActive(context));
+			updateContext(contextId, activation.evaluate(context));
 		}
 
 		// Next we update the source priority bucket sort of activations.
@@ -198,19 +182,6 @@ final class ContextAuthority implements ISourceProviderListener {
 	}
 
 	/**
-	 * Adds a source provider to a list of providers to check when updating.
-	 * This also attaches this authority as a listener to the provider.
-	 * 
-	 * @param provider
-	 *            The provider to add; must not be <code>null</code>.
-	 */
-	final void addSourceProvider(final ISourceProvider provider) {
-		provider.addSourceProviderListener(this);
-		providers.add(provider);
-		updateCurrentState();
-	}
-
-	/**
 	 * Checks whether the new active shell is registered. If it is already
 	 * registered, then it does no work. If it is not registered, then it checks
 	 * what type of contexts the shell should have by default. This is
@@ -225,96 +196,95 @@ final class ContextAuthority implements ISourceProviderListener {
 	 *            disposed.
 	 */
 	private final void checkWindowType(final Shell newShell,
-            final Shell oldShell) {
-        /*
-         * If the previous active shell was recognized as a dialog by default,
-         * then remove its submissions.
-         */
-        Collection oldActivations = (Collection) registeredWindows
-                .get(oldShell);
-        if (oldActivations == null) {
-            /*
-             * The old shell wasn't registered. So, we need to check if it was
-             * considered a dialog by default.
-             */
-            oldActivations = (Collection) registeredWindows.get(null);
-            if (oldActivations != null) {
-                final Iterator oldActivationItr = oldActivations.iterator();
-                while (oldActivationItr.hasNext()) {
-                    final IContextActivation activation = (IContextActivation) oldActivationItr
-                            .next();
-                    deactivateContext(activation);
-                }
-            }
-        }
+			final Shell oldShell) {
+		/*
+		 * If the previous active shell was recognized as a dialog by default,
+		 * then remove its submissions.
+		 */
+		Collection oldActivations = (Collection) registeredWindows
+				.get(oldShell);
+		if (oldActivations == null) {
+			/*
+			 * The old shell wasn't registered. So, we need to check if it was
+			 * considered a dialog by default.
+			 */
+			oldActivations = (Collection) registeredWindows.get(null);
+			if (oldActivations != null) {
+				final Iterator oldActivationItr = oldActivations.iterator();
+				while (oldActivationItr.hasNext()) {
+					final IContextActivation activation = (IContextActivation) oldActivationItr
+							.next();
+					deactivateContext(activation);
+				}
+			}
+		}
 
-        /*
-         * If the new active shell is recognized as a dialog by default, then
-         * create some submissions, remember them, and submit them for
-         * processing.
-         */
-        if ((newShell != null) && (!newShell.isDisposed())) {
-            final Collection newActivations;
+		/*
+		 * If the new active shell is recognized as a dialog by default, then
+		 * create some submissions, remember them, and submit them for
+		 * processing.
+		 */
+		if ((newShell != null) && (!newShell.isDisposed())) {
+			final Collection newActivations;
 
-            if ((newShell.getParent() != null)
-                    && (registeredWindows.get(newShell) == null)) {
-                // This is a dialog by default.
-                newActivations = new ArrayList();
-                final Expression expression = new ActiveShellExpression(
-                        newShell);
-                final IContextActivation dialogWindowActivation = new ContextActivation(
-                        IContextService.CONTEXT_ID_DIALOG_AND_WINDOW,
-                        expression, ActiveShellExpression.SOURCES,
-                        contextService);
-                activateContext(dialogWindowActivation);
-                newActivations.add(dialogWindowActivation);
-                final IContextActivation dialogActivation = new ContextActivation(
-                        IContextService.CONTEXT_ID_DIALOG, expression,
-                        ActiveShellExpression.SOURCES, contextService);
-                activateContext(dialogActivation);
-                newActivations.add(dialogActivation);
-                registeredWindows.put(null, newActivations);
+			if ((newShell.getParent() != null)
+					&& (registeredWindows.get(newShell) == null)) {
+				// This is a dialog by default.
+				newActivations = new ArrayList();
+				final Expression expression = new ActiveShellExpression(
+						newShell);
+				final IContextActivation dialogWindowActivation = new ContextActivation(
+						IContextService.CONTEXT_ID_DIALOG_AND_WINDOW,
+						expression, contextService);
+				activateContext(dialogWindowActivation);
+				newActivations.add(dialogWindowActivation);
+				final IContextActivation dialogActivation = new ContextActivation(
+						IContextService.CONTEXT_ID_DIALOG, expression,
+						contextService);
+				activateContext(dialogActivation);
+				newActivations.add(dialogActivation);
+				registeredWindows.put(null, newActivations);
 
-                /*
-                 * Make sure the submissions will be removed in event of
-                 * disposal. This is really just a paranoid check. The
-                 * "oldSubmissions" code above should take care of this.
-                 */
-                newShell.addDisposeListener(new DisposeListener() {
+				/*
+				 * Make sure the submissions will be removed in event of
+				 * disposal. This is really just a paranoid check. The
+				 * "oldSubmissions" code above should take care of this.
+				 */
+				newShell.addDisposeListener(new DisposeListener() {
 
-                    /*
-                     * (non-Javadoc)
-                     * 
-                     * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-                     */
-                    public void widgetDisposed(DisposeEvent e) {
-                        registeredWindows.remove(null);
-                        newShell.removeDisposeListener(this);
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+					 */
+					public void widgetDisposed(DisposeEvent e) {
+						registeredWindows.remove(null);
+						newShell.removeDisposeListener(this);
 
-                        /*
-                         * In the case where a dispose has happened, we are
-                         * expecting an activation event to arrive at some point
-                         * in the future. If we process the submissions now,
-                         * then we will update the activeShell before
-                         * checkWindowType is called. This means that dialogs
-                         * won't be recognized as dialogs.
-                         */
-                        final Iterator newActivationItr = newActivations
-                                .iterator();
-                        while (newActivationItr.hasNext()) {
-                            deactivateContext((IContextActivation) newActivationItr
-                                    .next());
-                        }
-                    }
-                });
+						/*
+						 * In the case where a dispose has happened, we are
+						 * expecting an activation event to arrive at some point
+						 * in the future. If we process the submissions now,
+						 * then we will update the activeShell before
+						 * checkWindowType is called. This means that dialogs
+						 * won't be recognized as dialogs.
+						 */
+						final Iterator newActivationItr = newActivations
+								.iterator();
+						while (newActivationItr.hasNext()) {
+							deactivateContext((IContextActivation) newActivationItr
+									.next());
+						}
+					}
+				});
 
-            } else {
-                // Shells that are not dialogs by default must register.
-                newActivations = null;
+			} else {
+				// Shells that are not dialogs by default must register.
+				newActivations = null;
 
-            }
-        }
-    }
+			}
+		}
+	}
 
 	/**
 	 * Returns a subset of the given <code>activations</code> containing only
@@ -331,7 +301,7 @@ final class ContextAuthority implements ISourceProviderListener {
 		while (activationItr.hasNext()) {
 			final IContextActivation activation = (IContextActivation) activationItr
 					.next();
-			if (activation.isActive(context)) {
+			if (activation.evaluate(context)) {
 				return true;
 			}
 		}
@@ -366,7 +336,7 @@ final class ContextAuthority implements ISourceProviderListener {
 							remainingActivation);
 					updateCurrentState();
 					updateContext(contextId, remainingActivation
-							.isActive(context));
+							.evaluate(context));
 
 				} else {
 					updateCurrentState();
@@ -396,7 +366,7 @@ final class ContextAuthority implements ISourceProviderListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the currently active shell.
 	 * 
@@ -505,7 +475,7 @@ final class ContextAuthority implements ISourceProviderListener {
 		if (shell == null) {
 			throw new NullPointerException("The shell was null"); //$NON-NLS-1$
 		}
-		
+
 		// Debugging output
 		if (DEBUG) {
 			System.out.print("CONTEXTS >> register shell '" + shell + "' as "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -534,28 +504,28 @@ final class ContextAuthority implements ISourceProviderListener {
 			expression = new ActiveShellExpression(shell);
 			dialogWindowActivation = new ContextActivation(
 					IContextService.CONTEXT_ID_DIALOG_AND_WINDOW, expression,
-					ActiveShellExpression.SOURCES, contextService);
+					contextService);
 			activateContext(dialogWindowActivation);
 			activations.add(dialogWindowActivation);
 			final IContextActivation dialogActivation = new ContextActivation(
 					IContextService.CONTEXT_ID_DIALOG, expression,
-					ActiveShellExpression.SOURCES, contextService);
+					contextService);
 			activateContext(dialogActivation);
 			activations.add(dialogActivation);
 			break;
 		case IContextService.TYPE_NONE:
-            updateCurrentState();
+			updateCurrentState();
 			break;
 		case IContextService.TYPE_WINDOW:
 			expression = new ActiveShellExpression(shell);
 			dialogWindowActivation = new ContextActivation(
 					IContextService.CONTEXT_ID_DIALOG_AND_WINDOW, expression,
-					ActiveShellExpression.SOURCES, contextService);
+					contextService);
 			activateContext(dialogWindowActivation);
 			activations.add(dialogWindowActivation);
 			final IContextActivation windowActivation = new ContextActivation(
 					IContextService.CONTEXT_ID_WINDOW, expression,
-					ActiveShellExpression.SOURCES, contextService);
+					contextService);
 			activateContext(windowActivation);
 			activations.add(windowActivation);
 			break;
@@ -619,19 +589,6 @@ final class ContextAuthority implements ISourceProviderListener {
 	}
 
 	/**
-	 * Removes this source provider from the list, and detaches this authority
-	 * as a listener.
-	 * 
-	 * @param provider
-	 *            The provider to remove; must not be <code>null</code>.
-	 */
-	final void removeSourceProvider(final ISourceProvider provider) {
-		provider.removeSourceProviderListener(this);
-		providers.remove(provider);
-		updateCurrentState();
-	}
-
-	/**
 	 * Carries out the actual source change notification. It assumed that by the
 	 * time this method is called, <code>context</code> is up-to-date with the
 	 * current state of the application.
@@ -639,7 +596,7 @@ final class ContextAuthority implements ISourceProviderListener {
 	 * @param sourcePriority
 	 *            A bit mask of all the source priorities that have changed.
 	 */
-	private final void sourceChanged(final int sourcePriority) {
+	protected final void sourceChanged(final int sourcePriority) {
 		/*
 		 * In this first phase, we cycle through all of the activations that
 		 * could have potentially changed. Each such activation is added to a
@@ -662,7 +619,7 @@ final class ContextAuthority implements ISourceProviderListener {
 		/*
 		 * For every activation, we recompute its active state, and check
 		 * whether it has changed. If it has changed, then we take note of the
-		 * command identifier so we can update the command later.
+		 * context identifier so we can update the context later.
 		 */
 		final Collection changedContextIds = new ArrayList(
 				activationsToRecompute.size());
@@ -670,9 +627,9 @@ final class ContextAuthority implements ISourceProviderListener {
 		while (activationItr.hasNext()) {
 			final IContextActivation activation = (IContextActivation) activationItr
 					.next();
-			final boolean currentActive = activation.isActive(context);
-			activation.clearActive();
-			final boolean newActive = activation.isActive(context);
+			final boolean currentActive = activation.evaluate(context);
+			activation.clearResult();
+			final boolean newActive = activation.evaluate(context);
 			if (newActive != currentActive) {
 				changedContextIds.add(activation.getContextId());
 			}
@@ -688,31 +645,13 @@ final class ContextAuthority implements ISourceProviderListener {
 			final Object value = contextActivationsByContextId.get(contextId);
 			if (value instanceof IContextActivation) {
 				final IContextActivation activation = (IContextActivation) value;
-				updateContext(contextId, activation.isActive(context));
+				updateContext(contextId, activation.evaluate(context));
 			} else if (value instanceof Collection) {
 				updateContext(contextId, containsActive((Collection) value));
 			} else {
 				updateContext(contextId, false);
 			}
 		}
-	}
-
-	public final void sourceChanged(final int sourcePriority,
-			final Map sourceValuesByName) {
-		final Iterator entryItr = sourceValuesByName.entrySet().iterator();
-		while (entryItr.hasNext()) {
-			final Map.Entry entry = (Map.Entry) entryItr.next();
-			final String sourceName = (String) entry.getKey();
-			final Object sourceValue = entry.getValue();
-			updateEvaluationContext(sourceName, sourceValue);
-		}
-		sourceChanged(sourcePriority);
-	}
-
-	public final void sourceChanged(final int sourcePriority,
-			final String sourceName, final Object sourceValue) {
-		updateEvaluationContext(sourceName, sourceValue);
-		sourceChanged(sourcePriority);
 	}
 
 	/**
@@ -791,39 +730,6 @@ final class ContextAuthority implements ISourceProviderListener {
 	}
 
 	/**
-	 * Updates the evaluation context with the current state from all of the
-	 * source providers.
-	 */
-	private final void updateCurrentState() {
-		final Iterator providerItr = providers.iterator();
-		while (providerItr.hasNext()) {
-			final ISourceProvider provider = (ISourceProvider) providerItr
-					.next();
-			final Map currentState = provider.getCurrentState();
-			final Iterator variableItr = currentState.entrySet().iterator();
-			while (variableItr.hasNext()) {
-				final Map.Entry entry = (Map.Entry) variableItr.next();
-				final String variableName = (String) entry.getKey();
-				final Object variableValue = entry.getValue();
-                /*
-                 * Bug 84056. If we update the active workbench window, then we
-                 * risk falling back to that shell when the active shell has
-                 * registered as "none".
-                 */
-				if ((variableName != null)
-                        && (!ISources.ACTIVE_WORKBENCH_WINDOW_NAME
-                                .equals(variableName))) {
-					if (variableValue == null) {
-						context.removeVariable(variableName);
-					} else {
-						context.addVariable(variableName, variableValue);
-					}
-				}
-			}
-		}
-	}
-
-	/**
 	 * Updates this authority's evaluation context. If the changed variable is
 	 * the <code>ISources.ACTIVE_SHELL_NAME</code> variable, then this also
 	 * triggers an update of the shell-specific contexts. For example, if a
@@ -837,20 +743,20 @@ final class ContextAuthority implements ISourceProviderListener {
 	 *            The new value of the variable. If this value is
 	 *            <code>null</code>, then the variable is removed.
 	 */
-	private final void updateEvaluationContext(final String name,
+	protected final void updateEvaluationContext(final String name,
 			final Object value) {
-        /*
-         * Bug 84056. If we update the active workbench window, then we risk
-         * falling back to that shell when the active shell has registered as
-         * "none".
-         */
+		/*
+		 * Bug 84056. If we update the active workbench window, then we risk
+		 * falling back to that shell when the active shell has registered as
+		 * "none".
+		 */
 		if ((name != null)
-                && (!ISources.ACTIVE_WORKBENCH_WINDOW_NAME.equals(name))) {
+				&& (!ISources.ACTIVE_WORKBENCH_WINDOW_NAME.equals(name))) {
 			/*
-             * We need to track shell activation ourselves, as some special
-             * contexts are automatically activated in response to different
-             * types of shells becoming active.
-             */
+			 * We need to track shell activation ourselves, as some special
+			 * contexts are automatically activated in response to different
+			 * types of shells becoming active.
+			 */
 			if (ISources.ACTIVE_SHELL_NAME.equals(name)) {
 				checkWindowType((Shell) value, (Shell) context
 						.getVariable(ISources.ACTIVE_SHELL_NAME));
@@ -864,19 +770,19 @@ final class ContextAuthority implements ISourceProviderListener {
 			}
 		}
 	}
-    
-    /**
-     * <p>
-     * Bug 95792. A mechanism by which the key binding architecture can force an
-     * update of the contexts (based on the active shell) before trying to
-     * execute a command. This mechanism is required for GTK+ only.
-     * </p>
-     * <p>
-     * DO NOT CALL THIS METHOD.
-     * </p>
-     */
-    final void updateShellKludge() {
-        updateCurrentState();
-        sourceChanged(ISources.ACTIVE_SHELL);
-    }
+
+	/**
+	 * <p>
+	 * Bug 95792. A mechanism by which the key binding architecture can force an
+	 * update of the contexts (based on the active shell) before trying to
+	 * execute a command. This mechanism is required for GTK+ only.
+	 * </p>
+	 * <p>
+	 * DO NOT CALL THIS METHOD.
+	 * </p>
+	 */
+	final void updateShellKludge() {
+		updateCurrentState();
+		sourceChanged(ISources.ACTIVE_SHELL);
+	}
 }

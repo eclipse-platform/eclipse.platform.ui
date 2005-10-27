@@ -223,8 +223,7 @@ public class EditorManager implements IExtensionChangeHandler {
 					.getWorkbench().getAdapter(IHandlerService.class);
 			pinEditorHandlerActivation = handlerService.activateHandler(
 					"org.eclipse.ui.window.pinEditor", pinEditorHandler, //$NON-NLS-1$
-					new ActiveShellExpression(shell),
-					ActiveShellExpression.SOURCES);
+					new ActiveShellExpression(shell));
         }
     }
 

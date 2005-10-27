@@ -13,6 +13,7 @@ package org.eclipse.ui;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.widgets.Shell;
 
@@ -110,15 +111,28 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 		return EvaluationResult.TRUE;
 	}
 
-    public final String toString() {
-        final StringBuffer buffer = new StringBuffer();
-        buffer.append("LegacyHandlerSubmission("); //$NON-NLS-1$
-        buffer.append(activeShell);
-        buffer.append(',');
-        buffer.append(activePartId);
-        buffer.append(',');
-        buffer.append(activeSite);
-        buffer.append(')');
-        return buffer.toString();
-    }
+	public final void collectExpressionInfo(final ExpressionInfo info) {
+		if (activePartId != null) {
+			info.addVariableNameAccess(ISources.ACTIVE_PART_NAME);
+		}
+		if (activeShell != null) {
+			info.addVariableNameAccess(ISources.ACTIVE_SHELL_NAME);
+			info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+		}
+		if (activeSite != null) {
+			info.addVariableNameAccess(ISources.ACTIVE_SITE_NAME);
+		}
+	}
+
+	public final String toString() {
+		final StringBuffer buffer = new StringBuffer();
+		buffer.append("LegacyHandlerSubmission("); //$NON-NLS-1$
+		buffer.append(activeShell);
+		buffer.append(',');
+		buffer.append(activePartId);
+		buffer.append(',');
+		buffer.append(activeSite);
+		buffer.append(')');
+		return buffer.toString();
+	}
 }

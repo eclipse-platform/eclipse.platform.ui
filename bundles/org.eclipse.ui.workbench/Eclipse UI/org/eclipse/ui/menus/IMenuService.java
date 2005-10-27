@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.menus;
 
+import java.util.Collection;
+
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.menus.MenuElement;
 import org.eclipse.jface.menus.SGroup;
 import org.eclipse.jface.menus.SItem;
 import org.eclipse.jface.menus.SMenu;
 import org.eclipse.jface.menus.SWidget;
+import org.eclipse.ui.IServiceWithSources;
+import org.eclipse.ui.commands.ICommandService;
 
 /**
  * <p>
@@ -35,15 +40,60 @@ import org.eclipse.jface.menus.SWidget;
  * 
  * @since 3.2
  */
-public interface IMenuService {
+public interface IMenuService extends IServiceWithSources {
 
-	public static final int TYPE_MENU = 0;
+	/**
+	 * <p>
+	 * Contributes the given menu element within the context of this service. If
+	 * this service was retrieved from the workbench, then this contribution
+	 * will be visible globally. If the service was retrieved from a nested
+	 * component, then the contribution will only be visible within that
+	 * component.
+	 * </p>
+	 * <p>
+	 * Also, it is guaranteed that the contributions submitted through a
+	 * particular service will be cleaned up when that service is destroyed. So,
+	 * for example, a service retrieved from a <code>IWorkbenchPartSite</code>
+	 * would remove all of its contributions when the site is destroyed.
+	 * </p>
+	 * 
+	 * @param menuElement
+	 *            The menu element to contribute; must not be <code>null</code>.
+	 * @return A token which can be used to later cancel the contribution. Only
+	 *         someone with access to this token can cancel the contribution.
+	 *         The contribution will automatically be cancelled if the context
+	 *         from which this service was retrieved is destroyed.
+	 */
+	public IMenuContribution contributeMenu(MenuElement menuElement);
 
-	public static final int TYPE_GROUP = 1;
-
-	public static final int TYPE_ITEM = 2;
-
-	public static final int TYPE_WIDGET = 3;
+	/**
+	 * <p>
+	 * Contributes the given menu element within the context of this service.
+	 * The menu element becomes visible when <code>expression</code> evaluates
+	 * to <code>true</code>.
+	 * </p>
+	 * <p>
+	 * Also, it is guaranteed that the contribution submitted through a
+	 * particular service will be cleaned up when that services is destroyed.
+	 * So, for example, a service retrieved from a
+	 * <code>IWorkbenchPartSite</code> would remove all of its contributions
+	 * when the site is destroyed.
+	 * </p>
+	 * 
+	 * @param menuElement
+	 *            The menu element to contribution; must not be
+	 *            <code>null</code>.
+	 * @param expression
+	 *            This expression must evaluate to <code>true</code> before
+	 *            this handler will really become visible. The expression must
+	 *            not be <code>null</code>.
+	 * @return A token which can be used to later cancel the contribution. Only
+	 *         someone with access to this token can cancel the contribution.
+	 *         The contribution will automatically be cancelled if the context
+	 *         from which this service was retrieved is destroyed.
+	 */
+	public IMenuContribution contributeMenu(MenuElement menuElement,
+			Expression expression);
 
 	/**
 	 * Retrieves the group with the given identifier. If no such group exists,
@@ -91,22 +141,6 @@ public interface IMenuService {
 	public SWidget getWidget(String widgetId);
 
 	/**
-	 * Retrieves the menu element of the given type with the given identifier.
-	 * If no such menu element exists, then an undefined menu element of the
-	 * given type is created and returned.
-	 * 
-	 * @param elementId
-	 *            The identifier to find; must not be <code>null</code>.
-	 * @param type
-	 *            The type of the menu element to retrieve. This must be one of
-	 *            <code>TYPE_MENU</code>, <code>TYPE_GROUP</code>,
-	 *            <code>TYPE_ITEM</code>, or <code>TYPE_WIDGET</code>
-	 * @return A menu element of the given type with the given identifier,
-	 *         either defined or undefined.
-	 */
-	public MenuElement getMenuElement(String elementId, int type);
-
-	/**
 	 * <p>
 	 * Reads the menu information from the registry and the preferences. This
 	 * will overwrite any of the existing information in the menu service. This
@@ -118,6 +152,38 @@ public interface IMenuService {
 	 * This will also attach listeners that will monitor changes to the registry
 	 * and preference store and update appropriately.
 	 * </p>
+	 * 
+	 * @param commandService
+	 *            The command service providing the command's for the workbench;
+	 *            must not be <code>null</code>.
 	 */
-	public void readRegistry();
+	public void readRegistry(final ICommandService commandService);
+
+	/**
+	 * Removes the given contribution within the context of this service. If the
+	 * contribution was contributed with a different service, then it must be
+	 * removed from that service instead. It is only possible to retract a
+	 * contribution with this method. That is, you must have the same
+	 * <code>IMenuContribution</code> used to contribute.
+	 * 
+	 * @param contribution
+	 *            The token that was returned from a call to
+	 *            <code>contributeMenu</code>; must not be <code>null</code>.
+	 */
+	public void removeContribution(IMenuContribution contribution);
+
+	/**
+	 * Removes the given contribution within the context of this service. If the
+	 * contribution was contributed with a different service, then it must be
+	 * removed from that service instead. It is only possible to retract a
+	 * contribution with this method. That is, you must have the same
+	 * <code>IMenuContribution</code> used to contribute.
+	 * 
+	 * @param contributions
+	 *            The tokens that were returned from a call to
+	 *            <code>contributeMenu</code>. This collection must only
+	 *            contain instances of <code>IMenuContribution</code>. The
+	 *            collection must not be <code>null</code>.
+	 */
+	public void removeContributions(Collection contributions);
 }

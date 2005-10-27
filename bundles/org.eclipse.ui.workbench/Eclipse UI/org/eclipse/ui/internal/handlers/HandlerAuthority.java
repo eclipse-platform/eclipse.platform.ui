@@ -25,10 +25,10 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
-import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.sources.ExpressionAuthority;
 
 /**
  * <p>
@@ -45,7 +45,7 @@ import org.eclipse.ui.internal.misc.Policy;
  * 
  * @since 3.1
  */
-final class HandlerAuthority implements ISourceProviderListener {
+final class HandlerAuthority extends ExpressionAuthority {
 
 	/**
 	 * Whether the workbench command support should kick into debugging mode.
@@ -82,13 +82,6 @@ final class HandlerAuthority implements ISourceProviderListener {
 	private final CommandManager commandManager;
 
 	/**
-	 * The evaluation context instance to use when evaluating handler
-	 * activations. This context is shared, and so all calls into
-	 * <code>sourceChanged</code> must happen on the event thread.
-	 */
-	private final IEvaluationContext context;
-
-	/**
 	 * This is a map of handler activations (<code>Collection</code> of
 	 * <code>IHandlerActivation</code>) sorted by command identifier (<code>String</code>).
 	 * If there is only one handler activation for a command, then the
@@ -119,7 +112,6 @@ final class HandlerAuthority implements ISourceProviderListener {
 		}
 
 		this.commandManager = commandManager;
-		this.context = new EvaluationContext(null, this);
 	}
 
 	/**
@@ -156,7 +148,7 @@ final class HandlerAuthority implements ISourceProviderListener {
 		} else {
 			handlerActivationsByCommandId.put(commandId, activation);
 			updateCurrentState();
-			updateCommand(commandId, (activation.isActive(context) ? activation
+			updateCommand(commandId, (activation.evaluate(getEvaluationContext()) ? activation
 					: null));
 		}
 
@@ -172,19 +164,6 @@ final class HandlerAuthority implements ISourceProviderListener {
 				activations.add(activation);
 			}
 		}
-	}
-
-	/**
-	 * Adds a source provider to a list of providers to check when updating.
-	 * This also attaches this authority as a listener to the provider.
-	 * 
-	 * @param provider
-	 *            The provider to add; must not be <code>null</code>.
-	 */
-	final void addSourceProvider(final ISourceProvider provider) {
-		provider.addSourceProviderListener(this);
-		providers.add(provider);
-		updateCurrentState();
 	}
 
 	/**
@@ -214,7 +193,7 @@ final class HandlerAuthority implements ISourceProviderListener {
 							remainingActivation);
 					updateCurrentState();
 					updateCommand(commandId, (remainingActivation
-							.isActive(context) ? remainingActivation : null));
+							.evaluate(getEvaluationContext()) ? remainingActivation : null));
 
 				} else {
 					updateCurrentState();
@@ -281,26 +260,13 @@ final class HandlerAuthority implements ISourceProviderListener {
 	 * @return The currently active shell; may be <code>null</code>.
 	 */
 	final Shell getActiveShell() {
-		return (Shell) context.getVariable(ISources.ACTIVE_SHELL_NAME);
+		return (Shell) getEvaluationContext().getVariable(ISources.ACTIVE_SHELL_NAME);
 	}
 
 	final IEvaluationContext getCurrentState() {
 		final IEvaluationContext context = new EvaluationContext(null, this);
 		fillInCurrentState(context);
 		return context;
-	}
-
-	/**
-	 * Removes this source provider from the list, and detaches this authority
-	 * as a listener.
-	 * 
-	 * @param provider
-	 *            The provider to remove; must not be <code>null</code>.
-	 */
-	final void removeSourceProvider(final ISourceProvider provider) {
-		provider.removeSourceProviderListener(this);
-		providers.remove(provider);
-		updateCurrentState();
 	}
 
 	/**
@@ -388,7 +354,7 @@ final class HandlerAuthority implements ISourceProviderListener {
 	 * @param sourcePriority
 	 *            A bit mask of all the source priorities that have changed.
 	 */
-	private final void sourceChanged(final int sourcePriority) {
+	protected final void sourceChanged(final int sourcePriority) {
 		/*
 		 * In this first phase, we cycle through all of the activations that
 		 * could have potentially changed. Each such activation is added to a
@@ -419,9 +385,9 @@ final class HandlerAuthority implements ISourceProviderListener {
 		while (activationItr.hasNext()) {
 			final IHandlerActivation activation = (IHandlerActivation) activationItr
 					.next();
-			final boolean currentActive = activation.isActive(context);
-			activation.clearActive();
-			final boolean newActive = activation.isActive(context);
+			final boolean currentActive = activation.evaluate(getEvaluationContext());
+			activation.clearResult();
+			final boolean newActive = activation.evaluate(getEvaluationContext());
 			if (newActive != currentActive) {
 				changedCommandIds.add(activation.getCommandId());
 			}
@@ -438,7 +404,7 @@ final class HandlerAuthority implements ISourceProviderListener {
 			if (value instanceof IHandlerActivation) {
 				final IHandlerActivation activation = (IHandlerActivation) value;
 				updateCommand(commandId,
-						(activation.isActive(context) ? activation : null));
+						(activation.evaluate(getEvaluationContext()) ? activation : null));
 			} else if (value instanceof Collection) {
 				final IHandlerActivation activation = resolveConflicts(
 						commandId, (Collection) value);
@@ -447,36 +413,6 @@ final class HandlerAuthority implements ISourceProviderListener {
 				updateCommand(commandId, null);
 			}
 		}
-	}
-
-	public final void sourceChanged(final int sourcePriority,
-			final Map sourceValuesByName) {
-		final Iterator entryItr = sourceValuesByName.entrySet().iterator();
-		while (entryItr.hasNext()) {
-			final Map.Entry entry = (Map.Entry) entryItr.next();
-			final String sourceName = (String) entry.getKey();
-			final Object sourceValue = entry.getValue();
-			if (sourceName != null) {
-				if (sourceValue == null) {
-					context.removeVariable(sourceName);
-				} else {
-					context.addVariable(sourceName, sourceValue);
-				}
-			}
-		}
-		sourceChanged(sourcePriority);
-	}
-
-	public final void sourceChanged(final int sourcePriority,
-			final String sourceName, final Object sourceValue) {
-		if (sourceName != null) {
-			if (sourceValue == null) {
-				context.removeVariable(sourceName);
-			} else {
-				context.addVariable(sourceName, sourceValue);
-			}
-		}
-		sourceChanged(sourcePriority);
 	}
 
 	/**
@@ -496,7 +432,7 @@ final class HandlerAuthority implements ISourceProviderListener {
 		while (activationItr.hasNext()) {
 			final IHandlerActivation activation = (IHandlerActivation) activationItr
 					.next();
-			if (activation.isActive(context)) {
+			if (activation.evaluate(getEvaluationContext())) {
 				trimmed.add(activation);
 			}
 		}
@@ -522,14 +458,6 @@ final class HandlerAuthority implements ISourceProviderListener {
 		} else {
 			command.setHandler(activation.getHandler());
 		}
-	}
-
-	/**
-	 * Updates the evaluation context with the current state from all of the
-	 * source providers.
-	 */
-	private final void updateCurrentState() {
-		fillInCurrentState(context);
 	}
     
     /**

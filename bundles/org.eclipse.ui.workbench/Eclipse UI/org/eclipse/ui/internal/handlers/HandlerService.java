@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.misc.Policy;
  * @since 3.1
  */
 public final class HandlerService implements IHandlerService {
-	
+
 	static {
 		Command.DEBUG_HANDLERS = Policy.DEBUG_HANDLERS_VERBOSE;
 		Command.DEBUG_HANDLERS_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
@@ -59,8 +59,13 @@ public final class HandlerService implements IHandlerService {
 
 	public final IHandlerActivation activateHandler(final String commandId,
 			final IHandler handler) {
+		return activateHandler(commandId, handler, null);
+	}
+
+	public final IHandlerActivation activateHandler(final String commandId,
+			final IHandler handler, final Expression expression) {
 		final IHandlerActivation activation = new HandlerActivation(commandId,
-				handler, null, ISources.WORKBENCH, this);
+				handler, expression, this);
 		handlerAuthority.activateHandler(activation);
 		return activation;
 	}
@@ -68,13 +73,7 @@ public final class HandlerService implements IHandlerService {
 	public final IHandlerActivation activateHandler(final String commandId,
 			final IHandler handler, final Expression expression,
 			final int sourcePriority) {
-		if (expression == null) {
-			throw new NullPointerException("The expression cannot be null"); //$NON-NLS-1$
-		}
-		final IHandlerActivation activation = new HandlerActivation(commandId,
-				handler, expression, sourcePriority, this);
-		handlerAuthority.activateHandler(activation);
-		return activation;
+		return activateHandler(commandId, handler, expression);
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
@@ -95,7 +94,7 @@ public final class HandlerService implements IHandlerService {
 			deactivateHandler(activation);
 		}
 	}
-	
+
 	public final IEvaluationContext getCurrentState() {
 		return handlerAuthority.getCurrentState();
 	}
@@ -108,39 +107,39 @@ public final class HandlerService implements IHandlerService {
 		handlerAuthority.removeSourceProvider(provider);
 	}
 
-    /**
-     * <p>
-     * Bug 95792. A mechanism by which the key binding architecture can force an
-     * update of the handlers (based on the active shell) before trying to
-     * execute a command. This mechanism is required for GTK+ only.
-     * </p>
-     * <p>
-     * DO NOT CALL THIS METHOD.
-     * </p>
-     */
-    public final void updateShellKludge() {
-        handlerAuthority.updateShellKludge();
-    }
+	/**
+	 * <p>
+	 * Bug 95792. A mechanism by which the key binding architecture can force an
+	 * update of the handlers (based on the active shell) before trying to
+	 * execute a command. This mechanism is required for GTK+ only.
+	 * </p>
+	 * <p>
+	 * DO NOT CALL THIS METHOD.
+	 * </p>
+	 */
+	public final void updateShellKludge() {
+		handlerAuthority.updateShellKludge();
+	}
 
-    /**
-     * <p>
-     * Bug 95792. A mechanism by which the key binding architecture can force an
-     * update of the handlers (based on the active shell) before trying to
-     * execute a command. This mechanism is required for GTK+ only.
-     * </p>
-     * <p>
-     * DO NOT CALL THIS METHOD.
-     * </p>
-     * 
-     * @param shell
-     *            The shell that should be considered active; must not be
-     *            <code>null</code>.
-     */
-    public final void updateShellKludge(final Shell shell) {
-    	final Shell currentActiveShell = handlerAuthority.getActiveShell();
+	/**
+	 * <p>
+	 * Bug 95792. A mechanism by which the key binding architecture can force an
+	 * update of the handlers (based on the active shell) before trying to
+	 * execute a command. This mechanism is required for GTK+ only.
+	 * </p>
+	 * <p>
+	 * DO NOT CALL THIS METHOD.
+	 * </p>
+	 * 
+	 * @param shell
+	 *            The shell that should be considered active; must not be
+	 *            <code>null</code>.
+	 */
+	public final void updateShellKludge(final Shell shell) {
+		final Shell currentActiveShell = handlerAuthority.getActiveShell();
 		if (currentActiveShell != shell) {
 			handlerAuthority.sourceChanged(ISources.ACTIVE_SHELL,
 					ISources.ACTIVE_SHELL_NAME, shell);
 		}
-    }
+	}
 }

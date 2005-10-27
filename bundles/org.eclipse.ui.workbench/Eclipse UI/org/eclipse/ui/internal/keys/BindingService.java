@@ -47,6 +47,11 @@ public final class BindingService implements IBindingService {
 	private final BindingManager bindingManager;
 
 	/**
+	 * The persistence class responsible for bindings.
+	 */
+	private final BindingPersistence bindingPersistence = new BindingPersistence();
+
+	/**
 	 * The key binding support for the contexts. In the workbench, key bindings
 	 * are intimately tied to the context mechanism.
 	 */
@@ -160,7 +165,7 @@ public final class BindingService implements IBindingService {
 
 	public final void readRegistryAndPreferences(
 			final ICommandService commandService) {
-		BindingPersistence.read(bindingManager, commandService);
+		bindingPersistence.read(bindingManager, commandService);
 	}
 
 	public final void savePreferences(final Scheme activeScheme,

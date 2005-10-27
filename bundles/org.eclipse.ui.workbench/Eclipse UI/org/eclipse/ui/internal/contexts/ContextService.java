@@ -60,21 +60,20 @@ public final class ContextService implements IContextService {
 	}
 
 	public final IContextActivation activateContext(final String contextId) {
+		return activateContext(contextId, null);
+	}
+
+	public final IContextActivation activateContext(final String contextId,
+			final Expression expression) {
 		final IContextActivation activation = new ContextActivation(contextId,
-				null, ISources.WORKBENCH, this);
+				expression, this);
 		contextAuthority.activateContext(activation);
 		return activation;
 	}
 
 	public final IContextActivation activateContext(final String contextId,
 			final Expression expression, final int sourcePriority) {
-		if (expression == null) {
-			throw new NullPointerException("The expression cannot be null"); //$NON-NLS-1$
-		}
-		final IContextActivation activation = new ContextActivation(contextId,
-				expression, sourcePriority, this);
-		contextAuthority.activateContext(activation);
-		return activation;
+		return activateContext(contextId, expression);
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
@@ -107,7 +106,7 @@ public final class ContextService implements IContextService {
 	public final Collection getDefinedContextIds() {
 		return contextManager.getDefinedContextIds();
 	}
-	
+
 	public final Context[] getDefinedContexts() {
 		return contextManager.getDefinedContexts();
 	}
@@ -132,39 +131,39 @@ public final class ContextService implements IContextService {
 		return contextAuthority.unregisterShell(shell);
 	}
 
-    /**
-     * <p>
-     * Bug 95792. A mechanism by which the key binding architecture can force an
-     * update of the contexts (based on the active shell) before trying to
-     * execute a command. This mechanism is required for GTK+ only.
-     * </p>
-     * <p>
-     * DO NOT CALL THIS METHOD.
-     * </p>
-     */
-    public final void updateShellKludge() {
-        contextAuthority.updateShellKludge();
-    }
+	/**
+	 * <p>
+	 * Bug 95792. A mechanism by which the key binding architecture can force an
+	 * update of the contexts (based on the active shell) before trying to
+	 * execute a command. This mechanism is required for GTK+ only.
+	 * </p>
+	 * <p>
+	 * DO NOT CALL THIS METHOD.
+	 * </p>
+	 */
+	public final void updateShellKludge() {
+		contextAuthority.updateShellKludge();
+	}
 
-    /**
-     * <p>
-     * Bug 95792. A mechanism by which the key binding architecture can force an
-     * update of the contexts (based on the active shell) before trying to
-     * execute a command. This mechanism is required for GTK+ only.
-     * </p>
-     * <p>
-     * DO NOT CALL THIS METHOD.
-     * </p>
-     * 
-     * @param shell
-     *            The shell that should be considered active; must not be
-     *            <code>null</code>.
-     */
-    public final void updateShellKludge(final Shell shell) {
-    	final Shell currentActiveShell = contextAuthority.getActiveShell();
-    	if (currentActiveShell != shell) {
+	/**
+	 * <p>
+	 * Bug 95792. A mechanism by which the key binding architecture can force an
+	 * update of the contexts (based on the active shell) before trying to
+	 * execute a command. This mechanism is required for GTK+ only.
+	 * </p>
+	 * <p>
+	 * DO NOT CALL THIS METHOD.
+	 * </p>
+	 * 
+	 * @param shell
+	 *            The shell that should be considered active; must not be
+	 *            <code>null</code>.
+	 */
+	public final void updateShellKludge(final Shell shell) {
+		final Shell currentActiveShell = contextAuthority.getActiveShell();
+		if (currentActiveShell != shell) {
 			contextAuthority.sourceChanged(ISources.ACTIVE_SHELL,
 					ISources.ACTIVE_SHELL_NAME, shell);
 		}
-    }
+	}
 }

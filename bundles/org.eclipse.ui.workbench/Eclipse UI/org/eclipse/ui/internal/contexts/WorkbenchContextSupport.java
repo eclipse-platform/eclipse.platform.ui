@@ -109,8 +109,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 				enabledSubmission.getContextId(),
 				new LegacyHandlerSubmissionExpression(enabledSubmission
 						.getActivePartId(), enabledSubmission.getActiveShell(),
-						enabledSubmission.getActiveWorkbenchPartSite()),
-				sourcePriorities);
+						enabledSubmission.getActiveWorkbenchPartSite()));
 		if (activationsBySubmission == null) {
 			activationsBySubmission = new HashMap();
 		}

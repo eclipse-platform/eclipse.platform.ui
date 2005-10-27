@@ -12,7 +12,7 @@
 package org.eclipse.ui.contexts;
 
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.ui.ISources;
+import org.eclipse.ui.internal.sources.IEvaluationResultCache;
 
 /**
  * <p>
@@ -29,13 +29,15 @@ import org.eclipse.ui.ISources;
  * @see org.eclipse.ui.ISources
  * @see org.eclipse.ui.ISourceProvider
  */
-public interface IContextActivation {
+public interface IContextActivation extends IEvaluationResultCache {
 
 	/**
 	 * Clears the cached computation of the <code>isActive</code> method, if
 	 * any. This method is only intended for internal use. It provides a
 	 * mechanism by which <code>ISourceProvider</code> events can invalidate
 	 * state on a <code>IContextActivation</code> instance.
+	 * 
+	 * @deprecated Use {@link IEvaluationResultCache#clearResult()} instead.
 	 */
 	public void clearActive();
 
@@ -56,14 +58,6 @@ public interface IContextActivation {
 	public IContextService getContextService();
 
 	/**
-	 * Returns the priority that has been given to this context activation.
-	 * 
-	 * @return The priority.
-	 * @see ISources
-	 */
-	public int getSourcePriority();
-
-	/**
 	 * Returns whether this context activation is currently active -- given the
 	 * current state of the workbench. This method should cache its computation.
 	 * The cache will be cleared by a call to <code>clearActive</code>.
@@ -73,6 +67,9 @@ public interface IContextActivation {
 	 *            be <code>null</code>.
 	 * @return <code>true</code> if the activation is currently active;
 	 *         <code>false</code> otherwise.
+	 * @deprecated Use
+	 *             {@link IEvaluationResultCache#evaluate(IEvaluationContext)}
+	 *             instead.
 	 */
 	public boolean isActive(IEvaluationContext context);
 }

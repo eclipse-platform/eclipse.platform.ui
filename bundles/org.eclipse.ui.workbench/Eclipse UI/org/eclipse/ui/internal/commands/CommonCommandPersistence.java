@@ -1,0 +1,499 @@
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
+
+package org.eclipse.ui.internal.commands;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.Parameterization;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.expressions.ElementHandler;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.Util;
+
+/**
+ * <p>
+ * A static class for accessing the registry.
+ * </p>
+ * 
+ * @since 3.2
+ */
+public abstract class CommonCommandPersistence {
+
+	/**
+	 * The name of the attribute storing the command id for a binding.
+	 */
+	protected static final String ATTRIBUTE_COMMAND_ID = "commandId"; //$NON-NLS-1$
+
+	/**
+	 * The name of the id attribute, which is used on scheme definitions.
+	 */
+	protected static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+
+	/**
+	 * The name of the deprecated attribute of the deprecated
+	 * <code>activeKeyConfiguration</code> element in the commands extension
+	 * point.
+	 */
+	protected static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
+
+	/**
+	 * The name of the element storing a parameter.
+	 */
+	protected static final String ELEMENT_PARAMETER = "parameter"; //$NON-NLS-1$
+
+	/**
+	 * Inserts the given element into the indexed two-dimensional array in the
+	 * array at the index. The array is grown as necessary.
+	 * 
+	 * @param elementToAdd
+	 *            The element to add to the indexed array; may be
+	 *            <code>null</code>
+	 * @param indexedArray
+	 *            The two-dimensional array that is indexed by element type;
+	 *            must not be <code>null</code>.
+	 * @param index
+	 *            The index at which the element should be added; must be a
+	 *            valid index.
+	 * @param currentCount
+	 *            The current number of items in the array at the index.
+	 */
+	protected static final void addElementToIndexedArray(
+			final IConfigurationElement elementToAdd,
+			final IConfigurationElement[][] indexedArray, final int index,
+			final int currentCount) {
+		final IConfigurationElement[] elements;
+		if (currentCount == 0) {
+			elements = new IConfigurationElement[1];
+			indexedArray[index] = elements;
+		} else {
+			if (currentCount >= indexedArray[index].length) {
+				final IConfigurationElement[] copy = new IConfigurationElement[indexedArray[index].length * 2];
+				System.arraycopy(indexedArray[index], 0, copy, 0, currentCount);
+				elements = copy;
+				indexedArray[index] = elements;
+			} else {
+				elements = indexedArray[index];
+			}
+		}
+		elements[currentCount] = elementToAdd;
+	}
+
+	/**
+	 * Adds a warning to be logged at some later point in time.
+	 * 
+	 * @param warningsToLog
+	 *            The collection of warnings to be logged; must not be
+	 *            <code>null</code>.
+	 * @param message
+	 *            The mesaage to log; must not be <code>null</code>.
+	 * @param pluginId
+	 *            The identifier of the plug-in from which the warning
+	 *            originates; may be <code>null</code>.
+	 */
+	protected static final void addWarning(final List warningsToLog,
+			final String message, final String pluginId) {
+		addWarning(warningsToLog, message, pluginId, null, null, null);
+	}
+
+	/**
+	 * Adds a warning to be logged at some later point in time. This logs the
+	 * identifier of the item.
+	 * 
+	 * @param warningsToLog
+	 *            The collection of warnings to be logged; must not be
+	 *            <code>null</code>.
+	 * @param message
+	 *            The mesaage to log; must not be <code>null</code>.
+	 * @param pluginId
+	 *            The identifier of the plug-in from which the warning
+	 *            originates; may be <code>null</code>.
+	 * @param id
+	 *            The identifier of the item for which a warning is being
+	 *            logged; may be <code>null</code>.
+	 */
+	protected static final void addWarning(final List warningsToLog,
+			final String message, final String pluginId, final String id) {
+		addWarning(warningsToLog, message, pluginId, id, null, null);
+	}
+
+	/**
+	 * Adds a warning to be logged at some later point in time. This logs the
+	 * identifier of the item, as well as an extra attribute.
+	 * 
+	 * @param warningsToLog
+	 *            The collection of warnings to be logged; must not be
+	 *            <code>null</code>.
+	 * @param message
+	 *            The mesaage to log; must not be <code>null</code>.
+	 * @param pluginId
+	 *            The identifier of the plug-in from which the warning
+	 *            originates; may be <code>null</code>.
+	 * @param id
+	 *            The identifier of the item for which a warning is being
+	 *            logged; may be <code>null</code>.
+	 * @param extraAttributeName
+	 *            The name of extra attribute to be logged; may be
+	 *            <code>null</code>.
+	 * @param extraAttributeValue
+	 *            The value of the extra attribute to be logged; may be
+	 *            <code>null</code>.
+	 */
+	protected static final void addWarning(final List warningsToLog,
+			final String message, final String pluginId, final String id,
+			final String extraAttributeName, final String extraAttributeValue) {
+		String statusMessage = message;
+		if (pluginId != null) {
+			statusMessage = statusMessage + ": plug-in='" + pluginId + '\''; //$NON-NLS-1$
+		}
+		if (id != null) {
+			if (pluginId != null) {
+				statusMessage = statusMessage + ',';
+			} else {
+				statusMessage = statusMessage + ':';
+			}
+			statusMessage = statusMessage + " id='" + id + '\''; //$NON-NLS-1$
+		}
+		if (extraAttributeName != null) {
+			if ((pluginId != null) || (id != null)) {
+				statusMessage = statusMessage + ',';
+			} else {
+				statusMessage = statusMessage + ':';
+			}
+			statusMessage = statusMessage + ' ' + extraAttributeName + "='" //$NON-NLS-1$
+					+ extraAttributeValue + '\'';
+		}
+
+		final IStatus status = new Status(IStatus.WARNING,
+				WorkbenchPlugin.PI_WORKBENCH, 0, statusMessage, null);
+		warningsToLog.add(status);
+	}
+
+	/**
+	 * Logs any warnings in <code>warningsToLog</code>.
+	 * 
+	 * @param warningsToLog
+	 *            The warnings to log; may be <code>null</code>.
+	 * @param message
+	 *            The message to include in the log entry; must not be
+	 *            <code>null</code>.
+	 */
+	protected static final void logWarnings(final List warningsToLog,
+			final String message) {
+		// If there were any warnings, then log them now.
+		if ((warningsToLog != null) && (!warningsToLog.isEmpty())) {
+			final IStatus status = new MultiStatus(
+					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
+							.toArray(new IStatus[warningsToLog.size()]),
+					message, null);
+			WorkbenchPlugin.log(status);
+		}
+	}
+
+	/**
+	 * Reads an optional attribute from an element. This converts zero-length
+	 * strings into <code>null</code>.
+	 * 
+	 * @param configurationElement
+	 *            The configuration element from which to read the attribute;
+	 *            must not be <code>null</code>.
+	 * @param attribute
+	 *            The attribute to read; must not be <code>null</code>.
+	 * @return The attribute's value; may be <code>null</code> if none.
+	 */
+	protected static final String readOptional(
+			final IConfigurationElement configurationElement,
+			final String attribute) {
+		String value = configurationElement.getAttribute(attribute);
+		if ((value != null) && (value.length() == 0)) {
+			value = null;
+		}
+
+		return value;
+	}
+
+	/**
+	 * Reads the parameterized command from a parent configuration element. This
+	 * is used to read the parameter sub-elements from a key element, as well as
+	 * the command id. Each parameter is guaranteed to be valid. If invalid
+	 * parameters are found, then a warning status will be appended to the
+	 * <code>warningsToLog</code> list. The command id is required, or a
+	 * warning will be logged.
+	 * 
+	 * @param configurationElement
+	 *            The configuration element from which the parameters should be
+	 *            read; must not be <code>null</code>.
+	 * @param commandService
+	 *            The service providing commands for the workbench; must not be
+	 *            <code>null</code>.
+	 * @param warningsToLog
+	 *            The list of warnings found during parsing. Warnings found will
+	 *            parsing the parameters will be appended to this list. This
+	 *            value must not be <code>null</code>.
+	 * @param message
+	 *            The message to print if the command identifier is not present;
+	 *            must not be <code>null</code>.
+	 * @return The array of parameters found for this configuration element;
+	 *         <code>null</code> if none can be found.
+	 */
+	protected static final ParameterizedCommand readParameterizedCommand(
+			final IConfigurationElement configurationElement,
+			final ICommandService commandService, final List warningsToLog,
+			final String message, final String id) {
+		final String commandId = readRequired(configurationElement,
+				ATTRIBUTE_COMMAND_ID, warningsToLog, message, id);
+		if (commandId == null) {
+			return null;
+		}
+
+		final Command command = commandService.getCommand(commandId);
+		final ParameterizedCommand parameterizedCommand = readParameters(
+				configurationElement, warningsToLog, command);
+
+		return parameterizedCommand;
+	}
+
+	/**
+	 * Reads the parameters from a parent configuration element. This is used to
+	 * read the parameter sub-elements from a key element. Each parameter is
+	 * guaranteed to be valid. If invalid parameters are found, then a warning
+	 * status will be appended to the <code>warningsToLog</code> list.
+	 * 
+	 * @param configurationElement
+	 *            The configuration element from which the parameters should be
+	 *            read; must not be <code>null</code>.
+	 * @param warningsToLog
+	 *            The list of warnings found during parsing. Warnings found will
+	 *            parsing the parameters will be appended to this list. This
+	 *            value must not be <code>null</code>.
+	 * @param command
+	 *            The command around which the parameterization should be
+	 *            created; must not be <code>null</code>.
+	 * @return The array of parameters found for this configuration element;
+	 *         <code>null</code> if none can be found.
+	 */
+	protected static final ParameterizedCommand readParameters(
+			final IConfigurationElement configurationElement,
+			final List warningsToLog, final Command command) {
+		final IConfigurationElement[] parameterElements = configurationElement
+				.getChildren(ELEMENT_PARAMETER);
+		if ((parameterElements == null) || (parameterElements.length == 0)) {
+			return new ParameterizedCommand(command, null);
+		}
+
+		final Collection parameters = new ArrayList();
+		for (int i = 0; i < parameterElements.length; i++) {
+			final IConfigurationElement parameterElement = parameterElements[i];
+
+			// Read out the id.
+			final String id = parameterElement.getAttribute(ATTRIBUTE_ID);
+			if ((id == null) || (id.length() == 0)) {
+				// The name should never be null. This is invalid.
+				final String message = "Parameters need a name: plug-in='" //$NON-NLS-1$
+						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				warningsToLog.add(status);
+				continue;
+			}
+
+			// Find the parameter on the command.
+			IParameter parameter = null;
+			try {
+				final IParameter[] commandParameters = command.getParameters();
+				if (parameters != null) {
+					for (int j = 0; j < commandParameters.length; j++) {
+						final IParameter currentParameter = commandParameters[j];
+						if (Util.equals(currentParameter.getId(), id)) {
+							parameter = currentParameter;
+							break;
+						}
+					}
+
+				}
+			} catch (final NotDefinedException e) {
+				// This should not happen.
+			}
+			if (parameter == null) {
+				// The name should never be null. This is invalid.
+				final String message = "Could not find a matching parameter: plug-in='" //$NON-NLS-1$
+						+ configurationElement.getNamespace()
+						+ "', parameterId='" + id //$NON-NLS-1$
+						+ "'."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				warningsToLog.add(status);
+				continue;
+			}
+
+			// Read out the value.
+			final String value = parameterElement.getAttribute(ATTRIBUTE_VALUE);
+			if ((value == null) || (value.length() == 0)) {
+				// The name should never be null. This is invalid.
+				final String message = "Parameters need a value: plug-in='" //$NON-NLS-1$
+						+ configurationElement.getNamespace()
+						+ "', parameterId='" //$NON-NLS-1$
+						+ id + "'."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				warningsToLog.add(status);
+				continue;
+			}
+
+			parameters.add(new Parameterization(parameter, value));
+		}
+
+		if (parameters.isEmpty()) {
+			return new ParameterizedCommand(command, null);
+		}
+
+		return new ParameterizedCommand(command,
+				(Parameterization[]) parameters
+						.toArray(new Parameterization[parameters.size()]));
+	}
+
+	/**
+	 * Reads a required attribute from the configuration element.
+	 * 
+	 * @param configurationElement
+	 *            The configuration element from which to read; must not be
+	 *            <code>null</code>.
+	 * @param attribute
+	 *            The attribute to read; must not be <code>null</code>.
+	 * @param warningsToLog
+	 *            The list of warnings; must not be <code>null</code>.
+	 * @param message
+	 *            The warning message to use if the attribute is missing; must
+	 *            not be <code>null</code>.
+	 * @return The required attribute; may be <code>null</code> if missing.
+	 */
+	protected static final String readRequired(
+			final IConfigurationElement configurationElement,
+			final String attribute, final List warningsToLog,
+			final String message) {
+		return readRequired(configurationElement, attribute, warningsToLog,
+				message, null);
+	}
+
+	/**
+	 * Reads a required attribute from the configuration element. This logs the
+	 * identifier of the item if this required element cannot be found.
+	 * 
+	 * @param configurationElement
+	 *            The configuration element from which to read; must not be
+	 *            <code>null</code>.
+	 * @param attribute
+	 *            The attribute to read; must not be <code>null</code>.
+	 * @param warningsToLog
+	 *            The list of warnings; must not be <code>null</code>.
+	 * @param message
+	 *            The warning message to use if the attribute is missing; must
+	 *            not be <code>null</code>.
+	 * @param id
+	 *            The identifier of the element for which this is a required
+	 *            attribute; may be <code>null</code>.
+	 * @return The required attribute; may be <code>null</code> if missing.
+	 */
+	protected static final String readRequired(
+			final IConfigurationElement configurationElement,
+			final String attribute, final List warningsToLog,
+			final String message, final String id) {
+		final String value = configurationElement.getAttribute(attribute);
+		if ((value == null) || (value.length() == 0)) {
+			addWarning(warningsToLog, message, configurationElement
+					.getNamespace(), id);
+			return null;
+		}
+
+		return value;
+	}
+
+	/**
+	 * Reads a <code>when</code> child element from the given configuration
+	 * element. Warnings will be appended to <code>warningsToLog</code>.
+	 * 
+	 * @param parentElement
+	 *            The configuration element which might have a <code>when</code>
+	 *            element as a child; never <code>null</code>.
+	 * @param whenElement
+	 *            The name of the when element to find; never <code>null</code>.
+	 * @param id
+	 *            The identifier of the menu element whose <code>when</code>
+	 *            expression is being read; never <code>null</code>.
+	 * @param warningsToLog
+	 *            The list of warnings while parsing the extension point; never
+	 *            <code>null</code>.
+	 * @return The <code>when</code> expression for the
+	 *         <code>configurationElement</code>, if any; otherwise,
+	 *         <code>null</code>.
+	 */
+	protected static final Expression readWhenElements(
+			final IConfigurationElement parentElement,
+			final String whenElement, final String id, final List warningsToLog) {
+		// Check to see if we have an visibleWhen expression.
+		final IConfigurationElement[] whenElements = parentElement
+				.getChildren(whenElement);
+		Expression whenExpression = null;
+		if (whenElements.length > 0) {
+			// Check if we have too many visible when elements.
+			if (whenElements.length > 1) {
+				// There should only be one visibleWhen element
+				addWarning(warningsToLog,
+						"There should only be one when element", //$NON-NLS-1$
+						parentElement.getNamespace(), id, "whenElement", //$NON-NLS-1$
+						whenElement);
+				return null;
+			}
+
+			// Convert the activeWhen element into an expression.
+			final ElementHandler elementHandler = ElementHandler.getDefault();
+			final ExpressionConverter converter = ExpressionConverter
+					.getDefault();
+			try {
+				whenExpression = elementHandler.create(converter,
+						whenElements[0]);
+			} catch (final CoreException e) {
+				// There activeWhen expression could not be created.
+				addWarning(warningsToLog, "Problem creating when element", //$NON-NLS-1$
+						parentElement.getNamespace(), id, "whenElement", //$NON-NLS-1$
+						whenElement);
+			}
+		}
+
+		return whenExpression;
+	}
+
+	/**
+	 * Whether the preference and registry change listeners have been attached
+	 * yet.
+	 */
+	protected boolean listenersAttached = false;
+
+	/**
+	 * Constructs a new instance of <code>CommonCommandPersistence</code>.
+	 */
+	protected CommonCommandPersistence() {
+		// Do nothing.
+	}
+}

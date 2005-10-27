@@ -63,6 +63,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.CommonCommandPersistence;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -73,17 +74,12 @@ import org.eclipse.ui.keys.IBindingService;
  * 
  * @since 3.1
  */
-public final class BindingPersistence {
+final class BindingPersistence extends CommonCommandPersistence {
 
 	/**
 	 * The name of the attribute storing the command id for a binding.
 	 */
 	private static final String ATTRIBUTE_COMMAND = "command"; //$NON-NLS-1$
-
-	/**
-	 * The name of the attribute storing the command id for a binding.
-	 */
-	private static final String ATTRIBUTE_COMMAND_ID = "commandId"; //$NON-NLS-1$
 
 	/**
 	 * The name of the configuration attribute storing the scheme id for a
@@ -101,11 +97,6 @@ public final class BindingPersistence {
 	 * definition.
 	 */
 	private static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
-
-	/**
-	 * The name of the id attribute, which is used on scheme definitions.
-	 */
-	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
 	/**
 	 * The name of the attribute storing the identifier for the active key
@@ -170,13 +161,6 @@ public final class BindingPersistence {
 	private static final String ATTRIBUTE_STRING = "string"; //$NON-NLS-1$
 
 	/**
-	 * The name of the deprecated attribute of the deprecated
-	 * <code>activeKeyConfiguration</code> element in the commands extension
-	 * point.
-	 */
-	private static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
-
-	/**
 	 * Whether this class should print out debugging information when it reads
 	 * in data, or writes to the preference store.
 	 */
@@ -223,11 +207,6 @@ public final class BindingPersistence {
 	 * in the bindings extension point.
 	 */
 	private static final String ELEMENT_KEY_CONFIGURATION = "keyConfiguration"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a parameter.
-	 */
-	private static final String ELEMENT_PARAMETER = "parameter"; //$NON-NLS-1$
 
 	/**
 	 * The name of the scheme element in the bindings extension point.
@@ -283,12 +262,6 @@ public final class BindingPersistence {
 	private static final String LEGACY_DEFAULT_SCOPE = "org.eclipse.ui.globalScope"; //$NON-NLS-1$
 
 	/**
-	 * Whether the preference and registry change listeners have been attached
-	 * yet.
-	 */
-    private static boolean listenersAttached = false;
-    
-    /**
 	 * A look-up map for 2.1.x style <code>string</code> keys on a
 	 * <code>keyBinding</code> element.
 	 */
@@ -354,43 +327,6 @@ public final class BindingPersistence {
 				.formalKeyLookupInteger(IKeyLookup.F11_NAME));
 		r2_1KeysByName.put(IKeyLookup.F12_NAME, lookup
 				.formalKeyLookupInteger(IKeyLookup.F12_NAME));
-	}
-
-	/**
-	 * Inserts the given element into the indexed two-dimensional array in the
-	 * array at the index. The array is grown as necessary.
-	 * 
-	 * @param elementToAdd
-	 *            The element to add to the indexed array; may be
-	 *            <code>null</code>
-	 * @param indexedArray
-	 *            The two-dimensional array that is indexed by element type;
-	 *            must not be <code>null</code>.
-	 * @param index
-	 *            The index at which the element should be added; must be a
-	 *            valid index.
-	 * @param currentCount
-	 *            The current number of items in the array at the index.
-	 */
-	private static final void addElementToIndexedArray(
-			final IConfigurationElement elementToAdd,
-			final IConfigurationElement[][] indexedArray, final int index,
-			final int currentCount) {
-		final IConfigurationElement[] elements;
-		if (currentCount == 0) {
-			elements = new IConfigurationElement[1];
-			indexedArray[index] = elements;
-		} else {
-			if (currentCount >= indexedArray[index].length) {
-				final IConfigurationElement[] copy = new IConfigurationElement[indexedArray[index].length * 2];
-				System.arraycopy(indexedArray[index], 0, copy, 0, currentCount);
-				elements = copy;
-				indexedArray[index] = elements;
-			} else {
-				elements = indexedArray[index];
-			}
-		}
-		elements[currentCount] = elementToAdd;
 	}
 
 	/**
@@ -537,195 +473,6 @@ public final class BindingPersistence {
 
 		return value;
 	}
-
-	/**
-     * Reads all of the binding information from the registry and from the
-     * preference store.
-     * 
-     * @param bindingManager
-     *            The binding manager which should be populated with the values
-     *            from the registry and preference store; must not be
-     *            <code>null</code>.
-     * @param commandService
-     *            The command service for the workbench; must not be
-     *            <code>null</code>.
-     */
-    static final void read(final BindingManager bindingManager,
-            final ICommandService commandService) {
-        // Create the extension registry mementos.
-        final IExtensionRegistry registry = Platform.getExtensionRegistry();
-        int activeSchemeElementCount = 0;
-        int bindingDefinitionCount = 0;
-        int schemeDefinitionCount = 0;
-        final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[3][];
-
-        // Sort the bindings extension point based on element name.
-        final IConfigurationElement[] bindingsExtensionPoint = registry
-                .getConfigurationElementsFor(EXTENSION_BINDINGS);
-        for (int i = 0; i < bindingsExtensionPoint.length; i++) {
-            final IConfigurationElement configurationElement = bindingsExtensionPoint[i];
-            final String name = configurationElement.getName();
-
-            // Check if it is a binding definition.
-            if (ELEMENT_KEY.equals(name)) {
-                addElementToIndexedArray(configurationElement,
-                        indexedConfigurationElements,
-                        INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
-            } else
-            // Check to see if it is a scheme definition.
-            if (ELEMENT_SCHEME.equals(name)) {
-                addElementToIndexedArray(configurationElement,
-                        indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
-                        schemeDefinitionCount++);
-            }
-
-        }
-
-        // Sort the commands extension point based on element name.
-        final IConfigurationElement[] commandsExtensionPoint = registry
-                .getConfigurationElementsFor(EXTENSION_COMMANDS);
-        for (int i = 0; i < commandsExtensionPoint.length; i++) {
-            final IConfigurationElement configurationElement = commandsExtensionPoint[i];
-            final String name = configurationElement.getName();
-
-            // Check if it is a binding definition.
-            if (ELEMENT_KEY_BINDING.equals(name)) {
-                addElementToIndexedArray(configurationElement,
-                        indexedConfigurationElements,
-                        INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
-
-                // Check if it is a scheme defintion.
-            } else if (ELEMENT_KEY_CONFIGURATION.equals(name)) {
-                addElementToIndexedArray(configurationElement,
-                        indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
-                        schemeDefinitionCount++);
-
-                // Check if it is an active scheme identifier.
-            } else if (ELEMENT_ACTIVE_KEY_CONFIGURATION.equals(name)) {
-                addElementToIndexedArray(configurationElement,
-                        indexedConfigurationElements, INDEX_ACTIVE_SCHEME,
-                        activeSchemeElementCount++);
-            }
-        }
-
-        /*
-         * Sort the accelerator configuration extension point into the scheme
-         * definitions.
-         */
-        final IConfigurationElement[] acceleratorConfigurationsExtensionPoint = registry
-                .getConfigurationElementsFor(EXTENSION_ACCELERATOR_CONFIGURATIONS);
-        for (int i = 0; i < acceleratorConfigurationsExtensionPoint.length; i++) {
-            final IConfigurationElement configurationElement = acceleratorConfigurationsExtensionPoint[i];
-            final String name = configurationElement.getName();
-
-            // Check if the name matches the accelerator configuration element
-            if (ELEMENT_ACCELERATOR_CONFIGURATION.equals(name)) {
-                addElementToIndexedArray(configurationElement,
-                        indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
-                        schemeDefinitionCount++);
-            }
-        }
-
-        // Create the preference memento.
-        final IPreferenceStore store = WorkbenchPlugin.getDefault()
-                .getPreferenceStore();
-        final String preferenceString = store.getString(EXTENSION_COMMANDS);
-        IMemento preferenceMemento = null;
-        if ((preferenceString != null) && (preferenceString.length() > 0)) {
-            final Reader reader = new StringReader(preferenceString);
-            try {
-                preferenceMemento = XMLMemento.createReadRoot(reader);
-            } catch (final WorkbenchException e) {
-                // Could not initialize the preference memento.
-            }
-        }
-
-        // Read the scheme definitions.
-        readSchemes(indexedConfigurationElements[INDEX_SCHEME_DEFINITIONS],
-                schemeDefinitionCount, bindingManager);
-        readActiveScheme(indexedConfigurationElements[INDEX_ACTIVE_SCHEME],
-                activeSchemeElementCount, preferenceMemento, bindingManager);
-        readBindingsFromRegistry(
-                indexedConfigurationElements[INDEX_BINDING_DEFINITIONS],
-                bindingDefinitionCount, bindingManager, commandService);
-        readBindingsFromPreferences(preferenceMemento, bindingManager,
-                commandService);
-
-        /*
-		 * Adds listener so that future preference and registry changes trigger
-		 * an update of the binding manager automatically.
-		 */
-        if (!listenersAttached) {
-			store.addPropertyChangeListener(new IPropertyChangeListener() {
-				public final void propertyChange(final PropertyChangeEvent event) {
-					if (EXTENSION_COMMANDS.equals(event.getProperty())) {
-						read(bindingManager, commandService);
-					}
-				}
-			});
-
-			registry.addRegistryChangeListener(new IRegistryChangeListener() {
-				public final void registryChanged(
-						final IRegistryChangeEvent event) {
-					/*
-					 * Bindings will need to be re-read (i.e., re-verified) if
-					 * any of the binding extensions change (i.e., accelerator
-					 * configurations, bindings, commands), or if any of the
-					 * command or context extensions change (i.e., accelerator
-					 * scopes, contexts, action definitions).
-					 */
-					final IExtensionDelta[] acceleratorConfigurationDeltas = event
-							.getExtensionDeltas(
-									PlatformUI.PLUGIN_ID,
-									IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS);
-					if (acceleratorConfigurationDeltas.length == 0) {
-						final IExtensionDelta[] bindingDeltas = event
-								.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-										IWorkbenchConstants.PL_BINDINGS);
-						if (bindingDeltas.length == 0) {
-							final IExtensionDelta[] commandDeltas = event
-									.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-											IWorkbenchConstants.PL_COMMANDS);
-							if (commandDeltas.length == 0) {
-								final IExtensionDelta[] acceleratorScopeDeltas = event
-										.getExtensionDeltas(
-												PlatformUI.PLUGIN_ID,
-												IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
-								if (acceleratorScopeDeltas.length == 0) {
-									final IExtensionDelta[] contextDeltas = event
-											.getExtensionDeltas(
-													PlatformUI.PLUGIN_ID,
-													IWorkbenchConstants.PL_CONTEXTS);
-									if (contextDeltas.length == 0) {
-										final IExtensionDelta[] actionDefinitionDeltas = event
-												.getExtensionDeltas(
-														PlatformUI.PLUGIN_ID,
-														IWorkbenchConstants.PL_ACTION_DEFINITIONS);
-										if (actionDefinitionDeltas.length == 0) {
-											return;
-										}
-									}
-								}
-							}
-						}
-					}
-					
-					/*
-					 * At least one of the deltas is non-zero, so re-read all of
-					 * the bindings.
-					 */
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
-							read(bindingManager, commandService);
-						}
-					});
-				}
-			}, PlatformUI.PLUGIN_ID);
-
-			listenersAttached = true;
-		}
-    }
-
 
 	/**
 	 * <p>
@@ -1226,105 +973,6 @@ public final class BindingPersistence {
 	}
 
 	/**
-	 * Reads the parameters from a parent configuration element. This is used to
-	 * read the parameter sub-elements from a key element. Each parameter is
-	 * guaranteed to be valid. If invalid parameters are found, then a warning
-	 * status will be appended to the <code>warningsToLog</code> list.
-	 * 
-	 * @param configurationElement
-	 *            The configuration element from which the parameters should be
-	 *            read; must not be <code>null</code>.
-	 * @param warningsToLog
-	 *            The list of warnings found during parsing. Warnings found will
-	 *            parsing the parameters will be appended to this list. This
-	 *            value must not be <code>null</code>.
-	 * @param command
-	 *            The command around which the parameterization should be
-	 *            created; must not be <code>null</code>.
-	 * @return The array of parameters found for this configuration element;
-	 *         <code>null</code> if none can be found.
-	 */
-	private static final ParameterizedCommand readParameters(
-			final IConfigurationElement configurationElement,
-			final List warningsToLog, final Command command) {
-		final IConfigurationElement[] parameterElements = configurationElement
-				.getChildren(ELEMENT_PARAMETER);
-		if ((parameterElements == null) || (parameterElements.length == 0)) {
-			return new ParameterizedCommand(command, null);
-		}
-
-		final Collection parameters = new ArrayList();
-		for (int i = 0; i < parameterElements.length; i++) {
-			final IConfigurationElement parameterElement = parameterElements[i];
-
-			// Read out the id.
-			final String id = parameterElement.getAttribute(ATTRIBUTE_ID);
-			if ((id == null) || (id.length() == 0)) {
-				// The name should never be null. This is invalid.
-				final String message = "Parameters need a name: plug-in='" //$NON-NLS-1$
-						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				warningsToLog.add(status);
-				continue;
-			}
-
-			// Find the parameter on the command.
-			IParameter parameter = null;
-			try {
-				final IParameter[] commandParameters = command.getParameters();
-				if (parameters != null) {
-					for (int j = 0; j < commandParameters.length; j++) {
-						final IParameter currentParameter = commandParameters[j];
-						if (Util.equals(currentParameter.getId(), id)) {
-							parameter = currentParameter;
-							break;
-						}
-					}
-
-				}
-			} catch (final NotDefinedException e) {
-				// This should not happen.
-			}
-			if (parameter == null) {
-				// The name should never be null. This is invalid.
-				final String message = "Could not find a matching parameter: plug-in='" //$NON-NLS-1$
-						+ configurationElement.getNamespace()
-						+ "', parameterId='" + id //$NON-NLS-1$
-						+ "'."; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				warningsToLog.add(status);
-				continue;
-			}
-
-			// Read out the value.
-			final String value = parameterElement.getAttribute(ATTRIBUTE_VALUE);
-			if ((value == null) || (value.length() == 0)) {
-				// The name should never be null. This is invalid.
-				final String message = "Parameters need a value: plug-in='" //$NON-NLS-1$
-						+ configurationElement.getNamespace()
-						+ "', parameterId='" //$NON-NLS-1$
-						+ id + "'."; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				warningsToLog.add(status);
-				continue;
-			}
-
-			parameters.add(new Parameterization(parameter, value));
-		}
-
-		if (parameters.isEmpty()) {
-			return new ParameterizedCommand(command, null);
-		}
-
-		return new ParameterizedCommand(command,
-				(Parameterization[]) parameters
-						.toArray(new Parameterization[parameters.size()]));
-	}
-
-	/**
 	 * Reads the parameters from a parent memento. This is used to read the
 	 * parameter sub-elements from a key element. Each parameter is guaranteed
 	 * to be valid. If invalid parameters are found, then a warning status will
@@ -1436,14 +1084,13 @@ public final class BindingPersistence {
 			final int configurationElementCount,
 			final BindingManager bindingManager) {
 		// Undefine all the previous handle objects.
-		final HandleObject[] handleObjects = bindingManager
-				.getDefinedSchemes();
+		final HandleObject[] handleObjects = bindingManager.getDefinedSchemes();
 		if (handleObjects != null) {
 			for (int i = 0; i < handleObjects.length; i++) {
 				handleObjects[i].undefine();
 			}
 		}
-		
+
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
@@ -1491,8 +1138,8 @@ public final class BindingPersistence {
 	 *             If something happens while trying to write to the workbench
 	 *             preference store.
 	 */
-	static final void write(final Scheme activeScheme,
-			final Binding[] bindings) throws IOException {
+	static final void write(final Scheme activeScheme, final Binding[] bindings)
+			throws IOException {
 		// Print out debugging information, if requested.
 		if (DEBUG) {
 			System.out.println("BINDINGS >> Persisting active scheme '" //$NON-NLS-1$
@@ -1623,9 +1270,197 @@ public final class BindingPersistence {
 	}
 
 	/**
-	 * This class should not be constructed.
+	 * Constructs a new instance of <code>BindingPersistence</code>.
 	 */
-	private BindingPersistence() {
-		// Should not be called.
+	BindingPersistence() {
+		// Do nothing.
+	}
+
+	/**
+	 * Reads all of the binding information from the registry and from the
+	 * preference store.
+	 * 
+	 * @param bindingManager
+	 *            The binding manager which should be populated with the values
+	 *            from the registry and preference store; must not be
+	 *            <code>null</code>.
+	 * @param commandService
+	 *            The command service for the workbench; must not be
+	 *            <code>null</code>.
+	 */
+	final void read(final BindingManager bindingManager,
+			final ICommandService commandService) {
+		// Create the extension registry mementos.
+		final IExtensionRegistry registry = Platform.getExtensionRegistry();
+		int activeSchemeElementCount = 0;
+		int bindingDefinitionCount = 0;
+		int schemeDefinitionCount = 0;
+		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[3][];
+
+		// Sort the bindings extension point based on element name.
+		final IConfigurationElement[] bindingsExtensionPoint = registry
+				.getConfigurationElementsFor(EXTENSION_BINDINGS);
+		for (int i = 0; i < bindingsExtensionPoint.length; i++) {
+			final IConfigurationElement configurationElement = bindingsExtensionPoint[i];
+			final String name = configurationElement.getName();
+
+			// Check if it is a binding definition.
+			if (ELEMENT_KEY.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements,
+						INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
+			} else
+			// Check to see if it is a scheme definition.
+			if (ELEMENT_SCHEME.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+						schemeDefinitionCount++);
+			}
+
+		}
+
+		// Sort the commands extension point based on element name.
+		final IConfigurationElement[] commandsExtensionPoint = registry
+				.getConfigurationElementsFor(EXTENSION_COMMANDS);
+		for (int i = 0; i < commandsExtensionPoint.length; i++) {
+			final IConfigurationElement configurationElement = commandsExtensionPoint[i];
+			final String name = configurationElement.getName();
+
+			// Check if it is a binding definition.
+			if (ELEMENT_KEY_BINDING.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements,
+						INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
+
+				// Check if it is a scheme defintion.
+			} else if (ELEMENT_KEY_CONFIGURATION.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+						schemeDefinitionCount++);
+
+				// Check if it is an active scheme identifier.
+			} else if (ELEMENT_ACTIVE_KEY_CONFIGURATION.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements, INDEX_ACTIVE_SCHEME,
+						activeSchemeElementCount++);
+			}
+		}
+
+		/*
+		 * Sort the accelerator configuration extension point into the scheme
+		 * definitions.
+		 */
+		final IConfigurationElement[] acceleratorConfigurationsExtensionPoint = registry
+				.getConfigurationElementsFor(EXTENSION_ACCELERATOR_CONFIGURATIONS);
+		for (int i = 0; i < acceleratorConfigurationsExtensionPoint.length; i++) {
+			final IConfigurationElement configurationElement = acceleratorConfigurationsExtensionPoint[i];
+			final String name = configurationElement.getName();
+
+			// Check if the name matches the accelerator configuration element
+			if (ELEMENT_ACCELERATOR_CONFIGURATION.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+						schemeDefinitionCount++);
+			}
+		}
+
+		// Create the preference memento.
+		final IPreferenceStore store = WorkbenchPlugin.getDefault()
+				.getPreferenceStore();
+		final String preferenceString = store.getString(EXTENSION_COMMANDS);
+		IMemento preferenceMemento = null;
+		if ((preferenceString != null) && (preferenceString.length() > 0)) {
+			final Reader reader = new StringReader(preferenceString);
+			try {
+				preferenceMemento = XMLMemento.createReadRoot(reader);
+			} catch (final WorkbenchException e) {
+				// Could not initialize the preference memento.
+			}
+		}
+
+		// Read the scheme definitions.
+		readSchemes(indexedConfigurationElements[INDEX_SCHEME_DEFINITIONS],
+				schemeDefinitionCount, bindingManager);
+		readActiveScheme(indexedConfigurationElements[INDEX_ACTIVE_SCHEME],
+				activeSchemeElementCount, preferenceMemento, bindingManager);
+		readBindingsFromRegistry(
+				indexedConfigurationElements[INDEX_BINDING_DEFINITIONS],
+				bindingDefinitionCount, bindingManager, commandService);
+		readBindingsFromPreferences(preferenceMemento, bindingManager,
+				commandService);
+
+		/*
+		 * Adds listener so that future preference and registry changes trigger
+		 * an update of the binding manager automatically.
+		 */
+		if (!listenersAttached) {
+			store.addPropertyChangeListener(new IPropertyChangeListener() {
+				public final void propertyChange(final PropertyChangeEvent event) {
+					if (EXTENSION_COMMANDS.equals(event.getProperty())) {
+						read(bindingManager, commandService);
+					}
+				}
+			});
+
+			registry.addRegistryChangeListener(new IRegistryChangeListener() {
+				public final void registryChanged(
+						final IRegistryChangeEvent event) {
+					/*
+					 * Bindings will need to be re-read (i.e., re-verified) if
+					 * any of the binding extensions change (i.e., accelerator
+					 * configurations, bindings, commands), or if any of the
+					 * command or context extensions change (i.e., accelerator
+					 * scopes, contexts, action definitions).
+					 */
+					final IExtensionDelta[] acceleratorConfigurationDeltas = event
+							.getExtensionDeltas(
+									PlatformUI.PLUGIN_ID,
+									IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS);
+					if (acceleratorConfigurationDeltas.length == 0) {
+						final IExtensionDelta[] bindingDeltas = event
+								.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+										IWorkbenchConstants.PL_BINDINGS);
+						if (bindingDeltas.length == 0) {
+							final IExtensionDelta[] commandDeltas = event
+									.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+											IWorkbenchConstants.PL_COMMANDS);
+							if (commandDeltas.length == 0) {
+								final IExtensionDelta[] acceleratorScopeDeltas = event
+										.getExtensionDeltas(
+												PlatformUI.PLUGIN_ID,
+												IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
+								if (acceleratorScopeDeltas.length == 0) {
+									final IExtensionDelta[] contextDeltas = event
+											.getExtensionDeltas(
+													PlatformUI.PLUGIN_ID,
+													IWorkbenchConstants.PL_CONTEXTS);
+									if (contextDeltas.length == 0) {
+										final IExtensionDelta[] actionDefinitionDeltas = event
+												.getExtensionDeltas(
+														PlatformUI.PLUGIN_ID,
+														IWorkbenchConstants.PL_ACTION_DEFINITIONS);
+										if (actionDefinitionDeltas.length == 0) {
+											return;
+										}
+									}
+								}
+							}
+						}
+					}
+
+					/*
+					 * At least one of the deltas is non-zero, so re-read all of
+					 * the bindings.
+					 */
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							read(bindingManager, commandService);
+						}
+					});
+				}
+			}, PlatformUI.PLUGIN_ID);
+
+			listenersAttached = true;
+		}
 	}
 }

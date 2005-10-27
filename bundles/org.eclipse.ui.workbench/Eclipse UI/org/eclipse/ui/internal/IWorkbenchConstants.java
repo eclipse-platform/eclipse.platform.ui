@@ -133,9 +133,18 @@ public interface IWorkbenchConstants {
     public static final String PL_CONTEXTS = "contexts"; //$NON-NLS-1$
     
     /**
-     * The extension point (3.1 and later) for specifying handlers.
-     */
+	 * The extension point (3.1 and later) for specifying handlers.
+	 * 
+	 * @since 3.1.1
+	 */
     public static final String PL_HANDLERS = "handlers"; //$NON-NLS-1$
+    
+    /**
+	 * The extension point (3.2 and later) for specifying menu contributions.
+	 * 
+	 * @since 3.2
+	 */
+    public static final String PL_MENUS = "menus"; //$NON-NLS-1$
     
     /**
      * The extension point for encoding definitions.

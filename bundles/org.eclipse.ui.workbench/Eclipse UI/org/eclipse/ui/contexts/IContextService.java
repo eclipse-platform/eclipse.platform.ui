@@ -15,7 +15,7 @@ import java.util.Collection;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.IServiceWithSources;
 
 /**
  * <p>
@@ -28,7 +28,7 @@ import org.eclipse.ui.ISourceProvider;
  * 
  * @since 3.1
  */
-public interface IContextService {
+public interface IContextService extends IServiceWithSources {
 
 	/**
 	 * The identifier for the context that is active when a shell registered as
@@ -115,6 +115,37 @@ public interface IContextService {
 	 *            This expression must evaluate to <code>true</code> before
 	 *            this context will really become active. The expression must
 	 *            not be <code>null</code>.
+	 * @return A token which can be used to later cancel the activation. Only
+	 *         someone with access to this token can cancel the activation. The
+	 *         activation will automatically be cancelled if the context from
+	 *         which this service was retrieved is destroyed.
+	 * 
+	 * @see org.eclipse.ui.ISources
+	 * @since 3.2
+	 */
+	public IContextActivation activateContext(String contextId,
+			Expression expression);
+
+	/**
+	 * <p>
+	 * Activates the given context within the context of this service. The
+	 * context becomes active when <code>expression</code> evaluates to
+	 * <code>true</code>.
+	 * </p>
+	 * <p>
+	 * Also, it is guaranteed that the context submitted through a particular
+	 * service will be cleaned up when that services is destroyed. So, for
+	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
+	 * would deactivate all of its handlers when the site is destroyed.
+	 * </p>
+	 * 
+	 * @param contextId
+	 *            The identifier for the context which should be activated; must
+	 *            not be <code>null</code>.
+	 * @param expression
+	 *            This expression must evaluate to <code>true</code> before
+	 *            this context will really become active. The expression must
+	 *            not be <code>null</code>.
 	 * @param sourcePriorities
 	 *            The source priorities for the expression.
 	 * @return A token which can be used to later cancel the activation. Only
@@ -123,20 +154,12 @@ public interface IContextService {
 	 *         which this service was retrieved is destroyed.
 	 * 
 	 * @see org.eclipse.ui.ISources
+	 * @deprecated Use
+	 *             {@link IContextService#activateContext(String, Expression)}
+	 *             instead.
 	 */
 	public IContextActivation activateContext(String contextId,
 			Expression expression, int sourcePriorities);
-
-	/**
-	 * Adds a source provider to this service. A source provider will notify the
-	 * service when the source it provides changes. An example of a source might
-	 * be an active editor or the current selection. This amounts to a pluggable
-	 * state tracker for the service.
-	 * 
-	 * @param provider
-	 *            The provider to add; must not be <code>null</code>.
-	 */
-	public void addSourceProvider(ISourceProvider provider);
 
 	/**
 	 * Deactivates the given context within the context of this service. If the
@@ -252,16 +275,6 @@ public interface IContextService {
 	 *         otherwise.
 	 */
 	public boolean registerShell(Shell shell, int type);
-
-	/**
-	 * Removes a source provider from this service. Most of the time, this
-	 * method call is not required as source provider typically share the same
-	 * life span as the workbench itself.
-	 * 
-	 * @param provider
-	 *            The provider to remove; must not be <code>null</code>.
-	 */
-	public void removeSourceProvider(ISourceProvider provider);
 
 	/**
 	 * <p>

@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -497,14 +496,10 @@ final class HandlerPersistence {
 			}
 
 			if (activeWhenExpression != null) {
-				handlerActivations.add(handlerService
-						.activateHandler(commandId, new HandlerProxy(
-								configurationElement, ATTRIBUTE_CLASS,
-								enabledWhenExpression, handlerService),
-								activeWhenExpression, ISources.ACTIVE_CONTEXT
-										| ISources.ACTIVE_CURRENT_SELECTION
-										| ISources.ACTIVE_EDITOR
-										| ISources.ACTIVE_PART));
+				handlerActivations.add(handlerService.activateHandler(
+						commandId, new HandlerProxy(configurationElement,
+								ATTRIBUTE_CLASS, enabledWhenExpression,
+								handlerService), activeWhenExpression));
 			} else {
 				handlerActivations.add(handlerService.activateHandler(
 						commandId, new HandlerProxy(configurationElement,

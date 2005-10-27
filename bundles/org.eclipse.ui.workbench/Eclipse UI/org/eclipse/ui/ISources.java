@@ -57,8 +57,8 @@ package org.eclipse.ui;
 public interface ISources {
 
 	/**
-	 * The priority given to default handlers and handlers that active across
-	 * the entire workbench.
+	 * The priority given to default handlers and handlers that are active
+	 * across the entire workbench.
 	 */
 	public static final int WORKBENCH = 0;
 
@@ -84,6 +84,12 @@ public interface ISources {
 	 * The priority given when the source includes a particular context.
 	 */
 	public static final int ACTIVE_CONTEXT = 1 << 6;
+
+	/**
+	 * The variable name for the active contexts. This is for use with the
+	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 */
+	public static final String ACTIVE_CONTEXT_NAME = "activeContexts"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the currently active shell.
@@ -114,6 +120,12 @@ public interface ISources {
 	public static final int ACTIVE_EDITOR = 1 << 18;
 
 	/**
+	 * The variable name for the active editor. This is for use with the
+	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 */
+	public static final String ACTIVE_EDITOR_NAME = "activeEditor"; //$NON-NLS-1$
+
+	/**
 	 * The priority given when the source includes the active part.
 	 */
 	public static final int ACTIVE_PART = 1 << 22;
@@ -141,4 +153,10 @@ public interface ISources {
 	 * The priority given when the source includes the current selection.
 	 */
 	public static final int ACTIVE_CURRENT_SELECTION = 1 << 30;
+
+	/**
+	 * The variable name for the active selection. This is for use with the
+	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 */
+	public static final String ACTIVE_CURRENT_SELECTION_NAME = "selection"; //$NON-NLS-1$
 }

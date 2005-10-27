@@ -118,8 +118,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 						handlerSubmission.getHandler()),
 				new LegacyHandlerSubmissionExpression(handlerSubmission
 						.getActivePartId(), handlerSubmission.getActiveShell(),
-						handlerSubmission.getActiveWorkbenchPartSite()),
-				sourcePriorities);
+						handlerSubmission.getActiveWorkbenchPartSite()));
 		if (activationsBySubmission == null) {
 			activationsBySubmission = new HashMap();
 		}

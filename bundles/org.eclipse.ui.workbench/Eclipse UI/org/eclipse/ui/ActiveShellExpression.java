@@ -13,6 +13,7 @@ package org.eclipse.ui;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.widgets.Shell;
 
@@ -80,12 +81,17 @@ public final class ActiveShellExpression extends Expression {
 
 		return EvaluationResult.TRUE;
 	}
-    
-    public final String toString() {
-        final StringBuffer buffer = new StringBuffer();
-        buffer.append("ActiveShellExpression("); //$NON-NLS-1$
-        buffer.append(activeShell);
-        buffer.append(')');
-        return buffer.toString();
-    }
+
+	public final void collectExpressionInfo(final ExpressionInfo info) {
+		info.addVariableNameAccess(ISources.ACTIVE_SHELL_NAME);
+		info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+	}
+
+	public final String toString() {
+		final StringBuffer buffer = new StringBuffer();
+		buffer.append("ActiveShellExpression("); //$NON-NLS-1$
+		buffer.append(activeShell);
+		buffer.append(')');
+		return buffer.toString();
+	}
 }

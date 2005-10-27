@@ -31,74 +31,78 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public final class Bug74990Test extends UITestCase {
 
-    /**
-     * Constructs a new instance of <code>Bug74990Test</code>.
-     * 
-     * @param name
-     *            The name of the test
-     */
-    public Bug74990Test(final String name) {
-        super(name);
-    }
+	/**
+	 * Constructs a new instance of <code>Bug74990Test</code>.
+	 * 
+	 * @param name
+	 *            The name of the test
+	 */
+	public Bug74990Test(final String name) {
+		super(name);
+	}
 
-    /**
-     * Tests whether a part-specific handler -- submitted via Java code -- is
-     * matched properly. This is only using the part id. The test verifies that
-     * it is active when the part is active, and not active when the part is not
-     * active.
-     * 
-     * @throws PartInitException
-     *             If something goes wrong creating the part to which this
-     *             handler is tied.
-     *  
-     */
-    public final void testPartIdSubmission() throws PartInitException {
-        // Define a command.
-        final String testCommandId = "org.eclipse.ui.tests.commands.Bug74990";
-        final IWorkbenchCommandSupport commandSupport = fWorkbench
-                .getCommandSupport();
-        final ICommand testCommand = commandSupport.getCommandManager()
-                .getCommand(testCommandId);
+	/**
+	 * Tests whether a part-specific handler -- submitted via Java code -- is
+	 * matched properly. This is only using the part id. The test verifies that
+	 * it is active when the part is active, and not active when the part is not
+	 * active.
+	 * 
+	 * @throws PartInitException
+	 *             If something goes wrong creating the part to which this
+	 *             handler is tied.
+	 * 
+	 */
+	public final void testPartIdSubmission() throws PartInitException {
+		// Define a command.
+		final String testCommandId = "org.eclipse.ui.tests.commands.Bug74990";
+		final IWorkbenchCommandSupport commandSupport = fWorkbench
+				.getCommandSupport();
+		final ICommand testCommand = commandSupport.getCommandManager()
+				.getCommand(testCommandId);
 
-        // Create a handler submission.
-        final IHandler handler = new AbstractHandler() {
-            public final Object execute(final Map parameterValuesByName)
-                    throws ExecutionException {
-                // Do nothing.
-                return null;
-            }
-        };
-        final HandlerSubmission testSubmission = new HandlerSubmission(
-                "org.eclipse.ui.tests.api.MockViewPart", null, null,
-                testCommandId, handler, Priority.MEDIUM);
-        commandSupport.addHandlerSubmission(testSubmission);
+		// Create a handler submission.
+		final IHandler handler = new AbstractHandler() {
+			public final Object execute(final Map parameterValuesByName)
+					throws ExecutionException {
+				// Do nothing.
+				return null;
+			}
+		};
+		final HandlerSubmission testSubmission = new HandlerSubmission(
+				"org.eclipse.ui.tests.api.MockViewPart", null, null,
+				testCommandId, handler, Priority.MEDIUM);
+		commandSupport.addHandlerSubmission(testSubmission);
 
-        try {
-            // Test to make sure the command is not currently handled.
-            assertTrue("The MockViewPart command should not be handled",
-                    !testCommand.isHandled());
+		try {
+			// Test to make sure the command is not currently handled.
+			assertTrue("The MockViewPart command should not be handled",
+					!testCommand.isHandled());
 
-            /*
-             * Open a window with the MockViewPart, and make sure it now
-             * handled.
-             */
-            final IWorkbenchPage page = openTestWindow().getActivePage();
-            final IViewPart openedView = page
-                    .showView("org.eclipse.ui.tests.api.MockViewPart");
-            page.activate(openedView);
-            while (fWorkbench.getDisplay().readAndDispatch());
-            assertTrue("The MockViewPart command should be handled",
-                    testCommand.isHandled());
+			/*
+			 * Open a window with the MockViewPart, and make sure it is now
+			 * handled.
+			 */
+			final IWorkbenchPage page = openTestWindow().getActivePage();
+			final IViewPart openedView = page
+					.showView("org.eclipse.ui.tests.api.MockViewPart");
+			page.activate(openedView);
+			while (fWorkbench.getDisplay().readAndDispatch()) {
+				// Read the event queue
+			}
+			assertTrue("The MockViewPart command should be handled",
+					testCommand.isHandled());
 
-            // Hide the view, and test that is becomes unhandled again.
-            page.hideView(openedView);
-            while (fWorkbench.getDisplay().readAndDispatch());
-            assertTrue("The MockViewPart command should not be handled",
-                    !testCommand.isHandled());
+			// Hide the view, and test that is becomes unhandled again.
+			page.hideView(openedView);
+			while (fWorkbench.getDisplay().readAndDispatch()) {
+				// Read the event queue
+			}
+			assertTrue("The MockViewPart command should not be handled",
+					!testCommand.isHandled());
 
-        } finally {
-            commandSupport.removeHandlerSubmission(testSubmission);
-        }
+		} finally {
+			commandSupport.removeHandlerSubmission(testSubmission);
+		}
 
-    }
+	}
 }

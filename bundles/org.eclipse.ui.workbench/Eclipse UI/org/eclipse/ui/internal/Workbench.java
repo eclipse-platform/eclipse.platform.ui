@@ -56,6 +56,7 @@ import org.eclipse.jface.commands.CommandImageManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.menus.SMenuManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -119,12 +120,15 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.internal.menus.MenuService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.sources.ActivePartSourceProvider;
+import org.eclipse.ui.internal.sources.ActiveShellSourceProvider;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -134,6 +138,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
@@ -959,6 +964,9 @@ public final class Workbench implements IWorkbench {
 		final ICommandImageService commandImageService = new CommandImageService(
 				commandImageManager, commandService);
 		services.put(ICommandImageService.class, commandImageService);
+		final SMenuManager menuManager = new SMenuManager();
+		final IMenuService menuService = new MenuService(menuManager);
+		services.put(IMenuService.class, menuService);
 
 		/*
 		 * Phase 2 of the initialization of commands. The registry and
@@ -970,6 +978,7 @@ public final class Workbench implements IWorkbench {
 		contextService.readRegistry();
 		bindingService.readRegistryAndPreferences(commandService);
 		commandImageService.readRegistry();
+		menuService.readRegistry(commandService);
 
 		/*
 		 * Phase 3 of the initialization of commands. The source providers that
@@ -981,10 +990,12 @@ public final class Workbench implements IWorkbench {
 				this);
 		handlerService.addSourceProvider(activeShellSourceProvider);
 		contextService.addSourceProvider(activeShellSourceProvider);
+		menuService.addSourceProvider(activeShellSourceProvider);
 		final ActivePartSourceProvider activePartSourceProvider = new ActivePartSourceProvider(
 				this);
 		handlerService.addSourceProvider(activePartSourceProvider);
 		contextService.addSourceProvider(activePartSourceProvider);
+		menuService.addSourceProvider(activePartSourceProvider);
 
 		/*
 		 * Phase 4 of the initialization of commands. This handles the creation

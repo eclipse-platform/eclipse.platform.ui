@@ -37,7 +37,7 @@ import org.eclipse.ui.internal.util.Util;
  * @see HandlerSubmission
  * @see org.eclipse.ui.ISources
  * @see org.eclipse.ui.handlers.IHandlerService#activateHandler(String,
- *      IHandler, Expression, int)
+ *      IHandler, Expression)
  * @deprecated This concept is now captured in the <code>ISources</code>
  *             integer constants.
  * 
