@@ -186,13 +186,13 @@ public class KeyboardProbe {
 			
 			postNaturalKeyPress(fKeyCode);
 			char c= getContent(text);
-			if (TRACE) System.out.println("" + fKeyCode + "content[NONE]: " + c);
+			if (TRACE) System.out.println("" + fKeyCode + "content[NONE]: " + c); //$NON-NLS-1$ //$NON-NLS-2$
 			fCodes[fKeyCode][NONE]= c;
 			clearText(text);
 			
 			postShiftKeyPress(fKeyCode);
 			c= getContent(text);
-			if (TRACE) System.out.println("" + fKeyCode + "content[SHIFT]: " + c);
+			if (TRACE) System.out.println("" + fKeyCode + "content[SHIFT]: " + c); //$NON-NLS-1$ //$NON-NLS-2$
 			fCodes[fKeyCode][SHIFT]= c;
 			clearText(text);
 
@@ -206,24 +206,24 @@ public class KeyboardProbe {
 		if (content.length() == 2) {
 			c= content.charAt(0);
 			if (TRACE && content.charAt(1) != FAKE_CHAR)
-				System.out.println("second char was '" + content.charAt(1) + "'");
+				System.out.println("second char was '" + content.charAt(1) + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (content.length() > 2) {
 			c= content.charAt(0);
-			if (TRACE) System.out.println("rest content was '" + content.substring(1) + "'");			
+			if (TRACE) System.out.println("rest content was '" + content.substring(1) + "'");			 //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (content.length() == 1) {
 			c= '\0';
 			if (TRACE && content.charAt(0) != FAKE_CHAR)
-				System.out.println("second char was '" + content.charAt(0) + "'");
+				System.out.println("second char was '" + content.charAt(0) + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			c= '\0';
-			if (TRACE) System.out.println("no content");
+			if (TRACE) System.out.println("no content"); //$NON-NLS-1$
 		}
 		return c;
 	}
 
 	private void clearText(Text text) {
 		fTextContinue= false;
-		text.setText("");
+		text.setText(""); //$NON-NLS-1$
 		do
 			driveEventQueue();
 		while (!fTextContinue && fDisplay.sleep());
