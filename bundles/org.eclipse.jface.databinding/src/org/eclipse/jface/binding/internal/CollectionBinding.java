@@ -60,15 +60,23 @@ public class CollectionBinding extends Binding implements IChangeListener {
 			if (notifier == target) {
 				if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
 					// we are notified of a pending change, do validation
-					// and
-					// veto the change if it is not valid
-					// TODO verify
+					// and veto the change if it is not valid
+					Object value = changeEvent.getNewValue();
+					String partialValidationError = validator
+							.isPartiallyValid(value);
+					context.updatePartialValidationError(this,
+							partialValidationError);
+					if (partialValidationError != null) {
+						changeEvent.setVeto(true);
+					}
 				} else {
-					// the target (usually a widget) has changed, validate
-					// the
-					// value and update the source
-					// TODO validation
-					update(model, target, changeEvent);
+					// Update	
+					// TODO, at this time we validate only the "value/conversion" not the index (add/remoe)
+					Object value = changeEvent.getNewValue();
+					String validationError = doValidateTarget(value);
+					context.updateValidationError(this, validationError);
+					if (validationError == null) 
+					     update(model, target, changeEvent);
 				}
 			} else if (notifier == model) {
 				// TODO validation
@@ -76,6 +84,13 @@ public class CollectionBinding extends Binding implements IChangeListener {
 			}
 		}
 	}
+		
+		private String doValidateTarget(Object value) {
+			String validationError = validator.isValid(value);
+			context.updatePartialValidationError(this, null);
+			context.updateValidationError(this, validationError);
+			return validationError;
+		}
 
 	/**
 	 * Update the collection from the event.
