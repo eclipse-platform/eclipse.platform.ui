@@ -29,9 +29,11 @@ public class CollectionBinding extends Binding implements IChangeListener {
 
 	private final IUpdatableCollection model;
 
-	private final IConverter converter;
+	private IConverter converter;
 
-	private final IValidator validator;
+	private IValidator validator;
+	
+	private boolean updating = false;
 
 	/**
 	 * @param context
@@ -47,26 +49,31 @@ public class CollectionBinding extends Binding implements IChangeListener {
 		this.model = model;
 		this.converter = bindSpec == null ? null : bindSpec.getConverter();
 		this.validator = bindSpec == null ? null : bindSpec.getValidator();
+		if (this.validator == null) {
+			this.validator = context.getValidator(converter);
+		}
 	}
 
 	public void handleChange(IChangeEvent changeEvent) {
-		IUpdatable notifier = changeEvent.getUpdatable();
-		if (notifier == target) {
-			if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
-				// we are notified of a pending change, do validation
-				// and
-				// veto the change if it is not valid
-				// TODO verify
-			} else {
-				// the target (usually a widget) has changed, validate
-				// the
-				// value and update the source
+		if (!updating) {
+			IUpdatable notifier = changeEvent.getUpdatable();
+			if (notifier == target) {
+				if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
+					// we are notified of a pending change, do validation
+					// and
+					// veto the change if it is not valid
+					// TODO verify
+				} else {
+					// the target (usually a widget) has changed, validate
+					// the
+					// value and update the source
+					// TODO validation
+					update(model, changeEvent);
+				}
+			} else if (notifier == model) {
 				// TODO validation
-				update(model, changeEvent);
+				update(target, changeEvent);
 			}
-		} else if (notifier == model) {
-			// TODO validation
-			update(target, changeEvent);
 		}
 	}
 
@@ -78,26 +85,38 @@ public class CollectionBinding extends Binding implements IChangeListener {
 	 * @param event
 	 */
 	public void update(IUpdatableCollection needsUpdate, IChangeEvent event) {
-		int row = event.getPosition();
-		if (event.getChangeType() == IChangeEvent.CHANGE)
-			needsUpdate.setElement(row, event.getNewValue());
-		else if (event.getChangeType() == IChangeEvent.ADD)
-			needsUpdate.addElement(event.getNewValue(), row);
-		else if (event.getChangeType() == IChangeEvent.REMOVE)
-			needsUpdate.removeElement(row);
+		try {			
+			updating=true;
+			int row = event.getPosition();
+			if (event.getChangeType() == IChangeEvent.CHANGE)
+				needsUpdate.setElement(row, event.getNewValue());
+			else if (event.getChangeType() == IChangeEvent.ADD)
+				needsUpdate.addElement(event.getNewValue(), row);
+			else if (event.getChangeType() == IChangeEvent.REMOVE)
+				needsUpdate.removeElement(row);
+		}
+		finally {
+			updating=false;
+		}
 	}
 
 	/**
 	 * Copy model's element into the target
 	 */
 	public void updateTargetFromModel() {
-		// Remove old, if any
-		while (target.getSize() > 0)
-			target.removeElement(0);
-
-		// Set the target List with the content of the Model List
-		for (int i = 0; i < model.getSize(); i++) {
-			target.addElement(model.getElement(i), i);
+		try {
+			updating=true;
+			// Remove old, if any
+			while (target.getSize() > 0)
+				target.removeElement(0);
+	
+			// Set the target List with the content of the Model List
+			for (int i = 0; i < model.getSize(); i++) {
+				target.addElement(model.getElement(i), i);
+			}
+		}
+		finally {
+			updating=false;
 		}
 	}
 
