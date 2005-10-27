@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.eclipse.jface.binding.internal.Binding;
 import org.eclipse.jface.binding.internal.CollectionBinding;
-import org.eclipse.jface.binding.internal.NestedUpdatableTable;
+import org.eclipse.jface.binding.internal.NestedUpdatableCollection;
 import org.eclipse.jface.binding.internal.NestedUpdatableValue;
 import org.eclipse.jface.binding.internal.TableBinding;
 import org.eclipse.jface.binding.internal.ValueBinding;
@@ -658,10 +658,14 @@ public class DatabindingContext {
 							propertyDescription.getUpdatableValue(),
 							propertyDescription.getPropertyID(),
 							propertyDescription.getPropertyType());
-				} else if (description instanceof NestedTableDescription) {
-					NestedTableDescription tableDescription = (NestedTableDescription) description;
-					return new NestedUpdatableTable(DatabindingContext.this,
-							tableDescription);
+				} else if (description instanceof NestedCollectionDescription) {
+					NestedCollectionDescription nestedCollectionDescription = (NestedCollectionDescription) description;
+					return new NestedUpdatableCollection(
+							DatabindingContext.this,
+							nestedCollectionDescription.getUpdatableValue(),
+							nestedCollectionDescription.getPropertyID(),
+							nestedCollectionDescription
+									.getPropertyElementType());
 				}
 				return null;
 			}

@@ -32,14 +32,14 @@ public class CollectionBinding extends Binding implements IChangeListener {
 	private IConverter converter;
 
 	private IValidator validator;
-	
+
 	private boolean updating = false;
 
 	/**
 	 * @param context
 	 * @param target
 	 * @param model
-	 * @param bindSpec 
+	 * @param bindSpec
 	 */
 	public CollectionBinding(DatabindingContext context,
 			IUpdatableCollection target, IUpdatableCollection model,
@@ -68,11 +68,11 @@ public class CollectionBinding extends Binding implements IChangeListener {
 					// the
 					// value and update the source
 					// TODO validation
-					update(model, changeEvent);
+					update(model, target, changeEvent);
 				}
 			} else if (notifier == model) {
 				// TODO validation
-				update(target, changeEvent);
+				update(target, model, changeEvent);
 			}
 		}
 	}
@@ -84,19 +84,23 @@ public class CollectionBinding extends Binding implements IChangeListener {
 	 *            IUpdatable to be updated
 	 * @param event
 	 */
-	public void update(IUpdatableCollection needsUpdate, IChangeEvent event) {
-		try {			
-			updating=true;
-			int row = event.getPosition();
-			if (event.getChangeType() == IChangeEvent.CHANGE)
-				needsUpdate.setElement(row, event.getNewValue());
-			else if (event.getChangeType() == IChangeEvent.ADD)
-				needsUpdate.addElement(event.getNewValue(), row);
-			else if (event.getChangeType() == IChangeEvent.REMOVE)
-				needsUpdate.removeElement(row);
-		}
-		finally {
-			updating=false;
+	private void update(IUpdatableCollection needsUpdate, IUpdatableCollection source, IChangeEvent event) {
+		int row = event.getPosition();
+		if (row == -1) {
+			// full update
+			copyContents(needsUpdate, source);
+		} else {
+			try {
+				updating = true;
+				if (event.getChangeType() == IChangeEvent.CHANGE)
+					needsUpdate.setElement(row, event.getNewValue());
+				else if (event.getChangeType() == IChangeEvent.ADD)
+					needsUpdate.addElement(event.getNewValue(), row);
+				else if (event.getChangeType() == IChangeEvent.REMOVE)
+					needsUpdate.removeElement(row);
+			} finally {
+				updating = false;
+			}
 		}
 	}
 
@@ -104,19 +108,23 @@ public class CollectionBinding extends Binding implements IChangeListener {
 	 * Copy model's element into the target
 	 */
 	public void updateTargetFromModel() {
+		copyContents(target, model);
+	}
+
+	private void copyContents(IUpdatableCollection destination,
+			IUpdatableCollection source) {
 		try {
-			updating=true;
+			updating = true;
 			// Remove old, if any
-			while (target.getSize() > 0)
-				target.removeElement(0);
-	
+			while (destination.getSize() > 0)
+				destination.removeElement(0);
+
 			// Set the target List with the content of the Model List
-			for (int i = 0; i < model.getSize(); i++) {
-				target.addElement(model.getElement(i), i);
+			for (int i = 0; i < source.getSize(); i++) {
+				destination.addElement(source.getElement(i), i);
 			}
-		}
-		finally {
-			updating=false;
+		} finally {
+			updating = false;
 		}
 	}
 
