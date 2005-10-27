@@ -9,7 +9,7 @@ package org.eclipse.ui.navigator.resources.internal.actions;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.ActionExpression;
+import org.eclipse.ui.navigator.internal.ActionExpression;
 
 /**
  * @author Admin

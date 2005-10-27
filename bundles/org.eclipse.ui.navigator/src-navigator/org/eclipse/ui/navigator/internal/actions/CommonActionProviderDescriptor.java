@@ -13,8 +13,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.navigator.ICommonActionProvider;
+import org.eclipse.ui.navigator.internal.ActionExpression;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.extensions.SkeletonActionProvider;
 

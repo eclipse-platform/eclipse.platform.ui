@@ -9,8 +9,7 @@
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.deferred;
-
-import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
+ 
 
 
 /**

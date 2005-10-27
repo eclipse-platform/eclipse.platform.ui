@@ -22,9 +22,7 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
@@ -85,8 +83,8 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 		try {
 			wizard = descriptor.createWizard();
 		} catch (CoreException e) {
-			ErrorDialog.openError(window.getShell(), IDEWorkbenchMessages.NewProjectWizard_errorTitle,  
-						IDEWorkbenchMessages.NewProjectAction_text,  
+			ErrorDialog.openError(window.getShell(), WorkbenchNavigatorMessages.NewProjectWizard_errorTitle,  
+						WorkbenchNavigatorMessages.NewProjectAction_text,  
 						e.getStatus());
 			return;
 		}
@@ -110,7 +108,7 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 		Shell parent = window.getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		dialog.create();
-		WorkbenchHelp.setHelp(dialog.getShell(), IWorkbenchHelpContextIds.NEW_WIZARD_SHORTCUT);
+		//WorkbenchHelp.setHelp(dialog.getShell(), IWorkbenchHelpContextIds.NEW_WIZARD_SHORTCUT);
 		dialog.open();
 	}
 

@@ -13,8 +13,8 @@ package org.eclipse.ui.navigator.internal.dnd;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.navigator.ICommonDropActionDelegate;
+import org.eclipse.ui.navigator.internal.ActionExpression;
 import org.eclipse.ui.navigator.internal.NavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 

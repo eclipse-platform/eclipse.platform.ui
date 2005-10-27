@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.internal.ActionExpression;
+import org.eclipse.ui.navigator.internal.ActionExpression;
 
 /**
  * @author mdelder

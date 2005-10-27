@@ -13,9 +13,9 @@ package org.eclipse.ui.navigator.resources.internal.actions;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.WorkbenchPlugin;

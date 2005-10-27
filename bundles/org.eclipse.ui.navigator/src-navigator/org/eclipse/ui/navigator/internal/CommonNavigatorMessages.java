@@ -39,5 +39,6 @@ public class CommonNavigatorMessages extends NLS {
 	public static String StructuredViewerManager_0;
 	public static String ExtensionFilterViewerRegistry_0;
 	public static String ExtensionFilterViewerRegistry_1;
+	public static String PendingUpdateAdapter_PendingLabel;
 
 }

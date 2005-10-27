@@ -30,11 +30,11 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ExportResourcesAction;
 import org.eclipse.ui.actions.ImportResourcesAction;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.navigator.ICommonActionProvider;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.navigator.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.actions.CommonActionProvider;
+import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -169,7 +169,7 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 			return;
 		}
 
-		IMenuManager submenu = new MenuManager(WorkbenchMessages.ImportResourcesAction_text, COMMON_NAVIGATOR_IMPORT_MENU);  
+		IMenuManager submenu = new MenuManager(WorkbenchNavigatorMessages.ImportResourcesAction_text, COMMON_NAVIGATOR_IMPORT_MENU);  
 		importWizardActionGroup.setWizardActionIds(wizardDescriptorIds);
 		importWizardActionGroup.setContext(actionContext);
 		importWizardActionGroup.fillContextMenu(submenu);
@@ -190,7 +190,7 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 			aMenu.appendToGroup(ICommonMenuConstants.GROUP_PORT, exportAction);
 			return;
 		}
-		IMenuManager submenu = new MenuManager(WorkbenchMessages.ExportResourcesAction_text, COMMON_NAVIGATOR_EXPORT_MENU);  
+		IMenuManager submenu = new MenuManager(WorkbenchNavigatorMessages.ExportResourcesAction_text, COMMON_NAVIGATOR_EXPORT_MENU);  
 		exportWizardActionGroup.setWizardActionIds(wizardDescriptorIds);
 		exportWizardActionGroup.setContext(actionContext);
 		exportWizardActionGroup.fillContextMenu(submenu);

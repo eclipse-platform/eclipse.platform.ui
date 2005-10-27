@@ -16,7 +16,6 @@ package org.eclipse.ui.navigator.internal.deferred;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
 import org.eclipse.ui.navigator.internal.NavigatorImages;
 
 
