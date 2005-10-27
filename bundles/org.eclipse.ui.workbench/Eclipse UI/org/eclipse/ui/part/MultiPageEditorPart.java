@@ -505,21 +505,23 @@ public abstract class MultiPageEditorPart extends EditorPart {
                     .setActivePage(activeEditor);
         }
         if (activeEditor != null) {
-            ISelectionProvider selectionProvider = activeEditor.getSite()
-                    .getSelectionProvider();
-                SelectionChangedEvent event = new SelectionChangedEvent(
-                        selectionProvider, selectionProvider.getSelection());
-                ((MultiPageSelectionProvider) getSite().getSelectionProvider())
-                        .fireSelectionChanged(event);
-        }
+			ISelectionProvider selectionProvider = activeEditor.getSite()
+					.getSelectionProvider();
+			SelectionChangedEvent event = new SelectionChangedEvent(
+					selectionProvider, selectionProvider.getSelection());
+			MultiPageSelectionProvider provider = (MultiPageSelectionProvider) getSite()
+					.getSelectionProvider();
+			provider.fireSelectionChanged(event);
+			provider.firePostSelectionChanged(event);
+		}
     }
 
     /**
-     * Disposes the given part and its site.
-     * 
-     * @param part
-     *            The part to dispose; must not be <code>null</code>.
-     */
+	 * Disposes the given part and its site.
+	 * 
+	 * @param part
+	 *            The part to dispose; must not be <code>null</code>.
+	 */
     private void disposePart(final IWorkbenchPart part) {
         Platform.run(new SafeRunnable() {
             public void run() {

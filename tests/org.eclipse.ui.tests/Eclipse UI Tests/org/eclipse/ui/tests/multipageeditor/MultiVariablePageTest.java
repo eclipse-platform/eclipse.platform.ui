@@ -18,7 +18,11 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -40,6 +44,8 @@ public class MultiVariablePageTest extends UITestCase {
 	private static final String MTEST01_FILE = "mtest01.multivar";
 
 	private static final String MULTI_VARIABLE_PROJ = "MultiVariableTest";
+
+	private int fPostCalled;
 
 	public MultiVariablePageTest(String testName) {
 		super(testName);
@@ -74,6 +80,12 @@ public class MultiVariablePageTest extends UITestCase {
 		assertEquals("#section02", text.getText());
 	}
 
+	/**
+	 * Make sure that removing a page that is a Control (instead of an
+	 * editor) disposes of the Control immediately.
+	 * 
+	 * @throws Throwable
+	 */
 	public void testRemovePage() throws Throwable {
 		// Open a new test window.
 		// Create and open a blurb file.
@@ -85,6 +97,43 @@ public class MultiVariablePageTest extends UITestCase {
 		assertFalse(c.isDisposed());
 		editor.removeLastPage();
 		assertTrue(c.isDisposed());
+	}
+	
+	/**
+	 * Now the MPEP site's selection provider should by default support
+	 * post selection listeners.  Since the MVPE is based on Text
+	 * editors, we should be getting the post selection events when
+	 * we change pages.
+	 * 
+	 * @throws Throwable on error cases
+	 */
+	public void testPostSelection() throws Throwable {
+		// Open a new test window.
+		// Create and open a blurb file.
+		IEditorPart part = openMultivarFile();
+
+		MultiVariablePageEditor editor = (MultiVariablePageEditor) part;
+		ISelectionProvider sp = editor.getEditorSite().getSelectionProvider();
+		assertTrue(sp instanceof IPostSelectionProvider);
+		
+		IPostSelectionProvider postProvider = (IPostSelectionProvider) sp;
+		
+		fPostCalled = 0;
+		ISelectionChangedListener listener = new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				++fPostCalled;
+			}
+		};
+		
+		try {
+			postProvider.addPostSelectionChangedListener(listener);
+			editor.setPage(1);
+			assertEquals(1, fPostCalled);
+			editor.setPage(0);
+			assertEquals(2, fPostCalled);
+		} finally {
+			postProvider.removePostSelectionChangedListener(listener);
+		}
 	}
 
 	private IEditorPart openMultivarFile() throws CoreException, PartInitException {

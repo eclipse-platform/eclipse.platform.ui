@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -66,6 +67,11 @@ public class MultiPageEditorSite implements IEditorSite {
      * if not yet created.
      */
     private ISelectionChangedListener selectionChangedListener = null;
+    
+    /**
+     * The post selection changed listener.
+     */
+    private ISelectionChangedListener postSelectionChangedListener = null;
 
     /**
      * The cached copy of the key binding service specific to this multi-page
@@ -253,6 +259,23 @@ public class MultiPageEditorSite implements IEditorSite {
         }
         return selectionChangedListener;
     }
+    
+    /**
+     * Returns the post selection change listener which listens to the nested
+     * editor's selection changes.
+     * 
+     * @return the post selection change listener.
+     */
+    private ISelectionChangedListener getPostSelectionChangedListener() {
+    	if (postSelectionChangedListener==null) {
+    		postSelectionChangedListener = new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent event) {
+					MultiPageEditorSite.this.handlePostSelectionChanged(event);
+				}
+    		};
+    	}
+    	return postSelectionChangedListener;
+    }
 
     /**
      * The <code>MultiPageEditorSite</code> implementation of this 
@@ -303,22 +326,43 @@ public class MultiPageEditorSite implements IEditorSite {
         ISelectionProvider parentProvider = getMultiPageEditor().getSite()
                 .getSelectionProvider();
         if (parentProvider instanceof MultiPageSelectionProvider) {
-            SelectionChangedEvent newEvent = new SelectionChangedEvent(
-                    parentProvider, event.getSelection());
-            ((MultiPageSelectionProvider) parentProvider)
-                    .fireSelectionChanged(newEvent);
-        }
+			SelectionChangedEvent newEvent = new SelectionChangedEvent(
+					parentProvider, event.getSelection());
+			MultiPageSelectionProvider prov = (MultiPageSelectionProvider) parentProvider;
+			prov.fireSelectionChanged(newEvent);
+		}
+    }
+    
+    /**
+     * Handles a post selection changed even from the nexted editor.
+     * <p>
+     * Subclasses may extend or reimplement this method
+     * 
+     * @param event the event
+     */
+    protected void handlePostSelectionChanged(SelectionChangedEvent event) {
+		ISelectionProvider parentProvider = getMultiPageEditor().getSite()
+				.getSelectionProvider();
+		if (parentProvider instanceof MultiPageSelectionProvider) {
+			SelectionChangedEvent newEvent = new SelectionChangedEvent(
+					parentProvider, event.getSelection());
+			MultiPageSelectionProvider prov = (MultiPageSelectionProvider) parentProvider;
+			prov.firePostSelectionChanged(newEvent);
+		}
     }
 
     /**
-     * The <code>MultiPageEditorSite</code> implementation of this 
-     * <code>IWorkbenchPartSite</code> method forwards to the multi-page editor for
-     * registration.
-     * 
-     * @param menuID The identifier for the menu.
-     * @param menuMgr The menu manager
-     * @param selProvider The selection provider.
-     */
+	 * The <code>MultiPageEditorSite</code> implementation of this
+	 * <code>IWorkbenchPartSite</code> method forwards to the multi-page
+	 * editor for registration.
+	 * 
+	 * @param menuID
+	 *            The identifier for the menu.
+	 * @param menuMgr
+	 *            The menu manager
+	 * @param selProvider
+	 *            The selection provider.
+	 */
     public void registerContextMenu(String menuID, MenuManager menuMgr,
             ISelectionProvider selProvider) {
         if (menuExtenders == null) {
@@ -357,13 +401,21 @@ public class MultiPageEditorSite implements IEditorSite {
         if (oldSelectionProvider != null) {
             oldSelectionProvider
                     .removeSelectionChangedListener(getSelectionChangedListener());
+            if (oldSelectionProvider instanceof IPostSelectionProvider) {
+				((IPostSelectionProvider) oldSelectionProvider)
+						.removePostSelectionChangedListener(getPostSelectionChangedListener());
+			}
         }
         if (selectionProvider != null) {
             selectionProvider
                     .addSelectionChangedListener(getSelectionChangedListener());
+            if (selectionProvider instanceof IPostSelectionProvider) {
+				((IPostSelectionProvider) selectionProvider)
+						.addPostSelectionChangedListener(getPostSelectionChangedListener());
+			}
         }
     }
-
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPartSite#progressEnd()
      */
