@@ -28,6 +28,8 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 		this.combo = combo;
 		this.attribute = attribute;
 		
+		if (attribute.equals(SWTBindingConstants.CONTENT))
+			attribute = SWTBindingConstants.ITEMS;
 		if (this.attribute.equals(SWTBindingConstants.ITEMS)) {
 			combo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {

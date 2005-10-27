@@ -242,6 +242,9 @@ public class SWTDatabindingContext extends DatabindingContext {
 					int updatePolicy = getPolicy(properties,
 							SWTDatabindingContext.UPDATE_TIME, SWT.FocusOut);
 					return new ButtonUpdatableValue((Button) description, updatePolicy);
+				} else if (description instanceof Combo) {
+					return new ComboUpdatableCollection((Combo)description, SWTBindingConstants.CONTENT);
+					//TODO add CCombo
 				} else if (description instanceof TableViewerDescription) {
 					return new TableViewerUpdatableCollectionExtended(
 							(TableViewerDescription) description);
