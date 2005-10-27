@@ -18,9 +18,11 @@ public interface IUpdatableFactory2 {
 	 *            a mapping from context-defined properties to values, e.g. for
 	 *            passing policies to the factory.
 	 * @param description
+	 * @param validationContext
+	 * 			  a validation context allowing error messages to be recorded
 	 * @return an updatable
 	 * @throws BindingException
 	 */
-	IUpdatable createUpdatable(Map properties, Object description)
+	IUpdatable createUpdatable(Map properties, Object description, IValidationContext validationContext)
 			throws BindingException;
 }

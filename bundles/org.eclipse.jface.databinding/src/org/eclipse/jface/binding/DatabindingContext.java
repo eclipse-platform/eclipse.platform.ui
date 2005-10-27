@@ -28,7 +28,7 @@ import org.eclipse.jface.binding.internal.ValueBinding;
 /**
  * @since 3.2
  */
-public class DatabindingContext {
+public class DatabindingContext implements IValidationContext {
 
 	private static class Pair {
 
@@ -632,7 +632,7 @@ public class DatabindingContext {
 
 	protected void registerValueFactories() {
 		addUpdatableFactory2(new IUpdatableFactory2() {
-			public IUpdatable createUpdatable(Map properties, Object description)
+			public IUpdatable createUpdatable(Map properties, Object description, IValidationContext validationContext)
 					throws BindingException {
 				if (description instanceof PropertyDescription) {
 					PropertyDescription propertyDescription = (PropertyDescription) description;
@@ -845,7 +845,7 @@ public class DatabindingContext {
 		for (int i = factories2.size() - 1; i >= 0; i--) {
 			IUpdatableFactory2 factory = (IUpdatableFactory2) factories2.get(i);
 			IUpdatable result = factory
-					.createUpdatable(properties, description);
+					.createUpdatable(properties, description,this);
 			if (result != null) {
 				return result;
 			}

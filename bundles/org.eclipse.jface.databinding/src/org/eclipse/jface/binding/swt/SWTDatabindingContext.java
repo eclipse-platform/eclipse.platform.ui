@@ -12,10 +12,12 @@ package org.eclipse.jface.binding.swt;
 
 import java.util.Map;
 
+import org.eclipse.jface.binding.BindingException;
 import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IUpdatable;
 import org.eclipse.jface.binding.IUpdatableFactory;
 import org.eclipse.jface.binding.IUpdatableFactory2;
+import org.eclipse.jface.binding.IValidationContext;
 import org.eclipse.jface.binding.internal.swt.ButtonUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.ComboUpdatableCollection;
 import org.eclipse.jface.binding.internal.swt.ComboUpdatableValue;
@@ -222,7 +224,7 @@ public class SWTDatabindingContext extends DatabindingContext {
 
 		// new stuff
 		addUpdatableFactory2(new IUpdatableFactory2() {
-			public IUpdatable createUpdatable(Map properties, Object description) {
+			public IUpdatable createUpdatable(Map properties, Object description, IValidationContext validationContext) throws BindingException {
 				if (description instanceof AbstractListViewer) {
 					// binding to a Viewer directly implies binding to its content
 					return new UpdatableCollectionViewer(
@@ -243,7 +245,7 @@ public class SWTDatabindingContext extends DatabindingContext {
 					//TODO add CCombo
 				} else if (description instanceof TableViewerDescription) {
 					return new TableViewerUpdatableCollectionExtended(
-							(TableViewerDescription) description);
+							(TableViewerDescription) description, validationContext);
 				}
 				return null;
 			}

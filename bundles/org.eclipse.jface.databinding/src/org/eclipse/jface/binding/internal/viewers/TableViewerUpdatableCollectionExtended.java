@@ -4,7 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
+import org.eclipse.jface.binding.IChangeEvent;
+import org.eclipse.jface.binding.IChangeListener;
 import org.eclipse.jface.binding.IConverter;
+import org.eclipse.jface.binding.IValidationContext;
 import org.eclipse.jface.binding.IValidator;
 import org.eclipse.jface.binding.IdentityConverter;
 import org.eclipse.jface.binding.swt.TableViewerDescription;
@@ -27,6 +30,8 @@ public class TableViewerUpdatableCollectionExtended extends
 		TableViewerUpdatableCollection {
 
 	private final TableViewerDescription tableViewerDescription;
+	
+	private IValidationContext validationContext;
 
 	private ITableLabelProvider tableLabelProvider = new ITableLabelProvider() {
 
@@ -86,9 +91,10 @@ public class TableViewerUpdatableCollectionExtended extends
 	 * @param tableViewerDescription
 	 */
 	public TableViewerUpdatableCollectionExtended(
-			TableViewerDescription tableViewerDescription) {
+			TableViewerDescription tableViewerDescription, IValidationContext validationContext) {
 		super(tableViewerDescription.getTableViewer());
 		this.tableViewerDescription = tableViewerDescription;
+		this.validationContext = validationContext;
 		fillDescriptionDefaults();
 		TableViewer tableViewer = tableViewerDescription.getTableViewer();
 		// TODO synchronize columns on the widget side (create missing columns,
@@ -183,6 +189,17 @@ public class TableViewerUpdatableCollectionExtended extends
 					}
 					if (element instanceof Item) {
 						element = ((Item) element).getData();
+					}
+					IValidator columnValidator = column.getValidator();
+					if(columnValidator != null){
+						String errorMessage = columnValidator.isValid(value);
+						if(errorMessage != null){
+							validationContext.updateValidationError(new IChangeListener(){
+								public void handleChange(IChangeEvent changeEvent) {									
+								}								
+							},errorMessage);
+							return;
+						}
 					}
 					try {
 						Method setter = element
