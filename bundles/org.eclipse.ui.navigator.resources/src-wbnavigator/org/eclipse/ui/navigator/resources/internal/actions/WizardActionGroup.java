@@ -17,8 +17,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.eclipse.ui.wizards.IWizardRegistry;
 
@@ -98,11 +98,11 @@ public class WizardActionGroup extends ActionGroup {
 	private IWizardRegistry getRegistry() { 
 		if(wizardRegistry == null) {
 			if(NEW_WIZARD.equals(type))
-				wizardRegistry = WorkbenchPlugin.getDefault().getNewWizardRegistry();
+				wizardRegistry = PlatformUI.getWorkbench().getNewWizardRegistry();
 			else if(IMPORT_WIZARD.equals(type))
-				wizardRegistry = WorkbenchPlugin.getDefault().getImportWizardRegistry();
+				wizardRegistry = PlatformUI.getWorkbench().getImportWizardRegistry();
 			else if(EXPORT_WIZARD.equals(type))
-				wizardRegistry = WorkbenchPlugin.getDefault().getExportWizardRegistry();
+				wizardRegistry = PlatformUI.getWorkbench().getExportWizardRegistry();
 		}
 		return wizardRegistry;
 	}
