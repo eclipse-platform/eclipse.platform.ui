@@ -342,6 +342,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			root = info.getFileStoreRoot();
 			if (root != null && root.isValid())
 				return root;
+			if (info.isSet(ICoreConstants.M_LINK)) {
+				ProjectDescription description = ((Project) target.getProject()).internalGetDescription();
+				if (description != null) {
+					IPath location = description.getLinkLocation(target.getName());
+					setLocation(target, info, FileUtil.toURI(location));
+					return info.getFileStoreRoot();
+				}
+			}
 		}
 		final IContainer parent = target.getParent();
 		if (parent == null) {
@@ -383,11 +391,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * @return The file store for the provided resource
 	 */
 	private IFileStore initializeStore(IResource target, URI location) {
-		FileStoreRoot root = new FileStoreRoot(location, target.getFullPath());
-		IFileStore store = root.createStore(target.getFullPath());
 		ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
-		info.setFileStoreRoot(root);
-		return store;
+		setLocation(target, info, location);
+		FileStoreRoot root = getStoreRoot(target);
+		return root.createStore(target.getFullPath());
 	}
 
 	/**
