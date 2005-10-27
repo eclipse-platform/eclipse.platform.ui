@@ -850,6 +850,11 @@ public class DatabindingContext {
 				modelObject, modelPropertyID)), bindSpec);
 	}
 
+	/**
+	 * @param description
+	 * @return IUpdatable for the given description
+	 * @throws BindingException
+	 */
 	public IUpdatable createUpdatable2(Object description)
 			throws BindingException {
 		Map properties = new HashMap();
@@ -875,7 +880,12 @@ public class DatabindingContext {
 		}
 	}
 
+	/**
+	 * @param updatableFactory
+	 */
 	public void addUpdatableFactory2(IUpdatableFactory2 updatableFactory) {
+		//TODO: consider the fact that adding new factories for a given description
+		//      may hide default ones (e.g., a new PropertyDescriptor may overide the ond for EMF)
 		factories2.add(updatableFactory);
 	}
 

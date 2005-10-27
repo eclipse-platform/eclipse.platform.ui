@@ -228,6 +228,7 @@ public class SWTDatabindingContext extends DatabindingContext {
 					return new TableViewerUpdatableTable(
 							(TableViewer) description);
 				} else if (description instanceof AbstractListViewer) {
+					// binding to a Viewer directly implies binding to its content
 					return new UpdatableCollectionViewer(
 							(AbstractListViewer) description);
 				} else if (description instanceof Text) {
