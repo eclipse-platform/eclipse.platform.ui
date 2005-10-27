@@ -71,10 +71,13 @@ public class CollectionBinding extends Binding implements IChangeListener {
 					}
 				} else {
 					// Update	
-					// TODO, at this time we validate only the "value/conversion" not the index (add/remoe)
-					Object value = changeEvent.getNewValue();
-					String validationError = doValidateTarget(value);
-					context.updateValidationError(this, validationError);
+					// TODO, at this time we validate only the "value/conversion" not the index (add/remove)
+					String validationError = null;
+					if (changeEvent.getChangeType() != IChangeEvent.REMOVE) {
+						Object value = changeEvent.getNewValue();
+						validationError = doValidateTarget(value);
+						context.updateValidationError(this, validationError);
+					}
 					if (validationError == null) 
 					     update(model, target, changeEvent);
 				}
