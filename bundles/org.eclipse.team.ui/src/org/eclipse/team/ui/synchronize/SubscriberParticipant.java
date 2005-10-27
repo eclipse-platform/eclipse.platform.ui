@@ -312,11 +312,14 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * Not to be called by clients.
 	 */
 	public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
-		if (refreshSchedule == schedule) return;
-		if (refreshSchedule != null) {
-			refreshSchedule.dispose();
+		if (refreshSchedule != schedule) {
+			if (refreshSchedule != null) {
+				refreshSchedule.dispose();
+			}
+	        this.refreshSchedule = schedule;
 		}
-		this.refreshSchedule = schedule;
+		// Always fir the event since the schedule may have been changed
+        firePropertyChange(this, AbstractSynchronizeParticipant.P_SCHEDULED, schedule, schedule);
 	}
 	
 	/* (non-Javadoc)

@@ -44,6 +44,12 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 */
 	public static final String P_PINNED = "org.eclipse.team.pinned"; //$NON-NLS-1$
 	
+	/**
+	 * Property key used in the property change event fired when the
+	 * participants refresh schedule changes.
+	 */
+	public static final String P_SCHEDULED = "org.eclipse.team.schedule"; //$NON-NLS-1$
+    
 	// key for persisting the pinned state of a participant
 	private final static String CTX_PINNED = "root"; //$NON-NLS-1$
 	

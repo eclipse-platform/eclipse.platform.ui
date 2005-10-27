@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.SubscriberRefreshSchedule;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.ui.synchronize.*;
 
@@ -58,7 +59,9 @@ public class ShowSynchronizeParticipantAction extends Action implements IPropert
 	}
     
 	public void propertyChange( PropertyChangeEvent event) {
-      if( AbstractSynchronizeParticipant.P_PINNED.equals( event.getProperty())) {
+      String property = event.getProperty();
+      if( AbstractSynchronizeParticipant.P_PINNED.equals( property) ||
+          AbstractSynchronizeParticipant.P_SCHEDULED.equals(property)) {
         setImageDescriptor(new ParticipantOverlay( fPage));
       }
 	}
@@ -66,7 +69,8 @@ public class ShowSynchronizeParticipantAction extends Action implements IPropert
     
 	private static final class ParticipantOverlay extends CompositeImageDescriptor {
 
-		private ImageData overlayData = TeamUIPlugin.getImageDescriptor("ovr/pinned_ovr.gif").getImageData(); //$NON-NLS-1$
+		private ImageData pinnedData = TeamUIPlugin.getImageDescriptor("ovr/pinned_ovr.gif").getImageData(); //$NON-NLS-1$
+		private ImageData scheduledData = TeamUIPlugin.getImageDescriptor("ovr/waiting_ovr.gif").getImageData(); //$NON-NLS-1$
 		private ImageData imageData;
 		private ISynchronizeParticipant participant;
 
@@ -82,8 +86,15 @@ public class ShowSynchronizeParticipantAction extends Action implements IPropert
 		protected void drawCompositeImage(int width, int height) {
 			drawImage(this.imageData, 0, 0);
 			if (this.participant.isPinned()) {
-				drawImage(overlayData, this.imageData.width - overlayData.width, 0);
+				drawImage(pinnedData, this.imageData.width - pinnedData.width, 0);
 			}
+            if (this.participant instanceof SubscriberParticipant) {
+                SubscriberParticipant participant = ( SubscriberParticipant) this.participant;
+                SubscriberRefreshSchedule schedule = participant.getRefreshSchedule();
+                if(schedule!=null && schedule.isEnabled()) {
+                  drawImage(scheduledData, 0, 0);
+                }
+            }
 		}
 
 		protected Point getSize() {
