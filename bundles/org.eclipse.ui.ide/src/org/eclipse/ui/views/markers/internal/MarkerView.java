@@ -1276,6 +1276,8 @@ public abstract class MarkerView extends TableView {
 				if (tree != null && !tree.isDisposed()) {
 					updateStatusMessage();
 					updateTitle();
+					if(isHierarchalMode())
+						getViewer().expandAll();
 				}
 				return Status.OK_STATUS;
 			}
@@ -1450,11 +1452,19 @@ public abstract class MarkerView extends TableView {
 		return (TableSorter) getViewer().getSorter();
 	}
 
+	/**
+	 * Add a listener for the end of the update.
+	 * @param listener
+	 */
 	public void addUpdateFinishListener(IJobChangeListener listener) {
 		updateJob.addJobChangeListener(listener);
 
 	}
 
+	/**
+	 * Remove a listener for the end of the update.
+	 * @param listener
+	 */
 	public void removeUpdateFinishListener(IJobChangeListener listener) {
 		updateJob.removeJobChangeListener(listener);
 
