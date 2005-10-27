@@ -130,9 +130,6 @@ public abstract class MarkerView extends TableView {
 		private Collection pendingMarkerUpdates = Collections
 				.synchronizedSet(new HashSet());
 
-		private Collection pendingRemoves = Collections
-				.synchronizedSet(new HashSet());
-
 		boolean refreshAll = false;
 
 		UpdateJob() {
@@ -156,7 +153,6 @@ public abstract class MarkerView extends TableView {
 		void refreshAll() {
 			refreshAll = true;
 			pendingMarkerUpdates.clear();
-			pendingRemoves.clear();
 		}
 
 		/*
@@ -180,27 +176,11 @@ public abstract class MarkerView extends TableView {
 				pendingMarkerUpdates.clear();
 			}
 
-			if (!pendingRemoves.isEmpty()) {
-				getViewer().remove(pendingRemoves.toArray());
-				pendingRemoves.clear();
-			}
-
 			pendingMarkerUpdates.clear();
 			return Status.OK_STATUS;
 		}
 
-		/**
-		 * Add the Collection of IMarker to the list of those pending removal.
-		 * 
-		 * @param removedMarkers
-		 */
-		void remove(MarkerList removedMarkers) {
-			if (refreshAll)
-				return;
-
-			pendingRemoves.addAll(removedMarkers.asList());
-
-		}
+		
 	}
 
 	private UpdateJob updateJob = new UpdateJob();
@@ -251,20 +231,31 @@ public abstract class MarkerView extends TableView {
 				}
 			}
 
-			if (refreshRequired(addedMarkers)) {
+			if (addRefreshRequired(addedMarkers) || removeRefreshRequired(removedMarkers)) {
 				updateJob.refreshAll();
 				getProgressService().schedule(updateJob);
 			}
 
-			if (!removedMarkers.isEmpty()) {
-				MarkerList removed = getCurrentMarkers().findMarkers(
-						removedMarkers);
-				if (removed.getItemCount() > 0) {
-					updateJob.remove(removed);
-					getProgressService().schedule(updateJob);
-				}
-			}
+		}
 
+		/**
+		 * Return whether or not any of the removedMarkers are being 
+		 * shown.
+		 * @param removedMarkers
+		 * @return <code>boolean</code>
+		 */
+		private boolean removeRefreshRequired(Collection removedMarkers) {
+			if(removedMarkers.isEmpty())
+				return false;
+			
+			MarkerList currentList = getCurrentMarkers();
+			Iterator removes = removedMarkers.iterator();
+			while(removes.hasNext()){
+				if(currentList.getMarker((IMarker) removes.next())!= null)
+					return true;
+			}
+			
+			return false;
 		}
 
 		/**
@@ -273,7 +264,7 @@ public abstract class MarkerView extends TableView {
 		 * @param addedMarkers
 		 * @return boolean
 		 */
-		private boolean refreshRequired(Collection addedMarkers) {
+		private boolean addRefreshRequired(Collection addedMarkers) {
 			if (addedMarkers.isEmpty())
 				return false;
 			MarkerFilter[] filters = getEnabledFilters();
@@ -345,9 +336,7 @@ public abstract class MarkerView extends TableView {
 
 	private int totalMarkers = 0;
 
-	private boolean markerCountDirty = true;
-
-	WorkbenchJob uiJob;
+	WorkbenchJob countUpdateJob;
 
 	private MarkerFilter[] markerFilters = new MarkerFilter[0];
 
@@ -552,15 +541,15 @@ public abstract class MarkerView extends TableView {
 		if (adaptable.equals(IShowInSource.class)) {
 			return new IShowInSource() {
 				public ShowInContext getShowInContext() {
-					ISelection selection = getViewer()
-							.getSelection();
+					ISelection selection = getViewer().getSelection();
 					if (!(selection instanceof IStructuredSelection))
 						return null;
 					IStructuredSelection structured = (IStructuredSelection) selection;
 					Iterator markerIterator = structured.iterator();
 					List newSelection = new ArrayList();
 					while (markerIterator.hasNext()) {
-						ConcreteMarker element = (ConcreteMarker) markerIterator.next();
+						ConcreteMarker element = (ConcreteMarker) markerIterator
+								.next();
 						newSelection.add(element.getResource());
 					}
 					return new ShowInContext(getViewer().getInput(),
@@ -572,7 +561,9 @@ public abstract class MarkerView extends TableView {
 		return super.getAdapter(adaptable);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#viewerSelectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected void viewerSelectionChanged(IStructuredSelection selection) {
@@ -617,7 +608,7 @@ public abstract class MarkerView extends TableView {
 	protected void createActions() {
 		revealAction = new ActionRevealMarker(this, getViewer());
 		openAction = new ActionOpenMarker(this, getViewer());
-		copyAction = new ActionCopyMarker(this,getViewer());
+		copyAction = new ActionCopyMarker(this, getViewer());
 		copyAction.setClipboard(clipboard);
 		copyAction.setProperties(getSortingFields());
 		pasteAction = new ActionPasteMarker(this, getViewer());
@@ -626,8 +617,7 @@ public abstract class MarkerView extends TableView {
 		deleteAction = new ActionRemoveMarker(this, getViewer());
 		selectAllAction = new ActionSelectAll(this);
 
-		propertiesAction = new ActionMarkerProperties(this,
-				getViewer());
+		propertiesAction = new ActionMarkerProperties(this, getViewer());
 
 		super.createActions();
 
@@ -726,13 +716,13 @@ public abstract class MarkerView extends TableView {
 	 */
 	private void performDragSetData(DragSourceEvent event) {
 		if (MarkerTransfer.getInstance().isSupportedType(event.dataType)) {
-			
+
 			event.data = getSelectedMarkers();
 			return;
 		}
 		if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-			List selection = ((IStructuredSelection) getViewer()
-					.getSelection()).toList();
+			List selection = ((IStructuredSelection) getViewer().getSelection())
+					.toList();
 			try {
 				IMarker[] markers = new IMarker[selection.size()];
 				selection.toArray(markers);
@@ -746,15 +736,16 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Get the array of selected markers.
+	 * 
 	 * @return IMarker[]
 	 */
 	private IMarker[] getSelectedMarkers() {
-		Object[] selection = ((IStructuredSelection) getViewer()
-				.getSelection()).toArray();
+		Object[] selection = ((IStructuredSelection) getViewer().getSelection())
+				.toArray();
 		ArrayList markers = new ArrayList();
 		for (int i = 0; i < selection.length; i++) {
-			if(selection[i] instanceof ConcreteMarker)
-				markers.add(((ConcreteMarker)selection[i]).getMarker());
+			if (selection[i] instanceof ConcreteMarker)
+				markers.add(((ConcreteMarker) selection[i]).getMarker());
 		}
 		return (IMarker[]) markers.toArray(new IMarker[markers.size()]);
 	}
@@ -1122,8 +1113,9 @@ public abstract class MarkerView extends TableView {
 	 */
 	protected String updateSummarySelected(IStructuredSelection selection) {
 		// Show how many items selected
-		return MessageFormat.format(MarkerMessages.marker_statusSummarySelected,
-				new Object[] {new Integer(selection.size())});
+		return MessageFormat.format(
+				MarkerMessages.marker_statusSummarySelected,
+				new Object[] { new Integer(selection.size()) });
 	}
 
 	/**
@@ -1275,7 +1267,7 @@ public abstract class MarkerView extends TableView {
 	 * 
 	 */
 	private void createUIJob() {
-		uiJob = new WorkbenchJob(MarkerMessages.MarkerView_refreshProgress) {
+		countUpdateJob = new WorkbenchJob(MarkerMessages.MarkerView_refreshProgress) {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				// Ensure that the view hasn't been disposed
@@ -1288,8 +1280,8 @@ public abstract class MarkerView extends TableView {
 				return Status.OK_STATUS;
 			}
 		};
-		uiJob.setPriority(Job.INTERACTIVE);
-		uiJob.setSystem(true);
+		countUpdateJob.setPriority(Job.INTERACTIVE);
+		countUpdateJob.setSystem(true);
 	}
 
 	/**
@@ -1377,15 +1369,12 @@ public abstract class MarkerView extends TableView {
 	 * @param monitor
 	 */
 	void refreshMarkerCounts(IProgressMonitor monitor) {
-		if (markerCountDirty) {
-			monitor.subTask(MarkerMessages.MarkerView_refreshing_counts);
-			try {
-				totalMarkers = MarkerList.compute(getMarkerTypes()).length;
-			} catch (CoreException e) {
-				IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
-				return;
-			}
-			markerCountDirty = false;
+		monitor.subTask(MarkerMessages.MarkerView_refreshing_counts);
+		try {
+			totalMarkers = MarkerList.compute(getMarkerTypes()).length;
+		} catch (CoreException e) {
+			IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+			return;
 		}
 
 	}
@@ -1394,12 +1383,16 @@ public abstract class MarkerView extends TableView {
 	 * Schedule an update of the summary counts.
 	 */
 	public void scheduleCountUpdate() {
-		if (uiJob == null)
+		if (countUpdateJob == null)
 			createUIJob();
 
-		uiJob.schedule();
+		countUpdateJob.schedule();
+		
+		if(getSite().getShell().getDisplay().getThread() == Thread.currentThread())
+			return; //Do not block the UI
+		
 		try {
-			uiJob.join();
+			countUpdateJob.join();
 		} catch (InterruptedException e) {
 			return;
 		}
