@@ -112,6 +112,7 @@ of this file system extension would be &quot;com.xyz.coolplugin.gopherFS&quot;.
          The value of the class attribute must represent a 
 subclass of 
 &lt;samp&gt;org.eclipse.core.filesystem.provider.FileSystem&lt;/samp&gt;.
+&lt;p&gt;
 File system instances can be obtained via the method
 &lt;samp&gt;org.eclipse.core.filesystem.FileSystemCore.getFileSystem(String)&lt;/samp&gt;.
       </documentation>
