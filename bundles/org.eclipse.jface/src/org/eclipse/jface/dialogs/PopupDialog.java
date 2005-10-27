@@ -337,11 +337,14 @@ public class PopupDialog extends Window {
 		// off by a menu or secondary popup showing.
 		shell.addListener(SWT.Activate, new Listener() {
 			public void handleEvent(Event event) {
-				listenToDeactivate = true;
-				// Typically we start listening for parent deactivate after we are activated.
-				// Except on the Mac, where the deactivate is received after activate.
-				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=100668
-				listenToParentDeactivate = !"carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+				// ignore this event if we have launched a child
+				if (event.widget == getShell() && getShell().getShells().length == 0) {
+					listenToDeactivate = true;
+					// Typically we start listening for parent deactivate after we are activated.
+					// Except on the Mac, where the deactivate is received after activate.
+					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=100668
+					listenToParentDeactivate = !"carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+				}
 			}
 		});
 
