@@ -13,6 +13,7 @@ package org.eclipse.jface.binding.internal.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.IUpdatableCollection;
 import org.eclipse.jface.binding.Updatable;
 import org.eclipse.jface.viewers.AbstractListViewer;
@@ -29,6 +30,8 @@ public class UpdatableCollectionViewer extends Updatable implements
 	private final AbstractListViewer viewer;
 
 	private List elements = new ArrayList();
+	
+	private boolean updating=false;
 
 	/**
 	 * @param viewer
@@ -58,12 +61,22 @@ public class UpdatableCollectionViewer extends Updatable implements
 	}
 
 	public int addElement(Object element, int index) {
-		int position = primAddElement(element, index);
-		if (position == elements.size() - 1 || viewer.getSorter() != null)
-			viewer.add(element);
-		else
-			viewer.refresh();
-		return position;
+		if (!updating) {
+			try {
+				updating = true;
+				int position = primAddElement(element, index);
+				if (position == elements.size() - 1
+						|| viewer.getSorter() != null)
+					viewer.add(element);
+				else
+					viewer.refresh();
+				fireChangeEvent(IChangeEvent.ADD, null, element, position);
+				return position;
+			} finally {
+				updating = false;
+			}
+		}
+		return index;
 	}
 
 	private int primAddElement(Object element, int index) {
@@ -79,16 +92,36 @@ public class UpdatableCollectionViewer extends Updatable implements
 	}
 
 	public void removeElement(int index) {
-		Object element = elements.remove(index);
-		viewer.remove(element);
+		if (!updating) {
+			try {
+				updating=true;
+				Object element = elements.remove(index);
+				viewer.remove(element);
+				fireChangeEvent(IChangeEvent.REMOVE, element, null, index);
+			} finally  {
+				updating=false;
+			}
+		}
 	}
 
 	public void setElement(int index, Object element) {
-		if (elements.get(index).equals(element)) {
-			viewer.update(element, null);
-		} else {
-			removeElement(index);
-			addElement(element, index);
+		
+		if (!updating) {            
+			try {
+				updating=true;
+				Object old;
+				if (elements.get(index).equals(element)) {
+					viewer.update(element, null);
+					old = element;
+				} else {
+					old = getElement(index);
+					removeElement(index);
+					addElement(element, index);
+				}
+				fireChangeEvent(IChangeEvent.CHANGE, old, element, index);
+			} finally {
+				updating=false;
+			}
 		}
 	}
 

@@ -55,11 +55,12 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 		try {
 			if (index<0 || index>getSize())
 				index=getSize();
-			String[] newItems = new String[getSize()+1];
+			String[] newItems = new String[getSize()+1];			
 			System.arraycopy(combo.getItems(), 0, newItems,0, index);
 			newItems[index]=(String)value;
 			System.arraycopy(combo.getItems(), index, newItems,index+1, getSize()-index);
 			combo.setItems(newItems);
+			fireChangeEvent(IChangeEvent.ADD, null, value, index);
 		}
 		finally{
 			updating=false;
@@ -73,9 +74,11 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 			if (index<0 || index>getSize())
 				index=getSize();
 			String[] newItems = new String[getSize()-1];
+			String old = combo.getItem(index);
 			System.arraycopy(combo.getItems(), 0, newItems,0, index);			
-			System.arraycopy(combo.getItems(), index, newItems,index-1, getSize()-index);
+			System.arraycopy(combo.getItems(), index, newItems,index-1, getSize()-index);			
 			combo.setItems(newItems);
+			fireChangeEvent(IChangeEvent.REMOVE, old, null, index);
 		}
 		finally{
 			updating=false;
@@ -83,7 +86,9 @@ public class ComboUpdatableCollection extends Updatable implements IUpdatableCol
 	}
 
 	public void setElement(int index, Object value) {
+		String old = combo.getItem(index);
 		combo.setItem(index, (String)value);
+		fireChangeEvent(IChangeEvent.CHANGE, old, value, index);
 	}
 
 	public Object getElement(int index) {
