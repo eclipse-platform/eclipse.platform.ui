@@ -27,7 +27,6 @@ import org.eclipse.jface.binding.internal.swt.TextUpdatableValue;
 import org.eclipse.jface.binding.internal.viewers.StructuredViewerUpdatableValue;
 import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableCollection;
 import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableCollectionExtended;
-import org.eclipse.jface.binding.internal.viewers.TableViewerUpdatableTable;
 import org.eclipse.jface.binding.internal.viewers.UpdatableCollectionViewer;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -224,10 +223,7 @@ public class SWTDatabindingContext extends DatabindingContext {
 		// new stuff
 		addUpdatableFactory2(new IUpdatableFactory2() {
 			public IUpdatable createUpdatable(Map properties, Object description) {
-				if (description instanceof TableViewer) {
-					return new TableViewerUpdatableTable(
-							(TableViewer) description);
-				} else if (description instanceof AbstractListViewer) {
+				if (description instanceof AbstractListViewer) {
 					// binding to a Viewer directly implies binding to its content
 					return new UpdatableCollectionViewer(
 							(AbstractListViewer) description);

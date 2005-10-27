@@ -23,7 +23,6 @@ import org.eclipse.jface.binding.internal.Binding;
 import org.eclipse.jface.binding.internal.CollectionBinding;
 import org.eclipse.jface.binding.internal.NestedUpdatableCollection;
 import org.eclipse.jface.binding.internal.NestedUpdatableValue;
-import org.eclipse.jface.binding.internal.TableBinding;
 import org.eclipse.jface.binding.internal.ValueBinding;
 
 /**
@@ -642,16 +641,6 @@ public class DatabindingContext {
 					return DatabindingContext.this.createUpdatable(
 							propertyDescription.getObject(),
 							propertyDescription.getPropertyID());
-				} else if (description instanceof ListDescription) {
-					// ListDescription was not handled already, turn it into a
-					// TableDescription and try again
-					ListDescription listDescription = (ListDescription) description;
-					TableDescription tableDescription = new TableDescription(
-							listDescription.getObject(),
-							listDescription.getPropertyID(),
-							new Object[] { listDescription.getLabelPropertyID() });
-					return DatabindingContext.this
-							.createUpdatable2(tableDescription);
 				} else if (description instanceof NestedPropertyDescription) {
 					NestedPropertyDescription propertyDescription = (NestedPropertyDescription) description;
 					return new NestedUpdatableValue(DatabindingContext.this,
@@ -751,17 +740,7 @@ public class DatabindingContext {
 	public void bind2(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) throws BindingException {
 		Binding binding;
-		if (targetUpdatable instanceof IUpdatableTable) {
-			if (modelUpdatable instanceof IUpdatableTable) {
-				binding = new TableBinding(this,
-						(IUpdatableTable) targetUpdatable,
-						(IUpdatableTable) modelUpdatable,
-						(ITableBindSpec) bindSpec);
-			} else {
-				throw new BindingException(
-						"incompatible updatables (target is table, model is not)"); //$NON-NLS-1$
-			}
-		} else if (targetUpdatable instanceof IUpdatableValue) {
+		if (targetUpdatable instanceof IUpdatableValue) {
 			if (modelUpdatable instanceof IUpdatableValue) {
 				IUpdatableValue target = (IUpdatableValue) targetUpdatable;
 				IUpdatableValue model = (IUpdatableValue) modelUpdatable;
@@ -888,8 +867,10 @@ public class DatabindingContext {
 	 * @param updatableFactory
 	 */
 	public void addUpdatableFactory2(IUpdatableFactory2 updatableFactory) {
-		//TODO: consider the fact that adding new factories for a given description
-		//      may hide default ones (e.g., a new PropertyDescriptor may overide the ond for EMF)
+		// TODO: consider the fact that adding new factories for a given
+		// description
+		// may hide default ones (e.g., a new PropertyDescriptor may overide the
+		// ond for EMF)
 		factories2.add(updatableFactory);
 	}
 
