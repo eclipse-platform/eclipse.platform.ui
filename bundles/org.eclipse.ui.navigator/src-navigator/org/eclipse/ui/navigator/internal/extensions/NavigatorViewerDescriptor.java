@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 
 /**
@@ -72,9 +73,9 @@ public class NavigatorViewerDescriptor {
 		String thePopupMenuId = element.getAttribute(ATT_POPUP_MENU_ID);
 		if (thePopupMenuId != null) {
 			if (popupMenuId != null)
-				NavigatorPlugin.log("Warning: popupMenuId of \""+getViewerId()+
-								"\" was overridden: old value = \"" + popupMenuId + 
-								"\", new value = \"" + thePopupMenuId + "\".");
+				NavigatorPlugin.log(CommonNavigatorMessages.NavigatorViewerDescriptor_0+getViewerId()+
+								CommonNavigatorMessages.NavigatorViewerDescriptor_1 + popupMenuId + 
+								CommonNavigatorMessages.NavigatorViewerDescriptor_2 + thePopupMenuId + CommonNavigatorMessages.NavigatorViewerDescriptor_3);
 
 			popupMenuId = thePopupMenuId;
 		}

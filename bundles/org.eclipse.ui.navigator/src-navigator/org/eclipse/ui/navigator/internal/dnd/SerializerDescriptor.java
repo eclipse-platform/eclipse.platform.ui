@@ -53,7 +53,7 @@ public class SerializerDescriptor {
 			try {
 				serializer = (ISerializer) serializerElement.createExecutableExtension(ExtensionPointElements.ATT_CLASS);
 			} catch (CoreException e) {
-				NavigatorPlugin.log(NavigatorMessages.format("SerializerDescriptor.5", new Object[]{id, e.toString()})); //$NON-NLS-1$ //$NON-NLS-2$
+				NavigatorPlugin.log(NavigatorMessages.format("SerializerDescriptor.5", new Object[]{id, e.toString()})); //$NON-NLS-1$  
 				serializer = null;
 			}
 		return serializer;

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.navigator.internal.filters.ExtensionFilterDescriptor;
 import org.eclipse.ui.navigator.internal.filters.ExtensionFilterProvider;
+import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.navigator.ResourcePatternFilter;
 
@@ -29,7 +30,7 @@ import org.eclipse.ui.views.navigator.ResourcePatternFilter;
  */
 public class ResourceExtensionFilterProvider implements ExtensionFilterProvider {
 
-	private static final String HIDE = "Hides " ;
+	private static final String HIDE = WorkbenchNavigatorMessages.ResourceExtensionFilterProvider_Hides ;
 	/**
 	 *  
 	 */

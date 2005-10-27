@@ -41,9 +41,8 @@ public class NavigatorContentServiceDescriptionProvider implements
 			IStructuredSelection structuredSelection = (IStructuredSelection) anElement;
 			if (structuredSelection.size() > 1) {
 				return getDefaultStatusBarMessage(structuredSelection.size()); 
-			} else {
-				target = structuredSelection.getFirstElement();
-			}
+			} 
+			target = structuredSelection.getFirstElement();
 		} else {
 			target = anElement;
 		}
@@ -52,17 +51,17 @@ public class NavigatorContentServiceDescriptionProvider implements
 		List contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(target);
 		if (contentDescriptors.size() == 0)
 			return getDefaultStatusBarMessage(0);
-		else {
-			/* Use the first Navigator Content Descriptor for now */
-			NavigatorContentDescriptor contentDescriptor = (NavigatorContentDescriptor) contentDescriptors.get(0);
-			NavigatorContentExtension contentDescriptorInstance = contentService.getExtension(contentDescriptor);
+		
+		/* Use the first Navigator Content Descriptor for now */
+		NavigatorContentDescriptor contentDescriptor = (NavigatorContentDescriptor) contentDescriptors.get(0);
+		NavigatorContentExtension contentDescriptorInstance = contentService.getExtension(contentDescriptor);
 
-			ICommonLabelProvider labelProvider = contentDescriptorInstance.getLabelProvider();
+		ICommonLabelProvider labelProvider = contentDescriptorInstance.getLabelProvider();
 
-			String message = labelProvider.getDescription(target);
-			message = (message != null) ? message : getDefaultStatusBarMessage(1);
-			return message;
-		} 
+		String message = labelProvider.getDescription(target);
+		message = (message != null) ? message : getDefaultStatusBarMessage(1);
+		return message;
+		 
 	}
 	
 	/**

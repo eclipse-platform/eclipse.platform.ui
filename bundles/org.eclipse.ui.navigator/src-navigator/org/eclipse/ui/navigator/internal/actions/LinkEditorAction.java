@@ -32,6 +32,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ILinkHelper;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorMessages;
 import org.eclipse.ui.navigator.internal.extensions.LinkHelperRegistry;
 import org.eclipse.ui.progress.UIJob;
@@ -87,7 +88,7 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 			activateEditor.run();
 		} else {
 			/* Create and schedule a UI Job to activate the editor in a valid Display thread */
-			new UIJob("Link With Editor Job") {
+			new UIJob(CommonNavigatorMessages.Link_With_Editor_Job_) {
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					activateEditor.run();
 					return Status.OK_STATUS;

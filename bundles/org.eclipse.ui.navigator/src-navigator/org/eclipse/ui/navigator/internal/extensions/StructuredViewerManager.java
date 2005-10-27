@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.progress.UIJob;
 
@@ -85,7 +86,7 @@ public class StructuredViewerManager {
 	 * 
 	 */
 	public void safeRefresh() {
-		UIJob refreshJob= new UIJob("Refresh Common Viewer Tree") {
+		UIJob refreshJob= new UIJob(CommonNavigatorMessages.StructuredViewerManager_0) {
 			public IStatus runInUIThread(org.eclipse.core.runtime.IProgressMonitor monitor) {
 				try {
 					if (viewer != null)

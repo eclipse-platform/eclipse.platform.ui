@@ -92,7 +92,7 @@ public class NavigatorContentServiceLabelProvider implements ILabelProvider {
 		Image image = null;
 		for (int i = 0; i < labelProviders.length && image == null; i++)
 			image = labelProviders[i].getImage(anElement);
-		return image == null ? null : decorator.decorateImage(image, anElement); //$NON-NLS-1$
+		return image == null ? null : decorator.decorateImage(image, anElement);  
 	}
 
 	/**

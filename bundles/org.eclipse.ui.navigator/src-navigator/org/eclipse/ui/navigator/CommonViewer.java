@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.ResourceToItemsMapper;
 import org.eclipse.ui.navigator.internal.dnd.CommonNavigatorDragAdapter;
@@ -216,12 +217,12 @@ public class CommonViewer extends TreeViewer {
 		} catch (Error e) {
 			e.printStackTrace();
 		}
-		Job job = new Job("Extract the Content Descriptor of children") {
+		Job job = new Job(CommonNavigatorMessages.CommonViewer_0) {
 			public IStatus run(IProgressMonitor monitor) {
 				try {
 					contentService.findRelevantContentProviders(element);
 				} catch (RuntimeException ex) {
-					String msg = "Could not acquire children for Object: "
+					String msg = CommonNavigatorMessages.CommonViewer_1
 							+ element.getClass();
 					NavigatorPlugin.log(msg, new Status(IStatus.ERROR,
 							NavigatorPlugin.PLUGIN_ID, 0, msg, ex));

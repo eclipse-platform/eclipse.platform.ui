@@ -33,6 +33,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.actions.CommonActionProviderDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
@@ -122,7 +123,7 @@ public class NavigatorActionService {
 			}
 
 		} catch (RuntimeException re) {
-			NavigatorPlugin.log("Could not initialize NavigatorActionService for " + contentService.getViewerId() + ": " + re.getMessage());
+			NavigatorPlugin.log(CommonNavigatorMessages.NavigatorActionService_0 + contentService.getViewerId() + CommonNavigatorMessages.NavigatorActionService_1 + re.getMessage());
 			re.printStackTrace();
 		}
 		isInitialized= true;
@@ -297,7 +298,7 @@ public class NavigatorActionService {
 
 	private void complainIfDisposed() {
 		if (isDisposed)
-			throw new IllegalStateException("NavigatorActionService has already been disposed.");
+			throw new IllegalStateException(CommonNavigatorMessages.NavigatorActionService_2);
 	}
 
 	private class CommonActionRegistry extends RegistryReader {
@@ -337,7 +338,7 @@ public class NavigatorActionService {
 					}
 
 					public void handleException(Throwable exception) {
-						NavigatorPlugin.logError(0, "Could not restore state for action provider \"" + provider.getClass() + "\".", exception);
+						NavigatorPlugin.logError(0, CommonNavigatorMessages.NavigatorActionService_3 + provider.getClass() + CommonNavigatorMessages.NavigatorActionService_4, exception);
 
 					}
 				};
@@ -359,7 +360,7 @@ public class NavigatorActionService {
 					}
 
 					public void handleException(Throwable exception) {
-						NavigatorPlugin.logError(0, "Could not restore state for action provider \"" + provider.getClass() + "\".", exception);
+						NavigatorPlugin.logError(0, CommonNavigatorMessages.NavigatorActionService_5 + provider.getClass() + CommonNavigatorMessages.NavigatorActionService_6, exception);
 
 					}
 				};

@@ -2,13 +2,12 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-   <extension-point id="navigatorContent" name="%ExtPoint.navigatorContent" schema="schema/navigatorContent.exsd"/>
-   <extension-point id="navigatorViewer" name="%ExtPoint.navigatorViewer" schema="schema/navigatorViewer.exsd"/>
-   <extension-point id="commonFilter" name="%ExtPoint.commonFilter" schema="schema/commonFilter.exsd"/>
-   <extension-point id="dropHandler" name="%ExtPoint.dropHandler" schema="schema/dropHandler.exsd"/>
-   <extension-point id="thirdPartyFilterProvider" name="%ExtPoint.thirdPartyFilterProvider"/>
-   <extension-point id="linkHelper" name="Link Helper" schema="schema/linkHelper.exsd"/>
-   <extension-point id="actionProvider" name="Common Action Provider" schema="schema/actionProvider.exsd"/>
+   <extension-point id="navigatorContent" name="%ExtPoint_navigatorContent" schema="schema/navigatorContent.exsd"/>
+   <extension-point id="navigatorViewer" name="%ExtPoint_navigatorViewer" schema="schema/navigatorViewer.exsd"/>
+   <extension-point id="commonFilter" name="%ExtPoint_commonFilter" schema="schema/commonFilter.exsd"/>
+   <extension-point id="dropHandler" name="%ExtPoint_dropHandler" schema="schema/dropHandler.exsd"/>
+   <extension-point id="linkHelper" name="%Link_Helper" schema="schema/linkHelper.exsd"/>
+   <extension-point id="actionProvider" name="%Common_Action_Provider" schema="schema/actionProvider.exsd"/>
  
    <extension
          point="org.eclipse.ui.dropActions">

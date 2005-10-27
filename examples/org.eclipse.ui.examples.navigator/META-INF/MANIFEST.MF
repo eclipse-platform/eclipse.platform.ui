@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Navigator
+Bundle-Name: %Navigator_Examples
 Bundle-SymbolicName: org.eclipse.ui.examples.navigator; singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Localization: plugin

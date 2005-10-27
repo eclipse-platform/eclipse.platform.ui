@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.extensions.IExtensionActivationListener;
 import org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener;
@@ -337,7 +338,7 @@ public class NavigatorContentService implements IExtensionActivationListener, IM
 						
 					}
 					public void handleException(Throwable exception) {
-						NavigatorPlugin.logError(0, "Could not restore state for Common Navigator content extension \""+element.getId()+"\".", exception);
+						NavigatorPlugin.logError(0, CommonNavigatorMessages.NavigatorContentService_0+element.getId()+CommonNavigatorMessages.NavigatorContentService_1, exception);
 						
 					}
 				};

@@ -110,7 +110,7 @@ public abstract class QuickMenuAction extends Action {
 				return binding.getKeySequence().format();
 			}
 		}
-		return null; //$NON-NLS-1$
+		return null;  
 	}
 
 	private Point computeMenuLocation(Control focus, Menu menu) {

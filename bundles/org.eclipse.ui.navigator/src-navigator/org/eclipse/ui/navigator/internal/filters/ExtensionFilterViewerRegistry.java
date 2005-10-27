@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.extensions.RegistryReader;
 
@@ -41,7 +42,7 @@ public class ExtensionFilterViewerRegistry extends RegistryReader {
 	private final ThirdPartyFilterProviderRegistry thirdPartyFilterProviderRegistry = new ThirdPartyFilterProviderRegistry();
 
 	public ExtensionFilterViewerRegistry(String viewerId) {
-		super(NavigatorPlugin.PLUGIN_ID, NAVIGATOR_FILTER); //$NON-NLS-1$ 
+		super(NavigatorPlugin.PLUGIN_ID, NAVIGATOR_FILTER);   
 		this.viewerId = viewerId;
 		activationManager = new ExtensionFilterActivationManager(this.viewerId, this);
 		readRegistry();
@@ -162,10 +163,10 @@ public class ExtensionFilterViewerRegistry extends RegistryReader {
 					descriptors.addAll(provider.getExtensionFilterDescriptors(navigatorExtensionId, this.viewerId));
 			} catch (RuntimeException e) {
 				// TODO Log this more appropriately
-				System.err.println("Problem loading a Third Party Filter Extension. Continuing anyway.");
+				System.err.println(CommonNavigatorMessages.ExtensionFilterViewerRegistry_0);
 				e.printStackTrace();
 			} catch (NoClassDefFoundError ncdfe) {
-				System.err.println("Problem loading a Third Party Filter Extension. Continuing anyway.");
+				System.err.println(CommonNavigatorMessages.ExtensionFilterViewerRegistry_1);
 				ncdfe.printStackTrace();
 			}
 		}

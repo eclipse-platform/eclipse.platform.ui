@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
@@ -110,7 +111,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				if (delegateChildren != null && delegateChildren.length > 0)
 					resultElements.addAll(Arrays.asList(delegateChildren));
 			} catch (RuntimeException re) {
-				String msg = "Could not acquire children from extension: " + delegateProviders[i].getClass();
+				String msg = CommonNavigatorMessages.NavigatorContentServiceContentProvider_0 + delegateProviders[i].getClass();
 				NavigatorPlugin.log(msg, new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, msg, re));
 			}
 		}
@@ -152,10 +153,10 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				if (delegateChildren != null && delegateChildren.length > 0)
 					resultChildren.addAll(Arrays.asList(delegateChildren));
 			} catch (RuntimeException re) {
-				String msg = "Could not acquire children from extension: " + delegateProviders[i].getClass();
+				String msg = CommonNavigatorMessages.NavigatorContentServiceContentProvider_1 + delegateProviders[i].getClass();
 				NavigatorPlugin.log(msg, new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, msg, re));
 			} catch (Error e) {
-				String msg = "Could not acquire children from extension: " + delegateProviders[i].getClass();
+				String msg = CommonNavigatorMessages.NavigatorContentServiceContentProvider_2 + delegateProviders[i].getClass();
 				NavigatorPlugin.log(msg, new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, msg, e));
 
 			}
@@ -189,7 +190,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				if ((parent = delegateProviders[i].getParent(anElement)) != null)
 					return parent;
 			} catch (RuntimeException re) {
-				String msg = "Could not acquire parent from extension: " + delegateProviders[i].getClass();
+				String msg = CommonNavigatorMessages.NavigatorContentServiceContentProvider_3 + delegateProviders[i].getClass();
 				NavigatorPlugin.log(msg, new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, msg, re));
 			}
 		}

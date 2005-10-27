@@ -104,7 +104,7 @@ public class NavigatorActivationService {
 				activatedExtensionsStringBuffer.append(activatedExtensionsIterator.next()).append(";"); //$NON-NLS-1$
 			}
 
-			preferences.setValue(getPreferenceKey(aViewerId), activatedExtensionsStringBuffer.toString()); //$NON-NLS-1$
+			preferences.setValue(getPreferenceKey(aViewerId), activatedExtensionsStringBuffer.toString());  
 		}
 		NavigatorPlugin.getDefault().savePluginPreferences();
 	}
@@ -173,7 +173,7 @@ public class NavigatorActivationService {
 		Preferences preferences = NavigatorPlugin.getDefault().getPluginPreferences();
 
 		Set activatedExtensions = new HashSet();
-		String activatedExtensionsString = preferences.getString(getPreferenceKey(aViewerId)); //$NON-NLS-1$
+		String activatedExtensionsString = preferences.getString(getPreferenceKey(aViewerId));  
 
 		if (activatedExtensionsString != null && activatedExtensionsString.length() > 0) {
 			String activatedExtensionKey = null;

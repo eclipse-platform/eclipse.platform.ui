@@ -85,8 +85,8 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 		try {
 			wizard = descriptor.createWizard();
 		} catch (CoreException e) {
-			ErrorDialog.openError(window.getShell(), IDEWorkbenchMessages.NewProjectWizard_errorTitle, //$NON-NLS-1$
-						IDEWorkbenchMessages.NewProjectAction_text, //$NON-NLS-1$
+			ErrorDialog.openError(window.getShell(), IDEWorkbenchMessages.NewProjectWizard_errorTitle,  
+						IDEWorkbenchMessages.NewProjectAction_text,  
 						e.getStatus());
 			return;
 		}

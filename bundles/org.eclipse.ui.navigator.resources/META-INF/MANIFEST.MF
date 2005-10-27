@@ -16,5 +16,5 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.jface,
  org.eclipse.ui,
  org.eclipse.ui.navigator,
- org.eclipse.core.runtime
-Eclipse-AutoStart: true
+ org.eclipse.core.runtime 
+Eclipse-LazyStart: true

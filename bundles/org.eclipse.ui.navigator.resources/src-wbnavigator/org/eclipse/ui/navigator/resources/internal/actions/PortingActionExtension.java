@@ -169,7 +169,7 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 			return;
 		}
 
-		IMenuManager submenu = new MenuManager(WorkbenchMessages.ImportResourcesAction_text, COMMON_NAVIGATOR_IMPORT_MENU); //$NON-NLS-1$
+		IMenuManager submenu = new MenuManager(WorkbenchMessages.ImportResourcesAction_text, COMMON_NAVIGATOR_IMPORT_MENU);  
 		importWizardActionGroup.setWizardActionIds(wizardDescriptorIds);
 		importWizardActionGroup.setContext(actionContext);
 		importWizardActionGroup.fillContextMenu(submenu);
@@ -190,7 +190,7 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 			aMenu.appendToGroup(ICommonMenuConstants.GROUP_PORT, exportAction);
 			return;
 		}
-		IMenuManager submenu = new MenuManager(WorkbenchMessages.ExportResourcesAction_text, COMMON_NAVIGATOR_EXPORT_MENU); //$NON-NLS-1$
+		IMenuManager submenu = new MenuManager(WorkbenchMessages.ExportResourcesAction_text, COMMON_NAVIGATOR_EXPORT_MENU);  
 		exportWizardActionGroup.setWizardActionIds(wizardDescriptorIds);
 		exportWizardActionGroup.setContext(actionContext);
 		exportWizardActionGroup.fillContextMenu(submenu);

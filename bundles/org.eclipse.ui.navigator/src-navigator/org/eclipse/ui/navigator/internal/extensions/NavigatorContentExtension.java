@@ -20,6 +20,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
 import org.eclipse.ui.navigator.NavigatorActionService;
 import org.eclipse.ui.navigator.NavigatorContentService;
+import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 
 /**
  * <p>
@@ -56,9 +57,9 @@ public class NavigatorContentExtension implements IMementoAware {
 
 		if (aDescriptor == null)
 			throw new IllegalArgumentException(
-					"The parameter aDescriptor (of type "
+					CommonNavigatorMessages.NavigatorContentExtension_0
 							+ NavigatorContentDescriptor.class.getName()
-							+ ") cannot be null!");
+							+ CommonNavigatorMessages.NavigatorContentExtension_1);
 
 		descriptor = aDescriptor;
 		contentService = aContentService;
@@ -280,8 +281,8 @@ public class NavigatorContentExtension implements IMementoAware {
 	protected final void complainDisposedIfNecessary() {
 		if (isDisposed)
 			throw new IllegalStateException(
-					"NavigatorContentDescriptorInstance \""
-							+ descriptor.getId() + "\" is disposed!");
+					CommonNavigatorMessages.NavigatorContentExtension_2
+							+ descriptor.getId() + CommonNavigatorMessages.NavigatorContentExtension_3);
 	}
 
 	public IExtensionStateModel getStateModel() {

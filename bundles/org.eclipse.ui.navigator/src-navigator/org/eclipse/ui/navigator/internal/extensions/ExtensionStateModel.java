@@ -105,7 +105,7 @@ public class ExtensionStateModel implements IExtensionStateModel {
 
 	public void setProperty(String aPropertyName, Object aPropertyValue) {
 
-		Object oldValue = (Object) values.get(aPropertyName);
+		Object oldValue = values.get(aPropertyName);
 		Object newValue = aPropertyValue;
 		if(hasPropertyChanged(oldValue, newValue)) {
 			values.put(aPropertyName, newValue);
