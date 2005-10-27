@@ -57,6 +57,8 @@
             <annotation>
                <documentation>
                   Supplies the name of a class which implements org.eclipse.jface.viewers.ITreeContentProvider or org.eclipse.wst.common.navigator.views.INavigatorContentProvider.
+
+The content provider will be consulted when addeding children to the tree. Use the &apos;enablement&apos; clause to indicate what kinds of content should trigger a request to your content provider for content. 
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
