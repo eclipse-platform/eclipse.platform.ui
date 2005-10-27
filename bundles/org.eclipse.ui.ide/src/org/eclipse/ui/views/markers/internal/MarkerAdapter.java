@@ -373,7 +373,7 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
 	public String getLabel(Object o) {
-		return MarkerMessages.MarkerList_0;
+		return view.getSite().getRegisteredName();
 	}
 
 	/*
