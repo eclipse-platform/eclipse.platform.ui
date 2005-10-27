@@ -72,42 +72,19 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
     public abstract boolean isThreeWay();
     
     /**
+     * @deprecated to be removed after 3.2 M3. Use {@link #hasRemoteChange(IResource, IProgressMonitor)}.
+	 */
+    public boolean contentDiffers(IFile file, IProgressMonitor monitor) throws CoreException {
+    	return hasRemoteChange(file, monitor);
+    }
+    
+    /**
 	 * For two-way comparisons, return whether the contents of the corresponding
 	 * remote differs from the content of the local file in the context of the
 	 * current operation. By this we mean that this method will return
 	 * <code>true</code> if the remote contents differ from the local
 	 * contents.
 	 * <p>
-	 * This can be used by clients to determine if they need to fetch the remote
-	 * contents in order to determine if the resources that constitute the model
-	 * element are different in the remote location. If the local file exists
-	 * and the remote file does not, or the remote file exists and the local
-	 * does not then the contents will be said to differ (i.e. <code>true</code>
-	 * is returned). Also, implementors will most likely use a timestamp based
-	 * comparison to determine if the contents differ. This may lead to a
-	 * situation where <code>true</code> is returned but the actual contents
-	 * do not differ. Clients must be prepared handle this situation.
-	 * </p>
-	 * 
-	 * @param file the local file
-	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return whether the contents of the corresponding remote differs from the
-	 *         content of the local file
-	 * @throws CoreException if the contents could not be compared. Reasons
-	 *             include:
-	 *             <ul>
-	 *             <li>The server could not be contacted for some reason (e.g.
-	 *             the context in which the operation is being called must be
-	 *             short running). The status code will be
-	 *             SERVER_CONTACT_PROHIBITED. </li>
-	 *             <li>The corresponding remote resource is not a container
-	 *             (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
-	 *             </ul>
-	 */
-    public abstract boolean contentDiffers(IFile file, IProgressMonitor monitor) throws CoreException;
-    
-    /**
 	 * For three-way comparisons, return whether the contents of the
 	 * corresponding remote differ from the contents of the base. In other
 	 * words, this method returns <code>true</code> if the corresponding
