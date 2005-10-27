@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><component  xmlns="http://eclipse.org/wtp/releng/tools/component-model" name="org.eclipse.wst.common.navigator.views"><component-depends unrestricted="true"></component-depends><plugin id="org.eclipse.wst.common.navigator.views" fragment="false"/><plugin id="org.eclipse.wst.common.navigator.workbench" fragment="false"/></component>
