@@ -6,7 +6,7 @@
   <property name="eclipse-home" value="${basedir}\..\.."/>
 
   <!-- sets the properties eclipse-home, and library-file -->
-  <property name="plugin-name" value="org.eclipse.ui.tests"/>
+  <property name="plugin-name" value="org.eclipse.ui.tests.navigator"/>
   <property name="library-file"
             value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
 
