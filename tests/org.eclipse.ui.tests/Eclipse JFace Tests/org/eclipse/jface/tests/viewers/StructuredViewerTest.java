@@ -174,10 +174,14 @@ public abstract class StructuredViewerTest extends TestCase {
     }
 
     public void setUp() {
-        fRootElement = TestElement.createModel(3, 10);
-        fModel = fRootElement.getModel();
+        setUpModel();
         openBrowser();
     }
+
+	protected void setUpModel() {
+		fRootElement = TestElement.createModel(3, 10);
+        fModel = fRootElement.getModel();
+	}
 
     /**
      * Sleeps for the given duration and processes pending

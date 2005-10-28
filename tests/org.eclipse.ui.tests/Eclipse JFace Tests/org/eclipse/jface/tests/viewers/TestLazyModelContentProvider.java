@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import junit.framework.AssertionFailedError;
+
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILazyContentProvider;
@@ -27,12 +29,17 @@ public class TestLazyModelContentProvider extends TestModelContentProvider imple
 	
 	TestLazyModelContentProvider(TableViewerTest testObject){
 		test = testObject;
+		if(!(testObject instanceof VirtualLazyTableViewerTest)) {
+			throw new AssertionFailedError("TestLazyModelContentProvider only works with VirtualLazyTableViewerTest");
+		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyContentProvider#updateElements(int, int)
 	 */
 	public void updateElement(int index) {
+		
+		((VirtualLazyTableViewerTest)test).updateElementCalled(index);
 
 		if(input == null)
 			return; //Nothing to update yet
@@ -53,6 +60,7 @@ public class TestLazyModelContentProvider extends TestModelContentProvider imple
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		input = (TestElement) newInput;
+		((TableViewer)viewer).setItemCount(input==null?0:input.getChildCount());
 		super.inputChanged(viewer, oldInput, newInput);
 	}
 	

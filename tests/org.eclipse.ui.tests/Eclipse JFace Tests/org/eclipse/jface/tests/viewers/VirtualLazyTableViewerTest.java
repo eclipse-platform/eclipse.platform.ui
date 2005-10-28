@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Table;
@@ -21,6 +24,10 @@ import org.eclipse.swt.widgets.Table;
  */
 public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 	
+	private List updatedElements;
+	// by default, no failure is triggered when updateElement is called
+	int updatedElementFailureTriggerIndex = -1;
+
 	/**
 	 * Create a new instance of the receiver/
 	 * @param name
@@ -33,6 +40,30 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 	 */
 	protected TestModelContentProvider getContentProvider() {
 		return new TestLazyModelContentProvider(this);
+	}
+	
+	public void setUp() {
+		updatedElements = new ArrayList();
+		super.setUp();
+		processEvents();
+	}
+	
+	protected void setUpModel() {
+		fRootElement = TestElement.createModel(2, 100);
+        fModel = fRootElement.getModel();
+	}
+
+	public void tearDown() {
+		super.tearDown();
+		updatedElements = null;
+	}
+	
+	// this method is called from TestLazyModelContentProvider
+	public void updateElementCalled(int index) {
+		updatedElements.add(new Integer(index));
+		if(updatedElementFailureTriggerIndex!=-1 && updatedElements.size()>=updatedElementFailureTriggerIndex) {
+			fail("unexpected call to updateElement, this is the " + updatedElements.size() + "th call");
+		}
 	}
 	
 	/**
@@ -48,13 +79,17 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		
 		Table table = ((TableViewer) fViewer).getTable();
 		table.setSelection(indices);
+
+		// we are virtual, so not all indices we requested to select will be selected.
+		indices = table.getSelectionIndices();
+		selectionSize = indices.length;
+		assertTrue("Expected at least one selected element", selectionSize > 0);
+		
 		table.showSelection();
 		
 		IStructuredSelection result = (IStructuredSelection) fViewer
 				.getSelection();
-		assertTrue("Size was " + String.valueOf(result.size()) + " expected "
-				+ String.valueOf(selectionSize),
-				(result.size() == selectionSize));
+		assertEquals(selectionSize, result.size());
 		assertTrue("First elements do not match ",
 				result.getFirstElement() == children[indices[0]]);
 		int lastIndex = indices[indices.length - 1];
@@ -62,6 +97,24 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 				"Last elements do not match ",
 				result.toArray()[result.size() - 1] == children[lastIndex]);
 	
+	}
+	
+	public void testSetInputDoesNotMaterializeEverything() {
+		fViewer.setInput(null);
+		updatedElements.clear();
+		// Assume something is wrong if all TableItems are materialized:
+		updatedElementFailureTriggerIndex = fRootElement.getChildCount();
+		fViewer.setInput(fRootElement);
+
+		int materializedSize = updatedElements.size();
+		assertTrue("Expected less than " + fRootElement.getChildCount()
+				+ ", actual " + materializedSize,
+				materializedSize < fRootElement.getChildCount());
+		// create a new model and check if we get an equal number of calls to updateElement
+		setUpModel();
+		updatedElements.clear();
+		fViewer.setInput(fRootElement);
+		assertEquals(materializedSize, updatedElements.size());
 	}
 	
 

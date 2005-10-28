@@ -59,7 +59,6 @@ public class VirtualTableViewerTest extends TableViewerTest {
 
 			}
 		});
-		viewer.setItemCount(10);
 		return viewer;
 	}
 
