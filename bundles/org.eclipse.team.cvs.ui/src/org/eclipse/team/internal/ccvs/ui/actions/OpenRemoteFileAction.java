@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -29,6 +30,7 @@ public class OpenRemoteFileAction extends CVSAction {
 	 */
 	protected ICVSRemoteFile[] getSelectedRemoteFiles() {
 		ArrayList resources = null;
+		IStructuredSelection selection = getSelection();
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
 			Iterator elements = selection.iterator();

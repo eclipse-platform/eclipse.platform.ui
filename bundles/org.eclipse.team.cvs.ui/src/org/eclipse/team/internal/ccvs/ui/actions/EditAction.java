@@ -35,7 +35,7 @@ public class EditAction extends WorkspaceAction {
 				executeProviderAction(editors, Policy.subMonitorFor(monitor, 25));
 				
 				// If there are editors show them and prompt the user to execute the edit command
-				if (!editors.promptToEdit(shell)) {
+				if (!editors.promptToEdit(getShell())) {
 					return;
 				}
 				

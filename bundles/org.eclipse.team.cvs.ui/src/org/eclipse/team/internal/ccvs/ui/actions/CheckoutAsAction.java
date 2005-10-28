@@ -40,7 +40,7 @@ public class CheckoutAsAction extends CVSAction {
 		}
 		
 		CheckoutAsWizard wizard = new CheckoutAsWizard(getTargetPart(), folders, allowProjectConfig);
-		WizardDialog dialog = new WizardDialog(shell, wizard);
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.open();
 	}
 	

@@ -22,6 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
@@ -389,6 +390,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 */
 	protected ICVSResource[] getSelectedCVSResources() {
 		ArrayList resources = null;
+		IStructuredSelection selection = getSelection();
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
 			Iterator elements = selection.iterator();
@@ -419,6 +421,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 */
 	protected ICVSRemoteFolder[] getSelectedRemoteFolders() {
 		ArrayList resources = null;
+		IStructuredSelection selection = getSelection();
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
 			Iterator elements = selection.iterator();
@@ -449,6 +452,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 */
 	protected ICVSRemoteResource[] getSelectedRemoteResources() {
 		ArrayList resources = null;
+		IStructuredSelection selection = getSelection();
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
 			Iterator elements = selection.iterator();
@@ -579,6 +583,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
      * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
      */
     protected final IResource[] getSelectedResourcesWithOverlap() {
+    	IStructuredSelection selection = getSelection();
         CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
         if (props == null) {
             return Utils.getContributedResources(selection.toArray());
@@ -590,7 +595,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
 	 */
 	protected final IResource[] getSelectedResources() {
-        if (selection == null) return new IResource[0];
+		IStructuredSelection selection = getSelection();
         CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
         if (props == null) {
             return CVSActionSelectionProperties.getNonOverlapping(Utils.getContributedResources(selection.toArray()));

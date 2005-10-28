@@ -120,8 +120,8 @@ public class UnmanageAction extends WorkspaceAction {
 	boolean confirmDeleteProjects() {
 		final int[] result = new int[] { MessageDialog.OK };
 		IProject[] projects = getSelectedProjects();
-		final DeleteProjectDialog dialog = new DeleteProjectDialog(shell, projects);
-		shell.getDisplay().syncExec(new Runnable() {
+		final DeleteProjectDialog dialog = new DeleteProjectDialog(getShell(), projects);
+		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				result[0] = dialog.open();
 			}

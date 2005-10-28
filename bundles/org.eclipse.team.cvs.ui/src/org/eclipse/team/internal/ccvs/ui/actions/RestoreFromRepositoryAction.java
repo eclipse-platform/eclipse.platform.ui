@@ -127,7 +127,7 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
 			return;
 		}
 		RestoreFromRepositoryWizard wizard = new RestoreFromRepositoryWizard(resource, files);
-		WizardDialog dialog = new ResizableWizardDialog(shell, wizard);
+		WizardDialog dialog = new ResizableWizardDialog(getShell(), wizard);
 		dialog.setMinimumPageSize(350, 250);
 		dialog.open();
 	}

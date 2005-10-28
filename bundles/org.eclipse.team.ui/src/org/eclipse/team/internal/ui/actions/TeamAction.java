@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.actions;
 
-
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -22,8 +21,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -47,10 +45,10 @@ import org.eclipse.ui.internal.LegacyResourceSupport;
  */
 public abstract class TeamAction extends ActionDelegate implements IObjectActionDelegate, IViewActionDelegate, IWorkbenchWindowActionDelegate  {
 	// The current selection
-	protected IStructuredSelection selection;
+	private IStructuredSelection selection;
 	
 	// The shell, required for the progress dialog
-	protected Shell shell;
+	private Shell shell;
 
 	// Constants for determining the type of progress. Subclasses may
 	// pass one of these values to the run method.
@@ -156,6 +154,8 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	}
 	
 	protected IStructuredSelection getSelection() {
+		if (selection == null)
+			selection = StructuredSelection.EMPTY;
 		return selection;
 	}
 	
@@ -209,6 +209,8 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 			return shell;
 		} else if (targetPart != null) {
 		    return targetPart.getSite().getShell();
+		} else if (window != null) {
+			return window.getShell();
 		} else {
 			IWorkbench workbench = TeamUIPlugin.getPlugin().getWorkbench();
 			if (workbench == null) return null;
@@ -386,11 +388,15 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	public void init(IViewPart view) {
-		targetPart = view;
+		if(view != null) {
+			this.shell = view.getSite().getShell();
+			this.targetPart = view;
+		}
 	}
 	
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
+		this.shell = window.getShell();	
 		window.getSelectionService().addPostSelectionListener(selectionListener);
 	}
 	

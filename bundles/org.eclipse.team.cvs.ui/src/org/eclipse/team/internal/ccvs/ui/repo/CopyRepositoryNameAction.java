@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
@@ -35,6 +36,7 @@ public class CopyRepositoryNameAction extends CVSAction {
 	}
 	protected ICVSRepositoryLocation[] getSelectedRepositories() {
 		ArrayList repositories = null;
+		IStructuredSelection selection = getSelection();
 		if (!selection.isEmpty()) {
 			repositories = new ArrayList();
 			Iterator elements = selection.iterator();

@@ -256,6 +256,7 @@ public class HistoryView extends ViewPart {
 				ICVSResource[] resources = super.getSelectedCVSResources();
 				if (resources == null || resources.length == 0) {
 					ArrayList logEntrieFiles = null;
+					IStructuredSelection selection = getSelection();
 					if (!selection.isEmpty()) {
 						logEntrieFiles = new ArrayList();
 						Iterator elements = selection.iterator();

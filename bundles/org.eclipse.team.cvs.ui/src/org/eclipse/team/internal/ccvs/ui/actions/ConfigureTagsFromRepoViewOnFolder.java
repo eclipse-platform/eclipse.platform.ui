@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -38,6 +39,7 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 	 */
 	protected ICVSRemoteFolder[] getSelectedRemoteFolders() {
 		ArrayList resources = null;
+		IStructuredSelection selection = getSelection();
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
 			Iterator elements = selection.iterator();

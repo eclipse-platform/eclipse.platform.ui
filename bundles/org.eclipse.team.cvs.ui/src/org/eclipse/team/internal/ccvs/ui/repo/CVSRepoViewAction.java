@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.repo;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
@@ -27,6 +28,7 @@ public abstract class CVSRepoViewAction extends CVSAction {
 	 */
 	protected ICVSRepositoryLocation[] getSelectedRepositoryLocations() {
 		ArrayList tags = new ArrayList();
+		IStructuredSelection selection = getSelection();
 		if (!selection.isEmpty()) {
 			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {

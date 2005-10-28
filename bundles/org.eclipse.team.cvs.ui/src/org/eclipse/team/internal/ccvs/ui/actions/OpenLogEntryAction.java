@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -31,6 +32,7 @@ public class OpenLogEntryAction extends CVSAction {
 	 */
 	protected ILogEntry[] getSelectedLogEntries() {
 		ArrayList entries = null;
+		IStructuredSelection selection = getSelection();
 		if (!selection.isEmpty()) {
 			entries = new ArrayList();
 			Iterator elements = selection.iterator();
