@@ -14,3 +14,5 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.ui.workbench,
  org.junit
 Eclipse-LazyStart: true
+Export-Package: org.eclipse.ui.tests.navigator,
+ org.eclipse.ui.tests.navigator.util
