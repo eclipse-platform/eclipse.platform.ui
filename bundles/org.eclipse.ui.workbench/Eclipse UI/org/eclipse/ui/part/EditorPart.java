@@ -201,7 +201,8 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
     }
 
     /**
-     * Sets the input to this editor.  
+     * Sets the input to this editor.  This method simply updates the internal
+     * member variable.
      * 
      * <p>Unlike most of the other set methods on this class, this method does 
      * not fire a property change. Clients that call this method from a subclass 
@@ -214,10 +215,10 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
      * reach back and call methods on this editor. Care should be taken not to 
      * fire the property change until the editor has fully updated its internal 
      * state to reflect the new input.</p>
-     * 
-     * @deprecated use setInputWithNotify
      *
      * @param input the editor input
+     * 
+     * @see #setInputWithNotify(IEditorInput)
      */
     protected void setInput(IEditorInput input) {
         editorInput = input;
@@ -225,7 +226,7 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
     
     /**
      * Sets the input to this editor and fires a PROP_INPUT property change if
-     * the input has changed.
+     * the input has changed.  This is the convenience method implementation.
      * 
      * <p>Note that firing a property change may cause other objects to reach back
      * and invoke methods on the editor. Care should be taken not to call this method
