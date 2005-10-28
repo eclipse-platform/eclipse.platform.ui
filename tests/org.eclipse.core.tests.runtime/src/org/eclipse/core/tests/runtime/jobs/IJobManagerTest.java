@@ -1645,7 +1645,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****"); 
 				Job[] jobs = Platform.getJobManager().find(null);
 				for (int j = 0; j < jobs.length; j++) {
-					System.out.println("" + jobs[j].getClass().getName() + " state: " + JobManager.printState(jobs[j].getState())); 
+					System.out.println("" + jobs[j] + " state: " + JobManager.printState(jobs[j].getState())); 
 				}
 				System.out.println("**** END DUMP JOB MANAGER INFORMATION ****"); 
 				assertTrue("Timeout waiting for job to start. Job: " + job + ", state: " + job.getState(), false);
