@@ -23,10 +23,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.IUndoManager;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 
-import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringHistoryParticipant;
-import org.eclipse.ltk.internal.core.refactoring.history.ProjectRefactoringHistoryParticipant;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.core.refactoring.history.ProjectRefactoringHistoryListener;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 import org.osgi.framework.BundleContext;
 
@@ -37,7 +38,7 @@ public class RefactoringCorePlugin extends Plugin {
 	
 	private static IUndoContext fRefactoringUndoContext;
 	
-	private IRefactoringHistoryParticipant fHistoryParticipant= null;
+	private IRefactoringHistoryListener fRefactoringHistoryListener= null;
 	
 	public RefactoringCorePlugin() {
 		fgDefault= this;
@@ -48,7 +49,7 @@ public class RefactoringCorePlugin extends Plugin {
 	}
 	
 	public static String getPluginId() {
-		return "org.eclipse.ltk.core.refactoring"; //$NON-NLS-1$
+		return RefactoringCore.ID_PLUGIN;
 	}
 	
 	public static IUndoContext getUndoContext() {
@@ -109,10 +110,10 @@ public class RefactoringCorePlugin extends Plugin {
 	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		final RefactoringHistory history= RefactoringHistory.getInstance();
-		history.connect();
-		fHistoryParticipant= new ProjectRefactoringHistoryParticipant();
-		history.addHistoryParticipant(fHistoryParticipant);
+		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
+		service.connect();
+		fRefactoringHistoryListener= new ProjectRefactoringHistoryListener();
+		service.addHistoryListener(fRefactoringHistoryListener);
 	}
 	
 	public void stop(BundleContext context) throws Exception {
@@ -124,10 +125,10 @@ public class RefactoringCorePlugin extends Plugin {
 		}
 		if (fgUndoManager != null)
 			fgUndoManager.shutdown();
-		final RefactoringHistory history= RefactoringHistory.getInstance();
-		history.disconnect();
-		if (fHistoryParticipant != null)
-			history.removeHistoryParticipant(fHistoryParticipant);
+		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
+		service.disconnect();
+		if (fRefactoringHistoryListener != null)
+			service.removeHistoryListener(fRefactoringHistoryListener);
 		super.stop(context);
 	}
 	

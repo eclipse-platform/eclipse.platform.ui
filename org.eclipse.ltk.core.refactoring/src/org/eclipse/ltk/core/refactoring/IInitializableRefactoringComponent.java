@@ -8,9 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.internal.core.refactoring.history;
+package org.eclipse.ltk.core.refactoring;
 
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 

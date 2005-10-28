@@ -11,11 +11,13 @@
 package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Preferences;
+
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePreferences;
-import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringHistory;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 /**
  * Central access point to access resources managed by the refactoring
@@ -27,6 +29,13 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistory;
  * @since 3.0
  */
 public class RefactoringCore {
+
+	/**
+	 * The id of the Refactoring plug-in (value <code>"org.eclipse.ltk.core.refactoring"</code>).
+	 * 
+	 * @since 3.2
+	 */
+	public static final String ID_PLUGIN= "org.eclipse.ltk.core.refactoring"; //$NON-NLS-1$
 
 	private static IValidationCheckResultQueryFactory fQueryFactory= new DefaultQueryFactory();
 
@@ -50,6 +59,34 @@ public class RefactoringCore {
 	}
 	
 	/**
+	 * Returns the refactoring core preferences.
+	 * <p>
+	 * This method is NOT official API. It is a special method for the
+	 * refactoring UI plug-in to access refactoring preferences.
+	 * </p>
+	 * 
+	 * @return the refactoring preferences
+	 * 
+	 * @since 3.2
+	 */
+	public static Preferences internalGetPreferences() {
+		return RefactoringCorePlugin.getDefault().getPluginPreferences();
+	}
+	
+	/**
+	 * Saves the refactoring core preferences.
+	 * <p>
+	 * This method is NOT official API. It is a special method for the refactoring UI 
+	 * plug-in to access refactoring preferences.
+	 * </p>
+	 * 
+	 * @since 3.2
+	 */
+	public static void internalSavePreferences() {
+		RefactoringCorePlugin.getDefault().savePluginPreferences();
+	}
+	
+	/**
 	 * Returns the singleton undo manager for the refactoring undo
 	 * stack.
 	 * 
@@ -60,18 +97,18 @@ public class RefactoringCore {
 	}
 	
 	/**
-	 * Returns the singleton refactoring history.
+	 * Returns the singleton refactoring history service.
 	 * <p>
 	 * Note: This API is considered experimental and may change in the near
 	 * future.
 	 * </p>
 	 * 
-	 * @return the refactoring history
+	 * @return the refactoring history service
 	 * 
 	 * @since 3.2
 	 */
-	public static IRefactoringHistory getRefactoringHistory() {
-		return RefactoringHistory.getInstance();
+	public static IRefactoringHistoryService getRefactoringHistoryService() {
+		return RefactoringHistoryService.getInstance();
 	}
 
 	/**

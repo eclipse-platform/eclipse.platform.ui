@@ -11,6 +11,7 @@
 package org.eclipse.ltk.internal.core.refactoring.history;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
@@ -32,28 +33,7 @@ import org.w3c.dom.Node;
  * 
  * @since 3.2
  */
-final class XmlRefactoringSessionTransformer implements IRefactoringSessionTransformer {
-
-	/** The comment attribute */
-	public static final String ATTRIBUTE_COMMENT= "comment"; //$NON-NLS-1$
-
-	/** The description attribute */
-	public static final String ATTRIBUTE_DESCRIPTION= "description"; //$NON-NLS-1$
-
-	/** The id attribute */
-	public static final String ATTRIBUTE_ID= "id"; //$NON-NLS-1$
-
-	/** The project attribute */
-	public static final String ATTRIBUTE_PROJECT= "project"; //$NON-NLS-1$
-
-	/** The version attribute */
-	public static final String ATTRIBUTE_VERSION= "version"; //$NON-NLS-1$
-
-	/** The refactoring element */
-	public static final String ELEMENT_REFACTORING= "refactoring"; //$NON-NLS-1$
-
-	/** The session element */
-	public static final String ELEMENT_SESSION= "session"; //$NON-NLS-1$
+public final class XmlRefactoringSessionTransformer implements IRefactoringSessionTransformer {
 
 	/** The version value */
 	private static final String VALUE_VERSION= "1.0"; //$NON-NLS-1$
@@ -68,32 +48,48 @@ final class XmlRefactoringSessionTransformer implements IRefactoringSessionTrans
 	private Node fSession= null;
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
-	public void beginRefactoring(final String id, final String project, final String description, final String comment) throws CoreException {
+	public void beginRefactoring(final String id, long stamp, final String project, final String description, final String comment) throws CoreException {
 		Assert.isNotNull(id);
 		Assert.isNotNull(description);
-		if (fDocument != null && fSession != null && fRefactoring == null) {
+		try {
+			if (fDocument == null)
+				fDocument= DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+		} catch (ParserConfigurationException exception) {
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+		} catch (FactoryConfigurationError exception) {
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+		}
+		if (fRefactoring == null) {
 			try {
-				fRefactoring= fDocument.createElement(ELEMENT_REFACTORING);
+				fRefactoring= fDocument.createElement(IRefactoringSerializationConstants.ELEMENT_REFACTORING);
 				final NamedNodeMap attributes= fRefactoring.getAttributes();
-				Attr attribute= fDocument.createAttribute(ATTRIBUTE_ID);
+				Attr attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_ID);
 				attribute.setValue(id);
 				attributes.setNamedItem(attribute);
-				attribute= fDocument.createAttribute(ATTRIBUTE_DESCRIPTION);
+				if (stamp >= 0) {
+					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_STAMP);
+					attribute.setValue(new Long(stamp).toString());
+					attributes.setNamedItem(attribute);
+				}
+				attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_DESCRIPTION);
 				attribute.setValue(description);
 				attributes.setNamedItem(attribute);
 				if (comment != null) {
-					attribute= fDocument.createAttribute(ATTRIBUTE_COMMENT);
+					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT);
 					attribute.setValue(comment);
 					attributes.setNamedItem(attribute);
 				}
 				if (project != null) {
-					attribute= fDocument.createAttribute(ATTRIBUTE_PROJECT);
+					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_PROJECT);
 					attribute.setValue(project);
 					attributes.setNamedItem(attribute);
 				}
-				fSession.appendChild(fRefactoring);
+				if (fSession == null)
+					fDocument.appendChild(fRefactoring);
+				else
+					fSession.appendChild(fRefactoring);
 			} catch (DOMException exception) {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 			}
@@ -101,18 +97,18 @@ final class XmlRefactoringSessionTransformer implements IRefactoringSessionTrans
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	public void beginSession(final String comment) throws CoreException {
 		if (fDocument == null) {
 			try {
 				fDocument= DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-				fSession= fDocument.createElement(ELEMENT_SESSION);
-				Attr attribute= fDocument.createAttribute(ATTRIBUTE_VERSION);
+				fSession= fDocument.createElement(IRefactoringSerializationConstants.ELEMENT_SESSION);
+				Attr attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);
 				attribute.setValue(VALUE_VERSION);
 				fSession.getAttributes().setNamedItem(attribute);
 				if (comment != null) {
-					attribute= fDocument.createAttribute(ATTRIBUTE_COMMENT);
+					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT);
 					attribute.setValue(comment);
 					fSession.getAttributes().setNamedItem(attribute);
 				}
@@ -126,7 +122,7 @@ final class XmlRefactoringSessionTransformer implements IRefactoringSessionTrans
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	public void createArgument(final String name, final String value) throws CoreException {
 		Assert.isNotNull(name);
@@ -145,21 +141,21 @@ final class XmlRefactoringSessionTransformer implements IRefactoringSessionTrans
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	public void endRefactoring() {
 		fRefactoring= null;
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	public void endSession() {
 		fSession= null;
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	public Object getResult() {
 		final Document document= fDocument;

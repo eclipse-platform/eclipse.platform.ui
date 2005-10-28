@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +18,17 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * Descriptor object of a refactoring.
+ * <p>
+ * A refactoring descriptor contains refactoring-specific data which allows to
+ * framework to completely reconstruct a particular refactoring instance and
+ * execute it on the workspace. Refactoring descriptors are identified by their
+ * refactoring id {@link #getID()} and their time stamps {@link #getTimeStamp()}.
+ * </p>
+ * <p>
+ * Refactoring descriptors are potentially heavyweight objects which should not
+ * be held on to. Use refactoring descriptor handles
+ * {@link RefactoringDescriptorHandle} to store refactoring information.
+ * </p>
  * <p>
  * This class is not indented to be subclassed outside the refactoring
  * framework.
@@ -29,10 +39,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * 
  * @since 3.2
  */
-public class RefactoringDescriptor implements Comparable, Serializable {
-
-	/** The serial version UID */
-	private static final long serialVersionUID= 1L;
+public class RefactoringDescriptor implements Comparable {
 
 	/** The map of arguments (element type: &lt;String, String&gt;) */
 	private final Map fArguments;
@@ -87,8 +94,8 @@ public class RefactoringDescriptor implements Comparable, Serializable {
 		fArguments= Collections.unmodifiableMap(new HashMap(arguments));
 	}
 
-	/*
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	/**
+	 * {@inheritDoc}
 	 */
 	public final int compareTo(final Object object) {
 		if (object instanceof RefactoringDescriptor) {
@@ -98,8 +105,8 @@ public class RefactoringDescriptor implements Comparable, Serializable {
 		return 0;
 	}
 
-	/*
-	 * @see java.lang.Object#equals(java.lang.Object)
+	/**
+	 * {@inheritDoc}
 	 */
 	public final boolean equals(final Object object) {
 		if (object instanceof RefactoringDescriptor) {
@@ -166,8 +173,8 @@ public class RefactoringDescriptor implements Comparable, Serializable {
 		return fTimeStamp;
 	}
 
-	/*
-	 * @see java.lang.Object#hashCode()
+	/**
+	 * {@inheritDoc}
 	 */
 	public final int hashCode() {
 		return (int) fTimeStamp;
@@ -199,8 +206,8 @@ public class RefactoringDescriptor implements Comparable, Serializable {
 		fTimeStamp= stamp;
 	}
 
-	/*
-	 * @see java.lang.Object#toString()
+	/**
+	 * {@inheritDoc}
 	 */
 	public final String toString() {
 

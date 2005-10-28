@@ -23,24 +23,23 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * Factory class to create a refactoring and its associated refactoring
- * arguments based on a refactoring descriptor.
+ * Factory class to create refactoring components from refactoring descriptors.
  * 
  * @since 3.2
  */
-public final class RefactoringSessionFactory {
+public final class RefactoringComponentFactory {
 
 	/** The singleton instance */
-	private static RefactoringSessionFactory fInstance= null;
+	private static RefactoringComponentFactory fInstance= null;
 
 	/**
-	 * Returns the singleton instance of the refactoring factory.
+	 * Returns the singleton instance of the refactoring component factory.
 	 * 
 	 * @return the singleton instance
 	 */
-	public static RefactoringSessionFactory getInstance() {
+	public static RefactoringComponentFactory getInstance() {
 		if (fInstance == null)
-			fInstance= new RefactoringSessionFactory();
+			fInstance= new RefactoringComponentFactory();
 		return fInstance;
 	}
 
@@ -54,9 +53,9 @@ public final class RefactoringSessionFactory {
 	private final Map fRefactoringMap= new HashMap();
 
 	/**
-	 * Creates a new refactoring session factory.
+	 * Creates a new refactoring component factory.
 	 */
-	private RefactoringSessionFactory() {
+	private RefactoringComponentFactory() {
 		// Not instantiatable
 	}
 

@@ -13,7 +13,14 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * Descriptor object of a recorded refactoring session.
+ * Descriptor object of a refactoring session. Refactoring session descriptors
+ * encapsulate a series of refactoring descriptors and provide additional
+ * information such as version information and comments.
+ * <p>
+ * Refactoring session descriptors are potentially heavyweight objects which
+ * should not be held on to. Use refactoring descriptor handles
+ * {@link RefactoringDescriptorHandle} to store refactoring information.
+ * </p>
  * <p>
  * This class is not indented to be subclassed outside the refactoring
  * framework.

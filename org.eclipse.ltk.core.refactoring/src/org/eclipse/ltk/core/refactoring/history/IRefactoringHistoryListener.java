@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.internal.core.refactoring.history;
+package org.eclipse.ltk.core.refactoring.history;
 
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
 /**
- * Interface for objects which participate in refactoring history maintenance.
+ * Interface for refactoring history listeners.
  * <p>
  * This interface is intended to be implemented by clients.
  * </p>
@@ -25,43 +25,43 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
  * 
  * @since 3.2
  */
-public interface IRefactoringHistoryParticipant {
+public interface IRefactoringHistoryListener {
 
 	/**
-	 * Connects the participant to the refactoring history.
+	 * Connects the listener to the refactoring history service.
 	 * <p>
-	 * If the participant is already connected, nothing happens.
+	 * If the listener is already connected, nothing happens.
 	 * </p>
 	 */
 	public void connect();
 
 	/**
-	 * Disconnects the participant from the refactoring history.
+	 * Gets called if the specified refactoring descriptor is pushed onto the
+	 * refactoring undo stack.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor to push
+	 * @throws CoreException
+	 *             if an error occurs
+	 */
+	public void descriptorAdded(RefactoringDescriptor descriptor) throws CoreException;
+
+	/**
+	 * Gets called if the specified refactoring descriptor is popped from the
+	 * refactoring undo stack.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor to pop
+	 * @throws CoreException
+	 *             if an error occurs
+	 */
+	public void descriptorRemoved(RefactoringDescriptor descriptor) throws CoreException;
+
+	/**
+	 * Disconnects the listener from the refactoring history service.
 	 * <p>
-	 * If the participant is not connected, nothing happens.
+	 * If the listener is not connected, nothing happens.
 	 * </p>
 	 */
 	public void disconnect();
-
-	/**
-	 * Pops the specified refactoring descriptor from the top of the refactoring
-	 * history.
-	 * 
-	 * @param descriptor
-	 *            the descriptor to pop
-	 * @throws CoreException
-	 *             if an error occurs
-	 */
-	public void pop(RefactoringDescriptor descriptor) throws CoreException;
-
-	/**
-	 * Pushes the specified refactoring descriptor onto the refactoring history
-	 * stack.
-	 * 
-	 * @param descriptor
-	 *            the descriptor to push
-	 * @throws CoreException
-	 *             if an error occurs
-	 */
-	public void push(RefactoringDescriptor descriptor) throws CoreException;
 }

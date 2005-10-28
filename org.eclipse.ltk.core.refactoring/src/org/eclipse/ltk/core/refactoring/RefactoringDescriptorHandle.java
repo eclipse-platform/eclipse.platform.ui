@@ -8,14 +8,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.internal.core.refactoring.history;
-
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 /**
  * Handle to a refactoring descriptor.
+ * <p>
+ * Refactoring descriptors are exposed by the refactoring history service as
+ * lightweight handle objects. The refactoring history service may hand out any
+ * number of handles for a given descriptor. Handles only offer direct access to
+ * the time stamp {@link #getTimeStamp()} and description
+ * {@link #getDescription()}. In order to access other information such as
+ * arguments and comments, clients have to resolve the handle by calling
+ * {@link #resolveDescriptor()} to obtain the refactoring descriptor.
+ * </p>
+ * <p>
+ * Refactoring descriptors are potentially heavyweight objects which should not
+ * be held on to. Handles which are retrieved from external sources may
+ * encapsulate refactoring descriptors and should not be held in memory as well.
+ * </p>
  * <p>
  * This class is not intended to be subclassed and instantiated by clients.
  * </p>
@@ -70,12 +83,16 @@ public class RefactoringDescriptorHandle {
 
 	/**
 	 * Resolves this handle and returns the associated refactoring descriptor.
+	 * <p>
+	 * This method is not intended to be overridden outside the refactoring
+	 * framework.
+	 * </p>
 	 * 
 	 * @return the refactoring descriptor, or <code>null</code>
 	 */
 	public RefactoringDescriptor resolveDescriptor() {
 		RefactoringDescriptor descriptor= null;
-		final RefactoringHistory history= RefactoringHistory.getInstance();
+		final RefactoringHistoryService history= RefactoringHistoryService.getInstance();
 		try {
 			history.connect();
 			descriptor= history.resolveDescriptor(this);
@@ -83,5 +100,22 @@ public class RefactoringDescriptorHandle {
 			history.disconnect();
 		}
 		return descriptor;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String toString() {
+
+		final StringBuffer buffer= new StringBuffer(128);
+
+		buffer.append(getClass().getName());
+		buffer.append("[timeStamp="); //$NON-NLS-1$
+		buffer.append(fTimeStamp);
+		buffer.append(",description="); //$NON-NLS-1$
+		buffer.append(fDescription);
+		buffer.append("]"); //$NON-NLS-1$
+
+		return buffer.toString();
 	}
 }

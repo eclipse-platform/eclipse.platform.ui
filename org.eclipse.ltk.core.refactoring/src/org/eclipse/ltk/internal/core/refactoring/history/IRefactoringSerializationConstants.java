@@ -15,7 +15,7 @@ package org.eclipse.ltk.internal.core.refactoring.history;
  * 
  * @since 3.2
  */
-public interface IXmlRefactoringConstants {
+public interface IRefactoringSerializationConstants {
 
 	/** The output method */
 	public static final String OUTPUT_METHOD= "xml"; //$NON-NLS-1$

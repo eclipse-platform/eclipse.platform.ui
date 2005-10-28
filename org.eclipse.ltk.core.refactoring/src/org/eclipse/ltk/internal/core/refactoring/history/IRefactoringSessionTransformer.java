@@ -15,12 +15,6 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Interface for objects which transform refactoring sessions and associated
  * refactorings.
- * <p>
- * This interface is intended to be implemented by clients.
- * </p>
- * <p>
- * Note: This API is considered experimental and may change in the near future.
- * </p>
  * 
  * @since 3.2
  */
@@ -31,7 +25,7 @@ public interface IRefactoringSessionTransformer {
 	 * arguments.
 	 * <p>
 	 * Calls to
-	 * {@link IRefactoringSessionTransformer#beginRefactoring(String, String, String, String)}
+	 * {@link IRefactoringSessionTransformer#beginRefactoring(String, long, String, String, String)}
 	 * must be balanced with calls to
 	 * {@link IRefactoringSessionTransformer#endRefactoring()}. If the
 	 * transformer is already processing a refactoring, nothing happens.
@@ -39,6 +33,8 @@ public interface IRefactoringSessionTransformer {
 	 * 
 	 * @param id
 	 *            the unique identifier of the refactoring
+	 * @param stamp
+	 *            the time stamp of the refactoring, or <code>-1</code>
 	 * @param project
 	 *            the non-empty name of the project this refactoring is
 	 *            associated with, or <code>null</code>
@@ -50,7 +46,7 @@ public interface IRefactoringSessionTransformer {
 	 * @throws CoreException
 	 *             if an error occurs while creating a new refactoring
 	 */
-	public void beginRefactoring(String id, String project, String description, String comment) throws CoreException;
+	public void beginRefactoring(String id, long stamp, String project, String description, String comment) throws CoreException;
 
 	/**
 	 * Begins the transformation of a refactoring session.

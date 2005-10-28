@@ -1,0 +1,33 @@
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.ltk.core.refactoring;
+
+/**
+ * Constants for refactoring preferences keys.
+ * <p>
+ * This class is NOT official API. It is used by the refactoring UI plug-in to
+ * access refactoring preferences.
+ * </p>
+ * 
+ * @since 3.2
+ */
+public final class RefactoringPreferenceConstants {
+
+	/** The project refactoring history preference */
+	public static final String PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY= "org.eclipse.ltk.core.refactoring.enable.project.refactoring.history"; //$NON-NLS-1$
+
+	/** The workspace refactoring history preference */
+	public static final String PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY= "org.eclipse.ltk.core.refactoring.enable.workspace.refactoring.history"; //$NON-NLS-1$
+
+	private RefactoringPreferenceConstants() {
+		// Not for instantiation
+	}
+}
