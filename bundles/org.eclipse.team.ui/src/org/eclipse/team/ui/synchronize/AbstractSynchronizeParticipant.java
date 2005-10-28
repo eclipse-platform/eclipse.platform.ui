@@ -29,7 +29,7 @@ import org.eclipse.ui.PartInitException;
 
 /**
  * This class is the abstract base class for all synchronize view participants. Clients must subclass
- * this class instead of directly implementing {@link AbstractSynchronizeParticipant}.
+ * this class instead of directly implementing {@link ISynchronizeParticipant}.
  * <p>
  * This class provides lifecycle support and hooks for configuration of synchronize view pages.
  * </p>
