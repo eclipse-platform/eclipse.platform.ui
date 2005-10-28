@@ -15,24 +15,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.core.expressions.ElementHandler;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ExpressionConverter;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.CommonCommandPersistence;
 
 /**
  * <p>
@@ -41,23 +35,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.1
  */
-final class HandlerPersistence {
-
-	/**
-	 * The name of the id attribute, which is used on command definitions.
-	 */
-	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-
-	/**
-	 * The name of the command identifier attribute, which appears on a handler
-	 * submission.
-	 */
-	private static final String ATTRIBUTE_COMMAND_ID = "commandId"; //$NON-NLS-1$
-
-	/**
-	 * The name of the class attribute, which appears on a handler definition.
-	 */
-	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
+final class HandlerPersistence extends CommonCommandPersistence {
 
 	/**
 	 * The name of the default handler attribute, which appears on a command
@@ -66,20 +44,15 @@ final class HandlerPersistence {
 	private static final String ATTRIBUTE_DEFAULT_HANDLER = "defaultHandler"; //$NON-NLS-1$
 
 	/**
-	 * The name of the element storing a command.
-	 */
-	private static final String ELEMENT_COMMAND = "command"; //$NON-NLS-1$
-
-	/**
 	 * The name of the active when element, which appears on a handler
 	 * definition.
 	 */
 	private static final String ELEMENT_ACTIVE_WHEN = "activeWhen"; //$NON-NLS-1$
 
 	/**
-	 * The name of the class element, which appears on a handler definition.
+	 * The name of the element storing a command.
 	 */
-	private static final String ELEMENT_CLASS = ATTRIBUTE_CLASS;
+	private static final String ELEMENT_COMMAND = "command"; //$NON-NLS-1$
 
 	/**
 	 * The name of the default handler element, which appears on a command
@@ -114,7 +87,7 @@ final class HandlerPersistence {
 	 */
 	private static final String EXTENSION_HANDLERS = PlatformUI.PLUGIN_ID + '.'
 			+ IWorkbenchConstants.PL_HANDLERS;
-	
+
 	/**
 	 * The handler activations that have come from the registry. This is used to
 	 * flush the activations when the registry is re-read. This value is never
@@ -144,49 +117,6 @@ final class HandlerPersistence {
 	private static final int INDEX_HANDLER_SUBMISSIONS = 2;
 
 	/**
-	 * Whether the preference and registry change listeners have been attached
-	 * yet.
-	 */
-    private static boolean listenersAttached = false;
-
-	/**
-	 * Inserts the given element into the indexed two-dimensional array in the
-	 * array at the index. The array is grown as necessary.
-	 * 
-	 * @param elementToAdd
-	 *            The element to add to the indexed array; may be
-	 *            <code>null</code>
-	 * @param indexedArray
-	 *            The two-dimensional array that is indexed by element type;
-	 *            must not be <code>null</code>.
-	 * @param index
-	 *            The index at which the element should be added; must be a
-	 *            valid index.
-	 * @param currentCount
-	 *            The current number of items in the array at the index.
-	 */
-	private static final void addElementToIndexedArray(
-			final IConfigurationElement elementToAdd,
-			final IConfigurationElement[][] indexedArray, final int index,
-			final int currentCount) {
-		final IConfigurationElement[] elements;
-		if (currentCount == 0) {
-			elements = new IConfigurationElement[1];
-			indexedArray[index] = elements;
-		} else {
-			if (currentCount >= indexedArray[index].length) {
-				final IConfigurationElement[] copy = new IConfigurationElement[indexedArray[index].length * 2];
-				System.arraycopy(indexedArray[index], 0, copy, 0, currentCount);
-				elements = copy;
-				indexedArray[index] = elements;
-			} else {
-				elements = indexedArray[index];
-			}
-		}
-		elements[currentCount] = elementToAdd;
-	}
-	
-	/**
 	 * Deactivates all of the activations made by this class, and then clears
 	 * the collection. This should be called before every read.
 	 * 
@@ -201,13 +131,160 @@ final class HandlerPersistence {
 	}
 
 	/**
+	 * Reads the default handlers from an array of command elements from the
+	 * commands extension point.
+	 * 
+	 * @param configurationElements
+	 *            The configuration elements in the commands extension point;
+	 *            must not be <code>null</code>, but may be empty.
+	 * @param configurationElementCount
+	 *            The number of configuration elements that are really in the
+	 *            array.
+	 * @param handlerService
+	 *            The handler service to which the handlers should be added;
+	 *            must not be <code>null</code>.
+	 */
+	private static final void readDefaultHandlersFromCommandsExtensionPoint(
+			final IConfigurationElement[] configurationElements,
+			final int configurationElementCount,
+			final IHandlerService handlerService) {
+		for (int i = 0; i < configurationElementCount; i++) {
+			final IConfigurationElement configurationElement = configurationElements[i];
+
+			/*
+			 * Read out the command identifier. This was already checked by
+			 * <code>CommandPersistence</code>, so we'll just ignore any
+			 * problems here.
+			 */
+			final String commandId = readOptional(configurationElement,
+					ATTRIBUTE_ID);
+			if (commandId == null) {
+				continue;
+			}
+
+			// Check to see if we have a default handler of any kind.
+			if ((configurationElement.getAttribute(ATTRIBUTE_DEFAULT_HANDLER) == null)
+					&& (configurationElement
+							.getChildren(ELEMENT_DEFAULT_HANDLER).length == 0)) {
+				continue;
+			}
+
+			handlerActivations.add(handlerService.activateHandler(commandId,
+					new HandlerProxy(configurationElement,
+							ATTRIBUTE_DEFAULT_HANDLER)));
+		}
+	}
+
+	/**
+	 * Reads all of the handlers from the handlers extension point.
+	 * 
+	 * @param configurationElements
+	 *            The configuration elements in the commands extension point;
+	 *            must not be <code>null</code>, but may be empty.
+	 * @param configurationElementCount
+	 *            The number of configuration elements that are really in the
+	 *            array.
+	 * @param handlerService
+	 *            The handler service to which the handlers should be added;
+	 *            must not be <code>null</code>.
+	 */
+	private static final void readHandlersFromHandlersExtensionPoint(
+			final IConfigurationElement[] configurationElements,
+			final int configurationElementCount,
+			final IHandlerService handlerService) {
+		final List warningsToLog = new ArrayList(1);
+
+		for (int i = 0; i < configurationElementCount; i++) {
+			final IConfigurationElement configurationElement = configurationElements[i];
+
+			// Read out the command identifier.
+			final String commandId = readRequired(configurationElement,
+					ATTRIBUTE_COMMAND_ID, warningsToLog,
+					"Handlers need a command id"); //$NON-NLS-1$
+			if (commandId == null) {
+				continue;
+			}
+
+			// Check to see if we have a handler class.
+			if (!checkClass(configurationElement, warningsToLog,
+					"Handlers need a class", commandId)) { //$NON-NLS-1$
+				continue;
+			}
+
+			// Get the activeWhen and enabledWhen expressions.
+			final Expression activeWhenExpression = readWhenElement(
+					configurationElement, ELEMENT_ACTIVE_WHEN, commandId,
+					warningsToLog);
+			final Expression enabledWhenExpression = readWhenElement(
+					configurationElement, ELEMENT_ENABLED_WHEN, commandId,
+					warningsToLog);
+
+			handlerActivations.add(handlerService.activateHandler(commandId,
+					new HandlerProxy(configurationElement, ATTRIBUTE_CLASS,
+							enabledWhenExpression, handlerService),
+					activeWhenExpression));
+		}
+
+		logWarnings(
+				warningsToLog,
+				"Warnings while parsing the handlers from the 'org.eclipse.ui.handlers' extension point."); //$NON-NLS-1$
+	}
+
+	/**
+	 * Reads all of the handler submissions from the commands extension point.
+	 * 
+	 * @param configurationElements
+	 *            The configuration elements in the commands extension point;
+	 *            must not be <code>null</code>, but may be empty.
+	 * @param configurationElementCount
+	 *            The number of configuration elements that are really in the
+	 *            array.
+	 * @param handlerService
+	 *            The handler service to which the handlers should be added;
+	 *            must not be <code>null</code>.
+	 */
+	private static final void readHandlerSubmissionsFromCommandsExtensionPoint(
+			final IConfigurationElement[] configurationElements,
+			final int configurationElementCount,
+			final IHandlerService handlerService) {
+		final List warningsToLog = new ArrayList(1);
+
+		for (int i = 0; i < configurationElementCount; i++) {
+			final IConfigurationElement configurationElement = configurationElements[i];
+
+			// Read out the command identifier.
+			final String commandId = readRequired(configurationElement,
+					ATTRIBUTE_COMMAND_ID, warningsToLog,
+					"Handler submissions need a command id"); //$NON-NLS-1$
+			if (commandId == null) {
+				continue;
+			}
+
+			handlerActivations.add(handlerService.activateHandler(commandId,
+					new LegacyHandlerWrapper(new LegacyHandlerProxy(
+							configurationElement))));
+		}
+
+		logWarnings(
+				warningsToLog,
+				"Warnings while parsing the handler submissions from the 'org.eclipse.ui.commands' extension point."); //$NON-NLS-1$
+	}
+
+	/**
+	 * Constructs a new instance of <code>HandlerPersistence</code>.
+	 */
+	HandlerPersistence() {
+		// Do nothing.
+	}
+
+	/**
 	 * Reads all of the handlers from the registry
 	 * 
 	 * @param handlerService
 	 *            The handler service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
 	 */
-	static final void read(final IHandlerService handlerService) {
+	final void read(final IHandlerService handlerService) {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int commandDefinitionCount = 0;
@@ -259,7 +336,7 @@ final class HandlerPersistence {
 		readHandlersFromHandlersExtensionPoint(
 				indexedConfigurationElements[INDEX_HANDLER_DEFINITIONS],
 				handlerDefinitionCount, handlerService);
-		
+
 		/*
 		 * Adds listener so that future registry changes trigger an update of
 		 * the command manager automatically.
@@ -305,275 +382,6 @@ final class HandlerPersistence {
 			}, PlatformUI.PLUGIN_ID);
 
 			listenersAttached = true;
-		}
-	}
-
-	/**
-	 * Reads the default handlers from an array of command elements from the
-	 * commands extension point.
-	 * 
-	 * @param configurationElements
-	 *            The configuration elements in the commands extension point;
-	 *            must not be <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param handlerService
-	 *            The handler service to which the handlers should be added;
-	 *            must not be <code>null</code>.
-	 */
-	private static final void readDefaultHandlersFromCommandsExtensionPoint(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount,
-			final IHandlerService handlerService) {
-		for (int i = 0; i < configurationElementCount; i++) {
-			final IConfigurationElement configurationElement = configurationElements[i];
-
-			// Read out the command identifier.
-			final String commandId = configurationElement
-					.getAttribute(ATTRIBUTE_ID);
-			if ((commandId == null) || (commandId.length() == 0)) {
-				continue;
-			}
-
-			// Check to see if we have a default handler of any kind.
-			if ((configurationElement.getAttribute(ATTRIBUTE_DEFAULT_HANDLER) == null)
-					&& (configurationElement
-							.getChildren(ELEMENT_DEFAULT_HANDLER).length == 0)) {
-				continue;
-			}
-
-			handlerActivations.add(handlerService.activateHandler(commandId,
-					new HandlerProxy(configurationElement,
-							ATTRIBUTE_DEFAULT_HANDLER)));
-		}
-	}
-
-	/**
-	 * Reads all of the handlers from the handlers extension point.
-	 * 
-	 * @param configurationElements
-	 *            The configuration elements in the commands extension point;
-	 *            must not be <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param handlerService
-	 *            The handler service to which the handlers should be added;
-	 *            must not be <code>null</code>.
-	 */
-	private static final void readHandlersFromHandlersExtensionPoint(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount,
-			final IHandlerService handlerService) {
-		/*
-		 * If necessary, this list of status items will be constructed. It will
-		 * only contains instances of <code>IStatus</code>.
-		 */
-		List warningsToLog = null;
-
-		for (int i = 0; i < configurationElementCount; i++) {
-			final IConfigurationElement configurationElement = configurationElements[i];
-
-			// Read out the command identifier.
-			final String commandId = configurationElement
-					.getAttribute(ATTRIBUTE_COMMAND_ID);
-			if ((commandId == null) || (commandId.length() == 0)) {
-				// The id should never be null. This is invalid.
-				final String message = "Handlers need a command id: plug-in='" //$NON-NLS-1$
-						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				if (warningsToLog == null) {
-					warningsToLog = new ArrayList();
-				}
-				warningsToLog.add(status);
-				continue;
-			}
-
-			// Check to see if we have a handler class.
-			if ((configurationElement.getAttribute(ATTRIBUTE_CLASS) == null)
-					&& (configurationElement.getChildren(ELEMENT_CLASS).length == 0)) {
-				// The id should never be null. This is invalid.
-				final String message = "Handlers need a class: plug-in='" //$NON-NLS-1$
-						+ configurationElement.getNamespace() + "', commandId=" //$NON-NLS-1$
-						+ commandId + "'."; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				if (warningsToLog == null) {
-					warningsToLog = new ArrayList();
-				}
-				warningsToLog.add(status);
-				continue;
-			}
-
-			// Check to see if we have an activeWhen expression.
-			final IConfigurationElement[] activeWhenElements = configurationElement
-					.getChildren(ELEMENT_ACTIVE_WHEN);
-			Expression activeWhenExpression = null;
-			if (activeWhenElements.length > 0) {
-				// Check if we have too many active when elements.
-				if (activeWhenElements.length > 1) {
-					// There should only be one activeWhen element
-					final String message = "Handlers should only have one activeWhen element: plug-in='" //$NON-NLS-1$
-							+ configurationElement.getNamespace()
-							+ "', commandId=" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					if (warningsToLog == null) {
-						warningsToLog = new ArrayList();
-					}
-					warningsToLog.add(status);
-					continue;
-				}
-
-				// Convert the activeWhen element into an expression.
-				final ElementHandler elementHandler = ElementHandler
-						.getDefault();
-				final ExpressionConverter converter = ExpressionConverter
-						.getDefault();
-				try {
-					activeWhenExpression = elementHandler.create(converter,
-							activeWhenElements[0]);
-				} catch (final CoreException e) {
-					// There activeWhen expression could not be created.
-					final String message = "Problem creating activeWhen element: plug-in='" //$NON-NLS-1$
-							+ configurationElement.getNamespace()
-							+ "', commandId=" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					if (warningsToLog == null) {
-						warningsToLog = new ArrayList();
-					}
-					warningsToLog.add(status);
-				}
-			}
-
-			// Check to see if we have an enabledWhen expression.
-			final IConfigurationElement[] enabledWhenElements = configurationElement
-					.getChildren(ELEMENT_ENABLED_WHEN);
-			Expression enabledWhenExpression = null;
-			if (enabledWhenElements.length > 0) {
-				// Check if we have too many enabled when elements.
-				if (enabledWhenElements.length > 1) {
-					// There should only be one enabledWhen element
-					final String message = "Handlers should only have one enabledWhen element: plug-in='" //$NON-NLS-1$
-							+ configurationElement.getNamespace()
-							+ "', commandId=" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					if (warningsToLog == null) {
-						warningsToLog = new ArrayList();
-					}
-					warningsToLog.add(status);
-					continue;
-				}
-
-				// Convert the enabledWhen element into an expression.
-				final ElementHandler elementHandler = ElementHandler
-						.getDefault();
-				final ExpressionConverter converter = ExpressionConverter
-						.getDefault();
-				try {
-					enabledWhenExpression = elementHandler.create(converter,
-							enabledWhenElements[0]);
-				} catch (final CoreException e) {
-					// There enabledWhen expression could not be created.
-					final String message = "Problem creating enabledWhen element: plug-in='" //$NON-NLS-1$
-							+ configurationElement.getNamespace()
-							+ "', commandId=" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					if (warningsToLog == null) {
-						warningsToLog = new ArrayList();
-					}
-					warningsToLog.add(status);
-				}
-			}
-
-			if (activeWhenExpression != null) {
-				handlerActivations.add(handlerService.activateHandler(
-						commandId, new HandlerProxy(configurationElement,
-								ATTRIBUTE_CLASS, enabledWhenExpression,
-								handlerService), activeWhenExpression));
-			} else {
-				handlerActivations.add(handlerService.activateHandler(
-						commandId, new HandlerProxy(configurationElement,
-								ATTRIBUTE_CLASS, enabledWhenExpression,
-								handlerService)));
-			}
-		}
-
-		// If there were any warnings, then log them now.
-		if (warningsToLog != null) {
-			final String message = "Warnings while parsing the handlers from the 'org.eclipse.ui.handlers' extension point."; //$NON-NLS-1$
-			final IStatus status = new MultiStatus(
-					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
-							.toArray(new IStatus[warningsToLog.size()]),
-					message, null);
-			WorkbenchPlugin.log(status);
-		}
-	}
-
-	/**
-	 * Reads all of the handler submissions from the commands extension point.
-	 * 
-	 * @param configurationElements
-	 *            The configuration elements in the commands extension point;
-	 *            must not be <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param handlerService
-	 *            The handler service to which the handlers should be added;
-	 *            must not be <code>null</code>.
-	 */
-	private static final void readHandlerSubmissionsFromCommandsExtensionPoint(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount,
-			final IHandlerService handlerService) {
-		/*
-		 * If necessary, this list of status items will be constructed. It will
-		 * only contains instances of <code>IStatus</code>.
-		 */
-		List warningsToLog = null;
-
-		for (int i = 0; i < configurationElementCount; i++) {
-			final IConfigurationElement configurationElement = configurationElements[i];
-
-			// Read out the command identifier.
-			final String commandId = configurationElement
-					.getAttribute(ATTRIBUTE_COMMAND_ID);
-			if ((commandId == null) || (commandId.length() == 0)) {
-				// The id should never be null. This is invalid.
-				final String message = "Handler submissions need a command id: '" //$NON-NLS-1$
-						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				if (warningsToLog == null) {
-					warningsToLog = new ArrayList();
-				}
-				warningsToLog.add(status);
-				continue;
-			}
-
-			handlerActivations.add(handlerService.activateHandler(commandId,
-					new LegacyHandlerWrapper(new LegacyHandlerProxy(
-							configurationElement))));
-		}
-
-		// If there were any warnings, then log them now.
-		if (warningsToLog != null) {
-			final String message = "Warnings while parsing the handler submissions from the 'org.eclipse.ui.commands' extension point."; //$NON-NLS-1$
-			final IStatus status = new MultiStatus(
-					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
-							.toArray(new IStatus[warningsToLog.size()]),
-					message, null);
-			WorkbenchPlugin.log(status);
 		}
 	}
 }

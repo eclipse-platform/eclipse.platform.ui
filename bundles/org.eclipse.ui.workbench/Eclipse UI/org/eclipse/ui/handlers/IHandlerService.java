@@ -77,8 +77,8 @@ public interface IHandlerService extends IServiceWithSources {
 	 *            The handler to activate; must not be <code>null</code>.
 	 * @param expression
 	 *            This expression must evaluate to <code>true</code> before
-	 *            this handler will really become active. The expression must
-	 *            not be <code>null</code>.
+	 *            this handler will really become active. The expression may be
+	 *            <code>null</code> if the handler should always be active.
 	 * @return A token which can be used to later cancel the activation. Only
 	 *         someone with access to this token can cancel the activation. The
 	 *         activation will automatically be cancelled if the context from
@@ -110,8 +110,8 @@ public interface IHandlerService extends IServiceWithSources {
 	 *            The handler to activate; must not be <code>null</code>.
 	 * @param expression
 	 *            This expression must evaluate to <code>true</code> before
-	 *            this handler will really become active. The expression must
-	 *            not be <code>null</code>.
+	 *            this handler will really become active. The expression may be
+	 *            <code>null</code> if the handler should always be active.
 	 * @param sourcePriorities
 	 *            The source priorities for the expression.
 	 * @return A token which can be used to later cancel the activation. Only

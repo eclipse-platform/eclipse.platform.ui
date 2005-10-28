@@ -210,11 +210,15 @@ public final class HandlerProxy extends AbstractHandler {
 						.createExecutableExtension(handlerAttributeName);
 				configurationElement = null;
 				return true;
+
+			} catch (final ClassCastException e) {
+				final String message = "The proxied handler was the wrong class"; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				WorkbenchPlugin.log(message, status);
+				return false;
+
 			} catch (final CoreException e) {
-				/*
-				 * TODO If it can't be instantiated, should future attempts to
-				 * instantiate be blocked?
-				 */
 				final String message = "The proxied handler for '" + configurationElement.getAttribute(handlerAttributeName) //$NON-NLS-1$
 						+ "' could not be loaded"; //$NON-NLS-1$
 				IStatus status = new Status(IStatus.ERROR,

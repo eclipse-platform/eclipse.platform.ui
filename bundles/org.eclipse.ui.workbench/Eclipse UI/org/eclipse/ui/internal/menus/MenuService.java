@@ -16,6 +16,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.menus.MenuElement;
+import org.eclipse.jface.menus.SActionSet;
 import org.eclipse.jface.menus.SGroup;
 import org.eclipse.jface.menus.SItem;
 import org.eclipse.jface.menus.SMenu;
@@ -38,7 +39,7 @@ public final class MenuService implements IMenuService {
 	/**
 	 * The central authority for determining which menus are visible.
 	 */
-	private final MenuAuthority menuAuthority;
+	private final MenuAuthority menuAuthority = new MenuAuthority();
 
 	/**
 	 * The menu manager underlying this menu service; never <code>null</code>.
@@ -58,7 +59,6 @@ public final class MenuService implements IMenuService {
 	 *            The menu manager to use; must not be <code>null</code>.
 	 */
 	public MenuService(final SMenuManager menuManager) {
-		this.menuAuthority = new MenuAuthority(menuManager);
 		this.menuManager = menuManager;
 	}
 
@@ -76,6 +76,10 @@ public final class MenuService implements IMenuService {
 				menuElement, expression, this);
 		menuAuthority.contributeMenu(contribution);
 		return contribution;
+	}
+
+	public final SActionSet getActionSet(final String actionSetId) {
+		return menuManager.getActionSet(actionSetId);
 	}
 
 	public final SGroup getGroup(final String groupId) {

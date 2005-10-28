@@ -42,6 +42,11 @@ import org.eclipse.ui.internal.util.Util;
 public abstract class CommonCommandPersistence {
 
 	/**
+	 * The name of the class attribute, which appears on a handler definition.
+	 */
+	protected static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
+
+	/**
 	 * The name of the attribute storing the command id for a binding.
 	 */
 	protected static final String ATTRIBUTE_COMMAND_ID = "commandId"; //$NON-NLS-1$
@@ -57,6 +62,11 @@ public abstract class CommonCommandPersistence {
 	 * point.
 	 */
 	protected static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
+
+	/**
+	 * The name of the class element, which appears on a handler definition.
+	 */
+	protected static final String ELEMENT_CLASS = ATTRIBUTE_CLASS;
 
 	/**
 	 * The name of the element storing a parameter.
@@ -191,6 +201,38 @@ public abstract class CommonCommandPersistence {
 	}
 
 	/**
+	 * Checks that the class attribute or element exists for this element. This
+	 * is used for executable extensions that are being read in.
+	 * 
+	 * @param configurationElement
+	 *            The configuration element which should contain a class
+	 *            attribute or a class child element; must not be
+	 *            <code>null</code>.
+	 * @param warningsToLog
+	 *            The list of warnings to be logged; never <code>null</code>.
+	 * @param message
+	 *            The message to log if something goes wrong; may be
+	 *            <code>null</code>.
+	 * @param id
+	 *            The identifier of the handle object; may be <code>null</code>.
+	 * @return <code>true</code> if the class attribute or element exists;
+	 *         <code>false</code> otherwise.
+	 */
+	protected static final boolean checkClass(
+			final IConfigurationElement configurationElement,
+			final List warningsToLog, final String message, final String id) {
+		// Check to see if we have a handler class.
+		if ((configurationElement.getAttribute(ATTRIBUTE_CLASS) == null)
+				&& (configurationElement.getChildren(ELEMENT_CLASS).length == 0)) {
+			addWarning(warningsToLog, message, configurationElement
+					.getNamespace(), id);
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Logs any warnings in <code>warningsToLog</code>.
 	 * 
 	 * @param warningsToLog
@@ -209,6 +251,33 @@ public abstract class CommonCommandPersistence {
 					message, null);
 			WorkbenchPlugin.log(status);
 		}
+	}
+
+	/**
+	 * Reads a boolean attribute from an element.
+	 * 
+	 * @param configurationElement
+	 *            The configuration element from which to read the attribute;
+	 *            must not be <code>null</code>.
+	 * @param attribute
+	 *            The attribute to read; must not be <code>null</code>.
+	 * @param defaultValue
+	 *            The default boolean value.
+	 * @return The attribute's value; may be <code>null</code> if none.
+	 */
+	protected static final boolean readBoolean(
+			final IConfigurationElement configurationElement,
+			final String attribute, final boolean defaultValue) {
+		final String value = configurationElement.getAttribute(attribute);
+		if (value == null) {
+			return defaultValue;
+		}
+
+		if (defaultValue) {
+			return !value.equalsIgnoreCase("false"); //$NON-NLS-1$
+		}
+
+		return !value.equalsIgnoreCase("true"); //$NON-NLS-1$
 	}
 
 	/**
@@ -448,7 +517,7 @@ public abstract class CommonCommandPersistence {
 	 *         <code>configurationElement</code>, if any; otherwise,
 	 *         <code>null</code>.
 	 */
-	protected static final Expression readWhenElements(
+	protected static final Expression readWhenElement(
 			final IConfigurationElement parentElement,
 			final String whenElement, final String id, final List warningsToLog) {
 		// Check to see if we have an visibleWhen expression.

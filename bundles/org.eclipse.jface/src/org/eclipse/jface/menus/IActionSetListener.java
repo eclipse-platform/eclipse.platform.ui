@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.menus;
+package org.eclipse.jface.menus;
 
 /**
  * An instance of this interface can be used by clients to receive notification

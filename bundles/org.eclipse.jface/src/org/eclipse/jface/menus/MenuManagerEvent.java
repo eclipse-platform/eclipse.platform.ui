@@ -24,12 +24,20 @@ import org.eclipse.core.commands.common.AbstractBitSetEvent;
 public final class MenuManagerEvent extends AbstractBitSetEvent {
 
 	/**
+	 * The bit used to represent whether the given action set has become
+	 * defined. If this bit is not set and there is no action set id, then no
+	 * action set has become defined nor undefined. If this bit is not set and
+	 * there is a action set id, then the action set has become undefined.
+	 */
+	private static final int CHANGED_ACTION_SET_DEFINED = 1;
+
+	/**
 	 * The bit used to represent whether the given group has become defined. If
 	 * this bit is not set and there is no group id, then no group has become
 	 * defined nor undefined. If this bit is not set and there is a group id,
 	 * then the group has become undefined.
 	 */
-	private static final int CHANGED_GROUP_DEFINED = 1;
+	private static final int CHANGED_GROUP_DEFINED = 1 << 1;
 
 	/**
 	 * The bit used to represent whether the given item has become defined. If
@@ -37,7 +45,7 @@ public final class MenuManagerEvent extends AbstractBitSetEvent {
 	 * defined nor undefined. If this bit is not set and there is a item id,
 	 * then the item has become undefined.
 	 */
-	private static final int CHANGED_ITEM_DEFINED = 1 << 1;
+	private static final int CHANGED_ITEM_DEFINED = 1 << 2;
 
 	/**
 	 * The bit used to represent whether the given menu has become defined. If
@@ -45,7 +53,7 @@ public final class MenuManagerEvent extends AbstractBitSetEvent {
 	 * defined nor undefined. If this bit is not set and there is a menu id,
 	 * then the menu has become undefined.
 	 */
-	private static final int CHANGED_MENU_DEFINED = 1 << 2;
+	private static final int CHANGED_MENU_DEFINED = 1 << 3;
 
 	/**
 	 * The bit used to represent whether the given widget has become defined. If
@@ -53,7 +61,14 @@ public final class MenuManagerEvent extends AbstractBitSetEvent {
 	 * defined nor undefined. If this bit is not set and there is a widget id,
 	 * then the widget has become undefined.
 	 */
-	private static final int CHANGED_WIDGET_DEFINED = 1 << 3;
+	private static final int CHANGED_WIDGET_DEFINED = 1 << 4;
+
+	/**
+	 * The action set identifier that was added or removed from the list of
+	 * defined action set identifiers. This value is <code>null</code> if the
+	 * list of defined action set identifiers did not change.
+	 */
+	private final String actionSetId;
 
 	/**
 	 * The group identifier that was added or removed from the list of defined
@@ -77,16 +92,16 @@ public final class MenuManagerEvent extends AbstractBitSetEvent {
 	private final String menuId;
 
 	/**
+	 * The menu manager that has changed.
+	 */
+	private final SMenuManager menuManager;
+
+	/**
 	 * The widget identifier that was added or removed from the list of defined
 	 * widget identifiers. This value is <code>null</code> if the list of
 	 * defined widget identifiers did not change.
 	 */
 	private final String widgetId;
-
-	/**
-	 * The menu manager that has changed.
-	 */
-	private final SMenuManager menuManager;
 
 	/**
 	 * Creates a new instance of this class.
@@ -118,12 +133,19 @@ public final class MenuManagerEvent extends AbstractBitSetEvent {
 	 * @param widgetIdAdded
 	 *            Whether the widget identifier became defined (otherwise, it
 	 *            became undefined).
+	 * @param actionSetId
+	 *            The action set identifier that was added or removed;
+	 *            <code>null</code> if an action set did not change.
+	 * @param actionSetIdAdded
+	 *            Whether the action set identifier became defined (otherwise,
+	 *            it became undefined).
 	 */
 	MenuManagerEvent(final SMenuManager menuManager, final String groupId,
 			final boolean groupIdAdded, final String itemId,
 			final boolean itemIdAdded, final String menuId,
 			final boolean menuIdAdded, final String widgetId,
-			final boolean widgetIdAdded) {
+			final boolean widgetIdAdded, final String actionSetId,
+			final boolean actionSetIdAdded) {
 		if (menuManager == null) {
 			throw new NullPointerException(
 					"An event must refer to its menu manager"); //$NON-NLS-1$
@@ -134,6 +156,7 @@ public final class MenuManagerEvent extends AbstractBitSetEvent {
 		this.itemId = itemId;
 		this.menuId = menuId;
 		this.widgetId = widgetId;
+		this.actionSetId = actionSetId;
 
 		if (groupIdAdded) {
 			changedValues |= CHANGED_GROUP_DEFINED;
@@ -147,6 +170,19 @@ public final class MenuManagerEvent extends AbstractBitSetEvent {
 		if (widgetIdAdded) {
 			changedValues |= CHANGED_WIDGET_DEFINED;
 		}
+		if (actionSetIdAdded) {
+			changedValues |= CHANGED_ACTION_SET_DEFINED;
+		}
+	}
+
+	/**
+	 * Returns the action set identifier that was added or removed.
+	 * 
+	 * @return The action set identifier that was added or removed; may be
+	 *         <code>null</code> if no action set changed.
+	 */
+	public final String getActionSetId() {
+		return groupId;
 	}
 
 	/**
@@ -180,6 +216,16 @@ public final class MenuManagerEvent extends AbstractBitSetEvent {
 	}
 
 	/**
+	 * Returns the instance of the interface that changed.
+	 * 
+	 * @return the instance of the interface that changed. Guaranteed not to be
+	 *         <code>null</code>.
+	 */
+	public final SMenuManager getMenuManager() {
+		return menuManager;
+	}
+
+	/**
 	 * Returns the widget identifier that was added or removed.
 	 * 
 	 * @return The widget identifier that was added or removed; may be
@@ -190,13 +236,25 @@ public final class MenuManagerEvent extends AbstractBitSetEvent {
 	}
 
 	/**
-	 * Returns the instance of the interface that changed.
+	 * Returns whether the list of defined action set identifiers has changed.
 	 * 
-	 * @return the instance of the interface that changed. Guaranteed not to be
-	 *         <code>null</code>.
+	 * @return <code>true</code> if the list of action set identifiers has
+	 *         changed; <code>false</code> otherwise.
 	 */
-	public final SMenuManager getMenuManager() {
-		return menuManager;
+	public final boolean isActionSetChanged() {
+		return (actionSetId != null);
+	}
+
+	/**
+	 * Returns whether the action set identifier became defined. Otherwise, the
+	 * action set identifier became undefined.
+	 * 
+	 * @return <code>true</code> if the action set identifier became defined;
+	 *         <code>false</code> if the action set identifier became
+	 *         undefined.
+	 */
+	public final boolean isActionSetDefined() {
+		return (((changedValues & CHANGED_ACTION_SET_DEFINED) != 0) && (actionSetId != null));
 	}
 
 	/**

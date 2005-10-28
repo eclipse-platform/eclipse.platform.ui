@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.menus.MenuElement;
+import org.eclipse.jface.menus.SActionSet;
 import org.eclipse.jface.menus.SGroup;
 import org.eclipse.jface.menus.SItem;
 import org.eclipse.jface.menus.SMenu;
@@ -94,6 +95,19 @@ public interface IMenuService extends IServiceWithSources {
 	 */
 	public IMenuContribution contributeMenu(MenuElement menuElement,
 			Expression expression);
+
+	/**
+	 * Retrieves the action set with the given identifier. If no such action set
+	 * exists, then an undefined action set is created and returned. An action
+	 * set is a logical grouping of menu elements, that can be made visible or
+	 * hidden as a group.
+	 * 
+	 * @param actionSetId
+	 *            The identifier to find; must not be <code>null</code>.
+	 * @return An action set with the given identifier, either defined or
+	 *         undefined.
+	 */
+	public SActionSet getActionSet(String actionSetId);
 
 	/**
 	 * Retrieves the group with the given identifier. If no such group exists,

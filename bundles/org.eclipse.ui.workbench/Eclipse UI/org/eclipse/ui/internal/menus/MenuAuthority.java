@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.menus.MenuElement;
-import org.eclipse.jface.menus.SMenuManager;
 import org.eclipse.ui.internal.sources.ExpressionAuthority;
 import org.eclipse.ui.menus.IMenuContribution;
 
@@ -47,11 +46,6 @@ final class MenuAuthority extends ExpressionAuthority {
 	private final Map menuContributionsByElement = new HashMap();
 
 	/**
-	 * The menu manager that should be updated when the menu are changing.
-	 */
-	private final SMenuManager menuManager;
-
-	/**
 	 * A bucket sort of the contributed menu elements based on source priority.
 	 * This only includes the items that are currently showing within the
 	 * workbench. Each contribution will appear only once per set, but may
@@ -63,18 +57,8 @@ final class MenuAuthority extends ExpressionAuthority {
 
 	/**
 	 * Constructs a new instance of <code>MenuAuthority</code>.
-	 * 
-	 * @param menuManager
-	 *            The menu manager from which contributions can be retrieved (to
-	 *            update their visibility); must not be <code>null</code>.
 	 */
-	MenuAuthority(final SMenuManager menuManager) {
-		if (menuManager == null) {
-			throw new NullPointerException(
-					"The menu authority needs a menu manager"); //$NON-NLS-1$
-		}
-
-		this.menuManager = menuManager;
+	MenuAuthority() {
 	}
 
 	/**
@@ -102,7 +86,6 @@ final class MenuAuthority extends ExpressionAuthority {
 			}
 		} else {
 			menuContributionsByElement.put(element, contribution);
-			menuManager.add(element);
 		}
 
 		// Next we update the source priority bucket sort of activations.
@@ -138,7 +121,6 @@ final class MenuAuthority extends ExpressionAuthority {
 				menuContributions.remove(contribution);
 				if (menuContributions.isEmpty()) {
 					menuContributionsByElement.remove(element);
-					menuManager.remove(element);
 
 				} else if (menuContributions.size() == 1) {
 					final IMenuContribution remainingContribution = (IMenuContribution) menuContributions
@@ -151,7 +133,6 @@ final class MenuAuthority extends ExpressionAuthority {
 		} else if (value instanceof IMenuContribution) {
 			if (value == contribution) {
 				menuContributionsByElement.remove(element);
-				menuManager.remove(element);
 			}
 		}
 

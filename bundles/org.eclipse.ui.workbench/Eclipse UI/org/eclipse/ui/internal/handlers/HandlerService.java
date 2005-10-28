@@ -47,6 +47,11 @@ public final class HandlerService implements IHandlerService {
 	private final HandlerAuthority handlerAuthority;
 
 	/**
+	 * The class providing persistence for this service.
+	 */
+	private final HandlerPersistence handlerPersistence = new HandlerPersistence();
+
+	/**
 	 * Constructs a new instance of <code>CommandService</code> using a
 	 * command manager.
 	 * 
@@ -100,7 +105,7 @@ public final class HandlerService implements IHandlerService {
 	}
 
 	public final void readRegistry() {
-		HandlerPersistence.read(this);
+		handlerPersistence.read(this);
 	}
 
 	public final void removeSourceProvider(final ISourceProvider provider) {
