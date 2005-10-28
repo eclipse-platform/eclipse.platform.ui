@@ -150,7 +150,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @return the selected resources
 	 */
 	protected IResource[] getSelectedResources() {
-		return Utils.getContributedResources(selection.toArray());
+		return Utils.getContributedResources(getSelection().toArray());
 	}
 	
 	protected IStructuredSelection getSelection() {
@@ -166,7 +166,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
      * @return the resource mappings that contain resources associated with the given provider
 	 */
     protected ResourceMapping[] getSelectedResourceMappings(String providerId) {
-        Object[] elements = selection.toArray();
+        Object[] elements = getSelection().toArray();
         ArrayList providerMappings = new ArrayList();
         for (int i = 0; i < elements.length; i++) {
             Object object = elements[i];
