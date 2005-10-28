@@ -97,6 +97,35 @@ public abstract class Refactoring extends PlatformObject {
 	//---- Conditions ------------------------------------------------------------
 	
 	/**
+	 * Returns the tick provider used for progress reporting for this
+	 * refactoring.
+	 * 
+	 * @return the refactoring tick provider used for progress reporting
+	 * 
+	 * @since 3.2
+	 */
+	public final RefactoringTickProvider getRefactoringTickProvider() {
+		RefactoringTickProvider result= doGetRefactoringTickProvider();
+		if (result == null) {
+			result= RefactoringTickProvider.DEFAULT;
+		}
+		return result;
+	}
+	
+	/**
+	 * Hook method to provide the tick provider used for progress reporting.
+	 * <p>
+	 * Subclasses may override this method
+	 * </p> 
+	 * @return the refactoring tick provider used for progress reporting
+	 * 
+	 * @since 3.2
+	 */
+	protected RefactoringTickProvider doGetRefactoringTickProvider() {
+		return RefactoringTickProvider.DEFAULT;
+	}
+	
+	/**
 	 * Checks all conditions. This implementation calls <code>checkInitialConditions</code>
 	 * and <code>checkFinalConditions</code>. 
 	 * <p>
@@ -117,13 +146,14 @@ public abstract class Refactoring extends PlatformObject {
 	 * @see #checkFinalConditions(IProgressMonitor)
 	 */
 	public RefactoringStatus checkAllConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		pm.beginTask("", 11); //$NON-NLS-1$
+		RefactoringTickProvider refactoringTickProvider= getRefactoringTickProvider();
+		pm.beginTask("", refactoringTickProvider.getCheckAllConditionsTicks()); //$NON-NLS-1$
 		RefactoringStatus result= new RefactoringStatus();
-		result.merge(checkInitialConditions(new SubProgressMonitor(pm, 1)));
+		result.merge(checkInitialConditions(new SubProgressMonitor(pm, refactoringTickProvider.getCheckInitialConditionsTicks())));
 		if (!result.hasFatalError()) {
 			if (pm.isCanceled())
 				throw new OperationCanceledException();
-			result.merge(checkFinalConditions(new SubProgressMonitor(pm, 10)));
+			result.merge(checkFinalConditions(new SubProgressMonitor(pm, refactoringTickProvider.getCheckFinalConditionsTicks())));
 		}	
 		pm.done();
 		return result;

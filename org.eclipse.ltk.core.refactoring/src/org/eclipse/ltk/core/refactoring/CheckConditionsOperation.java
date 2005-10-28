@@ -119,4 +119,14 @@ public class CheckConditionsOperation implements IWorkspaceRunnable {
 	private boolean checkStyle(int style) {
 		return style > NONE && style < LAST;
 	}
+	
+	/* package */ int getTicks(RefactoringTickProvider provider) {
+		if ((fStyle & ALL_CONDITIONS) == ALL_CONDITIONS)
+			return provider.getCheckAllConditionsTicks();
+		else if ((fStyle & INITIAL_CONDITONS) == INITIAL_CONDITONS)
+			return provider.getCheckInitialConditionsTicks();
+		else if ((fStyle & FINAL_CONDITIONS) == FINAL_CONDITIONS)
+			return provider.getCheckFinalConditionsTicks();
+		return 0;
+	}
 }

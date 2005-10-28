@@ -108,23 +108,26 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 		fChange= null;
 		try {
 			fChange= null;
+			RefactoringTickProvider rtp= fRefactoring.getRefactoringTickProvider();
 			if (fCheckConditionOperation != null) {
-				pm.beginTask("", 7); //$NON-NLS-1$
+				int conditionTicks= fCheckConditionOperation.getTicks(rtp);
+				int allTicks= conditionTicks + rtp.getCreateChangeTicks() + rtp.getInitializeChangeTicks();
+				pm.beginTask("", allTicks); //$NON-NLS-1$
 				pm.subTask(""); //$NON-NLS-1$
-				fCheckConditionOperation.run(new SubProgressMonitor(pm, 4));
+				fCheckConditionOperation.run(new SubProgressMonitor(pm, conditionTicks));
 				RefactoringStatus status= fCheckConditionOperation.getStatus();
 				if (status != null && status.getSeverity() < fConditionCheckingFailedSeverity) {
-					fChange= fRefactoring.createChange(new SubProgressMonitor(pm, 2));
+					fChange= fRefactoring.createChange(new SubProgressMonitor(pm, rtp.getCreateChangeTicks()));
 					fChange.initializeValidationData(new NotCancelableProgressMonitor(
-							new SubProgressMonitor(pm, 1)));
+							new SubProgressMonitor(pm, rtp.getInitializeChangeTicks())));
 				} else {
-					pm.worked(3);
+					pm.worked(rtp.getCreateChangeTicks() + rtp.getInitializeChangeTicks());
 				}
 			} else {
-				pm.beginTask("", 3); //$NON-NLS-1$
-				fChange= fRefactoring.createChange(new SubProgressMonitor(pm, 2));
+				pm.beginTask("", rtp.getCreateChangeTicks() + rtp.getInitializeChangeTicks()); //$NON-NLS-1$
+				fChange= fRefactoring.createChange(new SubProgressMonitor(pm, rtp.getCreateChangeTicks()));
 				fChange.initializeValidationData(new NotCancelableProgressMonitor(
-					new SubProgressMonitor(pm, 1)));
+					new SubProgressMonitor(pm, rtp.getInitializeChangeTicks())));
 			}
 		} finally {
 			pm.done();
