@@ -55,12 +55,6 @@ import org.eclipse.ui.menus.IMenuService;
 final class MenuPersistence extends CommonCommandPersistence {
 
 	/**
-	 * The name of the description attribute, which is used on action set
-	 * elements in the menus extension point.
-	 */
-	private static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
-
-	/**
 	 * The name of the image style attribute, which is used on location elements
 	 * in the menus extension point.
 	 */

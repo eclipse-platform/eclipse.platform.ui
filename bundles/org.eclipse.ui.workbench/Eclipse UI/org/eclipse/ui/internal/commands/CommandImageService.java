@@ -38,6 +38,11 @@ public final class CommandImageService implements ICommandImageService {
 	private final ICommandService commandService;
 
 	/**
+	 * The class providing persistence for this service.
+	 */
+	private final CommandImagePersistence commandImagePersistence = new CommandImagePersistence();
+
+	/**
 	 * Constructs a new instance of <code>CommandService</code> using a
 	 * command image manager.
 	 * 
@@ -83,6 +88,6 @@ public final class CommandImageService implements ICommandImageService {
 	}
 
 	public final void readRegistry() {
-		CommandImagePersistence.read(commandImageManager, commandService);
+		commandImagePersistence.read(commandImageManager, commandService);
 	}
 }

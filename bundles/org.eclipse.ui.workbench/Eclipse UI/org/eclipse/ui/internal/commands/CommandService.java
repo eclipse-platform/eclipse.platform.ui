@@ -35,6 +35,11 @@ public final class CommandService implements ICommandService {
 	private final CommandManager commandManager;
 
 	/**
+	 * The persistence class for this command service.
+	 */
+	private final CommandPersistence commandPersistence = new CommandPersistence();
+
+	/**
 	 * Constructs a new instance of <code>CommandService</code> using a
 	 * command manager.
 	 * 
@@ -54,21 +59,13 @@ public final class CommandService implements ICommandService {
 	}
 
 	public final Category getCategory(final String categoryId) {
-		/*
-		 * TODO Need to put in place protection against the category being
-		 * changed.
-		 */
 		return commandManager.getCategory(categoryId);
 	}
 
 	public final Command getCommand(final String commandId) {
-		/*
-		 * TODO Need to put in place protection against the command being
-		 * changed.
-		 */
 		return commandManager.getCommand(commandId);
 	}
-	
+
 	public final Category[] getDefinedCategories() {
 		return commandManager.getDefinedCategories();
 	}
@@ -80,13 +77,13 @@ public final class CommandService implements ICommandService {
 	public final Collection getDefinedCommandIds() {
 		return commandManager.getDefinedCommandIds();
 	}
-	
+
 	public final Command[] getDefinedCommands() {
 		return commandManager.getDefinedCommands();
 	}
 
 	public final void readRegistry() {
-		CommandPersistence.read(commandManager);
+		commandPersistence.read(commandManager);
 	}
 
 	public final void removeExecutionListener(final IExecutionListener listener) {

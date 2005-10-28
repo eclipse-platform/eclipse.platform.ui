@@ -42,29 +42,38 @@ import org.eclipse.ui.internal.util.Util;
 public abstract class CommonCommandPersistence {
 
 	/**
-	 * The name of the class attribute, which appears on a handler definition.
+	 * The name of the class attribute, which appears on executable extensions.
 	 */
 	protected static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 
 	/**
-	 * The name of the attribute storing the command id for a binding.
+	 * The name of the attribute storing the command id.
 	 */
 	protected static final String ATTRIBUTE_COMMAND_ID = "commandId"; //$NON-NLS-1$
 
 	/**
-	 * The name of the id attribute, which is used on scheme definitions.
+	 * The name of the description attribute, which appears on named handle
+	 * objects.
+	 */
+	protected static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
+
+	/**
+	 * The name of the id attribute, which is used on handle objects.
 	 */
 	protected static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
 	/**
-	 * The name of the deprecated attribute of the deprecated
-	 * <code>activeKeyConfiguration</code> element in the commands extension
-	 * point.
+	 * The name of the name attribute, which appears on named handle objects
+	 */
+	protected static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+
+	/**
+	 * The name of the value attributed, used in several places.
 	 */
 	protected static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
 
 	/**
-	 * The name of the class element, which appears on a handler definition.
+	 * The name of the class element, which appears on an executable extension.
 	 */
 	protected static final String ELEMENT_CLASS = ATTRIBUTE_CLASS;
 

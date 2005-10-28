@@ -34,10 +34,7 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
@@ -93,12 +90,6 @@ final class BindingPersistence extends CommonCommandPersistence {
 	private static final String ATTRIBUTE_CONTEXT_ID = "contextId"; //$NON-NLS-1$
 
 	/**
-	 * The name of the description attribute, which appears on a scheme
-	 * definition.
-	 */
-	private static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
-
-	/**
 	 * The name of the attribute storing the identifier for the active key
 	 * configuration identifier. This provides legacy support for the
 	 * <code>activeKeyConfiguration</code> element in the commands extension
@@ -116,11 +107,6 @@ final class BindingPersistence extends CommonCommandPersistence {
 	 * The name of the attribute storing the locale for a binding.
 	 */
 	private static final String ATTRIBUTE_LOCALE = "locale"; //$NON-NLS-1$
-
-	/**
-	 * The name of the name attribute, which appears on scheme definitions.
-	 */
-	private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 
 	/**
 	 * The name of the deprecated parent attribute, which appears on scheme
@@ -649,11 +635,10 @@ final class BindingPersistence extends CommonCommandPersistence {
 					schemeId = memento.getString(ATTRIBUTE_CONFIGURATION);
 					if ((schemeId == null) || (schemeId.length() == 0)) {
 						// The scheme id should never be null. This is invalid.
-						final String message = "Key bindings need a scheme or key configuration: commandId='" //$NON-NLS-1$
-								+ commandId + "'."; //$NON-NLS-1$
-						final IStatus status = new Status(IStatus.WARNING,
-								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-						warningsToLog.add(status);
+						addWarning(
+								warningsToLog,
+								"Key bindings need a scheme or key configuration", //$NON-NLS-1$
+								null, commandId);
 						continue;
 					}
 				}
@@ -685,11 +670,9 @@ final class BindingPersistence extends CommonCommandPersistence {
 						 * The key sequence should never be null. This is
 						 * pointless
 						 */
-						final String message = "Key bindings need a key sequence or string: commandId='" //$NON-NLS-1$
-								+ commandId + "'."; //$NON-NLS-1$
-						final IStatus status = new Status(IStatus.WARNING,
-								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-						warningsToLog.add(status);
+						addWarning(warningsToLog,
+								"Key bindings need a key sequence or string", //$NON-NLS-1$
+								null, commandId);
 						continue;
 					}
 
@@ -701,21 +684,16 @@ final class BindingPersistence extends CommonCommandPersistence {
 					try {
 						keySequence = KeySequence.getInstance(keySequenceText);
 					} catch (final ParseException e) {
-						final String message = "Could not parse: sequence='" //$NON-NLS-1$
-								+ keySequenceText + "': commandId='" //$NON-NLS-1$
-								+ commandId + "'."; //$NON-NLS-1$
-						final IStatus status = new Status(IStatus.WARNING,
-								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-						warningsToLog.add(status);
+						addWarning(warningsToLog, "Could not parse", null, //$NON-NLS-1$
+								commandId, "keySequence", keySequenceText); //$NON-NLS-1$
 						continue;
 					}
 					if (keySequence.isEmpty() || !keySequence.isComplete()) {
-						final String message = "Key bindings cannot use an empty or incomplete key sequence: sequence='" //$NON-NLS-1$
-								+ keySequence + "': commandId='" //$NON-NLS-1$
-								+ commandId + "'."; //$NON-NLS-1$
-						final IStatus status = new Status(IStatus.WARNING,
-								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-						warningsToLog.add(status);
+						addWarning(
+								warningsToLog,
+								"Key bindings cannot use an empty or incomplete key sequence", //$NON-NLS-1$
+								null, commandId, "keySequence", keySequence //$NON-NLS-1$
+										.toString());
 						continue;
 					}
 
@@ -748,14 +726,8 @@ final class BindingPersistence extends CommonCommandPersistence {
 		}
 
 		// If there were any warnings, then log them now.
-		if (!warningsToLog.isEmpty()) {
-			final String message = "Warnings while parsing the key bindings from the preference store"; //$NON-NLS-1$
-			final IStatus status = new MultiStatus(
-					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
-							.toArray(new IStatus[warningsToLog.size()]),
-					message, null);
-			WorkbenchPlugin.log(status);
-		}
+		logWarnings(warningsToLog,
+				"Warnings while parsing the key bindings from the preference store"); //$NON-NLS-1$
 	}
 
 	/**
@@ -780,12 +752,7 @@ final class BindingPersistence extends CommonCommandPersistence {
 			final BindingManager bindingManager,
 			final ICommandService commandService) {
 		final Collection bindings = new ArrayList(configurationElementCount);
-
-		/*
-		 * If necessary, this list of status items will be constructed. It will
-		 * only contains instances of <code>IStatus</code>.
-		 */
-		List warningsToLog = new ArrayList(1);
+		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
@@ -810,13 +777,9 @@ final class BindingPersistence extends CommonCommandPersistence {
 				command = commandService.getCommand(commandId);
 				if (!command.isDefined()) {
 					// Reference to an undefined command. This is invalid.
-					final String message = "Cannot bind to an undefined command: plug-in='" //$NON-NLS-1$
-							+ configurationElement.getNamespace()
-							+ "', commandId='" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					warningsToLog.add(status);
+					addWarning(warningsToLog,
+							"Cannot bind to an undefined command", //$NON-NLS-1$
+							configurationElement.getNamespace(), commandId);
 					continue;
 				}
 			} else {
@@ -834,13 +797,8 @@ final class BindingPersistence extends CommonCommandPersistence {
 							.getAttribute(ATTRIBUTE_CONFIGURATION);
 					if ((schemeId == null) || (schemeId.length() == 0)) {
 						// The scheme id should never be null. This is invalid.
-						final String message = "Key bindings need a scheme: plug-in='" //$NON-NLS-1$
-								+ configurationElement.getNamespace()
-								+ "', commandId='" //$NON-NLS-1$
-								+ commandId + "'."; //$NON-NLS-1$
-						final IStatus status = new Status(IStatus.WARNING,
-								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-						warningsToLog.add(status);
+						addWarning(warningsToLog, "Key bindings need a scheme", //$NON-NLS-1$
+								configurationElement.getNamespace(), commandId);
 						continue;
 					}
 				}
@@ -874,15 +832,11 @@ final class BindingPersistence extends CommonCommandPersistence {
 						.getAttribute(ATTRIBUTE_STRING);
 				if ((keySequenceText == null)
 						|| (keySequenceText.length() == 0)) {
-					// The key sequence should never be null. This is
-					// pointless
-					final String message = "Defining a key binding with no key sequence has no effect: plug-in='" //$NON-NLS-1$
-							+ configurationElement.getNamespace()
-							+ "', commandId='" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					warningsToLog.add(status);
+					// The key sequence should never be null. This is pointless
+					addWarning(
+							warningsToLog,
+							"Defining a key binding with no key sequence has no effect", //$NON-NLS-1$
+							configurationElement.getNamespace(), commandId);
 					continue;
 				}
 
@@ -890,14 +844,10 @@ final class BindingPersistence extends CommonCommandPersistence {
 				try {
 					keySequence = convert2_1Sequence(parse2_1Sequence(keySequenceText));
 				} catch (final IllegalArgumentException e) {
-					final String message = "Could not parse key sequence '" + keySequenceText //$NON-NLS-1$
-							+ "': plug-in='" //$NON-NLS-1$
-							+ configurationElement.getNamespace()
-							+ "', commandId='" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					warningsToLog.add(status);
+					addWarning(warningsToLog,
+							"Could not parse key sequence", //$NON-NLS-1$
+							configurationElement.getNamespace(), commandId,
+							"keySequence", keySequenceText); //$NON-NLS-1$
 					continue;
 				}
 
@@ -906,26 +856,18 @@ final class BindingPersistence extends CommonCommandPersistence {
 				try {
 					keySequence = KeySequence.getInstance(keySequenceText);
 				} catch (final ParseException e) {
-					final String message = "Could not parse key sequence '" + keySequenceText //$NON-NLS-1$
-							+ "': plug-in='" //$NON-NLS-1$
-							+ configurationElement.getNamespace()
-							+ "', commandId='" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					warningsToLog.add(status);
+					addWarning(warningsToLog,
+							"Could not parse key sequence", //$NON-NLS-1$
+							configurationElement.getNamespace(), commandId,
+							"keySequence", keySequenceText); //$NON-NLS-1$
 					continue;
 				}
 				if (keySequence.isEmpty() || !keySequence.isComplete()) {
-					final String message = "Key bindings should not have an empty or incomplete key sequence: sequence='" //$NON-NLS-1$
-							+ keySequence
-							+ "': plug-in='" //$NON-NLS-1$
-							+ configurationElement.getNamespace()
-							+ "', commandId='" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					warningsToLog.add(status);
+					addWarning(
+							warningsToLog,
+							"Key bindings should not have an empty or incomplete key sequence", //$NON-NLS-1$
+							configurationElement.getNamespace(), commandId,
+							"keySequence", keySequence.toString()); //$NON-NLS-1$
 					continue;
 				}
 
@@ -961,15 +903,9 @@ final class BindingPersistence extends CommonCommandPersistence {
 				.toArray(new Binding[bindings.size()]);
 		bindingManager.setBindings(bindingArray);
 
-		// If there were any warnings, then log them now.
-		if (!warningsToLog.isEmpty()) {
-			final String message = "Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' extension point"; //$NON-NLS-1$
-			final IStatus status = new MultiStatus(
-					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
-							.toArray(new IStatus[warningsToLog.size()]),
-					message, null);
-			WorkbenchPlugin.log(status);
-		}
+		logWarnings(
+				warningsToLog,
+				"Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' extension point"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1008,10 +944,8 @@ final class BindingPersistence extends CommonCommandPersistence {
 			final String id = parameterElement.getString(ATTRIBUTE_ID);
 			if ((id == null) || (id.length() == 0)) {
 				// The name should never be null. This is invalid.
-				final String message = "Parameters need a name: preferences."; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				warningsToLog.add(status);
+				addWarning(warningsToLog, "Parameters need a name", null, //$NON-NLS-1$
+						command.getId());
 				continue;
 			}
 
@@ -1034,11 +968,9 @@ final class BindingPersistence extends CommonCommandPersistence {
 			}
 			if (parameter == null) {
 				// The name should never be null. This is invalid.
-				final String message = "Could not find a matching parameter: preferences, parameterId='" //$NON-NLS-1$
-						+ id + "'."; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				warningsToLog.add(status);
+				addWarning(warningsToLog,
+						"Could not find a matching parameter", null, command //$NON-NLS-1$
+								.getId(), "parameterId", id); //$NON-NLS-1$
 				continue;
 			}
 
@@ -1046,11 +978,8 @@ final class BindingPersistence extends CommonCommandPersistence {
 			final String value = parameterElement.getString(ATTRIBUTE_VALUE);
 			if ((value == null) || (value.length() == 0)) {
 				// The name should never be null. This is invalid.
-				final String message = "Parameters need a value: preferences, parameterId='" //$NON-NLS-1$
-						+ id + "'."; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				warningsToLog.add(status);
+				addWarning(warningsToLog, "Parameters need a value", null, //$NON-NLS-1$
+						command.getId(), "parameterId", id); //$NON-NLS-1$
 				continue;
 			}
 
@@ -1091,24 +1020,25 @@ final class BindingPersistence extends CommonCommandPersistence {
 			}
 		}
 
+		final List warningsToLog = new ArrayList(1);
+
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the attributes.
-			final String id = configurationElement.getAttribute(ATTRIBUTE_ID);
-			if ((id == null) || (id.length() == 0)) {
-				// The id cannot be null or empty.
+			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+					warningsToLog, "Schemes need an id"); //$NON-NLS-1$
+			if (id == null) {
 				continue;
 			}
-			String name = configurationElement.getAttribute(ATTRIBUTE_NAME);
-			if ((name != null) && (name.length() == 0)) {
-				name = null;
+			final String name = readRequired(configurationElement,
+					ATTRIBUTE_NAME, warningsToLog, "A scheme needs a name", id); //$NON-NLS-1$
+			if (name == null) {
+				continue;
 			}
-			String description = configurationElement
-					.getAttribute(ATTRIBUTE_DESCRIPTION);
-			if ((description != null) && (description.length() == 0)) {
-				description = null;
-			}
+			final String description = readOptional(configurationElement,
+					ATTRIBUTE_DESCRIPTION);
+
 			String parentId = configurationElement
 					.getAttribute(ATTRIBUTE_PARENT_ID);
 			if ((parentId != null) && (parentId.length() == 0)) {
@@ -1122,6 +1052,10 @@ final class BindingPersistence extends CommonCommandPersistence {
 			final Scheme scheme = bindingManager.getScheme(id);
 			scheme.define(name, description, parentId);
 		}
+
+		logWarnings(
+				warningsToLog,
+				"Warnings while parsing the key bindings from the 'org.eclipse.ui.bindings', 'org.eclipse.ui.acceleratorConfigurations' and 'org.eclipse.ui.commands' extension point"); //$NON-NLS-1$
 	}
 
 	/**

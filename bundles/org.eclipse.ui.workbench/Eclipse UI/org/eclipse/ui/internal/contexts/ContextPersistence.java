@@ -22,14 +22,11 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.CommonCommandPersistence;
 
 /**
  * <p>
@@ -38,23 +35,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.1
  */
-final class ContextPersistence {
-
-	/**
-	 * The name of the description attribute, which appears on a context
-	 * definition.
-	 */
-	private static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
-
-	/**
-	 * The name of the id attribute, which is used on context definitions.
-	 */
-	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-
-	/**
-	 * The name of the name attribute, which appears on contexts definitions.
-	 */
-	private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+final class ContextPersistence extends CommonCommandPersistence {
 
 	/**
 	 * The name of the deprecated parent attribute, which appears on contexts
@@ -115,46 +96,83 @@ final class ContextPersistence {
 	private static final int INDEX_CONTEXT_DEFINITIONS = 0;
 
 	/**
-	 * Whether the preference and registry change listeners have been attached
-	 * yet.
-	 */
-    private static boolean listenersAttached = false;
-
-	/**
-	 * Inserts the given element into the indexed two-dimensional array in the
-	 * array at the index. The array is grown as necessary.
+	 * Reads all of the command definitions from the commands extension point.
 	 * 
-	 * @param elementToAdd
-	 *            The element to add to the indexed array; may be
-	 *            <code>null</code>
-	 * @param indexedArray
-	 *            The two-dimensional array that is indexed by element type;
+	 * @param configurationElements
+	 *            The configuration elements in the commands extension point;
+	 *            must not be <code>null</code>, but may be empty.
+	 * @param configurationElementCount
+	 *            The number of configuration elements that are really in the
+	 *            array.
+	 * @param contextManager
+	 *            The context manager to which the commands should be added;
 	 *            must not be <code>null</code>.
-	 * @param index
-	 *            The index at which the element should be added; must be a
-	 *            valid index.
-	 * @param currentCount
-	 *            The current number of items in the array at the index.
 	 */
-	private static final void addElementToIndexedArray(
-			final IConfigurationElement elementToAdd,
-			final IConfigurationElement[][] indexedArray, final int index,
-			final int currentCount) {
-		final IConfigurationElement[] elements;
-		if (currentCount == 0) {
-			elements = new IConfigurationElement[1];
-			indexedArray[index] = elements;
-		} else {
-			if (currentCount >= indexedArray[index].length) {
-				final IConfigurationElement[] copy = new IConfigurationElement[indexedArray[index].length * 2];
-				System.arraycopy(indexedArray[index], 0, copy, 0, currentCount);
-				elements = copy;
-				indexedArray[index] = elements;
-			} else {
-				elements = indexedArray[index];
+	private static final void readContextsFromExtensionPoint(
+			final IConfigurationElement[] configurationElements,
+			final int configurationElementCount,
+			final ContextManager contextManager) {
+		// Undefine all the previous handle objects.
+		final HandleObject[] handleObjects = contextManager
+				.getDefinedContexts();
+		if (handleObjects != null) {
+			for (int i = 0; i < handleObjects.length; i++) {
+				handleObjects[i].undefine();
 			}
 		}
-		elements[currentCount] = elementToAdd;
+
+		final List warningsToLog = new ArrayList(1);
+
+		for (int i = 0; i < configurationElementCount; i++) {
+			final IConfigurationElement configurationElement = configurationElements[i];
+
+			// Read out the command identifier.
+			final String contextId = readRequired(configurationElement,
+					ATTRIBUTE_ID, warningsToLog, "Contexts need an id"); //$NON-NLS-1$
+			if (contextId == null) {
+				continue;
+			}
+
+			// Read out the name.
+			final String name = readRequired(configurationElement,
+					ATTRIBUTE_NAME, warningsToLog, "Contexts need a name", //$NON-NLS-1$
+					contextId);
+			if (name == null) {
+				continue;
+			}
+
+			// Read out the description.
+			final String description = readOptional(configurationElement,
+					ATTRIBUTE_DESCRIPTION);
+
+			// Read out the parent id.
+			String parentId = configurationElement
+					.getAttribute(ATTRIBUTE_PARENT_ID);
+			if ((parentId == null) || (parentId.length() == 0)) {
+				parentId = configurationElement.getAttribute(ATTRIBUTE_PARENT);
+				if ((parentId == null) || (parentId.length() == 0)) {
+					parentId = configurationElement
+							.getAttribute(ATTRIBUTE_PARENT_SCOPE);
+				}
+			}
+			if ((parentId != null) && (parentId.length() == 0)) {
+				parentId = null;
+			}
+
+			final Context context = contextManager.getContext(contextId);
+			context.define(name, description, parentId);
+		}
+
+		logWarnings(
+				warningsToLog,
+				"Warnings while parsing the contexts from the 'org.eclipse.ui.contexts', 'org.eclipse.ui.commands' and 'org.eclipse.ui.acceleratorScopes' extension points."); //$NON-NLS-1$
+	}
+
+	/**
+	 * Constructs a new instance of <code>ContextPersistence</code>.
+	 */
+	ContextPersistence() {
+		// Does nothing
 	}
 
 	/**
@@ -164,7 +182,7 @@ final class ContextPersistence {
 	 *            The context manager which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
 	 */
-	static final void read(final ContextManager contextManager) {
+	final void read(final ContextManager contextManager) {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int contextDefinitionCount = 0;
@@ -231,8 +249,8 @@ final class ContextPersistence {
 		readContextsFromExtensionPoint(
 				indexedConfigurationElements[INDEX_CONTEXT_DEFINITIONS],
 				contextDefinitionCount, contextManager);
-		
-        /*
+
+		/*
 		 * Adds listener so that future registry changes trigger an update of
 		 * the command manager automatically.
 		 */
@@ -271,112 +289,6 @@ final class ContextPersistence {
 
 			listenersAttached = true;
 		}
-	}
-
-	/**
-	 * Reads all of the command definitions from the commands extension point.
-	 * 
-	 * @param configurationElements
-	 *            The configuration elements in the commands extension point;
-	 *            must not be <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param contextManager
-	 *            The context manager to which the commands should be added;
-	 *            must not be <code>null</code>.
-	 */
-	private static final void readContextsFromExtensionPoint(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount,
-			final ContextManager contextManager) {
-		// Undefine all the previous handle objects.
-		final HandleObject[] handleObjects = contextManager
-				.getDefinedContexts();
-		if (handleObjects != null) {
-			for (int i = 0; i < handleObjects.length; i++) {
-				handleObjects[i].undefine();
-			}
-		}
-		
-		/*
-		 * If necessary, this list of status items will be constructed. It will
-		 * only contains instances of <code>IStatus</code>.
-		 */
-		List warningsToLog = new ArrayList(1);
-
-		for (int i = 0; i < configurationElementCount; i++) {
-			final IConfigurationElement configurationElement = configurationElements[i];
-
-			// Read out the command identifier.
-			final String contextId = configurationElement
-					.getAttribute(ATTRIBUTE_ID);
-			if ((contextId == null) || (contextId.length() == 0)) {
-				// The id should never be null. This is invalid.
-				final String message = "Contexts need an id: plug-in='" //$NON-NLS-1$
-						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				warningsToLog.add(status);
-				continue;
-			}
-
-			// Read out the name.
-			final String name = configurationElement
-					.getAttribute(ATTRIBUTE_NAME);
-			if ((name == null) || (name.length() == 0)) {
-				// The name should never be null. This is invalid.
-				final String message = "Contexts need a name: plug-in='" //$NON-NLS-1$
-						+ configurationElement.getNamespace()
-						+ "', contextId='" //$NON-NLS-1$
-						+ contextId + "'."; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				warningsToLog.add(status);
-				continue;
-			}
-
-			// Read out the description.
-			String description = configurationElement
-					.getAttribute(ATTRIBUTE_DESCRIPTION);
-			if ((description != null) && (description.length() == 0)) {
-				description = null;
-			}
-
-			// Read out the category id.
-			String parentId = configurationElement
-					.getAttribute(ATTRIBUTE_PARENT_ID);
-			if ((parentId == null) || (parentId.length() == 0)) {
-				parentId = configurationElement.getAttribute(ATTRIBUTE_PARENT);
-				if ((parentId == null) || (parentId.length() == 0)) {
-					parentId = configurationElement
-							.getAttribute(ATTRIBUTE_PARENT_SCOPE);
-				}
-			}
-			if ((parentId != null) && (parentId.length() == 0)) {
-				parentId = null;
-			}
-
-			final Context context = contextManager.getContext(contextId);
-			context.define(name, description, parentId);
-		}
-
-		// If there were any warnings, then log them now.
-		if (!warningsToLog.isEmpty()) {
-			final String message = "Warnings while parsing the contexts from the 'org.eclipse.ui.contexts', 'org.eclipse.ui.commands' and 'org.eclipse.ui.acceleratorScopes' extension points."; //$NON-NLS-1$
-			final IStatus status = new MultiStatus(
-					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
-							.toArray(new IStatus[warningsToLog.size()]),
-					message, null);
-			WorkbenchPlugin.log(status);
-		}
-	}
-
-	/**
-	 * This class should not be constructed.
-	 */
-	private ContextPersistence() {
-		// Should not be called.
 	}
 
 }

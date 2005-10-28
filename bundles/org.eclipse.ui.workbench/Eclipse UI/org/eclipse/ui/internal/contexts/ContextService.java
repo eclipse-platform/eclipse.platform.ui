@@ -44,6 +44,11 @@ public final class ContextService implements IContextService {
 	private final ContextManager contextManager;
 
 	/**
+	 * The persistence class for this context service.
+	 */
+	private final ContextPersistence contextPersistence = new ContextPersistence();
+
+	/**
 	 * Constructs a new instance of <code>ContextService</code> using a
 	 * context manager.
 	 * 
@@ -96,10 +101,6 @@ public final class ContextService implements IContextService {
 	}
 
 	public final Context getContext(final String contextId) {
-		/*
-		 * TODO Need to put in place protection against the context being
-		 * changed.
-		 */
 		return contextManager.getContext(contextId);
 	}
 
@@ -116,7 +117,7 @@ public final class ContextService implements IContextService {
 	}
 
 	public final void readRegistry() {
-		ContextPersistence.read(contextManager);
+		contextPersistence.read(contextManager);
 	}
 
 	public final boolean registerShell(final Shell shell, final int type) {

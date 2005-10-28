@@ -140,10 +140,6 @@ public final class BindingService implements IBindingService {
 	}
 
 	public final Scheme getScheme(final String schemeId) {
-		/*
-		 * TODO Need to put in place protection against the scheme being
-		 * changed.
-		 */
 		return bindingManager.getScheme(schemeId);
 	}
 
