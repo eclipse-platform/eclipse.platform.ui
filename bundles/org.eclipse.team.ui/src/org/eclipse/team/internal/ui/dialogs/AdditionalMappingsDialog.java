@@ -13,16 +13,15 @@ package org.eclipse.team.internal.ui.dialogs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.ui.mapping.IResourceMappingOperationInput;
-import org.eclipse.team.ui.mapping.TeamViewerContext;
+import org.eclipse.team.ui.mapping.IResourceMappingOperationScope;
 
 public class AdditionalMappingsDialog extends DetailsDialog {
 
     private ResourceMappingSelectionArea selectedMappingsArea;
     private ResourceMappingHierarchyArea allMappingsArea;
-	private final IResourceMappingOperationInput input;
+	private final IResourceMappingOperationScope input;
 
-    public AdditionalMappingsDialog(Shell parentShell, String dialogTitle, IResourceMappingOperationInput input) {
+    public AdditionalMappingsDialog(Shell parentShell, String dialogTitle, IResourceMappingOperationScope input) {
         super(parentShell, dialogTitle);
 		this.input = input;
     }
@@ -38,7 +37,7 @@ public class AdditionalMappingsDialog extends DetailsDialog {
      */
     private void createSelectedMappingsArea(Composite parent) {
         Composite composite = createComposite(parent);
-        selectedMappingsArea = new ResourceMappingSelectionArea(input.getSeedMappings(), false, false);
+        selectedMappingsArea = new ResourceMappingSelectionArea(input.getInputMappings(), false, false);
         selectedMappingsArea.setDescription("Selected Elements");
         //selectedMappingsArea.addPropertyChangeListener(this);
         selectedMappingsArea.createArea(composite);
@@ -52,7 +51,7 @@ public class AdditionalMappingsDialog extends DetailsDialog {
      */
     private void createAllMappingsArea(Composite parent) {
         Composite composite = createComposite(parent);
-        allMappingsArea = ResourceMappingHierarchyArea.create(new TeamViewerContext(input));
+        allMappingsArea = ResourceMappingHierarchyArea.create(input, null);
         allMappingsArea.setDescription("All elements to be operated on");
         //allMappingsArea.addPropertyChangeListener(this);
         allMappingsArea.createArea(composite);

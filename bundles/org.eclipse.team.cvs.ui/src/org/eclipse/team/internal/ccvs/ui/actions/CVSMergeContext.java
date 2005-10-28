@@ -21,20 +21,26 @@ import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.mapping.ResourceMappingScope;
 import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.operations.MergeContext;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 
 public class CVSMergeContext extends MergeContext {
 	
 	private WorkspaceSynchronizeParticipant participant;
 
-	public static IMergeContext createContext(IResourceMappingOperationInput input, IProgressMonitor monitor) {
-		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(input.asSynchronizationScope());
+	public static IMergeContext createContext(IResourceMappingOperationScope input, IProgressMonitor monitor) {
+		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(asSynchronizationScope(input));
 		participant.refreshNow(participant.getResources(), NLS.bind("Preparing to merge {0}", new String[] { "TODO: mapping description for CVS merge context initialization" }), monitor);
 		return new CVSMergeContext(THREE_WAY, participant, input);
 	}
 	
-	protected CVSMergeContext(String type, WorkspaceSynchronizeParticipant participant, IResourceMappingOperationInput input) {
-		super(type, participant.getSyncInfoSet(), input);
+	private static ISynchronizeScope asSynchronizationScope(IResourceMappingOperationScope input) {
+		// TODO Temporary implementation
+		return new ResourceMappingScope("TODO: Need appropriate labels", input.getMappings(), input.getTraversals());
+	}
+	
+	protected CVSMergeContext(String type, WorkspaceSynchronizeParticipant participant, IResourceMappingOperationScope input) {
+		super(input, type, participant.getSyncInfoSet());
 		this.participant = participant;
 	}
 
@@ -61,12 +67,9 @@ public class CVSMergeContext extends MergeContext {
 	}
 
 	public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
-		IResource[] resources = new ResourceMappingScope("", getResourceMappings(ALL_MAPPINGS), traversals).getRoots();
+		// TODO: Shouldn't need to use a scope here
+		IResource[] resources = new ResourceMappingScope("", getScope().getMappings(), traversals).getRoots();
 		participant.refreshNow(resources, "TODO: CVS Merge Context Refresh", monitor);
-	}
-
-	public ISynchronizeScope getScope() {
-		return (ResourceMappingScope)participant.getScope();
 	}
 
 }

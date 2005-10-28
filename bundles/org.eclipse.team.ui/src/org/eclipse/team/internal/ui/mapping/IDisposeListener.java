@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.mapping;
+package org.eclipse.team.internal.ui.mapping;
 
 /**
  * Listener that, when registered with a synchronization context, gets invoked
@@ -28,5 +28,5 @@ public interface IDisposeListener {
 	/**
 	 * The given context has been disposed.
 	 */
-	void contextDisposed(ISynchronizeOperationContext context);
+	void contextDisposed(ISynchronizationCache context);
 }

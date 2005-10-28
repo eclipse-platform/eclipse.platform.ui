@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.team.ui.mapping.ITeamViewerContext;
 
 public class ResourceNavigatorContentExtensionFactory implements
 		INavigatorContentExtensionFactory {
@@ -23,12 +22,12 @@ public class ResourceNavigatorContentExtensionFactory implements
 		this.provider = provider;
 	}
 
-	public NavigatorContentExtension createProvider(final ModelProvider provider, ITeamViewerContext context) {
-		return new NavigatorContentExtension(provider, context) {
+	public NavigatorContentExtension createProvider(final ModelProvider provider) {
+		return new NavigatorContentExtension(provider) {
 			private ResourceMappingContentProvider resourceMappingContentProvider;
 			public IResourceMappingContentProvider getContentProvider() {
 				if (resourceMappingContentProvider == null)
-					resourceMappingContentProvider = new ResourceMappingContentProvider(getContext(), provider);
+					resourceMappingContentProvider = new ResourceMappingContentProvider(provider);
 				return resourceMappingContentProvider;
 			}
 			public void dispose() {

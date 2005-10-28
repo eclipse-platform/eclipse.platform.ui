@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -33,9 +33,9 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class CacheTreeContentsOperation extends SingleCommandOperation {
 
-	private final SyncInfoTree tree;
+	private final ISyncInfoTree tree;
 
-	public CacheTreeContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, SyncInfoTree tree) {
+	public CacheTreeContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, ISyncInfoTree tree) {
 		super(part, mappers, Command.NO_LOCAL_OPTIONS);
 		this.tree = tree;
 	}

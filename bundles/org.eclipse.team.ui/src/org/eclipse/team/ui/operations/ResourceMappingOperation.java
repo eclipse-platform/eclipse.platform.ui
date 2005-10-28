@@ -8,17 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.mapping;
+package org.eclipse.team.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
 import org.eclipse.team.internal.ui.mapping.DefaultResourceMappingMerger;
 import org.eclipse.team.ui.TeamOperation;
+import org.eclipse.team.ui.mapping.IResourceMappingMerger;
+import org.eclipse.team.ui.mapping.IResourceMappingOperationScope;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -62,7 +63,13 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class ResourceMappingOperation extends TeamOperation {
 
-	private final IResourceMappingOperationInput input;
+	/**
+	 * 
+	 */
+	private static final ResourceMappingOperationScopeBuilder DEFAULT_SCOPE_BUILDER = new ResourceMappingOperationScopeBuilder();
+	private final ResourceMapping[] selectedMappings;
+	private final ResourceMappingContext context;
+	private IResourceMappingOperationScope scope;
     
     /**
      * Create a resource mapping based operation
@@ -70,14 +77,15 @@ public abstract class ResourceMappingOperation extends TeamOperation {
      * @param input the input to the operation (which must have already been built by
      * invoking <code>buildInput</code>.
      */
-	protected ResourceMappingOperation(IWorkbenchPart part, IResourceMappingOperationInput input) {
+	protected ResourceMappingOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
 		super(part);
-		this.input = input;
+		this.selectedMappings = selectedMappings;
+		this.context = context;
 	}
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
-		buildInput(monitor);
+		buildScope(monitor);
 		execute(monitor);
 	}
 
@@ -86,15 +94,26 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	 * resource mappings and the set of interested participants
 	 * @param monitor 
 	 */
-	protected void buildInput(IProgressMonitor monitor) throws InvocationTargetException {
+	protected void buildScope(IProgressMonitor monitor) throws InvocationTargetException {
 		try {
-			input.buildInput(monitor);
-			if (input.hasAdditionalMappings()) {
+			scope = getScopeBuilder().buildScope(selectedMappings, context, monitor);
+			if (scope.hasAdditionalMappings()) {
 				promptForInputChange(monitor);
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		}
+	}
+
+	/**
+	 * Return the scope builder used to build the scope of this
+	 * operation from the input mappings. This method can be
+	 * overridden by subclasses.
+	 * @return the scope builder used to build the scope of this
+	 * operation from the input mappings.
+	 */
+	protected ResourceMappingOperationScopeBuilder getScopeBuilder() {
+		return DEFAULT_SCOPE_BUILDER;
 	}
 
 	/**
@@ -104,14 +123,14 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	 * @throws OperationCanceledException if the user choose to cancel
 	 */
 	protected void promptForInputChange(IProgressMonitor monitor) {
-		showAllMappings(input.getSeedMappings(), input.getInputMappings());
+		showAllMappings(scope.getInputMappings(), scope.getMappings());
 	}
 
     private void showAllMappings(final ResourceMapping[] selectedMappings, final ResourceMapping[] allMappings) {
         final boolean[] canceled = new boolean[] { false };
         getShell().getDisplay().syncExec(new Runnable() {
             public void run() {
-                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", getInput());
+                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", getScope());
                 int result = dialog.open();
                 canceled[0] = result != Dialog.OK;
             }
@@ -140,11 +159,11 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 		if (o instanceof IResourceMappingMerger) {
 			return (IResourceMappingMerger) o;	
 		}
-		return new DefaultResourceMappingMerger(provider, getInput());
+		return new DefaultResourceMappingMerger(provider, getScope());
 	}
 
-	public IResourceMappingOperationInput getInput() {
-		return input;
+	public IResourceMappingOperationScope getScope() {
+		return scope;
 	}
 	
 }

@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.*;
  * <code>IResourceMappingMerger</code>, clients can obtain the merger
  * from the Resources model provider {@link org.eclipse.core.resources.mapping.ResourceModelProvider}
  * and use that.
- * TODO: This is OK for now but will need to change
+ * TODO: This is OK for now but will need to change (see bug 113901)
  * 
  * @see org.eclipse.compare.IStreamMerger
  * @see org.eclipse.core.resources.mapping.ResourceMapping

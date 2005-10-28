@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.team.ui.mapping.ITeamViewerContext;
 
 /**
  * Placeholder for Common Navigator extension
@@ -30,12 +29,10 @@ import org.eclipse.team.ui.mapping.ITeamViewerContext;
 public abstract class NavigatorContentExtension {
 
 	private static final ResourceMappingLabelProvider RESOURCE_MAPPING_LABEL_PROVIDER = new ResourceMappingLabelProvider();
-	private final ITeamViewerContext context;
 	private final ModelProvider provider;
 	
-	public NavigatorContentExtension(ModelProvider provider, ITeamViewerContext context) {
+	public NavigatorContentExtension(ModelProvider provider) {
 		this.provider = provider;
-		this.context = context;
 	}
 	
 	/**
@@ -62,10 +59,6 @@ public abstract class NavigatorContentExtension {
 	 */
 	public ILabelProvider getLabelProvider() {
 		return RESOURCE_MAPPING_LABEL_PROVIDER;
-	}
-
-	public ITeamViewerContext getContext() {
-		return context;
 	}
 
 	public void dispose() {

@@ -8,16 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.mapping;
+package org.eclipse.team.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -80,11 +81,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * <li>Allow use to choose order of evaluation?
  * <li>Support tabbed sync view
  * </ul>
- * <p>
- * TODO: What about support for down grading a merge. That is, the user wants
- * to perform the merge at the file level even though a higher level model owns
- * the files. We could provide a preference that the user can set to perform
- * the merge at the level selected and not involve participants.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -97,8 +93,8 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class ResourceMappingMergeOperation extends ResourceMappingOperation {
 
-	protected ResourceMappingMergeOperation(IWorkbenchPart part, IResourceMappingOperationInput input) {
-		super(part, input);
+	protected ResourceMappingMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
+		super(part, selectedMappings, context);
 	}
 
 	/* (non-Javadoc)
@@ -107,7 +103,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
 			IMergeContext context = buildMergeContext(monitor);
-			ModelProvider[] providers = getInput().getModelProviders();
+			ModelProvider[] providers = getScope().getModelProviders();
 			List failedMerges = new ArrayList();
 			for (int i = 0; i < providers.length; i++) {
 				ModelProvider provider = providers[i];
@@ -156,7 +152,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 			monitor.beginTask(null, 100);
 			IStatus status = performAutoMerge(provider, mergeContext, Policy.subMonitorFor(monitor, 95));
 			if (!status.isOK()) {
-				if (status.getCode() == MergeStatus.CONFLICTS) {
+				if (status.getCode() == IMergeStatus.CONFLICTS) {
 					return false;
 				} else {
 					throw new TeamException(status);

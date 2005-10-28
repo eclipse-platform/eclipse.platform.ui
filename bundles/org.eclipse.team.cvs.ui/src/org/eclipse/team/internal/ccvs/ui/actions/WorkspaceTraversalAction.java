@@ -24,8 +24,8 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
-import org.eclipse.team.internal.ui.mapping.SimpleResourceMappingOperationInput;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.mapping.IResourceMappingOperationScope;
+import org.eclipse.team.ui.operations.ResourceMappingOperationScopeBuilder;
 import org.eclipse.ui.PlatformUI;
 
 
@@ -46,10 +46,9 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
     protected ResourceMapping[] getCVSResourceMappings() {
         ResourceMapping[] selectedMappings = getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
         try {
-			IResourceMappingOperationInput input = getOperationInput();
-			input.buildInput(new NullProgressMonitor());
-			if (input.hasAdditionalMappings()) {
-				return showAllMappings(input);
+			IResourceMappingOperationScope scope = new ResourceMappingOperationScopeBuilder().buildScope(selectedMappings, getResourceMappingContext(), new NullProgressMonitor());
+			if (scope.hasAdditionalMappings()) {
+				return showAllMappings(scope);
 			}
 		} catch (CoreException e) {
 			CVSUIPlugin.log(e);
@@ -57,11 +56,11 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
 		return selectedMappings;
     }
     
-    private ResourceMapping[] showAllMappings(final IResourceMappingOperationInput input) {
+    private ResourceMapping[] showAllMappings(final IResourceMappingOperationScope scope) {
         final boolean[] canceled = new boolean[] { false };
         getShell().getDisplay().syncExec(new Runnable() {
             public void run() {
-                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", input);
+                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", scope);
                 int result = dialog.open();
                 canceled[0] = result != Dialog.OK;
             }
@@ -71,7 +70,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
         if (canceled[0]) {
             return new ResourceMapping[0];
         }
-        return input.getInputMappings();
+        return scope.getMappings();
     }
 
     protected static IResource[] getRootTraversalResources(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
@@ -103,10 +102,6 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
     
     protected ResourceMappingContext getResourceMappingContext() {
 		return SubscriberResourceMappingContext.getCompareContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
-	}
-
-	protected SimpleResourceMappingOperationInput getOperationInput() {
-		return new ResourceMappingOperationInput(getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext());
 	}
 
 	public static IResource[] getResourcesToCompare(final ResourceMapping[] mappings, final Subscriber subscriber) throws InvocationTargetException {

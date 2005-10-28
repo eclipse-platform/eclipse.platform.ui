@@ -1,10 +1,10 @@
-package org.eclipse.team.ui.mapping;
+package org.eclipse.team.ui.operations;
 
-import org.eclipse.compare.IStreamMerger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.ui.mapping.IMergeStatus;
 
 /**
  * A special status that is returned when the return code 
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Status;
  * 
  * @since 3.2
  */
-public final class MergeStatus extends Status {
+public final class MergeStatus extends Status implements IMergeStatus {
     
     private ResourceMapping[] conflictingMappings;
 	private IFile[] conflictingFiles;
@@ -55,33 +55,16 @@ public final class MergeStatus extends Status {
         this.conflictingFiles = files;
 	}
 
-	/**
-     * Indicates that a change conflict prevented some or all of the resource
-     * mappings to be merged (value <code>1</code>). When this code is
-     * returned, the status must be of type
-     * <code>MergeStatus</code> and must contain the list of all
-     * resource mappings for which a manual merge is required.
-     */
-    public static final int CONFLICTS = IStreamMerger.CONFLICT;
-    
-    /**
-     * Status code describing an internal error (value <code>2</code>).
-     * The status return is not required to be of type <code>MergeStatus</code>
-     * for internal errors.
-     */
-    public static final int INTERNAL_ERROR= IStreamMerger.INTERNAL_ERROR;
-    
-    /**
-     * Returns the set of resource mappings for which an auto-merge was
-     * not performed. The client should present the mappings to the user
-     * in a manner that will allow the user to perform a manual merges.
-     * @return the set of resource mappings for which an auto-merge was
-     * not performed.
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.IMergeStatus#getConflictingMappings()
+	 */
     public ResourceMapping[] getConflictingMappings() {
         return conflictingMappings;
     }
     
+    /* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.IMergeStatus#getConflictingFiles()
+	 */
     public IFile[] getConflictingFiles() {
     	return conflictingFiles;
     }

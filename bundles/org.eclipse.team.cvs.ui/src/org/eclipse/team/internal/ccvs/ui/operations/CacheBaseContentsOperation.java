@@ -14,8 +14,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
@@ -29,7 +29,7 @@ public class CacheBaseContentsOperation extends CacheTreeContentsOperation {
 
 	private final boolean includeOutgoing;
 
-	public CacheBaseContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, SyncInfoTree tree, boolean includeOutgoing) {
+	public CacheBaseContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, ISyncInfoTree tree, boolean includeOutgoing) {
 		super(part, mappers, tree);
 		this.includeOutgoing = includeOutgoing;
 	}

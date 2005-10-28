@@ -19,10 +19,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.ui.mapping.IMergeContext;
-import org.eclipse.team.ui.mapping.IResourceMappingMerger;
-import org.eclipse.team.ui.mapping.IResourceMappingOperationInput;
-import org.eclipse.team.ui.mapping.MergeStatus;
+import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.operations.MergeStatus;
 
 /**
  * A default merger that delegates the merge to the merge context.
@@ -30,9 +28,9 @@ import org.eclipse.team.ui.mapping.MergeStatus;
 public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 	
 	private final ModelProvider provider;
-	private final IResourceMappingOperationInput input;
+	private final IResourceMappingOperationScope input;
 
-	public DefaultResourceMappingMerger(ModelProvider provider, IResourceMappingOperationInput input) {
+	public DefaultResourceMappingMerger(ModelProvider provider, IResourceMappingOperationScope input) {
 		this.provider = provider;
 		this.input = input;
 	}
@@ -49,7 +47,7 @@ public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 	}
 
 	private SyncInfoTree getSetToMerge(IMergeContext mergeContext) {
-		ResourceMapping[] mappings = input.getResourceMappings(provider.getDescriptor().getId());
+		ResourceMapping[] mappings = input.getMappings(provider.getDescriptor().getId());
 		SyncInfoTree result = new SyncInfoTree();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
@@ -64,9 +62,9 @@ public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 	}
 
 	private IStatus covertFilesToMappings(IStatus status, IMergeContext mergeContext) {
-		if (status.getCode() == MergeStatus.CONFLICTS) {
+		if (status.getCode() == IMergeStatus.CONFLICTS) {
 			// In general, we can't say which mapping failed so return them all
-			return new MergeStatus(status.getPlugin(), status.getMessage(), input.getResourceMappings(provider.getDescriptor().getId()));
+			return new MergeStatus(status.getPlugin(), status.getMessage(), input.getMappings(provider.getDescriptor().getId()));
 		}
 		return status;
 	}

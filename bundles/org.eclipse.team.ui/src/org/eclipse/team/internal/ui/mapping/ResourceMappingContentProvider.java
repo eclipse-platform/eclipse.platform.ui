@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.mapping.ITeamViewerContext;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
@@ -37,8 +37,9 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  */
 public class ResourceMappingContentProvider implements IResourceMappingContentProvider {
 
-	private ITeamViewerContext context;
+	private ISynchronizationContext context;
 	private final ModelProvider provider;
+	private IResourceMappingOperationScope input;
 	
 	public class ResourceAndDepth extends WorkbenchAdapter implements IAdaptable {
 		Object parent;
@@ -96,8 +97,7 @@ public class ResourceMappingContentProvider implements IResourceMappingContentPr
 		}
 	}
 
-    public ResourceMappingContentProvider(ITeamViewerContext context, ModelProvider provider) {
-        this.context = context;
+    public ResourceMappingContentProvider(ModelProvider provider) {
 		this.provider = provider;
     }
 
@@ -124,16 +124,16 @@ public class ResourceMappingContentProvider implements IResourceMappingContentPr
 
 	private ResourceTraversal[] getTraversals() {
 		List result = new ArrayList();
-		ResourceMapping[] mappings = context.getResourceMappings(provider.getDescriptor().getId());
+		ResourceMapping[] mappings = input.getMappings(provider.getDescriptor().getId());
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
-			ResourceTraversal[] traversals = context.getTraversals(mapping);
+			ResourceTraversal[] traversals = input.getTraversals(mapping);
 			for (int j = 0; j < traversals.length; j++) {
 				ResourceTraversal traversal = traversals[j];
 				result.add(traversal);
 			}
 		}
-		return SimpleResourceMappingOperationInput.combineTraversals((ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]));
+		return ResourceMappingOperationScope.combineTraversals((ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]));
 	}
 
     public Object getParent(Object element) {
@@ -166,10 +166,8 @@ public class ResourceMappingContentProvider implements IResourceMappingContentPr
         // Nothing to do
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.IResourceMappingContentProvider#init(org.eclipse.team.ui.mapping.ITeamViewerContext)
-	 */
-	public void init(ITeamViewerContext context) {
+	public void init(IResourceMappingOperationScope input, ISynchronizationContext context) {
+		this.input = input;
 		this.context = context;
 	}
 }

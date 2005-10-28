@@ -14,10 +14,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ui.mapping.ISynchronizationCache;
+import org.eclipse.team.ui.operations.MergeContext;
+import org.eclipse.team.ui.operations.SynchronizationContext;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 
 /**
@@ -35,7 +35,8 @@ import org.eclipse.team.ui.synchronize.ISynchronizeScope;
  * clients should listen to both sources in order to guarantee that they update
  * any dependent state appropriately.
  * <p>
- * This interface is not intended to be implemented by clients.
+ * This interface is not intended to be implemented by clients. They should subclass
+ * {@link SynchronizationContext} or one of its subclasses instead.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -44,9 +45,12 @@ import org.eclipse.team.ui.synchronize.ISynchronizeScope;
  * consulting with the Platform/Team team.
  * </p>
  * 
+ * @see SynchronizationContext
+ * @see MergeContext
+ * 
  * @since 3.2
  */
-public interface ISynchronizationContext extends ITeamViewerContext {
+public interface ISynchronizationContext {
 
 	/**
 	 * Synchronization type constant that indicates that
@@ -61,14 +65,14 @@ public interface ISynchronizationContext extends ITeamViewerContext {
 	public final static String THREE_WAY = "three-way"; //$NON-NLS-1$
 
 	/**
-	 * Return the scope of this synchronization context. The scope determines
-	 * the set of resources to which the context applies. Changes in the scope
-	 * may result in changes to the sync-info available in the tree of this
-	 * context.
+	 * Return the input that defined the scope of this synchronization context.
+	 * The input determines the set of resources to which the context applies.
+	 * Changes in the input may result in changes to the sync-info available in
+	 * the tree of this context.
 	 * 
-	 * @return the set of mappings for which this context applies.
+	 * @return the input that defined the scope of this synchronization context.
 	 */
-	public ISynchronizeScope getScope();
+	IResourceMappingOperationScope getScope();
 
 	/**
 	 * Return a tree that contains <code>SyncInfo</code> nodes for resources
@@ -81,25 +85,31 @@ public interface ISynchronizationContext extends ITeamViewerContext {
 	 * @return a tree that contains a <code>SyncInfo</code> node for any
 	 *         resources that are out-of-sync.
 	 */
-	public SyncInfoTree getSyncInfoTree();
+	public ISyncInfoTree getSyncInfoTree();
 	
 	/**
 	 * Returns synchronization info for the given resource, or <code>null</code>
 	 * if there is no synchronization info because the resource is not a
-	 * candidate for synchronization.
+	 * candidate for synchronization. This method can be used to obtain the
+	 * {@link SyncInfo} and hence the base and remote resource variant handles
+	 * for resources that are in-sync or out-of-sync. The sync info for
+	 * out-of-sync resources can also be obtained from the {@link #getSyncInfoTree()}
+	 * method.
 	 * <p>
-	 * Note that sync info may be returned for non-existing or for resources
-	 * which have no corresponding remote resource.
+	 * Note that sync info may be returned for non-existing resources or for
+	 * resources which have no corresponding remote resource.
 	 * </p>
 	 * <p>
-	 * This method will be quick. If synchronization calculation requires content from
-	 * the server it must be cached when the context is created or refreshed. A client should
-	 * call refresh before calling this method to ensure that the latest information
-	 * is available for computing the sync state.
+	 * This method will be quick. If synchronization calculation requires
+	 * content from the server it must be cached when the context is created or
+	 * refreshed. A client should call refresh before calling this method to
+	 * ensure that the latest information is available for computing the sync
+	 * state.
 	 * </p>
+	 * 
 	 * @param resource the resource of interest
 	 * @return sync info
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public SyncInfo getSyncInfo(IResource resource) throws CoreException;
 
@@ -120,8 +130,19 @@ public interface ISynchronizationContext extends ITeamViewerContext {
 	public String getType();
 	
 	/**
-	 * Dispose of the synchronization context. This method should be
-	 * invoked by clients when the context is no longer needed.
+	 * Return the cache assocated with this synchronization context.
+	 * The cache is maintained for the lifetime of this context and is
+	 * disposed when the the context is disposed. It can be used by
+	 * clients to cache model state related to the context so that it can
+	 * be mainatined for the life of the operation to which the context
+	 * applies.
+	 * @return the cache assocated with this synchronization context
+	 */
+     public ISynchronizationCache getCache();
+    
+	/**
+	 * Dispose of the synchronization context and the cache of the context. This
+	 * method should be invoked by clients when the context is no longer needed.
 	 */
 	public void dispose();
 	
@@ -154,5 +175,4 @@ public interface ISynchronizationContext extends ITeamViewerContext {
 	 *             </ul>
 	 */
     public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException;
-	
 }

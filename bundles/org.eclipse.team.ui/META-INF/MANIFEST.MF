@@ -17,6 +17,7 @@ Export-Package: org.eclipse.team.internal.ui;x-friends:="org.eclipse.team.cvs.ss
  org.eclipse.team.internal.ui.wizards;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
  org.eclipse.team.ui,
  org.eclipse.team.ui.mapping,
+ org.eclipse.team.ui.operations,
  org.eclipse.team.ui.synchronize
 Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.core.resources,

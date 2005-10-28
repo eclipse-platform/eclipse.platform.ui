@@ -14,8 +14,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class CacheRemoteContentsOperation extends CacheTreeContentsOperation {
 
-	public CacheRemoteContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, SyncInfoTree tree) {
+	public CacheRemoteContentsOperation(IWorkbenchPart part, ResourceMapping[] mappers, ISyncInfoTree tree) {
 		super(part, mappers, tree);
 	}
 

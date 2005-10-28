@@ -209,18 +209,18 @@ public class ResourceMappingHierarchyArea extends DialogArea {
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.internal.ui.mapping.IResourceMappingContentProvider#init(org.eclipse.team.ui.mapping.ITeamViewerContext)
 		 */
-		public void init(ITeamViewerContext context) {
+		public void init(IResourceMappingOperationScope input, ISynchronizationContext context) {
            	for (Iterator iter = providers.values().iterator(); iter.hasNext();) {
            		NavigatorContentExtension extension = (NavigatorContentExtension) iter.next();
 				IResourceMappingContentProvider provider = extension.getContentProvider();
-                provider.init(extension.getContext());
+                provider.init(input, context);
             }
 		}
         
     }
     
-    public static ResourceMappingHierarchyArea create(ITeamViewerContext context) {
-    	ModelProvider[] providers = context.getModelProviders();
+    public static ResourceMappingHierarchyArea create(IResourceMappingOperationScope input, ISynchronizationContext context) {
+    	ModelProvider[] providers = input.getModelProviders();
     	Map extensions = new HashMap();
     	for (int i = 0; i < providers.length; i++) {
 			ModelProvider provider = providers[i];
@@ -236,12 +236,12 @@ public class ResourceMappingHierarchyArea extends DialogArea {
 				}
 			}
 			if (factory != null) {
-				NavigatorContentExtension extension = factory.createProvider(provider, context);
+				NavigatorContentExtension extension = factory.createProvider(provider);
 				extensions.put(provider, extension);
 			}
 		}
         CompositeContentProvider provider = new CompositeContentProvider(extensions);
-        provider.init(context);
+        provider.init(input, context);
         return new ResourceMappingHierarchyArea(provider);
     }
     

@@ -11,7 +11,8 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.team.ui.mapping.ITeamViewerContext;
+import org.eclipse.team.ui.mapping.IResourceMappingOperationScope;
+import org.eclipse.team.ui.mapping.ISynchronizationContext;
 
 /**
  * A model content provider is a tree content provider that is used to display
@@ -29,5 +30,5 @@ public interface IResourceMappingContentProvider extends ITreeContentProvider {
 	 * methods of this content provider is invoked.
 	 * @param context a team context
 	 */
-	public void init(ITeamViewerContext context);
+	public void init(IResourceMappingOperationScope input, ISynchronizationContext context);
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.mapping;
+package org.eclipse.team.ui.operations;
 
 import java.io.*;
 import java.util.*;
@@ -23,6 +23,7 @@ import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.mapping.*;
 
 /**
  * Provides the context for an <code>IResourceMappingMerger</code>.
@@ -31,7 +32,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
  * The ancestor context is only required for merges while the remote
  * is required for both merge and replace.
  * 
- * TODO: Need to have a story for folder merging
+ * TODO: Need to have a story for folder merging (see bug 113898)
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -43,44 +44,16 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
  * @see IResourceMappingMerger
  * @since 3.2
  */
-public abstract class MergeContext extends SynchronizeOperationContext implements IMergeContext {
+public abstract class MergeContext extends SynchronizationContext implements IMergeContext {
 	
 	private static final String TXT_EXTENTION = "txt"; //$NON-NLS-1$
-	
-    private final String type;
-    private final SyncInfoTree tree;
 
 	/**
      * Create a merge context.
 	 * @param type 
      */
-    protected MergeContext(String type, SyncInfoTree tree, IResourceMappingOperationInput input) {
-    	super(input);
-		this.type = type;
-		this.tree = tree;
-    }
-    
-    /**
-     * Return the type of merge to take place. A
-     * type of <code>TWO_WAY</code> indicates that 
-     * the local contents are to be replaced with 
-     * the remote contents while a type of <code>THREE_WAY</code>
-     * indicates that the remote changes should be merged
-     * with the local changes.
-     * @return the type of merge to take place
-     */
-    public final String getType() {
-    	return type;
-    }
-    
-    /**
-     * Return a tree that contains a <code>SyncInfo</code>
-     * node for any resources that are out-of-sync. 
-     * @return a tree that contains a <code>SyncInfo</code>
-     * node for any resources that are out-of-sync.
-     */
-    public final SyncInfoTree getSyncInfoTree() {
-    	return tree;
+    protected MergeContext(IResourceMappingOperationScope input, String type, SyncInfoTree tree) {
+    	super(input, type, tree);
     }
     
     /**
@@ -116,8 +89,6 @@ public abstract class MergeContext extends SynchronizeOperationContext implement
 	 * Any resource changes triggered by this merge will be reported through the 
 	 * resource delta mechanism and the sync-info tree associated with this context.
 	 * 
-	 * TODO: How do we handle folder removals generically?
-	 * 
 	 * @see SyncInfoSet#addSyncSetChangedListener(ISyncInfoSetChangeListener)
 	 * @see org.eclipse.core.resources.IWorkspace#addResourceChangeListener(IResourceChangeListener)
 	 * 
@@ -136,8 +107,8 @@ public abstract class MergeContext extends SynchronizeOperationContext implement
 			SyncInfo info = (SyncInfo) iter.next();
 			IStatus s = merge(info, monitor);
 			if (!s.isOK()) {
-				if (s.getCode() == MergeStatus.CONFLICTS) {
-					failedFiles.addAll(Arrays.asList(((MergeStatus)s).getConflictingFiles()));
+				if (s.getCode() == IMergeStatus.CONFLICTS) {
+					failedFiles.addAll(Arrays.asList(((IMergeStatus)s).getConflictingFiles()));
 				} else {
 					return s;
 				}
@@ -163,7 +134,7 @@ public abstract class MergeContext extends SynchronizeOperationContext implement
      * @return a status indicating success or failure. A code of
      *         <code>MergeStatus.CONFLICTS</code> indicates that the file contain
      *         non-mergable conflicts and must be merged manually.
-     * @see org.eclipse.team.ui.mapping.MergeContext#merge(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.team.ui.operations.MergeContext#merge(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
      */
     public IStatus merge(SyncInfo info, IProgressMonitor monitor) {
 		IResource r = info.getLocal();
@@ -203,7 +174,7 @@ public abstract class MergeContext extends SynchronizeOperationContext implement
         		return performReplace(info, monitor);
         	}
         } catch (CoreException e) {
-            return new Status(IStatus.ERROR, TeamPlugin.ID, MergeStatus.INTERNAL_ERROR, NLS.bind("Merge of {0} failed due to an internal error.", new String[] { file.getFullPath().toString() }), e);
+            return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Merge of {0} failed due to an internal error.", new String[] { file.getFullPath().toString() }), e);
         }
     }
 
@@ -258,7 +229,7 @@ public abstract class MergeContext extends SynchronizeOperationContext implement
 		if (merger == null)
 		    merger = CompareUI.createStreamMerger(TXT_EXTENTION);
 		if (merger == null)
-		    return  new Status(IStatus.ERROR, TeamPlugin.ID, MergeStatus.INTERNAL_ERROR, NLS.bind("Auto-merge support for {0} is not available.", new String[] { file.getFullPath().toString() }), null);
+		    return  new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Auto-merge support for {0} is not available.", new String[] { file.getFullPath().toString() }), null);
 		return merge(merger, info, monitor);
 	}
 
@@ -362,7 +333,7 @@ public abstract class MergeContext extends SynchronizeOperationContext implement
         try {
             return new BufferedInputStream(new FileInputStream(tmpFile));
         } catch (FileNotFoundException e) {
-            throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, MergeStatus.INTERNAL_ERROR, NLS.bind("Could not read from temporary file {0}: {1}", new String[] { tmpFile.getAbsolutePath(), e.getMessage() }), e));
+            throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Could not read from temporary file {0}: {1}", new String[] { tmpFile.getAbsolutePath(), e.getMessage() }), e));
         }
     }
 

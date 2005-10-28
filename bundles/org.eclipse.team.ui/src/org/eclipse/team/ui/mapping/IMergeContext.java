@@ -16,13 +16,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.ui.operations.MergeContext;
 
 /**
  * Provides the context for an <code>IResourceMappingMerger</code>
  * or a model specific synchronization view that supports merging.
  * 
- * TODO: Need to have a story for folder merging
- * TODO: How are merge/markasMerge changes batched? IWorkspace#run?
+ * TODO: Need to have a story for folder merging (see bug 113898)
+ * TODO: How are merge/markasMerge changes batched? IWorkspace#run? (see bug 113928)
  * <p>
  * This interface is not intended to be implemented by clients. Clients should
  * instead subclass {@link MergeContext}.
@@ -38,7 +39,7 @@ import org.eclipse.team.core.synchronize.SyncInfoSet;
  * @see MergeContext
  * @since 3.2
  */
-public interface IMergeContext extends ISynchronizeOperationContext {
+public interface IMergeContext extends ISynchronizationContext {
 
 	/**
 	 * Method that allows the model merger to signal that the file in question
@@ -85,7 +86,7 @@ public interface IMergeContext extends ISynchronizeOperationContext {
 	 * Any resource changes triggered by this merge will be reported through the 
 	 * resource delta mechanism and the sync-info tree associated with this context.
 	 * 
-	 * TODO: How do we handle folder additions/removals generically?
+	 * TODO: How do we handle folder additions/removals generically? (see bug 113898)
 	 * 
 	 * @see SyncInfoSet#addSyncSetChangedListener(ISyncInfoSetChangeListener)
 	 * @see org.eclipse.core.resources.IWorkspace#addResourceChangeListener(IResourceChangeListener)

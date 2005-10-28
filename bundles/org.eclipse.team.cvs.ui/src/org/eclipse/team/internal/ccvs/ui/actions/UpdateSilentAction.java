@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -46,7 +47,7 @@ public class UpdateSilentAction extends WorkspaceTraversalAction {
 		//regular update action
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 	    if (store.getBoolean(ICVSUIConstants.PREF_ENABLEMODELUPDATE)){
-	    	new CVSMappingMergeOperation(getTargetPart(),getOperationInput()).run();
+	    	new CVSMappingMergeOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
 	    } else {
 	    	new UpdateOperation(getTargetPart(), getCVSResourceMappings(), Command.NO_LOCAL_OPTIONS, null /* no tag */).run();
 	    }

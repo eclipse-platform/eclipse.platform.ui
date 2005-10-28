@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.mapping;
+package org.eclipse.team.internal.ui.mapping;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,22 +29,21 @@ import org.eclipse.jface.util.SafeRunnable;
  * consulting with the Platform/Team team.
  * </p>
  * 
- * @see org.eclipse.team.ui.mapping.ISynchronizeOperationContext
+ * @see org.eclipse.team.internal.ui.mapping.ISynchronizationCache
  * @since 3.2
  */
-public abstract class SynchronizeOperationContext extends TeamViewerContext implements ISynchronizeOperationContext {
+public class SynchronizationCache implements ISynchronizationCache {
 
 	Map properties;
 	ListenerList listeners;
 	
 	/**
-	 * Create an operation context for the given input.
-	 * @param input the input of the context
+	 * CCreate an empty cache
 	 */
-	public SynchronizeOperationContext(IResourceMappingOperationInput input) {
-		super(input);
+	public SynchronizationCache() {
+		// nothing to do
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizeOperationContext#addProperty(java.lang.String, java.lang.Object)
 	 */
@@ -101,7 +100,7 @@ public abstract class SynchronizeOperationContext extends TeamViewerContext impl
 				final Object listener = allListeners[i];
 				Platform.run(new SafeRunnable(){
 					public void run() throws Exception {
-						((IDisposeListener)listener).contextDisposed(SynchronizeOperationContext.this);
+						((IDisposeListener)listener).contextDisposed(SynchronizationCache.this);
 					}
 				});
 			}
