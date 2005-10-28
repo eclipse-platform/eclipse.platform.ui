@@ -55,8 +55,18 @@ public class ViewPatternFilter extends PatternItemFilter {
 			text = desc.getLabel();
 		}
 
-		if (wordMatches(text))
+		if (wordMatches(text)){
+			// make sure the category has at least one matching child 
+			// to prevent an empty caategory from appearing
+			if (element instanceof IViewCategory && children != null){
+				for (int i = 0; i < children.length; i++){
+					if (select(viewer, element, children[i]))
+						return true;
+				}
+				return false;	// no matching children
+			}
 			return true;
+		}
 
 		if (matchItem && children != null) {
 			// Will return true if any subnode of the element matches the search
