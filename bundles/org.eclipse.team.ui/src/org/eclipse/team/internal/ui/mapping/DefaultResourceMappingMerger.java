@@ -24,15 +24,15 @@ import org.eclipse.team.ui.operations.MergeStatus;
 
 /**
  * A default merger that delegates the merge to the merge context.
+ * This is registered against ModelProvider so any model providers that
+ * don't provide a custom merger will get this one.
  */
 public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 	
 	private final ModelProvider provider;
-	private final IResourceMappingScope input;
 
-	public DefaultResourceMappingMerger(ModelProvider provider, IResourceMappingScope input) {
+	public DefaultResourceMappingMerger(ModelProvider provider) {
 		this.provider = provider;
-		this.input = input;
 	}
 
 	public IStatus merge(IMergeContext mergeContext, IProgressMonitor monitor) throws CoreException {
@@ -47,11 +47,11 @@ public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 	}
 
 	private SyncInfoTree getSetToMerge(IMergeContext mergeContext) {
-		ResourceMapping[] mappings = input.getMappings(provider.getDescriptor().getId());
+		ResourceMapping[] mappings = mergeContext.getScope().getMappings(provider.getDescriptor().getId());
 		SyncInfoTree result = new SyncInfoTree();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
-			ResourceTraversal[] traversals = input.getTraversals(mapping);
+			ResourceTraversal[] traversals = mergeContext.getScope().getTraversals(mapping);
 			SyncInfo[] infos = mergeContext.getSyncInfoTree().getSyncInfos(traversals);
 			for (int j = 0; j < infos.length; j++) {
 				SyncInfo info = infos[j];
@@ -64,7 +64,7 @@ public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 	private IStatus covertFilesToMappings(IStatus status, IMergeContext mergeContext) {
 		if (status.getCode() == IMergeStatus.CONFLICTS) {
 			// In general, we can't say which mapping failed so return them all
-			return new MergeStatus(status.getPlugin(), status.getMessage(), input.getMappings(provider.getDescriptor().getId()));
+			return new MergeStatus(status.getPlugin(), status.getMessage(), mergeContext.getScope().getMappings(provider.getDescriptor().getId()));
 		}
 		return status;
 	}

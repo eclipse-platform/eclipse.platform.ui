@@ -159,7 +159,7 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 		if (o instanceof IResourceMappingMerger) {
 			return (IResourceMappingMerger) o;	
 		}
-		return new DefaultResourceMappingMerger(provider, getScope());
+		return new DefaultResourceMappingMerger(provider);
 	}
 
 	public IResourceMappingScope getScope() {

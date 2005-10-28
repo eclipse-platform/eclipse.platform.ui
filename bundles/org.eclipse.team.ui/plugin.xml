@@ -317,6 +317,11 @@
       <factory
             adaptableType="org.eclipse.core.resources.mapping.ModelProvider"
             class="org.eclipse.team.internal.ui.TeamAdapterFactory">
+         <adapter type="org.eclipse.team.ui.mapping.IResourceMappingMerger"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.core.resources.mapping.ModelProvider"
+            class="org.eclipse.team.internal.ui.TeamAdapterFactory">
          <adapter type="org.eclipse.team.internal.ui.mapping.INavigatorContentExtensionFactory"/>
       </factory>
    </extension>
