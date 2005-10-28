@@ -233,6 +233,7 @@
       <workingSet
             name="%WorkingSets.resource"
             pageClass="org.eclipse.ui.internal.ide.dialogs.ResourceWorkingSetPage"
+            updaterClass="org.eclipse.ui.internal.ide.ResourceWorkingSetUpdater"
             icon="icons/full/obj16/workset.gif"
             id="org.eclipse.ui.resourceWorkingSetPage">
       </workingSet>
