@@ -26,8 +26,9 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorHandle;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringDescriptorHandle;
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
@@ -118,13 +119,13 @@ public class RefactoringHistoryDialog extends Dialog {
 	private static final String YESTERDAY_FORMAT= "yesterdayFormat"; //$NON-NLS-1$
 
 	/**
-	 * Converts a time stamp to a date stamp.
+	 * Converts a time stamp to a localized date stamp.
 	 * 
 	 * @param stamp
 	 *            the time stamp to convert
-	 * @return the date stamp
+	 * @return the localized date stamp
 	 */
-	private static long stampToDate(final long stamp) {
+	private static long stampToLocalizedDate(final long stamp) {
 		final int ONE_DAY_MS= 24 * 60 * 60 * 1000;
 		final Calendar calendar= Calendar.getInstance();
 		return (stamp + (calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET))) / ONE_DAY_MS;
@@ -160,9 +161,6 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The element image */
 	private Image fElementImage= null;
 
-	/** The history input of the dialog */
-	protected final RefactoringDescriptorHandle[] fHistoryInput;
-
 	/**
 	 * The history model (element type:
 	 * <code>&lt;Date, Collection&lt;RefactoringDescriptorHandle&gt;&gt;</code>)
@@ -184,6 +182,9 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The project, or <code>null</code> */
 	private IProject fProject= null;
 
+	/** The refactoring descriptor handles */
+	protected final RefactoringDescriptorHandle[] fRefactoringDescriptors;
+
 	/** The dialog settings, or <code>null</code> */
 	private IDialogSettings fSettings= null;
 
@@ -194,16 +195,16 @@ public class RefactoringHistoryDialog extends Dialog {
 	 *            the parent shell
 	 * @param bundle
 	 *            the resource bundle to use
-	 * @param input
-	 *            the sorted input of the dialog
+	 * @param history
+	 *            the refactoring history to display
 	 * @param id
 	 *            the ID of the dialog button
 	 */
-	public RefactoringHistoryDialog(final Shell parent, final ResourceBundle bundle, final RefactoringDescriptorHandle[] input, final int id) {
+	public RefactoringHistoryDialog(final Shell parent, final ResourceBundle bundle, final RefactoringHistory history, final int id) {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		fBundle= bundle;
-		fHistoryInput= input;
+		fRefactoringDescriptors= history.getDescriptors();
 		fButtonId= id;
 		fSettings= RefactoringUIPlugin.getDefault().getDialogSettings();
 		fBoundsKey= getClass().getName();
@@ -211,6 +212,10 @@ public class RefactoringHistoryDialog extends Dialog {
 
 	/**
 	 * Adds a refactoring descriptor handle to the history model.
+	 * <p>
+	 * This method may be called from non-UI threads. Therefore access to
+	 * widgets must be properly handled.
+	 * </p>
 	 * 
 	 * @param handle
 	 *            the handle of the descriptor
@@ -222,61 +227,73 @@ public class RefactoringHistoryDialog extends Dialog {
 		Assert.isNotNull(handle);
 		if (fHistoryTree == null || fHistoryTree.isDisposed())
 			return;
-		TreeItem item= null;
 		final long stamp= handle.getTimeStamp();
 		if (stamp > 0 && fDisplayTime) {
-			final TreeItem[] items= fHistoryTree.getItems();
-			TreeItem lastDay= null;
-			if (items.length > 0)
-				lastDay= items[items.length - 1];
-			final long day= stampToDate(stamp);
-			final Date date= new Date(stamp);
-			if (lastDay == null || day != stampToDate(((Date) lastDay.getData()).getTime())) {
-				lastDay= new TreeItem(fHistoryTree, SWT.NONE);
-				lastDay.setImage(fContainerImage);
-				final long today= stampToDate(System.currentTimeMillis());
-				String formatted= DateFormat.getDateInstance().format(date);
-				String key;
-				if (day == today)
-					key= TODAY_FORMAT;
-				else if (day == today - 1)
-					key= YESTERDAY_FORMAT;
-				else
-					key= DAY_FORMAT;
-				final String pattern= fBundle.getString(key);
-				if (pattern != null)
-					formatted= MessageFormat.format(pattern, new String[] { formatted});
-				lastDay.setText(formatted);
-				lastDay.setData(date);
-				fHistoryModel.put(date, new ArrayList(8));
-			}
-			item= new TreeItem(lastDay, SWT.NONE);
-			item.setImage(fElementImage);
-			final List list= (List) fHistoryModel.get(lastDay.getData());
-			list.add(handle);
-			item.setText(MessageFormat.format(fBundle.getString(REFACTORING_FORMAT), new String[] { DateFormat.getTimeInstance().format(date), handle.getDescription()}));
-			item.setData(handle);
-			if (selected)
-				lastDay.setExpanded(true);
+			getShell().getDisplay().syncExec(new Runnable() {
+
+				public final void run() {
+					TreeItem item= null;
+					if (!fHistoryTree.isDisposed()) {
+						final TreeItem[] items= fHistoryTree.getItems();
+						TreeItem lastDay= null;
+						if (items.length > 0)
+							lastDay= items[items.length - 1];
+						final long day= stampToLocalizedDate(stamp);
+						final Date date= new Date(stamp);
+						if (lastDay == null || day != stampToLocalizedDate(((Date) lastDay.getData()).getTime())) {
+							lastDay= new TreeItem(fHistoryTree, SWT.NONE);
+							lastDay.setImage(fContainerImage);
+							final long today= stampToLocalizedDate(System.currentTimeMillis());
+							String formatted= DateFormat.getDateInstance().format(date);
+							String key;
+							if (day == today)
+								key= TODAY_FORMAT;
+							else if (day == today - 1)
+								key= YESTERDAY_FORMAT;
+							else
+								key= DAY_FORMAT;
+							final String pattern= fBundle.getString(key);
+							if (pattern != null)
+								formatted= MessageFormat.format(pattern, new String[] { formatted});
+							lastDay.setText(formatted);
+							lastDay.setData(date);
+							fHistoryModel.put(date, new ArrayList(8));
+						}
+						item= new TreeItem(lastDay, SWT.NONE);
+						item.setImage(fElementImage);
+						item.setText(MessageFormat.format(fBundle.getString(REFACTORING_FORMAT), new String[] { DateFormat.getTimeInstance().format(date), handle.getDescription()}));
+						item.setData(handle);
+						final List list= (List) fHistoryModel.get(lastDay.getData());
+						list.add(handle);
+						if (selected) {
+							lastDay.setExpanded(true);
+							fHistoryTree.setSelection(new TreeItem[] { item});
+							handleSelection(item, handle, true);
+						}
+					}
+				}
+			});
+
 		} else {
-			if (fCollectionItem == null) {
-				fCollectionItem= new TreeItem(fHistoryTree, SWT.NONE);
-				fCollectionItem.setImage(fCaptionImage);
-				fCollectionItem.setText(fBundle.getString(REFACTORING_COLLECTION));
-			}
-			item= new TreeItem(fCollectionItem, SWT.NONE);
-			item.setImage(fItemImage);
-			item.setText(handle.getDescription());
-			item.setData(handle);
-		}
-		if (selected) {
-			fHistoryTree.setSelection(new TreeItem[] { item});
-			handleSelection(item, handle, true);
+			getShell().getDisplay().syncExec(new Runnable() {
+
+				public final void run() {
+					if (fCollectionItem == null) {
+						fCollectionItem= new TreeItem(fHistoryTree, SWT.NONE);
+						fCollectionItem.setImage(fCaptionImage);
+						fCollectionItem.setText(fBundle.getString(REFACTORING_COLLECTION));
+					}
+					final TreeItem item= new TreeItem(fCollectionItem, SWT.NONE);
+					item.setImage(fItemImage);
+					item.setText(handle.getDescription());
+					item.setData(handle);
+				}
+			});
 		}
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	public final boolean close() {
 		final boolean result= super.close();
@@ -295,7 +312,7 @@ public class RefactoringHistoryDialog extends Dialog {
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	protected void configureShell(final Shell shell) {
 		super.configureShell(shell);
@@ -303,21 +320,26 @@ public class RefactoringHistoryDialog extends Dialog {
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	public final void create() {
 		fHistoryModel.clear();
 		super.create();
 		fCollectionItem= null;
-		for (int index= 0; index < fHistoryInput.length - 1; index++)
-			addDescriptor(fHistoryInput[index], false);
-		if (fHistoryInput.length > 0)
-			addDescriptor(fHistoryInput[fHistoryInput.length - 1], true);
+		new Thread(new Runnable() {
+
+			public final void run() {
+				if (fRefactoringDescriptors.length > 0)
+					addDescriptor(fRefactoringDescriptors[0], true);
+				for (int index= 1; index < fRefactoringDescriptors.length; index++)
+					addDescriptor(fRefactoringDescriptors[index], false);
+			}
+		}).start();
 		fCollectionItem= null;
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	protected void createButtonsForButtonBar(final Composite parent) {
 		Button button= createButton(parent, fButtonId, fBundle.getString(BUTTON_LABEL), true);
@@ -334,7 +356,7 @@ public class RefactoringHistoryDialog extends Dialog {
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	protected Control createDialogArea(final Composite parent) {
 		final Composite result= (Composite) super.createDialogArea(parent);
@@ -455,7 +477,7 @@ public class RefactoringHistoryDialog extends Dialog {
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	protected final Point getInitialLocation(final Point size) {
 		final Point location= super.getInitialLocation(size);
@@ -476,7 +498,7 @@ public class RefactoringHistoryDialog extends Dialog {
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	protected final Point getInitialSize() {
 		int width= 0;

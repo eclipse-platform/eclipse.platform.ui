@@ -17,8 +17,9 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
+
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
@@ -53,7 +54,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	private IWorkingCopyManager fManager= null;
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	protected final Control createContents(final Composite parent) {
 		initializeDialogUnits(parent);
@@ -75,13 +76,13 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 		fEnableButton= new Button(result, SWT.CHECK);
 		fEnableButton.setText(RefactoringUIMessages.RefactoringPropertyPage_enable_message);
-		fEnableButton.setData(RefactoringHistory.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY);
+		fEnableButton.setData(RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY);
 
 		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		fEnableButton.setLayoutData(data);
 
 		fEnableButton.setSelection(isHistoryEnabled());
-		fEnableButton.setEnabled(RefactoringCorePlugin.getDefault().getPluginPreferences().getBoolean(RefactoringHistory.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY));
+		fEnableButton.setEnabled(RefactoringCore.internalGetPreferences().getBoolean(RefactoringPreferenceConstants.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY));
 
 		applyDialogFont(result);
 		return result;
@@ -97,7 +98,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 * @return the preferences
 	 */
 	private IEclipsePreferences getPreferences(final IWorkingCopyManager manager, final IScopeContext context) {
-		IEclipsePreferences preferences= context.getNode(RefactoringCorePlugin.getPluginId());
+		IEclipsePreferences preferences= context.getNode(RefactoringCore.ID_PLUGIN);
 		if (manager != null)
 			return manager.getWorkingCopy(preferences);
 		return preferences;
@@ -113,7 +114,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		final IProject project= (IProject) getElement().getAdapter(IProject.class);
 		if (project != null) {
 			final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
-			final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringHistory.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
+			final String preference= Platform.getPreferencesService().getString(RefactoringCore.ID_PLUGIN, RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
 			if (preference != null)
 				return Boolean.valueOf(preference).booleanValue();
 		}
@@ -121,22 +122,22 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	protected void performDefaults() {
 		super.performDefaults();
 		final IProject project= (IProject) getElement().getAdapter(IProject.class);
 		if (project != null)
-			setPreference(fManager, new ProjectScope(project), RefactoringHistory.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, null);
+			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, null);
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	public boolean performOk() {
 		final IProject project= (IProject) getElement().getAdapter(IProject.class);
 		if (project != null)
-			setPreference(fManager, new ProjectScope(project), RefactoringHistory.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.valueOf(fEnableButton.getSelection()).toString());
+			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.valueOf(fEnableButton.getSelection()).toString());
 		if (fManager != null)
 			try {
 				fManager.applyChanges();

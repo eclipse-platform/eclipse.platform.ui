@@ -15,8 +15,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Preferences;
 
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -33,15 +33,10 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
-/**
- * Preference page for work in progress.
- * 
- * TODO: remove "friends" from manifest.mf
- */
 public final class WorkInProgressPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	static {
-		RefactoringCorePlugin.getDefault().getPluginPreferences().setDefault(RefactoringHistory.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY, false);
+		RefactoringCore.internalGetPreferences().setDefault(RefactoringPreferenceConstants.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY, false);
 	}
 
 	private List fCheckBoxes;
@@ -64,7 +59,7 @@ public final class WorkInProgressPreferencePage extends PreferencePage implement
 		button.setData(key);
 		button.setLayoutData(data);
 
-		button.setSelection(RefactoringCorePlugin.getDefault().getPluginPreferences().getBoolean(key));
+		button.setSelection(RefactoringCore.internalGetPreferences().getBoolean(key));
 
 		fCheckBoxes.add(button);
 		return button;
@@ -81,8 +76,8 @@ public final class WorkInProgressPreferencePage extends PreferencePage implement
 		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		result.setLayout(layout);
 
-		Button button= addCheckBox(result, "&Record refactorings performed on workspace (after restart)", RefactoringHistory.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY); //$NON-NLS-1$
-		button.setSelection(RefactoringCorePlugin.getDefault().getPluginPreferences().getBoolean(RefactoringHistory.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY));
+		Button button= addCheckBox(result, "&Record refactorings performed on workspace (after restart)", RefactoringPreferenceConstants.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY); //$NON-NLS-1$
+		button.setSelection(RefactoringCore.internalGetPreferences().getBoolean(RefactoringPreferenceConstants.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY));
 
 		applyDialogFont(result);
 		return result;
@@ -98,7 +93,7 @@ public final class WorkInProgressPreferencePage extends PreferencePage implement
 	}
 
 	protected void performDefaults() {
-		Preferences preferences= RefactoringCorePlugin.getDefault().getPluginPreferences();
+		Preferences preferences= RefactoringCore.internalGetPreferences();
 		for (int i= 0; i < fCheckBoxes.size(); i++) {
 			Button button= (Button) fCheckBoxes.get(i);
 			String key= (String) button.getData();
@@ -118,7 +113,7 @@ public final class WorkInProgressPreferencePage extends PreferencePage implement
 	}
 
 	public boolean performOk() {
-		Preferences preferences= RefactoringCorePlugin.getDefault().getPluginPreferences();
+		Preferences preferences= RefactoringCore.internalGetPreferences();
 		for (int i= 0; i < fCheckBoxes.size(); i++) {
 			Button button= (Button) fCheckBoxes.get(i);
 			String key= (String) button.getData();
@@ -136,7 +131,7 @@ public final class WorkInProgressPreferencePage extends PreferencePage implement
 			String key= (String) text.getData();
 			preferences.setValue(key, text.getText());
 		}
-		RefactoringCorePlugin.getDefault().savePluginPreferences();
+		RefactoringCore.internalSavePreferences();
 		return super.performOk();
 	}
 }
