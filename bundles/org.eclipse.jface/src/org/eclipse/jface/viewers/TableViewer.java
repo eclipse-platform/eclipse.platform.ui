@@ -1147,7 +1147,7 @@ public class TableViewer extends StructuredViewer {
 			//This may create all items so it is not a good
 			//idea in general.
 			//Use #setSelection (int [] indices,boolean reveal) instead
-			for (int i = 0; i < getTable().getItemCount(); i++) {
+			for (int i = 0; virtualElements.size() > 0 && i < getTable().getItemCount(); i++) {
 				provider.updateElement(i);
 				TableItem item = getTable().getItem(i);
 				if(virtualElements.contains(item.getData())){
