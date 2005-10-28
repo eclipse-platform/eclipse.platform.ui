@@ -351,8 +351,9 @@ final class MenuPersistence extends CommonCommandPersistence {
 					visibleWhenExpression));
 		}
 
-		logWarnings(warningsToLog,
-				"Warnings while parsing the items from the registry"); //$NON-NLS-1$
+		logWarnings(
+				warningsToLog,
+				"Warnings while parsing the items from the 'org.eclipse.ui.menus' extension point"); //$NON-NLS-1$
 	}
 
 	/**
@@ -409,12 +410,12 @@ final class MenuPersistence extends CommonCommandPersistence {
 					ATTRIBUTE_IMAGE_STYLE);
 
 			// Read the position and the relativeTo attributes.
-			final SOrder ordering = readOrdering(parentElement, id,
+			final SOrder ordering = readOrdering(locationElement, id,
 					warningsToLog);
 
 			// Read the menu location information.
 			final LocationElement menuLocation = readMenuLocation(
-					parentElement, warningsToLog, id);
+					locationElement, warningsToLog, id);
 			if (menuLocation == null) {
 				continue;
 			}
