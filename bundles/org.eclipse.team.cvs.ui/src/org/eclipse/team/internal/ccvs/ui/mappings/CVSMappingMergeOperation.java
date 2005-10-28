@@ -25,11 +25,11 @@ import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.mapping.ResourceMappingScope;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.IMergeContext;
 import org.eclipse.team.ui.operations.ResourceMappingMergeOperation;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
@@ -62,7 +62,7 @@ public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
 	protected void requiresManualMerge(ModelProvider[] providers, IMergeContext context) throws CoreException {
 
 		// Sync Action
-		ResourceScope scope = new ResourceScope(getOtherScope().getRoots()); //create resource scope from here; sync
+		ResourceScope scope = new ResourceScope(getScope().getRoots()); //create resource scope from here; sync
 		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(scope);
 		TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 
@@ -76,13 +76,6 @@ public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
 				}
 			});
 		}
-	}
-	
-	/*
-	 * TODO This needs to change
-	 */
-	public ISynchronizeScope getOtherScope() {
-		return new ResourceMappingScope("", getScope().getMappings(), getScope().getTraversals());
 	}
 
 	private void provideInfo() {

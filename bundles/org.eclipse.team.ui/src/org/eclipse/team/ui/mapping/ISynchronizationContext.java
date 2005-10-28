@@ -72,7 +72,7 @@ public interface ISynchronizationContext {
 	 * 
 	 * @return the input that defined the scope of this synchronization context.
 	 */
-	IResourceMappingOperationScope getScope();
+	IResourceMappingScope getScope();
 
 	/**
 	 * Return a tree that contains <code>SyncInfo</code> nodes for resources

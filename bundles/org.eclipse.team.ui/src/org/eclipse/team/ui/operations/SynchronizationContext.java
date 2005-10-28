@@ -14,7 +14,7 @@ import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ui.mapping.ISynchronizationCache;
 import org.eclipse.team.internal.ui.mapping.SynchronizationCache;
-import org.eclipse.team.ui.mapping.IResourceMappingOperationScope;
+import org.eclipse.team.ui.mapping.IResourceMappingScope;
 import org.eclipse.team.ui.mapping.ISynchronizationContext;
 
 /**
@@ -33,7 +33,7 @@ import org.eclipse.team.ui.mapping.ISynchronizationContext;
  */
 public abstract class SynchronizationContext implements ISynchronizationContext {
 
-	private IResourceMappingOperationScope input;
+	private IResourceMappingScope input;
     private final String type;
     private final SyncInfoTree tree;
     private SynchronizationCache cache;
@@ -44,7 +44,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
      * @param type the type of synchronization (ONE_WAY or TWO_WAY)
      * @param tree the sync info tree that contains all out-of-sync resources
      */
-    protected SynchronizationContext(IResourceMappingOperationScope input, String type, SyncInfoTree tree) {
+    protected SynchronizationContext(IResourceMappingScope input, String type, SyncInfoTree tree) {
     	this.input = input;
 		this.type = type;
 		this.tree = tree;
@@ -53,7 +53,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationContext#getInput()
 	 */
-	public IResourceMappingOperationScope getScope() {
+	public IResourceMappingScope getScope() {
 		return input;
 	}
 

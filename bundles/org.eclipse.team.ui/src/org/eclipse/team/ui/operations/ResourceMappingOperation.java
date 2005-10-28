@@ -19,7 +19,7 @@ import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
 import org.eclipse.team.internal.ui.mapping.DefaultResourceMappingMerger;
 import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.team.ui.mapping.IResourceMappingMerger;
-import org.eclipse.team.ui.mapping.IResourceMappingOperationScope;
+import org.eclipse.team.ui.mapping.IResourceMappingScope;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -66,10 +66,10 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	/**
 	 * 
 	 */
-	private static final ResourceMappingOperationScopeBuilder DEFAULT_SCOPE_BUILDER = new ResourceMappingOperationScopeBuilder();
+	private static final ScopeGenerator DEFAULT_SCOPE_BUILDER = new ScopeGenerator();
 	private final ResourceMapping[] selectedMappings;
 	private final ResourceMappingContext context;
-	private IResourceMappingOperationScope scope;
+	private IResourceMappingScope scope;
     
     /**
      * Create a resource mapping based operation
@@ -96,7 +96,7 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	 */
 	protected void buildScope(IProgressMonitor monitor) throws InvocationTargetException {
 		try {
-			scope = getScopeBuilder().buildScope(selectedMappings, context, monitor);
+			scope = getScopeBuilder().prepareScope(getJobName(), selectedMappings, context, monitor);
 			if (scope.hasAdditionalMappings()) {
 				promptForInputChange(monitor);
 			}
@@ -112,7 +112,7 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	 * @return the scope builder used to build the scope of this
 	 * operation from the input mappings.
 	 */
-	protected ResourceMappingOperationScopeBuilder getScopeBuilder() {
+	protected ScopeGenerator getScopeBuilder() {
 		return DEFAULT_SCOPE_BUILDER;
 	}
 
@@ -162,7 +162,7 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 		return new DefaultResourceMappingMerger(provider, getScope());
 	}
 
-	public IResourceMappingOperationScope getScope() {
+	public IResourceMappingScope getScope() {
 		return scope;
 	}
 	

@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.mapping.ResourceMappingOperationScope;
-import org.eclipse.team.ui.mapping.IResourceMappingOperationScope;
+import org.eclipse.team.internal.ui.mapping.ResourceMappingScope;
+import org.eclipse.team.ui.mapping.IResourceMappingScope;
 
 /**
  * Class for translating a set of <code>ResourceMapping</code> objects
@@ -40,7 +40,7 @@ import org.eclipse.team.ui.mapping.IResourceMappingOperationScope;
  * 
  * @since 3.2
  */
-public class ResourceMappingOperationScopeBuilder {
+public class ScopeGenerator {
 
 	/**
 	 * Build the scope that is used to determine the complete set of resource
@@ -54,14 +54,15 @@ public class ResourceMappingOperationScopeBuilder {
 	 *         on
 	 * @throws CoreException
 	 */
-	public IResourceMappingOperationScope buildScope(
+	public IResourceMappingScope prepareScope(
+			String label,
 			ResourceMapping[] selectedMappings, ResourceMappingContext context,
 			IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 
 		// Create the scope
-		ResourceMappingOperationScope scope = createScope(selectedMappings);
+		ResourceMappingScope scope = createScope(label, selectedMappings);
 
 		// Accumulate the initial set of mappings we need traversals for
 		Set targetMappings = new HashSet();
@@ -106,21 +107,21 @@ public class ResourceMappingOperationScopeBuilder {
 	 *            additonal mappings
 	 */
 	protected void setHasAdditionalMappings(
-			ResourceMappingOperationScope scope, boolean hasAdditionalMappings) {
+			ResourceMappingScope scope, boolean hasAdditionalMappings) {
 		scope.setHasAdditionalMappings(hasAdditionalMappings);
 	}
 
 	/**
 	 * Create the scope that will be populated and returned by the builder. This
 	 * method is not intended to be overridden by clients.
-	 * 
+	 * @param label a label that describes the operation
 	 * @param inputMappings the input mappings
 	 * @return a newly created scope that will be populated and returned by the
 	 *         builder
 	 */
-	protected ResourceMappingOperationScope createScope(
-			ResourceMapping[] inputMappings) {
-		return new ResourceMappingOperationScope(inputMappings);
+	protected ResourceMappingScope createScope(
+			String label, ResourceMapping[] inputMappings) {
+		return new ResourceMappingScope(label, inputMappings);
 	}
 
 	/**
@@ -139,7 +140,7 @@ public class ResourceMappingOperationScopeBuilder {
 		return resources;
 	}
 
-	private Set addMappingsToScope(ResourceMappingOperationScope scope,
+	private Set addMappingsToScope(ResourceMappingScope scope,
 			Set targetMappings, ResourceMappingContext context,
 			IProgressMonitor monitor) throws CoreException {
 		Set newResources = new HashSet();
@@ -163,7 +164,7 @@ public class ResourceMappingOperationScopeBuilder {
 	 * @param mapping the resource mapping
 	 * @param traversals the resource mapping's traversals
 	 */
-	protected void addMappingToScope(ResourceMappingOperationScope scope,
+	protected void addMappingToScope(ResourceMappingScope scope,
 			ResourceMapping mapping, ResourceTraversal[] traversals) {
 		scope.addMapping(mapping, traversals);
 	}
@@ -236,7 +237,7 @@ public class ResourceMappingOperationScopeBuilder {
 				context, monitor);
 	}
 
-	private boolean hasAdditionalMappings(ResourceMappingOperationScope scope) {
+	private boolean hasAdditionalMappings(ResourceMappingScope scope) {
 		ResourceMapping[] inputMappings = scope.getInputMappings();
 		ResourceMapping[] mappings = scope.getMappings();
 		if (inputMappings.length == mappings.length) {

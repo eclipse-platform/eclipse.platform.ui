@@ -13,15 +13,15 @@ package org.eclipse.team.internal.ui.dialogs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.ui.mapping.IResourceMappingOperationScope;
+import org.eclipse.team.ui.mapping.IResourceMappingScope;
 
 public class AdditionalMappingsDialog extends DetailsDialog {
 
     private ResourceMappingSelectionArea selectedMappingsArea;
     private ResourceMappingHierarchyArea allMappingsArea;
-	private final IResourceMappingOperationScope input;
+	private final IResourceMappingScope input;
 
-    public AdditionalMappingsDialog(Shell parentShell, String dialogTitle, IResourceMappingOperationScope input) {
+    public AdditionalMappingsDialog(Shell parentShell, String dialogTitle, IResourceMappingScope input) {
         super(parentShell, dialogTitle);
 		this.input = input;
     }

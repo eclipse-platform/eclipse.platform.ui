@@ -11,7 +11,7 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.team.ui.mapping.IResourceMappingOperationScope;
+import org.eclipse.team.ui.mapping.IResourceMappingScope;
 import org.eclipse.team.ui.mapping.ISynchronizationContext;
 
 /**
@@ -30,5 +30,5 @@ public interface IResourceMappingContentProvider extends ITreeContentProvider {
 	 * methods of this content provider is invoked.
 	 * @param context a team context
 	 */
-	public void init(IResourceMappingOperationScope input, ISynchronizationContext context);
+	public void init(IResourceMappingScope input, ISynchronizationContext context);
 }

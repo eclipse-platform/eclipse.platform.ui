@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
+import org.eclipse.team.ui.operations.ScopeGenerator;
+import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 
 /**
  * Interface which defines the protocol for translating a set of
  * <code>ResourceMapping</code> objects representing a view selection into the
  * complete set of resources to be operated on.
  * <p>
- * This interface is not intended to be implemented by clients
+ * This interface is not intended to be implemented by clients.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -27,10 +30,11 @@ import org.eclipse.core.resources.mapping.*;
  * </p>
  * 
  * @see org.eclipse.core.resources.mapping.ResourceMapping
+ * @see ScopeGenerator
  * 
  * @since 3.2
  */
-public interface IResourceMappingOperationScope {
+public interface IResourceMappingScope extends ISynchronizeScope {
 
 	/**
 	 * Return the array of mappings that acted as the input to the scope builder
@@ -101,5 +105,13 @@ public interface IResourceMappingOperationScope {
 	 * @return all the mappings for the given model provider id
 	 */
 	public ResourceMapping[] getMappings(String modelProviderId);
+
+	/**
+	 * Return the set of resource that form the roots of this scope.
+	 * The roots are obtained from the set of traversals associated
+	 * with the scope ignoring the depth of the traversals.
+	 * @return the set of resource that form the roots of this scope
+	 */
+	public IResource[] getRoots();
 
 }

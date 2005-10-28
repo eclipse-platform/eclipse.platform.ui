@@ -52,7 +52,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
      * Create a merge context.
 	 * @param type 
      */
-    protected MergeContext(IResourceMappingOperationScope input, String type, SyncInfoTree tree) {
+    protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree) {
     	super(input, type, tree);
     }
     

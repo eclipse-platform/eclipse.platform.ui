@@ -28,9 +28,9 @@ import org.eclipse.team.ui.operations.MergeStatus;
 public class DefaultResourceMappingMerger implements IResourceMappingMerger {
 	
 	private final ModelProvider provider;
-	private final IResourceMappingOperationScope input;
+	private final IResourceMappingScope input;
 
-	public DefaultResourceMappingMerger(ModelProvider provider, IResourceMappingOperationScope input) {
+	public DefaultResourceMappingMerger(ModelProvider provider, IResourceMappingScope input) {
 		this.provider = provider;
 		this.input = input;
 	}

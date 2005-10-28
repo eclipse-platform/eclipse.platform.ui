@@ -24,8 +24,8 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
-import org.eclipse.team.ui.mapping.IResourceMappingOperationScope;
-import org.eclipse.team.ui.operations.ResourceMappingOperationScopeBuilder;
+import org.eclipse.team.ui.mapping.IResourceMappingScope;
+import org.eclipse.team.ui.operations.ScopeGenerator;
 import org.eclipse.ui.PlatformUI;
 
 
@@ -46,7 +46,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
     protected ResourceMapping[] getCVSResourceMappings() {
         ResourceMapping[] selectedMappings = getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
         try {
-			IResourceMappingOperationScope scope = new ResourceMappingOperationScopeBuilder().buildScope(selectedMappings, getResourceMappingContext(), new NullProgressMonitor());
+			IResourceMappingScope scope = new ScopeGenerator().prepareScope("CVS Operation", selectedMappings, getResourceMappingContext(), new NullProgressMonitor());
 			if (scope.hasAdditionalMappings()) {
 				return showAllMappings(scope);
 			}
@@ -56,7 +56,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
 		return selectedMappings;
     }
     
-    private ResourceMapping[] showAllMappings(final IResourceMappingOperationScope scope) {
+    private ResourceMapping[] showAllMappings(final IResourceMappingScope scope) {
         final boolean[] canceled = new boolean[] { false };
         getShell().getDisplay().syncExec(new Runnable() {
             public void run() {

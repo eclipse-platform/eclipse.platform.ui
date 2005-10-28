@@ -39,7 +39,7 @@ public class ResourceMappingContentProvider implements IResourceMappingContentPr
 
 	private ISynchronizationContext context;
 	private final ModelProvider provider;
-	private IResourceMappingOperationScope input;
+	private IResourceMappingScope input;
 	
 	public class ResourceAndDepth extends WorkbenchAdapter implements IAdaptable {
 		Object parent;
@@ -133,7 +133,7 @@ public class ResourceMappingContentProvider implements IResourceMappingContentPr
 				result.add(traversal);
 			}
 		}
-		return ResourceMappingOperationScope.combineTraversals((ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]));
+		return ResourceMappingScope.combineTraversals((ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]));
 	}
 
     public Object getParent(Object element) {
@@ -166,7 +166,7 @@ public class ResourceMappingContentProvider implements IResourceMappingContentPr
         // Nothing to do
     }
 
-	public void init(IResourceMappingOperationScope input, ISynchronizationContext context) {
+	public void init(IResourceMappingScope input, ISynchronizationContext context) {
 		this.input = input;
 		this.context = context;
 	}
