@@ -528,7 +528,7 @@ public class EditorReference extends WorkbenchPartReference implements
         // Things that will need to be disposed if an exception occurs (listed in the order they
         // need to be disposed, and set to null if they haven't been created yet)
         Composite content = null;
-        IEditorPart initializedPart = null;
+        IEditorPart part = null;
         EditorActionBars actionBars = null;
         EditorSite site = null;
         
@@ -543,7 +543,6 @@ public class EditorReference extends WorkbenchPartReference implements
                 throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_missing_editor_descriptor, editorID));
             }
             
-            IEditorPart part = null;
             
             if (desc.isInternal()) {    
                 // Create an editor instance.
@@ -620,9 +619,9 @@ public class EditorReference extends WorkbenchPartReference implements
                 }
             }
     
-            if (initializedPart != null) {
+            if (part != null) {
                 try {
-                    initializedPart.dispose();
+                    part.dispose();
                 } catch (RuntimeException re) {
                     WorkbenchPlugin.log(re);
                 }
