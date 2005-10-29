@@ -120,6 +120,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 				id++,
 				WorkbenchMessages.WorkingSetSelectionDialog_detailsButton_label,
 				false);
+		detailsButton.setEnabled(false);
 		detailsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editSelectedWorkingSet();
@@ -129,6 +130,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 		removeButton = createButton(buttonComposite, id++,
 				WorkbenchMessages.WorkingSetSelectionDialog_removeButton_label,
 				false);
+		removeButton.setEnabled(false);
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				removeSelectedWorkingSets();

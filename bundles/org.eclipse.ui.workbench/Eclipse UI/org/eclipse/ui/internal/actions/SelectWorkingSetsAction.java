@@ -26,7 +26,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -253,7 +255,7 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
 
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		viewer = CheckboxTableViewer.newCheckList(composite, SWT.NONE);
+		viewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.setLabelProvider(new WorkingSetLabelProvider());
 		viewer.setContentProvider(new ArrayContentProvider());
@@ -261,6 +263,12 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
 		viewer.setInput(window.getWorkbench().getWorkingSetManager()
 				.getWorkingSets());
 		viewer.setCheckedElements(window.getActivePage().getWorkingSets());
+		
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event) {
+                handleSelectionChanged();
+            }
+        });
 
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
@@ -291,4 +299,11 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
 		viewer.setInput(window.getWorkbench().getWorkingSetManager()
 				.getWorkingSets());
 	}
+	
+    /**
+     * Called when the selection has changed.
+     */
+    void handleSelectionChanged() {
+        updateButtonAvailability();
+    }
 }
