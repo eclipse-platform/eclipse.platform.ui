@@ -609,7 +609,7 @@ public class TableViewer extends StructuredViewer {
 				//Only add the element if it got updated.
 				//If this is done deferred the selection will
 				//be incomplete until selection is finished.
-				if(element != null)
+				if (element != null)
 					result.add(element);				
 			}
 		}
@@ -618,13 +618,16 @@ public class TableViewer extends StructuredViewer {
 				Object element = null;
 				//See if it is cached
 				int selectionIndex = selectionIndices[i];
-				if(selectionIndex < virtualManager.cachedElements.length){
+				if (selectionIndex < virtualManager.cachedElements.length){
 					element = virtualManager.cachedElements[selectionIndex];
 				}
-				if(element == null){//Already created then so just get the date
+				if (element == null){
+					// Not cached so try the item's data
 					TableItem item = getTable().getItem(selectionIndex);
-					result.add(item.getData());
+					element = item.getData();
 				}
+				if (element != null)
+					result.add(element);				
 			}
 			
 			
