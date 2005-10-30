@@ -12,14 +12,18 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSMergeContext;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
@@ -29,6 +33,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.IMergeContext;
 import org.eclipse.team.ui.operations.ResourceMappingMergeOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -63,7 +68,7 @@ public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
 
 		// Sync Action
 		ResourceScope scope = new ResourceScope(getScope().getRoots()); //create resource scope from here; sync
-		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(scope);
+		final WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(scope);
 		TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 
 		provideInfo();
@@ -72,7 +77,10 @@ public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
 		if (display != null && !display.isDisposed()) {
 			display.asyncExec(new Runnable() {
 				public void run() {
-					TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
+					ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
+					if (view != null) {
+						view.display(participant);
+					}
 				}
 			});
 		}
