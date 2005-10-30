@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -276,11 +280,8 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		assertTrue("Size was " + String.valueOf(result.size()) + " expected "
 				+ String.valueOf(children.length),
 				(result.size() == children.length));
-		assertTrue("First elements do not match ",
-				result.getFirstElement() == children[0]);
-		assertTrue(
-				"Last elements do not match ",
-				result.toArray()[children.length - 1] == children[children.length - 1]);
-	
+		Set childrenSet = new HashSet(Arrays.asList(children));
+		Set selectedSet = new HashSet(result.toList());
+		assertTrue("Elements do not match ", childrenSet.equals(selectedSet));
 	}
 }

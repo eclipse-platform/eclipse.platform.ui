@@ -598,35 +598,33 @@ public class TableViewer extends StructuredViewer {
 
 	private List getVirtualSelection() {
 		
-		int itemCount = getTable().getItemCount();
 		List result = new ArrayList();
+		int[] selectionIndices = getTable().getSelectionIndices(); 
 		if(getContentProvider() instanceof ILazyContentProvider){
-			for (int i = 0; i < itemCount; i++) {
-				ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
-				if(getTable().isSelected(i)){
-					lazy.updateElement(i);//Start the update
-					Object element = getTable().getItem(i).getData();
-					//Only add the element if it got updated.
-					//If this is done deferred the selection will
-					//be incomplete until selection is finished.
-					if(element != null)
-						result.add(element);				
-				}				
+			ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
+			for (int i = 0; i < selectionIndices.length; i++) {
+				int selectionIndex = selectionIndices[i];
+				lazy.updateElement(selectionIndex);//Start the update
+				Object element = getTable().getItem(selectionIndex).getData();
+				//Only add the element if it got updated.
+				//If this is done deferred the selection will
+				//be incomplete until selection is finished.
+				if(element != null)
+					result.add(element);				
 			}
 		}
 		else{
-			for (int i = 0; i < itemCount; i++) {
-				if(getTable().isSelected(i)){
-					Object element = null;
-					//See if it is cached
-					if(virtualManager.cachedElements.length < i){
-						element = virtualManager.cachedElements[i];
-					}
-					if(element == null){//Already created then so just get the date
-						TableItem item = getTable().getItem(i);
-						result.add(item.getData());
-					}
-				}				
+			for (int i = 0; i < selectionIndices.length; i++) {
+				Object element = null;
+				//See if it is cached
+				int selectionIndex = selectionIndices[i];
+				if(selectionIndex < virtualManager.cachedElements.length){
+					element = virtualManager.cachedElements[selectionIndex];
+				}
+				if(element == null){//Already created then so just get the date
+					TableItem item = getTable().getItem(selectionIndex);
+					result.add(item.getData());
+				}
 			}
 			
 			
