@@ -72,8 +72,7 @@ public class RefactoringSessionDescriptor {
 	}
 
 	/**
-	 * Returns the refactoring descriptors of the refactorings which have been
-	 * recorded in this session.
+	 * Returns the refactoring descriptors of the refactorings in this session.
 	 * 
 	 * @return the array of refactoring descriptors in executed order, or the
 	 *         empty array
