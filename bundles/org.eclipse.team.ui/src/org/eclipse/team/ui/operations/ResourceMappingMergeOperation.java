@@ -102,23 +102,32 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 */
 	protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
-			IMergeContext context = buildMergeContext(monitor);
-			ModelProvider[] providers = getScope().getModelProviders();
-			List failedMerges = new ArrayList();
-			for (int i = 0; i < providers.length; i++) {
-				ModelProvider provider = providers[i];
-				if (!performMerge(provider, context, monitor)) {
-					failedMerges.add(provider);
-				}
-			}
-			if (failedMerges.isEmpty()) {
-				context.dispose();
-			} else {
-				requiresManualMerge((ModelProvider[]) failedMerges.toArray(new ModelProvider[failedMerges.size()]), context);
-			}
+			monitor.beginTask(null, 100);
+			IMergeContext context = buildMergeContext(Policy.subMonitorFor(monitor, 75));
+			execute(context, Policy.subMonitorFor(monitor, 25));
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
+		} finally {
+			monitor.done();
 		}
+	}
+
+	private void execute(IMergeContext context, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+		ModelProvider[] providers = getScope().getModelProviders();
+		List failedMerges = new ArrayList();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			if (!performMerge(provider, context, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN))) {
+				failedMerges.add(provider);
+			}
+		}
+		if (failedMerges.isEmpty()) {
+			context.dispose();
+		} else {
+			requiresManualMerge((ModelProvider[]) failedMerges.toArray(new ModelProvider[failedMerges.size()]), context);
+		}
+		monitor.done();
 	}
 
 	/**
