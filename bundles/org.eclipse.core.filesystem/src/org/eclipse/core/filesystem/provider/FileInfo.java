@@ -18,7 +18,7 @@ import org.eclipse.core.filesystem.IFileInfo;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * @since 1.0
+ * @since org.eclipse.core.filesystem 1.0
  */
 public class FileInfo implements IFileInfo {
 	/**

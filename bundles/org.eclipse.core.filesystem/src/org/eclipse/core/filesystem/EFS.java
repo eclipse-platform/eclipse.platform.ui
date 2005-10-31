@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <p>
  * This class is not intended to be instantiated or subclassed.
  * </p>
- * @since 1.0
+ * @since org.eclipse.core.filesystem 1.0
  */
 public class EFS {
 	/**
