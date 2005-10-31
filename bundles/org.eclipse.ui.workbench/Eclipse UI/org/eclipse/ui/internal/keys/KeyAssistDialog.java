@@ -29,7 +29,7 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -41,10 +41,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -69,7 +66,7 @@ import org.eclipse.ui.keys.IBindingService;
  * 
  * @since 3.1
  */
-final class KeyAssistDialog extends Dialog {
+final class KeyAssistDialog extends PopupDialog {
 
 	/**
 	 * The data key for the binding stored on an SWT widget. The key is a
@@ -164,9 +161,7 @@ final class KeyAssistDialog extends Dialog {
 	KeyAssistDialog(final IWorkbench workbench,
 			final WorkbenchKeyboard associatedKeyboard,
 			final KeyBindingState associatedState) {
-		super((Shell) null);
-		setShellStyle(SWT.NO_TRIM);
-		setBlockOnOpen(false);
+		super((Shell) null, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false, false, false, null, null);
 
 		this.activityManager = workbench.getActivitySupport()
 				.getActivityManager();
@@ -176,6 +171,8 @@ final class KeyAssistDialog extends Dialog {
 				.getAdapter(ICommandService.class);
 		this.keyBindingState = associatedState;
 		this.workbenchKeyboard = associatedKeyboard;
+		
+		this.setInfoText(getKeySequenceString());
 	}
 
 	/**
@@ -272,7 +269,6 @@ final class KeyAssistDialog extends Dialog {
 	 */
 	private final void configureLocation(final Point size) {
 		final Shell shell = getShell();
-		final Display display = shell.getDisplay();
 
 		final Shell workbenchWindowShell = keyBindingState
 				.getAssociatedWindow().getShell();
@@ -295,25 +291,8 @@ final class KeyAssistDialog extends Dialog {
 			yCoord = 0;
 
 		}
-		final Point location = new Point(xCoord, yCoord);
-
-		// Constrains the position within the display's client area.
-		final Rectangle displayBounds = display.getClientArea();
-		final int displayRightEdge = displayBounds.x + displayBounds.width;
-		if (location.x < displayBounds.x) {
-			location.x = displayBounds.x;
-		} else if ((location.x + size.x) > displayRightEdge) {
-			location.x = displayRightEdge - size.x;
-		}
-		final int displayBottomEdge = displayBounds.y + displayBounds.height;
-		if (location.y < displayBounds.y) {
-			location.y = displayBounds.y;
-		} else if ((location.y + size.y) > displayBottomEdge) {
-			location.y = displayBottomEdge - size.y;
-		}
-
-		// Set the location.
-		shell.setLocation(location);
+		final Rectangle bounds = new Rectangle(xCoord, yCoord, size.x, size.y);
+		shell.setBounds(getConstrainedShellBounds(bounds));
 	}
 
 	/**
@@ -358,32 +337,12 @@ final class KeyAssistDialog extends Dialog {
 	}
 
 	/**
-	 * Creates and returns the contents of this dialog's button bar.
-	 * <p>
-	 * The <code>Dialog</code> implementation of this framework method lays
-	 * out a button bar and calls the <code>createButtonsForButtonBar</code>
-	 * framework method to populate it. Subclasses may override.
-	 * </p>
-	 * <p>
-	 * The returned control's layout data must be an instance of
-	 * <code>GridData</code>.
-	 * </p>
+	 * Returns a string representing the key sequence used to open this dialog.
 	 * 
-	 * @param parent
-	 *            the parent composite to contain the button bar
-	 * @return the button bar control
+	 * @return the string describing the key sequence, or <code>null</code> if
+	 * it cannot be determined.
 	 */
-	protected Control createButtonBar(Composite parent) {
-		// Create a composite for the button bar contents.
-		final Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		composite.setBackground(parent.getBackground());
-
-		/*
-		 * Figure out which key is used to open the key assist. If no key, then
-		 * just return.
-		 */
+	private String getKeySequenceString() {
 		final Command command = commandService
 				.getCommand("org.eclipse.ui.window.showKeyAssist"); //$NON-NLS-1$
 		final TriggerSequence[] keyBindings = bindingService
@@ -427,88 +386,27 @@ final class KeyAssistDialog extends Dialog {
 			break;
 		}
 		if (keySequence == null) {
-			return composite; // couldn't find a suitable key binding
+			return null; // couldn't find a suitable key binding
 		}
 
-		// Create a horizontal separator line
-		// Looks silly in this dialog, but might be useful in the general case.
-		// final Label separator = new Label(composite, SWT.SEPARATOR
-		// | SWT.HORIZONTAL | SWT.LINE_DOT);
-		// separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		// Create the text widget
-		final Label text = new Label(composite, SWT.NONE);
-		text.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
-		text.setBackground(composite.getBackground());
-		text.setText(MessageFormat.format(Util.translateString(RESOURCE_BUNDLE,
+		return MessageFormat.format(Util.translateString(RESOURCE_BUNDLE,
 				"openPreferencePage"), //$NON-NLS-1$
-				new Object[] { keySequence.format() }));
-
-		return composite;
+				new Object[] { keySequence.format() });
 	}
 
 	/**
-	 * Creates the contents of the dialog. This simply changes the colour of the
-	 * background to be <code>SWT.COLOR_INFO_BACKGROUND</code> and then calls
-	 * the super method.
-	 * 
-	 * @param parent
-	 *            The parent composite to contain the dialog contents; must not
-	 *            be <code>null</code>.
-	 * @return The control for the dialog contents; must not be
-	 *         <code>null</code>.
-	 */
-	protected final Control createContents(final Composite parent) {
-		// Create a black border around the outside of the shell.
-		final Display display = parent.getDisplay();
-		parent.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		final GridLayout shellLayout = new GridLayout(1, false);
-		shellLayout.marginHeight = 1;
-		shellLayout.marginWidth = 1;
-		parent.setLayout(shellLayout);
-
-		/*
-		 * Hook up the listeners and register the shell with the context
-		 * support.
-		 */
-		registerListeners();
-		registerShellType();
-
-		// Create the top-level composite for the dialog
-		final Composite contents = new Composite(parent, SWT.NONE);
-		contents.setBackground(display
-				.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		final GridLayout contentLayout = new GridLayout();
-		contentLayout.marginHeight = 1;
-		contentLayout.marginWidth = 1;
-		contents.setLayout(contentLayout);
-		contents.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		// Initialize the dialog units.
-		initializeDialogUnits(contents);
-
-		// Create the dialog area and button bar
-		dialogArea = createDialogArea(contents);
-		buttonBar = createButtonBar(contents);
-
-		// Make sure everyone is using the right font.
-		applyDialogFont(contents);
-
-		return contents;
-
-	}
-
-	/**
-	 * Creates the dialog area for the key assistant shell. This creates a table
+	 * Creates the content area for the key assistant. This creates a table
 	 * and places it inside the composite. The composite will contain a list of
 	 * all the key bindings.
 	 * 
 	 * @param parent
 	 *            The parent composite to contain the dialog area; must not be
 	 *            <code>null</code>.
-	 * @return The control for the dialog area; must not be <code>null</code>.
 	 */
 	protected final Control createDialogArea(final Composite parent) {
+		// First, register the shell type with the context support
+		registerShellType();
+		
 		// Create a composite for the dialog area.
 		final Composite composite = new Composite(parent, SWT.NONE);
 		final GridLayout compositeLayout = new GridLayout();
@@ -525,7 +423,6 @@ final class KeyAssistDialog extends Dialog {
 		} else {
 			createTableDialogArea(composite, partialMatches);
 		}
-
 		return composite;
 	}
 
@@ -563,8 +460,7 @@ final class KeyAssistDialog extends Dialog {
 	private final void createTableDialogArea(final Composite parent,
 			final SortedMap partialMatches) {
 		// Layout the table.
-		completionsTable = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION
-				| SWT.SINGLE);
+		completionsTable = new Table(parent, SWT.FULL_SELECTION	| SWT.SINGLE);
 		final GridData gridData = new GridData(GridData.FILL_BOTH);
 		completionsTable.setLayoutData(gridData);
 		completionsTable.setBackground(parent.getBackground());
@@ -743,19 +639,6 @@ final class KeyAssistDialog extends Dialog {
 		return super.open();
 	}
 
-	/**
-	 * Adds a deactivation listener to the shell. This listener will close the
-	 * shell if it ever deactivates. This listener should be attached when the
-	 * shell is created, not opened.
-	 */
-	private final void registerListeners() {
-		final Shell shell = getShell();
-		shell.addListener(SWT.Deactivate, new Listener() {
-			public void handleEvent(Event event) {
-				close();
-			}
-		});
-	}
 
 	/**
 	 * Registers the shell as the same type as its parent with the context
