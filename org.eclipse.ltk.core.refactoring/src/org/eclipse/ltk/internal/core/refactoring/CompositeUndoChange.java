@@ -35,14 +35,14 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 
 /**
- * A change to perform the reverse change of a {@link org.eclipse.ltk.core.refactoring.CompositeTextFileChange}.
+ * A change to perform the reverse change of a {@link org.eclipse.ltk.core.refactoring.MultiStateTextFileChange}.
  * <p>
  * This class is not intended to be instantiated by clients. It is usually
- * created by a <code>CompositeTextFileChange</code> object.
+ * created by a <code>MultiStateTextFileChange</code> object.
  * </p>
  * <p>
  * The class should be subclassed by clients also subclassing <code>
- * CompositeTextFileChange</code>
+ * MultiStateTextFileChange</code>
  * to provide a proper undo change object.
  * </p>
  * 

@@ -81,9 +81,9 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * executed edit can then be used to determine its position in the preview.
  * </p>
  * 
- * @deprecated Use {@link MultiStateTextFileChange} instead. This class is going to be removed after 3.2 M4
+ * @since 3.2
  */
-public class CompositeTextFileChange extends TextEditBasedChange {
+public class MultiStateTextFileChange extends TextEditBasedChange {
 
 	private static final class ComposableBufferChange {
 
@@ -116,7 +116,7 @@ public class CompositeTextFileChange extends TextEditBasedChange {
 
 		private final Set fEdits= new HashSet();
 
-		private ComposableBufferChangeGroup(final CompositeTextFileChange change, final TextEditGroup group) {
+		private ComposableBufferChangeGroup(final MultiStateTextFileChange change, final TextEditGroup group) {
 			super(change, group);
 
 			final TextEdit[] edits= group.getTextEdits();
@@ -252,7 +252,7 @@ public class CompositeTextFileChange extends TextEditBasedChange {
 	 * @param file
 	 *            the text file to apply the change to
 	 */
-	public CompositeTextFileChange(final String name, final IFile file) {
+	public MultiStateTextFileChange(final String name, final IFile file) {
 		super(name);
 
 		Assert.isNotNull(file);
