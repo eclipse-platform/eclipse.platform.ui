@@ -12,14 +12,14 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import java.util.Date;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -63,6 +63,29 @@ public class CVSMergeContext extends MergeContext {
 
 		int direction = SyncInfo.getDirection(info.getKind());
 		boolean isIncoming = (direction == SyncInfo.INCOMING);
+		
+		// For folders, just make them in-sync
+		if (info.getLocal().getType() != IResource.FILE) {
+			if (isIncoming && info instanceof CVSSyncInfo) {
+				CVSSyncInfo syncInfo = (CVSSyncInfo) info;
+				try {
+					syncInfo.makeInSync();
+				} catch (CVSException e) {
+					return new CVSStatus(IStatus.ERROR, e.getMessage(), e);
+				}
+			}
+			return Status.OK_STATUS;
+		}
+		
+		// For incoming file changes, make sure the parents exist
+		if (isIncoming && info.getRemote() != null && !info.getLocal().exists()) {
+			IContainer parent = info.getLocal().getParent();
+			try {
+				ensureExists(parent);
+			} catch (CoreException e) {
+				return new CVSStatus(IStatus.ERROR, e.getMessage(), e);
+			}
+		}
 
 		IStatus statusReturn = super.merge(info, monitor);
 
@@ -92,6 +115,7 @@ public class CVSMergeContext extends MergeContext {
 						if (!localResource.exists()) {
 							localResource.unmanage(monitor);
 						}
+						pruneEmptyParents(new SyncInfo[] {info} );
 					}
 				}
 				return Status.OK_STATUS;
@@ -101,6 +125,30 @@ public class CVSMergeContext extends MergeContext {
 		}
 
 		return statusReturn;
+	}
+
+	private void pruneEmptyParents(SyncInfo[] nodes) throws CVSException {
+		// TODO: A more explicit tie in to the pruning mechanism would be prefereable.
+		// i.e. I don't like referencing the option and visitor directly
+		if (!CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) return;
+		ICVSResource[] cvsResources = new ICVSResource[nodes.length];
+		for (int i = 0; i < cvsResources.length; i++) {
+			cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(nodes[i].getLocal());
+		}
+		new PruneFolderVisitor().visit(
+			CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()),
+			cvsResources);
+	}
+	
+	private void ensureExists(IContainer parent) throws CoreException {
+		if (!parent.exists()) {
+			ensureExists(parent.getParent());
+			SyncInfo parentInfo = getSyncInfo(parent);
+			if (parentInfo instanceof CVSSyncInfo) {
+				CVSSyncInfo syncInfo = (CVSSyncInfo) parentInfo;
+				syncInfo.makeInSync();
+			}
+		}
 	}
 	
 	public void dispose() {
