@@ -328,20 +328,31 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private void createGettingStarted(Composite parent) {
 		Font font = parent.getFont();
 		GridData gd = null;
-		createSpacer(parent, 1);
 		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
 		label.setFont(font);
-		label.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_2, null));
+		label.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_1);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = parent.getBounds().width - 30;
 		label.setLayoutData(gd);
 		createSpacer(parent, 1);
 		label = new Label(parent, SWT.LEFT | SWT.WRAP);
 		label.setFont(font);
-		label.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_1, null));
+		label.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_2);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = parent.getBounds().width - 30;
 		label.setLayoutData(gd);
+		label = new Label(parent, SWT.LEFT | SWT.WRAP);
+		label.setFont(font);
+		label.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = parent.getBounds().width - 30;
+		label.setLayoutData(gd);
+		label = new Label(parent, SWT.LEFT | SWT.WRAP);
+		label.setFont(font);
+		label.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_4);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = parent.getBounds().width - 30;
+		label.setLayoutData(gd);		
 	}
 	
 	/**
