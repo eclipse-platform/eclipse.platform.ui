@@ -15,9 +15,9 @@ import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.UpdatableValue;
 import org.eclipse.jface.binding.swt.SWTBindingConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * @since 3.2
@@ -47,17 +47,13 @@ public class ListUpdatableValue extends UpdatableValue {
 			throw new IllegalArgumentException("SWT.SINGLE support only for a List selection"); //$NON-NLS-1$
 		
 		if (attribute.equals(SWTBindingConstants.SELECTION)) {
-			list.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {
+			list.addListener(SWT.Selection, new Listener(){			
+				public void handleEvent(Event event) {
 					if (!updating) {
 						fireChangeEvent(IChangeEvent.CHANGE, null, null);
-					}					
+					}		
 				}
-				public void widgetDefaultSelected(SelectionEvent e) {
-					if (!updating) {
-						fireChangeEvent(IChangeEvent.CHANGE, null, null);
-					}				
-				}
+			
 			});
 		} else
 			throw new IllegalArgumentException();

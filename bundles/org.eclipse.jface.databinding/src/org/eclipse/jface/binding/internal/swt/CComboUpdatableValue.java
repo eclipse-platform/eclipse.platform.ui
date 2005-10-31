@@ -44,8 +44,8 @@ public class CComboUpdatableValue extends UpdatableValue {
 		if (attribute.equals(SWTBindingConstants.CONTENT))
 			attribute = SWTBindingConstants.TEXT;
 
-		if (attribute.equals(SWTBindingConstants.TEXT)
-				|| attribute.equals(SWTBindingConstants.SELECTION)) {
+		if (attribute.equals(SWTBindingConstants.SELECTION) || 
+			attribute.equals(SWTBindingConstants.TEXT)) {
 			ccombo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
@@ -53,7 +53,8 @@ public class CComboUpdatableValue extends UpdatableValue {
 					}
 				}
 			});
-		} else
+		}
+		else
 			throw new IllegalArgumentException();
 	}
 
@@ -88,10 +89,13 @@ public class CComboUpdatableValue extends UpdatableValue {
 		if (attribute.equals(SWTBindingConstants.TEXT)) {
 			return ccombo.getText();
 		} else if (attribute.equals(SWTBindingConstants.SELECTION)) {
-			int index = ccombo.getSelectionIndex();
-			if (index >= 0)
-				return ccombo.getItem(index);
-			return null;
+			// The problem with a ccombo, is that it changes the text an fires before 
+			// it update its selection index
+			return ccombo.getText();
+//			int index = ccombo.getSelectionIndex();
+//			if (index >= 0)
+//				return ccombo.getItem(index);
+//			return null;
 		} else
 			throw new AssertionError("unexpected attribute"); //$NON-NLS-1$
 
