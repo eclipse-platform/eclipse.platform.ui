@@ -44,12 +44,17 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
  * <p>
  * Provides the Tree Viewer for the Common Navigator. Content and labels are
  * provided by an instance of
- * {@link org.eclipse.wst.common.navigator.views.NavigatorContentService}&nbsp;
+ * {@link org.eclipse.ui.navigator.NavigatorContentService}&nbsp;
  * which uses the ID supplied in the constructor
  * {@link CommonViewer#CommonViewer(String, Composite, int)}.
+ * 
  * <p>
- * The following class is experimental until fully documented.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
  * </p>
+ * @since 3.2
  */
 public class CommonViewer extends TreeViewer {
 

@@ -44,28 +44,28 @@ import org.eclipse.ui.part.ViewPart;
  * <ul>
  * <li>
  * <p>
- * {@link org.eclipse.wst.common.navigator.views.CommonViewer}: The UI component that renders the
+ * {@link org.eclipse.ui.navigator.CommonViewer}: The UI component that renders the
  * extensible tree. Also creates and manages the lifecylce of the Navigator Content Service
  * (described below).
  * </p>
  * </li>
  * <li>
  * <p>
- * {@link org.eclipse.wst.common.navigator.views.CommonNavigatorManager}: Handles auxillary
+ * {@link org.eclipse.ui.navigator.CommonNavigatorManager}: Handles auxillary
  * functions, such as updating the status bar, populating popup menus, and managing the Navigator
  * Action Service (described below). Not expected to be needed by clients.
  * </p>
  * </li>
  * <li>
  * <p>
- * {@link org.eclipse.wst.common.navigator.views.NavigatorActionService}: Manages instances of
+ * {@link org.eclipse.ui.navigator.NavigatorActionService}: Manages instances of
  * {@link org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider}&nbsp;provided
  * by individual extensions and content extensions.
  * </p>
  * </li>
  * <li>
  * <p>
- * {@link org.eclipse.wst.common.navigator.views.NavigatorContentService}: Manages instances of
+ * {@link org.eclipse.ui.navigator.NavigatorContentService}: Manages instances of
  * Navigator Content Extensions. Instances are created as needed, and disposed of upon the disposal
  * of the Common Navigator.
  * </p>
@@ -83,7 +83,7 @@ import org.eclipse.ui.part.ViewPart;
  *        		name=&quot;My Custom View&quot;
  *        		icon=&quot;relative/path/to/icon.gif&quot;
  *        		category=&quot;org.acme.mycategory&quot;
- *        		class=&quot;org.eclipse.wst.common.navigator.views.CommonNavigator&quot;
+ *        		class=&quot;org.eclipse.ui.navigator.CommonNavigator&quot;
  *        		id=&quot;org.acme.MyCustomNavigatorID&quot;&gt;
  *        	&lt;/view&gt;
  *        &lt;/extension&gt; 
@@ -96,7 +96,7 @@ import org.eclipse.ui.part.ViewPart;
  * methods are provided to override specific pieces of functionality. Each of these methods begin
  * with <i>create </i> and explain what modular component they are responsible for creating. Each of
  * these pieces may take the instance of the Common Viewer (
- * {@link org.eclipse.wst.common.navigator.views.CommonViewer}) and have depedencies to that object,
+ * {@link org.eclipse.ui.navigator.CommonViewer}) and have depedencies to that object,
  * but the instance of the Common Viewer should never assume more than the standard Eclipse
  * interfaces when working with these components.
  * </p>
@@ -106,10 +106,15 @@ import org.eclipse.ui.part.ViewPart;
  * 
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
- * </p>
+ * </p> 
+ * 
  * <p>
- * The following class is experimental until fully documented.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
  * </p>
+ * @since 3.2
  */
 public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 

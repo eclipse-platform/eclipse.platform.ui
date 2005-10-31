@@ -22,6 +22,14 @@ import org.osgi.framework.Bundle;
 /**
  * A set of static methods that provide an nicer interface to common platform
  * operations related to bundle management.
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
+ * progress. There is a guarantee neither that this API will work nor that it will remain the same.
+ * Please do not use this API without consulting with the Platform/UI team.
+ * </p>
+ * 
+ * @since 3.2
  */
 public class BundleUtility {
 	public static boolean isActive(Bundle bundle) {

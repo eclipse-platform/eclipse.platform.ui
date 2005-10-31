@@ -23,11 +23,11 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 /**
  * <p>
  * Provides relevant content based on the associated
- * {@link org.eclipse.wst.common.navigator.views.NavigatorContentService}&nbsp; for a TreeViewer .
+ * {@link org.eclipse.ui.navigator.NavigatorContentService}&nbsp; for a TreeViewer .
  * </p>
  * <p>
  * Except for the dependency on
- * {@link org.eclipse.wst.common.navigator.views.NavigatorContentService}, this class has no
+ * {@link org.eclipse.ui.navigator.NavigatorContentService}, this class has no
  * dependencies on the rest of the Common Navigator framework. Tree viewers that would like to use
  * the extensions defined by the Common Navigator, without using the actual view part or other
  * pieces of functionality (filters, sorting, etc) may choose to use this class, in effect using an
@@ -36,6 +36,14 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
  * 
  * @see org.eclipse.ui.navigator.NavigatorContentService
  * @see org.eclipse.ui.navigator.NavigatorContentServiceLabelProvider
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
+ * progress. There is a guarantee neither that this API will work nor that it will remain the same.
+ * Please do not use this API without consulting with the Platform/UI team.
+ * </p>
+ * 
+ * @since 3.2
  *  
  */
 public class NavigatorContentServiceContentProvider implements ITreeContentProvider {
@@ -171,7 +179,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	 * <p>
 	 * This method requires that any extension that would like an opportunity to supply a parent for
 	 * anElement expressly indicate that in the action expression &lt;enables&gt; statement of the
-	 * <b>org.eclipse.wst.common.navigator.views.navigatorContent </b> extension point.
+	 * <b>org.eclipse.ui.navigator.navigatorContent </b> extension point.
 	 * </p>
 	 * {@inheritDoc}
 	 * 

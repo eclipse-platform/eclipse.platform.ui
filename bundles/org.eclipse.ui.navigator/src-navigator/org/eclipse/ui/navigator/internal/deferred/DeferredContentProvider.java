@@ -21,9 +21,15 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * DeferredContentProvider is largely adapted from (@see
- * org.eclipse.wst.common.navigator.views.DeferredTreeContentManager)
+ * org.eclipse.ui.navigator.DeferredTreeContentManager)
  * 
- * @author Michael D. Elder <mdelder@us.ibm.com>
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
+ * progress. There is a guarantee neither that this API will work nor that it will remain the same.
+ * Please do not use this API without consulting with the Platform/UI team.
+ * </p>
+ * 
+ * @since 3.2
  */
 public class DeferredContentProvider implements ITreeContentProvider {
 

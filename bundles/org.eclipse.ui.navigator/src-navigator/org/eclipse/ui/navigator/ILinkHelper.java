@@ -24,6 +24,14 @@ import org.eclipse.ui.IWorkbenchPage;
  * <b>org.eclipse.wst.common.navigator.views.linkHelper </b> extension point to gather information
  * and trigger editor activations.
  * </p>
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
+ * @since 3.2
  */
 public interface ILinkHelper {
 

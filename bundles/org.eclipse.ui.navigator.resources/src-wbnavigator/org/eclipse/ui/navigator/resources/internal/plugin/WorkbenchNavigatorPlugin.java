@@ -18,6 +18,15 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The main plugin class for the workbench Navigator.
+ * 
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
+ * @since 3.2
  */
 public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 	//The shared instance.

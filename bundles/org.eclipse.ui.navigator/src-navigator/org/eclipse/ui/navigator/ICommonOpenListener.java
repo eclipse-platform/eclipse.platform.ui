@@ -15,15 +15,19 @@ import org.eclipse.jface.viewers.IOpenListener;
  * Provides a custom interface for clients that require more information than the standard
  * {@link org.eclipse.jface.viewers.IOpenListener}&nbsp;allows. Clients may choose to implement this
  * interface for the openListener attribute of the
- * <b>org.eclipse.wst.common.navigator.views.navigatorContent </b> extension point.
+ * <b>org.eclipse.ui.navigator.navigatorContent </b> extension point.
  * </p>
  * <p>
  * Clients need not implement this interface if there is no cause to do so.
  * {@link ICommonOpenListener}&nbsp;is respected by the Common Navigator.
  * <p>
  * <p>
- * The following class is experimental until fully documented.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
  * </p>
+ * @since 3.2
  */
 public interface ICommonOpenListener extends IOpenListener {
 

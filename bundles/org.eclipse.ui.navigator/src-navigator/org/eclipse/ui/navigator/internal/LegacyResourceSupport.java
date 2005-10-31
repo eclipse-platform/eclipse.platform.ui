@@ -27,6 +27,15 @@ import org.osgi.framework.Bundle;
  * backwards compatibility for resource-specific functions which
  * could not be moved up from the generic workbench layer to the
  * IDE layer.
+ * 
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
+ * progress. There is a guarantee neither that this API will work nor that it will remain the same.
+ * Please do not use this API without consulting with the Platform/UI team.
+ * </p>
+ * 
+ * @since 3.2
  */
 public final class LegacyResourceSupport {
 

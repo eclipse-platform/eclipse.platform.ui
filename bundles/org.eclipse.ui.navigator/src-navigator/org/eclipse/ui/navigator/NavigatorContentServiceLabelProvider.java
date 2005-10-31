@@ -21,18 +21,25 @@ import org.eclipse.ui.PlatformUI;
 /**
  * <p>
  * Provides relevant labels based on the associated
- * {@link org.eclipse.wst.common.navigator.views.NavigatorContentService}for the contents of a
+ * {@link org.eclipse.ui.navigator.NavigatorContentService}for the contents of a
  * TreeViewer .
  * <p>
  * 
  * <p>
  * Except for the dependency on
- * {@link org.eclipse.wst.common.navigator.views.NavigatorContentService}, this class has no
+ * {@link org.eclipse.ui.navigator.NavigatorContentService}, this class has no
  * dependencies on the rest of the Common Navigator framework. Tree viewers that would like to use
  * the extensions defined by the Common Navigator, without using the actual view part or other
  * pieces of functionality (filters, sorting, etc) may choose to use this class, in effect using an
  * extensible label provider.
  * </p>
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
+ * progress. There is a guarantee neither that this API will work nor that it will remain the same.
+ * Please do not use this API without consulting with the Platform/UI team.
+ * </p>
+ * 
+ * @since 3.2
  * 
  * @see org.eclipse.ui.navigator.NavigatorContentService
  * @see org.eclipse.ui.navigator.NavigatorContentServiceContentProvider

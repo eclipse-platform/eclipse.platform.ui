@@ -17,10 +17,16 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * This adapter interface provides support for lazy initialization of UI workbench elements that are
  * displayed visually. This adapter is used with an associated deferred content provider.
  * 
- * @see DeferredAdapterProvider
- * @since 3.0
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
+ * progress. There is a guarantee neither that this API will work nor that it will remain the same.
+ * Please do not use this API without consulting with the Platform/UI team.
+ * </p>
  * 
- * <b>NOTE: </b> This API is experimental and subject to change.
+ * @since 3.2
+ * @see DeferredAdapterProvider 
+ * 
+ * 
  */
 public interface IDeferredElementAdapter extends IWorkbenchAdapter {
 

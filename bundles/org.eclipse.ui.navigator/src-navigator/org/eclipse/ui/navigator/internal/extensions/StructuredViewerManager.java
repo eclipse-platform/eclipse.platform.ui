@@ -31,9 +31,15 @@ import org.eclipse.ui.progress.UIJob;
  * be taken to ensure that {@link #inputChanged(Object, Object)}and
  * {@link #inputChanged(Viewer, Object, Object)}are not called concurrently with
  * {@link #initialize(IStructuredContentProvider)}.
+ * 
+ * 
  * <p>
- * The following class is experimental until fully documented.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
+ * progress. There is a guarantee neither that this API will work nor that it will remain the same.
+ * Please do not use this API without consulting with the Platform/UI team.
  * </p>
+ * 
+ * @since 3.2
  */
 public class StructuredViewerManager {
 

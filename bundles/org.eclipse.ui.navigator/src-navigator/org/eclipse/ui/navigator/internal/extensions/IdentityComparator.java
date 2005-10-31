@@ -11,7 +11,15 @@
 package org.eclipse.ui.navigator.internal.extensions;
 
 import java.util.Comparator;
-
+/**
+* <p>
+* <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
+* progress. There is a guarantee neither that this API will work nor that it will remain the same.
+* Please do not use this API without consulting with the Platform/UI team.
+* </p>
+* 
+* @since 3.2
+*/
 public class IdentityComparator implements Comparator {
 
 	public static final IdentityComparator INSTANCE = new IdentityComparator();

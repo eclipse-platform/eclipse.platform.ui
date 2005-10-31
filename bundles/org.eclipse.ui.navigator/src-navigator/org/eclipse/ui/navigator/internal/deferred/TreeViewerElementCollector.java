@@ -27,9 +27,16 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Elements of the following class were adapted from (@see
- * org.eclipse.wst.common.navigator.views.DeferredTreeContentManager)
+ * org.eclipse.ui.navigator.DeferredTreeContentManager)
  * 
- * @author Michael D. Elder <mdelder@us.ibm.com>
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
+ * progress. There is a guarantee neither that this API will work nor that it will remain the same.
+ * Please do not use this API without consulting with the Platform/UI team.
+ * </p>
+ * 
+ * @since 3.2
  */
 public class TreeViewerElementCollector implements IPendingElementCollector {
 
@@ -108,7 +115,7 @@ public class TreeViewerElementCollector implements IPendingElementCollector {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.wst.common.navigator.views.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		 * @see org.eclipse.ui.navigator.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public IStatus runInUIThread(IProgressMonitor updateMonitor) {
 			if (children == null || children.length == 0)
@@ -146,7 +153,7 @@ public class TreeViewerElementCollector implements IPendingElementCollector {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.wst.common.navigator.views.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		 * @see org.eclipse.ui.navigator.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			synchronized (treeViewer) {

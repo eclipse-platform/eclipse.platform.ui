@@ -19,10 +19,13 @@ package org.eclipse.ui.navigator.internal.extensions;
 import org.eclipse.ui.IPluginContribution;
 
 /**
- * @author jsholl
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
+ * progress. There is a guarantee neither that this API will work nor that it will remain the same.
+ * Please do not use this API without consulting with the Platform/UI team.
+ * </p>
  * 
- * To change the template for this generated type comment go to Window - Preferences - Java - Code
- * Generation - Code and Comments
+ * @since 3.2
  */
 public class NavigatorActivityHelper {
 

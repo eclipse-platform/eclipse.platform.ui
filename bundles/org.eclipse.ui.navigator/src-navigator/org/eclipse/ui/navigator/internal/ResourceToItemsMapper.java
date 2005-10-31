@@ -34,6 +34,15 @@ import org.eclipse.ui.navigator.AdaptabilityUtility;
  * Helper class for updating error markers and other decorators that work on resources. Items are
  * mapped to their element's underlying resource. Method <code>resourceChanged</code> updates all
  * items that are affected from the changed elements.
+ * 
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
+ * progress. There is a guarantee neither that this API will work nor that it will remain the same.
+ * Please do not use this API without consulting with the Platform/UI team.
+ * </p>
+ * 
+ * @since 3.2
  */
 public class ResourceToItemsMapper {
 
