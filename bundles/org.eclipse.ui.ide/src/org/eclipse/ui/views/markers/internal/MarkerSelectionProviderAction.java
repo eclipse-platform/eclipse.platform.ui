@@ -23,18 +23,6 @@ public abstract class MarkerSelectionProviderAction extends SelectionProviderAct
 		super(provider, text);
 		
 	}
-
-	/**
-	 * Return whether or not the selection has one element that
-	 * is concrete.
-	 * @param selection
-	 * @return <true>code</true> if the selection has one element that
-	 * is concrete.
-	 */
-	protected boolean hasSingleConcreteSelection(IStructuredSelection selection) {
-		return selection != null && selection.size() == 1
-				&& ((MarkerNode) selection.getFirstElement()).isConcrete();
-	}
 	
 	/**
 	 * Get the selected markers in the receiver.

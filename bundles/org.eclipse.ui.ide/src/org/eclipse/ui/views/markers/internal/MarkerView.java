@@ -1352,8 +1352,9 @@ public abstract class MarkerView extends TableView {
 			return;
 
 		IStructuredSelection structured = (IStructuredSelection) selection;
-		if (structured.size() != 1)
+		if(!Util.isSingleConcreteSelection(structured))
 			return;
+
 
 		menu.add(new Separator(MENU_SHOW_IN_GROUP));
 		// Don't add in the filters until they are set

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
@@ -274,6 +275,18 @@ public final class Util {
 		}
 
 		return marker.getResource().getProjectRelativePath().removeLastSegments(1).toOSString();
+	}
+	
+	/**
+	 * Return whether or not the selection has one element that
+	 * is concrete.
+	 * @param selection
+	 * @return <true>code</true> if the selection has one element that
+	 * is concrete.
+	 */
+	static boolean isSingleConcreteSelection(IStructuredSelection selection) {
+		return selection != null && selection.size() == 1
+				&& ((MarkerNode) selection.getFirstElement()).isConcrete();
 	}
 	
 }

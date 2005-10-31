@@ -54,6 +54,6 @@ public class ActionTaskProperties extends MarkerSelectionProviderAction {
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
-		setEnabled(hasSingleConcreteSelection(selection));
+		setEnabled(Util.isSingleConcreteSelection(selection));
 	}
 }
