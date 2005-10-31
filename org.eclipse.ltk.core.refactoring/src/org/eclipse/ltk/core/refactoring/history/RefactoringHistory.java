@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.history;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorHandle;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
  * Object which represents a sequence of executed refactorings with time
@@ -22,7 +22,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorHandle;
  * and associated refactoring descriptor handles for any given query.
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients.
+ * Note: this class is not intended to be extended outside the refactoring framework.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.
@@ -38,7 +38,7 @@ public abstract class RefactoringHistory {
 	 * 
 	 * @return the refactoring descriptors, or an empty array
 	 */
-	public abstract RefactoringDescriptorHandle[] getDescriptors();
+	public abstract RefactoringDescriptorProxy[] getDescriptors();
 
 	/**
 	 * Is the refactoring history empty?

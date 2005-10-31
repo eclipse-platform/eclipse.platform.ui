@@ -47,7 +47,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @since 3.2
  */
-public final class XmlRefactoringSessionReader extends DefaultHandler implements IRefactoringSessionReader {
+final class XmlRefactoringSessionReader extends DefaultHandler implements IRefactoringSessionReader {
 
 	/** The comment of the refactoring session, or <code>null</code> */
 	private String fComment= null;

@@ -33,7 +33,7 @@ import org.w3c.dom.Node;
  * 
  * @since 3.2
  */
-public final class XmlRefactoringSessionTransformer implements IRefactoringSessionTransformer {
+final class XmlRefactoringSessionTransformer implements IRefactoringSessionTransformer {
 
 	/** The version value */
 	private static final String VALUE_VERSION= "1.0"; //$NON-NLS-1$

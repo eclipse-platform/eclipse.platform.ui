@@ -23,10 +23,12 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 import org.eclipse.core.resources.IProject;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorHandle;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
@@ -163,7 +165,7 @@ public class RefactoringHistoryDialog extends Dialog {
 
 	/**
 	 * The history model (element type:
-	 * <code>&lt;Date, Collection&lt;RefactoringDescriptorHandle&gt;&gt;</code>)
+	 * <code>&lt;Date, Collection&lt;RefactoringDescriptorProxy&gt;&gt;</code>)
 	 */
 	protected final Map fHistoryModel= new HashMap(4);
 
@@ -182,8 +184,8 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The project, or <code>null</code> */
 	private IProject fProject= null;
 
-	/** The refactoring descriptor handles */
-	protected final RefactoringDescriptorHandle[] fRefactoringDescriptors;
+	/** The refactoring descriptor proxies */
+	protected final RefactoringDescriptorProxy[] fDescriptorProxies;
 
 	/** The dialog settings, or <code>null</code> */
 	private IDialogSettings fSettings= null;
@@ -204,30 +206,30 @@ public class RefactoringHistoryDialog extends Dialog {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		fBundle= bundle;
-		fRefactoringDescriptors= history.getDescriptors();
+		fDescriptorProxies= history.getDescriptors();
 		fButtonId= id;
 		fSettings= RefactoringUIPlugin.getDefault().getDialogSettings();
 		fBoundsKey= getClass().getName();
 	}
 
 	/**
-	 * Adds a refactoring descriptor handle to the history model.
+	 * Adds a refactoring descriptor proxy to the history model.
 	 * <p>
 	 * This method may be called from non-UI threads. Therefore access to
-	 * widgets must be properly handled.
+	 * widgets must be properly synchronized.
 	 * </p>
 	 * 
-	 * @param handle
+	 * @param proxy
 	 *            the handle of the descriptor
 	 * @param selected
 	 *            <code>true</code> if the refactoring should be initially
 	 *            selected, <code>false</code> otherwise
 	 */
-	protected void addDescriptor(final RefactoringDescriptorHandle handle, final boolean selected) {
-		Assert.isNotNull(handle);
+	protected void addDescriptor(final RefactoringDescriptorProxy proxy, final boolean selected) {
+		Assert.isNotNull(proxy);
 		if (fHistoryTree == null || fHistoryTree.isDisposed())
 			return;
-		final long stamp= handle.getTimeStamp();
+		final long stamp= proxy.getTimeStamp();
 		if (stamp > 0 && fDisplayTime) {
 			getShell().getDisplay().syncExec(new Runnable() {
 
@@ -261,14 +263,14 @@ public class RefactoringHistoryDialog extends Dialog {
 						}
 						item= new TreeItem(lastDay, SWT.NONE);
 						item.setImage(fElementImage);
-						item.setText(MessageFormat.format(fBundle.getString(REFACTORING_FORMAT), new String[] { DateFormat.getTimeInstance().format(date), handle.getDescription()}));
-						item.setData(handle);
+						item.setText(MessageFormat.format(fBundle.getString(REFACTORING_FORMAT), new String[] { DateFormat.getTimeInstance().format(date), proxy.getDescription()}));
+						item.setData(proxy);
 						final List list= (List) fHistoryModel.get(lastDay.getData());
-						list.add(handle);
+						list.add(proxy);
 						if (selected) {
 							lastDay.setExpanded(true);
 							fHistoryTree.setSelection(new TreeItem[] { item});
-							handleSelection(item, handle, true);
+							handleSelection(item, proxy, true);
 						}
 					}
 				}
@@ -285,8 +287,8 @@ public class RefactoringHistoryDialog extends Dialog {
 					}
 					final TreeItem item= new TreeItem(fCollectionItem, SWT.NONE);
 					item.setImage(fItemImage);
-					item.setText(handle.getDescription());
-					item.setData(handle);
+					item.setText(proxy.getDescription());
+					item.setData(proxy);
 				}
 			});
 		}
@@ -329,10 +331,10 @@ public class RefactoringHistoryDialog extends Dialog {
 		new Thread(new Runnable() {
 
 			public final void run() {
-				if (fRefactoringDescriptors.length > 0)
-					addDescriptor(fRefactoringDescriptors[0], true);
-				for (int index= 1; index < fRefactoringDescriptors.length; index++)
-					addDescriptor(fRefactoringDescriptors[index], false);
+				if (fDescriptorProxies.length > 0)
+					addDescriptor(fDescriptorProxies[0], true);
+				for (int index= 1; index < fDescriptorProxies.length; index++)
+					addDescriptor(fDescriptorProxies[index], false);
 			}
 		}).start();
 		fCollectionItem= null;
@@ -565,17 +567,17 @@ public class RefactoringHistoryDialog extends Dialog {
 	}
 
 	/**
-	 * Returns the selected refactoring descriptor handles of this dialog.
+	 * Returns the selected refactoring descriptor proxies of this dialog.
 	 * 
-	 * @return the selected refactoring descriptor handles
+	 * @return the selected refactoring descriptor proxies
 	 */
-	public final RefactoringDescriptorHandle[] getSelection() {
+	public final RefactoringDescriptorProxy[] getSelection() {
 		final Set set= new HashSet();
 		final TreeItem[] selection= fHistoryTree.getSelection();
 		for (int index= 0; index < selection.length; index++) {
 			final TreeItem item= selection[index];
 			final Object data= item.getData();
-			if (data instanceof RefactoringDescriptorHandle)
+			if (data instanceof RefactoringDescriptorProxy)
 				set.add(data);
 			else if (data instanceof Date) {
 				final Collection collection= (Collection) fHistoryModel.get(data);
@@ -583,7 +585,7 @@ public class RefactoringHistoryDialog extends Dialog {
 					set.addAll(collection);
 			}
 		}
-		return (RefactoringDescriptorHandle[]) set.toArray(new RefactoringDescriptorHandle[set.size()]);
+		return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
 	}
 
 	/**
@@ -599,9 +601,9 @@ public class RefactoringHistoryDialog extends Dialog {
 	 */
 	protected void handleSelection(final Widget widget, final Object object, final boolean check) {
 		Assert.isNotNull(widget);
-		if (object instanceof RefactoringDescriptorHandle) {
-			final RefactoringDescriptorHandle handle= (RefactoringDescriptorHandle) object;
-			final RefactoringDescriptor descriptor= handle.resolveDescriptor();
+		if (object instanceof RefactoringDescriptorProxy) {
+			final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) object;
+			final RefactoringDescriptor descriptor= proxy.requestDescriptor(new NullProgressMonitor());
 			if (descriptor != null) {
 				fCommentPane.setInput(descriptor.getComment());
 				fCommentPane.setText(fBundle.getString(COMMENT_CAPTION));

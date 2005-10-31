@@ -10,27 +10,31 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 /**
- * Handle to a refactoring descriptor.
+ * Proxy to a refactoring descriptor.
  * <p>
  * Refactoring descriptors are exposed by the refactoring history service as
- * lightweight handle objects. The refactoring history service may hand out any
- * number of handles for a given descriptor. Handles only offer direct access to
+ * lightweight proxy objects. The refactoring history service may hand out any
+ * number of proxies for a given descriptor. Proxies only offer direct access to
  * the time stamp {@link #getTimeStamp()} and description
  * {@link #getDescription()}. In order to access other information such as
- * arguments and comments, clients have to resolve the handle by calling
- * {@link #resolveDescriptor()} to obtain the refactoring descriptor.
+ * arguments and comments, clients have to resolve the proxy by calling
+ * {@link #requestDescriptor(IProgressMonitor)} to obtain the refactoring
+ * descriptor.
  * </p>
  * <p>
  * Refactoring descriptors are potentially heavyweight objects which should not
- * be held on to. Handles which are retrieved from external sources may
+ * be held on to. Proxies which are retrieved from external sources may
  * encapsulate refactoring descriptors and should not be held in memory as well.
  * </p>
  * <p>
- * This class is not intended to be subclassed and instantiated by clients.
+ * Note: this class is not intended to be subclassed and instantiated by
+ * clients.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.
@@ -38,7 +42,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * 
  * @since 3.2
  */
-public class RefactoringDescriptorHandle {
+public class RefactoringDescriptorProxy {
 
 	/** The description of the refactoring */
 	private final String fDescription;
@@ -47,7 +51,7 @@ public class RefactoringDescriptorHandle {
 	private final long fTimeStamp;
 
 	/**
-	 * Creates a new refactoring descriptor handle.
+	 * Creates a new refactoring descriptor proxy.
 	 * 
 	 * @param description
 	 *            a non-empty human-readable description of the particular
@@ -55,7 +59,7 @@ public class RefactoringDescriptorHandle {
 	 * @param stamp
 	 *            the time stamp of the refactoring
 	 */
-	public RefactoringDescriptorHandle(final String description, final long stamp) {
+	public RefactoringDescriptorProxy(final String description, final long stamp) {
 		Assert.isTrue(description != null && !"".equals(description)); //$NON-NLS-1$
 		fDescription= description;
 		fTimeStamp= stamp;
@@ -82,20 +86,23 @@ public class RefactoringDescriptorHandle {
 	}
 
 	/**
-	 * Resolves this handle and returns the associated refactoring descriptor.
+	 * Resolves this proxy and returns the associated refactoring descriptor.
 	 * <p>
 	 * This method is not intended to be overridden outside the refactoring
 	 * framework.
 	 * </p>
 	 * 
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
+	 * 
 	 * @return the refactoring descriptor, or <code>null</code>
 	 */
-	public RefactoringDescriptor resolveDescriptor() {
+	public RefactoringDescriptor requestDescriptor(final IProgressMonitor monitor) {
 		RefactoringDescriptor descriptor= null;
 		final RefactoringHistoryService history= RefactoringHistoryService.getInstance();
 		try {
 			history.connect();
-			descriptor= history.resolveDescriptor(this);
+			descriptor= history.requestDescriptor(this, monitor);
 		} finally {
 			history.disconnect();
 		}

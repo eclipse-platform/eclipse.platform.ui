@@ -27,10 +27,10 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * <p>
  * Refactoring descriptors are potentially heavyweight objects which should not
  * be held on to. Use refactoring descriptor handles
- * {@link RefactoringDescriptorHandle} to store refactoring information.
+ * {@link RefactoringDescriptorProxy} to store refactoring information.
  * </p>
  * <p>
- * This class is not indented to be subclassed outside the refactoring
+ * Note: this class is not indented to be subclassed outside the refactoring
  * framework.
  * </p>
  * <p>

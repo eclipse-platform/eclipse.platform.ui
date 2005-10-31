@@ -25,6 +25,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistoryEvent;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -39,50 +40,29 @@ public final class ProjectRefactoringHistoryListener implements IRefactoringHist
 	/**
 	 * {@inheritDoc}
 	 */
-	public void connect() {
-		// Do nothing
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void descriptorAdded(final RefactoringDescriptor descriptor) throws CoreException {
-		Assert.isNotNull(descriptor);
-		final String name= descriptor.getProject();
-		if (name != null && !"".equals(name)) { //$NON-NLS-1$
-			final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-			if (project != null && project.exists() && isHistoryEnabled(project)) {
-				final URI uri= project.getLocationURI();
-				if (uri != null)
-					new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER).toURI()).addDescriptor(descriptor);
-			}
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void descriptorRemoved(final RefactoringDescriptor descriptor) throws CoreException {
-		Assert.isNotNull(descriptor);
+	public void historyNotification(final RefactoringHistoryEvent event) {
+		final RefactoringDescriptor descriptor= event.getDescriptor();
 		final long stamp= descriptor.getTimeStamp();
 		if (stamp >= 0) {
 			final String name= descriptor.getProject();
 			if (name != null && !"".equals(name)) { //$NON-NLS-1$
 				final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-				if (project != null && project.exists() && isHistoryEnabled(project)) {
+				if (project != null && project.isAccessible() && isHistoryEnabled(project)) {
 					final URI uri= project.getLocationURI();
-					if (uri != null)
-						new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER).toURI()).removeDescriptor(stamp);
+					if (uri != null) {
+						try {
+							final RefactoringHistoryManager manager= new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER).toURI());
+							if (event.getEventType() == RefactoringHistoryEvent.ADDED)
+								manager.addDescriptor(descriptor);
+							else if (event.getEventType() == RefactoringHistoryEvent.REMOVED)
+								manager.removeDescriptor(stamp);
+						} catch (CoreException exception) {
+							RefactoringCorePlugin.log(exception);
+						}
+					}
 				}
 			}
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void disconnect() {
-		// Do nothing
 	}
 
 	/**
@@ -95,7 +75,7 @@ public final class ProjectRefactoringHistoryListener implements IRefactoringHist
 	 */
 	private boolean isHistoryEnabled(final IProject project) {
 		Assert.isNotNull(project);
-		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
+		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project) };
 		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
 		if (preference != null)
 			return Boolean.valueOf(preference).booleanValue();

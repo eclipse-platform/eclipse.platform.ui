@@ -10,14 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.history;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-
 /**
  * Interface for refactoring history listeners.
  * <p>
- * This interface is intended to be implemented by clients.
+ * Note: this interface is intended to be implemented by clients.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.
@@ -28,40 +24,10 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 public interface IRefactoringHistoryListener {
 
 	/**
-	 * Connects the listener to the refactoring history service.
-	 * <p>
-	 * If the listener is already connected, nothing happens.
-	 * </p>
-	 */
-	public void connect();
-
-	/**
-	 * Gets called if the specified refactoring descriptor is pushed onto the
-	 * refactoring undo stack.
+	 * Gets called if a refactoring history event happend.
 	 * 
-	 * @param descriptor
-	 *            the refactoring descriptor to push
-	 * @throws CoreException
-	 *             if an error occurs
+	 * @param event
+	 *            the refactoring history event
 	 */
-	public void descriptorAdded(RefactoringDescriptor descriptor) throws CoreException;
-
-	/**
-	 * Gets called if the specified refactoring descriptor is popped from the
-	 * refactoring undo stack.
-	 * 
-	 * @param descriptor
-	 *            the refactoring descriptor to pop
-	 * @throws CoreException
-	 *             if an error occurs
-	 */
-	public void descriptorRemoved(RefactoringDescriptor descriptor) throws CoreException;
-
-	/**
-	 * Disconnects the listener from the refactoring history service.
-	 * <p>
-	 * If the listener is not connected, nothing happens.
-	 * </p>
-	 */
-	public void disconnect();
+	public void historyNotification(RefactoringHistoryEvent event);
 }

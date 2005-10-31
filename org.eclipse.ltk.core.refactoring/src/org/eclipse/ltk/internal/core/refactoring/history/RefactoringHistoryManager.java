@@ -41,18 +41,22 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorHandle;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 import org.w3c.dom.Document;
@@ -114,7 +118,7 @@ public final class RefactoringHistoryManager {
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
-	public final void addDescriptor(final RefactoringDescriptor descriptor) throws CoreException {
+	void addDescriptor(final RefactoringDescriptor descriptor) throws CoreException {
 		Assert.isNotNull(descriptor);
 		final long stamp= descriptor.getTimeStamp();
 		if (stamp >= 0) {
@@ -214,8 +218,11 @@ public final class RefactoringHistoryManager {
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
-	public final boolean isEmpty() throws CoreException {
-		return EFS.getStore(fHistoryURI).childStores(0, null).length == 0;
+	boolean isEmpty() throws CoreException {
+		final IFileStore store= EFS.getStore(fHistoryURI);
+		if (store.fetchInfo().exists())
+			return store.childStores(0, null).length == 0;
+		return true;
 	}
 
 	/**
@@ -228,35 +235,56 @@ public final class RefactoringHistoryManager {
 	 *            the list of read descriptors
 	 * @param count
 	 *            the total number of descriptors to be read
+	 * @param monitor
+	 *            the progress monitor to use
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
-	private void readDescriptors(final IFileStore store, final List descriptors, final int count) throws CoreException {
+	private void readDescriptors(final IFileStore store, final List descriptors, final int count, final IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(descriptors);
 		Assert.isTrue(count - descriptors.size() >= 0);
-		if (count > 0) {
-			final IFileInfo info= store.fetchInfo();
-			if (store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_REFACTORING_HISTORY) && !info.isDirectory()) {
-				final RefactoringDescriptor[] results= readDescriptors(store.openInputStream(EFS.NONE, null));
-				Arrays.sort(results, new Comparator() {
+		Assert.isNotNull(monitor);
+		try {
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 16);
+			if (count > 0) {
+				final IFileInfo info= store.fetchInfo();
+				if (store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_REFACTORING_HISTORY) && !info.isDirectory()) {
+					final RefactoringDescriptor[] results= readDescriptors(store.openInputStream(EFS.NONE, null));
+					monitor.worked(1);
+					Arrays.sort(results, new Comparator() {
+
+						public final int compare(final Object first, final Object second) {
+							return (int) (((RefactoringDescriptor) first).getTimeStamp() - ((RefactoringDescriptor) second).getTimeStamp());
+						}
+					});
+					monitor.worked(1);
+					final int size= count - descriptors.size();
+					for (int index= 0; index < results.length && index < size; index++)
+						descriptors.add(results[index]);
+					monitor.worked(1);
+				} else
+					monitor.worked(3);
+				if (monitor.isCanceled())
+					throw new OperationCanceledException();
+				final IFileStore[] stores= store.childStores(EFS.NONE, null);
+				Arrays.sort(stores, new Comparator() {
 
 					public final int compare(final Object first, final Object second) {
-						return (int) (((RefactoringDescriptor) first).getTimeStamp() - ((RefactoringDescriptor) second).getTimeStamp());
+						return ((IFileStore) first).getName().compareTo(((IFileStore) second).getName());
 					}
 				});
-				final int size= count - descriptors.size();
-				for (int index= 0; index < results.length && index < size; index++)
-					descriptors.add(results[index]);
-			}
-			final IFileStore[] stores= store.childStores(EFS.NONE, null);
-			Arrays.sort(stores, new Comparator() {
-
-				public final int compare(final Object first, final Object second) {
-					return ((IFileStore) first).getName().compareTo(((IFileStore) second).getName());
+				monitor.worked(1);
+				final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 12);
+				try {
+					subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, stores.length);
+					for (int index= 0; index < stores.length; index++)
+						readDescriptors(stores[index], descriptors, count - descriptors.size(), new SubProgressMonitor(subMonitor, 1));
+				} finally {
+					subMonitor.done();
 				}
-			});
-			for (int index= 0; index < stores.length; index++)
-				readDescriptors(stores[index], descriptors, count - descriptors.size());
+			}
+		} finally {
+			monitor.done();
 		}
 	}
 
@@ -266,13 +294,18 @@ public final class RefactoringHistoryManager {
 	 * 
 	 * @param count
 	 *            the number of descriptors
+	 * @param monitor
+	 *            the progress monitor to use
 	 * @return The refactoring descriptors, or an empty array
 	 */
-	final RefactoringDescriptor[] readDescriptors(final int count) {
+	RefactoringDescriptor[] readDescriptors(final int count, final IProgressMonitor monitor) {
 		Assert.isTrue(count >= 0);
+		Assert.isNotNull(monitor);
 		final List list= new ArrayList(count);
 		try {
-			readDescriptors(EFS.getStore(fHistoryURI), list, count);
+			final IFileStore store= EFS.getStore(fHistoryURI);
+			if (store.fetchInfo().exists())
+				readDescriptors(store, list, count, monitor);
 		} catch (CoreException exception) {
 			RefactoringCorePlugin.log(exception);
 		}
@@ -282,79 +315,107 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
-	 * Reads refactoring descriptor handles.
-	 * 
-	 * @param store
-	 *            the file store to read
-	 * @param list
-	 *            the list of handles to fill in
-	 * @param start
-	 *            the start time stamp, inclusive
-	 * @param end
-	 *            the end time stamp, inclusive
-	 * @throws CoreException
-	 *             if an error occurs
-	 */
-	private void readHandles(final IFileStore store, final List list, final long start, final long end) throws CoreException {
-		Assert.isNotNull(store);
-		Assert.isNotNull(list);
-		Assert.isNotNull(store);
-		final IFileInfo info= store.fetchInfo();
-		if (store.getName().equalsIgnoreCase(NAME_INDEX_FILE) && !info.isDirectory() && info.exists()) {
-			InputStream stream= null;
-			try {
-				stream= store.openInputStream(0, null);
-				final BufferedReader reader= new BufferedReader(new InputStreamReader(stream));
-				while (reader.ready()) {
-					final String line= reader.readLine();
-					if (line != null) {
-						final int index= line.indexOf(DELIMITER_STAMP);
-						if (index > 0) {
-							try {
-								list.add(new RefactoringDescriptorHandle(line.substring(index + 1), new Long(line.substring(0, index)).longValue()));
-							} catch (NumberFormatException exception) {
-								// Just skip
-							}
-						}
-					}
-				}
-			} catch (IOException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-			} finally {
-				if (stream != null) {
-					try {
-						stream.close();
-					} catch (IOException exception) {
-						// Do nothing
-					}
-				}
-			}
-		}
-		final IFileStore[] stores= store.childStores(EFS.NONE, null);
-		for (int index= 0; index < stores.length; index++)
-			readHandles(stores[index], list, start, end);
-	}
-
-	/**
 	 * Reads the refactoring history from disk.
 	 * 
 	 * @param start
 	 *            the start time stamp, inclusive
 	 * @param end
 	 *            the end time stamp, inclusive
+	 * @param monitor
+	 *            the progress monitor to use
 	 * @return the refactoring history
 	 */
-	final RefactoringHistory readHistory(final long start, final long end) {
+	RefactoringHistory readHistory(final long start, final long end, final IProgressMonitor monitor) {
 		Assert.isTrue(end >= start);
+		Assert.isNotNull(monitor);
 		final List list= new ArrayList();
 		try {
-			readHandles(EFS.getStore(fHistoryURI), list, start, end);
+			final IFileStore store= EFS.getStore(fHistoryURI);
+			if (store.fetchInfo().exists())
+				readProxies(store, list, start, end, monitor);
 		} catch (CoreException exception) {
 			RefactoringCorePlugin.log(exception);
 		}
-		final RefactoringDescriptorHandle[] handles= new RefactoringDescriptorHandle[list.size()];
-		list.toArray(handles);
-		return new RefactoringHistoryImplementation(handles);
+		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[list.size()];
+		list.toArray(proxies);
+		return new RefactoringHistoryImplementation(proxies);
+	}
+
+	/**
+	 * Reads refactoring descriptor proxies.
+	 * 
+	 * @param store
+	 *            the file store to read
+	 * @param list
+	 *            the list of proxies to fill in
+	 * @param start
+	 *            the start time stamp, inclusive
+	 * @param end
+	 *            the end time stamp, inclusive
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @throws CoreException
+	 *             if an error occurs
+	 */
+	private void readProxies(final IFileStore store, final List list, final long start, final long end, final IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(store);
+		Assert.isNotNull(list);
+		Assert.isNotNull(store);
+		Assert.isNotNull(monitor);
+		try {
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 16);
+			final IFileInfo info= store.fetchInfo();
+			if (store.getName().equalsIgnoreCase(NAME_INDEX_FILE) && !info.isDirectory() && info.exists()) {
+				InputStream stream= null;
+				try {
+					stream= store.openInputStream(0, null);
+					monitor.worked(1);
+					final BufferedReader reader= new BufferedReader(new InputStreamReader(stream));
+					while (reader.ready()) {
+						if (monitor.isCanceled())
+							throw new OperationCanceledException();
+						final String line= reader.readLine();
+						if (line != null) {
+							final int index= line.indexOf(DELIMITER_STAMP);
+							if (index > 0) {
+								try {
+									list.add(new RefactoringDescriptorProxy(line.substring(index + 1), new Long(line.substring(0, index)).longValue()));
+								} catch (NumberFormatException exception) {
+									// Just skip
+								}
+							}
+						}
+					}
+					monitor.worked(1);
+				} catch (IOException exception) {
+					throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+				} finally {
+					monitor.worked(1);
+					if (stream != null) {
+						try {
+							stream.close();
+						} catch (IOException exception) {
+							// Do nothing
+						}
+					}
+					monitor.worked(1);
+				}
+			} else
+				monitor.worked(4);
+			if (monitor.isCanceled())
+				throw new OperationCanceledException();
+			final IFileStore[] stores= store.childStores(EFS.NONE, null);
+			final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 12);
+			try {
+				subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, stores.length);
+				for (int index= 0; index < stores.length; index++)
+					readProxies(stores[index], list, start, end, new SubProgressMonitor(subMonitor, 1));
+			} finally {
+				subMonitor.done();
+			}
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/**
@@ -372,8 +433,11 @@ public final class RefactoringHistoryManager {
 			if (info.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER))
 				return;
 			final IFileStore[] stores= store.childStores(EFS.NONE, null);
-			if (stores == null || stores.length > 1)
-				return;
+			for (int index= 0; index < stores.length; index++) {
+				final IFileInfo current= stores[index].fetchInfo();
+				if (current.isDirectory())
+					return;
+			}
 		}
 		final IFileStore parent= store.getParent();
 		store.delete(0, null);
@@ -388,7 +452,7 @@ public final class RefactoringHistoryManager {
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
-	public final void removeDescriptor(long stamp) throws CoreException {
+	void removeDescriptor(long stamp) throws CoreException {
 		Assert.isTrue(stamp >= 0);
 		final IFileStore folder= stampToStore(stamp);
 		if (folder != null) {
@@ -511,15 +575,15 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
-	 * Returns the descriptor the specified handle points to.
+	 * Returns the descriptor the specified proxy points to.
 	 * 
-	 * @param handle
-	 *            the refactoring descriptor handle
+	 * @param proxy
+	 *            the refactoring descriptor proxy
 	 * @return the associated refactoring descriptor, or <code>null</code>
 	 */
-	final RefactoringDescriptor resolveDescriptor(final RefactoringDescriptorHandle handle) {
-		Assert.isNotNull(handle);
-		final long stamp= handle.getTimeStamp();
+	RefactoringDescriptor requestDescriptor(final RefactoringDescriptorProxy proxy) {
+		Assert.isNotNull(proxy);
+		final long stamp= proxy.getTimeStamp();
 		if (stamp >= 0) {
 			InputStream input= null;
 			try {
@@ -548,7 +612,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Returns a file store representing the history part for the specified time
-	 * stamp
+	 * stamp.
 	 * 
 	 * @param stamp
 	 *            the time stamp

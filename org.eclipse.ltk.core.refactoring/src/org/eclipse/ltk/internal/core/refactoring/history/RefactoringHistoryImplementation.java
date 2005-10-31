@@ -13,7 +13,7 @@ package org.eclipse.ltk.internal.core.refactoring.history;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorHandle;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
@@ -25,41 +25,50 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  */
 public final class RefactoringHistoryImplementation extends RefactoringHistory {
 
-	/** The refactoring descriptor handles */
-	private final RefactoringDescriptorHandle[] fHandles;
+	/** The refactoring descriptor proxies */
+	private final RefactoringDescriptorProxy[] fDescriptorProxies;
 
 	/**
 	 * Creates a new refactoring history implementation.
 	 * 
-	 * @param handles
-	 *            the refactoring descriptor handles
+	 * @param proxies
+	 *            the refactoring descriptor proxies
 	 */
-	public RefactoringHistoryImplementation(final RefactoringDescriptorHandle[] handles) {
-		Assert.isNotNull(handles);
-		fHandles= handles;
+	public RefactoringHistoryImplementation(final RefactoringDescriptorProxy[] proxies) {
+		Assert.isNotNull(proxies);
+		fDescriptorProxies= proxies;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public RefactoringDescriptorHandle[] getDescriptors() {
-		final RefactoringDescriptorHandle[] handles= new RefactoringDescriptorHandle[fHandles.length];
-		System.arraycopy(fHandles, 0, handles, 0, handles.length);
-		Arrays.sort(handles, new Comparator() {
+	public RefactoringDescriptorProxy[] getDescriptors() {
+		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[fDescriptorProxies.length];
+		System.arraycopy(fDescriptorProxies, 0, proxies, 0, proxies.length);
+		Arrays.sort(proxies, new Comparator() {
 
 			public final int compare(final Object first, final Object second) {
-				final RefactoringDescriptorHandle predecessor= (RefactoringDescriptorHandle) first;
-				final RefactoringDescriptorHandle successor= (RefactoringDescriptorHandle) second;
+				final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
+				final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
 				return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
 			}
 		});
-		return handles;
+		return proxies;
+	}
+
+	/**
+	 * Returns the descriptor proxies, in no particular order.
+	 * 
+	 * @return the descriptor proxies
+	 */
+	RefactoringDescriptorProxy[] getDescriptorProxies() {
+		return fDescriptorProxies;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final boolean isEmpty() {
-		return fHandles.length == 0;
+	public boolean isEmpty() {
+		return fDescriptorProxies.length == 0;
 	}
 }

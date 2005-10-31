@@ -14,11 +14,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.core.resources.IProject;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorHandle;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
  * Interface for a refactoring history service. A refactoring history service
@@ -35,7 +36,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorHandle;
  * {@link java.util#Calendar}).
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients.
+ * Note: this interface is not intended to be implemented by clients.
  * </p>
  * <p>
  * Note: This API is considered experimental and may change in the near future.
@@ -90,29 +91,35 @@ public interface IRefactoringHistoryService {
 	 * 
 	 * @param project
 	 *            the project, which must exist
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
 	 * @return The project refactoring history
 	 */
-	public RefactoringHistory getProjectHistory(IProject project);
+	public RefactoringHistory getProjectHistory(IProject project, IProgressMonitor monitor);
 
 	/**
 	 * Returns a project refactoring history for the specified project.
 	 * 
-	 * @param start
-	 *            the start time stamp, inclusive
-	 * @param end
-	 *            the end time stamp, inclusive
 	 * @param project
 	 *            the project, which must exist
+	 * @param start
+	 *            the start time stamp, inclusive
+	 * @param end
+	 *            the end time stamp, inclusive
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
 	 * @return The project refactoring history
 	 */
-	public RefactoringHistory getProjectHistory(IProject project, long start, long end);
+	public RefactoringHistory getProjectHistory(IProject project, long start, long end, IProgressMonitor monitor);
 
 	/**
 	 * Returns the workspace refactoring history.
 	 * 
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
 	 * @return The workspace refactoring history
 	 */
-	public RefactoringHistory getWorkspaceHistory();
+	public RefactoringHistory getWorkspaceHistory(IProgressMonitor monitor);
 
 	/**
 	 * Returns the workspace refactoring history.
@@ -121,9 +128,11 @@ public interface IRefactoringHistoryService {
 	 *            the start time stamp, inclusive
 	 * @param end
 	 *            the end time stamp, inclusive
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
 	 * @return The workspace refactoring history
 	 */
-	public RefactoringHistory getWorkspaceHistory(long start, long end);
+	public RefactoringHistory getWorkspaceHistory(long start, long end, IProgressMonitor monitor);
 
 	/**
 	 * Reads a refactoring history from the input stream.
@@ -159,14 +168,14 @@ public interface IRefactoringHistoryService {
 	public void removeHistoryListener(IRefactoringHistoryListener listener);
 
 	/**
-	 * Writes the specified refactoring history to the output stream.
+	 * Writes the specified refactoring descriptor proxies to the output stream.
 	 * 
-	 * @param handles
-	 *            the refactoring descriptor handles
+	 * @param proxies
+	 *            the refactoring descriptor proxies
 	 * @param stream
 	 *            the output stream
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
-	public void writeRefactoringHistory(RefactoringDescriptorHandle[] handles, OutputStream stream) throws CoreException;
+	public void writeRefactoringHistory(RefactoringDescriptorProxy[] proxies, OutputStream stream) throws CoreException;
 }

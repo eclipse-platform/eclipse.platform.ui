@@ -16,7 +16,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * Implementors of refactorings uses instances of <code>RefactoringTickProvider</code>
- * to specify the trick distribution during progress reporting when executing the
+ * to specify the tick distribution during progress reporting when executing the
  * check conditions, create change and change initialization steps.
  * 
  * @since 3.2

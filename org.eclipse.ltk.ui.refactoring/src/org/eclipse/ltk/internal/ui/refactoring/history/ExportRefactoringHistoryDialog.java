@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorHandle;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
@@ -83,8 +83,8 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 	/**
 	 * {@inheritDoc}
 	 */
-	protected final void addDescriptor(final RefactoringDescriptorHandle handle, final boolean selected) {
-		super.addDescriptor(handle, selected);
+	protected final void addDescriptor(final RefactoringDescriptorProxy proxy, final boolean selected) {
+		super.addDescriptor(proxy, selected);
 		if (selected) {
 			getShell().getDisplay().syncExec(new Runnable() {
 
@@ -170,12 +170,12 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 	 * 
 	 * @param caption
 	 *            the caption of the export dialog
-	 * @param handles
-	 *            the refactoring descriptor handles to export
+	 * @param proxies
+	 *            the refactoring descriptor proxies to export
 	 */
-	protected final void handleExport(final String caption, final RefactoringDescriptorHandle[] handles) {
+	protected final void handleExport(final String caption, final RefactoringDescriptorProxy[] proxies) {
 		Assert.isNotNull(caption);
-		Assert.isNotNull(handles);
+		Assert.isNotNull(proxies);
 		final FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
 		dialog.setText(caption);
 		dialog.setFilterNames(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_name});
@@ -191,9 +191,9 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 			OutputStream stream= null;
 			try {
 				stream= new BufferedOutputStream(new FileOutputStream(file));
-				final RefactoringDescriptorHandle[] result= new RefactoringDescriptorHandle[handles.length];
-				for (int index= 0; index < handles.length; index++)
-					result[handles.length - 1 - index]= handles[index];
+				final RefactoringDescriptorProxy[] result= new RefactoringDescriptorProxy[proxies.length];
+				for (int index= 0; index < proxies.length; index++)
+					result[proxies.length - 1 - index]= proxies[index];
 				RefactoringCore.getRefactoringHistoryService().writeRefactoringHistory(result, stream);
 			} catch (CoreException exception) {
 				final Throwable throwable= exception.getStatus().getException();
@@ -219,7 +219,7 @@ public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDial
 	 * Handles the export all event.
 	 */
 	protected final void handleExportAll() {
-		handleExport(RefactoringUIMessages.ExportRefactoringHistoryDialog_export_all_caption, fRefactoringDescriptors);
+		handleExport(RefactoringUIMessages.ExportRefactoringHistoryDialog_export_all_caption, fDescriptorProxies);
 	}
 
 	/**

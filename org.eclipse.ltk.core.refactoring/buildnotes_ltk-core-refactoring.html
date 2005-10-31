@@ -12,6 +12,26 @@
 <h1>
 Eclipse Platform Build Notes 3.2 Stream&nbsp;<br>
 LTK Core Refactoring</h1>
+<h3>3.2 M3, October 31, 2005</h3>
+<h4>Implementation Changes</h4>
+<ul>
+    <li>Preliminary support for a global refactoring history has been added:<p>
+    <strong>Note:</strong> This API is considered experimental and may undergo several changes until its final release.
+    </p>
+    <ul>
+      <li>org.eclipse.ltk.core.refactoring.history.IRefactoringExecutionListener / RefactoringExecutionEvent
+      </li>
+      <li>org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener / RefactoringHistoryEvent
+      </li>
+      <li>org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService
+      </li>
+      <li>org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy (former RefactoringDescriptorHandle)
+      </li>
+      <li>org.eclipse.ltk.core.refactoring.IInitializableRefactoringComponent
+      </li>
+    </ul>
+  </li>
+</ul>
 <h3>3.2 M2, September 6, 2005</h3>
 <h4>Implementation Changes</h4>
 The management of a group category set has been moved from the <code>TextEditBasedChangeGroup</code>

@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.history.IRefactoringExecutionListener;
-import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
+import org.eclipse.ltk.core.refactoring.history.RefactoringExecutionEvent;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
@@ -30,6 +30,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
 
 /**
  * Operation that, when run, executes a series of refactoring sequentially.
+ * Refactorings are executed using {@link PerformRefactoringOperation}.
  * <p>
  * The operation should be executed via the run method offered by
  * <code>IWorkspace</code> to achieve proper delta batching.
@@ -42,9 +43,11 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * Note: This API is considered experimental and may change in the near future.
  * </p>
  * 
+ * @see org.eclipse.core.resources.IWorkspace
+ * 
  * @since 3.2
  */
-public class PerformRefactoringsOperation implements IWorkspaceRunnable {
+public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable {
 
 	/** Refactoring execution listener */
 	private class RefactoringExecutionListener implements IRefactoringExecutionListener {
@@ -52,47 +55,14 @@ public class PerformRefactoringsOperation implements IWorkspaceRunnable {
 		/**
 		 * {@inheritDoc}
 		 */
-		public void aboutToPerformRefactoring(IRefactoringHistoryService service, RefactoringDescriptor descriptor) {
-			// Do nothing
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public void aboutToRedoRefactoring(IRefactoringHistoryService service, RefactoringDescriptor descriptor) {
-			// Do nothing
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public void aboutToUndoRefactoring(IRefactoringHistoryService service, RefactoringDescriptor descriptor) {
-			// Do nothing
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public void refactoringPerformed(final IRefactoringHistoryService service, final RefactoringDescriptor descriptor) {
-			Assert.isNotNull(descriptor);
-			if (!descriptor.isUnknown())
-				fCurrentDescriptor= descriptor;
-			else
-				fCurrentDescriptor= null;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public void refactoringRedone(IRefactoringHistoryService service, RefactoringDescriptor descriptor) {
-			// Do nothing
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public void refactoringUndone(IRefactoringHistoryService service, RefactoringDescriptor descriptor) {
-			// Do nothing
+		public void executionNotification(final RefactoringExecutionEvent event) {
+			if (event.getEventType() == RefactoringExecutionEvent.PERFORMED) {
+				final RefactoringDescriptor descriptor= event.getDescriptor();
+				if (!descriptor.isUnknown())
+					fCurrentDescriptor= descriptor;
+				else
+					fCurrentDescriptor= null;
+			}
 		}
 	}
 
@@ -112,12 +82,12 @@ public class PerformRefactoringsOperation implements IWorkspaceRunnable {
 	private final RefactoringHistory fRefactoringHistory;
 
 	/**
-	 * Creates a new perform refactorings operation.
+	 * Creates a new perform multiple refactorings operation.
 	 * 
 	 * @param history
 	 *            the refactoring history
 	 */
-	public PerformRefactoringsOperation(final RefactoringHistory history) {
+	public PerformMultipleRefactoringsOperation(final RefactoringHistory history) {
 		Assert.isNotNull(history);
 		fRefactoringHistory= history;
 	}
@@ -136,15 +106,15 @@ public class PerformRefactoringsOperation implements IWorkspaceRunnable {
 	 */
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		fExecutionStatus= new RefactoringStatus();
-		final RefactoringDescriptorHandle[] handles= fRefactoringHistory.getDescriptors();
-		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringsOperation_perform_refactorings, handles.length);
+		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
+		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringsOperation_perform_refactorings, 2 * proxies.length);
 		final RefactoringComponentFactory factory= RefactoringComponentFactory.getInstance();
 		try {
 			fExecutionListener= new RefactoringExecutionListener();
 			RefactoringCore.getRefactoringHistoryService().addExecutionListener(fExecutionListener);
-			for (int index= 0; index < handles.length && !fExecutionStatus.hasFatalError(); index++) {
+			for (int index= 0; index < proxies.length && !fExecutionStatus.hasFatalError(); index++) {
 				boolean execute= false;
-				final RefactoringDescriptor descriptor= handles[index].resolveDescriptor();
+				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 1));
 				if (descriptor != null && !descriptor.isUnknown()) {
 					final Refactoring refactoring= factory.createRefactoring(descriptor);
 					if (refactoring instanceof IInitializableRefactoringComponent) {

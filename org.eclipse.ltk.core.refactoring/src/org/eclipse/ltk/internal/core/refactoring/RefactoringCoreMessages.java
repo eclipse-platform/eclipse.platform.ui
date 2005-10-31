@@ -72,6 +72,8 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String UndoManager2_no_change;
 
 	public static String RefactoringHistoryService_unknown_refactoring_description;
+	public static String RefactoringHistoryService_retrieving_history;
+	public static String RefactoringHistoryService_resolving_information;
 
 	public static String PerformRefactoringsOperation_perform_refactorings;
 
