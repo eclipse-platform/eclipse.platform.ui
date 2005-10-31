@@ -99,5 +99,12 @@ public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
 			}
 		});
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.TeamOperation#canRunAsJob()
+	 */
+	protected boolean canRunAsJob() {
+		return true;
+	}
 
 }
