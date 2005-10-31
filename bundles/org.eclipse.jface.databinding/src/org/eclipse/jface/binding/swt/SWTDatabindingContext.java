@@ -25,6 +25,7 @@ import org.eclipse.jface.binding.internal.swt.ComboUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.ControlUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.LabelUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.ListUpdatableCollection;
+import org.eclipse.jface.binding.internal.swt.ListUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.SpinnerUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.TableUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.TextUpdatableValue;
@@ -194,6 +195,17 @@ public class SWTDatabindingContext extends DatabindingContext {
 							(String) attribute);
 				else if (attribute.equals(SWTBindingConstants.ITEMS))
 					return new CComboUpdatableCollection((CCombo) object,
+							(String) attribute);
+				return null;
+			}
+		});
+		addUpdatableFactory(List.class, new IUpdatableFactory() {
+			public IUpdatable createUpdatable(Object object, Object attribute) {
+				if (attribute.equals(SWTBindingConstants.SELECTION)) // SWT.SINGLE selection only
+					return new ListUpdatableValue((List) object,
+							(String) attribute);
+				else if (attribute.equals(SWTBindingConstants.ITEMS))
+					return new ListUpdatableCollection((List) object,
 							(String) attribute);
 				return null;
 			}
