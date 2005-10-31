@@ -8,32 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui.actions;
+package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.ui.mapping.IMergeContext;
-import org.eclipse.team.ui.mapping.IMergeStatus;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.operations.MergeContext;
 
 public class CVSMergeContext extends MergeContext {
@@ -53,27 +45,16 @@ public class CVSMergeContext extends MergeContext {
 
 	public IStatus markAsMerged(IFile file, IProgressMonitor monitor) {
 		try {
-			SyncInfo info = getSyncInfoTree().getSyncInfo(file);
+			// Get the latest sync info for the file (i.e. not what is in the set).
+			// We do this because the client may have modified the file since the
+			// set was populated.
+			SyncInfo info = getSyncInfo(file);
 			if (info instanceof CVSSyncInfo) {
-				CVSSyncInfo cvsInfo = (CVSSyncInfo) info;
-				IResourceVariant remoteVar = cvsInfo.getRemote();
-				if (!file.exists()) {
-					if (remoteVar==null){
-						//file has been deleted remotely and locally
-						return Status.OK_STATUS;
-					}
-					
-					//Don't make outgoing incoming changes as the lack
-					//of a local will throw a NPE
-					if ((cvsInfo.getKind() & SyncInfo.DIRECTION_MASK) == SyncInfo.INCOMING){
-						return Status.OK_STATUS;
-					}
-				}
-				
+				CVSSyncInfo cvsInfo = (CVSSyncInfo) info;		
 				cvsInfo.makeOutgoing(monitor);
 			}
 			return Status.OK_STATUS;
-		} catch (TeamException e) {
+		} catch (CoreException e) {
 			return new Status(IStatus.ERROR, TeamPlugin.ID, IMergeStatus.INTERNAL_ERROR, NLS.bind("Merge of {0} failed due to an internal error.", new String[] { file.getFullPath().toString() }), e); //$NON-NLS-1$
 		}
 	}

@@ -179,7 +179,6 @@ public class CVSSyncInfo extends SyncInfo {
 		} else if (incoming) {
 			// We have an incoming change, addition, or deletion that we want to ignore
 			if (local.exists()) {
-				// We could have an incoming change or deletion
 				if (remote == null) {
 					info.setAdded();
 				} else {
@@ -189,8 +188,14 @@ public class CVSSyncInfo extends SyncInfo {
 				}
 			} else {
 				// We have an incoming add, turn it around as an outgoing delete
-				info = remote.getSyncInfo().cloneMutable();
-				info.setDeleted(true);
+				if (remote == null) {
+					// Both the local and remote do not exist so clear the sync info
+					info = null;
+					return Status.OK_STATUS;
+				} else {
+					info = remote.getSyncInfo().cloneMutable();
+					info.setDeleted(true);
+				}
 			}
 		} else if (local.exists()) {
 			// We have a conflict and a local resource!
@@ -200,7 +205,7 @@ public class CVSSyncInfo extends SyncInfo {
 					info.setRevision(remote.getSyncInfo().getRevision());
 				} else {
 					try {
-						// We have conflictin additions.
+						// We have conflicting additions.
 						// We need to fetch the contents of the remote to get all the relevant information (timestamp, permissions)
 						// The most important thing we get is the keyword substitution mode which must be right to perform the commit
 						remote.getStorage(Policy.monitorFor(monitor)).getContents();

@@ -24,7 +24,6 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.actions.CVSMergeContext;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
