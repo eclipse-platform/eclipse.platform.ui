@@ -320,8 +320,13 @@ public class PerspectivePreferencePage extends PreferencePage implements
 		fComboPlaceHolder.setLayout(new GridLayout(2, false));
 		fComboPlaceHolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Font font = fComboPlaceHolder.getFont();
-		Label label = null;
+		Label label = new Label(fComboPlaceHolder, SWT.NONE);
+		label.setText(DebugPreferencesMessages.PerspectivePreferencePage_2);
+		label.setFont(font);
 		GridData gd = null;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
 		for(Iterator iter = launchmodes.keySet().iterator(); iter.hasNext();) {
 			String modekey = (String)iter.next();
 			String persp = (String)launchmodes.get(modekey);
@@ -454,15 +459,19 @@ public class PerspectivePreferencePage extends PreferencePage implements
 		((GridData)lbl.getLayoutData()).widthHint = LABEL_WIDTH_HINT;
 		lbl.setText(MessageFormat.format(DebugPreferencesMessages.PerspectivePreferencePage_5, null));
 		
-		createSpacer(composite, 1);
-		
 		Composite comp = new Composite(composite, SWT.FILL);
 		comp.setLayout(new GridLayout(2, false));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setFont(font);
-		new Label(comp, SWT.NONE).setText(DebugPreferencesMessages.PerspectivePreferencePage_1);
-		new Label(comp, SWT.NONE).setText(DebugPreferencesMessages.PerspectivePreferencePage_2);
-		fTree = new Tree(comp, SWT.H_SCROLL + SWT.V_SCROLL + SWT.SINGLE + SWT.BORDER);
+		
+		Composite treeComp = new Composite(comp, SWT.NONE);
+		treeComp.setLayout(new GridLayout(1, true));
+		treeComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Label label = new Label(treeComp, SWT.NONE);
+		label.setText(DebugPreferencesMessages.PerspectivePreferencePage_1);
+		label.setFont(font);
+		
+		fTree = new Tree(treeComp, SWT.H_SCROLL + SWT.V_SCROLL + SWT.SINGLE + SWT.BORDER);
 		fTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewer = new TreeViewer(fTree);
 		fViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
