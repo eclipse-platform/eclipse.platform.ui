@@ -169,7 +169,7 @@ public class PopupDialog extends Window {
 	/**
 	 * Shell style appropriate for an info popup that can get focus.
 	 */
-	public final static int INFOPOPUP_SHELLSTYLE = SWT.NO_TRIM | SWT.ON_TOP;
+	public final static int INFOPOPUP_SHELLSTYLE = SWT.NO_TRIM;
 
 	/**
 	 * Shell style appropriate for a resizable info popup that can get focus.
