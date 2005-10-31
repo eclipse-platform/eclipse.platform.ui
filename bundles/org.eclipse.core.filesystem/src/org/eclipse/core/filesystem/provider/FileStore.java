@@ -123,7 +123,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * is possible.  This default implementation calls {@link #fetchInfo()} on each
 	 * child, which will result in a file system call for each child.
 	 */
-	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) {
+	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
 		IFileStore[] childStores = childStores(options, monitor);
 		IFileInfo[] childInfos = new IFileInfo[childStores.length];
 		for (int i = 0; i < childStores.length; i++) {
@@ -135,13 +135,13 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#childNames(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public abstract String[] childNames(int options, IProgressMonitor monitor);
+	public abstract String[] childNames(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * The default implementation of {@link IFileStore#childStores(int, IProgressMonitor)}.
 	 * Subclasses may override.
 	 */
-	public IFileStore[] childStores(int options, IProgressMonitor monitor) {
+	public IFileStore[] childStores(int options, IProgressMonitor monitor) throws CoreException {
 		String[] children = childNames(options, monitor);
 		IFileStore[] wrapped = new IFileStore[children.length];
 		for (int i = 0; i < wrapped.length; i++)
