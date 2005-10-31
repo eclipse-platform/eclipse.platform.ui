@@ -66,17 +66,17 @@ import org.eclipse.ltk.internal.core.refactoring.NonDeletingPositionUpdater;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
- * A composite text file change is a special change object that applies a sequence of {@link TextEdit
- * text edit trees} to a document. The composite text change manages the text edit trees. 
+ * A multi state text file change is a special change object that applies a sequence of {@link TextEdit
+ * text edit trees} to a document. The multi state text file change manages the text edit trees. 
  * <p>
- * A composite text file change offers the ability to access the original content of
+ * A multi state text file change offers the ability to access the original content of
  * the document as well as creating a preview of the change. The edit
- * trees get copied when creating any king of preview. Therefore no region
+ * trees get copied when creating any kind of preview. Therefore no region
  * updating on the original edit trees takes place when requesting a preview
  * (for more information on region updating see class {@link TextEdit TextEdit}. 
  * If region tracking is required for a preview it can be enabled via a call 
  * to the method {@link #setKeepPreviewEdits(boolean) setKeepPreviewEdits}.
- * If enabled the composite text change keeps the copied edit trees executed for the
+ * If enabled the multi state text file change keeps the copied edit trees executed for the
  * preview allowing clients to map an original edit to an executed edit. The
  * executed edit can then be used to determine its position in the preview.
  * </p>
