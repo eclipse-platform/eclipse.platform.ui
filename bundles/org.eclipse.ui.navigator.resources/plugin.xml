@@ -8,9 +8,10 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            category="org.eclipse.ui"
             class="org.eclipse.ui.navigator.CommonNavigator"
             id="org.eclipse.ui.navigator.resourceContent"
-            name="%Common_Navigator_Example"/>
+            name="%Common_Resource_Navigator"/>
    </extension>
 <!-- Resource Content  -->
    <extension  
