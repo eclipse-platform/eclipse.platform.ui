@@ -4,6 +4,14 @@
 
   <extension-point id="commonWizard" name="%Common_Wizard" schema="schema/commonWizard.exsd"/>
  
+ 
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            id="org.eclipse.ui.navigator.resourceContent"
+            name="%Common_Navigator_Example"/>
+   </extension>
 <!-- Resource Content  -->
    <extension  
          point="org.eclipse.ui.navigator.navigatorContent">
