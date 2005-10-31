@@ -12,17 +12,19 @@ package org.eclipse.jface.binding.swt;
 
 import java.util.Map;
 
-import org.eclipse.jface.binding.BindingException;
 import org.eclipse.jface.binding.DatabindingContext;
 import org.eclipse.jface.binding.IUpdatable;
 import org.eclipse.jface.binding.IUpdatableFactory;
 import org.eclipse.jface.binding.IUpdatableFactory2;
 import org.eclipse.jface.binding.IValidationContext;
 import org.eclipse.jface.binding.internal.swt.ButtonUpdatableValue;
+import org.eclipse.jface.binding.internal.swt.CComboUpdatableCollection;
+import org.eclipse.jface.binding.internal.swt.CComboUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.ComboUpdatableCollection;
 import org.eclipse.jface.binding.internal.swt.ComboUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.ControlUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.LabelUpdatableValue;
+import org.eclipse.jface.binding.internal.swt.ListUpdatableCollection;
 import org.eclipse.jface.binding.internal.swt.SpinnerUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.TableUpdatableValue;
 import org.eclipse.jface.binding.internal.swt.TextUpdatableValue;
@@ -34,12 +36,14 @@ import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -169,8 +173,7 @@ public class SWTDatabindingContext extends DatabindingContext {
 				}
 				return null;
 			}
-		});
-		// TODO: need to support CCombo as well.
+		});		
 		addUpdatableFactory(Combo.class, new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Object object, Object attribute) {
 				if (attribute.equals(SWTBindingConstants.TEXT)
@@ -179,6 +182,18 @@ public class SWTDatabindingContext extends DatabindingContext {
 							(String) attribute);
 				else if (attribute.equals(SWTBindingConstants.ITEMS))
 					return new ComboUpdatableCollection((Combo) object,
+							(String) attribute);
+				return null;
+			}
+		});
+		addUpdatableFactory(CCombo.class, new IUpdatableFactory() {
+			public IUpdatable createUpdatable(Object object, Object attribute) {
+				if (attribute.equals(SWTBindingConstants.TEXT)
+						|| attribute.equals(SWTBindingConstants.SELECTION))
+					return new CComboUpdatableValue((CCombo) object,
+							(String) attribute);
+				else if (attribute.equals(SWTBindingConstants.ITEMS))
+					return new CComboUpdatableCollection((CCombo) object,
 							(String) attribute);
 				return null;
 			}
@@ -224,7 +239,7 @@ public class SWTDatabindingContext extends DatabindingContext {
 
 		// new stuff
 		addUpdatableFactory2(new IUpdatableFactory2() {
-			public IUpdatable createUpdatable(Map properties, Object description, IValidationContext validationContext) throws BindingException {
+			public IUpdatable createUpdatable(Map properties, Object description, IValidationContext validationContext) {
 				if (description instanceof AbstractListViewer) {
 					// binding to a Viewer directly implies binding to its content
 					return new UpdatableCollectionViewer(
@@ -242,7 +257,10 @@ public class SWTDatabindingContext extends DatabindingContext {
 					return new ButtonUpdatableValue((Button) description, updatePolicy);
 				} else if (description instanceof Combo) {
 					return new ComboUpdatableCollection((Combo)description, SWTBindingConstants.CONTENT);
-					//TODO add CCombo
+				} else if (description instanceof CCombo) {
+					return new CComboUpdatableCollection((CCombo)description, SWTBindingConstants.CONTENT);										
+				} else if (description instanceof List) {
+					return new ListUpdatableCollection((List)description, SWTBindingConstants.CONTENT);					
 				} else if (description instanceof TableViewerDescription) {
 					return new TableViewerUpdatableCollectionExtended(
 							(TableViewerDescription) description, validationContext);
