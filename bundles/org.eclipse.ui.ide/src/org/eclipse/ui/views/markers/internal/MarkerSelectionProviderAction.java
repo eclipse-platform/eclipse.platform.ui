@@ -42,8 +42,11 @@ public abstract class MarkerSelectionProviderAction extends SelectionProviderAct
 		Object[] selection = structured.toArray();
 		ArrayList markers = new ArrayList();
 		for (int i = 0; i < selection.length; i++) {
-			MarkerNode object =(MarkerNode) selection[i];
-			if(object.isConcrete())
+			Object object = selection[i];
+			if(!(object instanceof MarkerNode))
+				return new IMarker[0];//still pending
+			MarkerNode marker =(MarkerNode) object;
+			if(marker.isConcrete())
 				markers.add(((ConcreteMarker) object).getMarker());
 		}
 		

@@ -299,8 +299,12 @@ public final class Util {
 	 * is concrete.
 	 */
 	static boolean isSingleConcreteSelection(IStructuredSelection selection) {
-		return selection != null && selection.size() == 1
-				&& ((MarkerNode) selection.getFirstElement()).isConcrete();
+		if( selection != null && selection.size() == 1){
+			Object first = selection.getFirstElement();
+			if(first instanceof MarkerNode)
+			 return((MarkerNode) first).isConcrete();
+		}
+		return false;	
 	}
 	
 }
