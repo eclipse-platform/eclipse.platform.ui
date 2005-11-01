@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.forms.widgets.WrappedPageBook;
  * 
  * @since 3.0
  */
-public final class ScrolledPageBook extends SharedScrolledComposite {
+public class ScrolledPageBook extends SharedScrolledComposite {
 	private WrappedPageBook pageBook;
 	private Hashtable pages;
 	private Composite emptyPage;

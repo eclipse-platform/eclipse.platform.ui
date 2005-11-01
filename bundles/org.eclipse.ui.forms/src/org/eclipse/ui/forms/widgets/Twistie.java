@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
  * @see TreeNode
  * @since 3.0
  */
-public final class Twistie extends ToggleHyperlink {
+public class Twistie extends ToggleHyperlink {
 	private static final int[] onPoints = { 0, 2, 8, 2, 4, 6 };
 
 	private static final int[] offPoints = { 2, -1, 2, 8, 6, 4 };

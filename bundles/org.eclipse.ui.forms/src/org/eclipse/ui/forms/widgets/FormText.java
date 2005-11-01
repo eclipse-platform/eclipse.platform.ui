@@ -114,7 +114,7 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * @see TableWrapLayout
  * @since 3.0
  */
-public final class FormText extends Canvas {
+public class FormText extends Canvas {
 	/**
 	 * The object ID to be used when registering action to handle URL hyperlinks
 	 * (those that should result in opening the web browser). Value is

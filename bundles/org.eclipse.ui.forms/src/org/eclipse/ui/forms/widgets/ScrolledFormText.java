@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.*;
  * @since 3.0
  * @see FormText
  */
-public final class ScrolledFormText extends SharedScrolledComposite {
+public class ScrolledFormText extends SharedScrolledComposite {
 	private FormText content;
 	private String text;
 	/**

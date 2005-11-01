@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
  * @see Twistie
  * @since 3.0
  */
-public final class TreeNode extends ToggleHyperlink {
+public class TreeNode extends ToggleHyperlink {
 	/**
 	 * Creates a control in a provided composite.
 	 * 

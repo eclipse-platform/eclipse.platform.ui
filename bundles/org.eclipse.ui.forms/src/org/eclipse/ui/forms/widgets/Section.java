@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Label;
  * 
  * @since 3.0
  */
-public final class Section extends ExpandableComposite {
+public class Section extends ExpandableComposite {
 	/**
 	 * Description style. If used, description will be rendered below the title.
 	 */
