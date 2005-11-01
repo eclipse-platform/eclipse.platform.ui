@@ -16,8 +16,7 @@ import java.util.List;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.Viewer;
@@ -130,7 +129,7 @@ public class FlatModelProvider extends SynchronizeModelProvider {
 	private class ToggleSortOrderAction extends Action {
 		private int criteria;
 		protected ToggleSortOrderAction(String name, int criteria) {
-			super(name, Action.AS_RADIO_BUTTON);
+			super(name, IAction.AS_RADIO_BUTTON);
 			this.criteria = criteria;
 			update();	
 		}

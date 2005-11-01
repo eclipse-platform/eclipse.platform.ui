@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -46,7 +47,7 @@ public class ShowSynchronizeParticipantAction extends Action implements IPropert
 	 * @param participant the participant to show
 	 */
 	public ShowSynchronizeParticipantAction(ISynchronizeView view, ISynchronizeParticipantReference ref) {
-		super(Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, ref.getDisplayName()), Action.AS_RADIO_BUTTON);
+		super(Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, ref.getDisplayName()), IAction.AS_RADIO_BUTTON);
 		fPage = ref;
 		fView = view;
         setImageDescriptor( new ParticipantOverlay( ref));

@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
 import org.eclipse.team.internal.ui.mapping.DefaultResourceMappingMerger;
 import org.eclipse.team.ui.TeamOperation;
@@ -132,7 +132,7 @@ public abstract class ResourceMappingOperation extends TeamOperation {
             public void run() {
                 AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", getScope());
                 int result = dialog.open();
-                canceled[0] = result != Dialog.OK;
+                canceled[0] = result != Window.OK;
             }
         
         });

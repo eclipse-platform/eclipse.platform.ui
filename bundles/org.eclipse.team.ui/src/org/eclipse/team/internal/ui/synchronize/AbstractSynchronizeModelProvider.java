@@ -473,10 +473,10 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				String path = resource.getFullPath().toString();
-				if (resource.getType() != IResource.FILE && path.charAt(path.length() - 1) != Path.SEPARATOR) {
+				if (resource.getType() != IResource.FILE && path.charAt(path.length() - 1) != IPath.SEPARATOR) {
 				    // Include a trailing slash on folders and projects.
 				    // It is used when recreating cached resources that don't exist locally
-				    path += Path.SEPARATOR;
+				    path += IPath.SEPARATOR;
 				}
                 paths.add(path);
 			}
@@ -612,7 +612,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
                 // The resource doesn't have an entry on the resources tree 
                 // but may still appear in the view so try to deduce the type
                 // from the path
-                if (path.endsWith(Character.toString(Path.SEPARATOR))) {
+                if (path.endsWith(Character.toString(IPath.SEPARATOR))) {
                     resource = container.getFolder(new Path(null, path));
                 } else {
                     resource = container.getFile(new Path(null, path));

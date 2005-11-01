@@ -208,7 +208,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 	private class ToggleSortOrderAction extends Action {
 		private int criteria;
 		protected ToggleSortOrderAction(String name, int criteria) {
-			super(name, Action.AS_RADIO_BUTTON);
+			super(name, IAction.AS_RADIO_BUTTON);
 			this.criteria = criteria;
 			update();		
 		}

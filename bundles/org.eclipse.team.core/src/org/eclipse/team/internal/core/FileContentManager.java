@@ -88,7 +88,7 @@ public class FileContentManager implements IFileContentManager {
                     f.delete();
                 }
             } catch (IOException ex) {
-                TeamPlugin.log(Status.ERROR, ex.getMessage(), ex);
+                TeamPlugin.log(IStatus.ERROR, ex.getMessage(), ex);
                 return false;
             }
             return true;

@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -150,7 +151,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 	private void addIgnore() {
 		InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.IgnorePreferencePage_enterPatternShort, TeamUIMessages.IgnorePreferencePage_enterPatternLong, null, null); // 
 		dialog.open();
-		if (dialog.getReturnCode() != InputDialog.OK) return;
+		if (dialog.getReturnCode() != Window.OK) return;
 		String pattern = dialog.getValue();
 		if (pattern.equals("")) return; //$NON-NLS-1$
 		// Check if the item already exists

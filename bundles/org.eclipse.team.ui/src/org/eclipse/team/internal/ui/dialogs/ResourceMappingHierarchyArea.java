@@ -67,7 +67,6 @@ public class ResourceMappingHierarchyArea extends DialogArea {
                 List result = new ArrayList();
                	for (Iterator iter = providers.values().iterator(); iter.hasNext();) {
                		NavigatorContentExtension extension = (NavigatorContentExtension) iter.next();
-               		IResourceMappingContentProvider provider = extension.getContentProvider();
                     Object element = extension.getModelProvider();
                     providerMap.put(element, extension);
                     result.add(element);

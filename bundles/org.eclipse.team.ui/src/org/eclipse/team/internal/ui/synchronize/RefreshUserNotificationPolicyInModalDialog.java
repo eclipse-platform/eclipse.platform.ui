@@ -11,7 +11,7 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.TeamUIMessages;
@@ -43,7 +43,7 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 			return null;
 		//	 If the event is for a cancelled operation, there's nothing to do
 		int severity = event.getStatus().getSeverity();
-		if(severity == Status.CANCEL || severity == Status.ERROR) 
+		if(severity == IStatus.CANCEL || severity == IStatus.ERROR) 
 			return null;
 		
 		return new WorkbenchAction() {

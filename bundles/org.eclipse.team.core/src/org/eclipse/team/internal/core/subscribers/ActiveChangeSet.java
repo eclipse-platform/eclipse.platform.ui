@@ -13,6 +13,7 @@ package org.eclipse.team.internal.core.subscribers;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
@@ -177,7 +178,7 @@ public class ActiveChangeSet extends ChangeSet {
         if (resource == null) {
             // May be an outgoing deletion
             Path path = new Path(null, next);
-            if (next.charAt(next.length()-1) == Path.SEPARATOR) {
+            if (next.charAt(next.length()-1) == IPath.SEPARATOR) {
                 if (path.segmentCount() == 1) {
                     // resource is a project
                     resource = root.getProject(path.lastSegment());

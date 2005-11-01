@@ -12,7 +12,7 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -60,7 +60,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 		if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber()) return null;
 		// If the event is for a cancelled operation, there's nothing to do
 		int severity = event.getStatus().getSeverity();
-		if(severity == Status.CANCEL || severity == Status.ERROR) return null;
+		if(severity == IStatus.CANCEL || severity == IStatus.ERROR) return null;
 		// Decide on what action to take after the refresh is completed
 		return new WorkbenchAction() {
 			public void run() {

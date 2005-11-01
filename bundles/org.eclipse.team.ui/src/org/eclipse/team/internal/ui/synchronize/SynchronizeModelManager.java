@@ -42,7 +42,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	private class ToggleModelProviderAction extends Action implements IPropertyChangeListener {
 		private ISynchronizeModelProviderDescriptor descriptor;
 		protected ToggleModelProviderAction(ISynchronizeModelProviderDescriptor descriptor) {
-			super(descriptor.getName(), Action.AS_RADIO_BUTTON);
+			super(descriptor.getName(), IAction.AS_RADIO_BUTTON);
 			setImageDescriptor(descriptor.getImageDescriptor());
 			setToolTipText(descriptor.getName());
 			this.descriptor = descriptor;

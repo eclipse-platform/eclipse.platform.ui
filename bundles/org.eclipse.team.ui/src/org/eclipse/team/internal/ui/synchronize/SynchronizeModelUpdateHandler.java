@@ -126,7 +126,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 	
 	private IPropertyChangeListener listener = new IPropertyChangeListener() {
 		public void propertyChange(final PropertyChangeEvent event) {
-			if (event.getProperty() == SynchronizeModelElement.BUSY_PROPERTY) {
+			if (event.getProperty() == ISynchronizeModelElement.BUSY_PROPERTY) {
 				Object source = event.getSource();
 				if (source instanceof ISynchronizeModelElement)
 				    updateBusyState((ISynchronizeModelElement)source, ((Boolean)event.getNewValue()).booleanValue());

@@ -26,4 +26,4 @@ Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.ui,
  org.eclipse.compare,
  org.eclipse.ui.forms
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

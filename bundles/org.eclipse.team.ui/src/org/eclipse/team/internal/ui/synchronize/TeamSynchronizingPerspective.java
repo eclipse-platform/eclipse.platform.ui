@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.ui.*;
 
 public class TeamSynchronizingPerspective implements IPerspectiveFactory {
@@ -35,7 +36,7 @@ public class TeamSynchronizingPerspective implements IPerspectiveFactory {
 		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file"); //$NON-NLS-1$
 
 		// Add "show views".
-		layout.addShowViewShortcut(SynchronizeView.VIEW_ID);
+		layout.addShowViewShortcut(ISynchronizeView.VIEW_ID);
 		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
@@ -54,7 +55,7 @@ public class TeamSynchronizingPerspective implements IPerspectiveFactory {
 	public void defineLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
 		IFolderLayout top = layout.createFolder("top", IPageLayout.LEFT, 0.45f, editorArea);	//$NON-NLS-1$
-		top.addView(SynchronizeView.VIEW_ID);
+		top.addView(ISynchronizeView.VIEW_ID);
 		IFolderLayout top2 = layout.createFolder("top2", IPageLayout.BOTTOM, 0.80f, editorArea);	//$NON-NLS-1$
 		top2.addView(IPageLayout.ID_TASK_LIST);
 		top2.addView(IPageLayout.ID_PROBLEM_VIEW);

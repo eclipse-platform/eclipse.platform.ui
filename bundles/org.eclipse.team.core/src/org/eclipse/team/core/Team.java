@@ -46,7 +46,7 @@ public final class Team {
 	
 	private static final String PREF_TEAM_IGNORES = "ignore_files"; //$NON-NLS-1$
 	private static final String PREF_TEAM_SEPARATOR = "\n"; //$NON-NLS-1$
-	public static final Status OK_STATUS = new Status(Status.OK, TeamPlugin.ID, Status.OK, Messages.ok, null); 
+	public static final Status OK_STATUS = new Status(IStatus.OK, TeamPlugin.ID, IStatus.OK, Messages.ok, null); 
 	
 	// File type constants
 	public static final int UNKNOWN = 0;

@@ -65,7 +65,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 					public void run() {
 						if (viewer == null || viewer.getControl().isDisposed() || !(viewer instanceof AbstractTreeViewer)) return;
 						viewer.getControl().setRedraw(false);		
-						((AbstractTreeViewer)viewer).collapseToLevel(viewer.getInput(), TreeViewer.ALL_LEVELS);
+						((AbstractTreeViewer)viewer).collapseToLevel(viewer.getInput(), AbstractTreeViewer.ALL_LEVELS);
 						viewer.getControl().setRedraw(true);
 					}
 				};
