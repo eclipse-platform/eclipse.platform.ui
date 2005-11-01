@@ -17,6 +17,6 @@ Export-Package: org.eclipse.core.internal.boot;x-friends:="org.eclipse.core.reso
  org.eclipse.core.runtime.dynamichelpers,
  org.eclipse.core.runtime.jobs,
  org.eclipse.core.runtime.preferences,
- org.osgi.service.prefs;version="1.0"
+ org.osgi.service.prefs;version="1.1"
 Require-Bundle: 
  org.eclipse.osgi; visibility:=reexport
