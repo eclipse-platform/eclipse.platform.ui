@@ -100,14 +100,12 @@ public class QueueTest extends TestCase {
 	public void testReusableElements() {
 		/**/
 		class ReusableObject {
-			int value;
 		}
 
 		/* add elements */
 		Queue queue = new Queue(10, true);
 		for (int i = 0; i < 9; i++) {
 			ReusableObject o = new ReusableObject();
-			o.value = i;
 			queue.add(o);
 		}
 
@@ -122,7 +120,6 @@ public class QueueTest extends TestCase {
 		for (int i = 0; i < 9; i++) {
 			ReusableObject o = (ReusableObject) queue.getNextAvailableObject();
 			assertTrue("1.0", o != null);
-			o.value = i;
 			queue.add(o);
 		}
 	}
