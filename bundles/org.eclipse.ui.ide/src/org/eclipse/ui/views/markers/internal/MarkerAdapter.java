@@ -225,6 +225,11 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 			if (monitor.isCanceled())
 				return;
 		}
+		
+		if(lastMarkers.getSize() == 0){
+			monitor.done();
+			return;
+		}
 
 		monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
 
