@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.navigator.resources; singleton:=true
 Bundle-Version: 1.0.0
-Bundle-ClassPath: wbnavigator.jar
+Bundle-ClassPath: navigator_resources.jar
 Bundle-Activator: org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorPlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
