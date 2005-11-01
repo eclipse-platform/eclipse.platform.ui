@@ -109,7 +109,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			// Allow the set if the parent is a CVS folder since
 			// this can occur when creating phatom folders
 			if (getFolderSync(folder.getParent()) == null) {
-				throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
+				throw new CVSException(IStatus.ERROR, TeamException.UNABLE,
 					NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingFolderSync, new String[] { folder.getFullPath().toString() })); 
 			}
 		}
@@ -214,7 +214,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		Assert.isNotNull(info); // enforce the use of deleteResourceSync
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) {
-			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
+			throw new CVSException(IStatus.ERROR, TeamException.UNABLE,
 				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() })); 
 		}
 		ISchedulingRule rule = null;
@@ -296,7 +296,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		Assert.isNotNull(syncBytes); // enforce the use of deleteResourceSync
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) {
-			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
+			throw new CVSException(IStatus.ERROR, TeamException.UNABLE,
 				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() })); 
 		}
 		ISchedulingRule rule = null;
@@ -387,7 +387,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 */
 	public void addIgnored(IContainer folder, String pattern) throws CVSException {
 		if (folder.getType() == IResource.ROOT || ! folder.exists()) {
-			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
+			throw new CVSException(IStatus.ERROR, TeamException.UNABLE,
 				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingIgnorePattern, new String[] { folder.getFullPath().toString() })); 
 		}
 		ISchedulingRule rule = null;

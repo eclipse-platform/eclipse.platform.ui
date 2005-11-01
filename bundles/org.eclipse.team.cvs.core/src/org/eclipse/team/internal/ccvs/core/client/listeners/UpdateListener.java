@@ -195,7 +195,7 @@ public class UpdateListener extends CommandOutputListener {
 							updateMessageListener.fileDoesNotExist(commandRoot, filename);
 						}
 					}
-					return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
+					return new CVSStatus(IStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
 				} else if (message.startsWith("warning:")) { //$NON-NLS-1$
 					/*
 					 * We can get the following conflict warnings
@@ -208,7 +208,7 @@ public class UpdateListener extends CommandOutputListener {
 							updateMessageListener.fileDoesNotExist(commandRoot, filename);
 						}
 					}
-					return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
+					return new CVSStatus(IStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
 				} else if (message.startsWith("conflicts")) { //$NON-NLS-1$
 					// This line is info only. The server doesn't report an error.
 					return new CVSStatus(IStatus.INFO, CVSStatus.CONFLICT, commandRoot, line);
@@ -260,7 +260,7 @@ public class UpdateListener extends CommandOutputListener {
 					if (message.startsWith("no such tag")) { //$NON-NLS-1$
 						// This is reported from CVS when a tag is used on the update there are no files in the directory
 						// To get the folders, the update request should be re-issued for HEAD
-						return new CVSStatus(CVSStatus.WARNING, CVSStatus.NO_SUCH_TAG, commandRoot, line);
+						return new CVSStatus(IStatus.WARNING, CVSStatus.NO_SUCH_TAG, commandRoot, line);
 					} else if (message.startsWith("Numeric join") && message.endsWith("may not contain a date specifier")) { //$NON-NLS-1$ //$NON-NLS-2$
 					    // This error indicates a join failed because a date tag was used
 					    return super.errorLine(line, location, commandRoot, monitor);
@@ -269,7 +269,7 @@ public class UpdateListener extends CommandOutputListener {
 					}
 				} else if (line.equals("rcsmerge: warning: conflicts during merge")) { //$NON-NLS-1$
 					// There were conflicts in the merge
-					return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
+					return new CVSStatus(IStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
 				}
 			}
 		} catch (StringIndexOutOfBoundsException e) {
@@ -278,7 +278,7 @@ public class UpdateListener extends CommandOutputListener {
 			if (CVSProviderPlugin.getPlugin().isDebugging()) {
 				System.out.println("Error parsing E line: " + line); //$NON-NLS-1$
 			}
-			return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE_PARSE_FAILURE, commandRoot, line);
+			return new CVSStatus(IStatus.ERROR, CVSStatus.ERROR_LINE_PARSE_FAILURE, commandRoot, line);
 		}
 		return super.errorLine(line, location, commandRoot, monitor);
 	}

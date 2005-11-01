@@ -33,7 +33,7 @@ public class TagListener extends CommandOutputListener {
 		// W folder/file : v1 already exists on version 1.2 : NOT MOVING tag to version 1.3
 		// Indicate this as an error since no tagging was done
 		if(line.length() >= 2 && line.charAt(0) == 'W' && line.charAt(1) == ' ') {
-			return new CVSStatus(CVSStatus.ERROR, CVSStatus.TAG_ALREADY_EXISTS, commandRoot, line.substring(2));
+			return new CVSStatus(IStatus.ERROR, CVSStatus.TAG_ALREADY_EXISTS, commandRoot, line.substring(2));
 		}
 			
 		return OK;

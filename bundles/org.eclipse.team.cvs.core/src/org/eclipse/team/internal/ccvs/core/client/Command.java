@@ -807,7 +807,7 @@ public abstract class Command extends Request {
 		}
 		if (accumulatedStatus.isOK()) return newStatus;
 		if (newStatus.isOK()) return accumulatedStatus;
-		MultiStatus result = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.INFO,
+		MultiStatus result = new MultiStatus(CVSProviderPlugin.ID, IStatus.INFO,
 				new IStatus[] {accumulatedStatus, newStatus},
 				NLS.bind(CVSMessages.Command_warnings, new String[] { getDisplayText() }), null);
 		return result;

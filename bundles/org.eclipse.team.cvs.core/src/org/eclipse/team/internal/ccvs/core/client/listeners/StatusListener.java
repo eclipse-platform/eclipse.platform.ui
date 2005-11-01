@@ -49,7 +49,7 @@ public class StatusListener extends CommandOutputListener {
 			if (serverMessage.startsWith("conflict:")) {//$NON-NLS-1$
 				// We get this because we made up an entry line to send to the server
 				// Therefore, we make this a warning!!!
-				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
+				return new CVSStatus(IStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
 			}
 			if (serverMessage.startsWith("Examining")) {//$NON-NLS-1$
 				isFolder = true;

@@ -47,7 +47,7 @@ public class AnnotateListener extends CommandOutputListener {
 		}
 		add(aBlock);
         if (error != null)
-            return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE_PARSE_FAILURE, commandRoot, error);
+            return new CVSStatus(IStatus.ERROR, CVSStatus.ERROR_LINE_PARSE_FAILURE, commandRoot, error);
 		return OK;
 	}
 	
@@ -84,7 +84,7 @@ public class AnnotateListener extends CommandOutputListener {
 	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
 		if(line.startsWith(CVSMessages.AnnotateListener_3)) { 
 			String error = CVSMessages.AnnotateListener_4; 
-			return new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, commandRoot, error);
+			return new CVSStatus(IStatus.ERROR, CVSStatus.SERVER_ERROR, commandRoot, error);
 		}
 		return super.errorLine(line, location, commandRoot, monitor);
 	}

@@ -106,7 +106,7 @@ class ImportStructureVisitor implements ICVSResourceVisitor {
 			return;
 		}
 		
-		boolean binary = Team.getType((IFile)mFile.getIResource()) == Team.BINARY;
+		boolean binary = Team.getFileContentManager().getType((IFile)mFile.getIResource()) == Team.BINARY;
 		if (wrapMatcher != null) {
 			String mode = wrapMatcher.getMatch(mFile.getName());
 			if (mode != null) binary = KSubstOption.fromMode(mode).isBinary();

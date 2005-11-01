@@ -461,7 +461,7 @@ public class CVSProviderPlugin extends Plugin {
 					// persisted in the user settings
 					file.delete();
 				} catch (IOException e) {
-					throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, CVSMessages.CVSProvider_ioException, e));  
+					throw new TeamException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, CVSMessages.CVSProvider_ioException, e));  
 				}
 			}
 		} catch (TeamException e) {

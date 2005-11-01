@@ -140,7 +140,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			this.workspaceRoot = new CVSWorkspaceRoot(project);
 			// Ensure that the project has CVS info
 			if (workspaceRoot.getLocalRoot().getFolderSyncInfo() == null) {
-				CVSProviderPlugin.log(new CVSException(new CVSStatus(CVSStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_noFolderInfo, new String[] { project.getName() })))); 
+				CVSProviderPlugin.log(new CVSException(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_noFolderInfo, new String[] { project.getName() })))); 
 			}
 		} catch (CVSException e) {
 			// Ignore exceptions here. They will be surfaced elsewhere
@@ -357,8 +357,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 								result[0] = Command.COMMIT.execute(
 									session,
 									Command.NO_GLOBAL_OPTIONS,
-									new LocalOption[] { Commit.DO_NOT_RECURSE, Commit.FORCE,
-										Commit.makeArgumentOption(Command.MESSAGE_OPTION, keywordChangeComment) },
+									new LocalOption[] { Command.DO_NOT_RECURSE, Commit.FORCE,
+										Command.makeArgumentOption(Command.MESSAGE_OPTION, keywordChangeComment) },
 									(ICVSResource[]) filesToCommitAsText.toArray(new ICVSResource[filesToCommitAsText.size()]),
 									filesToCommitAsText,
 									null, 

@@ -13,9 +13,8 @@ package org.eclipse.team.internal.ccvs.core;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
+
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -105,18 +104,18 @@ public class CVSTag {
 	
 	public static IStatus validateTagName(String tagName) {
 		if (tagName == null)
-			return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_nullName); 
+			return new CVSStatus(IStatus.ERROR, CVSMessages.CVSTag_nullName); 
 		if (tagName.equals(""))  //$NON-NLS-1$
-			return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_emptyName); 
+			return new CVSStatus(IStatus.ERROR, CVSMessages.CVSTag_emptyName); 
 		if (!Character. isLetter(tagName.charAt(0)))
-			return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_beginName); 
+			return new CVSStatus(IStatus.ERROR, CVSMessages.CVSTag_beginName); 
 		
 		for (int i = 0; i < tagName.length(); i++) {
 			char c = tagName.charAt(i);
 			if ( Character.isSpaceChar(c) || c == '$' || c == ',' || c == '.' || c == ':' || c == ';' || c == '@' || c == '|')
-				return new CVSStatus(CVSStatus.ERROR, CVSMessages.CVSTag_badCharName); 
+				return new CVSStatus(IStatus.ERROR, CVSMessages.CVSTag_badCharName); 
 		}
-		return new CVSStatus(CVSStatus.OK, CVSMessages.ok); 
+		return new CVSStatus(IStatus.OK, CVSMessages.ok); 
 	}
 	
 	/**

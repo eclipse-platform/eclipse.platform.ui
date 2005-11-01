@@ -33,13 +33,13 @@ public class CommandOutputListener implements ICommandOutputListener {
 	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
 		String protocolError = getProtocolError(line, location);
 		if (protocolError != null) {
-			return new CVSStatus(CVSStatus.ERROR, CVSStatus.PROTOCOL_ERROR, commandRoot, protocolError);
+			return new CVSStatus(IStatus.ERROR, CVSStatus.PROTOCOL_ERROR, commandRoot, protocolError);
 		}
 		if (line.equals(ROOT_CVSIGNORE_READ_FAILURE) || getServerMessage(ROOT_CVSIGNORE_READ_FAILURE, location).equals(getServerMessage(line, location))) {
 		    // Don't report this as an error since it does not affect the command
-		    return new CVSStatus(CVSStatus.WARNING, CVSStatus.ERROR_LINE, commandRoot, line);
+		    return new CVSStatus(IStatus.WARNING, CVSStatus.ERROR_LINE, commandRoot, line);
 		}
-		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
+		return new CVSStatus(IStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 	}
 	
 	/**

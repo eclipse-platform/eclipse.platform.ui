@@ -387,7 +387,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 								}
 								// Prune empty directories if pruning enabled
 								if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
-									localOptions.add(Checkout.PRUNE_EMPTY_DIRECTORIES);
+									localOptions.add(Command.PRUNE_EMPTY_DIRECTORIES);
 								// Add the options related to the CVSTag
 								CVSTag tag = resource.getTag();
 								if (tag == null) {

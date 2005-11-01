@@ -21,13 +21,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 
@@ -137,7 +130,7 @@ public class Update extends Command {
 		// Prune empty directories if pruning is enabled and the command in not being run in non-update mode
 		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories() && ! PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions)) {
 			if (! DO_NOT_CHANGE.isElementOf(globalOptions)) {
-				newOptions.add(Update.PRUNE_EMPTY_DIRECTORIES);
+				newOptions.add(Command.PRUNE_EMPTY_DIRECTORIES);
 			}
 		}
 		localOptions = (LocalOption[]) newOptions.toArray(new LocalOption[newOptions.size()]);

@@ -79,7 +79,7 @@ public class RemoteModule extends RemoteFolder {
 							localOptionsList.add(Checkout.ALIAS);
 							break;
 						case 'l': // don't recurse
-							localOptionsList.add(Checkout.DO_NOT_RECURSE);
+							localOptionsList.add(Command.DO_NOT_RECURSE);
 							break;
 						case 'd': // directory
 							localOptionsList.add(Checkout.makeDirectoryNameOption(tokenizer.nextToken()));

@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -48,7 +49,7 @@ public class CVSWorkspaceRoot {
 		ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
 		FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
 		if ( ! info.equals(folderInfo)) {
-			throw new CVSException(new CVSStatus(CVSStatus.ERROR, NLS.bind(CVSMessages.CVSProvider_infoMismatch, new String[] { project.getName() })));
+			throw new CVSException(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSProvider_infoMismatch, new String[] { project.getName() })));
 		}
         
         // Ensure that the repository location format is supported
@@ -132,7 +133,7 @@ public class CVSWorkspaceRoot {
 			}
 			// The types need to match or we're in trouble
 			if (remote != null && !(remote.isContainer() == managed.isFolder()))
-				throw new CVSException(new CVSStatus(CVSStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_typesDiffer, new String[] { resource.getFullPath().toString() }), null)); 
+				throw new CVSException(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_typesDiffer, new String[] { resource.getFullPath().toString() }), null)); 
 		}
 		return remote;
 	}

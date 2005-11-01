@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
@@ -158,13 +159,13 @@ public abstract class Request {
 				} else {
 					argument = NLS.bind(CVSMessages.Command_seriousServerError, new String[] { argument }); 
 					if (!session.hasErrors()) {
-						session.addError(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, argument));
+						session.addError(new CVSStatus(IStatus.ERROR, CVSStatus.SERVER_ERROR, argument));
 					}
 					serious = true;
 				}
 					
 				if (!session.hasErrors()) {
-				    session.addError(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, CVSMessages.Command_noMoreInfoAvailable));
+				    session.addError(new CVSStatus(IStatus.ERROR, CVSStatus.SERVER_ERROR, CVSMessages.Command_noMoreInfoAvailable));
 				}
 				IStatus status = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, 
 				        session.getErrors(),
@@ -190,7 +191,7 @@ public abstract class Request {
 					handler.handle(session, argument, monitor);
 				} else {
 					throw new CVSException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
-						CVSProviderPlugin.ID, CVSException.IO_FAILED,
+						CVSProviderPlugin.ID, TeamException.IO_FAILED,
 						NLS.bind(CVSMessages.Command_unsupportedResponse, new String[] { response, argument }), null)); 
 				}
 				// If a line is available, pass it on to the message listener 
@@ -217,7 +218,7 @@ public abstract class Request {
 					handler.handle(session, argument, monitor);
 				} else {
 					throw new CVSException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
-						CVSProviderPlugin.ID, CVSException.IO_FAILED,
+						CVSProviderPlugin.ID, TeamException.IO_FAILED,
 						NLS.bind(CVSMessages.Command_unsupportedResponse, new String[] { response, argument }), null)); 
 				}
 			}
@@ -225,7 +226,7 @@ public abstract class Request {
 		if (!session.hasErrors()) {
 			return ICommandOutputListener.OK;
 		} else {
-			return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.INFO,
+			return new MultiStatus(CVSProviderPlugin.ID, IStatus.INFO,
 				session.getErrors(),
 				NLS.bind(CVSMessages.Command_warnings, new String[] { getDisplayText() }), null);  //  
 		}
