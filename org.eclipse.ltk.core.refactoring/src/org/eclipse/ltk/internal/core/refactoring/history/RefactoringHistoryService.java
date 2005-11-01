@@ -407,15 +407,17 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				if (type == IResource.PROJECT) {
 					final IProject project= (IProject) resource;
 					if (project.exists()) {
-						final RefactoringHistoryImplementation history= (RefactoringHistoryImplementation) getProjectHistory(project, null);
-						final RefactoringDescriptorProxy[] proxies= history.getDescriptorProxies();
-						for (int index= 0; index < proxies.length; index++) {
-							final long stamp= proxies[index].getTimeStamp();
-							if (stamp >= 0) {
-								try {
-									fUndoStack.fManager.removeDescriptor(stamp);
-								} catch (CoreException exception) {
-									RefactoringCorePlugin.log(exception);
+						final RefactoringHistory history= getProjectHistory(project, null);
+						if (history instanceof RefactoringHistoryImplementation) {
+							final RefactoringDescriptorProxy[] proxies= ((RefactoringHistoryImplementation) history).getDescriptorProxies();
+							for (int index= 0; index < proxies.length; index++) {
+								final long stamp= proxies[index].getTimeStamp();
+								if (stamp >= 0) {
+									try {
+										fUndoStack.fManager.removeDescriptor(stamp);
+									} catch (CoreException exception) {
+										RefactoringCorePlugin.log(exception);
+									}
 								}
 							}
 						}
