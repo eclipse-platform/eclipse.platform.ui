@@ -25,5 +25,5 @@ public interface ISaveableWorkbenchPart extends ISaveablePart, IWorkbenchPart {
 	/**
 	 * The property id for <code>isDirty</code>.
 	 */
-	public static final int PROP_DIRTY = ISaveableWorkbenchPart.PROP_DIRTY;
+	public static final int PROP_DIRTY = ISaveablePart.PROP_DIRTY;
 }
