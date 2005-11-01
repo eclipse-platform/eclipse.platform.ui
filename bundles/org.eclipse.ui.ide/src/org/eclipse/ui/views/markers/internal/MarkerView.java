@@ -806,7 +806,8 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#handleOpenEvent(org.eclipse.jface.viewers.OpenEvent)
 	 */
 	protected void handleOpenEvent(OpenEvent event) {
-		openAction.run();
+		if(openAction.isEnabled())
+			openAction.run();
 	}
 
 	/*
