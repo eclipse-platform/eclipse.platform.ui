@@ -19,6 +19,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -78,7 +79,7 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 			IHelpContextIds.COMPARE_TAG_SELECTION_DIALOG);
 		dialog.setBlockOnOpen(true);
 		int result = dialog.open();
-		if (result == Dialog.CANCEL) {
+		if (result == Window.CANCEL) {
 			return null;
 		}
 		return dialog.getResult();

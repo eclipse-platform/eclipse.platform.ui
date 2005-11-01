@@ -16,8 +16,8 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -62,7 +62,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
             public void run() {
                 AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", scope);
                 int result = dialog.open();
-                canceled[0] = result != Dialog.OK;
+                canceled[0] = result != Window.OK;
             }
         
         });

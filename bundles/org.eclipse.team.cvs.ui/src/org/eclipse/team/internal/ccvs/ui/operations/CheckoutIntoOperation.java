@@ -340,14 +340,14 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 			// Add recurse option
 			List localOptions = new ArrayList();
 			if (!recurse)
-				localOptions.add(Update.DO_NOT_RECURSE);
+				localOptions.add(Command.DO_NOT_RECURSE);
 			if (localName != null) {
 				localOptions.add(Checkout.makeDirectoryNameOption(localName));
 			}
 			
 			// Prune empty directories if pruning enabled
 			if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
-				localOptions.add(Checkout.PRUNE_EMPTY_DIRECTORIES);
+				localOptions.add(Command.PRUNE_EMPTY_DIRECTORIES);
 			// Add the options related to the CVSTag
 			CVSTag tag = remoteFolder.getTag();
 			if (tag == null) {

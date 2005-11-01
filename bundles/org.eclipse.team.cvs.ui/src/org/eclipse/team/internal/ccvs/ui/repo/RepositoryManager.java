@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
@@ -337,7 +338,7 @@ public class RepositoryManager {
 					is.close();
 				}
 			} catch (IOException e) {
-				CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); 
+				CVSUIPlugin.log(IStatus.ERROR, CVSUIMessages.RepositoryManager_ioException, e); 
 			} catch (TeamException e) {
 				CVSUIPlugin.log(e);
 			}
@@ -355,7 +356,7 @@ public class RepositoryManager {
 					saveState();
 					file.delete();
 				} catch (IOException e) {
-					CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); 
+					CVSUIPlugin.log(IStatus.ERROR, CVSUIMessages.RepositoryManager_ioException, e); 
 				} catch (TeamException e) {
 					CVSUIPlugin.log(e);
 				}
@@ -374,7 +375,7 @@ public class RepositoryManager {
 				is.close();
 			}
 		} catch (IOException e) {
-			CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); 
+			CVSUIPlugin.log(IStatus.ERROR, CVSUIMessages.RepositoryManager_ioException, e); 
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e);
 		}
@@ -391,7 +392,7 @@ public class RepositoryManager {
                 is.close();
             }
         } catch (IOException e) {
-            CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); //$NON-NLS-1$
+            CVSUIPlugin.log(IStatus.ERROR, CVSUIMessages.RepositoryManager_ioException, e);
         } catch (TeamException e) {
             CVSUIPlugin.log(e);
         }
@@ -413,10 +414,10 @@ public class RepositoryManager {
 			}
 			boolean renamed = tempFile.renameTo(stateFile);
 			if (!renamed) {
-				throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_rename, new String[] { tempFile.getAbsolutePath() }), null)); 
+				throw new TeamException(new Status(IStatus.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_rename, new String[] { tempFile.getAbsolutePath() }), null)); 
 			}
 		} catch (IOException e) {
-			throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_save, new String[] { stateFile.getAbsolutePath() }), e)); 
+			throw new TeamException(new Status(IStatus.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_save, new String[] { stateFile.getAbsolutePath() }), e)); 
 		}
 	}
 	private void writeState(XMLWriter writer) {
@@ -531,10 +532,10 @@ public class RepositoryManager {
 		 		 }
 		 		 boolean renamed = tempFile.renameTo(histFile);
 		 		 if (!renamed) {
-		 		 		 throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_rename, new String[] { tempFile.getAbsolutePath() }), null)); 
+		 		 		 throw new TeamException(new Status(IStatus.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_rename, new String[] { tempFile.getAbsolutePath() }), null)); 
 		 		 }
 		 } catch (IOException e) {
-		 		 throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_save, new String[] { histFile.getAbsolutePath() }), e)); 
+		 		 throw new TeamException(new Status(IStatus.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_save, new String[] { histFile.getAbsolutePath() }), e)); 
 		 }
 	}
 	private void writeCommentHistory(XMLWriter writer) {
@@ -562,10 +563,10 @@ public class RepositoryManager {
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				result[0] = dialog.open();
-				if (result[0] != ReleaseCommentDialog.OK) return;
+				if (result[0] != Window.OK) return;
 			}
 		});
-		if (result[0] != ReleaseCommentDialog.OK) return null;
+		if (result[0] != Window.OK) return null;
 		return dialog.getComment();
 	}
 	
@@ -857,11 +858,11 @@ public class RepositoryManager {
 		} catch (SAXException ex) {
 			throw new CVSException(NLS.bind(
 					CVSUIMessages.RepositoryManager_parsingProblem,
-					new String[] { COMMENT_TEMPLATES_FILE }), ex); //$NON-NLS-1$
+					new String[] { COMMENT_TEMPLATES_FILE }), ex);
 		} catch (ParserConfigurationException ex) {
 			throw new CVSException(NLS.bind(
 					CVSUIMessages.RepositoryManager_parsingProblem,
-					new String[] { COMMENT_TEMPLATES_FILE }), ex); //$NON-NLS-1$
+					new String[] { COMMENT_TEMPLATES_FILE }), ex);
 		}
 	}
 	
@@ -884,17 +885,17 @@ public class RepositoryManager {
 			}
 			boolean renamed = tempFile.renameTo(histFile);
 			if (!renamed) {
-				throw new TeamException(new Status(Status.ERROR,
+				throw new TeamException(new Status(IStatus.ERROR,
 						CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(
 								CVSUIMessages.RepositoryManager_rename,
 								new String[] { tempFile.getAbsolutePath() }),
-						null)); //$NON-NLS-1$
+						null));
 			}
 		} catch (IOException e) {
-			throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID,
+			throw new TeamException(new Status(IStatus.ERROR, CVSUIPlugin.ID,
 					TeamException.UNABLE, NLS.bind(
 							CVSUIMessages.RepositoryManager_save,
-							new String[] { histFile.getAbsolutePath() }), e)); //$NON-NLS-1$
+							new String[] { histFile.getAbsolutePath() }), e));
 		}
 	}
 	

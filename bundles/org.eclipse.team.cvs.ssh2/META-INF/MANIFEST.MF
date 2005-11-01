@@ -17,4 +17,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.team.cvs.ssh,
  org.eclipse.team.ui
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

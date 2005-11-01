@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.Team;
@@ -63,7 +64,7 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 					view.open();
 				}
 			}, CVSUIPlugin.PERFORM_SYNC_EXEC);
-			return (view.getReturnCode() == EditorsDialog.OK);
+			return (view.getReturnCode() == Window.OK);
 		}
 		return true;
 	}

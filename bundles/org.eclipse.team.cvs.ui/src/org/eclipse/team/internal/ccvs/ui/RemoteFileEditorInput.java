@@ -121,7 +121,7 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 		//use path to make sure slashes are correct
 		ICVSRepositoryLocation location = file.getRepository();
 		IPath path = new Path(null, location.getRootDirectory());
-		path = path.setDevice(location.getHost() + Path.DEVICE_SEPARATOR);
+		path = path.setDevice(location.getHost() + IPath.DEVICE_SEPARATOR);
 		path = path.append(file.getRepositoryRelativePath());
 		String fullPath;
 		try {

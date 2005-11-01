@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -84,7 +85,7 @@ public class IgnoreAction extends WorkspaceTraversalAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				IResource[] resources = getSelectedResources();
 				IgnoreResourcesDialog dialog = new IgnoreResourcesDialog(getShell(), resources);
-				if (dialog.open() != IgnoreResourcesDialog.OK) return;
+				if (dialog.open() != Window.OK) return;
 				new IgnoreOperation(getTargetPart(), resources, dialog).run();
 				
 				//if (action != null) action.setEnabled(isEnabled());

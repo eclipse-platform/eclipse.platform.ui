@@ -14,21 +14,17 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.window.Window;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetCollector;
 import org.eclipse.team.internal.ui.synchronize.*;
-import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
-import org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
@@ -141,7 +137,7 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 			CommitSetDialog dialog = new CommitSetDialog(configuration.getSite().getShell(), set, getResources(infos),
 			        CVSUIMessages.WorkspaceChangeSetCapability_2, CVSUIMessages.WorkspaceChangeSetCapability_3); // 
 			dialog.open();
-			if (dialog.getReturnCode() != InputDialog.OK) return null;
+			if (dialog.getReturnCode() != Window.OK) return null;
 			set.add(infos);
 			return set;
         }
@@ -161,7 +157,7 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 	        CommitSetDialog dialog = new CommitSetDialog(configuration.getSite().getShell(), set, set.getResources(),
 			        CVSUIMessages.WorkspaceChangeSetCapability_7, CVSUIMessages.WorkspaceChangeSetCapability_8); // 
 			dialog.open();
-			if (dialog.getReturnCode() != InputDialog.OK) return;
+			if (dialog.getReturnCode() != Window.OK) return;
 			// Nothing to do here as the set was updated by the dialog 
         }
 

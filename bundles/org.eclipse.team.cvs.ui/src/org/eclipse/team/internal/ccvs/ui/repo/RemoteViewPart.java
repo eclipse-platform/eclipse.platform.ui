@@ -246,7 +246,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 				}
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.create();
-				if (dialog.open() == WizardDialog.OK)
+				if (dialog.open() == Window.OK)
 					setWorkingSet(wizard.getSelection(), true);
 			}
 		};
@@ -356,7 +356,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	public void collapseAll() {
 		if (viewer == null) return;
 		viewer.getControl().setRedraw(false);
-		viewer.collapseToLevel(viewer.getInput(), TreeViewer.ALL_LEVELS);
+		viewer.collapseToLevel(viewer.getInput(), AbstractTreeViewer.ALL_LEVELS);
 		viewer.getControl().setRedraw(true);
 	}
 	/**

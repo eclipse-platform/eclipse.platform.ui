@@ -17,8 +17,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.CVSTagElement;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
 
@@ -70,7 +70,7 @@ public class RemoveDateTagAction extends SelectionListenerAction {
 			cvsTagElements = new ArrayList();
 			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
-				Object next = CVSAction.getAdapter(elements.next(), CVSTagElement.class);
+				Object next = TeamAction.getAdapter(elements.next(), CVSTagElement.class);
 				if (next instanceof CVSTagElement) {
 					cvsTagElements.add(next);
 				}

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -118,7 +119,7 @@ public class UnmanageAction extends WorkspaceAction {
 	}
 
 	boolean confirmDeleteProjects() {
-		final int[] result = new int[] { MessageDialog.OK };
+		final int[] result = new int[] { Window.OK };
 		IProject[] projects = getSelectedProjects();
 		final DeleteProjectDialog dialog = new DeleteProjectDialog(getShell(), projects);
 		getShell().getDisplay().syncExec(new Runnable() {

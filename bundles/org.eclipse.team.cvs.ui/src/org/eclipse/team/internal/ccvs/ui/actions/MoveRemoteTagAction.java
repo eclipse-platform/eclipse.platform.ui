@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
@@ -33,7 +32,7 @@ public class MoveRemoteTagAction extends TagInRepositoryAction {
 			isFolderSelected(), /* show recurse */
 			IHelpContextIds.TAG_REMOTE_WITH_EXISTING_DIALOG);
 		dialog.setBlockOnOpen(true);
-		if (dialog.open() == Dialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			return null;
 		}
 		CVSTag tag = dialog.getResult();

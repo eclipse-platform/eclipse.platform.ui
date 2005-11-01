@@ -19,6 +19,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -54,7 +55,7 @@ public class AddToBranchAction extends CVSAction {
 				shell.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						InputDialog dialog = new InputDialog(getShell(), CVSUIMessages.AddToBranchAction_enterTag, CVSUIMessages.AddToBranchAction_enterTagLong, null, validator); // 
-						if (dialog.open() == InputDialog.OK) {
+						if (dialog.open() == Window.OK) {
 							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.BRANCH);
 							try {
 								CVSUIPlugin.getPlugin().getRepositoryManager().addTags(folder, new CVSTag[] {tag});

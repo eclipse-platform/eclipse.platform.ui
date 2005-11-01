@@ -3,13 +3,6 @@
 	<name>org.eclipse.team.cvs.ssh2</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.boot</project>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.team.core</project>
-		<project>org.eclipse.team.cvs.core</project>
-		<project>org.eclipse.team.cvs.ssh</project>
-		<project>org.eclipse.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

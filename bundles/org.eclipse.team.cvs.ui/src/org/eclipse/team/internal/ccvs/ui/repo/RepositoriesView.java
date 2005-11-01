@@ -27,10 +27,10 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
 import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -294,7 +294,7 @@ public class RepositoriesView extends RemoteViewPart {
 		
 		if (s.size() > 1)
             return NLS.bind(CVSUIMessages.RepositoriesView_NItemsSelected, new String[] { String.valueOf(s.size()) }); 
-		Object element = CVSAction.getAdapter(s.getFirstElement(), ICVSResource.class);
+		Object element = TeamAction.getAdapter(s.getFirstElement(), ICVSResource.class);
 		if (element instanceof ICVSRemoteResource) {
 			ICVSRemoteResource res = (ICVSRemoteResource)element;
 			String name;

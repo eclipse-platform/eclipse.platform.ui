@@ -247,7 +247,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				}
 				// Prune empty directories if pruning enabled
 				if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
-					localOptions.add(Checkout.PRUNE_EMPTY_DIRECTORIES);
+					localOptions.add(Command.PRUNE_EMPTY_DIRECTORIES);
 				// Add the options related to the CVSTag
 				CVSTag tag = resource.getTag();
 				if (tag == null) {
@@ -349,7 +349,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			Policy.checkCanceled(monitor);
 			if (needsPromptForOverwrite(project) && !promptToOverwrite(remoteFolder, project)) {
 				// User said no to this project but not no to all
-				return new CVSStatus(IStatus.INFO, CVSStatus.CANCEL, NLS.bind(CVSUIMessages.CheckoutProjectOperation_0, new String[] { remoteFolder.getRepositoryRelativePath() })); 
+				return new CVSStatus(IStatus.INFO, IStatus.CANCEL, NLS.bind(CVSUIMessages.CheckoutProjectOperation_0, new String[] { remoteFolder.getRepositoryRelativePath() })); 
 			}
 		}
 		// Create the projects and remove any previous content

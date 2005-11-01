@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -400,9 +401,9 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 									NLS.bind(CVSUIMessages.CVSRepositoryPropertiesPage_sharedProject, new String[] { location.toString() }), 
 									(IProject[]) projects.toArray(new IProject[projects.size()]),
 									true,
-									DetailsDialogWithProjects.DLG_IMG_WARNING);
+									Dialog.DLG_IMG_WARNING);
 								int r = dialog.open();
-								if (r != DetailsDialogWithProjects.OK) {
+								if (r != Window.OK) {
 									result[0] = false;
 									return;
 								}

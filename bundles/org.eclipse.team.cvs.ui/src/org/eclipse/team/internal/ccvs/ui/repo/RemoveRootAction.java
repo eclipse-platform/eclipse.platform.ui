@@ -19,6 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
@@ -28,8 +29,8 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.RepositoryLocationSchedulingRule;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialogWithProjects;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -59,7 +60,7 @@ public class RemoveRootAction extends SelectionListenerAction {
 			resources = new ArrayList();
 			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
-				Object next = CVSAction.getAdapter(elements.next(), RepositoryRoot.class);
+				Object next = TeamAction.getAdapter(elements.next(), RepositoryRoot.class);
 				if (next instanceof RepositoryRoot) {
 					resources.add(((RepositoryRoot)next).getRoot());
 				}
@@ -104,7 +105,7 @@ public class RemoveRootAction extends SelectionListenerAction {
 								CVSUIMessages.RemoteRootAction_The_projects_that_are_shared_with_the_above_repository_are__4, 
 								(IProject[]) shared.toArray(new IProject[shared.size()]),
 								false,
-								DetailsDialogWithProjects.DLG_IMG_ERROR);
+								Dialog.DLG_IMG_ERROR);
 							dialog.open();
 						}
 					});

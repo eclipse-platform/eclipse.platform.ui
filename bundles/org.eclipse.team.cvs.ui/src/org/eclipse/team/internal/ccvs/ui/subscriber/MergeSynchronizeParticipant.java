@@ -234,7 +234,7 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 				resources.add(resource);
 			} else {
 				// log that a resource previously in the merge set is no longer in the workspace
-				CVSProviderPlugin.log(CVSStatus.INFO, NLS.bind(CVSUIMessages.MergeSynchronizeParticipant_11, new String[] { path.toString() }), null); 
+				CVSProviderPlugin.log(IStatus.INFO, NLS.bind(CVSUIMessages.MergeSynchronizeParticipant_11, new String[] { path.toString() }), null); 
 			}
 		}
 		if(resources.isEmpty()) {

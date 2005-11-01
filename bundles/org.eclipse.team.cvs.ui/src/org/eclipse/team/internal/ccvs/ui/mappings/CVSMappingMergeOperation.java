@@ -38,7 +38,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class CVSMappingMergeOperation extends ResourceMappingMergeOperation {
 
-	protected static final String UPDATE_CLIENT_MERGE_INFO = "update_client_merge_info_prompt"; //$NON-NLS-1 //$NON-NLS-1$ //$NON-NLS-1$
+	protected static final String UPDATE_CLIENT_MERGE_INFO = "update_client_merge_info_prompt"; //$NON-NLS-1$
 	
 	public CVSMappingMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
 		super(part, selectedMappings, context);

@@ -13,7 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -62,7 +62,7 @@ public class BranchOperation extends RepositoryProviderOperation {
     											resources, 
     											allSticky, 
     											initialVersionName);
-    		if (dialog.open() != InputDialog.OK) return false;		
+    		if (dialog.open() != Window.OK) return false;		
     		
     		// Capture the dialog info in local variables
     		final String tagString = dialog.getBranchTagName();

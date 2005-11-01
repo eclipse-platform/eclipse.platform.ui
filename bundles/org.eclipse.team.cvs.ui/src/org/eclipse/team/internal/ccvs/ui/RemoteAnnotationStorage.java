@@ -59,7 +59,7 @@ public class RemoteAnnotationStorage extends PlatformObject implements IEncodedS
 	public IPath getFullPath() {
 		ICVSRepositoryLocation location = file.getRepository();
 		IPath path = new Path(null, location.getRootDirectory());
-		path = path.setDevice(location.getHost() + Path.DEVICE_SEPARATOR);
+		path = path.setDevice(location.getHost() + IPath.DEVICE_SEPARATOR);
 		path = path.append(file.getRepositoryRelativePath());
 		return path;
 	}

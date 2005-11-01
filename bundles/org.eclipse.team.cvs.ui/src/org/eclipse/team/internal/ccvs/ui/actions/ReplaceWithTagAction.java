@@ -17,8 +17,8 @@ import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -105,7 +105,7 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 					false, /*show recurse*/
 					IHelpContextIds.REPLACE_TAG_SELECTION_DIALOG); 
 				dialog.setBlockOnOpen(true);
-				if (dialog.open() == Dialog.CANCEL) {
+				if (dialog.open() == Window.CANCEL) {
 					return;
 				}
 				tag[0] = dialog.getResult();

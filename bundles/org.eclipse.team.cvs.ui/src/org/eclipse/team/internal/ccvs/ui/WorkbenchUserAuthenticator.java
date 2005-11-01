@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -181,7 +182,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		AlternateUserValidationDialog dialog = new AlternateUserValidationDialog(null, (username == null) ? "" : username); //$NON-NLS-1$
 		dialog.setUsername(username);
 		int result = dialog.open();
-		if (result == Dialog.CANCEL) return null;
+		if (result == Window.CANCEL) return null;
 		return dialog.getPassword();
 	}
 	

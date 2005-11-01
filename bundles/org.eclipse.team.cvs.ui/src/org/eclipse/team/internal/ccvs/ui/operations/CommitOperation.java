@@ -29,7 +29,7 @@ public class CommitOperation extends SingleCommandOperation {
 
 	public CommitOperation(IWorkbenchPart part, ResourceMapping[] mappers, LocalOption[] options, String comment) {
 		super(part, mappers, options);
-		addLocalOption(Commit.makeArgumentOption(Command.MESSAGE_OPTION, comment));
+		addLocalOption(Command.makeArgumentOption(Command.MESSAGE_OPTION, comment));
 	}
 	
 	/* (non-Javadoc)

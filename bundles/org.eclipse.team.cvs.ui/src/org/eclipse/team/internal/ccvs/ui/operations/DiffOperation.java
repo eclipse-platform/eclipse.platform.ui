@@ -201,7 +201,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 
 		
 		//get the path string for this file
-	    pathString= file.getRelativePath(cmdRoot); //$NON-NLS-1$
+	    pathString= file.getRelativePath(cmdRoot);
 	
 		int lines = 0;
 		BufferedReader fileReader = new BufferedReader(new InputStreamReader(file.getContents()));

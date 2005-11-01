@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -124,7 +125,7 @@ public class MergeWizardPage extends CVSWizardPage {
                         CVSUIMessages.MergeWizardPage_5, 
                         endTagIncludeFlags,
                         false, IHelpContextIds.MERGE_END_PAGE);
-                if (dialog.open() == Dialog.OK) {
+                if (dialog.open() == Window.OK) {
                     CVSTag selectedTag = dialog.getResult();
                     setEndTag(selectedTag);
                 }
@@ -152,7 +153,7 @@ public class MergeWizardPage extends CVSWizardPage {
                         CVSUIMessages.MergeWizardPage_9, 
                         TagSelectionDialog.INCLUDE_VERSIONS,
                         false, IHelpContextIds.MERGE_START_PAGE);
-                if (dialog.open() == Dialog.OK) {
+                if (dialog.open() == Window.OK) {
                     CVSTag selectedTag = dialog.getResult();
                     setStartTag(selectedTag);
                 }
