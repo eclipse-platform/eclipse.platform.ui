@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -274,7 +275,20 @@ public final class Util {
 			log(exception);
 		}
 
-		return marker.getResource().getProjectRelativePath().removeLastSegments(1).toOSString();
+		IResource resource = marker.getResource();
+		int type = resource.getType();
+		
+		//Cannot be project relative if it is the root or a project
+		if(type == IResource.PROJECT)
+			return resource.getName();
+		
+		if(type == IResource.ROOT)
+			return MarkerMessages.Util_WorkspaceRoot;
+		
+		String result =  marker.getResource().getProjectRelativePath().removeLastSegments(1).toOSString();
+		if(result.trim().length() == 0)
+			return MarkerMessages.Util_ProjectRoot;
+		return result;
 	}
 	
 	/**

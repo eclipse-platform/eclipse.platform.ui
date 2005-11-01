@@ -1277,7 +1277,8 @@ public abstract class MarkerView extends TableView {
 				if (tree != null && !tree.isDisposed()) {
 					updateStatusMessage();
 					updateTitle();
-					if(isHierarchalMode())
+					//Expand all if the list is small
+					if(isHierarchalMode() && getCurrentMarkers().getSize() < 20)
 						getViewer().expandAll();
 				}
 				return Status.OK_STATUS;

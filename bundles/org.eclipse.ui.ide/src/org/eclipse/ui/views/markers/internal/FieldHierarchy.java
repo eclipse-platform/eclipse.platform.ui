@@ -53,7 +53,7 @@ public class FieldHierarchy implements IField {
 		if(obj instanceof MarkerNode){
 			MarkerNode node = (MarkerNode) obj;
 			if(node.isConcrete())
-				return Util.EMPTY_STRING;
+				return ((ConcreteMarker) node).getResourceName();
 			return node.getDescription();
 		}
 		return Util.EMPTY_STRING;

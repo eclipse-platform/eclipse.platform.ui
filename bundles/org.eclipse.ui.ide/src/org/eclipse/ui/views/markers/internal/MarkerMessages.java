@@ -259,4 +259,8 @@ public class MarkerMessages extends NLS{
 	
 	public static String ProblemView_hierarchyMenu;
 	public static String ProblemView_flatMenu;
+	
+	public static String Util_WorkspaceName;
+	public static String Util_ProjectRoot;
+	public static String Util_WorkspaceRoot;
 }

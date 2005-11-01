@@ -60,10 +60,14 @@ public class AddMarkersAction implements IWorkbenchWindowActionDelegate {
 	        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 	        Map attribs = new HashMap();
 	        for (int i = 0; i < 1000; i++) {
+	        	
+	        	if(i /2 == 0){
+	        		attribs.put(MarkerViewUtil.NAME_ATTRIBUTE , "Test Name " + i);
+		            attribs.put(MarkerViewUtil.PATH_ATTRIBUTE , "Test Path " + i);
+	        	}
+	        	
 	            attribs.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_ERROR));
 	            attribs.put(IMarker.MESSAGE, "this is a test " + i);
-	            attribs.put(MarkerViewUtil.NAME_ATTRIBUTE , "Test Name " + i);
-	            attribs.put(MarkerViewUtil.PATH_ATTRIBUTE , "Test Path " + i);
 	            attribs.put("category" , "Category " + String.valueOf(i/10));
 	            MarkerUtilities.createMarker(root, attribs, CATEGORY_TEST_MARKER);
 	        }

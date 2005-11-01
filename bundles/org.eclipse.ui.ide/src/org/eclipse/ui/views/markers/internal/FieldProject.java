@@ -1,6 +1,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -32,7 +33,12 @@ public class FieldProject implements IField {
 	 */
 	public String getValue(Object obj) {
 		if (obj instanceof ConcreteMarker) {
-			IProject project = ((ConcreteMarker) obj).getMarker().getResource().getProject();
+			
+			IResource resource = ((ConcreteMarker) obj).getMarker().getResource();
+			if(resource.getType() == IResource.ROOT)
+				return MarkerMessages.Util_WorkspaceName;
+			
+			IProject project = resource.getProject();
 			if(project != null)
 				return project.getName();
 		}
