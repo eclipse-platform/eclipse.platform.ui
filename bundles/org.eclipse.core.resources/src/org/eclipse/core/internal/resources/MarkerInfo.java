@@ -136,7 +136,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	public void internalSetAttributes(Map map) {
 		//the cast effectively acts as an assertion to make sure
 		//the right kind of map is being used
-		attributes = (MarkerAttributeMap) map;
+		attributes = map;
 	}
 
 	public void setAttribute(String attributeName, Object value) {
