@@ -12,6 +12,7 @@ package org.eclipse.jface.examples.binding.javabean;
 
 import org.eclipse.jface.binding.BindingException;
 import org.eclipse.jface.binding.DatabindingContext;
+import org.eclipse.jface.binding.PropertyDescription;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -68,17 +69,17 @@ public class TextBinding extends Composite {
 
 		Person person = new Person();
 		person.setAge(35);
-		person.setFirstName("John");
-		person.setLastName("Doe");
+		person.setFirstName("John"); //$NON-NLS-1$
+		person.setLastName("Doe"); //$NON-NLS-1$
 
-		dbc.bind(txtDescription, "text", person, "firstName");
-		dbc.bind(txtDescription_1, "text", person, "firstName");
+		dbc.bind2(txtDescription, new PropertyDescription(person, "firstName"), null);//$NON-NLS-1$
+		dbc.bind2(txtDescription_1,  new PropertyDescription(person, "firstName"), null);//$NON-NLS-1$
 
-		dbc.bind(txtName, "text", person, "lastName");
-		dbc.bind(txtName_1, "text", person, "lastName");
+		dbc.bind2(txtName,  new PropertyDescription(person, "lastName"),null);//$NON-NLS-1$
+		dbc.bind2(txtName_1,  new PropertyDescription(person, "lastName"),null);//$NON-NLS-1$
 
-		dbc.bind(txtLocation, "text", person, "age");
-		dbc.bind(txtLocation_1, "text", person, "age");
+		dbc.bind2(txtLocation,  new PropertyDescription(person, "age"),null);//$NON-NLS-1$
+		dbc.bind2(txtLocation_1,  new PropertyDescription(person, "age"),null);//$NON-NLS-1$
 
 	}
 

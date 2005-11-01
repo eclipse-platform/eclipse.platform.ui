@@ -105,247 +105,247 @@ public class DatabindingContext implements IValidationContext {
 		updatableFactories.put(clazz, factory);
 	}
 
-	/**
-	 * Convenience method for binding the given target to the given model value,
-	 * using converters obtained by calling getConverter().
-	 * 
-	 * @param target
-	 *            the target value
-	 * @param model
-	 *            the model value
-	 * @throws BindingException
-	 */
-	public void bind(final IUpdatable target, final IUpdatable model)
-			throws BindingException {
-		IConverter converter = null;
-		if (target instanceof IUpdatableValue)
-			if (model instanceof IUpdatableValue) {
-				IUpdatableValue tgt = (IUpdatableValue) target, mdl = (IUpdatableValue) model;
-				converter = getConverter(tgt.getValueType(),
-						mdl.getValueType(), isDefaultIdentityConverter());
-			} else
-				throw new BindingException(
-						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
-		else if (target instanceof IUpdatableCollection)
-			if (model instanceof IUpdatableCollection) {
-				IUpdatableCollection tgt = (IUpdatableCollection) target, mdl = (IUpdatableCollection) model;
-				converter = getConverter(tgt.getElementType(), mdl
-						.getElementType(), isDefaultIdentityConverter());
-			} else
-				throw new BindingException(
-						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
-
-		bind(target, model, converter);
-	}
-
-	/**
-	 * Convenience method for binding the given target to the given model value,
-	 * using the given converters to convert between target values and model
-	 * values, and a validator obtained by calling
-	 * getValidator(target.getValueType(), model.getValueType(),
-	 * targetToModelValidator).
-	 * 
-	 * @param target
-	 *            the target value
-	 * @param model
-	 *            the model value
-	 * @param converter
-	 *            the converter for converting from target values to model
-	 *            values
-	 * @throws BindingException
-	 */
-	public void bind(final IUpdatable target, final IUpdatable model,
-			final IConverter converter) throws BindingException {
-		final IValidator targetValidator = getValidator(converter);
-		bind(target, model, converter, targetValidator);
-	}
-
-	/**
-	 * @param target
-	 * @param model
-	 * @param converter
-	 * @param targetValidator
-	 * @throws BindingException
-	 */
-	public void bind(final IUpdatable target, final IUpdatable model,
-			final IConverter converter, final IValidator targetValidator)
-			throws BindingException {
-		if (target instanceof IUpdatableValue)
-			if (model instanceof IUpdatableValue) {
-				IUpdatableValue tgt = (IUpdatableValue) target, mdl = (IUpdatableValue) model;
-				bind(tgt, mdl, converter, targetValidator);
-			} else
-				throw new BindingException(
-						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
-		else if (target instanceof IUpdatableCollection)
-			if (model instanceof IUpdatableCollection) {
-				IUpdatableCollection tgt = (IUpdatableCollection) target, mdl = (IUpdatableCollection) model;
-				bind(tgt, mdl, converter, targetValidator);
-			} else
-				throw new BindingException(
-						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
-	}
-
-	/**
-	 * 
-	 * Binds two {@link org.eclipse.jface.binding.IUpdatableCollection}
-	 * 
-	 * @param targetCollection
-	 * @param modelCollection
-	 * @param converter
-	 * @param validator
-	 * @throws BindingException
-	 * 
-	 */
-	public void bind(IUpdatableCollection targetCollection,
-			IUpdatableCollection modelCollection, IConverter converter,
-			final IValidator validator) throws BindingException {
-
-		// TODO use a ValueBindings, and deal with validator
-
-		// Verify element conversion types
-		Class convertedClass = converter.getTargetType();
-		if (!targetCollection.getElementType().isAssignableFrom(convertedClass)) {
-			throw new BindingException("no converter from " //$NON-NLS-1$
-					+ convertedClass.getName() + " to " //$NON-NLS-1$
-					+ targetCollection.getElementType().getName());
-		}
-		convertedClass = converter.getModelType();
-		if (!modelCollection.getElementType().isAssignableFrom(convertedClass)) {
-			throw new BindingException("no converter from " //$NON-NLS-1$
-					+ convertedClass.getName() + " to " //$NON-NLS-1$
-					+ modelCollection.getElementType().getName());
-		}
-
-		CollectionBinding binding = new CollectionBinding(this,
-				targetCollection, modelCollection, new BindSpec(converter,
-						validator));
-		targetCollection.addChangeListener(binding);
-		modelCollection.addChangeListener(binding);
-		binding.updateTargetFromModel();
-
-	}
-
-	/**
-	 * Binds the given target to the given model value, using the given
-	 * converters to convert between target values and model values, and the
-	 * given validator to validate target values. First, the target value will
-	 * be set to the current model value, using the modelToTargetConverter.
-	 * Subsequently, whenever one of the values changes, the other value will be
-	 * updated, using the matching converter. The model value will only be
-	 * updated if the given validator successfully validates the current target
-	 * value.
-	 * 
-	 * @param target
-	 *            the target value
-	 * @param model
-	 *            the model value
-	 * @param converter
-	 *            the converter for converting from target values to model
-	 *            values
-	 * @param targetValidator
-	 *            the validator for validating updated target values
-	 * @throws BindingException
-	 */
-	public void bind(final IUpdatableValue target, final IUpdatableValue model,
-			final IConverter converter, final IValidator targetValidator)
-			throws BindingException {
-		ValueBinding valueBinding = new ValueBinding(this, target, model,
-				new BindSpec(converter, targetValidator));
-		target.addChangeListener(valueBinding);
-		model.addChangeListener(valueBinding);
-		valueBinding.updateTargetFromModel();
-	}
-
-	/**
-	 * Convenience method for binding the given target object's feature to the
-	 * given model value. This method uses createUpdatableValue() to obtain the
-	 * IUpdatableValue objects used for the binding.
-	 * 
-	 * @param targetObject
-	 *            the target object
-	 * @param targetFeature
-	 *            the feature identifier for the target object
-	 * @param modelValue
-	 *            the model value
-	 * @throws BindingException
-	 */
-	public void bind(Object targetObject, Object targetFeature,
-			IUpdatable modelValue) throws BindingException {
-		bind(createUpdatable(targetObject, targetFeature), modelValue);
-	}
-
-	/**
-	 * Convenience method for binding the given target object's feature to the
-	 * given model object's feature. This method uses createUpdatableValue() to
-	 * obtain the IUpdatableValue objects used for the binding.
-	 * 
-	 * @param targetObject
-	 *            the target object
-	 * @param targetFeature
-	 *            the feature identifier for the target object
-	 * @param modelObject
-	 *            the model object
-	 * @param modelFeature
-	 *            the feature identifier for the model object
-	 * @throws BindingException
-	 */
-	public void bind(Object targetObject, Object targetFeature,
-			Object modelObject, Object modelFeature) throws BindingException {
-		bind(createUpdatable(targetObject, targetFeature), createUpdatable(
-				modelObject, modelFeature));
-	}
-
-	/**
-	 * Convenience method for binding the given target object's feature to the
-	 * given model object's feature. This method uses createUpdatableValue() to
-	 * obtain the IUpdatableValue objects used for the binding.
-	 * 
-	 * @param targetObject
-	 *            the target object
-	 * @param targetFeature
-	 *            the feature identifier for the target object
-	 * @param modelObject
-	 *            the model object
-	 * @param modelFeature
-	 *            the feature identifier for the model object
-	 * @param converter
-	 *            the converter for converting from target values to model
-	 *            values
-	 * @throws BindingException
-	 */
-	public void bind(Object targetObject, Object targetFeature,
-			Object modelObject, Object modelFeature, final IConverter converter)
-			throws BindingException {
-		bind(createUpdatable(targetObject, targetFeature), createUpdatable(
-				modelObject, modelFeature), converter);
-	}
-
-	/**
-	 * Convenience method for binding the given target object's feature to the
-	 * given model object's feature. This method uses createUpdatableValue() to
-	 * obtain the IUpdatableValue objects used for the binding.
-	 * 
-	 * @param targetObject
-	 *            the target object
-	 * @param targetFeature
-	 *            the feature identifier for the target object
-	 * @param modelObject
-	 *            the model object
-	 * @param modelFeature
-	 *            the feature identifier for the model object
-	 * @param converter
-	 *            the converter for converting from target values to model
-	 *            values
-	 * @param validator
-	 * @throws BindingException
-	 */
-	public void bind(Object targetObject, Object targetFeature,
-			Object modelObject, Object modelFeature, IConverter converter,
-			IValidator validator) throws BindingException {
-		bind(createUpdatable(targetObject, targetFeature), createUpdatable(
-				modelObject, modelFeature), converter, validator);
-	}
+//	/**
+//	 * Convenience method for binding the given target to the given model value,
+//	 * using converters obtained by calling getConverter().
+//	 * 
+//	 * @param target
+//	 *            the target value
+//	 * @param model
+//	 *            the model value
+//	 * @throws BindingException
+//	 */
+//	public void bind(final IUpdatable target, final IUpdatable model)
+//			throws BindingException {
+//		IConverter converter = null;
+//		if (target instanceof IUpdatableValue)
+//			if (model instanceof IUpdatableValue) {
+//				IUpdatableValue tgt = (IUpdatableValue) target, mdl = (IUpdatableValue) model;
+//				converter = getConverter(tgt.getValueType(),
+//						mdl.getValueType(), isDefaultIdentityConverter());
+//			} else
+//				throw new BindingException(
+//						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
+//		else if (target instanceof IUpdatableCollection)
+//			if (model instanceof IUpdatableCollection) {
+//				IUpdatableCollection tgt = (IUpdatableCollection) target, mdl = (IUpdatableCollection) model;
+//				converter = getConverter(tgt.getElementType(), mdl
+//						.getElementType(), isDefaultIdentityConverter());
+//			} else
+//				throw new BindingException(
+//						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
+//
+//		bind(target, model, converter);
+//	}
+//
+//	/**
+//	 * Convenience method for binding the given target to the given model value,
+//	 * using the given converters to convert between target values and model
+//	 * values, and a validator obtained by calling
+//	 * getValidator(target.getValueType(), model.getValueType(),
+//	 * targetToModelValidator).
+//	 * 
+//	 * @param target
+//	 *            the target value
+//	 * @param model
+//	 *            the model value
+//	 * @param converter
+//	 *            the converter for converting from target values to model
+//	 *            values
+//	 * @throws BindingException
+//	 */
+//	public void bind(final IUpdatable target, final IUpdatable model,
+//			final IConverter converter) throws BindingException {
+//		final IValidator targetValidator = getValidator(converter);
+//		bind(target, model, converter, targetValidator);
+//	}
+//
+//	/**
+//	 * @param target
+//	 * @param model
+//	 * @param converter
+//	 * @param targetValidator
+//	 * @throws BindingException
+//	 */
+//	public void bind(final IUpdatable target, final IUpdatable model,
+//			final IConverter converter, final IValidator targetValidator)
+//			throws BindingException {
+//		if (target instanceof IUpdatableValue)
+//			if (model instanceof IUpdatableValue) {
+//				IUpdatableValue tgt = (IUpdatableValue) target, mdl = (IUpdatableValue) model;
+//				bind(tgt, mdl, converter, targetValidator);
+//			} else
+//				throw new BindingException(
+//						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
+//		else if (target instanceof IUpdatableCollection)
+//			if (model instanceof IUpdatableCollection) {
+//				IUpdatableCollection tgt = (IUpdatableCollection) target, mdl = (IUpdatableCollection) model;
+//				bind(tgt, mdl, converter, targetValidator);
+//			} else
+//				throw new BindingException(
+//						"Incompatible instances of IUpdatable"); //$NON-NLS-1$
+//	}
+//
+//	/**
+//	 * 
+//	 * Binds two {@link org.eclipse.jface.binding.IUpdatableCollection}
+//	 * 
+//	 * @param targetCollection
+//	 * @param modelCollection
+//	 * @param converter
+//	 * @param validator
+//	 * @throws BindingException
+//	 * 
+//	 */
+//	public void bind(IUpdatableCollection targetCollection,
+//			IUpdatableCollection modelCollection, IConverter converter,
+//			final IValidator validator) throws BindingException {
+//
+//		// TODO use a ValueBindings, and deal with validator
+//
+//		// Verify element conversion types
+//		Class convertedClass = converter.getTargetType();
+//		if (!targetCollection.getElementType().isAssignableFrom(convertedClass)) {
+//			throw new BindingException("no converter from " //$NON-NLS-1$
+//					+ convertedClass.getName() + " to " //$NON-NLS-1$
+//					+ targetCollection.getElementType().getName());
+//		}
+//		convertedClass = converter.getModelType();
+//		if (!modelCollection.getElementType().isAssignableFrom(convertedClass)) {
+//			throw new BindingException("no converter from " //$NON-NLS-1$
+//					+ convertedClass.getName() + " to " //$NON-NLS-1$
+//					+ modelCollection.getElementType().getName());
+//		}
+//
+//		CollectionBinding binding = new CollectionBinding(this,
+//				targetCollection, modelCollection, new BindSpec(converter,
+//						validator));
+//		targetCollection.addChangeListener(binding);
+//		modelCollection.addChangeListener(binding);
+//		binding.updateTargetFromModel();
+//
+//	}
+//
+//	/**
+//	 * Binds the given target to the given model value, using the given
+//	 * converters to convert between target values and model values, and the
+//	 * given validator to validate target values. First, the target value will
+//	 * be set to the current model value, using the modelToTargetConverter.
+//	 * Subsequently, whenever one of the values changes, the other value will be
+//	 * updated, using the matching converter. The model value will only be
+//	 * updated if the given validator successfully validates the current target
+//	 * value.
+//	 * 
+//	 * @param target
+//	 *            the target value
+//	 * @param model
+//	 *            the model value
+//	 * @param converter
+//	 *            the converter for converting from target values to model
+//	 *            values
+//	 * @param targetValidator
+//	 *            the validator for validating updated target values
+//	 * @throws BindingException
+//	 */
+//	public void bind(final IUpdatableValue target, final IUpdatableValue model,
+//			final IConverter converter, final IValidator targetValidator)
+//			throws BindingException {
+//		ValueBinding valueBinding = new ValueBinding(this, target, model,
+//				new BindSpec(converter, targetValidator));
+//		target.addChangeListener(valueBinding);
+//		model.addChangeListener(valueBinding);
+//		valueBinding.updateTargetFromModel();
+//	}
+//
+//	/**
+//	 * Convenience method for binding the given target object's feature to the
+//	 * given model value. This method uses createUpdatableValue() to obtain the
+//	 * IUpdatableValue objects used for the binding.
+//	 * 
+//	 * @param targetObject
+//	 *            the target object
+//	 * @param targetFeature
+//	 *            the feature identifier for the target object
+//	 * @param modelValue
+//	 *            the model value
+//	 * @throws BindingException
+//	 */
+//	public void bind(Object targetObject, Object targetFeature,
+//			IUpdatable modelValue) throws BindingException {
+//		bind(createUpdatable(targetObject, targetFeature), modelValue);
+//	}
+//
+//	/**
+//	 * Convenience method for binding the given target object's feature to the
+//	 * given model object's feature. This method uses createUpdatableValue() to
+//	 * obtain the IUpdatableValue objects used for the binding.
+//	 * 
+//	 * @param targetObject
+//	 *            the target object
+//	 * @param targetFeature
+//	 *            the feature identifier for the target object
+//	 * @param modelObject
+//	 *            the model object
+//	 * @param modelFeature
+//	 *            the feature identifier for the model object
+//	 * @throws BindingException
+//	 */
+//	public void bind(Object targetObject, Object targetFeature,
+//			Object modelObject, Object modelFeature) throws BindingException {
+//		bind(createUpdatable(targetObject, targetFeature), createUpdatable(
+//				modelObject, modelFeature));
+//	}
+//
+//	/**
+//	 * Convenience method for binding the given target object's feature to the
+//	 * given model object's feature. This method uses createUpdatableValue() to
+//	 * obtain the IUpdatableValue objects used for the binding.
+//	 * 
+//	 * @param targetObject
+//	 *            the target object
+//	 * @param targetFeature
+//	 *            the feature identifier for the target object
+//	 * @param modelObject
+//	 *            the model object
+//	 * @param modelFeature
+//	 *            the feature identifier for the model object
+//	 * @param converter
+//	 *            the converter for converting from target values to model
+//	 *            values
+//	 * @throws BindingException
+//	 */
+//	public void bind(Object targetObject, Object targetFeature,
+//			Object modelObject, Object modelFeature, final IConverter converter)
+//			throws BindingException {
+//		bind(createUpdatable(targetObject, targetFeature), createUpdatable(
+//				modelObject, modelFeature), converter);
+//	}
+//
+//	/**
+//	 * Convenience method for binding the given target object's feature to the
+//	 * given model object's feature. This method uses createUpdatableValue() to
+//	 * obtain the IUpdatableValue objects used for the binding.
+//	 * 
+//	 * @param targetObject
+//	 *            the target object
+//	 * @param targetFeature
+//	 *            the feature identifier for the target object
+//	 * @param modelObject
+//	 *            the model object
+//	 * @param modelFeature
+//	 *            the feature identifier for the model object
+//	 * @param converter
+//	 *            the converter for converting from target values to model
+//	 *            values
+//	 * @param validator
+//	 * @throws BindingException
+//	 */
+//	public void bind(Object targetObject, Object targetFeature,
+//			Object modelObject, Object modelFeature, IConverter converter,
+//			IValidator validator) throws BindingException {
+//		bind(createUpdatable(targetObject, targetFeature), createUpdatable(
+//				modelObject, modelFeature), converter, validator);
+//	}
 
 	/**
 	 * Creates an updatable value from the given object and feature ID. This
@@ -360,9 +360,10 @@ public class DatabindingContext implements IValidationContext {
 	 *            is the property designated the updatable object.
 	 * @return updatable for the given object
 	 * @throws BindingException
+	 * @deprecated
 	 */
 
-	public IUpdatable createUpdatable(Object object, Object featureID)
+	private IUpdatable createUpdatable(Object object, Object featureID)
 			throws BindingException {
 		if (object instanceof IUpdatableValue)
 			return new NestedUpdatableValue(this, ((IUpdatableValue) object),

@@ -12,7 +12,13 @@ package org.eclipse.jface.tests.binding;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.binding.*;
+import org.eclipse.jface.binding.BindSpec;
+import org.eclipse.jface.binding.BindingException;
+import org.eclipse.jface.binding.DatabindingContext;
+import org.eclipse.jface.binding.IConverter;
+import org.eclipse.jface.binding.IUpdatableValue;
+import org.eclipse.jface.binding.IValidator;
+import org.eclipse.jface.binding.SettableValue;
 import org.eclipse.jface.tests.binding.util.Mocks;
 
 public class DatabindingContextTest extends TestCase {
@@ -73,8 +79,8 @@ public class DatabindingContextTest extends TestCase {
 		validatorMock.isValid(null);
 		Mocks.startChecking(updatableValueRMock);
 		Mocks.startChecking(validatorMock);
-		dbc.bind(settableValue1, updatableValueRMock, identityConverter,
-				validatorMock);
+		dbc.bind2(settableValue1, updatableValueRMock, new BindSpec(identityConverter,
+				validatorMock));
 		Mocks.verify(updatableValueRMock);
 	}
 
@@ -85,14 +91,14 @@ public class DatabindingContextTest extends TestCase {
 		validatorMock.isValid(null);
 		Mocks.startChecking(updatableValueRMock);
 		Mocks.startChecking(validatorMock);
-		dbc.bind(updatableValueRMock, settableValue2, identityConverter,
-				validatorMock);
+		dbc.bind2(updatableValueRMock, settableValue2, new BindSpec(identityConverter,
+				validatorMock));
 	}
 
 	public void testBindValuePropagation() throws BindingException {
 		settableValue1.setValue(o1);
 		settableValue2.setValue(o2);
-		dbc.bind(settableValue1, settableValue2);
+		dbc.bind2(settableValue1, settableValue2, null);
 		assertEquals(o2, settableValue1.getValue());
 		settableValue1.setValue(o1);
 		assertEquals(o1, settableValue2.getValue());
