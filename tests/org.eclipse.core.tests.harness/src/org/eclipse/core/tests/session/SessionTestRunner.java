@@ -154,7 +154,6 @@ public class SessionTestRunner {
 				stack.append(System.getProperty("line.separator"));
 				return;
 			}
-			Assert.isTrue(false, "Unexpected message: " + message);
 		}
 
 		public void run() {
