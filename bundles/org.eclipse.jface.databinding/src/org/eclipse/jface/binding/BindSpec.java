@@ -1,8 +1,17 @@
 package org.eclipse.jface.binding;
 
 /**
- * @since 3.2
+ * A concrete implementation of IBindSpec, suitable either for instantiating or
+ * subclassing.
  * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will remain
+ * unchanged during the 3.2 release cycle. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
+ * 
+ * @since 3.2
  */
 public class BindSpec implements IBindSpec {
 
@@ -17,6 +26,9 @@ public class BindSpec implements IBindSpec {
 	private final int targetUpdatePolicy;
 
 	/**
+	 * Creates a bind spec with the given converter, validator, and update
+	 * policies.
+	 * 
 	 * @param converter
 	 * @param validator
 	 * @param modelUpdatePolicy
@@ -33,6 +45,9 @@ public class BindSpec implements IBindSpec {
 	}
 
 	/**
+	 * Creates a bind spec with the given converter and validator. The update
+	 * policies are set to <code>IBindSpec.POLICY_CONTEXT</code>.
+	 * 
 	 * @param converter
 	 * @param validator
 	 */

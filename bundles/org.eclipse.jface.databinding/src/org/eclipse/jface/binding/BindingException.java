@@ -12,14 +12,28 @@
 package org.eclipse.jface.binding;
 
 /**
+ * A checked exception indicating a binding problem.
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will remain
+ * unchanged during the 3.2 release cycle. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
+ * 
+ * TODO API review issue: Use CoreException instead?
+ * 
  * @since 3.2
- *
  */
 public class BindingException extends Exception {
 
+	/*
+	 * Needed because all Throwables are Serializable.
+	 */
 	private static final long serialVersionUID = -4092828452936724217L;
 
 	/**
+	 * Creates a new BindingException with the given message.
 	 * @param message
 	 */
 	public BindingException(String message) {

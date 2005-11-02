@@ -11,8 +11,26 @@
 package org.eclipse.jface.binding;
 
 /**
- * @since 3.2
+ * An event describing a change to an updatable object.
+ * <p>
+ * <code>IChangeEvent</code> objects are delivered to
+ * <code>IChangeEventListener</code> objects registered with an
+ * <code>IUpdatable</code> object when a change occurs in the updatable.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented or extended by clients. To
+ * create IChangeEvent objects, use a constructor of class
+ * <code>ChangeEvent</code>.
+ * </p>
  * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will remain
+ * unchanged during the 3.2 release cycle. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
+ * 
+ * @since 3.2
  */
 public interface IChangeEvent {
 
