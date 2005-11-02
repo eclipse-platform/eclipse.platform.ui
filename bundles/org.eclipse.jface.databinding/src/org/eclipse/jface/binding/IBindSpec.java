@@ -1,5 +1,9 @@
 package org.eclipse.jface.binding;
 
+/**
+ * @since 3.2
+ *
+ */
 public interface IBindSpec {
 	
 	/**
@@ -17,8 +21,14 @@ public interface IBindSpec {
 	 */
 	public static final int POLICY_EXPLICIT = 2;
 	
+	/**
+	 * @return the converter
+	 */
 	public IConverter getConverter();
 	
+	/**
+	 * @return the validator
+	 */
 	public IValidator getValidator();
 	
 	/**

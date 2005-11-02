@@ -17,6 +17,10 @@ import java.lang.reflect.Method;
 import org.eclipse.jface.binding.IChangeEvent;
 import org.eclipse.jface.binding.UpdatableValue;
 
+/**
+ * @since 3.2
+ *
+ */
 public class JavaBeanUpdatableValue extends UpdatableValue {
 	private final Object object;
 
@@ -30,6 +34,10 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 
 	private boolean updating = false;
 
+	/**
+	 * @param object
+	 * @param propertyName
+	 */
 	public JavaBeanUpdatableValue(final Object object, String propertyName) {
 		this.object = object;
 		this.propertyName = propertyName;
@@ -59,6 +67,10 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 		return getMethod;
 	}
 
+	/**
+	 * @param propertyName
+	 * @return
+	 */
 	public static String getMethodName(String propertyName) {
 		// TODO: <gm> need to deal with BeanInfo overrides </gm>
 		StringBuffer getMethodName = new StringBuffer();
@@ -68,6 +80,10 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 		return getMethodName.toString();
 	}
 
+	/**
+	 * @param propertyName
+	 * @return
+	 */
 	public static String setMethodName(String propertyName) {
 		// TODO: <gm> need to deal with BeanInfo overrides </gm>
 		StringBuffer getMethodName = new StringBuffer();

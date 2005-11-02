@@ -51,7 +51,7 @@ public class NestedUpdatableCollection extends Updatable implements
 	 * @param databindingContext
 	 * @param outerUpdatableValue
 	 * @param feature
-	 * @param featureType
+	 * @param elementType 
 	 */
 	public NestedUpdatableCollection(DatabindingContext databindingContext,
 			final IUpdatableValue outerUpdatableValue, Object feature,

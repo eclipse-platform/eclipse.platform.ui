@@ -9,10 +9,17 @@ import org.eclipse.jface.binding.swt.TableViewerDescription.Column;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.swt.widgets.Item;
 
+/**
+ * @since 3.2
+ *
+ */
 public class DefaultCellModifier implements ICellModifier{
 	
 	private TableViewerDescription tableViewerDescription;
 
+	/**
+	 * @param tableViewerDescription
+	 */
 	public DefaultCellModifier(TableViewerDescription tableViewerDescription){
 		this.tableViewerDescription = tableViewerDescription;
 	}

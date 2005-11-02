@@ -89,6 +89,7 @@ public class TableViewerUpdatableCollectionExtended extends
 
 	/**
 	 * @param tableViewerDescription
+	 * @param validationContext 
 	 */
 	public TableViewerUpdatableCollectionExtended(
 			TableViewerDescription tableViewerDescription, IValidationContext validationContext) {

@@ -10,4 +10,4 @@ Export-Package: org.eclipse.jface.binding,
  org.eclipse.jface.binding.swt
 Require-Bundle: org.eclipse.jface,
  org.eclipse.core.runtime
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

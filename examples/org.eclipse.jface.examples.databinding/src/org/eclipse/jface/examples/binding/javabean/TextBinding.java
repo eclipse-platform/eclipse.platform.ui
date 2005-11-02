@@ -21,6 +21,10 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * @since 3.2
+ *
+ */
 public class TextBinding extends Composite {
 
 	private DatabindingContext dbc;
@@ -45,6 +49,11 @@ public class TextBinding extends Composite {
 
 	private Text txtLocation_1 = null;
 
+	/**
+	 * @param parent
+	 * @param style
+	 * @throws BindingException
+	 */
 	public TextBinding(Composite parent, int style) throws BindingException {
 		super(parent, style);
 		initialize();
