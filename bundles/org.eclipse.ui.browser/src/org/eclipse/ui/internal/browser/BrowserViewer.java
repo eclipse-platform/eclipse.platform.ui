@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.CloseWindowListener;
 import org.eclipse.swt.browser.LocationEvent;
@@ -864,6 +865,11 @@ public class BrowserViewer extends Composite {
     }
 
     public void setContainer(IBrowserViewerContainer container) {
+    	if (container==null && this.container!=null) {
+    		IStatusLineManager manager = this.container.getActionBars().getStatusLineManager();
+    		if (manager!=null) 
+    			manager.getProgressMonitor().done();
+    	}
         this.container = container;
     }
 

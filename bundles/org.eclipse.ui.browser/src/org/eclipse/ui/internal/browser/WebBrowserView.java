@@ -60,6 +60,8 @@ public class WebBrowserView extends ViewPart implements
 	}
 
 	public void dispose() {
+		if (viewer!=null)
+			viewer.setContainer(null);
 		if (listener != null)
 			removeSelectionListener();
 	}
