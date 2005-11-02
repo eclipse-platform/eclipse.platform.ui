@@ -110,14 +110,14 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
-		IMarker[] markers = getSelectedMarkers(selection);
-
-		for (int i = 0; i < markers.length; i++) {
-			if (IDE.getMarkerHelpRegistry().hasResolutions(markers[i])) {
+		
+		if(Util.isSingleConcreteSelection(selection)){
+			if(IDE.getMarkerHelpRegistry().hasResolutions(getSelectedMarker())){
 				setEnabled(true);
 				return;
 			}
 		}
+		
 		setEnabled(false);
 	}
 }
