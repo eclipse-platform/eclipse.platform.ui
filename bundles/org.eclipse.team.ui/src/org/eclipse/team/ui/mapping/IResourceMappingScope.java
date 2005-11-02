@@ -37,6 +37,13 @@ import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 public interface IResourceMappingScope extends ISynchronizeScope {
 
 	/**
+	 * Property used to indicate that the roots of the scope have
+	 * not changes but the resources covered by the scope have.
+	 * @see ISynchronizeScope#contains(IResource)
+	 */
+	public static final String CONTAINMENT = "prop_containment"; //$NON-NLS-1$
+	
+	/**
 	 * Return the array of mappings that acted as the input to the scope builder
 	 * that was used to build this scope. This set usually come from a view
 	 * selection but could come from another source. In most cases, clients will
@@ -107,11 +114,10 @@ public interface IResourceMappingScope extends ISynchronizeScope {
 	public ResourceMapping[] getMappings(String modelProviderId);
 
 	/**
-	 * Return the set of resource that form the roots of this scope.
-	 * The roots are obtained from the set of traversals associated
-	 * with the scope ignoring the depth of the traversals.
-	 * @return the set of resource that form the roots of this scope
+	 * Return whether the given resource is contained in this scope.
+	 * @param resource the resource to be tested
+	 * @return whether the given resource is contained in this scope
 	 */
-	public IResource[] getRoots();
+	public boolean contains(IResource resource);
 
 }

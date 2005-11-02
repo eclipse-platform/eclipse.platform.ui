@@ -18,7 +18,6 @@ import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.mapping.ISynchronizationCache;
 import org.eclipse.team.ui.operations.MergeContext;
 import org.eclipse.team.ui.operations.SynchronizationContext;
-import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 
 /**
  * Allows a model provider to build a view of their model that includes
@@ -80,7 +79,7 @@ public interface ISynchronizationContext {
 	 * resources that are within the scope of this context. The tree
 	 * may include additional out-of-sync resources, which should be ignored by
 	 * the client. Clients can test for inclusion using the method 
-	 * {@link ISynchronizeScope#contains(IResource)}.
+	 * {@link IResourceMappingScope#contains(IResource)}.
 	 * 
 	 * @return a tree that contains a <code>SyncInfo</code> node for any
 	 *         resources that are out-of-sync.
