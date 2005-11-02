@@ -49,7 +49,7 @@ public class ValueBinding extends Binding {
 		converter = bindSpec == null ? null : bindSpec.getConverter();
 		if (converter == null) {
 			converter = context.getConverter(target.getValueType(), model
-					.getValueType(), context.isDefaultIdentityConverter());
+					.getValueType());
 		}
 		validator = bindSpec == null ? null : bindSpec.getValidator();
 		if (validator == null) {

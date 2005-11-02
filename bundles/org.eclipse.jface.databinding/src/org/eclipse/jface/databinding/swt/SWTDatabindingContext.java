@@ -14,9 +14,9 @@ import java.util.Map;
 
 import org.eclipse.jface.databinding.DatabindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableFactory2;
 import org.eclipse.jface.databinding.IValidationContext;
+import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.internal.swt.ButtonUpdatableValue;
 import org.eclipse.jface.databinding.internal.swt.CComboUpdatableCollection;
 import org.eclipse.jface.databinding.internal.swt.CComboUpdatableValue;
@@ -134,133 +134,99 @@ public class SWTDatabindingContext extends DatabindingContext {
 		this(control, TIME_EARLY, TIME_LATE);
 	}
 
-	protected void registerValueFactories() {
-		super.registerValueFactories();
-		addUpdatableFactory(Control.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.ENABLED)) {
-					return new ControlUpdatableValue((Control) object,
-							(String) attribute);
-				}
-				return null;
-			}
-		});
-		addUpdatableFactory(Spinner.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.SELECTION)
-						|| attribute.equals(SWTBindingConstants.MIN)
-						|| attribute.equals(SWTBindingConstants.MAX)) {
-					return new SpinnerUpdatableValue((Spinner) object,
-							(String) attribute);
-				}
-				return null;
-			}
-		});
-		addUpdatableFactory(Text.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.TEXT)) {
-					return new TextUpdatableValue((Text) object, SWT.Modify,
-							SWT.Modify);
-				}
-				return null;
-			}
-		});
-		addUpdatableFactory(Label.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.TEXT)) {
-					return new LabelUpdatableValue((Label) object);
-				}
-				return null;
-			}
-		});
-		addUpdatableFactory(Button.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.SELECTION)) {
-					return new ButtonUpdatableValue((Button) object,
-							SWT.Selection);
-				}
-				return null;
-			}
-		});		
-		addUpdatableFactory(Combo.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.TEXT)
-						|| attribute.equals(SWTBindingConstants.SELECTION))
-					return new ComboUpdatableValue((Combo) object,
-							(String) attribute);
-				else if (attribute.equals(SWTBindingConstants.ITEMS))
-					return new ComboUpdatableCollection((Combo) object,
-							(String) attribute);
-				return null;
-			}
-		});
-		addUpdatableFactory(CCombo.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.TEXT)
-						|| attribute.equals(SWTBindingConstants.SELECTION))
-					return new CComboUpdatableValue((CCombo) object,
-							(String) attribute);
-				else if (attribute.equals(SWTBindingConstants.ITEMS))
-					return new CComboUpdatableCollection((CCombo) object,
-							(String) attribute);
-				return null;
-			}
-		});
-		addUpdatableFactory(List.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.SELECTION)) // SWT.SINGLE selection only
-					return new ListUpdatableValue((List) object,
-							(String) attribute);
-				else if (attribute.equals(SWTBindingConstants.ITEMS))
-					return new ListUpdatableCollection((List) object,
-							(String) attribute);
-				return null;
-			}
-		});
-		addUpdatableFactory(StructuredViewer.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.SELECTION)) {
-					return new StructuredViewerUpdatableValue(
-							(StructuredViewer) object, (String) attribute);
-				}
-				return null;
-			}
-		});
+	protected void registerFactories() {
+		super.registerFactories();
 
-		addUpdatableFactory(AbstractListViewer.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.SELECTION))
-					return new StructuredViewerUpdatableValue(
-							(AbstractListViewer) object, (String) attribute);
-				else if (attribute.equals(SWTBindingConstants.CONTENT))
-					return new UpdatableCollectionViewer(
-							(AbstractListViewer) object);
-				return null;
-			}
-		});
-
-		addUpdatableFactory(TableViewer.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				if (attribute.equals(SWTBindingConstants.CONTENT)) {
-					return new TableViewerUpdatableCollection(
-							(TableViewer) object);
-				}
-				return null;
-			}
-		});
-
-		addUpdatableFactory(Table.class, new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Object object, Object attribute) {
-				return new TableUpdatableValue((Table) object,
-						(String) attribute);
-			}
-		});
-
-		// new stuff
 		addUpdatableFactory2(new IUpdatableFactory2() {
-			public IUpdatable createUpdatable(Map properties, Object description, IValidationContext validationContext) {
+			public IUpdatable createUpdatable(Map properties,
+					Object description, IValidationContext validationContext) {
+				if (description instanceof PropertyDescription) {
+					Object object = ((PropertyDescription) description)
+							.getObject();
+					Object attribute = ((PropertyDescription) description)
+							.getPropertyID();
+					if (object instanceof Control
+							&& attribute.equals(SWTBindingConstants.ENABLED)) {
+						return new ControlUpdatableValue((Control) object,
+								(String) attribute);
+					}
+					if (object instanceof Spinner
+							&& attribute.equals(SWTBindingConstants.SELECTION)
+							|| attribute.equals(SWTBindingConstants.MIN)
+							|| attribute.equals(SWTBindingConstants.MAX)) {
+						return new SpinnerUpdatableValue((Spinner) object,
+								(String) attribute);
+					}
+					if (object instanceof Text
+							&& attribute.equals(SWTBindingConstants.TEXT)) {
+						return new TextUpdatableValue((Text) object,
+								SWT.Modify, SWT.Modify);
+					}
+					if (object instanceof Label
+							&& attribute.equals(SWTBindingConstants.TEXT)) {
+						return new LabelUpdatableValue((Label) object);
+					}
+					if (object instanceof Button
+							&& attribute.equals(SWTBindingConstants.SELECTION)) {
+						return new ButtonUpdatableValue((Button) object,
+								SWT.Selection);
+					}
+					if (object instanceof Combo
+							&& (attribute.equals(SWTBindingConstants.TEXT) || attribute
+									.equals(SWTBindingConstants.SELECTION))) {
+						return new ComboUpdatableValue((Combo) object,
+								(String) attribute);
+					} else if (object instanceof Combo
+							&& attribute.equals(SWTBindingConstants.ITEMS)) {
+						return new ComboUpdatableCollection((Combo) object,
+								(String) attribute);
+					}
+					if (object instanceof CCombo
+							&& (attribute.equals(SWTBindingConstants.TEXT) || attribute
+									.equals(SWTBindingConstants.SELECTION))) {
+						return new CComboUpdatableValue((CCombo) object,
+								(String) attribute);
+					} else if (object instanceof CCombo
+							&& attribute.equals(SWTBindingConstants.ITEMS)) {
+						return new CComboUpdatableCollection((CCombo) object,
+								(String) attribute);
+					}
+					if (object instanceof List
+							&& attribute.equals(SWTBindingConstants.SELECTION)) {
+						// SWT.SINGLE selection only
+						return new ListUpdatableValue((List) object,
+								(String) attribute);
+					} else if (object instanceof List
+							&& attribute.equals(SWTBindingConstants.ITEMS)) {
+						return new ListUpdatableCollection((List) object,
+								(String) attribute);
+					}
+					if (object instanceof StructuredViewer
+							&& attribute.equals(SWTBindingConstants.SELECTION)) {
+						return new StructuredViewerUpdatableValue(
+								(StructuredViewer) object, (String) attribute);
+					}
+					if (object instanceof AbstractListViewer
+							&& attribute.equals(SWTBindingConstants.SELECTION))
+						return new StructuredViewerUpdatableValue(
+								(AbstractListViewer) object, (String) attribute);
+					else if (object instanceof AbstractListViewer
+							&& attribute.equals(SWTBindingConstants.CONTENT))
+						return new UpdatableCollectionViewer(
+								(AbstractListViewer) object);
+					if (object instanceof TableViewer
+							&& attribute.equals(SWTBindingConstants.CONTENT)) {
+						return new TableViewerUpdatableCollection(
+								(TableViewer) object);
+					}
+					if (object instanceof Table) {
+						return new TableUpdatableValue((Table) object,
+								(String) attribute);
+					}
+				}
 				if (description instanceof AbstractListViewer) {
-					// binding to a Viewer directly implies binding to its content
+					// binding to a Viewer directly implies binding to its
+					// content
 					return new UpdatableCollectionViewer(
 							(AbstractListViewer) description);
 				} else if (description instanceof Text) {
@@ -273,16 +239,21 @@ public class SWTDatabindingContext extends DatabindingContext {
 				} else if (description instanceof Button) {
 					int updatePolicy = getPolicy(properties,
 							SWTDatabindingContext.UPDATE_TIME, SWT.FocusOut);
-					return new ButtonUpdatableValue((Button) description, updatePolicy);
+					return new ButtonUpdatableValue((Button) description,
+							updatePolicy);
 				} else if (description instanceof Combo) {
-					return new ComboUpdatableCollection((Combo)description, SWTBindingConstants.CONTENT);
+					return new ComboUpdatableCollection((Combo) description,
+							SWTBindingConstants.CONTENT);
 				} else if (description instanceof CCombo) {
-					return new CComboUpdatableCollection((CCombo)description, SWTBindingConstants.CONTENT);										
+					return new CComboUpdatableCollection((CCombo) description,
+							SWTBindingConstants.CONTENT);
 				} else if (description instanceof List) {
-					return new ListUpdatableCollection((List)description, SWTBindingConstants.CONTENT);					
+					return new ListUpdatableCollection((List) description,
+							SWTBindingConstants.CONTENT);
 				} else if (description instanceof TableViewerDescription) {
 					return new TableViewerUpdatableCollectionExtended(
-							(TableViewerDescription) description, validationContext);
+							(TableViewerDescription) description,
+							validationContext);
 				}
 				return null;
 			}
@@ -317,7 +288,7 @@ public class SWTDatabindingContext extends DatabindingContext {
 	}
 
 	/**
-	 * @param updateTime 
+	 * @param updateTime
 	 */
 	public void setUpdateTime(int updateTime) {
 		this.updateTime = updateTime;
@@ -331,7 +302,7 @@ public class SWTDatabindingContext extends DatabindingContext {
 	}
 
 	/**
-	 * @param validationTime 
+	 * @param validationTime
 	 */
 	public void setValidationTime(int validationTime) {
 		this.validationTime = validationTime;
