@@ -49,4 +49,4 @@ Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core,
  org.eclipse.core.expressions
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
