@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Item;
  * 
  * @since 3.2
  *
+ * TODO <bb>this class should be refactored, or moved to a different place</bb>
  */
 public class DefaultCellModifier implements ICellModifier{
 	

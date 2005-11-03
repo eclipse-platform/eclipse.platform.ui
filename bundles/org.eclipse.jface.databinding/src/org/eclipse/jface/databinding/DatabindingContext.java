@@ -150,7 +150,7 @@ public class DatabindingContext implements IValidationContext {
 	/**
 	 * @return the converter
 	 */
-	public IConverter getStringToDoubleConverter() {
+	private IConverter getStringToDoubleConverter() {
 		IConverter doubleConverter = new IConverter() {
 
 			public Object convertTargetToModel(Object object) {
@@ -176,7 +176,7 @@ public class DatabindingContext implements IValidationContext {
 	 * @param fromClass
 	 * @return the converter
 	 */
-	public IConverter getToStringConverter(final Class fromClass) {
+	private IConverter getToStringConverter(final Class fromClass) {
 		IConverter toStringConverter = new IConverter() {
 
 			public Object convertTargetToModel(Object object) {
