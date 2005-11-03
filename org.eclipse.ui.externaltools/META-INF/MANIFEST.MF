@@ -20,4 +20,4 @@ Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.debug.core,
  org.eclipse.debug.ui,
  org.eclipse.core.runtime
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
