@@ -55,20 +55,6 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     protected MergeContext(IResourceMappingScope input, String type, SyncInfoTree tree) {
     	super(input, type, tree);
     }
-    
-    /**
-     * Method that allows the model merger to signal that the file in question
-     * has been completely merged. Model mergers can call this method if they
-     * have transfered all changes from a remote file to a local file and wish
-     * to signal that the merge is done.This will allow repository providers to
-     * update the synchronization state of the file to reflect that the file is
-     * up-to-date with the repository.
-     * 
-     * @param file the file that has been merged
-     * @param monitor a progress monitor
-     * @return a status indicating the results of the operation
-     */
-    public abstract IStatus markAsMerged(IFile file, IProgressMonitor monitor);
 
     /**
 	 * Method that can be called by the model merger to attempt a file-system
@@ -101,7 +87,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 *         contain non-mergable conflicts and must be merged manually.
      * @throws CoreException if an error occurs
 	 */
-    public IStatus merge(SyncInfoSet infos, IProgressMonitor monitor) throws CoreException {
+    public IStatus merge(ISyncInfoSet infos, IProgressMonitor monitor) throws CoreException {
 		List failedFiles = new ArrayList();
 		for (Iterator iter = infos.iterator(); iter.hasNext();) {
 			SyncInfo info = (SyncInfo) iter.next();

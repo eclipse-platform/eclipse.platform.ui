@@ -11,11 +11,9 @@
 package org.eclipse.team.ui.mapping;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.ui.operations.MergeContext;
 
 /**
@@ -100,7 +98,7 @@ public interface IMergeContext extends ISynchronizationContext {
 	 *         contain non-mergable conflicts and must be merged manually.
 	 * @throws CoreException if an error occurs
 	 */
-	public IStatus merge(SyncInfoSet infos, IProgressMonitor monitor) throws CoreException;
+	public IStatus merge(ISyncInfoSet infos, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Method that can be called by the model merger to attempt a merge of a
