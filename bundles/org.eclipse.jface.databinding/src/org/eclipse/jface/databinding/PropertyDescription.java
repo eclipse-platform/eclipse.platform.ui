@@ -23,6 +23,10 @@ public class PropertyDescription {
 
 	private final Object propertyID;
 
+	private final Class propertyType;
+
+	private final Boolean isCollectionProperty;
+
 	/**
 	 * Creates a new property description from the given object and property
 	 * identifier.
@@ -31,8 +35,31 @@ public class PropertyDescription {
 	 * @param propertyID
 	 */
 	public PropertyDescription(Object object, Object propertyID) {
+		this(object, propertyID, null, null);
+	}
+
+	/**
+	 * Creates a new property description from the given object, property
+	 * identifier, property type, and information whether the property is a
+	 * collection property.
+	 * 
+	 * @param object
+	 *            the object that has the given property
+	 * @param propertyID
+	 *            the property identifier
+	 * @param propertyType
+	 *            the property type, or <code>null</code> if unknown
+	 * @param isCollectionProperty
+	 *            <code>Boolean.TRUE</code> if the property is a collection
+	 *            property, <code>Boolean.FALSE</code> if it is a simple
+	 *            property, or <code>null</code> if unknown
+	 */
+	public PropertyDescription(Object object, Object propertyID,
+			Class propertyType, Boolean isCollectionProperty) {
 		this.object = object;
 		this.propertyID = propertyID;
+		this.propertyType = propertyType;
+		this.isCollectionProperty = isCollectionProperty;
 	}
 
 	/**
@@ -51,5 +78,28 @@ public class PropertyDescription {
 	 */
 	public Object getPropertyID() {
 		return propertyID;
+	}
+
+	/**
+	 * Returns the property type of this property description, or
+	 * <code>null</code> if unknown.
+	 * 
+	 * @return the property identifier, or <code>null</code>
+	 */
+	public Class getPropertyType() {
+		return propertyType;
+	}
+
+	/**
+	 * Returns whether the property is a collection property, or
+	 * <code>null</code> if unknown. If the property is a collection property,
+	 * getPropertyType() returns the element type of the collection.
+	 * 
+	 * @return <code>Boolean.TRUE</code> if the property is a collection
+	 *         property, <code>null</code> if it is a simple property, or
+	 *         <code>null</code> if unknown
+	 */
+	public Boolean getIsCollectionProperty() {
+		return isCollectionProperty;
 	}
 }

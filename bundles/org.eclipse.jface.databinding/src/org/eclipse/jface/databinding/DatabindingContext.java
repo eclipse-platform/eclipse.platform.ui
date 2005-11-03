@@ -265,20 +265,33 @@ public class DatabindingContext implements IValidationContext {
 			public IUpdatable createUpdatable(Map properties,
 					Object description, IValidationContext validationContext)
 					throws BindingException {
-				if (description instanceof NestedPropertyDescription) {
-					NestedPropertyDescription propertyDescription = (NestedPropertyDescription) description;
-					return new NestedUpdatableValue(DatabindingContext.this,
-							propertyDescription.getUpdatableValue(),
-							propertyDescription.getPropertyID(),
-							propertyDescription.getPropertyType());
-				} else if (description instanceof NestedCollectionDescription) {
-					NestedCollectionDescription nestedCollectionDescription = (NestedCollectionDescription) description;
-					return new NestedUpdatableCollection(
-							DatabindingContext.this,
-							nestedCollectionDescription.getUpdatableValue(),
-							nestedCollectionDescription.getPropertyID(),
-							nestedCollectionDescription
-									.getPropertyElementType());
+				if (description instanceof PropertyDescription) {
+					PropertyDescription propertyDescription = (PropertyDescription) description;
+					if (propertyDescription.getObject() instanceof IUpdatableValue) {
+						IUpdatableValue updatableValue = (IUpdatableValue) propertyDescription
+								.getObject();
+						Class propertyType = propertyDescription
+								.getPropertyType();
+						if (propertyType == null) {
+							throw new BindingException(
+									"Missing required property type for binding to a property of an IUpdatableValue."); //$NON-NLS-1$
+						}
+						Boolean isCollectionProperty = propertyDescription
+								.getIsCollectionProperty();
+						if (isCollectionProperty == null) {
+							throw new BindingException(
+									"Missing required property collection information for binding to a property of an IUpdatableValue."); //$NON-NLS-1$
+						}
+						Object propertyID = propertyDescription.getPropertyID();
+						if (isCollectionProperty.booleanValue()) {
+							return new NestedUpdatableCollection(
+									DatabindingContext.this, updatableValue,
+									propertyID, propertyType);
+						}
+						return new NestedUpdatableValue(
+								DatabindingContext.this, updatableValue,
+								propertyID, propertyType);
+					}
 				}
 				return null;
 			}
