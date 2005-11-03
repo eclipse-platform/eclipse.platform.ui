@@ -34,7 +34,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * rather than the default text font, the new default text font is immediately effective.
  *
  * @see org.eclipse.jface.preference.FontFieldEditor
- * @deprecated since 3.0 not longer in use, no longer supported
+ * @deprecated since 3.0 not longer in use, no longer supported, use a
+ *             <code>ChainedPreferenceStore</code> to access preferences from the
+ *             <code>org.eclipse.ui.editors</code> plug-in.
  * @since 2.0
  */
 public class WorkbenchChainedTextFontFieldEditor extends PropagatingFontFieldEditor {
