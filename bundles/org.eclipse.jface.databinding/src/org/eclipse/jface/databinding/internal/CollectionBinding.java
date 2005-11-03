@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal;
 
+import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.DatabindingContext;
 import org.eclipse.jface.databinding.IBindSpec;
 import org.eclipse.jface.databinding.IChangeEvent;
@@ -40,17 +41,27 @@ public class CollectionBinding extends Binding implements IChangeListener {
 	 * @param target
 	 * @param model
 	 * @param bindSpec
+	 * @throws BindingException 
 	 */
 	public CollectionBinding(DatabindingContext context,
 			IUpdatableCollection target, IUpdatableCollection model,
-			IBindSpec bindSpec) {
+			IBindSpec bindSpec) throws BindingException {
 		super(context);
 		this.target = target;
 		this.model = model;
-		this.converter = bindSpec == null ? null : bindSpec.getConverter();
-		this.validator = bindSpec == null ? null : bindSpec.getValidator();
-		if (this.validator == null) {
-			this.validator = context.getValidator(converter);
+		this.converter = bindSpec.getConverter();
+		if (converter == null) {
+			throw new BindingException("Missing converter from " + target.getElementType() + " to " + model.getElementType()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if(!converter.getModelType().equals(model.getElementType())) {
+			throw new BindingException("Converter does not apply to model type. Expected: " + model.getElementType() + ", actual: " + converter.getModelType()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if(!converter.getTargetType().equals(target.getElementType())) {
+			throw new BindingException("Converter does not apply to target type. Expected: " + target.getElementType() + ", actual: " + converter.getTargetType()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		this.validator = bindSpec.getValidator();
+		if (validator == null) {
+			throw new BindingException("Missing validator"); //$NON-NLS-1$
 		}
 	}
 

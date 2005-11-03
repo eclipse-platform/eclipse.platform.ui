@@ -57,7 +57,7 @@ public class ButtonUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		return String.class;
+		return boolean.class;
 	}
 
 }

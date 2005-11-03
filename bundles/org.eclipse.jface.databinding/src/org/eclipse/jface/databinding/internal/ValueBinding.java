@@ -31,14 +31,14 @@ public class ValueBinding extends Binding {
 	private IValidator validator;
 
 	private IConverter converter;
-	
-	private boolean updating = false; 
+
+	private boolean updating = false;
 
 	/**
 	 * @param context
 	 * @param target
 	 * @param model
-	 * @param bindSpec 
+	 * @param bindSpec
 	 * @throws BindingException
 	 */
 	public ValueBinding(DatabindingContext context, IUpdatableValue target,
@@ -46,14 +46,21 @@ public class ValueBinding extends Binding {
 		super(context);
 		this.target = target;
 		this.model = model;
-		converter = bindSpec == null ? null : bindSpec.getConverter();
+		converter = bindSpec.getConverter();
 		if (converter == null) {
-			converter = context.getConverter(target.getValueType(), model
-					.getValueType());
+			throw new BindingException("Missing converter from " + target.getValueType() + " to " + model.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		validator = bindSpec == null ? null : bindSpec.getValidator();
+		if (!converter.getModelType().equals(model.getValueType())) {
+			throw new BindingException(
+					"Converter does not apply to model type. Expected: " + model.getValueType() + ", actual: " + converter.getModelType()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (!converter.getTargetType().equals(target.getValueType())) {
+			throw new BindingException(
+					"Converter does not apply to target type. Expected: " + target.getValueType() + ", actual: " + converter.getTargetType()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		validator = bindSpec.getValidator();
 		if (validator == null) {
-			validator = context.getValidator(converter);
+			throw new BindingException("Missing validator"); //$NON-NLS-1$
 		}
 	}
 
@@ -91,13 +98,12 @@ public class ValueBinding extends Binding {
 		context.updateValidationError(this, validationError);
 		if (validationError == null) {
 			try {
-				updating=true;
+				updating = true;
 				model.setValue(converter.convertTargetToModel(value));
 			} catch (Exception ex) {
 				context.updateValidationError(this, BindingMessages
 						.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
-			}
-			finally {
+			} finally {
 				updating = false;
 			}
 		}
@@ -123,12 +129,11 @@ public class ValueBinding extends Binding {
 	 */
 	public void updateTargetFromModel() {
 		try {
-			updating=true;
+			updating = true;
 			target.setValue(converter.convertModelToTarget(model.getValue()));
 			validateTarget();
-		}
-		finally {
-			updating=false;
+		} finally {
+			updating = false;
 		}
 	}
 }

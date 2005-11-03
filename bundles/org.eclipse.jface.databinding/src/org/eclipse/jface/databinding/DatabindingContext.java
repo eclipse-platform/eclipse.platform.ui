@@ -80,6 +80,34 @@ public class DatabindingContext implements IValidationContext {
 
 	private List factories2 = new ArrayList();
 
+	private List bindSupportFactories = new ArrayList();
+
+	/**
+	 * Method addBindSupportFactory. Add a factory for converters, validators,
+	 * and the like. Adds a factory to the list of factories that will be
+	 * consulted when attempting to determine which converter or validator
+	 * should be used when binding.
+	 * 
+	 * @param factory
+	 *            the factory to add.
+	 */
+	public void addBindSupportFactory(IBindSupportFactory factory) {
+		bindSupportFactories.add(factory);
+	}
+
+	/**
+	 * Method removeBindSupportFactory. Remove a factory for converters,
+	 * validators, and the like. Removes a factory from the list of factories
+	 * that will be consulted when attempting to determine which converter or
+	 * validator should be used when binding.
+	 * 
+	 * @param factory
+	 *            the factory to remove.
+	 */
+	public void removeBindSupportFactory(IBindSupportFactory factory) {
+		bindSupportFactories.remove(factory);
+	}
+
 	/**
 	 * 
 	 */
@@ -111,33 +139,6 @@ public class DatabindingContext implements IValidationContext {
 	 */
 	public IUpdatableValue getCombinedValidationMessage() {
 		return combinedValidationMessage;
-	}
-
-	/**
-	 * Get a registered converter between teh fromType and the toType
-	 * 
-	 * @param fromType
-	 * @param toType
-	 * @return registered converter, Identity (if create Identity is true)
-	 * @throws BindingException
-	 *             if no converter is found
-	 * 
-	 */
-	public IConverter getConverter(Class fromType, Class toType)
-			throws BindingException {
-		if (fromType == toType) {
-			return new IdentityConverter(fromType, toType);
-		}
-		IConverter converter = (IConverter) converters.get(new Pair(fromType,
-				toType));
-		if (converter == null)
-			converter = new IdentityConverter(fromType, toType);
-		else
-			throw new BindingException("no converter from " //$NON-NLS-1$
-					+ fromType.getName() + " to " //$NON-NLS-1$
-					+ toType.getName());
-
-		return converter;
 	}
 
 	/**
@@ -205,23 +206,6 @@ public class DatabindingContext implements IValidationContext {
 		return validationMessage;
 	}
 
-	/**
-	 * @param converter
-	 * @return the validator
-	 */
-	public IValidator getValidator(IConverter converter) {
-		return new IValidator() {
-
-			public String isPartiallyValid(Object value) {
-				return null;
-			}
-
-			public String isValid(Object value) {
-				return null;
-			}
-		};
-	}
-
 	protected void registerConverters() {
 		IConverter doubleConverter = getStringToDoubleConverter();
 		converters.put(new Pair(String.class, Double.class), doubleConverter);
@@ -258,6 +242,34 @@ public class DatabindingContext implements IValidationContext {
 				new IdentityConverter(Integer.class, int.class));
 		converters.put(new Pair(int.class, Integer.class),
 				new IdentityConverter(int.class, Integer.class));
+		converters.put(new Pair(boolean.class, Boolean.class),
+				new IdentityConverter(boolean.class, Boolean.class));
+		converters.put(new Pair(Boolean.class, boolean.class),
+				new IdentityConverter(Boolean.class, boolean.class));
+		addBindSupportFactory(new IBindSupportFactory() {
+
+			public IValidator createValidator(Class fromType, Class toType, Object modelDescription) {
+				return new IValidator() {
+
+					public String isPartiallyValid(Object value) {
+						return null;
+					}
+
+					public String isValid(Object value) {
+						return null;
+					}};
+			}
+
+			public IConverter createConverter(Class fromType, Class toType, Object modelDescription) {
+				if(toType==null) {
+					return null;
+				}
+				if (fromType == toType) {
+					return new IdentityConverter(fromType, toType);
+				}
+				return (IConverter) converters.get(new Pair(fromType,
+						toType));
+			}});
 	}
 
 	protected void registerFactories() {
@@ -370,10 +382,14 @@ public class DatabindingContext implements IValidationContext {
 	public void bind2(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) throws BindingException {
 		Binding binding;
+		if(bindSpec==null) {
+			bindSpec = new BindSpec(null,null);
+		}
 		if (targetUpdatable instanceof IUpdatableValue) {
 			if (modelUpdatable instanceof IUpdatableValue) {
 				IUpdatableValue target = (IUpdatableValue) targetUpdatable;
 				IUpdatableValue model = (IUpdatableValue) modelUpdatable;
+				fillBindSpecDefaults(bindSpec, target.getValueType(), model.getValueType(), null);
 				binding = new ValueBinding(this, target, model, bindSpec);
 			} else {
 				throw new BindingException(
@@ -383,6 +399,7 @@ public class DatabindingContext implements IValidationContext {
 			if (modelUpdatable instanceof IUpdatableCollection) {
 				IUpdatableCollection target = (IUpdatableCollection) targetUpdatable;
 				IUpdatableCollection model = (IUpdatableCollection) modelUpdatable;
+				fillBindSpecDefaults(bindSpec, target.getElementType(), model.getElementType(), null);
 				binding = new CollectionBinding(this, target, model, bindSpec);
 			} else {
 				throw new BindingException(
@@ -423,7 +440,64 @@ public class DatabindingContext implements IValidationContext {
 	 */
 	public void bind2(IUpdatable targetUpdatable, Object modelDescription,
 			IBindSpec bindSpec) throws BindingException {
+		if(bindSpec==null) {
+			bindSpec = new BindSpec(null,null);
+		}
+		Class fromType = null;
+		if (targetUpdatable instanceof IUpdatableValue) {
+			fromType = ((IUpdatableValue) targetUpdatable).getValueType();
+		} else if (targetUpdatable instanceof IUpdatableCollection) {
+			fromType = ((IUpdatableCollection) targetUpdatable)
+					.getElementType();
+		}
+		fillBindSpecDefaults(bindSpec, fromType, null, modelDescription);
 		bind2(targetUpdatable, createUpdatable2(modelDescription), bindSpec);
+	}
+
+	private void fillBindSpecDefaults(IBindSpec bindSpec, Class fromType,
+			Class toType, Object modelDescriptionOrNull) {
+		if (bindSpec.getValidator() == null) {
+			((BindSpec) bindSpec).setValidator(createValidator(fromType,
+					toType, modelDescriptionOrNull));
+		}
+		if (bindSpec.getConverter() == null) {
+			((BindSpec) bindSpec).setConverter(createConverter(fromType,
+					toType, modelDescriptionOrNull));
+		}
+	}
+
+	protected IValidator createValidator(Class fromType, Class toType,
+			Object modelDescription) {
+		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
+			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
+					.get(i);
+			IValidator validator = bindSupportFactory.createValidator(fromType,
+					toType, modelDescription);
+			if (validator != null) {
+				return validator;
+			}
+		}
+		if (parent != null) {
+			return parent.createValidator(fromType, toType, modelDescription);
+		}
+		return null;
+	}
+
+	protected IConverter createConverter(Class fromType, Class toType,
+			Object modelDescription) {
+		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
+			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
+					.get(i);
+			IConverter converter = bindSupportFactory.createConverter(fromType,
+					toType, modelDescription);
+			if (converter != null) {
+				return converter;
+			}
+		}
+		if (parent != null) {
+			return parent.createConverter(fromType, toType, modelDescription);
+		}
+		return null;
 	}
 
 	/**
@@ -438,8 +512,7 @@ public class DatabindingContext implements IValidationContext {
 	 */
 	public void bind2(Object targetDescription, Object modelDescription,
 			IBindSpec bindSpec) throws BindingException {
-		bind2(createUpdatable2(targetDescription),
-				createUpdatable2(modelDescription), bindSpec);
+		bind2(createUpdatable2(targetDescription), modelDescription, bindSpec);
 	}
 
 	/**

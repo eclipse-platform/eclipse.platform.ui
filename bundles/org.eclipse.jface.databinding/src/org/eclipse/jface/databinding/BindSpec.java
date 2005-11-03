@@ -15,9 +15,9 @@ package org.eclipse.jface.databinding;
  */
 public class BindSpec implements IBindSpec {
 
-	private final IConverter converter;
+	private IConverter converter;
 
-	private final IValidator validator;
+	private IValidator validator;
 
 	private final int modelUpdatePolicy;
 
@@ -74,6 +74,14 @@ public class BindSpec implements IBindSpec {
 
 	public IValidator getValidator() {
 		return validator;
+	}
+
+	public void setValidator(IValidator validator) {
+		this.validator = validator;
+	}
+
+	public void setConverter(IConverter converter) {
+		this.converter = converter;
 	}
 
 }
