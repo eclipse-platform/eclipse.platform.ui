@@ -586,7 +586,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			}
 			projectNodes.add(project);
 		}
-		restoredViewerInput= (AntProjectNode[]) projectNodes.toArray(new AntProjectNode[projectNodes.size()]);
+		restoredViewerInput= projectNodes.toArray(new AntProjectNode[projectNodes.size()]);
 	}
 
 	/* (non-Javadoc)
