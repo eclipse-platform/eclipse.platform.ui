@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
@@ -248,6 +249,7 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
 
 	protected ConfigureWindowWorkingSetsDialog(IWorkbenchWindow window) {
 		super(window.getShell(), null);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.window = window;
 		setTitle(WorkbenchMessages.WorkingSetSelectionDialog_title_multiSelect);
 		setMessage(WorkbenchMessages.WorkingSetSelectionDialog_message_multiSelect);
@@ -306,4 +308,9 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
     void handleSelectionChanged() {
         updateButtonAvailability();
     }
+    
+    protected void configureShell(Shell shell) {
+    		super.configureShell(shell);
+    }
+    
 }
