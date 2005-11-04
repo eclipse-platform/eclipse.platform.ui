@@ -2696,9 +2696,10 @@
          <selectedType markerId="org.eclipse.core.resources.problemmarker"/>
       </problemFilter>
       <subCategoryProvider
-      		markerType="org.eclipse.ui.tests.categoryTestMarker"
             class="org.eclipse.ui.tests.markers.TestCategoryProvider"
-            />
+          >
+         <markerTypeReference id="org.eclipse.ui.tests.categoryTestMarker"/>
+      </subCategoryProvider>
    </extension>
    <extension
          id="categoryTestMarker"
