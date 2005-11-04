@@ -121,6 +121,14 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
                 if (deletions.contains(treeElement)
                         || additions.contains(treeElement))
                     obsoleteRefresh.add(treeElement);
+                
+                //Also check for groups that are being added
+               Object parent = treeElement.getParent();
+               if(parent != null && (deletions.contains(parent)
+                       || additions.contains(parent))){
+            	   obsoleteRefresh.add(treeElement);
+               }
+               
                 if (!treeElement.isActive()) {
                     //If it is done then delete it
                     obsoleteRefresh.add(treeElement);
