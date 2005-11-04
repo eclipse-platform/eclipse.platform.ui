@@ -13,12 +13,12 @@ package org.eclipse.ui.tests.api;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;

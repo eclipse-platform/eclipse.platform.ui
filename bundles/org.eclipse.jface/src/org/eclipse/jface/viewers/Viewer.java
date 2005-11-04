@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;

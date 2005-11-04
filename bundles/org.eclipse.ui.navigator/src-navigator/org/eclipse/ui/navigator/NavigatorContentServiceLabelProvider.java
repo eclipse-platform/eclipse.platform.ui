@@ -8,8 +8,8 @@
  **************************************************************************************************/
 package org.eclipse.ui.navigator;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;

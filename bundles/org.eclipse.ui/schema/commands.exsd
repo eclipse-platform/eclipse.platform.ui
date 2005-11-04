@@ -126,10 +126,11 @@ This element has been replaced with a preference.  If your application needs to 
          </documentation>
       </annotation>
       <complexType>
-         <choice>
-            <element ref="commandParameter" minOccurs="0" maxOccurs="unbounded"/>
+         <sequence>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="defaultHandler" minOccurs="0" maxOccurs="1"/>
-         </choice>
+            <element ref="state" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="category" type="string">
             <annotation>
                <documentation>
@@ -409,7 +410,7 @@ This element has been replaced with a preference.  If your application needs to 
    <element name="scope">
       <annotation>
          <appInfo>
-            <meta.element deprecated="true"/>
+            <meta.element labelAttribute="id" deprecated="true"/>
          </appInfo>
          <documentation>
             This element is used to define scopes. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
@@ -464,6 +465,9 @@ This element has been replaced with a preference.  If your application needs to 
 
    <element name="commandParameter">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id"/>
+         </appInfo>
          <documentation>
             Defines a parameter that a command should understand.  A parameter is a way to provide more information to a handler at execution time.  For example, a &quot;show view&quot; command might take a view as a parameter.  Handlers should be able to understand these parameters, so they should be treated like API.
          </documentation>
@@ -511,6 +515,9 @@ This element has been replaced with a preference.  If your application needs to 
 
    <element name="values">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="class"/>
+         </appInfo>
          <documentation>
             The more verbose version of the &lt;code&gt;values&lt;/code&gt; attribute on the &lt;code&gt;commandParameter&lt;/code&gt;.
          </documentation>
@@ -534,6 +541,9 @@ This element has been replaced with a preference.  If your application needs to 
 
    <element name="parameter">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
          <documentation>
             A possible value for a parameter.
          </documentation>
@@ -558,14 +568,17 @@ This element has been replaced with a preference.  If your application needs to 
 
    <element name="defaultHandler">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="class"/>
+         </appInfo>
          <documentation>
             The default handler for this command.  If no other handler is active, this handler will be active.  This handler will conflict with other handler definitions that specify no &lt;code&gt;activeWhen&lt;/code&gt; conditions.  If you are not creating an &lt;code&gt;IExecutableExtension&lt;/code&gt;, you can use the &lt;code&gt;defaultHandler&lt;/code&gt; attribute instead.
          </documentation>
       </annotation>
       <complexType>
-         <choice>
-            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
-         </choice>
+         <sequence>
+            <element ref="parameter"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -573,6 +586,71 @@ This element has been replaced with a preference.  If your application needs to 
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.commands.IHandler"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="state">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="class"/>
+         </appInfo>
+         <documentation>
+            &lt;p&gt;
+State information shared between all handlers, and potentially persisted between sessions.  This is typically something like a check box state or the label of a handler.  The state is simply a class that is loaded to look after the state.  See the API Information for more details.
+&lt;/p&gt;
+&lt;dl&gt;
+    &lt;dt&gt;&lt;b&gt;Since:&lt;/b&gt;&lt;/dt&gt;
+    &lt;dd&gt;3.2&lt;/dd&gt;
+&lt;/dl&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="class" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must implement &lt;code&gt;org.eclipse.core.commands.IHandlerState&lt;/code&gt;.  Please see API Information.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this state.  This is used, amongst other things, for persisting the state between sessions (if the state implements &lt;code&gt;IPersistableHandlerState&lt;/code&gt;).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="class">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="class"/>
+         </appInfo>
+         <documentation>
+            The class that can be loaded to store the state of this command.  This element is used if you wish to pass multiple parameters to an &lt;code&gt;IExecutableExtension&lt;/code&gt;.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must implement &lt;code&gt;org.eclipse.core.commands.IHandlerState&lt;/code&gt;.  Please see API Information.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -609,6 +687,16 @@ The &lt;code&gt;plugin.xml&lt;/code&gt; file in the &lt;code&gt;org.eclipse.ui&l
          &lt;p&gt;
 This is no public API for declaring commands, categories, key bindings, key configurations, or contexts other than this extension point. Public API for querying and setting contexts, as well as registering actions to handle specific commands can be found in &lt;code&gt;org.eclipse.ui.IKeyBindingService&lt;/code&gt;.
 &lt;/p&gt;
+&lt;p&gt;
+There are a few default implementations of handler states that may be useful to users of this extension point:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;org.eclipse.jface.commands.LabelHandlerState&lt;/li&gt;
+&lt;li&gt;org.eclipse.jface.commands.RadioHandlerState&lt;/li&gt;
+&lt;li&gt;org.eclipse.jface.commands.ToggleHandlerState&lt;/li&gt;
+&lt;li&gt;org.eclipse.ui.handlers.RegistryRadioHandlerState&lt;/li&gt;
+&lt;li&gt;org.eclipse.ui.handlers.RegistryToggleHandlerState&lt;/li&gt;
+&lt;/ul&gt;
       </documentation>
    </annotation>
 

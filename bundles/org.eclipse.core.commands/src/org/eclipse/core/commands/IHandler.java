@@ -18,6 +18,7 @@ package org.eclipse.core.commands;
  * is asked to execute, it will simply pass that request on to its active
  * handler, if any.
  * 
+ * @see AbstractHandler
  * @since 3.1
  */
 public interface IHandler {

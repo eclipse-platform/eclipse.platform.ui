@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;

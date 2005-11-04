@@ -12,10 +12,10 @@ package org.eclipse.ui.internal.themes;
 
 import java.util.Set;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.themes.ITheme;
 

@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.IHandlerState;
 import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -78,6 +80,11 @@ final class CommandPersistence extends CommonCommandPersistence {
 	private static final String ELEMENT_COMMAND_PARAMETER = "commandParameter"; //$NON-NLS-1$
 
 	/**
+	 * The name of the element storing some state.
+	 */
+	private static final String ELEMENT_STATE = "state"; //$NON-NLS-1$
+
+	/**
 	 * The name of the action definitions extension point.
 	 */
 	private static final String EXTENSION_ACTION_DEFINITIONS = PlatformUI.PLUGIN_ID
@@ -102,6 +109,11 @@ final class CommandPersistence extends CommonCommandPersistence {
 	 * @see CommandPersistence#read(CommandManager)
 	 */
 	private static final int INDEX_COMMAND_DEFINITIONS = 1;
+
+	/**
+	 * The preference key prefix for all handler state.
+	 */
+	private static final String PREFERENCE_KEY_PREFIX = "org.eclipse.ui.handlers/state"; //$NON-NLS-1$
 
 	/**
 	 * Reads all of the category definitions from the commands extension point.
@@ -236,7 +248,18 @@ final class CommandPersistence extends CommonCommandPersistence {
 						configurationElement.getNamespace(), commandId,
 						"categoryId", categoryId); //$NON-NLS-1$
 			}
+
 			command.define(name, description, category, parameters);
+
+			// Read out the state.
+			final IHandlerState[] states = readState(configurationElement,
+					warningsToLog, commandId);
+			if (states != null) {
+				for (int j = 0; j < states.length; j++) {
+					final IHandlerState state = states[j];
+					command.addState(state);
+				}
+			}
 		}
 
 		// If there were any warnings, then log them now.
@@ -255,9 +278,9 @@ final class CommandPersistence extends CommonCommandPersistence {
 	 *            The configuration element from which the parameters should be
 	 *            read; must not be <code>null</code>.
 	 * @param warningsToLog
-	 *            The list of warnings found during parsing. Warnings found will
-	 *            parsing the parameters will be appended to this list. This
-	 *            value must not be <code>null</code>.
+	 *            The list of warnings found during parsing. Warnings found
+	 *            while parsing the parameters will be appended to this list.
+	 *            This value must not be <code>null</code>.
 	 * @return The array of parameters found for this configuration element;
 	 *         <code>null</code> if none can be found.
 	 */
@@ -310,6 +333,65 @@ final class CommandPersistence extends CommonCommandPersistence {
 		}
 
 		return parameters;
+	}
+
+	/**
+	 * Reads the states from a parent configuration element. This is used to
+	 * read the state sub-elements from a command element. Each state is
+	 * guaranteed to be valid. If invalid states are found, then a warning
+	 * status will be appended to the <code>warningsToLog</code> list.
+	 * 
+	 * @param configurationElement
+	 *            The configuration element from which the states should be
+	 *            read; must not be <code>null</code>.
+	 * @param warningsToLog
+	 *            The list of warnings found during parsing. Warnings found
+	 *            while parsing the parameters will be appended to this list.
+	 *            This value must not be <code>null</code>.
+	 * @param commandId
+	 *            The identifier of the command for which the state is being
+	 *            read; may be <code>null</code>.
+	 * @return The array of states found for this configuration element;
+	 *         <code>null</code> if none can be found.
+	 */
+	private static final IHandlerState[] readState(
+			final IConfigurationElement configurationElement,
+			final List warningsToLog, final String commandId) {
+		final IConfigurationElement[] stateElements = configurationElement
+				.getChildren(ELEMENT_STATE);
+		if ((stateElements == null) || (stateElements.length == 0)) {
+			return null;
+		}
+
+		int insertionIndex = 0;
+		IHandlerState[] states = new IHandlerState[stateElements.length];
+		for (int i = 0; i < stateElements.length; i++) {
+			final IConfigurationElement stateElement = stateElements[i];
+
+			final String id = readRequired(stateElement, ATTRIBUTE_ID,
+					warningsToLog, "State needs an id"); //$NON-NLS-1$
+			if (id == null) {
+				continue;
+			}
+
+			if (checkClass(stateElement, warningsToLog,
+					"State must have an associated class", id)) { //$NON-NLS-1$
+				final String preferenceKey = PREFERENCE_KEY_PREFIX + '/'
+						+ commandId + '/' + id;
+				final IHandlerState state = new HandlerStateProxy(stateElement,
+						ELEMENT_STATE, PrefUtil.getInternalPreferenceStore(),
+						preferenceKey);
+				states[insertionIndex++] = state;
+			}
+		}
+
+		if (insertionIndex != states.length) {
+			final IHandlerState[] compactedStates = new IHandlerState[insertionIndex];
+			System.arraycopy(states, 0, compactedStates, 0, insertionIndex);
+			states = compactedStates;
+		}
+
+		return states;
 	}
 
 	/**

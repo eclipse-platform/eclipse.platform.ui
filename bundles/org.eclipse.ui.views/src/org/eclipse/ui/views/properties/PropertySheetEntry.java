@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellEditorListener;
 import org.eclipse.jface.viewers.ILabelProvider;

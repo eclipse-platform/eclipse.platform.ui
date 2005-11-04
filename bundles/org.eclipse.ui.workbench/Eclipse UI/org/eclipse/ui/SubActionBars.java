@@ -13,6 +13,7 @@ package org.eclipse.ui;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -21,7 +22,6 @@ import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.SubStatusLineManager;
 import org.eclipse.jface.action.SubToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**

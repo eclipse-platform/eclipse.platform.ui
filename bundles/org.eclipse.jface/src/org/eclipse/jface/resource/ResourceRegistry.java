@@ -12,8 +12,8 @@ package org.eclipse.jface.resource;
 
 import java.util.Set;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**

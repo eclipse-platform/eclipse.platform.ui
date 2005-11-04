@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api.workbenchpart;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;

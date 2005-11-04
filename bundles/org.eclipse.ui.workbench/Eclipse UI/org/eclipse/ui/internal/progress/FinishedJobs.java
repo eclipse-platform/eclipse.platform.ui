@@ -17,9 +17,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.IProgressConstants;

@@ -12,6 +12,7 @@ package org.eclipse.core.commands;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -99,6 +100,12 @@ public final class Command extends NamedHandleObject implements Comparable {
 	private IParameter[] parameters = null;
 
 	/**
+	 * The collection of states currently held by this command. If this command
+	 * has no state, then this will be <code>null</code>.
+	 */
+	private Collection states = null;
+
+	/**
 	 * Constructs a new instance of <code>Command</code> based on the given
 	 * identifier. When a command is first constructed, it is undefined.
 	 * Commands should only be constructed by the <code>CommandManager</code>
@@ -154,6 +161,30 @@ public final class Command extends NamedHandleObject implements Comparable {
 		}
 
 		executionListeners.add(executionListener);
+	}
+
+	/**
+	 * <p>
+	 * Adds a state to this command. This will add this state to the active
+	 * handler, if the active handler is an instance of
+	 * {@link IHandlerWithState}.
+	 * </p>
+	 * 
+	 * @param state
+	 *            The state to add; must not be <code>null</code>.
+	 */
+	public void addState(final IHandlerState state) {
+		if (state == null) {
+			throw new NullPointerException("Cannot add a null state"); //$NON-NLS-1$
+		}
+
+		if (states == null) {
+			states = new ArrayList(1);
+		}
+		states.add(state);
+		if (handler instanceof IHandlerWithState) {
+			((IHandlerWithState) handler).addState(state);
+		}
 	}
 
 	/**
@@ -246,21 +277,21 @@ public final class Command extends NamedHandleObject implements Comparable {
 	}
 
 	/**
-     * Executes this command by delegating to the current handler, if any. If
-     * the debugging flag is set, then this method prints information about
-     * which handler is selected for performing this command.
-     * 
-     * @param event
-     *            An event containing all the information about the current
-     *            state of the application; must not be <code>null</code>.
-     * @return The result of the execution; may be <code>null</code>. This
-     *         result will be available to the client executing the command, and
-     *         execution listeners.
-     * @throws ExecutionException
-     *             If the handler has problems executing this command.
-     * @throws NotHandledException
-     *             If there is no handler.
-     */
+	 * Executes this command by delegating to the current handler, if any. If
+	 * the debugging flag is set, then this method prints information about
+	 * which handler is selected for performing this command.
+	 * 
+	 * @param event
+	 *            An event containing all the information about the current
+	 *            state of the application; must not be <code>null</code>.
+	 * @return The result of the execution; may be <code>null</code>. This
+	 *         result will be available to the client executing the command, and
+	 *         execution listeners.
+	 * @throws ExecutionException
+	 *             If the handler has problems executing this command.
+	 * @throws NotHandledException
+	 *             If there is no handler.
+	 */
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException, NotHandledException {
 		firePreExecute(event);
@@ -300,115 +331,115 @@ public final class Command extends NamedHandleObject implements Comparable {
 	}
 
 	/**
-     * Notifies the listeners for this command that it has changed in some way.
-     * 
-     * @param commandEvent
-     *            The event to send to all of the listener; must not be
-     *            <code>null</code>.
-     */
-    private final void fireCommandChanged(final CommandEvent commandEvent) {
-        if (commandEvent == null) {
-            throw new NullPointerException("Cannot fire a null event"); //$NON-NLS-1$
-        }
+	 * Notifies the listeners for this command that it has changed in some way.
+	 * 
+	 * @param commandEvent
+	 *            The event to send to all of the listener; must not be
+	 *            <code>null</code>.
+	 */
+	private final void fireCommandChanged(final CommandEvent commandEvent) {
+		if (commandEvent == null) {
+			throw new NullPointerException("Cannot fire a null event"); //$NON-NLS-1$
+		}
 
-        if (commandListeners != null) {
-            final int commandListenersSize = commandListeners.size();
-            if (commandListenersSize > 0) {
-                /*
-                 * Bug 88629. Copying to an array avoids a
-                 * ConcurrentModificationException if someone tries to remove
-                 * the listener while handling the event.
-                 */
-                final ICommandListener[] listeners = (ICommandListener[]) commandListeners
-                        .toArray(new ICommandListener[commandListenersSize]);
-                for (int i = 0; i < commandListenersSize; i++) {
-                    final ICommandListener listener = listeners[i];
-                    listener.commandChanged(commandEvent);
-                }
-            }
-        }
-    }
+		if (commandListeners != null) {
+			final int commandListenersSize = commandListeners.size();
+			if (commandListenersSize > 0) {
+				/*
+				 * Bug 88629. Copying to an array avoids a
+				 * ConcurrentModificationException if someone tries to remove
+				 * the listener while handling the event.
+				 */
+				final ICommandListener[] listeners = (ICommandListener[]) commandListeners
+						.toArray(new ICommandListener[commandListenersSize]);
+				for (int i = 0; i < commandListenersSize; i++) {
+					final ICommandListener listener = listeners[i];
+					listener.commandChanged(commandEvent);
+				}
+			}
+		}
+	}
 
-    /**
-     * Notifies the execution listeners for this command that an attempt to
-     * execute has failed because there is no handler.
-     * 
-     * @param e
-     *            The exception that is about to be thrown; never
-     *            <code>null</code>.
-     */
-    private final void fireNotHandled(final NotHandledException e) {
-        if (executionListeners != null) {
-            final int executionListenersSize = executionListeners.size();
-            if (executionListenersSize > 0) {
-                /*
-                 * Bug 88629. Copying to an array avoids a
-                 * ConcurrentModificationException if someone tries to remove
-                 * the listener while handling the event.
-                 */
-                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                        .toArray(new IExecutionListener[executionListenersSize]);
-                for (int i = 0; i < executionListenersSize; i++) {
-                    final IExecutionListener listener = listeners[i];
-                    listener.notHandled(getId(), e);
-                }
-            }
-        }
-    }
+	/**
+	 * Notifies the execution listeners for this command that an attempt to
+	 * execute has failed because there is no handler.
+	 * 
+	 * @param e
+	 *            The exception that is about to be thrown; never
+	 *            <code>null</code>.
+	 */
+	private final void fireNotHandled(final NotHandledException e) {
+		if (executionListeners != null) {
+			final int executionListenersSize = executionListeners.size();
+			if (executionListenersSize > 0) {
+				/*
+				 * Bug 88629. Copying to an array avoids a
+				 * ConcurrentModificationException if someone tries to remove
+				 * the listener while handling the event.
+				 */
+				final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+						.toArray(new IExecutionListener[executionListenersSize]);
+				for (int i = 0; i < executionListenersSize; i++) {
+					final IExecutionListener listener = listeners[i];
+					listener.notHandled(getId(), e);
+				}
+			}
+		}
+	}
 
-    /**
-     * Notifies the execution listeners for this command that an attempt to
-     * execute has failed during the execution.
-     * 
-     * @param e
-     *            The exception that has been thrown; never <code>null</code>.
-     *            After this method completes, the exception will be thrown
-     *            again.
-     */
-    private final void firePostExecuteFailure(final ExecutionException e) {
-        if (executionListeners != null) {
-            final int executionListenersSize = executionListeners.size();
-            if (executionListenersSize > 0) {
-                /*
-                 * Bug 88629. Copying to an array avoids a
-                 * ConcurrentModificationException if someone tries to remove
-                 * the listener while handling the event.
-                 */
-                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                        .toArray(new IExecutionListener[executionListenersSize]);
-                for (int i = 0; i < executionListenersSize; i++) {
-                    final IExecutionListener listener = listeners[i];
-                    listener.postExecuteFailure(getId(), e);
-                }
-            }
-        }
-    }
+	/**
+	 * Notifies the execution listeners for this command that an attempt to
+	 * execute has failed during the execution.
+	 * 
+	 * @param e
+	 *            The exception that has been thrown; never <code>null</code>.
+	 *            After this method completes, the exception will be thrown
+	 *            again.
+	 */
+	private final void firePostExecuteFailure(final ExecutionException e) {
+		if (executionListeners != null) {
+			final int executionListenersSize = executionListeners.size();
+			if (executionListenersSize > 0) {
+				/*
+				 * Bug 88629. Copying to an array avoids a
+				 * ConcurrentModificationException if someone tries to remove
+				 * the listener while handling the event.
+				 */
+				final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+						.toArray(new IExecutionListener[executionListenersSize]);
+				for (int i = 0; i < executionListenersSize; i++) {
+					final IExecutionListener listener = listeners[i];
+					listener.postExecuteFailure(getId(), e);
+				}
+			}
+		}
+	}
 
-    /**
-     * Notifies the execution listeners for this command that an execution has
-     * completed successfully.
-     * 
-     * @param returnValue
-     *            The return value from the command; may be <code>null</code>.
-     */
-    private final void firePostExecuteSuccess(final Object returnValue) {
-        if (executionListeners != null) {
-            final int executionListenersSize = executionListeners.size();
-            if (executionListenersSize > 0) {
-                /*
-                 * Bug 88629. Copying to an array avoids a
-                 * ConcurrentModificationException if someone tries to remove
-                 * the listener while handling the event.
-                 */
-                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                        .toArray(new IExecutionListener[executionListenersSize]);
-                for (int i = 0; i < executionListenersSize; i++) {
-                    final IExecutionListener listener = listeners[i];
-                    listener.postExecuteSuccess(getId(), returnValue);
-                }
-            }
-        }
-    }
+	/**
+	 * Notifies the execution listeners for this command that an execution has
+	 * completed successfully.
+	 * 
+	 * @param returnValue
+	 *            The return value from the command; may be <code>null</code>.
+	 */
+	private final void firePostExecuteSuccess(final Object returnValue) {
+		if (executionListeners != null) {
+			final int executionListenersSize = executionListeners.size();
+			if (executionListenersSize > 0) {
+				/*
+				 * Bug 88629. Copying to an array avoids a
+				 * ConcurrentModificationException if someone tries to remove
+				 * the listener while handling the event.
+				 */
+				final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+						.toArray(new IExecutionListener[executionListenersSize]);
+				for (int i = 0; i < executionListenersSize; i++) {
+					final IExecutionListener listener = listeners[i];
+					listener.postExecuteSuccess(getId(), returnValue);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Notifies the execution listeners for this command that an attempt to
@@ -418,22 +449,22 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 *            The execution event that will be used; never <code>null</code>.
 	 */
 	private final void firePreExecute(final ExecutionEvent event) {
-        if (executionListeners != null) {
-            final int executionListenersSize = executionListeners.size();
-            if (executionListenersSize > 0) {
-                /*
-                 * Bug 88629. Copying to an array avoids a
-                 * ConcurrentModificationException if someone tries to remove
-                 * the listener while handling the event.
-                 */
-                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                        .toArray(new IExecutionListener[executionListenersSize]);
-                for (int i = 0; i < executionListenersSize; i++) {
-                    final IExecutionListener listener = listeners[i];
-                    listener.preExecute(getId(), event);
-                }
-            }
-        }
+		if (executionListeners != null) {
+			final int executionListenersSize = executionListeners.size();
+			if (executionListenersSize > 0) {
+				/*
+				 * Bug 88629. Copying to an array avoids a
+				 * ConcurrentModificationException if someone tries to remove
+				 * the listener while handling the event.
+				 */
+				final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+						.toArray(new IExecutionListener[executionListenersSize]);
+				for (int i = 0; i < executionListenersSize; i++) {
+					final IExecutionListener listener = listeners[i];
+					listener.preExecute(getId(), event);
+				}
+			}
+		}
 	}
 
 	/**
@@ -474,6 +505,20 @@ public final class Command extends NamedHandleObject implements Comparable {
 		final IParameter[] returnValue = new IParameter[parameters.length];
 		System.arraycopy(parameters, 0, returnValue, 0, parameters.length);
 		return returnValue;
+	}
+
+	/**
+	 * Gets all of the state current associated with this command.
+	 * 
+	 * @return The state; may be <code>null</code> if there is no state.
+	 */
+	public final IHandlerState[] getState() {
+		if ((states == null) || (states.isEmpty())) {
+			return null;
+		}
+
+		return (IHandlerState[]) states
+				.toArray(new IHandlerState[states.size()]);
 	}
 
 	/**
@@ -521,6 +566,9 @@ public final class Command extends NamedHandleObject implements Comparable {
 
 		if (commandListeners != null) {
 			commandListeners.remove(commandListener);
+			if (commandListeners.isEmpty()) {
+				commandListeners = null;
+			}
 		}
 	}
 
@@ -540,13 +588,43 @@ public final class Command extends NamedHandleObject implements Comparable {
 
 		if (executionListeners != null) {
 			executionListeners.remove(executionListener);
+			if (executionListeners.isEmpty()) {
+				executionListeners = null;
+			}
 		}
 	}
 
 	/**
-	 * Changes the handler for this command. If debugging is turned on, then
-	 * this will also print information about the change to
-	 * <code>System.out</code>.
+	 * <p>
+	 * Removes a state from this command. This will remove the state from the
+	 * active handler, if the active handler is an instance of
+	 * {@link IHandlerWithState}.
+	 * </p>
+	 * 
+	 * @param state
+	 *            The state to remove; must not be <code>null</code>.
+	 */
+	public void removeState(final IHandlerState state) {
+		if (state == null) {
+			throw new NullPointerException("Cannot remove a null state"); //$NON-NLS-1$
+		}
+
+		if (handler instanceof IHandlerWithState) {
+			((IHandlerWithState) handler).removeState(state);
+		}
+		if (states != null) {
+			states.remove(state);
+			if (states.isEmpty()) {
+				states = null;
+			}
+		}
+	}
+
+	/**
+	 * Changes the handler for this command. This will remove all the state from
+	 * the currently active handler (if any), and add it to <code>handler</code>.
+	 * If debugging is turned on, then this will also print information about
+	 * the change to <code>System.out</code>.
 	 * 
 	 * @param handler
 	 *            The new handler; may be <code>null</code> if none.
@@ -556,6 +634,20 @@ public final class Command extends NamedHandleObject implements Comparable {
 	public final boolean setHandler(final IHandler handler) {
 		if (Util.equals(handler, this.handler)) {
 			return false;
+		}
+
+		// Swap the state around.
+		if (states != null) {
+			final Iterator stateItr = states.iterator();
+			while (stateItr.hasNext()) {
+				final IHandlerState state = (IHandlerState) stateItr.next();
+				if (this.handler instanceof IHandlerWithState) {
+					((IHandlerWithState) this.handler).removeState(state);
+				}
+				if (handler instanceof IHandlerWithState) {
+					((IHandlerWithState) handler).addState(state);
+				}
+			}
 		}
 
 		// Update the handler, and flush the string representation.
@@ -594,19 +686,19 @@ public final class Command extends NamedHandleObject implements Comparable {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append("Command("); //$NON-NLS-1$
-            stringBuffer.append(id);
-            stringBuffer.append(',');
-            stringBuffer.append(name);
-            stringBuffer.append(',');
-            stringBuffer.append(description);
-            stringBuffer.append(',');
+			stringBuffer.append(id);
+			stringBuffer.append(',');
+			stringBuffer.append(name);
+			stringBuffer.append(',');
+			stringBuffer.append(description);
+			stringBuffer.append(',');
 			stringBuffer.append(category);
 			stringBuffer.append(',');
 			stringBuffer.append(handler);
 			stringBuffer.append(',');
 			stringBuffer.append(parameters);
-            stringBuffer.append(',');
-            stringBuffer.append(defined);
+			stringBuffer.append(',');
+			stringBuffer.append(defined);
 			stringBuffer.append(')');
 			string = stringBuffer.toString();
 		}
@@ -615,8 +707,8 @@ public final class Command extends NamedHandleObject implements Comparable {
 
 	/**
 	 * Makes this command become undefined. This has the side effect of changing
-	 * the name and description to <code>null</code>. Notification is sent to
-	 * all listeners.
+	 * the name and description to <code>null</code>. This also removes all
+	 * state and disposes of it. Notification is sent to all listeners.
 	 */
 	public final void undefine() {
 		string = null;
@@ -635,6 +727,19 @@ public final class Command extends NamedHandleObject implements Comparable {
 
 		final boolean parametersChanged = parameters != null;
 		parameters = null;
+
+		if (states != null) {
+			final Iterator stateItr = states.iterator();
+			while (stateItr.hasNext()) {
+				IHandlerState state = (IHandlerState) stateItr.next();
+				if (handler instanceof IHandlerWithState) {
+					((IHandlerWithState) handler).removeState(state);
+				}
+				state.dispose();
+			}
+			
+			states = null;
+		}
 
 		fireCommandChanged(new CommandEvent(this, categoryChanged,
 				definedChanged, descriptionChanged, false, nameChanged,

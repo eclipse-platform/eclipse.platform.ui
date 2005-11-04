@@ -12,17 +12,22 @@ package org.eclipse.ui.preferences;
 
 import java.io.IOException;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.*;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.*;
-
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
-
 import org.osgi.service.prefs.BackingStoreException;
 
 /**

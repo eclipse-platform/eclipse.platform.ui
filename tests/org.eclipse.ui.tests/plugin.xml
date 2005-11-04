@@ -2115,7 +2115,24 @@
             id="org.eclipse.ui.tests.commands.categoryLessCommand">
       </command>
    </extension>
-
+   
+   <extension
+   		point="org.eclipse.ui.commands">
+   		<command
+   		     id="Ids are normally boring things with no spaces and dots"
+   		     name="but.i.can.change.that"
+   		     description="rn'7 1 c13v3r?">
+   		     <state id="1" class="org.eclipse.jface.commands.LabelHandlerState" />
+   		     <state id="2" class="org.eclipse.jface.commands.ToggleHandlerState:true" />
+   		     <state id="3">
+   		     	<class class="org.eclipse.ui.handlers.RegistryRadioHandlerState">
+   		     		<parameter name="default" value="true" />
+   		     		<parameter name="persisted" value="true" />
+   		     		<parameter name="id" value="radioGroup1" />
+   		     	</class>
+   		     </state>
+   		 </command>
+   </extension>
 
 	<!--malformed activity definitions -->
    <extension

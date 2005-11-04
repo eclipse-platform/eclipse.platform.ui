@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.util;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;

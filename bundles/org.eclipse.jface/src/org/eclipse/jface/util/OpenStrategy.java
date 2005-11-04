@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.util;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.custom.TableTreeItem;

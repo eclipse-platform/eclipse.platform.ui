@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.themes;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
@@ -20,7 +21,6 @@ import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;

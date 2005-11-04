@@ -13,8 +13,8 @@ package org.eclipse.ui.navigator.internal.extensions;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 

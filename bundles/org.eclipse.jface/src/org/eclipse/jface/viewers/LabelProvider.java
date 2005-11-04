@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.jface.util.ListenerList;
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
 

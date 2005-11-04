@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers.deferred;
 
-import org.eclipse.jface.util.ListenerList;
+import org.eclipse.core.commands.util.ListenerList;
+
 
 /**
  * Abstract base class for all IConcurrentModel implementations. Clients should
