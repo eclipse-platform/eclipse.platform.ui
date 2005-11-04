@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-Version: 3.1.0.qualifier
+Bundle-Version: 3.1.100.qualifier
 Bundle-SymbolicName: org.eclipse.core.runtime; singleton:=true
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
@@ -18,5 +18,4 @@ Export-Package: org.eclipse.core.internal.boot;x-friends:="org.eclipse.core.reso
  org.eclipse.core.runtime.jobs,
  org.eclipse.core.runtime.preferences,
  org.osgi.service.prefs;version="1.1"
-Require-Bundle: 
- org.eclipse.osgi; visibility:=reexport
+Require-Bundle: org.eclipse.osgi;bundle-version="[3.1.0,4.0.0)";visibility:=reexport
