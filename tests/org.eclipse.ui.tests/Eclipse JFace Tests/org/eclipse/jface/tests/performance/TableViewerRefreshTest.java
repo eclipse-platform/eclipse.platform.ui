@@ -43,7 +43,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		public void testUpdateItem(Widget widget, Object element) {
 			updateItem(widget, element);
 		}
-	};
+	}
 
 	TestTableViewer viewer;
 

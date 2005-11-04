@@ -74,7 +74,7 @@ public class PartPropertyProvider implements IPartPropertyProvider, INameable, I
         
         public IPropertyListener l;
         public IWorkbenchPart part;
-    };
+    }
     
     public PartPropertyProvider(ResourceManager manager, INameable parentNameable, 
             IDirtyHandler dirtyListener, IPartDescriptor descriptor, IEditorInput initialInput) {

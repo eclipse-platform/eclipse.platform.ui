@@ -39,7 +39,7 @@ public class DefaultCompositeFactory extends ComponentFactory {
             ((Composite)getInstance()).dispose();
         }
 
-    };
+    }
     
     /* (non-Javadoc)
      * @see org.eclipse.core.component.ComponentAdapter#createInstance(org.eclipse.core.component.IContainer)

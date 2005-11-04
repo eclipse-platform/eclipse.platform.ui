@@ -88,7 +88,7 @@ public class ResourceManagerTest extends TestCase {
         public int hashCode() {
             return toWrap.hashCode();
         }
-    };
+    }
     
     /* (non-Javadoc)
      * @see junit.framework.TestCase#setUp()

@@ -32,7 +32,7 @@ public class TestComponent {
         
         public Object key;
         public Object value;
-    };
+    }
     
     public TestComponent(IServiceProvider container) {
         this.container = container;

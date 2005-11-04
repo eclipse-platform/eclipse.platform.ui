@@ -59,16 +59,16 @@ public class TestPresentablePart implements IPresentablePart {
     // Set methods called from presentation (all ignored)
     public void setBounds(Rectangle bounds) {
         control.setBounds(bounds);
-    };
+    }
     
     public void setVisible(boolean isVisible) {
         control.setVisible(isVisible);
         toolbar.setVisible(isVisible);
-    };
+    }
     
     public void setFocus() {
         control.setFocus();
-    };
+    }
 
     public void addPropertyListener(IPropertyListener listener) {
         listeners.add(listener);

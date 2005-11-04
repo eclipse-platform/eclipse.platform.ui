@@ -55,7 +55,7 @@ public class ActionBarContributorFactory implements IActionBarContributorFactory
         public IPartDescriptor getDescriptor() {
             return descriptor;
         }
-    };
+    }
     
     private NullActivator nullActivator = new NullActivator();
     
@@ -132,7 +132,7 @@ public class ActionBarContributorFactory implements IActionBarContributorFactory
             actionBars.deactivate(true);
             isActive = false;
         }
-    };
+    }
     
     public ActionBarContributorFactory(IPartActionBars parent, IWorkbenchPage page, IStatusHandler handler, IStatusFactory factory) {
         this.partToEditorActionBars = new PartToEditorActionBarsAdapter(parent, 

@@ -107,7 +107,7 @@ public class DeferredContentProvider implements ILazyContentProvider {
 			return viewer.getControl();
 		}
 		
-	};
+	}
 
 	/**
 	 * Create a DeferredContentProvider with the given sort order.

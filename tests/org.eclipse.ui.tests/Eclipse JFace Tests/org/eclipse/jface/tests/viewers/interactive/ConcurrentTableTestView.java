@@ -66,7 +66,7 @@ public class ConcurrentTableTestView extends ViewPart {
             scheduleComparisonUpdate();
             
             return result;
-        };
+        }
     };
     private DeferredContentProvider contentProvider;
     
