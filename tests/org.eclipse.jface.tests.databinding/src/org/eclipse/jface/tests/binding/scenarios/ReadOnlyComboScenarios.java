@@ -336,7 +336,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 				null);
 
 		// Ensure that cv's content now has the catalog's accounts
-		assertEquals(catalog.getAccounts(), getViewerContent(cviewer));
+		assertArrayEquals(catalog.getAccounts(), getViewerContent(cviewer).toArray());
 		// Ensure that the cv's labels are the same as the account countries
 		assertEquals(getColumn(catalog.getAccounts(), "country"),
 				getComboContent());
@@ -373,7 +373,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 				null);
 
 		// Ensure that cv's content now has the catalog's lodgings
-		assertEquals(catalog.getLodgings(), getViewerContent(cviewer));
+		assertArrayEquals(catalog.getLodgings(), getViewerContent(cviewer).toArray());
 
 		// Ensure that the cv's labels are the same as the lodging descriptions
 		assertEquals(getColumn(catalog.getLodgings(), "name"),
@@ -384,7 +384,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 		getDbc().bind2(otherViewer,
 				new PropertyDescription(catalog, "lodgings"), null);
 		// Ensure that cv's content now has the catalog's lodgings
-		assertEquals(catalog.getLodgings(), getViewerContent(otherViewer));
+		assertArrayEquals(catalog.getLodgings(), getViewerContent(otherViewer).toArray());
 
 		// Bind both selections to the same thing
 		getDbc()

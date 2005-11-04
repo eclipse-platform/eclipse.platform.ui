@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.jface.databinding.internal.Binding;
 import org.eclipse.jface.databinding.internal.CollectionBinding;
+import org.eclipse.jface.databinding.internal.ListUpdatableCollection;
 import org.eclipse.jface.databinding.internal.NestedUpdatableCollection;
 import org.eclipse.jface.databinding.internal.NestedUpdatableValue;
 import org.eclipse.jface.databinding.internal.ValueBinding;
@@ -248,7 +249,8 @@ public class DatabindingContext implements IValidationContext {
 				new IdentityConverter(Boolean.class, boolean.class));
 		addBindSupportFactory(new IBindSupportFactory() {
 
-			public IValidator createValidator(Class fromType, Class toType, Object modelDescription) {
+			public IValidator createValidator(Class fromType, Class toType,
+					Object modelDescription) {
 				return new IValidator() {
 
 					public String isPartiallyValid(Object value) {
@@ -257,26 +259,30 @@ public class DatabindingContext implements IValidationContext {
 
 					public String isValid(Object value) {
 						return null;
-					}};
+					}
+				};
 			}
 
-			public IConverter createConverter(Class fromType, Class toType, Object modelDescription) {
-				if(toType==null) {
+			public IConverter createConverter(Class fromType, Class toType,
+					Object modelDescription) {
+				if (toType == null) {
 					return null;
 				}
 				if (fromType == toType) {
 					return new IdentityConverter(fromType, toType);
 				}
-				IConverter result = (IConverter) converters.get(new Pair(fromType,
-						toType));
-				if(result!=null) {
+				IConverter result = (IConverter) converters.get(new Pair(
+						fromType, toType));
+				if (result != null) {
 					return result;
 				}
-				if(toType.isAssignableFrom(fromType) || fromType.isAssignableFrom(toType)) {
+				if (toType.isAssignableFrom(fromType)
+						|| fromType.isAssignableFrom(toType)) {
 					return new IdentityConverter(fromType, toType);
 				}
 				return null;
- 			}});
+			}
+		});
 	}
 
 	protected void registerFactories() {
@@ -286,9 +292,9 @@ public class DatabindingContext implements IValidationContext {
 					throws BindingException {
 				if (description instanceof PropertyDescription) {
 					PropertyDescription propertyDescription = (PropertyDescription) description;
-					if (propertyDescription.getObject() instanceof IUpdatableValue) {
-						IUpdatableValue updatableValue = (IUpdatableValue) propertyDescription
-								.getObject();
+					Object o = propertyDescription.getObject();
+					if (o instanceof IUpdatableValue) {
+						IUpdatableValue updatableValue = (IUpdatableValue) o;
 						Class propertyType = propertyDescription
 								.getPropertyType();
 						if (propertyType == null) {
@@ -310,6 +316,11 @@ public class DatabindingContext implements IValidationContext {
 						return new NestedUpdatableValue(
 								DatabindingContext.this, updatableValue,
 								propertyID, propertyType);
+					} else if (o instanceof List) {
+						return new ListUpdatableCollection(
+								(List) o,
+								propertyDescription.getPropertyType() == null ? Object.class
+										: propertyDescription.getPropertyType());
 					}
 				}
 				return null;
@@ -389,14 +400,15 @@ public class DatabindingContext implements IValidationContext {
 	public void bind2(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) throws BindingException {
 		Binding binding;
-		if(bindSpec==null) {
-			bindSpec = new BindSpec(null,null);
+		if (bindSpec == null) {
+			bindSpec = new BindSpec(null, null);
 		}
 		if (targetUpdatable instanceof IUpdatableValue) {
 			if (modelUpdatable instanceof IUpdatableValue) {
 				IUpdatableValue target = (IUpdatableValue) targetUpdatable;
 				IUpdatableValue model = (IUpdatableValue) modelUpdatable;
-				fillBindSpecDefaults(bindSpec, target.getValueType(), model.getValueType(), null);
+				fillBindSpecDefaults(bindSpec, target.getValueType(), model
+						.getValueType(), null);
 				binding = new ValueBinding(this, target, model, bindSpec);
 			} else {
 				throw new BindingException(
@@ -406,7 +418,8 @@ public class DatabindingContext implements IValidationContext {
 			if (modelUpdatable instanceof IUpdatableCollection) {
 				IUpdatableCollection target = (IUpdatableCollection) targetUpdatable;
 				IUpdatableCollection model = (IUpdatableCollection) modelUpdatable;
-				fillBindSpecDefaults(bindSpec, target.getElementType(), model.getElementType(), null);
+				fillBindSpecDefaults(bindSpec, target.getElementType(), model
+						.getElementType(), null);
 				binding = new CollectionBinding(this, target, model, bindSpec);
 			} else {
 				throw new BindingException(
@@ -447,8 +460,8 @@ public class DatabindingContext implements IValidationContext {
 	 */
 	public void bind2(IUpdatable targetUpdatable, Object modelDescription,
 			IBindSpec bindSpec) throws BindingException {
-		if(bindSpec==null) {
-			bindSpec = new BindSpec(null,null);
+		if (bindSpec == null) {
+			bindSpec = new BindSpec(null, null);
 		}
 		Class fromType = null;
 		if (targetUpdatable instanceof IUpdatableValue) {
@@ -538,9 +551,8 @@ public class DatabindingContext implements IValidationContext {
 	public void bind2(Object targetObject, Object targetPropertyID,
 			Object modelObject, Object modelPropertyID, IBindSpec bindSpec)
 			throws BindingException {
-		bind2(new PropertyDescription(targetObject,
-				targetPropertyID), new PropertyDescription(
-				modelObject, modelPropertyID), bindSpec);
+		bind2(new PropertyDescription(targetObject, targetPropertyID),
+				new PropertyDescription(modelObject, modelPropertyID), bindSpec);
 	}
 
 	/**
@@ -553,7 +565,8 @@ public class DatabindingContext implements IValidationContext {
 		return doCreateUpdatable2(description, this);
 	}
 
-	protected IUpdatable doCreateUpdatable2(Object description, IValidationContext thisDatabindingContext) throws BindingException {
+	protected IUpdatable doCreateUpdatable2(Object description,
+			IValidationContext thisDatabindingContext) throws BindingException {
 		Map properties = new HashMap();
 		collectProperties(properties);
 		for (int i = factories2.size() - 1; i >= 0; i--) {
@@ -565,7 +578,8 @@ public class DatabindingContext implements IValidationContext {
 			}
 		}
 		if (parent != null) {
-			return parent.doCreateUpdatable2(description, thisDatabindingContext);
+			return parent.doCreateUpdatable2(description,
+					thisDatabindingContext);
 		}
 		throw new BindingException("could not find updatable for " //$NON-NLS-1$
 				+ description);
