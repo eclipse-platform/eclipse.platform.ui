@@ -1,6 +1,5 @@
 package org.eclipse.jface.tests.binding.scenarios.model;
 
-import java.util.List;
 
 public class Catalog {
 
@@ -40,7 +39,7 @@ public class Catalog {
 
 	}
 
-	public List getAccounts() {
+	public Account[] getAccounts() {
 		// TODO Auto-generated method stub
 		return null;
 	}

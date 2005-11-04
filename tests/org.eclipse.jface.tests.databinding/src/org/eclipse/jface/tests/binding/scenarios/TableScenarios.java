@@ -11,7 +11,6 @@
 package org.eclipse.jface.tests.binding.scenarios;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.PropertyDescription;
@@ -74,7 +73,7 @@ public class TableScenarios extends ScenariosTestCase {
 
 	public void testScenario01() throws BindingException {
 		// Show that a TableViewer with three columns renders the accounts
-		List accounts = catalog.getAccounts();
+		Account[] accounts = catalog.getAccounts();
 
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
@@ -85,8 +84,8 @@ public class TableScenarios extends ScenariosTestCase {
 				new PropertyDescription(catalog, "accounts"), null);
 
 		// Verify the data in the table columns matches the accounts
-		for (int i = 0; i < accounts.size(); i++) {
-			Account account = (Account) catalog.getAccounts().get(i);
+		for (int i = 0; i < accounts.length; i++) {
+			Account account = (Account) catalog.getAccounts()[i];
 			String col_0 = ((ITableLabelProvider) tableViewer
 					.getLabelProvider()).getColumnText(account, 0);
 			assertEquals(account.getFirstName(), col_0);
@@ -105,7 +104,7 @@ public class TableScenarios extends ScenariosTestCase {
 			IllegalAccessException {
 		// Show that a TableViewer with three columns can be used to update
 		// columns
-		List accounts = catalog.getAccounts();
+		Account[] accounts = catalog.getAccounts();
 
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
@@ -135,13 +134,13 @@ public class TableScenarios extends ScenariosTestCase {
 		((Text) firstNameEditor.getControl()).setText("Bill");
 		((Text) ((TextCellEditor) cellEditors[0]).getControl())
 				.notifyListeners(SWT.DefaultSelection, null);
-		Account account = (Account) accounts.get(0);
+		Account account = (Account) accounts[0];
 		// assertEquals("Bill",account.getFirstName());
 	}
 
 	public void testScenario03() throws BindingException {
 		// Show that converters work for table columns
-		List accounts = catalog.getAccounts();
+		Account[] accounts = catalog.getAccounts();
 
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
@@ -160,8 +159,8 @@ public class TableScenarios extends ScenariosTestCase {
 		// Verify the data in the table columns matches the accounts
 		PhoneConverter phoneConverter = new PhoneConverter();
 		StateConverter stateConverter = new StateConverter();
-		for (int i = 0; i < accounts.size(); i++) {
-			Account account = (Account) catalog.getAccounts().get(i);
+		for (int i = 0; i < accounts.length; i++) {
+			Account account = (Account) catalog.getAccounts()[i];
 			// Check the phone number
 			String col_phone = ((ITableLabelProvider) tableViewer
 					.getLabelProvider()).getColumnText(account, 1);

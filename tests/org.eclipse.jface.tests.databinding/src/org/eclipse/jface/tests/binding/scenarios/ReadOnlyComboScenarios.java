@@ -12,7 +12,6 @@ package org.eclipse.jface.tests.binding.scenarios;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.databinding.BindingException;
@@ -20,7 +19,6 @@ import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.swt.SWTBindingConstants;
 import org.eclipse.jface.tests.binding.scenarios.model.Account;
 import org.eclipse.jface.tests.binding.scenarios.model.Adventure;
-import org.eclipse.jface.tests.binding.scenarios.model.AdventureFactory;
 import org.eclipse.jface.tests.binding.scenarios.model.Catalog;
 import org.eclipse.jface.tests.binding.scenarios.model.Lodging;
 import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
@@ -104,14 +102,15 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 
 	protected List getColumn(Object[] list, String feature) {
 		List result = new ArrayList();
-		if (list == null || list.size() == 0)
-			return result;
-		EStructuralFeature sf = ((EObject) list.get(0)).eClass()
-				.getEStructuralFeature(feature);
-		for (Iterator iter = list.iterator(); iter.hasNext();) {
-			EObject o = (EObject) iter.next();
-			result.add(o.eGet(sf));
-		}
+//TODO
+//		if (list == null || list.size() == 0)
+//			return result;
+//		EStructuralFeature sf = ((EObject) list.get(0)).eClass()
+//				.getEStructuralFeature(feature);
+//		for (Iterator iter = list.iterator(); iter.hasNext();) {
+//			EObject o = (EObject) iter.next();
+//			result.add(o.eGet(sf));
+//		}
 		return result;
 	}
 
@@ -155,8 +154,8 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 
 		// Change the selection of the ComboViewer to all possible lodgings, and
 		// verify that skiAdventure's default lodging was changed accordingly
-		for (Iterator iter = catalog.getLodgings().iterator(); iter.hasNext();) {
-			Object selection = iter.next();
+		for (int i=0; i<catalog.getLodgings().length; i++) {
+			Object selection = catalog.getLodgings()[i];
 			cviewer.setSelection(new StructuredSelection(selection));
 			assertEquals(selection, skiAdventure.getDefaultLodging());
 			assertEquals(getViewerSelection(), skiAdventure.getDefaultLodging());
@@ -190,49 +189,49 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 		assertEquals(getColumn(catalog.getLodgings(), "name"),
 				getComboContent());
 
-		EList lodgings = catalog.getLodgings();
+		 Lodging[] lodgings = catalog.getLodgings();
 
 		// Add a lodging in the middle
-		Lodging lodging = AdventureFactory.eINSTANCE.createLodging();
+		Lodging lodging = SampleData.FACTORY.createLodging();
 		lodging.setName("Middle Lodging");
-		lodgings.add(2, lodging);
+//TODO		lodgings.add(2, lodging);
 		assertEquals(getViewerContent(cviewer).get(2), lodging);
 
 		// Add a lodging at the end
-		lodging = AdventureFactory.eINSTANCE.createLodging();
+		lodging = SampleData.FACTORY.createLodging();
 		lodging.setName("End Lodging");
-		lodgings.add(lodging);
+//TODO		lodgings.add(lodging);
 		int index = getComboContent().size() - 1;
 		assertEquals(getViewerContent(cviewer).get(index), lodging);
 
 		// Delete the first Lodging
-		lodgings.remove(lodgings.get(0));
+//		TODO		lodgings.remove(lodgings[0]);
 		// Ensure that the cv's labels are the same as the lodging descriptions
 		assertEquals(getColumn(catalog.getLodgings(), "name"),
 				getComboContent());
 
 		// Delete middle Lodging
-		lodgings.remove(lodgings.get(2));
+//		TODO		lodgings.remove(lodgings[2]);
 		// Ensure that the cv's labels are the same as the lodging descriptions
 		assertEquals(getColumn(catalog.getLodgings(), "name"),
 				getComboContent());
 
 		// Change the names of all Lodging
-		for (Iterator iter = lodgings.iterator(); iter.hasNext();) {
-			Lodging l = (Lodging) iter.next();
+		for (int i=0; i<lodgings.length;i++) {
+			Lodging l = lodgings[i];
 			l.setName("Changed: " + l.getName());
 		}
 		assertEquals(getColumn(catalog.getLodgings(), "name"),
 				getComboContent());
 
 		// Set to null value
-		Lodging l = (Lodging) catalog.getLodgings().get(0);
+		Lodging l = (Lodging) catalog.getLodgings()[0];
 		l.setName(null);
 		assertEquals(combo.getItem(0), "");
 
 		// set to empty list
-		while (lodgings.size() > 0)
-			lodgings.remove(0);
+//TODO		while (lodgings.size() > 0)
+//			lodgings.remove(0);
 		assertEquals(getColumn(catalog.getLodgings(), "name"),
 				getComboContent());
 
@@ -250,7 +249,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 		String[] items = new String[] { "FairyLand", "TuneLand", "NoWereLand",
 				"TinkerLand", "DreamLand" };
 		combo.setItems(items);
-		Account account = (Account) catalog.getAccounts().get(0);
+		Account account = (Account) catalog.getAccounts()[0];
 
 		// simple Combo's selection bound to the Account's country property
 		getDbc().bind2(
@@ -287,15 +286,15 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 	public void test_ROCombo_Scenario02_SWTCombo() throws BindingException {
 
 		// Create a list of Strings for the countries
-		BasicEList list = new BasicEList();
-		for (Iterator iter = catalog.getAccounts().iterator(); iter.hasNext();)
-			list.add(((Account) iter.next()).getCountry());
+		List list = new ArrayList();
+		for (int i=0; i<catalog.getAccounts().length;i++)
+			list.add(catalog.getAccounts()[i].getCountry());
 
 		// Bind the combo's content to that of the String based list
 		getDbc().bind2(combo, new PropertyDescription(list, null), null);
 		assertEquals(Arrays.asList(combo.getItems()), list);
 
-		Account account = (Account) catalog.getAccounts().get(0);
+		Account account = (Account) catalog.getAccounts()[0];
 
 		// simple Combo's selection bound to the Account's country property
 		getDbc().bind2(
@@ -329,7 +328,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 		assertEquals(getColumn(catalog.getAccounts(), "country"),
 				getComboContent());
 
-		Account account = AdventureFactory.eINSTANCE.createAccount();
+		Account account = SampleData.FACTORY.createAccount();
 
 		// Use the Viewers visual Combo (Strings) to set the account's country
 		getDbc().bind2(
@@ -338,8 +337,8 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 
 		// Change the selection of the ComboViewer to all possible accounts, and
 		// verify that the account's Country is being changed correctly.
-		for (Iterator iter = catalog.getAccounts().iterator(); iter.hasNext();) {
-			Account selection = (Account) iter.next();
+		for (int i =0; i<catalog.getAccounts().length; i++) {
+			Account selection = catalog.getAccounts()[i];
 			cviewer.setSelection(new StructuredSelection(selection));
 			assertEquals(selection.getCountry(), account.getCountry());
 		}
@@ -386,7 +385,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 						SWTBindingConstants.SELECTION),
 				new PropertyDescription(skiAdventure, "defaultLodging"), null);
 
-		Lodging lodging = (Lodging) catalog.getLodgings().get(0);
+		Lodging lodging = (Lodging) catalog.getLodgings()[0];
 
 		// Ensure that setting the selection is driven forward to the other
 		// combo
@@ -396,7 +395,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 				.getSelection()).getFirstElement());
 
 		// Change the list of one combo, and ensure it updates the other combo
-		catalog.getLodgings().remove(lodging);
+//TODO		catalog.getLodgings().remove(lodging);
 		assertEquals(getViewerContent(cviewer), getViewerContent(otherViewer));
 
 	}
@@ -411,9 +410,9 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 	public void test_ROCombo_SWTCCombo() throws BindingException {
 
 		// Create a list of Strings for the countries
-		BasicEList list = new BasicEList();
-		for (Iterator iter = catalog.getAccounts().iterator(); iter.hasNext();)
-			list.add(((Account) iter.next()).getCountry());
+		List list = new ArrayList();
+		for (int i=0; i<catalog.getAccounts().length; i++)
+			list.add(catalog.getAccounts()[i].getCountry());
 
 		CCombo ccombo = new CCombo(getComposite(), SWT.READ_ONLY
 				| SWT.DROP_DOWN);
@@ -422,7 +421,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 		getDbc().bind2(ccombo, new PropertyDescription(list, null), null);
 		assertEquals(Arrays.asList(ccombo.getItems()), list);
 
-		Account account = (Account) catalog.getAccounts().get(0);
+		Account account = (Account) catalog.getAccounts()[0];
 
 		// simple Combo's selection bound to the Account's country property
 		getDbc().bind2(
@@ -446,9 +445,9 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 	public void test_ROCombo_SWTList() throws BindingException {
 
 		// Create a list of Strings for the countries
-		BasicEList list = new BasicEList();
-		for (Iterator iter = catalog.getAccounts().iterator(); iter.hasNext();)
-			list.add(((Account) iter.next()).getCountry());
+		List list = new ArrayList();
+		for (int i=0; i<catalog.getAccounts().length; i++)
+			list.add(catalog.getAccounts()[i].getCountry());
 
 		org.eclipse.swt.widgets.List swtlist = new org.eclipse.swt.widgets.List(
 				getComposite(), SWT.READ_ONLY | SWT.SINGLE);
@@ -457,7 +456,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 		getDbc().bind2(swtlist, new PropertyDescription(list, null), null);
 		assertEquals(Arrays.asList(swtlist.getItems()), list);
 
-		Account account = (Account) catalog.getAccounts().get(0);
+		Account account = (Account) catalog.getAccounts()[0];
 
 		// simple Combo's selection bound to the Account's country property
 		getDbc()
