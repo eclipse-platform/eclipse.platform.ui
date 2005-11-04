@@ -38,12 +38,12 @@ public interface IChangeEvent {
 	 * Position constant denoting a change affecting more than one element, or a
 	 * change with an unknown position.
 	 */
-	public static final int POSITION_ALL = -1;
+	public static final int POSITION_UNKNOWN = -1;
 
 	/**
 	 * Change type constant denoting a general change. If the updatable is a
 	 * list, getPosition() returns the index of the changed element, or
-	 * <code>POSITION_ALL</code> if more than one element was changed, added
+	 * <code>POSITION_UNKNOWN</code> if more than one element was changed, added
 	 * or removed, or if the position of the changed, added or removed element
 	 * is not known.
 	 */
