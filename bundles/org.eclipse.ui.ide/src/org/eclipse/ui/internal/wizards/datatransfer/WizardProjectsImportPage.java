@@ -1203,14 +1203,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 	/**
 	 * Method used for test suite.
-	 * @return ProjectRecord[] an array of all the selected projects by name
-	 */
-	public ProjectRecord[] getProjects() {
-		return selectedProjects;
-	}
-
-	/**
-	 * Method used for test suite.
 	 * @return Button the Import from Directory RadioButton
 	 */
 	public Button getProjectFromDirectoryRadio() {
@@ -1242,10 +1234,12 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * If a project with the same name exists in both the source workspace and the 
 	 * current workspace, it will not appear in the list of projects to import and 
 	 * thus cannot be selected for import.
-	 *   
+	 * 
+	 * Method declared public for test suite.
+	 * 
 	 * @return ProjectRecord[] array of projects that can be imported into the workspace
 	 */
-	private ProjectRecord[] getValidProjects(){
+	public ProjectRecord[] getValidProjects(){
 		List validProjects = new ArrayList();
 		for (int i = 0; i < selectedProjects.length; i++){
 			if (!isProjectInWorkspace(selectedProjects[i].getProjectName()))

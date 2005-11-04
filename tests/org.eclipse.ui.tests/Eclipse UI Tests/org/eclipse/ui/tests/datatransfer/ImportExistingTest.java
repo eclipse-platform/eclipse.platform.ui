@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.zip.ZipFile;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -46,6 +48,10 @@ import org.eclipse.ui.tests.util.DialogCheck;
 import org.eclipse.ui.tests.util.FileUtil;
 
 public class ImportExistingTest extends DataTransferTestCase {
+	public static TestSuite suite() {
+		return new TestSuite(ImportExistingTest.class);
+	}
+	
 	private static final String PLUGIN_ID = "org.eclipse.ui.tests";
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
 	private static final String WS_DATA_PREFIX = "data/workspaces";
@@ -89,7 +95,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
 			wpip.updateProjectsList(helloworld.getPath());
 
-			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ProjectRecord[] selectedProjects= wpip.getValidProjects();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -112,7 +118,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
 			wpip.updateProjectsList(helloworld.getPath());
 			
-			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ProjectRecord[] selectedProjects= wpip.getValidProjects();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -136,7 +142,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			wpip.getProjectFromDirectoryRadio().setSelection((true)); 
 			wpip.updateProjectsList(wsPath.toOSString());
 
-			ProjectRecord[] selectedProjects = wpip.getProjects();
+			ProjectRecord[] selectedProjects = wpip.getValidProjects();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -147,6 +153,36 @@ public class ImportExistingTest extends DataTransferTestCase {
 		} catch (IOException e) {
 			fail(e.toString());
 		}
+	}
+	
+	
+	public void testDoNotShowProjectWithSameName(){
+		try {
+			dataLocation = copyDataLocation();
+			IPath wsPath = new Path(dataLocation).append(PLUGIN_ID).append(
+					DATA_PATH_PREFIX);
+			
+			FileUtil.createProject("HelloWorld");
+			
+			WizardProjectsImportPage wpip = getNewWizard();
+			// We're importing a directory
+			wpip.getProjectFromDirectoryRadio().setSelection((true)); 
+			wpip.updateProjectsList(wsPath.toOSString());
+
+			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
+			assertEquals("there should only be the WorldHello project left", 
+					1, projectNames.size());
+			
+			assertTrue("HelloWorld project should not be found in project list.",
+					!projectNames.contains("HelloWorld"));
+		} catch (Exception e) {
+			fail(e.toString());
+		}		
 	}
 	
 	public void testImportSingleZip() {
@@ -165,7 +201,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
 			wpip.updateProjectsList(helloworld.getPath());
 			
-			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ProjectRecord[] selectedProjects= wpip.getValidProjects();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -209,7 +245,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
 			wpip.updateProjectsList(helloworld.getPath());
 			
-			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ProjectRecord[] selectedProjects= wpip.getValidProjects();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -254,7 +290,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			
 			wpip.getProjectFromDirectoryRadio().setSelection((true)); 
 			wpip.updateProjectsList(wsPath.toOSString());
-			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ProjectRecord[] selectedProjects= wpip.getValidProjects();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -304,7 +340,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			wpip.restoreWidgetValues();
 
 			wpip.updateProjectsList(wsPath.toOSString());
-			ProjectRecord[] selectedProjects= wpip.getProjects();
+			ProjectRecord[] selectedProjects= wpip.getValidProjects();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
