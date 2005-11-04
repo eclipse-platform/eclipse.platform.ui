@@ -18,6 +18,6 @@ import org.eclipse.ui.internal.ide.IMarkerImageProvider;
  */
 public class TestMarkerImageProvider implements IMarkerImageProvider {
     public String getImagePath(IMarker marker) {
-        return "icons/dynamic.gif"; //$NON-NLS-1$
+        return "icons/anything.gif"; //$NON-NLS-1$
     }
 }

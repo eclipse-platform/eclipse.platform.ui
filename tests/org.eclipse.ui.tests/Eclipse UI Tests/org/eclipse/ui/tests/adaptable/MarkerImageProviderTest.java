@@ -62,7 +62,7 @@ public class MarkerImageProviderTest extends UITestCase {
                 .getAdapter(IWorkbenchAdapter.class);
         ImageDescriptor imageDesc = adapter.getImageDescriptor(marker);
         assertNotNull(imageDesc);
-        assertTrue(imageDesc.toString().indexOf("dynamic") != -1); //$NON-NLS-1$
+        assertTrue(imageDesc.toString().indexOf("anything") != -1); //$NON-NLS-1$
     }
 
 }
