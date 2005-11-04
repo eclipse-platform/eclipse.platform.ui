@@ -33,6 +33,10 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * encapsulate refactoring descriptors and should not be held in memory as well.
  * </p>
  * <p>
+ * All time stamps are measured in UTC milliseconds from the epoch (see
+ * {@link java.util#Calendar}).
+ * </p>
+ * <p>
  * Note: this class is not intended to be subclassed and instantiated by
  * clients.
  * </p>

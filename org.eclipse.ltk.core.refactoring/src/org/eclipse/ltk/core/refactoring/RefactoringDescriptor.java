@@ -30,6 +30,10 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * {@link RefactoringDescriptorProxy} to store refactoring information.
  * </p>
  * <p>
+ * All time stamps are measured in UTC milliseconds from the epoch (see
+ * {@link java.util#Calendar}).
+ * </p>
+ * <p>
  * Note: this class is not indented to be subclassed outside the refactoring
  * framework.
  * </p>
