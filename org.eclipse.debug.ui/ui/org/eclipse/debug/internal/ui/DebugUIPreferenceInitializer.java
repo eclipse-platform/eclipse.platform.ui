@@ -94,6 +94,10 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IDebugPreferenceConstants.PREF_COLUMN_SIZE, 
 				IDebugPreferenceConstants.PREF_COLUMN_SIZE_DEFAULT);
 		
+		// set default for row size preference
+		prefs.setDefault(IDebugPreferenceConstants.PREF_ROW_SIZE, 
+				IDebugPreferenceConstants.PREF_ROW_SIZE_DEFAULT);
+		
 		// set default padded string
 		prefs.setDefault(IDebugUIConstants.PREF_PADDED_STR, 
 				IDebugPreferenceConstants.PREF_PADDED_STR_DEFAULT);

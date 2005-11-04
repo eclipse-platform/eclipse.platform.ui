@@ -294,6 +294,11 @@ public class TableRenderingLine extends Object {
 	{
 		return fTableIndex;
 	}
+	
+	public int getLength()
+	{
+		return fBytes.length;
+	}
 
 }
 

@@ -114,6 +114,9 @@ public class TableRenderingContentInput {
 			fMemoryBlockBaseAddress = BigInteger.valueOf(memoryBlock.getStartAddress());
 	}
 	
+	/**
+	 * @return start address of the memory block
+	 */
 	public BigInteger getStartAddress()
 	{
 		if (fStartAddress == null)
@@ -137,6 +140,9 @@ public class TableRenderingContentInput {
 		return fStartAddress; 
 	}
 	
+	/**
+	 * @return end address of the memory block
+	 */
 	public BigInteger getEndAddress()
 	{
 		if (fEndAddress == null)

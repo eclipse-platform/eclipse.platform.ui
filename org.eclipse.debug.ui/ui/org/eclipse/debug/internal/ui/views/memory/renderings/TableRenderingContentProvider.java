@@ -30,6 +30,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.IMemoryRenderingUpdater;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -41,20 +42,26 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class TableRenderingContentProvider extends BasicDebugViewContentProvider {
 	
-	// cached information
+	// lines currently being displayed by the table rendering
 	protected Vector lineCache;
 	
-	// keeps track of all memory line ever retrieved
-	// allow us to compare and compute deltas
+	// Cache to allow the content provider to comppute change information
+	// Cache is taken by copying the lineCache after a suspend event
+	// or change event from the the memory block.
 	protected Hashtable contentCache;
 	
+	// cache in the form of MemoryByte
+	// needed for reorganizing cache when the row size changes
+	private MemoryByte[] fContentCacheInBytes;	
+	private String fContentCacheStartAddress;
+
 	private BigInteger fBufferTopAddress;
 	
 	private TableRenderingContentInput fInput;
 	private BigInteger fBufferEndAddress;
 	
 	private boolean fDynamicLoad;
-	
+
 	/**
 	 * @param memoryBlock
 	 * @param newTab
@@ -111,17 +118,24 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		if (lineCache.isEmpty()) { 
 		
 			try {
-				IMemoryBlock memoryBlock = fInput.getMemoryBlock();
-				if (memoryBlock instanceof IMemoryBlockExtension)
-				{
-					loadContentForExtendedMemoryBlock();
-					fInput.getMemoryRendering().displayTable();
-				}
-				else
-				{
-					loadContentForSimpleMemoryBlock();
-					fInput.getMemoryRendering().displayTable();
-				}
+				getMemoryFromMemoryBlock();
+			} catch (DebugException e) {
+				DebugUIPlugin.log(e.getStatus());
+				fInput.getMemoryRendering().displayError(e);
+				return lineCache.toArray();
+			}
+		}
+		
+		// check to see if the row size has changed
+		TableRenderingLine line = (TableRenderingLine)lineCache.get(0);
+		int currentRowSize = line.getByteArray().length;
+		int renderingRowSize = fInput.getMemoryRendering().getBytesPerLine();
+		
+		if (renderingRowSize != currentRowSize)
+		{
+			try {
+				reorganizeContentCache(renderingRowSize);			
+				reorganizeLines(lineCache, renderingRowSize);
 			} catch (DebugException e) {
 				DebugUIPlugin.log(e.getStatus());
 				fInput.getMemoryRendering().displayError(e);
@@ -129,6 +143,20 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			}
 		}
 		return lineCache.toArray();
+	}
+	
+	private void getMemoryFromMemoryBlock() throws DebugException {
+		IMemoryBlock memoryBlock = fInput.getMemoryBlock();
+		if (memoryBlock instanceof IMemoryBlockExtension)
+		{
+			loadContentForExtendedMemoryBlock();
+			fInput.getMemoryRendering().displayTable();
+		}
+		else
+		{
+			loadContentForSimpleMemoryBlock();
+			fInput.getMemoryRendering().displayTable();
+		}
 	}
 
 	/**
@@ -257,13 +285,19 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		int addressLength = addressSize * IInternalDebugUIConstants.CHAR_PER_BYTE;
 
 		// align starting address with double word boundary
-		if (fInput.getMemoryBlock() instanceof IMemoryBlockExtension)
+		if ( fInput.getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
 			if (!adjustedAddress.endsWith("0")) //$NON-NLS-1$
 			{
 				adjustedAddress = adjustedAddress.substring(0, adjustedAddress.length() - 1);
 				adjustedAddress += "0"; //$NON-NLS-1$
-				startingAddress = new BigInteger(adjustedAddress, 16);
+				
+				// adjust number of lines
+				BigInteger newAddress = new BigInteger(adjustedAddress, 16);
+				int reqLines = startingAddress.subtract(newAddress).divide(BigInteger.valueOf(fInput.getMemoryRendering().getBytesPerLine())).intValue();
+				numberOfLines = numberOfLines + reqLines;
+				
+				startingAddress = new BigInteger(adjustedAddress, 16);	
 			}
 		}
 
@@ -403,7 +437,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			
 		}
 		
-		// clear line cacheit'
+		// clear line cache
 		if (!lineCache.isEmpty())
 		{
 			lineCache.clear();
@@ -423,8 +457,17 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		}
 			
 		// put memory information into MemoryViewLine
+		organizeLines(numberOfLines, updateDelta, addressLength, memoryBuffer, paddedString, address, manageDelta);
+		
+		if (error){
+			throw dbgEvt;
+		}
+	}
+
+	private void organizeLines(long numberOfLines, boolean updateDelta, int addressLength, MemoryByte[] memoryBuffer, String paddedString, String address, boolean manageDelta) 
+	{
 		for (int i = 0; i < numberOfLines; i++)
-		{ //chop the raw memory up 
+		{   //chop the raw memory up 
 			String tmpAddress = address.toUpperCase();
 			if (tmpAddress.length() < addressLength)
 			{
@@ -433,14 +476,15 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 					tmpAddress = "0" + tmpAddress; //$NON-NLS-1$
 				}
 			}
-			MemoryByte[] memory = new MemoryByte[fInput.getMemoryRendering().getBytesPerLine()];
+			int bytesPerLine = fInput.getMemoryRendering().getBytesPerLine();
+			MemoryByte[] memory = new MemoryByte[bytesPerLine];
 			boolean isMonitored = true;
 			
 			// counter for memory, starts from 0 to number of bytes per line
 			int k = 0;
 			// j is the counter for memArray, memory returned by debug adapter
-			for (int j = i * fInput.getMemoryRendering().getBytesPerLine();
-				j < i * fInput.getMemoryRendering().getBytesPerLine() + fInput.getMemoryRendering().getBytesPerLine();
+			for (int j = i * bytesPerLine;
+				j < i * bytesPerLine + bytesPerLine;
 				j++)
 			{
 				
@@ -530,10 +574,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			fBufferEndAddress = bigInt;
 			int addressableUnit = fInput.getMemoryRendering().getBytesPerLine()/fInput.getMemoryRendering().getAddressableSize();
 			address = bigInt.add(BigInteger.valueOf(addressableUnit)).toString(16);
-		}
-		
-		if (error){
-			throw dbgEvt;
 		}
 	}
 	
@@ -635,9 +675,12 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	 *  Take a snapshot on the content, marking the lines as monitored
 	 */
 	public void takeContentSnapshot()
-	{
+	{	
 		// cache content before getting new ones
 		TableRenderingLine[] lines =(TableRenderingLine[]) lineCache.toArray(new TableRenderingLine[lineCache.size()]);
+		fContentCacheInBytes = convertLinesToBytes(lines);
+		fContentCacheStartAddress = lines[0].getAddress();
+		
 		if (contentCache != null)
 		{
 			contentCache.clear();
@@ -764,6 +807,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	
 	public void clearContentCache()
 	{
+		fContentCacheInBytes = new MemoryByte[0];
+		fContentCacheStartAddress = null;
 		contentCache.clear();
 	}
 	
@@ -804,5 +849,114 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	public void setDynamicLoad(boolean dynamicLoad)
 	{
 		fDynamicLoad = dynamicLoad;
+	}
+	
+	private void reorganizeLines(Vector lines, int numBytesPerLine) throws DebugException
+	{
+		if (lines == null || lines.isEmpty())
+			return;
+		
+		Object[] objs = lines.toArray();
+		
+		if (objs.length > 0)
+		{
+			TableRenderingLine[] renderingLines = (TableRenderingLine[])lines.toArray(new TableRenderingLine[lines.size()]);
+			MemoryByte[] buffer = convertLinesToBytes(renderingLines);
+			BigInteger lineAddress = new BigInteger(renderingLines[0].getAddress(), 16);
+			int numberOfLines = buffer.length / numBytesPerLine;
+			boolean updateDelta = false;
+			int addressLength = getAddressSize(lineAddress) * IInternalDebugUIConstants.CHAR_PER_BYTE;
+			MemoryByte[] memoryBuffer = buffer;
+			String address =renderingLines[0].getAddress();
+			String paddedString = DebugUITools.getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
+			
+			// set to false to preserve information delta information 
+			boolean manageDelta = true;
+			
+			// If change information is not managed by the memory block
+			// The view tab will manage it and calculate delta information
+			// for its content cache.
+			if (fInput.getMemoryBlock() instanceof IMemoryBlockExtension)
+			{
+				manageDelta = !((IMemoryBlockExtension)fInput.getMemoryBlock()).supportsChangeManagement();
+			}
+			lineCache.clear();
+			
+			organizeLines(numberOfLines, updateDelta, addressLength, memoryBuffer, paddedString, address, manageDelta);
+		}
+	}
+	
+	private void reorganizeContentCache(int bytesPerLine)
+	{
+		// if content cache is empty, do nothing
+		if (contentCache == null || contentCache.isEmpty()
+			|| fContentCacheInBytes.length == 0 || fContentCacheStartAddress == null)
+			return;
+		
+		MemoryByte[] bytes = fContentCacheInBytes;
+		TableRenderingLine[] convertedLines = convertBytesToLines(bytes, bytesPerLine, new BigInteger(fContentCacheStartAddress, 16));
+		
+		contentCache.clear();
+		for (int i=0; i<convertedLines.length; i++)
+		{
+			contentCache.put(convertedLines[i].getAddress(), convertedLines[i]);
+		}
+	}
+	
+	private MemoryByte[] convertLinesToBytes(TableRenderingLine[] lines)
+	{
+		// convert the lines back to a buffer of MemoryByte
+		TableRenderingLine temp = lines[0];
+		int lineLength = temp.getLength();
+
+		MemoryByte[] buffer = new MemoryByte[lines.length * lineLength];
+		for (int i=0; i<lines.length; i++)
+		{
+			TableRenderingLine line = lines[i];
+			MemoryByte[] bytes = line.getBytes();
+			System.arraycopy(bytes, 0, buffer, i*lineLength, lineLength);
+		}
+		return buffer;
+	}
+	
+	private TableRenderingLine[] convertBytesToLines(MemoryByte[] bytes, int bytesPerLine, BigInteger startAddress)
+	{
+		int numOfLines = bytes.length / bytesPerLine;
+		String address = startAddress.toString(16);
+		int addressLength;
+		try {
+			addressLength = getAddressSize(startAddress) * IInternalDebugUIConstants.CHAR_PER_BYTE;
+		} catch (DebugException e) {
+			DebugUIPlugin.log(e);
+			addressLength = 4 * IInternalDebugUIConstants.CHAR_PER_BYTE;
+		}
+		ArrayList lines = new ArrayList();
+		String paddedString = DebugUITools.getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
+		
+		for (int i=0; i<numOfLines; i++)
+		{
+			MemoryByte[] temp = new MemoryByte[bytesPerLine];
+			System.arraycopy(bytes, i*bytesPerLine, temp, 0, bytesPerLine);
+			
+			String tmpAddress = address.toUpperCase();
+			if (tmpAddress.length() < addressLength)
+			{
+				for (int j = 0; tmpAddress.length() < addressLength; j++)
+				{
+					tmpAddress = "0" + tmpAddress; //$NON-NLS-1$
+				}
+			}
+			
+			TableRenderingLine newLine = new TableRenderingLine(tmpAddress, temp, lines.size(), paddedString);
+			lines.add(newLine);
+			
+			// increment row address
+			BigInteger bigInt = new BigInteger(address, 16);
+			fBufferEndAddress = bigInt;
+			int addressableUnit = fInput.getMemoryRendering().getBytesPerLine()/fInput.getMemoryRendering().getAddressableSize();
+			address = bigInt.add(BigInteger.valueOf(addressableUnit)).toString(16);
+		}
+		
+		return (TableRenderingLine[])lines.toArray(new TableRenderingLine[lines.size()]);
 	}
 }

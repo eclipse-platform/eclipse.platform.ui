@@ -26,12 +26,11 @@ import org.eclipse.debug.internal.ui.memory.IMemoryBlockConnection;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.CopyTableRenderingToClipboardAction;
-import org.eclipse.debug.internal.ui.views.memory.renderings.FormatColumnAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.PrintTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ReformatAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ResetToBaseAddressAction;
-import org.eclipse.debug.internal.ui.views.memory.renderings.SetColumnSizeDefaultAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingCellModifier;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentInput;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentProvider;
@@ -43,7 +42,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -153,6 +151,13 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 */
 	public static final String PROPERTY_TOP_ADDRESS = "topAddress"; //$NON-NLS-1$
 	
+	/**
+	 * Property identifier for the row size in a table rendering
+	 * 
+	 * @since 3.2
+	 */
+	public static final String PROPERTY_ROW_SIZE = "rowSize"; //$NON-NLS-1$
+	
 	private PageBook fPageBook;
 	private TableViewer fTableViewer;
 	private TextViewer fTextViewer;
@@ -180,7 +185,6 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	private GoToAddressAction fGoToAddressAction;
 	private ResetToBaseAddressAction fResetMemoryBlockAction;
 	private PrintTableRenderingAction fPrintViewTabAction;
-	private Action[] fFormatColumnActions;
 	private ReformatAction fReformatAction;
 	private ToggleAddressColumnAction fToggleAddressColumnAction;
 	private EventHandleLock fEvtHandleLock = new EventHandleLock();
@@ -202,6 +206,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	private PrevPageAction fPrevAction;
 
 	private Shell fToolTipShell;
+
+	private FormatTableRenderingAction fFormatRenderingAction;
 	
 	private class EventHandleLock
 	{
@@ -385,6 +391,10 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		else if (propertyName.equals(AbstractTableRendering.PROPERTY_COL_SIZE) && value instanceof Integer)
 		{
 			columnSizeChanged(((Integer)value).intValue());
+		}
+		else if (propertyName.equals(AbstractTableRendering.PROPERTY_ROW_SIZE) && value instanceof Integer)
+		{
+			rowSizeChanged(((Integer)value).intValue());
 		}
 		else if (propertyName.equals(AbstractTableRendering.PROPERTY_TOP_ADDRESS) && value instanceof BigInteger)
 		{
@@ -716,7 +726,10 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		}
 		if (getAddressableSize() < 1)
 			fAddressableSize = 1;
-		int bytePerLine = IInternalDebugUIConstants.ADD_UNIT_PER_LINE * getAddressableSize();
+		
+		// Row size is stored as number of addressable units in preference store
+		int rowSize = DebugUITools.getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_ROW_SIZE);
+		int bytePerLine = rowSize * getAddressableSize();
 		
 		// get default column size from preference store
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
@@ -730,10 +743,23 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		
 		if (colSize != null)
 		{
+			// column size is stored as actual number of bytes in synchronizer
 			int syncColSize = colSize.intValue(); 
 			if (syncColSize > 0)
 			{
 				columnSize = syncColSize;
+			}	
+		}
+		
+		// check synchronized row size
+		Integer size = (Integer)getSynchronizedProperty(AbstractTableRendering.PROPERTY_ROW_SIZE);
+		if (size != null)
+		{
+			// row size is stored as actual number of bytes in synchronizer
+			int syncRowSize = size.intValue(); 
+			if (syncRowSize > 0)
+			{
+				bytePerLine = syncRowSize;
 			}	
 		}
 		
@@ -1149,12 +1175,6 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		// Back up the address and restore it later.
 		BigInteger selectedAddress = fSelectedAddress;
 		
-		// check parameter, limit number of addressable unit to 16
-		if (bytesPerLine/getAddressableSize() != IInternalDebugUIConstants.ADD_UNIT_PER_LINE)
-		{
-			return false;
-		}
-		
 		// bytes per cell must be divisible to bytesPerLine
 		if (bytesPerLine % columnSize != 0)
 		{
@@ -1283,8 +1303,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			fTableViewer.refresh();
 		}		
 		
-		
 		resizeColumnsToPreferredSize();
+		updateSyncRowSize();
 		updateSyncColSize();
 		
 		if (fIsCreated)
@@ -1449,7 +1469,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			
 			// check if there is already synchronization info available
 			Object selectedAddress =getSynchronizedProperty( AbstractTableRendering.PROPERTY_SELECTED_ADDRESS);
-			Object size =getSynchronizedProperty( AbstractTableRendering.PROPERTY_COL_SIZE);
+			Object rowSize = getSynchronizedProperty(AbstractTableRendering.PROPERTY_ROW_SIZE);
+			Object colSize =getSynchronizedProperty( AbstractTableRendering.PROPERTY_COL_SIZE);
 			Object topAddress =getSynchronizedProperty( AbstractTableRendering.PROPERTY_TOP_ADDRESS);
 			
 			if (!isDynamicLoad())
@@ -1465,8 +1486,13 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			if (selectedAddress == null) {
 				updateSyncSelectedAddress();
 			}
+			
+			if (rowSize == null)
+			{
+				updateSyncRowSize();
+			}
 
-			if (size == null) {
+			if (colSize == null) {
 				updateSyncColSize();
 			}
 			if (topAddress == null) {
@@ -1494,9 +1520,18 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			}
 		}
 		
+		Integer rowSize = (Integer) getSynchronizedProperty(AbstractTableRendering.PROPERTY_ROW_SIZE);
 		Integer columnSize = (Integer) getSynchronizedProperty(AbstractTableRendering.PROPERTY_COL_SIZE);
 		BigInteger selectedAddress = (BigInteger)getSynchronizedProperty(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS);
 		BigInteger topAddress = (BigInteger)getSynchronizedProperty(AbstractTableRendering.PROPERTY_TOP_ADDRESS);
+		
+		if (rowSize != null)
+		{
+			int rSize = rowSize.intValue();
+			if (rSize > 0 && rSize != fBytePerLine) {
+				rowSizeChanged(rSize);
+			}
+		}
 		
 		if (columnSize != null) {
 			int colSize = columnSize.intValue();
@@ -1564,6 +1599,18 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
+	 * update column size in synchronizer
+	 */
+	private void updateSyncRowSize() {
+		
+		if (!fIsCreated)
+			return;
+		
+		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractTableRendering.PROPERTY_ROW_SIZE, null, new Integer(fBytePerLine));
+		firePropertyChangedEvent(event);
+	}
+	
+	/**
 	 * update top visible address in synchronizer
 	 */
 	private void updateSyncTopAddress() {
@@ -1613,32 +1660,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	
 		menu.add(new Separator());
 		
-		if (fFormatColumnActions.length > 0)
-		{
-			// Format view tab actions
-			IMenuManager formatMenu = new MenuManager(DebugUIMessages.AbstractTableRendering_5,  
-				"format"); //$NON-NLS-1$
-			
-			menu.appendToGroup("topMenu", formatMenu); //$NON-NLS-1$
-		
-			for (int i=0; i<fFormatColumnActions.length; i++)
-			{
-				formatMenu.add(fFormatColumnActions[i]);	
-		
-				// add check mark to the action to reflect current format of the view tab
-				if (fFormatColumnActions[i] instanceof FormatColumnAction)
-				{
-					if (((FormatColumnAction)fFormatColumnActions[i]).getColumnSize() == getBytesPerColumn())
-					{
-						fFormatColumnActions[i].setChecked(true);
-					}
-					else
-					{
-						fFormatColumnActions[i].setChecked(false);
-					}
-				}
-			}
-		}
+		menu.add(fFormatRenderingAction);
+
 		if (!isDynamicLoad())
 		{		
 			menu.add(new Separator());
@@ -1694,7 +1717,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 * @return the number of bytes displayed in a row
 	 */
 	public int getBytesPerLine()
-	{
+	{		
 		return fBytePerLine;
 	}
 	
@@ -2217,14 +2240,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		fResetMemoryBlockAction = new ResetToBaseAddressAction(this);
 		fPrintViewTabAction = new PrintTableRenderingAction(this);
 		
-		fFormatColumnActions = new Action[6];
-		fFormatColumnActions[0] =  new FormatColumnAction(1, getAddressableSize(), this);
-		fFormatColumnActions[1] =  new FormatColumnAction(2, getAddressableSize(), this);
-		fFormatColumnActions[2] =  new FormatColumnAction(4, getAddressableSize(), this);
-		fFormatColumnActions[3] =  new FormatColumnAction(8, getAddressableSize(), this);
-		fFormatColumnActions[4] =  new FormatColumnAction(16, getAddressableSize(), this);
-		fFormatColumnActions[5] =  new SetColumnSizeDefaultAction(this);
-		
+		fFormatRenderingAction = new FormatTableRenderingAction(this);		
 		fReformatAction = new ReformatAction(this);
 		fToggleAddressColumnAction = new ToggleAddressColumnAction();
 		
@@ -2447,6 +2463,29 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				format(getBytesPerLine(), newColumnSize);
 			}
 		});
+	}
+	
+	/**
+	 * @param newRowSize - new row size in number of bytes
+	 */
+	private void rowSizeChanged(final int newRowSize)
+	{
+		// ignore event if view tab is disabled
+		if (!isVisible())
+			return;
+		
+		int bytesPerLine = newRowSize;
+		int col = getBytesPerColumn();
+		if (bytesPerLine < getBytesPerColumn())
+			col = bytesPerLine;
+
+		final int columnSize = col;
+		final int rowSize = bytesPerLine;
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				format(rowSize, columnSize);
+			}
+		});		
 	}
 	
 	private void handleCursorMouseEvent(MouseEvent e){

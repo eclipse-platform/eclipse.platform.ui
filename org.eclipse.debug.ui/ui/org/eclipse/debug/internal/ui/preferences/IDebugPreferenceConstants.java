@@ -142,6 +142,22 @@ public interface IDebugPreferenceConstants {
 	 * @since 3.0
 	 */
 	public static final int PREF_COLUMN_SIZE_DEFAULT = 4;
+	
+	
+	/**
+	 * Row size preference for Memory View
+	 * 
+	 * @since 3.2
+	 */
+	public static final String PREF_ROW_SIZE = "org.eclipse.debug.ui.memory.rowSize"; //$NON-NLS-1$
+	
+	/**
+	 * Default row size for the Memory View
+	 * 
+	 * @since 3.2
+	 */
+	public static final int PREF_ROW_SIZE_DEFAULT = 16;
+	
 		
 	/**
 	 * Default padded string for renderings

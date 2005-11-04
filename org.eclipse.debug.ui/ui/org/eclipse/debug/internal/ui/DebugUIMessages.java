@@ -217,7 +217,23 @@ public class DebugUIMessages extends NLS {
 	public static String ResetMemoryBlockPreferencePage_1;
 	public static String ResetMemoryBlockPreferencePage_2;
 	public static String ResetMemoryBlockPreferencePage_3;
-	
+	public static String FormatTableRenderingAction_0;
+	public static String FormatTableRenderingAction_1;
+	public static String FormatTableRenderingAction_2;
+	public static String FormatTableRenderingAction_3;
+	public static String FormatTableRenderingAction_4;
+	public static String FormatTableRenderingAction_5;
+	public static String FormatTableRenderingAction_6;
+	public static String FormatTableRenderingAction_7;
+	public static String FormatTableRenderingAction_8;
+	public static String FormatTableRenderingAction_9;
+	public static String FormatTableRenderingAction_11;
+	public static String FormatTableRenderingAction_13;
+	public static String FormatTableRenderingAction_15;
+	public static String FormatTableRenderingAction_16;
+	public static String TableRenderingPreferencePage_5;
+	public static String TableRenderingPreferencePage_6;
+		
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIMessages.class);
