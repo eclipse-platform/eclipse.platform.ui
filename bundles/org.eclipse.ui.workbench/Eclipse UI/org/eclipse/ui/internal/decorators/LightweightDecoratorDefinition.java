@@ -325,15 +325,4 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#setEnabled(boolean)
-	 */
-	public void setEnabled(boolean newState) {
-		super.setEnabled(newState);
-		if (isDeclarative())
-			DeclarativeDecorator.setEnabledBy(getId(), getEnablement());
-	}
-
 }

@@ -11,15 +11,12 @@
 package org.eclipse.ui.internal.decorators;
 
 import java.net.URL;
-import java.util.Collection;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-import org.eclipse.ui.internal.ActionExpression;
-import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
 
 /**
@@ -27,8 +24,7 @@ import org.eclipse.ui.internal.util.BundleUtility;
  * specification.
  */
 public class DeclarativeDecorator implements ILightweightLabelDecorator {
-    private static LightweightDecoratorListener updateListener;
-
+ 
 	private String iconLocation;
 
     private IConfigurationElement configElement;
@@ -50,16 +46,8 @@ public class DeclarativeDecorator implements ILightweightLabelDecorator {
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
      */
     public void dispose() {
-    	getUpdateListener().disableFor(getId());
+    	//Nothing to do here
     }
-
-    /**
-     * Return the id for this decorator.
-     * @return String
-     */
-    private String getId() {
-    	return configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-	}
 
 	/**
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
@@ -89,31 +77,4 @@ public class DeclarativeDecorator implements ILightweightLabelDecorator {
         }
         decoration.addOverlay(descriptor);
     }
-	
-	/**
-	 * Return the listener for updates.
-	 * @return LightweightDecoratorListener
-	 */
-	private static LightweightDecoratorListener getUpdateListener(){
-		return updateListener;
-	}
-
-	/**
-	 * Set the update listener for the receiver.
-	 * @param updateListener
-	 */
-	public static void setUpdateListener(LightweightDecoratorListener updateListener) {
-		DeclarativeDecorator.updateListener = updateListener;
-	}
-
-	public static void setEnabledBy(String id, ActionExpression enablement) {
-		Collection natureValues = enablement.valuesForExpression("nature");//$NON-NLS-1$
-		if(natureValues != null){
-			String[] natures = new String[natureValues.size()];
-			natureValues.toArray(natures);
-			getUpdateListener().listenFor(id, natures);
-		}
-		
-		
-	}
 }
