@@ -1,6 +1,8 @@
 package org.eclipse.jface.tests.binding.scenarios.model;
 
-public class Account {
+public class Account extends ModelObject {
+
+	private String country;
 
 	public void setFirstName(String string) {
 		// TODO Auto-generated method stub
@@ -23,13 +25,13 @@ public class Account {
 	}
 
 	public void setCountry(String string) {
-		// TODO Auto-generated method stub
-		
+		Object oldValue = country;
+		country = string;
+		firePropertyChange("country", oldValue, string);
 	}
 
 	public String getCountry() {
-		// TODO Auto-generated method stub
-		return null;
+		return country;
 	}
 
 	public String getFirstName() {

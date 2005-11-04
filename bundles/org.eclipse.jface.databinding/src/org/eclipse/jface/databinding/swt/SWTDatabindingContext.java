@@ -108,13 +108,14 @@ public class SWTDatabindingContext extends DatabindingContext {
 	private int updateTime;
 
 	/**
+	 * @param parent
 	 * @param control
 	 * @param validationTime
 	 * @param updateTime
 	 */
-	public SWTDatabindingContext(Control control, int validationTime,
-			int updateTime) {
-		super();
+	public SWTDatabindingContext(DatabindingContext parent, Control control,
+			int validationTime, int updateTime) {
+		super(parent);
 		this.validationTime = validationTime;
 		this.updateTime = updateTime;
 		control.addDisposeListener(new DisposeListener() {
@@ -130,8 +131,8 @@ public class SWTDatabindingContext extends DatabindingContext {
 	 * 
 	 * @param control
 	 */
-	public SWTDatabindingContext(Control control) {
-		this(control, TIME_EARLY, TIME_LATE);
+	public SWTDatabindingContext(DatabindingContext parent, Control control) {
+		this(parent, control, TIME_EARLY, TIME_LATE);
 	}
 
 	protected void registerFactories() {
@@ -146,76 +147,76 @@ public class SWTDatabindingContext extends DatabindingContext {
 					Object attribute = ((PropertyDescription) description)
 							.getPropertyID();
 					if (object instanceof Control
-							&& attribute.equals(SWTBindingConstants.ENABLED)) {
+							&& SWTBindingConstants.ENABLED.equals(attribute)) {
 						return new ControlUpdatableValue((Control) object,
 								(String) attribute);
 					}
 					if (object instanceof Spinner
-							&& attribute.equals(SWTBindingConstants.SELECTION)
-							|| attribute.equals(SWTBindingConstants.MIN)
-							|| attribute.equals(SWTBindingConstants.MAX)) {
+							&& SWTBindingConstants.SELECTION.equals(attribute)
+							|| SWTBindingConstants.MIN.equals(attribute)
+							|| SWTBindingConstants.MAX.equals(attribute)) {
 						return new SpinnerUpdatableValue((Spinner) object,
 								(String) attribute);
 					}
 					if (object instanceof Text
-							&& attribute.equals(SWTBindingConstants.TEXT)) {
+							&& SWTBindingConstants.TEXT.equals(attribute)) {
 						return new TextUpdatableValue((Text) object,
 								SWT.Modify, SWT.Modify);
 					}
 					if (object instanceof Label
-							&& attribute.equals(SWTBindingConstants.TEXT)) {
+							&& SWTBindingConstants.TEXT.equals(attribute)) {
 						return new LabelUpdatableValue((Label) object);
 					}
 					if (object instanceof Button
-							&& attribute.equals(SWTBindingConstants.SELECTION)) {
+							&& SWTBindingConstants.SELECTION.equals(attribute)) {
 						return new ButtonUpdatableValue((Button) object,
 								SWT.Selection);
 					}
 					if (object instanceof Combo
-							&& (attribute.equals(SWTBindingConstants.TEXT) || attribute
-									.equals(SWTBindingConstants.SELECTION))) {
+							&& (SWTBindingConstants.TEXT.equals(attribute) || SWTBindingConstants.SELECTION
+									.equals(attribute))) {
 						return new ComboUpdatableValue((Combo) object,
 								(String) attribute);
 					} else if (object instanceof Combo
-							&& attribute.equals(SWTBindingConstants.ITEMS)) {
+							&& SWTBindingConstants.ITEMS.equals(attribute)) {
 						return new ComboUpdatableCollection((Combo) object,
 								(String) attribute);
 					}
 					if (object instanceof CCombo
-							&& (attribute.equals(SWTBindingConstants.TEXT) || attribute
-									.equals(SWTBindingConstants.SELECTION))) {
+							&& (SWTBindingConstants.TEXT.equals(attribute) || SWTBindingConstants.SELECTION
+									.equals(attribute))) {
 						return new CComboUpdatableValue((CCombo) object,
 								(String) attribute);
 					} else if (object instanceof CCombo
-							&& attribute.equals(SWTBindingConstants.ITEMS)) {
+							&& SWTBindingConstants.ITEMS.equals(attribute)) {
 						return new CComboUpdatableCollection((CCombo) object,
 								(String) attribute);
 					}
 					if (object instanceof List
-							&& attribute.equals(SWTBindingConstants.SELECTION)) {
+							&& SWTBindingConstants.SELECTION.equals(attribute)) {
 						// SWT.SINGLE selection only
 						return new ListUpdatableValue((List) object,
 								(String) attribute);
 					} else if (object instanceof List
-							&& attribute.equals(SWTBindingConstants.ITEMS)) {
+							&& SWTBindingConstants.ITEMS.equals(attribute)) {
 						return new ListUpdatableCollection((List) object,
 								(String) attribute);
 					}
 					if (object instanceof StructuredViewer
-							&& attribute.equals(SWTBindingConstants.SELECTION)) {
+							&& SWTBindingConstants.SELECTION.equals(attribute)) {
 						return new StructuredViewerUpdatableValue(
 								(StructuredViewer) object, (String) attribute);
 					}
 					if (object instanceof AbstractListViewer
-							&& attribute.equals(SWTBindingConstants.SELECTION))
+							&& SWTBindingConstants.SELECTION.equals(attribute))
 						return new StructuredViewerUpdatableValue(
 								(AbstractListViewer) object, (String) attribute);
 					else if (object instanceof AbstractListViewer
-							&& attribute.equals(SWTBindingConstants.CONTENT))
+							&& SWTBindingConstants.CONTENT.equals(attribute))
 						return new UpdatableCollectionViewer(
 								(AbstractListViewer) object);
 					if (object instanceof TableViewer
-							&& attribute.equals(SWTBindingConstants.CONTENT)) {
+							&& SWTBindingConstants.CONTENT.equals(attribute)) {
 						return new TableViewerUpdatableCollection(
 								(TableViewer) object);
 					}

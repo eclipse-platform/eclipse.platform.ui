@@ -1,5 +1,7 @@
 package org.eclipse.jface.tests.binding.scenarios;
 
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 import org.eclipse.jface.databinding.swt.SWTDatabindingContext;
@@ -113,6 +115,10 @@ abstract public class ScenariosTestCase extends TestCase {
 		text.notifyListeners(SWT.FocusIn, null);
 		text.setText(string);
 		text.notifyListeners(SWT.FocusOut, null);
+	}
+
+	protected void assertArrayEquals(Object[] expected, Object[] actual) {
+		assertEquals(Arrays.asList(expected), Arrays.asList(actual));
 	}
 
 }

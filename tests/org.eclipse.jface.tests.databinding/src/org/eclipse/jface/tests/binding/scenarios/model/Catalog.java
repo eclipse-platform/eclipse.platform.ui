@@ -1,47 +1,51 @@
 package org.eclipse.jface.tests.binding.scenarios.model;
 
 
-public class Catalog {
+public class Catalog extends ModelObject {
 
-	private Category[] categories;
+	private Category[] categories = new Category[0];
+
+	private Lodging[] lodgings = new Lodging[0];
+
+	private Transportation[] transportations = new Transportation[0];
+
+	private Account[] accounts = new Account[0];
 
 	public Category[] getCategories() {
 		return categories;
 	}
 
-	public void addCategory(Category winter_category) {
-		// TODO Auto-generated method stub
-
+	public void addCategory(Category category) {
+		categories = (Category[]) append(categories, category);
+		firePropertyChange("categories", null, null);
 	}
 
-	public void addLodging(Lodging five_star_hotel) {
-		// TODO Auto-generated method stub
-
+	public void addLodging(Lodging lodging) {
+		lodgings = (Lodging[]) append(lodgings, lodging);
+		firePropertyChange("lodgings", null, null);
 	}
 
-	public void addTransportation(Transportation greyhound_bus) {
-		// TODO Auto-generated method stub
-
+	public void addTransportation(Transportation transportation) {
+		transportations = (Transportation[]) append(transportations, transportation);
+		firePropertyChange("transportations", null, null);
 	}
 
-	public void addAccount(Account santa_claus) {
-		// TODO Auto-generated method stub
-
+	public void addAccount(Account account) {
+		accounts = (Account[]) append(accounts, account);
+		firePropertyChange("accounts", null, null);
 	}
 
 	public Lodging[] getLodgings() {
-		// TODO Auto-generated method stub
-		return null;
+		return lodgings;
 	}
 
 	public void removeLodging(Lodging lodging) {
-		// TODO Auto-generated method stub
-
+		lodgings = (Lodging[]) remove(lodgings, lodging);
+		firePropertyChange("lodgings", null, null);
 	}
 
 	public Account[] getAccounts() {
-		// TODO Auto-generated method stub
-		return null;
+		return accounts;
 	}
 
 }

@@ -2,6 +2,10 @@ package org.eclipse.jface.tests.binding.scenarios.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ModelObject {
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
@@ -37,6 +41,20 @@ public class ModelObject {
 		Object oldValue = id;
 		id = string;
 		firePropertyChange("id", oldValue, id);
+	}
+
+	protected Object[] append(Object[] array, Object object) {
+		List newList = new ArrayList(Arrays.asList(array));
+		newList.add(object);
+		return newList.toArray((Object[]) Array.newInstance(array.getClass()
+				.getComponentType(), newList.size()));
+	}
+
+	protected Object[] remove(Object[] array, Object object) {
+		List newList = new ArrayList(Arrays.asList(array));
+		newList.remove(object);
+		return newList.toArray((Object[]) Array.newInstance(array.getClass()
+				.getComponentType(), newList.size()));
 	}
 	
 }

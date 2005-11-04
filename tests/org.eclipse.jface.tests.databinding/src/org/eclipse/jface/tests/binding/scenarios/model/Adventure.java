@@ -68,8 +68,7 @@ public class Adventure extends ModelObject {
 	}
 
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return description;
 	}
 
 }

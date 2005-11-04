@@ -538,9 +538,9 @@ public class DatabindingContext implements IValidationContext {
 	public void bind2(Object targetObject, Object targetPropertyID,
 			Object modelObject, Object modelPropertyID, IBindSpec bindSpec)
 			throws BindingException {
-		bind2(createUpdatable2(new PropertyDescription(targetObject,
-				targetPropertyID)), createUpdatable2(new PropertyDescription(
-				modelObject, modelPropertyID)), bindSpec);
+		bind2(new PropertyDescription(targetObject,
+				targetPropertyID), new PropertyDescription(
+				modelObject, modelPropertyID), bindSpec);
 	}
 
 	/**
@@ -548,20 +548,24 @@ public class DatabindingContext implements IValidationContext {
 	 * @return IUpdatable for the given description
 	 * @throws BindingException
 	 */
-	public IUpdatable createUpdatable2(Object description)
+	public final IUpdatable createUpdatable2(Object description)
 			throws BindingException {
+		return doCreateUpdatable2(description, this);
+	}
+
+	protected IUpdatable doCreateUpdatable2(Object description, IValidationContext thisDatabindingContext) throws BindingException {
 		Map properties = new HashMap();
 		collectProperties(properties);
 		for (int i = factories2.size() - 1; i >= 0; i--) {
 			IUpdatableFactory2 factory = (IUpdatableFactory2) factories2.get(i);
 			IUpdatable result = factory.createUpdatable(properties,
-					description, this);
+					description, thisDatabindingContext);
 			if (result != null) {
 				return result;
 			}
 		}
 		if (parent != null) {
-			return parent.createUpdatable2(description);
+			return parent.doCreateUpdatable2(description, thisDatabindingContext);
 		}
 		throw new BindingException("could not find updatable for " //$NON-NLS-1$
 				+ description);

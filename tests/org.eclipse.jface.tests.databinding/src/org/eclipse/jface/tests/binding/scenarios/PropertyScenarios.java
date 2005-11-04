@@ -511,7 +511,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		enterText(text, "foobar");
 		// uncomment the following line to see what's happening
 		// spinEventLoop(1);
-		assertEquals(adventureName, adventure.getName());
+		assertEquals("foobar", adventure.getName());
 		adventure.setName("barfoo");
 		// uncomment the following line to see what's happening
 		// spinEventLoop(1);
@@ -545,7 +545,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		name = name + "Bar";
 		uv.setValue(name);
 		assertEquals(t1.getText(), adventure.getName());
-		assertTrue(counter[0] == 2);
+		assertEquals(2, counter[0]);
 
 	}
 }

@@ -45,8 +45,10 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 	private void hookListener() {
 		listener = new PropertyChangeListener() {
 			public void propertyChange(java.beans.PropertyChangeEvent event) {
-				fireChangeEvent(IChangeEvent.CHANGE, event.getOldValue(), event
-						.getNewValue());
+				if (!updating) {
+					fireChangeEvent(IChangeEvent.CHANGE, event.getOldValue(),
+							event.getNewValue());
+				}
 			}
 		};
 		Method addPropertyChangeListenerMethod = null;
@@ -101,12 +103,12 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 
 	public void dispose() {
 		super.dispose();
-		if(listener!=null){
+		if (listener != null) {
 			Method removePropertyChangeListenerMethod = null;
 			try {
-				removePropertyChangeListenerMethod = object.getClass().getMethod(
-						"removePropertyChangeListener",
-						new Class[] { PropertyChangeListener.class });
+				removePropertyChangeListenerMethod = object.getClass()
+						.getMethod("removePropertyChangeListener",
+								new Class[] { PropertyChangeListener.class });
 			} catch (SecurityException e) {
 				// best effort - ignore
 			} catch (NoSuchMethodException e) {

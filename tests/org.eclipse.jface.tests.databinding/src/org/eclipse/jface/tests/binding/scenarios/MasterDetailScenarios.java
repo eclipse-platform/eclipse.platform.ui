@@ -89,7 +89,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		getDbc().bind2(listViewer,
 				new PropertyDescription(catalog, "lodgings"), null);
 
-		assertEquals(catalog.getLodgings(), getViewerContent(listViewer));
+		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer).toArray());
 
 		IUpdatableValue selectedLodging = (IUpdatableValue) getDbc()
 				.createUpdatable2(
@@ -137,7 +137,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		getDbc().bind2(listViewer,
 				new PropertyDescription(catalog, "lodgings"), null);
 
-		assertEquals(catalog.getLodgings(), getViewerContent(listViewer));
+		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer).toArray());
 
 		final IUpdatableValue selectedLodgingUpdatable = (IUpdatableValue) getDbc()
 				.createUpdatable2(
@@ -270,8 +270,8 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		getDbc().bind2(categoryListViewer,
 				new PropertyDescription(catalog, "categories"), null);
 
-		assertEquals(catalog.getCategories(),
-				getViewerContent(categoryListViewer));
+		assertArrayEquals(catalog.getCategories(),
+				getViewerContent(categoryListViewer).toArray());
 
 		final IUpdatableValue selectedCategoryUpdatable = (IUpdatableValue) getDbc()
 				.createUpdatable2(
