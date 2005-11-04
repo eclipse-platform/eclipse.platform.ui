@@ -13,12 +13,12 @@
 package org.eclipse.jface.tests.binding.scenarios;
 
 import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.tests.binding.scenarios.model.Catalog;
+import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.examples.rcp.adventure.Catalog;
-import org.eclipse.ui.examples.rcp.binding.scenarios.SampleData;
  
 
 public class TreeScenarios extends ScenariosTestCase {

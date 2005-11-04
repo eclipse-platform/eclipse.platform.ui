@@ -1,5 +1,7 @@
 package org.eclipse.jface.tests.binding.scenarios.model;
 
+import java.util.List;
+
 public class Catalog {
 
 	private Category[] categories;
@@ -26,6 +28,21 @@ public class Catalog {
 	public void addAccount(Account santa_claus) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public Lodging[] getLodgings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void removeLodging(Lodging lodging) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public List getAccounts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

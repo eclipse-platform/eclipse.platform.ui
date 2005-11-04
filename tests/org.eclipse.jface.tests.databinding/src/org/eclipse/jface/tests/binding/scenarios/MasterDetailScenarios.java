@@ -18,6 +18,11 @@ import org.eclipse.jface.databinding.ConditionalUpdatableValue;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.swt.SWTBindingConstants;
+import org.eclipse.jface.tests.binding.scenarios.model.Adventure;
+import org.eclipse.jface.tests.binding.scenarios.model.Catalog;
+import org.eclipse.jface.tests.binding.scenarios.model.Category;
+import org.eclipse.jface.tests.binding.scenarios.model.Lodging;
+import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -30,12 +35,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.examples.rcp.adventure.Adventure;
-import org.eclipse.ui.examples.rcp.adventure.AdventureFactory;
-import org.eclipse.ui.examples.rcp.adventure.Catalog;
-import org.eclipse.ui.examples.rcp.adventure.Category;
-import org.eclipse.ui.examples.rcp.adventure.Lodging;
-import org.eclipse.ui.examples.rcp.binding.scenarios.SampleData;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -199,16 +198,16 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 						.getValue();
 				int insertionIndex = 0;
 				if (selectedLodging != null) {
-					insertionIndex = catalog.getLodgings().indexOf(
-							selectedLodging);
+					insertionIndex = Arrays.asList(catalog.getLodgings())
+							.indexOf(selectedLodging);
 					assertTrue(insertionIndex >= 0);
 				}
-				Lodging newLodging = AdventureFactory.eINSTANCE.createLodging();
+				Lodging newLodging = SampleData.FACTORY.createLodging();
 				int itemCount = listViewer.getList().getItemCount();
 				newLodging.setName("new lodging name " + itemCount);
 				newLodging.setDescription("new lodging description "
 						+ itemCount);
-				catalog.getLodgings().add(insertionIndex, newLodging);
+				catalog.addLodging(newLodging);
 				assertEquals(itemCount + 1, listViewer.getList().getItemCount());
 				listViewer.setSelection(new StructuredSelection(newLodging));
 				assertSame(newLodging, selectedLodgingUpdatable.getValue());
@@ -230,11 +229,11 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				Lodging selectedLodging = (Lodging) selectedLodgingUpdatable
 						.getValue();
 				assertNotNull(selectedLodging);
-				int deletionIndex = catalog.getLodgings().indexOf(
-						selectedLodging);
+				int deletionIndex = Arrays.asList(catalog.getLodgings())
+						.indexOf(selectedLodging);
 				assertTrue(deletionIndex >= 0);
 				int itemCount = listViewer.getList().getItemCount();
-				catalog.getLodgings().remove(deletionIndex);
+				catalog.removeLodging(selectedLodging);
 				assertEquals(itemCount - 1, listViewer.getList().getItemCount());
 				assertNull(selectedLodgingUpdatable.getValue());
 			}

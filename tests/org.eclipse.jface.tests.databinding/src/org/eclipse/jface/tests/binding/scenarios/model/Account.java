@@ -27,4 +27,29 @@ public class Account {
 		
 	}
 
+	public String getCountry() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getFirstName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getLastName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getPhone() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

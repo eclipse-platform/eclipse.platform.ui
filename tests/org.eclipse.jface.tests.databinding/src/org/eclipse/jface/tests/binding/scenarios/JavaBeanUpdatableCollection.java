@@ -55,38 +55,47 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		// See if the object implements the API for property change listener
 	}
 
-	public void setValue(Object value) {
+	public void dispose() {
+		super.dispose();
+	}
+
+	public int getSize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int addElement(Object value, int index) {
 		updating = true;
 		try {
-			Object oldValue = getValue();
-			descriptor.getWriteMethod().invoke(object, new Object[] { value });
-			fireChangeEvent(IChangeEvent.CHANGE, oldValue, getValue());
+			// TODO add element
+			fireChangeEvent(IChangeEvent.CHANGE, null, null,
+					IChangeEvent.POSITION_UNKNOWN);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			updating = false;
 		}
+		return 0;
 	}
 
-	public Object getValue() {
-		try {
-			return getGetMethod().invoke(object, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public void removeElement(int index) {
+		// TODO Auto-generated method stub
+
 	}
 
-	public void dispose() {
-		super.dispose();
+	public void setElement(int index, Object value) {
+		// TODO Auto-generated method stub
+
 	}
 
-	public String toString() {
-		return propertyName.toString() + " of " + object.toString();
+	public Object getElement(int index) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public Class getValueType() {
-		return descriptor.getPropertyType();
+	public Class getElementType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

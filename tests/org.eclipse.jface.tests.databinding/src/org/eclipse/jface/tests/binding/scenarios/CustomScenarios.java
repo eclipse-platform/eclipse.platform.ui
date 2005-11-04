@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.binding.scenarios;
 
-import org.eclipse.jface.databinding.*;
+import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.PropertyDescription;
+import org.eclipse.jface.tests.binding.scenarios.model.Adventure;
+import org.eclipse.jface.tests.binding.scenarios.model.AggregateUpdatableValue;
+import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.examples.rcp.adventure.Adventure;
-import org.eclipse.ui.examples.rcp.binding.scenarios.AggregateUpdatableValue;
-import org.eclipse.ui.examples.rcp.binding.scenarios.SampleData;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in

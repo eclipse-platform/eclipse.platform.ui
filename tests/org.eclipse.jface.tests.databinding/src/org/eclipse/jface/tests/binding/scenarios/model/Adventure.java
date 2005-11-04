@@ -67,4 +67,9 @@ public class Adventure extends ModelObject {
 		firePropertyChange("location", oldValue, location);
 	}
 
+	public String getDescription() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

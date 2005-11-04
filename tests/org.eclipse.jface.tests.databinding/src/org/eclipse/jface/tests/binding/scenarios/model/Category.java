@@ -12,5 +12,8 @@ public class Category extends ModelObject {
 		// TODO Auto-generated method stub
 		
 	}
+	public String getName() {
+		return name;
+	}
 
 }

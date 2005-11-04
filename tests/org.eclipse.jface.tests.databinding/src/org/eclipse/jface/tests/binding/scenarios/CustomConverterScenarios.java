@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.binding.scenarios;
 
-import org.eclipse.jface.databinding.*;
+import org.eclipse.jface.databinding.BindSpec;
+import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.swt.SWTBindingConstants;
+import org.eclipse.jface.tests.binding.scenarios.model.Adventure;
+import org.eclipse.jface.tests.binding.scenarios.model.PriceCentsConverter;
+import org.eclipse.jface.tests.binding.scenarios.model.PriceDollarsConverter;
+import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.ui.examples.rcp.adventure.Adventure;
-import org.eclipse.ui.examples.rcp.binding.scenarios.*;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -43,13 +47,17 @@ public class CustomConverterScenarios extends ScenariosTestCase {
 		spinner_dollars.setMaximum(10000);
 		Spinner spinner_cents = new Spinner(getComposite(), SWT.NONE);
 
-		getDbc().bind2(new PropertyDescription(spinner_dollars, SWTBindingConstants.SELECTION), 
-				       new PropertyDescription(skiTrip, "price"),
-				       new BindSpec(new PriceDollarsConverter(),null));
-		
-		getDbc().bind2(new PropertyDescription(spinner_cents, SWTBindingConstants.SELECTION), 
-				       new PropertyDescription(skiTrip, "price"),
-				       new BindSpec(new PriceCentsConverter(), null));
+		getDbc().bind2(
+				new PropertyDescription(spinner_dollars,
+						SWTBindingConstants.SELECTION),
+				new PropertyDescription(skiTrip, "price"),
+				new BindSpec(new PriceDollarsConverter(), null));
+
+		getDbc().bind2(
+				new PropertyDescription(spinner_cents,
+						SWTBindingConstants.SELECTION),
+				new PropertyDescription(skiTrip, "price"),
+				new BindSpec(new PriceCentsConverter(), null));
 		// spinEventLoop(1);
 		// Make sure that the selection on the spinner_dollars matches the
 		// dollars of the price

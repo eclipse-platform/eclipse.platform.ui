@@ -50,29 +50,31 @@ public class SampleData {
 
 	public static Cart CART;
 
+	public static AdventureFactory FACTORY;
+
 	static {
 		initializeData();
 	}
 
 	public static void initializeData() {
 
-		AdventureFactory adventureFactory = new AdventureFactory();
+		FACTORY = new AdventureFactory();
 
-		CATALOG_2005 = adventureFactory.createCatalog();
+		CATALOG_2005 = FACTORY.createCatalog();
 
 		// Categories
-		WINTER_CATEGORY = adventureFactory.createCategory();
+		WINTER_CATEGORY = FACTORY.createCategory();
 		WINTER_CATEGORY.setName("Freeze Adventures");
 		WINTER_CATEGORY.setId("100");
 		CATALOG_2005.addCategory(WINTER_CATEGORY);
 
-		SUMMER_CATEGORY = adventureFactory.createCategory();
+		SUMMER_CATEGORY = FACTORY.createCategory();
 		SUMMER_CATEGORY.setName("Hot Adventures");
 		SUMMER_CATEGORY.setId("200");
 		CATALOG_2005.addCategory(SUMMER_CATEGORY);
 
 		// Adventures
-		WINTER_HOLIDAY = adventureFactory.createAdventure();
+		WINTER_HOLIDAY = FACTORY.createAdventure();
 		WINTER_HOLIDAY.setDescription("Winter holiday in France");
 		WINTER_HOLIDAY.setName("Ski Alps");
 		WINTER_HOLIDAY.setLocation("Chamonix");
@@ -80,14 +82,14 @@ public class SampleData {
 		WINTER_HOLIDAY.setId("150");
 		WINTER_CATEGORY.addAdventure(WINTER_HOLIDAY);
 
-		ICE_FISHING = adventureFactory.createAdventure();
+		ICE_FISHING = FACTORY.createAdventure();
 		ICE_FISHING.setDescription("Ice Fishing in Helsinki");
 		ICE_FISHING.setName("Ice Fishing");
 		ICE_FISHING.setLocation("Finland");
 		ICE_FISHING.setPrice(375.55d);
 		WINTER_CATEGORY.addAdventure(ICE_FISHING);
 
-		BEACH_HOLIDAY = adventureFactory.createAdventure();
+		BEACH_HOLIDAY = FACTORY.createAdventure();
 		BEACH_HOLIDAY.setDescription("Beach holiday in Spain");
 		BEACH_HOLIDAY.setName("Playa");
 		BEACH_HOLIDAY.setLocation("Lloret de Mar");
@@ -95,7 +97,7 @@ public class SampleData {
 		BEACH_HOLIDAY.setId("250");
 		SUMMER_CATEGORY.addAdventure(BEACH_HOLIDAY);
 
-		RAFTING_HOLIDAY = adventureFactory.createAdventure();
+		RAFTING_HOLIDAY = FACTORY.createAdventure();
 		RAFTING_HOLIDAY
 				.setDescription("White water rafting on the Ottawa river");
 		RAFTING_HOLIDAY.setName("Whitewater");
@@ -105,13 +107,13 @@ public class SampleData {
 		SUMMER_CATEGORY.addAdventure(RAFTING_HOLIDAY);
 
 		// Lodgings
-		FIVE_STAR_HOTEL = adventureFactory.createLodging();
+		FIVE_STAR_HOTEL = FACTORY.createLodging();
 		FIVE_STAR_HOTEL.setDescription("Deluxe palace");
 		FIVE_STAR_HOTEL.setName("Flashy");
-		YOUTH_HOSTEL = adventureFactory.createLodging();
+		YOUTH_HOSTEL = FACTORY.createLodging();
 		YOUTH_HOSTEL.setDescription("Youth Hostel");
 		YOUTH_HOSTEL.setName("Basic");
-		CAMP_GROUND = adventureFactory.createLodging();
+		CAMP_GROUND = FACTORY.createLodging();
 		CAMP_GROUND.setDescription("Camp ground");
 		CAMP_GROUND.setName("WetAndCold");
 		CATALOG_2005.addLodging(FIVE_STAR_HOTEL);
@@ -120,27 +122,27 @@ public class SampleData {
 		WINTER_HOLIDAY.setDefaultLodging(YOUTH_HOSTEL);
 
 		// Transporation
-		GREYHOUND_BUS = adventureFactory.createTransportation();
+		GREYHOUND_BUS = FACTORY.createTransportation();
 		GREYHOUND_BUS.setArrivalTime("14:30");
 		CATALOG_2005.addTransportation(GREYHOUND_BUS);
-		EXECUTIVE_JET = adventureFactory.createTransportation();
+		EXECUTIVE_JET = FACTORY.createTransportation();
 		EXECUTIVE_JET.setArrivalTime("11:10");
 		CATALOG_2005.addTransportation(EXECUTIVE_JET);
 
 		// Accounts
-		PRESIDENT = adventureFactory.createAccount();
+		PRESIDENT = FACTORY.createAccount();
 		PRESIDENT.setFirstName("George");
 		PRESIDENT.setLastName("Bush");
 		PRESIDENT.setState("TX");
 		PRESIDENT.setPhone("1112223333");
 		PRESIDENT.setCountry("U.S.A");
-		DENTIST = adventureFactory.createAccount();
+		DENTIST = FACTORY.createAccount();
 		DENTIST.setFirstName("Tooth");
 		DENTIST.setLastName("Fairy");
 		DENTIST.setState("CA");
 		DENTIST.setPhone("4543219876");
 		DENTIST.setCountry("PainLand");
-		SANTA_CLAUS = adventureFactory.createAccount();
+		SANTA_CLAUS = FACTORY.createAccount();
 		SANTA_CLAUS.setFirstName("Chris");
 		SANTA_CLAUS.setLastName("Chringle");
 		SANTA_CLAUS.setState("WI");
@@ -150,11 +152,10 @@ public class SampleData {
 		CATALOG_2005.addAccount(DENTIST);
 		CATALOG_2005.addAccount(SANTA_CLAUS);
 
-		CART = adventureFactory.createCart();
+		CART = FACTORY.createCart();
 	}
 
-	public static SWTDatabindingContext getDatabindingContext(
-			Control aControl) {
+	public static SWTDatabindingContext getDatabindingContext(Control aControl) {
 
 		SWTDatabindingContext dbc = new SWTDatabindingContext(aControl);
 
