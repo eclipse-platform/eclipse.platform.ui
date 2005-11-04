@@ -143,4 +143,31 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * @since 3.2
 	 */
 	public void setLabel(String label);
+	
+	/**
+	 * Returns <code>true</code> if this working set is capable of updating
+	 * itself and reacting to changes in the state of its members. For
+	 * non-aggregate working sets this means that the working set has an
+	 * {@link IWorkingSetUpdater} installed while for aggregates it means that
+	 * all component sets have {@link IWorkingSetUpdater}s installed. Otherwise
+	 * returns <code>false</code>.
+	 * 
+	 * <p>
+	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
+	 * </p>
+	 * 
+	 * @return whether the set is self-updating or not
+	 * @since 3.2
+	 */
+	public boolean isSelfUpdating();
+	
+	/**
+	 * Returns whether this working set is an aggregate working set or not.
+	 * 
+	 * <p><em>Please note: This API is experiemental and may change before 3.2 ships.</em></p>
+	 * 
+	 * @return whether this working set is an aggregate working set or not
+	 * @since 3.2
+	 */
+	public boolean isAggregateWorkingSet();	
 }

@@ -233,4 +233,16 @@ public class WorkingSet extends AbstractWorkingSet {
 	public boolean isVisible() {
 		return true;
 	}
+	
+	public boolean isSelfUpdating() {
+		if (editPageId == null)
+			return false;
+		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+		WorkingSetDescriptor descriptor= registry.getWorkingSetDescriptor(editPageId);
+		return descriptor != null && descriptor.getUpdaterClassName() != null;
+	}
+	
+	public boolean isAggregateWorkingSet() {
+		return false;
+	}
 }

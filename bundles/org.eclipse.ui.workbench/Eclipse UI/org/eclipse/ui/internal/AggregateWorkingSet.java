@@ -228,4 +228,18 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 		int hashCode = getName().hashCode() & getComponents().hashCode();
 		return hashCode;
 	}
+	
+	public boolean isSelfUpdating() {
+		if (components == null || components.length == 0)
+			return false;
+		for (int i= 0; i < components.length; i++) {
+			if (!components[i].isSelfUpdating())
+				return false;
+		}
+		return true;
+	}
+	
+	public boolean isAggregateWorkingSet() {
+		return true;
+	}
 }
