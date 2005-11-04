@@ -209,7 +209,7 @@ public abstract class DialogMarkerFilter extends Dialog {
 			if (workingSet != null) {
 				button.setText(NLS.bind(
 						MarkerMessages.filtersDialog_workingSet, workingSet
-								.getName()));
+								.getLabel()));
 			} else {
 				button.setText(MarkerMessages.filtersDialog_noWorkingSet);
 			}
