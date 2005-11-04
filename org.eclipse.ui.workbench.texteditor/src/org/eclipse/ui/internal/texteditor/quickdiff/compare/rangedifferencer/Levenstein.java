@@ -32,6 +32,9 @@ public final class Levenstein {
 	/* debug output */
 	private static final boolean DEBUG= false;
 	private static final boolean MATRIX= false;
+	
+	/* asserts - enable conditional compilation by not making this a trace option */
+	private static final boolean ASSERT= false;
 
 	/* edit cost constants */
 	private static final int COST_DELETE= 1;
@@ -77,7 +80,7 @@ public final class Levenstein {
 			if (minCellValue == fromAbove || minCellValue == fromLeft)
 				return minCellValue;
 
-			Assert.isTrue(minCellValue == minDiag && fromAbove >= minDiag && fromLeft >= minDiag);
+			if (ASSERT) Assert.isTrue(minCellValue == minDiag && fromAbove >= minDiag && fromLeft >= minDiag);
 
 			int nextCharCost= rangesEqual(row, col) ? 0 : COST_CHANGE;
 			minCost= sum(minCost, nextCharCost);
@@ -127,7 +130,7 @@ public final class Levenstein {
 			} else if (minCellValue == fromAbove || minCellValue == fromLeft) {
 				return minCellValue;
 			} else {
-				Assert.isTrue(minCellValue == minDiag && fromAbove >= minDiag && fromLeft >= minDiag);
+				if (ASSERT) Assert.isTrue(minCellValue == minDiag && fromAbove >= minDiag && fromLeft >= minDiag);
 
 				int nextCharCost= rangesEqual(row, col) ? 0 : Levenstein.COST_CHANGE;
 				minCost= Levenstein.sum(minCost, nextCharCost);
@@ -396,8 +399,8 @@ public final class Levenstein {
 	 */
 	void internalEditDistance(int rStart, int rEnd, int lStart, int lEnd) {
 
-		Assert.isTrue(rStart <= rEnd + 1);
-		Assert.isTrue(lStart <= lEnd + 1);
+		if (ASSERT) Assert.isTrue(rStart <= rEnd + 1);
+		if (ASSERT) Assert.isTrue(lStart <= lEnd + 1);
 
 		// build the matrix
 		fStep= 1;
@@ -411,12 +414,12 @@ public final class Levenstein {
 
 		for (fRow= fRowStart; fRow <= fRowEnd; fRow += fStep) { // for every row
 
+			if (fProgressMonitor.isCanceled())
+				return;
+			
 			fProgressMonitor.worked(1);
 
 			for (int col= fColStart; col <= fColEnd; col += fStep) { // for every column
-
-				if (fProgressMonitor.isCanceled())
-					return;
 
 				setAt(fRow, col, fCellComputer.computeCell(fRow, col));
 			}
@@ -432,8 +435,8 @@ public final class Levenstein {
 	 */
 	void internalReverseEditDistance(int rStart, int rEnd, int lStart, int lEnd) {
 
-		Assert.isTrue(rStart <= rEnd + 1);
-		Assert.isTrue(lStart <= lEnd + 1);
+		if (ASSERT) Assert.isTrue(rStart <= rEnd + 1);
+		if (ASSERT) Assert.isTrue(lStart <= lEnd + 1);
 
 		// build the matrix
 		fStep= -1;
@@ -447,12 +450,12 @@ public final class Levenstein {
 
 		for (fRow= fRowStart; fRow >= fRowEnd; fRow += fStep) { // for every row
 
+			if (fProgressMonitor.isCanceled())
+				return;
+			
 			fProgressMonitor.worked(1);
 
 			for (int col= fColStart; col >= fColEnd; col += fStep) { // for every column
-
-				if (fProgressMonitor.isCanceled())
-					return;
 
 				setAt(fRow, col, fCellComputer.computeCell(fRow, col));
 			}
@@ -490,7 +493,7 @@ public final class Levenstein {
 	 * @param column (left domain index)
 	 * @return the matrix value for the given row and column
 	 */
-	private int getAt(int row, int column) {
+	int getAt(int row, int column) {
 
 		// shift reverse iteration towards left by one
 		if (fStep < 0)
@@ -502,11 +505,12 @@ public final class Levenstein {
 		if (row == fRow)
 			return fCurrentRow[column];
 
-		if (row == fRow - fStep && ((fStep > 0 && row >= fRowStart && row <= fRowEnd) || fStep < 0 && row <= fRowStart && row >= fRowEnd))
-			return fPreviousRow[column];
+		if (ASSERT && !(row == fRow - fStep && ((fStep > 0 && row >= fRowStart && row <= fRowEnd) || fStep < 0 && row <= fRowStart && row >= fRowEnd))) {
+			Assert.isTrue(false, "random access to matrix not allowed"); //$NON-NLS-1$
+			return SKIP; // dummy
+		}
 
-		Assert.isTrue(false, "random access to matrix not allowed"); //$NON-NLS-1$
-		return SKIP; // dummy
+		return fPreviousRow[column];
 	}
 
 	/**
@@ -528,12 +532,12 @@ public final class Levenstein {
 		} else {
 			if (row == fRow)
 				fCurrentRow[column]= value;
-			else if (row == fRow - fStep
+			else if (ASSERT && !(row == fRow - fStep
 					&& ((fStep > 0 && row >= fRowStart && row <= fRowEnd)
-					  || fStep < 0 && row <= fRowStart && row >= fRowEnd))
-				fPreviousRow[column]= value;
-			else
+					  || fStep < 0 && row <= fRowStart && row >= fRowEnd)))
 				Assert.isTrue(false, "random access to matrix not allowed"); //$NON-NLS-1$
+			else
+				fPreviousRow[column]= value;
 		}
 	}
 
@@ -541,8 +545,8 @@ public final class Levenstein {
 	 * Compares the two domain element ranges corresponding to the cell at
 	 * [r,l], that is the (zero-based) elements at r - 1 and l - 1.
 	 */
-	private boolean rangesEqual(int r, int l) {
-		fComparisons++;
+	boolean rangesEqual(int r, int l) {
+		if (DEBUG) fComparisons++;
 		return fLeft.rangesEqual(l - 1, fRight, r - 1);
 	}
 
@@ -560,7 +564,7 @@ public final class Levenstein {
 	 * Computes the best possible edit distance from cell [r,l] if getting
 	 * there has cost cCur.
 	 */
-	private int minCost(int r, int l, int cCur) {
+	int minCost(int r, int l, int cCur) {
 		// minimal cost from cell [r,l] to [rCount, lCount] if cell cost == cost
 		// Assume that the minimum of the remaining columns / rows are equal, and just
 		// the rest of the ranges has to be inserted / deleted
@@ -573,7 +577,7 @@ public final class Levenstein {
 	 * Computes the worst possible edit distance from cell [r,l] if getting
 	 * there has cost cCur.
 	 */
-	private int maxCost(int r, int l, int cCur) {
+	int maxCost(int r, int l, int cCur) {
 		// maximal cost from cell [r,l] to [rCount, lCount] if cell cost == cost
 		// maximal additional cost is the maximum remaining columns / rows
 		if (cCur == SKIP)
@@ -644,7 +648,7 @@ public final class Levenstein {
 					difference.fRightStart= row;
 					difference.fRightLength++;
 				} else {
-					Assert.isTrue(false, "illegal matrix"); //$NON-NLS-1$
+					if (ASSERT) Assert.isTrue(false, "illegal matrix"); //$NON-NLS-1$
 				}
 
 				cell= diag;
@@ -725,13 +729,13 @@ public final class Levenstein {
 		if (fProgressMonitor.isCanceled())
 			return NO_DISTANCE;
 
-		Assert.isTrue(distance != SKIP);
-		Assert.isTrue(columnSplit != SKIP);
+		if (ASSERT) Assert.isTrue(distance != SKIP);
+		if (ASSERT) Assert.isTrue(columnSplit != SKIP);
 
 		if (distance == 0) {
 			// optimize for large unchanged parts
 			// no further partitioning needed, this part is equal
-			Assert.isTrue(rEnd - rStart == lEnd - lStart);
+			if (ASSERT) Assert.isTrue(rEnd - rStart == lEnd - lStart);
 			int col= lStart; int row= rStart;
 			while (row <= rEnd) {
 				fOptimalSplitColumn[row]= col;
@@ -786,7 +790,7 @@ public final class Levenstein {
 				difference= getChange(difference, previousRow, previousColumn);
 				difference.fLeftLength += column - previousColumn - 1;
 			} else {
-				Assert.isTrue(false, "Illegal edit description"); //$NON-NLS-1$
+				if (ASSERT) Assert.isTrue(false, "Illegal edit description"); //$NON-NLS-1$
 			}
 
 			previousColumn= column;
