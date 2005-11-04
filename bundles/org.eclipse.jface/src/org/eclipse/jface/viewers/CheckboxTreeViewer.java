@@ -551,4 +551,28 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
         }
         return false;
     }
+
+    /**
+     * Sets to the given value the checked state for all elements in this viewer.
+     *
+     * @param state <code>true</code> if the element should be checked,
+     *  and <code>false</code> if it should be unchecked
+     */
+	public void setAllChecked(boolean state) {
+		setAllChecked(state,  getTree().getItems());
+		
+	}
+
+	/**
+	 * Set the checked state of items and thier children to state.
+	 * @param state
+	 * @param items
+	 */
+	private void setAllChecked(boolean state, TreeItem[] items) {
+		for (int i = 0; i < items.length; i++) {
+			items[i].setChecked(state);			
+			TreeItem[] children = items[i].getItems();
+			setAllChecked(state, children);
+		}
+	}
 }
