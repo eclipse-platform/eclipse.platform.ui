@@ -35,10 +35,17 @@ package org.eclipse.jface.databinding;
 public interface IChangeEvent {
 
 	/**
+	 * Position constant denoting a change affecting more than one element, or a
+	 * change with an unknown position.
+	 */
+	public static final int POSITION_ALL = -1;
+
+	/**
 	 * Change type constant denoting a general change. If the updatable is a
-	 * list, getPosition() returns the index of the changed element, or -1 if
-	 * more than one element was changed or position of the changed element is
-	 * not known.
+	 * list, getPosition() returns the index of the changed element, or
+	 * <code>POSITION_ALL</code> if more than one element was changed, added
+	 * or removed, or if the position of the changed, added or removed element
+	 * is not known.
 	 */
 	public static final int CHANGE = 1;
 
@@ -96,7 +103,8 @@ public interface IChangeEvent {
 	public Object getNewValue();
 
 	/**
-	 * If the updatable is a list, return the position of the changed element.
+	 * If the updatable is a list, return the position of the changed element,
+	 * or POSITION_ALL if more than one element was changed, added or removed.
 	 * The return value is unspecified if the updatable is not a list.
 	 * 
 	 * @return the position of the changed element
