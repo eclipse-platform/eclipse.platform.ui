@@ -70,9 +70,11 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final Object SUB_CATEGORY_PROVIDER = "subCategoryProvider"; //$NON-NLS-1$
 
-	private static final String MARKER_TYPE = "markerType"; //$NON-NLS-1$
+	private static final String MARKER_TYPE_REFERENCE = "markerTypeReference"; //$NON-NLS-1$
 
 	private static final String CLASS = "class";//$NON-NLS-1$
+
+	private static final Object MARKER_CATEGORY = "markerCategory";//$NON-NLS-1$
 
 	private static MarkerSupportRegistry singleton;
 
@@ -96,6 +98,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private Collection registeredFilters = new ArrayList();
 
 	private HashMap registeredProviders = new HashMap();
+
+	private HashMap categories = new HashMap();
 
 	/**
 	 * Create a new instance of the receiver and read the registry.
@@ -140,22 +144,51 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			}
 			if (element.getName().equals(SUB_CATEGORY_PROVIDER)) {
 				
-				String markerType = element.getAttribute(MARKER_TYPE);
+				String[] markerTypes = getMarkerTypes(element);
 				ISubCategoryProvider provider = getProvider(element);
 				
 				if(provider != null){
-					Collection providers;
-					if(registeredProviders.containsKey(markerType))
-						providers = (Collection) registeredProviders.get(markerType);
-					else
-						providers = new ArrayList();
-					providers.add(provider);
-					registeredProviders.put(markerType, providers);
-					tracker.registerObject(extension, provider,
-							IExtensionTracker.REF_STRONG);
+					for (int i = 0; i < markerTypes.length; i++) {
+						String markerType = markerTypes[i];
+						Collection providers;
+						if(registeredProviders.containsKey(markerType))
+							providers = (Collection) registeredProviders.get(markerType);
+						else
+							providers = new ArrayList();
+						providers.add(provider);
+						registeredProviders.put(markerType, providers);
+						tracker.registerObject(extension, provider,
+								IExtensionTracker.REF_STRONG);
+					}
+					
+				}
+			}
+			
+			if (element.getName().equals(MARKER_CATEGORY)) {
+				
+				String[] markerTypes = getMarkerTypes(element);
+				String categoryName = element.getAttribute(NAME);
+				
+				for (int i = 0; i < markerTypes.length; i++) {
+					categories.put(markerTypes[i], categoryName);
+					
 				}
 			}
 		}
+	}
+
+	/**
+	 * Get the markerTypes defined in element.
+	 * @param element
+	 * @return String[]
+	 */
+	private String[] getMarkerTypes(IConfigurationElement element) {
+		IConfigurationElement[] types = element.getChildren(MARKER_TYPE_REFERENCE);
+		String[] ids = new String[types.length];
+		for (int i = 0; i < ids.length; i++) {
+			ids[i] = types[i].getAttribute(ID);			
+		}
+		return ids;
 	}
 
 	/**
@@ -373,6 +406,32 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		return providerArray;
 	}
 
+	/**
+	 * Get the category associated with marker. Return
+	 * <code>null</code> if there are none.
+	 * @param marker
+	 * @return String or <code>null</code> 
+	 */
+	public String getCategory(IMarker marker) {
+		try {
+			return getCategory(marker.getType());
+		} catch (CoreException e) {
+			Util.log(e);
+		}
+		return null;
+	}
 
+
+	/**
+	 * Get the category associated with markerTyoe. Return
+	 * <code>null</code> if there are none.
+	 * @param markerType
+	 * @return String or <code>null</code> 
+	 */
+	public String getCategory(String markerType) {
+		if(categories.containsKey(markerType))
+			return (String) categories.get(markerType);		
+		return null;
+	}
 
 }

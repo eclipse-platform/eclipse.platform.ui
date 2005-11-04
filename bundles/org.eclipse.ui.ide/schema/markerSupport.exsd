@@ -15,6 +15,7 @@
          <sequence>
             <element ref="problemFilter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="subCategoryProvider" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerCategory" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -150,13 +151,9 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="markerType" type="string">
-            <annotation>
-               <documentation>
-                  The markerType is the id of the marker that this provider will provide categories for.
-               </documentation>
-            </annotation>
-         </attribute>
+         <sequence>
+            <element ref="markerTypeReference"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -165,6 +162,41 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.views.markers.ICategoryProvider"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="markerCategory">
+      <complexType>
+         <sequence>
+            <element ref="markerTypeReference"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The label is the human readable name that will be presented to the user.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="markerTypeReference">
+      <annotation>
+         <documentation>
+            The markerTypeReference is a reference to a markerType defined using the extension point in org.eclipse.core.resources.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the markerType
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

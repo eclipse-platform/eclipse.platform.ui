@@ -126,6 +126,8 @@ public abstract class MarkerView extends TableView {
 	private static final String OLD_FILTER_SECTION = "filter"; //$NON-NLS-1$
 
 	private class UpdateJob extends WorkbenchJob {
+		
+		boolean buildDone = true; 
 
 		private Collection pendingMarkerUpdates = Collections
 				.synchronizedSet(new HashSet());
@@ -180,7 +182,12 @@ public abstract class MarkerView extends TableView {
 			return Status.OK_STATUS;
 		}
 
-		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
+		 */
+		public boolean shouldRun() {
+			return buildDone;
+		}	
 	}
 
 	private UpdateJob updateJob = new UpdateJob();
@@ -193,14 +200,28 @@ public abstract class MarkerView extends TableView {
 
 	private Clipboard clipboard;
 
-	IResourceChangeListener resourceListener = new IResourceChangeListener() {
+	IResourceChangeListener markerUpdateListener = new IResourceChangeListener() {
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+		 */
 		public void resourceChanged(IResourceChangeEvent event) {
 
 			String[] markerTypes = getMarkerTypes();
 			Collection changedMarkers = new ArrayList();
 			Collection addedMarkers = new ArrayList();
 			Collection removedMarkers = new ArrayList();
-
+			
+			if(event.getType() == IResourceChangeEvent.PRE_BUILD){
+				updateJob.buildDone = false;
+				return;
+			}
+			
+			if(event.getType() == IResourceChangeEvent.POST_BUILD){
+				updateJob.buildDone = true;
+				updateJob.schedule();
+				return;
+			}
+	
 			for (int idx = 0; idx < markerTypes.length; idx++) {
 				IMarkerDelta[] markerDeltas = event.findMarkerDeltas(
 						markerTypes[idx], true);
@@ -512,8 +533,8 @@ public abstract class MarkerView extends TableView {
 		focusSelectionChanged(getSite().getPage().getActivePart(), getSite()
 				.getPage().getSelection());
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				resourceListener);
-		getViewer().refresh();
+				markerUpdateListener,IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_BUILD | IResourceChangeEvent.POST_BUILD);
+		
 
 		// Set help on the view itself
 		getViewer().getControl().addHelpListener(new HelpListener() {
@@ -580,7 +601,7 @@ public abstract class MarkerView extends TableView {
 		super.dispose();
 
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(
-				resourceListener);
+				markerUpdateListener);
 		getSite().getPage().removeSelectionListener(focusListener);
 
 		// dispose of selection provider actions (may not have been created yet

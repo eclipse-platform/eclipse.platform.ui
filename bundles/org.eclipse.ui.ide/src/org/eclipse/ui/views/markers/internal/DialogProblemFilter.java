@@ -574,7 +574,7 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 	 */
 	private String getProblemTypesString(ProblemFilter filter) {
 		List types = filter.getSelectedTypes();
-		if (types.size() == getAllMarkerTypes(filter).length)
+		if (types.size() == getRootEntries(filter).length)
 			return MarkerMessages.ProblemFilterDialog_All_Problems;
 		StringBuffer typesBuffer = new StringBuffer();
 		Iterator typesIterator = types.iterator();
