@@ -106,6 +106,12 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
     private boolean scrollExpandEnabled = true;
 
     /**
+     * A flag that allows adapter users to turn selection feedback
+     *  on or off. Default is <code>true</code>.
+     */
+    private boolean selectFeedbackEnabled = true;
+
+    /**
      * Creates a new drop adapter for the given viewer.
      *
      * @param viewer the viewer
@@ -381,22 +387,40 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
                 break;
             }
         }
-        if (scrollExpandEnabled)
-            event.feedback |= DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
+        
+         // Explicitly inhibit SELECT feedback if desired
+		if (!selectFeedbackEnabled)
+			event.feedback &= ~DND.FEEDBACK_SELECT;
+
+		if (scrollExpandEnabled)
+			event.feedback |= DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
     }
 
     /**
-     * Sets whether visible insertion feedback should be presented to the user.
-     * <p>
-     * Typical insertion feedback is the horizontal insertion bars that appear 
-     * between adjacent items while dragging.
-     * </p>
-     *
-     * @param value <code>true</code> if visual feedback is desired, and
-     *   <code>false</code> if not
-     */
+	 * Sets whether visible insertion feedback should be presented to the user.
+	 * <p>
+	 * Typical insertion feedback is the horizontal insertion bars that appear
+	 * between adjacent items while dragging.
+	 * </p>
+	 * 
+	 * @param value
+	 *            <code>true</code> if visual feedback is desired, and
+	 *            <code>false</code> if not
+	 */
     public void setFeedbackEnabled(boolean value) {
         feedbackEnabled = value;
+    }
+
+    /**
+     * Sets whether selection feedback should be provided during dragging.
+     *
+     * @param value <code>true</code> if selection feedback is desired, and
+     *   <code>false</code> if not
+     *   
+     * @since 3.2
+     */
+    public void setSelectionFeedbackEnabled(boolean value) {
+        selectFeedbackEnabled = value;
     }
 
     /**
