@@ -292,6 +292,7 @@ public abstract class TableView extends ViewPart {
 			TreeColumn tc = new TreeColumn(tree, SWT.NONE, i);
 			tc.setText(fields[i].getColumnHeaderText());
 			tc.setImage(fields[i].getColumnHeaderImage());
+			tc.setResizable(columnWidths[i].resizable);
 			tc.addSelectionListener(headerListener);
 		}
 	}

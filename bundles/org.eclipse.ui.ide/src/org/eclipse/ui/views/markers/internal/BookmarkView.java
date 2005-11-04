@@ -37,6 +37,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class BookmarkView extends MarkerView {
 
 	private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
+			new ColumnPixelData(0,false,false),
 			new ColumnPixelData(200), new ColumnPixelData(75),
 			new ColumnPixelData(150), new ColumnPixelData(60) };
 
@@ -44,15 +45,15 @@ public class BookmarkView extends MarkerView {
 
 	private final static String[] ROOT_TYPES = { IMarker.BOOKMARK };
 
-	private final static String[] TABLE_COLUMN_PROPERTIES = { IMarker.MESSAGE,
-			"", //$NON-NLS-1$
-			"", //$NON-NLS-1$
-			"" //$NON-NLS-1$
+	private final static String[] TABLE_COLUMN_PROPERTIES = {Util.EMPTY_STRING, IMarker.MESSAGE,
+		Util.EMPTY_STRING,
+		Util.EMPTY_STRING,
+		Util.EMPTY_STRING
 	};
 
 	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.bookmark"; //$NON-NLS-1$
 
-	private final IField[] VISIBLE_FIELDS = { new FieldMessage(),
+	private final IField[] VISIBLE_FIELDS = {new FieldHierarchy(), new FieldMessage(),
 			new FieldResource(), new FieldFolder(), new FieldLineNumber() };
 
 	private ICellModifier cellModifier = new ICellModifier() {
@@ -60,8 +61,7 @@ public class BookmarkView extends MarkerView {
 			if (element instanceof ConcreteMarker
 					&& IMarker.MESSAGE.equals(property))
 				return ((ConcreteMarker) element).getDescription();
-			else
-				return null;
+			return null;
 		}
 
 		public boolean canModify(Object element, String property) {
@@ -94,16 +94,18 @@ public class BookmarkView extends MarkerView {
 
 	private CellEditorActionHandler cellEditorActionHandler;
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 
-		// TODO: Check for possible reliance on IMarker
 		TreeViewer treeViewer = getViewer();
 		CellEditor cellEditors[] = new CellEditor[treeViewer.getTree()
 				.getColumnCount()];
 		CellEditor descriptionCellEditor = new TextCellEditor(treeViewer
 				.getTree());
-		cellEditors[0] = descriptionCellEditor;
+		cellEditors[1] = descriptionCellEditor;
 		treeViewer.setCellEditors(cellEditors);
 		treeViewer.setCellModifier(cellModifier);
 		treeViewer.setColumnProperties(TABLE_COLUMN_PROPERTIES);

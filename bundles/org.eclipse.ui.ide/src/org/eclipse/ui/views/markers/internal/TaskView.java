@@ -30,8 +30,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.part.CellEditorActionHandler;
@@ -45,6 +43,7 @@ public class TaskView extends MarkerView {
 	private static final String COMPLETION = "completion"; //$NON-NLS-1$
 
 	private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
+			new ColumnPixelData(0, false, false),//hidden tree
 			new ColumnPixelData(16, false, true),
 			new ColumnPixelData(16, false, true), new ColumnPixelData(200),
 			new ColumnPixelData(75), new ColumnPixelData(150),
@@ -54,15 +53,15 @@ public class TaskView extends MarkerView {
 
 	private final static String[] ROOT_TYPES = { IMarker.TASK };
 
-	private final static String[] TABLE_COLUMN_PROPERTIES = { COMPLETION,
-			IMarker.PRIORITY, IMarker.MESSAGE, "", //$NON-NLS-1$
-			"", //$NON-NLS-1$
-			"" //$NON-NLS-1$
+	private final static String[] TABLE_COLUMN_PROPERTIES = {Util.EMPTY_STRING, COMPLETION,
+			IMarker.PRIORITY, IMarker.MESSAGE, Util.EMPTY_STRING,
+			Util.EMPTY_STRING,
+			Util.EMPTY_STRING
 	};
 
 	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.task"; //$NON-NLS-1$
 
-	private final IField[] VISIBLE_FIELDS = { new FieldDone(),
+	private final IField[] VISIBLE_FIELDS = {new FieldHierarchy(), new FieldDone(),
 			new FieldPriority(), new FieldMessage(), new FieldResource(),
 			new FieldFolder(), new FieldLineNumber() };
 
@@ -138,16 +137,16 @@ public class TaskView extends MarkerView {
 		TreeViewer treeViewer = getViewer();
 		CellEditor cellEditors[] = new CellEditor[treeViewer.getTree()
 				.getColumnCount()];
-		cellEditors[0] = new CheckboxCellEditor(treeViewer.getTree());
+		cellEditors[1] = new CheckboxCellEditor(treeViewer.getTree());
 
 		String[] priorities = new String[] { MarkerMessages.priority_high,
 				MarkerMessages.priority_normal, MarkerMessages.priority_low };
 
-		cellEditors[1] = new ComboBoxCellEditor(treeViewer.getTree(),
+		cellEditors[2] = new ComboBoxCellEditor(treeViewer.getTree(),
 				priorities, SWT.READ_ONLY);
 		CellEditor descriptionCellEditor = new TextCellEditor(treeViewer
 				.getTree());
-		cellEditors[2] = descriptionCellEditor;
+		cellEditors[3] = descriptionCellEditor;
 		treeViewer.setCellEditors(cellEditors);
 		treeViewer.setCellModifier(cellModifier);
 		treeViewer.setColumnProperties(TABLE_COLUMN_PROPERTIES);
@@ -195,23 +194,6 @@ public class TaskView extends MarkerView {
 		deleteCompletedAction = new ActionDeleteCompleted(this, getViewer());
 		markCompletedAction = new ActionMarkCompleted(getViewer());
 		propertiesAction = new ActionTaskProperties(this, getViewer());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.TableView#createColumns(org.eclipse.swt.widgets.Tree)
-	 */
-	protected void createColumns(Tree tree) {
-		super.createColumns(tree);
-		TreeColumn[] columns = tree.getColumns();
-
-		if (columns != null && columns.length >= 1) {
-			columns[0].setResizable(false);
-
-			if (columns.length >= 2)
-				columns[1].setResizable(false);
-		}
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
