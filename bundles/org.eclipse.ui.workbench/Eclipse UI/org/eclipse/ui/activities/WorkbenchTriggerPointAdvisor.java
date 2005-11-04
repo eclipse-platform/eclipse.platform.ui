@@ -21,6 +21,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.activities.ws.EnablementDialog;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * 
@@ -78,7 +79,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	 * @see org.eclipse.ui.activities.ITriggerPointAdvisor#allow(org.eclipse.ui.activities.ITriggerPoint, org.eclipse.ui.activities.IIdentifier)
 	 */
 	public Set allow(ITriggerPoint triggerPoint, IIdentifier identifier) {
-        if (!PlatformUI.getWorkbench().getPreferenceStore().getBoolean(
+        if (!PrefUtil.getInternalPreferenceStore().getBoolean(
                 IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT)) {
             return identifier.getActivityIds();
         }		
@@ -93,11 +94,11 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
         if (dialog.open() == Window.OK) {
             Set activities = dialog.getActivitiesToEnable();
             if (dialog.getDontAsk()) {
-                PlatformUI.getWorkbench().getPreferenceStore().setValue(
-                        IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
-                        false);
-                WorkbenchPlugin.getDefault().savePluginPreferences();
-            }
+				PrefUtil.getInternalPreferenceStore().setValue(
+						IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
+						false);
+				WorkbenchPlugin.getDefault().savePluginPreferences();
+			}
 
             return activities;
         }

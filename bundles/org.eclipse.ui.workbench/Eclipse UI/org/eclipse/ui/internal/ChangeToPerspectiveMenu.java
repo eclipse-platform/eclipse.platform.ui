@@ -17,9 +17,9 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.PerspectiveMenu;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Change the perspective of the active page in the window
@@ -68,7 +68,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
      * @see PerspectiveMenu#run(IPerspectiveDescriptor)
      */
     protected void run(IPerspectiveDescriptor desc) {
-        IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
         IWorkbenchPage page = getWindow().getActivePage();
         IPerspectiveDescriptor persp = null;

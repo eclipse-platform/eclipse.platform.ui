@@ -47,6 +47,7 @@ import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**	
  * Page used to determine what order projects will be built in 
@@ -485,7 +486,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
      */
     public void init(IWorkbench workbench) {
         this.workbench = workbench;
-        setPreferenceStore(workbench.getPreferenceStore());
+        setPreferenceStore(PrefUtil.getInternalPreferenceStore());
     }
 
     /**

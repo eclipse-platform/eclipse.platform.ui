@@ -1023,7 +1023,7 @@ public final class Workbench implements IWorkbench {
 		advisor.internalBasicInitialize(getWorkbenchConfigurer());
 
 		// configure use of color icons in toolbars
-		boolean useColorIcons = getPreferenceStore().getBoolean(
+		boolean useColorIcons = PrefUtil.getInternalPreferenceStore().getBoolean(
 				IPreferenceConstants.COLOR_ICONS);
 		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
 
@@ -1076,7 +1076,7 @@ public final class Workbench implements IWorkbench {
 				.getThemeRegistry().getColors();
 		ThemeElementHelper.populateRegistry(getThemeManager().getTheme(
 				IThemeManager.DEFAULT_THEME), colorDefinitions,
-				getPreferenceStore());
+				PrefUtil.getInternalPreferenceStore());
 	}
 
 	private void initializeSingleClickOption() {
@@ -1107,7 +1107,7 @@ public final class Workbench implements IWorkbench {
 				.getThemeRegistry().getFonts();
 		ThemeElementHelper.populateRegistry(getThemeManager().getTheme(
 				IThemeManager.DEFAULT_THEME), fontDefinitions,
-				getPreferenceStore());
+				PrefUtil.getInternalPreferenceStore());
 	}
 
 	/*
@@ -2388,8 +2388,10 @@ public final class Workbench implements IWorkbench {
 					PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
 			if (deltas.length == 0)
 				return;
-			final String disabledPlugins = getPreferenceStore().getString(
-					IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
+			final String disabledPlugins = PrefUtil
+					.getInternalPreferenceStore()
+					.getString(
+							IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 			Runnable runnable = new Runnable() {
 				public void run() {
 					for (int i = 0; i < deltas.length; i++) {

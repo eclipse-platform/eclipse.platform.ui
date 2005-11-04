@@ -36,6 +36,7 @@ import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -161,8 +162,8 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         FontDefinition[] fontDefs = (FontDefinition[]) fonts
                 .toArray(new FontDefinition[fonts.size()]);
         ThemeElementHelper.populateRegistry(workbench.getThemeManager()
-                .getTheme(IThemeManager.DEFAULT_THEME), fontDefs, workbench
-                .getPreferenceStore());
+				.getTheme(IThemeManager.DEFAULT_THEME), fontDefs, PrefUtil
+				.getInternalPreferenceStore());
     }
 
     //TODO: confirm
@@ -181,14 +182,14 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
         ITheme theme = workbench.getThemeManager().getTheme(
                 IThemeManager.DEFAULT_THEME);
-        ThemeElementHelper.populateRegistry(theme, colorDefs, workbench
-                .getPreferenceStore());
+        ThemeElementHelper.populateRegistry(theme, colorDefs, PrefUtil
+				.getInternalPreferenceStore());
 
         Collection fonts = reader.getFontDefinitions();
         FontDefinition[] fontDefs = (FontDefinition[]) fonts
                 .toArray(new FontDefinition[fonts.size()]);
-        ThemeElementHelper.populateRegistry(theme, fontDefs, workbench
-                .getPreferenceStore());
+        ThemeElementHelper.populateRegistry(theme, fontDefs, PrefUtil
+				.getInternalPreferenceStore());
 
         Map data = reader.getData();
         registry.addData(data);

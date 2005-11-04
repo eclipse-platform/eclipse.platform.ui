@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Filter used to determine whether resources are to be shown or not.
@@ -79,8 +79,7 @@ public class ResourcePatternFilter extends ViewerFilter {
 
         if (storedPatterns.length() == 0) {
             // try to migrate patterns from old workbench preference store location
-            IPreferenceStore workbenchPrefs = PlatformUI.getWorkbench()
-                    .getPreferenceStore();
+            IPreferenceStore workbenchPrefs = PrefUtil.getInternalPreferenceStore();
             storedPatterns = workbenchPrefs.getString(FILTERS_TAG);
             if (storedPatterns.length() > 0) {
                 viewsPrefs.setValue(FILTERS_TAG, storedPatterns);

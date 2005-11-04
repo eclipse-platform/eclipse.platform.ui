@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * This is a test preference page designed to
@@ -102,7 +102,7 @@ public class BrokenUpdatePreferencePage extends PreferencePage implements
 
         JFaceResources.getFontRegistry().addListener(badListener);
 
-        PlatformUI.getWorkbench().getPreferenceStore()
+        PrefUtil.getInternalPreferenceStore()
                 .addPropertyChangeListener(badListener);
 
     }
@@ -114,7 +114,7 @@ public class BrokenUpdatePreferencePage extends PreferencePage implements
         super.dispose();
         JFaceResources.getFontRegistry().removeListener(badListener);
 
-        PlatformUI.getWorkbench().getPreferenceStore()
+        PrefUtil.getInternalPreferenceStore()
                 .removePropertyChangeListener(badListener);
     }
 
@@ -123,7 +123,7 @@ public class BrokenUpdatePreferencePage extends PreferencePage implements
     }
 
     public void changePluginPreference() {
-        PlatformUI.getWorkbench().getPreferenceStore().firePropertyChangeEvent(
+        PrefUtil.getInternalPreferenceStore().firePropertyChangeEvent(
                 "FAKO", "Old", "New");
     }
 

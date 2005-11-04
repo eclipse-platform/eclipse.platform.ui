@@ -1235,7 +1235,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      */
     public void init(IWorkbench aWorkbench) {
         this.workbench = (Workbench) aWorkbench;
-        setPreferenceStore(workbench.getPreferenceStore());
+        setPreferenceStore(PrefUtil.getInternalPreferenceStore());
 
         final IThemeManager themeManager = aWorkbench.getThemeManager();
 

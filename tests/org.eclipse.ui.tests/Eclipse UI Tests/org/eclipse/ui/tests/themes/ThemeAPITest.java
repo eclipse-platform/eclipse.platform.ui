@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -111,56 +112,56 @@ public class ThemeAPITest extends ThemeTest {
     }
 
     public void testColorPreferenceListener_def_swtcolor() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
 
         testOverrideColorPreference(defaultTheme, store, "swtcolor");
     }
 
     public void testColorPreferenceListener_def_rgbcolor() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
 
         testOverrideColorPreference(defaultTheme, store, "rgbcolor");
     }
 
     public void testColorPreferenceListener_def_defaultedcolor() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
 
         testOverrideColorPreference(defaultTheme, store, "defaultedcolor");
     }
 
     public void testColorPreferenceListener_def_nooverridecolor() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
 
         testOverrideColorPreference(defaultTheme, store, "nooverridecolor");
     }
 
     public void testColorPreferenceListener_th1_swtcolor() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme theme1 = getTheme1();
 
         testOverrideColorPreference(theme1, store, "swtcolor");
     }
 
     public void testColorPreferenceListener_th1_rgbcolor() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme theme1 = getTheme1();
 
         testOverrideColorPreference(theme1, store, "rgbcolor");
     }
 
     public void testColorPreferenceListener_th1_defaultedcolor() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme theme1 = getTheme1();
 
         testOverrideColorPreference(theme1, store, "defaultedcolor");
     }
 
     public void testColorPreferenceListener_th1_nooverridecolor() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme theme1 = getTheme1();
 
         testOverrideColorPreference(theme1, store, "nooverridecolor");
@@ -318,55 +319,55 @@ public class ThemeAPITest extends ThemeTest {
     }
 
     public void testFontPreferenceListener_def_novalfont() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
         testOverrideFontPreference(defaultTheme, store, "novalfont");
     }
 
     public void testFontPreferenceListener_def_valfont() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
 
         testOverrideFontPreference(defaultTheme, store, "valfont");
     }
 
     public void testFontPreferenceListener_def_defaultedfont() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
 
         testOverrideFontPreference(defaultTheme, store, "defaultedfont");
     }
 
     public void testFontPreferenceListener_def_nooverridefont() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
 
         testOverrideFontPreference(defaultTheme, store, "nooverridefont");
     }
 
     public void testFontPreferenceListener_th1_valfont() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme theme1 = getTheme1();
 
         testOverrideFontPreference(theme1, store, "valfont");
     }
 
     public void testFontPreferenceListener_th1_novalfont() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme theme1 = getTheme1();
 
         testOverrideFontPreference(theme1, store, "novalfont");
     }
 
     public void testFontPreferenceListener_th1_defaultedfont() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme theme1 = getTheme1();
 
         testOverrideFontPreference(theme1, store, "defaultedfont");
     }
 
     public void testFontPreferenceListener_th1_nooverridefont() {
-        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
         ITheme theme1 = getTheme1();
 
         testOverrideFontPreference(theme1, store, "nooverridefont");

@@ -97,6 +97,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -1053,7 +1054,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	protected IPreferenceStore doGetPreferenceStore() {
-		return PlatformUI.getWorkbench().getPreferenceStore();
+		return PrefUtil.getInternalPreferenceStore();
 	}
 
 	/**

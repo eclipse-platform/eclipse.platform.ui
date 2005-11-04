@@ -28,6 +28,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -76,7 +77,7 @@ public class Theme implements ITheme {
                 themeColorRegistry = new CascadingColorRegistry(theme
                         .getColorRegistry());
                 ThemeElementHelper.populateRegistry(this, definitions,
-                        workbench.getPreferenceStore());
+                		PrefUtil.getInternalPreferenceStore());
             }
 
             FontDefinition[] fontDefinitions = this.descriptor.getFonts();
@@ -84,7 +85,7 @@ public class Theme implements ITheme {
                 themeFontRegistry = new CascadingFontRegistry(theme
                         .getFontRegistry());
                 ThemeElementHelper.populateRegistry(this, fontDefinitions,
-                        workbench.getPreferenceStore());
+                		PrefUtil.getInternalPreferenceStore());
             }
 
             dataMap = new CascadingMap(((ThemeRegistry) WorkbenchPlugin
@@ -94,7 +95,7 @@ public class Theme implements ITheme {
 
         getColorRegistry().addListener(getCascadeListener());
         getFontRegistry().addListener(getCascadeListener());
-        workbench.getPreferenceStore().addPropertyChangeListener(
+        PrefUtil.getInternalPreferenceStore().addPropertyChangeListener(
                 getPropertyListener());
     }
 
@@ -259,7 +260,7 @@ public class Theme implements ITheme {
             themeFontRegistry.removeListener(themeListener);
             themeFontRegistry.dispose();
         }
-        PlatformUI.getWorkbench().getPreferenceStore()
+        PrefUtil.getInternalPreferenceStore()
                 .removePropertyChangeListener(getPropertyListener());
     }
 

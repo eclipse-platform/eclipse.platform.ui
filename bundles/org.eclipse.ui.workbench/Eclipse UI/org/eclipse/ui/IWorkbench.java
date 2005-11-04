@@ -158,9 +158,13 @@ public interface IWorkbench extends IAdaptable {
 	 * 
 	 * @return the workbench preference store
 	 * @since 2.0
-     * @deprecated this returns the internal preference store 
-     * for the workbench, which clients should not use.  
-     * Use {@link PlatformUI#getPreferenceStore()} instead.
+	 * @deprecated this returns the internal preference store for the workbench,
+	 *             which clients should not use. Use
+	 *             {@link PlatformUI#getPreferenceStore()} instead. Note that
+	 *             these preference stores are not the same. If you were
+	 *             previously storing preferences in the store returned by this
+	 *             method you should move them to your own plugin preference
+	 *             store.
 	 */
 	public IPreferenceStore getPreferenceStore();
 
