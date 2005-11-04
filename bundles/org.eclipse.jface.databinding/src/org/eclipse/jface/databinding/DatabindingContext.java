@@ -267,9 +267,16 @@ public class DatabindingContext implements IValidationContext {
 				if (fromType == toType) {
 					return new IdentityConverter(fromType, toType);
 				}
-				return (IConverter) converters.get(new Pair(fromType,
+				IConverter result = (IConverter) converters.get(new Pair(fromType,
 						toType));
-			}});
+				if(result!=null) {
+					return result;
+				}
+				if(toType.isAssignableFrom(fromType) || fromType.isAssignableFrom(toType)) {
+					return new IdentityConverter(fromType, toType);
+				}
+				return null;
+ 			}});
 	}
 
 	protected void registerFactories() {
