@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     QNX Software Systems - Mikhail Khodjaiants - Bug 114664
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -92,8 +93,6 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_OBJS_PERSPECTIVE_TAB = "IMG_OBJS_PERSPECTIVE_TAB"; //$NON-NLS-1$
     public static final String IMG_OBJS_ARRAY_PARTITION = "IMG_OBJS_ARRAY_PARTITION"; //$NON-NLS-1$
     public static final String IMG_SRC_LOOKUP_TAB = "IMG_SRC_LOOKUP_TAB"; //$NON-NLS-1$
-    public static final String IMG_ADD_SRC_LOC_WIZ = "IMG_ADD_SRC_LOCATION"; //$NON-NLS-1$
-    public static final String IMG_EDIT_SRC_LOC_WIZ = "IMG_EDIT_SRC_LOCATION"; //$NON-NLS-1$
     public static final String IMG_OBJECT_MEMORY_CHANGED="IMG_OBJECT_MEMORY_CHANGED";  //$NON-NLS-1$
     public static final String IMG_OBJECT_MEMORY="IMG_OBJECT_MEMORY";  //$NON-NLS-1$
     public static final String IMG_OBJS_BREAKPOINT_TYPE="IMG_OBJ_BREAKPOINT_TYPE"; //$NON-NLS-1$
@@ -101,6 +100,10 @@ public interface IInternalDebugUIConstants {
     // wizard images
     public static final String IMG_WIZBAN_IMPORT_BREAKPOINTS = "IMG_WIZBAN_IMPORT_BREAKPOINTS"; //$NON-NLS-1$
     public static final String IMG_WIZBAN_EXPORT_BREAKPOINTS = "IMG_WIZBAN_EXPORT_BREAKPOINTS"; //$NON-NLS-1$
+    public static final String IMG_ADD_SRC_LOC_WIZ = "IMG_ADD_SRC_LOCATION"; //$NON-NLS-1$
+    public static final String IMG_EDIT_SRC_LOC_WIZ = "IMG_EDIT_SRC_LOCATION"; //$NON-NLS-1$
+    public static final String IMG_ADD_SRC_DIR_WIZ = "IMG_ADD_SRC_DIRECTORY"; //$NON-NLS-1$
+    public static final String IMG_EDIT_SRC_DIR_WIZ = "IMG_EDIT_SRC_DIRECTORY"; //$NON-NLS-1$
     
     // internal preferenes
     /**

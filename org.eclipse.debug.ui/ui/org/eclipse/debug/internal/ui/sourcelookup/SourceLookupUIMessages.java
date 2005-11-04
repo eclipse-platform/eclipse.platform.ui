@@ -6,6 +6,7 @@
  * 
  * Contributors: 
  * IBM - Initial API and implementation
+ * QNX Software Systems - Mikhail Khodjaiants - Bug 114664
  **********************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
@@ -59,4 +60,18 @@ public class SourceLookupUIMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SourceLookupUIMessages.class);
 	}
+
+	public static String DirectorySourceContainerDialog_2;
+
+	public static String DirectorySourceContainerDialog_3;
+
+	public static String DirectorySourceContainerDialog_4;
+
+	public static String DirectorySourceContainerDialog_5;
+
+	public static String DirectorySourceContainerDialog_6;
+
+	public static String DirectorySourceContainerDialog_7;
+
+	public static String DirectorySourceContainerDialog_8;
 }

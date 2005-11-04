@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
+ *     QNX Software Systems - Mikhail Khodjaiants - Bug 114664
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -195,6 +196,8 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_SRC_LOOKUP_TAB, ELCL + "edtsrclkup_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ADD_SRC_LOC_WIZ, WIZBAN + "addsrcloc_wiz.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_EDIT_SRC_LOC_WIZ, WIZBAN + "edtsrclkup_wiz.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ADD_SRC_DIR_WIZ, WIZBAN + "adddir_wiz.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_EDIT_SRC_DIR_WIZ, WIZBAN + "editdir_wiz.gif"); //$NON-NLS-1$
 		
 		// launch configuration types
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES);
