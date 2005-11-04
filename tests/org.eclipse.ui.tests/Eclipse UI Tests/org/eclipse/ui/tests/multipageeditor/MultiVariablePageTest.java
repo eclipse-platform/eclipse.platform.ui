@@ -97,6 +97,13 @@ public class MultiVariablePageTest extends UITestCase {
 		assertFalse(c.isDisposed());
 		editor.removeLastPage();
 		assertTrue(c.isDisposed());
+		
+		c = editor.getTestControl(1);
+		assertFalse(c.isDisposed());
+		editor.removeLastPage();
+		assertTrue(c.isDisposed());
+		editor.setPage(0);
+		editor.getSite().getPage().activate(editor);
 	}
 	
 	/**

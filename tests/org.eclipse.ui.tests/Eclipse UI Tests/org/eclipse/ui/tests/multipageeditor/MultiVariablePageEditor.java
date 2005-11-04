@@ -123,7 +123,9 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 	 *
 	 */
 	public void removeLastPage() {
-		removePage(2);
+		if (getPageCount()>0) {
+			removePage(getPageCount()-1);
+		}
 		lastPage = null;
 	}
 	
@@ -133,5 +135,15 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 	 */
 	public Control getLastPage() {
 		return lastPage;
+	}
+	
+	/**
+	 * Return the control for testing (like the editor control).
+	 * 
+	 * @param index the page index to get
+	 * @return the control for that page
+	 */
+	public Control getTestControl(int index) {
+		return getControl(index);
 	}
 }
