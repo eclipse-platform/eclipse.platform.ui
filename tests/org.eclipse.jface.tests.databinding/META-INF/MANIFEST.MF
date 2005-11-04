@@ -6,5 +6,7 @@ Bundle-Version: 3.2.0
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.jface.databinding,
- org.junit
+ org.junit,
+ org.eclipse.swt,
+ org.eclipse.jface
 Export-Package: org.eclipse.jface.tests.databinding.util
