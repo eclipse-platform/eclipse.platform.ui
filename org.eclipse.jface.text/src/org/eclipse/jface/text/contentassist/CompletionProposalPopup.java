@@ -901,22 +901,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		if (fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR)) {
 
-			if (fDocumentListener == null)
-				fDocumentListener=  new IDocumentListener()  {
-					public void documentAboutToBeChanged(DocumentEvent event) {
-						if (!fInserting)
-							fDocumentEvents.add(event);
-					}
-
-					public void documentChanged(DocumentEvent event) {
-						if (!fInserting)
-							filterProposals();
-					}
-				};
-			IDocument document= fContentAssistSubjectControlAdapter.getDocument();
-			if (document != null)
-				document.addDocumentListener(fDocumentListener);
-
+			ensureDocumentListenerInstalled();
+			
 			if (fFocusHelper == null) {
 				fFocusHelper= new IEditingSupport() {
 
@@ -954,6 +940,28 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 		} else
 			hide();
+	}
+
+	/**
+	 * Installs the document listener if not already done. 
+	 */
+	private void ensureDocumentListenerInstalled() {
+		if (fDocumentListener == null) {
+			fDocumentListener=  new IDocumentListener()  {
+				public void documentAboutToBeChanged(DocumentEvent event) {
+					if (!fInserting)
+						fDocumentEvents.add(event);
+				}
+
+				public void documentChanged(DocumentEvent event) {
+					if (!fInserting)
+						filterProposals();
+				}
+			};
+			IDocument document= fContentAssistSubjectControlAdapter.getDocument();
+			if (document != null)
+				document.addDocumentListener(fDocumentListener);
+		}
 	}
 
 	/*
@@ -1260,6 +1268,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 						insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
 						hide();
 					} else {
+						ensureDocumentListenerInstalled();
 						if (completeCommonPrefix())
 							hide();
 						else {
