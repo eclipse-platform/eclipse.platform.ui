@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
+import org.eclipse.jface.tests.binding.scenarios.BindingScenariosTestSuite;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -26,5 +28,6 @@ public class BindingTestSuite extends TestSuite {
 	public BindingTestSuite() {
 		addTestSuite(UpdatableTest.class);
 		addTestSuite(DatabindingContextTest.class);
+		addTest(BindingScenariosTestSuite.suite());
 	}
 }

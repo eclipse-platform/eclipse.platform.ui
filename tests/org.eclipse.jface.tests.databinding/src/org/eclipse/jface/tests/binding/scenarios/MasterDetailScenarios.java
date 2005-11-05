@@ -162,9 +162,6 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		getDbc().bind2(
 				new PropertyDescription(txtName, SWTBindingConstants.ENABLED),
 				selectionExistsUpdatable, null);
-		// TODO discuss this - the NestedPropertyDescription is needed so that
-		// the type of the nested property is known even if the current value of
-		// the given updatable is null at bind time.
 		getDbc().bind2(
 				new PropertyDescription(txtName, SWTBindingConstants.TEXT),
 				new PropertyDescription(selectedLodgingUpdatable, "name",
@@ -179,9 +176,6 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				new PropertyDescription(txtDescription,
 						SWTBindingConstants.ENABLED), selectionExistsUpdatable,
 				null);
-		// TODO discuss this - the NestedPropertyDescription is needed so that
-		// the type of the nested property is known even if the current value of
-		// the given updatable is null at bind time.
 		getDbc().bind2(
 				new PropertyDescription(txtDescription,
 						SWTBindingConstants.TEXT),
@@ -288,10 +282,6 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 			}
 		});
 
-		// TODO discuss this - the NestedTableDescription is needed so that
-		// the type of the nested property and the types of the columns are
-		// known even if the current value of
-		// the given updatable is null at bind time.
 		getDbc().bind2(
 				adventureListViewer,
 				new PropertyDescription(selectedCategoryUpdatable,
@@ -326,9 +316,6 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		getDbc().bind2(
 				new PropertyDescription(txtName, SWTBindingConstants.ENABLED),
 				adventureSelectionExistsUpdatable, null);
-		// TODO discuss this - the NestedPropertyDescription is needed so that
-		// the type of the nested property is known even if the current value of
-		// the given updatable is null at bind time.
 		getDbc().bind2(
 				new PropertyDescription(txtName, SWTBindingConstants.TEXT),
 				new PropertyDescription(selectedAdventureUpdatable, "name",
@@ -343,9 +330,6 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				new PropertyDescription(txtDescription,
 						SWTBindingConstants.ENABLED),
 				adventureSelectionExistsUpdatable, null);
-		// TODO discuss this - the NestedPropertyDescription is needed so that
-		// the type of the nested property is known even if the current value of
-		// the given updatable is null at bind time.
 		getDbc().bind2(
 				new PropertyDescription(txtDescription,
 						SWTBindingConstants.TEXT),

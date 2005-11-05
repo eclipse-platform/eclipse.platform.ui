@@ -66,8 +66,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		text.addFocusListener(new FocusListener() {
 
 			public void focusGained(FocusEvent e) {
-				// TODO Auto-generated method stub
-
+				// only interested in focus lost events
 			}
 
 			public void focusLost(FocusEvent e) {

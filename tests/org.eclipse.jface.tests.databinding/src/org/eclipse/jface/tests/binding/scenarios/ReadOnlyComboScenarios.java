@@ -224,7 +224,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 				getComboContent());
 
 		// Delete middle Lodging
-		// TODO lodgings.remove(lodgings[2]);
+		catalog.removeLodging(catalog.getLodgings()[2]);
 		// Ensure that the cv's labels are the same as the lodging descriptions
 		assertEquals(getColumn(catalog.getLodgings(), "name"),
 				getComboContent());
@@ -408,7 +408,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 				.getSelection()).getFirstElement());
 
 		// Change the list of one combo, and ensure it updates the other combo
-		// TODO catalog.getLodgings().remove(lodging);
+		catalog.removeLodging(lodging);
 		assertEquals(getViewerContent(cviewer), getViewerContent(otherViewer));
 
 	}
