@@ -18,10 +18,13 @@ import org.eclipse.jface.databinding.DatabindingContext;
 import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.IValidator;
+import org.eclipse.jface.databinding.IdentityConverter;
 import org.eclipse.jface.databinding.SettableValue;
 import org.eclipse.jface.tests.databinding.util.Mocks;
 
 public class DatabindingContextTest extends TestCase {
+
+	boolean failed = false;
 
 	DatabindingContext dbc;
 
@@ -37,25 +40,8 @@ public class DatabindingContextTest extends TestCase {
 
 	Object o2 = new Object();
 
-	private static IConverter identityConverter = new IConverter() {
-
-		public Class getModelType() {
-			return Object.class;
-		}
-
-		public Class getTargetType() {
-			return Object.class;
-		}
-
-		public Object convertTargetToModel(Object object) {
-			return object;
-		}
-
-		public Object convertModelToTarget(Object object) {
-			return object;
-		}
-	};
-
+	private static IConverter identityConverter = new IdentityConverter(Object.class);
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		dbc = new DatabindingContext();
@@ -67,20 +53,33 @@ public class DatabindingContextTest extends TestCase {
 	}
 
 	protected void tearDown() throws Exception {
-		Mocks.verify(updatableValueRMock);
-		Mocks.verify(validatorMock);
+		if (!failed) {
+			Mocks.verify(updatableValueRMock);
+			Mocks.verify(validatorMock);
+		}
 		super.tearDown();
+	}
+
+	protected void runTest() throws Throwable {
+		try {
+			super.runTest();
+		} catch (Throwable th) {
+			failed = true;
+			throw th;
+		}
 	}
 
 	public void testBindValueModel() throws BindingException {
 		Mocks.reset(updatableValueRMock);
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.getValue();
+		updatableValueRMock.getValueType();
+		Mocks.setLastReturnValue(updatableValueRMock, Object.class);
 		validatorMock.isValid(null);
 		Mocks.startChecking(updatableValueRMock);
 		Mocks.startChecking(validatorMock);
-		dbc.bind2(settableValue1, updatableValueRMock, new BindSpec(identityConverter,
-				validatorMock));
+		dbc.bind2(settableValue1, updatableValueRMock, new BindSpec(
+				identityConverter, validatorMock));
 		Mocks.verify(updatableValueRMock);
 	}
 
@@ -88,11 +87,13 @@ public class DatabindingContextTest extends TestCase {
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.setValue(null);
 		updatableValueRMock.getValue();
+		updatableValueRMock.getValueType();
+		Mocks.setLastReturnValue(updatableValueRMock, Object.class);
 		validatorMock.isValid(null);
 		Mocks.startChecking(updatableValueRMock);
 		Mocks.startChecking(validatorMock);
-		dbc.bind2(updatableValueRMock, settableValue2, new BindSpec(identityConverter,
-				validatorMock));
+		dbc.bind2(updatableValueRMock, settableValue2, new BindSpec(
+				identityConverter, validatorMock));
 	}
 
 	public void testBindValuePropagation() throws BindingException {

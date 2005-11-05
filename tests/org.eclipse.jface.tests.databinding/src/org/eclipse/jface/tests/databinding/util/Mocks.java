@@ -19,6 +19,8 @@ import java.util.List;
 
 import junit.framework.AssertionFailedError;
 
+import org.eclipse.jface.databinding.IUpdatableValue;
+
 public class Mocks {
 
 	public static interface EqualityComparator {
@@ -64,6 +66,8 @@ public class Mocks {
 
 			private final Object[] args;
 
+			private Object returnValue = null;
+
 			public MethodCall(Method method, Object[] args) {
 				this.method = method;
 				this.args = args;
@@ -88,6 +92,14 @@ public class Mocks {
 					}
 				}
 				return true;
+			}
+
+			public void setReturnValue(Object object) {
+				returnValue = object;
+			}
+
+			public Object getReturnValue() {
+				return returnValue;
 			}
 		}
 
@@ -116,7 +128,12 @@ public class Mocks {
 			MethodCall methodCall = new MethodCall(method, args);
 			if (previousCallHistory != null) {
 				// we are in replay mode
-				if (!previousCallHistory.contains(methodCall)) {
+				int indexOfMethodCall = previousCallHistory.indexOf(methodCall);
+				if (indexOfMethodCall != -1) {
+					// copy return value over to this method call
+					methodCall.setReturnValue(((MethodCall) previousCallHistory
+							.get(indexOfMethodCall)).getReturnValue());
+				} else {
 					throw new AssertionFailedError("unexpected method call: "
 							+ method.getName());
 				}
@@ -140,7 +157,7 @@ public class Mocks {
 			if (returnType.isPrimitive() && void.class != returnType) {
 				return returnType.newInstance();
 			}
-			return null;
+			return methodCall.getReturnValue();
 		}
 
 		public void replay() {
@@ -185,6 +202,12 @@ public class Mocks {
 		public void reset() {
 			previousCallHistory = null;
 			currentCallHistory = new ArrayList();
+		}
+
+		public void setLastReturnValue(Object object) {
+			MethodCall methodCall = (MethodCall) currentCallHistory
+					.get(currentCallHistory.size() - 1);
+			methodCall.setReturnValue(object);
 		}
 	}
 
@@ -262,5 +285,9 @@ public class Mocks {
 
 	private static MockInvocationHandler getMockInvocationHandler(Object mock) {
 		return ((Mock) mock).getMockInvocationHandler();
+	}
+
+	public static void setLastReturnValue(IUpdatableValue mock, Object object) {
+		getMockInvocationHandler(mock).setLastReturnValue(object);
 	}
 }
