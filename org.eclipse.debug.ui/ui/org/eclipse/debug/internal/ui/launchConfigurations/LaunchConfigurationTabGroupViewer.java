@@ -25,15 +25,22 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.preferences.PerspectivePreferencePage;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StackLayout;
@@ -41,6 +48,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -50,6 +58,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -328,31 +337,61 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private void createGettingStarted(Composite parent) {
 		Font font = parent.getFont();
 		GridData gd = null;
-		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
-		label.setFont(font);
-		label.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_1);
+		createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_1);
+		createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_2);
+		createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3);
+		createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_4);
+        createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_6);
+		
+		createSpacer(parent, 2);
+		Link link = new Link(parent, SWT.LEFT | SWT.WRAP);
+		link.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_5);
+		link.setFont(font);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = parent.getBounds().width - 30;
-		label.setLayoutData(gd);
-		createSpacer(parent, 1);
-		label = new Label(parent, SWT.LEFT | SWT.WRAP);
-		label.setFont(font);
-		label.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_2);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = parent.getBounds().width - 30;
-		label.setLayoutData(gd);
-		label = new Label(parent, SWT.LEFT | SWT.WRAP);
-		label.setFont(font);
-		label.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = parent.getBounds().width - 30;
-		label.setLayoutData(gd);
-		label = new Label(parent, SWT.LEFT | SWT.WRAP);
-		label.setFont(font);
-		label.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_4);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = parent.getBounds().width - 30;
-		label.setLayoutData(gd);		
+		link.setLayoutData(gd);
+		link.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				showPreferencePage("org.eclipse.debug.ui.PerspectivePreferencePage", new PerspectivePreferencePage()); //$NON-NLS-1$
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {}
+		});
+	}
+
+    /**
+     * Create a label on the given parent that wraps text.
+     * 
+     * @param parent
+     * @param text
+     */
+    private void createWrapLabel(Composite parent, String text) {
+        Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
+        label.setFont(parent.getFont());
+        label.setText(text);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.widthHint = parent.getBounds().width - 30;
+        label.setLayoutData(gd);
+    }
+	
+	/**
+	 * This method allows us to open the preference dialog on the specific page, in this case the perspective page
+	 * @param id the id of pref page to show
+	 * @param page the actual page to show
+	 */
+	private void showPreferencePage(String id, IPreferencePage page) {
+		final IPreferenceNode targetNode = new PreferenceNode(id, page);
+		
+		PreferenceManager manager = new PreferenceManager();
+		manager.addToRoot(targetNode);
+		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
+		final boolean [] result = new boolean[] { false };
+		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			public void run() {
+				dialog.create();
+				dialog.setMessage(targetNode.getLabelText());
+				result[0]= (dialog.open() == Window.OK);
+			}
+		});		
 	}
 	
 	/**

@@ -174,6 +174,7 @@ public class PerspectivePreferencePage extends PreferencePage implements
 	public PerspectivePreferencePage() {
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		setPreferenceStore(store);
+		setTitle(DebugPreferencesMessages.PerspectivePreferencePage_6);
 		setDescription(DebugPreferencesMessages.PerspectivePreferencePage_0);
 	}// end constructor
 
