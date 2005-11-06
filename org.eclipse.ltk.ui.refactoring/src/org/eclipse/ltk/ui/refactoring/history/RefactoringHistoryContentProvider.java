@@ -44,89 +44,6 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	private static final Object[] NO_ELEMENTS= {};
 
 	/**
-	 * Computes the time stamp thresholds.
-	 * 
-	 * @param stamp
-	 *            the time stamp of the oldest refactoring
-	 * @return the time stamp threshold array
-	 */
-	private static long[][] computeTimeStampThresholds(final long stamp) {
-		final long time= System.currentTimeMillis();
-		final Calendar calendar= Calendar.getInstance();
-		calendar.setTimeInMillis(time);
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-		final int zoneOffset= calendar.get(Calendar.ZONE_OFFSET);
-		final int dstOffset= calendar.get(Calendar.DST_OFFSET);
-		int count= 0;
-		final long[] thresholds= new long[32];
-		final int[] kinds= new int[32];
-		thresholds[count]= calendar.getTimeInMillis();
-		kinds[count]= RefactoringHistoryNode.TODAY;
-		count++;
-		calendar.add(Calendar.DATE, -1);
-		thresholds[count]= calendar.getTimeInMillis();
-		kinds[count]= RefactoringHistoryNode.YESTERDAY;
-		count++;
-		final int day= calendar.get(Calendar.DAY_OF_WEEK);
-		if (day != Calendar.SUNDAY) {
-			calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-			thresholds[count]= calendar.getTimeInMillis();
-			kinds[count]= RefactoringHistoryNode.THIS_WEEK;
-			count++;
-		}
-		calendar.add(Calendar.WEEK_OF_YEAR, -1);
-		calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-		thresholds[count]= calendar.getTimeInMillis();
-		kinds[count]= RefactoringHistoryNode.LAST_WEEK;
-		count++;
-		final int week= calendar.get(Calendar.WEEK_OF_MONTH);
-		if (week != 1) {
-			calendar.setTimeInMillis(time);
-			calendar.set(Calendar.HOUR_OF_DAY, 0);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-			calendar.set(Calendar.DAY_OF_MONTH, 1);
-			thresholds[count]= calendar.getTimeInMillis();
-			kinds[count]= RefactoringHistoryNode.THIS_MONTH;
-			count++;
-		}
-		calendar.add(Calendar.MONTH, -1);
-		calendar.set(Calendar.DAY_OF_MONTH, 1);
-		thresholds[count]= calendar.getTimeInMillis();
-		kinds[count]= RefactoringHistoryNode.LAST_MONTH;
-		count++;
-		final int month= calendar.get(Calendar.MONTH);
-		if (month != 0) {
-			calendar.set(Calendar.MONTH, 0);
-			calendar.set(Calendar.DAY_OF_MONTH, 1);
-			thresholds[count]= calendar.getTimeInMillis();
-			kinds[count]= RefactoringHistoryNode.YEAR;
-			count++;
-		}
-		if (stamp > 0) {
-			final long localized= stampToLocalizedDate(stamp, zoneOffset, dstOffset);
-			calendar.set(Calendar.MONTH, 0);
-			calendar.set(Calendar.DAY_OF_MONTH, 1);
-			do {
-				calendar.add(Calendar.YEAR, -1);
-				thresholds[count]= calendar.getTimeInMillis();
-				kinds[count]= RefactoringHistoryNode.YEAR;
-				count++;
-			} while (calendar.getTimeInMillis() > localized);
-		}
-		final long[][] result= new long[count][2];
-		for (int index= 0; index < count - 1; index++) {
-			result[index][0]= thresholds[index];
-			result[index][1]= kinds[index];
-		}
-		return result;
-	}
-
-	/**
 	 * Converts a time stamp to a localized date stamp.
 	 * 
 	 * @param stamp
@@ -147,6 +64,9 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	/** The refactoring history, or <code>null</code> */
 	private RefactoringHistory fRefactoringHistory= null;
 
+	/** The time stamp thresholds, or <code>null</code> */
+	private long[][] fTimeStampThresholds= null;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -158,20 +78,20 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * {@inheritDoc}
 	 */
 	public Object[] getChildren(final Object element) {
-		if (element instanceof RefactoringHistoryNode) {
+		if (element instanceof RefactoringHistoryNode && fRefactoringHistory != null) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
+			final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
+			final long[][] thresholds= getTimeStampTresholds(proxies[0].getTimeStamp());
 			final int kind= node.getKind();
 			switch (kind) {
 				case RefactoringHistoryNode.COLLECTION:
-					if (fRefactoringHistory != null)
-						return getRefactoringHistoryEntries(fRefactoringHistory);
-					break;
+					return getRefactoringHistoryEntries(fRefactoringHistory);
 				default: {
 					if (node instanceof RefactoringHistoryDate) {
 						final RefactoringHistoryDate date= (RefactoringHistoryDate) node;
+						final long stamp= date.getTimeStamp();
 						switch (kind) {
 							case RefactoringHistoryNode.TODAY:
-								return getRefactoringHistoryEntries(fRefactoringHistory);
 							case RefactoringHistoryNode.YESTERDAY:
 							case RefactoringHistoryNode.THIS_WEEK:
 							case RefactoringHistoryNode.LAST_WEEK:
@@ -197,7 +117,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 			if (fDisplayTime)
 				return getRefactoringHistoryRoots((RefactoringHistory) element);
 			else if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty())
-				return new Object[] { new RefactoringHistoryContainer()};
+				return new Object[] { new RefactoringHistoryContainer() };
 		}
 		return NO_ELEMENTS;
 	}
@@ -241,12 +161,98 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		final List list= new ArrayList();
 		if (!history.isEmpty()) {
 			final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
-			final long[][] thresholds= computeTimeStampThresholds(proxies[0].getTimeStamp());
+			final long[][] thresholds= getTimeStampTresholds(proxies[0].getTimeStamp());
 			for (int index= 0; index < thresholds.length; index++) {
 				list.add(new RefactoringHistoryDate(null, thresholds[index][0], (int) thresholds[index][1]));
 			}
 		}
 		return list.toArray();
+	}
+
+	/**
+	 * Computes and returns the time stamp thresholds if necessary.
+	 * 
+	 * @param stamp
+	 *            the time stamp of the oldest refactoring
+	 * @return the time stamp threshold array
+	 */
+	private long[][] getTimeStampTresholds(final long stamp) {
+		if (fTimeStampThresholds == null) {
+			final long time= System.currentTimeMillis();
+			final Calendar calendar= Calendar.getInstance();
+			calendar.setTimeInMillis(time);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			final int zoneOffset= calendar.get(Calendar.ZONE_OFFSET);
+			final int dstOffset= calendar.get(Calendar.DST_OFFSET);
+			int count= 0;
+			final long[] thresholds= new long[32];
+			final int[] kinds= new int[32];
+			thresholds[count]= calendar.getTimeInMillis();
+			kinds[count]= RefactoringHistoryNode.TODAY;
+			count++;
+			calendar.add(Calendar.DATE, -1);
+			thresholds[count]= calendar.getTimeInMillis();
+			kinds[count]= RefactoringHistoryNode.YESTERDAY;
+			count++;
+			final int day= calendar.get(Calendar.DAY_OF_WEEK);
+			if (day != Calendar.SUNDAY) {
+				calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+				thresholds[count]= calendar.getTimeInMillis();
+				kinds[count]= RefactoringHistoryNode.THIS_WEEK;
+				count++;
+			}
+			calendar.add(Calendar.WEEK_OF_YEAR, -1);
+			calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+			thresholds[count]= calendar.getTimeInMillis();
+			kinds[count]= RefactoringHistoryNode.LAST_WEEK;
+			count++;
+			final int week= calendar.get(Calendar.WEEK_OF_MONTH);
+			if (week != 1) {
+				calendar.setTimeInMillis(time);
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				calendar.set(Calendar.DAY_OF_MONTH, 1);
+				thresholds[count]= calendar.getTimeInMillis();
+				kinds[count]= RefactoringHistoryNode.THIS_MONTH;
+				count++;
+			}
+			calendar.add(Calendar.MONTH, -1);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			thresholds[count]= calendar.getTimeInMillis();
+			kinds[count]= RefactoringHistoryNode.LAST_MONTH;
+			count++;
+			final int month= calendar.get(Calendar.MONTH);
+			if (month != 0) {
+				calendar.set(Calendar.MONTH, 0);
+				calendar.set(Calendar.DAY_OF_MONTH, 1);
+				thresholds[count]= calendar.getTimeInMillis();
+				kinds[count]= RefactoringHistoryNode.YEAR;
+				count++;
+			}
+			if (stamp > 0) {
+				final long localized= stampToLocalizedDate(stamp, zoneOffset, dstOffset);
+				calendar.set(Calendar.MONTH, 0);
+				calendar.set(Calendar.DAY_OF_MONTH, 1);
+				do {
+					calendar.add(Calendar.YEAR, -1);
+					thresholds[count]= calendar.getTimeInMillis();
+					kinds[count]= RefactoringHistoryNode.YEAR;
+					count++;
+				} while (calendar.getTimeInMillis() > localized);
+			}
+			final long[][] result= new long[count][2];
+			for (int index= 0; index < count - 1; index++) {
+				result[index][0]= thresholds[index];
+				result[index][1]= kinds[index];
+			}
+			fTimeStampThresholds= result;
+		}
+		return fTimeStampThresholds;
 	}
 
 	/**
@@ -260,9 +266,10 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * {@inheritDoc}
 	 */
 	public void inputChanged(final Viewer viewer, final Object predecessor, final Object successor) {
-		if (successor instanceof RefactoringHistory)
+		if (successor instanceof RefactoringHistory) {
 			fRefactoringHistory= (RefactoringHistory) successor;
-		else
+			fTimeStampThresholds= null;
+		} else
 			fRefactoringHistory= null;
 	}
 
