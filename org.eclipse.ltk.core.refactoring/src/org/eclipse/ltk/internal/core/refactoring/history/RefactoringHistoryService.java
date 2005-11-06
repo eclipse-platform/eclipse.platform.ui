@@ -49,6 +49,7 @@ import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.commands.operations.TriggeredOperations;
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -224,6 +225,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				monitor.worked(2);
 				if (descriptor == null) {
 					final String name= proxy.getProject();
+					final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER);
 					if (name != null && !"".equals(name)) {//$NON-NLS-1$
 						try {
 							final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
@@ -233,13 +235,13 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 									if (uri != null)
 										return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER), name).requestDescriptor(proxy);
 								} else
-									return new RefactoringHistoryManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(name), null).requestDescriptor(proxy);
+									return new RefactoringHistoryManager(store.getChild(name), null).requestDescriptor(proxy);
 							}
 						} catch (CoreException exception) {
 							// Do nothing
 						}
 					} else
-						return new RefactoringHistoryManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(NAME_WORKSPACE_PROJECT), null).requestDescriptor(proxy);
+						return new RefactoringHistoryManager(store.getChild(NAME_WORKSPACE_PROJECT), null).requestDescriptor(proxy);
 				}
 				monitor.worked(6);
 				return descriptor;
@@ -334,7 +336,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						try {
 							final URI uri= project.getLocationURI();
 							if (uri != null)
-								RefactoringHistoryManager.recursiveDelete(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(project.getName()));
+								EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(project.getName()).delete(EFS.NONE, null);
 						} catch (CoreException exception) {
 							RefactoringCorePlugin.log(exception);
 						}

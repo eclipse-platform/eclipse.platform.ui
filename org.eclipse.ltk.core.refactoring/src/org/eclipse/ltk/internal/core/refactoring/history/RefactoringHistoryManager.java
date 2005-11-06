@@ -434,20 +434,6 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
-	 * Is the refactoring history empty?
-	 * 
-	 * @return <code>true</code> if it is empty, <code>false</code>
-	 *         otherwise
-	 * @throws CoreException
-	 *             if an error occurs
-	 */
-	boolean isEmpty() throws CoreException {
-		if (fHistoryStore.fetchInfo().exists())
-			return fHistoryStore.childStores(0, null).length == 0;
-		return true;
-	}
-
-	/**
 	 * Reads the specified number of refactoring descriptors from the head of
 	 * the history.
 	 * 
