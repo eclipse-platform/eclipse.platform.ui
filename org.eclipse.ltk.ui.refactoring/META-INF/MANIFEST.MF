@@ -9,7 +9,8 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.ltk.internal.ui.refactoring;x-internal:=true,
  org.eclipse.ltk.internal.ui.refactoring.history;x-internal:=true,
  org.eclipse.ltk.internal.ui.refactoring.util;x-internal:=true,
- org.eclipse.ltk.ui.refactoring
+ org.eclipse.ltk.ui.refactoring,
+ org.eclipse.ltk.ui.refactoring.history
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions,
  org.eclipse.core.filebuffers,

@@ -93,7 +93,7 @@ public interface IRefactoringHistoryService {
 	 *            the project, which must exist
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
-	 * @return The project refactoring history
+	 * @return the project refactoring history
 	 */
 	public RefactoringHistory getProjectHistory(IProject project, IProgressMonitor monitor);
 
@@ -108,16 +108,42 @@ public interface IRefactoringHistoryService {
 	 *            the end time stamp, inclusive
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
-	 * @return The project refactoring history
+	 * @return the project refactoring history
 	 */
 	public RefactoringHistory getProjectHistory(IProject project, long start, long end, IProgressMonitor monitor);
+
+	/**
+	 * Returns the combined refactoring history for the specified projects.
+	 * 
+	 * @param projects
+	 *            the projects, which must exist
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @return the combined refactoring history
+	 */
+	public RefactoringHistory getRefactoringHistory(IProject[] projects, IProgressMonitor monitor);
+
+	/**
+	 * Returns the combined refactoring history for the specified projects.
+	 * 
+	 * @param projects
+	 *            the projects, which must exist
+	 * @param start
+	 *            the start time stamp, inclusive
+	 * @param end
+	 *            the end time stamp, inclusive
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @return the combined refactoring history
+	 */
+	public RefactoringHistory getRefactoringHistory(IProject[] projects, long start, long end, IProgressMonitor monitor);
 
 	/**
 	 * Returns the workspace refactoring history.
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
-	 * @return The workspace refactoring history
+	 * @return the workspace refactoring history
 	 */
 	public RefactoringHistory getWorkspaceHistory(IProgressMonitor monitor);
 
@@ -130,7 +156,7 @@ public interface IRefactoringHistoryService {
 	 *            the end time stamp, inclusive
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
-	 * @return The workspace refactoring history
+	 * @return the workspace refactoring history
 	 */
 	public RefactoringHistory getWorkspaceHistory(long start, long end, IProgressMonitor monitor);
 

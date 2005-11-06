@@ -51,6 +51,9 @@ public class RefactoringDescriptorProxy {
 	/** The description of the refactoring */
 	private final String fDescription;
 
+	/** The non-empty name of the project, or <code>null</code> */
+	private final String fProject;
+
 	/** The time stamp of the refactoring */
 	private final long fTimeStamp;
 
@@ -60,12 +63,16 @@ public class RefactoringDescriptorProxy {
 	 * @param description
 	 *            a non-empty human-readable description of the particular
 	 *            refactoring instance
+	 * @param project
+	 *            the non-empty name of the project, or <code>null</code>
 	 * @param stamp
 	 *            the time stamp of the refactoring
 	 */
-	public RefactoringDescriptorProxy(final String description, final long stamp) {
+	public RefactoringDescriptorProxy(final String description, final String project, final long stamp) {
+		Assert.isTrue(project == null || !"".equals(project)); //$NON-NLS-1$
 		Assert.isTrue(description != null && !"".equals(description)); //$NON-NLS-1$
-		fDescription= description;
+		fDescription= description.intern();
+		fProject= project != null ? project.intern() : null;
 		fTimeStamp= stamp;
 	}
 
@@ -77,6 +84,15 @@ public class RefactoringDescriptorProxy {
 	 */
 	public String getDescription() {
 		return fDescription;
+	}
+
+	/**
+	 * Returns the name of the project.
+	 * 
+	 * @return the non-empty name, or <code>null</code>
+	 */
+	public String getProject() {
+		return fProject;
 	}
 
 	/**

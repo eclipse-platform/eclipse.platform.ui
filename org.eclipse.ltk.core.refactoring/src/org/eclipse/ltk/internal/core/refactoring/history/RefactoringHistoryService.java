@@ -15,14 +15,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -44,6 +41,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -56,6 +54,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.Change;
@@ -152,38 +151,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		/** The internal implementation */
 		private final LinkedList fImplementation= new LinkedList();
 
-		/** The refactoring history manager */
-		private RefactoringHistoryManager fManager= new RefactoringHistoryManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER).toURI());
-
-		/**
-		 * Frees the cache from the specified number of descriptors.
-		 * 
-		 * @param count
-		 *            the positive count of descriptors to free
-		 */
-		void freeCache(final int count) {
-			Assert.isTrue(count > 0);
-			int number= 0;
-			for (final ListIterator iterator= fImplementation.listIterator(fImplementation.size()); iterator.hasPrevious() && number < count; number++) {
-				iterator.previous();
-				iterator.remove();
-			}
-		}
-
-		/**
-		 * Does the descriptor stack need recaching?
-		 * 
-		 * @return <code>true</code> if the stack needs recaching,
-		 *         <code>false</code> otherwise
-		 */
-		boolean needsRecaching() {
-			try {
-				return fImplementation.isEmpty() && !fManager.isEmpty();
-			} catch (CoreException exception) {
-				return true;
-			}
-		}
-
 		/**
 		 * Returns the current descriptor on the top of the stack.
 		 * 
@@ -194,11 +161,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		RefactoringDescriptor peek() throws EmptyStackException {
 			if (!fImplementation.isEmpty())
 				return (RefactoringDescriptor) fImplementation.getFirst();
-			else
-				populateCache(new NullProgressMonitor());
-			if (fImplementation.isEmpty())
-				throw new EmptyStackException();
-			return (RefactoringDescriptor) fImplementation.getFirst();
+			throw new EmptyStackException();
 		}
 
 		/**
@@ -208,53 +171,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 *             if the stack is empty
 		 */
 		void pop() throws EmptyStackException {
-			try {
-				final boolean pop= RefactoringCorePlugin.getDefault().getPluginPreferences().getBoolean(RefactoringPreferenceConstants.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY);
-				if (pop) {
-					final RefactoringDescriptor descriptor= (RefactoringDescriptor) fImplementation.getFirst();
-					if (!descriptor.isUnknown()) {
-						final long stamp= descriptor.getTimeStamp();
-						if (stamp >= 0)
-							fManager.removeDescriptor(stamp);
-					}
-				}
-			} catch (CoreException exception) {
-				RefactoringCorePlugin.log(exception);
-			}
-			if (!fImplementation.isEmpty()) {
+			if (!fImplementation.isEmpty())
 				fImplementation.removeFirst();
-				return;
-			} else
-				populateCache(new NullProgressMonitor());
-			if (fImplementation.isEmpty())
+			else
 				throw new EmptyStackException();
-			fImplementation.removeFirst();
-		}
-
-		/**
-		 * Populates the memory cache.
-		 * 
-		 * @param monitor
-		 *            the progress monitor to use
-		 */
-		void populateCache(final IProgressMonitor monitor) {
-			Assert.isTrue(fImplementation.isEmpty());
-			Assert.isNotNull(monitor);
-			try {
-				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 8);
-				final RefactoringDescriptor[] descriptors= fManager.readDescriptors(MAX_UNDO_STACK - 1, new SubProgressMonitor(monitor, 7));
-
-				Arrays.sort(descriptors, new Comparator() {
-
-					public int compare(final Object first, final Object second) {
-						return (int) (((RefactoringDescriptor) second).getTimeStamp() - ((RefactoringDescriptor) first).getTimeStamp());
-					}
-				});
-				for (int index= 0; index < descriptors.length; index++)
-					fImplementation.addFirst(descriptors[index]);
-			} finally {
-				monitor.done();
-			}
 		}
 
 		/**
@@ -265,17 +185,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 */
 		void push(final RefactoringDescriptor descriptor) {
 			Assert.isNotNull(descriptor);
-			try {
-				final boolean push= RefactoringCorePlugin.getDefault().getPluginPreferences().getBoolean(RefactoringPreferenceConstants.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY);
-				if (push && !descriptor.isUnknown())
-					fManager.addDescriptor(descriptor);
-			} catch (CoreException exception) {
-				RefactoringCorePlugin.log(exception);
-			}
 			fImplementation.addFirst(descriptor);
 			final int size= fImplementation.size();
 			if (size > MAX_UNDO_STACK)
-				freeCache(size - MAX_UNDO_STACK);
+				fImplementation.removeLast();
 		}
 
 		/**
@@ -292,15 +205,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			Assert.isNotNull(monitor);
 			try {
 				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_resolving_information, 12);
-				if (needsRecaching())
-					populateCache(new SubProgressMonitor(monitor, 6));
-				else
-					monitor.worked(6);
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
 				final long timestamp= proxy.getTimeStamp();
 				RefactoringDescriptor descriptor= null;
-				final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 2);
+				final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 4);
 				try {
 					subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_resolving_information, fImplementation.size());
 					for (final Iterator iterator= fImplementation.iterator(); iterator.hasNext();) {
@@ -315,9 +222,26 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
 				monitor.worked(2);
-				if (descriptor == null)
-					descriptor= fManager.requestDescriptor(proxy);
-				monitor.worked(2);
+				if (descriptor == null) {
+					final String name= proxy.getProject();
+					if (name != null && !"".equals(name)) {//$NON-NLS-1$
+						try {
+							final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+							if (project.isAccessible()) {
+								if (RefactoringHistoryService.isHistoryEnabled(project)) {
+									final URI uri= project.getLocationURI();
+									if (uri != null)
+										return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER), name).requestDescriptor(proxy);
+								} else
+									return new RefactoringHistoryManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(name), null).requestDescriptor(proxy);
+							}
+						} catch (CoreException exception) {
+							// Do nothing
+						}
+					} else
+						return new RefactoringHistoryManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(NAME_WORKSPACE_PROJECT), null).requestDescriptor(proxy);
+				}
+				monitor.worked(6);
 				return descriptor;
 			} finally {
 				monitor.done();
@@ -407,19 +331,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				if (type == IResource.PROJECT) {
 					final IProject project= (IProject) resource;
 					if (project.exists()) {
-						final RefactoringHistory history= getProjectHistory(project, null);
-						if (history instanceof RefactoringHistoryImplementation) {
-							final RefactoringDescriptorProxy[] proxies= ((RefactoringHistoryImplementation) history).getDescriptorProxies();
-							for (int index= 0; index < proxies.length; index++) {
-								final long stamp= proxies[index].getTimeStamp();
-								if (stamp >= 0) {
-									try {
-										fUndoStack.fManager.removeDescriptor(stamp);
-									} catch (CoreException exception) {
-										RefactoringCorePlugin.log(exception);
-									}
-								}
-							}
+						try {
+							final URI uri= project.getLocationURI();
+							if (uri != null)
+								RefactoringHistoryManager.recursiveDelete(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(project.getName()));
+						} catch (CoreException exception) {
+							RefactoringCorePlugin.log(exception);
 						}
 					}
 				}
@@ -463,13 +380,16 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	private static RefactoringHistoryService fInstance= null;
 
 	/** The maximum size of the undo stack */
-	private static final int MAX_UNDO_STACK= 25;
+	private static final int MAX_UNDO_STACK= 5;
 
 	/** The refactoring history file */
 	public static final String NAME_REFACTORING_HISTORY= "refactorings.history"; //$NON-NLS-1$
 
 	/** The refactoring history folder */
 	public static final String NAME_REFACTORINGS_FOLDER= ".refactorings"; //$NON-NLS-1$
+
+	/** The name of the special workspace project */
+	static final String NAME_WORKSPACE_PROJECT= ".workspace"; //$NON-NLS-1$
 
 	/** The no history constant */
 	private static final NullRefactoringHistory NO_HISTORY= new NullRefactoringHistory();
@@ -486,6 +406,23 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		if (fInstance == null)
 			fInstance= new RefactoringHistoryService();
 		return fInstance;
+	}
+
+	/**
+	 * Should a project refactoring history be maintained?
+	 * 
+	 * @param project
+	 *            the project
+	 * @return <code>true</code> if a history should be maintained,
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean isHistoryEnabled(final IProject project) {
+		Assert.isNotNull(project);
+		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project) };
+		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
+		if (preference != null)
+			return Boolean.valueOf(preference).booleanValue();
+		return false;
 	}
 
 	/** The execution listeners */
@@ -711,25 +648,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * {@inheritDoc}
 	 */
 	public RefactoringHistory getProjectHistory(final IProject project, IProgressMonitor monitor) {
-		Assert.isNotNull(project);
-		Assert.isTrue(project.exists());
-		if (project.isOpen()) {
-			if (monitor == null)
-				monitor= new NullProgressMonitor();
-			try {
-				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 12);
-				if (fUndoStack.needsRecaching())
-					fUndoStack.populateCache(new SubProgressMonitor(monitor, 4));
-				else
-					monitor.worked(4);
-				final URI uri= project.getLocationURI();
-				if (uri != null)
-					return new RefactoringHistoryManager(uri).readHistory(Long.MIN_VALUE, Long.MAX_VALUE, new SubProgressMonitor(monitor, 8));
-			} finally {
-				monitor.done();
-			}
-		}
-		return NO_HISTORY;
+		return getProjectHistory(project, 0, Long.MAX_VALUE, monitor);
 	}
 
 	/**
@@ -745,13 +664,11 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				monitor= new NullProgressMonitor();
 			try {
 				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 12);
-				if (fUndoStack.needsRecaching())
-					fUndoStack.populateCache(new SubProgressMonitor(monitor, 4));
-				else
-					monitor.worked(4);
 				final URI uri= project.getLocationURI();
 				if (uri != null)
-					return new RefactoringHistoryManager(uri).readHistory(start, end, new SubProgressMonitor(monitor, 8));
+					return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER), project.getName()).readHistory(start, end, new SubProgressMonitor(monitor, 12));
+			} catch (CoreException exception) {
+				RefactoringCorePlugin.log(exception);
 			} finally {
 				monitor.done();
 			}
@@ -762,16 +679,33 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
-	public RefactoringHistory getWorkspaceHistory(IProgressMonitor monitor) {
+	public RefactoringHistory getRefactoringHistory(final IProject[] projects, final IProgressMonitor monitor) {
+		return getRefactoringHistory(projects, 0, Long.MAX_VALUE, monitor);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public RefactoringHistory getRefactoringHistory(final IProject[] projects, final long start, final long end, IProgressMonitor monitor) {
+		Assert.isNotNull(projects);
+		Assert.isTrue(start >= 0);
+		Assert.isTrue(end >= start);
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
-			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 12);
-			if (fUndoStack.needsRecaching())
-				fUndoStack.populateCache(new SubProgressMonitor(monitor, 4));
-			else
-				monitor.worked(4);
-			return fUndoStack.fManager.readHistory(Long.MIN_VALUE, Long.MAX_VALUE, new SubProgressMonitor(monitor, 8));
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, projects.length);
+			final List list= new ArrayList();
+			for (int index= 0; index < projects.length; index++) {
+				final IProject project= projects[index];
+				if (project.isAccessible()) {
+					final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, new SubProgressMonitor(monitor, 1)).getDescriptors();
+					for (int offset= 0; offset < proxies.length; offset++)
+						list.add(proxies[offset]);
+				}
+			}
+			final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[list.size()];
+			list.toArray(proxies);
+			return new RefactoringHistoryImplementation(proxies);
 		} finally {
 			monitor.done();
 		}
@@ -780,21 +714,15 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
+	public RefactoringHistory getWorkspaceHistory(IProgressMonitor monitor) {
+		return getWorkspaceHistory(0, Long.MAX_VALUE, monitor);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public RefactoringHistory getWorkspaceHistory(final long start, final long end, IProgressMonitor monitor) {
-		Assert.isTrue(start >= 0);
-		Assert.isTrue(end >= 0);
-		if (monitor == null)
-			monitor= new NullProgressMonitor();
-		try {
-			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 12);
-			if (fUndoStack.needsRecaching())
-				fUndoStack.populateCache(new SubProgressMonitor(monitor, 4));
-			else
-				monitor.worked(4);
-			return fUndoStack.fManager.readHistory(start, end, new SubProgressMonitor(monitor, 8));
-		} finally {
-			monitor.done();
-		}
+		return getRefactoringHistory(ResourcesPlugin.getWorkspace().getRoot().getProjects(), start, end, monitor);
 	}
 
 	/**

@@ -26,7 +26,7 @@ import org.eclipse.ltk.core.refactoring.IUndoManager;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 
-import org.eclipse.ltk.internal.core.refactoring.history.ProjectRefactoringHistoryListener;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistorySerializer;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 import org.osgi.framework.BundleContext;
@@ -112,7 +112,7 @@ public class RefactoringCorePlugin extends Plugin {
 		super.start(context);
 		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		service.connect();
-		fRefactoringHistoryListener= new ProjectRefactoringHistoryListener();
+		fRefactoringHistoryListener= new RefactoringHistorySerializer();
 		service.addHistoryListener(fRefactoringHistoryListener);
 	}
 	

@@ -28,6 +28,9 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 	/** The refactoring descriptor proxies */
 	private final RefactoringDescriptorProxy[] fDescriptorProxies;
 
+	/** Is the refactoring history already sorted? */
+	private boolean fSorted= false;
+
 	/**
 	 * Creates a new refactoring history implementation.
 	 * 
@@ -40,28 +43,29 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public RefactoringDescriptorProxy[] getDescriptors() {
-		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[fDescriptorProxies.length];
-		System.arraycopy(fDescriptorProxies, 0, proxies, 0, proxies.length);
-		Arrays.sort(proxies, new Comparator() {
-
-			public final int compare(final Object first, final Object second) {
-				final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
-				final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-				return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
-			}
-		});
-		return proxies;
-	}
-
-	/**
 	 * Returns the descriptor proxies, in no particular order.
 	 * 
 	 * @return the descriptor proxies
 	 */
 	RefactoringDescriptorProxy[] getDescriptorProxies() {
+		return fDescriptorProxies;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public RefactoringDescriptorProxy[] getDescriptors() {
+		if (!fSorted) {
+			Arrays.sort(fDescriptorProxies, new Comparator() {
+
+				public final int compare(final Object first, final Object second) {
+					final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
+					final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
+					return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
+				}
+			});
+			fSorted= true;
+		}
 		return fDescriptorProxies;
 	}
 

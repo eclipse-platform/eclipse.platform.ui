@@ -18,15 +18,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -83,31 +82,284 @@ public final class RefactoringHistoryManager {
 	private static final String NAME_INDEX_FILE= "index.dat"; //$NON-NLS-1$
 
 	/**
-	 * Reads refactoring information from the specified input stream.
+	 * Transforms the specified descriptor into a history object.
 	 * 
-	 * @param stream
-	 *            the input stream
-	 * @return the refactoring descriptors, or an empty array
+	 * @param descriptor
+	 *            the descriptor to transform
+	 * @return the transformation result
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
-	public static RefactoringDescriptor[] readDescriptors(final InputStream stream) throws CoreException {
-		Assert.isNotNull(stream);
-		return new XmlRefactoringSessionReader().readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
+	private static Object descriptorToNode(final RefactoringDescriptor descriptor) throws CoreException {
+		Assert.isNotNull(descriptor);
+		final IRefactoringSessionTransformer transformer= new XmlRefactoringSessionTransformer();
+		try {
+			transformer.beginSession(null);
+			try {
+				transformer.beginRefactoring(descriptor.getID(), descriptor.getTimeStamp(), descriptor.getProject(), descriptor.getDescription(), descriptor.getComment());
+				for (final Iterator iterator= descriptor.getArguments().entrySet().iterator(); iterator.hasNext();) {
+					final Map.Entry entry= (Entry) iterator.next();
+					transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
+				}
+			} finally {
+				transformer.endRefactoring();
+			}
+		} finally {
+			transformer.endSession();
+		}
+		return transformer.getResult();
 	}
 
-	/** The location of the history files */
-	private final URI fHistoryURI;
+	/**
+	 * Reads the specified number of refactoring descriptors from the head of
+	 * the history.
+	 * 
+	 * @param store
+	 *            the file store
+	 * @param descriptors
+	 *            the list of read descriptors
+	 * @param count
+	 *            the total number of descriptors to be read
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @throws CoreException
+	 *             if an error occurs
+	 */
+	private static void readDescriptors(final IFileStore store, final List descriptors, final int count, final IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(descriptors);
+		Assert.isNotNull(monitor);
+		try {
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 16);
+			if (count > 0) {
+				final IFileInfo info= store.fetchInfo();
+				if (store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_REFACTORING_HISTORY) && !info.isDirectory()) {
+					final RefactoringDescriptor[] results= new XmlRefactoringSessionReader().readSession(new InputSource(new BufferedInputStream(store.openInputStream(EFS.NONE, null)))).getRefactorings();
+					monitor.worked(1);
+					Arrays.sort(results, new Comparator() {
+
+						public final int compare(final Object first, final Object second) {
+							return (int) (((RefactoringDescriptor) first).getTimeStamp() - ((RefactoringDescriptor) second).getTimeStamp());
+						}
+					});
+					monitor.worked(1);
+					final int size= count - descriptors.size();
+					for (int index= 0; index < results.length && index < size; index++)
+						descriptors.add(results[index]);
+					monitor.worked(1);
+				} else
+					monitor.worked(3);
+				if (monitor.isCanceled())
+					throw new OperationCanceledException();
+				final IFileStore[] stores= store.childStores(EFS.NONE, null);
+				Arrays.sort(stores, new Comparator() {
+
+					public final int compare(final Object first, final Object second) {
+						return ((IFileStore) first).getName().compareTo(((IFileStore) second).getName());
+					}
+				});
+				monitor.worked(1);
+				final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 12);
+				try {
+					subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, stores.length);
+					for (int index= 0; index < stores.length; index++)
+						readDescriptors(stores[index], descriptors, count - descriptors.size(), new SubProgressMonitor(subMonitor, 1));
+				} finally {
+					subMonitor.done();
+				}
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * Recursively deletes entries of the refactoring history file tree.
+	 * 
+	 * @param store
+	 *            the file store
+	 * @throws CoreException
+	 *             if an error occurs
+	 */
+	public static void recursiveDelete(final IFileStore store) throws CoreException {
+		Assert.isNotNull(store);
+		final IFileInfo info= store.fetchInfo();
+		if (info.isDirectory()) {
+			if (info.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER))
+				return;
+			final IFileStore[] stores= store.childStores(EFS.NONE, null);
+			for (int index= 0; index < stores.length; index++) {
+				final IFileInfo current= stores[index].fetchInfo();
+				if (current.isDirectory())
+					return;
+			}
+		}
+		final IFileStore parent= store.getParent();
+		store.delete(0, null);
+		recursiveDelete(parent);
+	}
+
+	/**
+	 * Removes the specified index entry.
+	 * 
+	 * @param file
+	 *            the history index file
+	 * @param stamp
+	 *            the time stamp
+	 * @throws CoreException
+	 *             if an error occurs
+	 * @throws IOException
+	 *             if an error occurs
+	 */
+	private static void removeIndexEntry(final IFileStore file, final long stamp) throws CoreException, IOException {
+		InputStream input= null;
+		try {
+			if (file.fetchInfo().exists()) {
+				input= new DataInputStream(new BufferedInputStream(file.openInputStream(EFS.NONE, null)));
+				if (input != null) {
+					final String value= new Long(stamp).toString();
+					final BufferedReader reader= new BufferedReader(new InputStreamReader(input));
+					final StringBuffer buffer= new StringBuffer();
+					while (reader.ready()) {
+						final String line= reader.readLine();
+						if (!line.startsWith(value)) {
+							buffer.append(line);
+							buffer.append('\n');
+						}
+					}
+					try {
+						input.close();
+						input= null;
+					} catch (IOException exception) {
+						// Do nothing
+					}
+					OutputStream output= null;
+					try {
+						file.getParent().mkdir(EFS.NONE, null);
+						output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, null));
+						output.write(buffer.toString().getBytes());
+					} finally {
+						if (output != null) {
+							try {
+								output.close();
+							} catch (IOException exception) {
+								// Do nothing
+							}
+						}
+					}
+				}
+			}
+		} finally {
+			try {
+				if (input != null)
+					input.close();
+			} catch (IOException exception) {
+				// Do nothing
+			}
+		}
+	}
+
+	/**
+	 * Writes a refactoring history entry.
+	 * 
+	 * @param file
+	 *            the refactoring history file
+	 * @param node
+	 *            the DOM node
+	 * @throws CoreException
+	 *             if an error occurs
+	 * @throws IOException
+	 *             if an error occurs
+	 */
+	private static void writeHistoryEntry(final IFileStore file, final Node node) throws CoreException, IOException {
+		Assert.isNotNull(file);
+		Assert.isNotNull(node);
+		OutputStream output= null;
+		try {
+			file.getParent().mkdir(EFS.NONE, null);
+			output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, null));
+			if (output != null) {
+				final Transformer transformer= TransformerFactory.newInstance().newTransformer();
+				transformer.setOutputProperty(OutputKeys.METHOD, IRefactoringSerializationConstants.OUTPUT_METHOD);
+				transformer.setOutputProperty(OutputKeys.ENCODING, IRefactoringSerializationConstants.OUTPUT_ENCODING);
+				transformer.transform(new DOMSource(node), new StreamResult(output));
+			}
+		} catch (TransformerConfigurationException exception) {
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+		} catch (TransformerFactoryConfigurationError exception) {
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+		} catch (TransformerException exception) {
+			final Throwable throwable= exception.getException();
+			if (throwable instanceof IOException)
+				throw (IOException) throwable;
+			RefactoringCorePlugin.log(exception);
+		} finally {
+			if (output != null) {
+				try {
+					output.close();
+				} catch (IOException exception) {
+					// Do nothing
+				}
+			}
+		}
+	}
+
+	/**
+	 * Writes a refactoring history index.
+	 * 
+	 * @param file
+	 *            the history index file
+	 * @param stamp
+	 *            the time stamp
+	 * @param description
+	 *            the description of the refactoring
+	 * @throws CoreException
+	 *             if an error occurs
+	 * @throws IOException
+	 *             if an error occurs
+	 */
+	private static void writeIndexEntry(final IFileStore file, final long stamp, final String description) throws CoreException, IOException {
+		Assert.isNotNull(file);
+		Assert.isNotNull(description);
+		OutputStream output= null;
+		try {
+			file.getParent().mkdir(EFS.NONE, null);
+			output= new BufferedOutputStream(file.openOutputStream(EFS.APPEND, null));
+			final StringBuffer buffer= new StringBuffer(64);
+			buffer.append(stamp);
+			buffer.append(DELIMITER_STAMP);
+			buffer.append(description);
+			buffer.append(DELIMITER_ENTRY);
+			output.write(buffer.toString().getBytes());
+		} finally {
+			if (output != null) {
+				try {
+					output.close();
+				} catch (IOException exception) {
+					// Do nothing
+				}
+			}
+		}
+	}
+
+	/** The history file store */
+	private final IFileStore fHistoryStore;
+
+	/** The name of the project whose history is managed */
+	private final String fProjectName;
 
 	/**
 	 * Creates a new refactoring history manager.
 	 * 
-	 * @param uri
-	 *            the URI of the refactoring history folder
+	 * @param store
+	 *            the history file store
+	 * @param name
+	 *            the non-empty name of the managed project
 	 */
-	public RefactoringHistoryManager(final URI uri) {
-		Assert.isNotNull(uri);
-		fHistoryURI= uri;
+	public RefactoringHistoryManager(final IFileStore store, final String name) {
+		Assert.isNotNull(store);
+		Assert.isTrue(name == null || !"".equals(name)); //$NON-NLS-1$
+		fHistoryStore= store;
+		fProjectName= name;
 	}
 
 	/**
@@ -182,35 +434,6 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
-	 * Transforms the specified descriptor into a history object.
-	 * 
-	 * @param descriptor
-	 *            the descriptor to transform
-	 * @return the transformation result
-	 * @throws CoreException
-	 *             if an error occurs
-	 */
-	private Object descriptorToNode(final RefactoringDescriptor descriptor) throws CoreException {
-		Assert.isNotNull(descriptor);
-		final IRefactoringSessionTransformer transformer= new XmlRefactoringSessionTransformer();
-		try {
-			transformer.beginSession(null);
-			try {
-				transformer.beginRefactoring(descriptor.getID(), descriptor.getTimeStamp(), descriptor.getProject(), descriptor.getDescription(), descriptor.getComment());
-				for (final Iterator iterator= descriptor.getArguments().entrySet().iterator(); iterator.hasNext();) {
-					final Map.Entry entry= (Entry) iterator.next();
-					transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
-				}
-			} finally {
-				transformer.endRefactoring();
-			}
-		} finally {
-			transformer.endSession();
-		}
-		return transformer.getResult();
-	}
-
-	/**
 	 * Is the refactoring history empty?
 	 * 
 	 * @return <code>true</code> if it is empty, <code>false</code>
@@ -219,73 +442,9 @@ public final class RefactoringHistoryManager {
 	 *             if an error occurs
 	 */
 	boolean isEmpty() throws CoreException {
-		final IFileStore store= EFS.getStore(fHistoryURI);
-		if (store.fetchInfo().exists())
-			return store.childStores(0, null).length == 0;
+		if (fHistoryStore.fetchInfo().exists())
+			return fHistoryStore.childStores(0, null).length == 0;
 		return true;
-	}
-
-	/**
-	 * Reads the specified number of refactoring descriptors from the head of
-	 * the history.
-	 * 
-	 * @param store
-	 *            the file store
-	 * @param descriptors
-	 *            the list of read descriptors
-	 * @param count
-	 *            the total number of descriptors to be read
-	 * @param monitor
-	 *            the progress monitor to use
-	 * @throws CoreException
-	 *             if an error occurs
-	 */
-	private void readDescriptors(final IFileStore store, final List descriptors, final int count, final IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(descriptors);
-		Assert.isTrue(count - descriptors.size() >= 0);
-		Assert.isNotNull(monitor);
-		try {
-			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 16);
-			if (count > 0) {
-				final IFileInfo info= store.fetchInfo();
-				if (store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_REFACTORING_HISTORY) && !info.isDirectory()) {
-					final RefactoringDescriptor[] results= readDescriptors(store.openInputStream(EFS.NONE, null));
-					monitor.worked(1);
-					Arrays.sort(results, new Comparator() {
-
-						public final int compare(final Object first, final Object second) {
-							return (int) (((RefactoringDescriptor) first).getTimeStamp() - ((RefactoringDescriptor) second).getTimeStamp());
-						}
-					});
-					monitor.worked(1);
-					final int size= count - descriptors.size();
-					for (int index= 0; index < results.length && index < size; index++)
-						descriptors.add(results[index]);
-					monitor.worked(1);
-				} else
-					monitor.worked(3);
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
-				final IFileStore[] stores= store.childStores(EFS.NONE, null);
-				Arrays.sort(stores, new Comparator() {
-
-					public final int compare(final Object first, final Object second) {
-						return ((IFileStore) first).getName().compareTo(((IFileStore) second).getName());
-					}
-				});
-				monitor.worked(1);
-				final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 12);
-				try {
-					subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, stores.length);
-					for (int index= 0; index < stores.length; index++)
-						readDescriptors(stores[index], descriptors, count - descriptors.size(), new SubProgressMonitor(subMonitor, 1));
-				} finally {
-					subMonitor.done();
-				}
-			}
-		} finally {
-			monitor.done();
-		}
 	}
 
 	/**
@@ -303,9 +462,8 @@ public final class RefactoringHistoryManager {
 		Assert.isNotNull(monitor);
 		final List list= new ArrayList(count);
 		try {
-			final IFileStore store= EFS.getStore(fHistoryURI);
-			if (store.fetchInfo().exists())
-				readDescriptors(store, list, count, monitor);
+			if (fHistoryStore.fetchInfo().exists())
+				readDescriptors(fHistoryStore, list, count, monitor);
 		} catch (CoreException exception) {
 			RefactoringCorePlugin.log(exception);
 		}
@@ -330,9 +488,8 @@ public final class RefactoringHistoryManager {
 		Assert.isNotNull(monitor);
 		final List list= new ArrayList();
 		try {
-			final IFileStore store= EFS.getStore(fHistoryURI);
-			if (store.fetchInfo().exists())
-				readProxies(store, list, start, end, monitor);
+			if (fHistoryStore.fetchInfo().exists())
+				readProxies(fHistoryStore, list, start, end, monitor);
 		} catch (CoreException exception) {
 			RefactoringCorePlugin.log(exception);
 		}
@@ -379,7 +536,9 @@ public final class RefactoringHistoryManager {
 							final int index= line.indexOf(DELIMITER_STAMP);
 							if (index > 0) {
 								try {
-									list.add(new RefactoringDescriptorProxy(line.substring(index + 1), new Long(line.substring(0, index)).longValue()));
+									final long stamp= new Long(line.substring(0, index)).longValue();
+									if (stamp >= start && stamp <= end)
+										list.add(new RefactoringDescriptorProxy(line.substring(index + 1), fProjectName, stamp));
 								} catch (NumberFormatException exception) {
 									// Just skip
 								}
@@ -416,32 +575,6 @@ public final class RefactoringHistoryManager {
 		} finally {
 			monitor.done();
 		}
-	}
-
-	/**
-	 * Recursively deletes entries of the refactoring history file tree.
-	 * 
-	 * @param store
-	 *            the file store
-	 * @throws CoreException
-	 *             if an error occurs
-	 */
-	private void recursiveDelete(final IFileStore store) throws CoreException {
-		Assert.isNotNull(store);
-		final IFileInfo info= store.fetchInfo();
-		if (info.isDirectory()) {
-			if (info.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER))
-				return;
-			final IFileStore[] stores= store.childStores(EFS.NONE, null);
-			for (int index= 0; index < stores.length; index++) {
-				final IFileInfo current= stores[index].fetchInfo();
-				if (current.isDirectory())
-					return;
-			}
-		}
-		final IFileStore parent= store.getParent();
-		store.delete(0, null);
-		recursiveDelete(parent);
 	}
 
 	/**
@@ -515,66 +648,6 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
-	 * Removes the specified index entry.
-	 * 
-	 * @param file
-	 *            the history index file
-	 * @param stamp
-	 *            the time stamp
-	 * @throws CoreException
-	 *             if an error occurs
-	 * @throws IOException
-	 *             if an error occurs
-	 */
-	private void removeIndexEntry(final IFileStore file, final long stamp) throws CoreException, IOException {
-		InputStream input= null;
-		try {
-			if (file.fetchInfo().exists()) {
-				input= new DataInputStream(new BufferedInputStream(file.openInputStream(EFS.NONE, null)));
-				if (input != null) {
-					final String value= new Long(stamp).toString();
-					final BufferedReader reader= new BufferedReader(new InputStreamReader(input));
-					final StringBuffer buffer= new StringBuffer();
-					while (reader.ready()) {
-						final String line= reader.readLine();
-						if (!line.startsWith(value)) {
-							buffer.append(line);
-							buffer.append('\n');
-						}
-					}
-					try {
-						input.close();
-						input= null;
-					} catch (IOException exception) {
-						// Do nothing
-					}
-					OutputStream output= null;
-					try {
-						file.getParent().mkdir(EFS.NONE, null);
-						output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, null));
-						output.write(buffer.toString().getBytes());
-					} finally {
-						if (output != null) {
-							try {
-								output.close();
-							} catch (IOException exception) {
-								// Do nothing
-							}
-						}
-					}
-				}
-			}
-		} finally {
-			try {
-				if (input != null)
-					input.close();
-			} catch (IOException exception) {
-				// Do nothing
-			}
-		}
-	}
-
-	/**
 	 * Returns the descriptor the specified proxy points to.
 	 * 
 	 * @param proxy
@@ -622,95 +695,12 @@ public final class RefactoringHistoryManager {
 	 */
 	private IFileStore stampToStore(final long stamp) throws CoreException {
 		Assert.isTrue(stamp >= 0);
-		final Calendar calendar= Calendar.getInstance(Locale.US);
+		final Calendar calendar= Calendar.getInstance(TimeZone.getTimeZone("GMT+00:00")); //$NON-NLS-1$
 		calendar.setTimeInMillis(stamp);
-		IFileStore store= EFS.getStore(fHistoryURI);
+		IFileStore store= fHistoryStore;
 		store= store.getChild(String.valueOf(calendar.get(Calendar.YEAR)));
 		store= store.getChild(String.valueOf(calendar.get(Calendar.MONTH) + 1));
 		store= store.getChild(String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));
 		return store;
-	}
-
-	/**
-	 * Writes a refactoring history entry.
-	 * 
-	 * @param file
-	 *            the refactoring history file
-	 * @param node
-	 *            the DOM node
-	 * @throws CoreException
-	 *             if an error occurs
-	 * @throws IOException
-	 *             if an error occurs
-	 */
-	private void writeHistoryEntry(final IFileStore file, final Node node) throws CoreException, IOException {
-		Assert.isNotNull(file);
-		Assert.isNotNull(node);
-		OutputStream output= null;
-		try {
-			file.getParent().mkdir(EFS.NONE, null);
-			output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, null));
-			if (output != null) {
-				final Transformer transformer= TransformerFactory.newInstance().newTransformer();
-				transformer.setOutputProperty(OutputKeys.METHOD, IRefactoringSerializationConstants.OUTPUT_METHOD);
-				transformer.setOutputProperty(OutputKeys.ENCODING, IRefactoringSerializationConstants.OUTPUT_ENCODING);
-				transformer.transform(new DOMSource(node), new StreamResult(output));
-			}
-		} catch (TransformerConfigurationException exception) {
-			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-		} catch (TransformerFactoryConfigurationError exception) {
-			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-		} catch (TransformerException exception) {
-			final Throwable throwable= exception.getException();
-			if (throwable instanceof IOException)
-				throw (IOException) throwable;
-			RefactoringCorePlugin.log(exception);
-		} finally {
-			if (output != null) {
-				try {
-					output.close();
-				} catch (IOException exception) {
-					// Do nothing
-				}
-			}
-		}
-	}
-
-	/**
-	 * Writes a refactoring history index.
-	 * 
-	 * @param file
-	 *            the history index file
-	 * @param stamp
-	 *            the time stamp
-	 * @param description
-	 *            the description of the refactoring
-	 * @throws CoreException
-	 *             if an error occurs
-	 * @throws IOException
-	 *             if an error occurs
-	 */
-	private void writeIndexEntry(final IFileStore file, final long stamp, final String description) throws CoreException, IOException {
-		Assert.isNotNull(file);
-		Assert.isNotNull(description);
-		OutputStream output= null;
-		try {
-			file.getParent().mkdir(EFS.NONE, null);
-			output= new BufferedOutputStream(file.openOutputStream(EFS.APPEND, null));
-			final StringBuffer buffer= new StringBuffer(64);
-			buffer.append(stamp);
-			buffer.append(DELIMITER_STAMP);
-			buffer.append(description);
-			buffer.append(DELIMITER_ENTRY);
-			output.write(buffer.toString().getBytes());
-		} finally {
-			if (output != null) {
-				try {
-					output.close();
-				} catch (IOException exception) {
-					// Do nothing
-				}
-			}
-		}
 	}
 }

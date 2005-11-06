@@ -110,4 +110,6 @@ public final class RefactoringUIMessages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringUIMessages.class);
 	}
+
+	public static String RefactoringHistoryControl_resolving_information;
 }

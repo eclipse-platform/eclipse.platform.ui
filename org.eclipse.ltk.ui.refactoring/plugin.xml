@@ -29,7 +29,7 @@
       <page
             class="org.eclipse.ltk.internal.ui.refactoring.history.WorkInProgressPreferencePage"
             id="org.eclipse.ltk.ui.refactoring.work.in.progress"
-            name="Work in Progress"/>
+            name="%WorkInProgressPage_name"/>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">

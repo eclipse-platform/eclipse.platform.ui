@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring;
 
+import java.util.ResourceBundle;
+
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
+
+import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
@@ -21,6 +26,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog2;
 import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryControl;
 
 /**
  * Central access point to access resources managed by the refactoring
@@ -35,6 +41,21 @@ public class RefactoringUI {
 	
 	private RefactoringUI() {
 		// no instance
+	}
+	
+	/**
+	 * Creates a control capable of presenting a refactoring history. Clients
+	 * of this method can assume that the returned composite is an instance of
+	 * {@link IRefactoringHistoryControl}.
+	 * 
+	 * @param parent the parent control
+	 * @param bundle the resource bundle to use
+	 * @return the control
+	 * 
+	 * @since 3.2
+	 */
+	public static Composite createRefactoringHistoryControl(Composite parent, ResourceBundle bundle) {
+		return new RefactoringHistoryControl(parent, bundle);
 	}
 	
 	/**

@@ -6,7 +6,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
- * Adapter class which adapts refactoring descriptors to refactoring descriptor proxies.
+ * Adapter class which adapts refactoring descriptors to refactoring descriptor
+ * proxies.
  * 
  * @since 3.2
  */
@@ -22,7 +23,7 @@ public final class RefactoringDescriptorProxyAdapter extends RefactoringDescript
 	 *            the descriptor to encapsulate
 	 */
 	public RefactoringDescriptorProxyAdapter(final RefactoringDescriptor descriptor) {
-		super(descriptor.getDescription(), descriptor.getTimeStamp());
+		super(descriptor.getDescription(), descriptor.getProject(), descriptor.getTimeStamp());
 		fDescriptor= descriptor;
 	}
 
