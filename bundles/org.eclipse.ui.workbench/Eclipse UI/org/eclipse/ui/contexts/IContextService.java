@@ -13,6 +13,7 @@ package org.eclipse.ui.contexts;
 import java.util.Collection;
 
 import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IServiceWithSources;
@@ -162,6 +163,17 @@ public interface IContextService extends IServiceWithSources {
 			Expression expression, int sourcePriorities);
 
 	/**
+	 * Adds a listener to this context service. The listener will be notified
+	 * when the set of defined contexts changes. This can be used to track the
+	 * global appearance and disappearance of contexts.
+	 * 
+	 * @param listener
+	 *            The listener to attach; must not be <code>null</code>.
+	 * @since 3.2
+	 */
+	public void addContextManagerListener(IContextManagerListener listener);
+
+	/**
 	 * Deactivates the given context within the context of this service. If the
 	 * handler was context with a different service, then it must be deactivated
 	 * from that service instead. It is only possible to retract a context
@@ -189,6 +201,17 @@ public interface IContextService extends IServiceWithSources {
 	 *            collection must not be <code>null</code>.
 	 */
 	public void deactivateContexts(Collection activations);
+
+	/**
+	 * Returns the set of active context identifiers.
+	 * 
+	 * @return The set of active context identifiers; this value may be
+	 *         <code>null</code> if no active contexts have been set yet. If
+	 *         the set is not <code>null</code>, then it contains only
+	 *         instances of <code>String</code>.
+	 * @since 3.2
+	 */
+	public Collection getActiveContextIds();
 
 	/**
 	 * Retrieves the context with the given identifier. If no such context
@@ -275,6 +298,15 @@ public interface IContextService extends IServiceWithSources {
 	 *         otherwise.
 	 */
 	public boolean registerShell(Shell shell, int type);
+
+	/**
+	 * Removes a listener from this context service.
+	 * 
+	 * @param listener
+	 *            The listener to be removed; must not be <code>null</code>.
+	 * @since 3.2
+	 */
+	public void removeContextManagerListener(IContextManagerListener listener);
 
 	/**
 	 * <p>

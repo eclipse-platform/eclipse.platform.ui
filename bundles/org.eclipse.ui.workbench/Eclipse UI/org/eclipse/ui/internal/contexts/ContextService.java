@@ -15,6 +15,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
@@ -81,6 +82,11 @@ public final class ContextService implements IContextService {
 		return activateContext(contextId, expression);
 	}
 
+	public final void addContextManagerListener(
+			final IContextManagerListener listener) {
+		contextManager.addContextManagerListener(listener);
+	}
+
 	public final void addSourceProvider(final ISourceProvider provider) {
 		contextAuthority.addSourceProvider(provider);
 	}
@@ -98,6 +104,10 @@ public final class ContextService implements IContextService {
 					.next();
 			deactivateContext(activation);
 		}
+	}
+
+	public final Collection getActiveContextIds() {
+		return contextManager.getActiveContextIds();
 	}
 
 	public final Context getContext(final String contextId) {
@@ -122,6 +132,11 @@ public final class ContextService implements IContextService {
 
 	public final boolean registerShell(final Shell shell, final int type) {
 		return contextAuthority.registerShell(shell, type);
+	}
+
+	public final void removeContextManagerListener(
+			final IContextManagerListener listener) {
+		contextManager.addContextManagerListener(listener);
 	}
 
 	public final void removeSourceProvider(final ISourceProvider provider) {

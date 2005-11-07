@@ -112,6 +112,7 @@ import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
 import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.commands.WorkbenchCommandSupport;
+import org.eclipse.ui.internal.contexts.ActiveContextSourceProvider;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
@@ -996,6 +997,10 @@ public final class Workbench implements IWorkbench {
 		handlerService.addSourceProvider(activePartSourceProvider);
 		contextService.addSourceProvider(activePartSourceProvider);
 		menuService.addSourceProvider(activePartSourceProvider);
+		final ActiveContextSourceProvider activeContextSourceProvider = new ActiveContextSourceProvider(
+				contextService);
+		handlerService.addSourceProvider(activeContextSourceProvider);
+		menuService.addSourceProvider(activeContextSourceProvider);
 
 		/*
 		 * Phase 4 of the initialization of commands. This handles the creation
