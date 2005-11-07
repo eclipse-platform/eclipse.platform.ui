@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.themes.ColorUtil;
 import org.eclipse.ui.themes.IColorFactory;
 
 /**
@@ -111,17 +112,17 @@ public class RGBContrastFactory implements IColorFactory, IExecutableExtension {
         RGB cfg, cbg1, cbg2;
 
         if (fg != null) {
-            cfg = ColorUtils.getColorValue(fg);
+            cfg = ColorUtil.getColorValue(fg);
         } else {
             cfg = new RGB(255, 255, 255);
         }
         if (bg1 != null) {
-            cbg1 = ColorUtils.getColorValue(bg1);
+            cbg1 = ColorUtil.getColorValue(bg1);
         } else {
             cbg1 = new RGB(0, 0, 0);
         }
         if (bg2 != null) {
-            cbg2 = ColorUtils.getColorValue(bg2);
+            cbg2 = ColorUtil.getColorValue(bg2);
         } else {
             cbg2 = new RGB(0, 0, 0);
         }

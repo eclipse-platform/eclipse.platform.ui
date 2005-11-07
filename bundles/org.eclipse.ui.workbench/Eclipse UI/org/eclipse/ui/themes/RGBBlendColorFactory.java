@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.internal.themes.ColorUtils;
 
 /**
  * A resuable <code>IColorFactory</code> that may be used to blend two colors.  
@@ -58,13 +57,13 @@ public class RGBBlendColorFactory implements IColorFactory,
         if (color1 == null && color2 == null) {
             return new RGB(0, 0, 0);
         } else if (color1 != null && color2 == null) {
-            return ColorUtils.getColorValue(color1);
+            return ColorUtil.getColorValue(color1);
         } else if (color1 == null && color2 != null) {
-            return ColorUtils.getColorValue(color2);
+            return ColorUtil.getColorValue(color2);
         } else {
-            RGB rgb1 = ColorUtils.getColorValue(color1);
-            RGB rgb2 = ColorUtils.getColorValue(color2);
-            return ColorUtils.blend(rgb1, rgb2);
+            RGB rgb1 = ColorUtil.getColorValue(color1);
+            RGB rgb2 = ColorUtil.getColorValue(color2);
+            return ColorUtil.blend(rgb1, rgb2);
         }
     }
 

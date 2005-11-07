@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.themes;
 
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.themes.ColorUtil;
 
 /**
  * A <code>ColorDefiniton </code> is the representation of the extensions 
@@ -142,7 +143,7 @@ public class ColorDefinition implements IPluginContribution,
      */
     public RGB getValue() {
         if (parsedValue == null) {
-            parsedValue = ColorUtils.getColorValue(rawValue);
+            parsedValue = ColorUtil.getColorValue(rawValue);
         }
         return parsedValue;
     }
