@@ -56,38 +56,31 @@ public class TarLeveledStructureProvider implements
 	}
 
 	/**
-	 * Adds the specified child to the internal collection of the parent's
-	 * children.
+	 * Creates a new container tar entry with the specified name, iff it has 
+	 * not already been created. If the parent of the given element does not
+	 * already exist it will be recursively created as well.
+	 * @param pathname The path representing the container
+	 * @return The element represented by this pathname (it may have already existed)
 	 */
-	protected void addToChildren(TarEntry parent, TarEntry child) {
-		List childList = (List) children.get(parent);
-		if (childList == null) {
-			childList = new ArrayList();
-			children.put(parent, childList);
-		}
-
-		childList.add(child);
-	}
-
-	/**
-	 * Creates a new container tar entry with the specified name, iff it has not
-	 * already been created.
-	 */
-	protected void createContainer(IPath pathname) {
-		if (directoryEntryCache.containsKey(pathname))
-			return;
+	protected TarEntry createContainer(IPath pathname) {
+		TarEntry existingEntry = (TarEntry) directoryEntryCache.get(pathname);
+		if (existingEntry != null)
+			return existingEntry;
 
 		TarEntry parent;
 		if (pathname.segmentCount() == 1)
 			parent = root;
 		else
-			parent = (TarEntry) directoryEntryCache.get(pathname
-					.removeLastSegments(1));
-
+			parent = createContainer(pathname.removeLastSegments(1));
 		TarEntry newEntry = new TarEntry(pathname.toString());
 		newEntry.setFileType(TarEntry.DIRECTORY);
 		directoryEntryCache.put(pathname, newEntry);
-		addToChildren(parent, newEntry);
+		List childList = new ArrayList();
+		children.put(newEntry, childList);
+
+		List parentChildList = (List) children.get(parent);
+		parentChildList.add(newEntry);
+		return newEntry;
 	}
 
 	/**
@@ -102,7 +95,8 @@ public class TarLeveledStructureProvider implements
 			parent = (TarEntry) directoryEntryCache.get(pathname
 					.removeLastSegments(1));
 
-		addToChildren(parent, entry);
+		List childList = (List) children.get(parent);
+		childList.add(entry);
 	}
 
 	/*
@@ -183,21 +177,26 @@ public class TarLeveledStructureProvider implements
 	 */
 	protected void initialize() {
 		children = new HashMap(1000);
-
+		
+		children.put(root, new ArrayList());
 		Enumeration entries = tarFile.entries();
 		while (entries.hasMoreElements()) {
 			TarEntry entry = (TarEntry) entries.nextElement();
-			if (entry.getFileType() == TarEntry.FILE) {
-				IPath path = new Path(entry.getName()).addTrailingSeparator();
+			IPath path = new Path(entry.getName()).addTrailingSeparator();
+			
+			if (entry.getFileType() == TarEntry.DIRECTORY) 
+				createContainer(path);
+			else
+			{
+				// Ensure the container structure for all levels above this is initialized
+				// Once we hit a higher-level container that's already added we need go no further
 				int pathSegmentCount = path.segmentCount();
-
-				for (int i = 1; i < pathSegmentCount; i++)
-					createContainer(path.uptoSegment(i));
+				createContainer(path.uptoSegment(pathSegmentCount - 1));
 				createFile(entry);
 			}
 		}
 	}
-
+	
 	/*
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */
