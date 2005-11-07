@@ -1206,7 +1206,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 *
 	 * @param info the element's file info object
 	 * @return the system file for the given file info
-	 * @deprecated As of 3.2, replaced by {@link #getFileStore(FileInfo)}
+	 * @deprecated As of 3.2, replaced by {@link #getFileStore(org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo)}
 	 */
 	protected File getSystemFile(FileInfo info)  {
 		IPath path= info.fTextFileBuffer.getLocation();
