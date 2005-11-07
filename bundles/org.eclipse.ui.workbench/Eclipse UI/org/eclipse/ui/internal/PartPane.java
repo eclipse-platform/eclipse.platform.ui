@@ -372,18 +372,18 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
         PartStack folder = getStack();
 
         if (folder != null) {
-            folder.showSystemMenu();
+            folder.showPaneMenu();
         }
     }
 
     /**
      * Show the context menu for this part.
      */
-    public void showViewMenu() {
+    public void showSystemMenu() {
         PartStack folder = getStack();
 
         if (folder != null) {
-            folder.showPaneMenu();
+            folder.showSystemMenu();
         }
     }
 

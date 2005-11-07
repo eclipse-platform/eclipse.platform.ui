@@ -592,11 +592,23 @@ public class ViewPane extends PartPane {
         return perspective.isCloseable(getViewReference());
     }
     
+    public void showSystemMenu() {
+		if (isFastView()) {
+	        Perspective perspective = page.getActivePerspective();
+	        if (perspective != null) {
+				perspective.getFastViewPane().showSystemMenu();
+			}
+		} else {
+			super.showSystemMenu();	
+		}
+    } 
+    
     public void showPaneMenu() {
 		if (isFastView()) {
 	        Perspective perspective = page.getActivePerspective();
-	        
-	        perspective.getFastViewPane().showSystemMenu();
+			if (perspective != null) {
+				perspective.getFastViewPane().showPaneMenu();
+			}
 		} else {
 			super.showPaneMenu();	
 		}

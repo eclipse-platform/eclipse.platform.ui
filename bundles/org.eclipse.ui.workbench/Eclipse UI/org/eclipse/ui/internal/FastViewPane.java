@@ -550,4 +550,11 @@ public class FastViewPane {
     public void showSystemMenu() {
         getPresentation().showSystemMenu();
     }
+    
+    /**
+     * 
+     */
+    public void showPaneMenu() {
+        getPresentation().showPaneMenu();
+    }
 }

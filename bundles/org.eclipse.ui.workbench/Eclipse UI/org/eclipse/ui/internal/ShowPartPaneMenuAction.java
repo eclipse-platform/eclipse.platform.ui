@@ -63,7 +63,7 @@ public class ShowPartPaneMenuAction extends PartEventAction implements
      * Show the pane title menu.
      */
     protected void showMenu(PartPane pane) {
-        pane.showPaneMenu();
+        pane.showSystemMenu();
     }
 
     /**

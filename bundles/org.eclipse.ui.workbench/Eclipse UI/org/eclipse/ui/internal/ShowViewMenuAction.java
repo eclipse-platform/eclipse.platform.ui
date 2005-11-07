@@ -41,7 +41,7 @@ public class ShowViewMenuAction extends ShowPartPaneMenuAction {
      * Show the pane title menu.
      */
     protected void showMenu(PartPane pane) {
-        pane.showViewMenu();
+        pane.showPaneMenu();
     }
 
     /**
