@@ -212,11 +212,19 @@
       </page>
       <page
             name="%PreferencePages.Spelling"
-            class="org.eclipse.ui.internal.editors.text.SpellingPreferencePage"
             category="org.eclipse.ui.preferencePages.GeneralTextEditor"
+            class="org.eclipse.ui.internal.editors.text.SpellingPreferencePage"
             id="org.eclipse.ui.editors.preferencePages.Spelling">
             <keywordReference id="org.eclipse.ui.editors.spelling"/>
       </page>
+      <page
+            name="%editorLinkedMode"
+            category="org.eclipse.ui.preferencePages.GeneralTextEditor"
+            class="org.eclipse.ui.internal.editors.text.LinkedModePreferencePage"
+            id="org.eclipse.ui.internal.editors.preferencePages.LinkedModePreferencePage">
+         <keywordReference id="org.eclipse.ui.editors.spelling"/>
+      </page>
+      
    </extension>
    <extension
       point="org.eclipse.ui.keywords">
@@ -235,6 +243,9 @@
       <keyword
             label="%preferenceKeywords.spelling"
             id="org.eclipse.ui.editors.spelling"/>
+      <keyword
+            label="%preferenceKeywords.linkedmode"
+            id="org.eclipse.ui.editors.linkedmode"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.documentProviders">
@@ -716,6 +727,108 @@
             highlightPreferenceValue="true">
       </specification>
       
+      <!-- linked annotations -->
+	  <specification
+            annotationType="org.eclipse.ui.internal.workbench.texteditor.link.master"
+            colorPreferenceValue="70,100,165"
+            colorPreferenceKey="linked.focus.color"
+            isGoToPreviousNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="linked.focus.navigation.previous"
+            showInNextPrevDropdownToolbarAction="false"
+            showInNextPrevDropdownToolbarActionKey="linked.focus.navigation.dropdown"
+            isGoToNextNavigationTarget="false"
+            isGoToNextNavigationTargetKey="linked.focus.navigation.next"
+            contributesToHeader="false"
+            overviewRulerPreferenceValue="false"
+            presentationLayer="4"
+            label="%linked.focus.label"
+            textPreferenceValue="true"
+            textPreferenceKey="linked.focus.text"
+            highlightPreferenceKey="linked.focus.highlight"
+            highlightPreferenceValue="false"
+            textStylePreferenceKey="linked.focus.text.style"
+            textStylePreferenceValue="BOX"
+            verticalRulerPreferenceKey="linked.focus.verticalruler"
+            verticalRulerPreferenceValue="false"
+            includeOnPreferencePage="false"
+            overviewRulerPreferenceKey="linked.focus.overviewruler">
+      </specification>      
+      <specification
+            annotationType="org.eclipse.ui.internal.workbench.texteditor.link.slave"
+            colorPreferenceValue="180,215,255"
+            colorPreferenceKey="linked.slave.color"
+            isGoToPreviousNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="linked.slave.navigation.previous"
+            showInNextPrevDropdownToolbarAction="false"
+            showInNextPrevDropdownToolbarActionKey="linked.slave.navigation.dropdown"
+            isGoToNextNavigationTarget="false"
+            isGoToNextNavigationTargetKey="linked.slave.navigation.next"
+            contributesToHeader="false"
+            overviewRulerPreferenceValue="false"
+            presentationLayer="4"
+            label="%linked.slave.label"
+            textPreferenceValue="false"
+            textPreferenceKey="linked.slave.text"
+            highlightPreferenceKey="linked.slave.highlight"
+            highlightPreferenceValue="true"
+            textStylePreferenceKey="linked.slave.text.style"
+            textStylePreferenceValue="NONE"
+            verticalRulerPreferenceKey="linked.slave.verticalruler"
+            verticalRulerPreferenceValue="false"
+            includeOnPreferencePage="false"
+            overviewRulerPreferenceKey="linked.slave.overviewruler">
+      </specification>      
+      <specification
+            annotationType="org.eclipse.ui.internal.workbench.texteditor.link.target"
+            colorPreferenceValue="70,100,165"
+            colorPreferenceKey="linked.target.color"
+            isGoToPreviousNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="linked.target.navigation.previous"
+            showInNextPrevDropdownToolbarAction="false"
+            showInNextPrevDropdownToolbarActionKey="linked.target.navigation.dropdown"
+            isGoToNextNavigationTarget="false"
+            isGoToNextNavigationTargetKey="linked.target.navigation.next"
+            contributesToHeader="false"
+            overviewRulerPreferenceValue="false"
+            presentationLayer="4"
+            label="%linked.target.label"
+            textPreferenceValue="true"
+            textPreferenceKey="linked.target.text"
+            highlightPreferenceKey="linked.target.highlight"
+            highlightPreferenceValue="false"
+            textStylePreferenceKey="linked.target.text.style"
+            textStylePreferenceValue="BOX"
+            verticalRulerPreferenceKey="linked.target.verticalruler"
+            verticalRulerPreferenceValue="false"
+            includeOnPreferencePage="false"
+            overviewRulerPreferenceKey="linked.target.overviewruler">
+      </specification>
+      <specification
+            annotationType="org.eclipse.ui.internal.workbench.texteditor.link.exit"
+            colorPreferenceValue="0,180,0"
+            colorPreferenceKey="linked.exit.color"
+            isGoToPreviousNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="linked.exit.navigation.previous"
+            showInNextPrevDropdownToolbarAction="false"
+            showInNextPrevDropdownToolbarActionKey="linked.exit.navigation.dropdown"
+            isGoToNextNavigationTarget="false"
+            isGoToNextNavigationTargetKey="linked.exit.navigation.next"
+            contributesToHeader="false"
+            overviewRulerPreferenceValue="false"
+            presentationLayer="4"
+            label="%linked.exit.label"
+            textPreferenceValue="true"
+            textPreferenceKey="linked.exit.text"
+            highlightPreferenceKey="linked.exit.highlight"
+            highlightPreferenceValue="false"
+            textStylePreferenceKey="linked.exit.text.style"
+            textStylePreferenceValue="IBEAM"
+            verticalRulerPreferenceKey="linked.exit.verticalruler"
+            verticalRulerPreferenceValue="false"
+            includeOnPreferencePage="false"
+            overviewRulerPreferenceKey="linked.exit.overviewruler">
+      </specification>
+      
    </extension>
    
    <extension
@@ -743,6 +856,10 @@
          name="org.eclipse.ui.workbench.texteditor.bookmark"
          markerType="org.eclipse.core.resources.bookmark">
       </type>
+      <type name="org.eclipse.ui.internal.workbench.texteditor.link.master"/>
+      <type name="org.eclipse.ui.internal.workbench.texteditor.link.slave"/>
+      <type name="org.eclipse.ui.internal.workbench.texteditor.link.target"/>
+      <type name="org.eclipse.ui.internal.workbench.texteditor.link.exit"/>
    </extension>
    
    <extension

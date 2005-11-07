@@ -35,10 +35,10 @@ import org.eclipse.jface.text.source.AnnotationModel;
 final class LinkedPositionAnnotations extends AnnotationModel {
 
 	/* annotation types */
-	private static final String TARGET_ANNOTATION_TYPE= "org.eclipse.jdt.ui.link.target"; //$NON-NLS-1$
-	private static final String SLAVE_ANNOTATION_TYPE= "org.eclipse.jdt.ui.link.slave"; //$NON-NLS-1$
-	private static final String FOCUS_ANNOTATION_TYPE= "org.eclipse.jdt.ui.link.master"; //$NON-NLS-1$
-	private static final String EXIT_ANNOTATION_TYPE= "org.eclipse.jdt.ui.link.exit"; //$NON-NLS-1$
+	private static final String TARGET_ANNOTATION_TYPE= "org.eclipse.ui.internal.workbench.texteditor.link.target"; //$NON-NLS-1$
+	private static final String SLAVE_ANNOTATION_TYPE= "org.eclipse.ui.internal.workbench.texteditor.link.slave"; //$NON-NLS-1$
+	private static final String FOCUS_ANNOTATION_TYPE= "org.eclipse.ui.internal.workbench.texteditor.link.master"; //$NON-NLS-1$
+	private static final String EXIT_ANNOTATION_TYPE= "org.eclipse.ui.internal.workbench.texteditor.link.exit"; //$NON-NLS-1$
 
 	/* configuration */
 	private boolean fMarkTargets= true;

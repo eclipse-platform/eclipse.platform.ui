@@ -115,4 +115,13 @@ final class TextEditorMessages extends NLS {
 	}
 
 	public static String TextEditorDefaultsPreferencePage_range_indicator;
+	public static String LinkedModeConfigurationBlock_annotationPresentationOptions;
+	public static String LinkedModeConfigurationBlock_SQUIGGLES;
+	public static String LinkedModeConfigurationBlock_UNDERLINE;
+	public static String LinkedModeConfigurationBlock_BOX;
+	public static String LinkedModeConfigurationBlock_IBEAM;
+	public static String LinkedModeConfigurationBlock_HIGHLIGHT;
+	public static String LinkedModeConfigurationBlock_labels_showIn;
+	public static String LinkedModeConfigurationBlock_color;
+	public static String LinkedModeConfigurationBlock_linking_title;
 }
