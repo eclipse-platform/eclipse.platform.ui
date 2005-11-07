@@ -128,6 +128,16 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		}
 
 		if (sources != 0) {
+			if (DEBUG) {
+				if ((sources & ISources.ACTIVE_PART) != 0) {
+					logDebuggingInfo("Active part changed to " //$NON-NLS-1$
+							+ lastActivePartId);
+				}
+				if ((sources & ISources.ACTIVE_SITE) != 0) {
+					logDebuggingInfo("Active site changed to " //$NON-NLS-1$
+							+ lastActivePartSite);
+				}
+			}
 			fireSourceChanged(sources, currentState);
 		}
 	}

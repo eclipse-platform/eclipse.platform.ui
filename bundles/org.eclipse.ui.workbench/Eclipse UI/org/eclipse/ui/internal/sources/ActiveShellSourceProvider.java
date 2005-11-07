@@ -81,15 +81,34 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 						newActiveShell);
 				sourceValuesByName.put(ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
 						newActiveWorkbenchWindowShell);
+				
+				if (DEBUG) {
+					logDebuggingInfo("Active shell changed to " //$NON-NLS-1$
+							+ newActiveShell);
+					logDebuggingInfo("Active workbench window changed to " //$NON-NLS-1$
+							+ newActiveWorkbenchWindowShell);
+				}
+				
 				fireSourceChanged(ISources.ACTIVE_SHELL
 						| ISources.ACTIVE_WORKBENCH_WINDOW, sourceValuesByName);
+				
 			} else if (shellChanged) {
+				if (DEBUG) {
+					logDebuggingInfo("Active shell changed to " //$NON-NLS-1$
+							+ newActiveShell);
+				}
 				fireSourceChanged(ISources.ACTIVE_SHELL,
 						ISources.ACTIVE_SHELL_NAME, newActiveShell);
+				
 			} else if (windowChanged) {
+				if (DEBUG) {
+					logDebuggingInfo("Active workbench window changed to " //$NON-NLS-1$
+							+ newActiveWorkbenchWindowShell);
+				}
 				fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW,
 						ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
 						newActiveWorkbenchWindowShell);
+				
 			}
 
 			// Update the member variables.

@@ -11,8 +11,15 @@
 package org.eclipse.ui.internal.misc;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * A common facility for parsing the <code>org.eclipse.ui/.options</code>
+ * file.
+ * 
+ * @since 2.1
+ */
 public class Policy {
     public static boolean DEFAULT = false;
 
@@ -26,6 +33,15 @@ public class Policy {
      * Flag to log stale jobs
      */
     public static boolean DEBUG_STALE_JOBS = DEFAULT;
+
+    /**
+	 * Whether to report all events entering through the common event framework
+	 * used by the commands architecture.
+	 * 
+	 * @see ISourceProvider
+	 * @since 3.2
+	 */
+    public static boolean DEBUG_SOURCES = DEFAULT;
 
     /**
      * Whether to print information about key bindings that are successfully
@@ -112,6 +128,7 @@ public class Policy {
             DEBUG_SWT_GRAPHICS = getDebugOption("/trace/graphics"); //$NON-NLS-1$
             DEBUG_SWT_DEBUG = getDebugOption("/debug/swtdebug"); //$NON-NLS-1$
             DEBUG_DRAG_DROP = getDebugOption("/trace/dragDrop"); //$NON-NLS-1$
+            DEBUG_SOURCES = getDebugOption("/trace/sources"); //$NON-NLS-1$
             DEBUG_KEY_BINDINGS = getDebugOption("/trace/keyBindings"); //$NON-NLS-1$
             DEBUG_KEY_BINDINGS_VERBOSE = getDebugOption("/trace/keyBindings.verbose"); //$NON-NLS-1$
             DEBUG_TOOLBAR_DISPOSAL = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/toolbarDisposal")); //$NON-NLS-1$ //$NON-NLS-2$

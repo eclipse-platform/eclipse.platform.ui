@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.ui.internal.misc.Policy;
+
 /**
  * <p>
  * An implementation of <code>ISourceProvider</code> that provides listener
@@ -26,6 +28,14 @@ import java.util.Map;
  * @since 3.1
  */
 public abstract class AbstractSourceProvider implements ISourceProvider {
+
+	/**
+	 * Whether source providers should print out debugging information to the
+	 * console when events arrive.
+	 * 
+	 * @since 3.2
+	 */
+	protected static boolean DEBUG = Policy.DEBUG_SOURCES;
 
 	/**
 	 * The listeners to this source provider. This value is <code>null</code>
@@ -91,6 +101,22 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 						.next();
 				listener.sourceChanged(sourcePriority, sourceValuesByName);
 			}
+		}
+	}
+
+	/**
+	 * Logs a debugging message in an appropriate manner. If the message is
+	 * <code>null</code> or the <code>DEBUG</code> is <code>false</code>,
+	 * then this method does nothing.
+	 * 
+	 * @param message
+	 *            The debugging message to log; if <code>null</code>, then
+	 *            nothing is logged.
+	 * @since 3.2
+	 */
+	protected final void logDebuggingInfo(final String message) {
+		if (DEBUG && (message != null)) {
+			System.out.println("SOURCES >> " + message); //$NON-NLS-1$
 		}
 	}
 

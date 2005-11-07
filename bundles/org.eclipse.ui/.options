@@ -71,6 +71,9 @@ org.eclipse.ui/perf/contentTypes=200
 # Controls whether the heap status indicator is shown
 org.eclipse.ui/perf/showHeapStatus=true
 
+# Reports all events entering through the common event framework used by the
+# commands architecture.  See ISourceProvider and AbstractSourceProvider.DEBUG.
+org.eclipse.ui/trace/sources=false
 
 # Reports events received and dispatched by the key binding architecture
 org.eclipse.ui/trace/keyBindings=false
