@@ -71,7 +71,7 @@ public final class ExternalActionManager {
 	 * @since 3.1
 	 */
 	public static final class CommandCallback implements
-			IBindingManagerListener, ICallback {
+			IBindingManagerListener, IBindingManagerCallback {
 
 		/**
 		 * The internationalization bundle for text produced by this class.
@@ -192,11 +192,6 @@ public final class ExternalActionManager {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
-		 */
 		public final void bindingManagerChanged(final BindingManagerEvent event) {
 			if (event.isActiveBindingsChanged()) {
 				final Iterator listenerItr = registeredListeners.entrySet()
@@ -222,49 +217,52 @@ public final class ExternalActionManager {
 		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#getAccelerator(String)
 		 */
 		public final Integer getAccelerator(final String commandId) {
-			final Command command = commandManager.getCommand(commandId);
-			final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
-					command, null);
-			final TriggerSequence[] activeBindings = bindingManager
-					.getActiveBindingsFor(parameterizedCommand);
-			final int activeBindingsCount = activeBindings.length;
-			Integer accelerator = null;
-			for (int i = 0; i < activeBindingsCount; i++) {
-				final TriggerSequence triggerSequence = activeBindings[i];
+			final TriggerSequence triggerSequence = bindingManager
+					.getBestActiveBinding(commandId);
+			if (triggerSequence != null) {
 				final Trigger[] triggers = triggerSequence.getTriggers();
-
 				if (triggers.length == 1) {
 					final Trigger trigger = triggers[0];
 					if (trigger instanceof KeyStroke) {
-						accelerator = new Integer(
-								SWTKeySupport
-										.convertKeyStrokeToAccelerator((KeyStroke) trigger));
-						break;
+						final KeyStroke keyStroke = (KeyStroke) trigger;
+						final int accelerator = SWTKeySupport
+								.convertKeyStrokeToAccelerator(keyStroke);
+						return new Integer(accelerator);
 					}
 				}
 			}
 
-			return accelerator;
+			return null;
 		}
 
 		/**
 		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#getAcceleratorText(String)
 		 */
 		public final String getAcceleratorText(final String commandId) {
-			final Command command = commandManager.getCommand(commandId);
-			final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
-					command, null);
-			final TriggerSequence[] activeBindings = bindingManager
-					.getActiveBindingsFor(parameterizedCommand);
-			final int activeBindingsCount = activeBindings.length;
-			String acceleratorText = null;
-
-			for (int i = 0; i < activeBindingsCount; i++) {
-				final TriggerSequence triggerSequence = activeBindings[i];
-				acceleratorText = triggerSequence.format();
+			final TriggerSequence triggerSequence = bindingManager
+					.getBestActiveBinding(commandId);
+			if (triggerSequence == null) {
+				return null;
 			}
 
-			return acceleratorText;
+			return triggerSequence.format();
+		}
+
+		/**
+		 * Returns the active bindings for a particular command identifier.
+		 * 
+		 * @param commandId
+		 *            The identifier of the command whose bindings are
+		 *            requested. This argument may be <code>null</code>. It
+		 *            is assumed that the command has no parameters.
+		 * @return The array of active triggers (<code>TriggerSequence</code>)
+		 *         for a particular command identifier. This value is guaranteed
+		 *         not to be <code>null</code>, but it may be empty.
+		 * @since 3.2
+		 */
+		public final TriggerSequence[] getActiveBindingsFor(
+				final String commandId) {
+			return bindingManager.getActiveBindingsFor(commandId);
 		}
 
 		/**
@@ -363,6 +361,43 @@ public final class ExternalActionManager {
 		 *         <code>false</code> otherwise.
 		 */
 		public boolean isActive(String commandId);
+	}
+
+	/**
+	 * <p>
+	 * A callback which communicates with the applications binding manager. This
+	 * interface provides more information from the binding manager, which
+	 * allows greater integration. Implementing this interface is preferred over
+	 * {@link ICallback}.
+	 * </p>
+	 * <p>
+	 * Clients may implement this interface, but must not extend.
+	 * </p>
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API
+	 * will work nor that it will remain the same. Please do not use this API
+	 * without consulting with the Platform/UI team.
+	 * </p>
+	 * 
+	 * @since 3.2
+	 */
+	public static interface IBindingManagerCallback extends ICallback {
+
+		/**
+		 * <p>
+		 * Returns the active bindings for a particular command identifier.
+		 * </p>
+		 * 
+		 * @param commandId
+		 *            The identifier of the command whose bindings are
+		 *            requested. This argument may be <code>null</code>. It
+		 *            is assumed that the command has no parameters.
+		 * @return The array of active triggers (<code>TriggerSequence</code>)
+		 *         for a particular command identifier. This value is guaranteed
+		 *         not to be <code>null</code>, but it may be empty.
+		 */
+		public TriggerSequence[] getActiveBindingsFor(String commandId);
 	}
 
 	/**

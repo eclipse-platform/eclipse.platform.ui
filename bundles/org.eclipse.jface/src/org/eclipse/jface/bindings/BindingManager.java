@@ -30,6 +30,9 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
@@ -451,6 +454,42 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * Compares the identifier of two schemes, and decides which scheme is the
+	 * youngest (i.e., the child) of the two. Both schemes should be active
+	 * schemes.
+	 * 
+	 * @param schemeId1
+	 *            The identifier of the first scheme; must not be
+	 *            <code>null</code>.
+	 * @param schemeId2
+	 *            The identifier of the second scheme; must not be
+	 *            <code>null</code>.
+	 * @return <code>0</code> if the two schemes are equal of if neither
+	 *         scheme is active; <code>1</code> if the second scheme is the
+	 *         youngest; and <code>-1</code> if the first scheme is the
+	 *         youngest.
+	 * @since 3.2
+	 */
+	private final int compareSchemes(final String schemeId1,
+			final String schemeId2) {
+		if (!schemeId2.equals(schemeId1)) {
+			for (int i = 0; i < activeSchemeIds.length; i++) {
+				final String schemePointer = activeSchemeIds[i];
+				if (schemeId2.equals(schemePointer)) {
+					return 1;
+
+				} else if (schemeId1.equals(schemePointer)) {
+					return -1;
+
+				}
+
+			}
+		}
+
+		return 0;
+	}
+
+	/**
 	 * <p>
 	 * Computes the bindings given the context tree, and inserts them into the
 	 * <code>commandIdsByTrigger</code>. It is assumed that
@@ -630,6 +669,46 @@ public final class BindingManager implements IContextManagerListener,
 		if (contextManagerEvent.isActiveContextsChanged()) {
 			clearSolution();
 		}
+	}
+
+	/**
+	 * Returns the number of strokes in an array of triggers. It is assumed that
+	 * there is one natural key per trigger. The strokes are counted based on
+	 * the type of key. Natural keys are worth one; ctrl is worth two; shift is
+	 * worth four; and alt is worth eight.
+	 * 
+	 * @param triggers
+	 *            The triggers on which to count strokes; must not be
+	 *            <code>null</code>.
+	 * @return The value of the strokes in the triggers.
+	 * @since 3.2
+	 */
+	private final int countStrokes(final Trigger[] triggers) {
+		int strokeCount = triggers.length;
+		for (int i = 0; i < triggers.length; i++) {
+			final Trigger trigger = triggers[i];
+			if (trigger instanceof KeyStroke) {
+				final KeyStroke keyStroke = (KeyStroke) trigger;
+				final int modifierKeys = keyStroke.getModifierKeys();
+				final IKeyLookup lookup = KeyLookupFactory.getDefault();
+				if ((modifierKeys & lookup.getAlt()) != 0) {
+					strokeCount += 8;
+				}
+				if ((modifierKeys & lookup.getCtrl()) != 0) {
+					strokeCount += 2;
+				}
+				if ((modifierKeys & lookup.getShift()) != 0) {
+					strokeCount += 4;
+				}
+				if ((modifierKeys & lookup.getCommand()) != 0) {
+					strokeCount += 2;
+				}
+			} else {
+				strokeCount += 99;
+			}
+		}
+
+		return strokeCount;
 	}
 
 	/**
@@ -1080,6 +1159,39 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * A variation on {@link BindingManager#getActiveBindingsFor(String)} that
+	 * returns an array of bindings, rather than trigger sequences. This method
+	 * is needed for doing "best" calculationgs on the active bindings.
+	 * 
+	 * @param commandId
+	 *            The identifier of the command for which the active bindings
+	 *            should be retrieved; must not be <code>null</code>.
+	 * @return The active bindings for the given command; this value may be
+	 *         <code>null</code> if there are no active bindings.
+	 *         @since 3.2
+	 */
+	private final Binding[] getActiveBindingsFor1(final String commandId) {
+		final TriggerSequence[] triggers = getActiveBindingsFor(commandId);
+		if (triggers.length == 0) {
+			return null;
+		}
+
+		final Map activeBindings = getActiveBindings();
+		if (activeBindings != null) {
+			final Binding[] bindings = new Binding[triggers.length];
+			for (int i = 0; i < triggers.length; i++) {
+				final TriggerSequence triggerSequence = triggers[i];
+				final Object object = activeBindings.get(triggerSequence);
+				final Binding binding = (Binding) object;
+				bindings[i] = binding;
+			}
+			return bindings;
+		}
+
+		return null;
+	}
+
+	/**
 	 * <p>
 	 * Gets the currently active scheme.
 	 * </p>
@@ -1092,6 +1204,88 @@ public final class BindingManager implements IContextManagerListener,
 	 */
 	public final Scheme getActiveScheme() {
 		return activeScheme;
+	}
+
+	/**
+	 * Gets the best active binding for a command. The best binding is the one
+	 * that would be most appropriate to show in a menu. Bindings which belong
+	 * to a child scheme are given preference over those in a parent scheme. The
+	 * rest of the calculaton is based most on various concepts of "length", as
+	 * well as giving some modifier keys preference (e.g., <code>Alt</code> is
+	 * less likely to appear than <code>Ctrl</code>).
+	 * 
+	 * @param commandId
+	 *            The identifier of the command for which the best active
+	 *            binding should be retrieved; must not be <code>null</code>.
+	 * @return The trigger sequence for the best binding; may be
+	 *         <code>null</code> if no bindings are active for the given
+	 *         command.
+	 * @since 3.2
+	 */
+	public final TriggerSequence getBestActiveBinding(final String commandId) {
+		final Binding[] bindings = getActiveBindingsFor1(commandId);
+		if ((bindings == null) || (bindings.length == 0)) {
+			return null;
+		}
+
+		Binding bestBinding = bindings[0];
+		int compareTo;
+		for (int i = 1; i < bindings.length; i++) {
+			final Binding currentBinding = bindings[i];
+
+			// Bindings in a child scheme are always given preference.
+			final String bestSchemeId = bestBinding.getSchemeId();
+			final String currentSchemeId = currentBinding.getSchemeId();
+			compareTo = compareSchemes(bestSchemeId, currentSchemeId);
+			if (compareTo > 0) {
+				bestBinding = currentBinding;
+			}
+			if (compareTo != 0) {
+				continue;
+			}
+
+			/*
+			 * Check to see which has the least number of triggers in the
+			 * trigger sequence.
+			 */
+			final TriggerSequence bestTriggerSequence = bestBinding
+					.getTriggerSequence();
+			final TriggerSequence currentTriggerSequence = currentBinding
+					.getTriggerSequence();
+			final Trigger[] bestTriggers = bestTriggerSequence.getTriggers();
+			final Trigger[] currentTriggers = currentTriggerSequence
+					.getTriggers();
+			compareTo = bestTriggers.length - currentTriggers.length;
+			if (compareTo > 0) {
+				bestBinding = currentBinding;
+			}
+			if (compareTo != 0) {
+				continue;
+			}
+
+			/*
+			 * Compare the number of keys pressed in each trigger sequence. Some
+			 * types of keys count less than others (i.e., some types of
+			 * modifiers keys are less likely to be chosen).
+			 */
+			compareTo = countStrokes(bestTriggers)
+					- countStrokes(currentTriggers);
+			if (compareTo > 0) {
+				bestBinding = currentBinding;
+			}
+			if (compareTo != 0) {
+				continue;
+			}
+
+			// If this is still a tie, then just chose the shortest text.
+			compareTo = bestTriggerSequence.format().length()
+					- currentTriggerSequence.format().length();
+			if (compareTo > 0) {
+				bestBinding = currentBinding;
+			}
+		}
+
+		return bestBinding.getTriggerSequence();
 	}
 
 	/**
@@ -1694,30 +1888,16 @@ public final class BindingManager implements IContextManagerListener,
 			 * defined in a parent scheme -- assuming that consulting their
 			 * contexts led to a conflict.
 			 */
-			final String currentScheme = current.getSchemeId();
-			final String bestScheme = bestMatch.getSchemeId();
-			if (!currentScheme.equals(bestScheme)) {
-				boolean goToNextBinding = false;
-				for (int i = 0; i < activeSchemeIds.length; i++) {
-					final String schemePointer = activeSchemeIds[i];
-					if (currentScheme.equals(schemePointer)) {
-						// the current wins
-						bestMatch = current;
-						matches.clear();
-						matches.add(current);
-						goToNextBinding = true;
-						break;
-
-					} else if (bestScheme.equals(schemePointer)) {
-						// the best wins
-						goToNextBinding = true;
-						break;
-
-					}
-				}
-				if (goToNextBinding) {
-					continue;
-				}
+			final String currentSchemeId = current.getSchemeId();
+			final String bestSchemeId = bestMatch.getSchemeId();
+			final int compareTo = compareSchemes(bestSchemeId, currentSchemeId);
+			if (compareTo > 0) {
+				bestMatch = current;
+				matches.clear();
+				matches.add(current);
+			}
+			if (compareTo != 0) {
+				continue;
 			}
 
 			/*
@@ -1791,30 +1971,15 @@ public final class BindingManager implements IContextManagerListener,
 			 * defined in a child scheme will always take priority over bindings
 			 * defined in a parent scheme.
 			 */
-			final String currentScheme = current.getSchemeId();
-			final String bestScheme = bestMatch.getSchemeId();
-			if (!currentScheme.equals(bestScheme)) {
-				boolean goToNextBinding = false;
-				for (int i = 0; i < activeSchemeIds.length; i++) {
-					final String schemePointer = activeSchemeIds[i];
-					if (currentScheme.equals(schemePointer)) {
-						// the current wins
-						bestMatch = current;
-						conflict = false;
-						goToNextBinding = true;
-						break;
-
-					} else if (bestScheme.equals(schemePointer)) {
-						// the best wins
-						goToNextBinding = true;
-						break;
-
-					}
-
-				}
-				if (goToNextBinding) {
-					continue;
-				}
+			final String currentSchemeId = current.getSchemeId();
+			final String bestSchemeId = bestMatch.getSchemeId();
+			final int compareTo = compareSchemes(bestSchemeId, currentSchemeId);
+			if (compareTo > 0) {
+				bestMatch = current;
+				conflict = false;
+			}
+			if (compareTo != 0) {
+				continue;
 			}
 
 			/*

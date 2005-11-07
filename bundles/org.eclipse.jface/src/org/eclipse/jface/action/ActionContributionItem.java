@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import org.eclipse.jface.action.ExternalActionManager.IBindingManagerCallback;
+import org.eclipse.jface.bindings.Trigger;
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -49,26 +55,6 @@ public class ActionContributionItem extends ContributionItem {
      * @since 3.0
      */
     public static int MODE_FORCE_TEXT = 1;
-
-    /**
-     * This is the lower bound of the continuous range of accelerator values
-     * that should be handled specially on GTK.  This is to circumnavigate the
-     * special input mode in some cases.
-     */
-    private static final int LOWER_GTK_ACCEL_BOUND = SWT.MOD1 | SWT.MOD2 | 'A';
-
-    /**
-     * This is the lower bound of the continuous range of accelerator values
-     * that should be handled specially on GTK.  This is to circumnavigate the
-     * special input mode in some cases.
-     */
-    private static final int UPPER_GTK_ACCEL_BOUND = SWT.MOD1 | SWT.MOD2 | 'F';
-    
-    /**
-	 * After <a href="http://bugzilla.gnome.org/show_bug.cgi?id=82011">Bug 82011</a>
-	 * is fixed, "CTRL+SHIFT+U" will be the only special character.
-	 */
-    private static final int AFTER_82011_IS_FIXED = SWT.MOD1 | SWT.MOD2 | 'U';
 
     /** a string inserted in the middle of text that has been shortened */
     private static final String ellipsis = "..."; //$NON-NLS-1$
@@ -762,19 +748,35 @@ public class ActionContributionItem extends ContributionItem {
 					 * allowing these reserved accelerators to be placed on the
 					 * menu. We will only do this for "Ctrl+Shift+[A-F]".
 					 */
-					String commandId = updatedAction.getActionDefinitionId();
-					if (SWT.getPlatform().equals("gtk")) { //$NON-NLS-1$
-						if ((callback != null) && (commandId != null)) {
-							Integer commandAccelerator = callback
-									.getAccelerator(commandId);
-							if (commandAccelerator != null) {
-								int accelInt = callback.getAccelerator(
-										commandId).intValue();
-								if (((accelInt >= LOWER_GTK_ACCEL_BOUND) && (accelInt <= UPPER_GTK_ACCEL_BOUND))
-										|| (accelInt == AFTER_82011_IS_FIXED)) {
-									accelerator = accelInt;
-									acceleratorText = callback
-											.getAcceleratorText(commandId);
+					final String commandId = updatedAction
+							.getActionDefinitionId();
+					if (("gtk".equals(SWT.getPlatform())) && (callback instanceof IBindingManagerCallback) //$NON-NLS-1$
+							&& (commandId != null)) {
+						final IBindingManagerCallback bindingManagerCallback = (IBindingManagerCallback) callback;
+						final IKeyLookup lookup = KeyLookupFactory.getDefault();
+						final TriggerSequence[] triggerSequences = bindingManagerCallback
+								.getActiveBindingsFor(commandId);
+						for (int i = 0; i < triggerSequences.length; i++) {
+							final TriggerSequence triggerSequence = triggerSequences[i];
+							final Trigger[] triggers = triggerSequence
+									.getTriggers();
+							if (triggers.length == 1) {
+								final Trigger trigger = triggers[0];
+								if (trigger instanceof KeyStroke) {
+									final KeyStroke currentKeyStroke = (KeyStroke) trigger;
+									final int currentNaturalKey = currentKeyStroke
+											.getNaturalKey();
+									if ((currentKeyStroke.getModifierKeys() == (lookup
+											.getCtrl() | lookup.getShift()))
+											&& ((currentNaturalKey >= '0' && currentNaturalKey <= '9')
+													|| (currentNaturalKey >= 'A' && currentNaturalKey <= 'F') || (currentNaturalKey == 'U'))) {
+										accelerator = currentKeyStroke
+												.getModifierKeys()
+												| currentNaturalKey;
+										acceleratorText = triggerSequence
+												.format();
+										break;
+									}
 								}
 							}
 						}
