@@ -200,8 +200,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 
                     return manager.createImage(descriptor);
                 } catch (DeviceResourceException e) {
-                    e.printStackTrace();
-                    // ignore
+                    WorkbenchPlugin.log(e);
                 }
             }  
             return null;
