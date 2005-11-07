@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
@@ -23,7 +22,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -73,13 +71,11 @@ class ProgressInfoItem extends Composite {
 
 	List taskEntries = new ArrayList(0);
 
-	private Cursor normalCursor;
 
 	private ProgressBar progressBar;
 
 	private Label jobImageLabel;
 
-	private Color darkColor;
 
 	static final int MAX_PROGRESS_HEIGHT = 12;
 
@@ -179,14 +175,6 @@ class ProgressInfoItem extends Composite {
 		createChildren();
 		setData(info);
 		setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
-		try {
-			darkColor = JFaceResources.getColorRegistry().getColorDescriptor(
-					DARK_COLOR_KEY).createColor(getDisplay());
-		} catch (DeviceResourceException e) {
-			// If a calculated color is not found use the system light shadow
-			darkColor = getDisplay().getSystemColor(
-					SWT.COLOR_WIDGET_LIGHT_SHADOW);
-		}
 	}
 
 	/**
@@ -196,8 +184,6 @@ class ProgressInfoItem extends Composite {
 	 * 
 	 */
 	protected void createChildren() {
-
-		normalCursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
 
 		FormLayout layout = new FormLayout();
 		setLayout(layout);
@@ -216,7 +202,8 @@ class ProgressInfoItem extends Composite {
 		progressLabel.setText(getMainTitle());
 
 		actionBar = new ToolBar(this, SWT.FLAT);
-		actionBar.setCursor(normalCursor); // set cursor to overwrite any busy
+		actionBar.setCursor(getDisplay().getSystemCursor( SWT.CURSOR_ARROW)); // set cursor to overwrite any busy
+		
 		// cursor we might have
 		actionButton = new ToolItem(actionBar, SWT.NONE);
 		actionButton
@@ -734,7 +721,7 @@ class ProgressInfoItem extends Composite {
 		}
 
 		if (i % 2 == 0)
-			setAllBackgrounds(darkColor);
+			setAllBackgrounds(JFaceResources.getColorRegistry().get(DARK_COLOR_KEY));
 		else
 			setAllBackgrounds(getDisplay().getSystemColor(
 					SWT.COLOR_LIST_BACKGROUND));
