@@ -130,6 +130,7 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.sources.ActivePartSourceProvider;
 import org.eclipse.ui.internal.sources.ActiveShellSourceProvider;
+import org.eclipse.ui.internal.sources.CurrentSelectionSourceProvider;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -1001,6 +1002,12 @@ public final class Workbench implements IWorkbench {
 				contextService);
 		handlerService.addSourceProvider(activeContextSourceProvider);
 		menuService.addSourceProvider(activeContextSourceProvider);
+		final CurrentSelectionSourceProvider currentSelectionSourceProvider = new CurrentSelectionSourceProvider(
+				this);
+		handlerService.addSourceProvider(currentSelectionSourceProvider);
+		contextService.addSourceProvider(currentSelectionSourceProvider);
+		menuService.addSourceProvider(currentSelectionSourceProvider);
+		
 
 		/*
 		 * Phase 4 of the initialization of commands. This handles the creation
