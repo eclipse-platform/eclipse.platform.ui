@@ -59,9 +59,14 @@ public class NativeStackPresentation extends StackPresentation {
 
     private MenuManager systemMenuManager = new MenuManager();
 
-    private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
+    private static IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
 
+	// don't reset this dynamically, so just keep the information static.
+	// see bug:
+	//   75422 [Presentations] Switching presentation to R21 switches immediately, but only partially
+    private static int tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+  
     private final static String TAB_DATA = NativeStackPresentation.class
             .getName()
             + ".partId"; //$NON-NLS-1$
@@ -141,8 +146,6 @@ public class NativeStackPresentation extends StackPresentation {
             IStackPresentationSite stackSite) {
         super(stackSite);
 
-        int tabPos = preferenceStore
-                .getInt(IPreferenceConstants.VIEW_TAB_POSITION);
         tabFolder = new TabFolder(parent, tabPos);
 
         // listener to switch between visible tabItems

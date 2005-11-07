@@ -40,9 +40,14 @@ import org.eclipse.ui.themes.IThemePreview;
  */
 public class WorkbenchPreview implements IThemePreview {
 
-    private IPreferenceStore store = WorkbenchPlugin.getDefault()
+    private static IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
 
+	// don't reset this dynamically, so just keep the information static.
+	// see bug:
+	//   75422 [Presentations] Switching presentation to R21 switches immediately, but only partially
+    private static int tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+  
     private IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
     private boolean disposed = false;
@@ -63,21 +68,6 @@ public class WorkbenchPreview implements IThemePreview {
                 setColorsAndFonts();
                 //viewMessage.setSize(viewMessage.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
                 viewForm.layout(true);
-            }
-        }
-    };
-
-    private IPropertyChangeListener preferenceListener = new IPropertyChangeListener() {
-
-        public void propertyChange(PropertyChangeEvent event) {
-            if (!disposed) {
-                if (IPreferenceConstants.VIEW_TAB_POSITION.equals(event
-                        .getProperty())) {
-                    setTabPosition();
-                } else if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
-                        .equals(event.getProperty())) {
-                    setTabStyle();
-                }
             }
         }
     };
@@ -130,8 +120,6 @@ public class WorkbenchPreview implements IThemePreview {
         item.setText("Sit"); //$NON-NLS-1$
 
         currentTheme.addPropertyChangeListener(fontAndColorListener);
-        store.addPropertyChangeListener(preferenceListener);
-        apiStore.addPropertyChangeListener(preferenceListener);
         setColorsAndFonts();
         setTabPosition();
         setTabStyle();
@@ -150,8 +138,8 @@ public class WorkbenchPreview implements IThemePreview {
      * Set the tab location from preferences.
      */
     protected void setTabPosition() {
-        int tabLocation = store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
-        folder.setTabPosition(tabLocation);
+        tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+        folder.setTabPosition(tabPos);
     }
 
     /**
@@ -188,7 +176,5 @@ public class WorkbenchPreview implements IThemePreview {
     public void dispose() {
         disposed = true;
         theme.removePropertyChangeListener(fontAndColorListener);
-        store.removePropertyChangeListener(preferenceListener);
-        apiStore.removePropertyChangeListener(preferenceListener);
     }
 }

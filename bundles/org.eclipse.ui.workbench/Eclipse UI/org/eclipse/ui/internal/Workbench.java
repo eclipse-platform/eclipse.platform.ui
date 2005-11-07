@@ -2417,6 +2417,8 @@ public final class Workbench implements IWorkbench {
 		}
 	};
 
+	private String factoryID;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2445,16 +2447,20 @@ public final class Workbench implements IWorkbench {
 	 * @see IWorkbenchPreferenceConstants#PRESENTATION_FACTORY_ID
 	 */
 	public String getPresentationId() {
-		String factoryId = PrefUtil.getAPIPreferenceStore().getString(
+		if (factoryID != null) {
+			return factoryID;
+		}
+		
+		factoryID = PrefUtil.getAPIPreferenceStore().getString(
 				IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
 
 		// Workaround for bug 58975 - New preference mechanism does not properly
 		// initialize defaults
 		// Ensure that the UI plugin has started too.
-		if (factoryId == null || factoryId.equals("")) { //$NON-NLS-1$
-			factoryId = "org.eclipse.ui.presentations.default"; //$NON-NLS-1$
+		if (factoryID == null || factoryID.equals("")) { //$NON-NLS-1$
+			factoryID = "org.eclipse.ui.presentations.default"; //$NON-NLS-1$
 		}
-		return factoryId;
+		return factoryID;
 	}
 
 	/**

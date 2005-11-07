@@ -11,8 +11,6 @@
 package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -30,25 +28,14 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  */
 public class R21ViewStackPresentation extends R21BasicStackPresentation {
 
-    private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
+    private static IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
 
-    private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-            if (IPreferenceConstants.VIEW_TAB_POSITION
-                    .equals(propertyChangeEvent.getProperty())
-                    && !isDisposed()) {
-                int tabLocation = preferenceStore
-                        .getInt(IPreferenceConstants.VIEW_TAB_POSITION);
-                getPaneFolder().setTabPosition(tabLocation);
-            }
-            //			else if (IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(propertyChangeEvent.getProperty()) && !isDisposed()) {
-            //				boolean traditionalTab = preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS); 
-            //				setTabStyle(traditionalTab);
-            //			}		
-        }
-    };
-
+	// don't reset this dynamically, so just keep the information static.
+	// see bug:
+	//   75422 [Presentations] Switching presentation to R21 switches immediately, but only partially
+    private static int tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+  
     private R21PaneFolderButtonListener showListListener = new R21PaneFolderButtonListener() {
 
         public void showList(CTabFolderEvent event) {
@@ -57,6 +44,12 @@ public class R21ViewStackPresentation extends R21BasicStackPresentation {
         }
     };
 
+    /**
+	 * Create a new view stack presentation.
+	 *
+     * @param parent
+     * @param newSite
+     */
     public R21ViewStackPresentation(Composite parent,
             IStackPresentationSite newSite) {
 
@@ -65,34 +58,9 @@ public class R21ViewStackPresentation extends R21BasicStackPresentation {
 
         tabFolder.addButtonListener(showListListener);
 
-        preferenceStore.addPropertyChangeListener(propertyChangeListener);
-        int tabLocation = preferenceStore
-                .getInt(IPreferenceConstants.VIEW_TAB_POSITION);
-
-        tabFolder.setTabPosition(tabLocation);
-        //		setTabStyle(preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
-
-        //		// do not support close box on unselected tabs.
-        //		tabFolder.setUnselectedCloseVisible(false);
-        //		
-        //		// do not support icons in unselected tabs.
-        //		tabFolder.setUnselectedImageVisible(false);
-        //		
-        // set basic colors
-        //ColorSchemeService.setTabAttributes(this, tabFolder);
-
+        tabFolder.setTabPosition(tabPos);
         updateGradient();
     }
-
-    //	/**
-    //     * Set the tab folder tab style to a tradional style tab
-    //	 * @param traditionalTab <code>true</code> if traditional style tabs should be used
-    //     * <code>false</code> otherwise.
-    //	 */
-    //	protected void setTabStyle(boolean traditionalTab) {
-    //		// set the tab style to non-simple
-    //		getTabFolder().setSimpleTab(traditionalTab);
-    //	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.skins.Presentation#setActive(boolean)
@@ -104,22 +72,9 @@ public class R21ViewStackPresentation extends R21BasicStackPresentation {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.presentations.StackPresentation#dispose()
-     */
-    public void dispose() {
-        preferenceStore.removePropertyChangeListener(propertyChangeListener);
-        super.dispose();
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#getPartMenu()
      */
     protected String getPaneName() {
         return R21PresentationMessages.getString("ViewPane.moveView"); //$NON-NLS-1$ 
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.r21presentation.presentations.R21BasicStackPresentation#drawGradient(org.eclipse.swt.graphics.Color, org.eclipse.swt.graphics.Color[], int[], boolean)
-     */
-
 }

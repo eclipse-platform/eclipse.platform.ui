@@ -22,7 +22,6 @@ import org.eclipse.ui.internal.preferences.IDynamicPropertyMap;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultMultiTabListener;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultSimpleTabListener;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabFolder;
-import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabPositionListener;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultThemeListener;
 import org.eclipse.ui.internal.presentations.defaultpresentation.EmptyTabFolder;
 import org.eclipse.ui.internal.presentations.util.PresentablePartFolder;
@@ -73,9 +72,6 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
         
         IDynamicPropertyMap workbenchPreferences = result.getPluginPreferences(WorkbenchPlugin.getDefault()); 
         
-        new DefaultTabPositionListener(workbenchPreferences,
-				IPreferenceConstants.EDITOR_TAB_POSITION, folder);
-
 		new DefaultMultiTabListener(workbenchPreferences,
 				IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, folder);
 
@@ -110,10 +106,6 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
         DefaultThemeListener themeListener = new DefaultThemeListener(folder, result.getTheme());
         result.getTheme().addListener(themeListener);
         
-        new DefaultTabPositionListener(result
-				.getPluginPreferences(WorkbenchPlugin.getDefault()),
-				IPreferenceConstants.VIEW_TAB_POSITION, folder);
-
 		new DefaultSimpleTabListener(result.getApiPreferences(),
 				IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
 				folder);
@@ -132,12 +124,11 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
         
         if (showTitle) {
             return createViewPresentation(parent, site);
-        } else {
-            EmptyTabFolder folder = new EmptyTabFolder(parent, true);
-            TabbedStackPresentation presentation = new TabbedStackPresentation(site, folder, new StandardViewSystemMenu(site));
+        }        
+        EmptyTabFolder folder = new EmptyTabFolder(parent, true);
+        TabbedStackPresentation presentation = new TabbedStackPresentation(site, folder, new StandardViewSystemMenu(site));
             
-            return presentation;
-        }
+        return presentation;
     }
 
 }

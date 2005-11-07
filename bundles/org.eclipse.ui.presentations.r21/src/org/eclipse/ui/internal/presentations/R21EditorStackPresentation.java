@@ -18,8 +18,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -112,8 +110,14 @@ public class R21EditorStackPresentation extends StackPresentation {
     private MenuManager systemMenuManager = new MenuManager();
 
     /** the shared preference store */
-    private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
+    private static IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
+
+
+	// don't reset this dynamically, so just keep the information static.
+	// see bug:
+	//   75422 [Presentations] Switching presentation to R21 switches immediately, but only partially
+    private static int tabPos = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
 
     /** the tab item property holding the part */
     private final static String TAB_DATA = R21EditorStackPresentation.class
@@ -248,30 +252,18 @@ public class R21EditorStackPresentation extends StackPresentation {
         }
     };
 
-    /** the listener for preference changes */
-    private IPropertyChangeListener preferenceListener = new IPropertyChangeListener() {
-
-        public void propertyChange(PropertyChangeEvent event) {
-            if (IPreferenceConstants.EDITOR_TAB_POSITION.equals(event
-                    .getProperty())) {
-                int tabPos = preferenceStore
-                        .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
-                getTabFolder().setTabPosition(tabPos);
-            }
-        }
-    };
-
+    /**
+     * Create a new presentation stack.
+     * 
+     * @param parent the parent widget
+     * @param stackSite the site
+     */
     public R21EditorStackPresentation(Composite parent,
             IStackPresentationSite stackSite) {
         super(stackSite);
 
         // create the tab folder
-        int tabPos = preferenceStore
-                .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
         tabFolder = new CTabFolder(parent, tabPos | SWT.BORDER);
-
-        // add listener for preference changes
-        preferenceStore.addPropertyChangeListener(preferenceListener);
 
         // minimum tab width
         tabFolder.MIN_TAB_WIDTH = preferenceStore
@@ -382,6 +374,10 @@ public class R21EditorStackPresentation extends StackPresentation {
         return tabFolder;
     }
 
+    /**
+     * Answer whether the receiver is disposed.
+     * @return boolean <code>true</code> if disposed
+     */
     public boolean isDisposed() {
         return tabFolder == null || tabFolder.isDisposed();
     }
@@ -394,6 +390,11 @@ public class R21EditorStackPresentation extends StackPresentation {
             current.setBounds(calculatePageBounds(tabFolder));
     }
 
+    /**
+     * Calculate the bounds of the client area inside the folder
+     * @param folder
+     * @return Rectangle the bounds of the client
+     */
     public static Rectangle calculatePageBounds(CTabFolder folder) {
         if (folder == null)
             return new Rectangle(0, 0, 0, 0);
@@ -424,9 +425,6 @@ public class R21EditorStackPresentation extends StackPresentation {
 
         // remove drag listener
         PresentationUtil.removeDragListener(tabFolder, dragListener);
-
-        // remove preference listener
-        preferenceStore.removePropertyChangeListener(preferenceListener);
 
         // dispose system menu manager
         systemMenuManager.dispose();
@@ -500,12 +498,12 @@ public class R21EditorStackPresentation extends StackPresentation {
         Window window = getWindow();
         if (window instanceof WorkbenchWindow)
             return ((WorkbenchWindow) window).getShellActivated();
-        else
-            return false;
+        return false;
     }
 
     /**
      * Returns the top level window.
+     * @return Window the window for the receiver
      */
     public Window getWindow() {
         Control ctrl = getControl();

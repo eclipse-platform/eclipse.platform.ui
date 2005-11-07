@@ -92,6 +92,7 @@ public class WorkbenchPreferenceInitializer extends
 		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, false);
 		node.putInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL, 500);
 		node.putBoolean(IHeapStatusConstants.PREF_SHOW_MAX, false);
+		node.putBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION, false);
 		
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()

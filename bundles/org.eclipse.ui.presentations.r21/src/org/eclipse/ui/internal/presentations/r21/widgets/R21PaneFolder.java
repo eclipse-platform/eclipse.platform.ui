@@ -72,7 +72,7 @@ public final class R21PaneFolder {
 
     private SizeCache topLeftCache = new SizeCache();
 
-    private int tabPosition;
+    private int tabPos;
 
     private boolean putTrimOnTop = false;
 
@@ -169,7 +169,7 @@ public final class R21PaneFolder {
     /**
      * Return the main control for this pane folder
      * 
-     * @return
+     * @return Composite the control
      */
     public Composite getControl() {
         return tabFolder;
@@ -243,6 +243,11 @@ public final class R21PaneFolder {
         topCenterCache.flush();
     }
 
+    /**
+     * Layout the receiver, flusing the cache if needed.
+     * 
+     * @param flushCache
+     */
     public void layout(boolean flushCache) {
         // Flush the cached sizes if necessary
         if (flushCache)
@@ -271,7 +276,7 @@ public final class R21PaneFolder {
     /**
      * Returns the client area for this PaneFolder, relative to the pane folder's control.
      * 
-     * @return
+     * @return Rectangle the client area 
      */
     public Rectangle getClientArea() {
         Rectangle bounds = contentProxy.getControl().getBounds();
@@ -341,33 +346,56 @@ public final class R21PaneFolder {
         }
     }
 
+    /**
+     * @param listener
+     */
     public void addButtonListener(R21PaneFolderButtonListener listener) {
         buttonListeners.add(listener);
     }
 
+    /**
+     * @param listener
+     */
     public void removeButtonListener(R21PaneFolderButtonListener listener) {
         buttonListeners.remove(listener);
     }
 
+    /**
+     * @param newTabPosition
+     */
     public void setTabPosition(int newTabPosition) {
-        tabPosition = newTabPosition;
-        tabFolder.setTabPosition(tabPosition);
+        tabPos = newTabPosition;
+        tabFolder.setTabPosition(tabPos);
     }
 
+    /**
+     * @return int the postion of the tab
+     */
     public int getTabPosition() {
-        return tabPosition;
+        return tabPos;
     }
 
+    /**
+     * @return boolean <code>true</code> if the receiver has been disposed
+     */
     public boolean isDisposed() {
         return tabFolder == null || tabFolder.isDisposed();
     }
 
+    /**
+     * @param style
+     * @param index
+     * @return CTabItem the created item
+     */
     public CTabItem createItem(int style, int index) {
         return new CTabItem(tabFolder, style, index);
     }
 
     // The remainder of the methods in this class redirect directly to CTabFolder methods
 
+    /**
+     * @param selection
+     */
     public void setSelection(int selection) {
         tabFolder.setSelection(selection);
     }
@@ -377,7 +405,7 @@ public final class R21PaneFolder {
      * @param j
      * @param k
      * @param l
-     * @return
+     * @return Rectangle the trim rectangle
      */
     public Rectangle computeTrim(int i, int j, int k, int l) {
         return tabFolder.computeTrim(i, j, k, l);
@@ -391,53 +419,67 @@ public final class R21PaneFolder {
     }
 
     /**
-     * @param bgColors
-     * @param percentages
-     * @param vertical
+     * @param idx
+     * @return CTabItem the indexed item
      */
-    public void setSelectionBackground(Color[] bgColors, int[] percentages,
-            boolean vertical) {
-        tabFolder.setSelectionBackground(bgColors, percentages);
-    }
-
     public CTabItem getItem(int idx) {
         return tabFolder.getItem(idx);
     }
 
+    /**
+     * @return int the selected items index
+     */
     public int getSelectionIndex() {
         return tabFolder.getSelectionIndex();
     }
 
+    /**
+     * @return int the height of the tabs
+     */
     public int getTabHeight() {
         return tabFolder.getTabHeight();
     }
 
+    /**
+     * @param toFind
+     * @return int the index of the item to find
+     */
     public int indexOf(CTabItem toFind) {
         return tabFolder.indexOf(toFind);
     }
 
+    /**
+     * @param height
+     */
     public void setTabHeight(int height) {
         tabFolder.setTabHeight(height);
     }
 
     /**
-     * @return
+     * @return int the item count
      */
     public int getItemCount() {
         return tabFolder.getItemCount();
     }
 
     /**
-     * @return
+     * @return CTabItem the items
      */
     public CTabItem[] getItems() {
         return tabFolder.getItems();
     }
 
+    /**
+     * @param toGet
+     * @return CTabItem the indexed item
+     */
     public CTabItem getItem(Point toGet) {
         return tabFolder.getItem(toGet);
     }
 
+    /**
+     * @return CTabItem the selected item
+     */
     public CTabItem getSelection() {
         return tabFolder.getSelection();
     }

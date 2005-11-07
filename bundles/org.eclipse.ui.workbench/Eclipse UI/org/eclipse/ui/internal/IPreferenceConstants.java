@@ -117,9 +117,23 @@ public interface IPreferenceConstants {
 
     public static final int EDITORLIST_MRU_SORT = 1;
 
-    // Boolean; true = EditorList displays full path
+    /**
+     * Boolean; true = EditorList displays full path
+     */
     public static final String EDITORLIST_DISPLAY_FULL_NAME = "EDITORLIST_DISPLAY_FULL_NAME"; //$NON-NLS-1$
 
+    
+    /**
+     * Workbench preference id for determining whether the user has chosen to 
+     * override some of the settings in the current presentation.
+     * <p>
+     * The default value for this preference is: <code>false</code> (prompt)
+     * </p>
+     * 
+     * @since 3.2
+     */
+    public static final String OVERRIDE_PRESENTATION = "overridepresentation"; //$//$NON-NLS-1$
+    
     /**
      * <p>
      * The key for the preference indicating which tab is selected in the keys
