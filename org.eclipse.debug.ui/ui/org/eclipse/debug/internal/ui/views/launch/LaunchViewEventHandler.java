@@ -16,13 +16,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -31,12 +30,10 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.TreePath;
-import org.eclipse.debug.internal.ui.viewers.TreeSelection;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * Handles debug events, updating the launch view and viewer.
@@ -89,6 +86,16 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
     }
 	
 	/**
+	 * Returns the parent for the given element.
+	 * 
+	 * @param element
+	 * @return parent
+	 */
+	private Object getParent(Object element) {
+		return ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
+	}
+    
+	/**
 	 * @see AbstractDebugEventHandler#doHandleDebugEvents(DebugEvent[])
 	 */
 	protected void doHandleDebugEvents(DebugEvent[] events, Object data) {
@@ -100,41 +107,27 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			switch (event.getKind()) {
 				case DebugEvent.CREATE :
 					if (source instanceof IThread) {
-						IThread thread = (IThread) source;
-						IDebugTarget target = thread.getDebugTarget();
-						refresh(target);
+						insert(source);
 					} else {
-						getViewer().refresh();
+						Object parent = getParent(source);
+						if (parent != null) {
+							refresh(parent);
+						}
 						if (source instanceof IDebugTarget | source instanceof IProcess) {
 							getLaunchView().autoExpand(source, true);
 						}
 					}
 					break;
-				case DebugEvent.TERMINATE:
+				case DebugEvent.TERMINATE :
 					clearSourceSelection(source);
-					if (source instanceof IDebugElement) {
-						IDebugElement element = (IDebugElement) source;
-						if (source instanceof IThread) {
-							fThreadTimer.getTimedOutThreads().remove(source);
-							remove(source);
-						} else {
-							IDebugTarget debugTarget = element.getDebugTarget();
-							if (debugTarget != null) {
-								refresh(debugTarget);
-							}
-						}
-						
-						ILaunch launch = element.getLaunch();
-						if (launch.isTerminated()) {
-							update(launch);
-						}
-						resetSelection(source, data);
-					} else if (source instanceof IProcess) {
-						IProcess process = (IProcess) source;
-						refresh(process);
-						update(process.getLaunch());
+					if (source instanceof IThread) {
+						fThreadTimer.getTimedOutThreads().remove(source);
+						remove(source);
 					} else {
-						refresh(source);
+					    Object parent = getParent(source);
+						if (parent != null) {
+						    refresh(parent);
+						}
 					}
 					break;
 				case DebugEvent.RESUME :
@@ -148,8 +141,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					break;
 				case DebugEvent.CHANGE :
                     Object element = null;
-                    AsynchronousTreeViewer viewer = (AsynchronousTreeViewer) getViewer();
-                    IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+                    IStructuredSelection selection = getLaunchViewer().getDeferredSelection();
+                    if (selection == null) {
+                        selection = (IStructuredSelection) getLaunchViewer().getSelection();
+                    } 
                     
                     element = selection.getFirstElement();
                     IStackFrame lastFrame = null;
@@ -178,12 +173,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		}
 	}
 	
-	private void update(Object element) {
-		AsynchronousTreeViewer viewer = (AsynchronousTreeViewer) getLaunchView().getViewer();
-		viewer.update(element);
-	}
-
-
 	/**
 	 * Handles the given resume event with the given source.
 	 */
@@ -200,36 +189,25 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			}
 			return;
 		}
-		fLastStackFrame = null;
 		refresh(source);
-		resetSelection(source, data);
-	}
-	
-	private void resetSelection(Object source, Object data) {
 		if (source instanceof IThread) {
-			AsynchronousTreeViewer viewer = (AsynchronousTreeViewer) getViewer();
-			TreePath[] treePaths = null;
-			if (data instanceof IStackFrame) {
-				treePaths = viewer.getTreePaths(data);
-			} else {
-				treePaths = viewer.getTreePaths(source);
+		    if (data instanceof IStackFrame) {
+				selectAndReveal(data);
+				return;
 			}
-
-			if (treePaths != null && treePaths.length > 0) {
-				viewer.setSelection(new TreeSelection(new TreePath[] { treePaths[0] }));
-			}
+            selectAndReveal(source);
 		}
 	}
-
-
+	
 	/**
-	 * Updates the stack frame icons for a running thread. This is useful for
-	 * the case where a thread is resumed temporarily but the view should keep
-	 * the stack frame visible (for example, step start or evaluation start).
+	 * Updates the stack frame icons for a running thread.
+	 * This is useful for the case where a thread is resumed
+	 * temporarily  but the view should keep the stack frame 
+	 * visible (for example, step start or evaluation start).
 	 */
 	protected void updateRunningThread(IThread thread) {
-		labelChanged(thread);		
-//		getLaunchViewer().updateStackFrameImages(thread);
+		labelChanged(thread);
+		getLaunchViewer().updateStackFrameImages(thread);
 		clearSourceSelection(thread);
 	}
 
@@ -271,26 +249,33 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		    frame = (IStackFrame) data;
 		}
 	    
-		LaunchView launchView = getLaunchView();
-		if (frame != null) {
-			if (frame.equals(fLastStackFrame) && !wasTimedOut) {
-				// if the top frame is the same, only update the frame, and re-select
-				// the frame to display source
-				refresh(frame);
-			} else {
-				refresh(thread);
+		// if the top frame is the same, only update labels and images, and re-select
+		// the frame to display source
+		if (frame != null && frame.equals(fLastStackFrame)) {
+			if (wasTimedOut) {
+				getLaunchViewer().updateStackFrameImages(thread);
 			}
-			fLastStackFrame = frame;
-			// Auto-expand the thread. Only select the thread if this wasn't
-			// the end of an evaluation
-			
-			launchView.autoExpand(frame, !evaluationEvent);
-			launchView.openEditorForStackFrame(frame);
-		} else {
+			getLaunchViewer().update(new Object[] {thread, frame}, null);
+			if (!evaluationEvent) {
+			    getLaunchViewer().deferExpansion(thread);
+				getLaunchViewer().deferSelection(new StructuredSelection(frame));
+			} else if (wasTimedOut) {
+				getLaunchView().showEditorForCurrentSelection();
+			}
+			return;
+		}
+		
+		if (frame == null) {
 			// suspend event, but no frames in the thead
-			fLastStackFrame = null;
+			fLastStackFrame = null;			
 			refresh(thread);
-			launchView.autoExpand(thread, !evaluationEvent);
+			getLaunchView().autoExpand(thread, !evaluationEvent);
+		} else {
+		    fLastStackFrame = frame;
+			// Auto-expand the thread. Only select the thread if this wasn't the end
+			// of an evaluation
+		    refresh(thread);
+			getLaunchView().autoExpand(frame, !evaluationEvent);
 		}
 	}
 	
@@ -324,6 +309,15 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		}
 	}	
 
+	/**
+	 * Returns this event handler's launch viewer
+	 * 
+	 * @return launch viewer
+	 */
+	protected LaunchViewer getLaunchViewer() {
+		return (LaunchViewer)getViewer();
+	}
+	
 	/**
 	 * Returns this event handler's launch view
 	 * 
@@ -477,16 +471,13 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					// Refresh the UI to show that the thread
 					// is performing a long evaluation
 					final IThread thread= (IThread)entry.getKey();
-					fStopTimes.remove(thread);
-					WorkbenchJob job = new WorkbenchJob("updateRunningThread") { //$NON-NLS-1$
-						public IStatus runInUIThread(IProgressMonitor monitor) {
+					fStopTimes.remove(thread);	
+					getView().asyncExec(new Runnable() {
+						public void run() {
 							fTimedOutThreads.add(thread);
 							updateRunningThread(thread);
-							return Status.OK_STATUS;
 						}
-					};
-					job.setSystem(true);
-					job.schedule();
+					});
 				} else {
 					timeToWait= Math.min(timeToWait, stopTime - currentTime);
 				}
@@ -527,8 +518,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch)
 	 */
 	public void launchesChanged(final ILaunch[] launches) {
-		WorkbenchJob job = new WorkbenchJob("LaunchViewEventHandler.launchesChanged") { //$NON-NLS-1$
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+		Runnable r= new Runnable() {
+			public void run() {
 				if (isAvailable()) {	
 					if (launches.length == 1) {
 						refresh(launches[0]);
@@ -541,56 +532,72 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 						}						
 					}
 				}
-				return Status.OK_STATUS;
 			}
 		};
-		job.setSystem(true);
-		job.schedule();
+		
+		getView().asyncExec(r);				
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch)
 	 */
 	public void launchesRemoved(final ILaunch[] launches) {
-		WorkbenchJob job = new WorkbenchJob("LaunchViewEventHandler.launchesRemoved") { //$NON-NLS-1$
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+		Runnable r= new Runnable() {
+			public void run() {
 				if (isAvailable()) {
 					if (launches.length == 1) {
-						LaunchViewEventHandler.this.remove(launches[0]);
+						remove(launches[0]);
 					} else {
 						refresh();
 					}
 					
 					getLaunchView().cleanupLaunches(launches);
 					
-					ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
-					IDebugTarget[] targets= lm.getDebugTargets();
-					if (targets.length > 0) {
-						IDebugTarget target= targets[targets.length - 1];
-						try {
-							IThread[] threads= target.getThreads();
-							for (int i=0; i < threads.length; i++) {
-								if (threads[i].isSuspended()) {
-									IStackFrame topStackFrame = threads[i].getTopStackFrame();
-									if (topStackFrame != null) {
-									    getLaunchView().autoExpand(topStackFrame, true);
-									}
-									return Status.OK_STATUS;
+					// auto select the next suspended thread if no current selection
+					if (getLaunchViewer().getSelection().isEmpty()) {
+						// only change selection if the thing removed is of the same type as the things still there
+						Set types = new HashSet();
+						for (int i = 0; i < launches.length; i++) {
+							ILaunch launch = launches[i];
+							ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+							if (configuration != null) {
+								try {
+									types.add(configuration.getType());
+								} catch (CoreException e) {
 								}
-							}						
-						} catch (DebugException de) {
-							DebugUIPlugin.log(de);
+							}
 						}
-						
-						getLaunchView().autoExpand(target.getLaunch(), true);
+						ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
+						IDebugTarget[] targets= lm.getDebugTargets();
+						if (targets.length > 0) {
+							IDebugTarget target= targets[targets.length - 1];
+							ILaunchConfiguration configuration = target.getLaunch().getLaunchConfiguration();
+							if (configuration != null) {
+								try {
+									if (types.contains(configuration.getType())) {
+										IThread[] threads= target.getThreads();
+										for (int i=0; i < threads.length; i++) {
+											if (threads[i].isSuspended()) {
+												IStackFrame topStackFrame = threads[i].getTopStackFrame();
+												if (topStackFrame != null) {
+												    getLaunchView().autoExpand(topStackFrame, true);
+												}
+												return;
+											}
+										}
+									}
+								} catch (CoreException e) {
+									DebugUIPlugin.log(e);
+								}
+								getLaunchView().autoExpand(target.getLaunch(), true);
+							}
+						}
 					}
 				}
-				return Status.OK_STATUS;
 			}
 		};
-		
-		job.setSystem(true);
-		job.schedule();
+
+		getView().asyncExec(r);		
 	}
 
 
@@ -607,15 +614,12 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				}
 			}
 		}
-		WorkbenchJob job = new WorkbenchJob("LaunchViewEventHandler.launchesTerminated") { //$NON-NLS-1$
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+		Runnable r= new Runnable() {
+			public void run() {
 				getLaunchView().cleanupLaunches(launches);
-				return Status.OK_STATUS;
 			}
-			
 		};
-		job.setSystem(true);
-		job.schedule();
+		getView().asyncExec(r);
 	}
 
     /* (non-Javadoc)

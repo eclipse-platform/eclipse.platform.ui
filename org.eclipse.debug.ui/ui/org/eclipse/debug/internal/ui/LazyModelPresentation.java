@@ -337,10 +337,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	public Map getAttributeMap() {
 		return (Map) fAttributes.clone();
 	}
-	
-	public Map getAttributes() {
-		return fAttributes;
-	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)

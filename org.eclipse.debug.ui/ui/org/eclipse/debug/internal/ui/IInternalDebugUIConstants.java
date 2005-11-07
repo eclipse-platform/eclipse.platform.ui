@@ -193,34 +193,26 @@ public interface IInternalDebugUIConstants {
      */
     public static final String PREF_SWITCH_PERSPECTIVE_ON_SUSPEND= IDebugUIConstants.PLUGIN_ID + ".switch_perspective_on_suspend"; //$NON-NLS-1$
 
-	/**
-	 * String preference controlling whether the debugger waits for a currently
-	 * pending (running or waiting) background build to complete before launching.
-	 * Valid values are either "always", "never", or "prompt".
-	 * If "always" or "never", launching will wait for builds to finish (or not) automatically.
-	 * If "prompt", the user will be prompted each time.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String PREF_WAIT_FOR_BUILD= IDebugUIConstants.PLUGIN_ID + ".wait_for_build"; //$NON-NLS-1$
-	
-	/**
-	 * Maximum number of characters to display in the details area of the variables
-	 * view, or 0 if unlimited.
-	 * 
-	 * @since 3.1
-	 */
-	public static final String PREF_MAX_DETAIL_LENGTH = IDebugUIConstants.PLUGIN_ID + ".max_detail_length"; //$NON-NLS-1$
-	    
-	/**
-	 * Font for Memory View
-	 * 
-	 * @since 3.0
-	 */
-	public final static String FONT_NAME = IDebugUIConstants.PLUGIN_ID + ".MemoryViewTableFont"; //$NON-NLS-1$
-	
-	public final static int ADD_UNIT_PER_LINE = 16;	// number of addressable unit per line
-	public final static int CHAR_PER_BYTE = 2;		// number of characters to represent one byte
+    /**
+     * String preference controlling whether the debugger waits for a currently
+     * pending (running or waiting) background build to complete before launching.
+     * Valid values are either "always", "never", or "prompt".
+     * If "always" or "never", launching will wait for builds to finish (or not) automatically.
+     * If "prompt", the user will be prompted each time.
+     * 
+     * @since 3.0
+     */
+    public static final String PREF_WAIT_FOR_BUILD= IDebugUIConstants.PLUGIN_ID + ".wait_for_build"; //$NON-NLS-1$
+    
+    /**
+     * Font for Memory View
+     * 
+     * @since 3.0
+     */
+    public final static String FONT_NAME = IDebugUIConstants.PLUGIN_ID + ".MemoryViewTableFont"; //$NON-NLS-1$
+    
+    public final static int ADD_UNIT_PER_LINE = 16; // number of addressable unit per line
+    public final static int CHAR_PER_BYTE = 2;      // number of characters to represent one byte
 
     /**
      * Memory view identifier (value <code>"org.eclipse.debug.ui.MemoryView"</code>).

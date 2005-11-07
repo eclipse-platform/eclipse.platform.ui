@@ -21,12 +21,10 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.progress.UIJob;
@@ -76,7 +74,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
         private static final int TIMEOUT = 200;
         
 	    public EventProcessingJob() {
-	        super(DebugUIViewsMessages.AbstractDebugEventHandler_0);
+	        super(DebugUIViewsMessages.AbstractDebugEventHandler_0); 
 	        setSystem(true);
 	        setPriority(Job.INTERACTIVE);
 	    }
@@ -202,15 +200,13 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	protected void insert(Object element) {
 		if (isAvailable()) {
-			Viewer viewer = getViewer();
-			if (viewer instanceof TreeViewer) {
-				TreeViewer tv = (TreeViewer) viewer;
-				Object parent = ((ITreeContentProvider)tv.getContentProvider()).getParent(element);
-				if (parent != null) {
-					getView().showViewer();
-					tv.add(parent, element);
-				}
-			} 
+			Object parent= ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
+			// a parent can be null for a debug target or process that has not yet been associated
+			// with a launch
+			if (parent != null) {
+				getView().showViewer();
+				getTreeViewer().add(parent, element);
+			}
 		}
 	}
 
@@ -220,14 +216,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	protected void remove(Object element) {
 		if (isAvailable()) {
 			getView().showViewer();
-			Viewer viewer = getViewer();
-			if (viewer instanceof TreeViewer) {
-				TreeViewer tv = (TreeViewer) viewer;
-				tv.remove(element);
-			} else if (viewer instanceof AsynchronousTreeViewer) {
-				AsynchronousTreeViewer atv = (AsynchronousTreeViewer) viewer;
-				atv.refresh();
-			}
+			getTreeViewer().remove(element);
 		}
 	}
 
@@ -237,14 +226,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	protected void labelChanged(Object element) {
 		if (isAvailable()) {
 			getView().showViewer();
-			Viewer viewer = getViewer();
-			if (viewer instanceof TreeViewer) {
-				TreeViewer tv = (TreeViewer) viewer;
-				tv.update(element, new String[] {IBasicPropertyConstants.P_TEXT});
-			} else if (viewer instanceof AsynchronousTreeViewer) {
-				AsynchronousTreeViewer atv = (AsynchronousTreeViewer) viewer;
-				atv.update(element);
-			}
+			getTreeViewer().update(element, new String[] {IBasicPropertyConstants.P_TEXT});
 		}
 	}
 
@@ -254,14 +236,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	protected void refresh(Object element) {
 		if (isAvailable()) {
 			 getView().showViewer();
-			 Viewer viewer = getViewer();
-			 if (viewer instanceof TreeViewer) {
-				 TreeViewer treeViewer = (TreeViewer) viewer;
-				 treeViewer.refresh(element);
-			 } else if (viewer instanceof AsynchronousTreeViewer) {
-				 AsynchronousTreeViewer asyncTreeViewer = (AsynchronousTreeViewer) viewer;
-				 asyncTreeViewer.refresh(element);
-			 }
+			 getTreeViewer().refresh(element);
 		}
 	}
 	
@@ -271,7 +246,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	public void refresh() {
 		if (isAvailable()) {
 			 getView().showViewer();
-			 getViewer().refresh();
+			 getTreeViewer().refresh();
 		}
 	}	
 
@@ -324,17 +299,17 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	protected Viewer getViewer() {
 		return getView().getViewer();
 	}
-
+	
 	/**
-	 * Returns this event handler's viewer as a structured
+	 * Returns this event handler's viewer as a tree
 	 * viewer or <code>null</code> if none.
 	 * 
-	 * @return this event handler's viewer as a structured
+	 * @return this event handler's viewer as a tree
 	 * viewer or <code>null</code> if none
 	 */
-	protected StructuredViewer getStructuredViewer() {
-		if (getViewer() instanceof StructuredViewer) {
-			return (StructuredViewer)getViewer();
+	protected TreeViewer getTreeViewer() {
+		if (getViewer() instanceof TreeViewer) {
+			return (TreeViewer)getViewer();
 		} 
 		return null;
 	}

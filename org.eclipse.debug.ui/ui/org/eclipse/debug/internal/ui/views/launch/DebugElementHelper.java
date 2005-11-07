@@ -78,7 +78,7 @@ public class DebugElementHelper {
      * 
      * @return a model presentation to use to retrieve lables & images
      */
-    public static DelegatingModelPresentation getPresentation() {
+    private static DelegatingModelPresentation getPresentation() {
         if (fgPresenetation == null) {
             fgPresenetation = new DelegatingModelPresentation();
         }

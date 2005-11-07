@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
-import org.eclipse.debug.internal.ui.contexts.actions.TerminateActionDelegate;
+import org.eclipse.debug.internal.ui.actions.TerminateActionDelegate;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;

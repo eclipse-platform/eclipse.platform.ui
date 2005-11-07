@@ -23,20 +23,19 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	
-	private ContentViewer fViewer;
+	private TreeViewer fViewer;
 	
 	/**
 	 * @see AbstractDebugActionDelegate#initialize(IAction, ISelection)
@@ -46,7 +45,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 			IDebugView adapter= (IDebugView)getView().getAdapter(IDebugView.class);
 			if (adapter != null) {
 				if (adapter.getViewer() instanceof ContentViewer) {
-					setViewer((ContentViewer) adapter.getViewer());
+					setViewer((TreeViewer) adapter.getViewer());
 				}
 				adapter.setAction(getActionId(), action);
 			}
@@ -135,20 +134,15 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	 * remove the child.
 	 */
 	protected Iterator pruneSelection() {
-		Control control = getViewer().getControl();
-		List items = new ArrayList();
-		if (control instanceof Tree) {
-			Tree tree = (Tree) control;
-			TreeItem[] selection = tree.getSelection();
-
-			for (int i = 0; i < selection.length; i++) {
-				TreeItem item = selection[i];
-				if (isEnabledFor(item.getData())) {
-					if (walkHierarchy(item, items)) {
-						items.add(item);
-					}
+		TreeItem[] selection= getViewer().getTree().getSelection();
+		List items= new ArrayList(selection.length);
+		for (int i = 0; i < selection.length; i++) {
+			TreeItem item= selection[i];
+			if (isEnabledFor(item.getData())) {
+				if(walkHierarchy(item, items)) {
+					items.add(item);
 				}
-			}
+			}			
 		}
 		return items.iterator();
 	}
@@ -173,11 +167,11 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 		return data instanceof IDebugTarget || data instanceof IThread;
 	}
 			
-	protected ContentViewer getViewer() {
+	protected TreeViewer getViewer() {
 		return fViewer;
 	}
 
-	protected void setViewer(ContentViewer viewer) {
+	protected void setViewer(TreeViewer viewer) {
 		fViewer = viewer;
 	}
 	/**

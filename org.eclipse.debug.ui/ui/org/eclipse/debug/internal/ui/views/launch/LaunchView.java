@@ -24,10 +24,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
@@ -47,22 +45,19 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupResult;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.PresentationContext;
-import org.eclipse.debug.internal.ui.viewers.TreePath;
-import org.eclipse.debug.internal.ui.viewers.TreeSelection;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
+import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
+import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
+import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.contexts.IDebugContextListener;
-import org.eclipse.debug.ui.contexts.IDebugContextProvider;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
@@ -70,7 +65,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -79,11 +73,15 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
@@ -147,71 +145,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	private IWorkbenchSiteProgressService fProgressService = null;
 
-	class ContextProvider implements IDebugContextProvider {
-		/**
-		 * Context listeners
-		 */
-		private ListenerList fListeners = new ListenerList();
-		
-		private ISelection fContext = null;
-		
-		protected void dispose() { 
-			fContext = null;
-			fListeners.clear();
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#getPart()
-		 */
-		public IWorkbenchPart getPart() {
-			return LaunchView.this;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#addDebugContextListener(org.eclipse.debug.ui.contexts.IDebugContextListener)
-		 */
-		public void addDebugContextListener(IDebugContextListener listener) {
-			fListeners.add(listener);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#removeDebugContextListener(org.eclipse.debug.ui.contexts.IDebugContextListener)
-		 */
-		public void removeDebugContextListener(IDebugContextListener listener) {
-			fListeners.remove(listener);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#getActiveContext()
-		 */
-		public synchronized ISelection getActiveContext() {
-			return fContext;
-		}	
-		
-		protected synchronized void activate(ISelection selection) {
-			fContext = selection;
-			Object[] listeners = fListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final IDebugContextListener listener = (IDebugContextListener) listeners[i];
-				Platform.run(new ISafeRunnable() {
-					public void run() throws Exception {
-						listener.contextActivated(fContext, ContextProvider.this.getPart());
-					}
-					public void handleException(Throwable exception) {
-						DebugUIPlugin.log(exception);
-					}
-				});
-				
-			}
-		}
-		
-	}
-	
-	/**
-	 * Context provider
-	 */
-	private ContextProvider fProvider = new ContextProvider();
-	
 	/**
 	 * Context manager which automatically opens and closes views
 	 * based on debug contexts.
@@ -281,6 +214,43 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		
 	}
     
+	/**
+	 * Label provider for the launch view which renders pending launches
+	 * with italic font.
+	 */
+    private class LaunchViewLabelProvider extends DebugViewDecoratingLabelProvider {
+    	
+    	// The cached italic font used for pending launches
+    	private Font fItalicFont= null;
+    	
+        public LaunchViewLabelProvider(StructuredViewer viewer, IDebugModelPresentation presentation) {
+            super(viewer, new DebugViewInterimLabelProvider(presentation), new DebugViewLabelDecorator(presentation));
+        }
+        
+        public Font getFont(Object element) {
+            if (element instanceof DebugUIPlugin.PendingLaunch) {
+            	if (fItalicFont == null) {
+	                Control control = getViewer().getControl();
+	                Font originalFont = control.getFont();
+	                FontData fontData[] = originalFont.getFontData();
+	                // Add the italic attribute
+	                for (int i = 0; i < fontData.length; i++) {
+	                    fontData[i].setStyle(fontData[i].getStyle() | SWT.ITALIC);
+	                }
+	                fItalicFont= new Font(control.getDisplay(), fontData);
+            	}
+            	return fItalicFont;
+            }
+            return super.getFont(element);
+        }
+
+		public void dispose() {
+			if (fItalicFont != null) {
+				fItalicFont.dispose();
+			}
+			super.dispose();
+		}
+    }
 	
 	/**
 	 * Job used for source display.
@@ -329,28 +299,24 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
-		AsynchronousTreeViewer viewer = new LaunchViewer(parent);
-		viewer.setContext(new PresentationContext(this));
-        viewer.setInput(DebugPlugin.getDefault().getLaunchManager());
-        
-        viewer.addSelectionChangedListener(this);
-        // TODO: why post and selection change listener?
-        // viewer.addPostSelectionChangedListener(this);
-        viewer.getControl().addKeyListener(new KeyAdapter() {
-        	public void keyPressed(KeyEvent event) {
-        		if (event.character == SWT.DEL && event.stateMask == 0) {
-        			handleDeleteKeyPressed();
-        		}
-        	}
-        });
-        final DelegatingModelPresentation presentation = new DelegatingModelPresentation();
-        fEditorPresentation = presentation;
-        // add my viewer as a selection provider, so selective re-launch works
-		getSite().setSelectionProvider(viewer);
-		viewer.setInput(DebugPlugin.getDefault().getLaunchManager());
-		//setEventHandler(new LaunchViewEventHandler(this));
-		DebugContextManager.getDefault().addDebugContextProvider(fProvider);
-		return viewer;
+		LaunchViewer lv = new LaunchViewer(parent);
+		lv.addPostSelectionChangedListener(this);
+		lv.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.character == SWT.DEL && event.stateMask == 0) {
+					handleDeleteKeyPressed();
+				}
+			}
+		});
+		lv.setContentProvider(new DebugViewContentProvider(lv, getSite()));
+		final DelegatingModelPresentation presentation = new DelegatingModelPresentation();
+		lv.setLabelProvider(new LaunchViewLabelProvider(lv, presentation));
+		fEditorPresentation = presentation;
+		// add my viewer as a selection provider, so selective re-launch works
+		getSite().setSelectionProvider(lv);
+		lv.setInput(DebugPlugin.getDefault().getLaunchManager());
+		setEventHandler(new LaunchViewEventHandler(this));
+		return lv;
 	}
 		
 	private void handleDeleteKeyPressed() {
@@ -371,7 +337,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		if (itemsToTerminate) {
 			// Prompt the user to proceed with termination
-			if (!MessageDialog.openQuestion(getSite().getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_1, DebugUIViewsMessages.LaunchView_Terminate_and_remove_selected__2)) {  
+			if (!MessageDialog.openQuestion(getSite().getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_1, DebugUIViewsMessages.LaunchView_Terminate_and_remove_selected__2)) { // 
 				return;
 			}
 		}
@@ -387,7 +353,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (!status.isOK()) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_4, DebugUIViewsMessages.LaunchView_Terminate_and_remove_failed_5, status);  
+				DebugUIPlugin.errorDialog(window.getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_4, DebugUIViewsMessages.LaunchView_Terminate_and_remove_failed_5, status); // 
 			} else {
 				DebugUIPlugin.log(status);
 			}
@@ -440,26 +406,27 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (!isAvailable()) {
 			return;
 		}
-
+		TreeViewer tv = (TreeViewer)getViewer();
+		tv.expandToLevel(2);
+		final Object[] elements = tv.getExpandedElements();
 		// traverse debug model in non UI thread
 		Job initJob = new Job(DebugUIViewsMessages.LaunchView_2) { 
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			protected IStatus run(IProgressMonitor monitor) {
-				ILaunchManager launchManager = (ILaunchManager) getViewer().getInput();
-				ILaunch[] launches = launchManager.getLaunches();
-				for (int i = 0; i < launches.length; i++) {
-					ILaunch launch = launches[i];
-					final IStackFrame frame = findFrame(launch);
-					if (frame != null) {
-						Runnable runnable = new Runnable() {
-							public void run() {
-								autoExpand(frame, true);
-							}
-						};
-						asyncExec(runnable);
-					}					
+				for (int i = 0; i < elements.length; i++) {
+					if (elements[i] instanceof ILaunch) {
+						final IStackFrame frame = findFrame((ILaunch)elements[i]);
+						if (frame != null) {
+							Runnable runnable = new Runnable() {
+								public void run() {
+									autoExpand(frame, true);
+								}
+							};
+							asyncExec(runnable);
+						}
+					}
 				}
 				return Status.OK_STATUS;
 			}
@@ -540,14 +507,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		fProvider.dispose();
-	    Viewer viewer = getViewer();
+	    RemoteTreeViewer viewer = (RemoteTreeViewer) getViewer();
 		if (viewer != null) {
 			viewer.removeSelectionChangedListener(this);
-			if (viewer instanceof AsynchronousTreeViewer) {
-				AsynchronousTreeViewer asyncTreeViewer = (AsynchronousTreeViewer) viewer;
-				asyncTreeViewer.dispose();
-			}
+			viewer.cancelJobs();
 		}
 		if (fContextListener != null) {
 			fContextListener.dispose();
@@ -588,21 +551,12 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		fProvider.activate(event.getSelection());
-		
-//		clearStatusLine();
-//		updateObjects();
-//		Object element = ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
-//		if (element != null && !element.equals(fStackFrame)) {
-//			showEditorForCurrentSelection();
-//		}
-		
-//		 TODO: replace view conetxt stuff based on debug context
+		clearStatusLine();
+		updateObjects();
+		showEditorForCurrentSelection();
 		if (isActive()) {
-			Object element = ((IStructuredSelection)event.getSelection()).getFirstElement();
-		    fContextListener.updateForSelection(element);
+		    fContextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
 		}
-		
 	}
 
 	/**
@@ -649,8 +603,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (o == null || o instanceof IStackFrame) {
 			return;
 		} 
-		StructuredViewer viewer = (StructuredViewer) getViewer();
-		viewer.refresh(o);
+		TreeViewer tViewer= (TreeViewer)getViewer();
+		boolean expanded= tViewer.getExpandedState(o);
+		tViewer.setExpandedState(o, !expanded);
 	}
 		
 	/* (non-Javadoc)
@@ -879,27 +834,29 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @param selectNeeded whether the element should be selected
 	 */
 	public void autoExpand(Object element, boolean selectNeeded) {
-		AsynchronousTreeViewer viewer = (AsynchronousTreeViewer) getViewer();
-		TreePath[] treePaths = viewer.getTreePaths(element);
-		if (element instanceof IStackFrame) {
-			IStackFrame frame = (IStackFrame) element;
-			if (treePaths != null) {
-				viewer.expand(new TreeSelection(treePaths));
-				if (selectNeeded) {
-					viewer.setSelection(new TreeSelection(treePaths));
-				}
-			} else {
-				ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-				ILaunch launch = frame.getLaunch();
-				IDebugTarget debugTarget = frame.getDebugTarget();
-				IThread thread = frame.getThread();
-				
-				TreePath treePath = new TreePath(new Object[] {launchManager, launch, debugTarget, thread, frame});
-				viewer.expand(new TreeSelection(new TreePath[] {treePath}));
-				if (selectNeeded) {
-					viewer.setSelection(new TreeSelection(new TreePath[] {treePath}));
+		LaunchViewer launchViewer = (LaunchViewer)getViewer();
+        launchViewer.deferExpansion(element);
+		if (selectNeeded) {
+			IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
+			// if a frame is selected in a different thread, do not update selection
+			Iterator iterator = selection.iterator();
+			while (iterator.hasNext()) {
+				Object object = iterator.next();
+				if (object instanceof IStackFrame) {
+					if (element instanceof IStackFrame) {
+						IThread currThread = ((IStackFrame)object).getThread();
+						if (!currThread.equals(((IStackFrame)element).getThread())) {
+							// a frame in a different thread is selected, don't change
+							return;
+						}
+					} else {
+						// a frame is selected and the new selection is not a frame
+						// do not change the selection
+						return;
+					}
 				}
 			}
+			launchViewer.deferSelection(new StructuredSelection(element));
 		}
 	}
 	
@@ -1145,5 +1102,4 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
-
 }
