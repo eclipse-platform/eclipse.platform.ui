@@ -161,6 +161,16 @@ public interface IRefactoringHistoryService {
 	public RefactoringHistory getWorkspaceHistory(long start, long end, IProgressMonitor monitor);
 
 	/**
+	 * Returns whether a project has an explicit refactoring history.
+	 * 
+	 * @param project
+	 *            the project to test
+	 * @return <code>true</code> if the project contains an explicit project
+	 *         history, <code>false</code> otherwise
+	 */
+	public boolean hasProjectHistory(IProject project);
+
+	/**
 	 * Reads a refactoring history from the input stream.
 	 * 
 	 * @param stream
@@ -192,6 +202,29 @@ public interface IRefactoringHistoryService {
 	 *            the listener to remove
 	 */
 	public void removeHistoryListener(IRefactoringHistoryListener listener);
+
+	/**
+	 * Determines whether a project has an explicit refactoring history.
+	 * <p>
+	 * If an explicit refactoring history is enabled, refactorings executed on
+	 * that particular project are stored in a <code>.refactorings</code>
+	 * folder of the project folder. If no explicit refactoring history is
+	 * enabled, all refactoring information is tracked as well, but persisted
+	 * internally in a plugin-specific way without altering the project.
+	 * </p>
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param project
+	 *            the project to set
+	 * @param enable
+	 *            <code>true</code> to enable an explicit project history,
+	 *            <code>false</code> otherwise
+	 * @throws CoreException
+	 *             if an error occurs
+	 */
+	public void setProjectHistory(IProject project, boolean enable) throws CoreException;
 
 	/**
 	 * Writes the specified refactoring descriptor proxies to the output stream.

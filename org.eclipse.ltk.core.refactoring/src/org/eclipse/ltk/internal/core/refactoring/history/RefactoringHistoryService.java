@@ -107,47 +107,8 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		}
 	}
 
-	/** Stack of refactoring descriptors which notified participants */
-	private final class ParticipatingRefactoringDescriptorStack extends RefactoringDescriptorStack {
-
-		void pop() throws EmptyStackException {
-			final RefactoringDescriptor descriptor= peek();
-			super.pop();
-			for (int index= 0; index < fHistoryListeners.size(); index++) {
-				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
-				Platform.run(new ISafeRunnable() {
-
-					public void handleException(final Throwable throwable) {
-						RefactoringCorePlugin.log(throwable);
-					}
-
-					public void run() throws Exception {
-						listener.historyNotification(new RefactoringHistoryEvent(RefactoringHistoryService.this, RefactoringHistoryEvent.REMOVED, descriptor));
-					}
-				});
-			}
-		}
-
-		void push(final RefactoringDescriptor descriptor) {
-			super.push(descriptor);
-			for (int index= 0; index < fHistoryListeners.size(); index++) {
-				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
-				Platform.run(new ISafeRunnable() {
-
-					public void handleException(final Throwable throwable) {
-						RefactoringCorePlugin.log(throwable);
-					}
-
-					public void run() throws Exception {
-						listener.historyNotification(new RefactoringHistoryEvent(RefactoringHistoryService.this, RefactoringHistoryEvent.ADDED, descriptor));
-					}
-				});
-			}
-		}
-	}
-
 	/** Stack of refactoring descriptors */
-	private static class RefactoringDescriptorStack {
+	private final class RefactoringDescriptorStack {
 
 		/** The internal implementation */
 		private final LinkedList fImplementation= new LinkedList();
@@ -172,10 +133,24 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 *             if the stack is empty
 		 */
 		void pop() throws EmptyStackException {
+			final RefactoringDescriptor descriptor= peek();
 			if (!fImplementation.isEmpty())
 				fImplementation.removeFirst();
 			else
 				throw new EmptyStackException();
+			for (int index= 0; index < fHistoryListeners.size(); index++) {
+				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+				Platform.run(new ISafeRunnable() {
+
+					public void handleException(final Throwable throwable) {
+						RefactoringCorePlugin.log(throwable);
+					}
+
+					public void run() throws Exception {
+						listener.historyNotification(new RefactoringHistoryEvent(RefactoringHistoryService.this, RefactoringHistoryEvent.REMOVED, descriptor));
+					}
+				});
+			}
 		}
 
 		/**
@@ -190,6 +165,19 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			final int size= fImplementation.size();
 			if (size > MAX_UNDO_STACK)
 				fImplementation.removeLast();
+			for (int index= 0; index < fHistoryListeners.size(); index++) {
+				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+				Platform.run(new ISafeRunnable() {
+
+					public void handleException(final Throwable throwable) {
+						RefactoringCorePlugin.log(throwable);
+					}
+
+					public void run() throws Exception {
+						listener.historyNotification(new RefactoringHistoryEvent(RefactoringHistoryService.this, RefactoringHistoryEvent.ADDED, descriptor));
+					}
+				});
+			}
 		}
 
 		/**
@@ -230,7 +218,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						try {
 							final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 							if (project.isAccessible()) {
-								if (RefactoringHistoryService.isHistoryEnabled(project)) {
+								if (hasProjectHistory(project)) {
 									final URI uri= project.getLocationURI();
 									if (uri != null)
 										return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER), name).requestDescriptor(proxy);
@@ -410,23 +398,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		return fInstance;
 	}
 
-	/**
-	 * Should a project refactoring history be maintained?
-	 * 
-	 * @param project
-	 *            the project
-	 * @return <code>true</code> if a history should be maintained,
-	 *         <code>false</code> otherwise
-	 */
-	public static boolean isHistoryEnabled(final IProject project) {
-		Assert.isNotNull(project);
-		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
-		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
-		if (preference != null)
-			return Boolean.valueOf(preference).booleanValue();
-		return false;
-	}
-
 	/** The execution listeners */
 	private final List fExecutionListeners= new ArrayList(2);
 
@@ -486,7 +457,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			OperationHistoryFactory.getOperationHistory().addOperationHistoryListener(fOperationListener);
 			fResourceListener= new WorkspaceChangeListener();
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(fResourceListener, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE);
-			fUndoStack= new ParticipatingRefactoringDescriptorStack();
+			fUndoStack= new RefactoringDescriptorStack();
 			fRedoCache= new LinkedList();
 		}
 	}
@@ -667,7 +638,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			try {
 				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 12);
 				final String name= project.getName();
-				if (isHistoryEnabled(project)) {
+				if (hasProjectHistory(project)) {
 					final URI uri= project.getLocationURI();
 					if (uri != null)
 						return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER), name).readHistory(start, end, new SubProgressMonitor(monitor, 12));
@@ -764,6 +735,18 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
+	public boolean hasProjectHistory(final IProject project) {
+		Assert.isNotNull(project);
+		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
+		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
+		if (preference != null)
+			return Boolean.valueOf(preference).booleanValue();
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public RefactoringHistory readRefactoringHistory(final InputStream stream) throws CoreException {
 		Assert.isNotNull(stream);
 		final RefactoringSessionDescriptor descriptor= new XmlRefactoringSessionReader().readSession(new InputSource(stream));
@@ -819,9 +802,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * <p>
 	 * The refactoring history must be in connected state.
 	 * </p>
-	 * <p>
-	 * Note: This API must not be called from outside the refactoring framework.
-	 * </p>
 	 * 
 	 * @param source
 	 *            the source refactoring descriptor
@@ -834,6 +814,39 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isTrue(!target.isUnknown());
 
 		// TODO: implement
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setProjectHistory(final IProject project, final boolean enable) throws CoreException {
+		Assert.isNotNull(project);
+		Assert.isTrue(project.isAccessible());
+		final String name= project.getName();
+		final URI uri= project.getLocationURI();
+		if (uri != null) {
+			if (enable) {
+				final IFileStore source= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(name);
+				if (source.fetchInfo().exists()) {
+					IFileStore destination= EFS.getStore(uri).getChild(NAME_REFACTORINGS_FOLDER);
+					if (destination.fetchInfo().exists())
+						destination.delete(EFS.NONE, null);
+					destination.mkdir(EFS.NONE, null);
+					source.copy(destination, EFS.OVERWRITE, null);
+					source.delete(EFS.NONE, null);
+				}
+			} else {
+				final IFileStore source= EFS.getStore(uri).getChild(NAME_REFACTORINGS_FOLDER);
+				if (source.fetchInfo().exists()) {
+					IFileStore destination= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(name);
+					if (destination.fetchInfo().exists())
+						destination.delete(EFS.NONE, null);
+					destination.mkdir(EFS.NONE, null);
+					source.copy(destination, EFS.OVERWRITE, null);
+					source.delete(EFS.NONE, null);
+				}
+			}
+		}
 	}
 
 	/**

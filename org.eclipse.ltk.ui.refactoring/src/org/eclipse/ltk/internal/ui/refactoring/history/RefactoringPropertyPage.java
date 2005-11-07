@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
@@ -19,6 +19,7 @@ import org.eclipse.core.resources.ProjectScope;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
@@ -49,6 +50,9 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 	/** The enable history button, or <code>null</code> */
 	private Button fEnableButton= null;
+
+	/** The initial value of the refactoring preference */
+	private boolean fHasProjectHistory= false;
 
 	/** The preferences working copy manager, or <code>null</code> */
 	private IWorkingCopyManager fManager= null;
@@ -81,7 +85,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		fEnableButton.setLayoutData(data);
 
-		fEnableButton.setSelection(isHistoryEnabled());
+		fEnableButton.setSelection(hasProjectHistory());
 		fEnableButton.setEnabled(RefactoringCore.internalGetPreferences().getBoolean(RefactoringPreferenceConstants.PREFERENCE_ENABLE_WORKSPACE_REFACTORING_HISTORY));
 
 		applyDialogFont(result);
@@ -105,19 +109,15 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	}
 
 	/**
-	 * Should a project refactoring history be maintained?
+	 * Returns whether a project has an explicit refactoring history.
 	 * 
-	 * @return <code>true</code> if a history should be maintained,
-	 *         <code>false</code> otherwise
+	 * @return <code>true</code> if the project contains an explicit project
+	 *         history, <code>false</code> otherwise
 	 */
-	private boolean isHistoryEnabled() {
+	private boolean hasProjectHistory() {
 		final IProject project= (IProject) getElement().getAdapter(IProject.class);
-		if (project != null) {
-			final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
-			final String preference= Platform.getPreferencesService().getString(RefactoringCore.ID_PLUGIN, RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
-			if (preference != null)
-				return Boolean.valueOf(preference).booleanValue();
-		}
+		if (project != null)
+			return RefactoringCore.getRefactoringHistoryService().hasProjectHistory(project);
 		return false;
 	}
 
@@ -141,7 +141,13 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		if (fManager != null)
 			try {
 				fManager.applyChanges();
+				final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+				final boolean history= service.hasProjectHistory(project);
+				if (history != fHasProjectHistory && project != null)
+					service.setProjectHistory(project, history);
 			} catch (BackingStoreException exception) {
+				RefactoringUIPlugin.log(exception);
+			} catch (CoreException exception) {
 				RefactoringUIPlugin.log(exception);
 			}
 		return super.performOk();
@@ -164,5 +170,13 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			getPreferences(manager, context).put(key, value);
 		else
 			getPreferences(manager, context).remove(key);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setVisible(final boolean visible) {
+		fHasProjectHistory= hasProjectHistory();
+		super.setVisible(visible);
 	}
 }
