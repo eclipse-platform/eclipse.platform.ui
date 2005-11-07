@@ -420,7 +420,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	public static boolean isHistoryEnabled(final IProject project) {
 		Assert.isNotNull(project);
-		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project) };
+		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
 		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
 		if (preference != null)
 			return Boolean.valueOf(preference).booleanValue();
@@ -666,9 +666,13 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				monitor= new NullProgressMonitor();
 			try {
 				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 12);
-				final URI uri= project.getLocationURI();
-				if (uri != null)
-					return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER), project.getName()).readHistory(start, end, new SubProgressMonitor(monitor, 12));
+				final String name= project.getName();
+				if (isHistoryEnabled(project)) {
+					final URI uri= project.getLocationURI();
+					if (uri != null)
+						return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER), name).readHistory(start, end, new SubProgressMonitor(monitor, 12));
+				} else
+					return new RefactoringHistoryManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER).getChild(name), name).readHistory(start, end, new SubProgressMonitor(monitor, 12));
 			} catch (CoreException exception) {
 				RefactoringCorePlugin.log(exception);
 			} finally {
