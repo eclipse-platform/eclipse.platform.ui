@@ -40,6 +40,9 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
+import org.eclipse.ui.internal.presentations.util.AbstractTabFolder;
+import org.eclipse.ui.internal.presentations.util.AbstractTabItem;
+import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
 import org.eclipse.ui.presentations.StackDropResult;
 
 
@@ -56,7 +59,7 @@ public class DetachedWindow implements IDragOverListener {
     
     private Rectangle bounds = new Rectangle(0,0,0,0);
 
-    private Shell s;
+    private Shell windowShell;
     
     private boolean hideViewsOnClose = true;
     
@@ -137,14 +140,14 @@ public class DetachedWindow implements IDragOverListener {
     }
 
     public Shell getShell() {
-        return s;
+        return windowShell;
     }
     
     public void create() {
-        s = ((WorkbenchWindow)page.getWorkbenchWindow()).getDetachedWindowPool().allocateShell(shellListener);
-        s.setData(this);
-        s.setText(""); //$NON-NLS-1$
-        DragUtil.addDragTarget(s, this);
+        windowShell = ((WorkbenchWindow)page.getWorkbenchWindow()).getDetachedWindowPool().allocateShell(shellListener);
+        windowShell.setData(this);
+        windowShell.setText(""); //$NON-NLS-1$
+        DragUtil.addDragTarget(windowShell, this);
         hideViewsOnClose = true;
         if (bounds.isEmpty()) {
             Point center = Geometry.centerPoint(page.getWorkbenchWindow().getShell().getBounds());
@@ -155,11 +158,11 @@ public class DetachedWindow implements IDragOverListener {
         }
         getShell().setBounds(bounds);
 
-        configureShell(s);
+        configureShell(windowShell);
         
-        createContents(s);
-        s.layout(true);
-        folder.setBounds(s.getClientArea());
+        createContents(windowShell);
+        windowShell.layout(true);
+        folder.setBounds(windowShell.getClientArea());
     }
     
     
@@ -173,6 +176,21 @@ public class DetachedWindow implements IDragOverListener {
         if (shell != null)
             part.reparent(shell);
         folder.add(part);
+        
+        // Ensure that the shell's minimum size is capable of showing the initial first tab 
+        TabbedStackPresentation stack = (TabbedStackPresentation) folder.getPresentation();
+        AbstractTabFolder tabFolder = stack.getTabFolder();
+        if (tabFolder.getItemCount() == 1) {
+        	// Get the space that we need to show the tab
+        	AbstractTabItem firstItem = tabFolder.getItem(0);
+        	Rectangle tabRect = firstItem.getBounds();
+        	
+        	// Take the current shell 'trim' into account
+        	int shellHeight = windowShell.getBounds().height - windowShell.getClientArea().height;
+        	int shellWidth = windowShell.getBounds().width - windowShell.getClientArea().width;
+        	
+        	windowShell.setMinimumSize(tabRect.width + shellWidth, tabRect.height + shellHeight);
+        }
     }
 
     public boolean belongsToWorkbenchPage(IWorkbenchPage workbenchPage) {
@@ -206,19 +224,19 @@ public class DetachedWindow implements IDragOverListener {
         if (folder != null)
             folder.dispose();
         
-        if (s != null) {
-            s.removeListener(SWT.Resize, resizeListener);
-            DragUtil.removeDragTarget(s, this);
-            bounds = s.getBounds();
+        if (windowShell != null) {
+            windowShell.removeListener(SWT.Resize, resizeListener);
+            DragUtil.removeDragTarget(windowShell, this);
+            bounds = windowShell.getBounds();
 
             // Unregister this detached view as a window (for key bindings).
 			final IContextService contextService = (IContextService) getWorkbenchPage()
 					.getWorkbenchWindow().getWorkbench().getAdapter(
 							IContextService.class);
-			contextService.unregisterShell(s);
+			contextService.unregisterShell(windowShell);
 
-            s.setData(null);
-            s = null;
+            windowShell.setData(null);
+            windowShell = null;
         }
 
         return true;

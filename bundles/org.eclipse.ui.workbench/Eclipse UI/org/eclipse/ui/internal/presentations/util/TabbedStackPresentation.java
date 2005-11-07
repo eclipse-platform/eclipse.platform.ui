@@ -325,6 +325,13 @@ public final class TabbedStackPresentation extends StackPresentation {
         return folder.getTabFolder().getControl();
     }
 
+    /**
+     * @return AbstractTabFolder the presentation's tab folder
+     */
+    public AbstractTabFolder getTabFolder() {
+        return folder.getTabFolder();
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.StackPresentation#addPart(org.eclipse.ui.presentations.IPresentablePart, java.lang.Object)
      */
