@@ -58,7 +58,10 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 	 */
 	protected void becomesHidden() {
 		super.becomesHidden();
-		getEventHandler().viewBecomesHidden();
+		AbstractDebugEventHandler eventHandler = getEventHandler();
+		if (eventHandler != null) {
+			getEventHandler().viewBecomesHidden();
+		}
 	}
 
 	/**
@@ -66,7 +69,10 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 	 */
 	protected void becomesVisible() {
 		super.becomesVisible();
-		getEventHandler().viewBecomesVisible();
+		AbstractDebugEventHandler eventHandler = getEventHandler();
+		if (eventHandler != null) {
+			eventHandler.viewBecomesVisible();
+		}
 	}
 	
 	protected void clearStatusLine() {

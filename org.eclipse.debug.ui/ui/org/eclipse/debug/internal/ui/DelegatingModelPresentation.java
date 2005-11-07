@@ -293,7 +293,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return show.booleanValue();
 	}
 		
-	protected HashMap getAttributes() {
+	public HashMap getAttributes() {
 		return fAttributes;
 	}
 	
@@ -307,16 +307,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return (Map) getAttributes().clone();
 	}
 
-	protected void setAttributes(HashMap attributes) {
-		fAttributes = attributes;
-	}
-
 	protected HashMap getLabelProviders() {
 		return fLabelProviders;
-	}
-
-	protected void setLabelProviders(HashMap labelProviders) {
-		fLabelProviders = labelProviders;
 	}
 
     /* (non-Javadoc)

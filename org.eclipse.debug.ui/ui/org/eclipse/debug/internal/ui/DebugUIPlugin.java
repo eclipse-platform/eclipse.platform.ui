@@ -52,6 +52,7 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
@@ -60,9 +61,11 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.contexts.SuspendTriggerAdapterFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
@@ -417,9 +420,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		manager.registerAdapters(propertiesFactory, IExpression.class);
 		manager.registerAdapters(propertiesFactory, IExpressionManager.class);
         manager.registerAdapters(propertiesFactory, OtherBreakpointCategory.class);
+        manager.registerAdapters(propertiesFactory, IDebugElement.class);
 		DebugUIAdapterFactory uiFactory = new DebugUIAdapterFactory();
 		manager.registerAdapters(uiFactory, ILaunchConfiguration.class);
 		manager.registerAdapters(uiFactory, ILaunchConfigurationType.class);
+		SuspendTriggerAdapterFactory factory = new SuspendTriggerAdapterFactory();
+		manager.registerAdapters(factory, ILaunch.class);
 		getStandardDisplay().asyncExec(
 			new Runnable() {
 				public void run() {
@@ -665,6 +671,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		}
 		
 		getLaunchConfigurationManager().startup();
+		SourceLookupManager.getDefault();
 	}
 	
 	/**

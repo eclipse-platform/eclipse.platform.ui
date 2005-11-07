@@ -1002,6 +1002,14 @@ public interface IDebugUIConstants {
      * @since 3.1
      */
     public static final String EXTENSION_POINT_BREAKPOINT_ORGANIZERS = "breakpointOrganizers"; //$NON-NLS-1$    
+    
+    /**
+     * Update policies extension point identifier (value
+     * <code>"updatePolicies"</code>
+     * 
+     * @since 3.2
+     */
+    public static final String EXTENSION_POINT_UPDATE_POLICIES = "updatePolicies"; //$NON-NLS-1$    
 
 	/**
 	 * Padded string preference for renderings.  Padded string is the string to be used in place of 

@@ -11,8 +11,6 @@
 package org.eclipse.debug.internal.ui.views.expression;
 
 
-import java.util.List;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -25,7 +23,6 @@ import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewEventHandler;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -87,10 +84,10 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 		Runnable r = new Runnable() {
 			public void run() {
 				if (isAvailable()) {
-					getTreeViewer().refresh();
+					getStructuredViewer().refresh();
 					if (expressions.length > 0) {
 						ISelection selection = new StructuredSelection(expressions[0]); 
-						getTreeViewer().setSelection(selection, true);
+						getStructuredViewer().setSelection(selection, true);
 					}
 				}
 			}
@@ -102,31 +99,9 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 	 * @see IExpressionsListener#expressionsRemoved(IExpression[])
 	 */
 	public void expressionsRemoved(final IExpression[] expressions) {
-		Runnable r = new Runnable() {
-			public void run() {
-				if (isAvailable()) {
-					getTreeViewer().getControl().setRedraw(false);
-					for (int i = 0; i < expressions.length; i++) {
-						IExpression expression = expressions[i];
-						remove(expression);
-						IContentProvider provider= getTreeViewer().getContentProvider();
-						if (provider instanceof RemoteExpressionsContentProvider) {
-							RemoteExpressionsContentProvider expressionProvider= (RemoteExpressionsContentProvider) provider;
-							List decendants = expressionProvider.getCachedDecendants(expression);
-							decendants.add(expression);
-							// Remove the parent cache for the expression and its children
-							expressionProvider.removeCache(decendants.toArray());
-							IExpression[] allExpressions= DebugPlugin.getDefault().getExpressionManager().getExpressions();
-							if (allExpressions.length > 0) {
-								getTreeViewer().setSelection(new StructuredSelection(allExpressions[0]), true);
-							}
-						}						
-					}
-					getTreeViewer().getControl().setRedraw(true);
-				}
-			}
-		};
-		getView().asyncExec(r);
+		if (isAvailable()) {
+			getStructuredViewer().refresh();
+		}
 	}
 
 	/**
@@ -136,7 +111,7 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 		Runnable r = new Runnable() {
 			public void run() {
 				if (isAvailable()) {
-					getTreeViewer().getControl().setRedraw(false);
+					getStructuredViewer().getControl().setRedraw(false);
 					for (int i = 0; i < expressions.length; i++) {
 						IExpression expression = expressions[i];
 						refresh(expression);
@@ -146,7 +121,7 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 							getVariablesView().populateDetailPane();	
 						}
 					}
-					getTreeViewer().getControl().setRedraw(true);
+					getStructuredViewer().getControl().setRedraw(true);
 				}
 			}
 		};

@@ -12,16 +12,15 @@
 package org.eclipse.debug.internal.ui.views.variables;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.debug.internal.ui.views.AbstractViewerState;
-import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
@@ -34,88 +33,62 @@ public class ViewerState extends AbstractViewerState {
 	/**
 	 * Constructs a memento for the given viewer.
 	 */
-	public ViewerState(TreeViewer viewer) {
+	public ViewerState(AsynchronousTreeViewer viewer) {
 		super(viewer);
 	}
-    
-    public ViewerState() {
-        super();
-    }
 
 	/**
 	 * @see org.eclipse.debug.internal.ui.views.AbstractViewerState#encodeElement(org.eclipse.swt.widgets.TreeItem)
 	 */
 	protected IPath encodeElement(TreeItem item) throws DebugException {
-	    Object data = item.getData();
-	    if (data instanceof IVariable) {
-	        IVariable variable = (IVariable)data;
-	        IPath path = new Path(variable.getName());
-	        TreeItem parent = item.getParentItem();
-	        while (parent != null) {
-	            variable = (IVariable)parent.getData();
-	            path = new Path(variable.getName()).append(path);
-	            parent = parent.getParentItem();
-	        }
-	        return path;
-	    }
-	    
-        return null;
+		StringBuffer path = new StringBuffer(item.getText());
+		TreeItem parent = item.getParentItem();
+		while (parent != null) {
+			path.insert(0, parent.getText()+'/');
+			parent = parent.getParentItem();
+		}
+		return new Path(path.toString());
 	}
 
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.AbstractViewerState#decodePath(org.eclipse.core.runtime.IPath, org.eclipse.jface.viewers.TreeViewer)
+	 * @see org.eclipse.debug.internal.ui.views.AbstractViewerState#decodePath(org.eclipse.core.runtime.IPath,
+	 *      org.eclipse.jface.viewers.TreeViewer)
 	 */
-	protected Object decodePath(IPath path, TreeViewer viewer) throws DebugException {
-		ITreeContentProvider contentProvider = (ITreeContentProvider)viewer.getContentProvider();
+	protected TreePath decodePath(IPath path, AsynchronousTreeViewer viewer) throws DebugException {
 		String[] names = path.segments();
-		Object parent = viewer.getInput();
-		IVariable variable = null;
+		Tree tree = viewer.getTree();
+		TreeItem[] items = tree.getItems();
+		
+		List elements = new ArrayList();
+		elements.add(viewer.getInput());
+		
+		boolean pathFound = false;
+		
 		for (int i = 0; i < names.length; i++) {
-			variable = null;
-			Object[] children = null;
-			if (viewer instanceof RemoteTreeViewer) {
-				children = ((RemoteTreeViewer)viewer).getCurrentChildren(parent);
-			} else {
-				children = contentProvider.getChildren(parent);
-			}
-			if (children == null) {
-				return null;
-			}
 			String name = names[i];
-			for (int j = 0; j < children.length; j++) {
-                if (!(children[j] instanceof IVariable)) {
-                    continue;
-                }
-				IVariable var = (IVariable)children[j];
-				if (var.getName().equals(name)) {
-					variable = var;
-					break;
-				}
+			TreeItem item = findItem(name, items);
+			if (item != null) {
+				pathFound = true;
+				elements.add(item.getData());
+				items = item.getItems();
 			}
-			if (variable == null) {
-				return null;
-			} 
-			parent = variable;
 		}
-		return variable;
+		
+		if (pathFound) {
+			return new TreePath(elements.toArray());
+		}
+		
+		return null;
 	}
-    
-    public AbstractViewerState copy() {
-        ViewerState copy = new ViewerState();
-        if (fSavedExpansion != null) {
-            copy.fSavedExpansion = new ArrayList();
-            for (Iterator iter = fSavedExpansion.iterator(); iter.hasNext();) {
-                copy.fSavedExpansion.add(iter.next());
-            }
-        }
-        
-        if (fSelection != null) {
-            copy.fSelection = new IPath[fSelection.length];
-            for (int i = 0; i < fSelection.length; i++) {
-                IPath sel = fSelection[i];
-                copy.fSelection[i] = sel;
-            }
-        }
-        return copy;
-    }
+
+	private TreeItem findItem(String name, TreeItem[] items) {
+		for (int i = 0; i < items.length; i++) {
+			TreeItem item = items[i];
+			if (item.getText().equals(name)) {
+				return item;
+			}
+		}
+		return null;
+	}
+
 }

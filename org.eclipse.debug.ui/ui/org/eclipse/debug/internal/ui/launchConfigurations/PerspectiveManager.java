@@ -19,26 +19,26 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.contexts.ISuspendTrigger;
+import org.eclipse.debug.ui.contexts.ISuspendTriggerListener;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.swt.widgets.Display;
@@ -67,7 +67,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @see IDebugUIContants.ATTR_RUN_PERSPECTIVE
  * @see IDebugUIContants.ATTR_DEBUG_PERSPECTIVE
  */
-public class PerspectiveManager implements ILaunchListener, IDebugEventSetListener {
+public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListener {
 		
 	/**
 	 * Table of config types to tables of user specified perspective settings (mode ids
@@ -134,7 +134,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	public void startup() {
 		DebugPlugin plugin = DebugPlugin.getDefault();
 		plugin.getLaunchManager().addLaunchListener(this);
-		plugin.addDebugEventListener(this);
 	}
 
 	/**
@@ -145,7 +144,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	public void shutdown() {
 		DebugPlugin plugin = DebugPlugin.getDefault();
 		plugin.getLaunchManager().removeLaunchListener(this);
-		plugin.removeDebugEventListener(this);
 	}
 
 	/**
@@ -154,6 +152,10 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	public void launchRemoved(ILaunch launch) {
+		ISuspendTrigger trigger = (ISuspendTrigger) launch.getAdapter(ISuspendTrigger.class);
+		if (trigger != null) {
+			trigger.removeSuspendTriggerListener(this);
+		}
 	}
 	
 	/**
@@ -171,6 +173,11 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
 	public void launchAdded(ILaunch launch) {
+		
+		ISuspendTrigger trigger = (ISuspendTrigger) launch.getAdapter(ISuspendTrigger.class);
+		if (trigger != null) {
+			trigger.addSuspendTriggerListener(this);
+		}
 		
 		fPerspectiveSwitchLock.startSwitch();
 		
@@ -264,25 +271,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	}
 	
 	/**
-	 * On a SUSPEND event, show the debug view. If no debug view is open,
-	 * switch to the perspective specified by the launcher.
-	 *
-	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
-	 */
-	public void handleDebugEvents(DebugEvent[] events) {
-		// open the debugger if this is a suspend event and the debug view is not yet open
-		// and the preferences are set to switch
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
-			if (event.getKind() == DebugEvent.SUSPEND && !event.isEvaluation() &&
-			        event.getDetail() != DebugEvent.STEP_END) {
-			    // Don't switch perspective for evaluations or stepping
-				handleBreakpointHit(event);
-			}
-		}
-	}
-	
-	/**
 	 * Makes the debug view visible.
 	 */
 	protected void showDebugView(final IWorkbenchWindow window) {
@@ -332,7 +320,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * 
 	 * @param event the suspend event
 	 */
-	private void handleBreakpointHit(DebugEvent event) {
+	private void handleBreakpointHit(ILaunch launch) {
 		
 		// Must be called here to indicate that the perspective
 		// may be switching.
@@ -342,14 +330,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		// the perspective switch.
 		fPerspectiveSwitchLock.startSwitch();
 		
-		// apply event filters
-		ILaunch launch= null;
-		Object source = event.getSource();
-		if (source instanceof IDebugElement) {
-			launch = ((IDebugElement)source).getLaunch();
-		} else if (source instanceof IProcess) {
-			launch = ((IProcess)source).getLaunch();
-		}
 		String perspectiveId = null;
 		try {
 			perspectiveId = getPerspectiveId(launch);
@@ -814,5 +794,12 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 */
 	public void schedulePostSwitch(Job job) {
 		fPerspectiveSwitchLock.schedulePostSwitch(job);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.contexts.ISuspendTriggerListener#suspended(org.eclipse.debug.core.ILaunch, java.lang.Object)
+	 */
+	public void suspended(ILaunch launch, Object context) {
+		handleBreakpointHit(launch);
 	}
 }

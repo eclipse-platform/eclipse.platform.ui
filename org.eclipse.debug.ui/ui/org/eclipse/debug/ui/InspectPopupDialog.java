@@ -14,6 +14,7 @@ package org.eclipse.debug.ui;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
@@ -21,9 +22,12 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.PresentationContext;
+import org.eclipse.debug.internal.ui.viewers.TreePath;
+import org.eclipse.debug.internal.ui.viewers.TreeSelection;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
-import org.eclipse.debug.internal.ui.views.expression.ExpressionPopupContentProvider;
-import org.eclipse.debug.internal.ui.views.expression.RemoteExpressionsContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
@@ -47,7 +51,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 
 public class InspectPopupDialog extends DebugPopup {
@@ -57,7 +60,7 @@ public class InspectPopupDialog extends DebugPopup {
 
     private static final int MIN_HEIGHT = 200;
 
-    private IWorkbenchPage fPage;
+//    private IWorkbenchPage fPage;
 
     private VariablesViewer fVariablesViewer;
 
@@ -89,17 +92,11 @@ public class InspectPopupDialog extends DebugPopup {
         fSashForm.setOrientation(SWT.VERTICAL);
         fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        fPage = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
         VariablesView view = getViewToEmulate();
-        IWorkbenchPartSite site = null;
-        if (view != null) {
-            site = view.getSite();
-        } else {
-            site = fPage.getActivePart().getSite();
-        }
 
         fVariablesViewer = new VariablesViewer(fSashForm, SWT.NO_TRIM, null);
-        fVariablesViewer.setContentProvider(new ExpressionPopupContentProvider(fVariablesViewer, site, view));
+        
+        fVariablesViewer.setContext(new PresentationContext(view));
         fModelPresentation = new VariablesViewModelPresentation();
         fVariablesViewer.setLabelProvider(fModelPresentation);
 
@@ -161,7 +158,7 @@ public class InspectPopupDialog extends DebugPopup {
                     fVariablesViewer.addFilter(filters[i]);
                 }
             }
-            ((RemoteExpressionsContentProvider) fVariablesViewer.getContentProvider()).setShowLogicalStructure(view.isShowLogicalStructure());
+
             Map map = view.getPresentationAttributes(fExpression.getModelIdentifier());
             Iterator iterator = map.keySet().iterator();
             while (iterator.hasNext()) {
@@ -169,12 +166,26 @@ public class InspectPopupDialog extends DebugPopup {
                 fModelPresentation.setAttribute(key, map.get(key));
             }
         }
-        fVariablesViewer.setInput(new Object[] { fExpression });
-        fVariablesViewer.expandToLevel(2);
+
+        TreeRoot treeRoot = new TreeRoot();
+        fVariablesViewer.setInput(treeRoot);
+        fVariablesViewer.expand(new TreeSelection(new TreePath(new Object[] {treeRoot, fExpression})));
 
         return fTree;
     }
 
+    private class TreeRoot extends AsynchronousTreeContentAdapter {
+        protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
+            return new Object[] { fExpression };
+        }
+        protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
+            return true;
+        }
+        protected boolean supportsPartId(String id) {
+            return true;
+        }
+    }
+    
     void updateValueDisplay(IValue val) {
         IValueDetailListener valueDetailListener = new IValueDetailListener() {
             public void detailComputed(IValue value, final String result) {

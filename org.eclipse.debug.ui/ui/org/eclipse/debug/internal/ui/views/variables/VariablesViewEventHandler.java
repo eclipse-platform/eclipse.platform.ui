@@ -21,15 +21,12 @@ import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
-import org.eclipse.debug.internal.ui.views.RemoteTreeContentManager;
 import org.eclipse.debug.ui.AbstractDebugView;
 
 /**
  * Updates the variables view
  */
 public class VariablesViewEventHandler extends AbstractDebugEventHandler {	
-	
-	private RemoteTreeContentManager fContentManager = null;
 	
 	/**
 	 * Constructs a new event handler on the given view
@@ -81,15 +78,6 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 		if (!event.isStepStart() && !event.isEvaluation()) {
 			// clear variable expansion state
 			getVariablesView().clearExpandedVariables(event.getSource());
-		}
-		if (!event.isEvaluation()) {
-			Object input = getVariablesView().getVariablesViewer().getInput();
-			if (input instanceof IStackFrame) {
-				IStackFrame frame = (IStackFrame)input;
-				if (event.getSource().equals(frame.getThread())) {
-					fContentManager.cancel();
-				}
-			}
 		}
 	}
 
@@ -188,10 +176,6 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 		return (DebugEvent[]) all.toArray(new DebugEvent[all.size()]);
 	}
 	
-	public void setContentManager(RemoteTreeContentManager manager) { 
-		fContentManager = manager;
-	}
-
 	protected boolean isFiltered(DebugEvent event) {
 		if (event.getKind() == DebugEvent.CHANGE) {
 			Object source = event.getSource();
