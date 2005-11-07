@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -1027,6 +1028,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProject project = workspace.getRoot().getProject(projectName);
 		if (record.description == null) {
+			// error case
 			record.description = workspace.newProjectDescription(projectName);
 			IPath locationPath = new Path(record.projectSystemFile
 					.getAbsolutePath());
@@ -1054,16 +1056,21 @@ public class WizardProjectsImportPage extends WizardPage implements
 			return true;
 		}
 		//import from file system
-		IPath importSource = null;
+		File importSource = null;
 		if (copyFiles){
 			// import project from location copying files - use default project location for this workspace
-			importSource = new Path(record.description.getLocationURI().getRawPath());
-			IProjectDescription desc = workspace.newProjectDescription(projectName);
-			desc.setBuildSpec(record.description.getBuildSpec());
-			desc.setNatureIds(record.description.getNatureIds());
-			desc.setDynamicReferences(record.description.getDynamicReferences());
-			desc.setReferencedProjects(record.description.getReferencedProjects());
-			record.description = desc;
+			URI locationURI = record.description.getLocationURI();
+			// if location is null, project already exists in this location or 
+			// some error condition occured.
+			if (locationURI != null){
+				importSource = new File(locationURI);
+				IProjectDescription desc = workspace.newProjectDescription(projectName);
+				desc.setBuildSpec(record.description.getBuildSpec());
+				desc.setNatureIds(record.description.getNatureIds());
+				desc.setDynamicReferences(record.description.getDynamicReferences());
+				desc.setReferencedProjects(record.description.getReferencedProjects());
+				record.description = desc;
+			}
 		}
 
 		try {
@@ -1081,12 +1088,12 @@ public class WizardProjectsImportPage extends WizardPage implements
 		}
 
 		// import operation to import project files if copy checkbox is selected
-		if (copyFiles){
+		if (copyFiles && importSource != null){
 			List filesToImport = new ArrayList();
 			FileSystemStructureProvider provider = FileSystemStructureProvider.INSTANCE;
-			getFilesForProject(filesToImport, provider, importSource.toFile());
+			getFilesForProject(filesToImport, provider, importSource);
 			ImportOperation operation = new ImportOperation(project.getFullPath(), 
-					importSource.toFile(), 
+					importSource, 
 					FileSystemStructureProvider.INSTANCE, this, filesToImport);
 			operation.setContext(getShell());
 			operation.setOverwriteResources(true);	// need to overwrite .project, .classpath files
