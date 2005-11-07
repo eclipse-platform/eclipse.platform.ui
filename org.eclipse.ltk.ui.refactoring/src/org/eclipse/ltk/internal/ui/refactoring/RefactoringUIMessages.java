@@ -66,6 +66,7 @@ public final class RefactoringUIMessages extends NLS {
 	public static String PreviewWizardPage_no_source_code_change;
 	public static String PreviewWizardPage_showAll_text;
 	public static String PreviewWizardPage_showAll_description;
+	public static String PreviewWizardPage_filterChanges;
 	
 	public static String ComparePreviewer_element_name;
 	public static String ComparePreviewer_original_source;
