@@ -534,4 +534,22 @@ public abstract class PartSite implements IWorkbenchPartSite {
             progressService = new WorkbenchSiteProgressService(this);
         return progressService;
     }
+
+    /**
+	 * Prints out the identifier, the plug-in identifier and the registered
+	 * name. This is for debugging purposes only.
+	 * 
+	 * @since 3.2
+	 */
+	public String toString() {
+		final StringBuffer buffer = new StringBuffer();
+		buffer.append("PartSite(id="); //$NON-NLS-1$
+		buffer.append(getId());
+		buffer.append(",pluginId="); //$NON-NLS-1$
+		buffer.append(getPluginId());
+		buffer.append(",registeredName="); //$NON-NLS-1$
+		buffer.append(getRegisteredName());
+		buffer.append(')');
+		return buffer.toString();
+	}
 }
