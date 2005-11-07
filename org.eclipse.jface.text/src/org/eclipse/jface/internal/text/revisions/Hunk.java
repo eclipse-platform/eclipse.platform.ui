@@ -12,6 +12,11 @@ package org.eclipse.jface.internal.text.revisions;
 
 import org.eclipse.jface.text.Assert;
 
+/**
+ * A hunk is a sequence of changed, added or deleted lines.
+ * 
+ * @since 3.2
+ */
 public final class Hunk {
 	public final int line;
 	public final int delta;

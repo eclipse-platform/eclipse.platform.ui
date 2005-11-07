@@ -17,6 +17,11 @@ import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
 
 
+/**
+ * Applies diff information to a list of change regions.
+ *  
+ * @since 3.2
+ */
 public final class DiffApplier {
 	
 	private void applyDiff(List regions, Hunk hunk) {
