@@ -43,4 +43,4 @@ Require-Bundle: org.eclipse.core.expressions,
  org.eclipse.ui.ide,
  org.eclipse.ui.editors,
  org.eclipse.core.runtime
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

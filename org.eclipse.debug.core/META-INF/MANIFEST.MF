@@ -17,4 +17,4 @@ Export-Package: org.eclipse.debug.core,
 Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.variables,
  org.eclipse.core.runtime
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

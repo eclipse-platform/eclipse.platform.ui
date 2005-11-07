@@ -9,4 +9,4 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.core.internal.variables;x-internal:=true,
  org.eclipse.core.variables
 Require-Bundle: org.eclipse.core.runtime
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
