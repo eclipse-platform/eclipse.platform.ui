@@ -21,11 +21,11 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * Refactoring descriptors are exposed by the refactoring history service as
  * lightweight proxy objects. The refactoring history service may hand out any
  * number of proxies for a given descriptor. Proxies only offer direct access to
- * the time stamp {@link #getTimeStamp()} and description
- * {@link #getDescription()}. In order to access other information such as
- * arguments and comments, clients have to resolve the proxy by calling
- * {@link #requestDescriptor(IProgressMonitor)} to obtain the refactoring
- * descriptor.
+ * the time stamp {@link #getTimeStamp()}, the related project
+ * {@link #getProject()} and description {@link #getDescription()}. In order to
+ * access other information such as arguments and comments, clients have to call
+ * {@link #requestDescriptor(IProgressMonitor)} in order to obtain the
+ * refactoring descriptor.
  * </p>
  * <p>
  * Refactoring descriptors are potentially heavyweight objects which should not
