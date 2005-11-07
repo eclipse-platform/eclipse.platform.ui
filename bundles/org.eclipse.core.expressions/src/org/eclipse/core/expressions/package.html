@@ -43,7 +43,7 @@ Platform/UI. The test element is used as follows:</p>
 <p>The above expression evaluates to true if the object under inspection
 is of type "org.eclipse.core.resources.IFile" and its file name matches
 the pattern "*.html". But who actually provides the code to do the name
-pattern test. Predefining a set of properties to test is too limiting.
+pattern test? Predefining a set of properties to test is too limiting.
 The set of tests must be open. Property testers are added to the system
 using a special extension point <span style="font-family: monospace">propertyTesters</span>.
 The above matchesPattern property is added to the system in the
@@ -66,7 +66,7 @@ following way:</p>
 	<li>property testers and their properties are defined in XML as
 	extension points. This is required to check if an extender provides a
 	property without having to activate it (e.g. load the plug-in).</li>
-	<li>properties belong to a name space. This ensure that two sibling
+	<li>properties belong to a name space. This ensures that two sibling
 	plug-ins can define the same property without causing any ambiguity. If
 	a property is defined more than once for a name space then one of the
 	testers is randomly chosen to test the property. Inheritance only
@@ -160,7 +160,7 @@ exception.</p><p><u><i>Resolve expression</i></u></p>
 &lt;/adapt&gt;</pre></blockquote>
 <p>The actual resolving is delegated to the evaluation context used to evaluate the expressions. See below on how to evaluate an expression and how to create an evaluation context.</p>
 <p><u><i>Adapt expression</i></u></p>
-<p>The adapt expression can by used to adapt the object to be inspected
+<p>The adapt expression can be used to adapt the object to be inspected
 to an object of a different type using the adapter mechanism provided by
 the platform. The example below adapts the object to be inspected to an
 IType and then checks if the type is public:</p>
@@ -171,8 +171,15 @@ IType and then checks if the type is public:</p>
 inspect for all its children. The new object is the one returned from
 IAdapter.getAdapter(). If the adaption fails, the expression evaluates
 to false.</p>
-<p>The adapt expression is implemented based on the IAdapterManager API <code>hasAdapter(Object,
-String)</code> and <code>getAdapter(Object, String)</code>. This ensures that the right class loader is taken to convert the type name into a corresponding Class object. However, using this API requires that the adapter factory providing the actual adapter is registered in XML using the extension point &quot;org.eclipse.core.runtime.adapters&quot;. Assuming that there is an adapter that converts resources with the extension .java into type objects the adapter must be declared in XML to make the above adapt expression work correctly. The corresponding adapter definition looks like this</p>
+<p>The adapt expression is implemented based on the IAdapterManager API
+<code>hasAdapter(Object, String)</code> and <code>getAdapter(Object, String)</code>.
+This ensures that the right class loader is taken to convert the type name into a
+corresponding Class object.
+However, using this API requires that the adapter factory providing the actual adapter
+is registered in XML using the extension point &quot;org.eclipse.core.runtime.adapters&quot;.
+Assuming that there is an adapter that converts resources with the extension .java into IType objects,
+the adapter must be declared in XML to make the above adapt expression work correctly.
+The corresponding adapter definition looks like this:</p>
 <blockquote><pre>&lt;extension point=&quot;org.eclipse.core.runtime.adapters&quot;&gt;
   &lt;factory 
     class=&quot;org.demo.MyAdapterFactory&quot; 
@@ -188,15 +195,15 @@ String)</code> and <code>getAdapter(Object, String)</code>. This ensures that th
 </blockquote>
 <p><u><i>Dealing with collection of elements</i></u></p>
 <p>Several expressions are evaluated on a collection of objects (for
-example refactoring participants, menu contributions, ..). Up to now the
-iteration over collections is implicitly coded into the enclosing XML
+example refactoring participants, menu contributions, ...). Up to now, the
+iteration over collections was implicitly coded into the enclosing XML
 element, which isn't part of the expression itself. The new mechanism
 provides explicit expression elements to deal with collections of
 objects. The following element</p>
 <blockquote><pre>&lt;count value="*"/&gt;</pre></blockquote>
-<p>is used to check the number of objects in a collection and the syntax
+<p>is used to check the number of objects in a collection, and the syntax
 of the attribute value is equal to the enablesFor attribute used for
-object contributions. To iterate over a collection an element</p>
+object contributions. To iterate over a collection, an element</p>
 <blockquote><pre>&lt;iterate operator="..."&gt;</pre></blockquote>
 <p>is provided. The operator attribute can either be "and" or "or". It
 determines how the evaluation results of all objects in the list are
@@ -230,7 +237,9 @@ the following include element:
 &lt;include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/&gt;
 </pre></blockquote>
 <p><a name="converting"><u><i>Converting XML elements into expressions</i></u></a></p>
-<p>XML elements con be converted into corresponding expression objects using the class ExpressionConverter. If only expression tags from the common expression language are used then the standard expression converter can be used. The following example converts the configuration element representing an enablement element into the expressions:</p>
+<p>XML elements can be converted into corresponding expression objects using the class ExpressionConverter.
+If only expression tags from the common expression language are used, then the standard expression converter can be used.
+The following example converts the configuration element representing an enablement element into an expression:</p>
 <blockquote>
 <p><code>IConfigurationElement enablementElement= ...;<br>
 Expression expression=
