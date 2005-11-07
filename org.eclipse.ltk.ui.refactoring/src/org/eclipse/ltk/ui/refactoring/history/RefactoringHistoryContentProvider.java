@@ -85,7 +85,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 			final int kind= node.getKind();
 			switch (kind) {
 				case RefactoringHistoryNode.COLLECTION:
-					return getRefactoringHistoryEntries(node, 0, Long.MAX_VALUE);
+					return getRefactoringHistoryEntries(node);
 				default: {
 					if (node instanceof RefactoringHistoryDate) {
 						final RefactoringHistoryDate date= (RefactoringHistoryDate) node;
@@ -162,6 +162,22 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 			if (stamp >= start && stamp <= end)
 				list.add(new RefactoringHistoryEntry(parent, proxy));
 		}
+		return list.toArray();
+	}
+
+	/**
+	 * Returns the refactoring history entries.
+	 * 
+	 * @param parent
+	 *            the parent node, or <code>null</code>
+	 * 
+	 * @return the refactoring history entries
+	 */
+	private Object[] getRefactoringHistoryEntries(final RefactoringHistoryNode parent) {
+		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
+		final List list= new ArrayList(proxies.length);
+		for (int index= 0; index < proxies.length; index++)
+			list.add(new RefactoringHistoryEntry(parent, proxies[index]));
 		return list.toArray();
 	}
 
