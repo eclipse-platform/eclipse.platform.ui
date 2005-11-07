@@ -65,9 +65,9 @@ import org.eclipse.swt.widgets.Tracker;
  * as the dialog menu, separator styles, and fonts, is kept private so that all
  * popup dialogs will have a similar appearance.
  * 
- * @experimental - This API is considered experimental. It is still evolving
- *               during 3.2 and is subject to change. It is being released to
- *               obtain feedback from early adopters.
+ * Note: This API is considered experimental. It is still evolving during 3.2
+ * and is subject to change. It is being released to obtain feedback from early
+ * adopters.
  * 
  * @since 3.2
  */
@@ -221,7 +221,7 @@ public class PopupDialog extends Window {
 	private boolean listenToDeactivate;
 
 	private boolean listenToParentDeactivate;
-	
+
 	/**
 	 * Flag indicating whether focus should be taken when the dialog is opened.
 	 */
@@ -338,10 +338,13 @@ public class PopupDialog extends Window {
 		shell.addListener(SWT.Activate, new Listener() {
 			public void handleEvent(Event event) {
 				// ignore this event if we have launched a child
-				if (event.widget == getShell() && getShell().getShells().length == 0) {
+				if (event.widget == getShell()
+						&& getShell().getShells().length == 0) {
 					listenToDeactivate = true;
-					// Typically we start listening for parent deactivate after we are activated.
-					// Except on the Mac, where the deactivate is received after activate.
+					// Typically we start listening for parent deactivate after
+					// we are activated.
+					// Except on the Mac, where the deactivate is received after
+					// activate.
 					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=100668
 					listenToParentDeactivate = !"carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 				}
@@ -773,7 +776,7 @@ public class PopupDialog extends Window {
 
 		// set up the tab order for the dialog
 		setTabOrder((Composite) getContents());
-		
+
 		// initialize flags for listening to deactivate
 		listenToDeactivate = false;
 		listenToParentDeactivate = false;
@@ -804,7 +807,7 @@ public class PopupDialog extends Window {
 	 */
 	public boolean close() {
 		saveDialogBounds(getShell());
-		// Widgets are about to be disposed, so null out any state 
+		// Widgets are about to be disposed, so null out any state
 		// related to them that was not handled in dispose listeners.
 		// We do this before disposal so that any received activate or
 		// deactivate events are duly ignored.
