@@ -33,8 +33,8 @@ import org.eclipse.jface.viewers.LabelProvider;
  * Label provider to display a refactoring history.
  * <p>
  * This label provider can be customized by providing a resource bundle, which
- * contains localized strings for each of the <code>XXX_FORMAT</code>
- * constants in this class.
+ * contains localized strings for each of the <code>XXX_FORMAT</code> and the
+ * <code>XXX_COLLECTION</code> constants in this class.
  * </p>
  * <p>
  * Note: this class is not indented to be subclassed outside the refactoring
@@ -151,7 +151,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 			if (fDisplayTime) {
 				final long stamp= proxy.getTimeStamp();
 				if (stamp > 0)
-					return MessageFormat.format(fResourceBundle.getString(REFACTORING_FORMAT), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), proxy.getDescription() });
+					return MessageFormat.format(fResourceBundle.getString(REFACTORING_FORMAT), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), proxy.getDescription()});
 			}
 			return proxy.getDescription();
 		} else if (element instanceof RefactoringHistoryNode) {
@@ -206,7 +206,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								format= DateFormat.getDateInstance();
 								break;
 						}
-						buffer.append(MessageFormat.format(fResourceBundle.getString(key), new String[] { format.format(new Date(stamp)) }));
+						buffer.append(MessageFormat.format(fResourceBundle.getString(key), new String[] { format.format(new Date(stamp))}));
 					}
 				}
 			}
