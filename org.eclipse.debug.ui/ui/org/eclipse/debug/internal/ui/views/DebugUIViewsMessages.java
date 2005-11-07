@@ -14,7 +14,6 @@ import org.eclipse.osgi.util.NLS;
 public class DebugUIViewsMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.views.DebugUIViewsMessages";//$NON-NLS-1$
 
-	public static String ExpressionInformationControl_5;
 	public static String find_replace_action_label;
 	public static String find_replace_action_tooltip;
 	public static String find_replace_action_image;
@@ -68,4 +67,6 @@ public class DebugUIViewsMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIViewsMessages.class);
 	}
+
+    public static String InspectPopupDialog_0;
 }
