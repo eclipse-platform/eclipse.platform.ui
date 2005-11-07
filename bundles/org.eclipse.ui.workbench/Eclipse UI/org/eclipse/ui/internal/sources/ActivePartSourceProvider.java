@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ui.AbstractSourceProvider;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWindowListener;
@@ -31,6 +33,12 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.1
  */
 public class ActivePartSourceProvider extends AbstractSourceProvider {
+
+	/**
+	 * The last active editor id seen as active by this provider. This value may
+	 * be <code>null</code> if there is no currently active editor.
+	 */
+	private String lastActiveEditorId = null;
 
 	/**
 	 * The last active part id seen as active by this provider. This value may
@@ -114,6 +122,8 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 	private final void checkActivePart() {
 		final Map currentState = getCurrentState();
 		int sources = 0;
+
+		// Figure out what was changed.
 		final Object newActivePartId = currentState
 				.get(ISources.ACTIVE_PART_NAME);
 		if (!Util.equals(newActivePartId, lastActivePartId)) {
@@ -126,7 +136,14 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 			sources |= ISources.ACTIVE_SITE;
 			lastActivePartSite = (IWorkbenchPartSite) newActivePartSite;
 		}
+		final Object newActiveEditorId = currentState
+				.get(ISources.ACTIVE_EDITOR_NAME);
+		if (!Util.equals(newActiveEditorId, lastActiveEditorId)) {
+			sources |= ISources.ACTIVE_EDITOR;
+			lastActiveEditorId = (String) newActiveEditorId;
+		}
 
+		// Fire the event, if something has changed.
 		if (sources != 0) {
 			if (DEBUG) {
 				if ((sources & ISources.ACTIVE_PART) != 0) {
@@ -136,6 +153,10 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 				if ((sources & ISources.ACTIVE_SITE) != 0) {
 					logDebuggingInfo("Active site changed to " //$NON-NLS-1$
 							+ lastActivePartSite);
+				}
+				if ((sources & ISources.ACTIVE_EDITOR) != 0) {
+					logDebuggingInfo("Active editor changed to " //$NON-NLS-1$
+							+ lastActiveEditorId);
 				}
 			}
 			fireSourceChanged(sources, currentState);
@@ -150,6 +171,7 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		final Map currentState = new HashMap(4);
 		currentState.put(ISources.ACTIVE_SITE_NAME, null);
 		currentState.put(ISources.ACTIVE_PART_NAME, null);
+		currentState.put(ISources.ACTIVE_EDITOR_NAME, null);
 
 		final IWorkbenchWindow activeWorkbenchWindow = workbench
 				.getActiveWorkbenchWindow();
@@ -157,6 +179,7 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 			final IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow
 					.getActivePage();
 			if (activeWorkbenchPage != null) {
+				// Check the active workbench part.
 				final IWorkbenchPart activeWorkbenchPart = activeWorkbenchPage
 						.getActivePart();
 				if (activeWorkbenchPart != null) {
@@ -169,6 +192,20 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 								.getId();
 						currentState.put(ISources.ACTIVE_PART_NAME,
 								newActivePartId);
+					}
+				}
+
+				// Check the active editor part.
+				final IEditorPart activeEditorPart = activeWorkbenchPage
+						.getActiveEditor();
+				if (activeEditorPart != null) {
+					final IEditorSite activeEditorSite = activeEditorPart
+							.getEditorSite();
+					if (activeEditorSite != null) {
+						final String newActiveEditorId = activeEditorSite
+								.getId();
+						currentState.put(ISources.ACTIVE_EDITOR_NAME,
+								newActiveEditorId);
 					}
 				}
 			}
