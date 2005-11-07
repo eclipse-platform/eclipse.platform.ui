@@ -67,7 +67,6 @@ public interface ISyncInfoSet {
 	 * Return the number of out-of-sync resources contained in this set.
 	 * 
 	 * @return the size of the set.
-	 * @see #countFor(int, int)
 	 */
 	public int size();
 
