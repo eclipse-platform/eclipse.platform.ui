@@ -10,4 +10,4 @@ Export-Package: org.eclipse.ant.core,
  org.eclipse.ant.internal.core;x-friends:="org.eclipse.ant.ui"
 Require-Bundle: org.eclipse.core.variables,
  org.eclipse.core.runtime
-Eclipse-AutoStart: true; exceptions="org.eclipse.ant.internal.core.contentDescriber"
+Eclipse-LazyStart: true; exceptions="org.eclipse.ant.internal.core.contentDescriber"
