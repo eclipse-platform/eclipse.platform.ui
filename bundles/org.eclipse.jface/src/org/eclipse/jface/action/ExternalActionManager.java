@@ -218,7 +218,7 @@ public final class ExternalActionManager {
 		 */
 		public final Integer getAccelerator(final String commandId) {
 			final TriggerSequence triggerSequence = bindingManager
-					.getBestActiveBinding(commandId);
+					.getBestActiveBindingFor(commandId);
 			if (triggerSequence != null) {
 				final Trigger[] triggers = triggerSequence.getTriggers();
 				if (triggers.length == 1) {
@@ -240,7 +240,7 @@ public final class ExternalActionManager {
 		 */
 		public final String getAcceleratorText(final String commandId) {
 			final TriggerSequence triggerSequence = bindingManager
-					.getBestActiveBinding(commandId);
+					.getBestActiveBindingFor(commandId);
 			if (triggerSequence == null) {
 				return null;
 			}

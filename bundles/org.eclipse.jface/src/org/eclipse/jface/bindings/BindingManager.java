@@ -1222,7 +1222,7 @@ public final class BindingManager implements IContextManagerListener,
 	 *         command.
 	 * @since 3.2
 	 */
-	public final TriggerSequence getBestActiveBinding(final String commandId) {
+	public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 		final Binding[] bindings = getActiveBindingsFor1(commandId);
 		if ((bindings == null) || (bindings.length == 0)) {
 			return null;
