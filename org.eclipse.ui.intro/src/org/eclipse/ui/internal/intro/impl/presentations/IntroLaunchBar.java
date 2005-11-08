@@ -345,7 +345,7 @@ public class IntroLaunchBar implements IWindowTrim {
             .getActiveWorkbenchWindow();
         WorkbenchWindow wwindow = (WorkbenchWindow) window;
         createControl(window.getShell());
-        wwindow.addToTrim(getControl(), location);
+        wwindow.addToTrim(this, location);
         window.getShell().layout();
     }
 
@@ -738,4 +738,13 @@ public class IntroLaunchBar implements IWindowTrim {
     public int getValidSides() {
         return SWT.LEFT | SWT.RIGHT | SWT.BOTTOM;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.IWindowTrim#getId()
+     */
+    public String getId() {
+        return "org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar";
+    }
+    
+    
 }
