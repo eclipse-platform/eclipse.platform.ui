@@ -107,8 +107,8 @@ public class ListViewer extends AbstractListViewer {
         int height = list.getItemHeight();
         Rectangle rect = list.getClientArea();
         int topIndex = list.getTopIndex();
-        int visibleCount = Math.max((rect.x + rect.height) / height, 1);
-        int bottomIndex = Math.min(topIndex + visibleCount + 1, count - 1);
+        int visibleCount = Math.max(rect.height / height, 1);
+        int bottomIndex = Math.min(topIndex + visibleCount, count) - 1;
         if ((topIndex <= index) && (index <= bottomIndex))
             return;
         int newTop = Math.min(Math.max(index - (visibleCount / 2), 0),
