@@ -11,6 +11,7 @@
 package org.eclipse.jface.tests.viewers;
 
 import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
@@ -41,4 +42,33 @@ public class ListViewerTest extends StructuredViewerTest {
     public static void main(String args[]) {
         junit.textui.TestRunner.run(ListViewerTest.class);
     }
+    
+    public void testRevealBug69076() {
+		fViewer = null;
+		if (fShell != null) {
+			fShell.dispose();
+			fShell = null;
+		}
+		openBrowser();
+		for (int i = 40; i < 45; i++) {
+			fRootElement = TestElement.createModel(1, i);
+			fModel = fRootElement.getModel();
+			fViewer.setInput(fRootElement);
+			for (int j = 30; j < fRootElement.getChildCount(); j++) {
+				fViewer.setSelection(new StructuredSelection(fRootElement
+						.getFirstChild()), true);
+				TestElement child = fRootElement.getChildAt(j);
+				fViewer.reveal(child);
+				List list = ((ListViewer) fViewer).getList();
+				int topIndex = list.getTopIndex();
+				// even though we pass in reveal=false, SWT still scrolls to show the selection (since 20020815)
+				fViewer.setSelection(new StructuredSelection(child), false);
+				assertEquals("topIndex should not change on setSelection", topIndex, list
+						.getTopIndex());
+				list.showSelection();
+				assertEquals("topIndex should not change on showSelection", topIndex, list
+						.getTopIndex());
+			}
+		}
+	}
 }
