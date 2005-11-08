@@ -144,7 +144,7 @@ final class HandlerPersistence extends CommonCommandPersistence {
 	 *            The handler service to which the handlers should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private static final void readDefaultHandlersFromCommandsExtensionPoint(
+	private static final void readDefaultHandlersFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final IHandlerService handlerService) {
@@ -188,7 +188,7 @@ final class HandlerPersistence extends CommonCommandPersistence {
 	 *            The handler service to which the handlers should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private static final void readHandlersFromHandlersExtensionPoint(
+	private static final void readHandlersFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final IHandlerService handlerService) {
@@ -243,7 +243,7 @@ final class HandlerPersistence extends CommonCommandPersistence {
 	 *            The handler service to which the handlers should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private static final void readHandlerSubmissionsFromCommandsExtensionPoint(
+	private static final void readHandlerSubmissionsFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final IHandlerService handlerService) {
@@ -327,13 +327,13 @@ final class HandlerPersistence extends CommonCommandPersistence {
 		}
 
 		clearActivations(handlerService);
-		readDefaultHandlersFromCommandsExtensionPoint(
+		readDefaultHandlersFromRegistry(
 				indexedConfigurationElements[INDEX_COMMAND_DEFINITIONS],
 				commandDefinitionCount, handlerService);
-		readHandlerSubmissionsFromCommandsExtensionPoint(
+		readHandlerSubmissionsFromRegistry(
 				indexedConfigurationElements[INDEX_HANDLER_SUBMISSIONS],
 				handlerSubmissionCount, handlerService);
-		readHandlersFromHandlersExtensionPoint(
+		readHandlersFromRegistry(
 				indexedConfigurationElements[INDEX_HANDLER_DEFINITIONS],
 				handlerDefinitionCount, handlerService);
 
