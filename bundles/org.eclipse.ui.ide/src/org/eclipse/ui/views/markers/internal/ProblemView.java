@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
@@ -55,7 +56,7 @@ public class ProblemView extends MarkerView {
 			new FieldLineNumber(), new FieldCreationTime(),
 			// Add the marker ID so the table sorter won't reduce
 			// errors on the same line bug 82502
-			new FieldId(), new FieldProject(), new FieldMarkerType(), new FieldSubCategory(), new FieldCategory()};
+			new FieldId() };
 
 	// Field Tags
 	// These tags MUST occur in the same order as the VISIBLE_FIELDS +
@@ -81,14 +82,6 @@ public class ProblemView extends MarkerView {
 
 	private final static int MARKER_ID = 6;
 
-	private final static int PROJECT = 7;
-
-	private final static int MARKER_TYPE = 8;
-	
-	private final static int SUB_CATEGORY = 9;
-	
-	private final static int CATEGORY = 10;
-
 	private final static String[] ROOT_TYPES = { IMarker.PROBLEM };
 
 	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.problem"; //$NON-NLS-1$
@@ -109,16 +102,12 @@ public class ProblemView extends MarkerView {
 	 */
 	private int[] getDefaultDirections() {
 		return new int[] { DESCENDING, // severity
-				ASCENDING, // category
-				ASCENDING, // sub category
 				ASCENDING, // folder
 				ASCENDING, // resource
 				ASCENDING, // location
 				ASCENDING, // description
 				ASCENDING, // creation time
 				ASCENDING, // marker id
-				ASCENDING, // project
-				ASCENDING // marker type
 		};
 
 	}
@@ -129,11 +118,8 @@ public class ProblemView extends MarkerView {
 	 * @return int []
 	 */
 	private int[] getDefaultPriorities() {
-		if (isHierarchalMode())
-			return new int[] { MARKER_TYPE, CATEGORY, SUB_CATEGORY, PROJECT, SEVERITY, FOLDER,
-					RESOURCE, DESCRIPTION, LOCATION, CREATION_TIME, MARKER_ID };
-		return new int[] { SEVERITY,  SUB_CATEGORY, FOLDER, RESOURCE, LOCATION, DESCRIPTION,
-				CREATION_TIME, MARKER_ID, MARKER_TYPE, PROJECT, CATEGORY};
+		return new int[] { SEVERITY, FOLDER, RESOURCE, LOCATION, DESCRIPTION,
+				CREATION_TIME, MARKER_ID, };
 	}
 
 	/**
@@ -199,10 +185,8 @@ public class ProblemView extends MarkerView {
 	 */
 	protected void createActions() {
 		super.createActions();
-		propertiesAction = new ActionProblemProperties(this,
-				getViewer());
-		resolveMarkerAction = new ActionResolveMarker(this,
-				getViewer());
+		propertiesAction = new ActionProblemProperties(this, getViewer());
+		resolveMarkerAction = new ActionResolveMarker(this, getViewer());
 	}
 
 	/*
@@ -224,10 +208,13 @@ public class ProblemView extends MarkerView {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#buildSorter()
 	 */
-	protected TableSorter buildSorter() {
+	protected ViewerSorter buildSorter() {
 
-		return new TableSorter(getSortingFields(), getDefaultPriorities(),
-				getDefaultDirections());
+		TableSorter sorter = new TableSorter(getSortingFields(),
+				getDefaultPriorities(), getDefaultDirections());
+		if (isHierarchalMode())
+			return new CategorySorter(sorter);
+		return sorter;
 	}
 
 	/*
@@ -447,7 +434,8 @@ public class ProblemView extends MarkerView {
 							.setValue(
 									IDEInternalPreferences.PROBLEMS_HIERARCHAL_MODE,
 									true);
-					regeneratedLayout();
+					regenerateLayout();
+					getViewer().setSorter(buildSorter());
 					getViewer().refresh();
 				}
 			}
@@ -506,7 +494,8 @@ public class ProblemView extends MarkerView {
 							.setValue(
 									IDEInternalPreferences.PROBLEMS_HIERARCHAL_MODE,
 									false);
-					regeneratedLayout() ;
+					regenerateLayout();
+					getViewer().setSorter(buildSorter());
 					getViewer().refresh();
 				}
 			}
@@ -520,16 +509,41 @@ public class ProblemView extends MarkerView {
 	/**
 	 * Resize the category column in the table.
 	 */
-	protected void regeneratedLayout() {
+	protected void regenerateLayout() {
 		TableLayout layout = new TableLayout();
 		getViewer().getTree().setLayout(layout);
 
 		ColumnLayoutData[] columnWidths = getDefaultColumnLayouts();
 		for (int i = 0; i < columnWidths.length; i++) {
 			layout.addColumnData(columnWidths[i]);
-			
+
 		}
 		getViewer().getTree().layout(true);
-		
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.TableView#setSorter(org.eclipse.ui.views.markers.internal.TableSorter)
+	 */
+	void setSorter(TableSorter sorter2) {
+
+		if (isHierarchalMode()) {
+			TableSorter newSorter = new TableSorter(sorter2);
+			getViewer().setSorter(new CategorySorter(newSorter));
+			newSorter.saveState(getDialogSettings());
+			getViewer().refresh();
+		} else
+			super.setSorter(sorter2);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getTableSorter()
+	 */
+	public TableSorter getTableSorter() {
+		if(isHierarchalMode()){
+			CategorySorter sorter = (CategorySorter) getViewer().getSorter();
+			return sorter.innerSorter;
+		}
+		return super.getTableSorter();
 	}
 }

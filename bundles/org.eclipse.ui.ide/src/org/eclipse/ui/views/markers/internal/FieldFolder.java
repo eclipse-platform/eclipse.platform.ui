@@ -92,22 +92,5 @@ public class FieldFolder implements IField {
         return marker1.getFolder().compareTo(marker2.getFolder());
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#getCategoryValue(java.lang.Object)
-	 */
-	public String getCategoryValue(Object obj) {
-		 if (obj == null || !(obj instanceof ConcreteMarker)) {
-	            return Util.EMPTY_STRING;
-	        }
-	        ConcreteMarker marker = (ConcreteMarker) obj;
-	        return marker.getShortFolder();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
-	 */
-	public boolean isCategoryField() {
-		return true;
-	}
 
 }

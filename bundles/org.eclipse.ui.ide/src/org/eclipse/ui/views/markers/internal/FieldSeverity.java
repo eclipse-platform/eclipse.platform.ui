@@ -65,7 +65,7 @@ public class FieldSeverity implements IField {
      * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
      */
     public String getValue(Object obj) {
-    	return Util.EMPTY_STRING;
+    	return Util.getSeverityText(((ProblemMarker) obj).getSeverity());
     }
 
     /*
@@ -95,19 +95,4 @@ public class FieldSeverity implements IField {
         int severity2 = ((ProblemMarker) obj2).getSeverity();
         return severity1 - severity2;
     }
-
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#getCategoryValue(java.lang.Object)
-	 */
-	public String getCategoryValue(Object obj) {
-		return Util.getSeverityText(((ProblemMarker) obj).getSeverity());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
-	 */
-	public boolean isCategoryField() {
-		return true;
-	}
-
 }

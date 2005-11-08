@@ -125,19 +125,4 @@ public class FieldPriority implements IField {
         int priority2 = ((TaskMarker) obj2).getPriority();
         return priority1 - priority2;
     }
-
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#getCategoryValue(java.lang.Object)
-	 */
-	public String getCategoryValue(Object obj) {
-		return getValue(obj);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
-	 */
-	public boolean isCategoryField() {
-		return false;
-	}
-
 }

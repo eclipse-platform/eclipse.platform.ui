@@ -61,17 +61,4 @@ public interface IField {
      *  <li>a positive number if the value of obj1 is greater than the value of obj2 for this field.
      */
     int compare(Object obj1, Object obj2);
-    
-    /**
-     * Return the category title for the receiver
-     * @param obj
-     * @return String
-     */
-    String getCategoryValue(Object obj);
-    
-    /**
-     * Return whether or not the receiver is being shown in the categories.
-     * @return boolean <code>true</code> if this category should be shown
-     */
-    boolean isCategoryField();
 }

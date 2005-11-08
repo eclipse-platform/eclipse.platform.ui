@@ -288,4 +288,13 @@ public class MarkerList {
 	public int getSize() {
 		return getArray().length;
 	}
+
+	/**
+	 * Return the markers at index
+	 * @param index
+	 * @return ConcreteMarker
+	 */
+	public ConcreteMarker getMarker(int index) {
+		return markers[index];
+	}
 }

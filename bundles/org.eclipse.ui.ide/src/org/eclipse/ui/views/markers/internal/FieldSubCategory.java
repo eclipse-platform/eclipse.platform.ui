@@ -79,19 +79,4 @@ public class FieldSubCategory implements IField {
 	        
 	        return marker1.getSubCategory().compareTo(marker2.getSubCategory());
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#getCategoryValue(java.lang.Object)
-	 */
-	public String getCategoryValue(Object obj) {
-		return getValue(obj);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
-	 */
-	public boolean isCategoryField() {
-		return true;
-	}
-
 }

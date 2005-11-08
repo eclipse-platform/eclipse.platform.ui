@@ -71,21 +71,4 @@ public class FieldProject implements IField {
 
 		return getValue(marker1).compareTo(getValue(marker2));
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getCategoryValue(java.lang.Object)
-	 */
-	public String getCategoryValue(Object obj) {
-		return getValue(obj);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
-	 */
-	public boolean isCategoryField() {
-		return true;
-	}
-
 }

@@ -57,7 +57,7 @@ public class FieldCategory implements IField {
 			if (category != null)
 				return category;
 		}
-		return Util.EMPTY_STRING;
+		return MarkerMessages.FieldCategory_Uncategorized;
 	}
 
 	/*
@@ -79,22 +79,5 @@ public class FieldCategory implements IField {
 		return getValue(obj1).compareTo(getValue(obj2));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getCategoryValue(java.lang.Object)
-	 */
-	public String getCategoryValue(Object obj) {
-		return getValue(obj);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
-	 */
-	public boolean isCategoryField() {
-		return true;
-	}
 
 }

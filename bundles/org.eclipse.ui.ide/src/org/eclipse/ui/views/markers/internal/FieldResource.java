@@ -99,18 +99,4 @@ public class FieldResource implements IField {
                 marker2.getResourceName());
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#getCategoryValue(java.lang.Object)
-	 */
-	public String getCategoryValue(Object obj) {
-		return getValue(obj);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
-	 */
-	public boolean isCategoryField() {
-		return true;
-	}
-
 }

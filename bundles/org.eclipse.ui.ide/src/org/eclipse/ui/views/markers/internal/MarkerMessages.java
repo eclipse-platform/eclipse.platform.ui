@@ -238,6 +238,7 @@ public class MarkerMessages extends NLS{
 	public static String ProblemFilterRegistry_nullType;
 	
 	public static String FieldMessage_NullMessage;
+	public static String FieldCategory_Uncategorized;
 	public static String FieldMessage_WrongType;
 	
 	public static String ActionResolveMarker_CalculatingJob;

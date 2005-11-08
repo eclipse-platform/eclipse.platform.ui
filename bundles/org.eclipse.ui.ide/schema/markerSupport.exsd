@@ -16,6 +16,7 @@
             <element ref="problemFilter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="subCategoryProvider" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerCategory" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="hierarchy" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -198,6 +199,68 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                   The id of the markerType
                </documentation>
             </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="hierarchy">
+      <annotation>
+         <documentation>
+            The hierachy specifies the way a marker view tree is organized in hierarchal mode. The hierarchy is determined by the hierarchy references in order.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="markerTypeReference"/>
+            <element ref="hierarchyReference" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="hierarchyReference">
+      <annotation>
+         <documentation>
+            hierarchyReferences are used to build the tree in the hierarchy mode of marker views. The hierarchy is built in order of the hierarchy references supplied to a hierarchy.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="type">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="PROJECT">
+                  </enumeration>
+                  <enumeration value="PATH">
+                  </enumeration>
+                  <enumeration value="MESSAGE">
+                  </enumeration>
+                  <enumeration value="SEVERITY">
+                  </enumeration>
+                  <enumeration value="SUBCATEGORY">
+                  </enumeration>
+                  <enumeration value="RESOURCE">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="direction">
+            <annotation>
+               <documentation>
+                  The direction is the sort direction, either ascending or descending.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="ASCENDING">
+                  </enumeration>
+                  <enumeration value="DESCENDING">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>

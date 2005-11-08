@@ -40,7 +40,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private static final String ID = "id"; //$NON-NLS-1$
 
 	private static final Object INFO = "INFO";//$NON-NLS-1$
-	
+
 	private static final Object WARNING = "WARNING";//$NON-NLS-1$
 
 	private static final String MARKER_ID = "markerId"; //$NON-NLS-1$
@@ -76,21 +76,45 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final Object MARKER_CATEGORY = "markerCategory";//$NON-NLS-1$
 
+	private static final Object HIERARCHY = "hierarchy";//$NON-NLS-1$
+
+	private static final String HIERARCHY_REFERENCE = "hierarchyReference";//$NON-NLS-1$
+
+	private static final String TYPE = "type";//$NON-NLS-1$
+
+	private static final String PROJECT = "PROJECT";//$NON-NLS-1$
+
+	private static final String PATH = "PATH";//$NON-NLS-1$
+
+	private static final String MESSAGE = "MESSAGE";//$NON-NLS-1$
+
+	private static final String SUBCATEGORY = "SUBCATEGORY";//$NON-NLS-1$
+
+	private static final String RESOURCE = "RESOURCE";//$NON-NLS-1$
+
+	private static final String SEVERITY_HIERARCHY = "SEVERITY";//$NON-NLS-1$
+
+	private static final String DIRECTION = "direction";//$NON-NLS-1$
+
+	private static final String ASCENDING = "ASCENDING"; //$NON-NLS-1$
+
 	private static MarkerSupportRegistry singleton;
 
-	//Create a lock so that initiization happens in one thread
+	// Create a lock so that initiization happens in one thread
 	private static Object creationLock = new Object();
+
 	/**
 	 * Get the instance of the registry.
 	 * 
 	 * @return ProblemFilterRegistry
 	 */
 	public static MarkerSupportRegistry getInstance() {
-		if (singleton == null){
+		if (singleton == null) {
 			synchronized (creationLock) {
-				if (singleton == null)//May have been created by blocking thread
+				if (singleton == null)// May have been created by blocking
+					// thread
 					singleton = new MarkerSupportRegistry();
-			}			
+			}
 		}
 		return singleton;
 	}
@@ -100,6 +124,10 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private HashMap registeredProviders = new HashMap();
 
 	private HashMap categories = new HashMap();
+
+	private HashMap hierarchyOrders = new HashMap();
+
+	private MarkerType rootType;
 
 	/**
 	 * Create a new instance of the receiver and read the registry.
@@ -143,16 +171,17 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				continue;
 			}
 			if (element.getName().equals(SUB_CATEGORY_PROVIDER)) {
-				
+
 				String[] markerTypes = getMarkerTypes(element);
 				ISubCategoryProvider provider = getProvider(element);
-				
-				if(provider != null){
+
+				if (provider != null) {
 					for (int i = 0; i < markerTypes.length; i++) {
 						String markerType = markerTypes[i];
 						Collection providers;
-						if(registeredProviders.containsKey(markerType))
-							providers = (Collection) registeredProviders.get(markerType);
+						if (registeredProviders.containsKey(markerType))
+							providers = (Collection) registeredProviders
+									.get(markerType);
 						else
 							providers = new ArrayList();
 						providers.add(provider);
@@ -160,54 +189,107 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 						tracker.registerObject(extension, provider,
 								IExtensionTracker.REF_STRONG);
 					}
-					
+
 				}
 			}
-			
+
 			if (element.getName().equals(MARKER_CATEGORY)) {
-				
+
 				String[] markerTypes = getMarkerTypes(element);
 				String categoryName = element.getAttribute(NAME);
-				
+
 				for (int i = 0; i < markerTypes.length; i++) {
 					categories.put(markerTypes[i], categoryName);
-					
+
 				}
+			}
+
+			if (element.getName().equals(HIERARCHY)) {
+
+				String markerType = getMarkerTypes(element)[0];
+
+				IConfigurationElement[] types = element
+						.getChildren(HIERARCHY_REFERENCE);
+				IField[] properties = new IField[types.length];
+				int[] directions = new int[types.length];
+				for (int i = 0; i < types.length; i++) {
+					properties[i] = getFieldFor(types[i].getAttribute(TYPE));
+					String direction = types[i].getAttribute(DIRECTION);
+					if (direction == ASCENDING)
+						directions[i] = TableSorter.ASCENDING;
+					else
+						directions[i] = TableSorter.DESCENDING;
+				}
+
+				int[] priorities = new int[properties.length];
+				for (int i = 0; i < priorities.length; i++) {
+					priorities[i] = i;
+				}
+
+				hierarchyOrders.put(markerType, new TableSorter(properties,
+						priorities, directions));
+
 			}
 		}
 	}
 
 	/**
+	 * Return the field that matches attribute
+	 * 
+	 * @param attribute
+	 * @return IField or <code>null</code> if there is no matching field.
+	 */
+	private IField getFieldFor(String attribute) {
+		if (attribute.equals(PROJECT))
+			return new FieldProject();
+		if (attribute.equals(PATH))
+			return new FieldFolder();
+		if (attribute.equals(MESSAGE))
+			return new FieldMessage();
+		if (attribute.equals(SEVERITY_HIERARCHY))
+			return new FieldSeverity();
+		if (attribute.equals(SUBCATEGORY))
+			return new FieldSubCategory();
+		if (attribute.equals(RESOURCE))
+			return new FieldResource();
+
+		return null;
+
+	}
+
+	/**
 	 * Get the markerTypes defined in element.
+	 * 
 	 * @param element
 	 * @return String[]
 	 */
 	private String[] getMarkerTypes(IConfigurationElement element) {
-		IConfigurationElement[] types = element.getChildren(MARKER_TYPE_REFERENCE);
+		IConfigurationElement[] types = element
+				.getChildren(MARKER_TYPE_REFERENCE);
 		String[] ids = new String[types.length];
 		for (int i = 0; i < ids.length; i++) {
-			ids[i] = types[i].getAttribute(ID);			
+			ids[i] = types[i].getAttribute(ID);
 		}
 		return ids;
 	}
 
 	/**
 	 * Create an ICategoryProvider from element.
+	 * 
 	 * @param element
 	 * @return ICategoryProvider
 	 */
 	private ISubCategoryProvider getProvider(final IConfigurationElement element) {
-		
+
 		final ISubCategoryProvider[] providers = new ISubCategoryProvider[1];
 		final CoreException[] exceptions = new CoreException[1];
-		
+
 		Platform.run(new ISafeRunnable() {
 			public void run() {
 				try {
 					providers[0] = (ISubCategoryProvider) IDEWorkbenchPlugin
-							.createExtension(element,
-									CLASS);
-				
+							.createExtension(element, CLASS);
+
 				} catch (CoreException exception) {
 					exceptions[0] = exception;
 				}
@@ -220,12 +302,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				// Do nothing as Core will handle the logging
 			}
 		});
-		
-		if (exceptions[0] != null){
+
+		if (exceptions[0] != null) {
 			Util.log(exceptions[0]);
 			return null;
-		}			
-		
+		}
+
 		return providers[0];
 	}
 
@@ -364,22 +446,22 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof ProblemFilter)
 				registeredFilters.remove(objects[i]);
-			
+
 			Collection keysToRemove = new ArrayList();
-			if (objects[i] instanceof ISubCategoryProvider){
+			if (objects[i] instanceof ISubCategoryProvider) {
 				Iterator keys = registeredProviders.keySet().iterator();
-				while(keys.hasNext()){
+				while (keys.hasNext()) {
 					String key = (String) keys.next();
 					Collection next = (Collection) registeredProviders.get(key);
-					if(next.contains(objects[i])){
+					if (next.contains(objects[i])) {
 						next.remove(objects[i]);
-						if(next.isEmpty())
+						if (next.isEmpty())
 							keysToRemove.add(key);
 						break;
 					}
 				}
 			}
-				
+
 		}
 
 	}
@@ -387,8 +469,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Get the ICategoryProviders associated with marker. Return
 	 * <code>null</code> if there are none.
+	 * 
 	 * @param marker
-	 * @return ICategoryProvider[] or <code>null</code> 
+	 * @return ICategoryProvider[] or <code>null</code>
 	 */
 	public ISubCategoryProvider[] getCategoryProviders(IMarker marker) {
 		Object providers;
@@ -398,19 +481,21 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			Util.log(e);
 			return null;
 		}
-		if(providers == null)
+		if (providers == null)
 			return null;
 		Collection providerCollection = (Collection) providers;
-		ISubCategoryProvider[] providerArray = new ISubCategoryProvider[providerCollection.size()];
+		ISubCategoryProvider[] providerArray = new ISubCategoryProvider[providerCollection
+				.size()];
 		providerCollection.toArray(providerArray);
 		return providerArray;
 	}
 
 	/**
-	 * Get the category associated with marker. Return
-	 * <code>null</code> if there are none.
+	 * Get the category associated with marker. Return <code>null</code> if
+	 * there are none.
+	 * 
 	 * @param marker
-	 * @return String or <code>null</code> 
+	 * @return String or <code>null</code>
 	 */
 	public String getCategory(IMarker marker) {
 		try {
@@ -421,17 +506,73 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		return null;
 	}
 
-
 	/**
-	 * Get the category associated with markerTyoe. Return
-	 * <code>null</code> if there are none.
+	 * Get the category associated with markerTyoe. Return <code>null</code>
+	 * if there are none.
+	 * 
 	 * @param markerType
-	 * @return String or <code>null</code> 
+	 * @return String or <code>null</code>
 	 */
 	public String getCategory(String markerType) {
-		if(categories.containsKey(markerType))
-			return (String) categories.get(markerType);		
+		if (categories.containsKey(markerType))
+			return (String) categories.get(markerType);
 		return null;
+	}
+
+	/**
+	 * Return the TableSorter that corresponds to type.
+	 * 
+	 * @param type
+	 * @return TableSorter
+	 */
+	public TableSorter getSorterFor(String type) {
+		if (hierarchyOrders.containsKey(type))
+			return (TableSorter) hierarchyOrders.get(type);
+
+		TableSorter sorter = findSorterInChildren(type, getRootType());
+		if (sorter == null)
+			return new TableSorter(new IField[0], new int[0],
+					new int[0]);
+		return sorter;
+	}
+
+	/**
+	 * Return the list of root marker types.
+	 * 
+	 * @return List of MarkerType.
+	 */
+	private MarkerType getRootType() {
+		if (rootType == null) {
+			rootType = (new MarkerTypesModel()).getType(IMarker.PROBLEM);
+		}
+		return rootType;
+	}
+
+	/**
+	 * Find the best match sorter for typeName in the children. If it cannot be found then
+	 * return <code>null</code>.
+	 * 
+	 * @param typeName
+	 * @param type
+	 * @return TableSorter or <code>null</code>.
+	 */
+	private TableSorter findSorterInChildren(String typeName, MarkerType type) {
+
+		MarkerType[] types = type.getAllSubTypes();
+		TableSorter defaultSorter = null;
+		if (hierarchyOrders.containsKey(type.getId()))
+			defaultSorter = (TableSorter) hierarchyOrders.get(type.getId());
+		
+		for (int i = 0; i < types.length; i++) {
+			MarkerType[] subtypes = types[i].getAllSubTypes();
+			for (int j = 0; j < subtypes.length; j++) {
+				TableSorter sorter = findSorterInChildren(typeName, subtypes[j]);
+				if (sorter != null)
+					return sorter;
+			}
+		}
+		return defaultSorter;
+
 	}
 
 }

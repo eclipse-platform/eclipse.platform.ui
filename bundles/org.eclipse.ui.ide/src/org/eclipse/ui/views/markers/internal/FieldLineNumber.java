@@ -106,18 +106,4 @@ public class FieldLineNumber implements IField {
         return marker1.getLine() - marker2.getLine();
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#getCategoryValue(java.lang.Object)
-	 */
-	public String getCategoryValue(Object obj) {
-		return getValue(obj);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
-	 */
-	public boolean isCategoryField() {
-		return false;
-	}
-
 }

@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -366,7 +367,7 @@ public abstract class TableView extends ViewPart {
 	 * Build a sorter from the default settings.
 	 * @return TableSorter
 	 */
-	protected TableSorter buildSorter() {
+	protected ViewerSorter buildSorter() {
 
 		IField[] sortingFields = getSortingFields();
 		int[] priorities = new int[sortingFields.length];
@@ -378,6 +379,7 @@ public abstract class TableView extends ViewPart {
 		TableSorter sorter = new TableSorter(sortingFields, priorities,
 				directions);
 		sorter.restoreState(getDialogSettings());
+		
 
 		return sorter;
 	}
@@ -415,7 +417,7 @@ public abstract class TableView extends ViewPart {
 			 */
 			public void widgetSelected(SelectionEvent e) {
 
-				TableSorter sorter = (TableSorter) viewer.getSorter();
+				TableSorter sorter = getTableSorter();
 				int column = getViewer().getTree().indexOf(
 						(TreeColumn) e.widget);
 				if (column == sorter.getTopPriority())
@@ -435,8 +437,16 @@ public abstract class TableView extends ViewPart {
 	 * @return TableSortDialog
 	 */
 	protected TableSortDialog getSortDialog() {
-		return new TableSortDialog(getSite(),(TableSorter) viewer.getSorter());
+		return new TableSortDialog(getSite(),getTableSorter());
 		
+	}
+
+	/**
+	 * Return the table sorter portion of the sorter.
+	 * @return TableSorter
+	 */
+	TableSorter getTableSorter() {
+		return (TableSorter) viewer.getSorter();
 	}
 
 	protected abstract void handleKeyPressed(KeyEvent event);

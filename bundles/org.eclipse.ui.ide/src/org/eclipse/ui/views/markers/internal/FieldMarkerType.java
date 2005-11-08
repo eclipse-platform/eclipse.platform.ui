@@ -86,16 +86,4 @@ public class FieldMarkerType implements IField {
 
 		return getValue(marker1).compareTo(getValue(marker2));
 	}
-
-	public String getCategoryValue(Object obj) {
-		return getValue(obj);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#isCategoryField()
-	 */
-	public boolean isCategoryField() {
-		return true;
-	}
-
 }
