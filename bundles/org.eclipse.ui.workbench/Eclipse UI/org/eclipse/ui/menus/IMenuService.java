@@ -110,6 +110,46 @@ public interface IMenuService extends IServiceWithSources {
 	public SActionSet getActionSet(String actionSetId);
 
 	/**
+	 * Returns those action sets that are defined.
+	 * 
+	 * @return The defined action sets; this value may be empty, but it is never
+	 *         <code>null</code>.
+	 */
+	public SActionSet[] getDefinedActionSets();
+
+	/**
+	 * Returns those groups that are defined.
+	 * 
+	 * @return The defined groups; this value may be empty, but it is never
+	 *         <code>null</code>.
+	 */
+	public SGroup[] getDefinedGroups();
+
+	/**
+	 * Returns those items that are defined.
+	 * 
+	 * @return The defined items; this value may be empty, but it is never
+	 *         <code>null</code>.
+	 */
+	public SItem[] getDefinedItems();
+
+	/**
+	 * Returns those menus that are defined.
+	 * 
+	 * @return The defined menus; this value may be empty, but it is never
+	 *         <code>null</code>.
+	 */
+	public SMenu[] getDefinedMenus();
+
+	/**
+	 * Returns those widgets that are defined.
+	 * 
+	 * @return The defined widgets; this value may be empty, but it is never
+	 *         <code>null</code>.
+	 */
+	public SWidget[] getDefinedWidgets();
+
+	/**
 	 * Retrieves the group with the given identifier. If no such group exists,
 	 * then an undefined group is created and returned. A group is a logical
 	 * grouping of items and widgets within a menu.
@@ -171,7 +211,7 @@ public interface IMenuService extends IServiceWithSources {
 	 *            The command service providing the command's for the workbench;
 	 *            must not be <code>null</code>.
 	 */
-	public void readRegistry(final ICommandService commandService);
+	public void readRegistry(ICommandService commandService);
 
 	/**
 	 * Removes the given contribution within the context of this service. If the

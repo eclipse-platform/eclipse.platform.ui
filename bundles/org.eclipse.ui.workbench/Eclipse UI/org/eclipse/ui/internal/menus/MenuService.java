@@ -82,6 +82,26 @@ public final class MenuService implements IMenuService {
 		return menuManager.getActionSet(actionSetId);
 	}
 
+	public final SActionSet[] getDefinedActionSets() {
+		return menuManager.getDefinedActionSets();
+	}
+
+	public final SGroup[] getDefinedGroups() {
+		return menuManager.getDefinedGroups();
+	}
+
+	public final SItem[] getDefinedItems() {
+		return menuManager.getDefinedItems();
+	}
+
+	public final SMenu[] getDefinedMenus() {
+		return menuManager.getDefinedMenus();
+	}
+
+	public final SWidget[] getDefinedWidgets() {
+		return menuManager.getDefinedWidgets();
+	}
+
 	public final SGroup getGroup(final String groupId) {
 		return menuManager.getGroup(groupId);
 	}
@@ -102,18 +122,18 @@ public final class MenuService implements IMenuService {
 		menuPersistence.read(this, commandService);
 	}
 
+	public final void removeContribution(final IMenuContribution contribution) {
+		if (contribution.getMenuService() == this) {
+			menuAuthority.removeContribution(contribution);
+		}
+	}
+
 	public final void removeContributions(final Collection contributions) {
 		final Iterator contributionItr = contributions.iterator();
 		while (contributionItr.hasNext()) {
 			final IMenuContribution contribution = (IMenuContribution) contributionItr
 					.next();
 			removeContribution(contribution);
-		}
-	}
-
-	public final void removeContribution(final IMenuContribution contribution) {
-		if (contribution.getMenuService() == this) {
-			menuAuthority.removeContribution(contribution);
 		}
 	}
 
