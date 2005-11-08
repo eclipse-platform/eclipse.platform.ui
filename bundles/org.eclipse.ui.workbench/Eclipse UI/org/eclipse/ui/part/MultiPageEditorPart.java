@@ -507,12 +507,14 @@ public abstract class MultiPageEditorPart extends EditorPart {
         if (activeEditor != null) {
 			ISelectionProvider selectionProvider = activeEditor.getSite()
 					.getSelectionProvider();
-			SelectionChangedEvent event = new SelectionChangedEvent(
-					selectionProvider, selectionProvider.getSelection());
-			MultiPageSelectionProvider provider = (MultiPageSelectionProvider) getSite()
-					.getSelectionProvider();
-			provider.fireSelectionChanged(event);
-			provider.firePostSelectionChanged(event);
+			if (selectionProvider != null) {
+				SelectionChangedEvent event = new SelectionChangedEvent(
+						selectionProvider, selectionProvider.getSelection());
+				MultiPageSelectionProvider provider = (MultiPageSelectionProvider) getSite()
+						.getSelectionProvider();
+				provider.fireSelectionChanged(event);
+				provider.firePostSelectionChanged(event);
+			}
 		}
     }
 
