@@ -31,6 +31,12 @@ import org.eclipse.ui.menus.IMenuContribution;
  * showing, and listens to the menu manager to determine which menu elements are
  * currently visible.
  * </p>
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
  * 
  * @since 3.2
  */
@@ -191,11 +197,9 @@ final class MenuAuthority extends ExpressionAuthority {
 		while (contributionItr.hasNext()) {
 			final IMenuContribution contribution = (IMenuContribution) contributionItr
 					.next();
-			final boolean currentlyVisible = contribution
-					.evaluate(getEvaluationContext());
+			final boolean currentlyVisible = evaluate(contribution);
 			contribution.clearResult();
-			final boolean newVisible = contribution
-					.evaluate(getEvaluationContext());
+			final boolean newVisible = evaluate(contribution);
 			if (newVisible != currentlyVisible) {
 				contribution.getMenuElement().setVisible(newVisible);
 			}

@@ -148,8 +148,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 		} else {
 			handlerActivationsByCommandId.put(commandId, activation);
 			updateCurrentState();
-			updateCommand(commandId, (activation.evaluate(getEvaluationContext()) ? activation
-					: null));
+			updateCommand(commandId, (evaluate(activation) ? activation : null));
 		}
 
 		// Next we update the source priority bucket sort of activations.
@@ -192,8 +191,10 @@ final class HandlerAuthority extends ExpressionAuthority {
 					handlerActivationsByCommandId.put(commandId,
 							remainingActivation);
 					updateCurrentState();
-					updateCommand(commandId, (remainingActivation
-							.evaluate(getEvaluationContext()) ? remainingActivation : null));
+					updateCommand(
+							commandId,
+							(evaluate(remainingActivation) ? remainingActivation
+									: null));
 
 				} else {
 					updateCurrentState();
@@ -260,7 +261,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 * @return The currently active shell; may be <code>null</code>.
 	 */
 	final Shell getActiveShell() {
-		return (Shell) getEvaluationContext().getVariable(ISources.ACTIVE_SHELL_NAME);
+		return (Shell) getVariable(ISources.ACTIVE_SHELL_NAME);
 	}
 
 	final IEvaluationContext getCurrentState() {
@@ -385,9 +386,9 @@ final class HandlerAuthority extends ExpressionAuthority {
 		while (activationItr.hasNext()) {
 			final IHandlerActivation activation = (IHandlerActivation) activationItr
 					.next();
-			final boolean currentActive = activation.evaluate(getEvaluationContext());
+			final boolean currentActive = evaluate(activation);
 			activation.clearResult();
-			final boolean newActive = activation.evaluate(getEvaluationContext());
+			final boolean newActive = evaluate(activation);
 			if (newActive != currentActive) {
 				changedCommandIds.add(activation.getCommandId());
 			}
@@ -403,8 +404,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 			final Object value = handlerActivationsByCommandId.get(commandId);
 			if (value instanceof IHandlerActivation) {
 				final IHandlerActivation activation = (IHandlerActivation) value;
-				updateCommand(commandId,
-						(activation.evaluate(getEvaluationContext()) ? activation : null));
+				updateCommand(commandId, (evaluate(activation) ? activation
+						: null));
 			} else if (value instanceof Collection) {
 				final IHandlerActivation activation = resolveConflicts(
 						commandId, (Collection) value);
@@ -432,7 +433,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 		while (activationItr.hasNext()) {
 			final IHandlerActivation activation = (IHandlerActivation) activationItr
 					.next();
-			if (activation.evaluate(getEvaluationContext())) {
+			if (evaluate(activation)) {
 				trimmed.add(activation);
 			}
 		}
