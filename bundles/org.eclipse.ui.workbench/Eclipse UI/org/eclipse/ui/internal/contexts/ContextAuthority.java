@@ -22,9 +22,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Shell;
@@ -65,13 +63,6 @@ final class ContextAuthority extends ExpressionAuthority {
 	 * the array at that index will only contain <code>null</code>.
 	 */
 	private final Set[] activationsBySourcePriority = new Set[33];
-
-	/**
-	 * The evaluation context instance to use when evaluating handler
-	 * activations. This context is shared, and so all calls into
-	 * <code>sourceChanged</code> must happen on the event thread.
-	 */
-	private final IEvaluationContext context;
 
 	/**
 	 * This is a map of context activations (<code>Collection</code> of
@@ -130,7 +121,6 @@ final class ContextAuthority extends ExpressionAuthority {
 		}
 
 		this.contextManager = contextManager;
-		this.context = new EvaluationContext(null, this);
 		this.contextService = contextService;
 	}
 
@@ -164,7 +154,7 @@ final class ContextAuthority extends ExpressionAuthority {
 		} else {
 			contextActivationsByContextId.put(contextId, activation);
 			updateCurrentState();
-			updateContext(contextId, activation.evaluate(context));
+			updateContext(contextId, evaluate(activation));
 		}
 
 		// Next we update the source priority bucket sort of activations.
@@ -301,7 +291,7 @@ final class ContextAuthority extends ExpressionAuthority {
 		while (activationItr.hasNext()) {
 			final IContextActivation activation = (IContextActivation) activationItr
 					.next();
-			if (activation.evaluate(context)) {
+			if (evaluate(activation)) {
 				return true;
 			}
 		}
@@ -335,8 +325,7 @@ final class ContextAuthority extends ExpressionAuthority {
 					contextActivationsByContextId.put(contextId,
 							remainingActivation);
 					updateCurrentState();
-					updateContext(contextId, remainingActivation
-							.evaluate(context));
+					updateContext(contextId, evaluate(remainingActivation));
 
 				} else {
 					updateCurrentState();
@@ -373,7 +362,7 @@ final class ContextAuthority extends ExpressionAuthority {
 	 * @return The currently active shell; may be <code>null</code>.
 	 */
 	final Shell getActiveShell() {
-		return (Shell) context.getVariable(ISources.ACTIVE_SHELL_NAME);
+		return (Shell) getVariable(ISources.ACTIVE_SHELL_NAME);
 	}
 
 	/**
@@ -627,9 +616,9 @@ final class ContextAuthority extends ExpressionAuthority {
 		while (activationItr.hasNext()) {
 			final IContextActivation activation = (IContextActivation) activationItr
 					.next();
-			final boolean currentActive = activation.evaluate(context);
+			final boolean currentActive = evaluate(activation);
 			activation.clearResult();
-			final boolean newActive = activation.evaluate(context);
+			final boolean newActive = evaluate(activation);
 			if (newActive != currentActive) {
 				changedContextIds.add(activation.getContextId());
 			}
@@ -645,7 +634,7 @@ final class ContextAuthority extends ExpressionAuthority {
 			final Object value = contextActivationsByContextId.get(contextId);
 			if (value instanceof IContextActivation) {
 				final IContextActivation activation = (IContextActivation) value;
-				updateContext(contextId, activation.evaluate(context));
+				updateContext(contextId, evaluate(activation));
 			} else if (value instanceof Collection) {
 				updateContext(contextId, containsActive((Collection) value));
 			} else {
@@ -758,16 +747,12 @@ final class ContextAuthority extends ExpressionAuthority {
 			 * types of shells becoming active.
 			 */
 			if (ISources.ACTIVE_SHELL_NAME.equals(name)) {
-				checkWindowType((Shell) value, (Shell) context
-						.getVariable(ISources.ACTIVE_SHELL_NAME));
+				checkWindowType((Shell) value,
+						(Shell) getVariable(ISources.ACTIVE_SHELL_NAME));
 			}
 
 			// Update the evaluation context itself.
-			if (value == null) {
-				context.removeVariable(name);
-			} else {
-				context.addVariable(name, value);
-			}
+			changeVariable(name, value);
 		}
 	}
 
