@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -290,7 +291,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 *            be <code>null</code>.
 	 * @return The bar element, if any; <code>null</code> if none.
 	 */
-	private static final SBar readBar(
+	private static final SBar readBarFromRegistry(
 			final IConfigurationElement parentElement,
 			final List warningsToLog, final String id) {
 		// Check to see if we have a bar element.
@@ -349,7 +350,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 * @return The dynamic menu for this menu element; may be <code>null</code>
 	 *         if none.
 	 */
-	private static final IDynamicMenu readDynamicMenu(
+	private static final IDynamicMenu readDynamicMenuFromRegistry(
 			final IConfigurationElement parentElement, final String id,
 			final List warningsToLog) {
 		// Check to see if we have an element.
@@ -393,9 +394,17 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 *            The menu service to which the action sets should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private static final void readActionSetsFromExtensionPoint(
+	private static final void readActionSetsFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final IMenuService menuService) {
+		// Undefine all the previous handle objects.
+		final HandleObject[] handleObjects = menuService.getDefinedActionSets();
+		if (handleObjects != null) {
+			for (int i = 0; i < handleObjects.length; i++) {
+				handleObjects[i].undefine();
+			}
+		}
+
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -423,7 +432,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 					ATTRIBUTE_VISIBLE, true);
 
 			// Read the references.
-			final SReference[] references = readReferences(
+			final SReference[] references = readReferencesFromRegistry(
 					configurationElement, id, warningsToLog);
 
 			final SActionSet actionSet = menuService.getActionSet(id);
@@ -449,9 +458,17 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 *            The menu service to which the groups should be added; must not
 	 *            be <code>null</code>.
 	 */
-	private static final void readGroupsFromExtensionPoint(
+	private static final void readGroupsFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final IMenuService menuService) {
+		// Undefine all the previous handle objects.
+		final HandleObject[] handleObjects = menuService.getDefinedGroups();
+		if (handleObjects != null) {
+			for (int i = 0; i < handleObjects.length; i++) {
+				handleObjects[i].undefine();
+			}
+		}
+
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -473,11 +490,11 @@ final class MenuPersistence extends CommonCommandPersistence {
 					warningsToLog);
 
 			// Read out the location elements.
-			final SLocation[] locations = readLocationElements(
+			final SLocation[] locations = readLocationElementsFromRegistry(
 					configurationElement, id, warningsToLog);
 
 			// Read out the dynamic elements.
-			final IDynamicMenu dynamicMenu = readDynamicMenu(
+			final IDynamicMenu dynamicMenu = readDynamicMenuFromRegistry(
 					configurationElement, id, warningsToLog);
 
 			final SGroup group = menuService.getGroup(id);
@@ -508,10 +525,18 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 *            The command service providing commands for the workbench; must
 	 *            not be <code>null</code>.
 	 */
-	private static final void readItemsFromExtensionPoint(
+	private static final void readItemsFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final IMenuService menuService, final ICommandService commandService) {
+		// Undefine all the previous handle objects.
+		final HandleObject[] handleObjects = menuService.getDefinedItems();
+		if (handleObjects != null) {
+			for (int i = 0; i < handleObjects.length; i++) {
+				handleObjects[i].undefine();
+			}
+		}
+
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -538,7 +563,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 					warningsToLog);
 
 			// Read out the location elements.
-			final SLocation[] locations = readLocationElements(
+			final SLocation[] locations = readLocationElementsFromRegistry(
 					configurationElement, id, warningsToLog);
 
 			final SItem item = menuService.getItem(id);
@@ -570,7 +595,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 * @return The locations for the <code>configurationElement</code>, if
 	 *         any; otherwise, <code>null</code>.
 	 */
-	private static final SLocation[] readLocationElements(
+	private static final SLocation[] readLocationElementsFromRegistry(
 			final IConfigurationElement parentElement, final String id,
 			final List warningsToLog) {
 		// Check to see if we have an activeWhen expression.
@@ -606,11 +631,11 @@ final class MenuPersistence extends CommonCommandPersistence {
 					ATTRIBUTE_IMAGE_STYLE);
 
 			// Read the position and the relativeTo attributes.
-			final SOrder ordering = readOrdering(locationElement, id,
-					warningsToLog);
+			final SOrder ordering = readOrderingFromRegistry(locationElement,
+					id, warningsToLog);
 
 			// Read the menu location information.
-			final LocationElement menuLocation = readMenuLocation(
+			final LocationElement menuLocation = readMenuLocationFromRegistry(
 					locationElement, warningsToLog, id);
 			if (menuLocation == null) {
 				continue;
@@ -641,15 +666,17 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 * @return The element providing the location for the menu; may be
 	 *         <code>null</code> if none.
 	 */
-	private static final LocationElement readMenuLocation(
+	private static final LocationElement readMenuLocationFromRegistry(
 			final IConfigurationElement parentElement,
 			final List warningsToLog, final String id) {
 		LocationElement locationElement = null;
-		locationElement = readBar(parentElement, warningsToLog, id);
+		locationElement = readBarFromRegistry(parentElement, warningsToLog, id);
 		if (locationElement == null) {
-			locationElement = readPart(parentElement, warningsToLog, id);
+			locationElement = readPartFromRegistry(parentElement,
+					warningsToLog, id);
 			if (locationElement == null) {
-				locationElement = readPopup(parentElement, warningsToLog, id);
+				locationElement = readPopupFromRegistry(parentElement,
+						warningsToLog, id);
 			}
 		}
 		if (locationElement == null) {
@@ -675,9 +702,17 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 *            The menu service to which the menus should be added; must not
 	 *            be <code>null</code>.
 	 */
-	private static final void readMenusFromExtensionPoint(
+	private static final void readMenusFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final IMenuService menuService) {
+		// Undefine all the previous handle objects.
+		final HandleObject[] handleObjects = menuService.getDefinedMenus();
+		if (handleObjects != null) {
+			for (int i = 0; i < handleObjects.length; i++) {
+				handleObjects[i].undefine();
+			}
+		}
+
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -699,11 +734,11 @@ final class MenuPersistence extends CommonCommandPersistence {
 					warningsToLog);
 
 			// Read out the location elements.
-			final SLocation[] locations = readLocationElements(
+			final SLocation[] locations = readLocationElementsFromRegistry(
 					configurationElement, id, warningsToLog);
 
 			// Read out the dynamic elements.
-			final IDynamicMenu dynamicMenu = readDynamicMenu(
+			final IDynamicMenu dynamicMenu = readDynamicMenuFromRegistry(
 					configurationElement, id, warningsToLog);
 
 			final SMenu menu = menuService.getMenu(id);
@@ -732,7 +767,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 * @return The ordering for this location element; may be <code>null</code>
 	 *         if none.
 	 */
-	private static final SOrder readOrdering(
+	private static final SOrder readOrderingFromRegistry(
 			final IConfigurationElement parentElement, final String id,
 			final List warningsToLog) {
 		// Check to see if we have an order element.
@@ -814,7 +849,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 *            be <code>null</code>.
 	 * @return The part element, if any; <code>null</code> if none.
 	 */
-	private static final SPart readPart(
+	private static final SPart readPartFromRegistry(
 			final IConfigurationElement parentElement,
 			final List warningsToLog, final String id) {
 		// Check to see if we have a part element.
@@ -834,10 +869,11 @@ final class MenuPersistence extends CommonCommandPersistence {
 
 			// Read the leaf location element.
 			LeafLocationElement leafLocationElement = null;
-			leafLocationElement = readBar(parentElement, warningsToLog, id);
+			leafLocationElement = readBarFromRegistry(parentElement,
+					warningsToLog, id);
 			if (leafLocationElement == null) {
-				leafLocationElement = readPopup(parentElement, warningsToLog,
-						id);
+				leafLocationElement = readPopupFromRegistry(parentElement,
+						warningsToLog, id);
 			}
 			if (leafLocationElement == null) {
 				addWarning(warningsToLog,
@@ -883,7 +919,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 *            be <code>null</code>.
 	 * @return The popup element, if any; <code>null</code> if none.
 	 */
-	private static final SPopup readPopup(
+	private static final SPopup readPopupFromRegistry(
 			final IConfigurationElement parentElement,
 			final List warningsToLog, final String id) {
 		// Check to see if we have a popup element.
@@ -926,7 +962,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 * @return The references for the <code>configurationElement</code>, if
 	 *         any; otherwise, <code>null</code>.
 	 */
-	private static final SReference[] readReferences(
+	private static final SReference[] readReferencesFromRegistry(
 			final IConfigurationElement parentElement, final String id,
 			final List warningsToLog) {
 		final IConfigurationElement[] referenceElements = parentElement
@@ -990,9 +1026,17 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 *            The menu service to which the widgets should be added; must
 	 *            not be <code>null</code>.
 	 */
-	private static final void readWidgetsFromExtensionPoint(
+	private static final void readWidgetsFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final IMenuService menuService) {
+		// Undefine all the previous handle objects.
+		final HandleObject[] handleObjects = menuService.getDefinedWidgets();
+		if (handleObjects != null) {
+			for (int i = 0; i < handleObjects.length; i++) {
+				handleObjects[i].undefine();
+			}
+		}
+
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -1018,7 +1062,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 					warningsToLog);
 
 			// Read out the location elements.
-			final SLocation[] locations = readLocationElements(
+			final SLocation[] locations = readLocationElementsFromRegistry(
 					configurationElement, id, warningsToLog);
 
 			final SWidget widget = menuService.getWidget(id);
@@ -1088,17 +1132,15 @@ final class MenuPersistence extends CommonCommandPersistence {
 		}
 
 		clearContributions(menuService);
-		readItemsFromExtensionPoint(indexedConfigurationElements[INDEX_ITEMS],
+		readItemsFromRegistry(indexedConfigurationElements[INDEX_ITEMS],
 				itemCount, menuService, commandService);
-		readMenusFromExtensionPoint(indexedConfigurationElements[INDEX_MENUS],
+		readMenusFromRegistry(indexedConfigurationElements[INDEX_MENUS],
 				menuCount, menuService);
-		readGroupsFromExtensionPoint(
-				indexedConfigurationElements[INDEX_GROUPS], groupCount,
-				menuService);
-		readWidgetsFromExtensionPoint(
-				indexedConfigurationElements[INDEX_WIDGETS], widgetCount,
-				menuService);
-		readActionSetsFromExtensionPoint(
+		readGroupsFromRegistry(indexedConfigurationElements[INDEX_GROUPS],
+				groupCount, menuService);
+		readWidgetsFromRegistry(indexedConfigurationElements[INDEX_WIDGETS],
+				widgetCount, menuService);
+		readActionSetsFromRegistry(
 				indexedConfigurationElements[INDEX_ACTION_SETS],
 				actionSetCount, menuService);
 
