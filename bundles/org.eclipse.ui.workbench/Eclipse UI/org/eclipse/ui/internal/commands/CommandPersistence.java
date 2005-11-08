@@ -128,7 +128,7 @@ final class CommandPersistence extends CommonCommandPersistence {
 	 *            The command manager to which the categories should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private static final void readCategoriesFromCommandsExtensionPoint(
+	private static final void readCategoriesFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final CommandManager commandManager) {
@@ -188,7 +188,7 @@ final class CommandPersistence extends CommonCommandPersistence {
 	 *            The command manager to which the commands should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private static final void readCommandsFromCommandsExtensionPoint(
+	private static final void readCommandsFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final CommandManager commandManager) {
@@ -447,10 +447,10 @@ final class CommandPersistence extends CommonCommandPersistence {
 			}
 		}
 
-		readCategoriesFromCommandsExtensionPoint(
+		readCategoriesFromRegistry(
 				indexedConfigurationElements[INDEX_CATEGORY_DEFINITIONS],
 				categoryDefinitionCount, commandManager);
-		readCommandsFromCommandsExtensionPoint(
+		readCommandsFromRegistry(
 				indexedConfigurationElements[INDEX_COMMAND_DEFINITIONS],
 				commandDefinitionCount, commandManager);
 
