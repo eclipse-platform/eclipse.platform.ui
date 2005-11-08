@@ -156,8 +156,8 @@ final class HandlerPersistence extends CommonCommandPersistence {
 			 * <code>CommandPersistence</code>, so we'll just ignore any
 			 * problems here.
 			 */
-			final String commandId = readOptional(configurationElement,
-					ATTRIBUTE_ID);
+			final String commandId = readOptionalFromRegistry(
+					configurationElement, ATTRIBUTE_ID);
 			if (commandId == null) {
 				continue;
 			}
@@ -198,24 +198,24 @@ final class HandlerPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequired(configurationElement,
-					ATTRIBUTE_COMMAND_ID, warningsToLog,
+			final String commandId = readRequiredFromRegistry(
+					configurationElement, ATTRIBUTE_COMMAND_ID, warningsToLog,
 					"Handlers need a command id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;
 			}
 
 			// Check to see if we have a handler class.
-			if (!checkClass(configurationElement, warningsToLog,
+			if (!checkClassFromRegistry(configurationElement, warningsToLog,
 					"Handlers need a class", commandId)) { //$NON-NLS-1$
 				continue;
 			}
 
 			// Get the activeWhen and enabledWhen expressions.
-			final Expression activeWhenExpression = readWhenElement(
+			final Expression activeWhenExpression = readWhenElementFromRegistry(
 					configurationElement, ELEMENT_ACTIVE_WHEN, commandId,
 					warningsToLog);
-			final Expression enabledWhenExpression = readWhenElement(
+			final Expression enabledWhenExpression = readWhenElementFromRegistry(
 					configurationElement, ELEMENT_ENABLED_WHEN, commandId,
 					warningsToLog);
 
@@ -253,8 +253,8 @@ final class HandlerPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequired(configurationElement,
-					ATTRIBUTE_COMMAND_ID, warningsToLog,
+			final String commandId = readRequiredFromRegistry(
+					configurationElement, ATTRIBUTE_COMMAND_ID, warningsToLog,
 					"Handler submissions need a command id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;

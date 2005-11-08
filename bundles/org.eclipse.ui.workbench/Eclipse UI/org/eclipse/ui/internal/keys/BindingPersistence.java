@@ -714,8 +714,8 @@ final class BindingPersistence extends CommonCommandPersistence {
 				if (command == null) {
 					parameterizedCommand = null;
 				} else {
-					parameterizedCommand = readParameters(memento,
-							warningsToLog, command);
+					parameterizedCommand = readParametersFromPreferences(
+							memento, warningsToLog, command);
 				}
 
 				final Binding binding = new KeyBinding(keySequence,
@@ -889,7 +889,7 @@ final class BindingPersistence extends CommonCommandPersistence {
 			if (command == null) {
 				parameterizedCommand = null;
 			} else {
-				parameterizedCommand = readParameters(configurationElement,
+				parameterizedCommand = readParametersFromRegistry(configurationElement,
 						warningsToLog, command);
 			}
 
@@ -927,7 +927,7 @@ final class BindingPersistence extends CommonCommandPersistence {
 	 * @return The array of parameters found for this memento; <code>null</code>
 	 *         if none can be found.
 	 */
-	private static final ParameterizedCommand readParameters(
+	private static final ParameterizedCommand readParametersFromPreferences(
 			final IMemento memento, final List warningsToLog,
 			final Command command) {
 		final IMemento[] parameterElements = memento
@@ -1008,7 +1008,7 @@ final class BindingPersistence extends CommonCommandPersistence {
 	 *            The binding manager to which the schemes should be added; must
 	 *            not be <code>null</code>.
 	 */
-	private static final void readSchemes(
+	private static final void readSchemesFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final BindingManager bindingManager) {
@@ -1026,17 +1026,17 @@ final class BindingPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the attributes.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
 					warningsToLog, "Schemes need an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
-			final String name = readRequired(configurationElement,
+			final String name = readRequiredFromRegistry(configurationElement,
 					ATTRIBUTE_NAME, warningsToLog, "A scheme needs a name", id); //$NON-NLS-1$
 			if (name == null) {
 				continue;
 			}
-			final String description = readOptional(configurationElement,
+			final String description = readOptionalFromRegistry(configurationElement,
 					ATTRIBUTE_DESCRIPTION);
 
 			String parentId = configurationElement
@@ -1088,14 +1088,14 @@ final class BindingPersistence extends CommonCommandPersistence {
 		final XMLMemento xmlMemento = XMLMemento
 				.createWriteRoot(EXTENSION_COMMANDS);
 		if (activeScheme != null) {
-			writeActiveScheme(xmlMemento, activeScheme);
+			writeActiveSchemeToPreferences(xmlMemento, activeScheme);
 		}
 		if (bindings != null) {
 			final int bindingsLength = bindings.length;
 			for (int i = 0; i < bindingsLength; i++) {
 				final Binding binding = bindings[i];
 				if (binding.getType() == Binding.USER) {
-					writeBinding(xmlMemento, binding);
+					writeBindingToPreferences(xmlMemento, binding);
 				}
 			}
 		}
@@ -1123,8 +1123,8 @@ final class BindingPersistence extends CommonCommandPersistence {
 	 *            The scheme that should be written; must not be
 	 *            <code>null</code>.
 	 */
-	private static final void writeActiveScheme(final IMemento memento,
-			final Scheme scheme) {
+	private static final void writeActiveSchemeToPreferences(
+			final IMemento memento, final Scheme scheme) {
 		// Add this active scheme, if it is not the default.
 		final IPreferenceStore store = PlatformUI.getPreferenceStore();
 		final String schemeId = scheme.getId();
@@ -1170,7 +1170,7 @@ final class BindingPersistence extends CommonCommandPersistence {
 	 * @param binding
 	 *            The binding to write; must not be <code>null</code>.
 	 */
-	private static final void writeBinding(final IMemento parent,
+	private static final void writeBindingToPreferences(final IMemento parent,
 			final Binding binding) {
 		final IMemento element = parent.createChild(ELEMENT_BINDING);
 		element.putString(ATTRIBUTE_CONTEXT_ID, binding.getContextId());
@@ -1313,7 +1313,8 @@ final class BindingPersistence extends CommonCommandPersistence {
 		}
 
 		// Read the scheme definitions.
-		readSchemes(indexedConfigurationElements[INDEX_SCHEME_DEFINITIONS],
+		readSchemesFromRegistry(
+				indexedConfigurationElements[INDEX_SCHEME_DEFINITIONS],
 				schemeDefinitionCount, bindingManager);
 		readActiveScheme(indexedConfigurationElements[INDEX_ACTIVE_SCHEME],
 				activeSchemeElementCount, preferenceMemento, bindingManager);

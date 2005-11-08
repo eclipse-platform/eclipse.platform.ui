@@ -310,7 +310,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement barElement = barElements[0];
 
 			// Read the type attribute.
-			final String type = readRequired(barElement, ATTRIBUTE_TYPE,
+			final String type = readRequiredFromRegistry(barElement, ATTRIBUTE_TYPE,
 					warningsToLog, "Bar elements require a type element", id); //$NON-NLS-1$
 			final int typeInteger;
 			if (TYPE_MENU.equals(type)) {
@@ -328,7 +328,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 			}
 
 			// Read the path attribute.
-			final String path = readOptional(barElement, ATTRIBUTE_PATH);
+			final String path = readOptionalFromRegistry(barElement, ATTRIBUTE_PATH);
 
 			return new SBar(typeInteger, path);
 		}
@@ -369,7 +369,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 
 			final IConfigurationElement dynamicMenuElement = dynamicMenuElements[0];
 
-			if (!checkClass(dynamicMenuElement, warningsToLog,
+			if (!checkClassFromRegistry(dynamicMenuElement, warningsToLog,
 					"Dynamic menu needs a class", id)) { //$NON-NLS-1$
 				return null;
 			}
@@ -411,24 +411,24 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the menu identifier.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
 					warningsToLog, "Action sets need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read the label.
-			final String label = readRequired(configurationElement,
+			final String label = readRequiredFromRegistry(configurationElement,
 					ATTRIBUTE_LABEL, warningsToLog, "Action sets need a label"); //$NON-NLS-1$
 			if (label == null) {
 				continue;
 			}
 
 			// Read the description.
-			final String description = readOptional(configurationElement,
+			final String description = readOptionalFromRegistry(configurationElement,
 					ATTRIBUTE_DESCRIPTION);
 
 			// Read the whether the action set is visible by default.
-			final boolean visible = readBoolean(configurationElement,
+			final boolean visible = readBooleanFromRegistry(configurationElement,
 					ATTRIBUTE_VISIBLE, true);
 
 			// Read the references.
@@ -475,17 +475,17 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the menu identifier.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
 					warningsToLog, "Groups need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read whether the separators are visible.
-			final boolean separatorsVisible = readBoolean(configurationElement,
+			final boolean separatorsVisible = readBooleanFromRegistry(configurationElement,
 					ATTRIBUTE_SEPARATORS_VISIBLE, true);
 
 			// Read out the visibleWhen expression.
-			final Expression visibleWhenExpression = readWhenElement(
+			final Expression visibleWhenExpression = readWhenElementFromRegistry(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
 
@@ -543,22 +543,22 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the item identifier.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
 					warningsToLog, "Items need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read the parameterized command.
-			final ParameterizedCommand command = readParameterizedCommand(
+			final ParameterizedCommand command = readParameterizedCommandFromRegistry(
 					configurationElement, commandService, warningsToLog,
 					"Items need a command id", id); //$NON-NLS-1$
 
 			// Read the menu identifier.
-			final String menuId = readOptional(configurationElement,
+			final String menuId = readOptionalFromRegistry(configurationElement,
 					ATTRIBUTE_MENU_ID);
 
 			// Read out the visibleWhen expression.
-			final Expression visibleWhenExpression = readWhenElement(
+			final Expression visibleWhenExpression = readWhenElementFromRegistry(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
 
@@ -611,7 +611,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement locationElement = locationElements[i];
 
 			// Read the mnemonic.
-			final String mnemonic = readOptional(locationElement,
+			final String mnemonic = readOptionalFromRegistry(locationElement,
 					ATTRIBUTE_MNEMONIC);
 			final char mnemonicChar;
 			if (mnemonic == null) {
@@ -627,7 +627,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 			}
 
 			// Read the image style.
-			final String imageStyle = readOptional(locationElement,
+			final String imageStyle = readOptionalFromRegistry(locationElement,
 					ATTRIBUTE_IMAGE_STYLE);
 
 			// Read the position and the relativeTo attributes.
@@ -719,17 +719,17 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the menu identifier.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
 					warningsToLog, "Menus need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read the label.
-			final String label = readOptional(configurationElement,
+			final String label = readOptionalFromRegistry(configurationElement,
 					ATTRIBUTE_LABEL);
 
 			// Read out the visibleWhen expression.
-			final Expression visibleWhenExpression = readWhenElement(
+			final Expression visibleWhenExpression = readWhenElementFromRegistry(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
 
@@ -786,7 +786,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement orderingElement = orderingElements[0];
 
 			// Read the position attribute.
-			final String position = readRequired(orderingElement,
+			final String position = readRequiredFromRegistry(orderingElement,
 					ATTRIBUTE_POSITION, warningsToLog,
 					"Order elements require a position element", id); //$NON-NLS-1$
 			final int positionInteger;
@@ -810,7 +810,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 			String relativeTo = null;
 			if ((positionInteger == SOrder.POSITION_AFTER)
 					|| (positionInteger == SOrder.POSITION_BEFORE)) {
-				relativeTo = readRequired(
+				relativeTo = readRequiredFromRegistry(
 						parentElement,
 						ATTRIBUTE_RELATIVE_TO,
 						warningsToLog,
@@ -883,8 +883,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 			}
 
 			// Read the two optional attributes.
-			final String partId = readOptional(partElement, ATTRIBUTE_ID);
-			final String clazz = readOptional(partElement, ATTRIBUTE_CLASS);
+			final String partId = readOptionalFromRegistry(partElement, ATTRIBUTE_ID);
+			final String clazz = readOptionalFromRegistry(partElement, ATTRIBUTE_CLASS);
 			if ((partId == null) && (clazz == null)) {
 				addWarning(warningsToLog,
 						"A part id or a part class is required", parentElement //$NON-NLS-1$
@@ -936,8 +936,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 			}
 
 			final IConfigurationElement popupElement = popupElements[0];
-			final String popupId = readOptional(popupElement, ATTRIBUTE_ID);
-			final String path = readOptional(popupElement, ATTRIBUTE_PATH);
+			final String popupId = readOptionalFromRegistry(popupElement, ATTRIBUTE_ID);
+			final String path = readOptionalFromRegistry(popupElement, ATTRIBUTE_PATH);
 			return new SPopup(popupId, path);
 		}
 
@@ -976,14 +976,14 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement referenceElement = referenceElements[i];
 
 			// Read the id.
-			final String referenceId = readRequired(referenceElement,
+			final String referenceId = readRequiredFromRegistry(referenceElement,
 					ATTRIBUTE_ID, warningsToLog, "References are required", id); //$NON-NLS-1$
 			if (referenceId == null) {
 				continue;
 			}
 
 			// Read the type attribute.
-			final String type = readRequired(referenceElement, ATTRIBUTE_TYPE,
+			final String type = readRequiredFromRegistry(referenceElement, ATTRIBUTE_TYPE,
 					warningsToLog, "Reference elements require a type", id); //$NON-NLS-1$
 			final int typeInteger;
 			if (TYPE_ITEM.equals(type)) {
@@ -1043,13 +1043,13 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the widget identifier.
-			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
 					warningsToLog, "Widgets need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read the widget class.
-			if (!checkClass(configurationElement, warningsToLog,
+			if (!checkClassFromRegistry(configurationElement, warningsToLog,
 					"Widget needs a class", id)) { //$NON-NLS-1$
 				continue;
 			}
@@ -1057,7 +1057,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 					ATTRIBUTE_CLASS);
 
 			// Read out the visibleWhen expression.
-			final Expression visibleWhenExpression = readWhenElement(
+			final Expression visibleWhenExpression = readWhenElementFromRegistry(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
 

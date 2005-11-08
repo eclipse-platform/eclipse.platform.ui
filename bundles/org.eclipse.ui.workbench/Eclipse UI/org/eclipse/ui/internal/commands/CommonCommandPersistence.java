@@ -227,7 +227,7 @@ public abstract class CommonCommandPersistence {
 	 * @return <code>true</code> if the class attribute or element exists;
 	 *         <code>false</code> otherwise.
 	 */
-	protected static final boolean checkClass(
+	protected static final boolean checkClassFromRegistry(
 			final IConfigurationElement configurationElement,
 			final List warningsToLog, final String message, final String id) {
 		// Check to see if we have a handler class.
@@ -274,7 +274,7 @@ public abstract class CommonCommandPersistence {
 	 *            The default boolean value.
 	 * @return The attribute's value; may be <code>null</code> if none.
 	 */
-	protected static final boolean readBoolean(
+	protected static final boolean readBooleanFromRegistry(
 			final IConfigurationElement configurationElement,
 			final String attribute, final boolean defaultValue) {
 		final String value = configurationElement.getAttribute(attribute);
@@ -300,7 +300,7 @@ public abstract class CommonCommandPersistence {
 	 *            The attribute to read; must not be <code>null</code>.
 	 * @return The attribute's value; may be <code>null</code> if none.
 	 */
-	protected static final String readOptional(
+	protected static final String readOptionalFromRegistry(
 			final IConfigurationElement configurationElement,
 			final String attribute) {
 		String value = configurationElement.getAttribute(attribute);
@@ -335,18 +335,18 @@ public abstract class CommonCommandPersistence {
 	 * @return The array of parameters found for this configuration element;
 	 *         <code>null</code> if none can be found.
 	 */
-	protected static final ParameterizedCommand readParameterizedCommand(
+	protected static final ParameterizedCommand readParameterizedCommandFromRegistry(
 			final IConfigurationElement configurationElement,
 			final ICommandService commandService, final List warningsToLog,
 			final String message, final String id) {
-		final String commandId = readRequired(configurationElement,
+		final String commandId = readRequiredFromRegistry(configurationElement,
 				ATTRIBUTE_COMMAND_ID, warningsToLog, message, id);
 		if (commandId == null) {
 			return null;
 		}
 
 		final Command command = commandService.getCommand(commandId);
-		final ParameterizedCommand parameterizedCommand = readParameters(
+		final ParameterizedCommand parameterizedCommand = readParametersFromRegistry(
 				configurationElement, warningsToLog, command);
 
 		return parameterizedCommand;
@@ -371,7 +371,7 @@ public abstract class CommonCommandPersistence {
 	 * @return The array of parameters found for this configuration element;
 	 *         <code>null</code> if none can be found.
 	 */
-	protected static final ParameterizedCommand readParameters(
+	protected static final ParameterizedCommand readParametersFromRegistry(
 			final IConfigurationElement configurationElement,
 			final List warningsToLog, final Command command) {
 		final IConfigurationElement[] parameterElements = configurationElement
@@ -466,12 +466,12 @@ public abstract class CommonCommandPersistence {
 	 *            not be <code>null</code>.
 	 * @return The required attribute; may be <code>null</code> if missing.
 	 */
-	protected static final String readRequired(
+	protected static final String readRequiredFromRegistry(
 			final IConfigurationElement configurationElement,
 			final String attribute, final List warningsToLog,
 			final String message) {
-		return readRequired(configurationElement, attribute, warningsToLog,
-				message, null);
+		return readRequiredFromRegistry(configurationElement, attribute,
+				warningsToLog, message, null);
 	}
 
 	/**
@@ -493,7 +493,7 @@ public abstract class CommonCommandPersistence {
 	 *            attribute; may be <code>null</code>.
 	 * @return The required attribute; may be <code>null</code> if missing.
 	 */
-	protected static final String readRequired(
+	protected static final String readRequiredFromRegistry(
 			final IConfigurationElement configurationElement,
 			final String attribute, final List warningsToLog,
 			final String message, final String id) {
@@ -526,7 +526,7 @@ public abstract class CommonCommandPersistence {
 	 *         <code>configurationElement</code>, if any; otherwise,
 	 *         <code>null</code>.
 	 */
-	protected static final Expression readWhenElement(
+	protected static final Expression readWhenElementFromRegistry(
 			final IConfigurationElement parentElement,
 			final String whenElement, final String id, final List warningsToLog) {
 		// Check to see if we have an visibleWhen expression.

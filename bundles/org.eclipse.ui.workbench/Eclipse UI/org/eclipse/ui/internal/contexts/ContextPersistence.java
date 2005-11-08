@@ -127,14 +127,15 @@ final class ContextPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String contextId = readRequired(configurationElement,
-					ATTRIBUTE_ID, warningsToLog, "Contexts need an id"); //$NON-NLS-1$
+			final String contextId = readRequiredFromRegistry(
+					configurationElement, ATTRIBUTE_ID, warningsToLog,
+					"Contexts need an id"); //$NON-NLS-1$
 			if (contextId == null) {
 				continue;
 			}
 
 			// Read out the name.
-			final String name = readRequired(configurationElement,
+			final String name = readRequiredFromRegistry(configurationElement,
 					ATTRIBUTE_NAME, warningsToLog, "Contexts need a name", //$NON-NLS-1$
 					contextId);
 			if (name == null) {
@@ -142,8 +143,8 @@ final class ContextPersistence extends CommonCommandPersistence {
 			}
 
 			// Read out the description.
-			final String description = readOptional(configurationElement,
-					ATTRIBUTE_DESCRIPTION);
+			final String description = readOptionalFromRegistry(
+					configurationElement, ATTRIBUTE_DESCRIPTION);
 
 			// Read out the parent id.
 			String parentId = configurationElement

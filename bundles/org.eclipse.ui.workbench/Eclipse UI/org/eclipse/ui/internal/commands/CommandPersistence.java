@@ -147,14 +147,14 @@ final class CommandPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the category identifier.
-			final String categoryId = readRequired(configurationElement,
+			final String categoryId = readRequiredFromRegistry(configurationElement,
 					ATTRIBUTE_ID, warningsToLog, "Categories need an id"); //$NON-NLS-1$
 			if (categoryId == null) {
 				continue;
 			}
 
 			// Read out the name.
-			final String name = readRequired(configurationElement,
+			final String name = readRequiredFromRegistry(configurationElement,
 					ATTRIBUTE_NAME, warningsToLog, "Categories need a name", //$NON-NLS-1$
 					categoryId);
 			if (name == null) {
@@ -162,7 +162,7 @@ final class CommandPersistence extends CommonCommandPersistence {
 			}
 
 			// Read out the description.
-			final String description = readOptional(configurationElement,
+			final String description = readOptionalFromRegistry(configurationElement,
 					ATTRIBUTE_DESCRIPTION);
 
 			final Category category = commandManager.getCategory(categoryId);
@@ -207,21 +207,21 @@ final class CommandPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequired(configurationElement,
+			final String commandId = readRequiredFromRegistry(configurationElement,
 					ATTRIBUTE_ID, warningsToLog, "Commands need an id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;
 			}
 
 			// Read out the name.
-			final String name = readRequired(configurationElement,
+			final String name = readRequiredFromRegistry(configurationElement,
 					ATTRIBUTE_NAME, warningsToLog, "Commands need a name"); //$NON-NLS-1$
 			if (name == null) {
 				continue;
 			}
 
 			// Read out the description.
-			final String description = readOptional(configurationElement,
+			final String description = readOptionalFromRegistry(configurationElement,
 					ATTRIBUTE_DESCRIPTION);
 
 			// Read out the category id.
@@ -298,14 +298,14 @@ final class CommandPersistence extends CommonCommandPersistence {
 		for (int i = 0; i < parameterElements.length; i++) {
 			final IConfigurationElement parameterElement = parameterElements[i];
 			// Read out the id
-			final String id = readRequired(parameterElement, ATTRIBUTE_ID,
+			final String id = readRequiredFromRegistry(parameterElement, ATTRIBUTE_ID,
 					warningsToLog, "Parameters need an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
 
 			// Read out the name.
-			final String name = readRequired(parameterElement, ATTRIBUTE_NAME,
+			final String name = readRequiredFromRegistry(parameterElement, ATTRIBUTE_NAME,
 					warningsToLog, "Parameters need a name"); //$NON-NLS-1$
 			if (name == null) {
 				continue;
@@ -317,7 +317,7 @@ final class CommandPersistence extends CommonCommandPersistence {
 			 */
 
 			// Read out the optional attribute, if present.
-			final boolean optional = readBoolean(parameterElement,
+			final boolean optional = readBooleanFromRegistry(parameterElement,
 					ATTRIBUTE_OPTIONAL, true);
 
 			final Parameter parameter = new Parameter(id, name,
@@ -368,13 +368,13 @@ final class CommandPersistence extends CommonCommandPersistence {
 		for (int i = 0; i < stateElements.length; i++) {
 			final IConfigurationElement stateElement = stateElements[i];
 
-			final String id = readRequired(stateElement, ATTRIBUTE_ID,
+			final String id = readRequiredFromRegistry(stateElement, ATTRIBUTE_ID,
 					warningsToLog, "State needs an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
 
-			if (checkClass(stateElement, warningsToLog,
+			if (checkClassFromRegistry(stateElement, warningsToLog,
 					"State must have an associated class", id)) { //$NON-NLS-1$
 				final String preferenceKey = PREFERENCE_KEY_PREFIX + '/'
 						+ commandId + '/' + id;
