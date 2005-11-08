@@ -152,6 +152,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
     ProgressRegion progressRegion;
 
 	private HeapStatus heapStatus;
+	private IWindowTrim heapStatusTrim = null;
 
 
 	private boolean emptyWindowContentsCreated = false;
@@ -163,6 +164,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
     private boolean asMaximizedState = false;
 
     private CBanner topBar;
+    private IWindowTrim topBarTrim;
 
     // Previous shell size. Used to prevent the CBanner from triggering redundant layouts
     private Point lastShellSize = new Point(0, 0);
@@ -335,6 +337,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
     private boolean perspectiveBarVisible = true;
 
     private boolean statusLineVisible = true;
+    
+	private IWindowTrim statusLineTrim = null;
 
     /**
      * The handlers for action set actions that were last submitted to the
@@ -447,6 +451,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
             }
         }
     };
+
+
     
 
     void registerActionSets(IActionSet[] actionSets) {
@@ -932,6 +938,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
         // and the perspective switcher, and supports some configurations
         // on the left right and bottom
         topBar = new CBanner(shell, SWT.NONE);
+        topBarTrim = new WindowTrimProxy(topBar, 
+        		"org.eclipse.ui.internal.WorkbenchWindow.topBar",  //$NON-NLS-1$  
+        		SWT.TOP);
 
         // the banner gets a curve along with the new tab style
         // TODO create a dedicated preference for this
@@ -992,6 +1001,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         createPageComposite(shell);
 
         setLayoutDataForContents();
+//        System.err.println(defaultLayout.displayTrim());
     }
 
 	/**
@@ -1015,6 +1025,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 */
 	private void createHeapStatus(Composite parent) {
 		heapStatus = new HeapStatus(parent, PrefUtil.getInternalPreferenceStore());
+		heapStatusTrim = new WindowTrimProxy(heapStatus, 
+				"org.eclipse.ui.internal.HeapStatus",  //$NON-NLS-1$
+				SWT.BOTTOM);
 	}
 	
     /**
@@ -1334,6 +1347,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
     public StatusLineManager getStatusLineManager() {
         return super.getStatusLineManager();
     }
+    
+    private IWindowTrim getStatusLineTrim() {
+		if (statusLineTrim==null) {
+    		statusLineTrim = new WindowTrimProxy(getStatusLineManager().getControl(),
+    				"org.eclipse.jface.action.StatusLineManager", //$NON-NLS-1$
+    				SWT.BOTTOM); 
+    	}
+    	return statusLineTrim;
+    }
 
     /**
      * @see IWorkbenchWindow
@@ -1538,7 +1560,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
     public IStatus restoreState(IMemento memento,
             IPerspectiveDescriptor activeDescriptor) {
         Assert.isNotNull(getShell());
-
+        
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
@@ -2913,19 +2935,19 @@ public class WorkbenchWindow extends ApplicationWindow implements
         if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
                 || (getPerspectiveBarVisible() && getWindowConfigurer()
                         .getShowPerspectiveBar())) {
-            defaultLayout.addTrim(topBar, SWT.TOP, null);
+            defaultLayout.addTrim(topBarTrim, SWT.TOP, null);
             topBar.setVisible(true);
         } else {
-            defaultLayout.removeTrim(topBar);
+            defaultLayout.removeTrim(topBarTrim);
             topBar.setVisible(false);
         }
 
         if (getStatusLineVisible() && getWindowConfigurer().getShowStatusLine()) {
-            defaultLayout.addTrim(getStatusLineManager().getControl(),
+            defaultLayout.addTrim(getStatusLineTrim(),
                     SWT.BOTTOM, null);
             getStatusLineManager().getControl().setVisible(true);
         } else {
-            defaultLayout.removeTrim(getStatusLineManager().getControl());
+            defaultLayout.removeTrim(getStatusLineTrim());
             getStatusLineManager().getControl().setVisible(false);
         }
 
@@ -2940,13 +2962,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					heapStatus.setLayoutData(animationData);
 	            }
 
-	            defaultLayout.addTrim(heapStatus, SWT.BOTTOM, null);
+	            defaultLayout.addTrim(heapStatusTrim, SWT.BOTTOM, null);
 				heapStatus.setVisible(true);
 			}
 		}
 		else {
 			if (heapStatus != null) {
-	            defaultLayout.removeTrim(heapStatus);
+	            defaultLayout.removeTrim(heapStatusTrim);
 				heapStatus.setVisible(false);
 			}
 		}
@@ -2962,11 +2984,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 progressRegion.getControl().setLayoutData(animationData);
             }
             defaultLayout
-                    .addTrim(progressRegion.getControl(), SWT.BOTTOM, null);
+                    .addTrim(progressRegion, SWT.BOTTOM, null);
             progressRegion.getControl().setVisible(true);
         } else {
             if (progressRegion != null) {
-                defaultLayout.removeTrim(progressRegion.getControl());
+                defaultLayout.removeTrim(progressRegion);
                 progressRegion.getControl().setVisible(false);
             }
         }
@@ -2986,7 +3008,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         if (getWindowConfigurer().getShowFastViewBars() && fastViewBar != null) {
             fastViewBar.addDockingListener(new IChangeListener() {
                 public void update(boolean changed) {
-                    Control reference = null;
+                    IWindowTrim reference = null;
                     int side = fastViewBar.getSide();
 
                     fastViewBar.getControl().setLayoutData(
@@ -2995,10 +3017,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
                     if (side == SWT.BOTTOM
                             && getWindowConfigurer().getShowStatusLine()) {
-                        reference = getStatusLineManager().getControl();
+                        reference = getStatusLineTrim();
                     }
 
-                    defaultLayout.addTrim(fastViewBar.getControl(), side,
+                    defaultLayout.addTrim(fastViewBar, side,
                             reference);
                     WorkbenchPage page = getActiveWorkbenchPage();
 
@@ -3091,27 +3113,27 @@ public class WorkbenchWindow extends ApplicationWindow implements
     /**
      * Adds the given control to the specified side of this window's trim.
      * 
-     * @param control
-     *            the perspective bar's control
+     * @param trim
+     *            the  bar's IWindowTrim
      * @param side
      *            one of <code>SWT.LEFT</code>,<code>SWT.BOTTOM</code>,
      *            or <code>SWT.RIGHT</code> (only LEFT has been tested)
      * @since 3.0
      */
-    public void addToTrim(Control control, int side) {
-        Control reference = null;
+    public void addToTrim(IWindowTrim trim, int side) {
+        IWindowTrim reference = null;
 
         // the perspective bar should go before the fast view bar they're on the
         // same side and before the status line if on the bottom
         if (side == fastViewBar.getSide())
-            reference = fastViewBar.getControl();
+            reference = fastViewBar;
         else if (side == SWT.BOTTOM
                 && getWindowConfigurer().getShowStatusLine())
-            reference = getStatusLineManager().getControl();
+            reference = getStatusLineTrim();
 
-        control.setLayoutData(new TrimLayoutData(false, SWT.DEFAULT,
+        trim.getControl().setLayoutData(new TrimLayoutData(false, SWT.DEFAULT,
                 SWT.DEFAULT));
-        defaultLayout.addTrim(control, side, reference);
+        defaultLayout.addTrim(trim, side, reference);
     }
 
 	/* (non-Javadoc)

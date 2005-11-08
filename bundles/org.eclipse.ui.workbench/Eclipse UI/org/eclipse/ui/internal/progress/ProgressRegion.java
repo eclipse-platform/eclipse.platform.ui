@@ -19,13 +19,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.internal.IWindowTrim;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * The ProgressRegion is class for the region of the workbench where the
  * progress line and the animation item are shown.
  */
-public class ProgressRegion {
+public class ProgressRegion implements IWindowTrim {
     ProgressCanvasViewer viewer;
 
     AnimationItem item;
@@ -145,4 +146,25 @@ public class ProgressRegion {
     public void processDoubleClick() {
         ProgressManagerUtil.openProgressView(workbenchWindow);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#dock(int)
+	 */
+	public void dock(int dropSide) {
+		// deliberately do nothing
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#getId()
+	 */
+	public String getId() {
+		return "org.eclipse.ui.internal.progress.ProgressRegion"; //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#getValidSides()
+	 */
+	public int getValidSides() {
+		return SWT.BOTTOM;
+	}
 }

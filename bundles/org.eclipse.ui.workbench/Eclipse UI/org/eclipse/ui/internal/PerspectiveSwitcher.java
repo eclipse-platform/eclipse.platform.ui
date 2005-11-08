@@ -65,7 +65,7 @@ import org.eclipse.ui.presentations.PresentationUtil;
  * 
  * @since 3.0
  */
-public class PerspectiveSwitcher {
+public class PerspectiveSwitcher implements IWindowTrim {
 
     private IWorkbenchWindow window;
 
@@ -297,7 +297,7 @@ public class PerspectiveSwitcher {
 			topBar.setBottom(null);
 			topBar.setRight(null);
 			LayoutUtil.resize(topBar);
-			((WorkbenchWindow) window).addToTrim(trimControl, SWT.LEFT);
+			((WorkbenchWindow) window).addToTrim(this, SWT.LEFT);
 			break;
 		default:
 			return;
@@ -1227,5 +1227,32 @@ public class PerspectiveSwitcher {
 	 */
 	public void addReorderListener(IReorderListener listener) {
 		reorderListener = listener;	
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#dock(int)
+	 */
+	public void dock(int dropSide) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#getControl()
+	 */
+	public Control getControl() {
+		return trimControl;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#getId()
+	 */
+	public String getId() {
+		return "org.eclipse.ui.internal.PerspectiveSwitcher"; //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#getValidSides()
+	 */
+	public int getValidSides() {
+		return SWT.TOP|SWT.LEFT;
 	}
 }

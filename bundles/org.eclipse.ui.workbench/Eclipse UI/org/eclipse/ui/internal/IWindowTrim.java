@@ -36,7 +36,15 @@ public interface IWindowTrim {
      * Called to notify the trim object that it has been docked on the given side of the layout
      * 
      * @param dropSide
-     * @param insertionPoint
      */
     void dock(int dropSide);
+    
+    /**
+     * Each piece of window trim must have a unique ID to participate
+     * fully as trim.
+     * 
+     * @return The unique id
+     * @since 3.2
+     */
+    public String getId();
 }

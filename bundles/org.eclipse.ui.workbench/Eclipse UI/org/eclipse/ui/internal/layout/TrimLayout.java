@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.ui.internal.IWindowTrim;
 
 /**
  * Lays out the children of a Composite. One control occupies the center of the composite,
@@ -68,7 +69,9 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
     private int rightSpacing;
 
-    private Map mapPartOntoTrimData = new HashMap();
+    private Map mapControlOntoData = new HashMap();
+    
+    private Map mapControlOntoTrim = new HashMap();
 
     // Position constants -- correspond to indices in the controls array, above.
     private static final int TOP = 0;
@@ -339,7 +342,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
      * @param control new trim widget to be added
      * @param location one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT
      */
-    public void addTrim(Control control, int location) {
+    public void addTrim(IWindowTrim control, int location) {
         addTrim(control, location, null);
     }
 
@@ -358,17 +361,18 @@ public class TrimLayout extends Layout implements ICachingLayout {
      * this side of the layout. Otherwise, the control will be inserted before the given
      * widget.
      */
-    public void addTrim(Control control, int location, Control position) {
-        removeTrim(control);
+    public void addTrim(IWindowTrim trim, int location, IWindowTrim position) {
+        removeTrim(trim);
 
         int index = convertSwtConstantToIndex(location);
         List list = controls[index];
 
-        SizeCache cache = new SizeCache(control);
+        SizeCache cache = new SizeCache(trim.getControl());
 
         insertBefore(list, cache, position);
 
-        mapPartOntoTrimData.put(control, new TrimData(index, cache));
+        mapControlOntoData.put(trim.getControl(), new TrimData(index, cache));
+        mapControlOntoTrim.put(trim.getControl(), trim);
     }
 
     /**
@@ -378,7 +382,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
      * @param list a list of SizeCache
      */
     private static void insertBefore(List list, SizeCache cache,
-            Control position) {
+            IWindowTrim position) {
 
         if (position != null) {
             int insertionPoint = 0;
@@ -387,7 +391,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
             while (iter.hasNext()) {
                 SizeCache next = (SizeCache) iter.next();
 
-                if (next.getControl() == position) {
+                if (next.getControl() == position.getControl()) {
                     break;
                 }
 
@@ -400,14 +404,14 @@ public class TrimLayout extends Layout implements ICachingLayout {
         }
     }
 
-    private static void remove(List list, Control toRemove) {
+    private static void remove(List list, IWindowTrim toRemove) {
         SizeCache target = null;
 
         Iterator iter = list.iterator();
         while (iter.hasNext()) {
             SizeCache next = (SizeCache) iter.next();
 
-            if (next.getControl() == toRemove) {
+            if (next.getControl() == toRemove.getControl()) {
                 target = next;
                 break;
             }
@@ -422,7 +426,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
      * 
      * @param toRemove
      */
-    public void removeTrim(Control toRemove) {
+    public void removeTrim(IWindowTrim toRemove) {
 
         int idx = getIndex(toRemove);
 
@@ -432,9 +436,14 @@ public class TrimLayout extends Layout implements ICachingLayout {
         }
 
         remove(controls[idx], toRemove);
-        mapPartOntoTrimData.remove(toRemove);
+        mapControlOntoData.remove(toRemove.getControl());
+        mapControlOntoTrim.remove(toRemove.getControl());
     }
 
+    private int getIndex(IWindowTrim trim) {
+    	return getIndex(trim.getControl());
+    }
+    
     /**
      * Returns an index into the controls array, above, indicating the position
      * where this trim control is located.
@@ -443,7 +452,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
      * @return
      */
     private int getIndex(Control toQuery) {
-        TrimData data = (TrimData) mapPartOntoTrimData.get(toQuery);
+        TrimData data = (TrimData) mapControlOntoData.get(toQuery);
 
         if (data == null) {
             return NONTRIM;
@@ -665,7 +674,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
      * @see org.eclipse.ui.internal.layout.ICachingLayout#flush(org.eclipse.swt.widgets.Control)
      */
     public void flush(Control dirtyControl) {
-        TrimData data = (TrimData) mapPartOntoTrimData.get(dirtyControl);
+        TrimData data = (TrimData) mapControlOntoData.get(dirtyControl);
 
         if (data == null) {
             if (dirtyControl == centerArea.getControl()) {
@@ -674,5 +683,20 @@ public class TrimLayout extends Layout implements ICachingLayout {
         } else {
             data.cache.flush();
         }
+    }
+    
+    public String displayTrim() {
+    	String rc = "["; //$NON-NLS-1$
+    	for (int i = 0; i < controls.length; i++) {
+			List side = controls[i];
+			Iterator j = side.iterator();
+			while (j.hasNext()) {
+				SizeCache c = (SizeCache) j.next();
+				IWindowTrim trim = (IWindowTrim) mapControlOntoTrim.get(c.getControl());
+				rc += (trim==null?"null":trim.getId()) //$NON-NLS-1$
+					+ ", "; //$NON-NLS-1$
+			}
+		}
+    	return rc + "]"; //$NON-NLS-1$
     }
 }

@@ -891,7 +891,14 @@ public class FastViewBar implements IWindowTrim {
         }
     }
     
-    /**
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#getId()
+	 */
+	public String getId() {
+		return "org.eclise.ui.internal.FastViewBar"; //$NON-NLS-1$
+	}
+
+	/**
      * Returns the context menu contribution item.  This is for
      * internal UI testing only.
      * 
