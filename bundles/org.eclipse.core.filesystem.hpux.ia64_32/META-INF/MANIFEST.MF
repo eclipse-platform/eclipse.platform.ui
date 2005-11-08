@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %fragmentName
 Bundle-SymbolicName: org.eclipse.core.filesystem.hpux.ia64_32; singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %providerName
-Fragment-Host: org.eclipse.core.filesystem
+Fragment-Host: org.eclipse.core.filesystem;bundle-version="[1.0.0,2.0.0)"
 Bundle-Localization: fragment
 Eclipse-PlatformFilter: (& (osgi.os=hpux) (osgi.arch=ia64_32))
