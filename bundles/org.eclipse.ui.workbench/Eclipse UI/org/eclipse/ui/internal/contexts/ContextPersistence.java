@@ -108,7 +108,7 @@ final class ContextPersistence extends CommonCommandPersistence {
 	 *            The context manager to which the commands should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private static final void readContextsFromExtensionPoint(
+	private static final void readContextsFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final ContextManager contextManager) {
@@ -246,7 +246,7 @@ final class ContextPersistence extends CommonCommandPersistence {
 			}
 		}
 
-		readContextsFromExtensionPoint(
+		readContextsFromRegistry(
 				indexedConfigurationElements[INDEX_CONTEXT_DEFINITIONS],
 				contextDefinitionCount, contextManager);
 
