@@ -52,9 +52,14 @@ public class SessionTests extends TestSuite {
 
 	/**
 	 * Add a view state test that involves state from one session to the other.
+	 * 
+	 * BTW: the <b>editorSessionTests</b> is the zip file to grab the
+	 * default workspace for these particular session tests.
 	 */
 	private void addViewStateTests() {
 		addTest(new WorkbenchSessionTest("editorSessionTests",
 				Bug98800Test.class));
+		addTest(new WorkbenchSessionTest("editorSessionTests",
+				Bug108033Test.class));
 	}
 }

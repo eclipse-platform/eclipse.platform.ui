@@ -485,4 +485,24 @@ public final class TabbedStackPresentation extends StackPresentation {
         prefs.put(id, result);
         return result;
     }
+    
+    /**
+     * Move the tabs around.  This is for testing <b>ONLY</b>.
+     * @param part the part to move
+     * @param index the new index
+     * @since 3.2
+     */
+    public void moveTab(IPresentablePart part, int index) {
+    	tabs.move(part, index);
+    	folder.layout(true);
+    }
+    
+    /**
+     * Get the tab list. This is for testing <b>ONLY</b>.
+     * @return the presentable parts in order.
+     * @since 3.2
+     */
+    public IPresentablePart[] getPartList() {
+    	return tabs.getPartList();
+    }
 }

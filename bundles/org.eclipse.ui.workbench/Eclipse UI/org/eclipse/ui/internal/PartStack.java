@@ -593,10 +593,20 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         // Use a copy of the current set of children to avoid a ConcurrentModificationException
         // if a part is added to the same stack while iterating over the children (bug 78470)
         LayoutPart[] childParts = (LayoutPart[]) children.toArray(new LayoutPart[children.size()]);
+        // if we don't have a saved state, add the parts, otherwise "restore"
+        // the parts :-)
+        boolean addParts = (savedPresentationState==null);
         for (int i = 0; i < childParts.length; i++) {
 			LayoutPart part = childParts[i];
-            showPart(part, null);
+            showPart(part, null, addParts);
         }
+        // if we didn't add the parts above, it's because we had a saved
+        // presentation state.
+        if (!addParts) {
+			PresentationSerializer serializer = new PresentationSerializer(
+					getPresentableParts());
+			presentation.restoreState(serializer, savedPresentationState);
+		}
 
         Control ctrl = getPresentation().getControl();
 
@@ -1260,9 +1270,21 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     }
 
     /**
-     * Makes the given part visible in the presentation
+     * Makes the given part visible in the presentation.
+     * @param part the part to add to the stack
+     * @param cookie other information
      */
     private void showPart(LayoutPart part, Object cookie) {
+    	showPart(part, cookie, true);
+    }
+
+    /**
+     * Makes the given part visible in the presentation.
+     * @param part the part to add to the stack
+     * @param cookie other information
+     * @param addParts add this part to the presentation immediately
+     */
+    private void showPart(LayoutPart part, Object cookie, boolean addParts) {
 
         if (isDisposed()) {
             return;
@@ -1282,7 +1304,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             part.setContainer(this);
         }
         
-        presentationSite.getPresentation().addPart(presentablePart, cookie);
+        if (addParts) {
+        	presentationSite.getPresentation().addPart(presentablePart, cookie);
+        }
 
         if (requestedCurrent == null) {
             setSelection(part);

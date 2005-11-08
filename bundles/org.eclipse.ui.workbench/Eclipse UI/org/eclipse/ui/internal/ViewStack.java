@@ -21,6 +21,7 @@ import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Manages a set of ViewPanes that are docked into the workbench window. The container for a ViewStack
@@ -142,4 +143,14 @@ public class ViewStack extends PartStack {
         return part instanceof ViewPane;
     }
 
+    /**
+     * Get the presentation for testing purposes.  This is for testing
+     * purposes <b>ONLY</b>.
+     * 
+     * @return the presentation in use for this view stack
+     * @since 3.2
+     */
+    public StackPresentation getTestPresentation() {
+    	return getPresentation();
+    }
 }
