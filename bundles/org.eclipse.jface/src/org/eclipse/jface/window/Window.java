@@ -60,8 +60,8 @@ import org.eclipse.swt.widgets.Shell;
  * subclassed. Clients may define additional window subclasses as required.
  * </p>
  * <p>
- * The <code>Window</code> class provides the following methods which
- * subclasses may override:
+ * The <code>Window</code> class provides methods that subclasses may 
+ * override to configure the window, including:
  * <ul>
  * <li><code>close</code>- extend to free other SWT resources</li>
  * <li><code>configureShell</code>- extend or reimplement to set shell
@@ -74,7 +74,6 @@ import org.eclipse.swt.widgets.Shell;
  * location for the shell</li>
  * <li><code>getShellListener</code>- extend or reimplement to receive shell
  * events</li>
- * <li><code>getToolTipText</code>- reimplement to add tool tips</li>
  * <li><code>handleFontChange</code>- reimplement to respond to font changes
  * </li>
  * <li><code>handleShellCloseEvent</code>- extend or reimplement to handle
