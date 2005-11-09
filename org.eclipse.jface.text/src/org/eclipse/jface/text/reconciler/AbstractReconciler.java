@@ -258,7 +258,9 @@ abstract public class AbstractReconciler implements IReconciler {
 					fDocument.removeDocumentListener(this);
 
 				if (fIsIncrementalReconciler) {
-					fDirtyRegionQueue.purgeQueue();
+					synchronized (fDirtyRegionQueue) {
+						fDirtyRegionQueue.purgeQueue();
+					}
 					if (fDocument != null && fDocument.getLength() > 0) {
 						DocumentEvent e= new DocumentEvent(fDocument, 0, fDocument.getLength(), null);
 						createDirtyRegion(e);
@@ -478,19 +480,20 @@ abstract public class AbstractReconciler implements IReconciler {
 	 * @param e the document event for which to create a dirty region
 	 */
 	private void createDirtyRegion(DocumentEvent e) {
-
-		if (e.getLength() == 0 && e.getText() != null) {
-			// Insert
-			fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getText().length(), DirtyRegion.INSERT, e.getText()));
-
-		} else if (e.getText() == null || e.getText().length() == 0) {
-			// Remove
-			fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getLength(), DirtyRegion.REMOVE, null));
-
-		} else {
-			// Replace (Remove + Insert)
-			fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getLength(), DirtyRegion.REMOVE, null));
-			fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getText().length(), DirtyRegion.INSERT, e.getText()));
+		synchronized (fDirtyRegionQueue) {
+			if (e.getLength() == 0 && e.getText() != null) {
+				// Insert
+				fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getText().length(), DirtyRegion.INSERT, e.getText()));
+	
+			} else if (e.getText() == null || e.getText().length() == 0) {
+				// Remove
+				fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getLength(), DirtyRegion.REMOVE, null));
+	
+			} else {
+				// Replace (Remove + Insert)
+				fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getLength(), DirtyRegion.REMOVE, null));
+				fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getText().length(), DirtyRegion.INSERT, e.getText()));
+			}
 		}
 	}
 
