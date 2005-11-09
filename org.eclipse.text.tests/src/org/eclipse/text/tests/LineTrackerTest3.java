@@ -39,11 +39,12 @@ public class LineTrackerTest3 extends TestCase {
 	
 	protected void checkLines(int[] lines) {
 		
-		assertTrue("invalid number of line", fTracker.getNumberOfLines() == lines.length);
-	
-		for (int i= 0; i < lines.length; i++) {
+		try {
+			assertEquals("invalid number of lines, ", lines.length, fTracker.getNumberOfLines());
+			assertEquals("invalid number of lines, ", lines.length, fTracker.getNumberOfLines(0, fText.getLength()));
 			
-			try {
+			for (int i= 0; i < lines.length; i++) {
+				
 				
 				IRegion line= fTracker.getLineInformation(i);
 				
@@ -51,10 +52,10 @@ public class LineTrackerTest3 extends TestCase {
 				
 				int expected= getLineOffset(i, lines);
 				assertTrue("line: " + i + " offset=" + line.getOffset() + " should be:" + expected, line.getOffset() == expected);
-			
-			} catch (BadLocationException x) {
-				assertTrue(false);
+				
 			}
+		} catch (BadLocationException x) {
+			assertTrue(false);
 		}
 	}
 	
@@ -255,7 +256,7 @@ public class LineTrackerTest3 extends TestCase {
 			checkLines(new int[] { 1, 2, 2, 0 });
 	
 			fTracker.replace(3, 5, null);
-			fText.replace(3, 4, null);
+			fText.replace(3, 5, null);
 			checkLines(new int[] { 1, 1 });
 	
 			fTracker.replace(0, 3, null);
@@ -410,4 +411,64 @@ public class LineTrackerTest3 extends TestCase {
 			assertTrue("bad location", false);
 		}
 	}
+	
+	public void testDeleteEmptyLine() throws Exception {
+		fTracker.set("x\nx\n\nx\n\n");
+		fText.set("x\nx\n\nx\n\n");
+		
+		int[] lengths= new int[] { 1, 1, 0, 1, 0, 0 };
+		checkLines(lengths);
+		for (int line= lengths.length - 1; line >= 0; line--)
+			fTracker.replace(fTracker.getLineOffset(line), fTracker.getLineLength(line), null);
+		
+	}
+	
+	public void testDeleteLinesFromEnd() throws Exception {
+		fTracker.set("x\nx\n\nx\n\n");
+		fText.set("x\nx\n\nx\n\n");
+		
+		int[] lengths= new int[] { 1, 1, 0, 1, 0, 0 };
+		checkLines(lengths);
+		for (int line= lengths.length - 1; line >= 0; line--)
+			fTracker.replace(fTracker.getLineOffset(line), fTracker.getLineLength(line), null);
+		
+	}
+	
+	public void testDeleteLines() throws Exception {
+		String content= "";
+		for (int i= 0; i < 50; i++) {
+			fTracker.set(content + "x\nx\n\nx\n\n");
+			
+			int lines= fTracker.getNumberOfLines();
+			for (int line= 0; line < lines; line++)
+				fTracker.replace(fTracker.getLineOffset(0), fTracker.getLineLength(0), null);
+		}
+		content= "";
+		for (int i= 0; i < 50; i++) {
+			fTracker.set(content + "x\nx\n\nx\n\n");
+			
+			int lines= fTracker.getNumberOfLines();
+			for (int line= lines - 1; line >= 0; line--)
+				fTracker.replace(fTracker.getLineOffset(line), fTracker.getLineLength(line), null);
+		}
+	}
+	
+	public void testSet() throws Exception {
+		String content= "";
+		for (int i= 0; i < 35; i++) {
+			int[] lenghts= new int[i + 1];
+			for (int j= 0; j < i +1; j++)
+				lenghts[j]= j;
+			for (int j= 0; j < i; j++)
+				content += "x";
+			
+			fTracker.set(content);
+			fText.set(content);
+			checkLines(lenghts);
+			
+			content += "\n";
+		}
+	}
+	
+	
 }

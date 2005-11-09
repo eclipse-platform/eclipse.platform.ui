@@ -41,7 +41,7 @@ public class LineTrackerTest4 extends TestCase {
 	
 	protected void checkLines(int[] lines) {
 		
-		assertTrue("invalid number of line", fTracker.getNumberOfLines() == lines.length);
+		assertEquals("invalid number of line", lines.length, fTracker.getNumberOfLines());
 	
 		for (int i= 0; i < lines.length; i++) {
 			
