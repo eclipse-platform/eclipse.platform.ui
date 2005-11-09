@@ -138,7 +138,7 @@ public class ShowViewDialog extends Dialog implements
 
         createFilteredTreeViewer(composite);
 
-        layoutTopControl(filteredTree.getViewer().getControl());
+        layoutTopControl(filteredTree);
 
         // Restore the last state
         restoreWidgetValues();
