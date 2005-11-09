@@ -114,6 +114,7 @@ public class TarInputStream extends FilterInputStream
 		pos = 148;
 		StringBuffer checksumString = new StringBuffer();
 		for(i = 0; i < 8; i++) {
+			if(header[pos + i] == ' ') continue;
 			if(header[pos + i] == 0 || !Character.isDigit((char) header[pos + i])) break;
 			checksumString.append((char) header[pos + i]);
 		}
