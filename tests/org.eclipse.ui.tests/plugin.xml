@@ -936,6 +936,7 @@
          <action
                label="allAction_v2"
                class="org.eclipse.ui.tests.api.MockActionDelegate"
+               accelerator="ALT+SHIFT+-"
                menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1"
                enablesFor="1"
                id="org.eclipse.ui.tests.internal.ac1">
