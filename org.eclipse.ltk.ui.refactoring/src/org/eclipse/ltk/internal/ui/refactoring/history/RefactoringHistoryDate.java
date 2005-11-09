@@ -39,11 +39,29 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public boolean equals(final Object object) {
+		if (object instanceof RefactoringHistoryDate) {
+			final RefactoringHistoryDate date= (RefactoringHistoryDate) object;
+			return fStamp == date.fStamp;
+		}
+		return false;
+	}
+
+	/**
 	 * Returns the time stamp.
 	 * 
 	 * @return the time stamp
 	 */
 	public long getTimeStamp() {
 		return fStamp;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int hashCode() {
+		return (int) fStamp;
 	}
 }

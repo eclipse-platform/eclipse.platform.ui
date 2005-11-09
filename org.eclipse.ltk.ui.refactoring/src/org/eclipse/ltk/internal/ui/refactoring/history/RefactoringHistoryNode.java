@@ -18,40 +18,40 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
 public abstract class RefactoringHistoryNode {
 
 	/** The collection kind */
-	public static final int COLLECTION= 7;
+	public static final int COLLECTION= 11;
 
 	/** The day kind */
-	public static final int DAY= 0;
+	public static final int DAY= 9;
 
 	/** The entry kind */
-	public static final int ENTRY= 6;
+	public static final int ENTRY= 10;
 
 	/** The last month kind */
-	public static final int LAST_MONTH= 11;
+	public static final int LAST_MONTH= 5;
 
 	/** The last week kind */
-	public static final int LAST_WEEK= 1;
+	public static final int LAST_WEEK= 3;
 
 	/** The month kind */
-	public static final int MONTH= 8;
+	public static final int MONTH= 7;
 
 	/** The this month kind */
-	public static final int THIS_MONTH= 10;
+	public static final int THIS_MONTH= 4;
 
 	/** The this week kind */
 	public static final int THIS_WEEK= 2;
 
 	/** The today kind */
-	public static final int TODAY= 3;
+	public static final int TODAY= 0;
 
 	/** The week kind */
-	public static final int WEEK= 4;
+	public static final int WEEK= 8;
 
 	/** The year kind */
-	public static final int YEAR= 5;
+	public static final int YEAR= 6;
 
 	/** The yesterday kind */
-	public static final int YESTERDAY= 9;
+	public static final int YESTERDAY= 1;
 
 	/** The node kind */
 	private final int fKind;
@@ -73,6 +73,17 @@ public abstract class RefactoringHistoryNode {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public boolean equals(final Object object) {
+		if (object instanceof RefactoringHistoryNode) {
+			final RefactoringHistoryNode node= (RefactoringHistoryNode) object;
+			return fParent == node.fParent && fKind == node.fKind;
+		}
+		return false;
+	}
+
+	/**
 	 * Returns the node kind.
 	 * 
 	 * @return the node kind
@@ -88,5 +99,12 @@ public abstract class RefactoringHistoryNode {
 	 */
 	public RefactoringHistoryNode getParent() {
 		return fParent;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int hashCode() {
+		return fKind + 31 * (fParent != null ? fParent.hashCode() : 1);
 	}
 }

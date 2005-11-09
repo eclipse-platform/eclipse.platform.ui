@@ -20,7 +20,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 
 	/** The refactoring descriptor proxy */
-	private final RefactoringDescriptorProxy fRefactoringDescriptor;
+	private final RefactoringDescriptorProxy fDescriptorProxy;
 
 	/**
 	 * Creates a new refactoring history entry.
@@ -32,7 +32,18 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 	 */
 	public RefactoringHistoryEntry(final RefactoringHistoryNode parent, final RefactoringDescriptorProxy proxy) {
 		super(parent, RefactoringHistoryNode.ENTRY);
-		fRefactoringDescriptor= proxy;
+		fDescriptorProxy= proxy;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean equals(final Object object) {
+		if (object instanceof RefactoringHistoryEntry) {
+			final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) object;
+			return fDescriptorProxy.equals(entry.fDescriptorProxy);
+		}
+		return false;
 	}
 
 	/**
@@ -41,6 +52,13 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 	 * @return the refactoring descriptor
 	 */
 	public RefactoringDescriptorProxy getDescriptor() {
-		return fRefactoringDescriptor;
+		return fDescriptorProxy;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int hashCode() {
+		return fDescriptorProxy.hashCode();
 	}
 }
