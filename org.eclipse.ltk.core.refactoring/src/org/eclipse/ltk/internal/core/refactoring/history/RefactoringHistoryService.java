@@ -221,15 +221,15 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 								if (hasProjectHistory(project)) {
 									final URI uri= project.getLocationURI();
 									if (uri != null)
-										return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).requestDescriptor(proxy);
+										return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).getRefactoringDescriptor(proxy);
 								} else
-									return new RefactoringHistoryManager(store.getChild(name), null).requestDescriptor(proxy);
+									return new RefactoringHistoryManager(store.getChild(name), null).getRefactoringDescriptor(proxy);
 							}
 						} catch (CoreException exception) {
 							// Do nothing
 						}
 					} else
-						return new RefactoringHistoryManager(store.getChild(NAME_WORKSPACE_PROJECT), null).requestDescriptor(proxy);
+						return new RefactoringHistoryManager(store.getChild(NAME_WORKSPACE_PROJECT), null).getRefactoringDescriptor(proxy);
 				}
 				monitor.worked(6);
 				return descriptor;
@@ -644,9 +644,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				if (hasProjectHistory(project)) {
 					final URI uri= project.getLocationURI();
 					if (uri != null)
-						return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).readHistory(start, end, new SubProgressMonitor(monitor, 12));
+						return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).readRefactoringHistory(start, end, new SubProgressMonitor(monitor, 12));
 				} else
-					return new RefactoringHistoryManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER).getChild(name), name).readHistory(start, end, new SubProgressMonitor(monitor, 12));
+					return new RefactoringHistoryManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER).getChild(name), name).readRefactoringHistory(start, end, new SubProgressMonitor(monitor, 12));
 			} catch (CoreException exception) {
 				RefactoringCorePlugin.log(exception);
 			} finally {

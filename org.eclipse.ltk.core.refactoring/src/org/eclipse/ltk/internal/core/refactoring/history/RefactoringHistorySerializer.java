@@ -106,8 +106,8 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 		final int type= event.getEventType();
 		final RefactoringHistoryManager manager= new RefactoringHistoryManager(store, name);
 		if (type == RefactoringHistoryEvent.ADDED)
-			manager.addDescriptor(descriptor);
+			manager.writeRefactoringDescriptor(descriptor);
 		else if (type == RefactoringHistoryEvent.REMOVED)
-			manager.removeDescriptor(descriptor.getTimeStamp());
+			manager.removeRefactoringDescriptor(descriptor.getTimeStamp());
 	}
 }
