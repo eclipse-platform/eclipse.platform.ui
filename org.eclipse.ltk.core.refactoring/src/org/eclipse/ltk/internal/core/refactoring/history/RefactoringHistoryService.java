@@ -372,6 +372,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/** The maximum size of the undo stack */
 	private static final int MAX_UNDO_STACK= 5;
 
+	/** The index file name */
+	public static final String NAME_INDEX_FILE= "index.dat"; //$NON-NLS-1$
+
 	/** The refactoring history file */
 	public static final String NAME_REFACTORING_HISTORY= "refactorings.history"; //$NON-NLS-1$
 

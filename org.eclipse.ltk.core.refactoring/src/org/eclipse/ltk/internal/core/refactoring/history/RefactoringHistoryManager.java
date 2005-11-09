@@ -78,9 +78,6 @@ public final class RefactoringHistoryManager {
 	/** The index stamp delimiter */
 	private static final char DELIMITER_STAMP= '\t';
 
-	/** The index file name */
-	private static final String NAME_INDEX_FILE= "index.dat"; //$NON-NLS-1$
-
 	/**
 	 * Transforms the specified descriptor into a history object.
 	 * 
@@ -377,7 +374,7 @@ public final class RefactoringHistoryManager {
 			final IFileStore folder= stampToStore(stamp);
 			if (folder != null) {
 				final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_REFACTORING_HISTORY);
-				final IFileStore index= folder.getChild(NAME_INDEX_FILE);
+				final IFileStore index= folder.getChild(RefactoringHistoryService.NAME_INDEX_FILE);
 				if (history != null && index != null) {
 					if (history.fetchInfo().exists()) {
 						InputStream input= null;
@@ -508,7 +505,7 @@ public final class RefactoringHistoryManager {
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 16);
 			final IFileInfo info= store.fetchInfo();
-			if (store.getName().equalsIgnoreCase(NAME_INDEX_FILE) && !info.isDirectory() && info.exists()) {
+			if (store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_INDEX_FILE) && !info.isDirectory() && info.exists()) {
 				InputStream stream= null;
 				try {
 					stream= store.openInputStream(0, null);
@@ -576,7 +573,7 @@ public final class RefactoringHistoryManager {
 		final IFileStore folder= stampToStore(stamp);
 		if (folder != null) {
 			final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_REFACTORING_HISTORY);
-			final IFileStore index= folder.getChild(NAME_INDEX_FILE);
+			final IFileStore index= folder.getChild(RefactoringHistoryService.NAME_INDEX_FILE);
 			if (history != null && index != null && history.fetchInfo().exists() && index.fetchInfo().exists()) {
 				InputStream input= null;
 				try {
