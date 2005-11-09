@@ -194,7 +194,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			Assert.isNotNull(monitor);
 			try {
 				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_resolving_information, 12);
-				final long timestamp= proxy.getTimeStamp();
+				final long stamp= proxy.getTimeStamp();
 				RefactoringDescriptor descriptor= null;
 				final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 4);
 				try {
@@ -202,7 +202,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					for (final Iterator iterator= fImplementation.iterator(); iterator.hasNext();) {
 						descriptor= (RefactoringDescriptor) iterator.next();
 						subMonitor.worked(1);
-						if (descriptor.getTimeStamp() == timestamp)
+						if (descriptor.getTimeStamp() == stamp)
 							break;
 					}
 				} finally {

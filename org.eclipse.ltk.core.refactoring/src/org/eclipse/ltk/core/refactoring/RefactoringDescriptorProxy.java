@@ -119,12 +119,12 @@ public class RefactoringDescriptorProxy {
 	 */
 	public RefactoringDescriptor requestDescriptor(final IProgressMonitor monitor) {
 		RefactoringDescriptor descriptor= null;
-		final RefactoringHistoryService history= RefactoringHistoryService.getInstance();
+		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		try {
-			history.connect();
-			descriptor= history.requestDescriptor(this, monitor);
+			service.connect();
+			descriptor= service.requestDescriptor(this, monitor);
 		} finally {
-			history.disconnect();
+			service.disconnect();
 		}
 		return descriptor;
 	}
@@ -139,6 +139,8 @@ public class RefactoringDescriptorProxy {
 		buffer.append(getClass().getName());
 		buffer.append("[timeStamp="); //$NON-NLS-1$
 		buffer.append(fTimeStamp);
+		buffer.append(",project="); //$NON-NLS-1$
+		buffer.append(fProject);
 		buffer.append(",description="); //$NON-NLS-1$
 		buffer.append(fDescription);
 		buffer.append("]"); //$NON-NLS-1$

@@ -48,6 +48,7 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 				final long stamp= descriptor.getTimeStamp();
 				if (stamp >= 0) {
 					final String name= descriptor.getProject();
+					final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER);
 					if (name != null && !"".equals(name)) { //$NON-NLS-1$
 						final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 						if (project.isAccessible()) {
@@ -68,7 +69,7 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 								}
 							} else {
 								try {
-									processHistoryNotification(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER).getChild(name), event, name);
+									processHistoryNotification(store.getChild(name), event, name);
 								} catch (CoreException exception) {
 									RefactoringCorePlugin.log(exception);
 								}
@@ -76,7 +77,7 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 						}
 					} else {
 						try {
-							processHistoryNotification(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER).getChild(RefactoringHistoryService.NAME_WORKSPACE_PROJECT), event, name);
+							processHistoryNotification(store.getChild(RefactoringHistoryService.NAME_WORKSPACE_PROJECT), event, name);
 						} catch (CoreException exception) {
 							RefactoringCorePlugin.log(exception);
 						}
