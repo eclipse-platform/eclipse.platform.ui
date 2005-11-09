@@ -43,6 +43,11 @@ public class Catalog extends ModelObject {
 		lodgings = (Lodging[]) remove(lodgings, lodging);
 		firePropertyChange("lodgings", null, null);
 	}
+	
+	public void removeAccount(Account anAccount) {
+		accounts = (Account[]) remove(accounts, anAccount);
+		firePropertyChange("accounts", null, null);
+	}	
 
 	public Account[] getAccounts() {
 		return accounts;

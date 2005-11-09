@@ -137,6 +137,39 @@ public class TableScenarios extends ScenariosTestCase {
 		Account account = (Account) accounts[0];
 		// assertEquals("Bill",account.getFirstName());
 	}
+	
+	public void testScenario04() throws BindingException {
+		// Show that when an item is added to a collection the table gets an extra item
+		Account[] accounts = catalog.getAccounts();	
+		
+		TableViewerDescription tableViewerDescription = new TableViewerDescription(
+				tableViewer);
+		tableViewerDescription.addColumn("FirstName", "firstName");
+		tableViewerDescription.addColumn("LastName", "lastName");
+		tableViewerDescription.addColumn("State", "state");
+		getDbc().bind2(tableViewerDescription,
+				new PropertyDescription(catalog, "accounts"), null);
+		
+		// Verify the number of accounts matches the number of items in the table
+		assertEquals(tableViewer.getTable().getItemCount(),accounts.length);
+		// Add a new account and verify that the number of items in the table increases
+		Account newAccount = new Account();
+		newAccount.setFirstName("Finbar");
+		newAccount.setLastName("McGoo");
+		newAccount.setLastName("NC");
+		catalog.addAccount(newAccount);
+		// The number of items should have gone up by one
+		assertEquals(tableViewer.getTable().getItemCount(),accounts.length + 1);
+		// The number of items should still match the number of accounts (i.e. test the model)
+		assertEquals(tableViewer.getTable().getItemCount(),catalog.getAccounts().length);
+		// Remove the account that was just added
+		catalog.removeAccount(newAccount);
+		// The number of items should match the original
+		assertEquals(tableViewer.getTable().getItemCount(),accounts.length);
+		// The number of items should still match the number of accounts (i.e. test the model is reset)
+		assertEquals(tableViewer.getTable().getItemCount(),catalog.getAccounts().length);		
+		
+	}
 
 	public void testScenario03() throws BindingException {
 		// Show that converters work for table columns
