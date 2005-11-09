@@ -790,7 +790,7 @@ If you require direct access to the widgets (e.g., for rendering a combo box), t
 &lt;pre&gt;
 &lt;widget
  id=&quot;com.mycompany.myplugin.MyComboBoxSimple&quot;
- class=&quot;com.mycompany.myplugin.MyComboBox&quot; /&gt;
+ class=&quot;com.mycompany.myplugin.MyComboBox&quot;&gt;
  &lt;location&gt;
   &lt;toolbar path=&quot;myGroup&quot;&gt;
  &lt;/location&gt;
@@ -851,7 +851,7 @@ It is possible to add an existing menu element of any kind (i.e., menu, group, i
 &lt;/p&gt;
 &lt;pre&gt;
 &lt;modification&gt;
- &lt;reference id=&quot;SomeoneElsesMenu&quot; type=&quot;menu&quot;&gt;
+ &lt;reference id=&quot;SomeoneElsesMenu&quot; type=&quot;menu&quot; /&gt;
  &lt;location&gt;
   &lt;menubar path=&quot;org.eclipse.ui.run&quot; /&gt;
  &lt;/location&gt;
