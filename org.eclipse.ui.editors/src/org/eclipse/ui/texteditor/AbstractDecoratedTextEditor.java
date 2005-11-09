@@ -229,6 +229,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	private IRevisionRulerColumn fRevisionRulerColumn;
+	/**
+	 * Whether quick diff information is displayed, either on a change ruler or the line number
+	 * ruler.
+	 * @since 3.2
+	 */
 	private boolean fIsRevisionInformationShown;
 
 	/**
@@ -476,6 +481,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		}
 		if (fChangeRulerColumn instanceof IRevisionRulerColumn)
 			((IRevisionRulerColumn) fChangeRulerColumn).setRevisionInformation(null);
+		
+		fIsRevisionInformationShown= false;
 	}
 	
 	/**
