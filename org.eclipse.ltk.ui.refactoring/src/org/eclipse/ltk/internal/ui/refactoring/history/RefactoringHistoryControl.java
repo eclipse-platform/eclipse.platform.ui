@@ -121,68 +121,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		fResourceBundle= bundle;
 	}
 
-	// public void addDescriptor(final RefactoringDescriptorProxy proxy, final
-	// boolean selected) {
-	// Assert.isNotNull(proxy);
-	// if (fHistoryViewer == null || fHistoryViewer.isDisposed())
-	// return;
-	// final long stamp= proxy.getTimeStamp();
-	// if (stamp > 0 && fDisplayTime) {
-	// TreeItem item= null;
-	// if (!fHistoryViewer.isDisposed()) {
-	// final TreeItem[] items= fHistoryViewer.getItems();
-	// TreeItem lastDay= null;
-	// if (items.length > 0)
-	// lastDay= items[items.length - 1];
-	// final long day= stampToLocalizedDate(stamp);
-	// final Date date= new Date(stamp);
-	// if (lastDay == null || day != stampToLocalizedDate(((Date)
-	// lastDay.getData()).getTime())) {
-	// lastDay= new TreeItem(fHistoryViewer, SWT.NONE);
-	// lastDay.setImage(fContainerImage);
-	// final long today= stampToLocalizedDate(System.currentTimeMillis());
-	// String formatted= DateFormat.getDateInstance().format(date);
-	// String key;
-	// if (day == today)
-	// key= TODAY_FORMAT;
-	// else if (day == today - 1)
-	// key= YESTERDAY_FORMAT;
-	// else
-	// key= DAY_FORMAT;
-	// final String pattern= fBundle.getString(key);
-	// if (pattern != null)
-	// formatted= MessageFormat.format(pattern, new String[] { formatted});
-	// lastDay.setText(formatted);
-	// lastDay.setData(date);
-	// fHistoryModel.put(date, new ArrayList(8));
-	// }
-	// item= new TreeItem(lastDay, SWT.NONE);
-	// item.setImage(fElementImage);
-	// item.setText(MessageFormat.format(fBundle.getString(REFACTORING_FORMAT),
-	// new String[] { DateFormat.getTimeInstance().format(date),
-	// proxy.getDescription()}));
-	// item.setData(proxy);
-	// final List list= (List) fHistoryModel.get(lastDay.getData());
-	// list.add(proxy);
-	// if (selected) {
-	// lastDay.setExpanded(true);
-	// fHistoryViewer.setSelection(new TreeItem[] { item});
-	// handleSelection(item, proxy, true);
-	// }
-	// }
-	// } else {
-	// if (fCollectionItem == null) {
-	// fCollectionItem= new TreeItem(fHistoryViewer, SWT.NONE);
-	// fCollectionItem.setImage(fCaptionImage);
-	// fCollectionItem.setText(fBundle.getString(REFACTORING_COLLECTION));
-	// }
-	// final TreeItem item= new TreeItem(fCollectionItem, SWT.NONE);
-	// item.setImage(fItemImage);
-	// item.setText(proxy.getDescription());
-	// item.setData(proxy);
-	// }
-	// }
-
 	/**
 	 * Creates the button bar at the right of the component.
 	 * 
@@ -233,6 +171,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		handleCaptionChanged();
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
+		fHistoryViewer.setAutoExpandLevel(2);
 		fHistoryViewer.setContentProvider(fContentProvider);
 		fHistoryViewer.setLabelProvider(fLabelProvider);
 		fHistoryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
