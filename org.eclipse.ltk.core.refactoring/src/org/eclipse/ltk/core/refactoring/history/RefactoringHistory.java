@@ -17,9 +17,9 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
  * information.
  * <p>
  * Refactoring histories are exposed by the refactoring history service as
- * result of queries and contain only lightweight handle objects. The
+ * result of queries and contain only lightweight proxy objects. The
  * refactoring history service may hand out any number of refactoring histories
- * and associated refactoring descriptor handles for any given query.
+ * and associated refactoring descriptor proxies for any given query.
  * </p>
  * <p>
  * Note: this class is not intended to be extended outside the refactoring framework.
