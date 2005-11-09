@@ -66,6 +66,9 @@ import org.eclipse.jface.text.source.SourceViewer;
  * A projection source viewer uses a <code>ProjectionDocumentManager</code>
  * for the management of the visible document.</p>
  * <p>
+ * NOTE: The <code>ProjectionViewer</code> only supports projections that cover full lines.
+ * </p>
+ * <p>
  * This class should not be subclassed.</p>
  *
  * @since 3.0
