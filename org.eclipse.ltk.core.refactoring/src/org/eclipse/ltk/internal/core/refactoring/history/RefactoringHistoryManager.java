@@ -40,9 +40,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -253,6 +255,24 @@ public final class RefactoringHistoryManager {
 				// Do nothing
 			}
 		}
+	}
+
+	/**
+	 * Returns a path representing the history part for the specified time
+	 * stamp.
+	 * 
+	 * @param stamp
+	 *            the time stamp
+	 * @return A path representing the folder of the history part
+	 */
+	public static IPath stampToPath(final long stamp) {
+		Assert.isTrue(stamp >= 0);
+		final Calendar calendar= Calendar.getInstance(TimeZone.getTimeZone("GMT+00:00")); //$NON-NLS-1$
+		calendar.setTimeInMillis(stamp);
+		IPath path= new Path(String.valueOf(calendar.get(Calendar.YEAR)));
+		path= path.append(String.valueOf(calendar.get(Calendar.MONTH) + 1));
+		path= path.append(String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));
+		return path;
 	}
 
 	/**
@@ -672,18 +692,11 @@ public final class RefactoringHistoryManager {
 	 * 
 	 * @param stamp
 	 *            the time stamp
-	 * @return A file store which may not exist
+	 * @return A file store representing the folder of the history part
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
 	private IFileStore stampToStore(final long stamp) throws CoreException {
-		Assert.isTrue(stamp >= 0);
-		final Calendar calendar= Calendar.getInstance(TimeZone.getTimeZone("GMT+00:00")); //$NON-NLS-1$
-		calendar.setTimeInMillis(stamp);
-		IFileStore store= fHistoryStore;
-		store= store.getChild(String.valueOf(calendar.get(Calendar.YEAR)));
-		store= store.getChild(String.valueOf(calendar.get(Calendar.MONTH) + 1));
-		store= store.getChild(String.valueOf(calendar.get(Calendar.WEEK_OF_YEAR)));
-		return store;
+		return fHistoryStore.getChild(stampToPath(stamp));
 	}
 }
