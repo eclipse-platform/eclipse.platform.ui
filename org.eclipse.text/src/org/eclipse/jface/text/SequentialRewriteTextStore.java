@@ -13,7 +13,6 @@ package org.eclipse.jface.text;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 
 /**
@@ -44,7 +43,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	}
 
 	/** The list of buffered replacements. */
-	private List fReplaceList;
+	private LinkedList fReplaceList;
 	/** The source text store */
 	private ITextStore fSource;
 	/** A flag to enforce sequential access. */
@@ -82,8 +81,8 @@ public class SequentialRewriteTextStore implements ITextStore {
 			fReplaceList.add(new Replace(offset, offset, length, text));
 
 		} else {
-			Replace firstReplace= (Replace) fReplaceList.get(0);
-			Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
+			Replace firstReplace= (Replace) fReplaceList.getFirst();
+			Replace lastReplace= (Replace) fReplaceList.getLast();
 
 			// backward
 			if (offset + length <= firstReplace.newOffset) {
@@ -189,8 +188,8 @@ public class SequentialRewriteTextStore implements ITextStore {
 		if (fReplaceList.size() == 0)
 			return fSource.get(offset);
 
-		Replace firstReplace= (Replace) fReplaceList.get(0);
-		Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
+		Replace firstReplace= (Replace) fReplaceList.getFirst();
+		Replace lastReplace= (Replace) fReplaceList.getLast();
 
 		// before
 		if (offset < firstReplace.newOffset) {
