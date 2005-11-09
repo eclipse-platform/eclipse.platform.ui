@@ -154,7 +154,6 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 
 	private MarkerList lastMarkers = new MarkerList();
 
-	private CategorySorter categorySorter;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -167,13 +166,13 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 
 	/**
 	 * Return the category sorter for the receiver.
+	 * This should only be called in hierarchal mode 
+	 * or there will be a ClassCastException.
 	 * 
 	 * @return CategorySorter
 	 */
 	public CategorySorter getCategorySorter() {
-		if (categorySorter == null)
-			categorySorter = new CategorySorter(view.getTableSorter());
-		return categorySorter;
+		 return (CategorySorter) view.getViewer().getSorter();
 	}
 
 	/*
@@ -242,8 +241,7 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 			return;
 		}
 
-		ViewerSorter sorter = view.isHierarchalMode() ? getCategorySorter()
-				:  view.getViewer().getSorter();
+		ViewerSorter sorter = view.getViewer().getSorter();
 
 		if (markerLimit == -1) {
 			sorter.sort(view.getViewer(), lastMarkers.toArray());
@@ -258,6 +256,7 @@ public class MarkerAdapter implements IDeferredWorkbenchAdapter {
 					mon);
 			if (monitor.isCanceled())
 				return;
+			sorter.sort(view.getViewer(), lastMarkers.toArray());
 		}
 
 		if (lastMarkers.getSize() == 0) {
