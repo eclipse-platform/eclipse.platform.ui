@@ -343,6 +343,17 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static final String SHOW_RANGE_INDICATOR= "show_range_indicator"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether the user is asked before switching the quick diff
+	 * reference when showing revision information..
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * </p>
+	 * 
+	 * @since 3.2
+	 */
+	public static final String REVISION_ASK_BEFORE_QUICKDIFF_SWITCH= "quickdiff.nowarn.before.switch"; //$NON-NLS-1$
+
+	/**
   	* Initializes the given preference store with the default values.
 	 *
   	* @param store the preference store to be initialized
@@ -369,7 +380,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		if (!store.getBoolean(USE_QUICK_DIFF_PREFERENCE_PAGE)) {
 			store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, true);
 			store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, false);
-			store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, "org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider"); //$NON-NLS-1$
+			store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, "org.eclipse.quickdiff.providers.CVSReferenceProvider"); //$NON-NLS-1$
 		}
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
@@ -401,6 +412,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENGINE, ""); //$NON-NLS-1$
 		
 		store.setDefault(SHOW_RANGE_INDICATOR, true);
+		store.setDefault(REVISION_ASK_BEFORE_QUICKDIFF_SWITCH, ""); //$NON-NLS-1$
 
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}

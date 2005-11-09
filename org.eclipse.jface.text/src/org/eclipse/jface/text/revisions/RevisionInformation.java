@@ -11,6 +11,7 @@
 package org.eclipse.jface.text.revisions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.text.Assert;
@@ -24,7 +25,9 @@ import org.eclipse.jface.text.Assert;
  * @since 3.2
  */
 public final class RevisionInformation {
-	final List fRevisions= new ArrayList();
+	private final List fRevisions= new ArrayList();
+	private final List fRORevisions= Collections.unmodifiableList(fRevisions);
+	
 	/**
 	 * Creates a new annotate information object.
 	 */
@@ -39,6 +42,15 @@ public final class RevisionInformation {
 	public void addRevision(Revision revision) {
 		Assert.isLegal(revision != null);
 		fRevisions.add(revision);
+	}
+
+	/**
+	 * Returns the contained revisions.
+	 * 
+	 * @return an unmodifiable view of the contained revisions (element type: {@link Revision})
+	 */
+	public List getRevisions() {
+		return fRORevisions;
 	}
 	
 }

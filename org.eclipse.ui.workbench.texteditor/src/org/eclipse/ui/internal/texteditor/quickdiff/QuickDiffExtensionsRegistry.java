@@ -40,7 +40,7 @@ public class QuickDiffExtensionsRegistry {
 	}
 
 	/**
-	 * Returns the first descriptor with the <code>default</code> attribute set to <code>true</code>.
+	 * Returns the default provider, which is the last saved version.
 	 *
 	 * @return the descriptor of the default reference provider.
 	 */
@@ -83,9 +83,15 @@ public class QuickDiffExtensionsRegistry {
 		IConfigurationElement[] elements= registry.getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, TextEditorPlugin.REFERENCE_PROVIDER_EXTENSION_POINT);
 		for (int i= 0; i < elements.length; i++) {
 			ReferenceProviderDescriptor desc= new ReferenceProviderDescriptor(elements[i]);
-			if (fDefaultDescriptor == null && desc.getDefault())
+			if (desc.getId().equals("org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider")) //$NON-NLS-1$
 				fDefaultDescriptor= desc;
 			list.add(desc);
+		}
+		
+		// make sure the default is the first one in the list
+		if (fDefaultDescriptor != null) {
+			list.remove(fDefaultDescriptor);
+			list.add(0, fDefaultDescriptor);
 		}
 
 		fDescriptors= Collections.unmodifiableList(list);

@@ -275,7 +275,6 @@
    <extension
          point="org.eclipse.ui.workbench.texteditor.quickDiffReferenceProvider">
       <referenceprovider
-            default="true"
             label="%lastSaveReferenceProvider.label"
             class="org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider"
             id="org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider">
@@ -724,7 +723,7 @@
             verticalRulerPreferenceValue="false"
             includeOnPreferencePage="false"
             highlightPreferenceKey="revisionAnnotationIndicationHighlighting"
-            highlightPreferenceValue="true">
+            highlightPreferenceValue="false">
       </specification>
       
       <!-- linked annotations -->

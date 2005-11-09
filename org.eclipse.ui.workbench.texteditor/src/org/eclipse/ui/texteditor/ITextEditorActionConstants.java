@@ -555,4 +555,11 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.1
 	 */
 	static final String HIPPIE_COMPLETION= "HIPPIE_COMPLETION"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action for hiding the revision info
+	 * Value: <code>"Revision.HideInfo"</code>
+	 * @since 3.2
+	 */
+	static final String REVISION_HIDE_INFO= "Revision.HideInfo"; //$NON-NLS-1$
 }

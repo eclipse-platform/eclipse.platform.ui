@@ -155,7 +155,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 			if (info == null)
 				return;
 			List revisions= new ArrayList();
-			for (Iterator it= info.fRevisions.iterator(); it.hasNext();) {
+			for (Iterator it= info.getRevisions().iterator(); it.hasNext();) {
 				Revision revision= (Revision) it.next();
 				revisions.add(new Long(computeAge(revision)));
 			}
@@ -390,19 +390,6 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 
 		fParentRuler= parentRuler;
 		fCachedTextViewer= parentRuler.getTextViewer();
-		if (fCachedTextViewer instanceof ISourceViewer) {
-			ISourceViewer viewer= (ISourceViewer) fCachedTextViewer;
-			IAnnotationModel annotationModel= viewer.getAnnotationModel();
-			if (annotationModel instanceof IAnnotationModelExtension) {
-				IAnnotationModelExtension ext= (IAnnotationModelExtension) annotationModel;
-				IAnnotationModel diffModel= ext.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
-				if (diffModel instanceof ILineDiffer) {
-					fLineDiffer= (ILineDiffer) diffModel;
-					diffModel.addAnnotationModelListener(fAnnotationListener);
-				}
-			}
-		}
-
 		fCachedTextWidget= fCachedTextViewer.getTextWidget();
 
 		fCanvas= new Canvas(parentControl, SWT.NO_BACKGROUND);
@@ -660,9 +647,9 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		if (fChangeRegions == null && fRevisionInfo != null) {
 			ArrayList regions= new ArrayList();
 			// flatten
-			for (Iterator revisions= fRevisionInfo.fRevisions.iterator(); revisions.hasNext();) {
+			for (Iterator revisions= fRevisionInfo.getRevisions().iterator(); revisions.hasNext();) {
 				Revision revision= (Revision) revisions.next();
-				regions.addAll(revision.fChangeRegions);
+				regions.addAll(revision.getRegions());
 			}
 			
 			// sort
@@ -853,7 +840,32 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 	 * @see IVerticalRulerColumn#setModel(IAnnotationModel)
 	 */
 	public void setModel(IAnnotationModel model) {
-		fAnnotationModel= model; // this is the visual model
+		IAnnotationModel diffModel;
+		if (model instanceof IAnnotationModelExtension)
+			diffModel= ((IAnnotationModelExtension)model).getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
+		else
+			diffModel= model;
+		
+		setDiffer(diffModel);
+		setAnnotationModel(model);
+	}
+
+	private void setAnnotationModel(IAnnotationModel model) {
+		if (fAnnotationModel != model)
+			fAnnotationModel= model;
+	}
+
+	private void setDiffer(IAnnotationModel differ) {
+		if (differ instanceof ILineDiffer) {
+			if (fLineDiffer != differ) {
+				if (fLineDiffer != null)
+					((IAnnotationModel) fLineDiffer).removeAnnotationModelListener(fAnnotationListener);
+				fLineDiffer= (ILineDiffer) differ;
+				if (fLineDiffer != null)
+					((IAnnotationModel) fLineDiffer).addAnnotationModelListener(fAnnotationListener);
+				redraw();
+			}
+		}
 	}
 
 	/*
@@ -936,7 +948,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		Map added= null;
 		if (revision != null && fIsOverviewShowing) {
 			added= new HashMap();
-			for (Iterator it= revision.fChangeRegions.iterator(); it.hasNext();) {
+			for (Iterator it= revision.getRegions().iterator(); it.hasNext();) {
 				ChangeRegion region= (ChangeRegion) it.next();
 				for (Iterator regions= region.getAdjustedRanges().iterator(); regions.hasNext();) {
 					ILineRange range= (ILineRange) regions.next();
@@ -1049,7 +1061,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 		ILineRange nextWidgetRange= null;
 		ILineRange last= null;
 		if (up) {
-			outer: for (Iterator it= fFocusRevision.fChangeRegions.iterator(); it.hasNext();) {
+			outer: for (Iterator it= fFocusRevision.getRegions().iterator(); it.hasNext();) {
 				ChangeRegion region= (ChangeRegion) it.next();
 				for (Iterator regions= region.getAdjustedRanges().iterator(); regions.hasNext();) {
 					ILineRange range= (ILineRange) regions.next();
@@ -1064,7 +1076,7 @@ public final class RevisionRulerColumn implements IRevisionRulerColumn {
 				}
 			}
 		} else {
-			outer: for (ListIterator it= fFocusRevision.fChangeRegions.listIterator(fFocusRevision.fChangeRegions.size()); it.hasPrevious();) {
+			outer: for (ListIterator it= fFocusRevision.getRegions().listIterator(fFocusRevision.getRegions().size()); it.hasPrevious();) {
 				ChangeRegion region= (ChangeRegion) it.previous();
 				for (ListIterator regions= region.getAdjustedRanges().listIterator(region.getAdjustedRanges().size()); regions.hasPrevious();) {
 					ILineRange range= (ILineRange) regions.previous();

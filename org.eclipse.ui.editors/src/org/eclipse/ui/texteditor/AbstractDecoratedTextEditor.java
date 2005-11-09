@@ -37,6 +37,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
+import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.revisions.RevisionRulerColumn;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
@@ -76,6 +77,7 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -83,6 +85,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IStorageEditorInput;
@@ -144,6 +147,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.1
 	 */
 	private final static String DISABLE_OVERWRITE_MODE= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE;
+	/**
+	 * Preference key to get whether the overwrite mode is disabled.
+	 * @since 3.2
+	 */
+	private final static String REVISION_ASK_BEFORE_QUICKDIFF_SWITCH= AbstractDecoratedTextEditorPreferenceConstants.REVISION_ASK_BEFORE_QUICKDIFF_SWITCH;
 
 	/**
 	 * Adapter class for <code>IGotoMarker</code>.
@@ -221,6 +229,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	private IRevisionRulerColumn fRevisionRulerColumn;
+	private boolean fIsRevisionInformationShown;
 
 	/**
 	 * Creates a new text editor.
@@ -427,14 +436,130 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		else
 			fIsChangeInformationShown= false;
 	}
+	
+	/**
+	 * Shows revision information in this editor.
+	 * <p>
+	 * XXX This API is provisional and may change any time during the development of eclipse 3.2.
+	 * </p>
+	 * 
+	 * @param info the revision information to display
+	 * @param quickDiffProviderId the quick diff provider that matches the source of the revision
+	 *        information
+	 * @since 3.2
+	 */
+	public void showRevisionInformation(RevisionInformation info, String quickDiffProviderId) {
+		IRevisionRulerColumn revisionColumn= getRevisionColumn();
+		if (revisionColumn == null)
+			return;
+		
+		if (!ensureQuickDiffProvider(quickDiffProviderId))
+			return;
+		
+		revisionColumn.setRevisionInformation(info);
+		fIsRevisionInformationShown= true;
+	}
+	
+	/**
+	 * Hides revision information in this editor.
+	 * <p>
+	 * XXX This API is provisional and may change any time during the development of eclipse 3.2.
+	 * </p>
+	 * 
+	 * @since 3.2
+	 */
+	private void hideRevisionInformation() {
+		if (fRevisionRulerColumn != null) {
+			fRevisionRulerColumn.setRevisionInformation(null);
+			fRevisionRulerColumn.setModel(null);
+			((CompositeRuler) getVerticalRuler()).removeDecorator(2);
+		}
+		if (fChangeRulerColumn instanceof IRevisionRulerColumn)
+			((IRevisionRulerColumn) fChangeRulerColumn).setRevisionInformation(null);
+	}
+	
+	/**
+	 * Returns the revision ruler column of this editor, creating one if needed.
+	 * 
+	 * @return the revision ruler column of this editor
+	 */
+	private IRevisionRulerColumn getRevisionColumn() {
+		if (fChangeRulerColumn instanceof IRevisionRulerColumn)
+			return (IRevisionRulerColumn) fChangeRulerColumn;
+		
+		if (fRevisionRulerColumn == null) {
+			fRevisionRulerColumn= createRevisionRulerColumn();
+			fRevisionRulerColumn.setModel(getSourceViewer().getAnnotationModel());
+			((CompositeRuler) getVerticalRuler()).addDecorator(2, fRevisionRulerColumn);
+		}
+		return fRevisionRulerColumn;
+	}
+
+	private boolean ensureQuickDiffProvider(String diffProviderId) {
+		ISourceViewer viewer= getSourceViewer();
+		if (viewer == null)
+			return false;
+
+		if (!fIsChangeInformationShown) {
+			ensureChangeInfoCanBeDisplayed();
+			installChangeRulerModel();
+			return true;
+		}
+		
+		IAnnotationModel oldDiffer= getDiffer();
+		if (oldDiffer == null)
+			return false; // quick diff is enabled, but no differ? not working for whatever reason
+
+		QuickDiff util= new QuickDiff();
+		if (util.getConfiguredQuickDiffProvider(oldDiffer).equals(diffProviderId)) {
+			if (oldDiffer instanceof ILineDifferExtension)
+				((ILineDifferExtension) oldDiffer).resume();
+			return true;
+		}
+		
+		// quick diff is showing with the wrong provider - ask the user whether he wants to switch
+		IPreferenceStore store= EditorsUI.getPreferenceStore();
+		if (!store.getString(REVISION_ASK_BEFORE_QUICKDIFF_SWITCH).equals(MessageDialogWithToggle.ALWAYS)) {
+			MessageDialogWithToggle toggleDialog= MessageDialogWithToggle.openOkCancelConfirm(
+					viewer.getTextWidget().getShell(),
+					TextEditorMessages.AbstractDecoratedTextEditor_revision_quickdiff_switch_title,
+					TextEditorMessages.AbstractDecoratedTextEditor_revision_quickdiff_switch_message, 
+					TextEditorMessages.AbstractDecoratedTextEditor_revision_quickdiff_switch_rememberquestion,
+					true,
+					store,
+					REVISION_ASK_BEFORE_QUICKDIFF_SWITCH);
+			if (toggleDialog.getReturnCode() != Window.OK)
+				return false;
+		}
+		
+		IAnnotationModel m= viewer.getAnnotationModel();
+		if (!(m instanceof IAnnotationModelExtension))
+			return false;
+		IAnnotationModelExtension model= (IAnnotationModelExtension) m;
+		model.removeAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
+		
+		IAnnotationModel newDiffer= util.createQuickDiffAnnotationModel(this, diffProviderId);
+
+		model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, newDiffer);
+		
+		IChangeRulerColumn changeColumn= getChangeColumn();
+		if (changeColumn != null)
+			changeColumn.setModel(m);
+		if (fRevisionRulerColumn != null)
+			fRevisionRulerColumn.setModel(m);
+		
+		return true;
+	}
 
 	/**
 	 * Installs the differ annotation model with the current quick diff display.
 	 */
 	private void installChangeRulerModel() {
 		IChangeRulerColumn column= getChangeColumn();
-		if (column != null)
-			column.setModel(getOrCreateDiffer());
+		if (column != null) {
+			getOrCreateDiffer();
+			column.setModel(getSourceViewer().getAnnotationModel());
+		}
 		IOverviewRuler ruler= getOverviewRuler();
 		if (ruler != null) {
 			ruler.addAnnotationType("org.eclipse.ui.workbench.texteditor.quickdiffChange"); //$NON-NLS-1$
@@ -808,7 +933,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @return a new change ruler column
 	 */
 	protected IChangeRulerColumn createChangeRulerColumn() {
-		IChangeRulerColumn column= new ChangeRulerColumn();
+		IChangeRulerColumn column= new ChangeRulerColumn(getSharedColors());
 		column.setHover(createChangeHover());
 		fChangeRulerColumn= column;
 		initializeChangeRulerColumn(fChangeRulerColumn);
@@ -1248,6 +1373,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 										       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE)});
 		action2.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICKDIFF_REVERT);
 		setAction(ITextEditorActionConstants.QUICKDIFF_REVERT, action2);
+		
+		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.HideRevisionInformationAction.") { //$NON-NLS-1$
+			public void run() {
+				hideRevisionInformation();
+			}
+		};
+		setAction(ITextEditorActionConstants.REVISION_HIDE_INFO, action);
 
 		final Shell shell;
 		if (getSourceViewer() != null)
@@ -1292,30 +1424,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				}
 			};
 		}
-		
-		if (RevisionRulerColumn.class.equals(adapter)) {
-			return getRevisionColumn();
-		}
 	
 		return super.getAdapter(adapter);
 	
-	}
-
-	/**
-	 * Returns the revision ruler column of this editor, creating one if needed.
-	 * <p>
-	 * XXX This API is provisional and may change any time during the development of eclipse 3.2.
-	 * </p>
-	 * 
-	 * @return the revision ruler column of this editor
-	 */
-	public IRevisionRulerColumn getRevisionColumn() {
-		if (fRevisionRulerColumn == null) {
-			fRevisionRulerColumn= createRevisionRulerColumn();
-			fRevisionRulerColumn.setModel(getVerticalRuler().getModel());
-			((CompositeRuler) getVerticalRuler()).addDecorator(2, fRevisionRulerColumn);
-		}
-		return fRevisionRulerColumn;
 	}
 
 	/*
@@ -1427,7 +1538,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertDeletion);
 			}
 		}
-
+		
+		// revision info
+		if (fIsRevisionInformationShown) {
+			IAction hideRevisionInfoAction= getAction(ITextEditorActionConstants.REVISION_HIDE_INFO);
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, hideRevisionInfoAction);
+		}
 
 		IAction lineNumberAction= getAction(ITextEditorActionConstants.LINENUMBERS_TOGGLE);
 		lineNumberAction.setChecked(fLineNumberRulerColumn != null);

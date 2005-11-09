@@ -11,6 +11,7 @@
 package org.eclipse.jface.text.revisions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +34,8 @@ import org.eclipse.jface.internal.text.revisions.ChangeRegion;
  * @since 3.2
  */
 public abstract class Revision {
-	final List fChangeRegions= new ArrayList();
+	private final List fChangeRegions= new ArrayList();
+	private final List fROChangeRegions= Collections.unmodifiableList(fChangeRegions);
 	
 	/**
 	 * Creates a new revision.
@@ -48,6 +50,15 @@ public abstract class Revision {
 	 */
 	public void addRange(ILineRange range) {
 		fChangeRegions.add(new ChangeRegion(this, range));
+	}
+
+	/**
+	 * Returns the contained change regions.
+	 * 
+	 * @return an unmodifiable view of the contained change regions (element type: {@link Object})
+	 */
+	public List getRegions() {
+		return fROChangeRegions;
 	}
 
 	/**

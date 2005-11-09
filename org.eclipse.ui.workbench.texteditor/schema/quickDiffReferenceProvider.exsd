@@ -82,8 +82,11 @@
          <attribute name="default" type="boolean">
             <annotation>
                <documentation>
-                  If this flag is set to &lt;code&gt;true&lt;/code&gt;, this reference provider will be installed per default the first time quick diff is enabled for a document. If multiple providers are installed with the flag set are encountered, the first one is taken.
+                  Deprecated - do not use.
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

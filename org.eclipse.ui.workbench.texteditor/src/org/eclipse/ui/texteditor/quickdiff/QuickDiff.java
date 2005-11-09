@@ -13,6 +13,7 @@ package org.eclipse.ui.texteditor.quickdiff;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -38,12 +39,12 @@ public class QuickDiff {
 	}
 
 	/**
-	 * Returns the first descriptor with the <code>default</code> attribute set to <code>true</code>.
+	 * Returns the descriptor of the "last saved version" reference provider.
 	 * <p>
 	 * Clients should not cache this value because it can change when plug-ins get dynamically added or removed.
 	 * </p>
 	 *
-	 * @return the descriptor of the default reference provider or <code>null</code> if none
+	 * @return the descriptor of "last saved version" reference provider or <code>null</code> if none
 	 */
 	public ReferenceProviderDescriptor getDefaultProvider() {
 		QuickDiffExtensionsRegistry registry= TextEditorPlugin.getDefault().getQuickDiffExtensionRegistry();
@@ -88,38 +89,34 @@ public class QuickDiff {
 		Assert.isNotNull(id);
 
 		List descs= getReferenceProviderDescriptors();
-		IQuickDiffReferenceProvider provider= null;
 		// try to fetch preferred provider; load if needed
 		for (Iterator iter= descs.iterator(); iter.hasNext();) {
 			ReferenceProviderDescriptor desc= (ReferenceProviderDescriptor) iter.next();
 			if (desc.getId().equals(id)) {
-				provider= desc.createProvider();
+				IQuickDiffReferenceProvider provider= desc.createProvider();
 				if (provider != null) {
 					provider.setActiveEditor(editor);
 					if (provider.isEnabled())
-						break;
+						return provider;
 					provider.dispose();
 					provider= null;
 				}
 			}
 		}
-
-		// if not found, get default provider as specified by the extension point
-		if (provider == null) {
-			ReferenceProviderDescriptor defaultDescriptor= getDefaultProvider();
-			if (defaultDescriptor != null) {
-				provider= defaultDescriptor.createProvider();
-				if (provider != null) {
-					provider.setActiveEditor(editor);
-					if (!provider.isEnabled()) {
-						provider.dispose();
-						provider= null;
-					}
-				}
+		
+		for (ListIterator iter= descs.listIterator(descs.size()); iter.hasPrevious();) {
+			ReferenceProviderDescriptor desc= (ReferenceProviderDescriptor) iter.previous();
+			IQuickDiffReferenceProvider provider= desc.createProvider();
+			if (provider != null) {
+				provider.setActiveEditor(editor);
+				if (provider.isEnabled())
+					return provider;
+				provider.dispose();
+				provider= null;
 			}
 		}
 
-		return provider;
+		return null;
 	}
 
 	/**
@@ -138,6 +135,25 @@ public class QuickDiff {
 			return differ;
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the identifier of the quick diff provider installed with the given diff annotation
+	 * model, or the empty string if it is not a diff annotation model or has no configured diff
+	 * provider.
+	 * 
+	 * @param differ a diff annotation model
+	 * @return the reference provider id, or the empty string for none
+	 * @since 3.2
+	 */
+	public Object getConfiguredQuickDiffProvider(IAnnotationModel differ) {
+		if (differ instanceof DocumentLineDiffer) {
+			DocumentLineDiffer lineDiffer= (DocumentLineDiffer) differ;
+			IQuickDiffReferenceProvider provider= lineDiffer.getReferenceProvider();
+			if (provider != null)
+				return provider.getId();
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 }

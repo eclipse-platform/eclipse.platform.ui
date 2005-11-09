@@ -117,6 +117,7 @@ public class ReferenceProviderDescriptor {
 	 * Reads (if needed) and returns the default attribute value of this extension.
 	 *
 	 * @return the default attribute value for this extension.
+	 * @deprecated as of 3.2, the default flag should not be used any longer
 	 */
 	public boolean getDefault() {
 		if (fDefault == null) {

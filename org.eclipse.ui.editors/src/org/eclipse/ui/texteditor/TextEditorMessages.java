@@ -52,4 +52,8 @@ final class TextEditorMessages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, TextEditorMessages.class);
 	}
+
+	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_title;
+	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_message;
+	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_rememberquestion;
 }

@@ -355,8 +355,8 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 
 		if (hover instanceof IAnnotationHoverExtension) {
 			IAnnotationHoverExtension extension= (IAnnotationHoverExtension) hover;
-			setCustomInformationControlCreator(extension.getHoverControlCreator());
 			ILineRange range= extension.getHoverLineRange(fSourceViewer, line);
+			setCustomInformationControlCreator(extension.getHoverControlCreator());
 			range= adaptLineRange(range, line);
 			if (range != null)
 				setInformation(extension.getHoverInfo(fSourceViewer, range, computeNumberOfVisibleLines()), computeArea(range));
