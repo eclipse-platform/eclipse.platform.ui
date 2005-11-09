@@ -282,7 +282,7 @@ public abstract class DialogMarkerFilter extends Dialog {
 		 */
 		public MarkerTypeNode(MarkerType markerType) {
 			type = markerType;
-			nodeToTypeMapping.put(markerType, this);
+			nodeToTypeMapping.put(markerType.getId(), this);
 		}
 
 		/**
@@ -1155,7 +1155,7 @@ public abstract class DialogMarkerFilter extends Dialog {
 			Object obj = markerTypes.get(i);
 			if (obj instanceof MarkerType) {
 
-				Object mapping = nodeToTypeMapping.get(obj);
+				Object mapping = nodeToTypeMapping.get(((MarkerType) obj).getId());
 				if (mapping != null){
 					typesViewer.setChecked(mapping, true);
 					setParentCheckState(mapping, true);

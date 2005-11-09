@@ -430,7 +430,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 					selectedTypes.add(type);
 			}
 		}
-		filter.setSelectedTypes(selectedTypes);
+		
+		if(selectedTypes.size() >0) //Only set the types if there are any specified
+			filter.setSelectedTypes(selectedTypes);
 
 		return filter;
 
