@@ -98,6 +98,9 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
                <documentation>
                   the fully qualified class name of the class that implements &lt;code&gt;org.eclipse.ui.intro.config.IStandbyContentPart&lt;/code&gt; to handle displaying alternative standby content, such as a cheat sheet.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
