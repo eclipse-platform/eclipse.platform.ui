@@ -498,7 +498,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 	 */
 	private void verifyProjectInWorkspace(final boolean inWorkspace, final IProject project, String[] fileList){
 		try {
-			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, new NullProgressMonitor());
+			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, new NullProgressMonitor());
 		} catch (OperationCanceledException e) {
 			fail(e.getLocalizedMessage());
 		} catch (InterruptedException e) {
