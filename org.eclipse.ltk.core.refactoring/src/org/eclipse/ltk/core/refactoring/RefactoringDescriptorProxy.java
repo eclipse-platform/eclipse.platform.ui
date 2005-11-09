@@ -77,12 +77,23 @@ public class RefactoringDescriptorProxy {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public final boolean equals(final Object object) {
+		if (object instanceof RefactoringDescriptorProxy) {
+			final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) object;
+			return fTimeStamp == proxy.fTimeStamp && fDescription.equals(proxy.fDescription) && fProject != null ? fProject.equals(proxy.fProject) : fProject == proxy.fProject;
+		}
+		return false;
+	}
+
+	/**
 	 * Returns a human-readable description of the particular refactoring
 	 * instance.
 	 * 
 	 * @return a description of the refactoring
 	 */
-	public String getDescription() {
+	public final String getDescription() {
 		return fDescription;
 	}
 
@@ -91,7 +102,7 @@ public class RefactoringDescriptorProxy {
 	 * 
 	 * @return the non-empty name, or <code>null</code>
 	 */
-	public String getProject() {
+	public final String getProject() {
 		return fProject;
 	}
 
@@ -101,8 +112,15 @@ public class RefactoringDescriptorProxy {
 	 * @return the time stamp, or <code>-1</code> if no time information is
 	 *         available
 	 */
-	public long getTimeStamp() {
+	public final long getTimeStamp() {
 		return fTimeStamp;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final int hashCode() {
+		return (int) (fDescription.hashCode() + 17 * ((fProject != null) ? fProject.hashCode() : 1) + fTimeStamp);
 	}
 
 	/**
@@ -132,7 +150,7 @@ public class RefactoringDescriptorProxy {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String toString() {
+	public final String toString() {
 
 		final StringBuffer buffer= new StringBuffer(128);
 
