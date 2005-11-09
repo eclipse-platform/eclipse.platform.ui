@@ -164,26 +164,6 @@ public class LabelRetargetAction extends RetargetAction {
     }
 
     /**
-     * Extracts the accelerator text from the given text.
-     * Returns <code>null</code> if there is no accelerator text,
-     * and the empty string if there is no text after the accelerator delimeter (tab or '@').
-     *
-     * @param text the text for the action
-     * @return the accelerator text including '@' or '\t', or <code>null</code>
-     */
-    private String extractAcceleratorText(String text) {
-        if (text == null)
-            return null;
-
-        int index = text.lastIndexOf('\t');
-        if (index == -1)
-            index = text.lastIndexOf('@');
-        if (index >= 0)
-            return text.substring(index);
-        return null;
-    }
-
-    /**
      * Updates the images for this action based on the given handler.
      */
     private void updateImages(IAction handler) {

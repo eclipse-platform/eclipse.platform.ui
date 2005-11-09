@@ -379,10 +379,14 @@ public abstract class Action implements IAction {
      * Returns <code>null</code> if there is no accelerator text,
      * and the empty string if there is no text after the accelerator delimeter (tab or '@').
      *
-     * @param text the text for the action
+     * @param text the text for the action; may be <code>null</code>.
      * @return the accelerator text, or <code>null</code>
+     * @since 3.2
      */
-    private static String extractAcceleratorText(String text) {
+    public static final String extractAcceleratorText(String text) {
+        if (text == null)
+            return null;
+        
         int index = text.lastIndexOf('\t');
         if (index == -1)
             index = text.lastIndexOf('@');
