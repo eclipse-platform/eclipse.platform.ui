@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.common.EventDrivenManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -21,10 +22,19 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * A central lookup facility for images for commands. Images can be associated
  * with commands using this manager.
  * </p>
+ * <p>
+ * Clients may instantiate, but must not extend.
+ * </p>
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
  * 
  * @since 3.2
  */
-public final class CommandImageManager {
+public final class CommandImageManager extends EventDrivenManager {
 
 	/**
 	 * The type of image to display in the default case.
@@ -49,6 +59,19 @@ public final class CommandImageManager {
 	 * to <code>ImageDescriptor</code>.
 	 */
 	private final Map imagesById = new HashMap();
+
+	/**
+	 * Adds a listener to this command image manager. The listener will be
+	 * notified when the set of image bindings changes. This can be used to
+	 * track the global appearance and disappearance of image bindings.
+	 * 
+	 * @param listener
+	 *            The listener to attach; must not be <code>null</code>.
+	 */
+	public final void addCommandImageManagerListener(
+			final ICommandImageManagerListener listener) {
+		addListenerObject(listener);
+	}
 
 	/**
 	 * Binds a particular image path to a command id, type and style triple
@@ -98,6 +121,9 @@ public final class CommandImageManager {
 				images[type] = descriptor;
 			}
 		}
+
+		fireManagerChanged(new CommandImageManagerEvent(this,
+				new String[] { commandId }, type, style));
 	}
 
 	/**
@@ -105,6 +131,33 @@ public final class CommandImageManager {
 	 */
 	public final void clear() {
 		imagesById.clear();
+		if (isListenerAttached()) {
+			final String[] commandIds = (String[]) imagesById.keySet().toArray(
+					new String[imagesById.size()]);
+			fireManagerChanged(new CommandImageManagerEvent(this, commandIds,
+					TYPE_DEFAULT, null));
+		}
+	}
+
+	/**
+	 * Notifies all of the listeners to this manager that the image bindings
+	 * have changed.
+	 * 
+	 * @param event
+	 *            The event to send to all of the listeners; must not be
+	 *            <code>null</code>.
+	 */
+	private final void fireManagerChanged(final CommandImageManagerEvent event) {
+		if (event == null)
+			throw new NullPointerException();
+
+		if (listenerList != null) {
+			final Object[] listeners = listenerList.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final ICommandImageManagerListener listener = (ICommandImageManagerListener) listeners[i];
+				listener.commandImageManagerChanged(event);
+			}
+		}
 	}
 
 	/**
@@ -208,5 +261,16 @@ public final class CommandImageManager {
 	public final ImageDescriptor getImageDescriptor(final String commandId,
 			final String style) {
 		return getImageDescriptor(commandId, TYPE_DEFAULT, style);
+	}
+
+	/**
+	 * Removes a listener from this command image manager.
+	 * 
+	 * @param listener
+	 *            The listener to be removed; must not be <code>null</code>.
+	 */
+	public final void removeCommandImageManagerListener(
+			final ICommandImageManagerListener listener) {
+		removeListenerObject(listener);
 	}
 }

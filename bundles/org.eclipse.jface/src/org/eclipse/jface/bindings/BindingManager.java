@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.HandleObjectManager;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -55,8 +56,8 @@ import org.eclipse.swt.SWT;
  * 
  * @since 3.1
  */
-public final class BindingManager implements IContextManagerListener,
-		ISchemeListener {
+public final class BindingManager extends HandleObjectManager implements
+		IContextManagerListener, ISchemeListener {
 
 	/**
 	 * This flag can be set to <code>true</code> if the binding manager should
@@ -218,25 +219,6 @@ public final class BindingManager implements IContextManagerListener,
 	private final ContextManager contextManager;
 
 	/**
-	 * The number of defined schemes.
-	 */
-	private int definedSchemeCount = 0;
-
-	/**
-	 * The set of all schemes that are defined. This value may be empty, and it
-	 * may be <code>null</code>. There are only
-	 * <code>definedSchemeCount</code> real values in the array. The rest are
-	 * all <code>null</code>.
-	 */
-	private Scheme[] definedSchemes = null;
-
-	/**
-	 * The collection of listener to this binding manager. This collection is
-	 * <code>null</code> if there are no listeners.
-	 */
-	private Collection listeners = null;
-
-	/**
 	 * The locale for this manager. This defaults to the current locale. The
 	 * value will never be <code>null</code>.
 	 */
@@ -272,13 +254,6 @@ public final class BindingManager implements IContextManagerListener,
 	private Map prefixTable = null;
 
 	/**
-	 * The map of scheme identifiers (<code>String</code>) to scheme (
-	 * <code>Scheme</code>). This value may be empty, but is never
-	 * <code>null</code>.
-	 */
-	private final Map schemesById = new HashMap();
-
-	/**
 	 * <p>
 	 * Constructs a new instance of <code>BindingManager</code>.
 	 * </p>
@@ -312,8 +287,8 @@ public final class BindingManager implements IContextManagerListener,
 
 	/**
 	 * <p>
-	 * Adds a single new binding to the existing array of bindings. If the array is
-	 * currently <code>null</code>, then a new array is created and this
+	 * Adds a single new binding to the existing array of bindings. If the array
+	 * is currently <code>null</code>, then a new array is created and this
 	 * binding is added to it. This method does not detect duplicates.
 	 * </p>
 	 * <p>
@@ -354,15 +329,7 @@ public final class BindingManager implements IContextManagerListener,
 	 */
 	public final void addBindingManagerListener(
 			final IBindingManagerListener listener) {
-		if (listener == null) {
-			throw new NullPointerException();
-		}
-
-		if (listeners == null) {
-			listeners = new HashSet();
-		}
-
-		listeners.add(listener);
+		addListenerObject(listener);
 	}
 
 	/**
@@ -851,11 +818,10 @@ public final class BindingManager implements IContextManagerListener,
 		if (event == null)
 			throw new NullPointerException();
 
-		if (listeners != null) {
-			final Iterator listenerItr = listeners.iterator();
-			while (listenerItr.hasNext()) {
-				final IBindingManagerListener listener = (IBindingManagerListener) listenerItr
-						.next();
+		if (listenerList != null) {
+			final Object[] listeners = listenerList.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final IBindingManagerListener listener = (IBindingManagerListener) listeners[i];
 				listener.bindingManagerChanged(event);
 			}
 		}
@@ -1105,8 +1071,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * 
 	 * @param parameterizedCommand
-	 *            The fully-parameterized command whose bindings are
-	 *            requested. This argument may be <code>null</code>.
+	 *            The fully-parameterized command whose bindings are requested.
+	 *            This argument may be <code>null</code>.
 	 * @return The array of active triggers (<code>TriggerSequence</code>)
 	 *         for a particular command identifier. This value is guaranteed to
 	 *         never be <code>null</code>, but it may be empty.
@@ -1143,8 +1109,7 @@ public final class BindingManager implements IContextManagerListener,
 	 *         for a particular command identifier. This value is guaranteed not
 	 *         to be <code>null</code>, but it may be empty.
 	 */
-	public final TriggerSequence[] getActiveBindingsFor(
-			final String commandId) {
+	public final TriggerSequence[] getActiveBindingsFor(final String commandId) {
 		final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
 				commandManager.getCommand(commandId), null);
 		final Object object = getActiveBindingsByParameterizedCommand().get(
@@ -1168,7 +1133,7 @@ public final class BindingManager implements IContextManagerListener,
 	 *            should be retrieved; must not be <code>null</code>.
 	 * @return The active bindings for the given command; this value may be
 	 *         <code>null</code> if there are no active bindings.
-	 *         @since 3.2
+	 * @since 3.2
 	 */
 	private final Binding[] getActiveBindingsFor1(final String commandId) {
 		final TriggerSequence[] triggers = getActiveBindingsFor(commandId);
@@ -1200,7 +1165,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * 
 	 * @return The active scheme; may be <code>null</code> if there is no
-	 *         active scheme. If a scheme is returned, it is guaranteed to be defined.
+	 *         active scheme. If a scheme is returned, it is guaranteed to be
+	 *         defined.
 	 */
 	public final Scheme getActiveScheme() {
 		return activeScheme;
@@ -1290,7 +1256,7 @@ public final class BindingManager implements IContextManagerListener,
 
 	/**
 	 * <p>
-	 * Returns the set of all bindings managed by this class. 
+	 * Returns the set of all bindings managed by this class.
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>.
@@ -1321,13 +1287,8 @@ public final class BindingManager implements IContextManagerListener,
 	 *         <code>null</code>.
 	 */
 	public final Scheme[] getDefinedSchemes() {
-		if ((definedSchemes == null) || (definedSchemeCount == 0)) {
-			return new Scheme[0];
-		}
-
-		final Scheme[] returnValue = new Scheme[definedSchemeCount];
-		System.arraycopy(definedSchemes, 0, returnValue, 0, definedSchemeCount);
-		return returnValue;
+		return (Scheme[]) definedHandleObjects
+				.toArray(new Scheme[definedHandleObjects.size()]);
 	}
 
 	/**
@@ -1438,21 +1399,18 @@ public final class BindingManager implements IContextManagerListener,
 	 * This method completes in amortized <code>O(1)</code>.
 	 * </p>
 	 * 
-	 * @param identifier
+	 * @param schemeId
 	 *            The identifier for the scheme to retrieve; must not be
 	 *            <code>null</code>.
 	 * @return A scheme with the given identifier.
 	 */
-	public final Scheme getScheme(final String identifier) {
-		if (identifier == null) {
-			throw new NullPointerException(
-					"Cannot get a scheme with a null identifier"); //$NON-NLS-1$
-		}
+	public final Scheme getScheme(final String schemeId) {
+		checkId(schemeId);
 
-		Scheme scheme = (Scheme) schemesById.get(identifier);
+		Scheme scheme = (Scheme) handleObjectsById.get(schemeId);
 		if (scheme == null) {
-			scheme = new Scheme(identifier);
-			schemesById.put(identifier, scheme);
+			scheme = new Scheme(schemeId);
+			handleObjectsById.put(schemeId, scheme);
 			scheme.addSchemeListener(this);
 		}
 
@@ -1679,19 +1637,7 @@ public final class BindingManager implements IContextManagerListener,
 	 */
 	public final void removeBindingManagerListener(
 			final IBindingManagerListener listener) {
-		if (listener == null) {
-			throw new NullPointerException();
-		}
-
-		if (listeners == null) {
-			return;
-		}
-
-		listeners.remove(listener);
-
-		if (listeners.isEmpty()) {
-			listeners = null;
-		}
+		removeListenerObject(listener);
 	}
 
 	/**
@@ -1715,8 +1661,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * @param platform
 	 *            The platform to match; may be <code>null</code>.
 	 * @param windowManager
-	 *            The window manager to match; may be <code>null</code>.
-	 *            TODO Currently ignored.
+	 *            The window manager to match; may be <code>null</code>. TODO
+	 *            Currently ignored.
 	 * @param type
 	 *            The type to look for.
 	 * 
@@ -1816,7 +1762,7 @@ public final class BindingManager implements IContextManagerListener,
 						bindingsCopy[i] = null;
 						deletedCount++;
 					}
-					
+
 				} else if (deletion instanceof Collection) {
 					final Collection collection = (Collection) deletion;
 					final Iterator iterator = collection.iterator();
@@ -1830,7 +1776,7 @@ public final class BindingManager implements IContextManagerListener,
 							}
 						}
 					}
-					
+
 				}
 			}
 		}
@@ -2056,58 +2002,19 @@ public final class BindingManager implements IContextManagerListener,
 	 * This method calls out to listeners, and so the time it takes to complete
 	 * is dependent on third-party code.
 	 * </p>
-	 * @param schemeEvent 
-	 *			An event describing the change in the scheme.
+	 * 
+	 * @param schemeEvent
+	 *            An event describing the change in the scheme.
 	 */
 	public final void schemeChanged(final SchemeEvent schemeEvent) {
 		if (schemeEvent.isDefinedChanged()) {
 			final Scheme scheme = schemeEvent.getScheme();
-
 			final boolean schemeIdAdded = scheme.isDefined();
 			boolean activeSchemeChanged = false;
 			if (schemeIdAdded) {
-				/*
-				 * Add the defined scheme to the array -- creating and growing
-				 * the array as necessary.
-				 */
-				if (definedSchemes == null) {
-					definedSchemes = new Scheme[] { scheme };
-					definedSchemeCount = 1;
-
-				} else if (definedSchemeCount < definedSchemes.length) {
-					definedSchemes[definedSchemeCount++] = scheme;
-
-				} else {
-					// Double the array size.
-					final Scheme[] newArray = new Scheme[definedSchemes.length * 2];
-					System.arraycopy(definedSchemes, 0, newArray, 0,
-							definedSchemes.length);
-					definedSchemes = newArray;
-					definedSchemes[definedSchemeCount++] = scheme;
-				}
+				definedHandleObjects.add(scheme);
 			} else {
-				/*
-				 * Remove the scheme from the array of defined scheme, but do
-				 * not compact the array.
-				 */
-				if (definedSchemes != null) {
-					boolean found = false;
-					for (int i = 0; i < definedSchemeCount; i++) {
-						if (scheme == definedSchemes[i]) {
-							found = true;
-						}
-						if (found) {
-							if (i + 1 < definedSchemes.length) {
-								definedSchemes[i] = definedSchemes[i + 1];
-							} else {
-								definedSchemes[i] = null;
-							}
-						}
-					}
-					if (found) {
-						definedSchemeCount--;
-					}
-				}
+				definedHandleObjects.remove(scheme);
 
 				if (activeScheme == scheme) {
 					activeScheme = null;
@@ -2200,9 +2107,9 @@ public final class BindingManager implements IContextManagerListener,
 	 * <p>
 	 * Changes the set of bindings for this binding manager. Changing the set of
 	 * bindings all at once ensures that: (1) duplicates are removed; and (2)
-	 * avoids unnecessary intermediate computations. This method clears the existing
-	 * bindings, but does not trigger a recomputation (other method calls are required 
-	 * to do that).
+	 * avoids unnecessary intermediate computations. This method clears the
+	 * existing bindings, but does not trigger a recomputation (other method
+	 * calls are required to do that).
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(n)</code>, where <code>n</code> is

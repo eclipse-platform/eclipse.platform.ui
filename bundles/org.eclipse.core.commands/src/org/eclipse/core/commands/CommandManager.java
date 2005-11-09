@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.commands.common.HandleObjectManager;
+
 /**
  * <p>
  * A central repository for commands -- both in the defined and undefined
@@ -30,8 +32,8 @@ import java.util.Set;
  * @see CommandManager#getCommand(String)
  * @since 3.1
  */
-public final class CommandManager implements ICategoryListener,
-		ICommandListener {
+public final class CommandManager extends HandleObjectManager implements
+		ICategoryListener, ICommandListener {
 
 	/**
 	 * A listener that forwards incoming execution events to execution listeners
@@ -43,84 +45,84 @@ public final class CommandManager implements ICategoryListener,
 	private final class ExecutionListener implements IExecutionListener {
 
 		public final void notHandled(final String commandId,
-                final NotHandledException exception) {
-            if (executionListeners != null) {
-                final int executionListenersSize = executionListeners.size();
-                if (executionListenersSize > 0) {
-                    /*
-                     * Bug 88629. Copying to an array avoids a
-                     * ConcurrentModificationException if someone tries to
-                     * remove the listener while handling the event.
-                     */
-                    final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                            .toArray(new IExecutionListener[executionListenersSize]);
-                    for (int i = 0; i < executionListenersSize; i++) {
-                        final IExecutionListener listener = listeners[i];
-                        listener.notHandled(commandId, exception);
-                    }
-                }
-            }
-        }
+				final NotHandledException exception) {
+			if (executionListeners != null) {
+				final int executionListenersSize = executionListeners.size();
+				if (executionListenersSize > 0) {
+					/*
+					 * Bug 88629. Copying to an array avoids a
+					 * ConcurrentModificationException if someone tries to
+					 * remove the listener while handling the event.
+					 */
+					final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+							.toArray(new IExecutionListener[executionListenersSize]);
+					for (int i = 0; i < executionListenersSize; i++) {
+						final IExecutionListener listener = listeners[i];
+						listener.notHandled(commandId, exception);
+					}
+				}
+			}
+		}
 
-        public final void postExecuteFailure(final String commandId,
-                final ExecutionException exception) {
-            if (executionListeners != null) {
-                final int executionListenersSize = executionListeners.size();
-                if (executionListenersSize > 0) {
-                    /*
-                     * Bug 88629. Copying to an array avoids a
-                     * ConcurrentModificationException if someone tries to
-                     * remove the listener while handling the event.
-                     */
-                    final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                            .toArray(new IExecutionListener[executionListenersSize]);
-                    for (int i = 0; i < executionListenersSize; i++) {
-                        final IExecutionListener listener = listeners[i];
-                        listener.postExecuteFailure(commandId, exception);
-                    }
-                }
-            }
-        }
+		public final void postExecuteFailure(final String commandId,
+				final ExecutionException exception) {
+			if (executionListeners != null) {
+				final int executionListenersSize = executionListeners.size();
+				if (executionListenersSize > 0) {
+					/*
+					 * Bug 88629. Copying to an array avoids a
+					 * ConcurrentModificationException if someone tries to
+					 * remove the listener while handling the event.
+					 */
+					final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+							.toArray(new IExecutionListener[executionListenersSize]);
+					for (int i = 0; i < executionListenersSize; i++) {
+						final IExecutionListener listener = listeners[i];
+						listener.postExecuteFailure(commandId, exception);
+					}
+				}
+			}
+		}
 
-        public final void postExecuteSuccess(final String commandId,
-                final Object returnValue) {
-            if (executionListeners != null) {
-                final int executionListenersSize = executionListeners.size();
-                if (executionListenersSize > 0) {
-                    /*
-                     * Bug 88629. Copying to an array avoids a
-                     * ConcurrentModificationException if someone tries to
-                     * remove the listener while handling the event.
-                     */
-                    final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                            .toArray(new IExecutionListener[executionListenersSize]);
-                    for (int i = 0; i < executionListenersSize; i++) {
-                        final IExecutionListener listener = listeners[i];
-                        listener.postExecuteSuccess(commandId, returnValue);
-                    }
-                }
-            }
-        }
+		public final void postExecuteSuccess(final String commandId,
+				final Object returnValue) {
+			if (executionListeners != null) {
+				final int executionListenersSize = executionListeners.size();
+				if (executionListenersSize > 0) {
+					/*
+					 * Bug 88629. Copying to an array avoids a
+					 * ConcurrentModificationException if someone tries to
+					 * remove the listener while handling the event.
+					 */
+					final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+							.toArray(new IExecutionListener[executionListenersSize]);
+					for (int i = 0; i < executionListenersSize; i++) {
+						final IExecutionListener listener = listeners[i];
+						listener.postExecuteSuccess(commandId, returnValue);
+					}
+				}
+			}
+		}
 
-        public final void preExecute(final String commandId,
-                final ExecutionEvent event) {
-            if (executionListeners != null) {
-                final int executionListenersSize = executionListeners.size();
-                if (executionListenersSize > 0) {
-                    /*
-                     * Bug 88629. Copying to an array avoids a
-                     * ConcurrentModificationException if someone tries to
-                     * remove the listener while handling the event.
-                     */
-                    final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                            .toArray(new IExecutionListener[executionListenersSize]);
-                    for (int i = 0; i < executionListenersSize; i++) {
-                        final IExecutionListener listener = listeners[i];
-                        listener.preExecute(commandId, event);
-                    }
-                }
-            }
-        }
+		public final void preExecute(final String commandId,
+				final ExecutionEvent event) {
+			if (executionListeners != null) {
+				final int executionListenersSize = executionListeners.size();
+				if (executionListenersSize > 0) {
+					/*
+					 * Bug 88629. Copying to an array avoids a
+					 * ConcurrentModificationException if someone tries to
+					 * remove the listener while handling the event.
+					 */
+					final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+							.toArray(new IExecutionListener[executionListenersSize]);
+					for (int i = 0; i < executionListenersSize; i++) {
+						final IExecutionListener listener = listeners[i];
+						listener.preExecute(commandId, event);
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -131,29 +133,10 @@ public final class CommandManager implements ICategoryListener,
 	private final Map categoriesById = new HashMap();
 
 	/**
-	 * The collection of listeners to this command manager. This collection is
-	 * <code>null</code> if there are no listeners.
-	 */
-	private Collection commandManagerListeners = null;
-
-	/**
-	 * The map of command identifiers (<code>String</code>) to commands (
-	 * <code>Command</code>). This collection may be empty, but it is never
-	 * <code>null</code>.
-	 */
-	private final Map commandsById = new HashMap();
-
-	/**
 	 * The set of identifiers for those categories that are defined. This value
 	 * may be empty, but it is never <code>null</code>.
 	 */
 	private final Set definedCategoryIds = new HashSet();
-
-	/**
-	 * The set of identifiers for those commands that are defined. This value
-	 * may be empty, but it is never <code>null</code>.
-	 */
-	private final Set definedCommandIds = new HashSet();
 
 	/**
 	 * The execution listener for this command manager. This just forwards
@@ -178,17 +161,7 @@ public final class CommandManager implements ICategoryListener,
 	 */
 	public final void addCommandManagerListener(
 			final ICommandManagerListener listener) {
-		if (listener == null) {
-			throw new NullPointerException();
-		}
-
-		if (commandManagerListeners == null) {
-			commandManagerListeners = new ArrayList(1);
-		} else if (!commandManagerListeners.contains(listener)) {
-			return; // Listener already exists.
-		}
-
-		commandManagerListeners.add(listener);
+		addListenerObject(listener);
 	}
 
 	/**
@@ -210,7 +183,7 @@ public final class CommandManager implements ICategoryListener,
 
 			// Add an execution listener to every command.
 			executionListener = new ExecutionListener();
-			final Iterator commandItr = commandsById.values().iterator();
+			final Iterator commandItr = handleObjectsById.values().iterator();
 			while (commandItr.hasNext()) {
 				final Command command = (Command) commandItr.next();
 				command.addExecutionListener(executionListener);
@@ -255,9 +228,9 @@ public final class CommandManager implements ICategoryListener,
 			final String commandId = command.getId();
 			final boolean commandIdAdded = command.isDefined();
 			if (commandIdAdded) {
-				definedCommandIds.add(commandId);
+				definedHandleObjects.add(command);
 			} else {
-				definedCommandIds.remove(commandId);
+				definedHandleObjects.remove(command);
 			}
 			fireCommandManagerChanged(new CommandManagerEvent(this, commandId,
 					commandIdAdded, true, null, false, false));
@@ -268,32 +241,21 @@ public final class CommandManager implements ICategoryListener,
 	 * Notifies all of the listeners to this manager that the set of defined
 	 * command identifiers has changed.
 	 * 
-	 * @param commandManagerEvent
+	 * @param event
 	 *            The event to send to all of the listeners; must not be
 	 *            <code>null</code>.
 	 */
-	private final void fireCommandManagerChanged(
-			final CommandManagerEvent commandManagerEvent) {
-		if (commandManagerEvent == null)
+	private final void fireCommandManagerChanged(final CommandManagerEvent event) {
+		if (event == null)
 			throw new NullPointerException();
-    
-        if (commandManagerListeners != null) {
-            final int commandManagerListenersSize = commandManagerListeners
-                    .size();
-            if (commandManagerListenersSize > 0) {
-                /*
-                 * Bug 88629. Copying to an array avoids a
-                 * ConcurrentModificationException if someone tries to remove
-                 * the listener while handling the event.
-                 */
-                final ICommandManagerListener[] listeners = (ICommandManagerListener[]) commandManagerListeners
-                        .toArray(new ICommandManagerListener[commandManagerListenersSize]);
-                for (int i = 0; i < commandManagerListenersSize; i++) {
-                    final ICommandManagerListener listener = listeners[i];
-                    listener.commandManagerChanged(commandManagerEvent);
-                }
-            }
-        }
+
+		if (listenerList != null) {
+			final Object[] listeners = listenerList.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final ICommandManagerListener listener = (ICommandManagerListener) listeners[i];
+				listener.commandManagerChanged(event);
+			}
+		}
 	}
 
 	/**
@@ -307,8 +269,7 @@ public final class CommandManager implements ICategoryListener,
 	 * @see Category
 	 */
 	public final Category getCategory(final String categoryId) {
-		if (categoryId == null)
-			throw new NullPointerException();
+		checkId(categoryId, true);
 
 		Category category = (Category) categoriesById.get(categoryId);
 		if (category == null) {
@@ -332,20 +293,12 @@ public final class CommandManager implements ICategoryListener,
 	 * @see Command
 	 */
 	public final Command getCommand(final String commandId) {
-		if (commandId == null) {
-			throw new NullPointerException(
-					"A command may not have a null identifier"); //$NON-NLS-1$
-		}
+		checkId(commandId);
 
-		if (commandId.length() < 1) {
-			throw new IllegalArgumentException(
-					"The command must not have a zero-length identifier"); //$NON-NLS-1$
-		}
-
-		Command command = (Command) commandsById.get(commandId);
+		Command command = (Command) handleObjectsById.get(commandId);
 		if (command == null) {
 			command = new Command(commandId);
-			commandsById.put(commandId, command);
+			handleObjectsById.put(commandId, command);
 			command.addCommandListener(this);
 
 			if (executionListener != null) {
@@ -392,14 +345,8 @@ public final class CommandManager implements ICategoryListener,
 	 * @since 3.2
 	 */
 	public final Command[] getDefinedCommands() {
-		final Command[] commands = new Command[definedCommandIds.size()];
-		final Iterator commandIdItr = definedCommandIds.iterator();
-		int i = 0;
-		while (commandIdItr.hasNext()) {
-			String commandId = (String) commandIdItr.next();
-			commands[i++] = getCommand(commandId);
-		}
-		return commands;
+		return (Command[]) definedHandleObjects
+				.toArray(new Command[definedHandleObjects.size()]);
 	}
 
 	/**
@@ -409,7 +356,7 @@ public final class CommandManager implements ICategoryListener,
 	 *         but it is never <code>null</code>.
 	 */
 	public final Set getDefinedCommandIds() {
-		return Collections.unmodifiableSet(definedCommandIds);
+		return getDefinedHandleObjectIds();
 	}
 
 	/**
@@ -420,19 +367,7 @@ public final class CommandManager implements ICategoryListener,
 	 */
 	public final void removeCommandManagerListener(
 			final ICommandManagerListener listener) {
-		if (listener == null) {
-			throw new NullPointerException();
-		}
-
-		if (commandManagerListeners == null) {
-			return;
-		}
-
-		commandManagerListeners.remove(listener);
-
-		if (commandManagerListeners.isEmpty()) {
-			commandManagerListeners = null;
-		}
+		removeListenerObject(listener);
 	}
 
 	/**
@@ -456,7 +391,7 @@ public final class CommandManager implements ICategoryListener,
 			executionListeners = null;
 
 			// Remove the execution listener to every command.
-			final Iterator commandItr = commandsById.values().iterator();
+			final Iterator commandItr = handleObjectsById.values().iterator();
 			while (commandItr.hasNext()) {
 				final Command command = (Command) commandItr.next();
 				command.removeExecutionListener(executionListener);
@@ -487,7 +422,7 @@ public final class CommandManager implements ICategoryListener,
 		}
 
 		// Now, set-up the handlers on all of the existing commands.
-		final Iterator commandItr = commandsById.values().iterator();
+		final Iterator commandItr = handleObjectsById.values().iterator();
 		while (commandItr.hasNext()) {
 			final Command command = (Command) commandItr.next();
 			final String commandId = command.getId();

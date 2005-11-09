@@ -11,14 +11,11 @@
 
 package org.eclipse.core.commands.contexts;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.commands.common.HandleObjectManager;
 import org.eclipse.core.internal.commands.util.Util;
 
 /**
@@ -34,7 +31,8 @@ import org.eclipse.core.internal.commands.util.Util;
  * 
  * @since 3.1
  */
-public final class ContextManager implements IContextListener {
+public final class ContextManager extends HandleObjectManager implements
+		IContextListener {
 
 	/**
 	 * This flag can be set to <code>true</code> if the context manager should
@@ -48,25 +46,6 @@ public final class ContextManager implements IContextListener {
 	 * never <code>null</code>.
 	 */
 	private Set activeContextIds = new HashSet();
-
-	/**
-	 * The collection of listener to this context manager. This collection is
-	 * <code>null</code> if there are no listeners.
-	 */
-	private Collection listeners = null;
-
-	/**
-	 * The map of context identifiers (<code>String</code>) to contexts (
-	 * <code>Context</code>). This collection may be empty, but it is never
-	 * <code>null</code>.
-	 */
-	private final Map contextsById = new HashMap();
-
-	/**
-	 * The set of identifiers for those contexts that are defined. This value
-	 * may be empty, but it is never <code>null</code>.
-	 */
-	private final Set definedContextIds = new HashSet();
 
 	/**
 	 * Activates a context in this context manager.
@@ -101,31 +80,18 @@ public final class ContextManager implements IContextListener {
 	 */
 	public final void addContextManagerListener(
 			final IContextManagerListener listener) {
-		if (listener == null) {
-			throw new NullPointerException();
-		}
-
-		if (listeners == null) {
-			listeners = new HashSet();
-		}
-
-		listeners.add(listener);
+		addListenerObject(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.commands.contexts.IContextListener#contextChanged(org.eclipse.commands.contexts.ContextEvent)
-	 */
 	public final void contextChanged(final ContextEvent contextEvent) {
 		if (contextEvent.isDefinedChanged()) {
 			final Context context = contextEvent.getContext();
 			final String contextId = context.getId();
 			final boolean contextIdAdded = context.isDefined();
 			if (contextIdAdded) {
-				definedContextIds.add(contextId);
+				definedHandleObjects.add(context);
 			} else {
-				definedContextIds.remove(contextId);
+				definedHandleObjects.remove(context);
 			}
 			fireContextManagerChanged(new ContextManagerEvent(this, contextId,
 					contextIdAdded, false, null));
@@ -136,21 +102,19 @@ public final class ContextManager implements IContextListener {
 	 * Notifies all of the listeners to this manager that the set of defined
 	 * context identifiers has changed.
 	 * 
-	 * @param contextManagerEvent
+	 * @param event
 	 *            The event to send to all of the listeners; must not be
 	 *            <code>null</code>.
 	 */
-	private final void fireContextManagerChanged(
-			final ContextManagerEvent contextManagerEvent) {
-		if (contextManagerEvent == null)
+	private final void fireContextManagerChanged(final ContextManagerEvent event) {
+		if (event == null)
 			throw new NullPointerException();
 
-		if (listeners != null) {
-			final Iterator listenerItr = listeners.iterator();
-			while (listenerItr.hasNext()) {
-				final IContextManagerListener listener = (IContextManagerListener) listenerItr
-						.next();
-				listener.contextManagerChanged(contextManagerEvent);
+		if (listenerList != null) {
+			final Object[] listeners = listenerList.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final IContextManagerListener listener = (IContextManagerListener) listeners[i];
+				listener.contextManagerChanged(event);
 			}
 		}
 	}
@@ -178,17 +142,26 @@ public final class ContextManager implements IContextListener {
 	 * @see Context
 	 */
 	public final Context getContext(final String contextId) {
-		if (contextId == null)
-			throw new NullPointerException();
+		checkId(contextId);
 
-		Context context = (Context) contextsById.get(contextId);
+		Context context = (Context) handleObjectsById.get(contextId);
 		if (context == null) {
 			context = new Context(contextId);
-			contextsById.put(contextId, context);
+			handleObjectsById.put(contextId, context);
 			context.addContextListener(this);
 		}
 
 		return context;
+	}
+
+	/**
+	 * Returns the set of identifiers for those contexts that are defined.
+	 * 
+	 * @return The set of defined context identifiers; this value may be empty,
+	 *         but it is never <code>null</code>.
+	 */
+	public final Set getDefinedContextIds() {
+		return getDefinedHandleObjectIds();
 	}
 
 	/**
@@ -199,24 +172,8 @@ public final class ContextManager implements IContextListener {
 	 * @since 3.2
 	 */
 	public final Context[] getDefinedContexts() {
-		final Context[] contexts = new Context[definedContextIds.size()];
-		final Iterator contextIdItr = definedContextIds.iterator();
-		int i = 0;
-		while (contextIdItr.hasNext()) {
-			String contextId = (String) contextIdItr.next();
-			contexts[i++] = getContext(contextId);
-		}
-		return contexts;
-	}
-
-	/**
-	 * Returns the set of identifiers for those contexts that are defined.
-	 * 
-	 * @return The set of defined context identifiers; this value may be empty,
-	 *         but it is never <code>null</code>.
-	 */
-	public final Set getDefinedContextIds() {
-		return Collections.unmodifiableSet(definedContextIds);
+		return (Context[]) definedHandleObjects
+				.toArray(new Context[definedHandleObjects.size()]);
 	}
 
 	/**
@@ -237,7 +194,7 @@ public final class ContextManager implements IContextListener {
 		if (DEBUG) {
 			System.out.println("CONTEXTS >> " + activeContextIds); //$NON-NLS-1$
 		}
-		
+
 		fireContextManagerChanged(new ContextManagerEvent(this, null, false,
 				true, previouslyActiveContextIds));
 	}
@@ -250,19 +207,7 @@ public final class ContextManager implements IContextListener {
 	 */
 	public final void removeContextManagerListener(
 			final IContextManagerListener listener) {
-		if (listener == null) {
-			throw new NullPointerException();
-		}
-
-		if (listeners == null) {
-			return;
-		}
-
-		listeners.remove(listener);
-
-		if (listeners.isEmpty()) {
-			listeners = null;
-		}
+		removeListenerObject(listener);
 	}
 
 	/**

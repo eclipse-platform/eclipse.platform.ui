@@ -236,7 +236,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 * @param description
 	 *            The description for this command; may be <code>null</code>.
 	 * @param category
-	 *            The category for this command; may be <code>null</code>.
+	 *            The category for this command; must not be <code>null</code>.
 	 * @param parameters
 	 *            The parameters understood by this command. This value may be
 	 *            either <code>null</code> or empty if the command does not
@@ -737,7 +737,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 				}
 				state.dispose();
 			}
-			
+
 			states = null;
 		}
 
