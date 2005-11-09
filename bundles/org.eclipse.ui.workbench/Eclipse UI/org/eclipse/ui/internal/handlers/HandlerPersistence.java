@@ -50,11 +50,6 @@ final class HandlerPersistence extends CommonCommandPersistence {
 	private static final String ELEMENT_ACTIVE_WHEN = "activeWhen"; //$NON-NLS-1$
 
 	/**
-	 * The name of the element storing a command.
-	 */
-	private static final String ELEMENT_COMMAND = "command"; //$NON-NLS-1$
-
-	/**
 	 * The name of the default handler element, which appears on a command
 	 * definition.
 	 */
@@ -75,12 +70,6 @@ final class HandlerPersistence extends CommonCommandPersistence {
 	 * The name of the element storing a handler submission.
 	 */
 	private static final String ELEMENT_HANDLER_SUBMISSION = "handlerSubmission"; //$NON-NLS-1$
-
-	/**
-	 * The name of the commands extension point.
-	 */
-	private static final String EXTENSION_COMMANDS = PlatformUI.PLUGIN_ID + '.'
-			+ IWorkbenchConstants.PL_COMMANDS;
 
 	/**
 	 * The name of the commands extension point.

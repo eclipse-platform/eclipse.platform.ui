@@ -109,17 +109,6 @@ final class BindingPersistence extends CommonCommandPersistence {
 	private static final String ATTRIBUTE_LOCALE = "locale"; //$NON-NLS-1$
 
 	/**
-	 * The name of the deprecated parent attribute, which appears on scheme
-	 * definitions.
-	 */
-	private static final String ATTRIBUTE_PARENT = "parent"; //$NON-NLS-1$
-
-	/**
-	 * The name of the parent id attribute, which appears on scheme definitions.
-	 */
-	private static final String ATTRIBUTE_PARENT_ID = "parentId"; //$NON-NLS-1$
-
-	/**
 	 * The name of the attribute storing the platform for a binding.
 	 */
 	private static final String ATTRIBUTE_PLATFORM = "platform"; //$NON-NLS-1$
@@ -210,13 +199,6 @@ final class BindingPersistence extends CommonCommandPersistence {
 	 */
 	private static final String EXTENSION_BINDINGS = PlatformUI.PLUGIN_ID + '.'
 			+ IWorkbenchConstants.PL_BINDINGS;
-
-	/**
-	 * The name of the commands extension point, and the name of the key for the
-	 * commands preferences.
-	 */
-	private static final String EXTENSION_COMMANDS = PlatformUI.PLUGIN_ID + '.'
-			+ IWorkbenchConstants.PL_COMMANDS;
 
 	/**
 	 * The index of the active scheme configuration elements in the indexed
@@ -889,8 +871,8 @@ final class BindingPersistence extends CommonCommandPersistence {
 			if (command == null) {
 				parameterizedCommand = null;
 			} else {
-				parameterizedCommand = readParametersFromRegistry(configurationElement,
-						warningsToLog, command);
+				parameterizedCommand = readParametersFromRegistry(
+						configurationElement, warningsToLog, command);
 			}
 
 			final Binding binding = new KeyBinding(keySequence,
@@ -1026,8 +1008,8 @@ final class BindingPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the attributes.
-			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
-					warningsToLog, "Schemes need an id"); //$NON-NLS-1$
+			final String id = readRequiredFromRegistry(configurationElement,
+					ATTRIBUTE_ID, warningsToLog, "Schemes need an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
@@ -1036,8 +1018,8 @@ final class BindingPersistence extends CommonCommandPersistence {
 			if (name == null) {
 				continue;
 			}
-			final String description = readOptionalFromRegistry(configurationElement,
-					ATTRIBUTE_DESCRIPTION);
+			final String description = readOptionalFromRegistry(
+					configurationElement, ATTRIBUTE_DESCRIPTION);
 
 			String parentId = configurationElement
 					.getAttribute(ATTRIBUTE_PARENT_ID);

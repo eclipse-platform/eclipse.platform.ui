@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.commands;
 
+import java.net.URL;
+
 import org.eclipse.jface.commands.CommandImageManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.commands.ICommandImageService;
@@ -32,15 +34,15 @@ public final class CommandImageService implements ICommandImageService {
 	private final CommandImageManager commandImageManager;
 
 	/**
+	 * The class providing persistence for this service.
+	 */
+	private final CommandImagePersistence commandImagePersistence = new CommandImagePersistence();
+
+	/**
 	 * The command service that provides commands for this service. This value
 	 * is never <code>null</code>.
 	 */
 	private final ICommandService commandService;
-
-	/**
-	 * The class providing persistence for this service.
-	 */
-	private final CommandImagePersistence commandImagePersistence = new CommandImagePersistence();
 
 	/**
 	 * Constructs a new instance of <code>CommandService</code> using a
@@ -66,6 +68,15 @@ public final class CommandImageService implements ICommandImageService {
 		}
 		this.commandImageManager = commandImageManager;
 		this.commandService = commandService;
+	}
+
+	public final void bind(final String commandId, final int type,
+			final String style, final URL url) {
+		commandImageManager.bind(commandId, type, style, url);
+	}
+
+	public final String generateUnusedStyle(final String commandId) {
+		return commandImageManager.generateUnusedStyle(commandId);
 	}
 
 	public final ImageDescriptor getImageDescriptor(final String commandId) {

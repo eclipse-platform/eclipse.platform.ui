@@ -269,7 +269,7 @@ public final class CommandManager extends HandleObjectManager implements
 	 * @see Category
 	 */
 	public final Category getCategory(final String categoryId) {
-		checkId(categoryId, true);
+		checkId(categoryId);
 
 		Category category = (Category) categoriesById.get(categoryId);
 		if (category == null) {

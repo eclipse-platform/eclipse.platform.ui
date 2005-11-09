@@ -100,7 +100,6 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
-import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IContextService;
@@ -121,6 +120,7 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.internal.menus.DeprecatedActionPersistence;
 import org.eclipse.ui.internal.menus.MenuService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
@@ -963,9 +963,9 @@ public final class Workbench implements IWorkbench {
 				bindingManager, this);
 		services.put(IBindingService.class, bindingService);
 		final CommandImageManager commandImageManager = new CommandImageManager();
-		final ICommandImageService commandImageService = new CommandImageService(
+		final CommandImageService commandImageService = new CommandImageService(
 				commandImageManager, commandService);
-		services.put(ICommandImageService.class, commandImageService);
+		services.put(CommandImageManager.class, commandImageService);
 		final SMenuManager menuManager = new SMenuManager();
 		final IMenuService menuService = new MenuService(menuManager);
 		services.put(IMenuService.class, menuService);
@@ -981,6 +981,9 @@ public final class Workbench implements IWorkbench {
 		bindingService.readRegistryAndPreferences(commandService);
 		commandImageService.readRegistry();
 		menuService.readRegistry(commandService);
+		final DeprecatedActionPersistence deprecatedSupport = new DeprecatedActionPersistence();
+		deprecatedSupport.read(commandService, bindingManager,
+				commandImageService, menuService);
 
 		/*
 		 * Phase 3 of the initialization of commands. The source providers that

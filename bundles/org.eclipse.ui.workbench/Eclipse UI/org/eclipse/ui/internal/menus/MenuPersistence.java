@@ -62,11 +62,6 @@ final class MenuPersistence extends CommonCommandPersistence {
 	private static final String ATTRIBUTE_IMAGE_STYLE = "imageStyle"; //$NON-NLS-1$
 
 	/**
-	 * The name of the label attribute, which appears on menus.
-	 */
-	private static final String ATTRIBUTE_LABEL = "label"; //$NON-NLS-1$
-
-	/**
 	 * The name of the menu identifier attribute, which appears on items.
 	 */
 	private static final String ATTRIBUTE_MENU_ID = "menuId"; //$NON-NLS-1$
@@ -98,19 +93,9 @@ final class MenuPersistence extends CommonCommandPersistence {
 	private static final String ATTRIBUTE_SEPARATORS_VISIBLE = "separatorsVisible"; //$NON-NLS-1$
 
 	/**
-	 * The name of the visible attribute, which appears on action set elements.
-	 */
-	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
-
-	/**
 	 * The name of the type attribute, which appears on bar elements.
 	 */
 	private static final String ATTRIBUTE_TYPE = "type"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing an action set.
-	 */
-	private static final String ELEMENT_ACTION_SET = "actionSet"; //$NON-NLS-1$
 
 	/**
 	 * The name of the bar element, which appears in a location definition.
@@ -310,8 +295,9 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement barElement = barElements[0];
 
 			// Read the type attribute.
-			final String type = readRequiredFromRegistry(barElement, ATTRIBUTE_TYPE,
-					warningsToLog, "Bar elements require a type element", id); //$NON-NLS-1$
+			final String type = readRequiredFromRegistry(barElement,
+					ATTRIBUTE_TYPE, warningsToLog,
+					"Bar elements require a type element", id); //$NON-NLS-1$
 			final int typeInteger;
 			if (TYPE_MENU.equals(type)) {
 				typeInteger = SBar.TYPE_MENU;
@@ -328,7 +314,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 			}
 
 			// Read the path attribute.
-			final String path = readOptionalFromRegistry(barElement, ATTRIBUTE_PATH);
+			final String path = readOptionalFromRegistry(barElement,
+					ATTRIBUTE_PATH);
 
 			return new SBar(typeInteger, path);
 		}
@@ -411,8 +398,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the menu identifier.
-			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
-					warningsToLog, "Action sets need an id"); //$NON-NLS-1$
+			final String id = readRequiredFromRegistry(configurationElement,
+					ATTRIBUTE_ID, warningsToLog, "Action sets need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
@@ -424,12 +411,12 @@ final class MenuPersistence extends CommonCommandPersistence {
 			}
 
 			// Read the description.
-			final String description = readOptionalFromRegistry(configurationElement,
-					ATTRIBUTE_DESCRIPTION);
+			final String description = readOptionalFromRegistry(
+					configurationElement, ATTRIBUTE_DESCRIPTION);
 
 			// Read the whether the action set is visible by default.
-			final boolean visible = readBooleanFromRegistry(configurationElement,
-					ATTRIBUTE_VISIBLE, true);
+			final boolean visible = readBooleanFromRegistry(
+					configurationElement, ATTRIBUTE_VISIBLE, false);
 
 			// Read the references.
 			final SReference[] references = readReferencesFromRegistry(
@@ -475,14 +462,14 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the menu identifier.
-			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
-					warningsToLog, "Groups need an id"); //$NON-NLS-1$
+			final String id = readRequiredFromRegistry(configurationElement,
+					ATTRIBUTE_ID, warningsToLog, "Groups need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read whether the separators are visible.
-			final boolean separatorsVisible = readBooleanFromRegistry(configurationElement,
-					ATTRIBUTE_SEPARATORS_VISIBLE, true);
+			final boolean separatorsVisible = readBooleanFromRegistry(
+					configurationElement, ATTRIBUTE_SEPARATORS_VISIBLE, true);
 
 			// Read out the visibleWhen expression.
 			final Expression visibleWhenExpression = readWhenElementFromRegistry(
@@ -543,8 +530,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the item identifier.
-			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
-					warningsToLog, "Items need an id"); //$NON-NLS-1$
+			final String id = readRequiredFromRegistry(configurationElement,
+					ATTRIBUTE_ID, warningsToLog, "Items need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
@@ -554,8 +541,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 					"Items need a command id", id); //$NON-NLS-1$
 
 			// Read the menu identifier.
-			final String menuId = readOptionalFromRegistry(configurationElement,
-					ATTRIBUTE_MENU_ID);
+			final String menuId = readOptionalFromRegistry(
+					configurationElement, ATTRIBUTE_MENU_ID);
 
 			// Read out the visibleWhen expression.
 			final Expression visibleWhenExpression = readWhenElementFromRegistry(
@@ -719,8 +706,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the menu identifier.
-			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
-					warningsToLog, "Menus need an id"); //$NON-NLS-1$
+			final String id = readRequiredFromRegistry(configurationElement,
+					ATTRIBUTE_ID, warningsToLog, "Menus need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
@@ -883,8 +870,10 @@ final class MenuPersistence extends CommonCommandPersistence {
 			}
 
 			// Read the two optional attributes.
-			final String partId = readOptionalFromRegistry(partElement, ATTRIBUTE_ID);
-			final String clazz = readOptionalFromRegistry(partElement, ATTRIBUTE_CLASS);
+			final String partId = readOptionalFromRegistry(partElement,
+					ATTRIBUTE_ID);
+			final String clazz = readOptionalFromRegistry(partElement,
+					ATTRIBUTE_CLASS);
 			if ((partId == null) && (clazz == null)) {
 				addWarning(warningsToLog,
 						"A part id or a part class is required", parentElement //$NON-NLS-1$
@@ -936,8 +925,10 @@ final class MenuPersistence extends CommonCommandPersistence {
 			}
 
 			final IConfigurationElement popupElement = popupElements[0];
-			final String popupId = readOptionalFromRegistry(popupElement, ATTRIBUTE_ID);
-			final String path = readOptionalFromRegistry(popupElement, ATTRIBUTE_PATH);
+			final String popupId = readOptionalFromRegistry(popupElement,
+					ATTRIBUTE_ID);
+			final String path = readOptionalFromRegistry(popupElement,
+					ATTRIBUTE_PATH);
 			return new SPopup(popupId, path);
 		}
 
@@ -976,15 +967,17 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement referenceElement = referenceElements[i];
 
 			// Read the id.
-			final String referenceId = readRequiredFromRegistry(referenceElement,
-					ATTRIBUTE_ID, warningsToLog, "References are required", id); //$NON-NLS-1$
+			final String referenceId = readRequiredFromRegistry(
+					referenceElement, ATTRIBUTE_ID, warningsToLog,
+					"References are required", id); //$NON-NLS-1$
 			if (referenceId == null) {
 				continue;
 			}
 
 			// Read the type attribute.
-			final String type = readRequiredFromRegistry(referenceElement, ATTRIBUTE_TYPE,
-					warningsToLog, "Reference elements require a type", id); //$NON-NLS-1$
+			final String type = readRequiredFromRegistry(referenceElement,
+					ATTRIBUTE_TYPE, warningsToLog,
+					"Reference elements require a type", id); //$NON-NLS-1$
 			final int typeInteger;
 			if (TYPE_ITEM.equals(type)) {
 				typeInteger = SReference.TYPE_ITEM;
@@ -1043,8 +1036,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the widget identifier.
-			final String id = readRequiredFromRegistry(configurationElement, ATTRIBUTE_ID,
-					warningsToLog, "Widgets need an id"); //$NON-NLS-1$
+			final String id = readRequiredFromRegistry(configurationElement,
+					ATTRIBUTE_ID, warningsToLog, "Widgets need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 

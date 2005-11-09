@@ -28,7 +28,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 
@@ -58,9 +60,29 @@ public abstract class CommonCommandPersistence {
 	protected static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
 
 	/**
+	 * The name of the attribute storing the disabled icon for a command image.
+	 */
+	protected static final String ATTRIBUTE_DISABLED_ICON = "disabledIcon"; //$NON-NLS-1$
+
+	/**
+	 * The name of the attribute storing the hover icon for a command image.
+	 */
+	protected static final String ATTRIBUTE_HOVER_ICON = "hoverIcon"; //$NON-NLS-1$
+
+	/**
+	 * The name of the attribute storing the default icon for a command image.
+	 */
+	protected static final String ATTRIBUTE_ICON = "icon"; //$NON-NLS-1$
+
+	/**
 	 * The name of the id attribute, which is used on handle objects.
 	 */
 	protected static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+
+	/**
+	 * The name of the label attribute, which appears on menus.
+	 */
+	protected static final String ATTRIBUTE_LABEL = "label"; //$NON-NLS-1$
 
 	/**
 	 * The name of the name attribute, which appears on named handle objects
@@ -68,9 +90,30 @@ public abstract class CommonCommandPersistence {
 	protected static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 
 	/**
+	 * The name of the deprecated parent attribute, which appears on scheme
+	 * definitions.
+	 */
+	protected static final String ATTRIBUTE_PARENT = "parent"; //$NON-NLS-1$
+
+	/**
+	 * The name of the parent id attribute, which appears on scheme definitions.
+	 */
+	protected static final String ATTRIBUTE_PARENT_ID = "parentId"; //$NON-NLS-1$
+
+	/**
 	 * The name of the value attributed, used in several places.
 	 */
 	protected static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
+
+	/**
+	 * The name of the visible attribute, which appears on action set elements.
+	 */
+	protected static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
+
+	/**
+	 * The name of the element storing an action set.
+	 */
+	protected static final String ELEMENT_ACTION_SET = "actionSet"; //$NON-NLS-1$
 
 	/**
 	 * The name of the class element, which appears on an executable extension.
@@ -78,9 +121,21 @@ public abstract class CommonCommandPersistence {
 	protected static final String ELEMENT_CLASS = ATTRIBUTE_CLASS;
 
 	/**
+	 * The name of the element storing a command.
+	 */
+	protected static final String ELEMENT_COMMAND = "command"; //$NON-NLS-1$
+
+	/**
 	 * The name of the element storing a parameter.
 	 */
 	protected static final String ELEMENT_PARAMETER = "parameter"; //$NON-NLS-1$
+
+	/**
+	 * The name of the commands extension point, and the name of the key for the
+	 * commands preferences.
+	 */
+	protected static final String EXTENSION_COMMANDS = PlatformUI.PLUGIN_ID
+			+ '.' + IWorkbenchConstants.PL_COMMANDS;
 
 	/**
 	 * Inserts the given element into the indexed two-dimensional array in the

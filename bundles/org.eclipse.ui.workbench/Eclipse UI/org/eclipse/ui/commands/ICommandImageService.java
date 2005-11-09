@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.commands;
 
-import org.eclipse.jface.commands.CommandImageManager;
+import java.net.URL;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -36,6 +37,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * <p>
  * This interface should not be implemented or extended by clients.
  * </p>
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
  * 
  * @since 3.2
  */
@@ -44,18 +51,46 @@ public interface ICommandImageService {
 	/**
 	 * The type of image to display in the default case.
 	 */
-	public static final int TYPE_DEFAULT = CommandImageManager.TYPE_DEFAULT;
+	public static final int TYPE_DEFAULT = ICommandImageService.TYPE_DEFAULT;
 
 	/**
 	 * The type of image to display if the corresponding command is disabled.
 	 */
-	public static final int TYPE_DISABLED = CommandImageManager.TYPE_DISABLED;
+	public static final int TYPE_DISABLED = ICommandImageService.TYPE_DISABLED;
 
 	/**
 	 * The type of image to display if the mouse is hovering over the command
 	 * and the command is enabled.
 	 */
-	public static final int TYPE_HOVER = CommandImageManager.TYPE_HOVER;
+	public static final int TYPE_HOVER = ICommandImageService.TYPE_HOVER;
+
+	/**
+	 * Binds a particular image path to a command id, type and style triple
+	 * 
+	 * @param commandId
+	 *            The identifier of the command to which the image should be
+	 *            bound; must not be <code>null</code>.
+	 * @param type
+	 *            The type of image to retrieve. This value must be one of the
+	 *            <code>TYPE</code> constants defined in this class.
+	 * @param style
+	 *            The style of the image; may be <code>null</code>.
+	 * @param url
+	 *            The URL to the image. Should not be <code>null</code>.
+	 */
+	public void bind(String commandId, int type, String style, URL url);
+
+	/**
+	 * Generates a style tag that is not currently used for the given command.
+	 * This can be used by applications trying to create a unique style for a
+	 * new set of images.
+	 * 
+	 * @param commandId
+	 *            The identifier of the command for which a unique style is
+	 *            required; must not be <code>null</code>.
+	 * @return A style tag that is not currently used; may be <code>null</code>.
+	 */
+	public String generateUnusedStyle(String commandId);
 
 	/**
 	 * Retrieves the default image associated with the given command in the

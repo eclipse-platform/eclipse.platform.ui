@@ -44,7 +44,9 @@ public interface ICommandService {
 	 * exists, then an undefined category with the given id is created.
 	 * 
 	 * @param categoryId
-	 *            The identifier to find; must not be <code>null</code>.
+	 *            The identifier to find. If the category is <code>null</code>,
+	 *            then a category suitable for uncategorized items is defined
+	 *            and returned.
 	 * @return A category with the given identifier, either defined or
 	 *         undefined.
 	 */

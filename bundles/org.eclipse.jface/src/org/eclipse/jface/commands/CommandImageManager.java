@@ -12,7 +12,9 @@ package org.eclipse.jface.commands;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.commands.common.EventDrivenManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -89,7 +91,6 @@ public final class CommandImageManager extends EventDrivenManager {
 	 */
 	public final void bind(final String commandId, final int type,
 			final String style, final URL url) {
-
 		final ImageDescriptor descriptor = ImageDescriptor.createFromURL(url);
 		Object[] images = (Object[]) imagesById.get(commandId);
 		if (images == null) {
@@ -158,6 +159,46 @@ public final class CommandImageManager extends EventDrivenManager {
 				listener.commandImageManagerChanged(event);
 			}
 		}
+	}
+
+	/**
+	 * Generates a style tag that is not currently used for the given command.
+	 * This can be used by applications trying to create a unique style for a
+	 * new set of images.
+	 * 
+	 * @param commandId
+	 *            The identifier of the command for which a unique style is
+	 *            required; must not be <code>null</code>.
+	 * @return A style tag that is not currently used; may be <code>null</code>.
+	 */
+	public final String generateUnusedStyle(final String commandId) {
+		final Object[] existingImages = (Object[]) imagesById.get(commandId);
+		if (existingImages == null) {
+			return null;
+		}
+
+		final Set existingStyles = new HashSet(3);
+		for (int type = 0; type < existingImages.length; type++) {
+			final Object styledImages = existingImages[type];
+			if (styledImages instanceof ImageDescriptor) {
+				existingStyles.add(null);
+			} else if (styledImages instanceof Map) {
+				final Map styleMap = (Map) styledImages;
+				existingStyles.addAll(styleMap.keySet());
+			}
+		}
+
+		if (!existingStyles.contains(null)) {
+			return null;
+		}
+
+		String generatedStyle = "AUTOGEN:::"; //$NON-NLS-1$
+		int index = 0;
+		while (existingStyles.contains(generatedStyle)) {
+			generatedStyle += (index++ % 10);
+		}
+
+		return generatedStyle;
 	}
 
 	/**

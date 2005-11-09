@@ -38,18 +38,6 @@ import org.eclipse.ui.internal.commands.CommonCommandPersistence;
 final class ContextPersistence extends CommonCommandPersistence {
 
 	/**
-	 * The name of the deprecated parent attribute, which appears on contexts
-	 * definitions.
-	 */
-	private static final String ATTRIBUTE_PARENT = "parent"; //$NON-NLS-1$
-
-	/**
-	 * The name of the parent id attribute, which appears on contexts
-	 * definitions.
-	 */
-	private static final String ATTRIBUTE_PARENT_ID = "parentId"; //$NON-NLS-1$
-
-	/**
 	 * The name of the deprecated parent scope attribute, which appears on
 	 * contexts definitions.
 	 */
@@ -75,12 +63,6 @@ final class ContextPersistence extends CommonCommandPersistence {
 	 */
 	private static final String EXTENSION_ACCELERATOR_SCOPES = PlatformUI.PLUGIN_ID
 			+ '.' + IWorkbenchConstants.PL_ACCELERATOR_SCOPES;
-
-	/**
-	 * The name of the commands extension point.
-	 */
-	private static final String EXTENSION_COMMANDS = PlatformUI.PLUGIN_ID + '.'
-			+ IWorkbenchConstants.PL_COMMANDS;
 
 	/**
 	 * The name of the contexts extension point.
