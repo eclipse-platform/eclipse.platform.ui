@@ -213,7 +213,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				monitor.worked(2);
 				if (descriptor == null) {
 					final String name= proxy.getProject();
-					final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER);
+					final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER);
 					if (name != null && !"".equals(name)) {//$NON-NLS-1$
 						try {
 							final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
@@ -221,7 +221,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 								if (hasProjectHistory(project)) {
 									final URI uri= project.getLocationURI();
 									if (uri != null)
-										return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER), name).requestDescriptor(proxy);
+										return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).requestDescriptor(proxy);
 								} else
 									return new RefactoringHistoryManager(store.getChild(name), null).requestDescriptor(proxy);
 							}
@@ -324,7 +324,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						try {
 							final URI uri= project.getLocationURI();
 							if (uri != null)
-								EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(project.getName()).delete(EFS.NONE, null);
+								EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(project.getName()).delete(EFS.NONE, null);
 						} catch (CoreException exception) {
 							RefactoringCorePlugin.log(exception);
 						}
@@ -372,14 +372,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/** The maximum size of the undo stack */
 	private static final int MAX_UNDO_STACK= 5;
 
-	/** The index file name */
-	public static final String NAME_INDEX_FILE= "index.dat"; //$NON-NLS-1$
-
 	/** The refactoring history file */
-	public static final String NAME_REFACTORING_HISTORY= "refactorings.history"; //$NON-NLS-1$
+	public static final String NAME_HISTORY_FILE= "refactorings.history"; //$NON-NLS-1$
 
 	/** The refactoring history folder */
-	public static final String NAME_REFACTORINGS_FOLDER= ".refactorings"; //$NON-NLS-1$
+	public static final String NAME_HISTORY_FOLDER= ".refactorings"; //$NON-NLS-1$
+
+	/** The refactoring history index file name */
+	public static final String NAME_INDEX_FILE= "index.dat"; //$NON-NLS-1$
 
 	/** The name of the special workspace project */
 	static final String NAME_WORKSPACE_PROJECT= ".workspace"; //$NON-NLS-1$
@@ -644,9 +644,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				if (hasProjectHistory(project)) {
 					final URI uri= project.getLocationURI();
 					if (uri != null)
-						return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER), name).readHistory(start, end, new SubProgressMonitor(monitor, 12));
+						return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).readHistory(start, end, new SubProgressMonitor(monitor, 12));
 				} else
-					return new RefactoringHistoryManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER).getChild(name), name).readHistory(start, end, new SubProgressMonitor(monitor, 12));
+					return new RefactoringHistoryManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER).getChild(name), name).readHistory(start, end, new SubProgressMonitor(monitor, 12));
 			} catch (CoreException exception) {
 				RefactoringCorePlugin.log(exception);
 			} finally {
@@ -829,9 +829,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		final URI uri= project.getLocationURI();
 		if (uri != null) {
 			if (enable) {
-				final IFileStore source= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(name);
+				final IFileStore source= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
 				if (source.fetchInfo().exists()) {
-					IFileStore destination= EFS.getStore(uri).getChild(NAME_REFACTORINGS_FOLDER);
+					IFileStore destination= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
 					if (destination.fetchInfo().exists())
 						destination.delete(EFS.NONE, null);
 					destination.mkdir(EFS.NONE, null);
@@ -839,9 +839,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					source.delete(EFS.NONE, null);
 				}
 			} else {
-				final IFileStore source= EFS.getStore(uri).getChild(NAME_REFACTORINGS_FOLDER);
+				final IFileStore source= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
 				if (source.fetchInfo().exists()) {
-					IFileStore destination= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_REFACTORINGS_FOLDER).getChild(name);
+					IFileStore destination= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER).getChild(name);
 					if (destination.fetchInfo().exists())
 						destination.delete(EFS.NONE, null);
 					destination.mkdir(EFS.NONE, null);

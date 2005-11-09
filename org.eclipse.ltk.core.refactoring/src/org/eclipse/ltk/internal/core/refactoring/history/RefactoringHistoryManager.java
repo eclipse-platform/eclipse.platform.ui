@@ -131,7 +131,7 @@ public final class RefactoringHistoryManager {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 16);
 			if (count > 0) {
 				final IFileInfo info= store.fetchInfo();
-				if (store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_REFACTORING_HISTORY) && !info.isDirectory()) {
+				if (store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_HISTORY_FILE) && !info.isDirectory()) {
 					final RefactoringDescriptor[] results= new XmlRefactoringSessionReader().readSession(new InputSource(new BufferedInputStream(store.openInputStream(EFS.NONE, null)))).getRefactorings();
 					monitor.worked(1);
 					Arrays.sort(results, new Comparator() {
@@ -183,7 +183,7 @@ public final class RefactoringHistoryManager {
 		Assert.isNotNull(store);
 		final IFileInfo info= store.fetchInfo();
 		if (info.isDirectory()) {
-			if (info.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_REFACTORINGS_FOLDER))
+			if (info.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_HISTORY_FOLDER))
 				return;
 			final IFileStore[] stores= store.childStores(EFS.NONE, null);
 			for (int index= 0; index < stores.length; index++) {
@@ -393,7 +393,7 @@ public final class RefactoringHistoryManager {
 		if (stamp >= 0) {
 			final IFileStore folder= stampToStore(stamp);
 			if (folder != null) {
-				final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_REFACTORING_HISTORY);
+				final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
 				final IFileStore index= folder.getChild(RefactoringHistoryService.NAME_INDEX_FILE);
 				if (history != null && index != null) {
 					if (history.fetchInfo().exists()) {
@@ -592,7 +592,7 @@ public final class RefactoringHistoryManager {
 		Assert.isTrue(stamp >= 0);
 		final IFileStore folder= stampToStore(stamp);
 		if (folder != null) {
-			final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_REFACTORING_HISTORY);
+			final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
 			final IFileStore index= folder.getChild(RefactoringHistoryService.NAME_INDEX_FILE);
 			if (history != null && index != null && history.fetchInfo().exists() && index.fetchInfo().exists()) {
 				InputStream input= null;
@@ -665,7 +665,7 @@ public final class RefactoringHistoryManager {
 			try {
 				final IFileStore folder= stampToStore(stamp);
 				if (folder != null) {
-					final IFileStore file= folder.getChild(RefactoringHistoryService.NAME_REFACTORING_HISTORY);
+					final IFileStore file= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
 					if (file != null && file.fetchInfo().exists()) {
 						input= new BufferedInputStream(file.openInputStream(EFS.NONE, null));
 						if (input != null)
