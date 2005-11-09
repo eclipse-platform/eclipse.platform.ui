@@ -94,7 +94,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 					}
 				}
 
-				fReplaceList.add(0, new Replace(offset, offset, length, text));
+				fReplaceList.addFirst(new Replace(offset, offset, length, text));
 
 			// forward
 			} else if (offset >= lastReplace.newOffset + lastReplace.text.length()) {
@@ -124,12 +124,12 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 */
 	public String get(int offset, int length) {
 
-		if (fReplaceList.size() == 0)
+		if (fReplaceList.isEmpty())
 			return fSource.get(offset, length);
 
 
-		Replace firstReplace= (Replace) fReplaceList.get(0);
-		Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
+		Replace firstReplace= (Replace) fReplaceList.getFirst();
+		Replace lastReplace= (Replace) fReplaceList.getLast();
 
 		// before
 		if (offset + length <= firstReplace.newOffset) {
@@ -185,7 +185,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 * @see org.eclipse.jface.text.ITextStore#get(int)
 	 */
 	public char get(int offset) {
-		if (fReplaceList.size() == 0)
+		if (fReplaceList.isEmpty())
 			return fSource.get(offset);
 
 		Replace firstReplace= (Replace) fReplaceList.getFirst();
@@ -226,10 +226,10 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 * @see org.eclipse.jface.text.ITextStore#getLength()
 	 */
 	public int getLength() {
-		if (fReplaceList.size() == 0)
+		if (fReplaceList.isEmpty())
 			return fSource.getLength();
 
-		Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
+		Replace lastReplace= (Replace) fReplaceList.getLast();
 		return fSource.getLength() + getDelta(lastReplace);
 	}
 
@@ -246,7 +246,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 */
 	private void commit() {
 
-		if (fReplaceList.size() == 0)
+		if (fReplaceList.isEmpty())
 			return;
 
 		StringBuffer buffer= new StringBuffer();
