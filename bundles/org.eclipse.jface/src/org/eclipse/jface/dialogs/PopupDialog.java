@@ -201,6 +201,11 @@ public class PopupDialog extends Window {
 	 * dynamically if possible.
 	 */
 	private Label titleLabel, infoLabel;
+	
+	/**
+	 * Separator controls.  Cached so they can be excluded from color changes.
+	 */
+	private Control titleSeparator, infoSeparator;
 
 	/**
 	 * The images for the dialog menu.
@@ -394,14 +399,14 @@ public class PopupDialog extends Window {
 		// Title area
 		if (hasTitleArea()) {
 			createTitleMenuArea(composite);
-			createHorizontalSeparator(composite);
+			titleSeparator = createHorizontalSeparator(composite);
 		}
 		// Content
 		dialogArea = createDialogArea(composite);
 
 		// Info field
 		if (hasInfoArea()) {
-			createHorizontalSeparator(composite);
+			infoSeparator = createHorizontalSeparator(composite);
 			createInfoTextArea(composite);
 		}
 
@@ -1052,8 +1057,13 @@ public class PopupDialog extends Window {
 	 * @return the List of controls
 	 */
 	protected List getForegroundColorExclusions() {
-		List list = new ArrayList(1);
-		list.add(infoLabel);
+		List list = new ArrayList(3);
+		if (infoLabel != null)
+			list.add(infoLabel);
+		if (titleSeparator != null)
+			list.add(titleSeparator);
+		if (infoSeparator != null)
+			list.add(infoSeparator);
 		return list;
 	}
 
@@ -1076,6 +1086,8 @@ public class PopupDialog extends Window {
 		menuManager = null;
 		dialogArea = null;
 		titleLabel = null;
+		titleSeparator = null;
+		infoSeparator = null;
 		infoLabel = null;
 		toolBar = null;
 
