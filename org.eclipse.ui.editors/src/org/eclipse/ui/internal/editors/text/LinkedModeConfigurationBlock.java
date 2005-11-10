@@ -62,7 +62,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
  * org.eclipse.ui.editors. However, as they are chiefly used in the java editor,
  * we keep the preferences here for the time being. 
  * 
- * @since 3.1
+ * @since 3.2 (in jdt.ui since 3.1)
  */
 class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 

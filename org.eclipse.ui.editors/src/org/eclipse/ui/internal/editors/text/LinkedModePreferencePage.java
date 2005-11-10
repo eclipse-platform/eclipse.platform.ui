@@ -20,6 +20,8 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 /**
  * The page for setting the editor options.
+ * 
+ * @since 3.2
  */
 public final class LinkedModePreferencePage extends AbstractConfigurationBlockPreferencePage {
 	
