@@ -555,7 +555,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 	}
 	
 	private WizardProjectsImportPage getNewWizard(){
-		ImportExportWizard wizard = new ImportExportWizard();
+		ImportExportWizard wizard = new ImportExportWizard(ImportExportWizard.IMPORT);
 		wizard.init(getWorkbench(), null);
 		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
 		.getDialogSettings();
