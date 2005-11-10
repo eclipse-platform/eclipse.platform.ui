@@ -13,6 +13,7 @@ package org.eclipse.jface.databinding.internal.swt;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Spinner;
@@ -67,7 +68,8 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 				oldValue = spinner.getMaximum();
 				spinner.setMaximum(newValue);
 			} else {
-				throw new AssertionError("invalid attribute name"); //$NON-NLS-1$
+				Assert.isTrue(false, "invalid attribute name:" + attribute); //$NON-NLS-1$
+				return;
 			}
 			fireChangeEvent(IChangeEvent.CHANGE, new Integer(
 					oldValue), new Integer(newValue));

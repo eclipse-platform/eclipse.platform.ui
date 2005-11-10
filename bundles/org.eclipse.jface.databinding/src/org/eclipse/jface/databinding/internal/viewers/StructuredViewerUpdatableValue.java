@@ -13,6 +13,7 @@ package org.eclipse.jface.databinding.internal.viewers;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -80,10 +81,8 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		if (attribute.equals(DataBinding.SELECTION)) {
-			return Object.class;
-		}
-		throw new AssertionError("unexpected attribute"); //$NON-NLS-1$
+		Assert.isTrue(attribute.equals(DataBinding.SELECTION), "unexpected attribute: " + attribute); //$NON-NLS-1$
+		return Object.class;
 	}
 
 }

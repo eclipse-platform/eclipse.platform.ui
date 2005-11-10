@@ -13,6 +13,7 @@ package org.eclipse.jface.databinding.internal.swt;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
@@ -84,21 +85,18 @@ public class ListUpdatableValue extends UpdatableValue {
 	}
 
 	public Object getValue() {
-		if (attribute.equals(DataBinding.SELECTION)) {
-			int index = list.getSelectionIndex();
-			if (index >= 0)
-				return list.getItem(index);
-			return null;
-		}
-		throw new AssertionError("unexpected attribute"); //$NON-NLS-1$
-
+		Assert.isTrue(attribute.equals(DataBinding.SELECTION),
+				"unexpected attribute" + attribute); //$NON-NLS-1$
+		int index = list.getSelectionIndex();
+		if (index >= 0)
+			return list.getItem(index);
+		return null;
 	}
 
 	public Class getValueType() {
-		if (attribute.equals(DataBinding.SELECTION)) {
-			return String.class;
-		}
-		throw new AssertionError("unexpected attribute"); //$NON-NLS-1$
+		Assert.isTrue(attribute.equals(DataBinding.SELECTION),
+				"unexpected attribute" + attribute); //$NON-NLS-1$
+		return String.class;
 	}
 
 }

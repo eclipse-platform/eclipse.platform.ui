@@ -18,6 +18,7 @@ import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.util.Assert;
 
 /**
  * @since 3.2
@@ -87,10 +88,7 @@ public class NestedUpdatableCollection extends Updatable implements
 				if (elementType == null) {
 					elementType = innerElementType;
 				} else {
-					if (!elementType.equals(innerElementType)) {
-						throw new AssertionError(
-								"Cannot change element type in a nested updatable collection"); //$NON-NLS-1$
-					}
+					Assert.isTrue(elementType.equals(innerElementType), "Cannot change element type in a nested updatable collection"); //$NON-NLS-1$
 				}
 			} catch (BindingException e) {
 				// TODO Auto-generated catch block

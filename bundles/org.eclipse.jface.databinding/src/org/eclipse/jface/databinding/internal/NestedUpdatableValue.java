@@ -17,6 +17,7 @@ import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.util.Assert;
 
 /**
  * @since 3.2
@@ -83,9 +84,7 @@ public class NestedUpdatableValue extends UpdatableValue {
 				if(featureType==null) {
 					featureType = innerValueType;
 				} else {
-					if(!featureType.equals(innerValueType)) {
-						throw new AssertionError("Cannot change value type in a nested updatable value"); //$NON-NLS-1$
-					}
+					Assert.isTrue(featureType.equals(innerValueType), "Cannot change value type in a nested updatable value"); //$NON-NLS-1$
 				}
 			} catch (BindingException e) {
 				// TODO Auto-generated catch block

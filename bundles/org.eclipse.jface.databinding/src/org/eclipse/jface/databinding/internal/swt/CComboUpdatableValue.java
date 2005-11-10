@@ -13,6 +13,7 @@ package org.eclipse.jface.databinding.internal.swt;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -87,25 +88,22 @@ public class CComboUpdatableValue extends UpdatableValue {
 	public Object getValue() {
 		if (attribute.equals(DataBinding.TEXT)) {
 			return ccombo.getText();
-		} else if (attribute.equals(DataBinding.SELECTION)) {
-			// The problem with a ccombo, is that it changes the text an fires before 
-			// it update its selection index
-			return ccombo.getText();
+		}
+		Assert.isTrue(attribute.equals(DataBinding.SELECTION), "unexpected attribute: " + attribute); //$NON-NLS-1$
+		// The problem with a ccombo, is that it changes the text an fires before 
+		// it update its selection index
+		return ccombo.getText();
 //			int index = ccombo.getSelectionIndex();
 //			if (index >= 0)
 //				return ccombo.getItem(index);
 //			return null;
-		} else
-			throw new AssertionError("unexpected attribute"); //$NON-NLS-1$
-
 	}
 
 	public Class getValueType() {
-		if (attribute.equals(DataBinding.TEXT)
-				|| attribute.equals(DataBinding.SELECTION)) {
-			return String.class;
-		}
-		throw new AssertionError("unexpected attribute"); //$NON-NLS-1$
+		Assert.isTrue(attribute.equals(DataBinding.TEXT)
+				|| attribute.equals(DataBinding.SELECTION),
+				"unexpected attribute: " + attribute); //$NON-NLS-1$
+		return String.class;
 	}
 
 }

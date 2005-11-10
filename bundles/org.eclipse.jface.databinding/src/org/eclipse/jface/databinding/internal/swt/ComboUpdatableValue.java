@@ -13,6 +13,7 @@ package org.eclipse.jface.databinding.internal.swt;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Combo;
@@ -79,29 +80,26 @@ public class ComboUpdatableValue extends UpdatableValue {
 		} finally {
 			updating = false;
 		}
-		fireChangeEvent(IChangeEvent.CHANGE, oldValue, combo
-				.getText());
+		fireChangeEvent(IChangeEvent.CHANGE, oldValue, combo.getText());
 	}
 
 	public Object getValue() {
 		if (attribute.equals(DataBinding.TEXT)) {
 			return combo.getText();
-		} else if (attribute.equals(DataBinding.SELECTION)) {
-			int index = combo.getSelectionIndex();
-			if (index >= 0)
-				return combo.getItem(index);
-			return null;
-		} else
-			throw new AssertionError("unexpected attribute"); //$NON-NLS-1$
-
+		}
+		Assert.isTrue(attribute.equals(DataBinding.SELECTION),
+				"unexpected attribute" + attribute); //$NON-NLS-1$
+		int index = combo.getSelectionIndex();
+		if (index >= 0)
+			return combo.getItem(index);
+		return null;
 	}
 
 	public Class getValueType() {
-		if (attribute.equals(DataBinding.TEXT)
-				|| attribute.equals(DataBinding.SELECTION)) {
-			return String.class;
-		}
-		throw new AssertionError("unexpected attribute"); //$NON-NLS-1$
+		Assert.isTrue(attribute.equals(DataBinding.TEXT)
+				|| attribute.equals(DataBinding.SELECTION),
+				"unexpected attribute" + attribute); //$NON-NLS-1$
+		return String.class;
 	}
 
 }
