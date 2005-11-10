@@ -33,6 +33,7 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -234,7 +235,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Return the operation history we are using.
 	 */
 	IOperationHistory getHistory() {
-		return getWorkbenchWindow().getWorkbench().getOperationSupport()
+		return PlatformUI.getWorkbench().getOperationSupport()
 				.getOperationHistory();
 	}
 
