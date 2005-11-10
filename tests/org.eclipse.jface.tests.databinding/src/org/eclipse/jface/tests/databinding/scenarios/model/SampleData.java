@@ -154,7 +154,7 @@ public class SampleData {
 	}
 
 	public static IDataBindingContext getDatabindingContext(Control aControl) {
-		IDataBindingContext result = DataBinding.createContext(null, aControl,
+		IDataBindingContext result = DataBinding.createContext(aControl,
 				new String[] { DataBinding.FACTORY_BEANS,
 						DataBinding.FACTORY_SWT, DataBinding.FACTORY_JFACE });
 		return result;

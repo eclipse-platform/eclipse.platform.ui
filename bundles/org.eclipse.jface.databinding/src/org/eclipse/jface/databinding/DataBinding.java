@@ -50,6 +50,22 @@ public class DataBinding {
 	 * 
 	 */
 	public static final String FACTORY_JFACE = "org.eclipse.jface.databinding.swt"; //$NON-NLS-1$
+	
+	/**
+	 * Updatable factory supporting JFace Components
+	 */
+	public static final IUpdatableFactory jFaceFactory = new JFaceUpdatableFactory();
+	
+	/**
+	 * Updatable factory supporting SWT widgets
+	 */
+	public static final IUpdatableFactory swtFactory = new SWTUpdatableFactory();
+	
+	/**
+	 * Updatable factory supporting POJO
+	 */
+	public static final IUpdatableFactory javaBeanFactory = new BeanUpdatableFactory();
+	
 
 	/**
 	 * Constant denoting the factory that supports binding to SWT controls. This
@@ -106,21 +122,18 @@ public class DataBinding {
 	public static final String TEXT = "text"; //$NON-NLS-1$
 
 	/**
-	 * @param parent
 	 * @param factoryIDs
 	 * @return a data binding context
 	 */
-	public static IDataBindingContext createContext(IDataBindingContext parent,
-			String[] factoryIDs) {
-		DataBindingContext result = new DataBindingContext(
-				(DataBindingContext) parent);
+	public static IDataBindingContext createContext(String[] factoryIDs) {
+		DataBindingContext result = new DataBindingContext();
 		for (int i = 0; i < factoryIDs.length; i++) {
 			if (FACTORY_SWT.equals(factoryIDs[i])) {
-				result.addUpdatableFactory(new SWTUpdatableFactory());
+				result.addUpdatableFactory(swtFactory);
 			} else if (FACTORY_JFACE.equals(factoryIDs[i])) {
-				result.addUpdatableFactory(new JFaceUpdatableFactory());
+				result.addUpdatableFactory(jFaceFactory);
 			} else if (FACTORY_BEANS.equals(factoryIDs[i])) {
-				result.addUpdatableFactory(new BeanUpdatableFactory());
+				result.addUpdatableFactory(javaBeanFactory);
 			}
 		}
 		return result;
@@ -129,25 +142,21 @@ public class DataBinding {
 	/**
 	 * Creates and returns a data binding context
 	 * 
-	 * @param parent
 	 * @param control
 	 * @return
 	 */
-	public static IDataBindingContext createContext(IDataBindingContext parent,
-			Control control) {
-		return createContext(parent, control, new String[] { FACTORY_SWT,
-				FACTORY_JFACE });
+	public static IDataBindingContext createContext(Control control) {
+		return createContext(control, new String[] { FACTORY_BEANS, FACTORY_SWT,
+				FACTORY_JFACE});
 	}
 
-	/**
-	 * @param parent
+	/**	
 	 * @param control
 	 * @param factoryIDs
 	 * @return
 	 */
-	public static IDataBindingContext createContext(IDataBindingContext parent,
-			Control control, String[] factoryIDs) {
-		final IDataBindingContext result = createContext(parent, factoryIDs);
+	public static IDataBindingContext createContext(Control control, String[] factoryIDs) {
+		final IDataBindingContext result = createContext(factoryIDs);
 		control.addDisposeListener(new DisposeListener() {
 
 			public void widgetDisposed(DisposeEvent e) {

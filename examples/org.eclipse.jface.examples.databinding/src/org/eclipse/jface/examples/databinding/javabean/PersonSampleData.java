@@ -34,7 +34,7 @@ public class PersonSampleData {
 	public static IDataBindingContext getSWTtoJavaBeanDatabindingContext(
 			Control aControl) {
 
-		IDataBindingContext dbc = DataBinding.createContext(null, aControl);
+		IDataBindingContext dbc = DataBinding.createContext(aControl);
 
 		IUpdatableFactory emfValueFactory = new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,

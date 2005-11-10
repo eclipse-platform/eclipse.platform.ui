@@ -56,6 +56,15 @@ public interface IDataBindingContext {
 	 * collectProperties) that is passed to IUpdatableFactory
 	 */
 	public static final String VALIDATION_TIME = "org.eclipse.jface.databinding.validationTime"; //$NON-NLS-1$
+	
+	/**
+	 * Allow one to nesting
+	 * @param parent 
+	 * 
+	 * @deprecated not sure that this one really helps for shadowing issues more than one
+	 *             adding factories in a particualr order from scratch
+	 */
+	public void setParent(IDataBindingContext parent);
 
 	/**
 	 * Method addBindSupportFactory. Add a factory for converters, validators,

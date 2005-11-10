@@ -106,18 +106,11 @@ public class DataBindingContext implements IValidationContext,
 		bindSupportFactories.add(factory);
 	}
 
+
 	/**
 	 * 
 	 */
-	public DataBindingContext() {
-		this(null);
-	}
-
-	/**
-	 * @param parent
-	 */
-	public DataBindingContext(DataBindingContext parent) {
-		this.parent = parent;
+	public DataBindingContext() {		
 		registerFactories();
 		registerConverters();
 	}
@@ -606,6 +599,10 @@ public class DataBindingContext implements IValidationContext,
 
 	public void setValidationTime(int validationTime) {
 		this.validationTime = validationTime;
+	}
+
+	public void setParent(IDataBindingContext parent) {
+		this.parent=(DataBindingContext)parent;		
 	}
 
 }
