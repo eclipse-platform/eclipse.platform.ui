@@ -168,7 +168,7 @@ public class MultiEditorTest extends UITestCase {
 		// listHistory(((TiledEditor) multiEditor).callHistory);
 
 		// check the public API called for opening the TiledEditor
-		((TiledEditor) multiEditor).callHistory.printToConsole();
+//		((TiledEditor) multiEditor).callHistory.printToConsole();
 		assertTrue("The editor open trace was incorrect",
 				((TiledEditor) multiEditor).callHistory
 						.verifyOrder(gEditorOpenTrace));
