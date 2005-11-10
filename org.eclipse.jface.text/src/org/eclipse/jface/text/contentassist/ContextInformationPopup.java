@@ -196,7 +196,7 @@ class ContextInformationPopup implements IContentAssistListener {
 
 				} else if (count > 0) {
 
-					// if any of the proposed context matches the any of the contexts on the stack,
+					// if any of the proposed context matches any of the contexts on the stack,
 					// assume that one (so, if context info is invoked repeatedly, the current
 					// info is kept)
 					for (int i= 0; i < contexts.length; i++) {
@@ -233,7 +233,6 @@ class ContextInformationPopup implements IContentAssistListener {
 					createContextSelector();
 					setContexts(contexts);
 					displayContextSelector();
-					hideContextInfoPopup();
 				}
 			}
 		});
