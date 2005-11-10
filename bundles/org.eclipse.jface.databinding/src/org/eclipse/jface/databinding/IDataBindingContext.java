@@ -36,16 +36,16 @@ public interface IDataBindingContext {
 	public static final int TIME_NEVER = 3;
 
 	/**
-	 * Key for the validation time property in the properties map (see
-	 * collectProperties) that is passed to IUpdatableFactory
-	 */
-	public static final String VALIDATION_TIME = "org.eclipse.jface.databinding.validationTime"; //$NON-NLS-1$
-
-	/**
 	 * Key for the update time property in the properties map (see
 	 * collectProperties) that is passed to IUpdatableFactory
 	 */
 	public static final String UPDATE_TIME = "org.eclipse.jface.databinding.updateTime"; //$NON-NLS-1$
+
+	/**
+	 * Key for the validation time property in the properties map (see
+	 * collectProperties) that is passed to IUpdatableFactory
+	 */
+	public static final String VALIDATION_TIME = "org.eclipse.jface.databinding.validationTime"; //$NON-NLS-1$
 
 	/**
 	 * Method addBindSupportFactory. Add a factory for converters, validators,
@@ -59,24 +59,9 @@ public interface IDataBindingContext {
 	public void addBindSupportFactory(IBindSupportFactory factory);
 
 	/**
-	 * 
+	 * @param updatableFactory
 	 */
-	public void dispose();
-
-	/**
-	 * @return the validation message updatable value
-	 */
-	public IUpdatableValue getCombinedValidationMessage();
-
-	/**
-	 * @return the validation updatable
-	 */
-	public IUpdatableValue getPartialValidationMessage();
-
-	/**
-	 * @return the validation updatable
-	 */
-	public IUpdatableValue getValidationMessage();
+	public void addUpdatableFactory(IUpdatableFactory updatableFactory);
 
 	/**
 	 * Binds targetUpdatable and modelUpdatable using converter and validator as
@@ -93,19 +78,6 @@ public interface IDataBindingContext {
 			IBindSpec bindSpec) throws BindingException;
 
 	/**
-	 * Convenience method to bind createUpdatable(targetDescription) and
-	 * modelUpdatable.
-	 * 
-	 * @param targetDescription
-	 * @param modelUpdatable
-	 * @param bindSpec
-	 *            the bind spec, or null
-	 * @throws BindingException
-	 */
-	public void bind(Object targetDescription, IUpdatable modelUpdatable,
-			IBindSpec bindSpec) throws BindingException;
-
-	/**
 	 * Convenience method to bind targetUpdatable and
 	 * createUpdatable(modelDescription).
 	 * 
@@ -116,6 +88,19 @@ public interface IDataBindingContext {
 	 * @throws BindingException
 	 */
 	public void bind(IUpdatable targetUpdatable, Object modelDescription,
+			IBindSpec bindSpec) throws BindingException;
+
+	/**
+	 * Convenience method to bind createUpdatable(targetDescription) and
+	 * modelUpdatable.
+	 * 
+	 * @param targetDescription
+	 * @param modelUpdatable
+	 * @param bindSpec
+	 *            the bind spec, or null
+	 * @throws BindingException
+	 */
+	public void bind(Object targetDescription, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) throws BindingException;
 
 	/**
@@ -157,9 +142,19 @@ public interface IDataBindingContext {
 			throws BindingException;
 
 	/**
-	 * @param updatableFactory
+	 * 
 	 */
-	public void addUpdatableFactory(IUpdatableFactory updatableFactory);
+	public void dispose();
+
+	/**
+	 * @return the validation message updatable value
+	 */
+	public IUpdatableValue getCombinedValidationMessage();
+
+	/**
+	 * @return the validation updatable
+	 */
+	public IUpdatableValue getPartialValidationMessage();
 
 	/**
 	 * @return the default updateTime
@@ -167,14 +162,19 @@ public interface IDataBindingContext {
 	public int getUpdateTime();
 
 	/**
-	 * @param updateTime
+	 * @return the validation updatable
 	 */
-	public void setUpdateTime(int updateTime);
+	public IUpdatableValue getValidationMessage();
 
 	/**
 	 * @return the default validation time
 	 */
 	public int getValidationTime();
+
+	/**
+	 * @param updateTime
+	 */
+	public void setUpdateTime(int updateTime);
 
 	/**
 	 * @param validationTime
