@@ -523,25 +523,6 @@ public abstract class ActionFactory {
     };
 
     /**
-     * Workbench action (id "importexport"): Opens the import wizard. This action
-     * maintains its enablement state.
-     */
-    public static final ActionFactory IMPORT_EXPORT = new ActionFactory("importExport") {//$NON-NLS-1$
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
-         */
-        public IWorkbenchAction create(IWorkbenchWindow window) {
-            if (window == null) {
-                throw new IllegalArgumentException();
-            }
-            IWorkbenchAction action = new ImportExportAction(window);
-            action.setId(getId());
-            return action;
-        }
-    };
-
-    /**
      * Workbench action (id "lockToolBar"): Lock/unlock the workbench window
      * tool bar. This action maintains its enablement state.
      */

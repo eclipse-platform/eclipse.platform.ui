@@ -1,5 +1,6 @@
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
@@ -29,16 +30,7 @@ public class ImportExportWizard extends Wizard {
     private IWorkbench workbench;
     private IStructuredSelection selection;
     private ImportExportPage importExportPage;
-    private String initialPage = null;
-    
-    /**
-     * Create an import/export wizard, show the tab that was  
-     * selected the last time Finish was pressed.
-     *
-     */
-    public ImportExportWizard(){
-    	
-    }
+    private String page = null;
     
     /**
      * Create an import/export wizard and show the page 
@@ -47,7 +39,7 @@ public class ImportExportWizard extends Wizard {
      * @param pageId
      */
     public ImportExportWizard(String pageId){
-    	initialPage = pageId;
+    	page = pageId;
     }
     
     /**
@@ -63,10 +55,12 @@ public class ImportExportWizard extends Wizard {
      * Creates the wizard's pages lazily.
      */
     public void addPages() {
-    	importExportPage = new ImportExportPage(this.workbench, this.selection);
-    	if (initialPage != null)
-    		importExportPage.setInitialPage(initialPage);
-        addPage(importExportPage);
+    	if (page.equals(IMPORT))
+    		importExportPage = new ImportPage(this.workbench, this.selection);
+    	else if (page.equals(EXPORT))
+    		importExportPage = new ExportPage(this.workbench, this.selection);
+        if (importExportPage != null)
+        	addPage(importExportPage);
     }
 
     /**
@@ -80,10 +74,19 @@ public class ImportExportWizard extends Wizard {
         this.workbench = aWorkbench;
         this.selection = currentSelection;
 
-        setWindowTitle(WorkbenchMessages.ImportExportWizard_title); 
-        // TODO get new descriptor for import/export
-        setDefaultPageImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
+        ImageDescriptor wizardBannerImage = null;
+        if (IMPORT.equals(page)){
+        	wizardBannerImage = WorkbenchImages
+                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ);
+        	setWindowTitle(WorkbenchMessages.ImportWizard_title);
+        }
+        else if (EXPORT.equals(page)){
+        	wizardBannerImage = WorkbenchImages
+                    .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ);
+        	setWindowTitle(WorkbenchMessages.ExportWizard_title);
+        }
+        if (wizardBannerImage != null)
+        	setDefaultPageImageDescriptor(wizardBannerImage);
         setNeedsProgressMonitor(true);
     }
 }

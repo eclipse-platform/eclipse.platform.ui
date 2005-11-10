@@ -17,26 +17,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
@@ -45,48 +38,27 @@ import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.activities.ws.WorkbenchTriggerPoints;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
- * Wizard page from which an import source or export destination can be chosen.
+ * Abstract wizard page class from which an import or export wizard can be chosen.
  * 
  * @since 3.2
  *
  */
-public class ImportExportPage extends WorkbenchWizardSelectionPage{
-    private static final String DIALOG_SETTING_SECTION_NAME = "ImportExportPage."; //$NON-NLS-1$
-    private static final String IMPORT_EXPORT_SELECTION = DIALOG_SETTING_SECTION_NAME
-            + "STORE_SELECTED_TRANSFER_ID"; //$NON-NLS-1$
-    private static final String STORE_SELECTED_IMPORT_WIZARD_ID = DIALOG_SETTING_SECTION_NAME
-            + "STORE_SELECTED_IMPORT_WIZARD_ID"; //$NON-NLS-1$
-    private static final String STORE_SELECTED_EXPORT_WIZARD_ID = DIALOG_SETTING_SECTION_NAME
-    	+ "STORE_SELECTED_EXPORT_WIZARD_ID"; //$NON-NLS-1$
-    private static final String STORE_EXPANDED_IMPORT_CATEGORIES = DIALOG_SETTING_SECTION_NAME
-	+ "STORE_EXPANDED_IMPORT_CATEGORIES";	//$NON-NLS-1$
-    private static final String STORE_EXPANDED_EXPORT_CATEGORIES = DIALOG_SETTING_SECTION_NAME
-		+ "STORE_EXPANDED_EXPORT_CATEGORIES";	//$NON-NLS-1$
-
-    private static final int IMPORT_SELECTION = 0;
-    private static final int EXPORT_SELECTION = 1;
+public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
+    protected static final String DIALOG_SETTING_SECTION_NAME = "ImportExportPage."; //$NON-NLS-1$
+	
+    // tree viewer of wizard selections
+    private TreeViewer treeViewer;
     
-	private TabFolder tabFolder;
-	private ImportExportTree exportList;
-	private ImportExportTree importList;
-	
-	/*
-	 * the initial tab to be selected - required for backward compatibility with Import and Export menu items.
-	 */ 
-	private String initialPageId = null;
-	
 	/*
 	 * Class to create a control that shows a categorized tree of wizard types.
 	 */
-	protected class ImportExportTree {
+	protected class CategorizedWizardSelectionTree {
 		private final static int SIZING_LISTS_HEIGHT = 200;
 		
 		private IWizardCategory wizardCategories;
@@ -99,7 +71,7 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
 		 * @param categories root wizard category for the wizard type
 		 * @param msg message describing what the user should choose from the tree.
 		 */
-		protected ImportExportTree(IWizardCategory categories, String msg){
+		protected CategorizedWizardSelectionTree(IWizardCategory categories, String msg){
 			this.wizardCategories = categories;
 			this.message = msg;
 		}
@@ -108,14 +80,14 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
 		 * Create the tree viewer and a message describing what the user should choose
 		 * from the tree.
 		 * 
-		 * @param folder tab folder on which the tab for this composite is to be created
+		 * @param parent Composite on which the tree viewer is to be created
 		 * @return Comoposite with all widgets
 		 */
-		protected Composite createControl(TabFolder folder){
-	        Font font = folder.getFont();
+		protected Composite createControl(Composite parent){
+	        Font font = parent.getFont();
 
 	        // create composite for page.
-	        Composite outerContainer = new Composite(folder, SWT.NONE);
+	        Composite outerContainer = new Composite(parent, SWT.NONE);
 	        outerContainer.setLayout(new GridLayout());
 	        outerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 	        outerContainer.setFont(font);
@@ -225,21 +197,10 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
 	    outerContainer.setLayout(new GridLayout());
 	    outerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 	    outerContainer.setFont(font);
+
+	    Composite comp = createTreeViewer(outerContainer);
 	    
-	    setMessage(WorkbenchMessages.ImportExportPage_selectTransferType);
-	    
-	    tabFolder = new TabFolder(outerContainer, SWT.NULL);
-	    tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
-	    
-	    createTabs();
-	    
-	    tabFolder.addSelectionListener(new SelectionAdapter(){
-	    	public void widgetSelected(SelectionEvent e) {
-	    		tabSelectionChanged();
-	    	}
-	    });
-	    
-		Dialog.applyDialogFont(tabFolder);
+		Dialog.applyDialogFont(comp);
 		
 	    restoreWidgetValues();
 	
@@ -250,41 +211,9 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
 	}
 
 	/**
-	 * Create the tabs for the tab folder of this wizard page.
+	 * Create the tree viewer from which a wizard is selected.
 	 */
-    protected void createTabs(){
-		// Import tab
-		TabItem importTab = new TabItem(tabFolder, SWT.NULL);
-		importTab.setText(WorkbenchMessages.ImportExportPage_importTab); 
-		importTab.setControl(createImportTab());
-		
-		// Export tab
-		TabItem exportTab = new TabItem(tabFolder, SWT.NULL);
-		exportTab.setText(WorkbenchMessages.ImportExportPage_exportTab); 
-		exportTab.setControl(createExportTab());
-    }
-    
-    /*
-     * Create control for Import tab.
-     */
-    private Composite createImportTab(){
-		IWizardCategory root = WorkbenchPlugin.getDefault()
-			.getImportWizardRegistry().getRootCategory();
-    	importList = new ImportExportTree(
-    			root, WorkbenchMessages.ImportWizard_selectSource);
-    	Composite importComp = importList.createControl(tabFolder);
-    	importList.getViewer().addSelectionChangedListener(new ISelectionChangedListener(){
-    		public void selectionChanged(SelectionChangedEvent event) {
-    			listSelectionChanged(event.getSelection());    	       			
-    		}
-    	});
-    	importList.getViewer().addDoubleClickListener(new IDoubleClickListener(){
-        	public void doubleClick(DoubleClickEvent event) {
-        		treeDoubleClicked(event);
-        	}
-        });
-    	return importComp;
-    }
+    protected abstract Composite createTreeViewer(Composite parent);
     
     /**
      * Method to call when an item in one of the lists is double-clicked.
@@ -292,7 +221,7 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
      * tree.
      * @param event
      */
-    private void treeDoubleClicked(DoubleClickEvent event){
+    protected void treeDoubleClicked(DoubleClickEvent event){
     	ISelection selection = event.getViewer().getSelection();
 	    IStructuredSelection ss = (IStructuredSelection) selection;
     	listSelectionChanged(ss);
@@ -307,15 +236,6 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
 		}    	
         getContainer().showPage(getNextPage());   			
     }
-    /*
-     * Method to call whenever the selected tab has changes.
-     * Updates the wizard's message to reflect the tab selected and the selected wizard 
-     * on that tab, if there is one.
-     */
-    private void tabSelectionChanged(){
-    	int selected = tabFolder.getSelectionIndex();
-    	updateMessage(selected);
-    }
     
     /*
      * Update the wizard's message based on the given (selected) wizard element.
@@ -323,7 +243,7 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
     private void updateSelectedNode(WorkbenchWizardElement wizardElement){
         setErrorMessage(null);
         if (wizardElement == null) {
-        	updateMessage(tabFolder.getSelectionIndex());
+        	updateMessage();
             setSelectedNode(null);
             return;
         }
@@ -336,17 +256,8 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
      * Update the wizard's message based on the currently selected tab
      * and the selected wizard on that tab.
      */
-    private void updateMessage(int selected){
-    	TreeViewer viewer = null;
-    	String noSelectionMsg = null;
-    	if (selected == IMPORT_SELECTION){
-    		viewer = importList.getViewer();  
-    		noSelectionMsg = WorkbenchMessages.ImportExportPage_chooseImportSource;
-    	}
-    	else if (selected == EXPORT_SELECTION){
-    		viewer = exportList.getViewer();
-    		noSelectionMsg = WorkbenchMessages.ImportExportPage_chooseExportDestination;
-    	}
+    protected void updateMessage(){
+    	TreeViewer viewer = getTreeViewer();
     	if (viewer != null){
     		ISelection selection = viewer.getSelection();
             IStructuredSelection ss = (IStructuredSelection) selection;
@@ -355,12 +266,12 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
                	updateSelectedNode((WorkbenchWizardElement)sel);
             }
             else{
-            	setMessage(noSelectionMsg);  
+            	 
             	setSelectedNode(null);
             }
     	}
     	else 
-    		setMessage(WorkbenchMessages.ImportExportPage_selectTransferType);
+    		setMessage(null);
     }
     
     /*
@@ -368,7 +279,7 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
      * Updates the wizard's message to relect the description of the currently 
      * selected wizard.
      */
-    private void listSelectionChanged(ISelection selection){
+    protected void listSelectionChanged(ISelection selection){
         setErrorMessage(null);
         IStructuredSelection ss = (IStructuredSelection) selection;
         Object sel = ss.getFirstElement();
@@ -378,28 +289,6 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
         }
         else
         	updateSelectedNode(null);
-    }
-    
-    /*
-     * Create control for Export tab.
-     */
-    private Composite createExportTab(){
-		IWizardCategory root = WorkbenchPlugin.getDefault()
-			.getExportWizardRegistry().getRootCategory();
-    	exportList = new ImportExportTree(
-    			root, WorkbenchMessages.ExportWizard_selectDestination);
-    	Composite exportComp = exportList.createControl(tabFolder);
-        exportList.getViewer().addSelectionChangedListener(new ISelectionChangedListener(){
-    		public void selectionChanged(SelectionChangedEvent event) {
-    			listSelectionChanged(event.getSelection());    	       			
-    		}
-    	});
-        exportList.getViewer().addDoubleClickListener(new IDoubleClickListener(){
-        	public void doubleClick(DoubleClickEvent event) {
-        		treeDoubleClicked(event);
-        	}
-        });
-        return exportComp;
     }
 
     /*
@@ -418,42 +307,7 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
      * held last time this wizard was used to completion.
      */
     protected void restoreWidgetValues() {
-    	// restore each tabs last selection and tree state
-    	IWizardCategory importRoot = WorkbenchPlugin.getDefault().getImportWizardRegistry().getRootCategory();
-        expandPreviouslyExpandedCategories(STORE_EXPANDED_IMPORT_CATEGORIES, importRoot,importList.getViewer());
-        selectPreviouslySelected(STORE_SELECTED_IMPORT_WIZARD_ID, importRoot, importList.getViewer());
-        
-        IWizardCategory exportRoot = WorkbenchPlugin.getDefault().getExportWizardRegistry().getRootCategory();
-        expandPreviouslyExpandedCategories(STORE_EXPANDED_EXPORT_CATEGORIES, exportRoot, exportList.getViewer());
-        selectPreviouslySelected(STORE_SELECTED_EXPORT_WIZARD_ID, exportRoot, exportList.getViewer());       
-
-        // restore last selected tab or set to desired page (if provided)
-    	try{
-	    	if (initialPageId == null){
-	    		// initial page not specified, use settings 
-				int selectedTab = getDialogSettings().getInt(IMPORT_EXPORT_SELECTION);
-				if ((tabFolder.getItemCount() > selectedTab)) {
-					tabFolder.setSelection(selectedTab);
-					updateMessage(selectedTab);
-				}
-				else{	// default behavior - show first tab
-					updateMessage(0);
-				}
-	    	}
-	    	else{	
-	    		// initial page specified - set it and set the selected node for it, if one exists        		
-	    		if (initialPageId == ImportExportWizard.IMPORT){
-	    			tabFolder.setSelection(IMPORT_SELECTION);
-	    			updateMessage(tabFolder.getSelectionIndex());
-	    		}
-	    		else if (initialPageId == ImportExportWizard.EXPORT){
-	    			tabFolder.setSelection(EXPORT_SELECTION);
-	    			updateMessage(tabFolder.getSelectionIndex());
-	    		}
-	    	}
-		}
-		catch (NumberFormatException e){
-		} 
+        updateMessage();
     }
 
     /**
@@ -509,27 +363,6 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
 
         viewer.setSelection(new StructuredSelection(selected), true);
     }
-
-    /**
-     * Since Finish was pressed, write widget values to the dialog store so
-     * that they will persist into the next invocation of this wizard page
-     */
-    public void saveWidgetValues() {
-    	// store which tab is selected as well as its expanded categories and selected wizard
-    	int selected = tabFolder.getSelectionIndex();
-        if (selected == 1){
-            getDialogSettings().put(IMPORT_EXPORT_SELECTION,
-            		EXPORT_SELECTION);
-        	storeExpandedCategories(STORE_EXPANDED_EXPORT_CATEGORIES, exportList.getViewer());
-            storeSelectedCategoryAndWizard(STORE_SELECTED_EXPORT_WIZARD_ID, exportList.getViewer()); 
-        }
-        else{
-            getDialogSettings().put(IMPORT_EXPORT_SELECTION,
-                    IMPORT_SELECTION);
-        	storeExpandedCategories(STORE_EXPANDED_IMPORT_CATEGORIES, importList.getViewer());
-            storeSelectedCategoryAndWizard(STORE_SELECTED_IMPORT_WIZARD_ID, importList.getViewer());   
-        }
-    }
  
     /**
      * Stores the collection of currently-expanded categories in this page's
@@ -569,35 +402,52 @@ public class ImportExportPage extends WorkbenchWizardSelectionPage{
                         ((IWizardDescriptor) selected).getId());
         }
     }
+    
+    /**
+     * When Finish is pressed, write widget values to the dialog store so
+     * that they will persist into the next invocation of the wizard page.
+     *
+     */
+    public void saveWidgetValues(){
+    	// do nothing by default - subclasses should override
+    }
+    
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizardPage#getNextPage()
      */
     public IWizardPage getNextPage() { 
-    	int selected = tabFolder.getSelectionIndex();
-    	ITriggerPoint triggerPoint = null;
-    	if (selected == EXPORT_SELECTION){
-    		triggerPoint = getWorkbench().getActivitySupport()
-            .getTriggerPointManager().getTriggerPoint(WorkbenchTriggerPoints.EXPORT_WIZARDS);
-    	}
-    	else if (selected == IMPORT_SELECTION){
-	    	triggerPoint = getWorkbench().getActivitySupport()
-	        .getTriggerPointManager().getTriggerPoint(WorkbenchTriggerPoints.IMPORT_WIZARDS);
-    	}
-    	else
-    		return null;
+    	ITriggerPoint triggerPoint = getTriggerPoint();
         
         if (triggerPoint == null || WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelectedNode()))
             return super.getNextPage();
         return null;
     }
+
+    /** 
+     * Get the trigger point for the wizard type, if one exists.
+     * 
+     * @return the wizard's trigger point
+     */
+    protected ITriggerPoint getTriggerPoint(){
+    	return null;	// default implementation
+    }
     
     /**
-     * Set the initial page to import or export according to the given id.
+     * Set the tree viewer that is used for this wizard selection page.
      * 
-     * @param pageId
+     * @param viewer
      */
-    public void setInitialPage(String pageId){
-    	initialPageId = pageId;
+    protected void setTreeViewer(TreeViewer viewer){
+    	treeViewer = viewer;
+    }
+    
+    /**
+     * Get the tree viewer that is used for this wizard selection page.
+     * 
+     * @return tree viewer used for this wizard's selection page
+     */
+    protected TreeViewer getTreeViewer(){
+    	return treeViewer;
     }
 }

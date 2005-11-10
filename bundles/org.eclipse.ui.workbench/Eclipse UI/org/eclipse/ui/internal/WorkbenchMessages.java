@@ -65,8 +65,6 @@ public class WorkbenchMessages extends NLS {
 	public static String ExportResourcesAction_text;
 	public static String ExportResourcesAction_fileMenuText;
 	public static String ExportResourcesAction_toolTip;
-	public static String ImportExportAction_text;
-	public static String ImportExportAction_toolTip;
 	public static String ImportResourcesAction_text;
 	public static String ImportResourcesAction_toolTip;
 	public static String OpenRecent_errorTitle;
@@ -336,12 +334,8 @@ public class WorkbenchMessages extends NLS {
 	public static String TypesFiltering_typeDelimiter;
 
 	// --- Import/Export ---
-	public static String ImportExportWizard_title;
-	public static String ImportExportPage_selectTransferType;
 	public static String ImportExportPage_chooseImportSource;
 	public static String ImportExportPage_chooseExportDestination;
-	public static String ImportExportPage_importTab;
-	public static String ImportExportPage_exportTab;
 	
 	// --- Import ---
 	public static String ImportWizard_title;
