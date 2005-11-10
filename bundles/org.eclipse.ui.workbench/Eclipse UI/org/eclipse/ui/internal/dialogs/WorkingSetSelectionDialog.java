@@ -18,8 +18,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -31,8 +33,9 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -70,7 +73,11 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
     
     private IWorkbenchWindow workbenchWindow;
 
-	private Combo modeCombo;
+	private Button buttonWindowSet;
+
+	private Button buttonNoSet;
+
+	private Button buttonSelectedSets;
 
     /**
      * Creates a working set selection dialog.
@@ -86,7 +93,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
      */
     public WorkingSetSelectionDialog(Shell parentShell, boolean multi, String[] workingSetIds) {
         super(parentShell, workingSetIds);
-        
+        setShellStyle(getShellStyle() | SWT.RESIZE);
         initWorkbenchWindow();
         
         contentProvider = new ArrayContentProvider();
@@ -147,36 +154,46 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
     protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
 
-        createMessageArea(composite);
-        
-        modeCombo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
-		modeCombo.setItems(new String[] { WorkbenchMessages.WindowWorkingSets,
-				WorkbenchMessages.NoWorkingSet,
-				WorkbenchMessages.SelectedWorkingSets });
-		modeCombo.select(getInitialComboSelection());
-		modeCombo.addSelectionListener(new SelectionAdapter() {
+		createMessageArea(composite);
 
+		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				switch (modeCombo.getSelectionIndex()) {
-				case 0:
-				case 1:
-					updateButtonAvailability();
-					listViewer.getTable().setVisible(false);
-					break;
-				case 2:
-					listViewer.getTable().setVisible(true);
-					break;
-				}
+				updateButtonAvailability();
 			}
-		});
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        modeCombo.setLayoutData(data);
+		};
+		
+		buttonWindowSet = new Button(composite, SWT.RADIO);
+		buttonWindowSet.setText(WorkbenchMessages.WindowWorkingSets);
+		buttonWindowSet.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		buttonWindowSet.addSelectionListener(listener);
+
+		buttonNoSet = new Button(composite, SWT.RADIO);
+		buttonNoSet.setText(WorkbenchMessages.NoWorkingSet);
+		buttonNoSet.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		buttonNoSet.addSelectionListener(listener);
+
+		buttonSelectedSets = new Button(composite, SWT.RADIO);
+		buttonSelectedSets.setText(WorkbenchMessages.SelectedWorkingSets);
+		buttonSelectedSets.addSelectionListener(listener);
+
+		switch (getInitialRadioSelection()) {
+		case 0:
+			buttonWindowSet.setSelection(true);
+			break;
+		case 1:
+			buttonNoSet.setSelection(true);
+			break;
+		case 2:
+			buttonSelectedSets.setSelection(true);
+			break;
+		}
+		buttonSelectedSets
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
         listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER | SWT.MULTI);
-        data = new GridData(GridData.FILL_BOTH);
+        GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
         data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
-        listViewer.getTable().setVisible(getInitialComboSelection() == 2);
         listViewer.getTable().setLayoutData(data);
         listViewer.getTable().setFont(parent.getFont());
 
@@ -196,7 +213,16 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
                 okPressed();
             }
         });
-        addModifyButtons(composite);
+        listViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				// implicitly select the third radio button
+				buttonWindowSet.setSelection(false);
+				buttonNoSet.setSelection(false);
+				buttonSelectedSets.setSelection(true);
+			}
+		});
+
+		addModifyButtons(composite);
         listViewer.setInput(Arrays.asList(WorkbenchPlugin.getDefault()
                 .getWorkingSetManager().getWorkingSets()));
         List initialElementSelections = getInitialElementSelections();
@@ -215,7 +241,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		return composite;
     }
 
-    private int getInitialComboSelection() {
+    private int getInitialRadioSelection() {
     		IWorkingSet windowSet = workbenchWindow.getActivePage().getAggregateWorkingSet();
     		
     		int selectionIndex;
@@ -279,17 +305,16 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
     protected void okPressed() {
-    		switch (modeCombo.getSelectionIndex()) {
-    		case 0:
+    		if (buttonWindowSet.getSelection()) {
     			IWorkingSet [] windowSet = new IWorkingSet[] {workbenchWindow.getActivePage().getAggregateWorkingSet()};
     			setSelection(windowSet);
     			setResult(Arrays.asList(getSelection()));
-    			break;
-    		case 1:
+    		}
+    		else if (buttonNoSet.getSelection()) {
 			setSelection(new IWorkingSet[0]);
 			setResult(Arrays.asList(getSelection()));
-			break;
-		case 2:
+    		}
+    		else if (buttonSelectedSets.getSelection()) {
 			Object[] untypedResult = listViewer.getCheckedElements();
 			IWorkingSet[] typedResult = new IWorkingSet[untypedResult.length];
 			System.arraycopy(untypedResult, 0, typedResult, 0,
@@ -314,7 +339,6 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 				setSelection(new IWorkingSet[] {aggregate});
 				setResult(Collections.singletonList(aggregate));
 			}
-			break;
     		}
         
         super.okPressed();
