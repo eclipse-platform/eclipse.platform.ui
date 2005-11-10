@@ -40,16 +40,6 @@ public class DataBinding {
 	 * Applies to Control
 	 */
 	public static final String ENABLED = "enabled"; //$NON-NLS-1$
-
-	/**
-	 * Constant denoting
-	 */
-	public static final String FACTORY_BEANS = "org.eclipse.jface.databinding.beans"; //$NON-NLS-1$
-
-	/**
-	 * 
-	 */
-	public static final String FACTORY_JFACE = "org.eclipse.jface.databinding.swt"; //$NON-NLS-1$
 	
 	/**
 	 * Updatable factory supporting JFace Components
@@ -94,7 +84,6 @@ public class DataBinding {
 	 * </ul>
 	 * TODO complete the list
 	 */
-	public static final String FACTORY_SWT = "org.eclipse.jface.databinding.swt"; //$NON-NLS-1$
 
 	/**
 	 * Applies to
@@ -122,19 +111,13 @@ public class DataBinding {
 	public static final String TEXT = "text"; //$NON-NLS-1$
 
 	/**
-	 * @param factoryIDs
+	 * @param factories
 	 * @return a data binding context
 	 */
-	public static IDataBindingContext createContext(String[] factoryIDs) {
+	public static IDataBindingContext createContext(IUpdatableFactory[] factories) {
 		DataBindingContext result = new DataBindingContext();
-		for (int i = 0; i < factoryIDs.length; i++) {
-			if (FACTORY_SWT.equals(factoryIDs[i])) {
-				result.addUpdatableFactory(swtFactory);
-			} else if (FACTORY_JFACE.equals(factoryIDs[i])) {
-				result.addUpdatableFactory(jFaceFactory);
-			} else if (FACTORY_BEANS.equals(factoryIDs[i])) {
-				result.addUpdatableFactory(javaBeanFactory);
-			}
+		for (int i = 0; i < factories.length; i++) {			
+				result.addUpdatableFactory(factories[i]);
 		}
 		return result;
 	}
@@ -146,17 +129,16 @@ public class DataBinding {
 	 * @return
 	 */
 	public static IDataBindingContext createContext(Control control) {
-		return createContext(control, new String[] { FACTORY_BEANS, FACTORY_SWT,
-				FACTORY_JFACE});
+		return createContext(control, new IUpdatableFactory[] {javaBeanFactory, swtFactory, jFaceFactory});
 	}
 
 	/**	
 	 * @param control
-	 * @param factoryIDs
+	 * @param factories
 	 * @return
 	 */
-	public static IDataBindingContext createContext(Control control, String[] factoryIDs) {
-		final IDataBindingContext result = createContext(factoryIDs);
+	public static IDataBindingContext createContext(Control control, IUpdatableFactory[] factories) {
+		final IDataBindingContext result = createContext(factories);
 		control.addDisposeListener(new DisposeListener() {
 
 			public void widgetDisposed(DisposeEvent e) {

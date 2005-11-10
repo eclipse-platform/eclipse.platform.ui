@@ -17,6 +17,7 @@ import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.IValidator;
 import org.eclipse.jface.databinding.IdentityConverter;
@@ -45,7 +46,7 @@ public class DatabindingContextTest extends TestCase {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		dbc = DataBinding.createContext(null, new String[0]);
+		dbc = DataBinding.createContext(new IUpdatableFactory[0]);
 		updatableValueRMock = (IUpdatableValue) Mocks
 				.createRelaxedMock(IUpdatableValue.class);
 		validatorMock = (IValidator) Mocks.createMock(IValidator.class);

@@ -12,6 +12,7 @@ package org.eclipse.jface.tests.databinding.scenarios.model;
 
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.swt.widgets.Control;
 
 public class SampleData {
@@ -155,8 +156,8 @@ public class SampleData {
 
 	public static IDataBindingContext getDatabindingContext(Control aControl) {
 		IDataBindingContext result = DataBinding.createContext(aControl,
-				new String[] { DataBinding.FACTORY_BEANS,
-						DataBinding.FACTORY_SWT, DataBinding.FACTORY_JFACE });
+				new IUpdatableFactory[] { DataBinding.javaBeanFactory, DataBinding.swtFactory,
+					                      DataBinding.jFaceFactory });
 		return result;
 	}
 
