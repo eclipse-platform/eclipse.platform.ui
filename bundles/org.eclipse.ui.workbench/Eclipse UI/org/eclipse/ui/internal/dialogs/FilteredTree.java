@@ -167,16 +167,18 @@ public class FilteredTree extends Composite {
 					if (getViewer().getTree().getItemCount() == 0) {
 						Display.getCurrent().beep();
 					} else {
+						// if the initial filter text hasn't changed, do not try to match
 						boolean hasFocus = getViewer().getTree().setFocus();
-						if (hasFocus){
+						boolean textChanged = !getInitialText().equals(getFilterControl().getText().trim());
+						if (hasFocus && textChanged){
 							TreeItem item = getFirstHighlightedItem(getViewer().getTree().getItems());
 							if (item != null){
 								getViewer().getTree().setSelection(new TreeItem[] {item});
 								ISelection sel = getViewer().getSelection();
 								getViewer().setSelection(sel, true);
 							}
-						}
-					}
+						}						
+					} 
 				}
 			}
 		});
