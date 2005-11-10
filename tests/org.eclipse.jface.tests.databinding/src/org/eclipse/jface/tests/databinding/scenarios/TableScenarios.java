@@ -8,18 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.binding.scenarios;
+package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.lang.reflect.Field;
 
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.TableViewerDescription;
-import org.eclipse.jface.tests.binding.scenarios.model.Account;
-import org.eclipse.jface.tests.binding.scenarios.model.Catalog;
-import org.eclipse.jface.tests.binding.scenarios.model.PhoneConverter;
-import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
-import org.eclipse.jface.tests.binding.scenarios.model.StateConverter;
+import org.eclipse.jface.tests.databinding.scenarios.model.Account;
+import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
+import org.eclipse.jface.tests.databinding.scenarios.model.PhoneConverter;
+import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
+import org.eclipse.jface.tests.databinding.scenarios.model.StateConverter;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;

@@ -12,10 +12,10 @@
  *  Created Oct 21, 2005 by Gili Mendel
  * 
  *  $RCSfile: UpdatableFactoriesTest.java,v $
- *  $Revision: 1.1 $  $Date: 2005/11/04 03:30:56 $ 
+ *  $Revision: 1.2 $  $Date: 2005/11/10 05:20:58 $ 
  */
 
-package org.eclipse.jface.tests.binding.scenarios;
+package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.Map;
 

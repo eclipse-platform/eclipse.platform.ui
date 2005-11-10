@@ -1,11 +1,11 @@
-package org.eclipse.jface.tests.binding.scenarios;
+package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.Arrays;
 
 import junit.framework.TestCase;
 
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
+import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;

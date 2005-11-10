@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.binding.scenarios;
+package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,11 +20,11 @@ import java.util.Locale;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.tests.binding.scenarios.model.Account;
-import org.eclipse.jface.tests.binding.scenarios.model.Adventure;
-import org.eclipse.jface.tests.binding.scenarios.model.Catalog;
-import org.eclipse.jface.tests.binding.scenarios.model.Lodging;
-import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
+import org.eclipse.jface.tests.databinding.scenarios.model.Account;
+import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
+import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
+import org.eclipse.jface.tests.databinding.scenarios.model.Lodging;
+import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;

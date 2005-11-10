@@ -1,4 +1,4 @@
-package org.eclipse.jface.tests.binding.scenarios.model;
+package org.eclipse.jface.tests.databinding.scenarios.model;
 
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;

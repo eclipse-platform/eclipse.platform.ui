@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.binding.scenarios.model;
+package org.eclipse.jface.tests.databinding.scenarios.model;
 
 import org.eclipse.jface.databinding.IConverter;
  

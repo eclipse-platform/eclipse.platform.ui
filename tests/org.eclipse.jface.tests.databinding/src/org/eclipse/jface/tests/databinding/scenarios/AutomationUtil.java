@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.binding.scenarios;
+package org.eclipse.jface.tests.databinding.scenarios;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;

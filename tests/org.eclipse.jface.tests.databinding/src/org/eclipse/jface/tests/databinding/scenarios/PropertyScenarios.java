@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.binding.scenarios;
+package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -26,9 +26,9 @@ import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.IValidator;
 import org.eclipse.jface.databinding.IdentityConverter;
 import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.tests.binding.scenarios.model.Adventure;
-import org.eclipse.jface.tests.binding.scenarios.model.Cart;
-import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
+import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
+import org.eclipse.jface.tests.databinding.scenarios.model.Cart;
+import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;

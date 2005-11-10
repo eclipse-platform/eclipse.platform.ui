@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
-import org.eclipse.jface.tests.binding.scenarios.BindingScenariosTestSuite;
+import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

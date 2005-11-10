@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.binding.scenarios;
+package org.eclipse.jface.tests.databinding.scenarios;
 
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.tests.binding.scenarios.model.Adventure;
-import org.eclipse.jface.tests.binding.scenarios.model.AggregateUpdatableValue;
-import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
+import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
+import org.eclipse.jface.tests.databinding.scenarios.model.AggregateUpdatableValue;
+import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 

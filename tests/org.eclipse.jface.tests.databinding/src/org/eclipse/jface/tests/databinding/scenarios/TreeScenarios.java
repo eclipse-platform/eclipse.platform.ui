@@ -10,11 +10,11 @@
  *******************************************************************************/
 
  
-package org.eclipse.jface.tests.binding.scenarios;
+package org.eclipse.jface.tests.databinding.scenarios;
 
 import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.tests.binding.scenarios.model.Catalog;
-import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
+import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
+import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;

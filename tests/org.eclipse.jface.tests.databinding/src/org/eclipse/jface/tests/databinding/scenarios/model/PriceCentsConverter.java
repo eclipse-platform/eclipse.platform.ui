@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.binding.scenarios.model;
+package org.eclipse.jface.tests.databinding.scenarios.model;
 
 import org.eclipse.jface.databinding.IConverter;
 
-public class PriceDollarsConverter implements IConverter {
+public class PriceCentsConverter implements IConverter {
 
-	private double cents;
+	private double dollars;
 
 	public Class getTargetType() {
 		return Integer.class;
@@ -25,18 +25,18 @@ public class PriceDollarsConverter implements IConverter {
 	}
 
 	public Object convertTargetToModel(Object object) {
-		// Argument is an Integer representing the dollar portion. Add to cents
-		// to make the new price
-		double newPrice = cents + ((Integer) object).intValue();
+		// Argument is an Integer representing the cents portion.
+		// Add to dollars to make the new price
+		double newPrice = dollars + ((Integer) object).doubleValue() / 100;
 		return new Double(newPrice);
 	}
 
 	public Object convertModelToTarget(Object object) {
-		// Argument is a Double representing the price. Return dollars only and
-		// remember the cents
+		// Return the cents portion only and remember the dollars
 		Double price = (Double) object;
-		int dollars = price.intValue();
-		cents = price.doubleValue() - dollars;
-		return new Integer(dollars);
+		dollars = price.intValue();
+		double cents = price.doubleValue() - price.intValue();
+		cents = cents * 100;
+		return new Integer((int) cents);
 	}
 }

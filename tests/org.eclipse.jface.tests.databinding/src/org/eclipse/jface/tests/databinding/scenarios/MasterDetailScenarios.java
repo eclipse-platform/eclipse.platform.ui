@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.binding.scenarios;
+package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,11 +18,11 @@ import org.eclipse.jface.databinding.ConditionalUpdatableValue;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.tests.binding.scenarios.model.Adventure;
-import org.eclipse.jface.tests.binding.scenarios.model.Catalog;
-import org.eclipse.jface.tests.binding.scenarios.model.Category;
-import org.eclipse.jface.tests.binding.scenarios.model.Lodging;
-import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
+import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
+import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
+import org.eclipse.jface.tests.databinding.scenarios.model.Category;
+import org.eclipse.jface.tests.databinding.scenarios.model.Lodging;
+import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
