@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.eclipse.jface.databinding.DatabindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory2;
+import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IValidationContext;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.internal.swt.ButtonUpdatableValue;
@@ -93,13 +93,13 @@ public class SWTDatabindingContext extends DatabindingContext {
 
 	/**
 	 * Key for the validation time property in the properties map (see
-	 * collectProperties) that is passed to IUpdatableFactory2
+	 * collectProperties) that is passed to IUpdatableFactory
 	 */
 	public static final String VALIDATION_TIME = "org.eclipse.jface.databinding.swt.SWTDatabindingContext.validationTime"; //$NON-NLS-1$
 
 	/**
 	 * Key for the update time property in the properties map (see
-	 * collectProperties) that is passed to IUpdatableFactory2
+	 * collectProperties) that is passed to IUpdatableFactory
 	 */
 	public static final String UPDATE_TIME = "org.eclipse.jface.databinding.swt.SWTDatabindingContext.updateTime"; //$NON-NLS-1$
 
@@ -138,7 +138,7 @@ public class SWTDatabindingContext extends DatabindingContext {
 	protected void registerFactories() {
 		super.registerFactories();
 
-		addUpdatableFactory2(new IUpdatableFactory2() {
+		addUpdatableFactory(new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
 					Object description, IValidationContext validationContext) {
 				if (description instanceof PropertyDescription) {

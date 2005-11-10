@@ -86,13 +86,13 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				return ((Lodging) element).getName();
 			}
 		});
-		getDbc().bind2(listViewer,
+		getDbc().bind(listViewer,
 				new PropertyDescription(catalog, "lodgings"), null);
 
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer).toArray());
 
 		IUpdatableValue selectedLodging = (IUpdatableValue) getDbc()
-				.createUpdatable2(
+				.createUpdatable(
 						new PropertyDescription(listViewer,
 								SWTBindingConstants.SELECTION));
 
@@ -101,7 +101,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		assertEquals(SampleData.CAMP_GROUND, getViewerSelection(listViewer));
 		Text txtName = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bind2(
+		getDbc().bind(
 				txtName,
 				new PropertyDescription(selectedLodging, "name", String.class,
 						Boolean.FALSE), null);
@@ -134,13 +134,13 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				return ((Lodging) element).getName();
 			}
 		});
-		getDbc().bind2(listViewer,
+		getDbc().bind(listViewer,
 				new PropertyDescription(catalog, "lodgings"), null);
 
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer).toArray());
 
 		final IUpdatableValue selectedLodgingUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable2(
+				.createUpdatable(
 						new PropertyDescription(listViewer,
 								SWTBindingConstants.SELECTION));
 
@@ -159,10 +159,10 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bind2(
+		getDbc().bind(
 				new PropertyDescription(txtName, SWTBindingConstants.ENABLED),
 				selectionExistsUpdatable, null);
-		getDbc().bind2(
+		getDbc().bind(
 				new PropertyDescription(txtName, SWTBindingConstants.TEXT),
 				new PropertyDescription(selectedLodgingUpdatable, "name",
 						String.class, Boolean.FALSE), null);
@@ -172,11 +172,11 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		final Text txtDescription = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bind2(
+		getDbc().bind(
 				new PropertyDescription(txtDescription,
 						SWTBindingConstants.ENABLED), selectionExistsUpdatable,
 				null);
-		getDbc().bind2(
+		getDbc().bind(
 				new PropertyDescription(txtDescription,
 						SWTBindingConstants.TEXT),
 				new PropertyDescription(selectedLodgingUpdatable,
@@ -261,14 +261,14 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				return ((Category) element).getName();
 			}
 		});
-		getDbc().bind2(categoryListViewer,
+		getDbc().bind(categoryListViewer,
 				new PropertyDescription(catalog, "categories"), null);
 
 		assertArrayEquals(catalog.getCategories(),
 				getViewerContent(categoryListViewer).toArray());
 
 		final IUpdatableValue selectedCategoryUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable2(
+				.createUpdatable(
 						new PropertyDescription(categoryListViewer,
 								SWTBindingConstants.SELECTION));
 
@@ -282,7 +282,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 			}
 		});
 
-		getDbc().bind2(
+		getDbc().bind(
 				adventureListViewer,
 				new PropertyDescription(selectedCategoryUpdatable,
 						"adventures", Adventure.class, Boolean.TRUE), null);
@@ -294,13 +294,13 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 			}
 		};
 
-		getDbc().bind2(
+		getDbc().bind(
 				new PropertyDescription(adventureListViewer.getList(),
 						SWTBindingConstants.ENABLED),
 				categorySelectionExistsUpdatable, null);
 
 		final IUpdatableValue selectedAdventureUpdatable = (IUpdatableValue) getDbc()
-				.createUpdatable2(
+				.createUpdatable(
 						new PropertyDescription(adventureListViewer,
 								SWTBindingConstants.SELECTION));
 
@@ -313,10 +313,10 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bind2(
+		getDbc().bind(
 				new PropertyDescription(txtName, SWTBindingConstants.ENABLED),
 				adventureSelectionExistsUpdatable, null);
-		getDbc().bind2(
+		getDbc().bind(
 				new PropertyDescription(txtName, SWTBindingConstants.TEXT),
 				new PropertyDescription(selectedAdventureUpdatable, "name",
 						String.class, Boolean.FALSE), null);
@@ -326,11 +326,11 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		final Text txtDescription = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bind2(
+		getDbc().bind(
 				new PropertyDescription(txtDescription,
 						SWTBindingConstants.ENABLED),
 				adventureSelectionExistsUpdatable, null);
-		getDbc().bind2(
+		getDbc().bind(
 				new PropertyDescription(txtDescription,
 						SWTBindingConstants.TEXT),
 				new PropertyDescription(selectedAdventureUpdatable,

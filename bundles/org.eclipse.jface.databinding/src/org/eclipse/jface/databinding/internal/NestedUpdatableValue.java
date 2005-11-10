@@ -78,7 +78,7 @@ public class NestedUpdatableValue extends UpdatableValue {
 		} else {
 			try {
 				this.innerUpdatableValue = (IUpdatableValue) databindingContext
-						.createUpdatable2(new PropertyDescription(currentOuterValue, feature));
+						.createUpdatable(new PropertyDescription(currentOuterValue, feature));
 				Class innerValueType = innerUpdatableValue.getValueType();
 				if(featureType==null) {
 					featureType = innerValueType;

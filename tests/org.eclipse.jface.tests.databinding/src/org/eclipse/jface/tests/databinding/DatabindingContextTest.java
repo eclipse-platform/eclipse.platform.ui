@@ -78,7 +78,7 @@ public class DatabindingContextTest extends TestCase {
 		validatorMock.isValid(null);
 		Mocks.startChecking(updatableValueRMock);
 		Mocks.startChecking(validatorMock);
-		dbc.bind2(settableValue1, updatableValueRMock, new BindSpec(
+		dbc.bind(settableValue1, updatableValueRMock, new BindSpec(
 				identityConverter, validatorMock));
 		Mocks.verify(updatableValueRMock);
 	}
@@ -92,14 +92,14 @@ public class DatabindingContextTest extends TestCase {
 		validatorMock.isValid(null);
 		Mocks.startChecking(updatableValueRMock);
 		Mocks.startChecking(validatorMock);
-		dbc.bind2(updatableValueRMock, settableValue2, new BindSpec(
+		dbc.bind(updatableValueRMock, settableValue2, new BindSpec(
 				identityConverter, validatorMock));
 	}
 
 	public void testBindValuePropagation() throws BindingException {
 		settableValue1.setValue(o1);
 		settableValue2.setValue(o2);
-		dbc.bind2(settableValue1, settableValue2, null);
+		dbc.bind(settableValue1, settableValue2, null);
 		assertEquals(o2, settableValue1.getValue());
 		settableValue1.setValue(o1);
 		assertEquals(o1, settableValue2.getValue());

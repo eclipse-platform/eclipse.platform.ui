@@ -80,7 +80,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("FirstName", "firstName");
 		tableViewerDescription.addColumn("LastName", "lastName");
 		tableViewerDescription.addColumn("State", "state");
-		getDbc().bind2(tableViewerDescription,
+		getDbc().bind(tableViewerDescription,
 				new PropertyDescription(catalog, "accounts"), null);
 
 		// Verify the data in the table columns matches the accounts
@@ -113,7 +113,7 @@ public class TableScenarios extends ScenariosTestCase {
 				new PhoneConverter());
 		tableViewerDescription.addColumn("state", "state", null,
 				new StateConverter());
-		getDbc().bind2(tableViewerDescription,
+		getDbc().bind(tableViewerDescription,
 				new PropertyDescription(catalog, "accounts"), null);
 
 		CellEditor[] cellEditors = tableViewer.getCellEditors();
@@ -147,7 +147,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("FirstName", "firstName");
 		tableViewerDescription.addColumn("LastName", "lastName");
 		tableViewerDescription.addColumn("State", "state");
-		getDbc().bind2(tableViewerDescription,
+		getDbc().bind(tableViewerDescription,
 				new PropertyDescription(catalog, "accounts"), null);
 		
 		// Verify the number of accounts matches the number of items in the table
@@ -182,7 +182,7 @@ public class TableScenarios extends ScenariosTestCase {
 				new PhoneConverter());
 		tableViewerDescription.addColumn("state", "state", null,
 				new StateConverter());
-		getDbc().bind2(tableViewerDescription,
+		getDbc().bind(tableViewerDescription,
 				new PropertyDescription(catalog, "accounts"), null);
 
 		// Verify that the data in the the table columns matches the expected

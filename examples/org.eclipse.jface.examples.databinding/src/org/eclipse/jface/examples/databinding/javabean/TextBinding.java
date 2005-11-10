@@ -81,14 +81,14 @@ public class TextBinding extends Composite {
 		person.setFirstName("John"); //$NON-NLS-1$
 		person.setLastName("Doe"); //$NON-NLS-1$
 
-		dbc.bind2(txtDescription, new PropertyDescription(person, "firstName"), null);//$NON-NLS-1$
-		dbc.bind2(txtDescription_1,  new PropertyDescription(person, "firstName"), null);//$NON-NLS-1$
+		dbc.bind(txtDescription, new PropertyDescription(person, "firstName"), null);//$NON-NLS-1$
+		dbc.bind(txtDescription_1,  new PropertyDescription(person, "firstName"), null);//$NON-NLS-1$
 
-		dbc.bind2(txtName,  new PropertyDescription(person, "lastName"),null);//$NON-NLS-1$
-		dbc.bind2(txtName_1,  new PropertyDescription(person, "lastName"),null);//$NON-NLS-1$
+		dbc.bind(txtName,  new PropertyDescription(person, "lastName"),null);//$NON-NLS-1$
+		dbc.bind(txtName_1,  new PropertyDescription(person, "lastName"),null);//$NON-NLS-1$
 
-		dbc.bind2(txtLocation,  new PropertyDescription(person, "age"),null);//$NON-NLS-1$
-		dbc.bind2(txtLocation_1,  new PropertyDescription(person, "age"),null);//$NON-NLS-1$
+		dbc.bind(txtLocation,  new PropertyDescription(person, "age"),null);//$NON-NLS-1$
+		dbc.bind(txtLocation_1,  new PropertyDescription(person, "age"),null);//$NON-NLS-1$
 
 	}
 

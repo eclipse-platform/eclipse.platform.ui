@@ -13,7 +13,7 @@ import java.util.Map;
  * @since 3.2
  * 
  */
-public interface IUpdatableFactory2 {
+public interface IUpdatableFactory {
 
 	/**
 	 * Returns an updatable for the given description, or null if this factory

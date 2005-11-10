@@ -79,7 +79,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
 	public void testScenario01() throws BindingException {
 		Text text = new Text(getComposite(), SWT.BORDER);
-		getDbc().bind2(text, new PropertyDescription(adventure, "name"), null);
+		getDbc().bind(text, new PropertyDescription(adventure, "name"), null);
 		// uncomment the following line to see what's happening
 		// happening
 		// spinEventLoop(1);
@@ -99,7 +99,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		// Text controls, no conversion, no validation. The Text widget editable
 		// is set to false.by the developer (can not change the name)
 		Text text = new Text(getComposite(), SWT.READ_ONLY);
-		getDbc().bind2(text, new PropertyDescription(adventure, "name"), null);
+		getDbc().bind(text, new PropertyDescription(adventure, "name"), null);
 		assertEquals(adventure.getName(), text.getText());
 	}
 
@@ -112,7 +112,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		// bind to the lodgingDays feature, which is read-only and always one
 		// less than the number of adventure days.
 		Text text = new Text(getComposite(), SWT.BORDER);
-		getDbc().bind2(text, new PropertyDescription(cart, "lodgingDays"),
+		getDbc().bind(text, new PropertyDescription(cart, "lodgingDays"),
 				new BindSpec(new IConverter() {
 					public Class getModelType() {
 						return int.class;
@@ -152,9 +152,9 @@ public class PropertyScenarios extends ScenariosTestCase {
 		// scenario to the master/detail section? I'm assuming the latter for
 		// now.
 		IUpdatableValue defaultLodging = (IUpdatableValue) getDbc()
-				.createUpdatable2(
+				.createUpdatable(
 						new PropertyDescription(adventure, "defaultLodging"));
-		getDbc().bind2(
+		getDbc().bind(
 				text,
 				new PropertyDescription(defaultLodging, "description",
 						String.class, Boolean.FALSE), null);
@@ -196,7 +196,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		// capitalized.
 		Text text = new Text(getComposite(), SWT.BORDER);
 		adventure.setName("UPPERCASE");
-		getDbc().bind2(text, new PropertyDescription(adventure, "name"),
+		getDbc().bind(text, new PropertyDescription(adventure, "name"),
 				new BindSpec(new IConverter() {
 					public Class getModelType() {
 						return String.class;
@@ -238,7 +238,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		final String noSpacesMessage = "Name must not contain spaces.";
 		final String max15CharactersMessage = "Maximum length for name is 15 characters.";
 		adventure.setName("ValidValue");
-		getDbc().bind2(
+		getDbc().bind(
 				text,
 				new PropertyDescription(adventure, "name"),
 				new BindSpec(new IdentityConverter(String.class),
@@ -282,7 +282,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		adventure.setPrice(5.0);
 		final String cannotBeNegativeMessage = "Price cannot be negative.";
 		final String mustBeCurrencyMessage = "Price must be a currency.";
-		getDbc().bind2(text, new PropertyDescription(adventure, "price"),
+		getDbc().bind(text, new PropertyDescription(adventure, "price"),
 				new BindSpec(new Converter(String.class, double.class) {
 
 					public Object convertTargetToModel(Object fromObject) {
@@ -341,7 +341,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		final String mustBeCurrencyMessage = "Price must be a currency.";
 		final NumberFormat currencyFormat = NumberFormat
 				.getCurrencyInstance(Locale.CANADA);
-		getDbc().bind2(text, new PropertyDescription(adventure, "price"),
+		getDbc().bind(text, new PropertyDescription(adventure, "price"),
 				new BindSpec(new Converter(String.class, double.class) {
 
 					public Object convertTargetToModel(Object fromObject) {
@@ -403,7 +403,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		// checkbox.setText("Pets allowed");
 		// checkbox.setLayoutData(new GridData(SWT.LEFT,SWT.TOP, false,false));
 		adventure.setPetsAllowed(true);
-		getDbc().bind2(checkbox,
+		getDbc().bind(checkbox,
 				new PropertyDescription(adventure, "petsAllowed"), null);
 		assertEquals(true, checkbox.getSelection());
 		setButtonSelectionWithEvents(checkbox, false);
@@ -428,7 +428,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		spinner1.setMaximum(100);
 		Spinner spinner2 = new Spinner(getComposite(), SWT.NONE);
 		spinner2.setMaximum(1);
-		getDbc().bind2(spinner1, SWTBindingConstants.SELECTION, spinner2,
+		getDbc().bind(spinner1, SWTBindingConstants.SELECTION, spinner2,
 				SWTBindingConstants.MAX, null);
 		assertEquals(1, spinner1.getSelection());
 		spinner1.setSelection(10);
@@ -447,12 +447,12 @@ public class PropertyScenarios extends ScenariosTestCase {
 		Text text1 = new Text(getComposite(), SWT.NONE);
 		Text text2 = new Text(getComposite(), SWT.NONE);
 		IUpdatableValue checkbox1Selected = (IUpdatableValue) getDbc()
-				.createUpdatable2(checkbox1);
+				.createUpdatable(checkbox1);
 		IUpdatableValue checkbox2Selected = (IUpdatableValue) getDbc()
-				.createUpdatable2(checkbox2);
+				.createUpdatable(checkbox2);
 		// bind the two checkboxes so that if one is checked, the other is not
 		// and vice versa.
-		getDbc().bind2(checkbox1Selected, checkbox2Selected,
+		getDbc().bind(checkbox1Selected, checkbox2Selected,
 				new BindSpec(new IConverter() {
 					public Class getModelType() {
 						return boolean.class;
@@ -476,10 +476,10 @@ public class PropertyScenarios extends ScenariosTestCase {
 				}, null));
 		// bind the enabled state of the two text widgets to one of the
 		// checkboxes each.
-		getDbc().bind2(
+		getDbc().bind(
 				new PropertyDescription(text1, SWTBindingConstants.ENABLED),
 				checkbox1Selected, null);
-		getDbc().bind2(
+		getDbc().bind(
 				new PropertyDescription(text2, SWTBindingConstants.ENABLED),
 				checkbox2Selected, null);
 		assertEquals(true, text1.getEnabled());
@@ -501,7 +501,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		getDbc().setUpdateTime(SWTDatabindingContext.TIME_LATE);
 		getDbc().setValidationTime(SWTDatabindingContext.TIME_LATE);
 		Text text = new Text(getComposite(), SWT.BORDER);
-		getDbc().bind2(text, "text", adventure, "name", null);
+		getDbc().bind(text, "text", adventure, "name", null);
 		// uncomment the following line to see what's happening
 		// happening
 		// spinEventLoop(1);
@@ -522,11 +522,11 @@ public class PropertyScenarios extends ScenariosTestCase {
 		Text t2 = new Text(getComposite(), SWT.BORDER);
 
 		getDbc().setUpdateTime(SWTDatabindingContext.TIME_EARLY);
-		getDbc().bind2(t1, "text", adventure, "name", null);
-		getDbc().bind2(t2, "text", adventure, "name", null);
+		getDbc().bind(t1, "text", adventure, "name", null);
+		getDbc().bind(t2, "text", adventure, "name", null);
 
 		final int[] counter = { 0 };
-		IUpdatableValue uv = (IUpdatableValue) getDbc().createUpdatable2(
+		IUpdatableValue uv = (IUpdatableValue) getDbc().createUpdatable(
 				new PropertyDescription(adventure, "name"));
 		uv.addChangeListener(new IChangeListener() {
 			public void handleChange(IChangeEvent changeEvent) {

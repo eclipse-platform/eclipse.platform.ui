@@ -15,7 +15,7 @@ import java.util.Map;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.DatabindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory2;
+import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IValidationContext;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.swt.SWTDatabindingContext;
@@ -36,7 +36,7 @@ public class PersonSampleData {
 
 		DatabindingContext dbc = new SWTDatabindingContext(null,aControl);
 
-		IUpdatableFactory2 emfValueFactory = new IUpdatableFactory2() {
+		IUpdatableFactory emfValueFactory = new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
 					Object description, IValidationContext validationContext)
 					throws BindingException {
@@ -51,7 +51,7 @@ public class PersonSampleData {
 				return null;
 			}
 		};
-		dbc.addUpdatableFactory2(emfValueFactory);
+		dbc.addUpdatableFactory(emfValueFactory);
 
 		return dbc;
 

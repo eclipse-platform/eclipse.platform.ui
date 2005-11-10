@@ -9,7 +9,7 @@ import java.util.Map;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.DatabindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory2;
+import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IValidationContext;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.swt.SWTDatabindingContext;
@@ -161,7 +161,7 @@ public class SampleData {
 		DatabindingContext parent = new DatabindingContext();
 		SWTDatabindingContext dbc = new SWTDatabindingContext(parent, aControl);
 
-		IUpdatableFactory2 factory = new IUpdatableFactory2() {
+		IUpdatableFactory factory = new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
 					Object description, IValidationContext validationContext)
 					throws BindingException {
@@ -197,7 +197,7 @@ public class SampleData {
 			}
 
 		};
-		parent.addUpdatableFactory2(factory);
+		parent.addUpdatableFactory(factory);
 
 		return dbc;
 

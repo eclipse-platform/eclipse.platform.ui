@@ -12,7 +12,7 @@
  *  Created Oct 21, 2005 by Gili Mendel
  * 
  *  $RCSfile: UpdatableFactoriesTest.java,v $
- *  $Revision: 1.5 $  $Date: 2005/11/03 18:47:36 $ 
+ *  $Revision: 1.1 $  $Date: 2005/11/04 03:30:56 $ 
  */
 
 package org.eclipse.jface.tests.binding.scenarios;
@@ -22,7 +22,7 @@ import java.util.Map;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory2;
+import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IValidationContext;
 
 public class UpdatableFactoriesTest extends ScenariosTestCase {
@@ -58,7 +58,7 @@ public class UpdatableFactoriesTest extends ScenariosTestCase {
 		public Class getType();
 	}
 
-	class Factory implements IUpdatableFactory2 {
+	class Factory implements IUpdatableFactory {
 		Class c;
 
 		public Factory(Class c) {
@@ -88,23 +88,23 @@ public class UpdatableFactoriesTest extends ScenariosTestCase {
 		}
 	}
 
-	IUpdatableFactory2 root = new Factory(Root.class);
+	IUpdatableFactory root = new Factory(Root.class);
 
-	IUpdatableFactory2 middle = new Factory(Middle.class);
+	IUpdatableFactory middle = new Factory(Middle.class);
 
-	IUpdatableFactory2 sa = new Factory(StandAlone.class);
+	IUpdatableFactory sa = new Factory(StandAlone.class);
 
-	IUpdatableFactory2 factory = new Factory(Object.class);
+	IUpdatableFactory factory = new Factory(Object.class);
 
 	protected Class getFactoryType(Object src) throws BindingException {
-		TestIUpdatable u = (TestIUpdatable) getDbc().createUpdatable2(src);
+		TestIUpdatable u = (TestIUpdatable) getDbc().createUpdatable(src);
 		return u.getType();
 	}
 
 	public void test_factoryRegistration() throws BindingException {
 
-		getDbc().addUpdatableFactory2(root);
-		getDbc().addUpdatableFactory2(middle);
+		getDbc().addUpdatableFactory(root);
+		getDbc().addUpdatableFactory(middle);
 
 		// Direct mapping
 		assertEquals(Root.class, getFactoryType(new RootClass()));
@@ -120,11 +120,11 @@ public class UpdatableFactoriesTest extends ScenariosTestCase {
 		assertEquals(Middle.class, getFactoryType(new MiddleChild()));
 
 		// Direct, first interface
-		getDbc().addUpdatableFactory2(sa);
+		getDbc().addUpdatableFactory(sa);
 		assertEquals(StandAlone.class, getFactoryType(new AllClass()));
 
 		// Class based contribution.
-		getDbc().addUpdatableFactory2(factory);
+		getDbc().addUpdatableFactory(factory);
 		assertEquals(Object.class, getFactoryType(new AllClass()));
 
 	}

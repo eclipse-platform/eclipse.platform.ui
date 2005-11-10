@@ -80,7 +80,7 @@ public class NestedUpdatableCollection extends Updatable implements
 		} else {
 			try {
 				this.innerUpdatableCollection = (IUpdatableCollection) databindingContext
-						.createUpdatable2(new PropertyDescription(
+						.createUpdatable(new PropertyDescription(
 								currentOuterValue, feature));
 				Class innerElementType = innerUpdatableCollection
 						.getElementType();

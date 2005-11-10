@@ -79,7 +79,7 @@ public class DatabindingContext implements IValidationContext {
 	private SettableValue combinedValidationMessage = new SettableValue(
 			String.class, ""); //$NON-NLS-1$
 
-	private List factories2 = new ArrayList();
+	private List factories = new ArrayList();
 
 	private List bindSupportFactories = new ArrayList();
 
@@ -286,7 +286,7 @@ public class DatabindingContext implements IValidationContext {
 	}
 
 	protected void registerFactories() {
-		addUpdatableFactory2(new IUpdatableFactory2() {
+		addUpdatableFactory(new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
 					Object description, IValidationContext validationContext)
 					throws BindingException {
@@ -397,7 +397,7 @@ public class DatabindingContext implements IValidationContext {
 	 *            the bind spec, or null
 	 * @throws BindingException
 	 */
-	public void bind2(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
+	public void bind(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) throws BindingException {
 		Binding binding;
 		if (bindSpec == null) {
@@ -434,7 +434,7 @@ public class DatabindingContext implements IValidationContext {
 	}
 
 	/**
-	 * Convenience method to bind createUpdatable2(targetDescription) and
+	 * Convenience method to bind createUpdatable(targetDescription) and
 	 * modelUpdatable.
 	 * 
 	 * @param targetDescription
@@ -443,14 +443,14 @@ public class DatabindingContext implements IValidationContext {
 	 *            the bind spec, or null
 	 * @throws BindingException
 	 */
-	public void bind2(Object targetDescription, IUpdatable modelUpdatable,
+	public void bind(Object targetDescription, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) throws BindingException {
-		bind2(createUpdatable2(targetDescription), modelUpdatable, bindSpec);
+		bind(createUpdatable(targetDescription), modelUpdatable, bindSpec);
 	}
 
 	/**
 	 * Convenience method to bind targetUpdatable and
-	 * createUpdatable2(modelDescription).
+	 * createUpdatable(modelDescription).
 	 * 
 	 * @param targetUpdatable
 	 * @param modelDescription
@@ -458,7 +458,7 @@ public class DatabindingContext implements IValidationContext {
 	 *            the bind spec, or null
 	 * @throws BindingException
 	 */
-	public void bind2(IUpdatable targetUpdatable, Object modelDescription,
+	public void bind(IUpdatable targetUpdatable, Object modelDescription,
 			IBindSpec bindSpec) throws BindingException {
 		if (bindSpec == null) {
 			bindSpec = new BindSpec(null, null);
@@ -471,7 +471,7 @@ public class DatabindingContext implements IValidationContext {
 					.getElementType();
 		}
 		fillBindSpecDefaults(bindSpec, fromType, null, modelDescription);
-		bind2(targetUpdatable, createUpdatable2(modelDescription), bindSpec);
+		bind(targetUpdatable, createUpdatable(modelDescription), bindSpec);
 	}
 
 	private void fillBindSpecDefaults(IBindSpec bindSpec, Class fromType,
@@ -521,8 +521,8 @@ public class DatabindingContext implements IValidationContext {
 	}
 
 	/**
-	 * Convenience method to bind createUpdatable2(targetDescription) and
-	 * createUpdatable2(modelDescription).
+	 * Convenience method to bind createUpdatable(targetDescription) and
+	 * createUpdatable(modelDescription).
 	 * 
 	 * @param targetDescription
 	 * @param modelDescription
@@ -530,15 +530,15 @@ public class DatabindingContext implements IValidationContext {
 	 *            the bind spec, or null
 	 * @throws BindingException
 	 */
-	public void bind2(Object targetDescription, Object modelDescription,
+	public void bind(Object targetDescription, Object modelDescription,
 			IBindSpec bindSpec) throws BindingException {
-		bind2(createUpdatable2(targetDescription), modelDescription, bindSpec);
+		bind(createUpdatable(targetDescription), modelDescription, bindSpec);
 	}
 
 	/**
-	 * Convenience method to bind createUpdatable2(new
+	 * Convenience method to bind createUpdatable(new
 	 * PropertyDescription(targetObject, targetPropertyID)) and
-	 * createUpdatable2(new PropertyDescription(modelObject, modelPropertyID))
+	 * createUpdatable(new PropertyDescription(modelObject, modelPropertyID))
 	 * 
 	 * @param targetObject
 	 * @param targetPropertyID
@@ -548,10 +548,10 @@ public class DatabindingContext implements IValidationContext {
 	 *            the bind spec, or null
 	 * @throws BindingException
 	 */
-	public void bind2(Object targetObject, Object targetPropertyID,
+	public void bind(Object targetObject, Object targetPropertyID,
 			Object modelObject, Object modelPropertyID, IBindSpec bindSpec)
 			throws BindingException {
-		bind2(new PropertyDescription(targetObject, targetPropertyID),
+		bind(new PropertyDescription(targetObject, targetPropertyID),
 				new PropertyDescription(modelObject, modelPropertyID), bindSpec);
 	}
 
@@ -560,17 +560,17 @@ public class DatabindingContext implements IValidationContext {
 	 * @return IUpdatable for the given description
 	 * @throws BindingException
 	 */
-	public final IUpdatable createUpdatable2(Object description)
+	public final IUpdatable createUpdatable(Object description)
 			throws BindingException {
-		return doCreateUpdatable2(description, this);
+		return doCreateUpdatable(description, this);
 	}
 
-	protected IUpdatable doCreateUpdatable2(Object description,
+	protected IUpdatable doCreateUpdatable(Object description,
 			IValidationContext thisDatabindingContext) throws BindingException {
 		Map properties = new HashMap();
 		collectProperties(properties);
-		for (int i = factories2.size() - 1; i >= 0; i--) {
-			IUpdatableFactory2 factory = (IUpdatableFactory2) factories2.get(i);
+		for (int i = factories.size() - 1; i >= 0; i--) {
+			IUpdatableFactory factory = (IUpdatableFactory) factories.get(i);
 			IUpdatable result = factory.createUpdatable(properties,
 					description, thisDatabindingContext);
 			if (result != null) {
@@ -578,7 +578,7 @@ public class DatabindingContext implements IValidationContext {
 			}
 		}
 		if (parent != null) {
-			return parent.doCreateUpdatable2(description,
+			return parent.doCreateUpdatable(description,
 					thisDatabindingContext);
 		}
 		throw new BindingException("could not find updatable for " //$NON-NLS-1$
@@ -594,12 +594,12 @@ public class DatabindingContext implements IValidationContext {
 	/**
 	 * @param updatableFactory
 	 */
-	public void addUpdatableFactory2(IUpdatableFactory2 updatableFactory) {
+	public void addUpdatableFactory(IUpdatableFactory updatableFactory) {
 		// TODO: consider the fact that adding new factories for a given
 		// description
 		// may hide default ones (e.g., a new PropertyDescriptor may overide the
 		// ond for EMF)
-		factories2.add(updatableFactory);
+		factories.add(updatableFactory);
 	}
 
 }
