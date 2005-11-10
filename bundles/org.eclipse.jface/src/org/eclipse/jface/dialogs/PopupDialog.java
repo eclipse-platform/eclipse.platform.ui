@@ -1075,7 +1075,12 @@ public class PopupDialog extends Window {
 	 * @return the List of controls
 	 */
 	protected List getBackgroundColorExclusions() {
-		return new ArrayList();
+		List list = new ArrayList(2);
+		if (titleSeparator != null)
+			list.add(titleSeparator);
+		if (infoSeparator != null)
+			list.add(infoSeparator);
+		return list;
 	}
 
 	/**
