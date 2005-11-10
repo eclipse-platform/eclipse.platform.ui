@@ -102,8 +102,6 @@ public class WorkingCopyPreferences implements IEclipsePreferences {
 	 */
 	public void removeNode() throws BackingStoreException {
 		checkRemoved();
-		// mark as removed
-		removed = true;
 
 		// clear all values (long way so people get notified)
 		String[] keys = keys();
@@ -114,6 +112,9 @@ public class WorkingCopyPreferences implements IEclipsePreferences {
 		String[] childNames = childrenNames();
 		for (int i = 0; i < childNames.length; i++)
 			node(childNames[i]).removeNode();
+
+		// mark as removed
+		removed = true;
 	}
 
 	private WorkingCopyManager getManager() {
