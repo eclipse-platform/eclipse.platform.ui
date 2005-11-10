@@ -12,9 +12,12 @@ package org.eclipse.core.internal.resources;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.*;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
@@ -82,9 +85,25 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		if (description != null) {
 			writer.printSimpleTag(NAME, description.getName());
 			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
-			writer.printSimpleTag(LOCATION, description.getLocation().toPortableString());
+			//use ASCII string of URI to ensure spaces are encoded
+			writeLocation(description.getLocation(), writer);
 		}
 		writer.endTag(LINK);
+	}
+
+	/**
+	 * Writes a location to the XML writer.  For backwards compatibility,
+	 * local file system locations are written and read using a different tag
+	 * from non-local file systems.
+	 * @param location
+	 * @param writer
+	 */
+	private void writeLocation(URI location, XMLWriter writer) {
+		if (EFS.SCHEME_FILE.equals(location.getScheme())) {
+			writer.printSimpleTag(LOCATION, FileUtil.toPath(location).toPortableString());
+		} else {
+			writer.printSimpleTag(LOCATION_URI, location.toASCIIString());
+		}
 	}
 
 	/**

@@ -10,21 +10,21 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.net.URI;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  * Object for describing the characteristics of linked resources that are stored
  * in the project description.
  */
 public class LinkDescription {
+	
 	private String name;
-	private IPath localLocation;
+	private URI localLocation;
 	private int type;
 
-	public LinkDescription(IResource linkedResource, IPath location) {
+	public LinkDescription(IResource linkedResource, URI location) {
 		super();
 		Assert.isNotNull(linkedResource);
 		Assert.isNotNull(location);
@@ -33,7 +33,7 @@ public class LinkDescription {
 		this.localLocation = location;
 	}
 
-	public LinkDescription(String name, int type, IPath localLocation) {
+	public LinkDescription(String name, int type, URI localLocation) {
 		this.name = name;
 		this.type = type;
 		this.localLocation = localLocation;
@@ -42,7 +42,6 @@ public class LinkDescription {
 	public LinkDescription() {
 		this.name = ""; //$NON-NLS-1$
 		this.type = -1;
-		this.localLocation = Path.EMPTY;
 	}
 
 	public boolean equals(Object o) {
@@ -52,7 +51,7 @@ public class LinkDescription {
 		return localLocation.equals(other.localLocation) && type == other.type;
 	}
 
-	public IPath getLocation() {
+	public URI getLocation() {
 		return localLocation;
 	}
 
@@ -76,7 +75,7 @@ public class LinkDescription {
 		this.type = type;
 	}
 
-	public void setLocation(IPath location) {
+	public void setLocation(URI location) {
 		this.localLocation = location;
 	}
 }

@@ -13,13 +13,11 @@ package org.eclipse.core.internal.resources;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
-import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 public class ProjectDescription extends ModelObject implements IProjectDescription {
 	private static final ICommand[] EMPTY_COMMAND_ARRAY = new ICommand[0];
@@ -124,7 +122,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			return oldCommands;
 		ICommand[] result = new ICommand[oldCommands.length];
 		for (int i = 0; i < result.length; i++)
-			result[i] = (ICommand)((BuildCommand)oldCommands[i]).clone();
+			result[i] = (ICommand) ((BuildCommand) oldCommands[i]).clone();
 		return result;
 	}
 
@@ -153,6 +151,14 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * no such link exists.
 	 */
 	public IPath getLinkLocation(String aName) {
+		return FileUtil.toPath(getLinkLocationURI(aName));
+	}
+
+	/**
+	 * Returns the link location for the given resource name. Returns null if
+	 * no such link exists.
+	 */
+	public URI getLinkLocationURI(String aName) {
 		if (linkDescriptions == null)
 			return null;
 		LinkDescription desc = (LinkDescription) linkDescriptions.get(aName);
@@ -173,13 +179,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @deprecated
 	 */
 	public IPath getLocation() {
-		if (location == null)
-			return null;
-		final String scheme = location.getScheme();
-		// null scheme represents path variable
-		if (scheme == null || EFS.SCHEME_FILE.equals(scheme))
-			return new Path(location.getSchemeSpecificPart());
-		return null;
+		return FileUtil.toPath(location);
 	}
 
 	/* (non-Javadoc)
@@ -225,6 +225,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 				return true;
 		return false;
 	}
+
 	/**
 	 * Returns true if any private attributes of the description have changed.
 	 * Private attributes are those that are not stored in the project description
@@ -277,12 +278,12 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		//perform a deep copy in case clients perform further changes to the command
 		ICommand[] result = new ICommand[value.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i] = (ICommand)((BuildCommand)value[i]).clone();
+			result[i] = (ICommand) ((BuildCommand) value[i]).clone();
 			//copy the reference to any builder instance from the old build spec
 			//to preserve builder states if possible.
 			for (int j = 0; j < buildSpec.length; j++) {
 				if (result[i].equals(buildSpec[j])) {
-					((BuildCommand)result[i]).setBuilder(((BuildCommand)buildSpec[j]).getBuilder());
+					((BuildCommand) result[i]).setBuilder(((BuildCommand) buildSpec[j]).getBuilder());
 					break;
 				}
 			}
@@ -341,7 +342,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	public void setLocation(IPath path) {
 		this.location = path == null ? null : FileUtil.toURI(path);
 	}
-	
+
 	public void setLocationURI(URI location) {
 		this.location = location;
 	}

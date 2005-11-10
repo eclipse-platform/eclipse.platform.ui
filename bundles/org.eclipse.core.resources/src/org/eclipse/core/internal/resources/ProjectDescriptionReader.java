@@ -11,6 +11,8 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import javax.xml.parsers.*;
 import org.eclipse.core.internal.events.BuildCommand;
@@ -36,16 +38,17 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_INITIAL = 8;
 	protected static final int S_LINK = 9;
 	protected static final int S_LINK_LOCATION = 10;
-	protected static final int S_LINK_NAME = 11;
-	protected static final int S_LINK_TYPE = 12;
-	protected static final int S_LINKED_RESOURCES = 13;
-	protected static final int S_NATURE_NAME = 14;
-	protected static final int S_NATURES = 15;
-	protected static final int S_PROJECT_COMMENT = 16;
-	protected static final int S_PROJECT_DESC = 17;
-	protected static final int S_PROJECT_NAME = 18;
-	protected static final int S_PROJECTS = 19;
-	protected static final int S_REFERENCED_PROJECT_NAME = 20;
+	protected static final int S_LINK_LOCATION_URI = 11;
+	protected static final int S_LINK_NAME = 12;
+	protected static final int S_LINK_TYPE = 13;
+	protected static final int S_LINKED_RESOURCES = 14;
+	protected static final int S_NATURE_NAME = 15;
+	protected static final int S_NATURES = 16;
+	protected static final int S_PROJECT_COMMENT = 17;
+	protected static final int S_PROJECT_DESC = 18;
+	protected static final int S_PROJECT_NAME = 19;
+	protected static final int S_PROJECTS = 20;
+	protected static final int S_REFERENCED_PROJECT_NAME = 21;
 	
 	protected final StringBuffer charBuffer = new StringBuffer();
 
@@ -248,6 +251,9 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			case S_LINK_LOCATION :
 				endLinkLocation(elementName);
 				break;
+			case S_LINK_LOCATION_URI :
+				endLinkLocationURI(elementName);
+				break;
 		}
 		charBuffer.setLength(0);
 	}
@@ -309,7 +315,11 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// Make sure that you have something reasonable
 			String name = link.getName();
 			int type = link.getType();
-			IPath location = link.getLocation();
+			URI location = link.getLocation();
+			if (location == null) {
+				parseProblem(NLS.bind(Messages.projRead_badLinkLocation, name, Integer.toString(type)));
+				return;
+			}
 			if ((name == null) || name.length() == 0) {
 				parseProblem(NLS.bind(Messages.projRead_emptyLinkName, Integer.toString(type), location));
 				return;
@@ -318,27 +328,52 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				parseProblem(NLS.bind(Messages.projRead_badLinkType, name, location));
 				return;
 			}
-			if (location.isEmpty()) {
-				parseProblem(NLS.bind(Messages.projRead_badLinkLocation, name, Integer.toString(type)));
-				return;
-			}
 
 			// The HashMap of linked resources is the next thing on the stack
 			((HashMap) objectStack.peek()).put(link.getName(), link);
 		}
 	}
 
+	/**
+	 * For backwards compatibility, link locations in the local file system are represented 
+	 * in the project description under the "location" tag.
+	 * @param elementName
+	 */
 	private void endLinkLocation(String elementName) {
 		if (elementName.equals(LOCATION)) {
-			// A link location is an IPath.  IPath segments cannot have
-			// leading/trailing whitespace
+			// A link location is an URI.  URIs cannot have leading/trailing whitespace
 			String newLocation = charBuffer.toString().trim();
 			// objectStack has a LinkDescription on it. Set the type on this LinkDescription.
-			IPath oldLocation = ((LinkDescription) objectStack.peek()).getLocation();
-			if (!oldLocation.isEmpty()) {
+			URI oldLocation = ((LinkDescription) objectStack.peek()).getLocation();
+			if (oldLocation != null) {
 				parseProblem(NLS.bind(Messages.projRead_badLocation, oldLocation, newLocation));
 			} else {
-				((LinkDescription) objectStack.peek()).setLocation(Path.fromPortableString(newLocation));
+				((LinkDescription) objectStack.peek()).setLocation(Path.fromPortableString(newLocation).toFile().toURI());
+			}
+			state = S_LINK;
+		}
+	}
+
+	/**
+	 * Link locations that are not stored in the local file system are represented 
+	 * in the project description under the "locationURI" tag.
+	 * @param elementName
+	 */
+	private void endLinkLocationURI(String elementName) {
+		if (elementName.equals(LOCATION_URI)) {
+			// A link location is an URI.  URIs cannot have leading/trailing whitespace
+			String newLocation = charBuffer.toString().trim();
+			// objectStack has a LinkDescription on it. Set the type on this LinkDescription.
+			URI oldLocation = ((LinkDescription) objectStack.peek()).getLocation();
+			if (oldLocation != null) {
+				parseProblem(NLS.bind(Messages.projRead_badLocation, oldLocation, newLocation));
+			} else {
+				try {
+					((LinkDescription) objectStack.peek()).setLocation(new URI(newLocation));
+				} catch (URISyntaxException e) {
+					String msg = Messages.projRead_failureReadingProjectDesc;
+					problems.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, msg, e));
+				}
 			}
 			state = S_LINK;
 		}
@@ -625,6 +660,8 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					state = S_LINK_TYPE;
 				} else if (elementName.equals(LOCATION)) {
 					state = S_LINK_LOCATION;
+				} else if (elementName.equals(LOCATION_URI)) {
+					state = S_LINK_LOCATION_URI;
 				}
 				break;
 		}

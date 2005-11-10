@@ -437,24 +437,23 @@ public abstract class ResourceTest extends CoreTest {
 	/**
 	 * Create the given file in the local store. 
 	 */
-	public void createFileInFileSystem(IFileStore file) {
+	public void createFileInFileSystem(IFileStore file, InputStream contents) {
 		OutputStream output = null;
 		try {
 			file.getParent().mkdir(EFS.NONE, null);
 			output = file.openOutputStream(EFS.NONE, null);
-			output.write(getRandomString().getBytes("UTF8"));
-		} catch (IOException e) {
-			fail("ResourceTest#createFileInFileSystem.1", e);
+			transferData(contents, output);
 		} catch (CoreException e) {
 			fail("ResourceTest#createFileInFileSystem.2", e);
 		} finally {
-			try {
-				if (output != null)
-					output.close();
-			} catch (IOException e) {
-				// ignore
-			}
+			assertClose(output);
 		}
+	}
+	/**
+	 * Create the given file in the local store. 
+	 */
+	public void createFileInFileSystem(IFileStore file) {
+		createFileInFileSystem(file, getRandomContents());
 	}
 
 	/**
