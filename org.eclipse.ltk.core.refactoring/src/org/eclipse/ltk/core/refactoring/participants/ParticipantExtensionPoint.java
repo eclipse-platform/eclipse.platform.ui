@@ -78,7 +78,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 				iter.remove();
 			} else {
 				try {
-					if (descriptor.matches(evalContext)) {
+					if (descriptor.matches(evalContext) && descriptor.isApplicable(arguments)) {
 						RefactoringParticipant participant= shared.get(descriptor);
 						if (participant != null) {
 							((ISharableParticipant)participant).addElement(element, arguments);

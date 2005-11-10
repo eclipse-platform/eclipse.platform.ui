@@ -69,6 +69,9 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	private int fPreviewWidth;
 	private int fPreviewHeight;
 	private IDialogSettings fSettings;
+	private boolean fHasAdditionalPages;
+	private Rectangle fInitialSize;
+	
 	private static final String DIALOG_SETTINGS= "RefactoringWizard.preview"; //$NON-NLS-1$
 	private static final String WIDTH= "width"; //$NON-NLS-1$
 	private static final String HEIGHT= "height"; //$NON-NLS-1$
@@ -169,6 +172,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		fWizard.setContainer(this);
 		fWizard.addPages();
 		initSize();
+		fHasAdditionalPages= wizard.getPageCount() > 3;
 	}
 	
 	private void initSize() {
@@ -233,6 +237,17 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			if (previewButton.isEnabled())
 				defaultButton= previewButton;
 		}
+		Button nextButton= getButton(IDialogConstants.NEXT_ID);
+		if (nextButton != null && !nextButton.isDisposed()) {
+			nextButton.setEnabled(!previewPage);
+			if (!previewPage)
+				nextButton.setEnabled(canFlip);
+			if (nextButton.isEnabled())
+				defaultButton= nextButton;
+		}
+		Button backButton= getButton(IDialogConstants.BACK_ID);
+		if (backButton != null && !backButton.isDisposed())
+			backButton.setEnabled(!isFirstPage());
 		Button okButton= getButton(IDialogConstants.OK_ID);
 		if (okButton != null && !okButton.isDisposed()) {
 			okButton.setEnabled(ok);
@@ -422,13 +437,25 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		if (fCurrentPage == current)
 			return;
 		Assert.isTrue(ErrorWizardPage.PAGE_NAME.equals(fCurrentPage.getName()));
-		if (showErrorDialog((ErrorWizardPage)fCurrentPage)) {
+		if (fHasAdditionalPages) {
+			// Show error page as a normal page
+			showCurrentPage();
+		} else if (showErrorDialog((ErrorWizardPage) fCurrentPage)) {
+			// Show error page as a dialog
 			if (fWizard.performFinish()) {
 				super.okPressed();
 				return;
 			}
 		}
 		fCurrentPage= current;
+	}
+
+	private void showCurrentPage() {
+		if (fCurrentPage.getControl() == null)
+			fCurrentPage.createControl(fPageContainer);
+		makeVisible(fCurrentPage);
+		updateButtons();
+		resize();
 	}
 	
 	protected void handleShellCloseEvent() {
@@ -442,31 +469,39 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		return IPreviewWizardPage.PAGE_NAME.equals(fCurrentPage.getName());
 	}
 	
-	private void previewPressed() {
+	private void nextOrPreviewPressed() {
 		IWizardPage current= fCurrentPage;
+		if (isFirstPage()) {
+			// Moving away from initial page;
+			// store size (may have changed any time)
+			fInitialSize= getShell().getBounds();
+		}
 		fCurrentPage= fCurrentPage.getNextPage();
 		if (current == fCurrentPage)
 			return;
-		String pageName= fCurrentPage.getName();
-		if (ErrorWizardPage.PAGE_NAME.equals(pageName)) {
+		if (!fHasAdditionalPages && ErrorWizardPage.PAGE_NAME.equals(fCurrentPage.getName())) {
 			if (showErrorDialog((ErrorWizardPage)fCurrentPage)) {
 				fCurrentPage= fCurrentPage.getNextPage();
-				pageName= fCurrentPage.getName();
 			} else {
 				return;
 			}
 		}
-		if (IPreviewWizardPage.PAGE_NAME.equals(pageName)) {
-			fCurrentPage.createControl(fPageContainer);
-			makeVisible(fCurrentPage);
-			updateButtons();
-			if (((PreviewWizardPage)fCurrentPage).hasChanges())
-				resize();
-			else
-				getButton(IDialogConstants.OK_ID).setEnabled(false);
-		} else {
-			fCurrentPage= current;
-		}
+		
+		showCurrentPage();
+	}
+	
+	private boolean isFirstPage() {
+		IWizardPage[] pages= fWizard.getPages();
+		return (fCurrentPage.equals(pages[0]));
+	}
+
+	private void backPressed() {
+		IWizardPage current= fCurrentPage;
+		fCurrentPage= fCurrentPage.getPreviousPage();
+		if (current == fCurrentPage)
+			return;
+
+		showCurrentPage();
 	}
 	
 	private boolean showErrorDialog(ErrorWizardPage page) {
@@ -485,6 +520,12 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	}
 	
 	private void resize() {
+		
+		if (isFirstPage()) {
+			getShell().setBounds(fInitialSize);
+			return;
+		}
+		
 		Control control= fPageContainer.getTopPage();
 		Point size= control.getSize();
 		int dw= Math.max(0, fPreviewWidth - size.x);
@@ -577,19 +618,13 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
-		if (! (fCurrentPage instanceof PreviewWizardPage) && fWizard.internalHasPreviewPage(InternalAPI.INSTANCE)) {
-			Button preview= createButton(parent, PREVIEW_ID, RefactoringUIMessages.RefactoringWizardDialog2_buttons_preview_label, false); 
-			if (fMakeNextButtonDefault) {
-				preview.getShell().setDefaultButton(preview);
-			}
-			preview.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					previewPressed();
-				}
-			});
-		}
 		
-		String OK_LABEL= IDialogConstants.OK_LABEL;
+		if (fHasAdditionalPages)
+			createPreviousAndNextButtons(parent);
+		else
+			createPreviewButton(parent);
+
+		String OK_LABEL= (fHasAdditionalPages) ? IDialogConstants.FINISH_LABEL : IDialogConstants.OK_LABEL;
 		String CANCEL_LABEL= IDialogConstants.CANCEL_LABEL;
 		if (fWizard.internalIsYesNoStyle(InternalAPI.INSTANCE)) {
 			OK_LABEL= IDialogConstants.YES_LABEL;
@@ -607,6 +642,64 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			false);
 		Button okButton= getButton(IDialogConstants.OK_ID);
 		okButton.setFocus();
+	}
+	
+    private void createPreviewButton(Composite parent) {
+		if (! (fCurrentPage instanceof PreviewWizardPage) && fWizard.internalHasPreviewPage(InternalAPI.INSTANCE)) {
+			Button preview= createButton(parent, PREVIEW_ID, RefactoringUIMessages.RefactoringWizardDialog2_buttons_preview_label, false);
+			if (fMakeNextButtonDefault) {
+				preview.getShell().setDefaultButton(preview);
+			}
+			preview.addSelectionListener(new SelectionAdapter() {
+
+				public void widgetSelected(SelectionEvent e) {
+					nextOrPreviewPressed();
+				}
+			});
+		}
+	}
+
+	private Composite createPreviousAndNextButtons(Composite parent) {
+		// Copied from Wizard Dialog.
+		
+		// increment the number of columns in the button bar
+		((GridLayout) parent.getLayout()).numColumns+= 2; // parent is assumed to have a GridLayout (see javadoc of Dialog#createButton(..))
+		Composite composite= new Composite(parent, SWT.NONE);
+		// create a layout with spacing and margins appropriate for the font
+		// size.
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 0; // will be incremented by createButton
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
+		layout.horizontalSpacing= 0;
+		layout.verticalSpacing= 0;
+		composite.setLayout(layout);
+		composite.setFont(parent.getFont());
+		Button backButton= createButton(composite, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, false);
+		backButton.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				backPressed();
+			}
+		});
+		Button nextButton= createButton(composite, IDialogConstants.NEXT_ID, IDialogConstants.NEXT_LABEL, false);
+		nextButton.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				nextOrPreviewPressed();
+			}
+		});
+
+		GridData data= new GridData();
+		int widthHint= convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		Point minSize1= backButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		Point minSize2= nextButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		data.widthHint= Math.max(widthHint * 2, minSize1.x + minSize2.x);
+		data.horizontalAlignment= SWT.END;
+		data.horizontalSpan= 2;
+		composite.setLayoutData(data);
+
+		return composite;
 	}
 	
 	private void makeVisible(IWizardPage page) {

@@ -333,9 +333,6 @@ public abstract class RefactoringWizard extends Wizard {
 					IWizardPage[] pages= getPages();
 					((UserInputWizardPage)pages[fUserInputPages - 1]).markAsLastUserInputPage();
 				}
-				if (fUserInputPages > 1) {
-					Assert.isTrue((fFlags & WIZARD_BASED_USER_INTERFACE) != 0);
-				}
 				addErrorPage();
 				addPreviewPage();	
 			}
