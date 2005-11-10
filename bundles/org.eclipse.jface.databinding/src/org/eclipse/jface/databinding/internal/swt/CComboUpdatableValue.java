@@ -62,7 +62,7 @@ public class CComboUpdatableValue extends UpdatableValue {
 		try {
 			updating = true;
 			if (attribute.equals(DataBinding.TEXT)) {
-				String stringValue = (String) value;
+				String stringValue = value!=null?value.toString() : ""; //$NON-NLS-1$
 				ccombo.setText(stringValue);
 			} else if (attribute.equals(DataBinding.SELECTION)) {
 				String items[] = ccombo.getItems();
