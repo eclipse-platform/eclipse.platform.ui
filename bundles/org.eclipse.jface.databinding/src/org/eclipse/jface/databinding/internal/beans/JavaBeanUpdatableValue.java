@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.tests.binding.scenarios;
+package org.eclipse.jface.databinding.internal.beans;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
@@ -26,16 +26,16 @@ import org.eclipse.jface.databinding.UpdatableValue;
 public class JavaBeanUpdatableValue extends UpdatableValue {
 	private final Object object;
 
-	private Method getMethod;
-
-	private Method setMethod;
-
 	private PropertyChangeListener listener;
 
 	private boolean updating = false;
 
 	private final PropertyDescriptor propertyDescriptor;
 
+	/**
+	 * @param object
+	 * @param descriptor
+	 */
 	public JavaBeanUpdatableValue(Object object, PropertyDescriptor descriptor) {
 		this.object = object;
 		this.propertyDescriptor = descriptor;
@@ -54,7 +54,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 		Method addPropertyChangeListenerMethod = null;
 		try {
 			addPropertyChangeListenerMethod = object.getClass().getMethod(
-					"addPropertyChangeListener",
+					"addPropertyChangeListener", //$NON-NLS-1$
 					new Class[] { PropertyChangeListener.class });
 		} catch (SecurityException e) {
 			// ignore
@@ -107,7 +107,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 			Method removePropertyChangeListenerMethod = null;
 			try {
 				removePropertyChangeListenerMethod = object.getClass()
-						.getMethod("removePropertyChangeListener",
+						.getMethod("removePropertyChangeListener", //$NON-NLS-1$
 								new Class[] { PropertyChangeListener.class });
 			} catch (SecurityException e) {
 				// best effort - ignore

@@ -11,7 +11,7 @@
 package org.eclipse.jface.examples.databinding.javabean;
 
 import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.DatabindingContext;
+import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class TextBinding extends Composite {
 
-	private DatabindingContext dbc;
+	private IDataBindingContext dbc;
 
 	private Group group = null;
 

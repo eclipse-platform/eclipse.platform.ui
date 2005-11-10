@@ -12,8 +12,8 @@ package org.eclipse.jface.tests.binding.scenarios;
 
 import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.databinding.swt.SWTBindingConstants;
 import org.eclipse.jface.tests.binding.scenarios.model.Adventure;
 import org.eclipse.jface.tests.binding.scenarios.model.PriceCentsConverter;
 import org.eclipse.jface.tests.binding.scenarios.model.PriceDollarsConverter;
@@ -49,13 +49,13 @@ public class CustomConverterScenarios extends ScenariosTestCase {
 
 		getDbc().bind(
 				new PropertyDescription(spinner_dollars,
-						SWTBindingConstants.SELECTION),
+						DataBinding.SELECTION),
 				new PropertyDescription(skiTrip, "price"),
 				new BindSpec(new PriceDollarsConverter(), null));
 
 		getDbc().bind(
 				new PropertyDescription(spinner_cents,
-						SWTBindingConstants.SELECTION),
+						DataBinding.SELECTION),
 				new PropertyDescription(skiTrip, "price"),
 				new BindSpec(new PriceCentsConverter(), null));
 		// spinEventLoop(1);

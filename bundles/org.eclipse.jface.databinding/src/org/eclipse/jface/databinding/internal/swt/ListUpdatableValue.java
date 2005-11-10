@@ -11,9 +11,9 @@
 
 package org.eclipse.jface.databinding.internal.swt;
 
+import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
-import org.eclipse.jface.databinding.swt.SWTBindingConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
@@ -46,7 +46,7 @@ public class ListUpdatableValue extends UpdatableValue {
 		if ((list.getStyle()&SWT.MULTI)>0)
 			throw new IllegalArgumentException("SWT.SINGLE support only for a List selection"); //$NON-NLS-1$
 		
-		if (attribute.equals(SWTBindingConstants.SELECTION)) {
+		if (attribute.equals(DataBinding.SELECTION)) {
 			list.addListener(SWT.Selection, new Listener(){			
 				public void handleEvent(Event event) {
 					if (!updating) {
@@ -65,7 +65,7 @@ public class ListUpdatableValue extends UpdatableValue {
 			oldValue = list.getSelection()[0];
 		try {
 			updating = true;
-			if (attribute.equals(SWTBindingConstants.SELECTION)) {
+			if (attribute.equals(DataBinding.SELECTION)) {
 				String items[] = list.getItems();
 				int index = -1;
 				if (items != null && value != null) {
@@ -85,7 +85,7 @@ public class ListUpdatableValue extends UpdatableValue {
 	}
 
 	public Object getValue() {
-		if (attribute.equals(SWTBindingConstants.SELECTION)) {
+		if (attribute.equals(DataBinding.SELECTION)) {
 			int index = list.getSelectionIndex();
 			if (index >= 0)
 				return list.getItem(index);
@@ -96,7 +96,7 @@ public class ListUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		if (attribute.equals(SWTBindingConstants.SELECTION)) {
+		if (attribute.equals(DataBinding.SELECTION)) {
 			return String.class;
 		}
 		throw new AssertionError("unexpected attribute"); //$NON-NLS-1$

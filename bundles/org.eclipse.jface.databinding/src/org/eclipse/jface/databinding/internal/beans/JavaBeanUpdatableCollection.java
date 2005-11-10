@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.tests.binding.scenarios;
+package org.eclipse.jface.databinding.internal.beans;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
@@ -79,6 +79,10 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		}
 	}
 
+	/**
+	 * @param object
+	 * @param descriptor
+	 */
 	public JavaBeanUpdatableCollection(Object object,
 			PropertyDescriptor descriptor) {
 		this.object = object;
@@ -90,7 +94,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		Method addPropertyChangeListenerMethod = null;
 		try {
 			addPropertyChangeListenerMethod = target.getClass().getMethod(
-					"addPropertyChangeListener",
+					"addPropertyChangeListener", //$NON-NLS-1$
 					new Class[] { PropertyChangeListener.class });
 		} catch (SecurityException e) {
 			// ignore
@@ -116,7 +120,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		Method removePropertyChangeListenerMethod = null;
 		try {
 			removePropertyChangeListenerMethod = target.getClass().getMethod(
-					"removePropertyChangeListener",
+					"removePropertyChangeListener", //$NON-NLS-1$
 					new Class[] { PropertyChangeListener.class });
 		} catch (SecurityException e) {
 			// ignore
@@ -158,15 +162,15 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		} catch (IllegalAccessException e) {
 		} catch (InvocationTargetException e) {
 		}
-		throw new AssertionError("Could not read collection values");
+		throw new AssertionError("Could not read collection values"); //$NON-NLS-1$
 	}
 
 	public int addElement(Object value, int index) {
-		throw new AssertionError("cannot add elements");
+		throw new AssertionError("cannot add elements"); //$NON-NLS-1$
 	}
 
 	public void removeElement(int index) {
-		throw new AssertionError("cannot remove elements");
+		throw new AssertionError("cannot remove elements"); //$NON-NLS-1$
 	}
 
 	public void setElement(int index, Object value) {

@@ -11,7 +11,6 @@
 package org.eclipse.jface.databinding.internal;
 
 import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.DatabindingContext;
 import org.eclipse.jface.databinding.IBindSpec;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
@@ -43,7 +42,7 @@ public class CollectionBinding extends Binding implements IChangeListener {
 	 * @param bindSpec
 	 * @throws BindingException 
 	 */
-	public CollectionBinding(DatabindingContext context,
+	public CollectionBinding(DataBindingContext context,
 			IUpdatableCollection target, IUpdatableCollection model,
 			IBindSpec bindSpec) throws BindingException {
 		super(context);

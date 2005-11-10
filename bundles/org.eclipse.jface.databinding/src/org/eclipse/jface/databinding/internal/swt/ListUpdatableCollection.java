@@ -1,9 +1,9 @@
 package org.eclipse.jface.databinding.internal.swt;
 
+import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.Updatable;
-import org.eclipse.jface.databinding.swt.SWTBindingConstants;
 import org.eclipse.swt.widgets.List;
 
 /**
@@ -26,12 +26,12 @@ public class ListUpdatableCollection extends Updatable implements IUpdatableColl
 		this.list = list;
 		
 		
-		if (attribute.equals(SWTBindingConstants.CONTENT))
-			this.attribute = SWTBindingConstants.ITEMS;
+		if (attribute.equals(DataBinding.CONTENT))
+			this.attribute = DataBinding.ITEMS;
 		else
 			this.attribute = attribute;
 		
-		if (this.attribute.equals(SWTBindingConstants.ITEMS)) {
+		if (this.attribute.equals(DataBinding.ITEMS)) {
 			//TODO List does not fire any event when items are changed.
 //			list.addModifyListener(new ModifyListener() {
 //				public void modifyText(ModifyEvent e) {

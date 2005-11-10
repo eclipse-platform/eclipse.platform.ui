@@ -11,9 +11,9 @@
 package org.eclipse.jface.databinding.internal;
 
 import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.DatabindingContext;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
+import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.PropertyDescription;
@@ -43,7 +43,7 @@ public class NestedUpdatableCollection extends Updatable implements
 
 	private IUpdatableCollection innerUpdatableCollection;
 
-	private DatabindingContext databindingContext;
+	private IDataBindingContext databindingContext;
 
 	private Class elementType;
 
@@ -53,7 +53,7 @@ public class NestedUpdatableCollection extends Updatable implements
 	 * @param feature
 	 * @param elementType 
 	 */
-	public NestedUpdatableCollection(DatabindingContext databindingContext,
+	public NestedUpdatableCollection(IDataBindingContext databindingContext,
 			final IUpdatableValue outerUpdatableValue, Object feature,
 			Class elementType) {
 		this.databindingContext = databindingContext;

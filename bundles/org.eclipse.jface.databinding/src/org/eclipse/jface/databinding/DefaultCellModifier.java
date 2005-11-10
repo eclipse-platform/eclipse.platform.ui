@@ -1,10 +1,10 @@
-package org.eclipse.jface.databinding.swt;
+package org.eclipse.jface.databinding;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
-import org.eclipse.jface.databinding.swt.TableViewerDescription.Column;
+import org.eclipse.jface.databinding.TableViewerDescription.Column;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.swt.widgets.Item;
 

@@ -11,9 +11,9 @@
 
 package org.eclipse.jface.databinding.internal.swt;
 
+import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
-import org.eclipse.jface.databinding.swt.SWTBindingConstants;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Combo;
@@ -41,11 +41,11 @@ public class ComboUpdatableValue extends UpdatableValue {
 	public ComboUpdatableValue(Combo combo, String attribute) {
 		this.combo = combo;
 		this.attribute = attribute;
-		if (attribute.equals(SWTBindingConstants.CONTENT))
-			attribute = SWTBindingConstants.TEXT;
+		if (attribute.equals(DataBinding.CONTENT))
+			attribute = DataBinding.TEXT;
 
-		if (attribute.equals(SWTBindingConstants.TEXT)
-				|| attribute.equals(SWTBindingConstants.SELECTION)) {
+		if (attribute.equals(DataBinding.TEXT)
+				|| attribute.equals(DataBinding.SELECTION)) {
 			combo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
@@ -61,10 +61,10 @@ public class ComboUpdatableValue extends UpdatableValue {
 		String oldValue = combo.getText();
 		try {
 			updating = true;
-			if (attribute.equals(SWTBindingConstants.TEXT)) {
+			if (attribute.equals(DataBinding.TEXT)) {
 				String stringValue = (String) value;
 				combo.setText(stringValue);
-			} else if (attribute.equals(SWTBindingConstants.SELECTION)) {
+			} else if (attribute.equals(DataBinding.SELECTION)) {
 				String items[] = combo.getItems();
 				int index = -1;
 				if (items != null && value != null) {
@@ -85,9 +85,9 @@ public class ComboUpdatableValue extends UpdatableValue {
 	}
 
 	public Object getValue() {
-		if (attribute.equals(SWTBindingConstants.TEXT)) {
+		if (attribute.equals(DataBinding.TEXT)) {
 			return combo.getText();
-		} else if (attribute.equals(SWTBindingConstants.SELECTION)) {
+		} else if (attribute.equals(DataBinding.SELECTION)) {
 			int index = combo.getSelectionIndex();
 			if (index >= 0)
 				return combo.getItem(index);
@@ -98,8 +98,8 @@ public class ComboUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		if (attribute.equals(SWTBindingConstants.TEXT)
-				|| attribute.equals(SWTBindingConstants.SELECTION)) {
+		if (attribute.equals(DataBinding.TEXT)
+				|| attribute.equals(DataBinding.SELECTION)) {
 			return String.class;
 		}
 		throw new AssertionError("unexpected attribute"); //$NON-NLS-1$

@@ -41,7 +41,7 @@ public interface IBindSupportFactory {
 	 *            <code>null</code> if not known
 	 * @param modelDescription
 	 *            The model description object passed to
-	 *            DatabindingContext#bind, or <code>null</code> if not known
+	 *            DataBindingContext#bind, or <code>null</code> if not known
 	 * @return a validator, or <code>null</code> if this factory cannot create
 	 *         a validator for the given arguments.
 	 */
@@ -62,7 +62,7 @@ public interface IBindSupportFactory {
 	 *            The type to convert to, or <code>null</code> if not known
 	 * @param modelDescription
 	 *            The model description object passed to
-	 *            DatabindingContext#bind, or <code>null</code> if not known
+	 *            DataBindingContext#bind, or <code>null</code> if not known
 	 * @return a converter, or <code>null</code> if this factory cannot create
 	 *         a converter for the given arguments.
 	 */

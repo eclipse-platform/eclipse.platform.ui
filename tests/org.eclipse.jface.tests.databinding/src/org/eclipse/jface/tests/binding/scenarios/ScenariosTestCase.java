@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.swt.SWTDatabindingContext;
+import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.tests.binding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -23,7 +23,7 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	private Composite composite;
 
-	private SWTDatabindingContext dbc;
+	private IDataBindingContext dbc;
 
 	private Display display;
 
@@ -37,7 +37,7 @@ abstract public class ScenariosTestCase extends TestCase {
 		return composite;
 	}
 
-	protected SWTDatabindingContext getDbc() {
+	protected IDataBindingContext getDbc() {
 		return dbc;
 	}
 

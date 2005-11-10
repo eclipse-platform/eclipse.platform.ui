@@ -6,8 +6,7 @@ Bundle-Version: 3.2.0
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.jface.databinding,
- org.eclipse.jface.databinding.swt
+Export-Package: org.eclipse.jface.databinding
 Require-Bundle: org.eclipse.jface,
  org.eclipse.core.runtime
 Eclipse-LazyStart: true

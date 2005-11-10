@@ -2,8 +2,8 @@ package org.eclipse.jface.databinding;
 
 /**
  * A standard description type representing a property of an object. Description
- * objects can be passed to <code>DatabindingContext.bind()</code> or
- * <code>DatabindingContext.createUpdatable()</code>. They are passed to
+ * objects can be passed to <code>DataBindingContext.bind()</code> or
+ * <code>DataBindingContext.createUpdatable()</code>. They are passed to
  * <code>IUpdatableFactory.createUpdatable()</code> to create an updatable
  * object. It is up to the IUpdatableFactory objects to interpret this
  * description.

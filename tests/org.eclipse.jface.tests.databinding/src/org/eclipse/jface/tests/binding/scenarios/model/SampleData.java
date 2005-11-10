@@ -1,20 +1,7 @@
 package org.eclipse.jface.tests.binding.scenarios.model;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.util.Map;
-
-import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.DatabindingContext;
-import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.IValidationContext;
-import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.databinding.swt.SWTDatabindingContext;
-import org.eclipse.jface.tests.binding.scenarios.JavaBeanUpdatableCollection;
-import org.eclipse.jface.tests.binding.scenarios.JavaBeanUpdatableValue;
+import org.eclipse.jface.databinding.DataBinding;
+import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.swt.widgets.Control;
 
 public class SampleData {
@@ -156,51 +143,11 @@ public class SampleData {
 		CART = FACTORY.createCart();
 	}
 
-	public static SWTDatabindingContext getDatabindingContext(Control aControl) {
-
-		DatabindingContext parent = new DatabindingContext();
-		SWTDatabindingContext dbc = new SWTDatabindingContext(parent, aControl);
-
-		IUpdatableFactory factory = new IUpdatableFactory() {
-			public IUpdatable createUpdatable(Map properties,
-					Object description, IValidationContext validationContext)
-					throws BindingException {
-				if (description instanceof PropertyDescription) {
-					PropertyDescription propertyDescription = (PropertyDescription) description;
-					if (propertyDescription.getObject() instanceof Object) {
-						Object object = propertyDescription.getObject();
-						BeanInfo beanInfo;
-						try {
-							beanInfo = Introspector.getBeanInfo(object
-									.getClass());
-						} catch (IntrospectionException e) {
-							// cannot introspect, give up
-							return null;
-						}
-						PropertyDescriptor[] propertyDescriptors = beanInfo
-								.getPropertyDescriptors();
-						for (int i = 0; i < propertyDescriptors.length; i++) {
-							PropertyDescriptor descriptor = propertyDescriptors[i];
-							if (descriptor.getName().equals(
-									propertyDescription.getPropertyID())) {
-								if (descriptor.getPropertyType().isArray())
-									return new JavaBeanUpdatableCollection(
-											object, descriptor);
-								else
-									return new JavaBeanUpdatableValue(object,
-											descriptor);
-							}
-						}
-					}
-				}
-				return null;
-			}
-
-		};
-		parent.addUpdatableFactory(factory);
-
-		return dbc;
-
+	public static IDataBindingContext getDatabindingContext(Control aControl) {
+		IDataBindingContext result = DataBinding.createContext(null, aControl,
+				new String[] { DataBinding.FACTORY_BEANS,
+						DataBinding.FACTORY_SWT, DataBinding.FACTORY_JFACE });
+		return result;
 	}
 
 }

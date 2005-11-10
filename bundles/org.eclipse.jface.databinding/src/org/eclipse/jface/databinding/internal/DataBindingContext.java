@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.internal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,12 +17,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.databinding.internal.Binding;
-import org.eclipse.jface.databinding.internal.CollectionBinding;
-import org.eclipse.jface.databinding.internal.ListUpdatableCollection;
-import org.eclipse.jface.databinding.internal.NestedUpdatableCollection;
-import org.eclipse.jface.databinding.internal.NestedUpdatableValue;
-import org.eclipse.jface.databinding.internal.ValueBinding;
+import org.eclipse.jface.databinding.BindSpec;
+import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.databinding.IBindSpec;
+import org.eclipse.jface.databinding.IBindSupportFactory;
+import org.eclipse.jface.databinding.IChangeListener;
+import org.eclipse.jface.databinding.IConverter;
+import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IUpdatable;
+import org.eclipse.jface.databinding.IUpdatableCollection;
+import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.IValidationContext;
+import org.eclipse.jface.databinding.IValidator;
+import org.eclipse.jface.databinding.IdentityConverter;
+import org.eclipse.jface.databinding.PropertyDescription;
+import org.eclipse.jface.databinding.SettableValue;
 
 /**
  * <p>
@@ -34,7 +44,8 @@ import org.eclipse.jface.databinding.internal.ValueBinding;
  * 
  * @since 3.2
  */
-public class DatabindingContext implements IValidationContext {
+public class DataBindingContext implements IValidationContext,
+		IDataBindingContext {
 
 	private static class Pair {
 
@@ -64,7 +75,7 @@ public class DatabindingContext implements IValidationContext {
 
 	private List createdUpdatables = new ArrayList();
 
-	private DatabindingContext parent;
+	private DataBindingContext parent;
 
 	private List partialValidationMessages = new ArrayList();
 
@@ -83,50 +94,39 @@ public class DatabindingContext implements IValidationContext {
 
 	private List bindSupportFactories = new ArrayList();
 
-	/**
-	 * Method addBindSupportFactory. Add a factory for converters, validators,
-	 * and the like. Adds a factory to the list of factories that will be
-	 * consulted when attempting to determine which converter or validator
-	 * should be used when binding.
+	protected int validationTime;
+
+	protected int updateTime;
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param factory
-	 *            the factory to add.
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#addBindSupportFactory(org.eclipse.jface.databinding.IBindSupportFactory)
 	 */
 	public void addBindSupportFactory(IBindSupportFactory factory) {
 		bindSupportFactories.add(factory);
 	}
 
 	/**
-	 * Method removeBindSupportFactory. Remove a factory for converters,
-	 * validators, and the like. Removes a factory from the list of factories
-	 * that will be consulted when attempting to determine which converter or
-	 * validator should be used when binding.
-	 * 
-	 * @param factory
-	 *            the factory to remove.
-	 */
-	public void removeBindSupportFactory(IBindSupportFactory factory) {
-		bindSupportFactories.remove(factory);
-	}
-
-	/**
 	 * 
 	 */
-	public DatabindingContext() {
+	public DataBindingContext() {
 		this(null);
 	}
 
 	/**
 	 * @param parent
 	 */
-	public DatabindingContext(DatabindingContext parent) {
+	public DataBindingContext(DataBindingContext parent) {
 		this.parent = parent;
 		registerFactories();
 		registerConverters();
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#dispose()
 	 */
 	public void dispose() {
 		for (Iterator it = createdUpdatables.iterator(); it.hasNext();) {
@@ -135,15 +135,19 @@ public class DatabindingContext implements IValidationContext {
 		}
 	}
 
-	/**
-	 * @return the validation message updatable value
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#getCombinedValidationMessage()
 	 */
 	public IUpdatableValue getCombinedValidationMessage() {
 		return combinedValidationMessage;
 	}
 
-	/**
-	 * @return the validation updatable
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#getPartialValidationMessage()
 	 */
 	public IUpdatableValue getPartialValidationMessage() {
 		return partialValidationMessage;
@@ -200,8 +204,10 @@ public class DatabindingContext implements IValidationContext {
 		return toStringConverter;
 	}
 
-	/**
-	 * @return the validation updatable
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#getValidationMessage()
 	 */
 	public IUpdatableValue getValidationMessage() {
 		return validationMessage;
@@ -310,11 +316,11 @@ public class DatabindingContext implements IValidationContext {
 						Object propertyID = propertyDescription.getPropertyID();
 						if (isCollectionProperty.booleanValue()) {
 							return new NestedUpdatableCollection(
-									DatabindingContext.this, updatableValue,
+									DataBindingContext.this, updatableValue,
 									propertyID, propertyType);
 						}
 						return new NestedUpdatableValue(
-								DatabindingContext.this, updatableValue,
+								DataBindingContext.this, updatableValue,
 								propertyID, propertyType);
 					} else if (o instanceof List) {
 						return new ListUpdatableCollection(
@@ -386,16 +392,12 @@ public class DatabindingContext implements IValidationContext {
 		}
 	}
 
-	/**
-	 * Binds targetUpdatable and modelUpdatable using converter and validator as
-	 * specified in bindSpec. If bindSpec is null, a default converter and
-	 * validator is used.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param targetUpdatable
-	 * @param modelUpdatable
-	 * @param bindSpec
-	 *            the bind spec, or null
-	 * @throws BindingException
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#bind(org.eclipse.jface.databinding.IUpdatable,
+	 *      org.eclipse.jface.databinding.IUpdatable,
+	 *      org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public void bind(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) throws BindingException {
@@ -433,30 +435,23 @@ public class DatabindingContext implements IValidationContext {
 		binding.updateTargetFromModel();
 	}
 
-	/**
-	 * Convenience method to bind createUpdatable(targetDescription) and
-	 * modelUpdatable.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param targetDescription
-	 * @param modelUpdatable
-	 * @param bindSpec
-	 *            the bind spec, or null
-	 * @throws BindingException
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#bind(java.lang.Object,
+	 *      org.eclipse.jface.databinding.IUpdatable,
+	 *      org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public void bind(Object targetDescription, IUpdatable modelUpdatable,
 			IBindSpec bindSpec) throws BindingException {
 		bind(createUpdatable(targetDescription), modelUpdatable, bindSpec);
 	}
 
-	/**
-	 * Convenience method to bind targetUpdatable and
-	 * createUpdatable(modelDescription).
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param targetUpdatable
-	 * @param modelDescription
-	 * @param bindSpec
-	 *            the bind spec, or null
-	 * @throws BindingException
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#bind(org.eclipse.jface.databinding.IUpdatable,
+	 *      java.lang.Object, org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public void bind(IUpdatable targetUpdatable, Object modelDescription,
 			IBindSpec bindSpec) throws BindingException {
@@ -520,33 +515,23 @@ public class DatabindingContext implements IValidationContext {
 		return null;
 	}
 
-	/**
-	 * Convenience method to bind createUpdatable(targetDescription) and
-	 * createUpdatable(modelDescription).
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param targetDescription
-	 * @param modelDescription
-	 * @param bindSpec
-	 *            the bind spec, or null
-	 * @throws BindingException
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#bind(java.lang.Object,
+	 *      java.lang.Object, org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public void bind(Object targetDescription, Object modelDescription,
 			IBindSpec bindSpec) throws BindingException {
 		bind(createUpdatable(targetDescription), modelDescription, bindSpec);
 	}
 
-	/**
-	 * Convenience method to bind createUpdatable(new
-	 * PropertyDescription(targetObject, targetPropertyID)) and
-	 * createUpdatable(new PropertyDescription(modelObject, modelPropertyID))
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param targetObject
-	 * @param targetPropertyID
-	 * @param modelObject
-	 * @param modelPropertyID
-	 * @param bindSpec
-	 *            the bind spec, or null
-	 * @throws BindingException
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#bind(java.lang.Object,
+	 *      java.lang.Object, java.lang.Object, java.lang.Object,
+	 *      org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public void bind(Object targetObject, Object targetPropertyID,
 			Object modelObject, Object modelPropertyID, IBindSpec bindSpec)
@@ -555,10 +540,10 @@ public class DatabindingContext implements IValidationContext {
 				new PropertyDescription(modelObject, modelPropertyID), bindSpec);
 	}
 
-	/**
-	 * @param description
-	 * @return IUpdatable for the given description
-	 * @throws BindingException
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#createUpdatable(java.lang.Object)
 	 */
 	public final IUpdatable createUpdatable(Object description)
 			throws BindingException {
@@ -578,8 +563,8 @@ public class DatabindingContext implements IValidationContext {
 			}
 		}
 		if (parent != null) {
-			return parent.doCreateUpdatable(description,
-					thisDatabindingContext);
+			return parent
+					.doCreateUpdatable(description, thisDatabindingContext);
 		}
 		throw new BindingException("could not find updatable for " //$NON-NLS-1$
 				+ description);
@@ -589,10 +574,16 @@ public class DatabindingContext implements IValidationContext {
 		if (parent != null) {
 			parent.collectProperties(properties);
 		}
+		properties.put(IDataBindingContext.VALIDATION_TIME, new Integer(
+				validationTime));
+		properties
+				.put(IDataBindingContext.UPDATE_TIME, new Integer(updateTime));
 	}
 
-	/**
-	 * @param updatableFactory
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.databinding.IDataBindingContext#addUpdatableFactory(org.eclipse.jface.databinding.IUpdatableFactory)
 	 */
 	public void addUpdatableFactory(IUpdatableFactory updatableFactory) {
 		// TODO: consider the fact that adding new factories for a given
@@ -600,6 +591,22 @@ public class DatabindingContext implements IValidationContext {
 		// may hide default ones (e.g., a new PropertyDescriptor may overide the
 		// ond for EMF)
 		factories.add(updatableFactory);
+	}
+
+	public int getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(int updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public int getValidationTime() {
+		return validationTime;
+	}
+
+	public void setValidationTime(int validationTime) {
+		this.validationTime = validationTime;
 	}
 
 }

@@ -11,9 +11,9 @@
 
 package org.eclipse.jface.databinding.internal.viewers;
 
+import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
-import org.eclipse.jface.databinding.swt.SWTBindingConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -41,7 +41,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 			String attribute) {
 		this.viewer = viewer;
 		this.attribute = attribute;
-		if (attribute.equals(SWTBindingConstants.SELECTION)) {
+		if (attribute.equals(DataBinding.SELECTION)) {
 			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (!updating) {
@@ -58,7 +58,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 	public void setValue(Object value) {
 		try {
 			updating = true;
-			if (attribute.equals(SWTBindingConstants.SELECTION)) {
+			if (attribute.equals(DataBinding.SELECTION)) {
 				Object oldValue= getValue();
 				viewer.setSelection(value == null ? StructuredSelection.EMPTY
 						: new StructuredSelection(value));
@@ -70,7 +70,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 	}
 
 	public Object getValue() {
-		if (attribute.equals(SWTBindingConstants.SELECTION)) {
+		if (attribute.equals(DataBinding.SELECTION)) {
 			ISelection selection = viewer.getSelection();
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection sel = (IStructuredSelection) selection;
@@ -81,7 +81,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		if (attribute.equals(SWTBindingConstants.SELECTION)) {
+		if (attribute.equals(DataBinding.SELECTION)) {
 			return Object.class;
 		}
 		throw new AssertionError("unexpected attribute"); //$NON-NLS-1$

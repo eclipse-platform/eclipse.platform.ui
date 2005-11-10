@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.databinding.swt.TableViewerDescription;
+import org.eclipse.jface.databinding.TableViewerDescription;
 import org.eclipse.jface.tests.binding.scenarios.model.Account;
 import org.eclipse.jface.tests.binding.scenarios.model.Catalog;
 import org.eclipse.jface.tests.binding.scenarios.model.PhoneConverter;

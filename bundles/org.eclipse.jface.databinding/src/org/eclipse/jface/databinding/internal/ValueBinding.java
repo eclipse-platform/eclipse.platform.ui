@@ -11,7 +11,6 @@
 package org.eclipse.jface.databinding.internal;
 
 import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.DatabindingContext;
 import org.eclipse.jface.databinding.IBindSpec;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IConverter;
@@ -41,7 +40,7 @@ public class ValueBinding extends Binding {
 	 * @param bindSpec
 	 * @throws BindingException
 	 */
-	public ValueBinding(DatabindingContext context, IUpdatableValue target,
+	public ValueBinding(DataBindingContext context, IUpdatableValue target,
 			IUpdatableValue model, IBindSpec bindSpec) throws BindingException {
 		super(context);
 		this.target = target;

@@ -13,12 +13,12 @@ package org.eclipse.jface.examples.databinding.javabean;
 import java.util.Map;
 
 import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.DatabindingContext;
+import org.eclipse.jface.databinding.DataBinding;
+import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IValidationContext;
 import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.databinding.swt.SWTDatabindingContext;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -31,10 +31,10 @@ public class PersonSampleData {
 	 * @param aControl
 	 * @return the data binding service
 	 */
-	public static DatabindingContext getSWTtoJavaBeanDatabindingContext(
+	public static IDataBindingContext getSWTtoJavaBeanDatabindingContext(
 			Control aControl) {
 
-		DatabindingContext dbc = new SWTDatabindingContext(null,aControl);
+		IDataBindingContext dbc = DataBinding.createContext(null, aControl);
 
 		IUpdatableFactory emfValueFactory = new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,

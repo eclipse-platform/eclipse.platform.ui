@@ -1,10 +1,8 @@
-package org.eclipse.jface.databinding.swt;
+package org.eclipse.jface.databinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.databinding.IConverter;
-import org.eclipse.jface.databinding.IValidator;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableViewer;

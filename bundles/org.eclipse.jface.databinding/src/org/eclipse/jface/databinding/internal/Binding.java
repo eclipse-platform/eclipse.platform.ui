@@ -1,6 +1,5 @@
 package org.eclipse.jface.databinding.internal;
 
-import org.eclipse.jface.databinding.DatabindingContext;
 import org.eclipse.jface.databinding.IChangeListener;
 
 /**
@@ -9,12 +8,12 @@ import org.eclipse.jface.databinding.IChangeListener;
  */
 abstract public class Binding implements IChangeListener {
 
-	protected final DatabindingContext context;
+	protected final DataBindingContext context;
 
 	/**
 	 * @param context
 	 */
-	public Binding(DatabindingContext context) {
+	public Binding(DataBindingContext context) {
 		this.context = context;
 	}
 	
