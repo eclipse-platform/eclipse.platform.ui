@@ -75,6 +75,7 @@ public abstract class Expression {
 	 * </p>
 	 * 
 	 * @return the expression information 
+	 * @since 3.2
 	 */
 	public final ExpressionInfo computeExpressionInfo() {
 		ExpressionInfo result= new ExpressionInfo();
@@ -89,6 +90,7 @@ public abstract class Expression {
 	 * 
 	 * @param info the expression information object used
 	 *  to collect the information
+	 * @since 3.2
 	 */
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.addMisBehavingExpressionType(getClass());
