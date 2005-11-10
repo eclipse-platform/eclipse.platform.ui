@@ -8,24 +8,30 @@
  * Contributors: 
  * Geoff Longman - Initial API and implementation
  * IBM - Tightening integration with existing Platform
+ * Geoff Longman - added ability to delete the marker selection
  **********************************************************************/
 package org.eclipse.core.tools.resources.markers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tools.resources.CoreResourcesToolsPlugin;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.ViewSite;
+import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.views.properties.*;
 
 /**
@@ -38,31 +44,25 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	public static final String MEMENTO_TAG1 = "MarkerView";
 	public static final String MEMENTO_TAG2 = "IResourcePath";
 	public static final String NONE_SELECTED = "NONE_SELECTED";
-
 	protected static final IStructuredSelection emptySelection = new StructuredSelection();
 
 	protected int markerDepth = IResource.DEPTH_ZERO;
-
 	protected MarkerExtensionModel model;
 	protected ReadOnlyMarkerPropertySource propertySource;
-
 	protected TreeViewer viewer;
 	protected Action doubleClickAction;
 	protected MarkerDepthAction depthZero;
 	protected MarkerDepthAction depthOne;
 	protected MarkerDepthAction depthInfinite;
-
+	protected DeleteMarkersAction deleteMarkers;
 	protected IResource currentResource;
 	protected String errorMsg;
 	protected String warningMsg;
-
 	protected ImageDescriptor oneImageDesc;
 	protected ImageDescriptor zeroImageDesc;
 	protected ImageDescriptor infiniteImageDesc;
-
 	protected PagePartListener pagePartListener;
 	protected IWorkbenchPage currentPage;
-
 	protected SelectionProvider selectionProvider;
 	protected MarkerViewPropertySheetPage propertyPage;
 
@@ -98,7 +98,6 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 		public MarkerViewPropertySheetPage(MarkerView view) {
 			super();
 			this.view = view;
-
 		}
 
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
@@ -121,6 +120,57 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 			updateActionChecks();
 			if (currentResource != null)
 				viewer.setInput(currentResource);
+		}
+	}
+
+	class DeleteMarkersAction extends SelectionProviderAction {
+		public DeleteMarkersAction(ISelectionProvider provider, String text) {
+			super(provider, text);
+		}
+
+		public void selectionChanged(IStructuredSelection selection) {
+			setEnabled(!selection.isEmpty());
+		}
+
+		public void run() {
+			final IStructuredSelection selection = getStructuredSelection();
+			if (selection.isEmpty())
+				return;
+
+			IRunnableWithProgress op = new WorkspaceModifyOperation() {
+				public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					int count = selection.size();
+					int deleted = 1;
+					monitor.beginTask("deleting #" + deleted + " of " + count + " markers.", count);
+					for (Iterator iter = selection.iterator(); iter.hasNext();) {
+						IMarker marker = (IMarker) iter.next();
+						try {
+							marker.delete();
+							monitor.worked(1);
+							deleted++;
+							monitor.setTaskName("deleting #" + deleted + " of " + count + " markers.");
+						} catch (CoreException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					monitor.done();
+				}
+			};
+
+			IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+			try {
+				progressService.busyCursorWhile(op);
+			} catch (InvocationTargetException e) {
+				IStatus status = null;
+				Throwable nested = e.getCause();
+				String message = nested.getMessage();
+				if (nested instanceof CoreException)
+					status = ((CoreException) nested).getStatus();
+				ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", message, status);
+			} catch (InterruptedException e) {
+				// Do nothing
+			}
 		}
 	}
 
@@ -347,20 +397,16 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				IStructuredSelection newSelection = emptySelection;
-				try {
-					if (!sel.isEmpty() && sel.size() == 1) {
-						Object first = sel.getFirstElement();
-						if (first instanceof IMarker) {
-							IMarker marker = (IMarker) first;
-							MarkerExtensionModel.MarkerInfo info = model.getInfo(marker.getType());
-							propertySource.setSourceMarker(marker, info);
-							newSelection = new StructuredSelection(propertySource);
-						}
+				if (!sel.isEmpty() && sel.size() == 1) {
+					Object first = sel.getFirstElement();
+					if (first instanceof IMarker) {
+						IMarker marker = (IMarker) first;
+						propertySource.setSourceMarker(marker);
+						newSelection = new StructuredSelection(propertySource);
 					}
-				} catch (CoreException e) {
-					CoreResourcesToolsPlugin.logProblem(e);
 				}
-				((ViewSite) getSite()).getSelectionProvider().setSelection(newSelection);
+
+				getSite().getSelectionProvider().setSelection(newSelection);
 			}
 		});
 
@@ -420,6 +466,8 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 		manager.add(depthOne);
 		manager.add(depthInfinite);
 		manager.add(new Separator());
+		manager.add(deleteMarkers);
+		manager.add(new Separator());
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator("Additions"));
 	}
@@ -434,6 +482,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 		depthZero = new MarkerDepthAction(IResource.DEPTH_ZERO, "IResource.DEPTH_ZERO", zeroImageDesc);
 		depthOne = new MarkerDepthAction(IResource.DEPTH_ONE, "IResource.DEPTH_ONE", oneImageDesc);
 		depthInfinite = new MarkerDepthAction(IResource.DEPTH_INFINITE, "IResource.DEPTH_INFINITE", infiniteImageDesc);
+		deleteMarkers = new DeleteMarkersAction(viewer, "Delete");
 		updateActionChecks();
 	}
 

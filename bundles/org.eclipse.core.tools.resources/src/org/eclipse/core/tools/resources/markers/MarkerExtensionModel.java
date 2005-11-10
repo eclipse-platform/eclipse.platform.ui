@@ -8,6 +8,7 @@
  * Contributors: 
  * Geoff Longman - Initial API and implementation
  * IBM - Tightening integration with existing Platform
+ * Geoff Longman - added ability to track extension registry changes
  **********************************************************************/
 package org.eclipse.core.tools.resources.markers;
 
@@ -15,13 +16,15 @@ import java.util.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.dynamichelpers.*;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Builds a model of all the markers defined in the Workbench
  */
 public class MarkerExtensionModel {
 
-	private static final boolean DEBUG = false; //uncomment to get model dumps
+	private static final boolean DEBUG = false; // uncomment to get model dumps
 
 	static public class MarkerInfo {
 
@@ -38,13 +41,15 @@ public class MarkerExtensionModel {
 		public String id;
 	}
 
-	static List empty = Collections.unmodifiableList(new ArrayList());
+	public static interface MarkerModelChangedListener {
+		public void markerModelChanged(MarkerExtensionModel newModel);
+	}
 
+	static List empty = Collections.unmodifiableList(new ArrayList());
 	static public String RESOURCES_PROBLEM = IMarker.PROBLEM;
 	static public String RESOURCES_TASK = IMarker.TASK;
 	static public String RESOURCES_BOOKMARK = IMarker.BOOKMARK;
 	static public String RESOURCES_TEXT = IMarker.TEXT;
-
 	Map markerMap = new HashMap();
 
 	/**
@@ -53,23 +58,34 @@ public class MarkerExtensionModel {
 	public MarkerExtensionModel() {
 		super();
 		readMarkerDeclarations();
-		if (DEBUG)
-			dumpMarkerTypes();
+		registerForExtensionChanges();
 	}
 
-	public MarkerInfo getInfo(String id) {
+	public synchronized MarkerInfo getInfo(String id) {
 		return (MarkerInfo) markerMap.get(id);
 	}
 
-	public Iterator getMarkerIds() {
-		return markerMap.keySet().iterator();
+	private void registerForExtensionChanges() {
+		IExtensionChangeHandler changeHandler = new IExtensionChangeHandler() {
+			public void addExtension(IExtensionTracker tracker, IExtension extension) {
+				readMarkerDeclarations();
+			}
+
+			public void removeExtension(IExtension extension, Object[] objects) {
+				readMarkerDeclarations();
+			}
+		};
+		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
+		tracker.registerHandler(changeHandler, ExtensionTracker.createExtensionPointFilter(point));
 	}
 
 	/*
 	 * Retrieve the marker defn info out of the extension point.
 	 */
-	private void readMarkerDeclarations() {
-		IExtensionPoint point = Platform.getPluginRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
+	synchronized void readMarkerDeclarations() {
+		markerMap.clear();
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
 		if (point != null) {
 			// Gather all registered marker types.
 			IExtension[] extensions = point.getExtensions();
@@ -99,6 +115,8 @@ public class MarkerExtensionModel {
 				markerMap.put(identifier, info);
 			}
 		}
+		if (DEBUG)
+			dumpMarkerTypes();
 	}
 
 	// a cruddy debugging tool. Dumps the model out in pseudo xml
