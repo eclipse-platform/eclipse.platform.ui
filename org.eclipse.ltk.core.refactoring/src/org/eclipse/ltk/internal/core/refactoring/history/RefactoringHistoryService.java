@@ -379,7 +379,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	public static final String NAME_HISTORY_FOLDER= ".refactorings"; //$NON-NLS-1$
 
 	/** The refactoring history index file name */
-	public static final String NAME_INDEX_FILE= "index.dat"; //$NON-NLS-1$
+	public static final String NAME_INDEX_FILE= "refactorings.index"; //$NON-NLS-1$
 
 	/** The name of the special workspace project */
 	static final String NAME_WORKSPACE_PROJECT= ".workspace"; //$NON-NLS-1$
