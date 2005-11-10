@@ -1570,7 +1570,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			sleep(100);
 			Thread.yield();
 			//sanity test to avoid hanging tests
-			assertTrue("Timeout waiting for job to cancel", i++ < 1000);
+			if (i++ > 1000) {
+				dumpState();
+				assertTrue("Timeout waiting for job to cancel", false);
+			}
 		}
 	}
 
@@ -1584,7 +1587,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				//ignore
 			}
 			//sanity test to avoid hanging tests
-			assertTrue("Timeout waiting for job to complete", i++ < 1000);
+			if (i++ > 1000) {
+				dumpState();
+				assertTrue("Timeout waiting for job to complete", false);
+			}
 		}
 	}
 
@@ -1600,7 +1606,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		while (job.getState() != Job.NONE) {
 			sleep(tickLength);
 			//sanity test to avoid hanging tests
-			assertTrue("Timeout waiting for job to complete", i++ < ticks);
+			if (i++ > ticks) {
+				dumpState();
+				assertTrue("Timeout waiting for job to complete", false);
+			}
 		}
 	}
 
@@ -1624,7 +1633,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				sleep(100);
 				Thread.yield();
 				//sanity test to avoid hanging tests
-				assertTrue("Timeout waiting for job in family " + type.getType() + "to be canceled ", i++ < 100);
+				if (i++ > 100) {
+					dumpState();
+					assertTrue("Timeout waiting for job in family " + type.getType() + "to be canceled ", false);
+				}
 			}
 		}
 	}
@@ -1641,15 +1653,20 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			Thread.yield();
 			//sanity test to avoid hanging tests
 			if (i++ >= 1000) {
-				//extra debugging for bug 109898
-				System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****"); 
-				Job[] jobs = Platform.getJobManager().find(null);
-				for (int j = 0; j < jobs.length; j++) {
-					System.out.println("" + jobs[j] + " state: " + JobManager.printState(jobs[j].getState())); 
-				}
-				System.out.println("**** END DUMP JOB MANAGER INFORMATION ****"); 
+				dumpState(); 
 				assertTrue("Timeout waiting for job to start. Job: " + job + ", state: " + job.getState(), false);
 			}
 		}
+	}
+
+	/**
+	 * Extra debugging for bug 109898
+	 */
+	private void dumpState() {
+		System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****"); 
+		Job[] jobs = Platform.getJobManager().find(null);
+		for (int j = 0; j < jobs.length; j++)
+			System.out.println("" + jobs[j] + " state: " + JobManager.printState(jobs[j].getState())); 
+		System.out.println("**** END DUMP JOB MANAGER INFORMATION ****");
 	}
 }
