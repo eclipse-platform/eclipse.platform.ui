@@ -12,9 +12,8 @@
  *  Created Oct 21, 2005 by Gili Mendel
  * 
  *  $RCSfile: UpdatableFactoriesTest.java,v $
- *  $Revision: 1.2 $  $Date: 2005/11/10 05:20:58 $ 
+ *  $Revision: 1.1 $  $Date: 2005/11/10 06:41:38 $ 
  */
-
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.Map;

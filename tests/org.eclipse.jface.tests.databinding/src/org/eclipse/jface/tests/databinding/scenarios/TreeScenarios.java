@@ -8,8 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
- 
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import org.eclipse.jface.databinding.BindingException;

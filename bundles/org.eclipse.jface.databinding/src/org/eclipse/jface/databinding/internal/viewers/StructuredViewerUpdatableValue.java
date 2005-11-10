@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.databinding.internal.viewers;
 
 import org.eclipse.jface.databinding.DataBinding;

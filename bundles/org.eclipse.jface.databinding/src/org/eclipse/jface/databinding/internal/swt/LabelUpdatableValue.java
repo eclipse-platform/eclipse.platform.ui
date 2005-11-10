@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.databinding.internal.swt;
 
 import org.eclipse.jface.databinding.IChangeEvent;
