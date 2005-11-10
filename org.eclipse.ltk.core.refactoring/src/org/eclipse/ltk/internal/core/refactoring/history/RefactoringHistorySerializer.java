@@ -13,6 +13,7 @@ package org.eclipse.ltk.internal.core.refactoring.history;
 import java.net.URI;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -106,8 +107,8 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 		final int type= event.getEventType();
 		final RefactoringHistoryManager manager= new RefactoringHistoryManager(store, name);
 		if (type == RefactoringHistoryEvent.ADDED)
-			manager.writeRefactoringDescriptor(descriptor);
+			manager.writeRefactoringDescriptor(descriptor, new NullProgressMonitor());
 		else if (type == RefactoringHistoryEvent.REMOVED)
-			manager.removeRefactoringDescriptor(descriptor.getTimeStamp());
+			manager.removeRefactoringDescriptor(descriptor.getTimeStamp(), new NullProgressMonitor());
 	}
 }

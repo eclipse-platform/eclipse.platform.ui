@@ -74,6 +74,7 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String RefactoringHistoryService_unknown_refactoring_description;
 	public static String RefactoringHistoryService_retrieving_history;
 	public static String RefactoringHistoryService_resolving_information;
+	public static String RefactoringHistoryService_updating_history;
 
 	public static String PerformRefactoringsOperation_perform_refactorings;
 

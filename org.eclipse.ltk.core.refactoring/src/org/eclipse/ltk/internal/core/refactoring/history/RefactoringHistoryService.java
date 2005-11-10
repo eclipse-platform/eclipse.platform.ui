@@ -210,7 +210,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				}
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
-				monitor.worked(2);
+				monitor.worked(1);
 				if (descriptor == null) {
 					final String name= proxy.getProject();
 					final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER);
@@ -221,15 +221,15 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 								if (hasProjectHistory(project)) {
 									final URI uri= project.getLocationURI();
 									if (uri != null)
-										return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).getRefactoringDescriptor(proxy);
+										return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
 								} else
-									return new RefactoringHistoryManager(store.getChild(name), null).getRefactoringDescriptor(proxy);
+									return new RefactoringHistoryManager(store.getChild(name), null).requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
 							}
 						} catch (CoreException exception) {
 							// Do nothing
 						}
 					} else
-						return new RefactoringHistoryManager(store.getChild(NAME_WORKSPACE_PROJECT), null).getRefactoringDescriptor(proxy);
+						return new RefactoringHistoryManager(store.getChild(NAME_WORKSPACE_PROJECT), null).requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
 				}
 				monitor.worked(6);
 				return descriptor;
