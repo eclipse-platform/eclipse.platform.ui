@@ -65,7 +65,7 @@ public class LocationValidator {
 		String string2 = location2.toString();
 		return string1.startsWith(string2) || (bothDirections && string2.startsWith(string1));
 	}
-	
+
 	/**
 	 * Returns a string representation of a URI suitable for displaying to an end user.
 	 */
@@ -78,10 +78,43 @@ public class LocationValidator {
 		}
 	}
 
+	/**
+	 * Check that the location is absolute
+	 */
+	private IStatus validateAbsolute(URI location, boolean error) {
+		if (!location.isAbsolute()) {
+			IPath pathPart = new Path(location.getSchemeSpecificPart());
+			String message;
+			if (pathPart.segmentCount() > 0)
+				message = NLS.bind(Messages.pathvar_undefined, location.toString(), pathPart.segment(0));
+			else
+				message = Messages.links_noPath;
+			int code = error ? IResourceStatus.VARIABLE_NOT_DEFINED : IResourceStatus.VARIABLE_NOT_DEFINED_WARNING;
+			return new ResourceStatus(code, null, message);
+		}
+		return Status.OK_STATUS;
+	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#validateLinkLocation(IResource, IPath)
 	 */
 	public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation) {
+		IPath location = workspace.getPathVariableManager().resolvePath(unresolvedLocation);
+		if (location.isEmpty())
+			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), Messages.links_noPath);
+		//check that the location is absolute
+		if (!location.isAbsolute()) {
+			//we know there is at least one segment, because of previous isEmpty check
+			String message = NLS.bind(Messages.pathvar_undefined, location.toOSString(), location.segment(0));
+			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED_WARNING, resource.getFullPath(), message);
+		}
+		//if the location doesn't have a device, see if the OS will assign one
+		if (location.getDevice() == null)
+			location = new Path(location.toFile().getAbsolutePath());
+		return validateLinkLocationURI(resource, FileUtil.toURI(location));
+	}
+
+	public IStatus validateLinkLocationURI(IResource resource, URI unresolvedLocation) {
 		String message;
 		//check if resource linking is disabled
 		if (ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {
@@ -98,7 +131,7 @@ public class LocationValidator {
 			message = NLS.bind(Messages.links_parentNotAccessible, resource.getFullPath());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
-		IPath location = workspace.getPathVariableManager().resolvePath(unresolvedLocation);
+		URI location = workspace.getPathVariableManager().resolveURI(unresolvedLocation);
 		//check nature veto
 		String[] natureIds = ((Project) parent).internalGetDescription().getNatureIds();
 
@@ -112,39 +145,28 @@ public class LocationValidator {
 			result = workspace.getTeamHook().validateCreateLink((IFolder) resource, IResource.NONE, location);
 		if (!result.isOK())
 			return result;
-		if (location.isEmpty()) {
-			message = Messages.links_noPath;
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
-		}
 		//check the standard path name restrictions
-		int segmentCount = location.segmentCount();
-		for (int i = 0; i < segmentCount; i++) {
-			result = validateName(location.segment(i), resource.getType());
-			if (!result.isOK())
-				return result;
-		}
-		//if the location doesn't have a device, see if the OS will assign one
-		if (location.isAbsolute() && location.getDevice() == null)
-			location = new Path(location.toFile().getAbsolutePath());
+		result = validateSegments(location);
+		if (!result.isOK())
+			return result;
+		//check if the location is based on an undefined variable
+		result = validateAbsolute(location, false);
+		if (!result.isOK())
+			return result;
 		// test if the given location overlaps the platform metadata location
-		IPath testLocation = workspace.getMetaArea().getLocation();
+		URI testLocation = workspace.getMetaArea().getLocation().toFile().toURI();
 		if (isOverlapping(location, testLocation, true)) {
-			message = NLS.bind(Messages.links_invalidLocation, location.toOSString());
+			message = NLS.bind(Messages.links_invalidLocation, toString(location));
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		//test if the given path overlaps the location of the given project
-		testLocation = resource.getProject().getLocation();
+		testLocation = resource.getProject().getLocationURI();
 		if (testLocation != null && isOverlapping(location, testLocation, false)) {
-			message = NLS.bind(Messages.links_locationOverlapsProject, location.toOSString());
+			message = NLS.bind(Messages.links_locationOverlapsProject, toString(location));
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		//warnings (all errors must be checked before all warnings)
-		//check that the location is absolute
-		if (!location.isAbsolute()) {
-			//we know there is at least one segment, because of previous isEmpty check
-			message = NLS.bind(Messages.pathvar_undefined, location.toOSString(), location.segment(0));
-			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED_WARNING, resource.getFullPath(), message);
-		}
+
 		// Iterate over each known project and ensure that the location does not
 		// conflict with any project locations or linked resource locations
 		IProject[] projects = workspace.getRoot().getProjects();
@@ -153,9 +175,9 @@ public class LocationValidator {
 			// since we are iterating over the project in the workspace, we
 			// know that they have been created before and must have a description
 			IProjectDescription desc = ((Project) project).internalGetDescription();
-			testLocation = desc.getLocation();
+			testLocation = desc.getLocationURI();
 			if (testLocation != null && isOverlapping(location, testLocation, true)) {
-				message = NLS.bind(Messages.links_overlappingResource, location.toOSString());
+				message = NLS.bind(Messages.links_overlappingResource, toString(location));
 				return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 			}
 			//iterate over linked resources and check for overlap
@@ -171,9 +193,9 @@ public class LocationValidator {
 				continue;
 			for (int j = 0; j < children.length; j++) {
 				if (children[j].isLinked()) {
-					testLocation = children[j].getLocation();
+					testLocation = children[j].getLocationURI();
 					if (testLocation != null && isOverlapping(location, testLocation, true)) {
-						message = NLS.bind(Messages.links_overlappingResource, location.toOSString());
+						message = NLS.bind(Messages.links_overlappingResource, toString(location));
 						return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 					}
 				}
@@ -321,26 +343,12 @@ public class LocationValidator {
 		// the default default is ok for all projects
 		if (unresolvedLocation == null)
 			return Status.OK_STATUS;
-		//check the standard path name restrictions
 		URI location = workspace.getPathVariableManager().resolveURI(unresolvedLocation);
-		if (EFS.SCHEME_FILE.equals(location.getScheme())) {
-			IPath pathPart = new Path(location.getSchemeSpecificPart());
-			int segmentCount = pathPart.segmentCount();
-			for (int i = 0; i < segmentCount; i++) {
-				IStatus result = validateName(pathPart.segment(i), IResource.PROJECT);
-				if (!result.isOK())
-					return result;
-			}
-		}
-		//check that the location is absolute
-		if (!location.isAbsolute()) {
-			IPath pathPart = new Path(location.getSchemeSpecificPart());
-			if (pathPart.segmentCount() > 0)
-				message = NLS.bind(Messages.pathvar_undefined, toString(location), pathPart.segment(0));
-			else
-				message = Messages.links_noPath;
-			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED, null, message);
-		}
+		//check the standard path name restrictions
+		IStatus result = validateSegments(location);
+		if (!result.isOK())
+			return result;
+		result = validateAbsolute(location, true);
 		// test if the given location overlaps the default default location
 		IPath defaultDefaultLocation = Platform.getLocation();
 		if (isOverlapping(location, defaultDefaultLocation.toFile().toURI(), true)) {
@@ -386,6 +394,24 @@ public class LocationValidator {
 						}
 					}
 				}
+			}
+		}
+		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Validates the standard path name restrictions on the segments of the provided URI.
+	 * @param location The URI to validate
+	 * @return A status indicating if the segments of the provided URI are valid
+	 */
+	private IStatus validateSegments(URI location) {
+		if (EFS.SCHEME_FILE.equals(location.getScheme())) {
+			IPath pathPart = new Path(location.getSchemeSpecificPart());
+			int segmentCount = pathPart.segmentCount();
+			for (int i = 0; i < segmentCount; i++) {
+				IStatus result = validateName(pathPart.segment(i), IResource.PROJECT);
+				if (!result.isOK())
+					return result;
 			}
 		}
 		return Status.OK_STATUS;

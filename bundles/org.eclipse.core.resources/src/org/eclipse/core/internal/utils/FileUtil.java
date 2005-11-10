@@ -91,6 +91,8 @@ public class FileUtil {
 	 * Converts a path to a URI
 	 */
 	public static URI toURI(IPath path) {
+		if (path == null)
+			return null;
 		if (path.isAbsolute()) {
 			String filePath = path.toFile().getAbsolutePath();
 			if (File.separatorChar != '/')
@@ -113,6 +115,20 @@ public class FileUtil {
 			}
 		}
 		return URI.create(path.toString());
+	}
+	
+	/**
+	 * Converts a URI to an IPath.  Returns null if the URI cannot be represented
+	 * as an IPath.
+	 */
+	public static IPath toPath(URI uri) {
+		if (uri == null)
+			return null;
+		final String scheme = uri.getScheme();
+		// null scheme represents path variable
+		if (scheme == null || EFS.SCHEME_FILE.equals(scheme))
+			return new Path(uri.getSchemeSpecificPart());
+		return null;
 	}
 
 	public static final void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) throws CoreException {

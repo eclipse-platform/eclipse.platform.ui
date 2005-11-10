@@ -658,7 +658,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//for shallow move the destination is a linked resource with the same location
 				newInfo.set(ICoreConstants.M_LINK);
 				newInfo.setFileStoreRoot(sourceInfo.getFileStoreRoot());
-				linkDescription = new LinkDescription(destinationResource, source.getRawLocation());
+				linkDescription = new LinkDescription(destinationResource, source.getLocationURI());
 			} else {
 				//for deep move the destination is not a linked resource
 				newInfo.clear(ICoreConstants.M_LINK);
@@ -1937,6 +1937,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation) {
 		return locationValidator.validateLinkLocation(resource, unresolvedLocation);
+	}
+
+	/* (non-Javadoc)
+	 * @see IWorkspace#validateLinkLocation(IResource, IPath)
+	 */
+	public IStatus validateLinkLocationURI(IResource resource, URI unresolvedLocation) {
+		return locationValidator.validateLinkLocationURI(resource, unresolvedLocation);
 	}
 
 	/* (non-Javadoc)

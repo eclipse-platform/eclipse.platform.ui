@@ -1355,6 +1355,50 @@ public interface IWorkspace extends IAdaptable {
 	public IStatus validateLinkLocation(IResource resource, IPath location);
 
 	/**
+	 * Validates the given {@link URI} as the location of the given resource on disk.
+	 * The location must be either an absolute URI, or a relative URI
+	 * whose first segment is the name of a defined workspace path variable.
+	 * A link location must obey the following rules:
+	 * <ul>
+	 * <li>must not overlap with the platform's metadata directory</li>
+	 * <li>must not be the same as or a parent of the root directory of the
+	 * project the linked resource is contained in</li>
+	 * </ul>
+	 * <p>
+	 * This method also checks that the given resource can legally become a
+	 * linked resource. This includes the following restrictions:
+	 * <ul>
+	 * <li>must have a project as its immediate parent</li>
+	 * <li>project natures and the team hook may disallow linked resources on
+	 * projects they are associated with</li>
+	 * <li>the global workspace preference to disable linking,
+	 * <code>ResourcesPlugin.PREF_DISABLE_LINKING</code> must not be set to
+	 * &quot;true&quot;</li>.
+	 * </ul>
+	 * </p>
+	 * <p>
+	 * This method will return a status with severity <code>IStatus.ERROR</code>
+	 * if the location does not obey the above rules. Also, this method will
+	 * return a status with severity <code>IStatus.WARNING</code> if the
+	 * location overlaps the location of any existing resource in the workspace.
+	 * </p>
+	 * <p>
+	 * Note: this method does not consider whether files or directories exist in
+	 * the file system at the specified location.
+	 * 
+	 * @param resource the resource to validate the location for
+	 * @param location the location of the linked resource contents in some file system
+	 * @return a status object with code <code>IStatus.OK</code> if the given
+	 * location is valid as the linked resource location, otherwise a status
+	 * object with severity <code>IStatus.WARNING</code> or
+	 * <code>IStatus.ERROR</code> indicating what is wrong with the location
+	 * @see IStatus#OK
+	 * @see ResourcesPlugin#PREF_DISABLE_LINKING
+	 * @since 2.1
+	 */
+	public IStatus validateLinkLocationURI(IResource resource, URI location);
+
+	/**
 	 * Validates the given string as the name of a resource valid for one of the
 	 * given types.
 	 * <p>

@@ -13,7 +13,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.net.URI;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
@@ -141,25 +141,31 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	protected void assertLinkRequirements(IPath localLocation, int updateFlags) throws CoreException {
+	protected void assertLinkRequirements(URI localLocation, int updateFlags) throws CoreException {
 		checkDoesNotExist(getFlags(getResourceInfo(false, false)), true);
 		boolean allowMissingLocal = (updateFlags & IResource.ALLOW_MISSING_LOCAL) != 0;
-		IStatus locationStatus = workspace.validateLinkLocation(this, localLocation);
+		IStatus locationStatus = workspace.validateLinkLocationURI(this, localLocation);
 		//we only tolerate an undefined path variable in the allow missing local case
-		if (locationStatus.getSeverity() == IStatus.ERROR || (locationStatus.getCode() == IResourceStatus.VARIABLE_NOT_DEFINED_WARNING && !allowMissingLocal))
+		final boolean variableUndefined = locationStatus.getCode() == IResourceStatus.VARIABLE_NOT_DEFINED_WARNING;
+		if (locationStatus.getSeverity() == IStatus.ERROR || (variableUndefined && !allowMissingLocal))
 			throw new ResourceException(locationStatus);
 		//check that the parent exists and is open
 		Container parent = (Container) getParent();
 		parent.checkAccessible(getFlags(parent.getResourceInfo(false, false)));
+		//if the variable is undefined we can't do any further checks
+		if (variableUndefined)
+			return;
 		//check if the file exists
-		java.io.File localFile = workspace.getPathVariableManager().resolvePath(localLocation).toFile();
-		boolean localExists = localFile.exists();
+		URI resolved = workspace.getPathVariableManager().resolveURI(localLocation);
+		IFileStore store = EFS.getStore(resolved);
+		IFileInfo fileInfo = store.fetchInfo();
+		boolean localExists = fileInfo.exists();
 		if (!allowMissingLocal && !localExists) {
-			String msg = NLS.bind(Messages.links_localDoesNotExist, localFile);
+			String msg = NLS.bind(Messages.links_localDoesNotExist, store.toString());
 			throw new ResourceException(IResourceStatus.NOT_FOUND_LOCAL, getFullPath(), msg, null);
 		}
 		//resource type and file system type must match
-		if (localExists && ((getType() == IResource.FOLDER) != localFile.isDirectory())) {
+		if (localExists && ((getType() == IResource.FOLDER) != fileInfo.isDirectory())) {
 			String msg = NLS.bind(Messages.links_wrongLocalType, getFullPath());
 			throw new ResourceException(IResourceStatus.WRONG_TYPE_LOCAL, getFullPath(), msg, null);
 		}
@@ -573,6 +579,17 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see org.eclipse.core.resources.IFile#createLink(IPath, int, IProgressMonitor)
 	 */
 	public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException {
+		//if the location doesn't have a device, see if the OS will assign one
+		if (localLocation.isAbsolute() && localLocation.getDevice() == null)
+			localLocation = new Path(localLocation.toFile().getAbsolutePath());
+		createLink(FileUtil.toURI(localLocation), updateFlags, monitor);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IFolder#createLink(URI, int, IProgressMonitor)
+	 * @see org.eclipse.core.resources.IFile#createLink(URI, int, IProgressMonitor)
+	 */
+	public void createLink(URI localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = NLS.bind(Messages.links_creating, getFullPath());
@@ -582,16 +599,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 			try {
 				workspace.prepareOperation(rule, monitor);
-				//if the location doesn't have a device, see if the OS will assign one
-				if (localLocation.isAbsolute() && localLocation.getDevice() == null)
-					localLocation = new Path(localLocation.toFile().getAbsolutePath());
 				assertLinkRequirements(localLocation, updateFlags);
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 				workspace.beginOperation(true);
 				// resolve any variables used in the location path
 				ResourceInfo info = workspace.createResource(this, false);
 				info.set(M_LINK);
-				getLocalManager().link(this, FileUtil.toURI(localLocation));
+				getLocalManager().link(this, localLocation);
 				monitor.worked(Policy.opWork * 5 / 100);
 				//save the location in the project description
 				Project project = (Project) getProject();

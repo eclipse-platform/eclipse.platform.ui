@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
+import java.net.URI;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
 import org.eclipse.core.internal.utils.Assert;
@@ -304,7 +305,7 @@ public class LocalMetaArea implements ICoreConstants {
 				try {
 					String location = dataIn.readUTF();
 					if (location.length() > 0)
-						description.setLocation(Path.fromOSString(location));
+						description.setLocationURI(URI.create(location));
 				} catch (IOException e) {
 					String msg = NLS.bind(Messages.resources_exReadProjectLocation, target.getName());
 					ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e));
@@ -358,7 +359,7 @@ public class LocalMetaArea implements ICoreConstants {
 		ProjectDescription desc = ((Project) target).internalGetDescription();
 		if (desc == null)
 			return;
-		final IPath projectLocation = desc.getLocation();
+		final URI projectLocation = desc.getLocationURI();
 		final IProject[] references = desc.getDynamicReferences(false);
 		final int numRefs = references.length;
 		if (projectLocation == null && numRefs == 0)
@@ -368,7 +369,7 @@ public class LocalMetaArea implements ICoreConstants {
 			SafeChunkyOutputStream output = new SafeChunkyOutputStream(file);
 			DataOutputStream dataOut = new DataOutputStream(output);
 			try {
-				String locationString = projectLocation == null ? "" : projectLocation.toOSString(); //$NON-NLS-1$
+				String locationString = projectLocation == null ? "" : projectLocation.toString(); //$NON-NLS-1$
 				dataOut.writeUTF(locationString);
 				dataOut.writeInt(numRefs);
 				for (int i = 0; i < numRefs; i++)

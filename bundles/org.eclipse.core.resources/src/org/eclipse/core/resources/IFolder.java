@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import java.net.URI;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -203,6 +204,71 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * @since 2.1
 	 */
 	public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Creates a new folder resource as a member of this handle's parent resource.
+	 * The folder's contents will be located in the directory specified by the given
+	 * file system URI.  The given URI must be either absolute, or a relative URI 
+	 * whose first path segment is the name of a workspace path variable.
+	 * <p>
+	 * The <code>ALLOW_MISSING_LOCAL</code> update flag controls how this 
+	 * method deals with cases where the local file system directory to be linked does
+	 * not exist, or is relative to a workspace path variable that is not defined.
+	 * If <code>ALLOW_MISSING_LOCAL</code> is specified, the operation will succeed
+	 * even if the local directory is missing, or the path is relative to an
+	 * undefined variable. If <code>ALLOW_MISSING_LOCAL</code> is not specified, the
+	 * operation will fail in the case where the local file system directory does
+	 * not exist or the path is relative to an undefined variable.
+	 * </p>
+	 * <p>
+	 * Update flags other than <code>ALLOW_MISSING_LOCAL</code> are ignored.
+	 * </p>
+	 * <p>
+	 * This method synchronizes this resource with the local file system at the given
+	 * location.
+	 * </p>
+	 * <p>
+	 * This method changes resources; these changes will be reported
+	 * in a subsequent resource change event, including an indication 
+	 * that the folder has been added to its parent.
+	 * </p>
+	 * <p>
+	 * This method is long-running; progress and cancellation are provided
+	 * by the given progress monitor. 
+	 * </p>
+	 * 
+	 * @param location a file system path where the folder should be linked
+	 * @param updateFlags bit-wise or of update flag constants
+	 *   (only ALLOW_MISSING_LOCAL is relevant here) 
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource already exists in the workspace.</li>
+	 * <li> The workspace contains a resource of a different type 
+	 *      at the same path as this resource.</li>
+	 * <li> The parent of this resource does not exist.</li>
+	 * <li> The parent of this resource is not an open project</li>
+	 * <li> The name of this resource is not valid (according to 
+	 *    <code>IWorkspace.validateName</code>).</li>
+	 * <li> The corresponding location in the local file system does not exist, or
+	 * is relative to an undefined variable, and <code>ALLOW_MISSING_LOCAL</code> is
+	 * not specified.</li>
+	 * <li> The corresponding location in the local file system is occupied
+	 *    by a file (as opposed to a directory).</li>
+	 * <li> Resource changes are disallowed during certain types of resource change 
+	 *       event notification.  See <code>IResourceChangeEvent</code> for more details.</li>
+	 * <li>The team provider for the project which contains this folder does not permit
+	 *       linked resources.</li>
+	 * <li>This folder's project contains a nature which does not permit linked resources.</li>
+	 * </ul>
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
+	 * @see IResource#isLinked()
+	 * @see IResource#ALLOW_MISSING_LOCAL
+	 * @since 3.2
+	 */
+	public void createLink(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Deletes this resource from the workspace.
