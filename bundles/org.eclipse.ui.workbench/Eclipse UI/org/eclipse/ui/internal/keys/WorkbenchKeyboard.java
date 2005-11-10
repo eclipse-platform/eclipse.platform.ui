@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -93,7 +94,7 @@ public final class WorkbenchKeyboard {
 			if (!enabled) {
 				return;
 			}
-			
+
 			if (DEBUG && DEBUG_VERBOSE) {
 				System.out.print("KEYS >>> Listener.handleEvent(type = "); //$NON-NLS-1$
 				switch (event.type) {
@@ -446,17 +447,21 @@ public final class WorkbenchKeyboard {
 		final boolean commandEnabled = command.isEnabled();
 
 		if (DEBUG && DEBUG_VERBOSE) {
-			if (!command.isDefined()) {
+			if (!commandDefined) {
 				System.out.println("KEYS >>>     not defined"); //$NON-NLS-1$
-			} else if (!command.isHandled()) {
+			} else if (!commandHandled) {
 				System.out.println("KEYS >>>     not handled"); //$NON-NLS-1$
-			} else if (!command.isEnabled()) {
+			} else if (!commandEnabled) {
 				System.out.println("KEYS >>>     not enabled"); //$NON-NLS-1$
 			}
 		}
 
-		if (commandDefined && commandHandled && commandEnabled) {
-			parameterizedCommand.execute(trigger, null);
+		if (commandDefined && commandEnabled) {
+			try {
+				parameterizedCommand.execute(trigger, null);
+			} catch (final NotHandledException e) {
+				// There is no handler.  Forwarded to the IExecutionListener.
+			}
 		}
 
 		/*
@@ -650,47 +655,47 @@ public final class WorkbenchKeyboard {
 	}
 
 	/**
-     * Logs the given exception, and opens a dialog explaining the failure.
-     * 
-     * @param e
-     *            The exception to log; must not be <code>null</code>.
-     * @param command
-     *            The parameterized command for the binding to execute; may be
-     *            <code>null</code>.
-     */
-    final void logException(final CommandException e,
-            final ParameterizedCommand command) {
-        Throwable nestedException = e.getCause();
-        Throwable exception = (nestedException == null) ? e : nestedException;
+	 * Logs the given exception, and opens a dialog explaining the failure.
+	 * 
+	 * @param e
+	 *            The exception to log; must not be <code>null</code>.
+	 * @param command
+	 *            The parameterized command for the binding to execute; may be
+	 *            <code>null</code>.
+	 */
+	final void logException(final CommandException e,
+			final ParameterizedCommand command) {
+		Throwable nestedException = e.getCause();
+		Throwable exception = (nestedException == null) ? e : nestedException;
 
-        // If we can, include the command name in the exception.
-        String message = null;
-        if (command != null) {
-            try {
-                final String name = command.getCommand().getName();
-                message = MessageFormat.format(Util.translateString(
-                        RESOURCE_BUNDLE, "ExecutionError.MessageCommandName"), //$NON-NLS-1$
-                        new Object[] { name });
-            } catch (final NotDefinedException nde) {
-                // Fall through (message == null)
-            }
-        }
-        if (message == null) {
-            message = Util.translateString(RESOURCE_BUNDLE,
-                    "ExecutionError.Message"); //$NON-NLS-1$
-        }
+		// If we can, include the command name in the exception.
+		String message = null;
+		if (command != null) {
+			try {
+				final String name = command.getCommand().getName();
+				message = MessageFormat.format(Util.translateString(
+						RESOURCE_BUNDLE, "ExecutionError.MessageCommandName"), //$NON-NLS-1$
+						new Object[] { name });
+			} catch (final NotDefinedException nde) {
+				// Fall through (message == null)
+			}
+		}
+		if (message == null) {
+			message = Util.translateString(RESOURCE_BUNDLE,
+					"ExecutionError.Message"); //$NON-NLS-1$
+		}
 
-        String title = Util.translateString(RESOURCE_BUNDLE,
-                "ExecutionError.Title"); //$NON-NLS-1$
-        String exceptionMessage = exception.getMessage();
-        if (exceptionMessage == null) {
-            exceptionMessage = exception.getClass().getName();
-        }
-        IStatus status = new Status(IStatus.ERROR,
-                WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
-        WorkbenchPlugin.log(message, status);
-        ErrorDialog.openError(workbench.getDisplay().getActiveShell(),
-                title, message, status);
+		String title = Util.translateString(RESOURCE_BUNDLE,
+				"ExecutionError.Title"); //$NON-NLS-1$
+		String exceptionMessage = exception.getMessage();
+		if (exceptionMessage == null) {
+			exceptionMessage = exception.getClass().getName();
+		}
+		IStatus status = new Status(IStatus.ERROR,
+				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
+		WorkbenchPlugin.log(message, status);
+		ErrorDialog.openError(workbench.getDisplay().getActiveShell(), title,
+				message, status);
 	}
 
 	/**
@@ -728,44 +733,44 @@ public final class WorkbenchKeyboard {
 					.println("KEYS >>> WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
 							+ potentialKeyStrokes + ")"); //$NON-NLS-1$
 		}
-        
-        /*
-         * KLUDGE. This works around a couple of specific problems in how GTK+
-         * works. The first problem is the ordering of key press events with
-         * respect to shell activation events. If on the event thread a dialog
-         * is about to open, and the user presses a key, the key press event
-         * will arrive before the shell activation event. From the perspective
-         * of Eclipse, this means that things like two "Open Type" dialogs can
-         * appear if "Ctrl+Shift+T" is pressed twice rapidly. For more
-         * information, please see Bug 95792. The second problem is simply a bug
-         * in GTK+, for which an incomplete workaround currently exists in SWT.
-         * This makes shell activation events unreliable. Please see Bug 56231
-         * and Bug 95222 for more information.
-         */
-        if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
-            final Widget widget = event.widget;
 
-            // Update the contexts.
-            final ContextService contextService = (ContextService) workbench
-                    .getAdapter(IContextService.class);
-            if ((widget instanceof Control) && (!widget.isDisposed())) {
-                final Shell shell = ((Control) widget).getShell();
-                contextService.updateShellKludge(shell);
-            } else {
-                contextService.updateShellKludge();
-            }
+		/*
+		 * KLUDGE. This works around a couple of specific problems in how GTK+
+		 * works. The first problem is the ordering of key press events with
+		 * respect to shell activation events. If on the event thread a dialog
+		 * is about to open, and the user presses a key, the key press event
+		 * will arrive before the shell activation event. From the perspective
+		 * of Eclipse, this means that things like two "Open Type" dialogs can
+		 * appear if "Ctrl+Shift+T" is pressed twice rapidly. For more
+		 * information, please see Bug 95792. The second problem is simply a bug
+		 * in GTK+, for which an incomplete workaround currently exists in SWT.
+		 * This makes shell activation events unreliable. Please see Bug 56231
+		 * and Bug 95222 for more information.
+		 */
+		if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
+			final Widget widget = event.widget;
 
-            // Update the handlers.
-            final HandlerService handlerService = (HandlerService) workbench
-                    .getAdapter(IHandlerService.class);
-            if ((widget instanceof Control) && (!widget.isDisposed())) {
-                final Shell shell = ((Control) widget).getShell();
-                handlerService.updateShellKludge(shell);
-            } else {
-                handlerService.updateShellKludge();
-            }
-        } 
-        
+			// Update the contexts.
+			final ContextService contextService = (ContextService) workbench
+					.getAdapter(IContextService.class);
+			if ((widget instanceof Control) && (!widget.isDisposed())) {
+				final Shell shell = ((Control) widget).getShell();
+				contextService.updateShellKludge(shell);
+			} else {
+				contextService.updateShellKludge();
+			}
+
+			// Update the handlers.
+			final HandlerService handlerService = (HandlerService) workbench
+					.getAdapter(IHandlerService.class);
+			if ((widget instanceof Control) && (!widget.isDisposed())) {
+				final Shell shell = ((Control) widget).getShell();
+				handlerService.updateShellKludge(shell);
+			} else {
+				handlerService.updateShellKludge();
+			}
+		}
+
 		KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
 				.hasNext();) {
@@ -777,22 +782,22 @@ public final class WorkbenchKeyboard {
 
 			} else if (isPerfectMatch(sequenceAfterKeyStroke)) {
 				final Binding binding = getPerfectMatch(sequenceAfterKeyStroke);
-                try {
-                    return executeCommand(binding, event) || !sequenceBeforeKeyStroke
-						.isEmpty();
-                } catch (final CommandException e) {
-                    logException(e, binding.getParameterizedCommand());
-                    return true;
-                }
+				try {
+					return executeCommand(binding, event)
+							|| !sequenceBeforeKeyStroke.isEmpty();
+				} catch (final CommandException e) {
+					logException(e, binding.getParameterizedCommand());
+					return true;
+				}
 
 			} else if ((keyAssistDialog != null)
-                    && (keyAssistDialog.getShell() != null)
-                    && ((event.keyCode == SWT.ARROW_DOWN)
-                            || (event.keyCode == SWT.ARROW_UP)
-                            || (event.keyCode == SWT.ARROW_LEFT)
-                            || (event.keyCode == SWT.ARROW_RIGHT)
-                            || (event.keyCode == SWT.CR)
-                            || (event.keyCode == SWT.PAGE_UP) || (event.keyCode == SWT.PAGE_DOWN))) {
+					&& (keyAssistDialog.getShell() != null)
+					&& ((event.keyCode == SWT.ARROW_DOWN)
+							|| (event.keyCode == SWT.ARROW_UP)
+							|| (event.keyCode == SWT.ARROW_LEFT)
+							|| (event.keyCode == SWT.ARROW_RIGHT)
+							|| (event.keyCode == SWT.CR)
+							|| (event.keyCode == SWT.PAGE_UP) || (event.keyCode == SWT.PAGE_DOWN))) {
 				// We don't want to swallow keyboard navigation keys.
 				return false;
 
@@ -804,23 +809,23 @@ public final class WorkbenchKeyboard {
 	}
 
 	/**
-     * <p>
-     * Actually performs the processing of the key event by interacting with the
-     * <code>ICommandManager</code>. If work is carried out, then the event
-     * is stopped here (i.e., <code>event.doit = false</code>). It does not
-     * do any processing if there are no matching key strokes.
-     * </p>
-     * <p>
-     * If the active <code>Shell</code> is not the same as the one to which
-     * the state is associated, then a reset occurs.
-     * </p>
-     * 
-     * @param keyStrokes
-     *            The set of all possible matching key strokes; must not be
-     *            <code>null</code>.
-     * @param event
-     *            The event to process; must not be <code>null</code>.
-     */
+	 * <p>
+	 * Actually performs the processing of the key event by interacting with the
+	 * <code>ICommandManager</code>. If work is carried out, then the event
+	 * is stopped here (i.e., <code>event.doit = false</code>). It does not
+	 * do any processing if there are no matching key strokes.
+	 * </p>
+	 * <p>
+	 * If the active <code>Shell</code> is not the same as the one to which
+	 * the state is associated, then a reset occurs.
+	 * </p>
+	 * 
+	 * @param keyStrokes
+	 *            The set of all possible matching key strokes; must not be
+	 *            <code>null</code>.
+	 * @param event
+	 *            The event to process; must not be <code>null</code>.
+	 */
 	void processKeyEvent(List keyStrokes, Event event) {
 		// Dispatch the keyboard shortcut, if any.
 		boolean eatKey = false;
