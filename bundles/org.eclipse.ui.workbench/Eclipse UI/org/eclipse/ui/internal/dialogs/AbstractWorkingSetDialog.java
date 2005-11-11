@@ -52,11 +52,21 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 public abstract class AbstractWorkingSetDialog extends SelectionDialog
 		implements IWorkingSetSelectionDialog {
 
+	private static final int ID_NEW = IDialogConstants.CLIENT_ID + 1;
+	private static final int ID_DETAILS = ID_NEW + 1;
+	private static final int ID_REMOVE = ID_DETAILS + 1;
+	private static final int ID_SELECTALL = ID_REMOVE + 1;
+	private static final int ID_DESELECTALL = ID_SELECTALL + 1;
+	
 	private Button newButton;
 
 	private Button detailsButton;
 
 	private Button removeButton;
+	
+	private Button selectAllButton;
+	
+	private Button deselectAllButton;
 
 	private IWorkingSet[] result;
 
@@ -98,15 +108,12 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	protected void addModifyButtons(Composite composite) {
 		Composite buttonComposite = new Composite(composite, SWT.RIGHT);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.marginHeight = layout.marginWidth = 0;
 		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
-				| GridData.GRAB_HORIZONTAL);
-		data.grabExcessHorizontalSpace = true;
-		composite.setData(data);
+		GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_VERTICAL);;
+		buttonComposite.setLayoutData(data);
 
-		int id = IDialogConstants.CLIENT_ID + 1;
-		newButton = createButton(buttonComposite, id++,
+		newButton = createButton(buttonComposite, ID_NEW,
 				WorkbenchMessages.WorkingSetSelectionDialog_newButton_label,
 				false);
 		newButton.addSelectionListener(new SelectionAdapter() {
@@ -117,7 +124,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 
 		detailsButton = createButton(
 				buttonComposite,
-				id++,
+				ID_DETAILS,
 				WorkbenchMessages.WorkingSetSelectionDialog_detailsButton_label,
 				false);
 		detailsButton.setEnabled(false);
@@ -127,7 +134,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 			}
 		});
 
-		removeButton = createButton(buttonComposite, id++,
+		removeButton = createButton(buttonComposite, ID_REMOVE,
 				WorkbenchMessages.WorkingSetSelectionDialog_removeButton_label,
 				false);
 		removeButton.setEnabled(false);
@@ -136,7 +143,58 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 				removeSelectedWorkingSets();
 			}
 		});
+		
+		layout.numColumns = 1; // must manually reset the number of columns because createButton increments it - we want these buttons to be laid out vertically.
 	}
+
+	/**
+	 * Add the select/deselect buttons.
+	 * 
+	 * @param composite Composite to add the buttons to
+	 */
+	protected void addSelectionButtons(Composite composite) {
+		Composite buttonComposite = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = 0;
+		layout.numColumns = 2;
+		buttonComposite.setLayout(layout);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		buttonComposite.setLayoutData(data);
+		
+		selectAllButton = createButton(
+				buttonComposite,
+				ID_SELECTALL,
+				WorkbenchMessages.SelectionDialog_selectLabel,
+				false);
+
+		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				selectAllSets();
+			}
+		});
+		
+		deselectAllButton = createButton(
+				buttonComposite,
+				ID_DESELECTALL,
+				WorkbenchMessages.SelectionDialog_deselectLabel,
+				false);
+		
+		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				deselectAllSets();
+			}
+		});
+	}
+	
+	/**
+	 * Select all working sets.
+	 */
+	protected abstract void selectAllSets();
+	
+	/**
+	 * Deselect all working sets.
+	 */
+	protected abstract void deselectAllSets();
 
 	/**
 	 * Opens a working set wizard for editing the currently selected working

@@ -35,6 +35,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -190,12 +191,23 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		buttonSelectedSets
 				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
-        listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER | SWT.MULTI);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
-        data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
-        listViewer.getTable().setLayoutData(data);
-        listViewer.getTable().setFont(parent.getFont());
+		Composite viewerComposite = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		viewerComposite.setLayout(layout);
+		
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
+		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH + 300;  // fudge?  I like fudge.
+		viewerComposite.setLayoutData(data);
+		
+		listViewer = CheckboxTableViewer.newCheckList(viewerComposite,
+				SWT.BORDER | SWT.MULTI);
+		data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
+		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
+		listViewer.getTable().setLayoutData(data);
+		listViewer.getTable().setFont(parent.getFont());
 
         listViewer.setLabelProvider(labelProvider);
         listViewer.setContentProvider(contentProvider);
@@ -222,9 +234,13 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 			}
 		});
 
-		addModifyButtons(composite);
-        listViewer.setInput(Arrays.asList(WorkbenchPlugin.getDefault()
-                .getWorkingSetManager().getWorkingSets()));
+        addModifyButtons(viewerComposite);
+        
+        addSelectionButtons(composite);
+        
+
+		listViewer.setInput(Arrays.asList(WorkbenchPlugin.getDefault()
+				.getWorkingSetManager().getWorkingSets()));
         List initialElementSelections = getInitialElementSelections();
 		if (multiSelect) {
 			listViewer.setCheckedElements(initialElementSelections.toArray());
@@ -423,5 +439,23 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 	protected void availableWorkingSetsChanged() {
 		listViewer.setInput(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets());
+	}
+
+	protected void selectAllSets() {
+		listViewer.setCheckedElements(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets());
+		// implicitly select the third radio button
+		buttonWindowSet.setSelection(false);
+		buttonNoSet.setSelection(false);
+		buttonSelectedSets.setSelection(true);
+		updateButtonAvailability();
+	}
+
+	protected void deselectAllSets() {
+		listViewer.setCheckedElements(new Object[0]);
+		// implicitly select the third radio button
+		buttonWindowSet.setSelection(false);
+		buttonNoSet.setSelection(false);
+		buttonSelectedSets.setSelection(true);
+		updateButtonAvailability();
 	}
 }

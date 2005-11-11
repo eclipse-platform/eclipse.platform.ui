@@ -34,6 +34,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -74,7 +75,7 @@ public class SelectWorkingSetsAction implements IWorkbenchWindowActionDelegate,
 		private IWorkingSet set;
 
 		ToggleWorkingSetAction(IWorkingSet set) {
-			super(set.getName(), IAction.AS_CHECK_BOX);
+			super(set.getLabel(), IAction.AS_CHECK_BOX);
 			setImageDescriptor(set.getImage());
 			this.set = set;
 			setChecked(isWorkingSetEnabled(set));
@@ -257,7 +258,18 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
 
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		viewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
+		
+		Composite viewerComposite = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		viewerComposite.setLayout(layout);
+		
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
+		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH + 300;  // fudge?  I like fudge.
+		viewerComposite.setLayoutData(data);
+		
+		viewer = CheckboxTableViewer.newCheckList(viewerComposite, SWT.BORDER);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.setLabelProvider(new WorkingSetLabelProvider());
 		viewer.setContentProvider(new ArrayContentProvider());
@@ -272,13 +284,15 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
             }
         });
 
-		GridData data = new GridData(GridData.FILL_BOTH);
+		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 
 		viewer.getControl().setLayoutData(data);
-
-		addModifyButtons(composite);
+		addModifyButtons(viewerComposite);
+		
+		addSelectionButtons(composite);
+		
 		return composite;
 	}
 
@@ -312,5 +326,15 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
     protected void configureShell(Shell shell) {
     		super.configureShell(shell);
     }
-    
+
+	protected void selectAllSets() {
+		viewer.setCheckedElements(window.getWorkbench().getWorkingSetManager()
+				.getWorkingSets());
+		updateButtonAvailability();
+	}
+
+	protected void deselectAllSets() {
+		viewer.setCheckedElements(new Object[0]);
+		updateButtonAvailability();
+	}
 }
