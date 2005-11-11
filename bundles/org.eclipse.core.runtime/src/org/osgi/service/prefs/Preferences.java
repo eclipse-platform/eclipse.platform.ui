@@ -1,5 +1,5 @@
 /*
- * $Header: /cvshome/build/org.osgi.service.prefs/src/org/osgi/service/prefs/Preferences.java,v 1.8 2005/08/10 01:07:52 hargrave Exp $
+ * $Header: /home/eclipse/org.eclipse.core.runtime/src/org/osgi/service/prefs/Preferences.java,v 1.3 2005/08/17 15:01:28 twatson Exp $
  * 
  * Copyright (c) OSGi Alliance (2001, 2005). All Rights Reserved.
  * 
@@ -102,7 +102,7 @@ package org.osgi.service.prefs;
  * preference data.
  * 
  * 
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.3 $
  */
 public interface Preferences {
 	/**

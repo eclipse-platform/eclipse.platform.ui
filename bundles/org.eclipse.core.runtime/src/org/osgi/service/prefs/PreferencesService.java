@@ -1,5 +1,5 @@
 /*
- * $Header: /cvshome/build/org.osgi.service.prefs/src/org/osgi/service/prefs/PreferencesService.java,v 1.8 2005/08/11 03:07:45 hargrave Exp $
+ * $Header: /home/eclipse/org.eclipse.core.runtime/src/org/osgi/service/prefs/PreferencesService.java,v 1.3 2005/08/17 15:01:28 twatson Exp $
  * 
  * Copyright (c) OSGi Alliance (2001, 2005). All Rights Reserved.
  * 
