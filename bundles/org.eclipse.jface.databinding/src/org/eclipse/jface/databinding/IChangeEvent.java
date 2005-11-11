@@ -69,6 +69,7 @@ public interface IChangeEvent {
 	 * <code>getNewValue()</code> returns the new value that will be the
 	 * updatable's new value if the change is not vetoed by calling
 	 * <code>setVeto(true)</code>.
+	 * TODO turn this into flags, so that we can express pre-add etc.
 	 */
 	public static final int VERIFY = 4;
 
