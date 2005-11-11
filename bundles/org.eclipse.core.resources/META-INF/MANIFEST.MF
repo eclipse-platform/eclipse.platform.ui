@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.core.resources; singleton:=true
-Bundle-Version: 3.1.0
+Bundle-Version: 3.2.0.qualifier
 Bundle-Activator: 
  org.eclipse.core.internal.compatibility.PluginActivator
 Bundle-Vendor: %providerName
@@ -20,9 +20,9 @@ Export-Package: org.eclipse.core.internal.dtree;x-internal:=true,
  org.eclipse.core.resources.mapping,
  org.eclipse.core.resources.refresh,
  org.eclipse.core.resources.team
-Require-Bundle: org.eclipse.core.runtime.compatibility,
- org.eclipse.ant.core;resolution:=optional,
- org.eclipse.core.expressions,
- org.eclipse.core.filesystem
+Require-Bundle: org.eclipse.core.runtime.compatibility;bundle-version="[3.1.0,4.0.0)",
+ org.eclipse.ant.core;bundle-version="[3.1.0,4.0.0)";resolution:=optional,
+ org.eclipse.core.expressions;bundle-version="[3.1.0,4.0.0)",
+ org.eclipse.core.filesystem;bundle-version="[1.0.0,2.0.0)"
 Plugin-Class: org.eclipse.core.resources.ResourcesPlugin
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
