@@ -240,7 +240,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/** Operation history listener for refactoring operation events */
-	private final class RefactoringOperationListener implements IOperationHistoryListener {
+	private final class RefactoringOperationHistoryListener implements IOperationHistoryListener {
 
 		/** The last recently performed refactoring */
 		private RefactoringDescriptor fDescriptor= null;
@@ -456,7 +456,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	public void connect() {
 		fReferenceCount++;
 		if (fReferenceCount == 1) {
-			fOperationListener= new RefactoringOperationListener();
+			fOperationListener= new RefactoringOperationHistoryListener();
 			OperationHistoryFactory.getOperationHistory().addOperationHistoryListener(fOperationListener);
 			fResourceListener= new WorkspaceChangeListener();
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(fResourceListener, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE);
