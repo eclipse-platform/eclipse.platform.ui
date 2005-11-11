@@ -14,16 +14,28 @@
 
 	<target name="export" depends="build">
 		<mkdir dir="${destdir}" />
+		<delete dir="${dest}" />
+		<mkdir dir="${dest}" />
+		
+		<copy todir="${dest}/META-INF">
+			<fileset dir="META-INF" />
+		</copy>		
+		
+		<replaceregexp file="${dest}/META-INF/MANIFEST.MF" match="Bundle-Version: ((\d)+\.(\d)+\.(\d)+\.)qualifier" replace="Bundle-Version: \1zzz" byline="true" />
+		
 		<delete file="${destjar}" />
 		<zip zipfile="${destjar}">
 			<fileset dir=".">
 			  <include name="plugin.xml" />
 			  <include name="plugin.properties" />
-			  <include name="META-INF/**" />
 			  <include name="src/**" />
 			</fileset>
+			<fileset dir="${dest}/META-INF" />
 			<fileset dir="bin" />
 			<zipfileset dir="projection" prefix="src" />
 		</zip>
+		
+		<delete dir="${dest}" />		
+		
 	</target>
 </project>
