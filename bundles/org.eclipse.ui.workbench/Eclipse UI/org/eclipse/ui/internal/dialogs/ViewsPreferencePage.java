@@ -238,7 +238,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		themeCombo = new Combo(composite, SWT.READ_ONLY);
 		themeCombo.setLayoutData(data);
 		themeCombo.setFont(parent.getFont());
-		refreshThemeCombo();
+		refreshThemeCombo(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getId());
 
 		createShowTraditionalStyleTabsPref(composite);
 		createEnableAnimationsPref(composite);
@@ -745,31 +745,34 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * 
+	 * @param themeToSelect the id of the theme to be selected
 	 */
-	private void refreshThemeCombo() {
+	private void refreshThemeCombo(String themeToSelect) {
 		themeCombo.removeAll();
 		ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager()
 				.getCurrentTheme();
 
 		IThemeDescriptor[] descs = WorkbenchPlugin.getDefault()
 				.getThemeRegistry().getThemes();
-		int selection = 0;
-		String themeString = PlatformUI.getWorkbench().getThemeManager()
+		String defaultThemeString = PlatformUI.getWorkbench().getThemeManager()
 				.getTheme(IThemeManager.DEFAULT_THEME).getLabel();
 		if (currentTheme.getId().equals(IThemeManager.DEFAULT_THEME)) {
-			themeString = MessageFormat.format(
+			defaultThemeString = MessageFormat.format(
 					WorkbenchMessages.ViewsPreference_currentThemeFormat,
-					new Object[] { themeString });
+					new Object[] { defaultThemeString });
 		}
-		themeCombo.add(themeString);
-
+		themeCombo.add(defaultThemeString);
+		
+		String themeString;
+		int selection = 0;
 		for (int i = 0; i < descs.length; i++) {
 			themeString = descs[i].getName();
 			if (descs[i].getId().equals(currentTheme.getId())) {
 				themeString = MessageFormat.format(
 						WorkbenchMessages.ViewsPreference_currentThemeFormat,
 						new Object[] { themeString });
+			}
+			if (themeToSelect.equals(descs[i].getId())) {
 				selection = i + 1;
 			}
 			themeCombo.add(themeString);
@@ -887,6 +890,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 				.setSelection(IWorkbenchPreferenceConstants.TOP_RIGHT
 						.equals(perspBarLocation));
 
+		refreshThemeCombo(PlatformUI.getWorkbench().getThemeManager()
+				.getTheme(IThemeManager.DEFAULT_THEME).getId());
+		
 		WorkbenchPlugin.getDefault().savePluginPreferences();
 		super.performDefaults();
 	}
@@ -972,11 +978,12 @@ public class ViewsPreferencePage extends PreferencePage implements
 		if (idx == 0) {
 			Workbench.getInstance().getThemeManager().setCurrentTheme(
 					IThemeManager.DEFAULT_THEME);
+			refreshThemeCombo(IThemeManager.DEFAULT_THEME);
 		} else {
+			IThemeDescriptor applyTheme = WorkbenchPlugin.getDefault().getThemeRegistry().getThemes()[idx - 1]; 
 			Workbench.getInstance().getThemeManager()
-					.setCurrentTheme(
-							WorkbenchPlugin.getDefault().getThemeRegistry()
-									.getThemes()[idx - 1].getId());
+					.setCurrentTheme(applyTheme.getId());
+			refreshThemeCombo(applyTheme.getId());
 		}
 
 		apiStore.setValue(
@@ -985,7 +992,6 @@ public class ViewsPreferencePage extends PreferencePage implements
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
 				enableAnimations.getSelection());
 
-		refreshThemeCombo();
 		PrefUtil.savePrefs();
 
 		// we can get here through performApply, in that case only post one
