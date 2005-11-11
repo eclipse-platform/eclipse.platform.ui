@@ -95,7 +95,8 @@ public class NestedUpdatableValue extends UpdatableValue {
 	}
 
 	public void setValue(Object value) {
-		innerUpdatableValue.setValue(value);
+		if (innerUpdatableValue!=null)
+		   innerUpdatableValue.setValue(value);
 	}
 
 	public Object getValue() {
