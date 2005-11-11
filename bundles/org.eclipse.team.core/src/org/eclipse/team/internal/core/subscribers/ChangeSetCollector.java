@@ -12,12 +12,12 @@ package org.eclipse.team.internal.core.subscribers;
 
 import java.util.*;
 
-import org.eclipse.core.internal.runtime.ListenerList;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.internal.core.ListenerList;
 
 /**
  * This class defines the common aspects of collecting a set of change
