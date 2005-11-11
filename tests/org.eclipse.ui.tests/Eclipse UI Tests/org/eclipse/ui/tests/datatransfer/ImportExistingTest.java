@@ -20,10 +20,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.zip.ZipFile;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -50,18 +49,22 @@ import org.eclipse.ui.tests.util.DialogCheck;
 import org.eclipse.ui.tests.util.FileUtil;
 
 public class ImportExistingTest extends DataTransferTestCase {
-	public static TestSuite suite() {
-		return new TestSuite(ImportExistingTest.class);
-	}
-	
 	private static final String PLUGIN_ID = "org.eclipse.ui.tests";
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
 	private static final String WS_DATA_PREFIX = "data/workspaces";
 	private static final String WS_DATA_LOCATION = "importExistingFromDirTest";
+	private static final String ARCHIVE_HELLOWORLD = "helloworld";
+	private static final String ARCHIVE_FILE_WITH_EMPTY_FOLDER = "EmptyFolderInArchive";
 	
 	private static final String[] ARCHIVE_FILE_LIST = new String[] {
 			"HelloWorld.java", "HelloWorld.class", ".project", ".classpath" };
+	
+	private static final String[] ARCHIVE_FILE_EMPTY_FOLDER_LIST = new String[]{
+			"empty", "folder" };
+	
 	private String dataLocation = null;
+	
+	private boolean originalRefreshSetting;
 	
 	public ImportExistingTest(String testName) {
 		super(testName);
@@ -71,6 +74,14 @@ public class ImportExistingTest extends DataTransferTestCase {
 		return DialogCheck.getShell();
 	}
 	
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
+		originalRefreshSetting = ResourcesPlugin.getPlugin()
+        	.getPluginPreferences().getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
+		ResourcesPlugin.getPlugin()
+    		.getPluginPreferences().setValue(ResourcesPlugin.PREF_AUTO_REFRESH, true);
+	}
+
 	protected void doTearDown() throws Exception {
 		super.doTearDown();
 		IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
@@ -86,18 +97,22 @@ public class ImportExistingTest extends DataTransferTestCase {
 			}
 		}
 		dataLocation = null;	// reset for next test
+		
+		ResourcesPlugin.getPlugin()
+			.getPluginPreferences().setValue(ResourcesPlugin.PREF_AUTO_REFRESH, 
+						originalRefreshSetting);
 	}
 
 	public void testFindSingleZip() {
 		try {
-			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-					new Path(DATA_PATH_PREFIX+"helloworld.zip")));
+			URL archiveFile = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+					new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip")));
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
 			
 			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
-			wpip.updateProjectsList(helloworld.getPath());
+			wpip.updateProjectsList(archiveFile.getPath());
 
 			ProjectRecord[] selectedProjects= wpip.getValidProjects();
 			ArrayList projectNames = new ArrayList();
@@ -113,14 +128,14 @@ public class ImportExistingTest extends DataTransferTestCase {
 	
 	public void testFindSingleTar() {
 		try {
-			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-					new Path(DATA_PATH_PREFIX+"helloworld.tar")));
+			URL archiveFile = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+					new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".tar")));
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
 			
 			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
-			wpip.updateProjectsList(helloworld.getPath());
+			wpip.updateProjectsList(archiveFile.getPath());
 			
 			ProjectRecord[] selectedProjects= wpip.getValidProjects();
 			ArrayList projectNames = new ArrayList();
@@ -196,14 +211,14 @@ public class ImportExistingTest extends DataTransferTestCase {
 			IProject[] workspaceProjects = root.getProjects();
             for (int i = 0; i < workspaceProjects.length; i++) 
             	FileUtil.deleteProject(workspaceProjects[i]);
-			URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-					new Path(DATA_PATH_PREFIX+"helloworld.zip")));
+			URL archiveFile = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+					new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip")));
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
 			
 			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
-			wpip.updateProjectsList(helloworld.getPath());
+			wpip.updateProjectsList(archiveFile.getPath());
 			
 			ProjectRecord[] selectedProjects= wpip.getValidProjects();
 			ArrayList projectNames = new ArrayList();
@@ -225,7 +240,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
-			verifyProjectInWorkspace(true, workspaceProjects[0], ARCHIVE_FILE_LIST);
+			verifyProjectInWorkspace(true, workspaceProjects[0], ARCHIVE_FILE_LIST, true);
 
 		} catch (IOException e) {
 			fail(e.toString());
@@ -235,6 +250,51 @@ public class ImportExistingTest extends DataTransferTestCase {
 
 	}
 	
+	public void testImportZipWithEmptyFolder(){
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			
+			IProject[] workspaceProjects = root.getProjects();
+            for (int i = 0; i < workspaceProjects.length; i++) 
+            	FileUtil.deleteProject(workspaceProjects[i]);
+			URL archiveFile = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+					new Path(DATA_PATH_PREFIX + ARCHIVE_FILE_WITH_EMPTY_FOLDER + ".zip")));
+			WizardProjectsImportPage wpip = getNewWizard();
+			HashSet projects = new HashSet();
+			projects.add("A");
+			
+			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
+			wpip.updateProjectsList(archiveFile.getPath());
+			
+			ProjectRecord[] selectedProjects= wpip.getValidProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
+			assertTrue("Not all projects were found correctly in zip", projectNames.containsAll(projects));
+
+			CheckboxTreeViewer projectsList= wpip.getProjectsList();
+			projectsList.setCheckedElements(selectedProjects);
+			wpip.createProjects(); // Try importing all the projects we found
+
+			// "HelloWorld" should be the only project in the workspace
+			workspaceProjects = root.getProjects();
+			if (workspaceProjects.length != 1)
+				fail("Incorrect Number of projects imported");
+			IFolder helloFolder = workspaceProjects[0].getFolder("HelloWorld");
+			if (helloFolder.exists())
+				fail("Project was imported as a folder into itself");
+			
+			verifyProjectInWorkspace(true, workspaceProjects[0], ARCHIVE_FILE_EMPTY_FOLDER_LIST, false);
+
+		} catch (IOException e) {
+			fail(e.toString());
+		} catch (CoreException e) {
+			fail(e.toString());
+		}
+	}
+	
 	public void testImportSingleTar() {
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -242,14 +302,14 @@ public class ImportExistingTest extends DataTransferTestCase {
 			IProject[] workspaceProjects = root.getProjects();
             for (int i = 0; i < workspaceProjects.length; i++) 
             	FileUtil.deleteProject(workspaceProjects[i]);
-            URL helloworld = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-            		new Path(DATA_PATH_PREFIX+"helloworld.tar")));
+            URL archiveFile = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+            		new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".tar")));
 			WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
 			
 			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
-			wpip.updateProjectsList(helloworld.getPath());
+			wpip.updateProjectsList(archiveFile.getPath());
 			
 			ProjectRecord[] selectedProjects= wpip.getValidProjects();
 			ArrayList projectNames = new ArrayList();
@@ -271,7 +331,53 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
-			verifyProjectInWorkspace(true, workspaceProjects[0], ARCHIVE_FILE_LIST);
+			verifyProjectInWorkspace(true, workspaceProjects[0], ARCHIVE_FILE_LIST, true);
+
+		} catch (IOException e) {
+			fail(e.toString());
+		} catch (CoreException e) {
+			fail(e.toString());
+		}
+
+	}
+	
+	public void testImportTarWithEmptyFolder(){
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			
+			IProject[] workspaceProjects = root.getProjects();
+            for (int i = 0; i < workspaceProjects.length; i++) 
+            	FileUtil.deleteProject(workspaceProjects[i]);
+            URL archiveFile = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+            		new Path(DATA_PATH_PREFIX + ARCHIVE_FILE_WITH_EMPTY_FOLDER + ".tar")));
+			WizardProjectsImportPage wpip = getNewWizard();
+			HashSet projects = new HashSet();
+			projects.add("A");
+			
+			wpip.getProjectFromDirectoryRadio().setSelection((false)); //We want the other one selected
+			wpip.updateProjectsList(archiveFile.getPath());
+			
+			ProjectRecord[] selectedProjects= wpip.getValidProjects();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
+			assertTrue("Not all projects were found correctly in tar", projectNames.containsAll(projects));
+
+			CheckboxTreeViewer projectsList= wpip.getProjectsList();
+			projectsList.setCheckedElements(selectedProjects);
+			wpip.createProjects(); // Try importing all the projects we found
+
+			// "HelloWorld" should be the only project in the workspace
+			workspaceProjects = root.getProjects();
+			if (workspaceProjects.length != 1)
+				fail("Incorrect Number of projects imported");
+			IFolder helloFolder = workspaceProjects[0].getFolder("A");
+			if (helloFolder.exists())
+				fail("Project was imported as a folder into itself");
+			
+			verifyProjectInWorkspace(true, workspaceProjects[0], ARCHIVE_FILE_EMPTY_FOLDER_LIST, false);
 
 		} catch (IOException e) {
 			fail(e.toString());
@@ -319,7 +425,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
-			verifyProjectInWorkspace(false, workspaceProjects[0], fileList);
+			verifyProjectInWorkspace(false, workspaceProjects[0], fileList, true);
 
 		} catch (IOException e) {
 			fail(e.toString());
@@ -370,7 +476,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
-			verifyProjectInWorkspace(true, workspaceProjects[0], fileList);
+			verifyProjectInWorkspace(true, workspaceProjects[0], fileList, true);
 
 		} catch (IOException e) {
 			fail(e.toString());
@@ -421,7 +527,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
-			verifyProjectInWorkspace(true, workspaceProjects[0], fileList);
+			verifyProjectInWorkspace(true, workspaceProjects[0], fileList, true);
 			
 			// delete project but not contents
 			workspaceProjects[0].delete(false, true, null);
@@ -461,7 +567,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
-			verifyProjectInWorkspace(true, workspaceProjects[0], fileList);
+			verifyProjectInWorkspace(true, workspaceProjects[0], fileList, true);
 
 		} catch (IOException e) {
 			fail(e.toString());
@@ -496,7 +602,8 @@ public class ImportExistingTest extends DataTransferTestCase {
 	 * @param inWorkspace
 	 * @param project
 	 */
-	private void verifyProjectInWorkspace(final boolean inWorkspace, final IProject project, String[] fileList){
+	private void verifyProjectInWorkspace(final boolean inWorkspace, 
+			final IProject project, String[] fileList, boolean isListFiles){
 		try {
 			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, new NullProgressMonitor());
 		} catch (OperationCanceledException e) {
@@ -518,8 +625,10 @@ public class ImportExistingTest extends DataTransferTestCase {
 		}
 		// make sure the files in the project were imported
 		for (int i = 0; i < fileList.length; i++){
+			IResource res = isListFiles ? (IResource)project.getFile(fileList[i]) 
+					: (IResource)project.getFolder(fileList[i]);
 			assertTrue("Files were not imported", 
-					project.getFile(fileList[i]).exists());
+					res.exists());
 		}
 		
 	}
