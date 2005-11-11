@@ -174,9 +174,11 @@ public class WizardProjectsImportPage extends WizardPage implements
 		}
 	}
     
-    // dialog store id constant
+    // dialog store id constants
     private final static String STORE_COPY_PROJECT_ID = "WizardProjectsImportPage.STORE_COPY_PROJECT_ID"; //$NON-NLS-1$
 	
+    private final static String STORE_ARCHIVE_SELECTED = "WizardProjectsImportPage.STORE_ARCHIVE_SELECTED";	//$NON-NLS-1$
+    
 	private Text directoryPathField;
 
 	private CheckboxTreeViewer projectsList;
@@ -588,15 +590,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
-				if (projectFromDirectoryRadio.getSelection()) {
-					directoryPathField.setEnabled(true);
-					browseDirectoriesButton.setEnabled(true);
-					archivePathField.setEnabled(false);
-					browseArchivesButton.setEnabled(false);
-					updateProjectsList(directoryPathField.getText());
-					directoryPathField.setFocus();
-					copyCheckbox.setEnabled(true);
-				}
+				directoryRadioSelected();
 			}
 		});
 
@@ -607,21 +601,39 @@ public class WizardProjectsImportPage extends WizardPage implements
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
-				if (projectFromArchiveRadio.getSelection()) {
-					directoryPathField.setEnabled(false);
-					browseDirectoriesButton.setEnabled(false);
-					archivePathField.setEnabled(true);
-					browseArchivesButton.setEnabled(true);
-					updateProjectsList(archivePathField.getText());
-					archivePathField.setFocus();
-					copyCheckbox.setSelection(true);
-					copyCheckbox.setEnabled(false);
-				}
+				archiveRadioSelected();
 			}
 		});
 	}
 	
-    /* (non-Javadoc)
+	private void archiveRadioSelected(){
+		if (projectFromArchiveRadio.getSelection()) {
+			directoryPathField.setEnabled(false);
+			browseDirectoriesButton.setEnabled(false);
+			archivePathField.setEnabled(true);
+			browseArchivesButton.setEnabled(true);
+			updateProjectsList(archivePathField.getText());
+			archivePathField.setFocus();
+			copyCheckbox.setSelection(true);
+			copyCheckbox.setEnabled(false);
+		}		
+	}
+	
+	private void directoryRadioSelected(){
+		if (projectFromDirectoryRadio.getSelection()) {
+			directoryPathField.setEnabled(true);
+			browseDirectoriesButton.setEnabled(true);
+			archivePathField.setEnabled(false);
+			browseArchivesButton.setEnabled(false);
+			updateProjectsList(directoryPathField.getText());
+			directoryPathField.setFocus();
+			copyCheckbox.setEnabled(true);
+			copyCheckbox.setSelection(copyFiles);
+		}		
+	}
+	
+
+	/* (non-Javadoc)
      * Method declared on IDialogPage. Set the focus on path fields when page becomes visible.
      */
     public void setVisible(boolean visible) {
@@ -652,7 +664,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			selectedProjects = new ProjectRecord[0];
 			projectsList.refresh(true);
 			projectsList.setCheckedElements(selectedProjects);
-			setPageComplete(selectedProjects.length > 0);
+			setPageComplete(getValidProjects().length > 0);
 			return;
 		}
 		// We can't access the radio button from the inner class so get the
@@ -756,7 +768,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		projectsList.refresh(true);
 		projectsList.setCheckedElements(getValidProjects());
-		setPageComplete(selectedProjects.length > 0);
+		setPageComplete(getValidProjects().length > 0);
 	}
 
 	/**
@@ -983,7 +995,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
-					monitor.beginTask(DataTransferMessages.DataTransfer_importTask, selected.length);
+					monitor.beginTask("", selected.length);	//$NON-NLS-1$
 					if (monitor.isCanceled())
 						throw new OperationCanceledException();
 					for (int i = 0; i < selected.length; i++)
@@ -1282,10 +1294,18 @@ public class WizardProjectsImportPage extends WizardPage implements
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
             // checkbox	
-            copyCheckbox.setSelection(settings
-                    .getBoolean(STORE_COPY_PROJECT_ID));
+        	copyFiles = settings.getBoolean(STORE_COPY_PROJECT_ID);
+            copyCheckbox.setSelection(copyFiles);
+            
+            // radio selection
+            boolean archiveSelected = settings.getBoolean(STORE_ARCHIVE_SELECTED);
+            projectFromDirectoryRadio.setSelection(!archiveSelected);
+            projectFromArchiveRadio.setSelection(archiveSelected);
+            if (archiveSelected)
+            	archiveRadioSelected();
+            else 
+            	directoryRadioSelected();
         }
-        copyFiles = copyCheckbox.getSelection();
     }
 
     /**
@@ -1299,6 +1319,9 @@ public class WizardProjectsImportPage extends WizardPage implements
         if (settings != null) {
             settings.put(STORE_COPY_PROJECT_ID,
                     copyCheckbox.getSelection());
+            
+            settings.put(STORE_ARCHIVE_SELECTED, 
+            		projectFromArchiveRadio.getSelection());
         }
     }
 
