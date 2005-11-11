@@ -75,10 +75,10 @@ import org.xml.sax.SAXException;
 public final class RefactoringHistoryManager {
 
 	/** The index entry delimiter */
-	private static final char DELIMITER_ENTRY= '\n';
+	public static final char DELIMITER_ENTRY= '\n';
 
 	/** The index stamp delimiter */
-	private static final char DELIMITER_STAMP= '\t';
+	public static final char DELIMITER_STAMP= '\t';
 
 	/** The local time zone */
 	private static final TimeZone LOCAL_TIME_ZONE= TimeZone.getTimeZone("GMT+00:00"); //$NON-NLS-1$
