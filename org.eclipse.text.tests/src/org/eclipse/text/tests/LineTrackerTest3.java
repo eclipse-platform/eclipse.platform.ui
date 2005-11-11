@@ -48,7 +48,8 @@ public class LineTrackerTest3 extends TestCase {
 				
 				IRegion line= fTracker.getLineInformation(i);
 				
-				assertTrue("line: " + i + " length=" + line.getLength() + " should be:" + lines[i], line.getLength() == lines[i]);
+				int length= lines[i];
+				assertTrue("line: " + i + " length=" + line.getLength() + " should be:" + length, line.getLength() == length);
 				
 				int expected= getLineOffset(i, lines);
 				assertTrue("line: " + i + " offset=" + line.getOffset() + " should be:" + expected, line.getOffset() == expected);
@@ -470,5 +471,68 @@ public class LineTrackerTest3 extends TestCase {
 		}
 	}
 	
-	
+	public void testFunnyLastLineCompatibility() throws Exception {
+		/* empty last line */
+		fText.set("x\n");
+		fTracker.set("x\n");
+		int[] offsets= { 0, 2 };
+		int[] lengths= { 1, 0 };
+		
+		assertEquals("invalid number of lines, ", lengths.length, fTracker.getNumberOfLines());
+		assertEquals("invalid number of lines, ", lengths.length, fTracker.getNumberOfLines(0, fText.getLength()));
+		for (int i= 0; i < lengths.length; i++) {
+			IRegion line= fTracker.getLineInformation(i);
+			assertEquals("line: " + i, lengths[i], line.getLength());
+			assertEquals("line: " + i, offsets[i], line.getOffset());
+		}
+		try {
+			fTracker.getLineInformation(lengths.length);
+			fail();
+		} catch (Exception e) {
+		}
+		
+		try {
+			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
+			fail();
+		} catch (Exception e) {
+		}
+
+
+		/* phantom last line when the last line is not empty */
+		fText.set("x\nx");
+		fTracker.set("x\nx");
+		offsets= new int[] { 0, 2, 3 };
+		lengths= new int[] {1, 1, 0};
+		assertEquals("invalid number of lines, ", lengths.length - 1 /* !!!! */, fTracker.getNumberOfLines());
+		assertEquals("invalid number of lines, ", lengths.length - 1 /* !!!! */, fTracker.getNumberOfLines(0, fText.getLength()));
+		for (int i= 0; i < lengths.length; i++) {
+			IRegion line= fTracker.getLineInformation(i);
+			int len= lengths[i];
+			int offset= offsets[i];
+			assertEquals("length of line: " + i, len, line.getLength());
+			assertEquals("offset of line: " + i, offset, line.getOffset());
+			
+			line= fTracker.getLineInformationOfOffset(offset);
+			if ( i == lengths.length - 1) { // phantom line cannot be queried by offset
+				len= lengths[i - 1];
+				offset= offsets[i - 1];
+			}			
+			assertEquals("length of line: " + i, len, line.getLength());
+			assertEquals("offset of line: " + i, offset, line.getOffset());
+		}
+		
+		try {
+			fTracker.getLineInformation(lengths.length);
+			fail();
+		} catch (Exception e) {
+		}
+		
+		try {
+			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
+			fail();
+		} catch (Exception e) {
+		}
+
+	}
+
 }

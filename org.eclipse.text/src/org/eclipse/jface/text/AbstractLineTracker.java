@@ -1115,8 +1115,22 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 */
 	public IRegion getLineInformation(int line) throws BadLocationException {
 		checkRewriteSession();
-		Node node= nodeByLine(line);
-		return new Region(offsetHint, node.pureLength());
+		try {
+			Node node= nodeByLine(line);
+			return new Region(offsetHint, node.pureLength());
+		} catch (BadLocationException x) {
+			/*
+			 * FIXME: this really strange behavior is mandated by the previous line tracker
+			 * implementation and included here for compatibility. See
+			 * LineTrackerTest3#testFunnyLastLineCompatibility().
+			 */
+			if (line > 0 && line == getNumberOfLines()) {
+				Node last= nodeByLine(line - 1);
+				if (last.length > 0)
+					return new Region(offsetHint + last.length, 0);
+			}
+			throw x;
+		}
 	}
 
 	/*
