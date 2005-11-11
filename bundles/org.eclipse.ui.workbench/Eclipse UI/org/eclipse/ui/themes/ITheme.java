@@ -79,7 +79,7 @@ public interface ITheme {
     /**
      * Returns the id of this theme.
      * 
-     * @return the id of this theme.  Guarenteed not to be <code>null</code>.
+     * @return the id of this theme.  Guaranteed not to be <code>null</code>.
      */
     String getId();
 
@@ -95,7 +95,7 @@ public interface ITheme {
     /**
      * Returns the label of this theme.
      * 
-     * @return the label of this theme.  Guarenteed not be <code>null</code>.
+     * @return the label of this theme.  Guaranteed not be <code>null</code>.
      */
     String getLabel();
 
