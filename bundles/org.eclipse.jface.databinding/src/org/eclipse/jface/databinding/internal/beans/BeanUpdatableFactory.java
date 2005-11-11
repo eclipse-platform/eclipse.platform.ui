@@ -14,6 +14,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.jface.databinding.IUpdatable;
@@ -46,7 +47,7 @@ public class BeanUpdatableFactory implements IUpdatableFactory {
 					PropertyDescriptor descriptor = propertyDescriptors[i];
 					if (descriptor.getName().equals(
 							propertyDescription.getPropertyID())) {
-						if (descriptor.getPropertyType().isArray()) {
+						if (descriptor.getPropertyType().isArray() || Collection.class.isAssignableFrom(descriptor.getPropertyType())) {
 							return new JavaBeanUpdatableCollection(object,
 									descriptor);
 						}
