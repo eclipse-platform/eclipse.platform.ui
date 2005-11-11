@@ -198,7 +198,8 @@ public class ZipLeveledStructureProvider implements
 				// Ensure the container structure for all levels above this is initialized
 				// Once we hit a higher-level container that's already added we need go no further
 				int pathSegmentCount = path.segmentCount();
-				createContainer(path.uptoSegment(pathSegmentCount - 1));
+				if (pathSegmentCount > 1)
+					createContainer(path.uptoSegment(pathSegmentCount - 1));
 				createFile(entry);
 			}
 		}
