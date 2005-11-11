@@ -208,11 +208,11 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 
 				// iterate over the preferences in this node and set them
 				// in the global space.
-				if (epNode.properties != null && !epNode.properties.isEmpty()) {
+				String[] keys = epNode.properties.keys();
+				if (keys.length > 0) {
 					// if this node was removed then we need to create a new one
 					if (removed)
 						globalNode = (IEclipsePreferences) root.node(node.absolutePath());
-					String[] keys = epNode.properties.keys();
 					for (int i = 0; i < keys.length; i++) {
 						String key = keys[i];
 						// intern strings we import because some people

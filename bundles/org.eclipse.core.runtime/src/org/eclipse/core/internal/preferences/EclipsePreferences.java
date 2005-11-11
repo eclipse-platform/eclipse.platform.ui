@@ -54,7 +54,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected final String name;
 	// the parent of an EclipsePreference node is always an EclipsePreference node. (or null)
 	protected final EclipsePreferences parent;
-	protected HashMapOfString properties;
+	protected ImmutableMap properties = ImmutableMap.EMPTY;
 	protected boolean removed = false;
 	private ListenerList nodeChangeListeners;
 	private ListenerList preferenceChangeListeners;
@@ -141,9 +141,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * are called on a removed node.
 	 */
 	protected void checkRemoved() {
-		if (removed) {
+		if (removed)
 			throw new IllegalStateException(NLS.bind(Messages.preferences_removedNode, name));
-		}
 	}
 
 	/*
@@ -170,12 +169,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		checkRemoved();
 		// call each one separately (instead of Properties.clear) so
 		// clients get change notification
-		String[] keys;
-		synchronized (this) {
-			if (properties == null)
-				return;
-			keys = properties.keys();
-		}
+		String[] keys = properties.keys();
 		for (int i = 0; i < keys.length; i++)
 			remove(keys[i]);
 		makeDirty();
@@ -245,15 +239,13 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected Properties convertToProperties(Properties result, String prefix) throws BackingStoreException {
 		// add the key/value pairs from this node
 		boolean addSeparator = prefix.length() != 0;
-		synchronized (this) {
-			if (properties != null) {
-				String[] keys = properties.keys();
-				for (int i = 0; i < keys.length; i++) {
-					String value = properties.get(keys[i]);
-					if (value != null)
-						result.put(encodePath(prefix, keys[i]), value);
-				}
-			}
+		//thread safety: copy reference in case of concurrent change
+		ImmutableMap temp = properties;
+		String[] keys = temp.keys();
+		for (int i = 0, imax = keys.length; i < imax; i++) {
+			String value = temp.get(keys[i]);
+			if (value != null)
+				result.put(encodePath(prefix, keys[i]), value);
 		}
 		// recursively add the child information
 		IEclipsePreferences[] childNodes = getChildren(true);
@@ -507,10 +499,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
-		String result;
-		synchronized (this) {
-			result = properties == null ? null : properties.get(key);
-		}
+		String result = properties.get(key);
 		if (InternalPlatform.DEBUG_PREFERENCE_GET)
 			Policy.debug("Getting preference value: " + absolutePath() + '/' + key + "->" + result); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
@@ -553,15 +542,15 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * properties field if necessary. Returns the old value for the given key,
 	 * or null if no value existed.
 	 */
-	protected synchronized String internalPut(String key, String newValue) {
+	protected String internalPut(String key, String newValue) {
 		// illegal state if this node has been removed
 		checkRemoved();
-		if (properties == null)
-			properties = new HashMapOfString();
 		String oldValue = properties.get(key);
+		if (oldValue != null && oldValue.equals(newValue))
+			return oldValue;
 		if (InternalPlatform.DEBUG_PREFERENCE_SET)
 			Policy.debug("Setting preference: " + absolutePath() + '/' + key + '=' + newValue); //$NON-NLS-1$
-		properties.put(key, newValue);
+		properties = properties.put(key, newValue);
 		return oldValue;
 	}
 
@@ -578,9 +567,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public String[] keys() {
 		// illegal state if this node has been removed
 		checkRemoved();
-		synchronized (this) {
-			return properties == null ? EMPTY_STRING_ARRAY : properties.keys();
-		}
+		return properties.keys();
 	}
 
 	protected void load() throws BackingStoreException {
@@ -848,18 +835,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#remove(java.lang.String)
 	 */
 	public void remove(String key) {
-		String oldValue = null;
-		//Thread safety: synchronize when modifying the properties field
-		synchronized (this) {
-			if (properties == null)
-				return;
-			oldValue = properties.removeKey(key);
-			if (oldValue == null)
-				return;
-			if (properties.size() == 0)
-				properties = null;
-			makeDirty();
-		}
+		String oldValue = properties.get(key);
+		if (oldValue == null)
+			return;
+		properties = properties.removeKey(key);
+		makeDirty();
 		firePreferenceEvent(key, oldValue, null);
 	}
 
@@ -997,11 +977,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @param pool The pool to share strings in
 	 */
 	public void shareStrings(StringPool pool) {
-		//protect access while destructively sharing strings
-		synchronized (this) {
-			if (properties != null)
-				properties.shareStrings(pool);
-		}
+		properties.shareStrings(pool);
 		IEclipsePreferences[] myChildren = getChildren(false);
 		for (int i = 0; i < myChildren.length; i++)
 			if (myChildren[i] instanceof EclipsePreferences)
