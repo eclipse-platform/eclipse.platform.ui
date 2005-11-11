@@ -258,6 +258,14 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		}
 	}
 	
+	/**
+	 * Multiplexes between the annotate hover and the configured change hover.
+	 * <p>
+	 * FIXME: this relies on the hover manager to call #get
+	 * {@link #getHoverLineRange(ISourceViewer, int) } before {@link #getHoverControlCreator() }.
+	 * This should not be. Use the last ruler activity line to determine which hover to return.
+	 * </p>
+	 */
 	private final class RevisionHover implements IAnnotationHover, IAnnotationHoverExtension, IAnnotationHoverExtension2 {
 		private boolean fLastAccessWasRevision= false;
 		/*
