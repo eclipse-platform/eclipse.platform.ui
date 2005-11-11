@@ -207,7 +207,7 @@ public class RefactoringDescriptor implements Comparable {
 	 *            the time stamp to set
 	 */
 	public final void setTimeStamp(final long stamp) {
-		Assert.isTrue(fTimeStamp < 0);
+		Assert.isTrue(fTimeStamp >= -1);
 		fTimeStamp= stamp;
 	}
 
