@@ -21,6 +21,7 @@ import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IValidationContext;
 import org.eclipse.jface.databinding.PropertyDescription;
+import org.eclipse.jface.util.Assert;
 
 /**
  * @since 3.2
@@ -48,8 +49,11 @@ public class BeanUpdatableFactory implements IUpdatableFactory {
 					if (descriptor.getName().equals(
 							propertyDescription.getPropertyID())) {
 						if (descriptor.getPropertyType().isArray() || Collection.class.isAssignableFrom(descriptor.getPropertyType())) {
+							Class elementType = descriptor.getPropertyType().isArray()? 
+									descriptor.getPropertyType().getComponentType() : propertyDescription.getPropertyType();
+							Assert.isTrue(elementType!=null);									
 							return new JavaBeanUpdatableCollection(object,
-									descriptor);
+									descriptor, elementType);
 						}
 						return new JavaBeanUpdatableValue(object, descriptor);
 					}

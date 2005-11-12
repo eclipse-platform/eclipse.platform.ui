@@ -14,6 +14,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -60,6 +61,8 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 
 	private PropertyDescriptor descriptor;
 	
+	private Class elementType=null;
+	
 	private Set elementsListenedTo = new HashSet();
 	
 	private static class IdentityWrapper {
@@ -83,9 +86,10 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 	 * @param descriptor
 	 */
 	public JavaBeanUpdatableCollection(Object object,
-			PropertyDescriptor descriptor) {
+			PropertyDescriptor descriptor, Class elementType) {
 		this.object = object;
 		this.descriptor = descriptor;
+		this.elementType = elementType;		
 		hookListener(this.object);
 	}
 
@@ -153,23 +157,62 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		return getValues().length;
 	}
 
-	private Object[] getValues() {
+	
+	private Object primGetValues() {
 		try {
-			return (Object[]) descriptor.getReadMethod().invoke(object,
-					new Object[0]);
+		   return descriptor.getReadMethod().invoke(object, new Object[0]);
 		} catch (IllegalArgumentException e) {
 		} catch (IllegalAccessException e) {
 		} catch (InvocationTargetException e) {
 		}
-		throw new AssertionError("Could not read collection values"); //$NON-NLS-1$
+		throw new AssertionError("Could not read collection values"); //$NON-NLS-1$		   
+	}
+	
+	private Object[] getValues() {
+		Object[] values = null;
+
+		Object result = primGetValues();
+		if (descriptor.getPropertyType().isArray())
+			values = (Object[])result;
+		else {
+			//TODO add jUnit for POJO (var. SettableValue) collections  
+			Collection list = (Collection) result;
+			values = list.toArray();
+		}
+		return values;
 	}
 
 	public int addElement(Object value, int index) {
-		throw new AssertionError("cannot add elements"); //$NON-NLS-1$
+		if (descriptor.getPropertyType().isArray())
+		    throw new AssertionError("cannot add elements"); //$NON-NLS-1$
+		
+		Collection list = (Collection)primGetValues();
+		if (index <= 0 || index > list.size())
+			index = list.size();
+		list.add(value);	
+		fireChangeEvent(IChangeEvent.ADD, null, value, index);
+		return index;
+		
 	}
 
 	public void removeElement(int index) {
-		throw new AssertionError("cannot remove elements"); //$NON-NLS-1$
+		if (descriptor.getPropertyType().isArray())
+		    throw new AssertionError("cannot remove elements"); //$NON-NLS-1$
+		
+		Collection list = (Collection)primGetValues();
+		Object o = null;
+		int i=0;
+		for (Iterator iter = list.iterator(); iter.hasNext(); i++) {
+			if (index==i) {
+				o = iter.next();
+				break;
+			}
+			iter.next();
+		}
+		if (o!=null) {
+		   list.remove(o);
+		   fireChangeEvent(IChangeEvent.REMOVE, o, null, index);
+		}		
 	}
 
 	public void setElement(int index, Object value) {
@@ -188,8 +231,8 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		return getValues()[index];
 	}
 
-	public Class getElementType() {
-		return descriptor.getPropertyType().getComponentType();
+	public Class getElementType() {		
+		return elementType;
 	}
 
 }
