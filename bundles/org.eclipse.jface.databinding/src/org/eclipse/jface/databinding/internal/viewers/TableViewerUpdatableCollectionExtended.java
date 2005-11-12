@@ -12,7 +12,10 @@ package org.eclipse.jface.databinding.internal.viewers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
@@ -168,17 +171,34 @@ public class TableViewerUpdatableCollectionExtended extends
 					return findColumn(property) != null;
 				}
 
+				private List getNestedPorperties (String properties) {	
+					//TODO jUnit for nested column
+					StringTokenizer stk = new StringTokenizer(properties,TableViewerDescription.COLUMN_PROPERTY_NESTING_SEPERATOR);
+					List list = new ArrayList(stk.countTokens());
+					while(stk.hasMoreTokens())
+						list.add(stk.nextElement());
+					return list;					
+				}
+				
+				private Object getGetterValue(Object root, List properties) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+					Object result=root;					
+					for (int i = 0; i < properties.size(); i++) {
+						if (result==null) return null;
+						String prop = (String) properties.get(i);
+						Method getter = result.getClass().getMethod(
+								"get"+ prop.substring(0, 1).toUpperCase(Locale.ENGLISH) + prop.substring(1), new Class[0]); //$NON-NLS-1$
+						result=getter.invoke(result, new Object[0]);						
+					}
+					return result;
+				}
+				
 				public Object getValue(Object element, String property) {
 					Column column = findColumn(property);
 					if (column == null) {
 						return null;
 					}
-					try {
-						Method getter = element
-								.getClass()
-								.getMethod(
-										"get"	+ property.substring(0, 1).toUpperCase(Locale.ENGLISH) + property.substring(1), new Class[0]); //$NON-NLS-1$
-						return getter.invoke(element, new Object[0]);
+					try {						
+						return getGetterValue(element,getNestedPorperties(property));
 					} catch (SecurityException e) {
 						// TODO log
 					} catch (NoSuchMethodException e) {
@@ -213,11 +233,24 @@ public class TableViewerUpdatableCollectionExtended extends
 						}
 					}
 					try {
-						Method setter = element
+						List getters = getNestedPorperties(property);
+						String setterSig;
+						Object target;
+						if (getters.size()>1) {
+							setterSig = (String) getters.get(getters.size()-1);
+							getters.remove(getters.size()-1);
+							target=getGetterValue(element,getters);
+						}
+						else {
+							setterSig = property;
+							target = element;
+						}
+							
+						Method setter = target
 								.getClass()
 								.getMethod(
-										"set"	+ property.substring(0, 1).toUpperCase(Locale.ENGLISH) + property.substring(1), new Class[] { column.getConverter().getModelType() }); //$NON-NLS-1$
-						setter.invoke(element, new Object[] { value });
+										"set"	+ setterSig.substring(0, 1).toUpperCase(Locale.ENGLISH) + setterSig.substring(1), new Class[] { column.getConverter().getModelType() }); //$NON-NLS-1$
+						setter.invoke(target, new Object[] { value });
 						return;
 					} catch (SecurityException e) {
 						// TODO log

@@ -29,6 +29,12 @@ import org.eclipse.jface.viewers.TableViewer;
  *
  */
 public class TableViewerDescription {
+	
+	
+	/**
+	 * Table column may spedify a nested property
+	 */
+	public static final String COLUMN_PROPERTY_NESTING_SEPERATOR = "."; //$NON-NLS-1$
 
 	/**
 	 * @since 3.2
