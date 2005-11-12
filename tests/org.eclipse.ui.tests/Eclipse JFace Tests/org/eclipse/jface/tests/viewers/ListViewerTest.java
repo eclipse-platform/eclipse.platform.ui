@@ -13,6 +13,7 @@ package org.eclipse.jface.tests.viewers;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
 
@@ -44,6 +45,11 @@ public class ListViewerTest extends StructuredViewerTest {
     }
     
     public void testRevealBug69076() {
+    	// TODO remove the Mac OS check when SWT has fixed the bug in List.java
+    	// see bug 116105
+    	if ("carbon".equals(SWT.getPlatform())) {
+    		return;
+    	}
 		fViewer = null;
 		if (fShell != null) {
 			fShell.dispose();
