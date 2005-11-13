@@ -564,6 +564,13 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			busyCursor.dispose();
 	}
 
+	/*
+	 * Returns the cheat sheet being viewed. 
+	 */
+	public CheatSheet getCheatSheet() {
+		return cheatSheet;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#getCheatSheetID()
 	 */

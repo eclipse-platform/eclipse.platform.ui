@@ -37,9 +37,15 @@ import org.osgi.framework.Bundle;
 public class IntroModelSerializer {
 
     private StringBuffer buffer;
+    private boolean filter;
 
     public IntroModelSerializer(IntroModelRoot root) {
+        this(root, false);
+    }
+    
+    public IntroModelSerializer(IntroModelRoot root, boolean filter) {
         this.buffer = new StringBuffer();
+        this.filter = filter;
         printModelRootInfo(root, buffer);
 
         // Root Page
@@ -54,6 +60,20 @@ public class IntroModelSerializer {
         printModelFlagTests(root, buffer);
     }
 
+    /*
+     * Removes any platform/machine-specific paths from the given URL. This is
+     * used to remove absolute paths from the serialized model in order to compare
+     * results in automated tests.
+     */
+    private String filterURL(String url) {
+        if (filter) {
+            if (url != null && url.startsWith("file:/")) {
+                return "file:/" + "<filtered>" + url.substring(url.lastIndexOf('/'));
+            }
+        }
+        return url;
+    }
+    
     private void printModelRootInfo(IntroModelRoot model, StringBuffer text) {
         text.append("\nIntro Model Content:"); //$NON-NLS-1$
         text.append("\n======================"); //$NON-NLS-1$
@@ -91,8 +111,8 @@ public class IntroModelSerializer {
 
         text.append("\n\tid = " + rootPage.getId()); //$NON-NLS-1$
         text.append("\n\ttitle = " + rootPage.getTitle()); //$NON-NLS-1$
-        text.append("\n\tstyle = " + rootPage.getStyle()); //$NON-NLS-1$
-        text.append("\n\talt-style = " + rootPage.getAltStyle()); //$NON-NLS-1$
+        text.append("\n\tstyle = " + filterURL(rootPage.getStyle())); //$NON-NLS-1$
+        text.append("\n\talt-style = " + filterURL(rootPage.getAltStyle())); //$NON-NLS-1$
         text.append("\n\turl = " + rootPage.getUrl()); //$NON-NLS-1$
         text.append("\n\tstyle-id = " + rootPage.getStyleId()); //$NON-NLS-1$
         printPageStyles(rootPage, text);
@@ -102,7 +122,7 @@ public class IntroModelSerializer {
         text.append("\n\tpage styles are = "); //$NON-NLS-1$
         String[] styles = page.getStyles();
         for (int i = 0; i < styles.length; i++)
-            text.append(styles[i] + "\n\t\t\t"); //$NON-NLS-1$
+            text.append(filterURL(styles[i] + "\n\t\t\t")); //$NON-NLS-1$
         text.append("\n\tpage alt-styles are = "); //$NON-NLS-1$
 
         Hashtable altStylesHashtable = page.getAltStyles();
@@ -114,7 +134,7 @@ public class IntroModelSerializer {
             String altStyle = (String) altStyles.nextElement();
 
             Bundle bundle = (Bundle) altStylesHashtable.get(altStyle);
-            text.append(altStyle + " from " + bundle.getSymbolicName()); //$NON-NLS-1$
+            text.append(filterURL(altStyle) + " from " + bundle.getSymbolicName()); //$NON-NLS-1$
             text.append("\n\t\t"); //$NON-NLS-1$
         }
     }
@@ -187,6 +207,7 @@ public class IntroModelSerializer {
         indent = indent + "\t\t"; //$NON-NLS-1$
         text.append(indent + "label = " + link.getLabel()); //$NON-NLS-1$
         text.append(indent + "text = " + link.getText()); //$NON-NLS-1$
+        text.append(indent + "url = " + link.getUrl()); //$NON-NLS-1$
         text.append(indent + "style-id = " + link.getStyleId()); //$NON-NLS-1$
     }
 
@@ -264,8 +285,8 @@ public class IntroModelSerializer {
             text.append("\n\nPAGE id = " + pages[i].getId()); //$NON-NLS-1$
             text.append("\n----------"); //$NON-NLS-1$
             text.append("\n\ttitle = " + pages[i].getTitle()); //$NON-NLS-1$
-            text.append("\n\tstyle = " + pages[i].getStyle()); //$NON-NLS-1$
-            text.append("\n\talt-style = " + pages[i].getAltStyle()); //$NON-NLS-1$
+            text.append("\n\tstyle = " + filterURL(pages[i].getStyle())); //$NON-NLS-1$
+            text.append("\n\talt-style = " + filterURL(pages[i].getAltStyle())); //$NON-NLS-1$
             text.append("\n\tstyle-id = " + pages[i].getStyleId()); //$NON-NLS-1$
             printPageStyles(pages[i], text);
             printPageChildren(pages[i], text);

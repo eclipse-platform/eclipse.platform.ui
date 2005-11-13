@@ -130,6 +130,13 @@ public class CheatSheetView extends ViewPart {
 		return null;
 	}
 
+	/*
+	 * Returns the CheatSheetViewer contained in this view.
+	 */
+	public CheatSheetViewer getCheatSheetViewer() {
+		return viewer;
+	}
+	
 	/* (non-Javadoc)
 	 * Initializes this view with the given view site.  A memento is passed to
 	 * the view which contains a snapshot of the views state from a previous
