@@ -35,7 +35,7 @@
       </category>
       <view
             name="%CHEAT_SHEETS"
-            icon="icons/view16/cheatsheet_view.gif"
+            icon="$nl$/icons/view16/cheatsheet_view.gif"
             category="org.eclipse.ui.cheatsheets.cheatsheetCategory"
             fastViewWidthRatio="0.5"
             class="org.eclipse.ui.internal.cheatsheets.views.CheatSheetView"

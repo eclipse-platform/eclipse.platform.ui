@@ -127,15 +127,15 @@ public class ModelUtil {
             if (Log.logPerformance)
                 start = System.currentTimeMillis();
             IPath parentFolder = ModelUtil.getParentFolderPath(contentFile);
-            URL parentFolderURL = Platform.find(bundle, parentFolder);
-            if (parentFolderURL == null) {
+            URL[] parentFolderURLs = FindSupport.findEntries(bundle, parentFolder);
+            if (parentFolderURLs.length == 0) {
                 // should never be here.
                 Log.error("Could not find folder to extract: " + contentFile, //$NON-NLS-1$
                     null);
                 return;
             }
-
-            Platform.asLocalURL(parentFolderURL);
+            for (int i = 0; i < parentFolderURLs.length; i++)
+                Platform.asLocalURL(parentFolderURLs[i]);
             if (Log.logPerformance) {
                 String msg = StringUtil.concat(
                     "extracting content folder ", contentFile, " (", //$NON-NLS-1$ //$NON-NLS-2$

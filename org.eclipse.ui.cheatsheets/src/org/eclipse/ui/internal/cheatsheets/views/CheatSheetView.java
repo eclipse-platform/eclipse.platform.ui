@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.cheatsheets.views;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -34,22 +34,21 @@ import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.part.ViewPart;
 
 public class CheatSheetView extends ViewPart {
-
+	
 	private boolean actionBarContributed = false;
 	private CheatSheetExpandRestoreAction expandRestoreAction;
 	private Action copyAction;
 	private CheatSheetViewer viewer;
 	private IMemento memento;
-
+	
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		IMenuManager menuManager = bars.getMenuManager();
 		IToolBarManager tbmanager = bars.getToolBarManager();
 	
 		// fields
-		String collapseExpandFile = "icons/elcl16/collapse_expand_all.gif"; //$NON-NLS-1$
-		URL collapseExpandURL = CheatSheetPlugin.getPlugin().find(new Path(collapseExpandFile));
-		ImageDescriptor collapseExpandImage = ImageDescriptor.createFromURL(collapseExpandURL);
+		IPath path = CheatSheetPlugin.ICONS_PATH.append(CheatSheetPlugin.T_ELCL).append("collapse_expand_all.gif");//$NON-NLS-1$
+		ImageDescriptor collapseExpandImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);
 	
 		expandRestoreAction = new CheatSheetExpandRestoreAction(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP, false, viewer);
 		expandRestoreAction.setToolTipText(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP);
