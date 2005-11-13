@@ -3,8 +3,6 @@
 	<name>org.eclipse.platform</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.ui</project>
-		<project>org.eclipse.ui.intro</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
