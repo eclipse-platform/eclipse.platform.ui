@@ -21,4 +21,4 @@ Export-Package: org.eclipse.ui.intro.config,
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.ui.forms
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

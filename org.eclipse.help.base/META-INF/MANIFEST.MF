@@ -22,4 +22,4 @@ Require-Bundle: org.apache.lucene,
  org.eclipse.help.appserver,
  org.eclipse.core.runtime,
  org.eclipse.ant.core;resolution:=optional
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

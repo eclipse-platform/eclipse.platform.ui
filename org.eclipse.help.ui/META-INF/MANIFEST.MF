@@ -19,4 +19,4 @@ Require-Bundle: org.eclipse.help.base,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

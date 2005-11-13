@@ -13,6 +13,7 @@ Export-Package: org.eclipse.help,
  org.eclipse.help.internal.model;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
  org.eclipse.help.internal.protocols;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
  org.eclipse.help.internal.toc;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
- org.eclipse.help.internal.util;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp"
+ org.eclipse.help.internal.util;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
+ org.eclipse.ua.internal.common;x-friends:="org.eclipse.help.ui"
 Require-Bundle: org.eclipse.core.runtime
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
