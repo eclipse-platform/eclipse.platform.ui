@@ -1,6 +1,5 @@
-#Mon May 16 16:30:22 EDT 2005
+#Sat Nov 12 22:55:27 EST 2005
 eclipse.preferences.version=1
-org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=disabled
 org.eclipse.jdt.core.compiler.problem.annotationSuperInterface=warning
 org.eclipse.jdt.core.compiler.problem.autoboxing=ignore
 org.eclipse.jdt.core.compiler.problem.deprecation=warning
