@@ -9,5 +9,5 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.help.base,
  org.eclipse.core.runtime
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Export-Package: org.eclipse.help.internal.webapp;x-internal:=true

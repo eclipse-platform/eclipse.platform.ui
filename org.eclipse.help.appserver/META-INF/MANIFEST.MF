@@ -9,4 +9,4 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.help.internal.appserver;x-friends:="org.eclipse.help.base,org.eclipse.help.ui"
 Require-Bundle: org.eclipse.core.runtime
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
