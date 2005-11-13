@@ -15,7 +15,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class CommonNavigatorMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.navigator.internal.navigator_messages.properties"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ui.navigator.internal.navigator_messages"; //$NON-NLS-1$
 	
 	public static String Link_With_Editor_Job_; 
 	public static String NavigatorContentService_0;
