@@ -28,7 +28,6 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.navigator.internal.CommonNavigatorActionGroup;
 import org.eclipse.ui.navigator.internal.CommonSorter;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
-import org.eclipse.ui.navigator.internal.NavigatorMessages;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.internal.filters.CommonViewerFilter;
 import org.eclipse.ui.navigator.internal.filters.ExtensionFilterRegistryManager;
@@ -505,8 +504,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 			ILabelProvider labelProvider = (ILabelProvider) commonViewer.getLabelProvider();
 			String inputToolTip = getFrameToolTipText(input);
 
-			setPartName(NavigatorMessages.format("Navigator.title", //$NON-NLS-1$
-						new Object[]{viewName, labelProvider.getText(input)}));
+			setPartName(labelProvider.getText(input));
 			setTitleToolTip(inputToolTip);
 		}
 	}
