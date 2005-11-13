@@ -8,13 +8,16 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/ 
-package org.eclipse.ui.navigator;
+package org.eclipse.ui.navigator.internal;
 
-import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.navigator.internal.NavigatorMessages;
+import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.ICommonLabelProvider;
+import org.eclipse.ui.navigator.IDescriptionProvider;
+import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
@@ -30,15 +33,15 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
  * @since 3.2 
  *
  */
-public class NavigatorContentServiceDescriptionProvider implements
+public final class NavigatorContentServiceDescriptionProvider implements
 		IDescriptionProvider {
 	
 
 	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry.getInstance();
  
-	private final NavigatorContentService contentService;
+	private final INavigatorContentService contentService;
 
-	public NavigatorContentServiceDescriptionProvider(NavigatorContentService aContentService) { 
+	public NavigatorContentServiceDescriptionProvider(INavigatorContentService aContentService) { 
 		Assert.isNotNull(aContentService); 
 		contentService = aContentService;		
 	}	
@@ -59,12 +62,12 @@ public class NavigatorContentServiceDescriptionProvider implements
 		}
 			
 
-		List contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(target);
-		if (contentDescriptors.size() == 0)
+		Set contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(target);
+		if (contentDescriptors.isEmpty())
 			return getDefaultStatusBarMessage(0);
 		
 		/* Use the first Navigator Content Descriptor for now */
-		NavigatorContentDescriptor contentDescriptor = (NavigatorContentDescriptor) contentDescriptors.get(0);
+		NavigatorContentDescriptor contentDescriptor = (NavigatorContentDescriptor) contentDescriptors.iterator().next();
 		NavigatorContentExtension contentDescriptorInstance = contentService.getExtension(contentDescriptor);
 
 		ICommonLabelProvider labelProvider = contentDescriptorInstance.getLabelProvider();

@@ -9,6 +9,7 @@
 package org.eclipse.ui.navigator;
 
 import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
 
 /**
  * <p>
@@ -43,5 +44,5 @@ public interface ICommonOpenListener extends IOpenListener {
 	 *            The instance of {@link NavigatorContentService}&nbsp;that the current
 	 *            ICommonOpenListener will be associated with
 	 */
-	void initialize(CommonNavigator aCommonNavigator, NavigatorContentService aContentService);
+	void initialize(CommonNavigator aCommonNavigator, INavigatorContentService aContentService);
 }

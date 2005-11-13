@@ -42,6 +42,11 @@
    </element>
 
    <element name="commonFilter">
+      <annotation>
+         <documentation>
+            Clients may contribute filters as part of one logical extension by specifying the navigatorExtensionId.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="enablement" minOccurs="0" maxOccurs="1"/>
@@ -87,7 +92,7 @@
          <attribute name="className" type="string" use="required">
             <annotation>
                <documentation>
-                  Must provide a concrete implementation of INavigatorExtensionFilter.
+                  Must provide a concrete implementation of org.eclipse.ui.navigator.INavigatorExtensionFilter.
                </documentation>
             </annotation>
          </attribute>
@@ -103,13 +108,6 @@
 
    <element name="enablement">
       <complexType>
-         <attribute name="functionGroup" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="enabled" type="string" use="required">
             <annotation>
                <documentation>

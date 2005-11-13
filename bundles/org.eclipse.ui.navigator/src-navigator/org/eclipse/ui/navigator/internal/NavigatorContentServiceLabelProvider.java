@@ -6,7 +6,8 @@
  * 
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
-package org.eclipse.ui.navigator;
+package org.eclipse.ui.navigator.internal;
+
 
 import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.Platform;
@@ -17,17 +18,19 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * <p>
  * Provides relevant labels based on the associated
- * {@link org.eclipse.ui.navigator.NavigatorContentService}for the contents of a
+ * {@link org.eclipse.ui.navigator.internal.NavigatorContentService}for the contents of a
  * TreeViewer .
  * <p>
  * 
  * <p>
  * Except for the dependency on
- * {@link org.eclipse.ui.navigator.NavigatorContentService}, this class has no
+ * {@link org.eclipse.ui.navigator.internal.NavigatorContentService}, this class has no
  * dependencies on the rest of the Common Navigator framework. Tree viewers that would like to use
  * the extensions defined by the Common Navigator, without using the actual view part or other
  * pieces of functionality (filters, sorting, etc) may choose to use this class, in effect using an
@@ -41,13 +44,13 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.2
  * 
- * @see org.eclipse.ui.navigator.NavigatorContentService
- * @see org.eclipse.ui.navigator.NavigatorContentServiceContentProvider
+ * @see org.eclipse.ui.navigator.internal.NavigatorContentService
+ * @see org.eclipse.ui.navigator.internal.NavigatorContentServiceContentProvider
  */
 public class NavigatorContentServiceLabelProvider implements ILabelProvider {
 
 	private final ILabelDecorator decorator;
-	private final NavigatorContentService contentService;
+	private final INavigatorContentService contentService;
 	private final boolean isContentServiceSelfManaged;
 	private ListenerList listeners = new ListenerList(1);
 
@@ -75,7 +78,7 @@ public class NavigatorContentServiceLabelProvider implements ILabelProvider {
 	 * @param aContentService
 	 *            The associated NavigatorContentService that should be used to acquire information.
 	 */
-	public NavigatorContentServiceLabelProvider(NavigatorContentService aContentService) {
+	public NavigatorContentServiceLabelProvider(INavigatorContentService aContentService) {
 		contentService = aContentService;
 		decorator = PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
 		isContentServiceSelfManaged = false;

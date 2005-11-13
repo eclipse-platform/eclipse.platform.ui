@@ -6,7 +6,7 @@
  * 
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
-package org.eclipse.ui.navigator;
+package org.eclipse.ui.navigator.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,8 +33,9 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
-import org.eclipse.ui.navigator.internal.NavigatorPlugin;
+import org.eclipse.ui.navigator.ICommonActionProvider;
+import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.eclipse.ui.navigator.INavigatorActionService;
 import org.eclipse.ui.navigator.internal.actions.CommonActionProviderDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.internal.extensions.RegistryReader;
@@ -45,7 +46,7 @@ import org.eclipse.ui.navigator.internal.extensions.SkeletonActionProvider;
  * The following class is experimental until fully documented.
  * </p>
  */
-public class NavigatorActionService {
+public class NavigatorActionService implements INavigatorActionService {
 	
 
 	private static final CommonActionProviderDescriptor[] NO_DESCRIPTORS= new CommonActionProviderDescriptor[0];
@@ -98,6 +99,9 @@ public class NavigatorActionService {
 		init();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.INavigatorActionService#refresh()
+	 */
 	public void refresh() {
 		IStructuredSelection sSelection= (IStructuredSelection) structuredViewer.getSelection();
 		fillActionBars(viewPart.getViewSite().getActionBars(), sSelection);
@@ -129,6 +133,9 @@ public class NavigatorActionService {
 		isInitialized= true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.INavigatorActionService#fillContextMenu(org.eclipse.jface.action.IMenuManager, org.eclipse.jface.viewers.IStructuredSelection)
+	 */
 	public void fillContextMenu(IMenuManager aMenu, IStructuredSelection aStructuredSelection) {
 		complainIfDisposed();
 
@@ -203,6 +210,9 @@ public class NavigatorActionService {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.INavigatorActionService#fillActionBars(org.eclipse.ui.IActionBars, org.eclipse.jface.viewers.IStructuredSelection)
+	 */
 	public void fillActionBars(IActionBars theActionBars, IStructuredSelection aStructuredSelection) {
 		complainIfDisposed();
 
@@ -260,6 +270,9 @@ public class NavigatorActionService {
 		return NO_DESCRIPTORS;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.INavigatorActionService#dispose()
+	 */
 	public void dispose() {
 		if (isDisposed)
 			return;
@@ -322,8 +335,8 @@ public class NavigatorActionService {
 		}
 	}
 
-	/**
-	 * @param aMemento
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.INavigatorActionService#restoreState(org.eclipse.ui.IMemento)
 	 */
 	public void restoreState(IMemento aMemento) {
 		memento= aMemento;
@@ -370,8 +383,8 @@ public class NavigatorActionService {
 	}
 
 
-	/**
-	 * @param memento2
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.INavigatorActionService#saveState(org.eclipse.ui.IMemento)
 	 */
 	public void saveState(IMemento aMemento) {
 		memento= aMemento;
@@ -394,6 +407,9 @@ public class NavigatorActionService {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.INavigatorActionService#initialize(java.lang.String, org.eclipse.ui.navigator.ICommonActionProvider)
+	 */
 	public void initialize(String anExtensionId, ICommonActionProvider anActionProvider) {
 		if (anActionProvider != null && anActionProvider != SkeletonActionProvider.INSTANCE) {
 			anActionProvider.init(anExtensionId, viewPart, contentService, structuredViewer);
@@ -405,6 +421,9 @@ public class NavigatorActionService {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.INavigatorActionService#setUpdateMenu(org.eclipse.jface.action.MenuManager)
+	 */
 	public void setUpdateMenu(MenuManager menuMgr) {
 		contextMenu= menuMgr;
 

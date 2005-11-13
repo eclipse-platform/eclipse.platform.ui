@@ -20,7 +20,7 @@ package org.eclipse.ui.navigator;
  * 
  * @since 3.2
  */
-public class Priority {
+public final class Priority {
 
 	public static final int HIGHEST_PRIORITY_VALUE = 7;
 	public static final int HIGHER_PRIORITY_VALUE = 6;

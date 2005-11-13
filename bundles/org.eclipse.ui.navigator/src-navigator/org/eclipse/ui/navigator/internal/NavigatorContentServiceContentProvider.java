@@ -6,7 +6,7 @@
  * 
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
-package org.eclipse.ui.navigator;
+package org.eclipse.ui.navigator.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,26 +16,25 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
-import org.eclipse.ui.navigator.internal.NavigatorPlugin;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
 /**
  * <p>
  * Provides relevant content based on the associated
- * {@link org.eclipse.ui.navigator.NavigatorContentService}&nbsp; for a TreeViewer .
+ * {@link org.eclipse.ui.navigator.internal.NavigatorContentService}&nbsp; for a TreeViewer .
  * </p>
  * <p>
  * Except for the dependency on
- * {@link org.eclipse.ui.navigator.NavigatorContentService}, this class has no
+ * {@link org.eclipse.ui.navigator.internal.NavigatorContentService}, this class has no
  * dependencies on the rest of the Common Navigator framework. Tree viewers that would like to use
  * the extensions defined by the Common Navigator, without using the actual view part or other
  * pieces of functionality (filters, sorting, etc) may choose to use this class, in effect using an
  * extensible, aggregating, delegate content provider.
  * </p>
  * 
- * @see org.eclipse.ui.navigator.NavigatorContentService
- * @see org.eclipse.ui.navigator.NavigatorContentServiceLabelProvider
+ * @see org.eclipse.ui.navigator.internal.NavigatorContentService
+ * @see org.eclipse.ui.navigator.internal.NavigatorContentServiceLabelProvider
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
@@ -116,8 +115,8 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		for (int i = 0; i < delegateProviders.length; i++) {
 			try {
 				delegateChildren = delegateProviders[i].getElements(anInputElement);
-				if (delegateChildren != null && delegateChildren.length > 0)
-					resultElements.addAll(Arrays.asList(delegateChildren));
+				if (delegateChildren != null && delegateChildren.length > 0) 
+					resultElements.addAll(Arrays.asList(delegateChildren)); 
 			} catch (RuntimeException re) {
 				String msg = CommonNavigatorMessages.NavigatorContentServiceContentProvider_0 + delegateProviders[i].getClass();
 				NavigatorPlugin.log(msg, new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, 0, msg, re));

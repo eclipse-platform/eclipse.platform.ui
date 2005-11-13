@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
 
 /**
  * <p>
@@ -45,7 +46,7 @@ public interface ICommonActionProvider extends IMementoAware {
 	 * @param aStructuredViewer TODO
 	 */
 	public void init(String anExtensionId, IViewPart aViewPart, 
-						NavigatorContentService aContentService, StructuredViewer aStructuredViewer);
+						INavigatorContentService aContentService, StructuredViewer aStructuredViewer);
 
 	/**
 	 * <p>

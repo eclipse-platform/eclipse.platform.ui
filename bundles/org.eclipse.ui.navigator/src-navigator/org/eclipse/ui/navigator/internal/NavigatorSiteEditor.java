@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.internal.extensions.INavigatorSiteEditor;
 

@@ -6,16 +6,19 @@
  * 
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
-package org.eclipse.ui.navigator;
+package org.eclipse.ui.navigator.internal;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.Priority;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
@@ -39,12 +42,12 @@ public class CommonSorter extends ViewerSorter {
 	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry.getInstance();
  
 	private Comparator comparator = null;
-	private NavigatorContentService contentService;
+	private INavigatorContentService contentService;
 
 	/**
 	 * 
 	 */
-	public CommonSorter(NavigatorContentService aContentService) {
+	public CommonSorter(INavigatorContentService aContentService) {
 		super();
 		contentService = aContentService;
 	}
@@ -55,9 +58,10 @@ public class CommonSorter extends ViewerSorter {
 	 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 	 */
 	public int category(Object anElement) {
-		List descriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(anElement);
-		if (descriptors.size() > 0)
-			return ((NavigatorContentDescriptor) descriptors.get(0)).getPriority();
+		Set descriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(anElement);
+		Iterator dItr = descriptors.iterator();
+		if(dItr.hasNext())
+			return ((NavigatorContentDescriptor) dItr.next()).getPriority();
 		return Priority.NORMAL_PRIORITY_VALUE;
 	}
 

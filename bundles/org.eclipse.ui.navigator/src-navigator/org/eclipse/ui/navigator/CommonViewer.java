@@ -12,7 +12,6 @@ package org.eclipse.ui.navigator;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -28,23 +27,21 @@ import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.navigator.internal.AdaptabilityUtility;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
-import org.eclipse.ui.navigator.internal.ResourceToItemsMapper;
 import org.eclipse.ui.navigator.internal.dnd.CommonNavigatorDragAdapter;
 import org.eclipse.ui.navigator.internal.dnd.CommonNavigatorDropAdapter;
 import org.eclipse.ui.part.PluginTransfer;
-import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * <p>
  * Provides the Tree Viewer for the Common Navigator. Content and labels are
  * provided by an instance of
- * {@link org.eclipse.ui.navigator.NavigatorContentService}&nbsp;
+ * {@link org.eclipse.ui.navigator.internal.NavigatorContentService}&nbsp;
  * which uses the ID supplied in the constructor
  * {@link CommonViewer#CommonViewer(String, Composite, int)}.
  * 
@@ -59,9 +56,7 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 public class CommonViewer extends TreeViewer {
 
 	private final NavigatorContentService contentService;
-
-	protected ResourceToItemsMapper fResourceToItemsMapper;
-
+ 
 	/**
 	 * <p>
 	 * Constructs the Tree Viewer for the Common Navigator and the corresponding
@@ -102,14 +97,9 @@ public class CommonViewer extends TreeViewer {
 				contentService.createCommonLabelProvider(), PlatformUI
 						.getWorkbench().getDecoratorManager()
 						.getLabelDecorator());
-		setLabelProvider(decoratingProvider);
-		initMapper();
+		setLabelProvider(decoratingProvider); 
 		initDragAndDrop();
 
-	}
-
-	private void initMapper() {
-		fResourceToItemsMapper = new ResourceToItemsMapper(this);
 	}
 
 	/**
@@ -197,9 +187,11 @@ public class CommonViewer extends TreeViewer {
 		/* Handle Drag and Drop */
 		int operations = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transfers = new Transfer[] {
-				LocalSelectionTransfer.getInstance(),
+		// TODO Removed LocalSelectTransfer and ResourceTransfer to break dependency on ide and resources plugins.
+		//		LocalSelectionTransfer.getInstance(),
 				PluginTransfer.getInstance(), FileTransfer.getInstance(),
-				ResourceTransfer.getInstance() };
+		//		ResourceTransfer.getInstance() 
+		};
 		addDragSupport(operations, transfers, new CommonNavigatorDragAdapter(
 				this));
 		addDropSupport(operations, transfers, new CommonNavigatorDropAdapter(
@@ -250,48 +242,21 @@ public class CommonViewer extends TreeViewer {
 	}
 
 	/*
-	 * @see StructuredViewer#mapElement(Object, Widget)
-	 */
-	protected void mapElement(Object element, Widget item) {
-		super.mapElement(element, item);
-		if (item instanceof Item) {
-			fResourceToItemsMapper.addToMap(element, (Item) item);
-		}
-	}
-
-	/*
-	 * @see StructuredViewer#unmapElement(Object, Widget)
-	 */
-	protected void unmapElement(Object element, Widget item) {
-		if (item instanceof Item) {
-			fResourceToItemsMapper.removeFromMap(element, (Item) item);
-		}
-		super.unmapElement(element, item);
-	}
-
-	/*
-	 * @see StructuredViewer#unmapAllElements()
-	 */
-	protected void unmapAllElements() {
-		fResourceToItemsMapper.clearMap();
-		super.unmapAllElements();
-	}
-
-	/*
 	 * @see ContentViewer#handleLabelProviderChanged(LabelProviderChangedEvent)
 	 */
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 
 		Object[] changed = event.getElements();
-		if (changed != null && !fResourceToItemsMapper.isEmpty()) {
+		if (changed != null) {
 			ArrayList others = new ArrayList();
 			for (int i = 0; i < changed.length; i++) {
 				Object curr = changed[i];
-				if (curr instanceof IResource) {
-					fResourceToItemsMapper.resourceChanged((IResource) curr);
-				} else {
+				// TODO Resource Mapper removed. Perhaps this would be a good chance to use ResourceMapping?  
+//				if (curr instanceof IResource) {
+//					fResourceToItemsMapper.resourceChanged((IResource) curr);
+//				} else {
 					others.add(curr);
-				}
+//				}
 			}
 			if (others.isEmpty()) {
 				return;

@@ -25,7 +25,6 @@ import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.PluginTransferData;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /** 
  *  

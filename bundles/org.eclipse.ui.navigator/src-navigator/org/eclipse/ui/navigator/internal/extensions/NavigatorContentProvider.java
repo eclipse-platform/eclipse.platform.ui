@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
 
 /**
  * <p>
@@ -27,14 +28,18 @@ import org.eclipse.ui.navigator.IMementoAware;
  */
 public class NavigatorContentProvider implements ICommonContentProvider {
 
-	private final ITreeContentProvider contentProvider; 
+	private final ITreeContentProvider contentProvider;
+	private NavigatorContentService contentService;
+	private NavigatorContentDescriptor descriptor; 
 
 	/**
 	 *  
 	 */
-	public NavigatorContentProvider(ITreeContentProvider aContentProvider) {
+	public NavigatorContentProvider(ITreeContentProvider aContentProvider, NavigatorContentDescriptor aDescriptor, NavigatorContentService theContentService) {
 		super();
 		contentProvider = aContentProvider; 
+		contentService = theContentService;
+		descriptor = aDescriptor;
 	}
 
 	/**
@@ -58,7 +63,9 @@ public class NavigatorContentProvider implements ICommonContentProvider {
 	 * @return
 	 */
 	public Object[] getChildren(Object aParentElement) {
-		return contentProvider.getChildren(aParentElement);
+		Object[] children = contentProvider.getChildren(aParentElement);
+		contentService.rememberContribution(descriptor, children);
+		return children;
 	}
 
 	/**
@@ -66,7 +73,9 @@ public class NavigatorContentProvider implements ICommonContentProvider {
 	 * @return
 	 */
 	public Object[] getElements(Object anInputElement) {
-		return contentProvider.getElements(anInputElement);
+		Object[] elements = contentProvider.getElements(anInputElement);
+		contentService.rememberContribution(descriptor, elements);
+		return elements;
 	}
 
 	/**

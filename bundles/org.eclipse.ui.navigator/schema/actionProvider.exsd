@@ -42,6 +42,11 @@
    </element>
 
    <element name="actionProvider">
+      <annotation>
+         <documentation>
+            The action provider has an opportunity to contribute to the context menu and the retargetable actions defined in the IActionBars. Clients may also contribute directly to the view menu through the IActionBars view menu. 
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="enablement"/>
@@ -50,7 +55,7 @@
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  A class which implments the ICommonActionProvider interface.
+                  A class which implments the org.eclipse.navigator.ui.ICommonActionProvider interface.
                </documentation>
             </annotation>
          </attribute>
@@ -60,8 +65,7 @@
    <element name="enablement">
       <annotation>
          <documentation>
-            This element is used to define the enablement for the extension. 
-Objects which are accepted by the expression will cause the ActionProvider to be invoked.
+            Clients must define an expression that will indicate to the framework when their IActionProvider should be invoked. Because of contributions to the IActionBars, clients must be invoked whenever an object they are interested in is selected. Therefore, clients should use discretion in deciding when their extension should be enabled. 
          </documentation>
       </annotation>
       <complexType>
@@ -75,9 +79,6 @@ Objects which are accepted by the expression will cause the ActionProvider to be
             <element ref="systemProperty"/>
          </choice>
       </complexType>
-   </element>
-
-   <element name="emfEnablement" type="string">
    </element>
 
    <annotation>

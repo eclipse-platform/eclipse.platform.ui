@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.filters;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorExtensionFilter;
-import org.eclipse.ui.navigator.NavigatorContentService;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorActivationService;
+import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 
@@ -35,7 +36,7 @@ public class CommonViewerFilter extends ViewerFilter {
 	private static final NavigatorActivationService NAVIGATOR_ACTIVATION_SERVICE = NavigatorActivationService.getInstance();
 	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry.getInstance();
 	private final CommonViewer commonViewer;
-	private final NavigatorContentService contentService;
+	private final INavigatorContentService contentService;
 
 	/**
 	 *  
@@ -54,10 +55,10 @@ public class CommonViewerFilter extends ViewerFilter {
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		boolean select = true;
-		List contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(element);
+		Set contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(element);
 
-		for (int extindex = 0; extindex < contentDescriptors.size() && select; extindex++) {
-			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptors.get(extindex);
+		for (Iterator descriptorsIterator = contentDescriptors.iterator(); descriptorsIterator.hasNext() && select;) {
+			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) descriptorsIterator.next();
 			if (NAVIGATOR_ACTIVATION_SERVICE.isNavigatorExtensionActive(contentService.getViewerId(), descriptor.getId())) {
 
 				ExtensionFilterDescriptor[] enabledFilters = ExtensionFilterRegistryManager.getInstance().getViewerRegistry(contentService.getViewerId()).getActiveDescriptors(descriptor.getId());

@@ -1,0 +1,38 @@
+<component xmlns="http://eclipse.org/component"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
+   name="Common Navigator">
+   
+	<plugin
+		id="org.eclipse.ui.navigator" fragment="false" />	
+		
+	<plugin
+		id="org.eclipse.ui.navigator.resources" fragment="false" />
+
+ <package name="org.eclipse.ui.navigator">
+ 
+   <type name= "CommonNavigator" subclass="true"/>
+   <type name= "CommonViewer" subclass="true"/>
+   
+   <type name= "CommonNavigatorManager" subclass="false"/>  
+   <type name= "Priority" subclass="false"/>    
+   <type name= "INavigatorActionService" implements="false"/>    
+   <type name= "INavigatorContentService" implements="false"/>    
+   
+   <!--  Contracts for the framework  -->
+   <type name= "ICommonActionProvider" implements="true"/>        
+   <type name= "ICommonDropActionDelegate" implements="true"/>        
+   <type name= "ICommonLabelProvider" implements="true"/>         
+   <type name= "ICommonOpenListener" implements="true"/>        
+   <type name= "IDescriptionProvider" implements="true"/>            
+   <type name= "ILinkHelper" implements="true"/>        
+   <type name= "IMementoAware" implements="true"/>        
+   <type name= "INavigatorExtensionFilter" implements="true"/>    
+   
+   <!--  Contracts for the clients -->
+   <type name= "IExtensionStateModel" implements="false"/>    
+   <type name= "ICommonMenuConstants" implements="false"/>  
+ </package>
+ 
+ <component-depends unrestricted="true"/>
+</component>

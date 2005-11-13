@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.ICommonOpenListener;
-import org.eclipse.ui.navigator.NavigatorContentService;
+import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * <p>
@@ -28,9 +28,9 @@ import org.eclipse.ui.navigator.NavigatorContentService;
 public class ResourceOpenListener implements ICommonOpenListener{
 	OpenFileAction openFileAction ;
 	private CommonNavigator commonNavigator;
-	private NavigatorContentService contentService;
+	private INavigatorContentService contentService;
 	
-	public void initialize(CommonNavigator aCommonNavigator, NavigatorContentService aContentService) {
+	public void initialize(CommonNavigator aCommonNavigator, INavigatorContentService aContentService) {
 		commonNavigator = aCommonNavigator;
 		contentService = aContentService;
 		openFileAction = new OpenFileAction(commonNavigator.getSite().getPage());

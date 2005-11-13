@@ -32,7 +32,7 @@ import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.navigator.AdaptabilityUtility;
+import org.eclipse.ui.navigator.internal.AdaptabilityUtility;
 import org.eclipse.ui.navigator.internal.dnd.CommonNavigatorDropAdapter;
 import org.eclipse.ui.navigator.internal.dnd.IDropValidator;
 import org.eclipse.ui.navigator.internal.dnd.NavigatorDropActionDelegate;

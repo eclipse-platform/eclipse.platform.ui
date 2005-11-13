@@ -56,7 +56,7 @@
          <attribute name="viewerId" type="string">
             <annotation>
                <documentation>
-                  An ID that corresponds to an org.eclipse.ui.views extension point that defines an instance or subclass of org.eclipse.wst.common.navigator.CommonNavigator.
+                  An ID that corresponds to an org.eclipse.ui.views extension point that defines an instance or subclass of org.eclipse.ui.navigator.CommonNavigator.
                </documentation>
             </annotation>
          </attribute>

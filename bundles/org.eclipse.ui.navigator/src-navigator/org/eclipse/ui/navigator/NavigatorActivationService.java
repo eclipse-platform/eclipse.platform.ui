@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.navigator.internal.extensions;
+package org.eclipse.ui.navigator;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,8 +18,11 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.ui.navigator.NavigatorContentService;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
+import org.eclipse.ui.navigator.internal.extensions.IExtensionActivationListener;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 
 /**
  * <p>
@@ -30,7 +33,7 @@ import org.eclipse.ui.navigator.internal.NavigatorPlugin;
  * 
  * @since 3.2
  */
-public class NavigatorActivationService {
+public final class NavigatorActivationService {
 
 	private static final NavigatorActivationService INSTANCE = new NavigatorActivationService();
 	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry.getInstance();

@@ -14,13 +14,10 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.PluginTransferData;
-import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * <p>
@@ -32,11 +29,13 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
  * @since 3.2
  *  
  */
+// Dependencies to ResourceTransferDragAdapter and FileTransferDragAdapter have
+// been removed to support RCP applications. These will be revisted for M5.  
 public class CommonNavigatorDragAdapter extends DragSourceAdapter {
 
-	private ResourceTransferDragAdapter delegateResourceDragAdapter;
-
-	private FileTransferDragAdapter delegateFileDragAdapter;
+//	private ResourceTransferDragAdapter delegateResourceDragAdapter;
+//
+//	private FileTransferDragAdapter delegateFileDragAdapter;
 
 	private ISerializer serializer;
 
@@ -48,8 +47,8 @@ public class CommonNavigatorDragAdapter extends DragSourceAdapter {
 	public CommonNavigatorDragAdapter(CommonViewer aViewer) {
 		super();
 		commonViewer = aViewer;
-		this.delegateResourceDragAdapter = new ResourceTransferDragAdapter(commonViewer);
-		this.delegateFileDragAdapter = new FileTransferDragAdapter(commonViewer);
+//		this.delegateResourceDragAdapter = new ResourceTransferDragAdapter(commonViewer);
+//		this.delegateFileDragAdapter = new FileTransferDragAdapter(commonViewer);
 	}
 
 	/*
@@ -86,14 +85,15 @@ public class CommonNavigatorDragAdapter extends DragSourceAdapter {
 			event.data = new PluginTransferData("org.eclipse.wst.common.navigator.internal.views.navigator.dnd.PluginDropAction", data); //$NON-NLS-1$
 			// System.out.println(getClass().getName()+".dragSetData(DragSourceEvent
 			// event=\""+event+"\"): Setting PluginTransfer");
-		} else if (ResourceTransfer.getInstance().isSupportedType(event.dataType)) {
-			this.delegateResourceDragAdapter.dragSetData(event);
-			// System.out.println(getClass().getName()+".dragSetData(DragSourceEvent
-			// event=\""+event+"\"): Setting ResourceTransfer");
-		} else if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
-			this.delegateFileDragAdapter.dragSetData(event);
-			// System.out.println(getClass().getName()+".dragSetData(DragSourceEvent
-			// event=\""+event+"\"): Setting FileTransfer");
+// Removed to allow RCP integration			
+//		} else if (ResourceTransfer.getInstance().isSupportedType(event.dataType)) {
+//			this.delegateResourceDragAdapter.dragSetData(event);
+//			// System.out.println(getClass().getName()+".dragSetData(DragSourceEvent
+//			// event=\""+event+"\"): Setting ResourceTransfer");
+//		} else if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
+//			this.delegateFileDragAdapter.dragSetData(event);
+//			// System.out.println(getClass().getName()+".dragSetData(DragSourceEvent
+//			// event=\""+event+"\"): Setting FileTransfer");
 
 		}
 	}

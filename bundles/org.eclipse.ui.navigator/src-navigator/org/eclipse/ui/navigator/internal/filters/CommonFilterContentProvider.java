@@ -15,7 +15,8 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.navigator.NavigatorContentService;
+import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 
@@ -33,7 +34,7 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRe
 public class CommonFilterContentProvider implements IStructuredContentProvider {
 
 	private static final NavigatorContentDescriptorRegistry CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorRegistry.getInstance();
-	private NavigatorContentService contentService;
+	private INavigatorContentService contentService;
 
 	public CommonFilterContentProvider() {
 	}
@@ -46,7 +47,7 @@ public class CommonFilterContentProvider implements IStructuredContentProvider {
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput instanceof NavigatorContentService)
-			contentService = (NavigatorContentService) newInput;
+			contentService = (INavigatorContentService) newInput;
 	}
 
 	/*

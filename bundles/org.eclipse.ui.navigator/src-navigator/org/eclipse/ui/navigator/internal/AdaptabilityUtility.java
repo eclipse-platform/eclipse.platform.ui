@@ -8,16 +8,14 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.navigator;
+package org.eclipse.ui.navigator.internal;
 
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * <p>
- * A placeholder for activities API. Still under construction.
- * </p>
- * <p>
- * The following class is experimental until fully documented.
+ * Provides utilities for working with adaptable and non-adaptable objects.
  * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -27,17 +25,23 @@ import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
  * </p>
  * @since 3.2
  */
-public class CommonActivitiesUtilities {
+public class AdaptabilityUtility {
 
 
 	/**
 	 * <p>
-	 * Filters the supplied array of theDescriptors by the currently enabled Activities
-	 * @param theDescriptors
+	 * Returns an adapter of the requested type (anAdapterType)
+	 * @param anElement The element to adapt, which may or may not implement {@link IAdaptable}
+	 * @param anAdapterType The class type to return 
 	 * @return
 	 */
-	public static NavigatorContentDescriptor[] filterByActivity(NavigatorContentDescriptor[] theDescriptors) {
-		return theDescriptors;
+	public static Object getAdapter(Object anElement, Class anAdapterType) {
+		if (anElement == null)
+			return null;
+		else if (anElement instanceof IAdaptable)
+			return ((IAdaptable) anElement).getAdapter(anAdapterType);
+		else
+			return Platform.getAdapterManager().getAdapter(anElement, anAdapterType);
 	}
 
 }

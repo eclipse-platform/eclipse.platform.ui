@@ -31,6 +31,12 @@
             <objectClass
                   name="org.eclipse.core.resources.IWorkspaceRoot">
             </objectClass> 
+
+         </or>
+         </enablement>
+      </navigatorContent>
+   </extension>
+               <!--
             <objectClass
                   name="org.eclipse.core.resources.IProject">
             </objectClass> 
@@ -47,10 +53,7 @@
                     adaptable="true"
                   	name="org.eclipse.core.resources.IFile">
             </objectClass>
-         </or>
-         </enablement>
-      </navigatorContent>
-   </extension>
+            -->
 <!-- Handle Resource drag and drop -->
    <extension
          id="resourceDropHandler"

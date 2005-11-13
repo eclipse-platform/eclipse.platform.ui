@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.extensions;
 
-import org.eclipse.ui.actions.TextActionHandler;
+import org.eclipse.ui.navigator.internal.TextActionHandler;
 
 
 /**

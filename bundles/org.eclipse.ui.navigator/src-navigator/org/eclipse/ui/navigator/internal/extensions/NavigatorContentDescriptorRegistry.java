@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator.internal.extensions;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -25,6 +24,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -108,8 +108,8 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 	 *            the element to return the best content descriptor for
 	 * @return the best content descriptor for the given element.
 	 */
-	public List getEnabledContentDescriptors(Object anElement) {
-		List descriptors = new ArrayList();
+	public Set getEnabledContentDescriptors(Object anElement) {
+		Set descriptors = new HashSet();
 
 		/* Find other ContentProviders which enable for this object */
 		for (Iterator contentDescriptorsItr = contentDescriptors.values().iterator(); contentDescriptorsItr.hasNext();) {
@@ -118,9 +118,9 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 			if (descriptor.isEnabledFor(anElement))
 				descriptors.add(descriptor);
 		}
-		Collections.sort(descriptors, EXTENSION_COMPARATOR);
+		//Collections.sort(descriptors, EXTENSION_COMPARATOR);
 
-		return Collections.unmodifiableList(descriptors);
+		return descriptors;
 	}
 
 	/**
@@ -131,8 +131,8 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 	 *            the element to return the best content descriptor for
 	 * @return the best content descriptor for the given element.
 	 */
-	public List getEnabledContentDescriptors(IStructuredSelection aStructuredSelection) {
-		List descriptors = new ArrayList();
+	public Set getEnabledContentDescriptors(IStructuredSelection aStructuredSelection) {
+		Set descriptors = new HashSet();
 
 		/* Find other ContentProviders which enable for this object */
 		for (Iterator contentDescriptorsItr = contentDescriptors.values().iterator(); contentDescriptorsItr.hasNext();) {
@@ -141,9 +141,9 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 			if (descriptor.isEnabledFor(aStructuredSelection))
 				descriptors.add(descriptor);
 		}
-		Collections.sort(descriptors, EXTENSION_COMPARATOR);
+		// Collections.sort(descriptors, EXTENSION_COMPARATOR);
 
-		return Collections.unmodifiableList(descriptors);
+		return descriptors;
 	}
 
 	/**
@@ -154,8 +154,8 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 	 *            the element to return the best content descriptor for
 	 * @return the best content descriptor for the given element.
 	 */
-	public List getEnabledContentDescriptors(Object anElement, NavigatorViewerDescriptor aViewerDescriptor) {
-		List descriptors = new ArrayList();
+	public Set getEnabledContentDescriptors(Object anElement, NavigatorViewerDescriptor aViewerDescriptor) {
+		Set descriptors = new HashSet();
 
 		/* Find other ContentProviders which enable for this object */
 		for (Iterator contentDescriptorsItr = contentDescriptors.values().iterator(); contentDescriptorsItr.hasNext();) {
@@ -166,9 +166,9 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 					descriptors.add(descriptor);
 			}
 		}
-		Collections.sort(descriptors, EXTENSION_COMPARATOR);
+		// Collections.sort(descriptors, EXTENSION_COMPARATOR);
 
-		return Collections.unmodifiableList(descriptors);
+		return descriptors;
 	}
 
 	/**
@@ -232,6 +232,8 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 				// log an error since its not safe to open a dialog here
 				NavigatorPlugin.log("Unable to create navigator descriptor.", e.getStatus());//$NON-NLS-1$
 			}
+		} else {
+			NavigatorPlugin.log("The tag " + element.getName() + " is not yet supported."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return false;
 	}

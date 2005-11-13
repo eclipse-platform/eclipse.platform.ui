@@ -8,16 +8,14 @@ Bundle-Activator: org.eclipse.ui.navigator.internal.NavigatorPlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.navigator,
- org.eclipse.ui.navigator.internal,
- org.eclipse.ui.navigator.internal.actions,
- org.eclipse.ui.navigator.internal.deferred,
- org.eclipse.ui.navigator.internal.dnd,
- org.eclipse.ui.navigator.internal.extensions,
- org.eclipse.ui.navigator.internal.filters
+ org.eclipse.ui.navigator.internal;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources",
+ org.eclipse.ui.navigator.internal.actions;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources",
+ org.eclipse.ui.navigator.internal.deferred;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources",
+ org.eclipse.ui.navigator.internal.dnd;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources",
+ org.eclipse.ui.navigator.internal.extensions;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources",
+ org.eclipse.ui.navigator.internal.filters;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources"
 Require-Bundle: org.eclipse.jface,
  org.eclipse.ui.workbench,
- org.eclipse.core.resources,
- org.eclipse.ui.ide,
  org.eclipse.core.runtime,
  org.eclipse.ui
 Eclipse-LazyStart: true

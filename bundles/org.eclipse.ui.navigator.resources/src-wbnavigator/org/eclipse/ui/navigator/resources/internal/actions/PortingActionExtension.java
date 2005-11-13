@@ -32,7 +32,7 @@ import org.eclipse.ui.actions.ExportResourcesAction;
 import org.eclipse.ui.actions.ImportResourcesAction;
 import org.eclipse.ui.navigator.ICommonActionProvider;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eclipse.ui.navigator.NavigatorContentService;
+import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.internal.actions.CommonActionProvider;
 import org.eclipse.ui.navigator.resources.internal.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -64,7 +64,7 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 	private ImportResourcesAction importAction;
 	private ExportResourcesAction exportAction;
 	private ActionContext actionContext;
-	private NavigatorContentService contentService;
+	private INavigatorContentService contentService;
 
 	private WizardActionGroup importWizardActionGroup;
 	private WizardActionGroup exportWizardActionGroup;
@@ -90,7 +90,7 @@ public class PortingActionExtension extends CommonActionProvider implements ICom
 	 * 
 	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#init(org.eclipse.ui.IViewPart)
 	 */
-	public void init(String anExtensionId, IViewPart aViewPart, NavigatorContentService aContentService, StructuredViewer aStructuredViewer) {
+	public void init(String anExtensionId, IViewPart aViewPart, INavigatorContentService aContentService, StructuredViewer aStructuredViewer) {
 		contentService = aContentService;
 		IWorkbenchWindow window = (aViewPart.getViewSite() != null) ? aViewPart.getViewSite().getWorkbenchWindow() : null;
 		importAction = new ImportResourcesAction(window);

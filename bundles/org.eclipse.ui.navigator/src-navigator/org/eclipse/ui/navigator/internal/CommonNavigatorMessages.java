@@ -48,6 +48,15 @@ public class CommonNavigatorMessages extends NLS {
 	public static String ExtensionFilterViewerRegistry_1;
 	public static String PendingUpdateAdapter_PendingLabel;
 	
+	public static String TextAction_selectAll;
+	public static String Cut;
+	public static String Copy;
+	public static String Paste;
+	public static String Delete;
+	
+
+	public static String LocalSelectionTransfer_errorMessage;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CommonNavigatorMessages.class);
 	}

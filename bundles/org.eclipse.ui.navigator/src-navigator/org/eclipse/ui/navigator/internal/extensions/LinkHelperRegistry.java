@@ -19,6 +19,7 @@ package org.eclipse.ui.navigator.internal.extensions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -155,12 +156,12 @@ public class LinkHelperRegistry extends RegistryReader {
 		if (aSelection.isEmpty())
 			return NO_LINK_HELPERS;
 
-		List contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(aSelection.getFirstElement());
-		if (contentDescriptors.size() == 0)
+		Set contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(aSelection.getFirstElement());
+		if (contentDescriptors.isEmpty())
 			return NO_LINK_HELPERS;
 
 		/* Use the first Navigator Content Descriptor for now */
-		NavigatorContentDescriptor contentDescriptor = (NavigatorContentDescriptor) contentDescriptors.get(0);
+		NavigatorContentDescriptor contentDescriptor = (NavigatorContentDescriptor) contentDescriptors.iterator().next();
 
 		List helpersList = new ArrayList();
 		ILinkHelper[] helpers = NO_LINK_HELPERS;

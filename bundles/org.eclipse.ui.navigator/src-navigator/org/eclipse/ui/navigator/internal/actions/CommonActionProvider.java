@@ -17,7 +17,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.navigator.ICommonActionProvider;
-import org.eclipse.ui.navigator.NavigatorContentService;
+import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * 
@@ -37,7 +37,7 @@ public class CommonActionProvider implements ICommonActionProvider {
 	 * @see org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider#init(org.eclipse.ui.IViewPart,
 	 *      org.eclipse.wst.common.navigator.internal.views.extensions.NavigatorContentService)
 	 */
-	public void init(String anExtensionId, IViewPart aViewPart, NavigatorContentService aContentService, StructuredViewer aStructuredViewer) {
+	public void init(String anExtensionId, IViewPart aViewPart, INavigatorContentService aContentService, StructuredViewer aStructuredViewer) {
 
 	}
 

@@ -24,6 +24,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.navigator.internal.NavigatorActionService;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
+import org.eclipse.ui.navigator.internal.NavigatorContentServiceDescriptionProvider;
 
 /**
  * <p>
@@ -42,13 +45,13 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  * </p>
  * @since 3.2
  */
-public class CommonNavigatorManager implements ISelectionChangedListener {
+public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 	private final CommonNavigator commonNavigator;
 
 	private final NavigatorContentService contentService;
 
-	private NavigatorActionService actionService;
+	private INavigatorActionService actionService;
 
 	private final IDescriptionProvider commonDescriptionProvider;
 
@@ -214,7 +217,7 @@ public class CommonNavigatorManager implements ISelectionChangedListener {
 				.getDescription(aSelection));
 	}
 
-	public NavigatorActionService getNavigatorActionService() {
+	public INavigatorActionService getNavigatorActionService() {
 		return actionService;
 	}
 

@@ -8,11 +8,7 @@
  **************************************************************************************************/
 package org.eclipse.ui.navigator;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -30,6 +26,8 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.navigator.internal.CommonNavigatorActionGroup;
+import org.eclipse.ui.navigator.internal.CommonSorter;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.NavigatorMessages;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.internal.filters.CommonViewerFilter;
@@ -58,14 +56,14 @@ import org.eclipse.ui.part.ViewPart;
  * </li>
  * <li>
  * <p>
- * {@link org.eclipse.ui.navigator.NavigatorActionService}: Manages instances of
+ * {@link org.eclipse.ui.navigator.internal.NavigatorActionService}: Manages instances of
  * {@link org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider}&nbsp;provided
  * by individual extensions and content extensions.
  * </p>
  * </li>
  * <li>
  * <p>
- * {@link org.eclipse.ui.navigator.NavigatorContentService}: Manages instances of
+ * {@link org.eclipse.ui.navigator.internal.NavigatorContentService}: Manages instances of
  * Navigator Content Extensions. Instances are created as needed, and disposed of upon the disposal
  * of the Common Navigator.
  * </p>
@@ -165,7 +163,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
  
 
 		/* make sure input is set after sorters and filters to avoid unnecessary refreshes */
-		commonViewer.setInput(getInitialInput() != null ? getInitialInput() : ResourcesPlugin.getWorkspace().getRoot());
+		commonViewer.setInput(getInitialInput());
 		commonViewer.getControl().addDisposeListener(createDisposeListener());
 
 		getSite().setSelectionProvider(commonViewer);
@@ -318,7 +316,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	/**
 	 * @return The Navigator Content Service which populates this instance of Common Navigator
 	 */
-	public NavigatorActionService getNavigatorActionService() {
+	public INavigatorActionService getNavigatorActionService() {
 		return commonManager.getNavigatorActionService();
 	}
 
@@ -497,11 +495,10 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 			return;
 
 		Object input = commonViewer.getInput();
-		String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$ 
 		// IWorkingSet workingSet = workingSetFilter.getWorkingSet();
 
-		if (input == null || input.equals(workspace) || input.equals(workspace.getRoot())) {
+		if (input == null) {
 			setPartName(viewName);
 			setTitleToolTip(""); //$NON-NLS-1$ 
 		} else {
@@ -521,13 +518,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	 * </p>
 	 */
 	protected String getFrameToolTipText(Object anElement) {
-		if (anElement instanceof IResource) {
-			IPath path = ((IResource) anElement).getFullPath();
-			if (path.isRoot()) {
-				return NavigatorMessages.getString("Navigator.toolTip"); //$NON-NLS-1$
-			}
-			return path.makeRelative().toString();
-		}
 		if (commonViewer != null)
 			return ((ILabelProvider) commonViewer.getLabelProvider()).getText(anElement);
 		return ""; //$NON-NLS-1$

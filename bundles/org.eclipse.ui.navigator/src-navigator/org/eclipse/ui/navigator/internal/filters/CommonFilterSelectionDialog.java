@@ -36,13 +36,13 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.navigator.CommonActivitiesUtilities;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.NavigatorActionService;
-import org.eclipse.ui.navigator.NavigatorContentService;
+import org.eclipse.ui.navigator.INavigatorActionService;
+import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.NavigatorActivationService;
+import org.eclipse.ui.navigator.internal.CommonActivitiesUtilities;
 import org.eclipse.ui.navigator.internal.NavigatorMessages;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 
@@ -69,7 +69,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 	
 	private CommonNavigator commonNavigator;
 	private final CommonViewer commonViewer;
-	private final NavigatorContentService contentService;
+	private final INavigatorContentService contentService;
 
 	/**
 	 * @param arg0
@@ -384,7 +384,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 		if (updateExtensionActivation || updateFilterActivation) {
 			contentService.update();
 			
-			NavigatorActionService actionService = commonNavigator.getNavigatorActionService();
+			INavigatorActionService actionService = commonNavigator.getNavigatorActionService();
 			actionService.refresh();
 		}
 

@@ -18,9 +18,9 @@ import org.eclipse.ui.navigator.ICommonActionProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
-import org.eclipse.ui.navigator.NavigatorActionService;
-import org.eclipse.ui.navigator.NavigatorContentService;
+import org.eclipse.ui.navigator.INavigatorActionService;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
+import org.eclipse.ui.navigator.internal.NavigatorContentService;
 
 /**
  * <p>
@@ -88,7 +88,7 @@ public class NavigatorContentExtension implements IMementoAware {
 				if (contentProvider == null) {
 					ITreeContentProvider treeContentProvider = (ITreeContentProvider) descriptor.getConfigurationElement().createExecutableExtension(NavigatorContentDescriptor.ATT_CONTENT_PROVIDER);
 					if (treeContentProvider != null) {
-						contentProvider = new NavigatorContentProvider(treeContentProvider);
+						contentProvider = new NavigatorContentProvider(treeContentProvider, descriptor, contentService);
 						contentProvider.init(getStateModel(), appliedMemento); 
 						viewerManager.initialize(contentProvider);
 					}
@@ -147,7 +147,7 @@ public class NavigatorContentExtension implements IMementoAware {
 	/**
 	 * @return
 	 */
-	public ICommonActionProvider getActionProvider(NavigatorActionService theActionService) {
+	public ICommonActionProvider getActionProvider(INavigatorActionService theActionService) {
 		if (actionProvider != null || actionProviderInitializationFailed)
 			return actionProvider;
 		if (descriptor.getConfigurationElement().getAttribute(NavigatorContentDescriptor.ATT_ACTION_PROVIDER) == null) {
