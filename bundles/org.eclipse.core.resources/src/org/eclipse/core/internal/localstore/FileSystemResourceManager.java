@@ -345,7 +345,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			if (info.isSet(ICoreConstants.M_LINK)) {
 				ProjectDescription description = ((Project) target.getProject()).internalGetDescription();
 				if (description != null) {
-					IPath location = description.getLinkLocation(target.getName());
+					IPath location = description.getLinkLocation(target.getProjectRelativePath());
 					setLocation(target, info, FileUtil.toURI(location));
 					return info.getFileStoreRoot();
 				}
@@ -548,7 +548,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				}
 				description = ((Project) target.getProject()).internalGetDescription();
 				if (linked.isLinked()) {
-					IPath location = description.getLinkLocation(linked.getName());
+					IPath location = description.getLinkLocation(linked.getProjectRelativePath());
 					//location may have been deleted from the project description between sessions
 					if (location != null) {
 						location = workspace.getPathVariableManager().resolvePath(location);

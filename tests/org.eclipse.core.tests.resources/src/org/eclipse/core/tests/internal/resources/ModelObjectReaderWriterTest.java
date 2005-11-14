@@ -35,7 +35,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	static final IPath LONG_LOCATION = new Path("/eclipse/dev/i0218/eclipse/pffds/fds//fds///fdsfsdfsd///fdsfdsf/fsdfsdfsd/lugi/dsds/fsd//f/ffdsfdsf/fsdfdsfsd/fds//fdsfdsfdsf/fdsfdsfds/fdsfdsfdsf/fdsfdsfdsds/ns/org.eclipse.help.ui_2.1.0/contexts.xml").setDevice(WINDOWS ? "D:" : null);
 	static final URI LONG_LOCATION_URI = LONG_LOCATION.toFile().toURI();
 	private static final String PATH_STRING = new Path("/abc/def").setDevice(WINDOWS ? "D:" : null).toString();
-	
+
 	public static Test suite() {
 		//	TestSuite suite = new TestSuite();
 		//	suite.addTest(new ModelObjectReaderWriterTest("testMultipleProjectDescriptions"));
@@ -65,8 +65,8 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		natures[0] = "org.eclipse.jdt.core.javanature";
 		desc.setNatureIds(natures);
 		HashMap linkMap = new HashMap();
-		LinkDescription link = new LinkDescription("newLink", 2, uriFromPortableString("d:/abc/def"));
-		linkMap.put(link.getName(), link);
+		LinkDescription link = createLinkDescription("newLink", IResource.FOLDER, "d:/abc/def");
+		linkMap.put(link.getPath(), link);
 		desc.setLinkDescriptions(linkMap);
 		result.put(desc.getName(), desc);
 		commands = null;
@@ -85,14 +85,14 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		natures[0] = "org.eclipse.jdt.core.javanature";
 		desc.setNatureIds(natures);
 		linkMap = new HashMap();
-		link = new LinkDescription("newLink", 2, uriFromPortableString("d:/abc/def"));
-		linkMap.put(link.getName(), link);
-		link = new LinkDescription("link2", 2, uriFromPortableString("d:/abc"));
-		linkMap.put(link.getName(), link);
-		link = new LinkDescription("link3", 2, uriFromPortableString("d:/abc/def/ghi"));
-		linkMap.put(link.getName(), link);
-		link = new LinkDescription("link4", 1, uriFromPortableString("d:/abc/def/afile.txt"));
-		linkMap.put(link.getName(), link);
+		link = createLinkDescription("newLink", IResource.FOLDER, "d:/abc/def");
+		linkMap.put(link.getPath(), link);
+		link = createLinkDescription("link2", IResource.FOLDER, "d:/abc");
+		linkMap.put(link.getPath(), link);
+		link = createLinkDescription("link3", IResource.FOLDER, "d:/abc/def/ghi");
+		linkMap.put(link.getPath(), link);
+		link = createLinkDescription("link4", IResource.FILE, "d:/abc/def/afile.txt");
+		linkMap.put(link.getPath(), link);
 		desc.setLinkDescriptions(linkMap);
 		result.put(desc.getName(), desc);
 		commands = null;
@@ -191,10 +191,10 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		Set keys = links.keySet();
 		int x = 1;
 		for (Iterator i = keys.iterator(); i.hasNext(); x++) {
-			String key = (String) i.next();
+			IPath key = (IPath) i.next();
 			LinkDescription value = (LinkDescription) links.get(key);
 			LinkDescription value2 = (LinkDescription) links2.get(key);
-			assertTrue(errorTag + ".4." + x, value.getName().equals(value2.getName()));
+			assertTrue(errorTag + ".4." + x, value.getPath().equals(value2.getPath()));
 			assertEquals(errorTag + ".5." + x, value.getType(), value2.getType());
 			assertEquals(errorTag + ".6." + x, value.getLocation(), value2.getLocation());
 		}
@@ -250,6 +250,18 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		return false;
 	}
 
+	private LinkDescription createLinkDescription(IPath path, int type, URI location) {
+		LinkDescription result = new LinkDescription();
+		result.setPath(path);
+		result.setType(type);
+		result.setLocation(location);
+		return result;
+	}
+
+	private LinkDescription createLinkDescription(String path, int type, String location) {
+		return createLinkDescription(new Path(path), type, uriFromPortableString(location));
+	}
+
 	protected String getInvalidWorkspaceDescription() {
 		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<workspaceDescription>\n" + "<name>Foo</name>\n" + "<autobuild>Foo</autobuild>\n" + "<snapshotInterval>300Foo000</snapshotInterval>\n" + "<fileStateLongevity>Foo480000</fileStateLongevity>\n" + "<maxFileStateSize>104856Foo</maxFileStateSize>\n" + "<maxFileStates>5Foo0</maxFileStates>\n" + "</workspaceDescription>\n";
 	}
@@ -262,8 +274,8 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 
 	private String getLongDescriptionURI() {
 		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<projectDescription>" + "<name>org.eclipse.help.ui</name>" + "<comment></comment>" + "<charset>UTF-8</charset>" + "	<projects>" + "	<project>org.eclipse.core.boot</project>" + "	<project>org.eclipse.core.resources</project>" + "	<project>org.eclipse.core.runtime</project>" + "	<project>org.eclipse.help</project>" + "	<project>org.eclipse.help.appserver</project>" + "	<project>org.eclipse.search</project>" + "	<project>org.eclipse.ui</project>" + "	</projects>" + "	<buildSpec>" + "	<buildCommand>" + "	<name>org.eclipse.jdt.core.javabuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	<buildCommand>" + "	<name>org.eclipse.pde.ManifestBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>"
-				+ "	<buildCommand>" + "	<name>org.eclipse.pde.SchemaBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	</buildSpec>" + "	<natures>" + "	<nature>org.eclipse.jdt.core.javanature</nature>" + "	<nature>org.eclipse.pde.PluginNature</nature>" + "	</natures>" + "	<linkedResources>" + "	<link>" + "	<name>contexts.xml</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>doc</name>" + "	<type>2</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>icons</name>" + "	<type>2</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>preferences.ini</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>"
-				+ "	<link>" + "	<name>.options</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>plugin.properties</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>plugin.xml</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>about.html</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>helpworkbench.jar</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "</linkedResources>" + "</projectDescription>";
+				+ "	<buildCommand>" + "	<name>org.eclipse.pde.SchemaBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	</buildSpec>" + "	<natures>" + "	<nature>org.eclipse.jdt.core.javanature</nature>" + "	<nature>org.eclipse.pde.PluginNature</nature>" + "	</natures>" + "	<linkedResources>" + "	<link>" + "	<name>contexts.xml</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>doc</name>" + "	<type>2</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>icons</name>" + "	<type>2</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>preferences.ini</name>" + "	<type>1</type>" + "	<locationURI>"
+				+ LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>.options</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>plugin.properties</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>plugin.xml</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>about.html</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>helpworkbench.jar</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "</linkedResources>" + "</projectDescription>";
 	}
 
 	/**
@@ -355,7 +367,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		assertEquals("3.5", new String[0], projDesc.getNatureIds());
 		assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
 		LinkDescription link = (LinkDescription) projDesc.getLinks().values().iterator().next();
-		assertEquals("3.7", "newLink", link.getName());
+		assertEquals("3.7", new Path("newLink"), link.getPath());
 		assertEquals("3.8", PATH_STRING, FileUtil.toPath(link.getLocation()).toString());
 	}
 
@@ -415,7 +427,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			ensureDoesNotExistInFileSystem(location.toFile());
 			for (Iterator i = projDesc.getLinks().values().iterator(); i.hasNext();) {
 				LinkDescription link = (LinkDescription) i.next();
-				assertEquals("1.0." + link.getName(), LONG_LOCATION_URI, link.getLocation());
+				assertEquals("1.0." + link.getPath(), LONG_LOCATION_URI, link.getLocation());
 			}
 		} finally {
 			Workspace.clear(location.toFile());
@@ -438,7 +450,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			ensureDoesNotExistInFileSystem(location.toFile());
 			for (Iterator i = projDesc.getLinks().values().iterator(); i.hasNext();) {
 				LinkDescription link = (LinkDescription) i.next();
-				assertEquals("1.0." + link.getName(), LONG_LOCATION_URI, link.getLocation());
+				assertEquals("1.0." + link.getPath(), LONG_LOCATION_URI, link.getLocation());
 			}
 		} finally {
 			Workspace.clear(location.toFile());
@@ -447,10 +459,10 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 
 	public void testMultiLineCharFields() throws Throwable {
 		String multiLineProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>\n" + "      abc\n" + "   </name>\n" + "	<charset>\n" + "		ISO-8859-1\n" + "	</charset>\n" + "	<comment>This is the comment.</comment>\n" + "	<projects>\n" + "	   <project>\n" + "         org.eclipse.core.boot\n" + "      </project>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>\n" + "              org.eclipse.jdt.core.javabuilder\n" + "           </name>\n" + "			<arguments>\n" + "              <key>thisIsTheKey</key>\n" + "              <value>thisIsTheValue</value>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	   <nature>\n" + "         org.eclipse.jdt.core.javanature\n"
-				+ "      </nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>\n" + "              newLink\n" + "           </name>\n" + "			<type>\n" + "              2\n" + "           </type>\n" + "			<location>\n" + "              " + PATH_STRING + "\n" + "           </location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
+				+ "      </nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>" + "newLink" + "</name>\n" + "			<type>\n" + "              2\n" + "           </type>\n" + "			<location>" + PATH_STRING + "</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
 
-		String singleLineProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>abc</name>\n" + "	<charset>ISO-8859-1</charset>\n" + "	<comment>This is the comment.</comment>\n" + "	<projects>\n" + "	   <project>org.eclipse.core.boot</project>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>org.eclipse.jdt.core.javabuilder</name>\n" + "			<arguments>\n" + "              <key>thisIsTheKey</key>\n" + "              <value>thisIsTheValue</value>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	   <nature>org.eclipse.jdt.core.javanature</nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>newLink</name>\n" + "			<type>2</type>\n"
-				+ "			<location>" + PATH_STRING + "</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
+		String singleLineProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>abc</name>\n" + "	<charset>ISO-8859-1</charset>\n" + "	<comment>This is the comment.</comment>\n" + "	<projects>\n" + "	   <project>org.eclipse.core.boot</project>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>org.eclipse.jdt.core.javabuilder</name>\n" + "			<arguments>\n" + "              <key>thisIsTheKey</key>\n" + "              <value>thisIsTheValue</value>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	   <nature>org.eclipse.jdt.core.javanature</nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>newLink</name>\n" + "			<type>2</type>\n" + "			<location>"
+				+ PATH_STRING + "</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
 
 		IPath root = getWorkspace().getRoot().getLocation();
 		IPath multiLocation = root.append("multiLineTest.txt");
@@ -545,26 +557,6 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		assertEquals("2.10", "", commands2[0].getArguments().get("EmptyArg"));
 	}
 
-	public void testProjectDescriptionWithSpaces() throws Throwable {
-
-		IFileStore store = getTempStore();
-		URI location = store.toURI();
-		URI locationWithSpaces = store.getChild("With some spaces").toURI();
-		/* test write */
-		ProjectDescription description = new ProjectDescription();
-		description.setLocationURI(location);
-		description.setName("MyProjectDescription");
-		description.setLinkLocation("link", new LinkDescription("link", IResource.FOLDER, locationWithSpaces));
-
-		writeDescription(store, description);
-
-		/* test read */
-		ProjectDescription description2 = readDescription(store);
-		assertTrue("1.1", description.getName().equals(description2.getName()));
-		assertEquals("1.2", location, description.getLocationURI());
-		assertEquals("1.3", locationWithSpaces, description2.getLinkLocationURI("link"));
-	}
-
 	public void testProjectDescription2() throws Throwable {
 		// Use ModelObject2 to read the project description
 
@@ -621,6 +613,27 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		assertTrue("4.1", ref[0].getName().equals(ref2[0].getName()));
 		assertTrue("4.2", ref[1].getName().equals(ref2[1].getName()));
 		assertTrue("4.3", ref[2].getName().equals(ref2[2].getName()));
+	}
+
+	public void testProjectDescriptionWithSpaces() throws Throwable {
+
+		IFileStore store = getTempStore();
+		final Path path = new Path("link");
+		URI location = store.toURI();
+		URI locationWithSpaces = store.getChild("With some spaces").toURI();
+		/* test write */
+		ProjectDescription description = new ProjectDescription();
+		description.setLocationURI(location);
+		description.setName("MyProjectDescription");
+		description.setLinkLocation(path, createLinkDescription(path, IResource.FOLDER, locationWithSpaces));
+
+		writeDescription(store, description);
+
+		/* test read */
+		ProjectDescription description2 = readDescription(store);
+		assertTrue("1.1", description.getName().equals(description2.getName()));
+		assertEquals("1.2", location, description.getLocationURI());
+		assertEquals("1.3", locationWithSpaces, description2.getLinkLocationURI(path));
 	}
 
 	public void testWorkspaceDescription() throws Throwable {

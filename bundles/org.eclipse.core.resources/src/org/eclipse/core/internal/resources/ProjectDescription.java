@@ -38,6 +38,11 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	protected IProject[] cachedRefs = null;
 	protected String comment = ""; //$NON-NLS-1$
 	protected IProject[] dynamicRefs = EMPTY_PROJECT_ARRAY;
+	
+	/**
+	 * Map of (IPath -> LinkDescription) pairs for each linked resource
+	 * in this project.
+	 */
 	protected HashMap linkDescriptions = null;
 
 	// fields
@@ -150,18 +155,18 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Returns the link location for the given resource name. Returns null if
 	 * no such link exists.
 	 */
-	public IPath getLinkLocation(String aName) {
-		return FileUtil.toPath(getLinkLocationURI(aName));
+	public IPath getLinkLocation(IPath aPath) {
+		return FileUtil.toPath(getLinkLocationURI(aPath));
 	}
 
 	/**
 	 * Returns the link location for the given resource name. Returns null if
 	 * no such link exists.
 	 */
-	public URI getLinkLocationURI(String aName) {
+	public URI getLinkLocationURI(IPath aPath) {
 		if (linkDescriptions == null)
 			return null;
-		LinkDescription desc = (LinkDescription) linkDescriptions.get(aName);
+		LinkDescription desc = (LinkDescription) linkDescriptions.get(aPath);
 		return desc == null ? null : desc.getLocation();
 	}
 
@@ -320,16 +325,16 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Sets the description of a link. Setting to a description of null will
 	 * remove the link from the project description.
 	 */
-	public void setLinkLocation(String name, LinkDescription description) {
+	public void setLinkLocation(IPath path, LinkDescription description) {
 		if (description != null) {
 			//addition or modification
 			if (linkDescriptions == null)
 				linkDescriptions = new HashMap(10);
-			linkDescriptions.put(name, description);
+			linkDescriptions.put(path, description);
 		} else {
 			//removal
 			if (linkDescriptions != null) {
-				linkDescriptions.remove(name);
+				linkDescriptions.remove(path);
 				if (linkDescriptions.size() == 0)
 					linkDescriptions = null;
 			}

@@ -665,7 +665,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				linkDescription = null;
 			}
 			Project project = (Project) destinationResource.getProject();
-			project.internalGetDescription().setLinkLocation(destinationResource.getName(), linkDescription);
+			project.internalGetDescription().setLinkLocation(destinationResource.getProjectRelativePath(), linkDescription);
 			project.writeDescription(updateFlags);
 		}
 

@@ -83,7 +83,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	protected void write(LinkDescription description, XMLWriter writer) {
 		writer.startTag(LINK, null);
 		if (description != null) {
-			writer.printSimpleTag(NAME, description.getName());
+			writer.printSimpleTag(NAME, description.getPath());
 			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
 			//use ASCII string of URI to ensure spaces are encoded
 			writeLocation(description.getLocation(), writer);

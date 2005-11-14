@@ -609,7 +609,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				monitor.worked(Policy.opWork * 5 / 100);
 				//save the location in the project description
 				Project project = (Project) getProject();
-				project.internalGetDescription().setLinkLocation(getName(), new LinkDescription(this, localLocation));
+				project.internalGetDescription().setLinkLocation(getProjectRelativePath(), new LinkDescription(this, localLocation));
 				project.writeDescription(IResource.NONE);
 				monitor.worked(Policy.opWork * 5 / 100);
 
@@ -770,7 +770,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (wasLinked) {
 			Project project = (Project) getProject();
 			ProjectDescription description = project.internalGetDescription();
-			description.setLinkLocation(getName(), null);
+			description.setLinkLocation(getProjectRelativePath(), null);
 			project.internalSetDescription(description, true);
 			project.writeDescription(IResource.FORCE);
 		}
@@ -837,7 +837,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		//if a linked resource is moved, we need to remove the location info from the .project 
 		if (isLinked()) {
 			Project project = (Project) getProject();
-			project.internalGetDescription().setLinkLocation(getName(), null);
+			project.internalGetDescription().setLinkLocation(getProjectRelativePath(), null);
 			project.writeDescription(IResource.NONE);
 		}
 
@@ -983,7 +983,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 */
 	public IPath getRawLocation() {
 		if (isLinked())
-			return ((Project) getProject()).internalGetDescription().getLinkLocation(getName());
+			return ((Project) getProject()).internalGetDescription().getLinkLocation(getProjectRelativePath());
 		return getLocation();
 	}
 

@@ -13,35 +13,38 @@ package org.eclipse.core.internal.resources;
 import java.net.URI;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Object for describing the characteristics of linked resources that are stored
  * in the project description.
  */
 public class LinkDescription {
-	
-	private String name;
+
 	private URI localLocation;
+
+	/**
+	 * The project relative path.
+	 */
+	private IPath path;
+	/**
+	 * The resource type (IResource.FILE or IResoruce.FOLDER)
+	 */
 	private int type;
+
+	public LinkDescription() {
+		this.path = Path.EMPTY;
+		this.type = -1;
+	}
 
 	public LinkDescription(IResource linkedResource, URI location) {
 		super();
 		Assert.isNotNull(linkedResource);
 		Assert.isNotNull(location);
 		this.type = linkedResource.getType();
-		this.name = linkedResource.getName();
+		this.path = linkedResource.getProjectRelativePath();
 		this.localLocation = location;
-	}
-
-	public LinkDescription(String name, int type, URI localLocation) {
-		this.name = name;
-		this.type = type;
-		this.localLocation = localLocation;
-	}
-
-	public LinkDescription() {
-		this.name = ""; //$NON-NLS-1$
-		this.type = -1;
 	}
 
 	public boolean equals(Object o) {
@@ -55,8 +58,12 @@ public class LinkDescription {
 		return localLocation;
 	}
 
-	public String getName() {
-		return name;
+	/**
+	 * Returns the project relative path of the resource that is linked.
+	 * @return the project relative path of the resource that is linked.
+	 */
+	public IPath getPath() {
+		return path;
 	}
 
 	public int getType() {
@@ -67,15 +74,15 @@ public class LinkDescription {
 		return type + localLocation.hashCode();
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setLocation(URI location) {
+		this.localLocation = location;
+	}
+
+	public void setPath(IPath path) {
+		this.path = path;
 	}
 
 	public void setType(int type) {
 		this.type = type;
-	}
-
-	public void setLocation(URI location) {
-		this.localLocation = location;
 	}
 }

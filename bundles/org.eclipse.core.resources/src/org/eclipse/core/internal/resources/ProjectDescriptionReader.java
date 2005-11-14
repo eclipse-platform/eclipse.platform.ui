@@ -40,7 +40,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_LINK = 9;
 	protected static final int S_LINK_LOCATION = 10;
 	protected static final int S_LINK_LOCATION_URI = 11;
-	protected static final int S_LINK_NAME = 12;
+	protected static final int S_LINK_PATH = 12;
 	protected static final int S_LINK_TYPE = 13;
 	protected static final int S_LINKED_RESOURCES = 14;
 	protected static final int S_NATURE_NAME = 15;
@@ -243,8 +243,8 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					state = S_NATURES;
 				}
 				break;
-			case S_LINK_NAME :
-				endLinkName(elementName);
+			case S_LINK_PATH :
+				endLinkPath(elementName);
 				break;
 			case S_LINK_TYPE :
 				endLinkType(elementName);
@@ -314,24 +314,24 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// Pop off the link description
 			LinkDescription link = (LinkDescription) objectStack.pop();
 			// Make sure that you have something reasonable
-			String name = link.getName();
+			IPath path = link.getPath();
 			int type = link.getType();
 			URI location = link.getLocation();
 			if (location == null) {
-				parseProblem(NLS.bind(Messages.projRead_badLinkLocation, name, Integer.toString(type)));
+				parseProblem(NLS.bind(Messages.projRead_badLinkLocation, path, Integer.toString(type)));
 				return;
 			}
-			if ((name == null) || name.length() == 0) {
+			if ((path == null) || path.segmentCount() == 0) {
 				parseProblem(NLS.bind(Messages.projRead_emptyLinkName, Integer.toString(type), location));
 				return;
 			}
 			if (type == -1) {
-				parseProblem(NLS.bind(Messages.projRead_badLinkType, name, location));
+				parseProblem(NLS.bind(Messages.projRead_badLinkType, path, location));
 				return;
 			}
 
 			// The HashMap of linked resources is the next thing on the stack
-			((HashMap) objectStack.peek()).put(link.getName(), link);
+			((HashMap) objectStack.peek()).put(link.getPath(), link);
 		}
 	}
 
@@ -380,18 +380,16 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		}
 	}
 
-	private void endLinkName(String elementName) {
+	private void endLinkPath(String elementName) {
 		if (elementName.equals(NAME)) {
-			// A link name is an IResource name.  IResource names
-			// cannot have leading/trailing whitespace.
-			String newName = charBuffer.toString().trim();
+			IPath newPath= new Path(charBuffer.toString());
 			// objectStack has a LinkDescription on it. Set the name
 			// on this LinkDescription.
-			String oldName = ((LinkDescription) objectStack.peek()).getName();
-			if (oldName.length() != 0) {
-				parseProblem(NLS.bind(Messages.projRead_badLinkName, oldName, newName));
+			IPath oldPath= ((LinkDescription) objectStack.peek()).getPath();
+			if (oldPath.segmentCount() != 0) {
+				parseProblem(NLS.bind(Messages.projRead_badLinkName, oldPath, newPath));
 			} else {
-				((LinkDescription) objectStack.peek()).setName(newName);
+				((LinkDescription) objectStack.peek()).setPath(newPath);
 			}
 			state = S_LINK;
 		}
@@ -656,7 +654,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				break;
 			case S_LINK :
 				if (elementName.equals(NAME)) {
-					state = S_LINK_NAME;
+					state = S_LINK_PATH;
 				} else if (elementName.equals(TYPE)) {
 					state = S_LINK_TYPE;
 				} else if (elementName.equals(LOCATION)) {

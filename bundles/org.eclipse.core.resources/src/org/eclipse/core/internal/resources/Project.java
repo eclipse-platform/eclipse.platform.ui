@@ -886,7 +886,7 @@ public class Project extends Container implements IProject {
 			return status;
 		for (Iterator it = newLinks.values().iterator(); it.hasNext();) {
 			LinkDescription newLink = (LinkDescription) it.next();
-			IResource existing = findMember(newLink.getName());
+			IResource existing = findMember(newLink.getPath());
 			if (existing != null) {
 				if (!existing.isLinked())
 					//cannot create a link if a normal resource is blocking it
@@ -894,7 +894,7 @@ public class Project extends Container implements IProject {
 			} else {
 				//no conflicting old resource, just create the new link
 				try {
-					Resource toLink = workspace.newResource(getFullPath().append(newLink.getName()), newLink.getType());
+					Resource toLink = workspace.newResource(getFullPath().append(newLink.getPath()), newLink.getType());
 					toLink.createLink(newLink.getLocation(), IResource.ALLOW_MISSING_LOCAL, null);
 				} catch (CoreException e) {
 					status.merge(e.getStatus());
@@ -908,7 +908,7 @@ public class Project extends Container implements IProject {
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 */
 	public void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		// FIXME - update flags should be honoured:
+		// FIXME - update flags should be honored:
 		//    KEEP_HISTORY means capture .project file in local history
 		//    FORCE means overwrite any existing .project file 
 		monitor = Policy.monitorFor(monitor);
