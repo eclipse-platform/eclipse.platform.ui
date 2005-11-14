@@ -17,7 +17,7 @@ import java.util.Locale;
 import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.Converter;
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IUpdatableValue;
@@ -528,7 +528,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		IUpdatableValue uv = (IUpdatableValue) getDbc().createUpdatable(
 				new PropertyDescription(adventure, "name"));
 		uv.addChangeListener(new IChangeListener() {
-			public void handleChange(IChangeEvent changeEvent) {
+			public void handleChange(ChangeEvent changeEvent) {
 				// Count how many times adventure has changed
 				counter[0]++;
 			}

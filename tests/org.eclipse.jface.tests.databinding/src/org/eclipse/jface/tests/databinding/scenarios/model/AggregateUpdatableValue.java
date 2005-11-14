@@ -13,7 +13,6 @@ package org.eclipse.jface.tests.databinding.scenarios.model;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.UpdatableValue;
@@ -27,7 +26,7 @@ public class AggregateUpdatableValue extends UpdatableValue {
 	private boolean updating = false;
 
 	private IChangeListener listener = new IChangeListener() {
-		public void handleChange(IChangeEvent changeEvent) {
+		public void handleChange(ChangeEvent changeEvent) {
 			if (!updating) 
 			   fireChangeEvent(ChangeEvent.CHANGE, null, null);
 		}
@@ -59,7 +58,7 @@ public class AggregateUpdatableValue extends UpdatableValue {
 		} finally {
 			updating = false;
 		}
-		fireChangeEvent(IChangeEvent.CHANGE, oldValue, getValue());
+		fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
 	}
 
 	public Object getValue() {

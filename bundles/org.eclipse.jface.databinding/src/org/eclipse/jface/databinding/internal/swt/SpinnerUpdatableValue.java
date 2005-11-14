@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.jface.util.Assert;
@@ -41,7 +41,7 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 			spinner.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
-						fireChangeEvent(IChangeEvent.CHANGE, null, null);
+						fireChangeEvent(ChangeEvent.CHANGE, null, null);
 					}
 				}
 			});
@@ -71,7 +71,7 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 				Assert.isTrue(false, "invalid attribute name:" + attribute); //$NON-NLS-1$
 				return;
 			}
-			fireChangeEvent(IChangeEvent.CHANGE, new Integer(
+			fireChangeEvent(ChangeEvent.CHANGE, new Integer(
 					oldValue), new Integer(newValue));
 		} finally {
 			updating = false;

@@ -3,7 +3,7 @@
 <component xmlns="http://eclipse.org/component"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
-   name="JFace">
+   name="JFace Data Binding">
  <plugin id="org.eclipse.jface.databinding" />
 
  <package name="org.eclipse.jface.databinding" >

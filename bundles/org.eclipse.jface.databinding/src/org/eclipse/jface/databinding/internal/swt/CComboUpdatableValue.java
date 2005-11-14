@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.jface.databinding.ViewersProperties;
@@ -50,7 +50,7 @@ public class CComboUpdatableValue extends UpdatableValue {
 			ccombo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
-						fireChangeEvent(IChangeEvent.CHANGE, null, null);
+						fireChangeEvent(ChangeEvent.CHANGE, null, null);
 					}
 				}
 			});
@@ -82,7 +82,7 @@ public class CComboUpdatableValue extends UpdatableValue {
 		} finally {
 			updating = false;
 		}
-		fireChangeEvent(IChangeEvent.CHANGE, oldValue, ccombo
+		fireChangeEvent(ChangeEvent.CHANGE, oldValue, ccombo
 				.getText());
 	}
 

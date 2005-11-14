@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.jface.util.Assert;
@@ -50,7 +50,7 @@ public class ListUpdatableValue extends UpdatableValue {
 			list.addListener(SWT.Selection, new Listener(){			
 				public void handleEvent(Event event) {
 					if (!updating) {
-						fireChangeEvent(IChangeEvent.CHANGE, null, null);
+						fireChangeEvent(ChangeEvent.CHANGE, null, null);
 					}		
 				}
 			
@@ -81,7 +81,7 @@ public class ListUpdatableValue extends UpdatableValue {
 		} finally {
 			updating = false;
 		}
-		fireChangeEvent(IChangeEvent.CHANGE, oldValue, value);
+		fireChangeEvent(ChangeEvent.CHANGE, oldValue, value);
 	}
 
 	public Object getValue() {

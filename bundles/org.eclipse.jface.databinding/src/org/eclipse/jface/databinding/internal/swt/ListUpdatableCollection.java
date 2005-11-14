@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.Updatable;
@@ -47,7 +47,7 @@ public class ListUpdatableCollection extends Updatable implements IUpdatableColl
 //			list.addModifyListener(new ModifyListener() {
 //				public void modifyText(ModifyEvent e) {
 //					if (!updating) {
-//						fireChangeEvent(IChangeEvent.CHANGE, null, null);
+//						fireChangeEvent(ChangeEvent.CHANGE, null, null);
 //					}
 //				}
 //			});
@@ -70,7 +70,7 @@ public class ListUpdatableCollection extends Updatable implements IUpdatableColl
 			newItems[index]=(String)value;
 			System.arraycopy(list.getItems(), index, newItems,index+1, getSize()-index);
 			list.setItems(newItems);
-			fireChangeEvent(IChangeEvent.ADD, null, value, index);
+			fireChangeEvent(ChangeEvent.ADD, null, value, index);
 		}
 		finally{
 			updating=false;
@@ -88,7 +88,7 @@ public class ListUpdatableCollection extends Updatable implements IUpdatableColl
 			System.arraycopy(list.getItems(), 0, newItems,0, index);			
 			System.arraycopy(list.getItems(), index, newItems,index-1, getSize()-index);			
 			list.setItems(newItems);
-			fireChangeEvent(IChangeEvent.REMOVE, old, null, index);
+			fireChangeEvent(ChangeEvent.REMOVE, old, null, index);
 		}
 		finally{
 			updating=false;
@@ -98,7 +98,7 @@ public class ListUpdatableCollection extends Updatable implements IUpdatableColl
 	public void setElement(int index, Object value) {
 		String old = list.getItem(index);
 		list.setItem(index, (String)value);
-		fireChangeEvent(IChangeEvent.CHANGE, old, value, index);
+		fireChangeEvent(ChangeEvent.CHANGE, old, value, index);
 	}
 
 	public Object getElement(int index) {

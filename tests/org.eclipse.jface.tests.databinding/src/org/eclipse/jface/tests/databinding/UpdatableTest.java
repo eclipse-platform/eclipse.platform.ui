@@ -108,8 +108,8 @@ public class UpdatableTest extends TestCase {
 				.createMock(IChangeListener.class,
 						new Mocks.EqualityComparator() {
 							public boolean equals(Object o1, Object o2) {
-								IChangeEvent changeEvent1 = (IChangeEvent) o1;
-								IChangeEvent changeEvent2 = (IChangeEvent) o2;
+								ChangeEvent changeEvent1 = (ChangeEvent) o1;
+								ChangeEvent changeEvent2 = (ChangeEvent) o2;
 								return changeEvent1.getChangeType() == changeEvent2
 										.getChangeType()
 										&& changeEvent1.getPosition() == changeEvent2
@@ -130,14 +130,14 @@ public class UpdatableTest extends TestCase {
 		changeListenerMock.handleChange(new ChangeEvent(updatable, 0, null,
 				null, 0));
 		changeListenerMock.handleChange(new ChangeEvent(updatable,
-				IChangeEvent.CHANGE, o1, o2, 0));
+				ChangeEvent.CHANGE, o1, o2, 0));
 		changeListenerMock.handleChange(new ChangeEvent(updatable,
-				IChangeEvent.CHANGE, o1, o2, 42));
+				ChangeEvent.CHANGE, o1, o2, 42));
 		Mocks.startChecking(changeListenerMock);
 		updatable.fireChange(0, null, null);
 		updatable.fireChange(0, null, null, 0);
-		updatable.fireChange(IChangeEvent.CHANGE, o1, o2);
-		updatable.fireChange(IChangeEvent.CHANGE, o1, o2, 42);
+		updatable.fireChange(ChangeEvent.CHANGE, o1, o2);
+		updatable.fireChange(ChangeEvent.CHANGE, o1, o2, 42);
 		Mocks.verify(changeListenerMock);
 	}
 

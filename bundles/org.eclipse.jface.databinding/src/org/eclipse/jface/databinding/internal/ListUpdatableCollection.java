@@ -12,7 +12,7 @@ package org.eclipse.jface.databinding.internal;
 
 import java.util.List;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.Updatable;
 
@@ -43,7 +43,7 @@ public class ListUpdatableCollection extends Updatable implements
 		updating = true;
 		try {
 			elements.add(index, value);
-			fireChangeEvent(IChangeEvent.ADD, null, value, index);
+			fireChangeEvent(ChangeEvent.ADD, null, value, index);
 			return index;
 		} finally {
 			updating = false;
@@ -54,7 +54,7 @@ public class ListUpdatableCollection extends Updatable implements
 		updating = true;
 		try {
 			Object oldValue = elements.remove(index);
-			fireChangeEvent(IChangeEvent.REMOVE, oldValue, null, index);
+			fireChangeEvent(ChangeEvent.REMOVE, oldValue, null, index);
 		} finally {
 			updating = false;
 		}
@@ -64,7 +64,7 @@ public class ListUpdatableCollection extends Updatable implements
 		updating = true;
 		try {
 			Object oldValue = elements.set(index, value);
-			fireChangeEvent(IChangeEvent.CHANGE, oldValue, value, index);
+			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, index);
 		} finally {
 			updating = false;
 		}

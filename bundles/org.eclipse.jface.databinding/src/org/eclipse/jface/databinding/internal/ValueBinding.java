@@ -11,8 +11,8 @@
 package org.eclipse.jface.databinding.internal;
 
 import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IBindSpec;
-import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.IValidator;
@@ -63,10 +63,10 @@ public class ValueBinding extends Binding {
 		}
 	}
 
-	public void handleChange(IChangeEvent changeEvent) {
+	public void handleChange(ChangeEvent changeEvent) {
 		if (!updating) {
 			if (changeEvent.getUpdatable() == target) {
-				if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
+				if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
 					// we are notified of a pending change, do validation
 					// and veto the change if it is not valid
 					Object value = changeEvent.getNewValue();

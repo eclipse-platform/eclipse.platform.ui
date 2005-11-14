@@ -26,5 +26,5 @@ public interface IChangeListener {
 	/**
 	 * @param changeEvent
 	 */
-	public void handleChange(IChangeEvent changeEvent);
+	public void handleChange(ChangeEvent changeEvent);
 }

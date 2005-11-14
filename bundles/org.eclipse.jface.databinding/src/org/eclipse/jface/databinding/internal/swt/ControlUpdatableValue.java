@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.swt.widgets.Control;
@@ -37,7 +37,7 @@ public class ControlUpdatableValue extends UpdatableValue {
 	public void setValue(Object value) {
 		boolean oldValue = control.getEnabled();
 		control.setEnabled(((Boolean) value).booleanValue());
-		fireChangeEvent(IChangeEvent.CHANGE, new Boolean(oldValue), value);
+		fireChangeEvent(ChangeEvent.CHANGE, new Boolean(oldValue), value);
 	}
 
 	public Object getValue() {

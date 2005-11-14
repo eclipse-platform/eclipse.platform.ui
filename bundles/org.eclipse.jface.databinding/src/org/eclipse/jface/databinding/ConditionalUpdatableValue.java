@@ -26,8 +26,8 @@ public abstract class ConditionalUpdatableValue extends UpdatableValue {
 	private final IUpdatableValue innerUpdatableValue;
 
 	IChangeListener changeListener = new IChangeListener() {
-		public void handleChange(IChangeEvent changeEvent) {
-			fireChangeEvent(IChangeEvent.CHANGE, null, null);
+		public void handleChange(ChangeEvent changeEvent) {
+			fireChangeEvent(ChangeEvent.CHANGE, null, null);
 		}
 	};
 

@@ -38,12 +38,12 @@ abstract public class Updatable implements IUpdatable {
 		changeListeners.remove(changeListener);
 	}
 
-	protected IChangeEvent fireChangeEvent(int changeType, Object oldValue,
+	protected ChangeEvent fireChangeEvent(int changeType, Object oldValue,
 			Object newValue) {
 		return fireChangeEvent(changeType, oldValue, newValue, 0);
 	}
 
-	protected IChangeEvent fireChangeEvent(int changeType, Object oldValue, Object newValue, int position) {
+	protected ChangeEvent fireChangeEvent(int changeType, Object oldValue, Object newValue, int position) {
 		ChangeEvent changeEvent = new ChangeEvent(this, changeType, oldValue,
 				newValue, position);
 		IChangeListener[] listeners = (IChangeListener[]) changeListeners

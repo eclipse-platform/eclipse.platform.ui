@@ -13,7 +13,7 @@ package org.eclipse.jface.databinding.internal.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.Updatable;
 import org.eclipse.jface.viewers.AbstractListViewer;
@@ -70,7 +70,7 @@ public class UpdatableCollectionViewer extends Updatable implements
 					viewer.add(element);
 				else
 					viewer.refresh();
-				fireChangeEvent(IChangeEvent.ADD, null, element, position);
+				fireChangeEvent(ChangeEvent.ADD, null, element, position);
 				return position;
 			} finally {
 				updating = false;
@@ -97,7 +97,7 @@ public class UpdatableCollectionViewer extends Updatable implements
 				updating=true;
 				Object element = elements.remove(index);
 				viewer.remove(element);
-				fireChangeEvent(IChangeEvent.REMOVE, element, null, index);
+				fireChangeEvent(ChangeEvent.REMOVE, element, null, index);
 			} finally  {
 				updating=false;
 			}
@@ -118,7 +118,7 @@ public class UpdatableCollectionViewer extends Updatable implements
 					removeElement(index);
 					addElement(element, index);
 				}
-				fireChangeEvent(IChangeEvent.CHANGE, old, element, index);
+				fireChangeEvent(ChangeEvent.CHANGE, old, element, index);
 			} finally {
 				updating=false;
 			}

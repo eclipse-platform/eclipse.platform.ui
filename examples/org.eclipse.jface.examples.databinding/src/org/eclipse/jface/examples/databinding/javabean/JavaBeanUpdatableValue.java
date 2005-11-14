@@ -14,7 +14,7 @@ package org.eclipse.jface.examples.databinding.javabean;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
 
 /**
@@ -96,7 +96,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 	private void hookListener() {
 		listener = new PropertyChangeListener() {
 			public void propertyChange(java.beans.PropertyChangeEvent event) {
-				fireChangeEvent(IChangeEvent.CHANGE, event.getOldValue(), event
+				fireChangeEvent(ChangeEvent.CHANGE, event.getOldValue(), event
 						.getNewValue());
 			}
 		};
@@ -108,7 +108,7 @@ public class JavaBeanUpdatableValue extends UpdatableValue {
 		try {
 			Object oldValue = getValue();
 			getSetMethod().invoke(object, new Object[] { value });
-			fireChangeEvent(IChangeEvent.CHANGE, oldValue, getValue());
+			fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

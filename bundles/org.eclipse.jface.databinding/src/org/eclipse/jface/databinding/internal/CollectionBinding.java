@@ -11,8 +11,8 @@
 package org.eclipse.jface.databinding.internal;
 
 import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IBindSpec;
-import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IUpdatable;
@@ -64,11 +64,11 @@ public class CollectionBinding extends Binding implements IChangeListener {
 		}
 	}
 
-	public void handleChange(IChangeEvent changeEvent) {
+	public void handleChange(ChangeEvent changeEvent) {
 		if (!updating) {
 			IUpdatable notifier = changeEvent.getUpdatable();
 			if (notifier == target) {
-				if (changeEvent.getChangeType() == IChangeEvent.VERIFY) {
+				if (changeEvent.getChangeType() == ChangeEvent.VERIFY) {
 					// we are notified of a pending change, do validation
 					// and veto the change if it is not valid
 					Object value = changeEvent.getNewValue();
@@ -83,7 +83,7 @@ public class CollectionBinding extends Binding implements IChangeListener {
 					// Update	
 					// TODO, at this time we validate only the "value/conversion" not the index (add/remove)
 					String validationError = null;
-					if (changeEvent.getChangeType() != IChangeEvent.REMOVE) {
+					if (changeEvent.getChangeType() != ChangeEvent.REMOVE) {
 						Object value = changeEvent.getNewValue();
 						validationError = doValidateTarget(value);
 						context.updateValidationError(this, validationError);
@@ -112,7 +112,7 @@ public class CollectionBinding extends Binding implements IChangeListener {
 	 *            IUpdatable to be updated
 	 * @param event
 	 */
-	private void update(IUpdatableCollection needsUpdate, IUpdatableCollection source, IChangeEvent event) {
+	private void update(IUpdatableCollection needsUpdate, IUpdatableCollection source, ChangeEvent event) {
 		int row = event.getPosition();
 		if (row == -1) {
 			// full update
@@ -120,11 +120,11 @@ public class CollectionBinding extends Binding implements IChangeListener {
 		} else {
 			try {
 				updating = true;
-				if (event.getChangeType() == IChangeEvent.CHANGE)
+				if (event.getChangeType() == ChangeEvent.CHANGE)
 					needsUpdate.setElement(row, event.getNewValue());
-				else if (event.getChangeType() == IChangeEvent.ADD)
+				else if (event.getChangeType() == ChangeEvent.ADD)
 					needsUpdate.addElement(event.getNewValue(), row);
-				else if (event.getChangeType() == IChangeEvent.REMOVE)
+				else if (event.getChangeType() == ChangeEvent.REMOVE)
 					needsUpdate.removeElement(row);
 			} finally {
 				updating = false;

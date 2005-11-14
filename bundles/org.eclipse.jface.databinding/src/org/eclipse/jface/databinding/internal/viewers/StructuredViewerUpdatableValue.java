@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.viewers;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.jface.databinding.ViewersProperties;
 import org.eclipse.jface.util.Assert;
@@ -45,7 +45,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (!updating) {
-						fireChangeEvent(IChangeEvent.CHANGE, null, getValue());
+						fireChangeEvent(ChangeEvent.CHANGE, null, getValue());
 					}
 				}
 			});
@@ -62,7 +62,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 				Object oldValue= getValue();
 				viewer.setSelection(value == null ? StructuredSelection.EMPTY
 						: new StructuredSelection(value));
-				fireChangeEvent(IChangeEvent.CHANGE, oldValue, getValue());
+				fireChangeEvent(ChangeEvent.CHANGE, oldValue, getValue());
 			}
 		} finally {
 			updating = false;

@@ -46,7 +46,7 @@ public class SettableValue extends UpdatableValue {
 	public void setValue(Object value) {
 		Object oldValue = this.value;
 		this.value = value;
-		fireChangeEvent(IChangeEvent.CHANGE, oldValue, value);
+		fireChangeEvent(ChangeEvent.CHANGE, oldValue, value);
 	}
 
 	public Object getValue() {

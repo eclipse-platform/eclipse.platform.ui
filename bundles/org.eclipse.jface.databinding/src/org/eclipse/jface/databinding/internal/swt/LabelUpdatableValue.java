@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.swt.widgets.Label;
 
@@ -32,7 +32,7 @@ public class LabelUpdatableValue extends UpdatableValue {
 	public void setValue(Object value) {
 		String oldValue = label.getText();
 		label.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
-		fireChangeEvent(IChangeEvent.CHANGE, oldValue, label.getText());
+		fireChangeEvent(ChangeEvent.CHANGE, oldValue, label.getText());
 	}
 
 	public Object getValue() {

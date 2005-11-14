@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -27,7 +27,7 @@ public class ButtonUpdatableValue extends UpdatableValue {
 
 	private Listener updateListener = new Listener() {
 		public void handleEvent(Event event) {
-			fireChangeEvent(IChangeEvent.CHANGE, null, new Boolean(button
+			fireChangeEvent(ChangeEvent.CHANGE, null, new Boolean(button
 					.getSelection()));
 		}
 	};
@@ -47,7 +47,7 @@ public class ButtonUpdatableValue extends UpdatableValue {
 	public void setValue(Object value) {
 		button.setSelection(value == null ? false : ((Boolean) value)
 				.booleanValue());
-		fireChangeEvent(IChangeEvent.CHANGE, null, new Boolean(
+		fireChangeEvent(ChangeEvent.CHANGE, null, new Boolean(
 				button.getSelection()));
 	}
 

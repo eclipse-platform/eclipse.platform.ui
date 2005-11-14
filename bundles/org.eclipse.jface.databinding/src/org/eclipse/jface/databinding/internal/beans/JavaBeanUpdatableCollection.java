@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.Updatable;
 import org.eclipse.jface.util.Assert;
@@ -52,8 +52,8 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 					elementsListenedTo.remove(new IdentityWrapper(o));
 					unhookListener(o);
 				}
-				fireChangeEvent(IChangeEvent.CHANGE, null,
-						null, IChangeEvent.POSITION_UNKNOWN);
+				fireChangeEvent(ChangeEvent.CHANGE, null,
+						null, ChangeEvent.POSITION_UNKNOWN);
 			}
 		}
 	};
@@ -161,7 +161,11 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 	
 	private Object primGetValues() {
 		try {
-		   return descriptor.getReadMethod().invoke(object, new Object[0]);
+		   Method readMethod = descriptor.getReadMethod();
+			if (!readMethod.isAccessible()) {
+				readMethod.setAccessible(true);
+			}
+			return readMethod.invoke(object, new Object[0]);
 		} catch (IllegalArgumentException e) {
 		} catch (IllegalAccessException e) {
 		} catch (InvocationTargetException e) {
@@ -192,7 +196,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		if (index <= 0 || index > list.size())
 			index = list.size();
 		list.add(value);	
-		fireChangeEvent(IChangeEvent.ADD, null, value, index);
+		fireChangeEvent(ChangeEvent.ADD, null, value, index);
 		return index;
 		
 	}
@@ -213,7 +217,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		}
 		if (o!=null) {
 		   list.remove(o);
-		   fireChangeEvent(IChangeEvent.REMOVE, o, null, index);
+		   fireChangeEvent(ChangeEvent.REMOVE, o, null, index);
 		}		
 	}
 
@@ -223,7 +227,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 			Object[] values = getValues();
 			Object oldValue = values[index];
 			values[index] = value;
-			fireChangeEvent(IChangeEvent.CHANGE, oldValue, value, index);
+			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, index);
 		} finally {
 			updating = false;
 		}

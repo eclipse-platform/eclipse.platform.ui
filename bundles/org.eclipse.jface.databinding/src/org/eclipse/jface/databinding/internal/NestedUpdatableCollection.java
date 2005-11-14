@@ -11,7 +11,7 @@
 package org.eclipse.jface.databinding.internal;
 
 import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableCollection;
@@ -30,7 +30,7 @@ public class NestedUpdatableCollection extends Updatable implements
 	private boolean updating = false;
 
 	private IChangeListener innerChangeListener = new IChangeListener() {
-		public void handleChange(IChangeEvent changeEvent) {
+		public void handleChange(ChangeEvent changeEvent) {
 			if (!updating) {
 				fireChangeEvent(changeEvent.getChangeType(), changeEvent
 						.getOldValue(), changeEvent.getNewValue());
@@ -62,9 +62,9 @@ public class NestedUpdatableCollection extends Updatable implements
 		this.elementType = elementType;
 		updateInnerUpdatableValue(outerUpdatableValue);
 		IChangeListener outerChangeListener = new IChangeListener() {
-			public void handleChange(IChangeEvent changeEvent) {
+			public void handleChange(ChangeEvent changeEvent) {
 				updateInnerUpdatableValue(outerUpdatableValue);
-				fireChangeEvent(IChangeEvent.CHANGE, null, null, -1);
+				fireChangeEvent(ChangeEvent.CHANGE, null, null, -1);
 			}
 		};
 		outerUpdatableValue.addChangeListener(outerChangeListener);
