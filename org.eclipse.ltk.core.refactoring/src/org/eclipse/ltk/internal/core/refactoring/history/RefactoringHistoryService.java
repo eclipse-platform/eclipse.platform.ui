@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring.history;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -20,26 +19,13 @@ import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
@@ -59,7 +45,6 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringPreferenceConstants;
@@ -76,7 +61,6 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.UndoableOperation2ChangeAdapter;
 
-import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 /**
@@ -858,43 +842,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream) throws CoreException {
 		Assert.isNotNull(proxies);
 		Assert.isNotNull(stream);
-		final IRefactoringSessionTransformer transformer= new XmlRefactoringSessionTransformer();
-		try {
-			transformer.beginSession(null);
-			for (int index= 0; index < proxies.length; index++) {
-				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new NullProgressMonitor());
-				if (descriptor != null) {
-					try {
-						transformer.beginRefactoring(descriptor.getID(), -1, descriptor.getProject(), descriptor.getDescription(), descriptor.getComment());
-						for (final Iterator iterator= descriptor.getArguments().entrySet().iterator(); iterator.hasNext();) {
-							final Map.Entry entry= (Entry) iterator.next();
-							transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
-						}
-					} finally {
-						transformer.endRefactoring();
-					}
-				}
-			}
-		} finally {
-			transformer.endSession();
+		final List list= new ArrayList(proxies.length);
+		for (int index= 0; index < proxies.length; index++) {
+			final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new NullProgressMonitor());
+			if (descriptor != null)
+				list.add(descriptor);
 		}
-		final Object result= transformer.getResult();
-		if (result instanceof Node) {
-			try {
-				final Transformer transform= TransformerFactory.newInstance().newTransformer();
-				transform.setOutputProperty(OutputKeys.METHOD, IRefactoringSerializationConstants.OUTPUT_METHOD);
-				transform.setOutputProperty(OutputKeys.ENCODING, IRefactoringSerializationConstants.OUTPUT_ENCODING);
-				transform.transform(new DOMSource((Node) result), new StreamResult(stream));
-			} catch (TransformerConfigurationException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, 0, exception.getLocalizedMessage(), exception));
-			} catch (TransformerFactoryConfigurationError exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, 0, exception.getLocalizedMessage(), exception));
-			} catch (TransformerException exception) {
-				final Throwable throwable= exception.getException();
-				if (throwable instanceof IOException)
-					throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, 0, throwable.getLocalizedMessage(), throwable));
-				RefactoringCorePlugin.log(exception);
-			}
-		}
+		final RefactoringDescriptor[] descriptors= new RefactoringDescriptor[list.size()];
+		list.toArray(descriptors);
+		RefactoringHistoryManager.writeRefactoringDescriptors(stream, descriptors);
 	}
 }

@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -52,6 +53,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
@@ -123,6 +125,45 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
+	 * Reads refactoring descriptor proxies from the specified input stream.
+	 * 
+	 * @param stream
+	 *            the input stream where to read from
+	 * @param project
+	 *            the name of the project, or <code>null</code>
+	 * @param start
+	 *            the start time stamp, inclusive
+	 * @param end
+	 *            the end time stamp, inclusive
+	 * @return An array of refactoring descriptor proxies
+	 * @throws IOException
+	 *             if an input/output error occurs
+	 */
+	public static RefactoringDescriptorProxy[] readRefactoringDescriptorProxies(final InputStream stream, final String project, final long start, final long end) throws IOException {
+		Assert.isNotNull(stream);
+		Assert.isTrue(start >= 0);
+		Assert.isTrue(end >= start);
+		final List list= new ArrayList();
+		final BufferedReader reader= new BufferedReader(new InputStreamReader(stream));
+		while (reader.ready()) {
+			final String line= reader.readLine();
+			if (line != null) {
+				final int index= line.indexOf(DELIMITER_STAMP);
+				if (index > 0) {
+					try {
+						final long stamp= new Long(line.substring(0, index)).longValue();
+						if (stamp >= start && stamp <= end)
+							list.add(new RefactoringDescriptorProxy(line.substring(index + 1), project, stamp));
+					} catch (NumberFormatException exception) {
+						// Just skip
+					}
+				}
+			}
+		}
+		return (RefactoringDescriptorProxy[]) list.toArray(new RefactoringDescriptorProxy[list.size()]);
+	}
+
+	/**
 	 * Reads the specified number of refactoring descriptors from the head of
 	 * the refactoring history.
 	 * 
@@ -143,17 +184,7 @@ public final class RefactoringHistoryManager {
 			if (count > 0) {
 				final IFileInfo info= store.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				if (store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_HISTORY_FILE) && !info.isDirectory()) {
-					final RefactoringDescriptor[] results= new XmlRefactoringSessionReader().readSession(new InputSource(new BufferedInputStream(store.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL))))).getRefactorings();
-					Arrays.sort(results, new Comparator() {
-
-						public final int compare(final Object first, final Object second) {
-							return (int) (((RefactoringDescriptor) first).getTimeStamp() - ((RefactoringDescriptor) second).getTimeStamp());
-						}
-					});
-					monitor.worked(1);
-					final int size= count - descriptors.size();
-					for (int index= 0; index < results.length && index < size; index++)
-						descriptors.add(results[index]);
+					readRefactoringDescriptors(store.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)), descriptors, count, monitor);
 					monitor.worked(1);
 				} else
 					monitor.worked(3);
@@ -207,7 +238,7 @@ public final class RefactoringHistoryManager {
 				InputStream stream= null;
 				try {
 					stream= store.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-					final RefactoringDescriptorProxy[] proxies= readRefactoringDescriptors(stream, project, start, end);
+					final RefactoringDescriptorProxy[] proxies= readRefactoringDescriptorProxies(stream, project, start, end);
 					for (int index= 0; index < proxies.length; index++)
 						list.add(proxies[index]);
 					monitor.worked(1);
@@ -243,42 +274,61 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
+	 * Reads the specified number of refactoring descriptors from the
+	 * refactoring history.
+	 * 
+	 * @param stream
+	 *            the input stream where to read
+	 * @param descriptors
+	 *            the list of descriptors read from the history
+	 * @param count
+	 *            the total number of descriptors to be read
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @throws CoreException
+	 *             if an error occurs while reading the descriptors
+	 */
+	private static void readRefactoringDescriptors(final InputStream stream, final List descriptors, final int count, final IProgressMonitor monitor) throws CoreException {
+		try {
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 1);
+			final RefactoringDescriptor[] results= new XmlRefactoringSessionReader().readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
+			Arrays.sort(results, new Comparator() {
+
+				public final int compare(final Object first, final Object second) {
+					return (int) (((RefactoringDescriptor) first).getTimeStamp() - ((RefactoringDescriptor) second).getTimeStamp());
+				}
+			});
+			monitor.worked(1);
+			final int size= count - descriptors.size();
+			for (int index= 0; index < results.length && index < size; index++)
+				descriptors.add(results[index]);
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
 	 * Reads refactoring descriptor proxies from the specified input stream.
 	 * 
 	 * @param stream
 	 *            the input stream where to read from
-	 * @param project
-	 *            the name of the project, or <code>null</code>
 	 * @param start
 	 *            the start time stamp, inclusive
 	 * @param end
 	 *            the end time stamp, inclusive
 	 * @return An array of refactoring descriptor proxies
-	 * @throws IOException
-	 *             if an input/output error occurs
+	 * @throws CoreException
+	 *             if an error occurs while reading the descriptors
 	 */
-	public static RefactoringDescriptorProxy[] readRefactoringDescriptors(final InputStream stream, final String project, final long start, final long end) throws IOException {
+	public static RefactoringDescriptor[] readRefactoringDescriptors(final InputStream stream, final long start, final long end) throws CoreException {
 		Assert.isNotNull(stream);
 		Assert.isTrue(start >= 0);
 		Assert.isTrue(end >= start);
 		final List list= new ArrayList();
-		final BufferedReader reader= new BufferedReader(new InputStreamReader(stream));
-		while (reader.ready()) {
-			final String line= reader.readLine();
-			if (line != null) {
-				final int index= line.indexOf(DELIMITER_STAMP);
-				if (index > 0) {
-					try {
-						final long stamp= new Long(line.substring(0, index)).longValue();
-						if (stamp >= start && stamp <= end)
-							list.add(new RefactoringDescriptorProxy(line.substring(index + 1), project, stamp));
-					} catch (NumberFormatException exception) {
-						// Just skip
-					}
-				}
-			}
-		}
-		return (RefactoringDescriptorProxy[]) list.toArray(new RefactoringDescriptorProxy[list.size()]);
+		readRefactoringDescriptors(stream, list, Integer.MAX_VALUE, new NullProgressMonitor());
+		final RefactoringDescriptor[] descriptors= new RefactoringDescriptor[list.size()];
+		list.toArray(descriptors);
+		return descriptors;
 	}
 
 	/**
@@ -361,7 +411,7 @@ public final class RefactoringHistoryManager {
 					try {
 						file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
-						output.write(buffer.toString().getBytes("utf-8")); //$NON-NLS-1$
+						output.write(buffer.toString().getBytes(IRefactoringSerializationConstants.OUTPUT_ENCODING));
 					} finally {
 						if (output != null) {
 							try {
@@ -505,7 +555,7 @@ public final class RefactoringHistoryManager {
 			buffer.append(DELIMITER_STAMP);
 			buffer.append(descriptor.getDescription());
 			buffer.append(DELIMITER_ENTRY);
-			output.write(buffer.toString().getBytes("utf-8")); //$NON-NLS-1$
+			output.write(buffer.toString().getBytes(IRefactoringSerializationConstants.OUTPUT_ENCODING));
 		} finally {
 			monitor.done();
 			if (output != null) {
@@ -514,6 +564,60 @@ public final class RefactoringHistoryManager {
 				} catch (IOException exception) {
 					// Do nothing
 				}
+			}
+		}
+	}
+
+	/**
+	 * Writes refactoring descriptors to the specified output stream.
+	 * 
+	 * @param stream
+	 *            the output stream where to write to
+	 * @param descriptors
+	 *            the refactoring descriptors to write
+	 * @throws CoreException
+	 *             if an error occurs while writing the descriptors
+	 * @throws IllegalArgumentException
+	 */
+	public static void writeRefactoringDescriptors(final OutputStream stream, final RefactoringDescriptor[] descriptors) throws CoreException, IllegalArgumentException {
+		Assert.isNotNull(stream);
+		Assert.isNotNull(descriptors);
+		final IRefactoringSessionTransformer transformer= new XmlRefactoringSessionTransformer();
+		try {
+			transformer.beginSession(null);
+			for (int index= 0; index < descriptors.length; index++) {
+				final RefactoringDescriptor descriptor= descriptors[index];
+				if (descriptor != null) {
+					try {
+						transformer.beginRefactoring(descriptor.getID(), -1, descriptor.getProject(), descriptor.getDescription(), descriptor.getComment());
+						for (final Iterator iterator= descriptor.getArguments().entrySet().iterator(); iterator.hasNext();) {
+							final Map.Entry entry= (Entry) iterator.next();
+							transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
+						}
+					} finally {
+						transformer.endRefactoring();
+					}
+				}
+			}
+		} finally {
+			transformer.endSession();
+		}
+		final Object result= transformer.getResult();
+		if (result instanceof Node) {
+			try {
+				final Transformer transform= TransformerFactory.newInstance().newTransformer();
+				transform.setOutputProperty(OutputKeys.METHOD, IRefactoringSerializationConstants.OUTPUT_METHOD);
+				transform.setOutputProperty(OutputKeys.ENCODING, IRefactoringSerializationConstants.OUTPUT_ENCODING);
+				transform.transform(new DOMSource((Node) result), new StreamResult(stream));
+			} catch (TransformerConfigurationException exception) {
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, 0, exception.getLocalizedMessage(), exception));
+			} catch (TransformerFactoryConfigurationError exception) {
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, 0, exception.getLocalizedMessage(), exception));
+			} catch (TransformerException exception) {
+				final Throwable throwable= exception.getException();
+				if (throwable instanceof IOException)
+					throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, 0, throwable.getLocalizedMessage(), throwable));
+				RefactoringCorePlugin.log(exception);
 			}
 		}
 	}
