@@ -988,6 +988,15 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/* (non-Javadoc)
+	 * @see IResource#getRawLocation()
+	 */
+	public URI getRawLocationURI() {
+		if (isLinked())
+			return ((Project) getProject()).internalGetDescription().getLinkLocationURI(getProjectRelativePath());
+		return getLocationURI();
+	}
+
+	/* (non-Javadoc)
 	 * @see IResource#getResourceAttributes()
 	 */
 	public ResourceAttributes getResourceAttributes() {

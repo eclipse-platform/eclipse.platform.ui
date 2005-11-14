@@ -433,6 +433,14 @@ public class Project extends Container implements IProject {
 	}
 
 	/* (non-Javadoc)
+	 * @see IResource#getRawLocation()
+	 */
+	public URI getRawLocationURI() {
+		ProjectDescription description = internalGetDescription();
+		return description == null ? null : description.getLocationURI();
+	}
+
+	/* (non-Javadoc)
 	 * @see IProject#getReferencedProjects()
 	 */
 	public IProject[] getReferencedProjects() throws CoreException {
