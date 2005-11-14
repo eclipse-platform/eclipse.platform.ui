@@ -711,6 +711,25 @@ public class LinkedResourceTest extends ResourceTest {
 		assertTrue("2.1", link.isLinked());
 		assertEquals("2.2", resolvePath(existingLocation), link.getLocation());
 	}
+	
+	/**
+	 * Tests creating a linked resource whose location contains a colon character.
+	 */
+	public void testLocationWithColon() {
+		//windows does not allow a location with colon in the name
+		if (Platform.getOS().equals(Platform.OS_WIN32))
+			return;
+		IFolder folder = nonExistingFolderInExistingProject;
+		try {
+			//Note that on *nix, "c:/temp" is a relative path with two segments
+			//so this is treated as relative to an undefined path variable called "c:".
+			IPath location = new Path("c:/temp");
+			folder.createLink(location, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+			assertEquals("1.0", location, folder.getRawLocation());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+	}
 
 	/**
 	 * Automated test of IFile#createLink
