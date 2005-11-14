@@ -13,10 +13,10 @@ package org.eclipse.ui.tests.session;
 import junit.framework.TestCase;
 
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.ViewStack;
@@ -95,21 +95,13 @@ public class Bug108033Test extends TestCase {
 		verifyOrder(pres, new String[] { "Problems", "Tasks", "Progress" });
 	}
 
-	private IViewPart instantiateViews() {
-		IViewReference problemRef = fActivePage
-				.findViewReference(PROBLEM_VIEW_ID);
-		assertNotNull(problemRef);
-		IViewPart problemView = (IViewPart) problemRef.getPart(true);
+	private IViewPart instantiateViews() throws PartInitException {
+		IViewPart problemView = fActivePage.showView(PROBLEM_VIEW_ID);
+		assertNotNull(problemView);
 
 		// make sure all of the views have been instantiated
-		IViewReference stateRef = fActivePage
-				.findViewReference(PROGRESS_VIEW_ID);
-		assertNotNull(stateRef);
-		stateRef.getPart(true);
-
-		IViewReference taskRef = fActivePage.findViewReference(TASK_VIEW_ID);
-		assertNotNull(taskRef);
-		taskRef.getPart(true);
+		assertNotNull(fActivePage.showView(PROGRESS_VIEW_ID));
+		assertNotNull(fActivePage.showView(TASK_VIEW_ID));
 		return problemView;
 	}
 
