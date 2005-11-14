@@ -12,6 +12,7 @@ package org.eclipse.team.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.mapping.*;
@@ -115,6 +116,7 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	private void execute(IMergeContext context, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 		ModelProvider[] providers = getScope().getModelProviders();
+		providers = sortByExtension(providers);
 		List failedMerges = new ArrayList();
 		for (int i = 0; i < providers.length; i++) {
 			ModelProvider provider = providers[i];
@@ -128,6 +130,35 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 			requiresManualMerge((ModelProvider[]) failedMerges.toArray(new ModelProvider[failedMerges.size()]), context);
 		}
 		monitor.done();
+	}
+
+	private ModelProvider[] sortByExtension(ModelProvider[] providers) {
+		List result = new ArrayList();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider providerToInsert = providers[i];
+			int index = result.size();
+			for (int j = 0; j < result.size(); j++) {
+				ModelProvider provider = (ModelProvider) result.get(j);
+				if (extendsProvider(providerToInsert, provider)) {
+					index = j;
+					break;
+				}
+			}
+			result.add(index, providerToInsert);
+		}
+		return (ModelProvider[]) result.toArray(new ModelProvider[result.size()]);
+	}
+
+	private boolean extendsProvider(ModelProvider providerToInsert, ModelProvider provider) {
+		String[] extended = providerToInsert.getDescriptor().getExtendedModels();
+		// First search immediate dependents
+		for (int i = 0; i < extended.length; i++) {
+			String id = extended[i];
+			if (id.equals(provider.getDescriptor().getId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
