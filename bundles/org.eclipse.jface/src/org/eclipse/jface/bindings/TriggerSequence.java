@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.bindings;
 
-import java.util.Arrays;
-
 import org.eclipse.jface.util.Util;
 
 /**
@@ -46,7 +44,7 @@ public abstract class TriggerSequence {
 	 * values is <code>HASH_CODE_NOT_COMPUTED</code> iff the hash code has not
 	 * yet been computed.
 	 */
-	protected transient int hashCode;
+	protected transient int hashCode = HASH_CODE_NOT_COMPUTED;
 
 	/**
 	 * The list of trigger in this sequence. This value is never
@@ -100,17 +98,19 @@ public abstract class TriggerSequence {
 
 		return Util.endsWith(triggers, triggerSequence.triggers, equals);
 	}
-    /*
-     * (non-Javadoc)
-     * 
- 	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	public final boolean equals(final Object object) {
+		// Check if they're the same.
+		if (object == this) {
+			return true;
+		}
+
+		// Check if they're the same type.
 		if (!(object instanceof TriggerSequence))
 			return false;
 
 		final TriggerSequence triggerSequence = (TriggerSequence) object;
-		return Arrays.equals(triggers, triggerSequence.triggers);
+		return Util.equals(triggers, triggerSequence.triggers);
 	}
 
 	/**

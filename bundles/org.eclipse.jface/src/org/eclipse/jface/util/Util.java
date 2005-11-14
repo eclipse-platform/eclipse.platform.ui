@@ -270,6 +270,10 @@ public final class Util {
 	 */
 	public static final boolean equals(final Object[] leftArray,
 			final Object[] rightArray) {
+		if (leftArray == rightArray) {
+			return true;
+		}
+		
 		if (leftArray == null) {
 			return (rightArray == null);
 		} else if (rightArray == null) {

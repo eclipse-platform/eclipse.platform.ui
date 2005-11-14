@@ -702,9 +702,16 @@ public final class BindingManager extends HandleObjectManager implements
 		while (contextIdItr.hasNext()) {
 			String childContextId = (String) contextIdItr.next();
 			while (childContextId != null) {
+				// Check if we've already got the part of the tree from here up.
+				if (contextTree.containsKey(childContextId)) {
+					break;
+				}
+				
+				// Retrieve the context.
 				final Context childContext = contextManager
 						.getContext(childContextId);
 
+				// Add the child-parent pair to the tree.
 				try {
 					final String parentContextId = childContext.getParentId();
 					contextTree.put(childContextId, parentContextId);
