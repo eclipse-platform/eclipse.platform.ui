@@ -86,13 +86,13 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 							case RefactoringHistoryNode.YESTERDAY:
 								return getRefactoringHistoryEntries(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.TODAY)][0] - 1);
 							case RefactoringHistoryNode.THIS_WEEK:
-								return getRefactoringHistoryEntries(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.YESTERDAY)][0] - 1);
+								return getRefactoringHistoryDays(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.YESTERDAY)][0] - 1);
 							case RefactoringHistoryNode.LAST_WEEK:
-								return getRefactoringHistoryEntries(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_WEEK)][0] - 1);
+								return getRefactoringHistoryDays(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_WEEK)][0] - 1);
 							case RefactoringHistoryNode.THIS_MONTH:
-								return getRefactoringHistoryEntries(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.LAST_WEEK)][0] - 1);
+								return getRefactoringHistoryWeeks(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.LAST_WEEK)][0] - 1);
 							case RefactoringHistoryNode.LAST_MONTH:
-								return getRefactoringHistoryEntries(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_MONTH)][0] - 1);
+								return getRefactoringHistoryWeeks(node, stamp, structure[getRefactoringRootKindIndex(structure, RefactoringHistoryNode.THIS_MONTH)][0] - 1);
 							case RefactoringHistoryNode.DAY:
 								return getRefactoringHistoryEntries(node, stamp, stamp + 1000 * 60 * 60 * 24 - 1);
 							case RefactoringHistoryNode.WEEK:
