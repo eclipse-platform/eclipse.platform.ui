@@ -65,6 +65,7 @@
 				<pathelement path="../org.eclipse.help/@dot"/>
 				<pathelement path="../org.eclipse.core.runtime"/>
 				<pathelement path="../org.eclipse.core.runtime/@dot"/>
+				<pathelement path="../org.eclipse.core.equinox.common/@dot"/>
 				<pathelement path="../org.eclipse.osgi"/>
 				<pathelement path="../org.eclipse.osgi/@dot"/>
 				<pathelement path="../org.eclipse.help.appserver/bin"/>
