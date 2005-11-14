@@ -736,7 +736,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	public RefactoringHistory readRefactoringHistory(final InputStream stream) throws CoreException {
 		Assert.isNotNull(stream);
-		final RefactoringSessionDescriptor descriptor= new XmlRefactoringSessionReader().readSession(new InputSource(stream));
+		final RefactoringSessionDescriptor descriptor= new RefactoringHistoryReader().readSession(new InputSource(stream));
 		final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
 		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[descriptors.length];
 		for (int index= 0; index < descriptors.length; index++)

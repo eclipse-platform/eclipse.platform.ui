@@ -291,7 +291,7 @@ public final class RefactoringHistoryManager {
 	private static void readRefactoringDescriptors(final InputStream stream, final List descriptors, final int count, final IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 1);
-			final RefactoringDescriptor[] results= new XmlRefactoringSessionReader().readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
+			final RefactoringDescriptor[] results= new RefactoringHistoryReader().readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
 			Arrays.sort(results, new Comparator() {
 
 				public final int compare(final Object first, final Object second) {
@@ -462,7 +462,7 @@ public final class RefactoringHistoryManager {
 	 *             if an error occurs while transforming the descriptor
 	 */
 	private static Object transformDescriptor(final RefactoringDescriptor descriptor) throws CoreException {
-		final IRefactoringSessionTransformer transformer= new XmlRefactoringSessionTransformer();
+		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer();
 		try {
 			transformer.beginSession(null);
 			try {
@@ -582,7 +582,7 @@ public final class RefactoringHistoryManager {
 	public static void writeRefactoringDescriptors(final OutputStream stream, final RefactoringDescriptor[] descriptors) throws CoreException, IllegalArgumentException {
 		Assert.isNotNull(stream);
 		Assert.isNotNull(descriptors);
-		final IRefactoringSessionTransformer transformer= new XmlRefactoringSessionTransformer();
+		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer();
 		try {
 			transformer.beginSession(null);
 			for (int index= 0; index < descriptors.length; index++) {
@@ -807,7 +807,7 @@ public final class RefactoringHistoryManager {
 						if (file != null && file.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists()) {
 							input= new BufferedInputStream(file.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
 							if (input != null)
-								return new XmlRefactoringSessionReader().readDescriptor(new InputSource(input), stamp);
+								return new RefactoringHistoryReader().readDescriptor(new InputSource(input), stamp);
 						}
 					}
 				} catch (CoreException exception) {

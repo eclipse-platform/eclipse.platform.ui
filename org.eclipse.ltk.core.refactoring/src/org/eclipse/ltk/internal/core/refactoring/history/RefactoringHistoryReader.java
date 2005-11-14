@@ -39,15 +39,14 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * XML-based implementation of
- * {@link org.eclipse.ltk.internal.core.refactoring.history.IRefactoringSessionReader}.
+ * Reader for XML-based refactoring histories.
  * <p>
  * The input object is exspected to be of type {@link org.xml.sax.InputSource}.
  * </p>
  * 
  * @since 3.2
  */
-final class XmlRefactoringSessionReader extends DefaultHandler implements IRefactoringSessionReader {
+final class RefactoringHistoryReader extends DefaultHandler {
 
 	/** The comment of the refactoring session, or <code>null</code> */
 	private String fComment= null;
@@ -66,17 +65,6 @@ final class XmlRefactoringSessionReader extends DefaultHandler implements IRefac
 
 	/** The current version of the refactoring script, or <code>null</code> */
 	private String fVersion= null;
-
-	/**
-	 * Creates a core exception from the given throwable.
-	 * 
-	 * @param throwable
-	 *            the throwable
-	 * @return the core exception
-	 */
-	private CoreException createCoreException(final Throwable throwable) {
-		return new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, throwable.getLocalizedMessage(), null));
-	}
 
 	/**
 	 * Creates a new parser from the specified factory.
@@ -108,7 +96,15 @@ final class XmlRefactoringSessionReader extends DefaultHandler implements IRefac
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Reads a refactoring from the specified input object.
+	 * 
+	 * @param input
+	 *            the input object
+	 * @param stamp
+	 *            the time stamp of the refactoring
+	 * @return a corresponding refactoring descriptor, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while reading form the input
 	 */
 	public RefactoringDescriptor readDescriptor(Object input, long stamp) throws CoreException {
 		Assert.isTrue(stamp >= 0);
@@ -123,11 +119,11 @@ final class XmlRefactoringSessionReader extends DefaultHandler implements IRefac
 					return descriptor;
 				}
 			} catch (IOException exception) {
-				throw createCoreException(exception);
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 			} catch (ParserConfigurationException exception) {
-				throw createCoreException(exception);
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 			} catch (SAXException exception) {
-				throw createCoreException(exception);
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 			} finally {
 				fRefactoringDescriptors= null;
 				fRefactoringDescriptor= null;
@@ -140,7 +136,14 @@ final class XmlRefactoringSessionReader extends DefaultHandler implements IRefac
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Reads a refactoring session from the specified input object.
+	 * 
+	 * @param input
+	 *            the input object
+	 * @return a corresponding refactoring session descriptor, or
+	 *         <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while reading form the input
 	 */
 	public RefactoringSessionDescriptor readSession(final Object input) throws CoreException {
 		fStamp= -1;
@@ -154,11 +157,11 @@ final class XmlRefactoringSessionReader extends DefaultHandler implements IRefac
 					return descriptor;
 				}
 			} catch (IOException exception) {
-				throw createCoreException(exception);
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 			} catch (ParserConfigurationException exception) {
-				throw createCoreException(exception);
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 			} catch (SAXException exception) {
-				throw createCoreException(exception);
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 			} finally {
 				fRefactoringDescriptors= null;
 				fRefactoringDescriptor= null;
