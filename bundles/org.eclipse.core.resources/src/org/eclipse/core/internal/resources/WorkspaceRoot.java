@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.HashMap;
-import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -25,7 +25,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 
 	protected WorkspaceRoot(IPath path, Workspace container) {
 		super(path, container);
-		Assert.isTrue(path.equals(Path.ROOT));
+		OldAssert.isTrue(path.equals(Path.ROOT));
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		if (result == null) {
 			IPath projectPath = new Path(null, name).makeAbsolute();
 			String message = "Path for project must have only one segment."; //$NON-NLS-1$
-			Assert.isLegal(projectPath.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
+			OldAssert.isLegal(projectPath.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
 			result = new Project(projectPath, workspace);
 			projectTable.put(name, result);
 		}

@@ -19,7 +19,7 @@ package org.eclipse.core.internal.utils;
  * breakage when assertions in the code are added or removed.
  * </p>
  */
-class AssertionFailedException extends RuntimeException {
+class OldAssertionFailedException extends RuntimeException {
 	/**
 	 * All serializable objects should have a stable serialVersionUID
 	 */
@@ -28,7 +28,7 @@ class AssertionFailedException extends RuntimeException {
 	/** 
 	 * Constructs a new exception with the given message.
 	 */
-	public AssertionFailedException(String detail) {
+	public OldAssertionFailedException(String detail) {
 		super(detail);
 	}
 }

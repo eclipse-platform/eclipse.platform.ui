@@ -17,7 +17,7 @@ import org.eclipse.core.internal.localstore.BucketTree;
 import org.eclipse.core.internal.localstore.Bucket.Entry;
 import org.eclipse.core.internal.properties.PropertyBucket.PropertyEntry;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -87,9 +87,9 @@ public class PropertyManager2 implements IPropertyManager {
 	 * Copies all properties from the source path to the target path, to the given depth.
 	 */
 	private void copyProperties(final IPath source, final IPath destination, int depth) throws CoreException {
-		Assert.isLegal(source.segmentCount() > 0);
-		Assert.isLegal(destination.segmentCount() > 0);
-		Assert.isLegal(source.segmentCount() > 1 || destination.segmentCount() == 1);
+		OldAssert.isLegal(source.segmentCount() > 0);
+		OldAssert.isLegal(destination.segmentCount() > 0);
+		OldAssert.isLegal(source.segmentCount() > 1 || destination.segmentCount() == 1);
 
 		// copy history by visiting the source tree
 		PropertyCopyVisitor copyVisitor = new PropertyCopyVisitor(source, destination);

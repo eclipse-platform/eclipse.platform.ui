@@ -12,7 +12,7 @@ package org.eclipse.core.internal.dtree;
 
 import java.io.DataOutput;
 import java.io.IOException;
-import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -178,7 +178,7 @@ public class DataTreeWriter {
 			}
 		}
 
-		Assert.isTrue(currentPath.equals(path), "dtree.navigationError"); //$NON-NLS-1$
+		OldAssert.isTrue(currentPath.equals(path), "dtree.navigationError"); //$NON-NLS-1$
 
 		/* recursively write the subtree we're interested in */
 		writeNode(node, path, depth);

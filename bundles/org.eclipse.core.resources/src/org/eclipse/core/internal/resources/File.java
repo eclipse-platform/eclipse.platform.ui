@@ -37,7 +37,7 @@ public class File extends Resource implements IFile {
 		try {
 			String message = NLS.bind(Messages.resources_settingContents, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
-			Assert.isNotNull(content, "Content cannot be null."); //$NON-NLS-1$
+			OldAssert.isNotNull(content, "Content cannot be null."); //$NON-NLS-1$
 			if (workspace.shouldValidate)
 				workspace.validateSave(this);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);

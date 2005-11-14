@@ -13,7 +13,7 @@ package org.eclipse.core.internal.watson;
 import java.io.*;
 import org.eclipse.core.internal.dtree.DataTreeReader;
 import org.eclipse.core.internal.dtree.IDataFlattener;
-import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -48,7 +48,7 @@ public class ElementTreeReader {
 	 * the given element info flattener.
 	 */
 	public ElementTreeReader(final IElementInfoFlattener factory) {
-		Assert.isNotNull(factory);
+		OldAssert.isNotNull(factory);
 		elementInfoFlattener = factory;
 
 		/* wrap the IElementInfoFlattener in an IDataFlattener */

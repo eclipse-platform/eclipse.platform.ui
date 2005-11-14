@@ -66,7 +66,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 		try {
 			comparison = ((NodeComparison) data).asReverseComparison(comparator);
 		} catch (ClassCastException e) {
-			Assert.isTrue(false, Messages.dtree_reverse);
+			OldAssert.isTrue(false, Messages.dtree_reverse);
 		}
 
 		int nextChild = 0;

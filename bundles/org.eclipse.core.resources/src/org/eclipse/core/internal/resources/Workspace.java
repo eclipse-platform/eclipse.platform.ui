@@ -160,8 +160,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @see IWorkspace#addSaveParticipant(Plugin, ISaveParticipant)
 	 */
 	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException {
-		Assert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
-		Assert.isNotNull(participant, "Participant must not be null"); //$NON-NLS-1$
+		OldAssert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
+		OldAssert.isNotNull(participant, "Participant must not be null"); //$NON-NLS-1$
 		return saveManager.addParticipant(plugin, participant);
 	}
 
@@ -169,7 +169,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		WorkManager workManager = getWorkManager();
 		workManager.incrementNestedOperations();
 		if (!workManager.isBalanced())
-			Assert.isTrue(false, "Operation was not prepared."); //$NON-NLS-1$
+			OldAssert.isTrue(false, "Operation was not prepared."); //$NON-NLS-1$
 		if (workManager.getPreparedOperationDepth() > 1) {
 			if (createNewTree && tree.isImmutable())
 				newWorkingTree();
@@ -548,7 +548,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			int totalWork = Policy.totalWork * opWork / Policy.opWork;
 			String message = Messages.resources_copying_0;
 			monitor.beginTask(message, totalWork);
-			Assert.isLegal(resources != null);
+			OldAssert.isLegal(resources != null);
 			if (resources.length == 0)
 				return Status.OK_STATUS;
 			// to avoid concurrent changes to this array
@@ -845,7 +845,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @see IWorkspace#deleteMarkers(IMarker[])
 	 */
 	public void deleteMarkers(IMarker[] markers) throws CoreException {
-		Assert.isNotNull(markers);
+		OldAssert.isNotNull(markers);
 		if (markers.length == 0)
 			return;
 		// clone to avoid outside changes
@@ -907,7 +907,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			try {
 				notificationManager.beginNotify();
 				// check for a programming error on using beginOperation/endOperation
-				Assert.isTrue(workManager.getPreparedOperationDepth() > 0, "Mismatched begin/endOperation"); //$NON-NLS-1$
+				OldAssert.isTrue(workManager.getPreparedOperationDepth() > 0, "Mismatched begin/endOperation"); //$NON-NLS-1$
 
 				// At this time we need to re-balance the nested operations. It is necessary because
 				// build() and snapshot() should not fail if they are called.
@@ -950,7 +950,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @see IWorkspace#forgetSavedTree(String)
 	 */
 	public void forgetSavedTree(String pluginId) {
-		Assert.isNotNull(pluginId, "PluginId must not be null"); //$NON-NLS-1$
+		OldAssert.isNotNull(pluginId, "PluginId must not be null"); //$NON-NLS-1$
 		saveManager.forgetSavedTree(pluginId);
 	}
 
@@ -1133,7 +1133,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			if (path.segmentCount() == 0) {
 				ResourceInfo info = (ResourceInfo) tree.getTreeData();
-				Assert.isNotNull(info, "Tree root info must never be null"); //$NON-NLS-1$
+				OldAssert.isNotNull(info, "Tree root info must never be null"); //$NON-NLS-1$
 				return info;
 			}
 			ResourceInfo result = null;
@@ -1420,7 +1420,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			int totalWork = Policy.totalWork * opWork / Policy.opWork;
 			String message = Messages.resources_moving_0;
 			monitor.beginTask(message, totalWork);
-			Assert.isLegal(resources != null);
+			OldAssert.isLegal(resources != null);
 			if (resources.length == 0)
 				return Status.OK_STATUS;
 			resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
@@ -1540,13 +1540,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			case IResource.FOLDER :
 				if (path.segmentCount() < ICoreConstants.MINIMUM_FOLDER_SEGMENT_LENGTH) {
 					message = "Path must include project and resource name: " + path.toString(); //$NON-NLS-1$
-					Assert.isLegal(false, message);
+					OldAssert.isLegal(false, message);
 				}
 				return new Folder(path.makeAbsolute(), this);
 			case IResource.FILE :
 				if (path.segmentCount() < ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH) {
 					message = "Path must include project and resource name: " + path.toString(); //$NON-NLS-1$
-					Assert.isLegal(false, message);
+					OldAssert.isLegal(false, message);
 				}
 				return new File(path.makeAbsolute(), this);
 			case IResource.PROJECT :
@@ -1554,7 +1554,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			case IResource.ROOT :
 				return (Resource) getRoot();
 		}
-		Assert.isLegal(false);
+		OldAssert.isLegal(false);
 		// will never get here because of assertion.
 		return null;
 	}
@@ -1610,7 +1610,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// This method is not inside an operation because it is the one responsible for
 		// creating the WorkManager object (who takes care of operations).
 		String message = Messages.resources_workspaceOpen;
-		Assert.isTrue(!isOpen(), message);
+		OldAssert.isTrue(!isOpen(), message);
 		if (!getMetaArea().hasSavedWorkspace()) {
 			message = Messages.resources_readWorkspaceMeta;
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, Platform.getLocation(), message, null);
@@ -1683,7 +1683,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @see IWorkspace#removeSaveParticipant(Plugin)
 	 */
 	public void removeSaveParticipant(Plugin plugin) {
-		Assert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
+		OldAssert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
 		saveManager.removeParticipant(plugin);
 	}
 

@@ -13,7 +13,7 @@ package org.eclipse.core.internal.localstore;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.utils.Queue;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -65,7 +65,7 @@ public class UnifiedTree {
 	}
 
 	public void accept(IUnifiedTreeVisitor visitor, int depth) throws CoreException {
-		Assert.isNotNull(root);
+		OldAssert.isNotNull(root);
 		initializeQueue();
 		setLevel(0, depth);
 		while (!queue.isEmpty()) {

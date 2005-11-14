@@ -13,7 +13,7 @@ package org.eclipse.core.internal.events;
 import java.util.Map;
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -161,7 +161,7 @@ public abstract class InternalBuilder {
 	 * @see #getProject()
 	 */
 	final void setProject(IProject value) {
-		Assert.isTrue(project == null);
+		OldAssert.isTrue(project == null);
 		project = value;
 	}
 

@@ -198,9 +198,9 @@ public class HistoryStore2 implements IHistoryStore {
 
 		final IPath source = sourceResource.getFullPath();
 		final IPath destination = destinationResource.getFullPath();
-		Assert.isLegal(source.segmentCount() > 0);
-		Assert.isLegal(destination.segmentCount() > 0);
-		Assert.isLegal(source.segmentCount() > 1 || destination.segmentCount() == 1);
+		OldAssert.isLegal(source.segmentCount() > 0);
+		OldAssert.isLegal(destination.segmentCount() > 0);
+		OldAssert.isLegal(source.segmentCount() > 1 || destination.segmentCount() == 1);
 
 		// special case: we are moving a project
 		if (moving && sourceResource.getType() == IResource.PROJECT) {

@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.net.URI;
-import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -40,8 +40,8 @@ public class LinkDescription {
 
 	public LinkDescription(IResource linkedResource, URI location) {
 		super();
-		Assert.isNotNull(linkedResource);
-		Assert.isNotNull(location);
+		OldAssert.isNotNull(linkedResource);
+		OldAssert.isNotNull(location);
 		this.type = linkedResource.getType();
 		this.path = linkedResource.getProjectRelativePath();
 		this.localLocation = location;

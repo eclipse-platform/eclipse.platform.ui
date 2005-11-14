@@ -197,7 +197,7 @@ public class CharsetManager implements IManager {
 	 * @return the charset setting for the given resource
 	 */
 	public String getCharsetFor(IPath resourcePath, boolean recurse) {
-		Assert.isLegal(resourcePath.segmentCount() >= 1);
+		OldAssert.isLegal(resourcePath.segmentCount() >= 1);
 		IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
 		Preferences encodingSettings = getPreferences(project, false);
 		if (encodingSettings == null)

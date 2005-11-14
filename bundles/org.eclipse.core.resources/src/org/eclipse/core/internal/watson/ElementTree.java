@@ -148,7 +148,7 @@ public class ElementTree {
 	 * @return this tree.
 	 */
 	public ElementTree collapseTo(ElementTree parent) {
-		Assert.isTrue(tree.isImmutable());
+		OldAssert.isTrue(tree.isImmutable());
 		if (this == parent) {
 			//already collapsed
 			return this;
@@ -294,7 +294,7 @@ public class ElementTree {
 
 			/* if the table is now empty, we have a winner */
 		}
-		Assert.isNotNull(oldestSoFar);
+		OldAssert.isNotNull(oldestSoFar);
 
 		/* return the appropriate index */
 		for (int i = 0; i < trees.length; i++) {
@@ -302,7 +302,7 @@ public class ElementTree {
 				return i;
 			}
 		}
-		Assert.isTrue(false, "Should not get here"); //$NON-NLS-1$
+		OldAssert.isTrue(false, "Should not get here"); //$NON-NLS-1$
 		return -1;
 	}
 
@@ -312,7 +312,7 @@ public class ElementTree {
 	 * The given element must be present in this tree.
 	 */
 	public int getChildCount(IPath key) {
-		Assert.isNotNull(key);
+		OldAssert.isNotNull(key);
 		return getChildIDs(key).length;
 	}
 
@@ -343,7 +343,7 @@ public class ElementTree {
 	 * The given element must be present in this tree.
 	 */
 	public IPath[] getChildren(IPath key) {
-		Assert.isNotNull(key);
+		OldAssert.isNotNull(key);
 		return getChildIDs(key);
 	}
 
@@ -637,7 +637,7 @@ public class ElementTree {
 	 * this method will fail.
 	 */
 	public synchronized Object openElementData(IPath key) {
-		Assert.isTrue(!isImmutable());
+		OldAssert.isTrue(!isImmutable());
 
 		/* don't allow modification of the implicit root */
 		if (key.isRoot())
@@ -681,7 +681,7 @@ public class ElementTree {
 		if (key.isRoot())
 			return;
 
-		Assert.isNotNull(key);
+		OldAssert.isNotNull(key);
 		// Clear the lookup cache, in case the element being modified is the same
 		// as for the last lookup.
 		lookupCache = lookupCacheIgnoreCase = null;

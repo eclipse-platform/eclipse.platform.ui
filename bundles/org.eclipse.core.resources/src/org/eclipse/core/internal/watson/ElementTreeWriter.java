@@ -13,7 +13,7 @@ package org.eclipse.core.internal.watson;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.dtree.*;
-import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -158,7 +158,7 @@ public class ElementTreeWriter {
 
 		deltaToWrite = completeTree.forwardDeltaWith(derivedTree, comparator);
 
-		Assert.isTrue(deltaToWrite.isImmutable());
+		OldAssert.isTrue(deltaToWrite.isImmutable());
 		dataTreeWriter.writeTree(deltaToWrite, path, depth, output);
 	}
 

@@ -57,7 +57,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 			}
 			if (bytes.length > 65535) {
 				String msg = "Marker property value is too long: " + valueString.substring(0, 10000); //$NON-NLS-1$
-				Assert.isTrue(false, msg);
+				OldAssert.isTrue(false, msg);
 			}
 			return value;
 		}
@@ -165,7 +165,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	}
 
 	public void setAttributes(String[] attributeNames, Object[] values) {
-		Assert.isTrue(attributeNames.length == values.length);
+		OldAssert.isTrue(attributeNames.length == values.length);
 		for (int i = 0; i < attributeNames.length; i++)
 			setAttribute(attributeNames[i], values[i]);
 	}

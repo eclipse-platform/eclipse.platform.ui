@@ -205,7 +205,7 @@ public class Project extends Container implements IProject {
 		// FIXME - the logic here for copying projects needs to be moved to Resource.copy
 		//   so that IResource.copy(IProjectDescription,int,IProgressMonitor) works properly for
 		//   projects and honours all update flags
-		Assert.isNotNull(destination);
+		OldAssert.isNotNull(destination);
 		internalCopy(destination, updateFlags, monitor);
 	}
 
@@ -723,7 +723,7 @@ public class Project extends Container implements IProject {
 	 * @see IProject#move(IProjectDescription, boolean, IProgressMonitor)
 	 */
 	public void move(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(destination);
+		OldAssert.isNotNull(destination);
 		move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 	}
 
@@ -731,7 +731,7 @@ public class Project extends Container implements IProject {
 	 * @see IResource#move(IProjectDescription, int, IProgressMonitor)
 	 */
 	public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(description);
+		OldAssert.isNotNull(description);
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = NLS.bind(Messages.resources_moving, getFullPath());

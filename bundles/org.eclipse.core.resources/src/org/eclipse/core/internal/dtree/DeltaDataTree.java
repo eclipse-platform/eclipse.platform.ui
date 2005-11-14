@@ -519,7 +519,7 @@ public class DeltaDataTree extends AbstractDataTree {
 		if (childNodes != null) {
 			// Some deltas carry info about children, but there is
 			// no complete node against which they describe deltas.
-			Assert.isTrue(false, Messages.dtree_malformedTree);
+			OldAssert.isTrue(false, Messages.dtree_malformedTree);
 		}
 
 		// Node is missing or has been deleted.

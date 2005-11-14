@@ -25,9 +25,9 @@ import org.eclipse.osgi.util.NLS;
  * specifically).
  * </p>
  */
-public final class Assert {
+public final class OldAssert {
 	/* This class is not intended to be instantiated. */
-	private Assert() {
+	private OldAssert() {
 		// not allowed
 	}
 
@@ -81,7 +81,7 @@ public final class Assert {
 	 */
 	public static void isNotNull(Object object, String message) {
 		if (object == null)
-			throw new AssertionFailedException(NLS.bind(Messages.utils_null, message));
+			throw new OldAssertionFailedException(NLS.bind(Messages.utils_null, message));
 	}
 
 	/** Asserts that the given boolean is <code>true</code>. If this
@@ -106,7 +106,7 @@ public final class Assert {
 	 */
 	public static boolean isTrue(boolean expression, String message) {
 		if (!expression)
-			throw new AssertionFailedException(NLS.bind(Messages.utils_failed, message));
+			throw new OldAssertionFailedException(NLS.bind(Messages.utils_failed, message));
 		return expression;
 	}
 }

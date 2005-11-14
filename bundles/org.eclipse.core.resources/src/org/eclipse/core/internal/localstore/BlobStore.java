@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Set;
 import org.eclipse.core.filesystem.*;
-import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.*;
 
@@ -39,10 +39,10 @@ public class BlobStore {
 	 * should be an existing valid directory.
 	 */
 	public BlobStore(IFileStore store, int limit) {
-		Assert.isNotNull(store);
+		OldAssert.isNotNull(store);
 		localStore = store;
-		Assert.isTrue(localStore.fetchInfo().isDirectory());
-		Assert.isTrue(limit == 256 || limit == 128 || limit == 64 || limit == 32 || limit == 16 || limit == 8 || limit == 4 || limit == 2 || limit == 1);
+		OldAssert.isTrue(localStore.fetchInfo().isDirectory());
+		OldAssert.isTrue(limit == 256 || limit == 128 || limit == 64 || limit == 32 || limit == 16 || limit == 8 || limit == 4 || limit == 2 || limit == 1);
 		mask = (byte) (limit - 1);
 	}
 
@@ -87,7 +87,7 @@ public class BlobStore {
 	 * Deletes a blobFile.
 	 */
 	public void deleteBlob(UniversalUniqueIdentifier uuid) {
-		Assert.isNotNull(uuid);
+		OldAssert.isNotNull(uuid);
 		try {
 			fileFor(uuid).delete(EFS.NONE, null);
 		} catch (CoreException e) {

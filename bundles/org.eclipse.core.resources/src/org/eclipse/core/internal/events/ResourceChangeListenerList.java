@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.resources.IResourceChangeListener;
 
 /**
@@ -63,7 +63,7 @@ public class ResourceChangeListenerList {
 	 * @param mask event types
 	 */
 	public synchronized void add(IResourceChangeListener listener, int mask) {
-		Assert.isNotNull(listener);
+		OldAssert.isNotNull(listener);
 		if (mask == 0) {
 			remove(listener);
 			return;
@@ -138,7 +138,7 @@ public class ResourceChangeListenerList {
 	 * @param listener the listener to remove
 	 */
 	public synchronized void remove(IResourceChangeListener listener) {
-		Assert.isNotNull(listener);
+		OldAssert.isNotNull(listener);
 		final int oldSize = listeners.length;
 		for (int i = 0; i < oldSize; ++i) {
 			if (listeners[i].listener == listener) {
