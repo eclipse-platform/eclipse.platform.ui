@@ -27,44 +27,14 @@ package org.eclipse.jface.databinding;
 public interface IDataBindingContext {
 
 	/**
-	 * Constant specifiying that validation or update events from UI updatables
-	 * should be triggered early, typically on each keystroke.
+	 * Policy constant specifying that update or validation should occur automatically. 
 	 */
-	public static final int TIME_EARLY = 1;
-
-	/**
-	 * Constant specifiying that validation or update events from UI updatables
-	 * should be triggered late, typically on focus lost.
-	 */
-	public static final int TIME_LATE = 2;
-
-	/**
-	 * Constant specifiying that validation or update events from UI updatables
-	 * should never be triggered. Note that this means that the updatable will
-	 * not track the underlying widget's changes.
-	 */
-	public static final int TIME_NEVER = 3;
-
-	/**
-	 * Key for the update time property in the properties map (see
-	 * collectProperties) that is passed to IUpdatableFactory
-	 */
-	public static final String UPDATE_TIME = "org.eclipse.jface.databinding.updateTime"; //$NON-NLS-1$
-
-	/**
-	 * Key for the validation time property in the properties map (see
-	 * collectProperties) that is passed to IUpdatableFactory
-	 */
-	public static final String VALIDATION_TIME = "org.eclipse.jface.databinding.validationTime"; //$NON-NLS-1$
+	public static final int POLICY_AUTOMATIC = 1;
 	
 	/**
-	 * Allow one to nesting
-	 * @param parent 
-	 * 
-	 * @deprecated not sure that this one really helps for shadowing issues more than one
-	 *             adding factories in a particualr order from scratch
+	 * Policy constant specifying that update or validation should only occur when explicitly requested. 
 	 */
-	public void setParent(IDataBindingContext parent);
+	public static final int POLICY_EXPLICIT = 2;
 
 	/**
 	 * Method addBindSupportFactory. Add a factory for converters, validators,
@@ -159,27 +129,7 @@ public interface IDataBindingContext {
 	public IUpdatableValue getPartialValidationMessage();
 
 	/**
-	 * @return the default updateTime
-	 */
-	public int getUpdateTime();
-
-	/**
 	 * @return the validation updatable
 	 */
 	public IUpdatableValue getValidationMessage();
-
-	/**
-	 * @return the default validation time
-	 */
-	public int getValidationTime();
-
-	/**
-	 * @param updateTime
-	 */
-	public void setUpdateTime(int updateTime);
-
-	/**
-	 * @param validationTime
-	 */
-	public void setValidationTime(int validationTime);
 }

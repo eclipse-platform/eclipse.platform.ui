@@ -544,11 +544,9 @@ public class DataBindingContext implements IValidationContext,
 
 	protected IUpdatable doCreateUpdatable(Object description,
 			IValidationContext thisDatabindingContext) throws BindingException {
-		Map properties = new HashMap();
-		collectProperties(properties);
 		for (int i = factories.size() - 1; i >= 0; i--) {
 			IUpdatableFactory factory = (IUpdatableFactory) factories.get(i);
-			IUpdatable result = factory.createUpdatable(properties,
+			IUpdatable result = factory.createUpdatable(null,
 					description, thisDatabindingContext);
 			if (result != null) {
 				return result;
@@ -562,16 +560,6 @@ public class DataBindingContext implements IValidationContext,
 				+ description);
 	}
 
-	protected void collectProperties(Map properties) {
-		if (parent != null) {
-			parent.collectProperties(properties);
-		}
-		properties.put(IDataBindingContext.VALIDATION_TIME, new Integer(
-				validationTime));
-		properties
-				.put(IDataBindingContext.UPDATE_TIME, new Integer(updateTime));
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -583,26 +571,6 @@ public class DataBindingContext implements IValidationContext,
 		// may hide default ones (e.g., a new PropertyDescriptor may overide the
 		// ond for EMF)
 		factories.add(updatableFactory);
-	}
-
-	public int getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(int updateTime) {
-		this.updateTime = updateTime;
-	}
-
-	public int getValidationTime() {
-		return validationTime;
-	}
-
-	public void setValidationTime(int validationTime) {
-		this.validationTime = validationTime;
-	}
-
-	public void setParent(IDataBindingContext parent) {
-		this.parent=(DataBindingContext)parent;		
 	}
 
 }

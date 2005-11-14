@@ -20,12 +20,12 @@ import org.eclipse.jface.databinding.Converter;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IConverter;
-import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.IValidator;
 import org.eclipse.jface.databinding.IdentityConverter;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.SWTProperties;
+import org.eclipse.jface.databinding.SWTUpdatableFactory;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
 import org.eclipse.jface.tests.databinding.scenarios.model.Cart;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
@@ -428,8 +428,8 @@ public class PropertyScenarios extends ScenariosTestCase {
 		spinner1.setMaximum(100);
 		Spinner spinner2 = new Spinner(getComposite(), SWT.NONE);
 		spinner2.setMaximum(1);
-		getDbc().bind(spinner1, new PropertyDescription(spinner2,
-				SWTProperties.MAX), null);
+		getDbc().bind(spinner1,
+				new PropertyDescription(spinner2, SWTProperties.MAX), null);
 		assertEquals(1, spinner1.getSelection());
 		spinner1.setSelection(10);
 		spinner1.notifyListeners(SWT.Modify, new Event());
@@ -476,11 +476,9 @@ public class PropertyScenarios extends ScenariosTestCase {
 				}, null));
 		// bind the enabled state of the two text widgets to one of the
 		// checkboxes each.
-		getDbc().bind(
-				new PropertyDescription(text1, SWTProperties.ENABLED),
+		getDbc().bind(new PropertyDescription(text1, SWTProperties.ENABLED),
 				checkbox1Selected, null);
-		getDbc().bind(
-				new PropertyDescription(text2, SWTProperties.ENABLED),
+		getDbc().bind(new PropertyDescription(text2, SWTProperties.ENABLED),
 				checkbox2Selected, null);
 		assertEquals(true, text1.getEnabled());
 		assertEquals(false, text2.getEnabled());
@@ -498,8 +496,9 @@ public class PropertyScenarios extends ScenariosTestCase {
 	public void testScenario13() throws BindingException {
 		// Changing the update policy to be not automatic, but on explicit
 		// method call (e.g. triggered by a button click).
-		getDbc().setUpdateTime(IDataBindingContext.TIME_LATE);
-		getDbc().setValidationTime(IDataBindingContext.TIME_LATE);
+		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_LATE);
+		getSWTUpdatableFactory().setValidationTime(
+				SWTUpdatableFactory.TIME_LATE);
 		Text text = new Text(getComposite(), SWT.BORDER);
 		getDbc().bind(text, new PropertyDescription(adventure, "name"), null);
 		// uncomment the following line to see what's happening
@@ -521,7 +520,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		Text t1 = new Text(getComposite(), SWT.BORDER);
 		Text t2 = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().setUpdateTime(IDataBindingContext.TIME_EARLY);
+		getSWTUpdatableFactory().setUpdateTime(SWTUpdatableFactory.TIME_EARLY);
 		getDbc().bind(t1, new PropertyDescription(adventure, "name"), null);
 		getDbc().bind(t2, new PropertyDescription(adventure, "name"), null);
 

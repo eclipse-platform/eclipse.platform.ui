@@ -29,11 +29,11 @@ public class BindSpec implements IBindSpec {
 
 	private IValidator validator;
 
-	private final int modelUpdatePolicy;
+	private final Integer modelUpdatePolicy;
 
-	private final int validatePolicy;
+	private final Integer validatePolicy;
 
-	private final int targetUpdatePolicy;
+	private final Integer targetUpdatePolicy;
 
 	/**
 	 * Creates a bind spec with the given converter, validator, and update
@@ -46,7 +46,8 @@ public class BindSpec implements IBindSpec {
 	 * @param targetUpdatePolicy
 	 */
 	public BindSpec(IConverter converter, IValidator validator,
-			int modelUpdatePolicy, int validatePolicy, int targetUpdatePolicy) {
+			Integer modelUpdatePolicy, Integer validatePolicy,
+			Integer targetUpdatePolicy) {
 		this.converter = converter;
 		this.validator = validator;
 		this.modelUpdatePolicy = modelUpdatePolicy;
@@ -62,23 +63,22 @@ public class BindSpec implements IBindSpec {
 	 * @param validator
 	 */
 	public BindSpec(IConverter converter, IValidator validator) {
-		this(converter, validator, IBindSpec.POLICY_CONTEXT,
-				IBindSpec.POLICY_CONTEXT, IBindSpec.POLICY_CONTEXT);
+		this(converter, validator, null, null, null);
 	}
 
 	public IConverter getConverter() {
 		return converter;
 	}
 
-	public int getModelUpdatePolicy() {
+	public Integer getModelUpdatePolicy() {
 		return modelUpdatePolicy;
 	}
 
-	public int getTargetUpdatePolicy() {
+	public Integer getTargetUpdatePolicy() {
 		return targetUpdatePolicy;
 	}
 
-	public int getValidatePolicy() {
+	public Integer getValidatePolicy() {
 		return validatePolicy;
 	}
 

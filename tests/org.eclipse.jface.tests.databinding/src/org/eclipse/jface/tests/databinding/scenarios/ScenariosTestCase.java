@@ -15,6 +15,7 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.SWTUpdatableFactory;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -43,12 +44,18 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	protected Text dummyText;
 
+	private SWTUpdatableFactory swtUpdatableFactory;
+
 	protected Composite getComposite() {
 		return composite;
 	}
 
 	protected IDataBindingContext getDbc() {
 		return dbc;
+	}
+	
+	protected SWTUpdatableFactory getSWTUpdatableFactory() {
+		return swtUpdatableFactory;
 	}
 
 	public Shell getShell() {
@@ -103,6 +110,7 @@ abstract public class ScenariosTestCase extends TestCase {
 		SampleData.initializeData(); // test may manipulate the data... let
 		// all start from fresh
 		dbc = SampleData.getDatabindingContext(composite);
+		swtUpdatableFactory = SampleData.getSWTUpdatableFactory();
 		dummyText = new Text(getComposite(), SWT.NONE);
 		dummyText.setText("dummy");
 	}

@@ -48,6 +48,27 @@ import org.eclipse.swt.widgets.Text;
  */
 final public class SWTUpdatableFactory implements IUpdatableFactory {
 
+	/**
+	 * Constant specifiying that validation or update events from UI updatables
+	 * should be triggered early, typically on each keystroke.
+	 */
+	public static final int TIME_EARLY = 0;
+	/**
+	 * Constant specifiying that validation or update events from UI updatables
+	 * should be triggered late, typically on focus lost.
+	 */
+	public static final int TIME_LATE = 1;
+	/**
+	 * Constant specifiying that validation or update events from UI updatables
+	 * should never be triggered. Note that this means that the updatable will
+	 * not track the underlying widget's changes.
+	 */
+	public static final int TIME_NEVER = 2;
+	
+	private int updateTime = TIME_LATE;
+	
+	private int validateTime = TIME_EARLY;
+	
 	public IUpdatable createUpdatable(Map properties,
 			Object description, IValidationContext validationContext) {
 		if (description instanceof PropertyDescription) {
@@ -140,15 +161,12 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 			return new UpdatableCollectionViewer(
 					(AbstractListViewer) description);
 		} else if (description instanceof Text) {
-			int validatePolicy = getPolicy(properties,
-					IDataBindingContext.VALIDATION_TIME, SWT.Modify);
-			int updatePolicy = getPolicy(properties,
-					IDataBindingContext.UPDATE_TIME, SWT.FocusOut);
+			int validatePolicy = new int[]{SWT.Modify,SWT.FocusOut,SWT.None}[validateTime];
+			int updatePolicy = new int[]{SWT.Modify,SWT.FocusOut,SWT.None}[updateTime];
 			return new TextUpdatableValue((Text) description,
 					validatePolicy, updatePolicy);
 		} else if (description instanceof Button) {
-			int updatePolicy = getPolicy(properties,
-					IDataBindingContext.UPDATE_TIME, SWT.FocusOut);
+			int updatePolicy = new int[]{SWT.Modify,SWT.FocusOut,SWT.None}[updateTime];
 			return new ButtonUpdatableValue((Button) description,
 					updatePolicy);
 		} else if (description instanceof Combo) {
@@ -171,23 +189,11 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 		return null;
 	}
 
-	private int getPolicy(Map properties, String propertyName,
-			int defaultPolicy) {
-		int policy = defaultPolicy;
-		Integer time = (Integer) properties.get(propertyName);
-		if (time != null) {
-			switch (time.intValue()) {
-			case IDataBindingContext.TIME_EARLY:
-				policy = SWT.Modify;
-				break;
-			case IDataBindingContext.TIME_LATE:
-				policy = SWT.FocusOut;
-				break;
-			case IDataBindingContext.TIME_NEVER:
-				policy = SWT.None;
-				break;
-			}
-		}
-		return policy;
+	public void setUpdateTime(int time) {
+		updateTime = time;
+	}
+
+	public void setValidationTime(int time) {
+		validateTime = time;
 	}
 }
