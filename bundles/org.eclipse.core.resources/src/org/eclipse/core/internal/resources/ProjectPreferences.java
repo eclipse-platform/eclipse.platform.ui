@@ -499,7 +499,11 @@ public class ProjectPreferences extends EclipsePreferences {
 			preferencesChanged(file.getProject());
 	}
 
-	private synchronized void removeNode(String path) {
+	/**
+	 * @deprecated
+	 * TODO: remove when runtime method with same signature is added
+	 */
+	protected synchronized void removeNode(String path) {
 		if (children != null) {
 			if (children.remove(path) != null)
 				makeDirty();
