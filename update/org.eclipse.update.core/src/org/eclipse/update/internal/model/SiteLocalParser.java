@@ -18,6 +18,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.core.Assert;
 
 /**
  * parse the default site.xml

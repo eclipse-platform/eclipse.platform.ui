@@ -17,6 +17,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.core.Assert;
 
 /**
  * Root model object. Extended by all model objects.
