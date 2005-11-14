@@ -14,9 +14,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;

@@ -12,8 +12,8 @@ package org.eclipse.ui.internal.cheatsheets;
 
 import java.util.*;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.*;
 
 import org.eclipse.ui.internal.cheatsheets.registry.*;
