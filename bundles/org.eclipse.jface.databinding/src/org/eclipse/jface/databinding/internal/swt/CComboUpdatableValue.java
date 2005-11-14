@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.databinding.ViewersProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyEvent;
@@ -41,11 +42,11 @@ public class CComboUpdatableValue extends UpdatableValue {
 	public CComboUpdatableValue(CCombo ccombo, String attribute) {
 		this.ccombo = ccombo;
 		this.attribute = attribute;
-		if (attribute.equals(DataBinding.CONTENT))
-			attribute = DataBinding.TEXT;
+		if (attribute.equals(ViewersProperties.CONTENT))
+			attribute = SWTProperties.TEXT;
 
-		if (attribute.equals(DataBinding.SELECTION) || 
-			attribute.equals(DataBinding.TEXT)) {
+		if (attribute.equals(SWTProperties.SELECTION) || 
+			attribute.equals(SWTProperties.TEXT)) {
 			ccombo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
@@ -62,10 +63,10 @@ public class CComboUpdatableValue extends UpdatableValue {
 		String oldValue = ccombo.getText();
 		try {
 			updating = true;
-			if (attribute.equals(DataBinding.TEXT)) {
+			if (attribute.equals(SWTProperties.TEXT)) {
 				String stringValue = value!=null?value.toString() : ""; //$NON-NLS-1$
 				ccombo.setText(stringValue);
-			} else if (attribute.equals(DataBinding.SELECTION)) {
+			} else if (attribute.equals(SWTProperties.SELECTION)) {
 				String items[] = ccombo.getItems();
 				int index = -1;
 				if (items != null && value != null) {
@@ -86,10 +87,10 @@ public class CComboUpdatableValue extends UpdatableValue {
 	}
 
 	public Object getValue() {
-		if (attribute.equals(DataBinding.TEXT)) {
+		if (attribute.equals(SWTProperties.TEXT)) {
 			return ccombo.getText();
 		}
-		Assert.isTrue(attribute.equals(DataBinding.SELECTION), "unexpected attribute: " + attribute); //$NON-NLS-1$
+		Assert.isTrue(attribute.equals(SWTProperties.SELECTION), "unexpected attribute: " + attribute); //$NON-NLS-1$
 		// The problem with a ccombo, is that it changes the text an fires before 
 		// it update its selection index
 		return ccombo.getText();
@@ -100,8 +101,8 @@ public class CComboUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		Assert.isTrue(attribute.equals(DataBinding.TEXT)
-				|| attribute.equals(DataBinding.SELECTION),
+		Assert.isTrue(attribute.equals(SWTProperties.TEXT)
+				|| attribute.equals(SWTProperties.SELECTION),
 				"unexpected attribute: " + attribute); //$NON-NLS-1$
 		return String.class;
 	}

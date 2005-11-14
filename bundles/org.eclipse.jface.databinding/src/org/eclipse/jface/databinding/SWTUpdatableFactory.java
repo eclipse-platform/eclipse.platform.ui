@@ -8,17 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.jface.databinding.internal.swt;
+package org.eclipse.jface.databinding;
 
 import java.util.Map;
 
-import org.eclipse.jface.databinding.DataBinding;
-import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.IValidationContext;
-import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.databinding.TableViewerDescription;
+import org.eclipse.jface.databinding.internal.swt.ButtonUpdatableValue;
+import org.eclipse.jface.databinding.internal.swt.CComboUpdatableCollection;
+import org.eclipse.jface.databinding.internal.swt.CComboUpdatableValue;
+import org.eclipse.jface.databinding.internal.swt.ComboUpdatableCollection;
+import org.eclipse.jface.databinding.internal.swt.ComboUpdatableValue;
+import org.eclipse.jface.databinding.internal.swt.ControlUpdatableValue;
+import org.eclipse.jface.databinding.internal.swt.LabelUpdatableValue;
+import org.eclipse.jface.databinding.internal.swt.ListUpdatableCollection;
+import org.eclipse.jface.databinding.internal.swt.ListUpdatableValue;
+import org.eclipse.jface.databinding.internal.swt.SpinnerUpdatableValue;
+import org.eclipse.jface.databinding.internal.swt.TableUpdatableValue;
+import org.eclipse.jface.databinding.internal.swt.TextUpdatableValue;
 import org.eclipse.jface.databinding.internal.viewers.StructuredViewerUpdatableValue;
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollection;
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollectionExtended;
@@ -37,7 +42,11 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
-public class SWTUpdatableFactory implements IUpdatableFactory {
+/**
+ * @since 3.2
+ *
+ */
+final public class SWTUpdatableFactory implements IUpdatableFactory {
 
 	public IUpdatable createUpdatable(Map properties,
 			Object description, IValidationContext validationContext) {
@@ -47,76 +56,76 @@ public class SWTUpdatableFactory implements IUpdatableFactory {
 			Object attribute = ((PropertyDescription) description)
 					.getPropertyID();
 			if (object instanceof Control
-					&& DataBinding.ENABLED.equals(attribute)) {
+					&& SWTProperties.ENABLED.equals(attribute)) {
 				return new ControlUpdatableValue((Control) object,
 						(String) attribute);
 			}
 			if (object instanceof Spinner
-					&& DataBinding.SELECTION.equals(attribute)
-					|| DataBinding.MIN.equals(attribute)
-					|| DataBinding.MAX.equals(attribute)) {
+					&& SWTProperties.SELECTION.equals(attribute)
+					|| SWTProperties.MIN.equals(attribute)
+					|| SWTProperties.MAX.equals(attribute)) {
 				return new SpinnerUpdatableValue((Spinner) object,
 						(String) attribute);
 			}
 			if (object instanceof Text
-					&& DataBinding.TEXT.equals(attribute)) {
+					&& SWTProperties.TEXT.equals(attribute)) {
 				return new TextUpdatableValue((Text) object,
 						SWT.Modify, SWT.Modify);
 			}
 			if (object instanceof Label
-					&& DataBinding.TEXT.equals(attribute)) {
+					&& SWTProperties.TEXT.equals(attribute)) {
 				return new LabelUpdatableValue((Label) object);
 			}
 			if (object instanceof Button
-					&& DataBinding.SELECTION.equals(attribute)) {
+					&& SWTProperties.SELECTION.equals(attribute)) {
 				return new ButtonUpdatableValue((Button) object,
 						SWT.Selection);
 			}
 			if (object instanceof Combo
-					&& (DataBinding.TEXT.equals(attribute) || DataBinding.SELECTION
+					&& (SWTProperties.TEXT.equals(attribute) || SWTProperties.SELECTION
 							.equals(attribute))) {
 				return new ComboUpdatableValue((Combo) object,
 						(String) attribute);
 			} else if (object instanceof Combo
-					&& DataBinding.ITEMS.equals(attribute)) {
+					&& SWTProperties.ITEMS.equals(attribute)) {
 				return new ComboUpdatableCollection((Combo) object,
 						(String) attribute);
 			}
 			if (object instanceof CCombo
-					&& (DataBinding.TEXT.equals(attribute) || DataBinding.SELECTION
+					&& (SWTProperties.TEXT.equals(attribute) || SWTProperties.SELECTION
 							.equals(attribute))) {
 				return new CComboUpdatableValue((CCombo) object,
 						(String) attribute);
 			} else if (object instanceof CCombo
-					&& DataBinding.ITEMS.equals(attribute)) {
+					&& SWTProperties.ITEMS.equals(attribute)) {
 				return new CComboUpdatableCollection((CCombo) object,
 						(String) attribute);
 			}
 			if (object instanceof List
-					&& DataBinding.SELECTION.equals(attribute)) {
+					&& SWTProperties.SELECTION.equals(attribute)) {
 				// SWT.SINGLE selection only
 				return new ListUpdatableValue((List) object,
 						(String) attribute);
 			} else if (object instanceof List
-					&& DataBinding.ITEMS.equals(attribute)) {
+					&& SWTProperties.ITEMS.equals(attribute)) {
 				return new ListUpdatableCollection((List) object,
 						(String) attribute);
 			}
 			if (object instanceof StructuredViewer
-					&& DataBinding.SELECTION.equals(attribute)) {
+					&& SWTProperties.SELECTION.equals(attribute)) {
 				return new StructuredViewerUpdatableValue(
 						(StructuredViewer) object, (String) attribute);
 			}
 			if (object instanceof AbstractListViewer
-					&& DataBinding.SELECTION.equals(attribute))
+					&& SWTProperties.SELECTION.equals(attribute))
 				return new StructuredViewerUpdatableValue(
 						(AbstractListViewer) object, (String) attribute);
 			else if (object instanceof AbstractListViewer
-					&& DataBinding.CONTENT.equals(attribute))
+					&& ViewersProperties.CONTENT.equals(attribute))
 				return new UpdatableCollectionViewer(
 						(AbstractListViewer) object);
 			if (object instanceof TableViewer
-					&& DataBinding.CONTENT.equals(attribute)) {
+					&& ViewersProperties.CONTENT.equals(attribute)) {
 				return new TableViewerUpdatableCollection(
 						(TableViewer) object);
 			}
@@ -144,16 +153,16 @@ public class SWTUpdatableFactory implements IUpdatableFactory {
 					updatePolicy);
 		} else if (description instanceof Combo) {
 			return new ComboUpdatableCollection((Combo) description,
-					DataBinding.CONTENT);
+					ViewersProperties.CONTENT);
 		} else if (description instanceof Spinner) {
 			return new SpinnerUpdatableValue((Spinner) description,
-					DataBinding.SELECTION);
+					SWTProperties.SELECTION);
 		} else if (description instanceof CCombo) {
 			return new CComboUpdatableCollection((CCombo) description,
-					DataBinding.CONTENT);
+					ViewersProperties.CONTENT);
 		} else if (description instanceof List) {
 			return new ListUpdatableCollection((List) description,
-					DataBinding.CONTENT);
+					ViewersProperties.CONTENT);
 		} else if (description instanceof TableViewerDescription) {
 			return new TableViewerUpdatableCollectionExtended(
 					(TableViewerDescription) description,

@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios.model;
 
+import org.eclipse.jface.databinding.BeanUpdatableFactory;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.ViewersUpdatableFactory;
+import org.eclipse.jface.databinding.SWTUpdatableFactory;
 import org.eclipse.swt.widgets.Control;
 
 public class SampleData {
@@ -156,8 +159,8 @@ public class SampleData {
 
 	public static IDataBindingContext getDatabindingContext(Control aControl) {
 		IDataBindingContext result = DataBinding.createContext(aControl,
-				new IUpdatableFactory[] { DataBinding.getJavaBeanFactory(), DataBinding.getSwtFactory(),
-					                      DataBinding.getJFaceFactory() });
+				new IUpdatableFactory[] { new BeanUpdatableFactory(), new SWTUpdatableFactory(),
+					                      new ViewersUpdatableFactory() });
 		return result;
 	}
 

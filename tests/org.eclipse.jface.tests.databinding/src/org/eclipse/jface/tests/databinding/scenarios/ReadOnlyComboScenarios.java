@@ -18,8 +18,9 @@ import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.jface.databinding.BindingException;
-import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.PropertyDescription;
+import org.eclipse.jface.databinding.SWTProperties;
+import org.eclipse.jface.databinding.ViewersProperties;
 import org.eclipse.jface.tests.databinding.scenarios.model.Account;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
 import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
@@ -159,7 +160,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 		getDbc()
 				.bind(
 						new PropertyDescription(cviewer,
-								DataBinding.SELECTION),
+								ViewersProperties.SINGLE_SELECTION),
 						new PropertyDescription(skiAdventure, "defaultLodging"),
 						null);
 
@@ -266,7 +267,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 
 		// simple Combo's selection bound to the Account's country property
 		getDbc().bind(
-				new PropertyDescription(combo, DataBinding.SELECTION),
+				new PropertyDescription(combo, SWTProperties.SELECTION),
 				new PropertyDescription(account, "country"), null);
 
 		// Drive the combo selection
@@ -311,7 +312,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 
 		// simple Combo's selection bound to the Account's country property
 		getDbc().bind(
-				new PropertyDescription(combo, DataBinding.SELECTION),
+				new PropertyDescription(combo, SWTProperties.SELECTION),
 				new PropertyDescription(account, "country"), null);
 
 		// Drive the combo selection
@@ -345,7 +346,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 
 		// Use the Viewers visual Combo (Strings) to set the account's country
 		getDbc().bind(
-				new PropertyDescription(combo, DataBinding.SELECTION),
+				new PropertyDescription(combo, SWTProperties.SELECTION),
 				new PropertyDescription(account, "country"), null);
 
 		// Change the selection of the ComboViewer to all possible accounts, and
@@ -390,12 +391,12 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 		getDbc()
 				.bind(
 						new PropertyDescription(cviewer,
-								DataBinding.SELECTION),
+								ViewersProperties.SINGLE_SELECTION),
 						new PropertyDescription(skiAdventure, "defaultLodging"),
 						null);
 		getDbc().bind(
 				new PropertyDescription(otherViewer,
-						DataBinding.SELECTION),
+						ViewersProperties.SINGLE_SELECTION),
 				new PropertyDescription(skiAdventure, "defaultLodging"), null);
 
 		Lodging lodging = (Lodging) catalog.getLodgings()[0];
@@ -438,7 +439,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 
 		// simple Combo's selection bound to the Account's country property
 		getDbc().bind(
-				new PropertyDescription(ccombo, DataBinding.SELECTION),
+				new PropertyDescription(ccombo, SWTProperties.SELECTION),
 				new PropertyDescription(account, "country"), null);
 
 		// Drive the combo selection
@@ -475,7 +476,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 		getDbc()
 				.bind(
 						new PropertyDescription(swtlist,
-								DataBinding.SELECTION),
+								SWTProperties.SELECTION),
 						new PropertyDescription(account, "country"), null);
 
 		String selection = (String) list.get(2);

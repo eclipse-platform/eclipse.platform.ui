@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.databinding.ViewersProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -41,11 +42,11 @@ public class ComboUpdatableValue extends UpdatableValue {
 	public ComboUpdatableValue(Combo combo, String attribute) {
 		this.combo = combo;
 		this.attribute = attribute;
-		if (attribute.equals(DataBinding.CONTENT))
-			attribute = DataBinding.TEXT;
+		if (attribute.equals(ViewersProperties.CONTENT))
+			attribute = SWTProperties.TEXT;
 
-		if (attribute.equals(DataBinding.TEXT)
-				|| attribute.equals(DataBinding.SELECTION)) {
+		if (attribute.equals(SWTProperties.TEXT)
+				|| attribute.equals(SWTProperties.SELECTION)) {
 			combo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
@@ -61,10 +62,10 @@ public class ComboUpdatableValue extends UpdatableValue {
 		String oldValue = combo.getText();
 		try {
 			updating = true;
-			if (attribute.equals(DataBinding.TEXT)) {
+			if (attribute.equals(SWTProperties.TEXT)) {
 				String stringValue = value!=null?value.toString() : ""; //$NON-NLS-1$
 				combo.setText(stringValue);
-			} else if (attribute.equals(DataBinding.SELECTION)) {
+			} else if (attribute.equals(SWTProperties.SELECTION)) {
 				String items[] = combo.getItems();
 				int index = -1;
 				if (items != null && value != null) {
@@ -84,10 +85,10 @@ public class ComboUpdatableValue extends UpdatableValue {
 	}
 
 	public Object getValue() {
-		if (attribute.equals(DataBinding.TEXT)) {
+		if (attribute.equals(SWTProperties.TEXT)) {
 			return combo.getText();
 		}
-		Assert.isTrue(attribute.equals(DataBinding.SELECTION),
+		Assert.isTrue(attribute.equals(SWTProperties.SELECTION),
 				"unexpected attribute" + attribute); //$NON-NLS-1$
 		int index = combo.getSelectionIndex();
 		if (index >= 0)
@@ -96,8 +97,8 @@ public class ComboUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		Assert.isTrue(attribute.equals(DataBinding.TEXT)
-				|| attribute.equals(DataBinding.SELECTION),
+		Assert.isTrue(attribute.equals(SWTProperties.TEXT)
+				|| attribute.equals(SWTProperties.SELECTION),
 				"unexpected attribute" + attribute); //$NON-NLS-1$
 		return String.class;
 	}

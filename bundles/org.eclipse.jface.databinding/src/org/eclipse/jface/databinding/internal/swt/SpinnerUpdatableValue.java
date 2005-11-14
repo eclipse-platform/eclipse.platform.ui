@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.ModifyEvent;
@@ -37,7 +37,7 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 	public SpinnerUpdatableValue(Spinner spinner, String attribute) {
 		this.spinner = spinner;
 		this.attribute = attribute;
-		if (attribute.equals(DataBinding.SELECTION)) {
+		if (attribute.equals(SWTProperties.SELECTION)) {
 			spinner.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
@@ -45,8 +45,8 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 					}
 				}
 			});
-		} else if (!attribute.equals(DataBinding.MIN)
-				&& !attribute.equals(DataBinding.MAX)) {
+		} else if (!attribute.equals(SWTProperties.MIN)
+				&& !attribute.equals(SWTProperties.MAX)) {
 			throw new IllegalArgumentException(
 					"Attribute name not valid: " + attribute); //$NON-NLS-1$
 		}
@@ -58,13 +58,13 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 		try {
 			updating = true;
 			newValue = ((Integer) value).intValue();
-			if (attribute.equals(DataBinding.SELECTION)) {
+			if (attribute.equals(SWTProperties.SELECTION)) {
 				oldValue = spinner.getSelection();
 				spinner.setSelection(newValue);
-			} else if (attribute.equals(DataBinding.MIN)) {
+			} else if (attribute.equals(SWTProperties.MIN)) {
 				oldValue = spinner.getMinimum();
 				spinner.setMinimum(newValue);
-			} else if (attribute.equals(DataBinding.MAX)) {
+			} else if (attribute.equals(SWTProperties.MAX)) {
 				oldValue = spinner.getMaximum();
 				spinner.setMaximum(newValue);
 			} else {
@@ -80,11 +80,11 @@ public class SpinnerUpdatableValue extends UpdatableValue {
 
 	public Object getValue() {
 		int value = 0;
-		if (attribute.equals(DataBinding.SELECTION)) {
+		if (attribute.equals(SWTProperties.SELECTION)) {
 			value = spinner.getSelection();
-		} else if (attribute.equals(DataBinding.MIN)) {
+		} else if (attribute.equals(SWTProperties.MIN)) {
 			value = spinner.getMinimum();
-		} else if (attribute.equals(DataBinding.MAX)) {
+		} else if (attribute.equals(SWTProperties.MAX)) {
 			value = spinner.getMaximum();
 		}
 		return new Integer(value);

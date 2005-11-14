@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
+import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.ViewersProperties;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -38,12 +39,12 @@ public class CComboUpdatableCollection extends Updatable implements IUpdatableCo
 		this.ccombo = ccombo;
 		
 		
-		if (attribute.equals(DataBinding.CONTENT))
-			this.attribute = DataBinding.ITEMS;
+		if (attribute.equals(ViewersProperties.CONTENT))
+			this.attribute = SWTProperties.ITEMS;
 		else
 			this.attribute = attribute;
 		
-		if (this.attribute.equals(DataBinding.ITEMS)) {
+		if (this.attribute.equals(SWTProperties.ITEMS)) {
 			ccombo.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.databinding.internal.beans;
+package org.eclipse.jface.databinding;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -17,17 +17,15 @@ import java.beans.PropertyDescriptor;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.IValidationContext;
-import org.eclipse.jface.databinding.PropertyDescription;
+import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableCollection;
+import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableValue;
 import org.eclipse.jface.util.Assert;
 
 /**
  * @since 3.2
  * 
  */
-public class BeanUpdatableFactory implements IUpdatableFactory {
+final public class BeanUpdatableFactory implements IUpdatableFactory {
 
 	public IUpdatable createUpdatable(Map properties, Object description,
 			IValidationContext validationContext) {

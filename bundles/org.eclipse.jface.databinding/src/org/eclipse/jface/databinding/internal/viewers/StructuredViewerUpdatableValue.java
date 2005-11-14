@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.viewers;
 
-import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.databinding.ViewersProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -41,7 +41,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 			String attribute) {
 		this.viewer = viewer;
 		this.attribute = attribute;
-		if (attribute.equals(DataBinding.SELECTION)) {
+		if (attribute.equals(ViewersProperties.SINGLE_SELECTION)) {
 			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (!updating) {
@@ -58,7 +58,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 	public void setValue(Object value) {
 		try {
 			updating = true;
-			if (attribute.equals(DataBinding.SELECTION)) {
+			if (attribute.equals(ViewersProperties.SINGLE_SELECTION)) {
 				Object oldValue= getValue();
 				viewer.setSelection(value == null ? StructuredSelection.EMPTY
 						: new StructuredSelection(value));
@@ -70,7 +70,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 	}
 
 	public Object getValue() {
-		if (attribute.equals(DataBinding.SELECTION)) {
+		if (attribute.equals(ViewersProperties.SINGLE_SELECTION)) {
 			ISelection selection = viewer.getSelection();
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection sel = (IStructuredSelection) selection;
@@ -81,7 +81,7 @@ public class StructuredViewerUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		Assert.isTrue(attribute.equals(DataBinding.SELECTION), "unexpected attribute: " + attribute); //$NON-NLS-1$
+		Assert.isTrue(attribute.equals(ViewersProperties.SINGLE_SELECTION), "unexpected attribute: " + attribute); //$NON-NLS-1$
 		return Object.class;
 	}
 

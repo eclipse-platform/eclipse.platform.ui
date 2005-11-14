@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
+import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.databinding.ViewersProperties;
 import org.eclipse.swt.widgets.List;
 
 /**
@@ -36,12 +37,12 @@ public class ListUpdatableCollection extends Updatable implements IUpdatableColl
 		this.list = list;
 		
 		
-		if (attribute.equals(DataBinding.CONTENT))
-			this.attribute = DataBinding.ITEMS;
+		if (attribute.equals(ViewersProperties.CONTENT))
+			this.attribute = SWTProperties.ITEMS;
 		else
 			this.attribute = attribute;
 		
-		if (this.attribute.equals(DataBinding.ITEMS)) {
+		if (this.attribute.equals(SWTProperties.ITEMS)) {
 			//TODO List does not fire any event when items are changed.
 //			list.addModifyListener(new ModifyListener() {
 //				public void modifyText(ModifyEvent e) {

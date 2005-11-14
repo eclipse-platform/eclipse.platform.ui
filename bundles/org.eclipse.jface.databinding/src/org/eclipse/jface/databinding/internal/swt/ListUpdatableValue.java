@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
@@ -46,7 +46,7 @@ public class ListUpdatableValue extends UpdatableValue {
 		if ((list.getStyle()&SWT.MULTI)>0)
 			throw new IllegalArgumentException("SWT.SINGLE support only for a List selection"); //$NON-NLS-1$
 		
-		if (attribute.equals(DataBinding.SELECTION)) {
+		if (attribute.equals(SWTProperties.SELECTION)) {
 			list.addListener(SWT.Selection, new Listener(){			
 				public void handleEvent(Event event) {
 					if (!updating) {
@@ -65,7 +65,7 @@ public class ListUpdatableValue extends UpdatableValue {
 			oldValue = list.getSelection()[0];
 		try {
 			updating = true;
-			if (attribute.equals(DataBinding.SELECTION)) {
+			if (attribute.equals(SWTProperties.SELECTION)) {
 				String items[] = list.getItems();
 				int index = -1;
 				if (items != null && value != null) {
@@ -85,7 +85,7 @@ public class ListUpdatableValue extends UpdatableValue {
 	}
 
 	public Object getValue() {
-		Assert.isTrue(attribute.equals(DataBinding.SELECTION),
+		Assert.isTrue(attribute.equals(SWTProperties.SELECTION),
 				"unexpected attribute" + attribute); //$NON-NLS-1$
 		int index = list.getSelectionIndex();
 		if (index >= 0)
@@ -94,7 +94,7 @@ public class ListUpdatableValue extends UpdatableValue {
 	}
 
 	public Class getValueType() {
-		Assert.isTrue(attribute.equals(DataBinding.SELECTION),
+		Assert.isTrue(attribute.equals(SWTProperties.SELECTION),
 				"unexpected attribute" + attribute); //$NON-NLS-1$
 		return String.class;
 	}

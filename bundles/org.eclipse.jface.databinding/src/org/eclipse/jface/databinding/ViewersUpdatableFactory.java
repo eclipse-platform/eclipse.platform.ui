@@ -8,16 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.jface.databinding.internal.viewers;
+package org.eclipse.jface.databinding;
 
 import java.util.Map;
 
-import org.eclipse.jface.databinding.DataBinding;
-import org.eclipse.jface.databinding.IUpdatable;
-import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.IValidationContext;
-import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.databinding.TableViewerDescription;
+import org.eclipse.jface.databinding.internal.viewers.StructuredViewerUpdatableValue;
+import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollection;
+import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollectionExtended;
+import org.eclipse.jface.databinding.internal.viewers.UpdatableCollectionViewer;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
@@ -26,7 +24,7 @@ import org.eclipse.jface.viewers.TableViewer;
  * @since 3.2
  *
  */
-public class JFaceUpdatableFactory implements IUpdatableFactory {
+final public class ViewersUpdatableFactory implements IUpdatableFactory {
 
 	public IUpdatable createUpdatable(Map properties, Object description,
 			IValidationContext validationContext) {
@@ -35,20 +33,20 @@ public class JFaceUpdatableFactory implements IUpdatableFactory {
 			Object attribute = ((PropertyDescription) description)
 					.getPropertyID();
 			if (object instanceof StructuredViewer
-					&& DataBinding.SELECTION.equals(attribute)) {
+					&& ViewersProperties.SINGLE_SELECTION.equals(attribute)) {
 				return new StructuredViewerUpdatableValue(
 						(StructuredViewer) object, (String) attribute);
 			}
 			if (object instanceof AbstractListViewer
-					&& DataBinding.SELECTION.equals(attribute))
+					&& ViewersProperties.SINGLE_SELECTION.equals(attribute))
 				return new StructuredViewerUpdatableValue(
 						(AbstractListViewer) object, (String) attribute);
 			else if (object instanceof AbstractListViewer
-					&& DataBinding.CONTENT.equals(attribute))
+					&& ViewersProperties.CONTENT.equals(attribute))
 				return new UpdatableCollectionViewer(
 						(AbstractListViewer) object);
 			if (object instanceof TableViewer
-					&& DataBinding.CONTENT.equals(attribute)) {
+					&& ViewersProperties.CONTENT.equals(attribute)) {
 				return new TableViewerUpdatableCollection((TableViewer) object);
 			}
 		}

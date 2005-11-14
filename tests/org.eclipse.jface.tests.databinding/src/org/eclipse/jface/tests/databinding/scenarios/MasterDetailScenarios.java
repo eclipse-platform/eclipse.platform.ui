@@ -15,9 +15,10 @@ import java.util.List;
 
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ConditionalUpdatableValue;
-import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.PropertyDescription;
+import org.eclipse.jface.databinding.SWTProperties;
+import org.eclipse.jface.databinding.ViewersProperties;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
 import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
 import org.eclipse.jface.tests.databinding.scenarios.model.Category;
@@ -94,7 +95,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		IUpdatableValue selectedLodging = (IUpdatableValue) getDbc()
 				.createUpdatable(
 						new PropertyDescription(listViewer,
-								DataBinding.SELECTION));
+								ViewersProperties.SINGLE_SELECTION));
 
 		selectedLodging.setValue(SampleData.CAMP_GROUND);
 
@@ -142,7 +143,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		final IUpdatableValue selectedLodgingUpdatable = (IUpdatableValue) getDbc()
 				.createUpdatable(
 						new PropertyDescription(listViewer,
-								DataBinding.SELECTION));
+								ViewersProperties.SINGLE_SELECTION));
 
 		selectedLodgingUpdatable.setValue(null);
 		assertTrue(listViewer.getSelection().isEmpty());
@@ -160,10 +161,10 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
 
 		getDbc().bind(
-				new PropertyDescription(txtName, DataBinding.ENABLED),
+				new PropertyDescription(txtName, SWTProperties.ENABLED),
 				selectionExistsUpdatable, null);
 		getDbc().bind(
-				new PropertyDescription(txtName, DataBinding.TEXT),
+				new PropertyDescription(txtName, SWTProperties.TEXT),
 				new PropertyDescription(selectedLodgingUpdatable, "name",
 						String.class, Boolean.FALSE), null);
 
@@ -174,11 +175,11 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		getDbc().bind(
 				new PropertyDescription(txtDescription,
-						DataBinding.ENABLED), selectionExistsUpdatable,
+						SWTProperties.ENABLED), selectionExistsUpdatable,
 				null);
 		getDbc().bind(
 				new PropertyDescription(txtDescription,
-						DataBinding.TEXT),
+						SWTProperties.TEXT),
 				new PropertyDescription(selectedLodgingUpdatable,
 						"description", String.class, Boolean.FALSE), null);
 
@@ -270,7 +271,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		final IUpdatableValue selectedCategoryUpdatable = (IUpdatableValue) getDbc()
 				.createUpdatable(
 						new PropertyDescription(categoryListViewer,
-								DataBinding.SELECTION));
+								ViewersProperties.SINGLE_SELECTION));
 
 		final ListViewer adventureListViewer = new ListViewer(getComposite(),
 				SWT.BORDER);
@@ -296,13 +297,13 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		getDbc().bind(
 				new PropertyDescription(adventureListViewer.getList(),
-						DataBinding.ENABLED),
+						SWTProperties.ENABLED),
 				categorySelectionExistsUpdatable, null);
 
 		final IUpdatableValue selectedAdventureUpdatable = (IUpdatableValue) getDbc()
 				.createUpdatable(
 						new PropertyDescription(adventureListViewer,
-								DataBinding.SELECTION));
+								ViewersProperties.SINGLE_SELECTION));
 
 		ConditionalUpdatableValue adventureSelectionExistsUpdatable = new ConditionalUpdatableValue(
 				selectedAdventureUpdatable) {
@@ -314,10 +315,10 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
 
 		getDbc().bind(
-				new PropertyDescription(txtName, DataBinding.ENABLED),
+				new PropertyDescription(txtName, SWTProperties.ENABLED),
 				adventureSelectionExistsUpdatable, null);
 		getDbc().bind(
-				new PropertyDescription(txtName, DataBinding.TEXT),
+				new PropertyDescription(txtName, SWTProperties.TEXT),
 				new PropertyDescription(selectedAdventureUpdatable, "name",
 						String.class, Boolean.FALSE), null);
 
@@ -328,11 +329,11 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		getDbc().bind(
 				new PropertyDescription(txtDescription,
-						DataBinding.ENABLED),
+						SWTProperties.ENABLED),
 				adventureSelectionExistsUpdatable, null);
 		getDbc().bind(
 				new PropertyDescription(txtDescription,
-						DataBinding.TEXT),
+						SWTProperties.TEXT),
 				new PropertyDescription(selectedAdventureUpdatable,
 						"description", String.class, Boolean.FALSE), null);
 

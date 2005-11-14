@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal.swt;
 
-import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IChangeEvent;
+import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.UpdatableValue;
 import org.eclipse.swt.widgets.Control;
 
@@ -29,7 +29,7 @@ public class ControlUpdatableValue extends UpdatableValue {
 	 */
 	public ControlUpdatableValue(Control control, String attribute) {
 		this.control = control;
-		if (!attribute.equals(DataBinding.ENABLED)) {
+		if (!attribute.equals(SWTProperties.ENABLED)) {
 			throw new IllegalArgumentException();
 		}
 	}
