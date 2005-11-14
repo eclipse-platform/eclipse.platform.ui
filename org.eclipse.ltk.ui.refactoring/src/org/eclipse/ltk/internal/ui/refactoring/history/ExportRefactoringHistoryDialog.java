@@ -141,7 +141,7 @@ public class ExportRefactoringHistoryDialog extends RefactoringHistoryDialog {
 						return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
 					}
 				});
-				RefactoringCore.getRefactoringHistoryService().writeRefactoringHistory(proxies, stream);
+				RefactoringCore.getRefactoringHistoryService().writeRefactoringDescriptors(proxies, stream);
 			} catch (CoreException exception) {
 				final Throwable throwable= exception.getStatus().getException();
 				if (throwable instanceof IOException)

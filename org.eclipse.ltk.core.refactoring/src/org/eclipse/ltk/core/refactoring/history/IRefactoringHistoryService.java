@@ -236,5 +236,5 @@ public interface IRefactoringHistoryService {
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
-	public void writeRefactoringHistory(RefactoringDescriptorProxy[] proxies, OutputStream stream) throws CoreException;
+	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream) throws CoreException;
 }

@@ -855,7 +855,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/**
 	 * {@inheritDoc}
 	 */
-	public void writeRefactoringHistory(final RefactoringDescriptorProxy[] proxies, final OutputStream stream) throws CoreException {
+	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream) throws CoreException {
 		Assert.isNotNull(proxies);
 		Assert.isNotNull(stream);
 		final IRefactoringSessionTransformer transformer= new XmlRefactoringSessionTransformer();
