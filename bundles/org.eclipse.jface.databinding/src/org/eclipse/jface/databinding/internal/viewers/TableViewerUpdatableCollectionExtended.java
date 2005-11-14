@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IConverter;
+import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IValidationContext;
 import org.eclipse.jface.databinding.IValidator;
 import org.eclipse.jface.databinding.IdentityConverter;
@@ -105,11 +106,11 @@ public class TableViewerUpdatableCollectionExtended extends
 	 * @param validationContext 
 	 */
 	public TableViewerUpdatableCollectionExtended(
-			TableViewerDescription tableViewerDescription, IValidationContext validationContext) {
+			TableViewerDescription tableViewerDescription, IDataBindingContext dataBindingContext, IValidationContext validationContext) {
 		super(tableViewerDescription.getTableViewer());
 		this.tableViewerDescription = tableViewerDescription;
 		this.validationContext = validationContext;
-		fillDescriptionDefaults();
+		fillDescriptionDefaults(dataBindingContext);
 		TableViewer tableViewer = tableViewerDescription.getTableViewer();
 		// TODO synchronize columns on the widget side (create missing columns,
 		// set name if not already set)
@@ -127,12 +128,15 @@ public class TableViewerUpdatableCollectionExtended extends
 		tableViewer.setCellEditors(cellEditors);
 	}
 
-	private void fillDescriptionDefaults() {
+	private void fillDescriptionDefaults(IDataBindingContext dataBindingContext) {
 		CellEditor defaultCellEditor = null;
 		for (int i = 0; i < tableViewerDescription.getColumnCount(); i++) {
 			Column column = tableViewerDescription.getColumn(i);
 			if (column.getConverter() == null) {
-				column.setConverter(new IdentityConverter(String.class));
+				if (column.getPropertyType()!=null)
+				   column.setConverter(dataBindingContext.createConverter(String.class, column.getPropertyType(), tableViewerDescription));
+				else
+				   column.setConverter(new IdentityConverter(String.class));
 			}
 			if (column.getValidator() == null) {
 				column.setValidator(new IValidator() {

@@ -44,6 +44,8 @@ public class TableViewerDescription {
 		private String name;
 
 		private String propertyName;
+		
+		private Class  propertyType;
 
 		private IValidator validator;
 
@@ -68,28 +70,28 @@ public class TableViewerDescription {
 		}
 
 		/**
-		 * @return
+		 * @return IConverter
 		 */
 		public IConverter getConverter() {
 			return converter;
 		}
 
 		/**
-		 * @return
+		 * @return String name
 		 */
 		public String getName() {
 			return name;
 		}
 
 		/**
-		 * @return
+		 * @return String property
 		 */
 		public String getPropertyName() {
 			return propertyName;
 		}
 
 		/**
-		 * @return
+		 * @return IValidator
 		 */
 		public IValidator getValidator() {
 			return validator;
@@ -110,7 +112,7 @@ public class TableViewerDescription {
 		}
 
 		/**
-		 * @return
+		 * @return CellEditor
 		 */
 		public CellEditor getCellEditor() {
 			return cellEditor;
@@ -121,6 +123,20 @@ public class TableViewerDescription {
 		 */
 		public void setCellEditor(CellEditor cellEditor) {
 			this.cellEditor = cellEditor;
+		}
+
+		/**
+		 * @return property Class
+		 */
+		public Class getPropertyType() {
+			return propertyType;
+		}
+
+		/**
+		 * @param propertyType
+		 */
+		public void setPropertyType(Class propertyType) {
+			this.propertyType = propertyType;
 		}
 	}
 

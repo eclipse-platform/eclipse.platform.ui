@@ -38,7 +38,7 @@ public class PersonSampleData {
 
 		IUpdatableFactory emfValueFactory = new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
-					Object description, IValidationContext validationContext)
+					Object description, IDataBindingContext bindingContext, IValidationContext validationContext)
 					throws BindingException {
 				if (description instanceof PropertyDescription) {
 					PropertyDescription propertyDescription = (PropertyDescription) description;

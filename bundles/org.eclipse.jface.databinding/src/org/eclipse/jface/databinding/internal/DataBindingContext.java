@@ -286,7 +286,7 @@ public class DataBindingContext implements IValidationContext,
 	protected void registerFactories() {
 		addUpdatableFactory(new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
-					Object description, IValidationContext validationContext)
+					Object description, IDataBindingContext bindingContext, IValidationContext validationContext)
 					throws BindingException {
 				if (description instanceof PropertyDescription) {
 					PropertyDescription propertyDescription = (PropertyDescription) description;
@@ -461,7 +461,7 @@ public class DataBindingContext implements IValidationContext,
 		bind(targetUpdatable, createUpdatable(modelDescription), bindSpec);
 	}
 
-	private void fillBindSpecDefaults(IBindSpec bindSpec, Class fromType,
+	public void fillBindSpecDefaults(IBindSpec bindSpec, Class fromType,
 			Class toType, Object modelDescriptionOrNull) {
 		if (bindSpec.getValidator() == null) {
 			((BindSpec) bindSpec).setValidator(createValidator(fromType,
@@ -473,7 +473,7 @@ public class DataBindingContext implements IValidationContext,
 		}
 	}
 
-	protected IValidator createValidator(Class fromType, Class toType,
+	public IValidator createValidator(Class fromType, Class toType,
 			Object modelDescription) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
 			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
@@ -490,7 +490,7 @@ public class DataBindingContext implements IValidationContext,
 		return null;
 	}
 
-	protected IConverter createConverter(Class fromType, Class toType,
+	public IConverter createConverter(Class fromType, Class toType,
 			Object modelDescription) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
 			IBindSupportFactory bindSupportFactory = (IBindSupportFactory) bindSupportFactories
@@ -547,7 +547,7 @@ public class DataBindingContext implements IValidationContext,
 		for (int i = factories.size() - 1; i >= 0; i--) {
 			IUpdatableFactory factory = (IUpdatableFactory) factories.get(i);
 			IUpdatable result = factory.createUpdatable(null,
-					description, thisDatabindingContext);
+					description, this, thisDatabindingContext);
 			if (result != null) {
 				return result;
 			}

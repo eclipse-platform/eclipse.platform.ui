@@ -40,6 +40,6 @@ public interface IUpdatableFactory {
 	 * @return an updatable
 	 * @throws BindingException
 	 */
-	IUpdatable createUpdatable(Map properties, Object description, IValidationContext validationContext)
+	IUpdatable createUpdatable(Map properties, Object description, IDataBindingContext bindingContext, IValidationContext validationContext)
 			throws BindingException;
 }

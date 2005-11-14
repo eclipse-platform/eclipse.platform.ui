@@ -112,6 +112,24 @@ public interface IDataBindingContext {
 	 */
 	public IUpdatable createUpdatable(Object description)
 			throws BindingException;
+	
+	/**
+	 * @param fromType
+	 * @param toType
+	 * @param modelDescription
+	 * @return IValidator
+	 */
+	public IValidator createValidator(Class fromType, Class toType,
+			Object modelDescription);
+	
+	/**
+	 * @param fromType
+	 * @param toType
+	 * @param modelDescription
+	 * @return IConverter
+	 */
+	public IConverter createConverter(Class fromType, Class toType,
+			Object modelDescription);
 
 	/**
 	 * 
