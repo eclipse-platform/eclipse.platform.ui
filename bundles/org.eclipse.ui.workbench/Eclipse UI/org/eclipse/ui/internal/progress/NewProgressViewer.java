@@ -157,7 +157,7 @@ public class NewProgressViewer extends TreeViewer implements
                 jobitem.locked = true;
                 gotoAction.run();
                 if (jobitem.jobTerminated)
-                    jobitem.kill();
+                    jobitem.kill(jobTreeElement);
                 return true;
             }
             return false;
@@ -551,7 +551,18 @@ public class NewProgressViewer extends TreeViewer implements
             refresh();
         }
 
-        private boolean aboutToKeep() {
+        /**
+         * Kill selected element if it is the receiver rather than
+         * a child of it.
+         * @param selectedElement
+         */
+        public void kill(JobTreeElement selectedElement) {
+        	//Only kill the receiver if it is the one we are showing
+			if(jobTreeElement.equals(selectedElement))
+				kill();
+		}
+
+		private boolean aboutToKeep() {
             boolean changed = false;
 
             // finish progress reporting
