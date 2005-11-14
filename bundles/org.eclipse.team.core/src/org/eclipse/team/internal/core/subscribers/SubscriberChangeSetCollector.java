@@ -10,19 +10,35 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.core.*;
+import org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent;
+import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.internal.core.BackgroundEventHandler;
+import org.eclipse.team.internal.core.Messages;
+import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
