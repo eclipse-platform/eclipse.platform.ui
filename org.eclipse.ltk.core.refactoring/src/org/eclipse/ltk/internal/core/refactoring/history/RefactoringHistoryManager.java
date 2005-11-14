@@ -361,7 +361,7 @@ public final class RefactoringHistoryManager {
 					try {
 						file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
-						output.write(buffer.toString().getBytes());
+						output.write(buffer.toString().getBytes("utf-8")); //$NON-NLS-1$
 					} finally {
 						if (output != null) {
 							try {
@@ -505,7 +505,7 @@ public final class RefactoringHistoryManager {
 			buffer.append(DELIMITER_STAMP);
 			buffer.append(descriptor.getDescription());
 			buffer.append(DELIMITER_ENTRY);
-			output.write(buffer.toString().getBytes());
+			output.write(buffer.toString().getBytes("utf-8")); //$NON-NLS-1$
 		} finally {
 			monitor.done();
 			if (output != null) {
