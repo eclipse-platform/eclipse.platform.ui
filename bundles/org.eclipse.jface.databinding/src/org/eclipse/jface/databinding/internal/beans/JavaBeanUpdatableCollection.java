@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.jface.databinding.IChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.Updatable;
+import org.eclipse.jface.util.Assert;
 
 /**
  * @since 3.2
@@ -165,7 +166,8 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		} catch (IllegalAccessException e) {
 		} catch (InvocationTargetException e) {
 		}
-		throw new AssertionError("Could not read collection values"); //$NON-NLS-1$		   
+		Assert.isTrue(false, "Could not read collection values"); //$NON-NLS-1$
+		return null;
 	}
 	
 	private Object[] getValues() {
@@ -184,7 +186,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 
 	public int addElement(Object value, int index) {
 		if (descriptor.getPropertyType().isArray())
-		    throw new AssertionError("cannot add elements"); //$NON-NLS-1$
+			Assert.isTrue(false, "cannot add elements"); //$NON-NLS-1$		   
 		
 		Collection list = (Collection)primGetValues();
 		if (index <= 0 || index > list.size())
@@ -197,7 +199,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 
 	public void removeElement(int index) {
 		if (descriptor.getPropertyType().isArray())
-		    throw new AssertionError("cannot remove elements"); //$NON-NLS-1$
+			Assert.isTrue(false, "cannot remove elements"); //$NON-NLS-1$		   
 		
 		Collection list = (Collection)primGetValues();
 		Object o = null;
