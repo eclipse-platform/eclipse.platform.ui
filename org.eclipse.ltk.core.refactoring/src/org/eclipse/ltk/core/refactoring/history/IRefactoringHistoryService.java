@@ -172,6 +172,9 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Reads a refactoring history from the input stream.
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
 	 * 
 	 * @param stream
 	 *            the input stream
@@ -228,6 +231,9 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Writes the specified refactoring descriptor proxies to the output stream.
+	 * <p>
+	 * Note: This API must not be called from outside the refactoring framework.
+	 * </p>
 	 * 
 	 * @param proxies
 	 *            the refactoring descriptor proxies
