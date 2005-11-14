@@ -17,6 +17,7 @@ import java.util.*;
 import javax.xml.parsers.*;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -348,7 +349,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			if (oldLocation != null) {
 				parseProblem(NLS.bind(Messages.projRead_badLocation, oldLocation, newLocation));
 			} else {
-				((LinkDescription) objectStack.peek()).setLocation(Path.fromPortableString(newLocation).toFile().toURI());
+				((LinkDescription) objectStack.peek()).setLocation(FileUtil.toURI(Path.fromPortableString(newLocation)));
 			}
 			state = S_LINK;
 		}

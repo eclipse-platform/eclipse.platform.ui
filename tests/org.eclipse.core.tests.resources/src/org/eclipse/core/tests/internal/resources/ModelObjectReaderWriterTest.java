@@ -34,7 +34,8 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	private static final boolean WINDOWS = Platform.getOS().equals(Platform.OS_WIN32);
 	static final IPath LONG_LOCATION = new Path("/eclipse/dev/i0218/eclipse/pffds/fds//fds///fdsfsdfsd///fdsfdsf/fsdfsdfsd/lugi/dsds/fsd//f/ffdsfdsf/fsdfdsfsd/fds//fdsfdsfdsf/fdsfdsfds/fdsfdsfdsf/fdsfdsfdsds/ns/org.eclipse.help.ui_2.1.0/contexts.xml").setDevice(WINDOWS ? "D:" : null);
 	static final URI LONG_LOCATION_URI = LONG_LOCATION.toFile().toURI();
-
+	private static final String PATH_STRING = new Path("/abc/def").setDevice(WINDOWS ? "D:" : null).toString();
+	
 	public static Test suite() {
 		//	TestSuite suite = new TestSuite();
 		//	suite.addTest(new ModelObjectReaderWriterTest("testMultipleProjectDescriptions"));
@@ -284,7 +285,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	}
 
 	public void testInvalidProjectDescription1() throws Throwable {
-		String invalidProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<homeDescription>\n" + "	<name>abc</name>\n" + "	<comment></comment>\n" + "	<projects>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>org.eclipse.jdt.core.javabuilder</name>\n" + "			<arguments>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	<nature>org.eclipse.jdt.core.javanature</nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>newLink</name>\n" + "			<type>2</type>\n" + "			<location>d:/abc/def</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</homeDescription>";
+		String invalidProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<homeDescription>\n" + "	<name>abc</name>\n" + "	<comment></comment>\n" + "	<projects>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>org.eclipse.jdt.core.javabuilder</name>\n" + "			<arguments>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	<nature>org.eclipse.jdt.core.javanature</nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>newLink</name>\n" + "			<type>2</type>\n" + "			<location>" + PATH_STRING + "</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</homeDescription>";
 
 		IPath root = getWorkspace().getRoot().getLocation();
 		IPath location = root.append("ModelObjectReaderWriterTest.txt");
@@ -339,7 +340,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	}
 
 	public void testInvalidProjectDescription4() throws Throwable {
-		String invalidProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>abc</name>\n" + "	<comment></comment>\n" + "	<projects>\n" + "	</projects>\n" + "	<buildSpec>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>newLink</name>\n" + "			<type>foobar</type>\n" + "			<location>d:/abc/def</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
+		String invalidProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>abc</name>\n" + "	<comment></comment>\n" + "	<projects>\n" + "	</projects>\n" + "	<buildSpec>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>newLink</name>\n" + "			<type>foobar</type>\n" + "			<location>" + PATH_STRING + "</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
 
 		IFileStore store = getTempStore();
 		// Write out the project description file
@@ -355,7 +356,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
 		LinkDescription link = (LinkDescription) projDesc.getLinks().values().iterator().next();
 		assertEquals("3.7", "newLink", link.getName());
-		assertEquals("3.8", "d:/abc/def", FileUtil.toPath(link.getLocation()).toString());
+		assertEquals("3.8", PATH_STRING, FileUtil.toPath(link.getLocation()).toString());
 	}
 
 	public void testInvalidWorkspaceDescription() {
@@ -446,10 +447,10 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 
 	public void testMultiLineCharFields() throws Throwable {
 		String multiLineProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>\n" + "      abc\n" + "   </name>\n" + "	<charset>\n" + "		ISO-8859-1\n" + "	</charset>\n" + "	<comment>This is the comment.</comment>\n" + "	<projects>\n" + "	   <project>\n" + "         org.eclipse.core.boot\n" + "      </project>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>\n" + "              org.eclipse.jdt.core.javabuilder\n" + "           </name>\n" + "			<arguments>\n" + "              <key>thisIsTheKey</key>\n" + "              <value>thisIsTheValue</value>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	   <nature>\n" + "         org.eclipse.jdt.core.javanature\n"
-				+ "      </nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>\n" + "              newLink\n" + "           </name>\n" + "			<type>\n" + "              2\n" + "           </type>\n" + "			<location>\n" + "              d:/abc/def\n" + "           </location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
+				+ "      </nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>\n" + "              newLink\n" + "           </name>\n" + "			<type>\n" + "              2\n" + "           </type>\n" + "			<location>\n" + "              " + PATH_STRING + "\n" + "           </location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
 
 		String singleLineProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>abc</name>\n" + "	<charset>ISO-8859-1</charset>\n" + "	<comment>This is the comment.</comment>\n" + "	<projects>\n" + "	   <project>org.eclipse.core.boot</project>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>org.eclipse.jdt.core.javabuilder</name>\n" + "			<arguments>\n" + "              <key>thisIsTheKey</key>\n" + "              <value>thisIsTheValue</value>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	   <nature>org.eclipse.jdt.core.javanature</nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>newLink</name>\n" + "			<type>2</type>\n"
-				+ "			<location>d:/abc/def</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
+				+ "			<location>" + PATH_STRING + "</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
 
 		IPath root = getWorkspace().getRoot().getLocation();
 		IPath multiLocation = root.append("multiLineTest.txt");

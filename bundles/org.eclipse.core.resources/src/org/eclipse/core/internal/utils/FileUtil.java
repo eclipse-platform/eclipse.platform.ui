@@ -45,6 +45,22 @@ public class FileUtil {
 		return fileInfo;
 	}
 
+	private static String escapeColons(String string) {
+		final String COLON_STRING = "%3A"; //$NON-NLS-1$
+		if (string.indexOf(':') == -1)
+			return string;
+		int length = string.length();
+		StringBuffer result = new StringBuffer(length);
+		for (int i = 0; i < length; i++) {
+			char c = string.charAt(i);
+			if (c == ':')
+				result.append(COLON_STRING);
+			else
+				result.append(c);
+		}
+		return result.toString();
+	}
+
 	/**
 	 * Converts an IFileInfo object into a ResourceAttributes object.
 	 * @param fileInfo The file info
@@ -88,6 +104,20 @@ public class FileUtil {
 	}
 
 	/**
+	 * Converts a URI to an IPath.  Returns null if the URI cannot be represented
+	 * as an IPath.
+	 */
+	public static IPath toPath(URI uri) {
+		if (uri == null)
+			return null;
+		final String scheme = uri.getScheme();
+		// null scheme represents path variable
+		if (scheme == null || EFS.SCHEME_FILE.equals(scheme))
+			return new Path(uri.getSchemeSpecificPart());
+		return null;
+	}
+
+	/**
 	 * Converts a path to a URI
 	 */
 	public static URI toURI(IPath path) {
@@ -114,21 +144,7 @@ public class FileUtil {
 				throw iae;
 			}
 		}
-		return URI.create(path.toString());
-	}
-	
-	/**
-	 * Converts a URI to an IPath.  Returns null if the URI cannot be represented
-	 * as an IPath.
-	 */
-	public static IPath toPath(URI uri) {
-		if (uri == null)
-			return null;
-		final String scheme = uri.getScheme();
-		// null scheme represents path variable
-		if (scheme == null || EFS.SCHEME_FILE.equals(scheme))
-			return new Path(uri.getSchemeSpecificPart());
-		return null;
+		return URI.create(escapeColons(path.toString()));
 	}
 
 	public static final void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) throws CoreException {
