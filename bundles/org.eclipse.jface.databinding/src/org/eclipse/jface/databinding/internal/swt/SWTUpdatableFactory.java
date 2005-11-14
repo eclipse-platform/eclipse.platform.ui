@@ -145,6 +145,9 @@ public class SWTUpdatableFactory implements IUpdatableFactory {
 		} else if (description instanceof Combo) {
 			return new ComboUpdatableCollection((Combo) description,
 					DataBinding.CONTENT);
+		} else if (description instanceof Spinner) {
+			return new SpinnerUpdatableValue((Spinner) description,
+					DataBinding.SELECTION);
 		} else if (description instanceof CCombo) {
 			return new CComboUpdatableCollection((CCombo) description,
 					DataBinding.CONTENT);

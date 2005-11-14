@@ -428,8 +428,8 @@ public class PropertyScenarios extends ScenariosTestCase {
 		spinner1.setMaximum(100);
 		Spinner spinner2 = new Spinner(getComposite(), SWT.NONE);
 		spinner2.setMaximum(1);
-		getDbc().bind(spinner1, DataBinding.SELECTION, spinner2,
-				DataBinding.MAX, null);
+		getDbc().bind(spinner1, new PropertyDescription(spinner2,
+				DataBinding.MAX), null);
 		assertEquals(1, spinner1.getSelection());
 		spinner1.setSelection(10);
 		spinner1.notifyListeners(SWT.Modify, new Event());
@@ -501,7 +501,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		getDbc().setUpdateTime(IDataBindingContext.TIME_LATE);
 		getDbc().setValidationTime(IDataBindingContext.TIME_LATE);
 		Text text = new Text(getComposite(), SWT.BORDER);
-		getDbc().bind(text, "text", adventure, "name", null);
+		getDbc().bind(text, new PropertyDescription(adventure, "name"), null);
 		// uncomment the following line to see what's happening
 		// happening
 		// spinEventLoop(1);
@@ -522,8 +522,8 @@ public class PropertyScenarios extends ScenariosTestCase {
 		Text t2 = new Text(getComposite(), SWT.BORDER);
 
 		getDbc().setUpdateTime(IDataBindingContext.TIME_EARLY);
-		getDbc().bind(t1, "text", adventure, "name", null);
-		getDbc().bind(t2, "text", adventure, "name", null);
+		getDbc().bind(t1, new PropertyDescription(adventure, "name"), null);
+		getDbc().bind(t2, new PropertyDescription(adventure, "name"), null);
 
 		final int[] counter = { 0 };
 		IUpdatableValue uv = (IUpdatableValue) getDbc().createUpdatable(

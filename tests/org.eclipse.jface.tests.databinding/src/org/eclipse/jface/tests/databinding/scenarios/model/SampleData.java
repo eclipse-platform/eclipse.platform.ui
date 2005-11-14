@@ -156,8 +156,8 @@ public class SampleData {
 
 	public static IDataBindingContext getDatabindingContext(Control aControl) {
 		IDataBindingContext result = DataBinding.createContext(aControl,
-				new IUpdatableFactory[] { DataBinding.javaBeanFactory, DataBinding.swtFactory,
-					                      DataBinding.jFaceFactory });
+				new IUpdatableFactory[] { DataBinding.getJavaBeanFactory(), DataBinding.getSwtFactory(),
+					                      DataBinding.getJFaceFactory() });
 		return result;
 	}
 

@@ -44,17 +44,17 @@ public class DataBinding {
 	/**
 	 * Updatable factory supporting JFace Components
 	 */
-	public static final IUpdatableFactory jFaceFactory = new JFaceUpdatableFactory();
+	private static final IUpdatableFactory jFaceFactory = new JFaceUpdatableFactory();
 	
 	/**
 	 * Updatable factory supporting SWT widgets
 	 */
-	public static final IUpdatableFactory swtFactory = new SWTUpdatableFactory();
+	private static final IUpdatableFactory swtFactory = new SWTUpdatableFactory();
 	
 	/**
 	 * Updatable factory supporting POJO
 	 */
-	public static final IUpdatableFactory javaBeanFactory = new BeanUpdatableFactory();
+	private static final IUpdatableFactory javaBeanFactory = new BeanUpdatableFactory();
 	
 
 	/**
@@ -130,7 +130,7 @@ public class DataBinding {
 	 * @return
 	 */
 	public static IDataBindingContext createContext(Control control) {
-		return createContext(control, new IUpdatableFactory[] {javaBeanFactory, swtFactory, jFaceFactory});
+		return createContext(control, new IUpdatableFactory[] {getJavaBeanFactory(), getSwtFactory(), getJFaceFactory()});
 	}
 
 	/**	
@@ -147,6 +147,18 @@ public class DataBinding {
 			}
 		});
 		return result;
+	}
+
+	public static IUpdatableFactory getJFaceFactory() {
+		return jFaceFactory;
+	}
+
+	public static IUpdatableFactory getSwtFactory() {
+		return swtFactory;
+	}
+
+	public static IUpdatableFactory getJavaBeanFactory() {
+		return javaBeanFactory;
 	}
 
 }

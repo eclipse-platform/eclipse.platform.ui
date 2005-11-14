@@ -136,23 +136,6 @@ public interface IDataBindingContext {
 			IBindSpec bindSpec) throws BindingException;
 
 	/**
-	 * Convenience method to bind createUpdatable(new
-	 * PropertyDescription(targetObject, targetPropertyID)) and
-	 * createUpdatable(new PropertyDescription(modelObject, modelPropertyID))
-	 * 
-	 * @param targetObject
-	 * @param targetPropertyID
-	 * @param modelObject
-	 * @param modelPropertyID
-	 * @param bindSpec
-	 *            the bind spec, or null
-	 * @throws BindingException
-	 */
-	public void bind(Object targetObject, Object targetPropertyID,
-			Object modelObject, Object modelPropertyID, IBindSpec bindSpec)
-			throws BindingException;
-
-	/**
 	 * @param description
 	 * @return IUpdatable for the given description
 	 * @throws BindingException
