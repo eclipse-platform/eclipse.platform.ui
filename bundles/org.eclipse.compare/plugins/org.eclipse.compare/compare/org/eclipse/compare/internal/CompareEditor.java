@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
