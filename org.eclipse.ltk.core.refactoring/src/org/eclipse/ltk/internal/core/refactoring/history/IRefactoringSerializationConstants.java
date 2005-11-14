@@ -21,7 +21,7 @@ public interface IRefactoringSerializationConstants {
 	public static final String OUTPUT_METHOD= "xml"; //$NON-NLS-1$
 
 	/** The output encoding */
-	public static final String OUTPUT_ENCODING= "UTF-8"; //$NON-NLS-1$
+	public static final String OUTPUT_ENCODING= "utf-8"; //$NON-NLS-1$
 
 	/** The comment attribute */
 	public static final String ATTRIBUTE_COMMENT= "comment"; //$NON-NLS-1$
