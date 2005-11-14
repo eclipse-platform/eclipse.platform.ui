@@ -18,6 +18,7 @@ import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.core.ListenerList;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.preferences.SyncViewerPreferencePage;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;

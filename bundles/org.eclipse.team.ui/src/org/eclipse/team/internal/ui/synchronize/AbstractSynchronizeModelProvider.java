@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.internal.core.ListenerList;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.Policy;

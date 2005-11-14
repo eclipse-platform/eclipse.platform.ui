@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.core.ListenerList;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
