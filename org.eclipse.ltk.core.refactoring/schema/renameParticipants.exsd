@@ -88,7 +88,7 @@ The default variable used during expression evaluation is bound to the element v
          <attribute name="handlesDerived" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
-                  true if this participant is able to deal with processors which rename derived elements. Such processors implement the  org.eclipse.ltk.core.refactoring.IDerivedElementRefactoringComponent API. Participants must ask their processor via getDerivedElements() about derived elements that are refactored as well. They can obtain a reference to an element after the refactoring has been applied via getRefactoredElement(Object). Note that an element may change in subtle ways e.g. if the element is renamed and its parent is renamed as well.
+                  true if this participant is able to deal with processors which rename derived elements. Such processors implement the  org.eclipse.ltk.core.refactoring.IDerivedElementRefactoringProcessor API. Participants must ask their processor via getDerivedElements() about derived elements that are refactored as well. They can obtain a reference to an element after the refactoring has been applied via getRefactoredElement(Object). Note that an element may change in subtle ways e.g. if the element is renamed and its parent is renamed as well.
                </documentation>
             </annotation>
          </attribute>
