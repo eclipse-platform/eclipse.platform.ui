@@ -28,7 +28,7 @@ import org.eclipse.ui.IEditorInput;
 
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.ListenerList;
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.*;

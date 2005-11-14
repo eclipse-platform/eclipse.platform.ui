@@ -11,7 +11,7 @@
 package org.eclipse.compare;
 
 import java.io.*;
-import org.eclipse.jface.util.ListenerList;
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.compare.internal.Utilities;
 

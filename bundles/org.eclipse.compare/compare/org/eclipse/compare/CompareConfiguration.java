@@ -12,10 +12,13 @@ package org.eclipse.compare;
 
 import java.util.HashMap;
 
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.core.commands.util.ListenerList;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.compare.internal.*;

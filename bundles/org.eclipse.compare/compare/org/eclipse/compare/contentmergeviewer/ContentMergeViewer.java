@@ -21,6 +21,7 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchPartSite;
 
+import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 

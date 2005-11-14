@@ -14,7 +14,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.jface.util.ListenerList;
+import org.eclipse.core.commands.util.ListenerList;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.Utilities;

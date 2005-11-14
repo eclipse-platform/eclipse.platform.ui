@@ -137,7 +137,7 @@ public class PatchTest extends TestCase {
 	 * @param originalFiles
 	 * @param patch
 	 * @param expectedOutcomeFiles
-	 * @p
+	 * @param reverse
 	 */
 	private void patchWorkspace(String[] originalFiles, String patch, String[] expectedOutcomeFiles, boolean reverse) {
 		
