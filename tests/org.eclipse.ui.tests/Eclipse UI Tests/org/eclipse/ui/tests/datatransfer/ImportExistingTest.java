@@ -522,15 +522,17 @@ public class ImportExistingTest extends DataTransferTestCase {
 			// "HelloWorld" should be the only project in the workspace
 			workspaceProjects = root.getProjects();
 			if (workspaceProjects.length != 1)
-				fail("Incorrect Number of projects imported");
+				fail("Incorrect Number of projects imported: " + workspaceProjects.length + " projects in workspace.");
 			IFolder helloFolder = workspaceProjects[0].getFolder("HelloWorld");
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
 			verifyProjectInWorkspace(true, workspaceProjects[0], fileList, true);
 			
-			// delete project but not contents
-			workspaceProjects[0].delete(false, true, null);
+			// delete projects in workspace but not contents
+			for (int i = 0; i < workspaceProjects.length; i++){
+				workspaceProjects[i].delete(false, true, null);
+			}
 			assertTrue("Test project not deleted successfully.", root.getProjects().length == 0);
 			
 			// perform same test again, but this time import from this workspace
@@ -543,17 +545,16 @@ public class ImportExistingTest extends DataTransferTestCase {
 			wpip2.saveWidgetValues();
 			wpip2.restoreWidgetValues();
 
-			IPath wsPath2 = root.getLocation();
-			wpip2.updateProjectsList(wsPath2.toOSString());
+			wpip2.updateProjectsList(wsPath.toOSString());
 			ProjectRecord[] selectedProjects2 = wpip2.getValidProjects();
-			assertTrue("Did not locate project from workspace to import.", selectedProjects2.length > 0);
+			assertTrue("Not all projects were found correctly in zip (2).", selectedProjects2.length == 1);
 			
 			ArrayList projectNames2 = new ArrayList();
 			for (int i = 0; i < selectedProjects2.length; i++) {
 				projectNames2.add(selectedProjects2[i].getProjectName());
 			}
 			
-			assertTrue("Not all projects were found correctly in zip", projectNames2.containsAll(projects2));
+			assertTrue("Not all projects were found correctly in zip (2)", projectNames2.containsAll(projects2));
 
 			CheckboxTreeViewer projects2List= wpip2.getProjectsList();
 			projects2List.setCheckedElements(selectedProjects2);
@@ -565,7 +566,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 				fail("Incorrect Number of projects imported");
 			helloFolder = workspaceProjects[0].getFolder("HelloWorld");
 			if (helloFolder.exists())
-				fail("Project was imported as a folder into itself");
+				fail("Project was imported as a folder into itself (2)");
 			
 			verifyProjectInWorkspace(true, workspaceProjects[0], fileList, true);
 
