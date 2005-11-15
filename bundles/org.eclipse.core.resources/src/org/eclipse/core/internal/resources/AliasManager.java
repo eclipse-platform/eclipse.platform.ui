@@ -609,9 +609,9 @@ public class AliasManager implements IManager, ILifecycleListener {
 		boolean hadChanges = false;
 		for (Iterator it = structureChanges.iterator(); it.hasNext();) {
 			IResource resource = (IResource) it.next();
-			if (!resource.exists())
-				continue;
 			hadChanges = true;
+			if (!resource.isAccessible())
+				continue;
 			if (resource.getType() == IResource.PROJECT)
 				addToLocationsMap((IProject) resource);
 			else

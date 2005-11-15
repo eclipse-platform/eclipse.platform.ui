@@ -94,6 +94,10 @@ public class UnifiedTree {
 		if (parentType == IResource.FILE && !node.isFolder())
 			return;
 
+		//don't refresh resources in closed or non-existent projects
+		if (!parent.getProject().isAccessible())
+			return;
+
 		// get the list of resources in the file system 
 		// don't ask for local children if we know it doesn't exist locally
 		IFileInfo[] list = node.existsInFileSystem() ? getLocalList(node) : NO_CHILDREN;
@@ -119,7 +123,7 @@ public class UnifiedTree {
 			while (workspaceIndex < members.length) {
 				target = members[workspaceIndex];
 				String name = target.getName();
-				String localName = (list != null && localIndex < list.length) ? list[localIndex].getName() : null;
+				String localName = localIndex < list.length ? list[localIndex].getName() : null;
 				int comp = localName != null ? name.compareTo(localName) : -1;
 				//special handling for linked resources
 				if (parentType == IResource.PROJECT && target.isLinked()) {
@@ -212,7 +216,10 @@ public class UnifiedTree {
 	}
 
 	protected void addRootToQueue() {
-		IFileStore rootStore = ((Resource)root).getStore();
+		//don't refresh in closed projects
+		if (!root.getProject().isAccessible())
+			return;
+		IFileStore rootStore = ((Resource) root).getStore();
 		UnifiedTreeNode node = createNode(root, rootStore, rootStore.fetchInfo(), root.exists());
 		if (!node.existsInFileSystem() && !node.existsInWorkspace())
 			return;
@@ -288,10 +295,10 @@ public class UnifiedTree {
 			list = node.getStore().childInfos(EFS.NONE, null);
 		} catch (CoreException e) {
 			//treat failure to access the directory as a non-existent directory
-			return null;
+			return NO_CHILDREN;
 		}
 		if (list == null)
-			return null;
+			return NO_CHILDREN;
 		int size = list.length;
 		if (size > 1)
 			quickSort(list, 0, size - 1);

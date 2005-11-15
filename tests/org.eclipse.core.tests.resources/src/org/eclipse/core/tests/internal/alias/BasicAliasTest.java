@@ -188,7 +188,20 @@ public class BasicAliasTest extends ResourceTest {
 	}
 
 	public void testCloseOpenProject() {
-		// TODO
+		//close the project and make sure aliases in that project are no longer updated
+		try {
+			pOverlap.close(getMonitor());
+			IFile linkFile = fLinked.getFile("ChildFile.txt");
+			linkFile.create(getRandomContents(), IResource.NONE, getMonitor());
+			IFile closedFile = fOverlap.getFile(linkFile.getName());
+			assertTrue("1.0", !closedFile.exists());
+			pOverlap.open(IResource.NONE, getMonitor());
+			//should a refresh be needed when a project has been changed while it was closed?
+			pOverlap.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			assertTrue("1.1", closedFile.exists());
+		} catch (CoreException e) {
+			fail("4.99", e);
+		}
 	}
 
 	/**
