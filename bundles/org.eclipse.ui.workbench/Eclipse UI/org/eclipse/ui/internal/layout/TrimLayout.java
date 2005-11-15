@@ -11,11 +11,8 @@
 package org.eclipse.ui.internal.layout;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -61,7 +58,10 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
 	private SizeCache centerArea = new SizeCache();
 
-	private List[] controls;
+	/**
+	 * Each trimArea is a list of TrimDescriptors.
+	 */
+	private List[] fTrimArea;
 
 	private int[] trimSizes;
 
@@ -77,9 +77,9 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
 	private int rightSpacing;
 
-	private Map mapControlOntoData = new HashMap();
-
-	private Map mapControlOntoTrim = new HashMap();
+	// private Map mapControlOntoData = new HashMap();
+	//
+	// private Map mapControlOntoTrim = new HashMap();
 
 	// Position constants -- correspond to indices in the controls array, above.
 	private static final int TOP = 0;
@@ -94,26 +94,15 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
 	private int spacing = 3;
 
-	private class TrimData {
-		int controlsIndex;
-
-		SizeCache cache;
-
-		TrimData(int index, SizeCache cache) {
-			this.cache = cache;
-			this.controlsIndex = index;
-		}
-	}
-
 	/**
 	 * Creates a new (initially empty) trim layout.
 	 */
 	public TrimLayout() {
-		controls = new List[4];
-		trimSizes = new int[controls.length];
+		fTrimArea = new List[4];
+		trimSizes = new int[fTrimArea.length];
 
-		for (int idx = 0; idx < controls.length; idx++) {
-			controls[idx] = new LinkedList();
+		for (int idx = 0; idx < fTrimArea.length; idx++) {
+			fTrimArea[idx] = new ArrayList();
 			trimSizes[idx] = SWT.DEFAULT;
 		}
 	}
@@ -121,6 +110,15 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	/**
 	 * Sets the empty space surrounding the center area. This whitespace is
 	 * located between the trim and the central widget.
+	 * 
+	 * @param left
+	 *            pixel width
+	 * @param right
+	 *            pixel width
+	 * @param top
+	 *            pixel width
+	 * @param bottom
+	 *            pixel width
 	 */
 	public void setSpacing(int left, int right, int top, int bottom) {
 		leftSpacing = left;
@@ -142,45 +140,45 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	}
 
 	/**
-	 * Converts an SWT position constant into an index in the controls array
+	 * Converts an SWT position constant into the trim area id.
 	 * 
 	 * @param positionConstant
 	 *            one of SWT.LEFT, SWT.RIGHT, SWT.TOP, or SWT.BOTTOM
-	 * @return an index into the controls array
+	 * @return the ID for the trim area
 	 */
-	private int convertSwtConstantToIndex(int positionConstant) {
+	private int convertSwtConstantToAreaId(int positionConstant) {
 		switch (positionConstant) {
 		case SWT.TOP:
-			return TOP;
+			return TrimLayout.TOP;
 		case SWT.BOTTOM:
-			return BOTTOM;
+			return TrimLayout.BOTTOM;
 		case SWT.LEFT:
-			return LEFT;
+			return TrimLayout.LEFT;
 		case SWT.RIGHT:
-			return RIGHT;
+			return TrimLayout.RIGHT;
 		}
 
 		return 0;
 	}
 
 	/**
-	 * Converts an index into the controls array into the corresponding SWT
-	 * constants.
+	 * Converts the trim area id into the corresponding SWT constants.
 	 * 
-	 * @param index
-	 * @return
+	 * @param id
+	 *            the area id
+	 * @return the SWT constant
 	 */
-	private int convertIndexToSwtConstant(int index) {
-		switch (index) {
-		case TOP:
+	private int convertAreaIdToSwtConstant(int id) {
+		switch (id) {
+		case TrimLayout.TOP:
 			return SWT.TOP;
-		case BOTTOM:
+		case TrimLayout.BOTTOM:
 			return SWT.BOTTOM;
-		case LEFT:
+		case TrimLayout.LEFT:
 			return SWT.LEFT;
-		case RIGHT:
+		case TrimLayout.RIGHT:
 			return SWT.RIGHT;
-		case NONTRIM:
+		case TrimLayout.NONTRIM:
 			return SWT.DEFAULT;
 		}
 
@@ -191,7 +189,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * This method separates resizable controls from non-resizable controls.
 	 * 
 	 * @param input
-	 *            the list of SizeCache to filter
+	 *            the list of {@link SizeCache} to filter
 	 * @param resizable
 	 *            will contain resizable controls from the input list
 	 * @param nonResizable
@@ -267,15 +265,15 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	/**
 	 * Computes the maximum dimensions of controls in the given list
 	 * 
-	 * @param controls
-	 *            a list of SizeCaches
-	 * @return
+	 * @param caches
+	 *            a list of {@link SizeCache}
+	 * @return pixel width
 	 */
-	private static int maxDimension(List controls, int hint, boolean width) {
+	private static int maxDimension(List caches, int hint, boolean width) {
 
 		if (hint == SWT.DEFAULT) {
 			int result = 0;
-			Iterator iter = controls.iterator();
+			Iterator iter = caches.iterator();
 
 			while (iter.hasNext()) {
 				SizeCache next = (SizeCache) iter.next();
@@ -286,10 +284,10 @@ public class TrimLayout extends Layout implements ICachingLayout {
 			return result;
 		}
 
-		List resizable = new ArrayList(controls.size());
-		List nonResizable = new ArrayList(controls.size());
+		List resizable = new ArrayList(caches.size());
+		List nonResizable = new ArrayList(caches.size());
 
-		filterResizable(controls, resizable, nonResizable, width);
+		filterResizable(caches, resizable, nonResizable, width);
 
 		int result = 0;
 		int usedHeight = 0;
@@ -334,9 +332,9 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * @param size
 	 */
 	public void setTrimSize(int position, int size) {
-		int idx = convertSwtConstantToIndex(position);
+		int id = convertSwtConstantToAreaId(position);
 
-		trimSizes[idx] = size;
+		trimSizes[id] = size;
 	}
 
 	/**
@@ -350,7 +348,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * @return one of SWT.LEFT, SWT.RIGHT, SWT.TOP, SWT.BOTTOM, or SWT.DEFAULT
 	 */
 	public int getTrimLocation(Control trimControl) {
-		return convertIndexToSwtConstant(getIndex(trimControl));
+		return convertAreaIdToSwtConstant(getAreaId(trimControl));
 	}
 
 	/**
@@ -358,7 +356,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * is equivalent to <code>addTrim(control, location, null)</code>.
 	 * 
 	 * @param control
-	 *            new trim widget to be added
+	 *            new window trim to be added
 	 * @param location
 	 *            one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT
 	 */
@@ -378,8 +376,8 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * existing control".
 	 * </p>
 	 * 
-	 * @param control
-	 *            new trim widget to be added
+	 * @param trim
+	 *            new window trim to be added
 	 * @param location
 	 *            one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT
 	 * @param position
@@ -390,15 +388,13 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	public void addTrim(IWindowTrim trim, int location, IWindowTrim position) {
 		removeTrim(trim);
 
-		int index = convertSwtConstantToIndex(location);
-		List list = controls[index];
+		int id = convertSwtConstantToAreaId(location);
+		List list = fTrimArea[id];
 
 		SizeCache cache = new SizeCache(trim.getControl());
+		TrimDescriptor desc = new TrimDescriptor(trim, cache, id);
 
-		insertBefore(list, cache, position);
-
-		mapControlOntoData.put(trim.getControl(), new TrimData(index, cache));
-		mapControlOntoTrim.put(trim.getControl(), trim);
+		insertBefore(list, desc, position);
 	}
 
 	/**
@@ -407,9 +403,9 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * list.
 	 * 
 	 * @param list
-	 *            a list of SizeCache
+	 *            a list of {@link TrimDescriptor}
 	 */
-	private static void insertBefore(List list, SizeCache cache,
+	private static void insertBefore(List list, TrimDescriptor desc,
 			IWindowTrim position) {
 
 		if (position != null) {
@@ -417,29 +413,37 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
 			Iterator iter = list.iterator();
 			while (iter.hasNext()) {
-				SizeCache next = (SizeCache) iter.next();
+				TrimDescriptor next = (TrimDescriptor) iter.next();
 
-				if (next.getControl() == position.getControl()) {
+				if (next.getTrim() == position) {
 					break;
 				}
 
 				insertionPoint++;
 			}
 
-			list.add(insertionPoint, cache);
+			list.add(insertionPoint, desc);
 		} else {
-			list.add(cache);
+			list.add(desc);
 		}
 	}
 
+	/**
+	 * Remove window trim from list.
+	 * 
+	 * @param list
+	 *            a list of {@link TrimDescriptor}
+	 * @param toRemove
+	 *            the trim to remove.
+	 */
 	private static void remove(List list, IWindowTrim toRemove) {
-		SizeCache target = null;
+		TrimDescriptor target = null;
 
 		Iterator iter = list.iterator();
 		while (iter.hasNext()) {
-			SizeCache next = (SizeCache) iter.next();
+			TrimDescriptor next = (TrimDescriptor) iter.next();
 
-			if (next.getControl() == toRemove.getControl()) {
+			if (next.getTrim() == toRemove) {
 				target = next;
 				break;
 			}
@@ -449,63 +453,82 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	}
 
 	/**
-	 * Removes the given trim widget. Note that this has no effect if the widget
-	 * is not a trim widget.
+	 * Removes the given window trim. Note that this has no effect if window
+	 * trim is not our window trim.
 	 * 
 	 * @param toRemove
 	 */
 	public void removeTrim(IWindowTrim toRemove) {
 
-		int idx = getIndex(toRemove);
+		int id = getAreaId(toRemove);
 
 		// If this isn't a trim widget.
-		if (idx == NONTRIM) {
+		if (id == NONTRIM) {
 			return;
 		}
 
-		remove(controls[idx], toRemove);
-		mapControlOntoData.remove(toRemove.getControl());
-		mapControlOntoTrim.remove(toRemove.getControl());
+		remove(fTrimArea[id], toRemove);
 	}
 
-	private int getIndex(IWindowTrim trim) {
-		return getIndex(trim.getControl());
+	// private int getAreaId(TrimDescriptor desc) {
+	// return desc.getAreaId();
+	// }
+
+	private int getAreaId(IWindowTrim trim) {
+		return getAreaId(trim.getControl());
 	}
 
 	/**
-	 * Returns an index into the controls array, above, indicating the position
-	 * where this trim control is located.
+	 * Returns the area id indicating the position where this trim control is
+	 * located.
 	 * 
 	 * @param toQuery
-	 * @return
+	 *            the control
+	 * @return the area id
 	 */
-	private int getIndex(Control toQuery) {
-		TrimData data = (TrimData) mapControlOntoData.get(toQuery);
-
-		if (data == null) {
-			return NONTRIM;
+	private int getAreaId(Control toQuery) {
+		TrimDescriptor desc = getTrimDescription(toQuery);
+		if (desc == null) {
+			return TrimLayout.NONTRIM;
 		}
+		return desc.getAreaId();
+	}
 
-		return data.controlsIndex;
+	// private TrimDescriptor getTrimDescription(IWindowTrim trim) {
+	// return getTrimDescription(trim.getControl());
+	// }
+
+	private TrimDescriptor getTrimDescription(Control toQuery) {
+		for (int i = 0; i < fTrimArea.length; i++) {
+			List area = fTrimArea[i];
+			Iterator d = area.iterator();
+			while (d.hasNext()) {
+				TrimDescriptor desc = (TrimDescriptor) d.next();
+				if (desc.getTrim().getControl() == toQuery) {
+					return desc;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
 	 * Removes any disposed widgets from this layout
 	 */
 	private void removeDisposed() {
-		for (int idx = 0; idx < controls.length; idx++) {
-			List ctrl = controls[idx];
+		for (int idx = 0; idx < fTrimArea.length; idx++) {
+			List ctrl = fTrimArea[idx];
 
 			if (ctrl != null) {
 				Iterator iter = ctrl.iterator();
 
 				while (iter.hasNext()) {
-					SizeCache next = (SizeCache) iter.next();
+					TrimDescriptor next = (TrimDescriptor) iter.next();
 
-					Control nextControl = next.getControl();
+					Control nextControl = next.getTrim().getControl();
 
-					if (nextControl.isDisposed()
-							|| getIndex(nextControl) != idx) {
+					if (nextControl == null || nextControl.isDisposed()
+							|| next.getAreaId() != idx) {
 						iter.remove();
 					}
 				}
@@ -520,10 +543,10 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 *         for the meaning of the indices.
 	 */
 	private int[] getTrimSizes(int widthHint, int heightHint) {
-		int[] trimSize = new int[controls.length];
+		int[] trimSize = new int[fTrimArea.length];
 
 		for (int idx = 0; idx < trimSizes.length; idx++) {
-			if (controls[idx].isEmpty()) {
+			if (fTrimArea[idx].isEmpty()) {
 				trimSize[idx] = 0;
 			} else {
 				trimSize[idx] = trimSizes[idx];
@@ -531,18 +554,40 @@ public class TrimLayout extends Layout implements ICachingLayout {
 		}
 
 		if (trimSize[TOP] == SWT.DEFAULT) {
-			trimSize[TOP] = maxDimension(controls[TOP], widthHint, false);
+			trimSize[TOP] = maxDimension(cacheList(fTrimArea[TOP]), widthHint,
+					false);
 		}
 		if (trimSize[BOTTOM] == SWT.DEFAULT) {
-			trimSize[BOTTOM] = maxDimension(controls[BOTTOM], widthHint, false);
+			trimSize[BOTTOM] = maxDimension(cacheList(fTrimArea[BOTTOM]),
+					widthHint, false);
 		}
 		if (trimSize[LEFT] == SWT.DEFAULT) {
-			trimSize[LEFT] = maxDimension(controls[LEFT], heightHint, true);
+			trimSize[LEFT] = maxDimension(cacheList(fTrimArea[LEFT]),
+					heightHint, true);
 		}
 		if (trimSize[RIGHT] == SWT.DEFAULT) {
-			trimSize[RIGHT] = maxDimension(controls[RIGHT], heightHint, true);
+			trimSize[RIGHT] = maxDimension(cacheList(fTrimArea[RIGHT]),
+					heightHint, true);
 		}
 		return trimSize;
+	}
+
+	/**
+	 * Takes the trim area and turns it back into an array of {@link SizeCache}.
+	 * There can be more items in the return list than in the parameter list.
+	 * 
+	 * @param list
+	 *            a list of {@link TrimDescriptor}
+	 * @return a list of {@link SizeCache}
+	 */
+	private List cacheList(List list) {
+		ArrayList result = new ArrayList(list.size());
+		Iterator d = list.iterator();
+		while (d.hasNext()) {
+			TrimDescriptor desc = (TrimDescriptor) d.next();
+			result.add(desc.getCache());
+		}
+		return result;
 	}
 
 	/*
@@ -607,16 +652,16 @@ public class TrimLayout extends Layout implements ICachingLayout {
 				- trimSize[BOTTOM];
 
 		arrange(new Rectangle(leftOfLayout, topOfLayout, clientArea.width,
-				trimSize[TOP]), controls[TOP], true, spacing);
+				trimSize[TOP]), cacheList(fTrimArea[TOP]), true, spacing);
 		arrange(new Rectangle(leftOfCenterPane, bottomOfCenterPane,
-				widthOfCenterPane, trimSize[BOTTOM]), controls[BOTTOM], true,
-				spacing);
+				widthOfCenterPane, trimSize[BOTTOM]),
+				cacheList(fTrimArea[BOTTOM]), true, spacing);
 		arrange(new Rectangle(leftOfLayout, topOfCenterPane, trimSize[LEFT],
-				clientArea.height - trimSize[TOP]), controls[LEFT], false,
-				spacing);
+				clientArea.height - trimSize[TOP]), cacheList(fTrimArea[LEFT]),
+				false, spacing);
 		arrange(new Rectangle(rightOfCenterPane, topOfCenterPane,
 				trimSize[RIGHT], clientArea.height - trimSize[TOP]),
-				controls[RIGHT], false, spacing);
+				cacheList(fTrimArea[RIGHT]), false, spacing);
 
 		if (centerArea.getControl() != null) {
 			centerArea.getControl().setBounds(leftOfCenterPane,
@@ -630,17 +675,17 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * 
 	 * @param area
 	 *            area to be filled by the controls
-	 * @param controls
+	 * @param caches
 	 *            a list of SizeCaches for controls that will span the rectangle
 	 */
-	private static void arrange(Rectangle area, List controls,
+	private static void arrange(Rectangle area, List caches,
 			boolean horizontally, int spacing) {
 		Point currentPosition = new Point(area.x, area.y);
 
-		List resizable = new ArrayList(controls.size());
-		List nonResizable = new ArrayList(controls.size());
+		List resizable = new ArrayList(caches.size());
+		List nonResizable = new ArrayList(caches.size());
 
-		filterResizable(controls, resizable, nonResizable, horizontally);
+		filterResizable(caches, resizable, nonResizable, horizontally);
 
 		int[] sizes = new int[nonResizable.size()];
 
@@ -660,11 +705,11 @@ public class TrimLayout extends Layout implements ICachingLayout {
 		}
 
 		int available = Geometry.getDimension(area, horizontally) - used
-				- spacing * (controls.size() - 1);
+				- spacing * (caches.size() - 1);
 		idx = 0;
 		int remainingResizable = resizable.size();
 
-		iter = controls.iterator();
+		iter = caches.iterator();
 
 		while (iter.hasNext()) {
 			SizeCache next = (SizeCache) iter.next();
@@ -696,7 +741,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * Typically, this will be a composite that contains the main widgetry of
 	 * the application.
 	 * 
-	 * @param composite
+	 * @param center
 	 *            control that will occupy the center of the layout, or null if
 	 *            none
 	 */
@@ -707,7 +752,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	/**
 	 * Returns the control in the center of this layout
 	 * 
-	 * @return
+	 * @return the center area control.
 	 */
 	public Control getCenterControl() {
 		return centerArea.getControl();
@@ -719,30 +764,13 @@ public class TrimLayout extends Layout implements ICachingLayout {
 	 * @see org.eclipse.ui.internal.layout.ICachingLayout#flush(org.eclipse.swt.widgets.Control)
 	 */
 	public void flush(Control dirtyControl) {
-		TrimData data = (TrimData) mapControlOntoData.get(dirtyControl);
-
-		if (data == null) {
-			if (dirtyControl == centerArea.getControl()) {
-				centerArea.flush();
-			}
+		if (dirtyControl == centerArea.getControl()) {
+			centerArea.flush();
 		} else {
-			data.cache.flush();
-		}
-	}
-
-	public String displayTrim() {
-		String rc = "["; //$NON-NLS-1$
-		for (int i = 0; i < controls.length; i++) {
-			List side = controls[i];
-			Iterator j = side.iterator();
-			while (j.hasNext()) {
-				SizeCache c = (SizeCache) j.next();
-				IWindowTrim trim = (IWindowTrim) mapControlOntoTrim.get(c
-						.getControl());
-				rc += (trim == null ? "null" : trim.getId()) //$NON-NLS-1$
-						+ ", "; //$NON-NLS-1$
+			TrimDescriptor desc = getTrimDescription(dirtyControl);
+			if (desc != null) {
+				desc.flush();
 			}
 		}
-		return rc + "]"; //$NON-NLS-1$
 	}
 }
