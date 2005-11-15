@@ -61,6 +61,7 @@ public class UpdateCore extends Plugin {
 	private static final String PREFIX = "org.eclipse.update.core"; //$NON-NLS-1$
 	public static final String P_HISTORY_SIZE = PREFIX + ".historySize"; //$NON-NLS-1$
 	public static final String P_CHECK_SIGNATURE = PREFIX + ".checkSignature"; //$NON-NLS-1$
+	public static final String P_AUTOMATICALLY_CHOOSE_MIRROR =  PREFIX + ".automaticallyChooseMirror"; //$NON-NLS-1$
 	public static final String P_UPDATE_VERSIONS = PREFIX + ".updateVersions"; //$NON-NLS-1$
 	public static final String EQUIVALENT_VALUE = "equivalent"; //$NON-NLS-1$
 	public static final String COMPATIBLE_VALUE = "compatible"; //$NON-NLS-1$

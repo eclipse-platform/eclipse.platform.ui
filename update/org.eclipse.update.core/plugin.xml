@@ -57,6 +57,13 @@
       </install-handler>
    </extension>
    <extension
+         id="JarDeltaInstallHandler"
+         point="org.eclipse.update.core.installHandlers">
+      <install-handler
+            class="org.eclipse.update.internal.core.JarDeltaInstallHandler">
+      </install-handler>
+   </extension>
+   <extension
          id="standaloneUpdate"
          point="org.eclipse.core.runtime.applications">
       <application>

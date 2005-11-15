@@ -43,7 +43,8 @@ public class UpdatePreferencesInitializer extends AbstractPreferenceInitializer 
 	 */
 	public void initializeDefaultPreferences() {
 		Plugin plugin = UpdateCore.getPlugin();
-		plugin.getPluginPreferences().setDefault(UpdateCore.P_CHECK_SIGNATURE, true);		
+		plugin.getPluginPreferences().setDefault(UpdateCore.P_CHECK_SIGNATURE, true);
+		plugin.getPluginPreferences().setDefault(UpdateCore.P_AUTOMATICALLY_CHOOSE_MIRROR, false);
 		plugin.getPluginPreferences().setDefault(UpdateCore.P_HISTORY_SIZE, UpdateCore.DEFAULT_HISTORY);
 		plugin.getPluginPreferences().setDefault(UpdateCore.P_UPDATE_VERSIONS, UpdateCore.EQUIVALENT_VALUE);
 		

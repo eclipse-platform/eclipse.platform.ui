@@ -154,7 +154,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		}
 		// call the configure task	
 		if (installedFeature != null)
-			configure(installedFeature, optionalFeatures, false);
+			configure(installedFeature, optionalFeatures, true);
 		/*callInstallHandler*/
 
 		return installedFeatureRef;

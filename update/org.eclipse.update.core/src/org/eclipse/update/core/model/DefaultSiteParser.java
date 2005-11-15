@@ -10,17 +10,37 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import java.io.*;
-import java.util.*;
-import javax.xml.parsers.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Stack;
 
-import org.eclipse.core.runtime.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.eclipse.update.core.SiteFeatureReferenceModel;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Default site parser.
@@ -749,6 +769,16 @@ public class DefaultSiteParser extends DefaultHandler {
 	static URLEntryModel[] getMirrors(String mirrorsURL, SiteModelFactory factory) {
 	    
 		try {
+			String countryCode = Locale.getDefault().getCountry().toLowerCase();
+			int timeZone = (new GregorianCalendar()).get(Calendar.ZONE_OFFSET)/(60*60*1000);
+
+			if (mirrorsURL.indexOf("?") != -1) {
+				mirrorsURL = mirrorsURL + "&";
+			} else {
+				mirrorsURL = mirrorsURL + "?";
+			}			
+			mirrorsURL = mirrorsURL + "countryCode=" + countryCode + "&timeZone=" + timeZone + "&responseType=xml";
+
 		    DocumentBuilderFactory domFactory = 
 		    DocumentBuilderFactory.newInstance();
 		    DocumentBuilder builder = domFactory.newDocumentBuilder();

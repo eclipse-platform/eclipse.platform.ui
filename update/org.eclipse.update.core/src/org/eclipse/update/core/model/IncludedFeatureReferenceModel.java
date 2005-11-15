@@ -69,6 +69,8 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 		setArch(includedFeatureRef.getOSArch());
 		setWS(includedFeatureRef.getWS());
 		setOS(includedFeatureRef.getOS());
+		setNL(includedFeatureRef.getNL());
+		setPatch(includedFeatureRef.getPatch());
 	}
 
 	/**

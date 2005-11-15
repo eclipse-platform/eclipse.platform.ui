@@ -76,6 +76,8 @@ public class UpdateJob extends Job {
 	private boolean isAutomatic;
 
 	private IStatus jobStatus = Status.OK_STATUS;
+	
+	private int mirrorIndex;
 
 	/**
 	 * Use this constructor to search for updates to installed features
@@ -113,6 +115,7 @@ public class UpdateJob extends Job {
 		updates = new ArrayList();
 		searchRequest = UpdateUtils.createNewUpdatesRequest(features);
 		setPriority(Job.DECORATE);
+		mirrorIndex = 0;
 	}
 
 	/**
@@ -292,10 +295,14 @@ public class UpdateJob extends Job {
 			if (mirrors.containsKey(site))
 				return (IURLEntry) mirrors.get(site);
 			try {
+				boolean automaticallyChooseMirrors = UpdateCore.getPlugin().getPluginPreferences().getBoolean(UpdateCore.P_AUTOMATICALLY_CHOOSE_MIRROR);
+				
 				IURLEntry[] mirrorURLs = site.getMirrorSiteEntries();
 				if (mirrorURLs.length == 0)
 					return null;
-				else {
+				else if (automaticallyChooseMirrors){
+					return mirrorURLs[mirrorIndex];
+				} else {
 					// here we need to prompt the user
 					final IURLEntry[] returnValue = new IURLEntry[1];
 					UpdateUI.getStandardDisplay().syncExec(new Runnable() {

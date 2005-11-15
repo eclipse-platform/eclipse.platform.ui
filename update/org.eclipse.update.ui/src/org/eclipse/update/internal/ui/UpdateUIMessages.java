@@ -46,6 +46,7 @@ public final class UpdateUIMessages extends NLS {
 	public static String SiteCategory_other_label;
 	public static String SiteCategory_other_description;
 	public static String MainPreferencePage_checkSignature;
+	public static String MainPreferencePage_automaticallyChooseMirror;
 	public static String MainPreferencePage_historySize;
 	public static String MainPreferencePage_invalidHistorySize;
 	public static String MainPreferencePage_updateVersions;

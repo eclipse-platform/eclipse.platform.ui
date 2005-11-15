@@ -11,12 +11,21 @@
 
 package org.eclipse.update.internal.core;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.BaseInstallHandler;
+import org.eclipse.update.core.ContentReference;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureContentConsumer;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.PluginEntry;
+import org.eclipse.update.core.Site;
+import org.eclipse.update.internal.operations.UpdateUtils;
 
 /**
  * Install handler for partial plugin delivery: copy delta content from old plugin into the new one.

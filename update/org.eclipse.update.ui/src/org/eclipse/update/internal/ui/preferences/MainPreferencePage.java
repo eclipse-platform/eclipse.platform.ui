@@ -39,6 +39,7 @@ public class MainPreferencePage
 	//private Label historySizeLabel;
 	private Text historySizeText;
 	private Button checkSignatureCheckbox;
+	private Button automaticallyChooseMirrorCheckbox;
 	private Button equivalentButton;
 	private Button compatibleButton;
 	private Text updatePolicyText;
@@ -102,6 +103,12 @@ public class MainPreferencePage
 				}
 			}
 		});
+		
+		automaticallyChooseMirrorCheckbox =
+			new Button(mainComposite, SWT.CHECK | SWT.LEFT);
+		automaticallyChooseMirrorCheckbox.setText(UpdateUIMessages.MainPreferencePage_automaticallyChooseMirror); 
+		gd.horizontalSpan = 2;
+		automaticallyChooseMirrorCheckbox.setLayoutData(gd);
 
 		createSpacer(mainComposite, 2);
 
@@ -269,6 +276,7 @@ public class MainPreferencePage
 		prefs.setValue(
 			UpdateCore.P_CHECK_SIGNATURE,
 			checkSignatureCheckbox.getSelection());
+		prefs.setValue(UpdateCore.P_AUTOMATICALLY_CHOOSE_MIRROR, automaticallyChooseMirrorCheckbox.getSelection());
 		prefs.setValue(UpdateCore.P_HISTORY_SIZE, historySizeText.getText());
 		prefs.setValue(
 			UpdateCore.P_UPDATE_VERSIONS,
@@ -302,6 +310,8 @@ public class MainPreferencePage
 
 		checkSignatureCheckbox.setSelection(
 			prefs.getBoolean(UpdateCore.P_CHECK_SIGNATURE));
+		automaticallyChooseMirrorCheckbox.setSelection(
+				prefs.getBoolean(UpdateCore.P_AUTOMATICALLY_CHOOSE_MIRROR));
 
 		historySizeText.setText(prefs.getString(UpdateCore.P_HISTORY_SIZE));
 
@@ -345,8 +355,10 @@ public class MainPreferencePage
 		updatePolicyText.setText(""); //$NON-NLS-1$
 
 		checkSignatureCheckbox.setSelection(true);
+		automaticallyChooseMirrorCheckbox.setSelection(false);
 		historySizeText.setText(
 			prefs.getDefaultString(UpdateCore.P_HISTORY_SIZE));
+		
 		equivalentButton.setSelection(true);
 		compatibleButton.setSelection(false);
 	}

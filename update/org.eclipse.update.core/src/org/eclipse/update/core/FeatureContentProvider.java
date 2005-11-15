@@ -188,11 +188,8 @@ public abstract class FeatureContentProvider
 			if (localFile != null) {
 				// check if the cached file is still valid (no newer version on
 				// server)
-				if (UpdateManagerUtils
-					.isSameTimestamp(ref.asURL(), localFile.lastModified()))
-					return ref.createContentReference(
-						ref.getIdentifier(),
-						localFile);
+				if (UpdateManagerUtils.isSameTimestamp(ref.asURL(), localFile.lastModified()))
+					return ref.createContentReference(ref.getIdentifier(), localFile);
 			}
 
 			if (localFile == null) {

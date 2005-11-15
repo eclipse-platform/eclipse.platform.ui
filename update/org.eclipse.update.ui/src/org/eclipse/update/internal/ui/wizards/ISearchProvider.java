@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.update.search.*;
+import org.eclipse.update.search.UpdateSearchRequest;
 
 /**
  * A search request provider

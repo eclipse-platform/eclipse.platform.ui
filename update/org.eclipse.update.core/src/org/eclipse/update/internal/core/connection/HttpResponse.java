@@ -107,6 +107,7 @@ public class HttpResponse extends AbstractResponse {
 	protected long offset;
 
 	protected HttpResponse(URL url) {
+		System.out.println(url);
         this.url = url;
 	}
 
