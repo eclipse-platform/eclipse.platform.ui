@@ -218,8 +218,13 @@ public class LocalFile extends FileStore {
 		//if equal then not a parent
 		if (thisLength >= thatLength)
 			return false;
-		if (thatPath.indexOf(thisPath) != 0)
-			return false;
+		if (getFileSystem().isCaseSensitive()) {
+			if (thatPath.indexOf(thisPath) != 0)
+				return false;
+		} else {
+			if (thatPath.toLowerCase().indexOf(thisPath.toLowerCase()) != 0)
+				return false;
+		}
 		//The common portion must end with a separator character for this to be a parent of that
 		return thisPath.charAt(thisLength - 1) == File.separatorChar || thatPath.charAt(thisLength) == File.separatorChar;
 	}
