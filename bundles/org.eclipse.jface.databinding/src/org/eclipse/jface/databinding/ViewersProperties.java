@@ -11,8 +11,10 @@
 package org.eclipse.jface.databinding;
 
 /**
+ * Constants used to describe properties of JFace viewers.
+ * 
  * @since 3.2
- *
+ * 
  */
 public interface ViewersProperties {
 
@@ -27,11 +29,11 @@ public interface ViewersProperties {
 	 * structured viewers.
 	 */
 	public static final String SINGLE_SELECTION = "single_selection"; //$NON-NLS-1$
-	
+
 	/**
 	 * Property ID constant denoting the (multi) selection collection property
 	 * of JFace structured viewers.
 	 */
 	public static final String MULTI_SELECTION = "multi_selection"; //$NON-NLS-1$
-	
+
 }

@@ -34,7 +34,7 @@ public interface IDataBindingContext {
 
 	/**
 	 * Policy constant specifying that update or validation should occur
-	 * automatically.
+	 * automatically whenever a bound updatable object generates a change event.
 	 */
 	public static final int POLICY_AUTOMATIC = 1;
 
@@ -118,6 +118,10 @@ public interface IDataBindingContext {
 			IBindSpec bindSpec) throws BindingException;
 
 	/**
+	 * Creates an updatable object from a description. Description objects are
+	 * interpreted by implementors of IUpdatableFactory, the data binding
+	 * framework does not impose any semantics on them.
+	 * 
 	 * @param description
 	 * @return IUpdatable for the given description
 	 * @throws BindingException
@@ -126,25 +130,40 @@ public interface IDataBindingContext {
 			throws BindingException;
 
 	/**
+	 * Tries to create a validator that can validate values of type fromType.
+	 * Returns <code>null</code> if no validator could be created. Either
+	 * toType or modelDescription can be <code>null</code>, but not both. The
+	 * implementation of this method will iterate over the registered bind
+	 * support factories in reverse order, passing the given arguments to
+	 * {@link IBindSupportFactory#createValidator(Class, Class, Object)}. The
+	 * first non-null validator will be returned. 
 	 * @param fromType
 	 * @param toType
 	 * @param modelDescription
-	 * @return IValidator
+	 * @return an IValidator, or <code>null</code> if unsuccessful
 	 */
 	public IValidator createValidator(Class fromType, Class toType,
 			Object modelDescription);
 
 	/**
+	 * Tries to create a converter that can convert from values of type fromType.
+	 * Returns <code>null</code> if no converter could be created. Either
+	 * toType or modelDescription can be <code>null</code>, but not both. The
+	 * implementation of this method will iterate over the registered bind
+	 * support factories in reverse order, passing the given arguments to
+	 * {@link IBindSupportFactory#createConverter(Class, Class, Object)}. The
+	 * first non-null converter will be returned. 
 	 * @param fromType
 	 * @param toType
 	 * @param modelDescription
-	 * @return IConverter
+	 * @return an IConverter, or <code>null</code> if unsuccessful
 	 */
 	public IConverter createConverter(Class fromType, Class toType,
 			Object modelDescription);
 
 	/**
-	 * 
+	 * Disposes of this data binding context and all updatable objects created
+	 * in this context.
 	 */
 	public void dispose();
 
@@ -163,25 +182,34 @@ public interface IDataBindingContext {
 	public void updateModels();
 
 	/**
+	 * Returns an updatable value of type String
+	 * 
 	 * @return the validation message updatable value
 	 */
 	public IUpdatableValue getCombinedValidationMessage();
 
 	/**
+	 * Returns an updatable value of type String
+	 * 
 	 * @return the validation updatable
 	 */
 	public IUpdatableValue getPartialValidationMessage();
 
 	/**
+	 * Returns an updatable value of type String
+	 * 
 	 * @return the validation updatable
 	 */
 	public IUpdatableValue getValidationMessage();
 
 	/**
+	 * Updates the current validation error message originating from the
+	 * given listener to an updatable object. 
+	 * 
 	 * @param listener
-	 * @param validationErrorOrNull
+	 * @param validationMessage the new message, or <code>null</code>
 	 */
 	public void updateValidationError(IChangeListener listener,
-			String validationErrorOrNull);
+			String validationMessage);
 
 }

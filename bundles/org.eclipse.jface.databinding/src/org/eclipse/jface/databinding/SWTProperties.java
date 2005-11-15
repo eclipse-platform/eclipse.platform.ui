@@ -11,6 +11,8 @@
 package org.eclipse.jface.databinding;
 
 /**
+ * Constants used to describe properties of SWT controls.
+ * 
  * @since 3.2
  *
  */

@@ -109,7 +109,7 @@ public class PropertyDescription {
 	 *         property, <code>null</code> if it is a simple property, or
 	 *         <code>null</code> if unknown
 	 */
-	public Boolean getIsCollectionProperty() {
+	public Boolean isCollectionProperty() {
 		return isCollectionProperty;
 	}
 }

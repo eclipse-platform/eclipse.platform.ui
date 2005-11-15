@@ -22,6 +22,23 @@ import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableValue;
 import org.eclipse.jface.util.Assert;
 
 /**
+ * A factory for creating updatable objects for properties of plain Java objects
+ * with JavaBeans-style notification.
+ * 
+ * This factory supports the following description objects:
+ * <ul>
+ * <li>org.eclipse.jface.databinding.PropertyDescription:
+ * <ul>
+ * <li>Returns an updatable value representing the specified value property of
+ * the given object, if {@link PropertyDescription#isCollectionProperty()}
+ * returns false</li>
+ * <li>Returns an updatable collection representing the specified collection
+ * property of the given object, if
+ * {@link PropertyDescription#isCollectionProperty()} returns false</li>
+ * </ul>
+ * </li>
+ * </ul>
+ * 
  * @since 3.2
  * 
  */
@@ -46,10 +63,14 @@ final public class BeanUpdatableFactory implements IUpdatableFactory {
 					PropertyDescriptor descriptor = propertyDescriptors[i];
 					if (descriptor.getName().equals(
 							propertyDescription.getPropertyID())) {
-						if (descriptor.getPropertyType().isArray() || Collection.class.isAssignableFrom(descriptor.getPropertyType())) {
-							Class elementType = descriptor.getPropertyType().isArray()? 
-									descriptor.getPropertyType().getComponentType() : propertyDescription.getPropertyType();
-							Assert.isTrue(elementType!=null);									
+						if (descriptor.getPropertyType().isArray()
+								|| Collection.class.isAssignableFrom(descriptor
+										.getPropertyType())) {
+							Class elementType = descriptor.getPropertyType()
+									.isArray() ? descriptor.getPropertyType()
+									.getComponentType() : propertyDescription
+									.getPropertyType();
+							Assert.isTrue(elementType != null);
 							return new JavaBeanUpdatableCollection(object,
 									descriptor, elementType);
 						}

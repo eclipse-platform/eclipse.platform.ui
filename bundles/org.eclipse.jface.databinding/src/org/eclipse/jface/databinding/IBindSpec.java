@@ -24,12 +24,18 @@ package org.eclipse.jface.databinding;
 public interface IBindSpec {
 	
 	/**
-	 * @return the converter
+	 * Returns the converter to be used, or <code>null</code> if a default
+	 * converter should be used.
+	 * 
+	 * @return the converter, or <code>null</code>
 	 */
 	public IConverter getConverter();
 	
 	/**
-	 * @return the validator
+	 * Returns the validator to be used, or <code>null</code> if a default
+	 * validator should be used.
+	 * 
+	 * @return the validator, or <code>null</code>
 	 */
 	public IValidator getValidator();
 	

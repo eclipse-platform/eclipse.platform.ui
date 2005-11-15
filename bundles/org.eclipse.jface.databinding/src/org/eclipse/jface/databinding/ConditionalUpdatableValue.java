@@ -11,6 +11,8 @@
 package org.eclipse.jface.databinding;
 
 /**
+ * An abstract class for implementing updatable values of type boolean that
+ * track changes of another updatable value.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
@@ -32,6 +34,8 @@ public abstract class ConditionalUpdatableValue extends UpdatableValue {
 	};
 
 	/**
+	 * Creates a new instance.
+	 * 
 	 * @param innerUpdatableValue
 	 */
 	public ConditionalUpdatableValue(IUpdatableValue innerUpdatableValue) {
@@ -48,6 +52,13 @@ public abstract class ConditionalUpdatableValue extends UpdatableValue {
 		return new Boolean(compute(currentValue));
 	}
 
+	/**
+	 * To be implemented by subclasses.
+	 * 
+	 * @param currentValue
+	 *            the current value of the tracked updatable value.
+	 * @return a boolean result
+	 */
 	abstract protected boolean compute(Object currentValue);
 
 	public Class getValueType() {

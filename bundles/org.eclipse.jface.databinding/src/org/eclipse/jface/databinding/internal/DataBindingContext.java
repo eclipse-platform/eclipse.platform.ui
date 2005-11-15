@@ -293,7 +293,7 @@ public class DataBindingContext implements IDataBindingContext {
 									"Missing required property type for binding to a property of an IUpdatableValue."); //$NON-NLS-1$
 						}
 						Boolean isCollectionProperty = propertyDescription
-								.getIsCollectionProperty();
+								.isCollectionProperty();
 						if (isCollectionProperty == null) {
 							throw new BindingException(
 									"Missing required property collection information for binding to a property of an IUpdatableValue."); //$NON-NLS-1$

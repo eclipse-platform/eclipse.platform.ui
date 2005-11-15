@@ -11,6 +11,8 @@
 package org.eclipse.jface.databinding;
 
 /**
+ * A listener that can be notified of changes to objects of type
+ * {@link IUpdatable}.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
@@ -19,7 +21,7 @@ package org.eclipse.jface.databinding;
  * </p>
  * 
  * @since 3.2
- *
+ * 
  */
 public interface IChangeListener {
 

@@ -21,6 +21,22 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 
 /**
+ * A factory that supports binding to JFace viewers. This
+ * factory supports the following description objects:
+ * <ul>
+ * <li>{@link AbstractListViewer} - denotes the viewer's collection of elements</li>
+ * <li>{@link TableViewerDescription} - TODO describe</li>
+ * <li>org.eclipse.jface.databinding.PropertyDescription - depending on the
+ * property description's object and property ID:
+ * <ul>
+ * <li>object instanceof StructuredViewer, property ID is ViewersProperties.SINGLE_SELECTION - denoting the
+ * viewer's (single) selection</li>
+ * <li>object instanceof TableViewer, property ID is ViewersProperties.CONTENT</li>
+ * <li>object instanceof AbstractListViewer, property ID is ViewersProperties.CONTENT</li>
+ * </ul>
+ * </li>
+ * </ul>
+ * TODO complete the list
  * @since 3.2
  *
  */

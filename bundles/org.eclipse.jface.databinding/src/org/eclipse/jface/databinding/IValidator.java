@@ -11,6 +11,7 @@
 package org.eclipse.jface.databinding;
 
 /**
+ * A validator.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain

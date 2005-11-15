@@ -11,6 +11,8 @@
 package org.eclipse.jface.databinding;
 
 /**
+ * An updatable value that can be instantiated directly. 
+ * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
@@ -28,6 +30,9 @@ public class SettableValue extends UpdatableValue {
 	private Object value;
 
 	/**
+	 * Creates a new settable value of the given value type, and with the given
+	 * initial value.
+	 * 
 	 * @param type
 	 * @param initialValue
 	 */
@@ -37,6 +42,9 @@ public class SettableValue extends UpdatableValue {
 	}
 
 	/**
+	 * Creates a new settable value of the given value type, and with an
+	 * initial value of <code>null</code>.
+	 * 
 	 * @param type
 	 */
 	public SettableValue(Class type) {

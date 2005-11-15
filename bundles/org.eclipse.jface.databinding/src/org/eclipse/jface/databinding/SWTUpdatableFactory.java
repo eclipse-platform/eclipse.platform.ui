@@ -43,6 +43,31 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
 /**
+ * A factory that supports binding to SWT controls. This
+ * factory supports the following description objects:
+ * <ul>
+ * <li>org.eclipse.swt.widgets.Text - denotes the text's text property</li>
+ * <li>org.eclipse.swt.widgets.Button - denotes the button's selection
+ * property</li>
+ * <li>org.eclipse.swt.widgets.Combo - denotes the combo's items collection</li>
+ * <li>org.eclipse.swt.widgets.CCombo - denotes the ccombo's items
+ * collection</li>
+ * <li>org.eclipse.swt.widgets.List - denotes the list's items collection</li>
+ * <li>org.eclipse.jface.databinding.PropertyDescription - depending on the
+ * property description's object and property ID:
+ * <ul>
+ * <li>object instanceof Widget, property ID is SWT_ENABLED - denoting the
+ * widget's enabled property</li>
+ * <li>object instanceof Spinner, property ID is SWT_SELECTION - denoting
+ * the spinner's selection property</li>
+ * <li>object instanceof Spinner, property ID is SWT_MINIMUM - denoting the
+ * spinner's minimum property</li>
+ * <li>object instanceof Spinner, property ID is SWT_MAXIMUM - denoting the
+ * spinner's maximum property</li>
+ * </ul>
+ * </li>
+ * </ul>
+ * TODO complete the list
  * @since 3.2
  *
  */
