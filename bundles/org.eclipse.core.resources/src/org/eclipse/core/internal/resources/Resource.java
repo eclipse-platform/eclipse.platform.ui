@@ -579,9 +579,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see org.eclipse.core.resources.IFile#createLink(IPath, int, IProgressMonitor)
 	 */
 	public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		//if the location doesn't have a device, see if the OS will assign one
-		if (localLocation.isAbsolute() && localLocation.getDevice() == null)
-			localLocation = new Path(localLocation.toFile().getAbsolutePath());
 		createLink(FileUtil.toURI(localLocation), updateFlags, monitor);
 	}
 	
