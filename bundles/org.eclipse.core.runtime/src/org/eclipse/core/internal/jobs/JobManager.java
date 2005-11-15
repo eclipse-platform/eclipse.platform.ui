@@ -458,7 +458,7 @@ public class JobManager implements IJobManager {
 			rescheduleDelay = job.getStartTime();
 			changeState(job, Job.NONE);
 			blocked = job.previous();
-			job.setPrevious(null);
+			job.remove();
 
 			//add any blocked jobs back to the wait queue
 			while (blocked != null) {
