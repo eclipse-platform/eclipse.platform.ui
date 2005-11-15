@@ -367,7 +367,7 @@ public class InstallWizard2
 		job.schedule();
 	}
 	
-	private void install(IProgressMonitor monitor) {
+	private boolean install(IProgressMonitor monitor) {
 		// Installs the (already downloaded) features and prompts for restart
 		try {
 			needsRestart = installOperation.execute(monitor, InstallWizard2.this);
@@ -385,10 +385,13 @@ public class InstallWizard2
 					}
 				});
 			}
+			return false;
 		} catch (CoreException e) {
+			return false;
 		} finally {
 			isRunning = false;
 		}
+		return true;
 	}
 	
 	private boolean download(final IProgressMonitor monitor) {
@@ -456,7 +459,29 @@ public class InstallWizard2
                 Platform.getJobManager().removeJobChangeListener(this);
                 Platform.getJobManager().cancel(job);
                 
-                final IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
+                Job installJob = new Job(UpdateUIMessages.InstallWizard_jobName) { 
+        			public IStatus run(IProgressMonitor monitor) {
+        				install(monitor);
+        				if (install(monitor)) {
+        					return Status.OK_STATUS;
+        			} else {
+        					isRunning = false;
+        					return Status.CANCEL_STATUS;
+        				}
+        			}
+        			public boolean belongsTo(Object family) {
+        				return InstallWizard2.jobFamily == family;
+        			}
+        		};
+
+        		installJob.setUser(true);
+        		installJob.setPriority(Job.INTERACTIVE);
+//        		if (wait) {
+//        			progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job); 
+//        		}
+        		installJob.schedule();
+                
+                /*final IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
                 UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
                     public void run() {
                         try {
@@ -471,7 +496,7 @@ public class InstallWizard2
                             UpdateUI.logException(e, false);
                         }
                     }
-                }); 
+                }); */
             } else if (event.getJob() == InstallWizard2.this.job && event.getResult() != Status.OK_STATUS) {
                 isRunning = false;
                 Platform.getJobManager().removeJobChangeListener(this);
