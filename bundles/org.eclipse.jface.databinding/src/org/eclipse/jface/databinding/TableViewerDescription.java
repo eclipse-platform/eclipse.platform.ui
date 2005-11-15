@@ -12,7 +12,6 @@ package org.eclipse.jface.databinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -45,6 +44,8 @@ public class TableViewerDescription {
 		private String name;
 
 		private String propertyName;
+		
+		private Class  propertyType;
 
 		private IValidator validator;
 
@@ -68,7 +69,7 @@ public class TableViewerDescription {
 		}
 
 		/**
-		 * @return
+		 * @return IConverter
 		 */
 		public IConverter getConverter() {
 			return converter;
@@ -82,7 +83,7 @@ public class TableViewerDescription {
 		}
 
 		/**
-		 * @return
+		 * @return IValidator
 		 */
 		public IValidator getValidator() {
 			return validator;
@@ -103,7 +104,7 @@ public class TableViewerDescription {
 		}
 
 		/**
-		 * @return
+		 * @return CellEditor
 		 */
 		public CellEditor getCellEditor() {
 			return cellEditor;
@@ -115,13 +116,25 @@ public class TableViewerDescription {
 		public void setCellEditor(CellEditor cellEditor) {
 			this.cellEditor = cellEditor;
 		}
+
+		/**
+		 * @return property Class
+		 */
+		public Class getPropertyType() {
+			return propertyType;
+		}
+
+		/**
+		 * @param propertyType
+		 */
+		public void setPropertyType(Class propertyType) {
+			this.propertyType = propertyType;
+		}
 	}
 
 	private TableViewer tableViewer;
 
 	private List columns = new ArrayList();
-	
-	private Map laterColumns;
 
 	private ICellModifier cellModifier = null;
 

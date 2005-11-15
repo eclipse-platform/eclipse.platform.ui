@@ -77,9 +77,9 @@ public class TableScenarios extends ScenariosTestCase {
 
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
-		tableViewerDescription.addColumn("FirstName", "firstName");
-		tableViewerDescription.addColumn("LastName", "lastName");
-		tableViewerDescription.addColumn("State", "state");
+		tableViewerDescription.addColumn(1, "firstName");
+		tableViewerDescription.addColumn(2, "lastName");
+		tableViewerDescription.addColumn(3, "state");
 		getDbc().bind(tableViewerDescription,
 				new PropertyDescription(catalog, "accounts"), null);
 
@@ -108,10 +108,10 @@ public class TableScenarios extends ScenariosTestCase {
 
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
-		tableViewerDescription.addColumn("firstName", "firstName");
-		tableViewerDescription.addColumn("lastName", "lastName", null,
+		tableViewerDescription.addColumn(1, "firstName");
+		tableViewerDescription.addColumn(2, "lastName", null,
 				new PhoneConverter());
-		tableViewerDescription.addColumn("state", "state", null,
+		tableViewerDescription.addColumn(3, "state", null,
 				new StateConverter());
 		getDbc().bind(tableViewerDescription,
 				new PropertyDescription(catalog, "accounts"), null);
@@ -144,9 +144,9 @@ public class TableScenarios extends ScenariosTestCase {
 		
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
-		tableViewerDescription.addColumn("FirstName", "firstName");
-		tableViewerDescription.addColumn("LastName", "lastName");
-		tableViewerDescription.addColumn("State", "state");
+		tableViewerDescription.addColumn(1, "firstName");
+		tableViewerDescription.addColumn(2, "lastName");
+		tableViewerDescription.addColumn(3, "state");
 		getDbc().bind(tableViewerDescription,
 				new PropertyDescription(catalog, "accounts"), null);
 		
@@ -177,10 +177,10 @@ public class TableScenarios extends ScenariosTestCase {
 
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
-		tableViewerDescription.addColumn("lastName", "lastName");
-		tableViewerDescription.addColumn("phone", "phone", null,
+		tableViewerDescription.addColumn(1, "lastName");
+		tableViewerDescription.addColumn(2, "phone", null,
 				new PhoneConverter());
-		tableViewerDescription.addColumn("state", "state", null,
+		tableViewerDescription.addColumn(3, "state", null,
 				new StateConverter());
 		getDbc().bind(tableViewerDescription,
 				new PropertyDescription(catalog, "accounts"), null);
