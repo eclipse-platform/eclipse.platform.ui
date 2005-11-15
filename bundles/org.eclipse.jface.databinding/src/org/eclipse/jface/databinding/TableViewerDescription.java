@@ -12,6 +12,7 @@ package org.eclipse.jface.databinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -44,8 +45,6 @@ public class TableViewerDescription {
 		private String name;
 
 		private String propertyName;
-		
-		private Class  propertyType;
 
 		private IValidator validator;
 
@@ -60,9 +59,8 @@ public class TableViewerDescription {
 		 * @param validator
 		 * @param converter
 		 */
-		public Column(String name, String propertyName, CellEditor cellEditor,
+		public Column(String propertyName, CellEditor cellEditor,
 				IValidator validator, IConverter converter) {
-			this.name = name;
 			this.propertyName = propertyName;
 			this.cellEditor = cellEditor;
 			this.validator = validator;
@@ -70,7 +68,7 @@ public class TableViewerDescription {
 		}
 
 		/**
-		 * @return IConverter
+		 * @return
 		 */
 		public IConverter getConverter() {
 			return converter;
@@ -79,19 +77,12 @@ public class TableViewerDescription {
 		/**
 		 * @return String name
 		 */
-		public String getName() {
-			return name;
-		}
-
-		/**
-		 * @return String property
-		 */
 		public String getPropertyName() {
 			return propertyName;
 		}
 
 		/**
-		 * @return IValidator
+		 * @return
 		 */
 		public IValidator getValidator() {
 			return validator;
@@ -112,7 +103,7 @@ public class TableViewerDescription {
 		}
 
 		/**
-		 * @return CellEditor
+		 * @return
 		 */
 		public CellEditor getCellEditor() {
 			return cellEditor;
@@ -124,25 +115,13 @@ public class TableViewerDescription {
 		public void setCellEditor(CellEditor cellEditor) {
 			this.cellEditor = cellEditor;
 		}
-
-		/**
-		 * @return property Class
-		 */
-		public Class getPropertyType() {
-			return propertyType;
-		}
-
-		/**
-		 * @param propertyType
-		 */
-		public void setPropertyType(Class propertyType) {
-			this.propertyType = propertyType;
-		}
 	}
 
 	private TableViewer tableViewer;
 
 	private List columns = new ArrayList();
+	
+	private Map laterColumns;
 
 	private ICellModifier cellModifier = null;
 
@@ -154,41 +133,74 @@ public class TableViewerDescription {
 	}
 
 	/**
-	 * @param columnName
+	 * @param columnIndex
 	 * @param propertyName
 	 * @param cellEditor 
 	 * @param validator
 	 * @param converter
 	 *            converter from model objects to String, or ImageAndString.
 	 */
-	public void addColumn(String columnName, String propertyName,
+	public void addColumn(int columnIndex, String propertyName,
 			CellEditor cellEditor, IValidator validator, IConverter converter) {
-		columns.add(new Column(columnName, propertyName, cellEditor, validator,
-				converter));
+		Column column = new Column(propertyName, cellEditor , validator,
+				converter);
+		if(columnIndex == -1){
+			columns.add(column);
+		} else {
+			columns.add(columnIndex,column);				
+		}	
+	}
+	
+	/**
+	 * @param propertyName
+	 * @param cellEditor
+	 * @param validator
+	 * @param converter
+	 */
+	public void addColumn(String propertyName,
+			CellEditor cellEditor, IValidator validator, IConverter converter) {
+		addColumn(-1,propertyName,cellEditor,validator,converter);
 	}
 
 	/**
-	 * @param columnName
+	 * @param columnIndex
 	 * @param propertyName
 	 * @param validator
 	 * @param converter
 	 */
-	public void addColumn(String columnName, String propertyName,
+	public void addColumn(int columnIndex, String propertyName,
 			IValidator validator, IConverter converter) {
-		columns.add(new Column(columnName, propertyName, null, validator,
-				converter));
+		addColumn(columnIndex,propertyName,null,validator,converter);
+	}
+	
+	
+	/**
+	 * @param propertyName
+	 * @param validator
+	 * @param converter
+	 */
+	public void addColumn(String propertyName,
+			IValidator validator, IConverter converter) {	
+		addColumn(-1,propertyName,validator,converter);
 	}
 
 	/**
-	 * @param columnName
 	 * @param propertyName
 	 */
-	public void addColumn(String columnName, String propertyName) {
-		addColumn(columnName, propertyName, null, null, null);
+	public void addColumn(String propertyName) {
+		addColumn(-1, propertyName, null, null, null);
 	}
+	
+	/**
+	 * @param columnIndex
+	 * @param propertyName
+	 */
+	public void addColumn(int columnIndex, String propertyName) {
+		addColumn(columnIndex, propertyName, null, null, null);
+	}	
 
 	/**
-	 * @return
+	 * @return cellModifier   The cell Modifier
 	 */
 	public ICellModifier getCellModifier() {
 		return cellModifier;
@@ -202,7 +214,7 @@ public class TableViewerDescription {
 	}
 
 	/**
-	 * @return
+	 * @return columnCount  The number of Columns
 	 */
 	public int getColumnCount() {
 		return columns.size();
@@ -210,14 +222,14 @@ public class TableViewerDescription {
 
 	/**
 	 * @param columnIndex
-	 * @return
+	 * @return Column  The column at the specified index
 	 */
 	public Column getColumn(int columnIndex) {
 		return (Column) columns.get(columnIndex);
 	}
 
 	/**
-	 * @return
+	 * @return tableViewer
 	 */
 	public TableViewer getTableViewer() {
 		return tableViewer;
