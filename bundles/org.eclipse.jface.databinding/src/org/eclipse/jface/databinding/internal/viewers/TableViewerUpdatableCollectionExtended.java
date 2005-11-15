@@ -43,7 +43,7 @@ public class TableViewerUpdatableCollectionExtended extends
 		TableViewerUpdatableCollection {
 
 	private final TableViewerDescription tableViewerDescription;
-	
+			
 	private ITableLabelProvider tableLabelProvider = new ITableLabelProvider() {
 
 		private Object getValue(Object element, Column column) {
@@ -58,7 +58,7 @@ public class TableViewerUpdatableCollectionExtended extends
 					value);
 			return convertedValue;
 		}
-
+		
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex<tableViewerDescription.getColumnCount() && columnIndex>=0) {
 				Column column = getColumn(columnIndex);
@@ -83,7 +83,7 @@ public class TableViewerUpdatableCollectionExtended extends
 					return viewerLabel.getText();
 			  }				
 			}
-			return convertedValue==null? "null": (String) convertedValue; //$NON-NLS-1$
+			return convertedValue==null? "": (String) convertedValue; //$NON-NLS-1$
 		}
 
 		public void addListener(ILabelProviderListener listener) {
@@ -129,9 +129,134 @@ public class TableViewerUpdatableCollectionExtended extends
 		tableViewer.setColumnProperties(columnProperties);
 		tableViewer.setCellEditors(cellEditors);
 	}
+	
+	protected CellEditor createCellEditor(final Column column) {
+		return new TextCellEditor(tableViewerDescription.getTableViewer().getTable()) {				
+			protected void doSetValue(Object value) {
+				super.doSetValue( column.getConverter().convertModelToTarget(value));
+			}
+			protected Object doGetValue() {
+				String textValue = (String)super.doGetValue();
+				return column.getConverter().convertTargetToModel(textValue);
+			}
+		};
+		
+	}
+	
+	protected ICellModifier createCellModifier(final IDataBindingContext dataBindingContext) {
+		return new ICellModifier() {
+			private Column findColumn(String property) {
+				for (int i = 0; i < tableViewerDescription.getColumnCount(); i++) {
+					Column column = tableViewerDescription.getColumn(i);
+					if (column.getPropertyName().equals(property)) {
+						return column;
+					}
+				}
+				return null;
+			}
 
-	private void fillDescriptionDefaults(final IDataBindingContext dataBindingContext) {
-		CellEditor defaultCellEditor = null;
+			public boolean canModify(Object element, String property) {
+				return findColumn(property) != null;
+			}
+
+			private List getNestedPorperties (String properties) {	
+				//TODO jUnit for nested column
+				StringTokenizer stk = new StringTokenizer(properties,TableViewerDescription.COLUMN_PROPERTY_NESTING_SEPERATOR);
+				List list = new ArrayList(stk.countTokens());
+				while(stk.hasMoreTokens())
+					list.add(stk.nextElement());
+				return list;					
+			}
+			
+			private Object getGetterValue(Object root, List properties) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+				Object result=root;					
+				for (int i = 0; i < properties.size(); i++) {
+					if (result==null) return null;
+					String prop = (String) properties.get(i);
+					Method getter = result.getClass().getMethod(
+							"get"+ prop.substring(0, 1).toUpperCase(Locale.ENGLISH) + prop.substring(1), new Class[0]); //$NON-NLS-1$
+					result=getter.invoke(result, new Object[0]);						
+				}
+				return result;
+			}
+			
+			public Object getValue(Object element, String property) {
+				Column column = findColumn(property);
+				if (column == null) {
+					return null;
+				}
+				try {						
+					return getGetterValue(element,getNestedPorperties(property));
+				} catch (SecurityException e) {
+					// TODO log
+				} catch (NoSuchMethodException e) {
+					// TODO log
+				} catch (IllegalArgumentException e) {
+					// TODO log
+				} catch (IllegalAccessException e) {
+					// TODO log
+				} catch (InvocationTargetException e) {
+					// TODO log
+				}
+				return null;
+			}
+
+			public void modify(Object element, String property, Object value) {
+				Column column = findColumn(property);
+				if (column == null) {
+					return;
+				}
+				if (element instanceof Item) {
+					element = ((Item) element).getData();
+				}
+				IValidator columnValidator = column.getValidator();
+				if(columnValidator != null){
+					String errorMessage = columnValidator.isValid(value);
+					if(errorMessage != null){
+						dataBindingContext.updateValidationError(new IChangeListener(){
+							public void handleChange(ChangeEvent changeEvent) {									
+							}								
+						},errorMessage);
+						return;
+					}
+				}
+				try {
+					List getters = getNestedPorperties(property);
+					String setterSig;
+					Object target;
+					if (getters.size()>1) {
+						setterSig = (String) getters.get(getters.size()-1);
+						getters.remove(getters.size()-1);
+						target=getGetterValue(element,getters);
+					}
+					else {
+						setterSig = property;
+						target = element;
+					}
+						
+					Method setter = target
+							.getClass()
+							.getMethod(
+									"set"	+ setterSig.substring(0, 1).toUpperCase(Locale.ENGLISH) + setterSig.substring(1), new Class[] { column.getConverter().getTargetType() }); //$NON-NLS-1$
+					setter.invoke(target, new Object[] { value });
+					tableViewerDescription.getTableViewer().refresh(element);
+					return;
+				} catch (SecurityException e) {
+					// TODO log
+				} catch (NoSuchMethodException e) {
+					// TODO log
+				} catch (IllegalArgumentException e) {
+					// TODO log
+				} catch (IllegalAccessException e) {
+					// TODO log
+				} catch (InvocationTargetException e) {
+					// TODO log
+				}
+			}
+		};
+	}
+
+	private void fillDescriptionDefaults(final IDataBindingContext dataBindingContext) {		
 		for (int i = 0; i < tableViewerDescription.getColumnCount(); i++) {
 			Column column = tableViewerDescription.getColumn(i);
 			if (column.getConverter() == null) {
@@ -152,125 +277,12 @@ public class TableViewerUpdatableCollectionExtended extends
 					}
 				});
 			}
-			if (column.getCellEditor() == null) {
-				if (defaultCellEditor == null) {
-					defaultCellEditor = new TextCellEditor(
-							tableViewerDescription.getTableViewer().getTable());
-				}
-				column.setCellEditor(defaultCellEditor);
+			if (column.getCellEditor() == null) {				
+				column.setCellEditor(createCellEditor(column));
 			}
 		}
 		if (tableViewerDescription.getCellModifier() == null) {
-			tableViewerDescription.setCellModifier(new ICellModifier() {
-
-				private Column findColumn(String property) {
-					for (int i = 0; i < tableViewerDescription.getColumnCount(); i++) {
-						Column column = tableViewerDescription.getColumn(i);
-						if (column.getPropertyName().equals(property)) {
-							return column;
-						}
-					}
-					return null;
-				}
-
-				public boolean canModify(Object element, String property) {
-					return findColumn(property) != null;
-				}
-
-				private List getNestedPorperties (String properties) {	
-					//TODO jUnit for nested column
-					StringTokenizer stk = new StringTokenizer(properties,TableViewerDescription.COLUMN_PROPERTY_NESTING_SEPERATOR);
-					List list = new ArrayList(stk.countTokens());
-					while(stk.hasMoreTokens())
-						list.add(stk.nextElement());
-					return list;					
-				}
-				
-				private Object getGetterValue(Object root, List properties) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-					Object result=root;					
-					for (int i = 0; i < properties.size(); i++) {
-						if (result==null) return null;
-						String prop = (String) properties.get(i);
-						Method getter = result.getClass().getMethod(
-								"get"+ prop.substring(0, 1).toUpperCase(Locale.ENGLISH) + prop.substring(1), new Class[0]); //$NON-NLS-1$
-						result=getter.invoke(result, new Object[0]);						
-					}
-					return result;
-				}
-				
-				public Object getValue(Object element, String property) {
-					Column column = findColumn(property);
-					if (column == null) {
-						return null;
-					}
-					try {						
-						return getGetterValue(element,getNestedPorperties(property));
-					} catch (SecurityException e) {
-						// TODO log
-					} catch (NoSuchMethodException e) {
-						// TODO log
-					} catch (IllegalArgumentException e) {
-						// TODO log
-					} catch (IllegalAccessException e) {
-						// TODO log
-					} catch (InvocationTargetException e) {
-						// TODO log
-					}
-					return null;
-				}
-
-				public void modify(Object element, String property, Object value) {
-					Column column = findColumn(property);
-					if (column == null) {
-						return;
-					}
-					if (element instanceof Item) {
-						element = ((Item) element).getData();
-					}
-					IValidator columnValidator = column.getValidator();
-					if(columnValidator != null){
-						String errorMessage = columnValidator.isValid(value);
-						if(errorMessage != null){
-							dataBindingContext.updateValidationError(new IChangeListener(){
-								public void handleChange(ChangeEvent changeEvent) {									
-								}								
-							},errorMessage);
-							return;
-						}
-					}
-					try {
-						List getters = getNestedPorperties(property);
-						String setterSig;
-						Object target;
-						if (getters.size()>1) {
-							setterSig = (String) getters.get(getters.size()-1);
-							getters.remove(getters.size()-1);
-							target=getGetterValue(element,getters);
-						}
-						else {
-							setterSig = property;
-							target = element;
-						}
-							
-						Method setter = target
-								.getClass()
-								.getMethod(
-										"set"	+ setterSig.substring(0, 1).toUpperCase(Locale.ENGLISH) + setterSig.substring(1), new Class[] { column.getConverter().getModelType() }); //$NON-NLS-1$
-						setter.invoke(target, new Object[] { value });
-						return;
-					} catch (SecurityException e) {
-						// TODO log
-					} catch (NoSuchMethodException e) {
-						// TODO log
-					} catch (IllegalArgumentException e) {
-						// TODO log
-					} catch (IllegalAccessException e) {
-						// TODO log
-					} catch (InvocationTargetException e) {
-						// TODO log
-					}
-				}
-			});
+			tableViewerDescription.setCellModifier(createCellModifier(dataBindingContext));
 		}
 	}
 

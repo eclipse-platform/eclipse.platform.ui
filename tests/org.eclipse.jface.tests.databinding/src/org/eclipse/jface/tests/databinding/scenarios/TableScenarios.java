@@ -71,6 +71,11 @@ public class TableScenarios extends ScenariosTestCase {
 		stateColumn = null;
 	}
 
+	private String getValue(String text) {
+		if (text==null)
+			return "";
+		return text;
+	}
 	public void testScenario01() throws BindingException {
 		// Show that a TableViewer with three columns renders the accounts
 		Account[] accounts = catalog.getAccounts();
@@ -85,16 +90,16 @@ public class TableScenarios extends ScenariosTestCase {
 
 		// Verify the data in the table columns matches the accounts
 		for (int i = 0; i < accounts.length; i++) {
-			Account account = (Account) catalog.getAccounts()[i];
+			Account account = catalog.getAccounts()[i];
 			String col_0 = ((ITableLabelProvider) tableViewer
-					.getLabelProvider()).getColumnText(account, 0);
-			assertEquals(account.getFirstName(), col_0);
+					.getLabelProvider()).getColumnText(account, 0); 
+			assertEquals(getValue(account.getFirstName()), col_0);
 			String col_1 = ((ITableLabelProvider) tableViewer
 					.getLabelProvider()).getColumnText(account, 1);
-			assertEquals(account.getLastName(), col_1);
+			assertEquals(getValue(account.getLastName()), col_1);
 			String col_2 = ((ITableLabelProvider) tableViewer
 					.getLabelProvider()).getColumnText(account, 2);
-			assertEquals(account.getState(), col_2);
+			assertEquals(getValue(account.getState()), col_2);
 
 		}
 	}
@@ -170,7 +175,7 @@ public class TableScenarios extends ScenariosTestCase {
 		assertEquals(tableViewer.getTable().getItemCount(),catalog.getAccounts().length);		
 		
 	}
-
+	
 	public void testScenario03() throws BindingException {
 		// Show that converters work for table columns
 		Account[] accounts = catalog.getAccounts();
@@ -197,12 +202,12 @@ public class TableScenarios extends ScenariosTestCase {
 			// Check the phone number
 			String col_phone = ((ITableLabelProvider) tableViewer
 					.getLabelProvider()).getColumnText(account, 1);
-			assertEquals(phoneConverter
-					.convertModelToTarget(account.getPhone()), col_phone);
+			assertEquals(getValue((String)phoneConverter
+					.convertModelToTarget(account.getPhone())), col_phone);
 			String col_state = ((ITableLabelProvider) tableViewer
 					.getLabelProvider()).getColumnText(account, 2);
-			assertEquals(stateConverter
-					.convertModelToTarget(account.getState()), col_state);
+			assertEquals(getValue((String)stateConverter
+					.convertModelToTarget(account.getState())), col_state);
 		}
 	}
 }
