@@ -65,10 +65,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	protected int scheduledJobs;
 
 	public static Test suite() {
-//		return new TestSuite(IJobManagerTest.class);
-				TestSuite suite = new TestSuite();
-				suite.addTest(new IJobManagerTest("testJobFamilyCancel"));
-				return suite;
+		return new TestSuite(IJobManagerTest.class);
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new IJobManagerTest("testJobFamilyCancel"));
+//		return suite;
 	}
 
 	public IJobManagerTest() {
