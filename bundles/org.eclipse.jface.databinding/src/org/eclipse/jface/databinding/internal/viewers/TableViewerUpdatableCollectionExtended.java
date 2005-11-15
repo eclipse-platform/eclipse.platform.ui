@@ -60,25 +60,30 @@ public class TableViewerUpdatableCollectionExtended extends
 		}
 
 		public Image getColumnImage(Object element, int columnIndex) {
-			Column column = getColumn(columnIndex);
-			IConverter converter = column.getConverter();
-			if (converter.getTargetType().equals(ViewerLabel.class)) {
-				ViewerLabel viewerLabel = (ViewerLabel) getConvertedValue(
-						element, column);
-				return viewerLabel.getImage();
+			if (columnIndex<tableViewerDescription.getColumnCount() && columnIndex>=0) {
+				Column column = getColumn(columnIndex);
+				IConverter converter = column.getConverter();
+				if (converter.getTargetType().equals(ViewerLabel.class)) {
+					ViewerLabel viewerLabel = (ViewerLabel) getConvertedValue(
+							element, column);
+					return viewerLabel.getImage();
+				}
 			}
 			return null;
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			Column column = getColumn(columnIndex);
-			Object convertedValue = getConvertedValue(element, column);
-			IConverter converter = column.getConverter();
-			if (converter.getTargetType().equals(ViewerLabel.class)) {
-				ViewerLabel viewerLabel = (ViewerLabel) convertedValue;
-				return viewerLabel.getText();
+			Object convertedValue=null;
+			if (columnIndex<tableViewerDescription.getColumnCount() && columnIndex>=0) {
+			  Column column = getColumn(columnIndex);
+			  convertedValue = getConvertedValue(element, column);
+			  IConverter converter = column.getConverter();
+			  if (converter.getTargetType().equals(ViewerLabel.class)) {
+					ViewerLabel viewerLabel = (ViewerLabel) convertedValue;
+					return viewerLabel.getText();
+			  }				
 			}
-			return (String) convertedValue;
+			return convertedValue==null? "null": (String) convertedValue; //$NON-NLS-1$
 		}
 
 		public void addListener(ILabelProviderListener listener) {
