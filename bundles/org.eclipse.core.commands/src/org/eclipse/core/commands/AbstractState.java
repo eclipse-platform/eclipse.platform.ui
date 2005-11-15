@@ -63,7 +63,7 @@ public abstract class AbstractState implements IState {
 	 * @param oldValue
 	 *            The old value; may be anything.
 	 */
-	protected final void fireHandlerStateChanged(final Object oldValue) {
+	protected final void fireStateChanged(final Object oldValue) {
 		if (listenerList != null) {
 			final Object[] listeners = listenerList.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -81,7 +81,7 @@ public abstract class AbstractState implements IState {
 		if (!Util.equals(this.value, value)) {
 			final Object oldValue = this.value;
 			this.value = value;
-			fireHandlerStateChanged(oldValue);
+			fireStateChanged(oldValue);
 		}
 	}
 

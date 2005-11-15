@@ -614,7 +614,7 @@ State information shared between all handlers, and potentially persisted between
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must implement &lt;code&gt;org.eclipse.core.commands.IHandlerState&lt;/code&gt;.  Please see API Information.
+                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must implement &lt;code&gt;org.eclipse.core.commands.IState&lt;/code&gt;.  Please see API Information.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -624,7 +624,7 @@ State information shared between all handlers, and potentially persisted between
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  A unique identifier for this state.  This is used for persisting the state between sessions (if the state implements &lt;code&gt;IPersistableHandlerState&lt;/code&gt;).  Certain common identifiers (see &lt;code&gt;IMenuStateIds&lt;/code&gt;) are understood when the command is being renderer in the menus or tool bars.
+                  A unique identifier for this state.  This is used for persisting the state between sessions (if the state implements &lt;code&gt;IPersistableState&lt;/code&gt;).  Certain common identifiers (see &lt;code&gt;IMenuStateIds&lt;/code&gt;) are understood when the command is being renderer in the menus or tool bars.
                </documentation>
             </annotation>
          </attribute>
@@ -647,7 +647,7 @@ State information shared between all handlers, and potentially persisted between
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must implement &lt;code&gt;org.eclipse.core.commands.IHandlerState&lt;/code&gt;.  Please see API Information.
+                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must implement &lt;code&gt;org.eclipse.core.commands.IState&lt;/code&gt;.  Please see API Information.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -691,11 +691,11 @@ This is no public API for declaring commands, categories, key bindings, key conf
 There are a few default implementations of handler states that may be useful to users of this extension point:
 &lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;org.eclipse.jface.commands.LabelHandlerState&lt;/li&gt;
-&lt;li&gt;org.eclipse.jface.commands.RadioHandlerState&lt;/li&gt;
-&lt;li&gt;org.eclipse.jface.commands.ToggleHandlerState&lt;/li&gt;
-&lt;li&gt;org.eclipse.ui.handlers.RegistryRadioHandlerState&lt;/li&gt;
-&lt;li&gt;org.eclipse.ui.handlers.RegistryToggleHandlerState&lt;/li&gt;
+&lt;li&gt;org.eclipse.jface.commands.TextState&lt;/li&gt;
+&lt;li&gt;org.eclipse.jface.commands.RadioState&lt;/li&gt;
+&lt;li&gt;org.eclipse.jface.commands.ToggleState&lt;/li&gt;
+&lt;li&gt;org.eclipse.ui.handlers.RegistryRadioState&lt;/li&gt;
+&lt;li&gt;org.eclipse.ui.handlers.RegistryToggleState&lt;/li&gt;
 &lt;/ul&gt;
       </documentation>
    </annotation>

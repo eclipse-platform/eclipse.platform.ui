@@ -15,16 +15,14 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.jface.commands.RadioHandlerState;
+import org.eclipse.jface.commands.RadioState;
 
 /**
  * <p>
- * A radio handler state that can be read from the registry. This stores a piece
- * of boolean state information for a command, which can be shared amongst the
- * handlers. This boolean state is grouped with boolean state from other
- * commands to form a radio group. In a single radio group, there can be at most
- * one state who value is <code>true</code>; all the others must be
- * <code>false</code>.
+ * A radio state that can be read from the registry. This stores a piece of
+ * boolean state information that is grouped with other boolean state to form a
+ * radio group. In a single radio group, there can be at most one state who
+ * value is {@link Boolean#TRUE} all the others must be {@link Boolean.FALSE}.
  * </p>
  * <p>
  * When parsing from the registry, this state understands three parameters:
@@ -50,8 +48,8 @@ import org.eclipse.jface.commands.RadioHandlerState;
  * 
  * @since 3.2
  */
-public final class RegistryRadioHandlerState extends RadioHandlerState
-		implements IExecutableExtension {
+public final class RegistryRadioState extends RadioState implements
+		IExecutableExtension {
 
 	/**
 	 * Reads the <code>default</code> parameter from the given string. This

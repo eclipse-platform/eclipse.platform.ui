@@ -18,14 +18,18 @@ import java.util.Set;
 
 import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.IStateListener;
+import org.eclipse.jface.menus.IMenuStateIds;
 
 /**
  * <p>
- * A piece of boolean state information for a command, which can be shared
- * amongst the handlers. This boolean state is grouped with boolean state from
- * other commands to form a radio group. In a single radio group, there can be
- * at most one state who value is <code>true</code>; all the others must be
- * <code>false</code>.
+ * A piece of boolean state grouped with other boolean states. Of these states,
+ * only one may have a value of {@link Boolean.TRUE} at any given point in time.
+ * The values of all other states must be {@link Boolean.FALSE}.
+ * </p>
+ * <p>
+ * If this state is registered using {@link IMenuStateIds#STYLE}, then it will
+ * control the presentation of the command if displayed in the menus, tool bars
+ * or status line.
  * </p>
  * <p>
  * Clients may instantiate or extend this interface.
@@ -39,25 +43,25 @@ import org.eclipse.core.commands.IStateListener;
  * 
  * @since 3.2
  */
-public class RadioHandlerState extends ToggleHandlerState {
+public class RadioState extends ToggleState {
 
 	/**
 	 * The manager of radio groups within the application. This ensures that
 	 * only one member of a radio group is active at any one time, and tracks
 	 * group memberships.
 	 */
-	private static final class RadioHandlerStateManager {
+	private static final class RadioStateManager {
 
 		/**
-		 * A group of radio handler states with the same identifier.
+		 * A group of radio states with the same identifier.
 		 */
 		private static final class RadioGroup implements IStateListener {
 
 			/**
-			 * The active handler state. If there is no active state, then this
-			 * value is <code>null</code>.
+			 * The active state. If there is no active state, then this value is
+			 * <code>null</code>.
 			 */
-			private RadioHandlerState active = null;
+			private RadioState active = null;
 
 			/**
 			 * The current members in this group. If there are no members, then
@@ -73,7 +77,7 @@ public class RadioHandlerState extends ToggleHandlerState {
 			 *            The state that should become active; must not be
 			 *            <code>null</code>.
 			 */
-			private final void activateMember(final RadioHandlerState state) {
+			private final void activateMember(final RadioState state) {
 				if (active != state) {
 					active.setValue(Boolean.FALSE);
 				}
@@ -88,7 +92,7 @@ public class RadioHandlerState extends ToggleHandlerState {
 			 * @param state
 			 *            The state to add; must not be <code>null</code>.
 			 */
-			private final void addMember(final RadioHandlerState state) {
+			private final void addMember(final RadioState state) {
 				if (members == null) {
 					members = new HashSet(5);
 				}
@@ -109,7 +113,7 @@ public class RadioHandlerState extends ToggleHandlerState {
 				final Object newValue = state.getValue();
 				if (newValue instanceof Boolean) {
 					if (((Boolean) newValue).booleanValue()) {
-						activateMember((RadioHandlerState) state);
+						activateMember((RadioState) state);
 					}
 				}
 			}
@@ -121,7 +125,7 @@ public class RadioHandlerState extends ToggleHandlerState {
 			 * @param state
 			 *            The state to remove; must not be <code>null</code>.
 			 */
-			private final void removeMember(final RadioHandlerState state) {
+			private final void removeMember(final RadioState state) {
 				state.removeListener(this);
 				if (active == state) {
 					active = null;
@@ -135,10 +139,9 @@ public class RadioHandlerState extends ToggleHandlerState {
 		}
 
 		/**
-		 * The map of radio handler states indexed by identifier (<code>String</code>).
-		 * The radio handler states is either a single
-		 * <code>RadioHandlerState</code> instance or a
-		 * <code>Collection</code> of <code>RadioHandlerState</code>
+		 * The map of radio states indexed by identifier (<code>String</code>).
+		 * The radio states is either a single <code>RadioState</code>
+		 * instance or a <code>Collection</code> of <code>RadioState</code>
 		 * instances.
 		 */
 		private static Map radioStatesById = null;
@@ -153,7 +156,7 @@ public class RadioHandlerState extends ToggleHandlerState {
 		 *            The state to activate; must not be <code>null</code>.
 		 */
 		private static final void activateGroup(final String identifier,
-				final RadioHandlerState state) {
+				final RadioState state) {
 			if (radioStatesById == null) {
 				return;
 			}
@@ -175,7 +178,7 @@ public class RadioHandlerState extends ToggleHandlerState {
 		 *            The state to register; must not be <code>null</code>.
 		 */
 		private static final void registerState(final String identifier,
-				final RadioHandlerState state) {
+				final RadioState state) {
 			if (radioStatesById == null) {
 				radioStatesById = new HashMap();
 			}
@@ -200,7 +203,7 @@ public class RadioHandlerState extends ToggleHandlerState {
 		 *            The state to unregister; must not be <code>null</code>.
 		 */
 		private static final void unregisterState(final String identifier,
-				final RadioHandlerState state) {
+				final RadioState state) {
 			if (radioStatesById == null) {
 				return;
 			}
@@ -238,12 +241,11 @@ public class RadioHandlerState extends ToggleHandlerState {
 	 */
 	public final void setRadioGroupIdentifier(final String identifier) {
 		if (identifier == null) {
-			RadioHandlerStateManager
-					.unregisterState(radioGroupIdentifier, this);
+			RadioStateManager.unregisterState(radioGroupIdentifier, this);
 			radioGroupIdentifier = null;
 		} else {
 			radioGroupIdentifier = identifier;
-			RadioHandlerStateManager.registerState(identifier, this);
+			RadioStateManager.registerState(identifier, this);
 		}
 	}
 
@@ -257,11 +259,11 @@ public class RadioHandlerState extends ToggleHandlerState {
 	public void setValue(final Object value) {
 		if (!(value instanceof Boolean)) {
 			throw new IllegalArgumentException(
-					"RadioHandlerState takes a Boolean as a value"); //$NON-NLS-1$
+					"RadioState takes a Boolean as a value"); //$NON-NLS-1$
 		}
 
 		if (((Boolean) value).booleanValue() && (radioGroupIdentifier != null)) {
-			RadioHandlerStateManager.activateGroup(radioGroupIdentifier, this);
+			RadioStateManager.activateGroup(radioGroupIdentifier, this);
 		}
 
 		super.setValue(value);

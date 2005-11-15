@@ -27,10 +27,10 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.commands.CommandImageManager;
-import org.eclipse.jface.commands.RadioHandlerState;
-import org.eclipse.jface.commands.ToggleHandlerState;
+import org.eclipse.jface.commands.RadioState;
+import org.eclipse.jface.commands.ToggleState;
 import org.eclipse.jface.menus.IMenuStateIds;
-import org.eclipse.jface.menus.LabelHandlerState;
+import org.eclipse.jface.menus.TextState;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.events.HelpListener;
@@ -268,9 +268,9 @@ public final class CommandAction extends AbstractAction {
 	public final int getStyle() {
 		// TODO Pulldown. This does not currently support the pulldown style.
 		final IState state = command.getCommand().getState(IMenuStateIds.STYLE);
-		if (state instanceof RadioHandlerState) {
+		if (state instanceof RadioState) {
 			return IAction.AS_RADIO_BUTTON;
-		} else if (state instanceof ToggleHandlerState) {
+		} else if (state instanceof ToggleState) {
 			return IAction.AS_CHECK_BOX;
 		}
 
@@ -291,7 +291,7 @@ public final class CommandAction extends AbstractAction {
 
 	public final boolean isChecked() {
 		final IState state = command.getCommand().getState(IMenuStateIds.STYLE);
-		if (state instanceof ToggleHandlerState) {
+		if (state instanceof ToggleState) {
 			final Boolean currentValue = (Boolean) state.getValue();
 			return currentValue.booleanValue();
 		}
@@ -415,7 +415,7 @@ public final class CommandAction extends AbstractAction {
 
 	public final void setChecked(final boolean checked) {
 		final IState state = command.getCommand().getState(IMenuStateIds.STYLE);
-		if (state instanceof ToggleHandlerState) {
+		if (state instanceof ToggleState) {
 			final Boolean currentValue = (Boolean) state.getValue();
 			if (checked != currentValue.booleanValue()) {
 				if (checked) {
@@ -430,7 +430,7 @@ public final class CommandAction extends AbstractAction {
 	public final void setDescription(final String text) {
 		final IState state = command.getCommand().getState(
 				INamedHandleStateIds.DESCRIPTION);
-		if (state instanceof LabelHandlerState) {
+		if (state instanceof TextState) {
 			final String currentValue = (String) state.getValue();
 			if (!Util.equals(text, currentValue)) {
 				state.setValue(text);
@@ -482,7 +482,7 @@ public final class CommandAction extends AbstractAction {
 	public final void setText(final String text) {
 		final IState state = command.getCommand().getState(
 				INamedHandleStateIds.NAME);
-		if (state instanceof LabelHandlerState) {
+		if (state instanceof TextState) {
 			final String currentValue = (String) state.getValue();
 			if (!Util.equals(text, currentValue)) {
 				state.setValue(text);

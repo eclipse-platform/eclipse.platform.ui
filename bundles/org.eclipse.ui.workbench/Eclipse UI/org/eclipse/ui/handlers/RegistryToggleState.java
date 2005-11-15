@@ -15,13 +15,12 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.jface.commands.ToggleHandlerState;
+import org.eclipse.jface.commands.ToggleState;
 
 /**
  * <p>
- * A toggle handler state that can be read from the registry. This stores a
- * piece of boolean state information for a command, which can be shared amongst
- * the handlers.
+ * A toggle state that can be read from the registry. This stores a piece of
+ * boolean state information.
  * </p>
  * <p>
  * When parsing from the registry, this state understands two parameters:
@@ -45,8 +44,8 @@ import org.eclipse.jface.commands.ToggleHandlerState;
  * 
  * @since 3.2
  */
-public final class RegistryToggleHandlerState extends ToggleHandlerState
-		implements IExecutableExtension {
+public final class RegistryToggleState extends ToggleState implements
+		IExecutableExtension {
 
 	/**
 	 * Reads the <code>default</code> parameter from the given string. This

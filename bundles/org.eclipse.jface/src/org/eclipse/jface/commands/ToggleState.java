@@ -11,15 +11,17 @@
 
 package org.eclipse.jface.commands;
 
+import org.eclipse.jface.menus.IMenuStateIds;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * <p>
- * A piece of handler state storing whether a command is in one of two states.
- * The value stored by this state is a <code>Boolean</code>. The
- * <code>commandId</code> is ignored, except on
- * {@link ToggleHandlerState#load(IPreferenceStore, String)} and
- * {@link ToggleHandlerState#save(IPreferenceStore, String)}.
+ * A piece of state storing a {@link Boolean}.
+ * </p>
+ * <p>
+ * If this state is registered using {@link IMenuStateIds#STYLE}, then it will
+ * control the presentation of the command if displayed in the menus, tool bars
+ * or status line.
  * </p>
  * <p>
  * Clients may instantiate this class, but must not extend.
@@ -33,13 +35,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * 
  * @since 3.2
  */
-public class ToggleHandlerState extends AbstractPersistentState {
+public class ToggleState extends AbstractPersistentState {
 
 	/**
-	 * Constructs a new <code>ToggleHandlerState</code>. By default, the
-	 * toggle is off (e.g., <code>false</code>).
+	 * Constructs a new <code>ToggleState</code>. By default, the toggle is
+	 * off (e.g., <code>false</code>).
 	 */
-	public ToggleHandlerState() {
+	public ToggleState() {
 		setValue(Boolean.FALSE);
 	}
 
@@ -64,7 +66,7 @@ public class ToggleHandlerState extends AbstractPersistentState {
 	public void setValue(final Object value) {
 		if (!(value instanceof Boolean)) {
 			throw new IllegalArgumentException(
-					"ToggleHandlerState takes a Boolean as a value"); //$NON-NLS-1$
+					"ToggleState takes a Boolean as a value"); //$NON-NLS-1$
 		}
 
 		super.setValue(value);

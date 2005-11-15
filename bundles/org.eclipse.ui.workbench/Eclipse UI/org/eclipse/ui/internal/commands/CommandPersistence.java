@@ -355,7 +355,7 @@ final class CommandPersistence extends CommonCommandPersistence {
 					"State must have an associated class", id)) { //$NON-NLS-1$
 				final String preferenceKey = PREFERENCE_KEY_PREFIX + '/'
 						+ command.getId() + '/' + id;
-				final IState state = new HandlerStateProxy(stateElement,
+				final IState state = new CommandStateProxy(stateElement,
 						ELEMENT_STATE, PrefUtil.getInternalPreferenceStore(),
 						preferenceKey);
 				command.addState(id, state);
