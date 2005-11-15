@@ -21,7 +21,6 @@ import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IValidationContext;
 import org.eclipse.jface.databinding.IValidator;
 import org.eclipse.jface.databinding.IdentityConverter;
 import org.eclipse.jface.databinding.TableViewerDescription;
@@ -45,8 +44,6 @@ public class TableViewerUpdatableCollectionExtended extends
 
 	private final TableViewerDescription tableViewerDescription;
 	
-	private IValidationContext validationContext;
-
 	private ITableLabelProvider tableLabelProvider = new ITableLabelProvider() {
 
 		private Object getValue(Object element, Column column) {
@@ -103,13 +100,13 @@ public class TableViewerUpdatableCollectionExtended extends
 
 	/**
 	 * @param tableViewerDescription
+	 * @param dataBindingContext 
 	 * @param validationContext 
 	 */
 	public TableViewerUpdatableCollectionExtended(
-			TableViewerDescription tableViewerDescription, IDataBindingContext dataBindingContext, IValidationContext validationContext) {
+			TableViewerDescription tableViewerDescription, IDataBindingContext dataBindingContext) {
 		super(tableViewerDescription.getTableViewer());
 		this.tableViewerDescription = tableViewerDescription;
-		this.validationContext = validationContext;
 		fillDescriptionDefaults(dataBindingContext);
 		TableViewer tableViewer = tableViewerDescription.getTableViewer();
 		// TODO synchronize columns on the widget side (create missing columns,
@@ -128,7 +125,7 @@ public class TableViewerUpdatableCollectionExtended extends
 		tableViewer.setCellEditors(cellEditors);
 	}
 
-	private void fillDescriptionDefaults(IDataBindingContext dataBindingContext) {
+	private void fillDescriptionDefaults(final IDataBindingContext dataBindingContext) {
 		CellEditor defaultCellEditor = null;
 		for (int i = 0; i < tableViewerDescription.getColumnCount(); i++) {
 			Column column = tableViewerDescription.getColumn(i);
@@ -229,7 +226,7 @@ public class TableViewerUpdatableCollectionExtended extends
 					if(columnValidator != null){
 						String errorMessage = columnValidator.isValid(value);
 						if(errorMessage != null){
-							validationContext.updateValidationError(new IChangeListener(){
+							dataBindingContext.updateValidationError(new IChangeListener(){
 								public void handleChange(ChangeEvent changeEvent) {									
 								}								
 							},errorMessage);

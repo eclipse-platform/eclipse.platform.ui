@@ -17,7 +17,6 @@ import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.IValidationContext;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.swt.widgets.Control;
 
@@ -38,7 +37,7 @@ public class PersonSampleData {
 
 		IUpdatableFactory emfValueFactory = new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
-					Object description, IDataBindingContext bindingContext, IValidationContext validationContext)
+					Object description, IDataBindingContext bindingContext)
 					throws BindingException {
 				if (description instanceof PropertyDescription) {
 					PropertyDescription propertyDescription = (PropertyDescription) description;

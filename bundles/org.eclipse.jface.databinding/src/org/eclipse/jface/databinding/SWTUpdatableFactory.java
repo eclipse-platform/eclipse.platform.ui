@@ -70,7 +70,7 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 	private int validateTime = TIME_EARLY;
 	
 	public IUpdatable createUpdatable(Map properties,
-			Object description, IDataBindingContext bindingContext, IValidationContext validationContext) {
+			Object description, IDataBindingContext bindingContext) {
 		if (description instanceof PropertyDescription) {
 			Object object = ((PropertyDescription) description)
 					.getObject();
@@ -184,7 +184,7 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 		} else if (description instanceof TableViewerDescription) {
 			return new TableViewerUpdatableCollectionExtended(
 					(TableViewerDescription) description,
-					bindingContext, validationContext);
+					bindingContext);
 		}
 		return null;
 	}

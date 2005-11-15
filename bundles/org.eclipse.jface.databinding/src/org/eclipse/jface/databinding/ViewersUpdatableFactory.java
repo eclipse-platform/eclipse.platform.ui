@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.TableViewer;
 final public class ViewersUpdatableFactory implements IUpdatableFactory {
 
 	public IUpdatable createUpdatable(Map properties, Object description,
-			IDataBindingContext bindingContext, IValidationContext validationContext) {
+			IDataBindingContext bindingContext) {
 		if (description instanceof PropertyDescription) {
 			Object object = ((PropertyDescription) description).getObject();
 			Object attribute = ((PropertyDescription) description)
@@ -57,7 +57,7 @@ final public class ViewersUpdatableFactory implements IUpdatableFactory {
 					(AbstractListViewer) description);
 		} else if (description instanceof TableViewerDescription) {
 			return new TableViewerUpdatableCollectionExtended(
-					(TableViewerDescription) description, bindingContext, validationContext);
+					(TableViewerDescription) description, bindingContext);
 		}
 		return null;
 	}

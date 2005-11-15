@@ -150,4 +150,11 @@ public interface IDataBindingContext {
 	 * @return the validation updatable
 	 */
 	public IUpdatableValue getValidationMessage();
+	
+	/**
+	 * @param listener
+	 * @param validationErrorOrNull
+	 */
+	public void updateValidationError(IChangeListener listener, String validationErrorOrNull);
+
 }

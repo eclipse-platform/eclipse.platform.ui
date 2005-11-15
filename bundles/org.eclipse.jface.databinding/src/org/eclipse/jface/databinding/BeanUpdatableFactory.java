@@ -28,7 +28,7 @@ import org.eclipse.jface.util.Assert;
 final public class BeanUpdatableFactory implements IUpdatableFactory {
 
 	public IUpdatable createUpdatable(Map properties, Object description,
-			IDataBindingContext bindingContext, IValidationContext validationContext) {
+			IDataBindingContext bindingContext) {
 		if (description instanceof PropertyDescription) {
 			PropertyDescription propertyDescription = (PropertyDescription) description;
 			if (propertyDescription.getObject() != null) {
