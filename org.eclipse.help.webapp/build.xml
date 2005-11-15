@@ -67,6 +67,8 @@
 				<pathelement path="../org.eclipse.core.runtime/@dot"/>
 				<pathelement path="../org.eclipse.equinox.common"/>
 				<pathelement path="../org.eclipse.equinox.common/@dot"/>
+				<pathelement path="../org.eclipse.equinox.preferences"/>
+				<pathelement path="../org.eclipse.equinox.preferences/@dot"/>	
 				<pathelement path="../org.eclipse.osgi"/>
 				<pathelement path="../org.eclipse.osgi/@dot"/>
 				<pathelement path="../org.eclipse.help.appserver/bin"/>
@@ -118,6 +120,8 @@
 				<pathelement path="../org.eclipse.core.runtime/@dot"/>
 				<pathelement path="../org.eclipse.equinox.common"/>
 				<pathelement path="../org.eclipse.equinox.common/@dot"/>
+				<pathelement path="../org.eclipse.equinox.preferences"/>
+				<pathelement path="../org.eclipse.equinox.preferences/@dot"/>	
 				<pathelement path="../org.eclipse.osgi"/>
 				<pathelement path="../org.eclipse.osgi/@dot"/>
 				<pathelement path="../org.eclipse.help.appserver/bin"/>
@@ -195,6 +199,8 @@
 				<pathelement path="../org.eclipse.core.runtime/@dot"/>
 				<pathelement path="../org.eclipse.equinox.common"/>
 				<pathelement path="../org.eclipse.equinox.common/@dot"/>
+				<pathelement path="../org.eclipse.equinox.preferences"/>
+				<pathelement path="../org.eclipse.equinox.preferences/@dot"/>	
 				<pathelement path="../org.eclipse.osgi"/>
 				<pathelement path="../org.eclipse.osgi/@dot"/>
 				<pathelement path="../org.eclipse.help.appserver/bin"/>
