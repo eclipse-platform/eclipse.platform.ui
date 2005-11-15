@@ -436,7 +436,7 @@ public class EditorSashContainer extends PartSashContainer {
                     .getWorkbenchWindow()).getWindowConfigurer();
 
             dropTarget = new DropTarget(getControl(), DND.DROP_DEFAULT
-                    | DND.DROP_COPY);
+                    | DND.DROP_COPY | DND.DROP_LINK);
             dropTarget.setTransfer(winConfigurer.getTransfers());
             if (winConfigurer.getDropTargetListener() != null) {
                 dropTarget.addDropListener(winConfigurer
