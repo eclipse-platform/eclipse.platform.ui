@@ -31,14 +31,9 @@ import org.eclipse.jface.databinding.IValidator;
 import org.eclipse.jface.databinding.IdentityConverter;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.SettableValue;
+import org.eclipse.jface.util.Assert;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will remain
- * unchanged during the 3.2 release cycle. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * 
  * @since 3.2
  */
@@ -554,6 +549,16 @@ public class DataBindingContext implements IDataBindingContext {
 		// may hide default ones (e.g., a new PropertyDescriptor may overide the
 		// ond for EMF)
 		factories.add(updatableFactory);
+	}
+
+
+	public void updateTargets() {
+		Assert.isTrue(false, "updateTargets is not yet implemented"); //$NON-NLS-1$
+	}
+
+
+	public void updateModels() {
+		Assert.isTrue(false, "updateModels is not yet implemented"); //$NON-NLS-1$
 	}
 
 }

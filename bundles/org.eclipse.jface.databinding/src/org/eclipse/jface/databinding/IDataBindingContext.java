@@ -11,8 +11,14 @@
 package org.eclipse.jface.databinding;
 
 /**
+ * A context for binding updatable objects with a shared lifecycle. The
+ * factories registered with a data binding context determine how updatable
+ * objects are created from description objects, and which converters and
+ * validators are used when no specific converter or validator is given.
  * 
+ * <p>
  * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -27,20 +33,22 @@ package org.eclipse.jface.databinding;
 public interface IDataBindingContext {
 
 	/**
-	 * Policy constant specifying that update or validation should occur automatically. 
+	 * Policy constant specifying that update or validation should occur
+	 * automatically.
 	 */
 	public static final int POLICY_AUTOMATIC = 1;
-	
+
 	/**
-	 * Policy constant specifying that update or validation should only occur when explicitly requested. 
+	 * Policy constant specifying that update or validation should only occur
+	 * when explicitly requested by calling {@link #updateModels() } or
+	 * {@link #updateTargets() }.
 	 */
 	public static final int POLICY_EXPLICIT = 2;
 
 	/**
-	 * Method addBindSupportFactory. Add a factory for converters, validators,
-	 * and the like. Adds a factory to the list of factories that will be
-	 * consulted when attempting to determine which converter or validator
-	 * should be used when binding.
+	 * Adds a factory that can create converters and validators. The list of
+	 * bind support factories is used for creating converters and validators
+	 * when binding without specifying a converter or validator.
 	 * 
 	 * @param factory
 	 *            the factory to add.
@@ -48,6 +56,10 @@ public interface IDataBindingContext {
 	public void addBindSupportFactory(IBindSupportFactory factory);
 
 	/**
+	 * Adds a factory for creating updatable objects from description objects to
+	 * this context. The list of updatable factories is used for creating
+	 * updatable objects when binding based on description objects.
+	 * 
 	 * @param updatableFactory
 	 */
 	public void addUpdatableFactory(IUpdatableFactory updatableFactory);
@@ -112,7 +124,7 @@ public interface IDataBindingContext {
 	 */
 	public IUpdatable createUpdatable(Object description)
 			throws BindingException;
-	
+
 	/**
 	 * @param fromType
 	 * @param toType
@@ -121,7 +133,7 @@ public interface IDataBindingContext {
 	 */
 	public IValidator createValidator(Class fromType, Class toType,
 			Object modelDescription);
-	
+
 	/**
 	 * @param fromType
 	 * @param toType
@@ -137,6 +149,20 @@ public interface IDataBindingContext {
 	public void dispose();
 
 	/**
+	 * Updates all target updatable objects to reflect the current state of the
+	 * model updatable objects.
+	 * 
+	 */
+	public void updateTargets();
+
+	/**
+	 * Updates all model updatable objects to reflect the current state of the
+	 * target updatable objects.
+	 * 
+	 */
+	public void updateModels();
+
+	/**
 	 * @return the validation message updatable value
 	 */
 	public IUpdatableValue getCombinedValidationMessage();
@@ -150,11 +176,12 @@ public interface IDataBindingContext {
 	 * @return the validation updatable
 	 */
 	public IUpdatableValue getValidationMessage();
-	
+
 	/**
 	 * @param listener
 	 * @param validationErrorOrNull
 	 */
-	public void updateValidationError(IChangeListener listener, String validationErrorOrNull);
+	public void updateValidationError(IChangeListener listener,
+			String validationErrorOrNull);
 
 }
