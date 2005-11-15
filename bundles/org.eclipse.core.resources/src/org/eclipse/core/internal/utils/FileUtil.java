@@ -144,6 +144,8 @@ public class FileUtil {
 				throw iae;
 			}
 		}
+		//in the relative path case, we need to create a relative URI to ensure
+		//the path variable case is properly handled
 		return URI.create(escapeColons(path.toString()));
 	}
 
