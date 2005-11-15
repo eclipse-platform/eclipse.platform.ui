@@ -13,7 +13,7 @@ package org.eclipse.core.commands;
 
 /**
  * <p>
- * A listener to changes in the state of a handler.
+ * A listener to changes in some state.
  * </p>
  * <p>
  * Clients may implement, but must not extend this interface.
@@ -27,10 +27,10 @@ package org.eclipse.core.commands;
  * 
  * @since 3.2
  */
-public interface IHandlerStateListener {
+public interface IStateListener {
 
 	/**
-	 * Handles a change to the value in a handler state.
+	 * Handles a change to the value in some state.
 	 * 
 	 * @param state
 	 *            The state that has changed; never <code>null</code>. The
@@ -38,5 +38,5 @@ public interface IHandlerStateListener {
 	 * @param oldValue
 	 *            The old value; may be anything.
 	 */
-	public void handleStateChange(IHandlerState state, Object oldValue);
+	public void handleStateChange(IState state, Object oldValue);
 }

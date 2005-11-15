@@ -13,10 +13,10 @@ package org.eclipse.core.commands;
 
 /**
  * <p>
- * A piece of state information for a command that is shared between handlers,
- * and might be persisted between sessions. This can be used for commands that
- * toggle between two states and wish to pass this state information between
- * different handlers.
+ * A piece of state information that can be shared between objects, and might be
+ * persisted between sessions. This can be used for commands that toggle between
+ * two states and wish to pass this state information between different
+ * handlers.
  * </p>
  * <p>
  * This state object can either be used as a single state object shared between
@@ -33,10 +33,10 @@ package org.eclipse.core.commands;
  * consulting with the Platform/UI team.
  * </p>
  * 
- * @see AbstractHandlerState
+ * @see AbstractState
  * @since 3.2
  */
-public interface IHandlerState {
+public interface IState {
 
 	/**
 	 * Adds a listener to changes for this state.
@@ -44,11 +44,11 @@ public interface IHandlerState {
 	 * @param listener
 	 *            The listener to add; must not be <code>null</code>.
 	 */
-	public void addListener(IHandlerStateListener listener);
+	public void addListener(IStateListener listener);
 
 	/**
-	 * Disposes of this handler state. This allows the state to unregister
-	 * itself with any managers or as a listener.
+	 * Disposes of this state. This allows the state to unregister itself with
+	 * any managers or as a listener.
 	 */
 	public void dispose();
 
@@ -75,5 +75,5 @@ public interface IHandlerState {
 	 * @param listener
 	 *            The listener to remove; must not be <code>null</code>.
 	 */
-	public void removeListener(IHandlerStateListener listener);
+	public void removeListener(IStateListener listener);
 }

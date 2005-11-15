@@ -11,12 +11,12 @@
 
 package org.eclipse.jface.commands;
 
-import org.eclipse.core.commands.AbstractHandlerState;
+import org.eclipse.core.commands.AbstractState;
 
 /**
  * <p>
- * An abstract implementation of {@link IPersistableHandlerState}. This is a
- * handler state that might (or might not) be persisted.
+ * An abstract implementation of {@link IPersistableState}. This is a state
+ * that might (or might not) be persisted.
  * </p>
  * <p>
  * Clients may implement, but must not extend this interface.
@@ -30,8 +30,8 @@ import org.eclipse.core.commands.AbstractHandlerState;
  * 
  * @since 3.2
  */
-public abstract class AbstractPersistentHandlerState extends
-		AbstractHandlerState implements IPersistableHandlerState {
+public abstract class AbstractPersistentState extends AbstractState implements
+		IPersistableState {
 
 	/**
 	 * Whether this state should be persisted.

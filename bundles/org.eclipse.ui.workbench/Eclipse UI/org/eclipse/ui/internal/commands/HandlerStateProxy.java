@@ -11,14 +11,14 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.core.commands.IHandlerState;
-import org.eclipse.core.commands.IHandlerStateListener;
+import org.eclipse.core.commands.IState;
+import org.eclipse.core.commands.IStateListener;
 import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.commands.IPersistableHandlerState;
+import org.eclipse.jface.commands.IPersistableState;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -43,7 +43,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.2
  */
-public final class HandlerStateProxy implements IPersistableHandlerState {
+public final class HandlerStateProxy implements IPersistableState {
 
 	/**
 	 * The configuration element from which the state can be created. This value
@@ -73,7 +73,7 @@ public final class HandlerStateProxy implements IPersistableHandlerState {
 	 * forced to load the real state. At this point, the configuration element
 	 * is converted, nulled out, and this state gains a reference.
 	 */
-	private IHandlerState state = null;
+	private IState state = null;
 
 	/**
 	 * The name of the configuration element attribute which contains the
@@ -119,7 +119,7 @@ public final class HandlerStateProxy implements IPersistableHandlerState {
 		this.preferenceStore = preferenceStore;
 	}
 
-	public final void addListener(final IHandlerStateListener listener) {
+	public final void addListener(final IStateListener listener) {
 		if (state == null) {
 			if (listeners == null) {
 				listeners = new ListenerList(1);
@@ -133,8 +133,8 @@ public final class HandlerStateProxy implements IPersistableHandlerState {
 	public final void dispose() {
 		if (state != null) {
 			state.dispose();
-			if (state instanceof IPersistableHandlerState) {
-				final IPersistableHandlerState persistableState = (IPersistableHandlerState) state;
+			if (state instanceof IPersistableState) {
+				final IPersistableState persistableState = (IPersistableState) state;
 				if (persistableState.isPersisted() && preferenceStore != null
 						&& preferenceKey != null) {
 					persistableState.save(preferenceStore, preferenceKey);
@@ -152,8 +152,8 @@ public final class HandlerStateProxy implements IPersistableHandlerState {
 	}
 
 	public final boolean isPersisted() {
-		if (loadState() && state instanceof IPersistableHandlerState) {
-			return ((IPersistableHandlerState) state).isPersisted();
+		if (loadState() && state instanceof IPersistableState) {
+			return ((IPersistableState) state).isPersisted();
 		}
 
 		return false;
@@ -161,8 +161,8 @@ public final class HandlerStateProxy implements IPersistableHandlerState {
 
 	public final void load(final IPreferenceStore store,
 			final String preferenceKey) {
-		if (loadState() && state instanceof IPersistableHandlerState) {
-			((IPersistableHandlerState) state).load(store, preferenceKey);
+		if (loadState() && state instanceof IPersistableState) {
+			((IPersistableState) state).load(store, preferenceKey);
 		}
 	}
 
@@ -177,13 +177,13 @@ public final class HandlerStateProxy implements IPersistableHandlerState {
 	private final boolean loadState() {
 		if (state == null) {
 			try {
-				state = (IHandlerState) configurationElement
+				state = (IState) configurationElement
 						.createExecutableExtension(stateAttributeName);
 				configurationElement = null;
 
 				// Try to load the persistent state, if possible.
-				if (state instanceof IPersistableHandlerState) {
-					final IPersistableHandlerState persistableState = (IPersistableHandlerState) state;
+				if (state instanceof IPersistableState) {
+					final IPersistableState persistableState = (IPersistableState) state;
 					if (persistableState.isPersisted()
 							&& preferenceStore != null && preferenceKey != null) {
 						persistableState.load(preferenceStore, preferenceKey);
@@ -195,7 +195,7 @@ public final class HandlerStateProxy implements IPersistableHandlerState {
 					final Object[] listenerArray = listeners.getListeners();
 					for (int i = 0; i < listenerArray.length; i++) {
 						state
-								.addListener((IHandlerStateListener) listenerArray[i]);
+								.addListener((IStateListener) listenerArray[i]);
 					}
 					listeners = null;
 				}
@@ -222,7 +222,7 @@ public final class HandlerStateProxy implements IPersistableHandlerState {
 		return true;
 	}
 
-	public final void removeListener(final IHandlerStateListener listener) {
+	public final void removeListener(final IStateListener listener) {
 		if (state == null) {
 			if (listeners != null) {
 				listeners.remove(listener);
@@ -237,14 +237,14 @@ public final class HandlerStateProxy implements IPersistableHandlerState {
 
 	public final void save(final IPreferenceStore store,
 			final String preferenceKey) {
-		if (loadState() && state instanceof IPersistableHandlerState) {
-			((IPersistableHandlerState) state).load(store, preferenceKey);
+		if (loadState() && state instanceof IPersistableState) {
+			((IPersistableState) state).load(store, preferenceKey);
 		}
 	}
 
 	public final void setPersisted(final boolean persisted) {
-		if (loadState() && state instanceof IPersistableHandlerState) {
-			((IPersistableHandlerState) state).setPersisted(persisted);
+		if (loadState() && state instanceof IPersistableState) {
+			((IPersistableState) state).setPersisted(persisted);
 		}
 	}
 

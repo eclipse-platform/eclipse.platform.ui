@@ -982,8 +982,8 @@ public final class Workbench implements IWorkbench {
 		commandImageService.readRegistry();
 		menuService.readRegistry(commandService);
 		final DeprecatedActionPersistence deprecatedSupport = new DeprecatedActionPersistence();
-		deprecatedSupport.read(commandService, bindingManager,
-				commandImageService, menuService);
+		deprecatedSupport.read(commandManager, handlerService, bindingManager,
+				commandImageManager, menuService);
 
 		/*
 		 * Phase 3 of the initialization of commands. The source providers that

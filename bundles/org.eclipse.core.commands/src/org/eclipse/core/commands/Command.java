@@ -12,9 +12,7 @@ package org.eclipse.core.commands;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
-import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.internal.commands.util.Util;
 
@@ -47,7 +45,8 @@ import org.eclipse.core.internal.commands.util.Util;
  * 
  * @since 3.1
  */
-public final class Command extends NamedHandleObject implements Comparable {
+public final class Command extends NamedHandleObjectWithState implements
+		Comparable {
 
 	/**
 	 * This flag can be set to <code>true</code> if commands should print
@@ -98,12 +97,6 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 * is undefined. It may also be empty.
 	 */
 	private IParameter[] parameters = null;
-
-	/**
-	 * The collection of states currently held by this command. If this command
-	 * has no state, then this will be <code>null</code>.
-	 */
-	private Collection states = null;
 
 	/**
 	 * Constructs a new instance of <code>Command</code> based on the given
@@ -166,24 +159,19 @@ public final class Command extends NamedHandleObject implements Comparable {
 	/**
 	 * <p>
 	 * Adds a state to this command. This will add this state to the active
-	 * handler, if the active handler is an instance of
-	 * {@link IHandlerWithState}.
+	 * handler, if the active handler is an instance of {@link IObjectWithState}.
 	 * </p>
 	 * 
+	 * @param id
+	 *            The identifier of the state to add; must not be
+	 *            <code>null</code>.
 	 * @param state
 	 *            The state to add; must not be <code>null</code>.
 	 */
-	public void addState(final IHandlerState state) {
-		if (state == null) {
-			throw new NullPointerException("Cannot add a null state"); //$NON-NLS-1$
-		}
-
-		if (states == null) {
-			states = new ArrayList(1);
-		}
-		states.add(state);
-		if (handler instanceof IHandlerWithState) {
-			((IHandlerWithState) handler).addState(state);
+	public void addState(final String id, final IState state) {
+		super.addState(id, state);
+		if (handler instanceof IObjectWithState) {
+			((IObjectWithState) handler).addState(id, state);
 		}
 	}
 
@@ -508,20 +496,6 @@ public final class Command extends NamedHandleObject implements Comparable {
 	}
 
 	/**
-	 * Gets all of the state current associated with this command.
-	 * 
-	 * @return The state; may be <code>null</code> if there is no state.
-	 */
-	public final IHandlerState[] getState() {
-		if ((states == null) || (states.isEmpty())) {
-			return null;
-		}
-
-		return (IHandlerState[]) states
-				.toArray(new IHandlerState[states.size()]);
-	}
-
-	/**
 	 * Returns whether this command has a handler, and whether this handler is
 	 * also handled and enabled.
 	 * 
@@ -598,26 +572,17 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 * <p>
 	 * Removes a state from this command. This will remove the state from the
 	 * active handler, if the active handler is an instance of
-	 * {@link IHandlerWithState}.
+	 * {@link IObjectWithState}.
 	 * </p>
 	 * 
 	 * @param state
 	 *            The state to remove; must not be <code>null</code>.
 	 */
-	public void removeState(final IHandlerState state) {
-		if (state == null) {
-			throw new NullPointerException("Cannot remove a null state"); //$NON-NLS-1$
+	public void removeState(final String stateId) {
+		if (handler instanceof IObjectWithState) {
+			((IObjectWithState) handler).removeState(stateId);
 		}
-
-		if (handler instanceof IHandlerWithState) {
-			((IHandlerWithState) handler).removeState(state);
-		}
-		if (states != null) {
-			states.remove(state);
-			if (states.isEmpty()) {
-				states = null;
-			}
-		}
+		super.removeState(stateId);
 	}
 
 	/**
@@ -637,15 +602,16 @@ public final class Command extends NamedHandleObject implements Comparable {
 		}
 
 		// Swap the state around.
-		if (states != null) {
-			final Iterator stateItr = states.iterator();
-			while (stateItr.hasNext()) {
-				final IHandlerState state = (IHandlerState) stateItr.next();
-				if (this.handler instanceof IHandlerWithState) {
-					((IHandlerWithState) this.handler).removeState(state);
+		final String[] stateIds = getStateIds();
+		if (stateIds != null) {
+			for (int i = 0; i < stateIds.length; i++) {
+				final String stateId = stateIds[i];
+				if (this.handler instanceof IObjectWithState) {
+					((IObjectWithState) this.handler).removeState(stateId);
 				}
-				if (handler instanceof IHandlerWithState) {
-					((IHandlerWithState) handler).addState(state);
+				if (handler instanceof IObjectWithState) {
+					final IState stateToAdd = getState(stateId);
+					((IObjectWithState) handler).addState(stateId, stateToAdd);
 				}
 			}
 		}
@@ -728,17 +694,26 @@ public final class Command extends NamedHandleObject implements Comparable {
 		final boolean parametersChanged = parameters != null;
 		parameters = null;
 
-		if (states != null) {
-			final Iterator stateItr = states.iterator();
-			while (stateItr.hasNext()) {
-				IHandlerState state = (IHandlerState) stateItr.next();
-				if (handler instanceof IHandlerWithState) {
-					((IHandlerWithState) handler).removeState(state);
+		final String[] stateIds = getStateIds();
+		if (stateIds != null) {
+			if (handler instanceof IObjectWithState) {
+				final IObjectWithState handlerWithState = (IObjectWithState) handler;
+				for (int i = 0; i < stateIds.length; i++) {
+					final String stateId = stateIds[i];
+					handlerWithState.removeState(stateId);
+					
+					final IState state = getState(stateId);
+					removeState(stateId);
+					state.dispose();
 				}
-				state.dispose();
+			} else {
+				for (int i = 0; i < stateIds.length; i++) {
+					final String stateId = stateIds[i];
+					final IState state = getState(stateId);
+					removeState(stateId);
+					state.dispose();
+				}
 			}
-
-			states = null;
 		}
 
 		fireCommandChanged(new CommandEvent(this, categoryChanged,

@@ -9,8 +9,9 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.commands;
+package org.eclipse.jface.menus;
 
+import org.eclipse.jface.commands.AbstractPersistentState;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
@@ -32,7 +33,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * 
  * @since 3.2
  */
-public class LabelHandlerState extends AbstractPersistentHandlerState {
+public class LabelHandlerState extends AbstractPersistentState {
 
 	public final void load(final IPreferenceStore store,
 			final String preferenceKey) {

@@ -1,7 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="**/internal/" kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
+<?xml version="1.0" encoding="UTF-8"?><classpath>	<classpathentry kind="src" path="src"/>	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins">		<accessrules>			<accessrule kind="nonaccessible" pattern="**/internal/"/>		</accessrules>	</classpathentry>	<classpathentry sourcepath="/opt/sun-jdk-1.5.0.04/share/src.zip" kind="lib" path="/org.eclipse.osgi/osgi/ee.foundation.jar"/>	<classpathentry kind="lib" path="/org.eclipse.osgi/osgi/xmlParserAPIs.jar"/>	<classpathentry kind="output" path="bin"/></classpath>

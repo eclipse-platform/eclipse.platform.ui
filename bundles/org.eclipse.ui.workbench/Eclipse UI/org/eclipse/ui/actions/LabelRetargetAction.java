@@ -12,6 +12,7 @@ package org.eclipse.ui.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -62,7 +63,7 @@ public class LabelRetargetAction extends RetargetAction {
         super(actionID, text, style);
         this.defaultText = text;
         this.defaultToolTipText = text;
-        acceleratorText = extractAcceleratorText(text);
+        acceleratorText = LegacyActionTools.extractAcceleratorText(text);
     }
 
     /**
@@ -134,7 +135,7 @@ public class LabelRetargetAction extends RetargetAction {
      */
     public void setText(String text) {
         super.setText(text);
-        acceleratorText = extractAcceleratorText(text);
+        acceleratorText = LegacyActionTools.extractAcceleratorText(text);
         defaultText = text;
     }
 

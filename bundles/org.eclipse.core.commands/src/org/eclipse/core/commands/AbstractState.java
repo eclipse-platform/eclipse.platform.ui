@@ -16,10 +16,9 @@ import org.eclipse.core.internal.commands.util.Util;
 
 /**
  * <p>
- * An abstract implementation of <code>IHandlerState</code> that provides good
- * default implementations for all of the methods. It is recommended that
- * developers extend this class, rather than implementing
- * <code>IHandlerState</code> themselves.
+ * An abstract implementation of {@link IState} that provides good default
+ * implementations for all of the methods. It is recommended that developers
+ * extend this class, rather than implementing {@link IState} themselves.
  * </p>
  * <p>
  * Clients may extend this class.
@@ -33,7 +32,7 @@ import org.eclipse.core.internal.commands.util.Util;
  * 
  * @since 3.2
  */
-public abstract class AbstractHandlerState implements IHandlerState {
+public abstract class AbstractState implements IState {
 
 	/**
 	 * The listeners to this piece of state. If there are no listeners, this
@@ -46,7 +45,7 @@ public abstract class AbstractHandlerState implements IHandlerState {
 	 */
 	private Object value;
 
-	public final void addListener(final IHandlerStateListener listener) {
+	public final void addListener(final IStateListener listener) {
 		if (listenerList == null) {
 			listenerList = new ListenerList(1);
 		}
@@ -59,7 +58,7 @@ public abstract class AbstractHandlerState implements IHandlerState {
 	}
 
 	/**
-	 * Notifies listeners to this handler state that it has changed in some way.
+	 * Notifies listeners to this state that it has changed in some way.
 	 * 
 	 * @param oldValue
 	 *            The old value; may be anything.
@@ -68,7 +67,7 @@ public abstract class AbstractHandlerState implements IHandlerState {
 		if (listenerList != null) {
 			final Object[] listeners = listenerList.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
-				final IHandlerStateListener listener = (IHandlerStateListener) listeners[i];
+				final IStateListener listener = (IStateListener) listeners[i];
 				listener.handleStateChange(this, oldValue);
 			}
 		}
@@ -86,7 +85,7 @@ public abstract class AbstractHandlerState implements IHandlerState {
 		}
 	}
 
-	public final void removeListener(final IHandlerStateListener listener) {
+	public final void removeListener(final IStateListener listener) {
 		if (listenerList != null) {
 			listenerList.remove(listener);
 			if (listenerList.isEmpty()) {

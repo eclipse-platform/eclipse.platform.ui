@@ -33,7 +33,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * 
  * @since 3.2
  */
-public class ToggleHandlerState extends AbstractPersistentHandlerState {
+public class ToggleHandlerState extends AbstractPersistentState {
 
 	/**
 	 * Constructs a new <code>ToggleHandlerState</code>. By default, the

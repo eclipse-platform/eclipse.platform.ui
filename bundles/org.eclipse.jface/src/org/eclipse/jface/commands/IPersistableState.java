@@ -11,16 +11,16 @@
 
 package org.eclipse.jface.commands;
 
-import org.eclipse.core.commands.IHandlerState;
+import org.eclipse.core.commands.IState;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * <p>
- * A piece of handler state that can be persisted using {@link IPreferenceStore}.
- * A piece of persistent handler state stores a flag (<code>persisted</code>)
- * as to whether it should do anything for
- * {@link IPersistableHandlerState#load(IPreferenceStore, String)} or
- * {@link IPersistableHandlerState#save(IPreferenceStore, String)} calls.
+ * A piece of state that can be persisted using {@link IPreferenceStore}. A
+ * piece of persistent state stores a flag (<code>persisted</code>) as to
+ * whether it should do anything for
+ * {@link IPersistableState#load(IPreferenceStore, String)} or
+ * {@link IPersistableState#save(IPreferenceStore, String)} calls.
  * </p>
  * <p>
  * Clients may implement or extend this interface.
@@ -34,13 +34,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * 
  * @since 3.2
  */
-public interface IPersistableHandlerState extends IHandlerState {
+public interface IPersistableState extends IState {
 
 	/**
 	 * Whether this state should be persisted when a call to
-	 * {@link IPersistableHandlerState#save(IPreferenceStore, String)} or read
-	 * when a call to
-	 * {@link IPersistableHandlerState#load(IPreferenceStore, String)} is made.
+	 * {@link IPersistableState#save(IPreferenceStore, String)} or read when a
+	 * call to {@link IPersistableState#load(IPreferenceStore, String)} is made.
 	 * 
 	 * @return <code>true</code> if this state should really be persisted;
 	 *         <code>false</code> otherwise.
@@ -50,7 +49,7 @@ public interface IPersistableHandlerState extends IHandlerState {
 	/**
 	 * Loads this state from the preference store, given the location at which
 	 * to look. This method must be symmetric with a call to
-	 * {@link IPersistableHandlerState#save(IPreferenceStore, String)}.
+	 * {@link IPersistableState#save(IPreferenceStore, String)}.
 	 * 
 	 * @param store
 	 *            The store from which to read; must not be <code>null</code>.
@@ -63,7 +62,7 @@ public interface IPersistableHandlerState extends IHandlerState {
 	/**
 	 * Saves this state to the preference store, given the location at which to
 	 * write. This method must be symmetric with a call to
-	 * {@link IPersistableHandlerState#load(IPreferenceStore, String)}.
+	 * {@link IPersistableState#load(IPreferenceStore, String)}.
 	 * 
 	 * @param store
 	 *            The store to which the state should be written; must not be

@@ -49,7 +49,7 @@ public abstract class NamedHandleObject extends HandleObject {
 	 * @throws NotDefinedException
 	 *             If the handle is not currently defined.
 	 */
-	public final String getDescription() throws NotDefinedException {
+	public String getDescription() throws NotDefinedException {
 		if (!isDefined()) {
 			throw new NotDefinedException(
 					"Cannot get a description from an undefined object."); //$NON-NLS-1$
@@ -65,7 +65,7 @@ public abstract class NamedHandleObject extends HandleObject {
 	 * @throws NotDefinedException
 	 *             If the handle is not currently defined.
 	 */
-	public final String getName() throws NotDefinedException {
+	public String getName() throws NotDefinedException {
 		if (!isDefined()) {
 			throw new NotDefinedException(
 					"Cannot get the name from an undefined object."); //$NON-NLS-1$

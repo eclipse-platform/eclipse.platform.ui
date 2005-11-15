@@ -16,8 +16,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.commands.IHandlerState;
-import org.eclipse.core.commands.IHandlerStateListener;
+import org.eclipse.core.commands.IState;
+import org.eclipse.core.commands.IStateListener;
 
 /**
  * <p>
@@ -51,7 +51,7 @@ public class RadioHandlerState extends ToggleHandlerState {
 		/**
 		 * A group of radio handler states with the same identifier.
 		 */
-		private static final class RadioGroup implements IHandlerStateListener {
+		private static final class RadioGroup implements IStateListener {
 
 			/**
 			 * The active handler state. If there is no active state, then this
@@ -104,7 +104,7 @@ public class RadioHandlerState extends ToggleHandlerState {
 				}
 			}
 
-			public final void handleStateChange(final IHandlerState state,
+			public final void handleStateChange(final IState state,
 					final Object oldValue) {
 				final Object newValue = state.getValue();
 				if (newValue instanceof Boolean) {

@@ -624,7 +624,7 @@ State information shared between all handlers, and potentially persisted between
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  A unique identifier for this state.  This is used, amongst other things, for persisting the state between sessions (if the state implements &lt;code&gt;IPersistableHandlerState&lt;/code&gt;).
+                  A unique identifier for this state.  This is used for persisting the state between sessions (if the state implements &lt;code&gt;IPersistableHandlerState&lt;/code&gt;).  Certain common identifiers (see &lt;code&gt;IMenuStateIds&lt;/code&gt;) are understood when the command is being renderer in the menus or tool bars.
                </documentation>
             </annotation>
          </attribute>

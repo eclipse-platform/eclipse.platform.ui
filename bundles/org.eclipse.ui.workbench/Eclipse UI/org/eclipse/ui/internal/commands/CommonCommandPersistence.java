@@ -101,6 +101,12 @@ public abstract class CommonCommandPersistence {
 	protected static final String ATTRIBUTE_PARENT_ID = "parentId"; //$NON-NLS-1$
 
 	/**
+	 * The name of the attribute storing the style for a command image, or
+	 * storing the legacy widget style for an action.
+	 */
+	protected static final String ATTRIBUTE_STYLE = "style"; //$NON-NLS-1$
+
+	/**
 	 * The name of the value attributed, used in several places.
 	 */
 	protected static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
