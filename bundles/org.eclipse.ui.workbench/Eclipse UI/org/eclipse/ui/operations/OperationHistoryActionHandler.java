@@ -200,7 +200,15 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
 	 */
 	public void dispose() {
-		getHistory().removeOperationHistoryListener(historyListener);
+		
+		IOperationHistory history = getHistory();
+		if (history != null) {
+			history.removeOperationHistoryListener(historyListener);
+		}
+		
+		if (isInvalid())
+			return;
+
 		site.getPage().removePartListener(partListener);
 		site = null;
 		progressDialog = null;
@@ -225,6 +233,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Return the operation history we are using.
 	 */
 	IOperationHistory getHistory() {
+		if (PlatformUI.getWorkbench() == null)
+			return null;
+		
 		return PlatformUI.getWorkbench().getOperationSupport()
 			.getOperationHistory();
 	}
@@ -240,8 +251,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#run()
 	 */
 	public final void run() {
-		if (undoContext == null || site == null) return;
-		
+		if  (isInvalid())
+			return;
+
 		Shell parent = getWorkbenchWindow().getShell();
 		progressDialog = new TimeTriggeredProgressMonitorDialog(parent,
 				getWorkbenchWindow().getWorkbench().getProgressService()
@@ -350,6 +362,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * operation history.
 	 */
 	public void update() {
+		if (isInvalid())
+			return;
+		
 		boolean enabled = shouldBeEnabled();
 		String text = getCommandString();
 		if (enabled) {
@@ -400,6 +415,14 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		WorkbenchPlugin.log(message, status);
 		ErrorDialog.openError(getWorkbenchWindow().getShell(), title, message,
 				status);
+	}
+	
+	/*
+	 * Answer true if the receiver is not valid for running commands,
+	 * accessing the history, etc.
+	 */
+	final boolean isInvalid() {
+		return undoContext == null || site == null;
 	}
 
 }
