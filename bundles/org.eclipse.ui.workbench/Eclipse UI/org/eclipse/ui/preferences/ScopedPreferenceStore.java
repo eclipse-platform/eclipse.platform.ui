@@ -14,6 +14,7 @@ import java.io.IOException;
 
 import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -102,6 +103,9 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	/**
 	 * Create a new instance of the receiver. Store the values in context in the
 	 * node looked up by qualifier.
+	 * <strong>NOTE:</strong> Any instance of ScopedPreferenceStore should 
+	 * have {@link #dispose() }called before it is dereferenced so that
+	 * listeners can be cleaned up.
 	 * 
 	 * @param context
 	 *            the scope to store to
@@ -118,6 +122,9 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	/**
 	 * Create a new instance of the receiver. Store the values in context in the
 	 * node looked up by qualifier.
+	 * <strong>NOTE:</strong> Any instance of ScopedPreferenceStore should 
+	 * have {@link #dispose() }called before it is dereferenced so that
+	 * listeners can be cleaned up.
 	 * 
 	 * @param context
 	 *            the scope to store to
@@ -769,5 +776,22 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 			throw new IOException(e.getMessage());
 		}
 
+	}
+	
+	/**
+	 * Dispose the receiver.
+	 */
+	public void dispose(){
+		
+		IEclipsePreferences root = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(Plugin.PLUGIN_PREFERENCE_SCOPE);
+		try {
+			if(!(root.nodeExists(nodeQualifier)))
+				return;
+		} catch (BackingStoreException e) {
+			return;//No need to report here as the node won't have the listener
+		}
+		
+		getStorePreferences().removePreferenceChangeListener(
+				preferencesListener);
 	}
 }
