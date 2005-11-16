@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ltk.core.refactoring; singleton:=true
-Bundle-Version: 3.1.0
+Bundle-Version: 3.2.0.qualifier
 Bundle-Activator: org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ltk.core.refactoring,
  org.eclipse.ltk.core.refactoring.history,
  org.eclipse.ltk.core.refactoring.participants,
- org.eclipse.ltk.internal.core.refactoring;x-friends:="org.eclipse.jdt.junit",
+ org.eclipse.ltk.internal.core.refactoring;x-internal:=true,
  org.eclipse.ltk.internal.core.refactoring.history;x-internal:=true
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions,
