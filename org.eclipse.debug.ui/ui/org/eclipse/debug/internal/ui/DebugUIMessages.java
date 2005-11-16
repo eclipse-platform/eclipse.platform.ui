@@ -169,6 +169,9 @@ public class DebugUIMessages extends NLS {
 	public static String AbstractTableRendering_11;
 	public static String AbstractTableRendering_12;
 	public static String AbstractTableRendering_13;
+	public static String AbstractTableRendering_16;
+	public static String AbstractTableRendering_18;
+	public static String AbstractTableRendering_20;
 	public static String SetPaddedStringDialog_0;
 	public static String SetPaddedStringDialog_1;
 	public static String SetPaddedStringDialog_3;
@@ -233,7 +236,11 @@ public class DebugUIMessages extends NLS {
 	public static String FormatTableRenderingAction_16;
 	public static String TableRenderingPreferencePage_5;
 	public static String TableRenderingPreferencePage_6;
-		
+	public static String FormatTableRenderingDialog_0;
+	public static String FormatTableRenderingDialog_1;
+	public static String FormatTableRenderingDialog_2;
+	public static String FormatTableRenderingDialog_3;
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIMessages.class);
