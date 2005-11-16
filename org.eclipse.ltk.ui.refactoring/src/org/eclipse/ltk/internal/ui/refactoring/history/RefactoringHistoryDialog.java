@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import java.util.ResourceBundle;
-
 import org.eclipse.core.resources.IProject;
 
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
@@ -49,12 +47,6 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
  */
 public class RefactoringHistoryDialog extends Dialog {
 
-	/** The button label key */
-	private static final String BUTTON_LABEL= "buttonLabel"; //$NON-NLS-1$
-
-	/** The dialog title key */
-	private static final String DIALOG_TITLE= "title"; //$NON-NLS-1$
-
 	/** The height key */
 	private static final String HEIGHT= "height"; //$NON-NLS-1$
 
@@ -67,11 +59,14 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The y coordinate key */
 	private static final String Y= "y"; //$NON-NLS-1$
 
-	/** The button id */
+	/** The commit button id */
 	protected final int fButtonId;
 
 	/** The dialog bounds, or <code>null</code> */
 	private Rectangle fDialogBounds= null;
+
+	/** The refactoring history dialog configuration to use */
+	protected final RefactoringHistoryDialogConfiguration fDialogConfiguration;
 
 	/** The dialog bounds key */
 	private final String fDialogKey;
@@ -85,26 +80,23 @@ public class RefactoringHistoryDialog extends Dialog {
 	/** The refactoring history */
 	protected final RefactoringHistory fRefactoringHistory;
 
-	/** The resource bundle to use */
-	protected final ResourceBundle fResourceBundle;
-
 	/**
 	 * Creates a new refactoring history dialog.
 	 * 
 	 * @param parent
 	 *            the parent shell
-	 * @param bundle
-	 *            the resource bundle to use
+	 * @param configuration
+	 *            the refactoring history dialog configuration to use
 	 * @param history
 	 *            the refactoring history to display
 	 * @param id
-	 *            the ID of the dialog button
+	 *            the commit button's id
 	 */
-	public RefactoringHistoryDialog(final Shell parent, final ResourceBundle bundle, final RefactoringHistory history, final int id) {
+	public RefactoringHistoryDialog(final Shell parent, final RefactoringHistoryDialogConfiguration configuration, final RefactoringHistory history, final int id) {
 		super(parent);
-		Assert.isNotNull(bundle);
+		Assert.isNotNull(configuration);
 		Assert.isNotNull(history);
-		fResourceBundle= bundle;
+		fDialogConfiguration= configuration;
 		fRefactoringHistory= history;
 		fButtonId= id;
 		fDialogSettings= RefactoringUIPlugin.getDefault().getDialogSettings();
@@ -143,7 +135,7 @@ public class RefactoringHistoryDialog extends Dialog {
 	 * {@inheritDoc}
 	 */
 	protected void createButtonsForButtonBar(final Composite parent) {
-		Button button= createButton(parent, fButtonId, fResourceBundle.getString(BUTTON_LABEL), true);
+		Button button= createButton(parent, fButtonId, fDialogConfiguration.getButtonLabel(), true);
 		button.setFocus();
 		final SelectionAdapter adapter= new SelectionAdapter() {
 
@@ -161,10 +153,10 @@ public class RefactoringHistoryDialog extends Dialog {
 	 */
 	protected Control createDialogArea(final Composite parent) {
 		final Composite composite= (Composite) super.createDialogArea(parent);
-		getShell().setText(fResourceBundle.getString(DIALOG_TITLE));
+		getShell().setText(fDialogConfiguration.getDialogTitle());
 		fHistoryControl= createHistoryControl(composite);
 		fHistoryControl.setContentProvider(new RefactoringHistoryContentProvider());
-		fHistoryControl.setLabelProvider(new RefactoringHistoryLabelProvider(fResourceBundle));
+		fHistoryControl.setLabelProvider(new RefactoringHistoryLabelProvider(fDialogConfiguration));
 		fHistoryControl.createControl();
 		fHistoryControl.setRefactoringHistory(fRefactoringHistory);
 		applyDialogFont(parent);
@@ -179,7 +171,7 @@ public class RefactoringHistoryDialog extends Dialog {
 	 * @return the history control
 	 */
 	protected RefactoringHistoryControl createHistoryControl(final Composite parent) {
-		return new RefactoringHistoryControl(parent, fResourceBundle);
+		return new RefactoringHistoryControl(parent, fDialogConfiguration);
 	}
 
 	/**
@@ -224,17 +216,9 @@ public class RefactoringHistoryDialog extends Dialog {
 		}
 		final IDialogSettings settings= fDialogSettings.getSection(fDialogKey);
 		if (settings == null) {
-			if (fResourceBundle != null) {
-				try {
-					String string= fResourceBundle.getString(WIDTH);
-					if (string != null)
-						width= Integer.parseInt(string);
-					string= fResourceBundle.getString(HEIGHT);
-					if (string != null)
-						height= Integer.parseInt(string);
-				} catch (NumberFormatException exception) {
-					// Do nothing
-				}
+			if (fDialogConfiguration != null) {
+				width= fDialogConfiguration.getDefaultWidth();
+				height= fDialogConfiguration.getDefaultHeight();
 				final Shell parent= getParentShell();
 				if (parent != null) {
 					final Point size= parent.getSize();

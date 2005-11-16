@@ -10,18 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring;
 
-import java.util.ResourceBundle;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
 
 import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
+import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog2;
@@ -49,13 +49,13 @@ public class RefactoringUI {
 	 * {@link IRefactoringHistoryControl}.
 	 * 
 	 * @param parent the parent control
-	 * @param bundle the resource bundle to use
-	 * @return the control
+	 * @param configuration the refactoring history control configuration
+	 * @return the refactoring history control
 	 * 
 	 * @since 3.2
 	 */
-	public static Composite createRefactoringHistoryControl(Composite parent, ResourceBundle bundle) {
-		return new RefactoringHistoryControl(parent, bundle);
+	public static Composite createRefactoringHistoryControl(Composite parent, RefactoringHistoryControlConfiguration configuration) {
+		return new RefactoringHistoryControl(parent, configuration);
 	}
 	
 	/**

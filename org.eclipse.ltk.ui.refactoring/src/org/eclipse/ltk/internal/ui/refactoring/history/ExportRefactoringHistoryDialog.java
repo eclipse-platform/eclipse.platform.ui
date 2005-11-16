@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -54,15 +53,15 @@ public class ExportRefactoringHistoryDialog extends RefactoringHistoryDialog {
 	 * 
 	 * @param parent
 	 *            the parent shell
-	 * @param bundle
-	 *            the resource bundle to use
+	 * @param configuration
+	 *            the refactoring history dialog configuration to use
 	 * @param history
 	 *            the refactoring history to display
 	 * @param id
-	 *            the ID of the dialog button
+	 *            the commit button's id
 	 */
-	public ExportRefactoringHistoryDialog(final Shell parent, final ResourceBundle bundle, final RefactoringHistory history, final int id) {
-		super(parent, bundle, history, id);
+	public ExportRefactoringHistoryDialog(final Shell parent, final RefactoringHistoryDialogConfiguration configuration, final RefactoringHistory history, final int id) {
+		super(parent, configuration, history, id);
 	}
 
 	/**
@@ -97,7 +96,7 @@ public class ExportRefactoringHistoryDialog extends RefactoringHistoryDialog {
 	 * {@inheritDoc}
 	 */
 	protected RefactoringHistoryControl createHistoryControl(Composite parent) {
-		return new ExportRefactoringHistoryControl(parent, fResourceBundle);
+		return new ExportRefactoringHistoryControl(parent, fDialogConfiguration);
 	}
 
 	/**
@@ -120,8 +119,8 @@ public class ExportRefactoringHistoryDialog extends RefactoringHistoryDialog {
 		Assert.isNotNull(proxies);
 		final FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
 		dialog.setText(caption);
-		dialog.setFilterNames(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_name});
-		dialog.setFilterExtensions(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_extension});
+		dialog.setFilterNames(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_name });
+		dialog.setFilterExtensions(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_extension });
 		dialog.setFileName(RefactoringUIMessages.ExportRefactoringHistoryDialog_file_default_name);
 		final String path= dialog.open();
 		if (path != null) {

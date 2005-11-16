@@ -15,7 +15,6 @@ import java.text.Format;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.ResourceBundle;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
@@ -32,11 +31,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 /**
  * Label provider to display a refactoring history.
  * <p>
- * This label provider can be customized by providing a resource bundle, which
- * contains localized strings for each of the <code>XXX_FORMAT</code> and the
- * <code>XXX_COLLECTION</code> constants in this class.
- * </p>
- * <p>
  * Note: this class is not indented to be subclassed outside the refactoring
  * framework.
  * </p>
@@ -48,47 +42,14 @@ import org.eclipse.jface.viewers.LabelProvider;
  */
 public class RefactoringHistoryLabelProvider extends LabelProvider {
 
-	/** The day format key */
-	public static final String DAY_FORMAT= "dayFormat"; //$NON-NLS-1$
-
-	/** The last month format key */
-	public static final String LAST_MONTH_FORMAT= "lastMonthFormat"; //$NON-NLS-1$
-
-	/** The last week format key */
-	public static final String LAST_WEEK_FORMAT= "lastWeekFormat"; //$NON-NLS-1$
-
-	/** The month format key */
-	public static final String MONTH_FORMAT= "monthFormat"; //$NON-NLS-1$
-
-	/** The refactoring collection key */
-	public static final String REFACTORING_COLLECTION= "refactoringCollection"; //$NON-NLS-1$
-
-	/** The refactoring format key */
-	public static final String REFACTORING_FORMAT= "refactoringFormat"; //$NON-NLS-1$
-
-	/** The this month format key */
-	public static final String THIS_MONTH_FORMAT= "thisMonthFormat"; //$NON-NLS-1$
-
-	/** The this week format key */
-	public static final String THIS_WEEK_FORMAT= "thisWeekFormat"; //$NON-NLS-1$
-
-	/** The today format key */
-	public static final String TODAY_FORMAT= "todayFormat"; //$NON-NLS-1$
-
-	/** The week format key */
-	public static final String WEEK_FORMAT= "weekFormat"; //$NON-NLS-1$
-
-	/** The year format key */
-	public static final String YEAR_FORMAT= "yearFormat"; //$NON-NLS-1$
-
-	/** The yesterday format key */
-	public static final String YESTERDAY_FORMAT= "yesterdayFormat"; //$NON-NLS-1$
-
 	/** The collection image */
 	private Image fCollectionImage= null;
 
 	/** The container image */
 	private Image fContainerImage= null;
+
+	/** The resource bundle to use */
+	private final RefactoringHistoryControlConfiguration fControlConfiguration;
 
 	/** Should time information be displayed? */
 	private boolean fDisplayTime= true;
@@ -99,18 +60,15 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	/** The item image */
 	private Image fItemImage= null;
 
-	/** The resource bundle to use */
-	private final ResourceBundle fResourceBundle;
-
 	/**
 	 * Creates a new refactoring history label provider.
 	 * 
-	 * @param bundle
-	 *            the resource bundle to use
+	 * @param configuration
+	 *            the refactoring history control configuration to use
 	 */
-	public RefactoringHistoryLabelProvider(final ResourceBundle bundle) {
-		Assert.isNotNull(bundle);
-		fResourceBundle= bundle;
+	public RefactoringHistoryLabelProvider(final RefactoringHistoryControlConfiguration configuration) {
+		Assert.isNotNull(configuration);
+		fControlConfiguration= configuration;
 		fItemImage= RefactoringPluginImages.DESC_OBJS_DEFAULT_CHANGE.createImage();
 		fContainerImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_DATE.createImage();
 		fElementImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_TIME.createImage();
@@ -151,7 +109,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 			if (fDisplayTime) {
 				final long stamp= proxy.getTimeStamp();
 				if (stamp > 0)
-					return MessageFormat.format(fResourceBundle.getString(REFACTORING_FORMAT), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), proxy.getDescription()});
+					return MessageFormat.format(fControlConfiguration.getRefactoringPattern(), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), proxy.getDescription() });
 			}
 			return proxy.getDescription();
 		} else if (element instanceof RefactoringHistoryNode) {
@@ -160,53 +118,53 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 			final int kind= node.getKind();
 			switch (kind) {
 				case RefactoringHistoryNode.COLLECTION:
-					buffer.append(fResourceBundle.getString(REFACTORING_COLLECTION));
+					buffer.append(fControlConfiguration.getCollectionLabel());
 					break;
 				case RefactoringHistoryNode.LAST_WEEK:
-					buffer.append(fResourceBundle.getString(LAST_WEEK_FORMAT));
+					buffer.append(fControlConfiguration.getLastWeekLabel());
 					break;
 				case RefactoringHistoryNode.THIS_WEEK:
-					buffer.append(fResourceBundle.getString(THIS_WEEK_FORMAT));
+					buffer.append(fControlConfiguration.getThisWeekLabel());
 					break;
 				case RefactoringHistoryNode.THIS_MONTH:
-					buffer.append(fResourceBundle.getString(THIS_MONTH_FORMAT));
+					buffer.append(fControlConfiguration.getThisMonthLabel());
 					break;
 				case RefactoringHistoryNode.LAST_MONTH:
-					buffer.append(fResourceBundle.getString(LAST_MONTH_FORMAT));
+					buffer.append(fControlConfiguration.getLastMonthLabel());
 					break;
 				default: {
 					if (node instanceof RefactoringHistoryDate) {
 						final RefactoringHistoryDate date= (RefactoringHistoryDate) node;
 						final long stamp= date.getTimeStamp();
 						Format format= null;
-						String key= ""; //$NON-NLS-1$
+						String pattern= ""; //$NON-NLS-1$
 						switch (kind) {
 							case RefactoringHistoryNode.WEEK:
-								key= WEEK_FORMAT;
+								pattern= fControlConfiguration.getWeekPattern();
 								format= new SimpleDateFormat("ww"); //$NON-NLS-1$
 								break;
 							case RefactoringHistoryNode.YEAR:
-								key= YEAR_FORMAT;
+								pattern= fControlConfiguration.getYearPattern();
 								format= new SimpleDateFormat("yyyy"); //$NON-NLS-1$
 								break;
 							case RefactoringHistoryNode.MONTH:
-								key= MONTH_FORMAT;
+								pattern= fControlConfiguration.getMonthPattern();
 								format= new SimpleDateFormat("MMMMM"); //$NON-NLS-1$
 								break;
 							case RefactoringHistoryNode.DAY:
-								key= DAY_FORMAT;
+								pattern= fControlConfiguration.getDayPattern();
 								format= DateFormat.getDateInstance();
 								break;
 							case RefactoringHistoryNode.YESTERDAY:
-								key= YESTERDAY_FORMAT;
+								pattern= fControlConfiguration.getYesterdayPattern();
 								format= DateFormat.getDateInstance();
 								break;
 							case RefactoringHistoryNode.TODAY:
-								key= TODAY_FORMAT;
+								pattern= fControlConfiguration.getTodayPattern();
 								format= DateFormat.getDateInstance();
 								break;
 						}
-						buffer.append(MessageFormat.format(fResourceBundle.getString(key), new String[] { format.format(new Date(stamp))}));
+						buffer.append(MessageFormat.format(pattern, new String[] { format.format(new Date(stamp)) }));
 					}
 				}
 			}

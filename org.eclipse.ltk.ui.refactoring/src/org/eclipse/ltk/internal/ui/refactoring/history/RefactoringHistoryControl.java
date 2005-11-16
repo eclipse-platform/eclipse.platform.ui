@@ -13,7 +13,6 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,6 +56,7 @@ import org.eclipse.compare.Splitter;
 
 import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
+import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
 
 /**
@@ -66,15 +66,6 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
  */
 public class RefactoringHistoryControl extends Composite implements IRefactoringHistoryControl {
 
-	/** The comment caption key */
-	private static final String COMMENT_CAPTION= "commentCaption"; //$NON-NLS-1$
-
-	/** The project caption key */
-	private static final String PROJECT_CAPTION= "projectCaption"; //$NON-NLS-1$
-
-	/** The workspace caption key */
-	private static final String WORKSPACE_CAPTION= "workspaceCaption"; //$NON-NLS-1$
-
 	/** The caption image */
 	private Image fCaptionImage= null;
 
@@ -83,6 +74,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/** The content provider to use, or <code>null</code> */
 	private RefactoringHistoryContentProvider fContentProvider= null;
+
+	/** The refactoring history control configuration to use */
+	protected final RefactoringHistoryControlConfiguration fControlConfiguration;
 
 	/** The history pane */
 	private CompareViewerPane fHistoryPane= null;
@@ -102,9 +96,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	/** The project, or <code>null</code> */
 	private IProject fProject= null;
 
-	/** The resource bundle to use */
-	protected final ResourceBundle fResourceBundle;
-
 	/** The splitter control */
 	private Splitter fSplitterControl= null;
 
@@ -113,12 +104,13 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * 
 	 * @param parent
 	 *            the parent control
-	 * @param bundle
-	 *            the resource bundle to use
+	 * @param configuration
+	 *            the refactoring history control configuration to use
 	 */
-	public RefactoringHistoryControl(final Composite parent, final ResourceBundle bundle) {
+	public RefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
 		super(parent, SWT.NONE);
-		fResourceBundle= bundle;
+		Assert.isNotNull(configuration);
+		fControlConfiguration= configuration;
 	}
 
 	/**
@@ -190,13 +182,13 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 					final String comment= (String) input;
 					final SourceViewer extended= new SourceViewer(fCommentPane, null, SWT.NULL);
 					extended.setDocument(new Document(comment));
-					setText(fResourceBundle.getString(COMMENT_CAPTION));
+					setText(fControlConfiguration.getCommentCaption());
 					return extended;
 				}
 				return null;
 			}
 		};
-		fCommentPane.setText(fResourceBundle.getString(COMMENT_CAPTION));
+		fCommentPane.setText(fControlConfiguration.getCommentCaption());
 		fMessageLabel= new Label(fSplitterControl, SWT.LEFT | SWT.WRAP | SWT.HORIZONTAL);
 		handleMessageChanged();
 	}
@@ -240,9 +232,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	protected void handleCaptionChanged() {
 		String text= null;
 		if (fProject != null)
-			text= MessageFormat.format(fResourceBundle.getString(PROJECT_CAPTION), new String[] { fProject.getName()});
+			text= MessageFormat.format(fControlConfiguration.getProjectPattern(), new String[] { fProject.getName() });
 		else
-			text= fResourceBundle.getString(WORKSPACE_CAPTION);
+			text= fControlConfiguration.getWorkspaceCaption();
 		fHistoryPane.setText(text);
 	}
 
@@ -252,9 +244,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	protected void handleMessageChanged() {
 		if (fMessage != null && !"".equals(fMessage)) { //$NON-NLS-1$
 			fMessageLabel.setText(fMessage);
-			fSplitterControl.setWeights(new int[] { 70, 15, 15});
+			fSplitterControl.setWeights(new int[] { 70, 15, 15 });
 		} else
-			fSplitterControl.setWeights(new int[] { 75, 25, 0});
+			fSplitterControl.setWeights(new int[] { 75, 25, 0 });
 	}
 
 	/**
@@ -275,7 +267,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 					final RefactoringDescriptor descriptor= proxy.requestDescriptor(monitor);
 					if (descriptor != null) {
 						fCommentPane.setInput(descriptor.getComment());
-						fCommentPane.setText(fResourceBundle.getString(COMMENT_CAPTION));
+						fCommentPane.setText(fControlConfiguration.getCommentCaption());
 					}
 					return Status.OK_STATUS;
 				}
@@ -284,7 +276,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			job.schedule();
 		}
 		fCommentPane.setInput(null);
-		fCommentPane.setText(fResourceBundle.getString(COMMENT_CAPTION));
+		fCommentPane.setText(fControlConfiguration.getCommentCaption());
 	}
 
 	/**

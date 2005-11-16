@@ -105,6 +105,15 @@ public final class RefactoringUIMessages extends NLS {
 	public static String ExportRefactoringHistoryDialog_export_caption;
 	public static String ExportRefactoringHistoryDialog_export_all_caption;
 
+	public static String ExportRefactoringHistoryControl_export_label;
+	public static String ExportRefactoringHistoryControl_export_all_label;
+
+	public static String RefactoringHistoryControl_resolving_information;
+
+	public static String RefactoringHistoryControlConfiguration_comment_caption;
+	public static String RefactoringHistoryControlConfiguration_project_pattern;
+	public static String RefactoringHistoryControlConfiguration_workspace_caption;
+
 	public static String RefactoringPropertyPage_enable_message;
 	public static String RefactoringPropertyPage_label_message;
 
@@ -112,5 +121,18 @@ public final class RefactoringUIMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringUIMessages.class);
 	}
 
-	public static String RefactoringHistoryControl_resolving_information;
+	public static String RefactoringHistoryDialogConfiguration_commit_button_label;
+	public static String RefactoringHistoryDialogConfiguration_dialog_title;
+	public static String RefactoringHistoryControlConfiguration_collection_label;
+	public static String RefactoringHistoryControlConfiguration_day_pattern;
+	public static String RefactoringHistoryControlConfiguration_last_month_label;
+	public static String RefactoringHistoryControlConfiguration_last_week_label;
+	public static String RefactoringHistoryControlConfiguration_month_pattern;
+	public static String RefactoringHistoryControlConfiguration_refactoring_pattern;
+	public static String RefactoringHistoryControlConfiguration_this_month_pattern;
+	public static String RefactoringHistoryControlConfiguration_this_week_pattern;
+	public static String RefactoringHistoryControlConfiguration_today_pattern;
+	public static String RefactoringHistoryControlConfiguration_9;
+	public static String RefactoringHistoryControlConfiguration_10;
+	public static String RefactoringHistoryControlConfiguration_11;
 }

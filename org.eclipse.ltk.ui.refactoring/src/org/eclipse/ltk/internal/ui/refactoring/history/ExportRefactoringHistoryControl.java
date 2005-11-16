@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import java.util.ResourceBundle;
-
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -25,18 +24,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
+import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
+
 /**
  * Control which is capable of displaying and exporting refactoring histories.
  * 
  * @since 3.2
  */
 public class ExportRefactoringHistoryControl extends RefactoringHistoryControl {
-
-	/** The export all label key */
-	private static final String EXPORT_ALL_LABEL= "exportAllLabel"; //$NON-NLS-1$
-
-	/** The export label key */
-	private static final String EXPORT_LABEL= "exportLabel"; //$NON-NLS-1$
 
 	/** The export all button, or <code>null</code> */
 	private Button fExportAllButton= null;
@@ -49,11 +44,11 @@ public class ExportRefactoringHistoryControl extends RefactoringHistoryControl {
 	 * 
 	 * @param parent
 	 *            the parent control
-	 * @param bundle
-	 *            the resource bundle to use
+	 * @param configuration
+	 *            the refactoring history control configuration to use
 	 */
-	public ExportRefactoringHistoryControl(final Composite parent, final ResourceBundle bundle) {
-		super(parent, bundle);
+	public ExportRefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
+		super(parent, configuration);
 	}
 
 	/**
@@ -74,7 +69,7 @@ public class ExportRefactoringHistoryControl extends RefactoringHistoryControl {
 
 		fExportButton= new Button(composite, SWT.NONE);
 		fExportButton.setEnabled(false);
-		fExportButton.setText(fResourceBundle.getString(EXPORT_LABEL));
+		fExportButton.setText(RefactoringUIMessages.ExportRefactoringHistoryControl_export_label);
 
 		data= new GridData();
 		data.horizontalAlignment= SWT.FILL;
@@ -82,7 +77,7 @@ public class ExportRefactoringHistoryControl extends RefactoringHistoryControl {
 
 		fExportAllButton= new Button(composite, SWT.NONE);
 		fExportAllButton.setEnabled(false);
-		fExportAllButton.setText(fResourceBundle.getString(EXPORT_ALL_LABEL));
+		fExportAllButton.setText(RefactoringUIMessages.ExportRefactoringHistoryControl_export_all_label);
 
 		data= new GridData();
 		data.horizontalAlignment= SWT.FILL;
