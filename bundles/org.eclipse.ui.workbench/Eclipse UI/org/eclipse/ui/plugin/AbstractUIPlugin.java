@@ -620,8 +620,10 @@ public abstract class AbstractUIPlugin extends Plugin {
             }
             saveDialogSettings();
             savePreferenceStore();
-            preferenceStore.dispose();
-            preferenceStore = null;
+            if(preferenceStore != null){
+            	preferenceStore.dispose();
+            	preferenceStore = null;
+            }
             imageRegistry = null;
         } finally {
             super.stop(context);
