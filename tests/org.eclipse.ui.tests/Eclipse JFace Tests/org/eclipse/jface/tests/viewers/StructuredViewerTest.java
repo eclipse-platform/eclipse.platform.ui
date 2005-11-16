@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
@@ -20,27 +18,14 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableTreeViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
-public abstract class StructuredViewerTest extends TestCase {
-    Display fDisplay;
-
-    Shell fShell;
-
-    StructuredViewer fViewer;
-
-    TestElement fRootElement;
-
+public abstract class StructuredViewerTest extends ViewerTestCase {
     public static class TestLabelFilter extends ViewerFilter {
         public boolean select(Viewer viewer, Object parent, Object element) {
             String label = ((TestElement) element).getLabel();
@@ -89,18 +74,8 @@ public abstract class StructuredViewerTest extends TestCase {
         }
     }
 
-    public TestModel fModel;
-
     public StructuredViewerTest(String name) {
         super(name);
-    }
-
-    protected void assertSelectionEquals(String message, TestElement expected) {
-        ISelection selection = fViewer.getSelection();
-        assertTrue(selection instanceof StructuredSelection);
-        StructuredSelection expectedSelection = new StructuredSelection(
-                expected);
-        assertEquals("selections", selection, expectedSelection);
     }
 
     protected void bulkChange(TestModelChange eventToFire) {
@@ -113,56 +88,9 @@ public abstract class StructuredViewerTest extends TestCase {
         assertNull("first child is not visible", fViewer.testFindItem(first));
     }
 
-    /**
-     * Creates the viewer used by this test, under the given parent widget.
-     */
-    protected abstract StructuredViewer createViewer(Composite parent);
-
     protected abstract int getItemCount();
 
     protected abstract String getItemText(int at);
-
-    /**
-     * Interacts with a test set up. Call this method from your
-     * test when you want to interactively experiment with a set up.
-     * The interaction terminates when the browser is closed.
-     */
-    public void interact() {
-        Shell shell = fShell;
-        if (shell != null && !shell.isDisposed()) {
-            Display display = shell.getDisplay();
-            if (display != null) {
-                while (shell.isVisible())
-                    display.readAndDispatch();
-            }
-        }
-    }
-
-    protected void openBrowser() {
-        fDisplay = Display.getCurrent();
-        if (fDisplay == null) {
-            fDisplay = new Display();
-        }
-        fShell = new Shell(fDisplay);
-        fShell.setSize(500, 500);
-        fShell.setLayout(new FillLayout());
-        fViewer = createViewer(fShell);
-        fViewer.setUseHashlookup(true);
-        fViewer.setInput(fRootElement);
-        fShell.open();
-        //processEvents();
-    }
-
-    public void processEvents() {
-        Shell shell = fShell;
-        if (shell != null && !shell.isDisposed()) {
-            Display display = shell.getDisplay();
-            if (display != null) {
-                while (display.readAndDispatch())
-                    ;
-            }
-        }
-    }
 
     public static String providedString(String s) {
         return s + "<rendered>" + TestLabelProvider.fgSuffix;
@@ -171,40 +99,6 @@ public abstract class StructuredViewerTest extends TestCase {
     public static String providedString(TestElement element) {
         return element.getID() + " " + element.getLabel() + "<rendered>"
                 + TestLabelProvider.fgSuffix;
-    }
-
-    public void setUp() {
-        setUpModel();
-        openBrowser();
-    }
-
-	protected void setUpModel() {
-		fRootElement = TestElement.createModel(3, 10);
-        fModel = fRootElement.getModel();
-	}
-
-    /**
-     * Sleeps for the given duration and processes pending
-     * events. Call this method to temporarily suspend a test
-     * see the current state in the browser.
-     */
-    void sleep(int d) {
-        processEvents();
-        try {
-            Thread.sleep(d * 1000);
-        } catch (Exception e) {
-        }
-    }
-
-    public void tearDown() {
-        processEvents();
-        fViewer = null;
-        if (fShell != null) {
-            fShell.dispose();
-            fShell = null;
-        }
-        // leave the display
-        fRootElement = null;
     }
 
     public void testClearSelection() {
