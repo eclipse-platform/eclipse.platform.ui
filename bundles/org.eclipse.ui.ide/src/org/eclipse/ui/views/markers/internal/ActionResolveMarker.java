@@ -91,7 +91,7 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 		}
 
 		Dialog dialog = new MarkerResolutionDialog(view.getSite().getShell(),
-				getSelectedMarker(), (IMarkerResolution[]) resolutions[0]);
+				getSelectedMarker(), (IMarkerResolution[]) resolutions[0],view);
 		dialog.open();
 
 	}

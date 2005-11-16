@@ -260,6 +260,8 @@ public class MarkerMessages extends NLS{
 	public static String MarkerResolutionWizard_WorkingSubTask;
 	public static String MarkerResolutionWizard_FixingTask;
 	
+	public static String MarkerResolutionDialog_AddOthers;
+	
 	public static String ProblemView_hierarchyMenu;
 	public static String ProblemView_flatMenu;
 	
