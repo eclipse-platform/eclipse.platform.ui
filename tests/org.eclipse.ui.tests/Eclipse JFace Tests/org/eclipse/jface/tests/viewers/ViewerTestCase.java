@@ -63,9 +63,13 @@ public abstract class ViewerTestCase extends TestCase {
 	    fShell.setLayout(new FillLayout());
 	    fViewer = createViewer(fShell);
 	    fViewer.setUseHashlookup(true);
-	    fViewer.setInput(fRootElement);
+	    setInput();
 	    fShell.open();
 	    //processEvents();
+	}
+
+	protected void setInput() {
+		fViewer.setInput(fRootElement);
 	}
 
 	public void processEvents() {

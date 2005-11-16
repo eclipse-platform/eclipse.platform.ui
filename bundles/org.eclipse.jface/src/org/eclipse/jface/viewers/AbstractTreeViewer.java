@@ -1531,9 +1531,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * checks to ensure that the content provider is an <code>ITreeContentProvider</code>.
      */
     public void setContentProvider(IContentProvider provider) {
-        Assert.isTrue(provider instanceof ITreeContentProvider);
+    	// the actual check is in assertContentProviderType
         super.setContentProvider(provider);
     }
+    
+	protected void assertContentProviderType(IContentProvider provider) {
+		Assert.isTrue(provider instanceof ITreeContentProvider);
+	}
 
     /**
      * Sets the expand state of the given item.

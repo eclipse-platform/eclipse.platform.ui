@@ -24,7 +24,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -435,6 +437,25 @@ public class TreeViewer extends AbstractTreeViewer {
 				treeViewerImpl.handleMouseDown(e);
 			}
 		});
+		if ((treeControl.getStyle() & SWT.VIRTUAL) != 0) {
+			treeControl.addListener(SWT.SetData, new Listener(){
+
+				public void handleEvent(Event event) {
+					ILazyTreeContentProvider lazyContentProvider = (ILazyTreeContentProvider) getContentProvider();
+					TreeItem item = (TreeItem) event.item;
+					TreeItem parentItem = item.getParentItem();
+					Object parent;
+					int index;
+					if (parentItem != null) {
+						parent = parentItem.getData();
+						index = parentItem.indexOf(item);
+					} else {
+						parent = getInput();
+						index = getTree().indexOf(item);
+					}
+					lazyContentProvider.updateElement(parent, index);
+				}});
+		}
 	}
 
 	/**
@@ -642,4 +663,79 @@ public class TreeViewer extends AbstractTreeViewer {
 			return ((Tree) widget).getItem(index);
 		return null;
 	}
+	
+	protected void assertContentProviderType(IContentProvider provider) {
+		if(provider instanceof ILazyTreeContentProvider)
+			return;
+		super.assertContentProviderType(provider);
+	}
+	
+    protected Object[] getRawChildren(Object parent) {
+    	if(getContentProvider() instanceof ILazyTreeContentProvider) {
+    		return new Object[0];
+    	}
+    	return super.getRawChildren(parent);
+    }
+
+    /**
+     * For a TreeViewer with a tree with the VIRTUAL style bit set, set the
+     * number of children of the given element. To set the number of children
+     * of the invisible root of the tree, the input object is passed as the
+     * element.
+     * 
+     * @param element
+     * @param count
+     * 
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is no guarantee that this API will remain
+	 * unchanged during the 3.2 release cycle. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+     * 
+     * @since 3.2
+     */
+	public void setChildCount(Object element, int count) {
+		Tree tree = (Tree) doFindInputItem(element);
+		if (tree != null) {
+			tree.setItemCount(count);
+			return;
+		}
+		TreeItem item = (TreeItem) doFindItem(element);
+		if (item != null) {
+			item.setItemCount(count);
+		}
+	}
+
+	/**
+	 * For a TreeViewer with a tree with the VIRTUAL style bit set, replace the
+	 * given parent's child at index with the given element. If the given parent
+	 * is this viewer's input, this will replace the root element at the given
+	 * index.
+	 * <p>
+	 * This method should be called by implementers of ILazyTreeContentProvider
+	 * to populate this viewer.
+	 * </p>
+	 * 
+	 * @see #setChildCount(Object, int)
+	 * @see ILazyTreeContentProvider
+     * 
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is no guarantee that this API will remain
+	 * unchanged during the 3.2 release cycle. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+     * 
+	 * @since 3.2
+	 */
+	public void replace(Object parent, int index, Object element) {
+		Widget item;
+		if(parent.equals(getInput())) {
+			item = tree.getItem(index);
+		} else {
+			TreeItem parentItem = (TreeItem) doFindItem(parent);
+			item = parentItem.getItem(index);
+		}
+		updateItem(item, element);
+	}
+
 }
