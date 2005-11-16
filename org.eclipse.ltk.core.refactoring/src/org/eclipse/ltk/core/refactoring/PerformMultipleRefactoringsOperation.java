@@ -25,7 +25,7 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringComponentFactory;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFactory;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 /**
@@ -108,7 +108,7 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 		fExecutionStatus= new RefactoringStatus();
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringsOperation_perform_refactorings, 2 * proxies.length);
-		final RefactoringComponentFactory factory= RefactoringComponentFactory.getInstance();
+		final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
 		try {
 			fExecutionListener= new RefactoringExecutionListener();
 			RefactoringCore.getRefactoringHistoryService().addExecutionListener(fExecutionListener);
