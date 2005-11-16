@@ -245,20 +245,17 @@ public class MarkerMessages extends NLS{
 	public static String ActionResolveMarker_CalculatingJob;
 	public static String ActionResolveMarker_OpenWizardJob;
 	
-	public static String MarkerResolutionPage_Fixing;
-	public static String MarkerResolutionPage_Title;
-	public static String MarkerResolutionPage_Description;
-	public static String MarkerResolutionPage_Problems_List_Title;
-	public static String MarkerResolutionPage_Resolutions_List_Title;
-	public static String MarkerResolutionPage_NoMatchMessage;
-	public static String MarkerResolutionPage_CannotFixTitle;
-	public static String MarkerResolutionPage_CannotFixMessage;
-	public static String MarkerResolutionPage_NoResolutionsMessage;
-	
-	public static String MarkerResolutionWizard_Title;
-	public static String MarkerResolutionWizard_CalculatingTask;
-	public static String MarkerResolutionWizard_WorkingSubTask;
-	public static String MarkerResolutionWizard_FixingTask;
+	public static String MarkerResolutionDialog_Fixing;
+	public static String MarkerResolutionDialog_Description;
+	public static String MarkerResolutionDialog_Problems_List_Title;
+	public static String MarkerResolutionDialog_Resolutions_List_Title;
+	public static String MarkerResolutionDialog_NoMatchMessage;
+	public static String MarkerResolutionDialog_CannotFixTitle;
+	public static String MarkerResolution_CannotFixMessage;
+
+	public static String MarkerResolutionDialog_Title;
+	public static String MarkerResolutionDialog_CalculatingTask;
+	public static String MarkerResolutionDialog_WorkingSubTask;
 	
 	public static String MarkerResolutionDialog_AddOthers;
 	

@@ -104,7 +104,7 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 	private void handleException(Exception exception) {
 		IDEWorkbenchPlugin.log(exception.getLocalizedMessage(), exception);
 		ErrorDialog.openError(view.getSite().getShell(), MarkerMessages.Error,
-				NLS.bind(MarkerMessages.MarkerResolutionPage_CannotFixMessage,
+				NLS.bind(MarkerMessages.MarkerResolution_CannotFixMessage,
 						getMarkerDescription()), Util.errorStatus(exception));
 	}
 

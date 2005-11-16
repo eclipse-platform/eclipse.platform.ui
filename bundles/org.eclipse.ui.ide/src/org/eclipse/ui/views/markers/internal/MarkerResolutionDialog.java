@@ -12,8 +12,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.Hashtable;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.Dialog;
@@ -29,6 +28,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 /**
  * The MarkerResolutionDialog is the dialog used to select a marker resolution.
@@ -56,7 +57,7 @@ import org.eclipse.ui.ide.IDE;
  */
 public class MarkerResolutionDialog extends TitleAreaDialog {
 
-	private Collection markers = new ArrayList();
+	private ArrayList markers = new ArrayList();
 
 	private IMarkerResolution[] resolutions;
 
@@ -66,7 +67,11 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	private ProgressMonitorPart progressPart;
 
-	private MarkerView markerViewer;
+	private MarkerView markerView;
+
+	private ViewerSorter resolutionsSorter;
+
+	private Hashtable resolutionMap = new Hashtable(0);
 
 	/**
 	 * Create a new instance of the receiver with the given resolutions.
@@ -75,15 +80,19 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 * @param marker
 	 *            the marker to show
 	 * @param newResolutions
-	 * @param viewer
+	 * @param view
 	 *            the viewer that is showing these errors
 	 */
 	public MarkerResolutionDialog(Shell shell, IMarker marker,
-			IMarkerResolution[] newResolutions, MarkerView viewer) {
+			IMarkerResolution[] newResolutions, MarkerView view) {
 		super(shell);
 		markers.add(marker);
+		initializeResolutionsSorter();
+		resolutionsSorter.sort(view.getViewer(), newResolutions);
 		resolutions = newResolutions;
-		markerViewer = viewer;
+		markerView = view;
+		resolutionMap.put(marker,newResolutions);
+
 	}
 
 	/*
@@ -103,54 +112,55 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite mainArea = (Composite) super.createDialogArea(parent);
-		
-		//Create a new composite as there is the title bar seperator
-		//to deal with
-		Composite control = new Composite(mainArea,SWT.NONE);
-		control.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-		
+
+		// Create a new composite as there is the title bar seperator
+		// to deal with
+		Composite control = new Composite(mainArea, SWT.NONE);
+		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
 		FormLayout layout = new FormLayout();
 		layout.marginLeft = IDialogConstants.BUTTON_MARGIN;
-		layout.marginTop = IDialogConstants.BUTTON_MARGIN ;
-		layout.marginRight = IDialogConstants.BUTTON_MARGIN ;
-		layout.marginBottom = IDialogConstants.BUTTON_MARGIN ;
+		layout.marginTop = IDialogConstants.BUTTON_MARGIN;
+		layout.marginRight = IDialogConstants.BUTTON_MARGIN;
+		layout.marginBottom = IDialogConstants.BUTTON_MARGIN;
 		layout.spacing = IDialogConstants.BUTTON_MARGIN;
 		control.setLayout(layout);
 
 		initializeDialogUnits(control);
 
 		Label title = new Label(control, SWT.NONE);
-		title.setText(MarkerMessages.MarkerResolutionPage_Problems_List_Title);
+		title.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Title);
 		FormData labelData = new FormData();
 		labelData.top = new FormAttachment(0);
 		labelData.left = new FormAttachment(0);
 		title.setLayoutData(labelData);
-		
+
 		Composite buttons = createTableButtons(control);
 		FormData buttonData = new FormData();
-		buttonData.top = new FormAttachment(title,0);
+		buttonData.top = new FormAttachment(title, 0);
 		buttonData.right = new FormAttachment(100);
 		buttonData.height = convertHeightInCharsToPixels(10);
 		buttons.setLayoutData(buttonData);
-		
+
 		createMarkerTable(control);
-		
+
 		FormData tableData = new FormData();
-		tableData.top = new FormAttachment(buttons,0,SWT.TOP);
+		tableData.top = new FormAttachment(buttons, 0, SWT.TOP);
 		tableData.left = new FormAttachment(0);
-		tableData.right = new FormAttachment(buttons,0);
+		tableData.right = new FormAttachment(buttons, 0);
 		tableData.height = convertHeightInCharsToPixels(10);
 		markersTable.getControl().setLayoutData(tableData);
-		
+
 		Label resolutionsLabel = new Label(control, SWT.NONE);
 		resolutionsLabel
-				.setText(MarkerMessages.MarkerResolutionPage_Resolutions_List_Title);
+				.setText(MarkerMessages.MarkerResolutionDialog_Resolutions_List_Title);
 
 		FormData resolutionsLabelData = new FormData();
-		resolutionsLabelData.top = new FormAttachment(markersTable.getControl(),0);
+		resolutionsLabelData.top = new FormAttachment(
+				markersTable.getControl(), 0);
 		resolutionsLabelData.left = new FormAttachment(0);
-		resolutionsLabel.setLayoutData(resolutionsLabelData);		
-		
+		resolutionsLabel.setLayoutData(resolutionsLabelData);
+
 		resolutionsList = new ListViewer(control, SWT.BORDER | SWT.SINGLE);
 		resolutionsList.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
@@ -198,82 +208,194 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 				});
 
 		resolutionsList.setInput(this);
+
+		resolutionsList.setSorter(resolutionsSorter);
+
 		FormData listData = new FormData();
-		listData.top = new FormAttachment(resolutionsLabel,0);
+		listData.top = new FormAttachment(resolutionsLabel, 0);
 		listData.left = new FormAttachment(0);
-		listData.right = new FormAttachment(100,0);
+		listData.right = new FormAttachment(100, 0);
 		listData.height = convertHeightInCharsToPixels(10);
 		resolutionsList.getControl().setLayoutData(listData);
 
 		progressPart = new ProgressMonitorPart(control, new GridLayout());
-		
+
 		FormData progressData = new FormData();
-		progressData.top = new FormAttachment(resolutionsList.getControl(),0);
+		progressData.top = new FormAttachment(resolutionsList.getControl(), 0);
 		progressData.left = new FormAttachment(0);
-		progressData.right = new FormAttachment(100,0);
-		progressPart
-				.setLayoutData(progressData);
+		progressData.right = new FormAttachment(100, 0);
+		progressPart.setLayoutData(progressData);
 
 		Dialog.applyDialogFont(control);
-		markerViewer.getTree();
+		markerView.getTree();
 
-		setMessage(MarkerMessages.MarkerResolutionPage_Description);
+		setMessage(MarkerMessages.MarkerResolutionDialog_Description);
 		return mainArea;
 
 	}
 
 	/**
+	 * Create the resolutions sorter.
+	 */
+	private void initializeResolutionsSorter() {
+		resolutionsSorter = new ViewerSorter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
+			 */
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				return ((IMarkerResolution) e1).getLabel().compareTo(
+						((IMarkerResolution) e1).getLabel());
+			}
+		};
+	}
+
+	/**
 	 * Create the buttons for the table.
+	 * 
 	 * @param control
 	 * @return Composite
 	 */
 	private Composite createTableButtons(Composite control) {
-		
-		Composite buttonComposite = new Composite(control,SWT.NONE);
+
+		Composite buttonComposite = new Composite(control, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout());
-		
-		Button selectAll = new Button(buttonComposite,SWT.PUSH);
+
+		Button selectAll = new Button(buttonComposite, SWT.PUSH);
 		selectAll.setText(MarkerMessages.selectAllAction_title);
-		selectAll.setLayoutData(new GridData(SWT.FILL,SWT.NONE,false,false));
-		
-		selectAll.addSelectionListener(new SelectionAdapter(){
-			/* (non-Javadoc)
+		selectAll.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
+
+		selectAll.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent arg0) {
 				markersTable.setAllChecked(true);
+				setComplete(!resolutionsList.getSelection().isEmpty());
 			}
 		});
-		
-		Button deselectAll = new Button(buttonComposite,SWT.PUSH);
+
+		Button deselectAll = new Button(buttonComposite, SWT.PUSH);
 		deselectAll.setText(MarkerMessages.filtersDialog_deselectAll);
-		deselectAll.setLayoutData(new GridData(SWT.FILL,SWT.NONE,false,false));
-		
-		deselectAll.addSelectionListener(new SelectionAdapter(){
-			/* (non-Javadoc)
+		deselectAll
+				.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
+
+		deselectAll.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent arg0) {
 				markersTable.setAllChecked(false);
+				setComplete(false);
 			}
 		});
-		
-		Button addMatching = new Button(buttonComposite,SWT.PUSH);
+
+		final Button addMatching = new Button(buttonComposite, SWT.PUSH);
 		addMatching.setText(MarkerMessages.MarkerResolutionDialog_AddOthers);
-		addMatching.setLayoutData(new GridData(SWT.FILL,SWT.NONE,false,false));
-		addMatching.setEnabled(false);
-		
+		addMatching
+				.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
+		addMatching.setEnabled(getMatchingButtonEnablement());
+		addMatching.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent arg0) {
+				addMatchingMarkers();
+				addMatching.setEnabled(false);
+			}
+		});
+
 		return buttonComposite;
 	}
 
 	/**
+	 * Add all of the markers that have resolutions compatible with the
+	 * receiver.
+	 */
+	protected void addMatchingMarkers() {
+
+		Object[] all = markerView.getCurrentMarkers().getArray();
+		progressPart.beginTask(
+				MarkerMessages.MarkerResolutionDialog_CalculatingTask,
+				all.length);
+
+		WorkbenchMarkerResolution[] existing = new WorkbenchMarkerResolution[resolutions.length];
+		System.arraycopy(resolutions, 0, existing, 0, existing.length);
+
+		for (int i = 0; i < all.length; i++) {
+			ConcreteMarker marker = (ConcreteMarker) all[i];
+			progressPart.subTask(NLS.bind(
+					MarkerMessages.MarkerResolutionDialog_WorkingSubTask,
+					marker.getDescription()));
+			IMarkerResolution[] resolutions = IDE.getMarkerHelpRegistry()
+					.getResolutions(marker.getMarker());
+			if (isCompatible(resolutions, existing)){
+				markersTable.add(marker.getMarker());
+				resolutionMap .put(marker.getMarker(),resolutions);
+			}
+			progressPart.worked(1);
+		}
+		progressPart.done();
+	}
+
+	/**
+	 * Return whether or not the list of resolutions in newResolutions can be
+	 * grouped with the current set of resolutions.
+	 * 
+	 * @param newResolutions
+	 * @param existingResolutions
+	 * @return boolean <code>true</code> if the newResolutions all can be
+	 *         grouped with the existing ones.
+	 * @see WorkbenchMarkerResolution#canBeGroupedWith(WorkbenchMarkerResolution)
+	 */
+	private boolean isCompatible(IMarkerResolution[] newResolutions,
+			WorkbenchMarkerResolution[] existingResolutions) {
+
+		if (newResolutions.length != existingResolutions.length)
+			return false;
+
+		for (int i = 0; i < newResolutions.length; i++) {
+			if (newResolutions[i] instanceof WorkbenchMarkerResolution) {
+				if (!(existingResolutions[i]
+						.canBeGroupedWith((WorkbenchMarkerResolution) newResolutions[i])))
+					return false;
+			}
+			else
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Return whether or not the add button should be enabled.
+	 * 
+	 * @return boolean
+	 */
+	private boolean getMatchingButtonEnablement() {
+
+		if (markers.size() != 1)
+			return false;
+
+		return resolutions[0] instanceof WorkbenchMarkerResolution;
+
+	}
+
+	/**
 	 * Create the table for the markers/
+	 * 
 	 * @param control
 	 */
 	private void createMarkerTable(Composite control) {
 		markersTable = CheckboxTableViewer.newCheckList(control, SWT.BORDER
 				| SWT.V_SCROLL);
-
 
 		markersTable.setContentProvider(new IStructuredContentProvider() {
 			/*
@@ -346,24 +468,6 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * Return the choice whose label matches allChoices.
-	 * 
-	 * @param resolution
-	 * @param allChoices
-	 * @return IMarkerResolution or <code>null</code> if it cannot be found
-	 */
-	private IMarkerResolution getResolutionMatching(
-			IMarkerResolution resolution, IMarkerResolution[] allChoices) {
-		Comparator resolutionComparator = MarkerResolutionWizard
-				.getResolutionComparator();
-		for (int i = 0; i < allChoices.length; i++) {
-			if (resolutionComparator.compare(allChoices[i], resolution) == 0)
-				return allChoices[i];
-		}
-		return null;
-	}
-
-	/**
 	 * Return the description of the element.
 	 * 
 	 * @param element
@@ -380,7 +484,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 */
 	public void create() {
 		super.create();
-		setTitle(MarkerMessages.MarkerResolutionPage_Title);
+		setTitle(MarkerMessages.MarkerResolutionDialog_Title);
 		// If there is only one select it
 		if (resolutionsList.getList().getItemCount() == 1) {
 			resolutionsList.getList().select(0);
@@ -400,40 +504,27 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			return;
 
 		Object[] checked = markersTable.getCheckedElements();
-		IMarkerResolution resolution = (IMarkerResolution) ((IStructuredSelection) selected)
-				.getFirstElement();
-		progressPart.beginTask(NLS.bind(
-				MarkerMessages.MarkerResolutionPage_Fixing, resolution
-						.getLabel()), checked.length + 1);
+		int index = resolutionsList.getList().getSelectionIndex();
+		
+		progressPart.beginTask(
+				MarkerMessages.MarkerResolutionDialog_Fixing, checked.length + 1);
 		progressPart.worked(1);
 
 		for (int i = 0; i < checked.length; i++) {
 			IMarker marker = (IMarker) checked[i];
-			IMarkerResolution[] newResolutions = IDE.getMarkerHelpRegistry()
-					.getResolutions(marker);
+			progressPart.subTask(Util.getProperty(IMarker.MESSAGE, marker));
+			
+			IMarkerResolution[] resolutions = (IMarkerResolution[]) resolutionMap.get(marker);
+			IMarkerResolution matching = ((WorkbenchMarkerResolution) resolutions[index]).getUpdatedResolution();
 
-			if (newResolutions.length == 0) {
-				MessageDialog
-						.openInformation(
-								getShell(),
-								MarkerMessages.MarkerResolutionPage_CannotFixTitle,
-								NLS
-										.bind(
-												MarkerMessages.MarkerResolutionPage_NoResolutionsMessage,
-												getDescription(marker)));
-				return;
-			}
-
-			IMarkerResolution matching = getResolutionMatching(resolution,
-					newResolutions);
 			if (matching == null) {
 				MessageDialog
 						.openInformation(
 								getShell(),
-								MarkerMessages.MarkerResolutionPage_CannotFixTitle,
+								MarkerMessages.MarkerResolutionDialog_CannotFixTitle,
 								NLS
 										.bind(
-												MarkerMessages.MarkerResolutionPage_NoMatchMessage,
+												MarkerMessages.MarkerResolutionDialog_NoMatchMessage,
 												getDescription(marker)));
 				return;
 			}
