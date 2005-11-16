@@ -155,6 +155,7 @@ public class MarkerMessages extends NLS{
 	public static String resolveMarkerAction_title;
 	public static String resolveMarkerAction_dialogTitle;
 	public static String resolveMarkerAction_noResolutionsLabel;
+	public static String resolveMarkerAction_computationAction;
 
 	public static String deleteCompletedTasks_dialogTitle;
 	public static String deleteCompletedTasks_noneCompleted;

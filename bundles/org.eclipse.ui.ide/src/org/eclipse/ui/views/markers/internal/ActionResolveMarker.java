@@ -11,19 +11,23 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IMarkerResolution;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * This action displays a list of resolutions for the selected marker
@@ -52,56 +56,65 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 	 */
 	public void run() {
 
-		final MarkerResolutionWizard[] wizard = new MarkerResolutionWizard[1];
+		IRunnableContext context = new ProgressMonitorDialog(view.getSite()
+				.getShell());
+		final Object[] resolutions = new Object[1];
 
-		Job processingJob = new WorkbenchJob(
-				MarkerMessages.ActionResolveMarker_CalculatingJob) {
-
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-				IMarker[] markers = getSelectedMarkers();
-
-				try {
-					wizard[0] = new MarkerResolutionWizard(markers, MarkerList
-							.compute(view.getMarkerTypes()));
-					wizard[0].determinePages(monitor);
-				} catch (CoreException e) {
-					return e.getStatus();
-				}
-				return Status.OK_STATUS;
+		IRunnableWithProgress resolutionsRunnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				monitor.beginTask(NLS.bind(
+						MarkerMessages.resolveMarkerAction_computationAction,
+						getMarkerDescription()), 100);
+				monitor.worked(25);
+				resolutions[0] = IDE.getMarkerHelpRegistry().getResolutions(
+						getSelectedMarker());
+				monitor.done();
 			}
-
 		};
 
-		processingJob.addJobChangeListener(new JobChangeAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void done(IJobChangeEvent event) {
+		Object service = view.getSite().getAdapter(
+				IWorkbenchSiteProgressService.class);
 
-				WorkbenchJob dialogJob = new WorkbenchJob(
-						MarkerMessages.ActionResolveMarker_OpenWizardJob) {
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-					 */
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						(new WizardDialog(view.getSite().getShell(), wizard[0]))
-								.open();
-						return Status.OK_STATUS;
-					}
-				};
-				dialogJob.setSystem(true);
-				dialogJob.schedule();
+		try {
+			if (service == null)
+				PlatformUI.getWorkbench().getProgressService().runInUI(context,
+						resolutionsRunnable, null);
+			else
+				((IWorkbenchSiteProgressService) service).runInUI(context,
+						resolutionsRunnable, null);
+		} catch (InvocationTargetException exception) {
+			handleException(exception);
+			return;
+		} catch (InterruptedException exception) {
+			handleException(exception);
+			return;
+		}
 
-			}
-		});
+		Dialog dialog = new MarkerResolutionDialog(view.getSite().getShell(),
+				getSelectedMarker(), (IMarkerResolution[]) resolutions[0]);
+		dialog.open();
 
-		processingJob.setUser(true);
-		processingJob.schedule();
+	}
+
+	/**
+	 * Handle the exception.
+	 * 
+	 * @param exception
+	 */
+	private void handleException(Exception exception) {
+		IDEWorkbenchPlugin.log(exception.getLocalizedMessage(), exception);
+		ErrorDialog.openError(view.getSite().getShell(), MarkerMessages.Error,
+				NLS.bind(MarkerMessages.MarkerResolutionPage_CannotFixMessage,
+						getMarkerDescription()), Util.errorStatus(exception));
+	}
+
+	/**
+	 * Return the description of the marker.
+	 * 
+	 * @return String
+	 */
+	private String getMarkerDescription() {
+		return Util.getProperty(IMarker.MESSAGE, getSelectedMarker());
 	}
 
 	/*
@@ -110,14 +123,14 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
-		
-		if(Util.isSingleConcreteSelection(selection)){
-			if(IDE.getMarkerHelpRegistry().hasResolutions(getSelectedMarker())){
+
+		if (Util.isSingleConcreteSelection(selection)) {
+			if (IDE.getMarkerHelpRegistry().hasResolutions(getSelectedMarker())) {
 				setEnabled(true);
 				return;
 			}
 		}
-		
+
 		setEnabled(false);
 	}
 }
