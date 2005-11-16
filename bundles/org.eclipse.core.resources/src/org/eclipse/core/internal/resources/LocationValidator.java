@@ -121,19 +121,20 @@ public class LocationValidator {
 			message = NLS.bind(Messages.links_workspaceVeto, resource.getName());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
-		//check that the resource has a project as its parent
-		IContainer parent = resource.getParent();
-		if (parent == null || parent.getType() != IResource.PROJECT) {
-			message = NLS.bind(Messages.links_parentNotProject, resource.getName());
+		//check that the resource is the right type
+		int type = resource.getType();
+		if (type != IResource.FOLDER && type != IResource.FILE) {
+			message = NLS.bind(Messages.links_notFileFolder, resource.getName());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
+		IContainer parent = resource.getParent();
 		if (!parent.isAccessible()) {
 			message = NLS.bind(Messages.links_parentNotAccessible, resource.getFullPath());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		URI location = workspace.getPathVariableManager().resolveURI(unresolvedLocation);
 		//check nature veto
-		String[] natureIds = ((Project) parent).internalGetDescription().getNatureIds();
+		String[] natureIds = ((Project) resource.getProject()).internalGetDescription().getNatureIds();
 
 		IStatus result = workspace.getNatureManager().validateLinkCreation(natureIds);
 		if (!result.isOK())

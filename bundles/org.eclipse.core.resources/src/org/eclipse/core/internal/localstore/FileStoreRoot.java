@@ -11,6 +11,7 @@ package org.eclipse.core.internal.localstore;
 
 import java.net.URI;
 import org.eclipse.core.filesystem.*;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -28,6 +29,13 @@ public class FileStoreRoot {
 	 */
 	private boolean isValid = true;
 	private URI root;
+	
+	/**
+	 * If this root represents a resource in the local file system, this path
+	 * represents the root location.  This value is null if the root represents
+	 * a non-local file system
+	 */
+	private IPath localRoot = null;
 
 	private final IPathVariableManager variableManager;
 
@@ -42,6 +50,7 @@ public class FileStoreRoot {
 		this.variableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 		this.root = rootURI;
 		this.chop = workspacePath.segmentCount();
+		this.localRoot = FileUtil.toPath(root);
 	}
 
 	IFileStore createStore(IPath workspacePath) {
@@ -61,6 +70,17 @@ public class FileStoreRoot {
 
 	boolean isValid() {
 		return isValid;
+	}
+	
+	IPath localLocation(IPath workspacePath) {
+		IPath location = localRoot.append(workspacePath.removeFirstSegments(chop));
+		if (location == null)
+			return null;
+		location = variableManager.resolvePath(location);
+		//if path is still relative then path variable could not be resolved
+		if (!location.isAbsolute())
+			return null;
+		return location;
 	}
 
 	void setValid(boolean value) {

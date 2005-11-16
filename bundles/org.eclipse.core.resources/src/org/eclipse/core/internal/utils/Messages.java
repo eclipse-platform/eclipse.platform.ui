@@ -55,7 +55,7 @@ public class Messages extends NLS {
 	public static String links_noPath;
 	public static String links_overlappingResource;
 	public static String links_parentNotAccessible;
-	public static String links_parentNotProject;
+	public static String links_notFileFolder;
 	public static String links_updatingDuplicate;
 	public static String links_vetoNature;
 	public static String links_workspaceVeto;

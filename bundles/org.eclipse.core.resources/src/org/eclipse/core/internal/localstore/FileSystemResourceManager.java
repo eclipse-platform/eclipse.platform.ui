@@ -261,7 +261,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	public boolean fastIsSynchronized(File target) {
 		ResourceInfo info = target.getResourceInfo(false, false);
 		if (target.exists(target.getFlags(info), true)) {
-			IFileInfo fileInfo= getStore(target).fetchInfo();
+			IFileInfo fileInfo = getStore(target).fetchInfo();
 			if (!fileInfo.isDirectory() && info.getLocalSyncInfo() == fileInfo.getLastModified())
 				return true;
 		}
@@ -439,7 +439,9 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			if (!result.isOK())
 				throw new ResourceException(result);
 		}
-		descriptionFile.setContents(in, updateFlags, null);
+		//write the project description file (don't use API because scheduling rule might not match)
+		write(descriptionFile, in, true, false, false, Policy.monitorFor(null));
+		workspace.getAliasManager().updateAliases(descriptionFile, getStore(descriptionFile), IResource.DEPTH_ZERO, Policy.monitorFor(null));
 
 		//update the timestamp on the project as well so we know when it has
 		//been changed from the outside
@@ -523,51 +525,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * Returns null if the location could not be resolved.
 	 */
 	public IPath locationFor(IResource target) {
-		//note: this method is a critical performance path,
-		//code may be in-lined to prevent method calls
-		switch (target.getType()) {
-			case IResource.ROOT :
-				return Platform.getLocation();
-			case IResource.PROJECT :
-				Project project = (Project) target;
-				ProjectDescription description = project.internalGetDescription();
-				if (description != null && description.getLocation() != null) {
-					IPath resolved = workspace.getPathVariableManager().resolvePath(description.getLocation());
-					//if path is still relative then path variable could not be resolved
-					return resolved != null && resolved.isAbsolute() ? resolved : null;
-				}
-				return getProjectDefaultLocation(project);
-			default :
-				//check if the resource is a linked resource
-				IPath targetPath = target.getFullPath();
-				int numSegments = targetPath.segmentCount();
-				IResource linked = target;
-				if (numSegments > 2) {
-					//parent could be a linked resource
-					linked = workspace.getRoot().getFolder(targetPath.removeLastSegments(numSegments - 2));
-				}
-				description = ((Project) target.getProject()).internalGetDescription();
-				if (linked.isLinked()) {
-					IPath location = description.getLinkLocation(linked.getProjectRelativePath());
-					//location may have been deleted from the project description between sessions
-					if (location != null) {
-						location = workspace.getPathVariableManager().resolvePath(location);
-						//if path is still relative then path variable could not be resolved
-						if (!location.isAbsolute())
-							return null;
-						return location.append(targetPath.removeFirstSegments(2));
-					}
-				}
-				//not a linked resource -- get location of project
-				if (description != null && description.getLocation() != null) {
-					IPath resolved = workspace.getPathVariableManager().resolvePath(description.getLocation());
-					//if path is still relative then path variable could not be resolved
-					if (!resolved.isAbsolute())
-						return null;
-					return resolved.append(target.getProjectRelativePath());
-				}
-				return Platform.getLocation().append(target.getFullPath());
-		}
+		return getStoreRoot(target).localLocation(target.getFullPath());
 	}
 
 	public void move(IResource source, IFileStore destination, int flags, IProgressMonitor monitor) throws CoreException {
@@ -913,6 +871,9 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			lastModified = store.fetchInfo().getLastModified();
 			ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
 			updateLocalSync(info, lastModified);
+			info.incrementContentId();
+			info.clear(M_CONTENT_CACHE);
+			workspace.updateModificationStamp(info);
 		} finally {
 			FileUtil.safeClose(content);
 		}

@@ -319,10 +319,6 @@ public class File extends Resource implements IFile {
 		if (content == null)
 			content = new ByteArrayInputStream(new byte[0]);
 		getLocalManager().write(this, content, force, keepHistory, append, monitor);
-		ResourceInfo info = getResourceInfo(false, true);
-		info.incrementContentId();
-		info.clear(M_CONTENT_CACHE);
-		workspace.updateModificationStamp(info);
 		updateMetadataFiles();
 		workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_ZERO, monitor);
 	}

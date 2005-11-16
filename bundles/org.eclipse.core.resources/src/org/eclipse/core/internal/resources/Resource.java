@@ -1503,9 +1503,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#isLinked()
 	 */
 	public boolean isLinked() {
-		//only resources at depth two can be linked
-		if (path.segmentCount() != 2)
-			return false;
 		ResourceInfo info = getResourceInfo(false, false);
 		return info != null && info.isSet(M_LINK);
 	}
