@@ -1119,7 +1119,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
     protected void internalExpandToLevel(Widget widget, int level) {
         if (level == ALL_LEVELS || level > 0) {
-            createChildren(widget);
+        	if(!(getContentProvider() instanceof ILazyTreeContentProvider)) {
+        		createChildren(widget);
+        	}
             if (widget instanceof Item)
                 setExpanded((Item) widget, true);
             if (level == ALL_LEVELS || level > 1) {

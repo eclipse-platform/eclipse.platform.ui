@@ -715,6 +715,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * This method should be called by implementers of ILazyTreeContentProvider
 	 * to populate this viewer.
 	 * </p>
+	 * @param parent the parent of the element that should be updated
+	 * @param index the index in the parent's children
+	 * @param element the new element
 	 * 
 	 * @see #setChildCount(Object, int)
 	 * @see ILazyTreeContentProvider

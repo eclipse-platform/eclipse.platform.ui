@@ -68,9 +68,15 @@ public class VirtualLazyTreeViewerTest extends ViewerTestCase {
 	}
 
 	public void testCreation() {
+		processEvents();
 		assertTrue("tree should have items", getTreeViewer().getTree().getItemCount() > 0);
 		assertTrue("call to updateElement expected", updateElementCallCount > 0);
 		assertEquals("R-0", getTreeViewer().getTree().getItem(0).getText());
-		interact();
+	}
+
+	public void testExpand() {
+		Tree tree = getTreeViewer().getTree();
+		getTreeViewer().expandToLevel("R-0", 1);
+		assertEquals(10, tree.getItem(0).getItemCount());
 	}
 }
