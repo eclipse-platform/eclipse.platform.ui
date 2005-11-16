@@ -791,7 +791,9 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 			return;//No need to report here as the node won't have the listener
 		}
 		
-		getStorePreferences().removePreferenceChangeListener(
-				preferencesListener);
+		IEclipsePreferences preferences = getStorePreferences();
+		if(preferences == null)
+			return;
+		preferences.removePreferenceChangeListener(preferencesListener);
 	}
 }
