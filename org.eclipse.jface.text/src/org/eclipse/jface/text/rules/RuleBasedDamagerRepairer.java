@@ -25,7 +25,7 @@ public class RuleBasedDamagerRepairer extends DefaultDamagerRepairer {
 	 * text attribute if the current token does not carry a text attribute.
 	 *
 	 * @param scanner the rule based scanner to be used
-	 * @param defaultTextAttribute the text attribute to be returned if non is specified by the current token,
+	 * @param defaultTextAttribute the text attribute to be returned if none is specified by the current token,
 	 * 			may not be <code>null</code>
 	 *
 	 * @deprecated use RuleBasedDamagerRepairer(RuleBasedScanner) instead
