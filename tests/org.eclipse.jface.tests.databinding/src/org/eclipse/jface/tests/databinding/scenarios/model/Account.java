@@ -13,25 +13,33 @@ package org.eclipse.jface.tests.databinding.scenarios.model;
 public class Account extends ModelObject {
 
 	private String country;
+	private String firstName;
+	private String lastName;
+	private String state;
+	private String phone;	
 
 	public void setFirstName(String string) {
-		// TODO Auto-generated method stub
-		
+		String oldValue = firstName;
+		firstName = string;
+		firePropertyChange("firstName", oldValue, string);		
 	}
 
 	public void setLastName(String string) {
-		// TODO Auto-generated method stub
-		
+		String oldValue = lastName;
+		lastName = string;
+		firePropertyChange("lastName", oldValue, string);				
 	}
 
 	public void setState(String string) {
-		// TODO Auto-generated method stub
-		
+		String oldValue = state;
+		state = string;
+		firePropertyChange("state", oldValue, string);		
 	}
 
 	public void setPhone(String string) {
-		// TODO Auto-generated method stub
-		
+		String oldValue = phone;
+		phone = string;
+		firePropertyChange("phone", oldValue, phone);		
 	}
 
 	public void setCountry(String string) {
@@ -45,23 +53,19 @@ public class Account extends ModelObject {
 	}
 
 	public String getFirstName() {
-		// TODO Auto-generated method stub
-		return null;
+		return firstName;
 	}
 
 	public String getLastName() {
-		// TODO Auto-generated method stub
-		return null;
+		return lastName;
 	}
 
 	public String getState() {
-		// TODO Auto-generated method stub
-		return null;
+		return state;
 	}
 
 	public String getPhone() {
-		// TODO Auto-generated method stub
-		return null;
+		return phone;
 	}
 
 }
