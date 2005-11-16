@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -22,6 +21,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -36,14 +36,19 @@ import org.eclipse.ui.internal.wizards.datatransfer.ZipLeveledStructureProvider;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 public class ImportArchiveOperationTest extends UITestCase implements IOverwriteQuery {
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
 
+	private static final String ARCHIVE_SOURCE_PROPERTY = "archiveSource";
+	
+	private static final String ARCHIVE_115800_PROPERTY = "bug115800Source";
+	
     private String localDirectory;
 
+    private String rootResourceName = "test.txt";
+    
     private String[] directoryNames = { "dir1", "dir2" };
 
     private String[] fileNames = { "file1.txt", "file2.txt" };
@@ -67,22 +72,6 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         return "";
     }
 
-    protected void doSetUp() throws Exception {
-        super.doSetUp();
-        Class testClass = Class
-                .forName("org.eclipse.ui.tests.datatransfer.ImportArchiveOperationTest");
-        InputStream stream = testClass.getResourceAsStream("tests.ini");
-        Properties properties = new Properties();
-        properties.load(stream);
-        String zipFileName = properties.getProperty("archiveSource");
-        localDirectory = zipFileName;
-        
-        zipFileURL = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-        		new Path(DATA_PATH_PREFIX).append(zipFileName+ ".zip")));
-        tarFileURL = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
-        		new Path(DATA_PATH_PREFIX).append(zipFileName+ ".tar")));
-    }
-
     /**
      * Tear down. Delete the project we created and all of the
      * files on the file system.
@@ -96,7 +85,23 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         }
     }
 
+    private void setup(String propertyName) throws Exception{
+        Class testClass = Class
+		        .forName("org.eclipse.ui.tests.datatransfer.ImportArchiveOperationTest");
+		InputStream stream = testClass.getResourceAsStream("tests.ini");
+		Properties properties = new Properties();
+		properties.load(stream);
+		String zipFileName = properties.getProperty(propertyName);
+		localDirectory = zipFileName;
+		
+		zipFileURL = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+				new Path(DATA_PATH_PREFIX).append(zipFileName+ ".zip")));
+		tarFileURL = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), 
+				new Path(DATA_PATH_PREFIX).append(zipFileName+ ".tar")));    	
+    }
+    
     public void testZipGetStatus() throws Exception {
+    	setup(ARCHIVE_SOURCE_PROPERTY);
         project = FileUtil.createProject("ImportZipGetStatus");
         ZipFile zipFile = new ZipFile(zipFileURL.getPath());
         
@@ -116,6 +121,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
     }
 
     public void testTarGetStatus() throws Exception {
+    	setup(ARCHIVE_SOURCE_PROPERTY);
         project = FileUtil.createProject("ImportTarGetStatus");
         TarFile tarFile = new TarFile(tarFileURL.getPath());
         TarLeveledStructureProvider structureProvider = new TarLeveledStructureProvider(tarFile);
@@ -133,6 +139,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
     }
     
     public void testZipImport() throws Exception {
+    	setup(ARCHIVE_SOURCE_PROPERTY);
         project = FileUtil.createProject("ImportZip");
         ZipFile zipFile = new ZipFile(zipFileURL.getPath());
         ZipLeveledStructureProvider structureProvider = new ZipLeveledStructureProvider(zipFile);
@@ -151,11 +158,12 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         openTestWindow().run(true, true, operation);
         closeZipFile(zipFile);
         
-        verifyFiles(directoryNames.length);
+        verifyFiles(directoryNames.length, false);
     }
 
     
     public void testTarImport() throws Exception {
+    	setup(ARCHIVE_SOURCE_PROPERTY);
         project = FileUtil.createProject("ImportTar");
         TarFile tarFile = new TarFile(tarFileURL.getPath());
         TarLeveledStructureProvider structureProvider = new TarLeveledStructureProvider(tarFile);
@@ -171,19 +179,11 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         
         openTestWindow().run(true, true, operation);
 
-        verifyFiles(directoryNames.length);
-    }
-    
-    public void zztestImportTarSource() throws Exception {
-        project = FileUtil.createProject("ImportTarSource");
-        ImportOperation operation = new ImportOperation(project.getFullPath(),
-                new File(localDirectory), FileSystemStructureProvider.INSTANCE,
-                this);
-        openTestWindow().run(true, true, operation);
-        verifyFiles(directoryNames.length);
+        verifyFiles(directoryNames.length, false);
     }
 
     public void testTarSetOverwriteResources() throws Exception {
+    	setup(ARCHIVE_SOURCE_PROPERTY);
         project = FileUtil.createProject("ImportTarSetOverwriteResources");
         TarFile tarFile = new TarFile(tarFileURL.getPath());
         TarLeveledStructureProvider structureProvider = new TarLeveledStructureProvider(tarFile);
@@ -200,10 +200,11 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         openTestWindow().run(true, true, operation);
         operation.setOverwriteResources(true);
         openTestWindow().run(true, true, operation);
-        verifyFiles(directoryNames.length);
+        verifyFiles(directoryNames.length, false);
     }
     
     public void testZipSetOverwriteResources() throws Exception {
+    	setup(ARCHIVE_SOURCE_PROPERTY);
     	project = FileUtil.createProject("ImporZiprSetOverwriteResources");
         ZipFile zipFile = new ZipFile(zipFileURL.getPath());
         ZipLeveledStructureProvider structureProvider = new ZipLeveledStructureProvider(zipFile);
@@ -223,15 +224,60 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         operation.setOverwriteResources(true);
         openTestWindow().run(true, true, operation);
         closeZipFile(zipFile);  
-        verifyFiles(directoryNames.length);
+        verifyFiles(directoryNames.length, false);
+    }
+    
+    public void testZipWithFileAtRoot() throws Exception {
+    	setup(ARCHIVE_115800_PROPERTY);
+        project = FileUtil.createProject("ImportZipWithFileAtRoot");
+        ZipFile zipFile = new ZipFile(zipFileURL.getPath());
+        ZipLeveledStructureProvider structureProvider = new ZipLeveledStructureProvider(zipFile);
+        zipFile = new ZipFile(zipFileURL.getPath());
+	    Enumeration zipEntries = zipFile.entries();
+	    List entries = new ArrayList();
+	    while (zipEntries.hasMoreElements()){
+	    	ZipEntry entry = (ZipEntry)zipEntries.nextElement();
+	    	if (!entry.isDirectory())
+	    		entries.add(entry);
+	    }
+		ImportOperation operation = new ImportOperation(
+				new Path(project.getName()), structureProvider.getRoot(),
+				structureProvider, this, entries);
+		
+        openTestWindow().run(true, true, operation);
+        closeZipFile(zipFile);
+        
+        verifyFiles(directoryNames.length, true);    	
     }
 
+    
+    public void testTarWithFileAtRoot() throws Exception {
+    	setup(ARCHIVE_115800_PROPERTY);
+        project = FileUtil.createProject("ImportTarWithFileAtRoot");
+        TarFile tarFile = new TarFile(tarFileURL.getPath());
+        TarLeveledStructureProvider structureProvider = new TarLeveledStructureProvider(tarFile);
+    
+	    Enumeration tarEntries = tarFile.entries();
+	    List entries = new ArrayList();
+	    while (tarEntries.hasMoreElements()){
+	    	entries.add(tarEntries.nextElement());
+	    }
+		ImportOperation operation = new ImportOperation(
+				new Path(project.getName()), structureProvider.getRoot(),
+				structureProvider, this, entries);
+        
+        openTestWindow().run(true, true, operation);
+
+        verifyFiles(directoryNames.length, true);
+    
+    }
+    
     /**
      * Verifies that all files were imported.
      * 
      * @param folderCount number of folders that were imported
      */
-    private void verifyFiles(int folderCount) {
+    private void verifyFiles(int folderCount, boolean hasRootMembers) {
         try {
             IPath path = new Path(localDirectory);
             IResource targetFolder = project.findMember(path.makeRelative());
@@ -239,12 +285,24 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
             assertTrue("Import failed", targetFolder instanceof IContainer);
 
             IResource[] resources = ((IContainer) targetFolder).members();
-            assertEquals("Import failed to import all directories",
-                    folderCount, resources.length);
-            for (int i = 0; i < resources.length; i++) {
-                assertTrue("Import failed", resources[i] instanceof IContainer);
-                verifyFolder((IContainer) resources[i]);
+            if (!hasRootMembers){
+	            assertEquals("Import failed to import all directories",
+	                    folderCount, resources.length);
+	            for (int i = 0; i < resources.length; i++) {
+	                assertTrue("Import failed", resources[i] instanceof IContainer);
+	                verifyFolder((IContainer) resources[i]);
+	            }
             }
+            else {
+            	for (int i = 0; i < resources.length; i++){
+            		if (resources[i] instanceof IContainer)
+            			verifyFolder((IContainer)resources[i]);
+            		else
+            			assertTrue("Root resource is not present or is not present as a file: " + rootResourceName, 
+            					resources[i] instanceof IFile && rootResourceName.equals(resources[i].getName()));
+            	}
+            }
+
         } catch (CoreException e) {
             fail(e.toString());
         }
