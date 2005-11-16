@@ -27,6 +27,7 @@ import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.CopyTableRenderingToClipboardAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingDialog;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.PrintTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ReformatAction;
@@ -153,7 +154,6 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	
 	/**
 	 * Property identifier for the row size in a table rendering
-	 * 
 	 * @since 3.2
 	 */
 	public static final String PROPERTY_ROW_SIZE = "rowSize"; //$NON-NLS-1$
@@ -711,7 +711,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		fTableViewer.getTable().setHeaderVisible(true);
 		fTableViewer.getTable().setLinesVisible(true);
 		
-// FORMAT RENDERING
+
 		// set up addressable size and figure out number of bytes required per line
 		fAddressableSize = -1;
 		try {
@@ -727,53 +727,137 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		if (getAddressableSize() < 1)
 			fAddressableSize = 1;
 		
-		// Row size is stored as number of addressable units in preference store
-		int rowSize = DebugUITools.getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_ROW_SIZE);
-		int bytePerLine = rowSize * getAddressableSize();
+// set up initial format
+		setupInitialFormat();
 		
-		// get default column size from preference store
-		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
-		// column size is now stored as number of addressable units
-		int columnSize = prefStore.getInt(IDebugPreferenceConstants.PREF_COLUMN_SIZE);
-		// actual column size is number of addressable units * size of the addressable unit
-		columnSize = columnSize * getAddressableSize();
+// set up selected address		
+		setupSelectedAddress();
 		
-		// check synchronized col size
-		Integer colSize = (Integer)getSynchronizedProperty(AbstractTableRendering.PROPERTY_COL_SIZE);
+		// figure out top visible address
+		BigInteger topVisibleAddress = getInitialTopVisibleAddress();
 		
-		if (colSize != null)
+		getPageSizeFromPreference();
+		
+		if (isDynamicLoad())
+			fContentInput = new TableRenderingContentInput(this, 20, 20, 20, topVisibleAddress, getNumberOfVisibleLines(), false);
+		else
 		{
-			// column size is stored as actual number of bytes in synchronizer
-			int syncColSize = colSize.intValue(); 
-			if (syncColSize > 0)
+			BigInteger addressToLoad = topVisibleAddress;
+			
+			// check synchronization service to see if we need to sync with another rendering
+			Object obj = getSynchronizedProperty(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS);
+			if (obj != null && obj instanceof BigInteger)
 			{
-				columnSize = syncColSize;
-			}	
+				addressToLoad = (BigInteger)obj;
+			}
+			fContentInput = new TableRenderingContentInput(this, 0, 0, 0, addressToLoad, fPageSize, false);
 		}
 		
-		// check synchronized row size
-		Integer size = (Integer)getSynchronizedProperty(AbstractTableRendering.PROPERTY_ROW_SIZE);
-		if (size != null)
-		{
-			// row size is stored as actual number of bytes in synchronizer
-			int syncRowSize = size.intValue(); 
-			if (syncRowSize > 0)
-			{
-				bytePerLine = syncRowSize;
-			}	
+		fTableViewer.setInput(fContentInput);
+		
+		// set up cell modifier
+		fCellModifier = new TableRenderingCellModifier(this);
+		fTableViewer.setCellModifier(fCellModifier);
+		
+		// SET UP FONT		
+		// set to a non-proportional font
+		fTableViewer.getTable().setFont(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
+		if (!(getMemoryBlock() instanceof IMemoryBlockExtension))
+		{		
+			// If not extended memory block, do not create any buffer
+			// no scrolling
+			fContentInput.setPreBuffer(0);
+			fContentInput.setPostBuffer(0);
+			fContentInput.setDefaultBufferSize(0);
 		}
 		
-		// format memory block with specified "bytesPerLine" and "columnSize"	
-		boolean ok = format(bytePerLine, columnSize);
+		// set up table cursor
+		createCursor(fTableViewer.getTable(), fSelectedAddress);
+		fTableViewer.getTable().addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+				handleTableMouseEvent(e);
+			}});
+		
+		// create pop up menu for the rendering
+		createActions();
+		createPopupMenu(fTableViewer.getControl());
+		createPopupMenu(fTableCursor);
+		getPopupMenuManager().addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				fillContextMenu(manager);
+				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+			}});
+		
+		// now the rendering is successfully created
+		fIsCreated = true;
 
-		if (!ok)
-		{
-			DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.AbstractTableRendering_0, null)); 
-			displayError(e);
-			return;
-		}
-// END FORMAT RENDERING		
+		//synchronize
+		addRenderingToSyncService();
+		synchronize();
 		
+		fTopRowAddress = getTopVisibleAddress();
+		// Need to resize column after content is filled in
+		// Pack function does not work unless content is not filled in
+		// since the table is not able to compute the preferred size.
+		resizeColumnsToPreferredSize();
+		try {
+			if (getMemoryBlock() instanceof IMemoryBlockExtension)
+			{
+				if(((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress() == null)
+				{
+					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.AbstractTableRendering_1, null)); 
+					displayError(e);				
+				}
+			}
+		} catch (DebugException e1) {
+			displayError(e1);	
+		}
+
+		// add font change listener and update font when the font has been changed
+		JFaceResources.getFontRegistry().addListener(this);
+		fScrollbarSelectionListener = new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent event) {
+				handleScrollBarSelection();
+				
+			}};
+		scroll.addSelectionListener(fScrollbarSelectionListener);
+		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+	}
+	
+	private boolean validateInitialFormat()
+	{
+		int rowSize = getDefaultRowSize();
+		int columnSize = getDefaultColumnSize();
+		
+		if (rowSize < columnSize || rowSize % columnSize != 0 || rowSize == 0 || columnSize == 0)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	private BigInteger getInitialTopVisibleAddress() {
+		BigInteger topVisibleAddress = (BigInteger) getSynchronizedProperty(AbstractTableRendering.PROPERTY_TOP_ADDRESS);
+		if (topVisibleAddress == null)
+		{
+			if (getMemoryBlock() instanceof IMemoryBlockExtension)
+			{
+				try {
+					topVisibleAddress = ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress();
+				} catch (DebugException e1) {
+					topVisibleAddress = new BigInteger("0"); //$NON-NLS-1$
+				}
+			}
+			else
+			{
+				topVisibleAddress = BigInteger.valueOf(getMemoryBlock().getStartAddress());
+			}
+		}
+		return topVisibleAddress;
+	}
+
+	private void setupSelectedAddress() {
 		// figure out selected address 
 		BigInteger selectedAddress = (BigInteger) getSynchronizedProperty(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS);
 		if (selectedAddress == null)
@@ -795,99 +879,112 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			}
 		}
 		setSelectedAddress(selectedAddress);
-		// figure out top visible address
-		BigInteger topVisibleAddress = (BigInteger) getSynchronizedProperty(AbstractTableRendering.PROPERTY_TOP_ADDRESS);
-		if (topVisibleAddress == null)
-		{
-			if (getMemoryBlock() instanceof IMemoryBlockExtension)
-			{
-				try {
-					topVisibleAddress = ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress();
-				} catch (DebugException e1) {
-					topVisibleAddress = new BigInteger("0"); //$NON-NLS-1$
-				}
-			}
-			else
-			{
-				topVisibleAddress = BigInteger.valueOf(getMemoryBlock().getStartAddress());
-			}
-		}
+	}
+
+	private void setupInitialFormat() {
 		
-		getPageSizeFromPreference();
-		if (isDynamicLoad())
-			fContentInput = new TableRenderingContentInput(this, 20, 20, 20, topVisibleAddress, getNumberOfVisibleLines(), false);
+		boolean validated = validateInitialFormat();
+		
+		if (!validated)
+		{
+			// pop up dialog to ask user for default values
+			StringBuffer msgBuffer = new StringBuffer(DebugUIMessages.AbstractTableRendering_20);
+			msgBuffer.append(" "); //$NON-NLS-1$
+			msgBuffer.append(this.getLabel());
+			msgBuffer.append("\n\n"); //$NON-NLS-1$
+			msgBuffer.append(DebugUIMessages.AbstractTableRendering_16);
+			msgBuffer.append("\n"); //$NON-NLS-1$
+			msgBuffer.append(DebugUIMessages.AbstractTableRendering_18);
+			msgBuffer.append("\n\n"); //$NON-NLS-1$
+			
+			int bytePerLine = fBytePerLine;
+			int columnSize = fColumnSize;
+			
+			// initialize this value to populate the dialog properly
+			fBytePerLine = getDefaultRowSize() / getAddressableSize();
+			fColumnSize = getDefaultColumnSize() / getAddressableSize();
+
+			FormatTableRenderingDialog dialog = new FormatTableRenderingDialog(this, DebugUIPlugin.getShell());
+			dialog.openError(msgBuffer.toString());
+			
+			// restore to original value before formatting
+			fBytePerLine = bytePerLine;
+			fColumnSize = columnSize;
+			
+			bytePerLine = dialog.getRowSize() * getAddressableSize();
+			columnSize = dialog.getColumnSize() * getAddressableSize();
+			
+			format(bytePerLine, columnSize);
+		}
 		else
 		{
-			BigInteger addressToLoad = topVisibleAddress;
+			// Row size is stored as number of addressable units in preference store
+			int bytePerLine = getDefaultRowSize();
+			// column size is now stored as number of addressable units
+			int columnSize = getDefaultColumnSize();
 			
-			// check synchronization service to see if we need to sync with another rendering
-			Object obj = getSynchronizedProperty(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS);
-			if (obj != null && obj instanceof BigInteger)
+			// format memory block with specified "bytesPerLine" and "columnSize"	
+			boolean ok = format(bytePerLine, columnSize);
+			
+			if (!ok)
 			{
-				addressToLoad = (BigInteger)obj;
+				// this is to ensure that the rest of the rendering can be created
+				// and we can recover from a format error
+				format(bytePerLine, bytePerLine);
 			}
-			fContentInput = new TableRenderingContentInput(this, 0, 0, 0, addressToLoad, fPageSize, false);
 		}
-		
-		fTableViewer.setInput(fContentInput);
-		fCellModifier = new TableRenderingCellModifier(this);
-		fTableViewer.setCellModifier(fCellModifier);
-		// SET UP FONT		
-		// set to a non-proportional font
-		fTableViewer.getTable().setFont(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
-		if (!(getMemoryBlock() instanceof IMemoryBlockExtension))
-		{		
-			// If not extended memory block, do not create any buffer
-			// no scrolling
-			fContentInput.setPreBuffer(0);
-			fContentInput.setPostBuffer(0);
-			fContentInput.setDefaultBufferSize(0);
-		}
-		createCursor(fTableViewer.getTable(), fSelectedAddress);
-		fTableViewer.getTable().addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				handleTableMouseEvent(e);
-			}});
-		// create pop up menu for the rendering
-		createActions();
-		createPopupMenu(fTableViewer.getControl());
-		createPopupMenu(fTableCursor);
-		getPopupMenuManager().addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				fillContextMenu(manager);
-				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-			}});
-		fIsCreated = true;
-		addRenderingToSyncService();
-		//synchronize
-		synchronize();
-		fTopRowAddress = getTopVisibleAddress();
-		// Need to resize column after content is filled in
-		// Pack function does not work unless content is not filled in
-		// since the table is not able to compute the preferred size.
-		resizeColumnsToPreferredSize();
-		try {
-			if (getMemoryBlock() instanceof IMemoryBlockExtension)
-			{
-				if(((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress() == null)
-				{
-					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.AbstractTableRendering_1, null)); 
-					displayError(e);				
-				}
-			}
-		} catch (DebugException e1) {
-			displayError(e1);	
-		}
-		// add font change listener and update font when the font has been changed
-		JFaceResources.getFontRegistry().addListener(this);
-		fScrollbarSelectionListener = new SelectionAdapter() {
+	}
 
-			public void widgetSelected(SelectionEvent event) {
-				handleScrollBarSelection();
-				
-			}};
-		scroll.addSelectionListener(fScrollbarSelectionListener);
-		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+	private int getDefaultColumnSize() {
+		
+		IPreferenceStore prefStore = DebugUITools.getPreferenceStore();
+		int columnSize = prefStore.getInt(IDebugPreferenceConstants.PREF_COLUMN_SIZE);
+		// actual column size is number of addressable units * size of the addressable unit
+		columnSize = columnSize * getAddressableSize();
+		
+		// check synchronized col size
+		Integer colSize = (Integer)getSynchronizedProperty(AbstractTableRendering.PROPERTY_COL_SIZE);
+		if (colSize != null)
+		{
+			// column size is stored as actual number of bytes in synchronizer
+			int syncColSize = colSize.intValue(); 
+			if (syncColSize > 0)
+			{
+				columnSize = syncColSize;
+			}	
+		}
+		else
+		{
+			int defaultColSize = getDefaultColumnSizeByModel(getMemoryBlock().getModelIdentifier());
+			if (defaultColSize > 0)
+				columnSize = defaultColSize * getAddressableSize();
+		}
+		return columnSize;
+	}
+
+	private int getDefaultRowSize() {
+		int rowSize = DebugUITools.getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_ROW_SIZE);
+		int bytePerLine = rowSize * getAddressableSize();
+		
+		// check synchronized row size
+		Integer size = (Integer)getSynchronizedProperty(AbstractTableRendering.PROPERTY_ROW_SIZE);
+		if (size != null)
+		{
+			// row size is stored as actual number of bytes in synchronizer
+			int syncRowSize = size.intValue(); 
+			if (syncRowSize > 0)
+			{
+				bytePerLine = syncRowSize;
+			}	
+		}
+		else
+		{
+			// no synchronized property, ask preference store by id
+			int defaultRowSize = getDefaultRowSizeByModel(getMemoryBlock().getModelIdentifier());
+			if (defaultRowSize > 0)
+				bytePerLine = defaultRowSize * getAddressableSize();
+		}
+		return bytePerLine;
 	}
 	
 	private void getPageSizeFromPreference()
@@ -1164,12 +1261,13 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	/**
 	 * Format view tab based on the bytes per line and column.
 	 * 
-	 * @param bytesPerLine - number of bytes per line, possible values: 16 * addressableSize
+	 * @param bytesPerLine - number of bytes per line, possible values: (1 / 2 / 4 / 8 / 16) * addressableSize
 	 * @param columnSize - number of bytes per column, possible values: (1 / 2 / 4 / 8 / 16) * addressableSize
 	 * @return true if format is successful, false, otherwise
 	 */
 	public boolean format(int bytesPerLine, int columnSize)
-	{			
+	{	
+		
 		// selected address gets changed as the cursor is moved
 		// during the reformat.
 		// Back up the address and restore it later.
@@ -1177,6 +1275,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		
 		// bytes per cell must be divisible to bytesPerLine
 		if (bytesPerLine % columnSize != 0)
+		{
+			return false;
+		}
+		
+		if (bytesPerLine < columnSize)
 		{
 			return false;
 		}
@@ -1365,7 +1468,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		styleText = fTextViewer.getTextWidget();
 		
 		if (styleText != null)
-			styleText.setText(DebugUIMessages.AbstractTableRendering_3 + e.getMessage());	 
+			styleText.setText(DebugUIMessages.AbstractTableRendering_3 + e.getMessage());
 		fPageBook.showPage(fTextViewer.getControl());
 		
 		// clear content cache if we need to display error
@@ -1454,7 +1557,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 
 	private void addRenderingToSyncService()
-	{
+	{	
 		IMemoryRenderingSynchronizationService syncService = getMemoryRenderingContainer().getMemoryRenderingSite().getSynchronizationService();
 		
 		if (syncService == null)
@@ -1462,6 +1565,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		
 		syncService.addPropertyChangeListener(this, null);
 	
+		// we could be in a format error even though the error is not yet displayed
+		// do not update sync property in this case
 		if (!isDisplayingError())
 		{
 			if (syncService.getSynchronizationProvider() == null)
@@ -3261,7 +3366,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 */
 	private void createToolTip() {
 		
-		fToolTipShell = new Shell(fTableViewer.getTable().getDisplay().getActiveShell(), SWT.ON_TOP | SWT.RESIZE );
+		fToolTipShell = new Shell(DebugUIPlugin.getShell(), SWT.ON_TOP | SWT.RESIZE );
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
 		gridLayout.marginWidth = 2;
@@ -3284,7 +3389,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			private int fCol = -1;
 			
 			public void mouseExit(MouseEvent e){
-				fToolTipShell.setVisible(false);
+				
+				if (!fToolTipShell.isDisposed())
+					fToolTipShell.setVisible(false);
 				fTooltipItem = null;
 			}
 			
@@ -3407,26 +3514,33 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 * @param toolTipControl - the control for displaying the tooltip
 	 * @param item - the table item where the mouse is pointing.
 	 * @param col - the column at which the mouse is pointing.
+	 * @since 3.2
 	 */
-	protected void toolTipAboutToShow(Control toolTipControl, TableItem item, int col)
-	{
-		if (toolTipControl instanceof Label)
-		{
+	protected void toolTipAboutToShow(Control toolTipControl, TableItem item,
+			int col) {
+		if (toolTipControl instanceof Label) {
 			BigInteger address = getAddressFromTableItem(item, col);
-			if (address != null)
-			{
+			if (address != null) {
 				Object data = item.getData();
-				if (data instanceof TableRenderingLine && col > 0)
-				{
-					TableRenderingLine line = (TableRenderingLine)data;
-					int start = (col-1)*getBytesPerColumn();
-					int end = start + getBytesPerColumn();
-					MemoryByte[] bytes = line.getBytes(start, end);
-					
-					String str = getToolTipString(address, bytes);
-					
-					if (str != null)
-						((Label)toolTipControl).setText(str);
+				if (data instanceof TableRenderingLine) {
+					TableRenderingLine line = (TableRenderingLine) data;
+
+					if (col > 0) {
+						int start = (col - 1) * getBytesPerColumn();
+						int end = start + getBytesPerColumn();
+						MemoryByte[] bytes = line.getBytes(start, end);
+
+						String str = getToolTipString(address, bytes);
+
+						if (str != null)
+							((Label) toolTipControl).setText(str);
+					} else {
+						String str = getToolTipString(address,
+								new MemoryByte[] {});
+
+						if (str != null)
+							((Label) toolTipControl).setText(str);
+					}
 				}
 			}
 		}
@@ -3435,13 +3549,60 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	/**
 	 * @param address
 	 * @param bytes
-	 * @return the tooltip string for the memory bytes located at the specified address
+	 * @return the tooltip string for the memory bytes located at the specified
+	 *         address
+	 * @since 3.2
 	 */
 	protected String getToolTipString(BigInteger address, MemoryByte[] bytes)
 	{
 		StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
 		buf.append(address.toString(16).toUpperCase());
+		
 		return buf.toString();
+	}
+	
+	
+	private String getRowPrefId(String modelId) {
+		String rowPrefId = IDebugPreferenceConstants.PREF_ROW_SIZE + ":" + modelId; //$NON-NLS-1$
+		return rowPrefId;
+	}
+
+	private String getColumnPrefId(String modelId) {
+		String colPrefId = IDebugPreferenceConstants.PREF_COLUMN_SIZE + ":" + modelId; //$NON-NLS-1$
+		return colPrefId;
+	}
+	
+	/**
+	 * @param modelId
+	 * @return default number of addressable units per line for the model
+	 */
+	private int getDefaultRowSizeByModel(String modelId)
+	{
+		int row = DebugUITools.getPreferenceStore().getInt(getRowPrefId(modelId));
+		if (row == 0)
+		{
+			DebugUITools.getPreferenceStore().setValue(getRowPrefId(modelId), IDebugPreferenceConstants.PREF_ROW_SIZE_DEFAULT);
+		}
+		
+		row = DebugUITools.getPreferenceStore().getInt(getRowPrefId(modelId));
+		return row;
+		
+	}
+	
+	/**
+	 * @param modelId
+	 * @return default number of addressable units per column for the model
+	 */
+	private int getDefaultColumnSizeByModel(String modelId)
+	{
+		int col = DebugUITools.getPreferenceStore().getInt(getColumnPrefId(modelId));
+		if (col == 0)
+		{
+			DebugUITools.getPreferenceStore().setValue(getColumnPrefId(modelId), IDebugPreferenceConstants.PREF_COLUMN_SIZE_DEFAULT);
+		}
+		
+		col = DebugUITools.getPreferenceStore().getInt(getColumnPrefId(modelId));
+		return col;
 	}
 
 	
