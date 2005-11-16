@@ -43,7 +43,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.2
  */
-public final class HandlerStateProxy implements IPersistableState {
+public final class CommandStateProxy implements IPersistableState {
 
 	/**
 	 * The configuration element from which the state can be created. This value
@@ -99,7 +99,7 @@ public final class HandlerStateProxy implements IPersistableState {
 	 *            The key at which the persistent data is located within the
 	 *            preference store.
 	 */
-	public HandlerStateProxy(final IConfigurationElement configurationElement,
+	public CommandStateProxy(final IConfigurationElement configurationElement,
 			final String stateAttributeName,
 			final IPreferenceStore preferenceStore, final String preferenceKey) {
 

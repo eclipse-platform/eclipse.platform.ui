@@ -39,8 +39,8 @@ import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.commands.CommandImageManager;
-import org.eclipse.jface.commands.RadioHandlerState;
-import org.eclipse.jface.commands.ToggleHandlerState;
+import org.eclipse.jface.commands.RadioState;
+import org.eclipse.jface.commands.ToggleState;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.menus.IMenuStateIds;
 import org.eclipse.jface.menus.IWidget;
@@ -338,7 +338,7 @@ public final class DeprecatedActionPersistence extends CommonCommandPersistence 
 			final String style = readOptionalFromRegistry(element,
 					ATTRIBUTE_STYLE);
 			if (STYLE_RADIO.equals(style)) {
-				final IState state = new RadioHandlerState();
+				final IState state = new RadioState();
 				// TODO How to set the id?
 				final boolean checked = readBooleanFromRegistry(element,
 						ATTRIBUTE_STATE, false);
@@ -346,7 +346,7 @@ public final class DeprecatedActionPersistence extends CommonCommandPersistence 
 				command.addState(IMenuStateIds.STYLE, state);
 
 			} else if (STYLE_TOGGLE.equals(style)) {
-				final IState state = new ToggleHandlerState();
+				final IState state = new ToggleState();
 				final boolean checked = readBooleanFromRegistry(element,
 						ATTRIBUTE_STATE, false);
 				state.setValue((checked) ? Boolean.TRUE : Boolean.FALSE);
