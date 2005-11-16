@@ -15,17 +15,31 @@
 	<target name="export" depends="build">
 		<mkdir dir="${destdir}" />
 		<delete file="${destjar}" />
+		<delete dir="${dest}" />
+		<mkdir dir="${dest}" />
+		
+		<copy todir="${dest}/META-INF">
+			<fileset dir="META-INF" />
+		</copy>		
+		
+		<replaceregexp file="${dest}/META-INF/MANIFEST.MF" match="Bundle-Version: ((\d)+\.(\d)+\.(\d)+\.)qualifier" replace="Bundle-Version: \1zzz" byline="true" />
+		
 		<zip zipfile="${destjar}">
 			<fileset dir=".">
 			  <include name="plugin.xml" />
 			  <include name="plugin.properties" />
 			  <include name=".options" />
-			  <include name="META-INF/**" />
 			  <include name="schema/**" />
 			  <include name="src/**" />
 			</fileset>
 			<fileset dir="bin" />
 			<zipfileset dir="projection" prefix="src" />
+			<fileset dir="${dest}">
+			  <include name="META-INF/**" />
+			</fileset>
 		</zip>
+		
+		<delete dir="${dest}" />
+
 	</target>
 </project>

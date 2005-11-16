@@ -30,11 +30,11 @@
 			  <include name="plugin.properties" />
 			  <include name="src/**" />
 			</fileset>
+			<fileset dir="bin" />
+			<zipfileset dir="projection" prefix="src" />
 			<fileset dir="${dest}">
 			  <include name="META-INF/**" />
 			</fileset>
-			<fileset dir="bin" />
-			<zipfileset dir="projection" prefix="src" />
 		</zip>
 		
 		<delete dir="${dest}" />		
