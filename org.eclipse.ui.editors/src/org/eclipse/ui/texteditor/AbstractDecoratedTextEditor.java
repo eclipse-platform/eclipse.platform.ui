@@ -14,14 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-import org.eclipse.core.commands.operations.IOperationApprover;
-import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -31,6 +23,30 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IUndoContext;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
+
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -66,35 +82,20 @@ import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
-import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
-import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
+import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.part.IShowInSource;
@@ -1657,15 +1658,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.1
 	 */
 	protected IOperationApprover getUndoRedoOperationApprover(IUndoContext undoContext) {
-		if (getEditorInput() instanceof IStorageEditorInput) {
-			Object affectedObject;
-			try {
-				affectedObject= ((IStorageEditorInput)getEditorInput()).getStorage();
-			} catch (CoreException ex) {
-				affectedObject= getEditorInput();
-			}
-			return new NonLocalUndoUserApprover(undoContext, this, new Object [] { affectedObject }, IResource.class);
-		}
+		IEditorInput input= getEditorInput();
+		if (input != null && input.getAdapter(IResource.class) != null)
+			return new NonLocalUndoUserApprover(undoContext, this, new Object [] { input }, IResource.class);
 		return super.getUndoRedoOperationApprover(undoContext);
 	}
 	
