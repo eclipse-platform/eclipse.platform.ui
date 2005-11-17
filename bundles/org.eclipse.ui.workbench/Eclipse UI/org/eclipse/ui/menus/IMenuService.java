@@ -86,8 +86,9 @@ public interface IMenuService extends IServiceWithSources {
 	 *            <code>null</code>.
 	 * @param expression
 	 *            This expression must evaluate to <code>true</code> before
-	 *            this handler will really become visible. The expression must
-	 *            not be <code>null</code>.
+	 *            this handler will really become visible. The expression may be
+	 *            <code>null</code> if the menu element should always be
+	 *            visible.
 	 * @return A token which can be used to later cancel the contribution. Only
 	 *         someone with access to this token can cancel the contribution.
 	 *         The contribution will automatically be cancelled if the context
