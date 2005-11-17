@@ -11,13 +11,9 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import java.text.Collator;
-
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
-import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  *	A Viewer element sorter that sorts Elements by their name attribute.
@@ -29,9 +25,11 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  *	ultimately be placed at the beginning of the sorted result.
  */
 class NewWizardCollectionSorter extends ViewerSorter {
+	/**
+	 * Static instance of this class.
+	 */
     public final static NewWizardCollectionSorter INSTANCE = new NewWizardCollectionSorter();
 
-    private Collator collator = Collator.getInstance();
 
     /**
      * Creates an instance of <code>NewWizardCollectionSorter</code>.  Since this
@@ -42,48 +40,27 @@ class NewWizardCollectionSorter extends ViewerSorter {
         super();
     }
 
-    /**
-     * The 'compare' method of the sort operation.
-     *
-     * @return  the value <code>0</code> if the argument o1 is equal to o2;
-     * 			a value less than <code>0</code> if o1 is less than o2;
-     *			and a value greater than <code>0</code> if o1 is greater than o2.
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
      */
-    public int compare(Viewer viewer, Object o1, Object o2) {
-        // wizards before categories
-        if (o1 instanceof WorkbenchWizardElement
-                && o2 instanceof WizardCollectionElement)
-            return -1;
-        if (o2 instanceof WorkbenchWizardElement
-                && o1 instanceof WizardCollectionElement)
-            return 1;
+    public int category(Object element) {
+    	if (element instanceof WorkbenchWizardElement)
+    		return -1;
+    	if (element instanceof WizardCollectionElement){
+    		String id = ((WizardCollectionElement)element).getId();
+    		if (WizardsRegistryReader.GENERAL_WIZARD_CATEGORY.equals(id))
+    			return 1;
+    		if (WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY.equals(id))
+    			return 3;
+    		if (WizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY.equals(id))
+    			return 4;
+    		return 2;
+    	}
+    	return super.category(element);	
+	}
 
-        String name1 = ((WorkbenchAdapter) o1).getLabel(o1);
-        String name2 = ((WorkbenchAdapter) o2).getLabel(o2);
-        if (name1.equals(name2))
-            return 0;
-
-        // Be sure that the examples category is at the end of the wizard categories
-        if (name2
-                .equalsIgnoreCase(WizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
-            return -1;
-
-        if (name1
-                .equalsIgnoreCase(WizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
-            return 1;
-
-        // note that this must be checked for name2 before name1 because if they're
-        // BOTH equal to BASE_CATEGORY then we want to answer false by convention
-        if (name2.equalsIgnoreCase(WizardsRegistryReader.BASE_CATEGORY))
-            return 1;
-
-        if (name1.equalsIgnoreCase(WizardsRegistryReader.BASE_CATEGORY))
-            return -1;
-
-        return collator.compare(name1, name2);
-    }
-
-    /**
+	/**
      *	Return true if this sorter is affected by a property 
      *	change of propertyName on the specified element.
      */

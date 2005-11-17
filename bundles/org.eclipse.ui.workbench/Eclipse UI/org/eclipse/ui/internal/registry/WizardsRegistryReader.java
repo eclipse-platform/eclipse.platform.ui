@@ -46,16 +46,21 @@ public class WizardsRegistryReader extends RegistryReader {
     private Set deferPrimary;
 
     // constants
-    public final static String BASE_CATEGORY = "Base";//$NON-NLS-1$
-
-    public final static String EXAMPLES_WIZARD_CATEGORY = "Examples";//$NON-NLS-1$
-
+    /**
+     * Examples wizard category id
+     */    
     public final static String FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples";//$NON-NLS-1$
-
+    /**
+     * Other wizard category id
+     */
     final public static String UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";//$NON-NLS-1$
+    /**
+     * General wizard category id
+     */
+    final public static String GENERAL_WIZARD_CATEGORY = "org.eclipse.ui.Basic";	//$NON-NLS-1$
 
-    final public static String UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.NewWizardsRegistryReader_otherCategory;
-
+    final private static String UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.NewWizardsRegistryReader_otherCategory;
+    
     private final static String CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
 
     private WorkbenchWizardElement[] primaryWizards = new WorkbenchWizardElement[0];
@@ -518,7 +523,10 @@ public class WizardsRegistryReader extends RegistryReader {
     }
 
     /**
-     *	Returns the first wizard with a given id.
+     * Returns the first wizard with a given id.
+     * 
+     * @param id wizard id to search for
+     * @return WorkbenchWizardElement matching the given id, if found; null otherwise
      */
     public WorkbenchWizardElement findWizard(String id) {
         Object[] wizards = getWizardCollectionElements();

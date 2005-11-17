@@ -11,14 +11,9 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import java.text.Collator;
-
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
-import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  *	A Viewer element sorter that sorts Elements by their name attribute.
@@ -34,11 +29,10 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  *  @since 3.2
  */
 class DataTransferWizardCollectionSorter extends ViewerSorter {
+	/**
+	 * Static instance of this class.
+	 */	
     public final static DataTransferWizardCollectionSorter INSTANCE = new DataTransferWizardCollectionSorter();
-    
-    private final static String CATEGORY_GENERAL = WorkbenchMessages.WizardsGeneralCategory_label;
-    
-    private Collator collator = Collator.getInstance();
 
     /**
      * Creates an instance of <code>DataTransferWizardCollectionSorter</code>.  Since this
@@ -49,40 +43,19 @@ class DataTransferWizardCollectionSorter extends ViewerSorter {
         super();
     }
 
-    /**
-     * The 'compare' method of the sort operation.
-     *
-     * @return  the value <code>0</code> if the argument o1 is equal to o2;
-     * 			a value less than <code>0</code> if o1 is less than o2;
-     *			and a value greater than <code>0</code> if o1 is greater than o2.
-     */
-    public int compare(Viewer viewer, Object o1, Object o2) {
-        String name1 = ((WorkbenchAdapter) o1).getLabel(o1);
-        String name2 = ((WorkbenchAdapter) o2).getLabel(o2);
-        if (name1.equals(name2))
-            return 0;
+    public int category(Object element) {
+		if (element instanceof WizardCollectionElement){
+			String id = ((WizardCollectionElement)element).getId();
+    		if (WizardsRegistryReader.GENERAL_WIZARD_CATEGORY.equals(id))
+    			return 1;
+    		if (WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY.equals(id))
+    			return 3;
+    		return 2;
+		}
+		return super.category(element);
+	}
 
-        // Be sure that the Other category is at the end of the wizard categories
-        if (name2
-                .equalsIgnoreCase(WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY_LABEL))
-            return -1;
-
-        if (name1
-                .equalsIgnoreCase(WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY_LABEL))
-            return 1;
-
-        // note that this must be checked for name2 before name1 because if they're
-        // BOTH equal to GENERAL_CATEGORY then we want to answer false by convention
-        if (name2.equalsIgnoreCase(CATEGORY_GENERAL))
-            return 1;
-
-        if (name1.equalsIgnoreCase(CATEGORY_GENERAL))
-            return -1;
-
-        return collator.compare(name1, name2);
-    }
-
-    /**
+	/**
      *	Return true if this sorter is affected by a property 
      *	change of propertyName on the specified element.
      */
