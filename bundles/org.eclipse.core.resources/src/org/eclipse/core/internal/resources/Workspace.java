@@ -657,7 +657,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if ((updateFlags & IResource.SHALLOW) != 0) {
 				//for shallow move the destination is a linked resource with the same location
 				newInfo.set(ICoreConstants.M_LINK);
-				newInfo.setFileStoreRoot(sourceInfo.getFileStoreRoot());
 				linkDescription = new LinkDescription(destinationResource, source.getLocationURI());
 			} else {
 				//for deep move the destination is not a linked resource
