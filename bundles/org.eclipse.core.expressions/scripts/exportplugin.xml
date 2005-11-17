@@ -5,7 +5,7 @@
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
 		<property name="plugin"  value="org.eclipse.core.expressions" />
-		<property name="plugin_version"  value="_3.1.0" />
+		<property name="plugin_version"  value="_3.2.0" />
 		<property name="dest"  value="${destdir}/${plugin}${plugin_version}" />
 		<property name="destjar"  value="${destdir}/${plugin}${plugin_version}.jar" />
 	</target>
