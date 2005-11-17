@@ -90,4 +90,8 @@ public class TextUpdatableValue extends UpdatableValue {
 		return String.class;
 	}
 
+	public void dispose() {
+		// TODO Should unhook listeners from Text (if it hasn't been disposed)
+		super.dispose();
+	}
 }
