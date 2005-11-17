@@ -107,9 +107,9 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 						(String) attribute);
 			}
 			if (object instanceof Spinner
-					&& SWTProperties.SELECTION.equals(attribute)
+					&& (SWTProperties.SELECTION.equals(attribute)
 					|| SWTProperties.MIN.equals(attribute)
-					|| SWTProperties.MAX.equals(attribute)) {
+					|| SWTProperties.MAX.equals(attribute))) {
 				return new SpinnerUpdatableValue((Spinner) object,
 						(String) attribute);
 			}
@@ -194,6 +194,8 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 			int updatePolicy = new int[]{SWT.Modify,SWT.FocusOut,SWT.None}[updateTime];
 			return new ButtonUpdatableValue((Button) description,
 					updatePolicy);
+		} else if (description instanceof Label) {
+			return new LabelUpdatableValue((Label) description);
 		} else if (description instanceof Combo) {
 			return new ComboUpdatableCollection((Combo) description,
 					ViewersProperties.CONTENT);
