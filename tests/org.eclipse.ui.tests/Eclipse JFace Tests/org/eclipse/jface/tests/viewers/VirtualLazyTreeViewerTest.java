@@ -16,22 +16,30 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Tests TreeViewer's VIRTUAL support with a lazy content provider.
+ * 
  * @since 3.2
  */
 public class VirtualLazyTreeViewerTest extends ViewerTestCase {
-	
-	private class LazyTreeContentProvider implements ILazyTreeContentProvider {
+	private static final int NUM_ROOTS = 100;
 
+	private boolean callbacksEnabled = true;
+
+	private class LazyTreeContentProvider implements ILazyTreeContentProvider {
 		public void updateElement(Object parent, int index) {
 			updateElementCallCount++;
 			String parentString = (String) parent;
 			Object childElement = parentString + "-" + index;
-			getTreeViewer().replace(parent, index, childElement);
-			getTreeViewer().setChildCount(childElement, 10);
+			// System.out.println(childElement);
+			if (callbacksEnabled) {
+				getTreeViewer().replace(parent, index, childElement);
+				getTreeViewer().setChildCount(childElement, 10);
+			}
 		}
 
 		public void dispose() {
@@ -41,11 +49,10 @@ public class VirtualLazyTreeViewerTest extends ViewerTestCase {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// do nothing
 		}
-		
 	}
 
 	private int updateElementCallCount = 0;
-	
+
 	public VirtualLazyTreeViewerTest(String name) {
 		super(name);
 	}
@@ -53,11 +60,11 @@ public class VirtualLazyTreeViewerTest extends ViewerTestCase {
 	public TreeViewer getTreeViewer() {
 		return (TreeViewer) fViewer;
 	}
-	
+
 	protected void setInput() {
 		String letterR = "R";
 		getTreeViewer().setInput(letterR);
-		getTreeViewer().setChildCount(letterR, 10);
+		getTreeViewer().setChildCount(letterR, NUM_ROOTS);
 	}
 
 	protected StructuredViewer createViewer(Composite parent) {
@@ -69,14 +76,40 @@ public class VirtualLazyTreeViewerTest extends ViewerTestCase {
 
 	public void testCreation() {
 		processEvents();
-		assertTrue("tree should have items", getTreeViewer().getTree().getItemCount() > 0);
+		assertTrue("tree should have items", getTreeViewer().getTree()
+				.getItemCount() > 0);
 		assertTrue("call to updateElement expected", updateElementCallCount > 0);
+		assertTrue(
+				"expected calls to updateElement for less than half of the items",
+				updateElementCallCount < NUM_ROOTS / 2);
 		assertEquals("R-0", getTreeViewer().getTree().getItem(0).getText());
 	}
 
 	public void testExpand() {
+		processEvents();
 		Tree tree = getTreeViewer().getTree();
 		getTreeViewer().expandToLevel("R-0", 1);
 		assertEquals(10, tree.getItem(0).getItemCount());
+		TreeItem treeItem = tree.getItem(0).getItem(3);
+		expandAndNotify(treeItem);
+		assertEquals(10, treeItem.getItemCount());
+		assertEquals(10, treeItem.getItems().length);
+		// interact();
+	}
+
+	private void expandAndNotify(TreeItem treeItem) {
+		// callbacksEnabled = false;
+		Tree tree = treeItem.getParent();
+		tree.setRedraw(false);
+		treeItem.setExpanded(true);
+		try {
+			Event event = new Event();
+			event.item = treeItem;
+			event.type = SWT.Expand;
+			tree.notifyListeners(SWT.Expand, event);
+		} finally {
+			// callbacksEnabled = true;
+			tree.setRedraw(true);
+		}
 	}
 }

@@ -945,7 +945,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      *           the SWT tree event
      */
     protected void handleTreeExpand(TreeEvent event) {
-        createChildren(event.item);
+    	if (!(getContentProvider() instanceof ILazyTreeContentProvider)) {
+			createChildren(event.item);
+		}
         if (event.item.getData() != null) {
             fireTreeExpanded(new TreeExpansionEvent(this, event.item.getData()));
         }

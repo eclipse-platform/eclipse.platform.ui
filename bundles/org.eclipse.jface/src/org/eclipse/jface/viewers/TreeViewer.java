@@ -703,7 +703,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			tree.setItemCount(count);
 			return;
 		}
-		TreeItem item = (TreeItem) doFindItem(element);
+		TreeItem item = (TreeItem) findItem(element);
 		if (item != null) {
 			item.setItemCount(count);
 		}
@@ -738,7 +738,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		if(parent.equals(getInput())) {
 			item = tree.getItem(index);
 		} else {
-			TreeItem parentItem = (TreeItem) doFindItem(parent);
+			TreeItem parentItem = (TreeItem) findItem(parent);
 			item = parentItem.getItem(index);
 		}
 		updateItem(item, element);

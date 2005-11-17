@@ -26,8 +26,7 @@ public class AllTests extends TestSuite {
 	public AllTests() {
 		addTestSuite(LazySortedCollectionTest.class);
 		addTestSuite(TreeViewerTest.class);
-		// leads to OutOfMemoryErrors:
-		// addTestSuite(VirtualTreeViewerTest.class);
+		addTestSuite(VirtualTreeViewerTest.class);
 		addTestSuite(VirtualLazyTreeViewerTest.class);
 		addTestSuite(TableViewerTest.class);
 		addTestSuite(TreeViewerColumnTest.class);
