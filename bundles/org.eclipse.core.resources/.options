@@ -18,6 +18,9 @@ org.eclipse.core.resources/perf/save.participants=500
 # Debug build failure cases such as failure to retrieve deltas.
 org.eclipse.core.resources/build/failure=false
 
+# Reports the cause of autobuild interruption
+org.eclipse.core.resources/build/interrupt=false
+
 # Reports the start and end of all builder invocations
 org.eclipse.core.resources/build/invoking=false
 

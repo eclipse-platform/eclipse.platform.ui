@@ -25,6 +25,7 @@ public class Policy {
 	//debug constants
 	public static boolean DEBUG_BUILD_FAILURE = false;
 	public static boolean DEBUG_BUILD_INVOKING = false;
+	public static boolean DEBUG_BUILD_INTERRUPT = false;
 
 	public static boolean DEBUG_BUILD_STACK = false;
 	public static boolean DEBUG_CONTENT_TYPE = false;
@@ -66,6 +67,7 @@ public class Policy {
 			DEBUG_BUILD_FAILURE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/failure")); //$NON-NLS-1$ 
 			DEBUG_NEEDS_BUILD = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/needbuild")); //$NON-NLS-1$ 
 			DEBUG_BUILD_INVOKING = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/invoking")); //$NON-NLS-1$ 
+			DEBUG_BUILD_INTERRUPT = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/interrupt")); //$NON-NLS-1$ 
 			DEBUG_BUILD_DELTA = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/delta")); //$NON-NLS-1$ 
 			DEBUG_BUILD_STACK = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/stacktrace")); //$NON-NLS-1$ 
 			DEBUG_NATURES = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/natures")); //$NON-NLS-1$ 

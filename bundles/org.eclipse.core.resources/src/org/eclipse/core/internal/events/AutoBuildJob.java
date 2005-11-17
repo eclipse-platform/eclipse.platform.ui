@@ -118,6 +118,10 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			case RUNNING :
 				//make sure autobuild doesn't interrupt itself
 				interrupted = jobManager.currentJob() != this;
+				if (interrupted && Policy.DEBUG_BUILD_INTERRUPT) {
+					System.out.println("Autobuild was interrupted:"); //$NON-NLS-1$
+					new Exception().fillInStackTrace().printStackTrace();
+				}
 				break;
 		}
 		//clear the autobuild avoidance flag if we were interrupted
@@ -135,7 +139,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				workspace.beginOperation(true);
 				final int trigger = IncrementalProjectBuilder.AUTO_BUILD;
 				workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.PRE_BUILD, trigger);
-				if (shouldBuild()) 
+				if (shouldBuild())
 					workspace.getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 				workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.POST_BUILD, trigger);
 				buildNeeded = false;
@@ -150,7 +154,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			monitor.done();
 		}
 	}
-	
+
 	/**
 	 * Forces an autobuild to occur, even if nothing has changed since the last
 	 * build. This is used to force a build after a clean.
@@ -167,7 +171,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			interrupted = true;
 		return interrupted;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 	 */
@@ -183,7 +187,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			build(false);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
