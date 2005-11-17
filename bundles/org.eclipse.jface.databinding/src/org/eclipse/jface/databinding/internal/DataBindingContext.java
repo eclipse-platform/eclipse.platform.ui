@@ -410,7 +410,7 @@ public class DataBindingContext implements IDataBindingContext {
 				binding = new CollectionBinding(this, target, model, bindSpec);
 			} else {
 				throw new BindingException(
-						"incompatible updatables (target is value, model is not)"); //$NON-NLS-1$
+						"incompatible updatables (target is collection, model is not)"); //$NON-NLS-1$
 			}
 		} else {
 			throw new BindingException("not yet implemented"); //$NON-NLS-1$
@@ -518,7 +518,11 @@ public class DataBindingContext implements IDataBindingContext {
 	 */
 	public final IUpdatable createUpdatable(Object description)
 			throws BindingException {
-		return doCreateUpdatable(description, this);
+		IUpdatable updatable = doCreateUpdatable(description, this);
+		if (updatable != null) {
+			createdUpdatables.add(updatable);
+		}
+		return updatable;
 	}
 
 	protected IUpdatable doCreateUpdatable(Object description, DataBindingContext thisDatabindingContext) throws BindingException {
