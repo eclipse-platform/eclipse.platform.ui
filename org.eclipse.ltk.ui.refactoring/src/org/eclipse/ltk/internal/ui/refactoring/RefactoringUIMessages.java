@@ -113,16 +113,6 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringHistoryControlConfiguration_comment_caption;
 	public static String RefactoringHistoryControlConfiguration_project_pattern;
 	public static String RefactoringHistoryControlConfiguration_workspace_caption;
-
-	public static String RefactoringPropertyPage_enable_message;
-	public static String RefactoringPropertyPage_label_message;
-
-	static {
-		NLS.initializeMessages(BUNDLE_NAME, RefactoringUIMessages.class);
-	}
-
-	public static String RefactoringHistoryDialogConfiguration_commit_button_label;
-	public static String RefactoringHistoryDialogConfiguration_dialog_title;
 	public static String RefactoringHistoryControlConfiguration_collection_label;
 	public static String RefactoringHistoryControlConfiguration_day_pattern;
 	public static String RefactoringHistoryControlConfiguration_last_month_label;
@@ -132,7 +122,17 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringHistoryControlConfiguration_this_month_pattern;
 	public static String RefactoringHistoryControlConfiguration_this_week_pattern;
 	public static String RefactoringHistoryControlConfiguration_today_pattern;
-	public static String RefactoringHistoryControlConfiguration_9;
-	public static String RefactoringHistoryControlConfiguration_10;
-	public static String RefactoringHistoryControlConfiguration_11;
+	public static String RefactoringHistoryControlConfiguration_week_pattern;
+	public static String RefactoringHistoryControlConfiguration_year_pattern;
+	public static String RefactoringHistoryControlConfiguration_yesterday_pattern;
+	
+	public static String RefactoringHistoryDialogConfiguration_commit_button_label;
+	public static String RefactoringHistoryDialogConfiguration_dialog_title;
+	
+	public static String RefactoringPropertyPage_enable_message;
+	public static String RefactoringPropertyPage_label_message;
+
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, RefactoringUIMessages.class);
+	}
 }

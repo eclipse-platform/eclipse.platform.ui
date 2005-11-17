@@ -170,7 +170,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * @return the week pattern
 	 */
 	public String getWeekPattern() {
-		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_9;
+		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_week_pattern;
 	}
 
 	/**
@@ -195,7 +195,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * @return the year pattern
 	 */
 	public String getYearPattern() {
-		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_10;
+		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_year_pattern;
 	}
 
 	/**
@@ -210,6 +210,6 @@ public class RefactoringHistoryControlConfiguration {
 	 * @return the yesterday pattern
 	 */
 	public String getYesterdayPattern() {
-		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_11;
+		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_yesterday_pattern;
 	}
 }
