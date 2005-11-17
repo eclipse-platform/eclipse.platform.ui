@@ -42,15 +42,12 @@ public class Messages extends NLS {
 	public static String history_notValid;
 	public static String history_problemsCleaning;
 
-	public static String links_copyNotProject;
 	public static String links_creating;
 	public static String links_errorLinkReconcile;
 	public static String links_invalidLocation;
 	public static String links_localDoesNotExist;
 	public static String links_locationOverlapsLink;
 	public static String links_locationOverlapsProject;
-	public static String links_moveNotProject;
-
 	public static String links_natureVeto;
 	public static String links_noPath;
 	public static String links_overlappingResource;
