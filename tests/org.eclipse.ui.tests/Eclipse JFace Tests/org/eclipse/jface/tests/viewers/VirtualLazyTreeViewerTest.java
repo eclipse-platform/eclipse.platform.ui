@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 
 /**
- * Tests TreeViewer's VIRTUAL support. Do not add to the suites yet!
+ * Tests TreeViewer's VIRTUAL support with a lazy content provider.
  * @since 3.2
  */
 public class VirtualLazyTreeViewerTest extends ViewerTestCase {

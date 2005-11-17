@@ -441,20 +441,23 @@ public class TreeViewer extends AbstractTreeViewer {
 			treeControl.addListener(SWT.SetData, new Listener(){
 
 				public void handleEvent(Event event) {
-					ILazyTreeContentProvider lazyContentProvider = (ILazyTreeContentProvider) getContentProvider();
-					TreeItem item = (TreeItem) event.item;
-					TreeItem parentItem = item.getParentItem();
-					Object parent;
-					int index;
-					if (parentItem != null) {
-						parent = parentItem.getData();
-						index = parentItem.indexOf(item);
-					} else {
-						parent = getInput();
-						index = getTree().indexOf(item);
+					if (getContentProvider() instanceof ILazyTreeContentProvider) {
+						ILazyTreeContentProvider lazyContentProvider = (ILazyTreeContentProvider) getContentProvider();
+						TreeItem item = (TreeItem) event.item;
+						TreeItem parentItem = item.getParentItem();
+						Object parent;
+						int index;
+						if (parentItem != null) {
+							parent = parentItem.getData();
+							index = parentItem.indexOf(item);
+						} else {
+							parent = getInput();
+							index = getTree().indexOf(item);
+						}
+						lazyContentProvider.updateElement(parent, index);
 					}
-					lazyContentProvider.updateElement(parent, index);
-				}});
+				}
+			});
 		}
 	}
 

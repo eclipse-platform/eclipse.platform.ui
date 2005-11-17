@@ -26,6 +26,8 @@ public class AllTests extends TestSuite {
 	public AllTests() {
 		addTestSuite(LazySortedCollectionTest.class);
 		addTestSuite(TreeViewerTest.class);
+		addTestSuite(VirtualTreeViewerTest.class);
+		addTestSuite(VirtualLazyTreeViewerTest.class);
 		addTestSuite(TableViewerTest.class);
 		addTestSuite(TreeViewerColumnTest.class);
 		addTestSuite(VirtualTableViewerTest.class);
