@@ -55,9 +55,7 @@ import org.eclipse.compare.CompareViewerSwitchingPane;
 import org.eclipse.compare.Splitter;
 
 import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
-import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
-import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
 
 /**
  * Control which is capable of displaying refactoring histories.
@@ -72,9 +70,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	/** The comment pane */
 	private CompareViewerSwitchingPane fCommentPane= null;
 
-	/** The content provider to use, or <code>null</code> */
-	private RefactoringHistoryContentProvider fContentProvider= null;
-
 	/** The refactoring history control configuration to use */
 	protected final RefactoringHistoryControlConfiguration fControlConfiguration;
 
@@ -84,17 +79,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	/** The history viewer */
 	private TreeViewer fHistoryViewer= null;
 
-	/** The label provider to use */
-	private RefactoringHistoryLabelProvider fLabelProvider= null;
-
-	/** The message, or <code>null</code> */
-	private String fMessage= null;
-
 	/** The message label */
 	private Label fMessageLabel= null;
-
-	/** The project, or <code>null</code> */
-	private IProject fProject= null;
 
 	/** The splitter control */
 	private Splitter fSplitterControl= null;
@@ -127,8 +113,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * {@inheritDoc}
 	 */
 	public final void createControl() {
-		Assert.isNotNull(fContentProvider);
-		Assert.isNotNull(fLabelProvider);
 		fCaptionImage= RefactoringPluginImages.DESC_OBJS_COMPOSITE_CHANGE.createImage();
 		GridLayout layout= new GridLayout(2, false);
 		layout.marginHeight= 0;
@@ -164,8 +148,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
 		fHistoryViewer.setAutoExpandLevel(2);
-		fHistoryViewer.setContentProvider(fContentProvider);
-		fHistoryViewer.setLabelProvider(fLabelProvider);
+		fHistoryViewer.setContentProvider(fControlConfiguration.getContentProvider());
+		fHistoryViewer.setLabelProvider(fControlConfiguration.getLabelProvider());
 		fHistoryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public final void selectionChanged(final SelectionChangedEvent event) {
@@ -231,8 +215,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	protected void handleCaptionChanged() {
 		String text= null;
-		if (fProject != null)
-			text= MessageFormat.format(fControlConfiguration.getProjectPattern(), new String[] { fProject.getName() });
+		final IProject project= fControlConfiguration.getProject();
+		if (project != null)
+			text= MessageFormat.format(fControlConfiguration.getProjectPattern(), new String[] { project.getName()});
 		else
 			text= fControlConfiguration.getWorkspaceCaption();
 		fHistoryPane.setText(text);
@@ -242,11 +227,12 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * Handles the message changed event.
 	 */
 	protected void handleMessageChanged() {
-		if (fMessage != null && !"".equals(fMessage)) { //$NON-NLS-1$
-			fMessageLabel.setText(fMessage);
-			fSplitterControl.setWeights(new int[] { 70, 15, 15 });
+		final String message= fControlConfiguration.getMessage();
+		if (message != null && !"".equals(message)) { //$NON-NLS-1$
+			fMessageLabel.setText(message);
+			fSplitterControl.setWeights(new int[] { 70, 15, 15});
 		} else
-			fSplitterControl.setWeights(new int[] { 75, 25, 0 });
+			fSplitterControl.setWeights(new int[] { 75, 25, 0});
 	}
 
 	/**
@@ -277,49 +263,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		}
 		fCommentPane.setInput(null);
 		fCommentPane.setText(fControlConfiguration.getCommentCaption());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final void setContentProvider(final RefactoringHistoryContentProvider provider) {
-		Assert.isNotNull(provider);
-		fContentProvider= provider;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final void setDisplayTime(final boolean display) {
-		fContentProvider.setDisplayTime(display);
-		fLabelProvider.setDisplayTime(display);
-		fHistoryViewer.refresh();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final void setLabelProvider(final RefactoringHistoryLabelProvider provider) {
-		Assert.isNotNull(provider);
-		fLabelProvider= provider;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final void setMessage(final String message) {
-		fMessage= message;
-		if (fSplitterControl != null && fMessageLabel != null)
-			handleMessageChanged();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final void setProject(final IProject project) {
-		fProject= project;
-		if (fHistoryPane != null)
-			handleCaptionChanged();
 	}
 
 	/**

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
@@ -36,9 +34,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
-import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
 
 /**
  * Dialog to show the refactoring history.
@@ -155,8 +150,6 @@ public class RefactoringHistoryDialog extends Dialog {
 		final Composite composite= (Composite) super.createDialogArea(parent);
 		getShell().setText(fDialogConfiguration.getDialogTitle());
 		fHistoryControl= createHistoryControl(composite);
-		fHistoryControl.setContentProvider(new RefactoringHistoryContentProvider());
-		fHistoryControl.setLabelProvider(new RefactoringHistoryLabelProvider(fDialogConfiguration));
 		fHistoryControl.createControl();
 		fHistoryControl.setRefactoringHistory(fRefactoringHistory);
 		applyDialogFont(parent);
@@ -252,42 +245,5 @@ public class RefactoringHistoryDialog extends Dialog {
 			}
 		}
 		return new Point(width, height);
-	}
-
-	/**
-	 * Determines whether time information should be displayed.
-	 * <p>
-	 * Note: the default value is <code>true</code>.
-	 * </p>
-	 * 
-	 * @param display
-	 *            <code>true</code> to display time information,
-	 *            <code>false</code> otherwise
-	 */
-	public final void setDisplayTime(final boolean display) {
-		fHistoryControl.setDisplayTime(display);
-	}
-
-	/**
-	 * Sets the message to display below the refactoring tree.
-	 * 
-	 * @param message
-	 *            the message to display, or <code>null</code> for none
-	 */
-	public final void setMessage(final String message) {
-		fHistoryControl.setMessage(message);
-	}
-
-	/**
-	 * Sets the project which the history belongs to.
-	 * <p>
-	 * Note: the project does not have to exist.
-	 * </p>
-	 * 
-	 * @param project
-	 *            the project, or <code>null</code> for the workspace
-	 */
-	public final void setProject(final IProject project) {
-		fHistoryControl.setProject(project);
 	}
 }

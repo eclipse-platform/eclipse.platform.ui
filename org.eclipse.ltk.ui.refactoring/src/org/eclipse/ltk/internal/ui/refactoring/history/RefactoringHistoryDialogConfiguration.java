@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
+import org.eclipse.core.resources.IProject;
+
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
@@ -20,6 +22,21 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
  * @since 3.2
  */
 public class RefactoringHistoryDialogConfiguration extends RefactoringHistoryControlConfiguration {
+
+	/**
+	 * Creates a new refactoring history dialog configuration.
+	 * 
+	 * @param project
+	 *            the project, or <code>null</code>
+	 * @param message
+	 *            the information message, or <code>null</code>
+	 * @param time
+	 *            <code>true</code> to display time information,
+	 *            <code>false</code> otherwise
+	 */
+	public RefactoringHistoryDialogConfiguration(final IProject project, final String message, final boolean time) {
+		super(project, message, time);
+	}
 
 	/**
 	 * Returns the label of the commit button of the dialog.

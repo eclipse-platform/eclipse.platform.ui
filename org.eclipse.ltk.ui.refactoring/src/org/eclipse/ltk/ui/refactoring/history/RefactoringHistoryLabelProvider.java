@@ -51,9 +51,6 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	/** The resource bundle to use */
 	private final RefactoringHistoryControlConfiguration fControlConfiguration;
 
-	/** Should time information be displayed? */
-	private boolean fDisplayTime= true;
-
 	/** The element image */
 	private Image fElementImage= null;
 
@@ -93,10 +90,11 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	 * {@inheritDoc}
 	 */
 	public Image getImage(final Object element) {
+		final boolean time= fControlConfiguration.isTimeDisplayed();
 		if (element instanceof RefactoringHistoryEntry)
-			return fDisplayTime ? fElementImage : fItemImage;
+			return time ? fElementImage : fItemImage;
 		else
-			return fDisplayTime ? fContainerImage : fCollectionImage;
+			return time ? fContainerImage : fCollectionImage;
 	}
 
 	/**
@@ -106,10 +104,10 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 		if (element instanceof RefactoringHistoryEntry) {
 			final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) element;
 			final RefactoringDescriptorProxy proxy= entry.getDescriptor();
-			if (fDisplayTime) {
+			if (fControlConfiguration.isTimeDisplayed()) {
 				final long stamp= proxy.getTimeStamp();
 				if (stamp > 0)
-					return MessageFormat.format(fControlConfiguration.getRefactoringPattern(), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), proxy.getDescription() });
+					return MessageFormat.format(fControlConfiguration.getRefactoringPattern(), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), proxy.getDescription()});
 			}
 			return proxy.getDescription();
 		} else if (element instanceof RefactoringHistoryNode) {
@@ -164,26 +162,12 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								format= DateFormat.getDateInstance();
 								break;
 						}
-						buffer.append(MessageFormat.format(pattern, new String[] { format.format(new Date(stamp)) }));
+						buffer.append(MessageFormat.format(pattern, new String[] { format.format(new Date(stamp))}));
 					}
 				}
 			}
 			return buffer.toString();
 		}
 		return super.getText(element);
-	}
-
-	/**
-	 * Determines whether time information should be displayed.
-	 * <p>
-	 * Note: the default value is <code>true</code>.
-	 * </p>
-	 * 
-	 * @param display
-	 *            <code>true</code> to display time information,
-	 *            <code>false</code> otherwise
-	 */
-	public void setDisplayTime(final boolean display) {
-		fDisplayTime= display;
 	}
 }

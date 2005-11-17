@@ -44,8 +44,8 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	/** The no elements constant */
 	private static final Object[] NO_ELEMENTS= {};
 
-	/** Should time information be displayed? */
-	private boolean fDisplayTime= true;
+	/** The refactoring history control configuration to use */
+	private final RefactoringHistoryControlConfiguration fControlConfiguration;
 
 	/** The refactoring history, or <code>null</code> */
 	private RefactoringHistory fRefactoringHistory= null;
@@ -55,6 +55,17 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	/** The refactoring time stamps, in descending order, or <code>null</code> */
 	private long[] fRefactoringStamps= null;
+
+	/**
+	 * Creates a new refactoring history content provider.
+	 * 
+	 * @param configuration
+	 *            the refactoring history control configuration
+	 */
+	public RefactoringHistoryContentProvider(final RefactoringHistoryControlConfiguration configuration) {
+		Assert.isNotNull(configuration);
+		fControlConfiguration= configuration;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -118,7 +129,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 */
 	public Object[] getElements(final Object element) {
 		if (element instanceof RefactoringHistory) {
-			if (fDisplayTime)
+			if (fControlConfiguration.isTimeDisplayed())
 				return getRefactoringHistoryRoots();
 			else if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty())
 				return new Object[] { new RefactoringHistoryContainer()};
@@ -293,7 +304,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		if (right >= 0)
 			range[1]= right;
 		else
-			range[1]= - right - 2;
+			range[1]= -right - 2;
 		final int temp= fRefactoringStamps.length - range[1] - 1;
 		range[1]= fRefactoringStamps.length - range[0] - 1;
 		range[0]= temp;
@@ -487,19 +498,5 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 			fRefactoringStamps= null;
 		} else
 			fRefactoringHistory= null;
-	}
-
-	/**
-	 * Determines whether time information should be displayed.
-	 * <p>
-	 * Note: the default value is <code>true</code>.
-	 * </p>
-	 * 
-	 * @param display
-	 *            <code>true</code> to display time information,
-	 *            <code>false</code> otherwise
-	 */
-	public void setDisplayTime(final boolean display) {
-		fDisplayTime= display;
 	}
 }

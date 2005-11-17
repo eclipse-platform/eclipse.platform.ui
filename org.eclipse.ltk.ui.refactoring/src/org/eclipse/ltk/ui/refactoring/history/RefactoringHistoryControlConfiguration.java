@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.history;
 
+import org.eclipse.core.resources.IProject;
+
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 /**
@@ -25,6 +27,32 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
  * @since 3.2
  */
 public class RefactoringHistoryControlConfiguration {
+
+	/** The information message, or <code>null</code> */
+	protected final String fMessage;
+
+	/** The project, or <code>null</code> */
+	protected final IProject fProject;
+
+	/** Should time information be displayed? */
+	protected final boolean fTime;
+
+	/**
+	 * Creates a new refactoring history control configuration.
+	 * 
+	 * @param project
+	 *            the project, or <code>null</code>
+	 * @param message
+	 *            the information message, or <code>null</code>
+	 * @param time
+	 *            <code>true</code> to display time information,
+	 *            <code>false</code> otherwise
+	 */
+	public RefactoringHistoryControlConfiguration(final IProject project, final String message, final boolean time) {
+		fProject= project;
+		fMessage= message;
+		fTime= time;
+	}
 
 	/**
 	 * Returns the label of a collection of refactorings.
@@ -46,6 +74,15 @@ public class RefactoringHistoryControlConfiguration {
 	}
 
 	/**
+	 * Returns the content provider to use.
+	 * 
+	 * @return the content provider to use
+	 */
+	public RefactoringHistoryContentProvider getContentProvider() {
+		return new RefactoringHistoryContentProvider(this);
+	}
+
+	/**
 	 * Returns the message format pattern to use for days.
 	 * <p>
 	 * Arguments:
@@ -58,6 +95,15 @@ public class RefactoringHistoryControlConfiguration {
 	 */
 	public String getDayPattern() {
 		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_pattern;
+	}
+
+	/**
+	 * Returns the label provider to use.
+	 * 
+	 * @return the label provider to use
+	 */
+	public RefactoringHistoryLabelProvider getLabelProvider() {
+		return new RefactoringHistoryLabelProvider(this);
 	}
 
 	/**
@@ -79,6 +125,15 @@ public class RefactoringHistoryControlConfiguration {
 	}
 
 	/**
+	 * Returns the information message of the control.
+	 * 
+	 * @return the information message
+	 */
+	public String getMessage() {
+		return fMessage;
+	}
+
+	/**
 	 * Returns the message format pattern to use for months.
 	 * <p>
 	 * Arguments:
@@ -91,6 +146,15 @@ public class RefactoringHistoryControlConfiguration {
 	 */
 	public String getMonthPattern() {
 		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_month_pattern;
+	}
+
+	/**
+	 * Returns the project of the refactoring history being displayed.
+	 * 
+	 * @return the project, or <code>null</code>
+	 */
+	public IProject getProject() {
+		return fProject;
 	}
 
 	/**
@@ -211,5 +275,15 @@ public class RefactoringHistoryControlConfiguration {
 	 */
 	public String getYesterdayPattern() {
 		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_yesterday_pattern;
+	}
+
+	/**
+	 * Returns whether the control should display time information.
+	 * 
+	 * @return <code>true</code> to display time information,
+	 *         <code>false</code> otherwise
+	 */
+	public boolean isTimeDisplayed() {
+		return fTime;
 	}
 }

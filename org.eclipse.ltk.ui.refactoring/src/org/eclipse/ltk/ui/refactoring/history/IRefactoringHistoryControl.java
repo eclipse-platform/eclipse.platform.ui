@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.history;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
@@ -30,10 +28,6 @@ public interface IRefactoringHistoryControl {
 
 	/**
 	 * Creates the control.
-	 * <p>
-	 * The content provider and the label provider must have been set before
-	 * calling this method.
-	 * </p>
 	 */
 	public void createControl();
 
@@ -43,53 +37,6 @@ public interface IRefactoringHistoryControl {
 	 * @return the selected refactoring descriptors
 	 */
 	public RefactoringDescriptorProxy[] getSelectedDescriptors();
-
-	/**
-	 * Sets the content provider to use.
-	 * 
-	 * @param provider
-	 *            the content provider
-	 */
-	public void setContentProvider(RefactoringHistoryContentProvider provider);
-
-	/**
-	 * Determines whether time information should be displayed.
-	 * <p>
-	 * Note: the default value is <code>true</code>.
-	 * </p>
-	 * 
-	 * @param display
-	 *            <code>true</code> to display time information,
-	 *            <code>false</code> otherwise
-	 */
-	public void setDisplayTime(boolean display);
-
-	/**
-	 * Sets the label provider to use.
-	 * 
-	 * @param provider
-	 *            the label provider to use
-	 */
-	public void setLabelProvider(RefactoringHistoryLabelProvider provider);
-
-	/**
-	 * Sets the message to display below the refactoring tree.
-	 * 
-	 * @param message
-	 *            the message to display, or <code>null</code>
-	 */
-	public void setMessage(String message);
-
-	/**
-	 * Sets the project which the history belongs to.
-	 * <p>
-	 * Note: the project does not have to exist.
-	 * </p>
-	 * 
-	 * @param project
-	 *            the project, or <code>null</code>
-	 */
-	public void setProject(IProject project);
 
 	/**
 	 * Sets the refactoring history of this control.
