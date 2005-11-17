@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.io.File;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Date;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -27,6 +30,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -40,6 +44,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.LineDelimiterEditor;
 
@@ -488,7 +493,7 @@ public class ResourceInfoPage extends PropertyPage {
 		if (!resource.isLocal(IResource.DEPTH_ZERO))
 			return NOT_LOCAL_TEXT;
 
-		IPath location = resource.getLocation();
+		URI location = resource.getLocationURI();
 		if (location == null) {
 			if (resource.isLinked())
 				return MISSING_PATH_VARIABLE_TEXT;
@@ -496,14 +501,34 @@ public class ResourceInfoPage extends PropertyPage {
 			return NOT_EXIST_TEXT;
 		}
 
-		File localFile = location.toFile();
-		if (localFile.exists()) {
+		IFileInfo info = getFileInfo(location);
+		if(info == null)
+			return UNKNOWN_LABEL;
+		
+		if (info.exists()) {
 			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG,
 					DateFormat.MEDIUM);
-			return format.format(new Date(localFile.lastModified()));
+			return format.format(new Date(info.getLastModified()));
 		}
 		return NOT_EXIST_TEXT;
 
+	}
+	
+	/**
+	 * Return the fileInfo for location. Return <code>null</code>
+	 * if there is a CoreException looking it up
+	 * @param location
+	 * @return String or  <code>null</code>
+	 */
+	private IFileInfo getFileInfo(URI location){
+		IFileStore store;
+		try {
+			store = EFS.getStore(location);
+		} catch (CoreException e) {
+			IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
+			return null;
+		}
+		return store.fetchInfo();
 	}
 
 	/**
@@ -516,25 +541,26 @@ public class ResourceInfoPage extends PropertyPage {
 		if (!resource.isLocal(IResource.DEPTH_ZERO))
 			return NOT_LOCAL_TEXT;
 
-		IPath resolvedLocation = resource.getLocation();
-		IPath location = resolvedLocation;
+		URI resolvedLocation = resource.getLocationURI();
+		URI location = resolvedLocation;
 		if (resource.isLinked()) {
-			location = resource.getRawLocation();
+			location = resource.getRawLocationURI();
 		}
 		if (location == null) {
 			return NOT_EXIST_TEXT;
 		}
 
-		String locationString = location.toOSString();
 		if (resolvedLocation != null && !isPathVariable(resource)) {
 			// No path variable used. Display the file not exist message
 			// in the location. Fixes bug 33318.
-			File file = resolvedLocation.toFile();
-			if (!file.exists()) {
-				locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
+			IFileInfo info = getFileInfo(location);
+			if(info == null)
+				return UNKNOWN_LABEL;
+			if (!info.exists()) {
+				return NLS.bind(FILE_NOT_EXIST_TEXT,location.toString());
 			}
 		}
-		return locationString;
+		return location.toString();
 
 	}
 
@@ -549,7 +575,7 @@ public class ResourceInfoPage extends PropertyPage {
 		if (!resource.isLocal(IResource.DEPTH_ZERO))
 			return NOT_LOCAL_TEXT;
 
-		IPath location = resource.getLocation();
+		URI location = resource.getLocationURI();
 		if (location == null) {
 			if (resource.isLinked())
 				return MISSING_PATH_VARIABLE_TEXT;
@@ -557,13 +583,14 @@ public class ResourceInfoPage extends PropertyPage {
 			return NOT_EXIST_TEXT;
 		}
 
-		String locationString = location.toOSString();
-		File file = location.toFile();
+		IFileInfo info = getFileInfo(location);
+		if(info == null)
+			return UNKNOWN_LABEL;
 
-		if (!file.exists()) {
-			locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
-		}
-		return locationString;
+		if (!info.exists()) 
+			return NLS.bind(FILE_NOT_EXIST_TEXT,location.toString());
+		
+		return location.toString();
 
 	}
 
@@ -577,7 +604,7 @@ public class ResourceInfoPage extends PropertyPage {
 		if (!file.isLocal(IResource.DEPTH_ZERO))
 			return NOT_LOCAL_TEXT;
 
-		IPath location = file.getLocation();
+		URI location = file.getLocationURI();
 		if (location == null) {
 			if (file.isLinked())
 				return MISSING_PATH_VARIABLE_TEXT;
@@ -585,13 +612,13 @@ public class ResourceInfoPage extends PropertyPage {
 			return NOT_EXIST_TEXT;
 		}
 
-		File localFile = location.toFile();
-
-		if (localFile.exists()) {
-			String bytesString = Long.toString(localFile.length());
-			return MessageFormat.format(BYTES_LABEL,
-					new Object[] { bytesString });
-		}
+		IFileInfo info = getFileInfo(location);
+		if(info == null)
+			return UNKNOWN_LABEL;
+		
+		if (info.exists()) 
+			return NLS.bind(BYTES_LABEL,Long.toString(info.getLength()));
+		
 		return NOT_EXIST_TEXT;
 
 	}
