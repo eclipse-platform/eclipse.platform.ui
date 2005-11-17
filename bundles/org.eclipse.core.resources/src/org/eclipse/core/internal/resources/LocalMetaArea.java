@@ -14,8 +14,7 @@ import java.io.*;
 import java.net.URI;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
-import org.eclipse.core.internal.utils.OldAssert;
-import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -36,6 +35,8 @@ public class LocalMetaArea implements ICoreConstants {
 	/* package */static final String F_SNAP_EXTENSION = "snap"; //$NON-NLS-1$
 	/* package */static final String F_SYNCINFO = ".syncinfo"; //$NON-NLS-1$
 	/* package */static final String F_TREE = ".tree"; //$NON-NLS-1$
+	/* package */static final String URI_PREFIX = "URI//"; //$NON-NLS-1$
+	
 
 	protected final IPath metaAreaLocation;
 
@@ -283,7 +284,7 @@ public class LocalMetaArea implements ICoreConstants {
 	 * The project location will be set to <code>null</code> if the default
 	 * location should be used. In the case of failure, log the exception and
 	 * return silently, thus reverting to using the default location and no
-	 * dynamic references. The format of the location file for 3.0 is:
+	 * dynamic references. The current format of the location file is:
 	 *    UTF - project location
 	 *    int - number of dynamic project references
 	 *    UTF - project reference 1
@@ -304,9 +305,16 @@ public class LocalMetaArea implements ICoreConstants {
 			try {
 				try {
 					String location = dataIn.readUTF();
-					if (location.length() > 0)
-						description.setLocationURI(URI.create(location));
-				} catch (IOException e) {
+					if (location.length() > 0) {
+						//location format < 3.2 was a local file system OS path
+						//location format >= 3.2 is: URI_PREFIX + uri.toString()
+						if (location.startsWith(URI_PREFIX))
+							description.setLocationURI(URI.create(location.substring(URI_PREFIX.length())));
+						else
+							description.setLocationURI(FileUtil.toURI(Path.fromOSString(location)));
+					}
+				} catch (Exception e) {
+					//don't allow failure to read the location to propagate
 					String msg = NLS.bind(Messages.resources_exReadProjectLocation, target.getName());
 					ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e));
 				}
@@ -369,8 +377,10 @@ public class LocalMetaArea implements ICoreConstants {
 			SafeChunkyOutputStream output = new SafeChunkyOutputStream(file);
 			DataOutputStream dataOut = new DataOutputStream(output);
 			try {
-				String locationString = projectLocation == null ? "" : projectLocation.toString(); //$NON-NLS-1$
-				dataOut.writeUTF(locationString);
+				if (projectLocation == null)
+					dataOut.writeUTF(""); //$NON-NLS-1$
+				else
+					dataOut.writeUTF(URI_PREFIX + projectLocation.toString());
 				dataOut.writeInt(numRefs);
 				for (int i = 0; i < numRefs; i++)
 					dataOut.writeUTF(references[i].getName());
