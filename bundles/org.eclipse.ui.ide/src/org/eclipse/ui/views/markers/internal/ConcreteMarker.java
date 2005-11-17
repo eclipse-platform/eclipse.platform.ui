@@ -98,7 +98,7 @@ public class ConcreteMarker extends MarkerNode{
         // store the marker ID locally
         id = marker.getId();
         
-        ISubCategoryProvider[] providers =  MarkerSupportRegistry.getInstance().getCategoryProviders(marker);
+        ISubCategoryProvider[] providers =  MarkerSupportRegistry.getInstance().getSubCategoryProviders(marker);
         if(providers == null)
         	subCategory = Util.EMPTY_STRING;
         else{

@@ -202,6 +202,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 					categories.put(markerTypes[i], categoryName);
 
 				}
+				tracker.registerObject(extension, categoryName,
+						IExtensionTracker.REF_STRONG);
 			}
 
 			if (element.getName().equals(HIERARCHY)) {
@@ -226,8 +228,11 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 					priorities[i] = i;
 				}
 
-				hierarchyOrders.put(markerType, new TableSorter(properties,
-						priorities, directions));
+				TableSorter sorter = new TableSorter(properties, priorities,
+						directions);
+				hierarchyOrders.put(markerType, sorter);
+				tracker.registerObject(extension, sorter,
+						IExtensionTracker.REF_STRONG);
 
 			}
 		}
@@ -430,8 +435,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 					selectedTypes.add(type);
 			}
 		}
-		
-		if(selectedTypes.size() >0) //Only set the types if there are any specified
+
+		if (selectedTypes.size() > 0) // Only set the types if there are any
+										// specified
 			filter.setSelectedTypes(selectedTypes);
 
 		return filter;
@@ -449,23 +455,53 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (objects[i] instanceof ProblemFilter)
 				registeredFilters.remove(objects[i]);
 
-			Collection keysToRemove = new ArrayList();
 			if (objects[i] instanceof ISubCategoryProvider) {
-				Iterator keys = registeredProviders.keySet().iterator();
-				while (keys.hasNext()) {
-					String key = (String) keys.next();
-					Collection next = (Collection) registeredProviders.get(key);
-					if (next.contains(objects[i])) {
-						next.remove(objects[i]);
-						if (next.isEmpty())
-							keysToRemove.add(key);
-						break;
-					}
-				}
+				removeValues(objects[i], registeredProviders);
+			}
+
+			if (objects[i] instanceof String) {
+				removeValues(objects[i], categories);
+			}
+
+			if (objects[i] instanceof TableSorter) {
+				removeValues(objects[i], hierarchyOrders);
 			}
 
 		}
 
+	}
+
+	/**
+	 * Remove the value from all of the collection sets in cache. If the
+	 * collection is empty remove the key as well.
+	 * 
+	 * @param value
+	 * @param cache
+	 */
+	private void removeValues(Object value, HashMap cache) {
+		Collection keysToRemove = new ArrayList();
+		Iterator keys = cache.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			Object next = cache.get(key);
+			if (next instanceof Collection) {
+				Collection collection = (Collection) next;
+				if (collection.contains(value)) {
+					collection.remove(value);
+					if (collection.isEmpty())
+						keysToRemove.add(key);
+					break;
+				}
+			}
+			else{
+				if(cache.get(key).equals(value))
+					keysToRemove.add(key);
+			}
+		}
+		Iterator keysToRemoveIterator = keysToRemove.iterator();
+		while (keysToRemoveIterator.hasNext()) {
+			cache.remove(keysToRemoveIterator.next());
+		}
 	}
 
 	/**
@@ -475,14 +511,26 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @param marker
 	 * @return ICategoryProvider[] or <code>null</code>
 	 */
-	public ISubCategoryProvider[] getCategoryProviders(IMarker marker) {
-		Object providers;
+	public ISubCategoryProvider[] getSubCategoryProviders(IMarker marker) {
 		try {
-			providers = registeredProviders.get(marker.getType());
+			return getSubCategoryProviders(marker.getType());
 		} catch (CoreException e) {
 			Util.log(e);
 			return null;
 		}
+
+	}
+
+	/**
+	 * Return the subcategory providers for markers of type marker type.
+	 * 
+	 * @param markerType
+	 * @return ISubCategoryProvider[] or <code>null</code>
+	 */
+	public ISubCategoryProvider[] getSubCategoryProviders(String markerType) {
+		Object providers;
+		providers = registeredProviders.get(markerType);
+
 		if (providers == null)
 			return null;
 		Collection providerCollection = (Collection) providers;
@@ -509,7 +557,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Get the category associated with markerTyoe. Return <code>null</code>
+	 * Get the category associated with markerType. Return <code>null</code>
 	 * if there are none.
 	 * 
 	 * @param markerType
@@ -533,8 +581,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 		TableSorter sorter = findSorterInChildren(type, getRootType());
 		if (sorter == null)
-			return new TableSorter(new IField[0], new int[0],
-					new int[0]);
+			return new TableSorter(new IField[0], new int[0], new int[0]);
 		return sorter;
 	}
 
@@ -551,8 +598,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Find the best match sorter for typeName in the children. If it cannot be found then
-	 * return <code>null</code>.
+	 * Find the best match sorter for typeName in the children. If it cannot be
+	 * found then return <code>null</code>.
 	 * 
 	 * @param typeName
 	 * @param type
@@ -564,7 +611,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		TableSorter defaultSorter = null;
 		if (hierarchyOrders.containsKey(type.getId()))
 			defaultSorter = (TableSorter) hierarchyOrders.get(type.getId());
-		
+
 		for (int i = 0; i < types.length; i++) {
 			MarkerType[] subtypes = types[i].getAllSubTypes();
 			for (int j = 0; j < subtypes.length; j++) {

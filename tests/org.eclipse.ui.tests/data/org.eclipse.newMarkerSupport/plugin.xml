@@ -7,6 +7,17 @@
    <requires>
       <import plugin="org.eclipse.ui.ide"/>
    </requires>
+    <runtime>
+      <library name="markerSupport.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <extension
+         id="dynamicTestMarker"
+         name="Dynamic Test Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+   </extension>
    <extension
    		 id="testDynamicFilterAddition"
          point="org.eclipse.ui.ide.markerSupport">
@@ -23,8 +34,20 @@
             enabled="true"
             id="filter3"
             name="Filter 3">
-         <selectedType markerId="org.eclipse.core.resources.problemmarker"/>
+         <selectedType markerId="org.eclipse.ui.tests.dynamicTestMarker"/>
       </problemFilter>
+      <subCategoryProvider class="org.eclipse.ui.dynamic.markerSupport.DynamicTestsSubCategoryProvider">
+         <markerTypeReference id="org.eclipse.ui.tests.dynamicTestMarker"/>
+      </subCategoryProvider>
+      <markerCategory name="dynamicCategory">
+         <markerTypeReference id="org.eclipse.ui.tests.dynamicTestMarker"/>
+      </markerCategory>
+      <hierarchy>
+         <hierarchyReference
+               direction="ASCENDING"
+               type="PROJECT"/>
+         <markerTypeReference id="org.eclipse.ui.tests.dynamicTestMarker"/>
+      </hierarchy>
   
    </extension>
 </plugin>

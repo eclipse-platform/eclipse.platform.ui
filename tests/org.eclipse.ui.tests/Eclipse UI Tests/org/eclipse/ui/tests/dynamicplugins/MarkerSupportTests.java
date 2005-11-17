@@ -17,7 +17,7 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
 /**
- * Test the loading and unloading of problem filters.
+ * Test the loading and unloading of the marker support components.
  * 
  * @since 3.2
  */
@@ -28,6 +28,10 @@ public class MarkerSupportTests extends DynamicTestCase {
 	public static final String FILTER2 = "filter2";
 
 	public static final String FILTER3 = "filter3";
+
+	public static final String DYNAMIC_CATEGORY = "dynamicCategory";
+
+	static final String DYNAMIC_PROBLEM_MARKER = "org.eclipse.ui.tests.dynamicTestMarker";
 
 	static final String PROBLEM_MARKER = "org.eclipse.core.resources.problemmarker";
 
@@ -51,9 +55,71 @@ public class MarkerSupportTests extends DynamicTestCase {
 		assertFalse(hasFilter(FILTER2));
 		assertFalse(hasFilter(FILTER3));
 	}
+	
+	public void testSubCategories() {
+		assertFalse(hasSubCategory());
+		getBundle();
+		assertTrue(hasSubCategory());
+		removeBundle();
+		assertFalse(hasSubCategory());
+	}
+	
+	public void testCategories() {
+		assertFalse(hasCategory());
+		getBundle();
+		assertTrue(hasCategory());
+		removeBundle();
+		assertFalse(hasCategory());
+	}
+	
+	public void testHierarchies() {
+		assertFalse(hasHierarchy());
+		getBundle();
+		assertTrue(hasHierarchy());
+		removeBundle();
+		assertFalse(hasHierarchy());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getMarkerClass()
+	 */
+	protected String getMarkerClass() {
+		return "org.eclipse.ui.dynamic.markerSupport.DynamicTestsSubCategoryProvider";
+	}
 
+	/**
+	 * Return whether or not there is a hierarchy for the 
+	 * dynamic type or if it is using the default.
+	 * @return
+	 */
+	private boolean hasHierarchy() {
+		return MarkerSupportRegistry.getInstance().getSorterFor(
+				DYNAMIC_PROBLEM_MARKER) != MarkerSupportRegistry.getInstance()
+				.getSorterFor(PROBLEM_MARKER);
+	}
 
-	public boolean hasFilter(String id) {
+	private boolean hasSubCategory() {
+		return MarkerSupportRegistry.getInstance().getSubCategoryProviders(
+				DYNAMIC_PROBLEM_MARKER) != null;
+	}
+
+	/**
+	 * Return whether or not there is a filter for the dynamic category
+	 * 
+	 * @return
+	 */
+	private boolean hasCategory() {
+		return MarkerSupportRegistry.getInstance().getCategory(
+				DYNAMIC_PROBLEM_MARKER) != null;
+	}
+
+	/**
+	 * Return whether or not there is a filter for id.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private boolean hasFilter(String id) {
 		Iterator filters = MarkerSupportRegistry.getInstance()
 				.getRegisteredFilters().iterator();
 		while (filters.hasNext()) {
