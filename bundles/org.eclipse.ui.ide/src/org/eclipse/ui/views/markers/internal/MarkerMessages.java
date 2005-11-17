@@ -251,7 +251,7 @@ public class MarkerMessages extends NLS{
 	public static String MarkerResolutionDialog_Resolutions_List_Title;
 	public static String MarkerResolutionDialog_NoMatchMessage;
 	public static String MarkerResolutionDialog_CannotFixTitle;
-	public static String MarkerResolution_CannotFixMessage;
+	public static String MarkerResolutionDialog_CannotFixMessage;
 
 	public static String MarkerResolutionDialog_Title;
 	public static String MarkerResolutionDialog_CalculatingTask;
