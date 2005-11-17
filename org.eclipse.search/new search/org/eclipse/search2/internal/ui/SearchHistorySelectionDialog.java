@@ -108,7 +108,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
 	 */
 	protected int getDialogBoundsStrategy() {
-		return 0x0002; // TODO: change to DIALOG_PERSISTSIZE;
+		return DIALOG_PERSISTSIZE;
 	}
 	
 	
@@ -118,7 +118,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	protected Label createMessageArea(Composite composite) {
 		Label label = new Label(composite,SWT.WRAP);
 		label.setText(getMessage()); 
-		GridData gd= new GridData(GridData.FILL_BOTH);
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(WIDTH_IN_CHARACTERS);
 		label.setLayoutData(gd);
 		applyDialogFont(label);
@@ -155,7 +155,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		parent.setLayout(layout);
-		
+		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fViewer= new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		fViewer.setContentProvider(new ListContentProvider());
