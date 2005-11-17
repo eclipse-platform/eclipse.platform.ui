@@ -73,7 +73,11 @@ public class FileStoreRoot {
 	}
 	
 	IPath localLocation(IPath workspacePath) {
-		IPath location = localRoot.append(workspacePath.removeFirstSegments(chop));
+		IPath location;
+		if (workspacePath.segmentCount() <= chop)
+			location = localRoot;
+		else
+			location = localRoot.append(workspacePath.removeFirstSegments(chop));
 		if (location == null)
 			return null;
 		location = variableManager.resolvePath(location);
