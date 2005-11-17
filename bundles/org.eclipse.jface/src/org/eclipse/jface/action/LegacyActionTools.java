@@ -209,12 +209,16 @@ public final class LegacyActionTools {
 	 * Extracts the mnemonic text from the given string.
 	 * 
 	 * @param text
-	 *            The text from which the mnemonic should be extracted; must not
-	 *            be <code>null</code>.
-	 * @return The text of the mnemonic; may be <code>null</code> if there is
-	 *         no mnemonic;
+	 *            The text from which the mnemonic should be extracted; may be
+	 *            <code>null</code>
+	 * @return The text of the mnemonic; will be {@link #MNEMONIC_NONE} if there
+	 *         is no mnemonic;
 	 */
 	public static final char extractMnemonic(final String text) {
+		if (text == null) {
+			return MNEMONIC_NONE;
+		}
+
 		int index = text.indexOf('&');
 		if (index == -1) {
 			return MNEMONIC_NONE;
