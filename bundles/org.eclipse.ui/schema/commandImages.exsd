@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui" id="commandImages" name="Command Images"/>
       </appInfo>
       <documentation>
-         The images extension point provides a way of linking different types of images and icons to a particular command.  These images can be used, as appropriate, wherever the command appears in the user interface.  To accommodate some boundary cases (e.g., tool bar drop-down items), it is possible to group the images for a particular commands into “styles”.  These styles can then be specifically requested when a command is to be displayed.
+         The images extension point provides a way of linking different types of images and icons to a particular command.  These images can be used, as appropriate, wherever the command appears in the user interface.  To accommodate some boundary cases (e.g., tool bar drop-down items), it is possible to group the images for a particular commands into &quot;styles&quot;.  These styles can then be specifically requested when a command is to be displayed.
       </documentation>
    </annotation>
 

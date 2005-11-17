@@ -847,7 +847,7 @@ It is possible to define action sets, or groups of elements with a name.  The wo
 &lt;/actionSet&gt;
 &lt;/pre&gt;
 &lt;p&gt;
-It is possible to add an existing menu element of any kind (i.e., menu, group, item) to a new location.  This allows third-party plug-in developers to include an existing definition in some new location – perhaps in a new view or editor – without needing to worry about things like externalized strings.  A reference inherits all of its properties from the element to which it refers.
+It is possible to add an existing menu element of any kind (i.e., menu, group, item) to a new location.  This allows third-party plug-in developers to include an existing definition in some new location -- perhaps in a new view or editor -- without needing to worry about things like externalized strings.  A reference inherits all of its properties from the element to which it refers.
 &lt;/p&gt;
 &lt;pre&gt;
 &lt;modification&gt;
