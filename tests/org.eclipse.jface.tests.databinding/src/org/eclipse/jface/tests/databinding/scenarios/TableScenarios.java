@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import java.lang.reflect.Field;
-
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.TableViewerDescription;
@@ -22,12 +20,12 @@ import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.jface.tests.databinding.scenarios.model.StateConverter;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
@@ -55,8 +53,11 @@ public class TableScenarios extends ScenariosTestCase {
 		getComposite().setLayout(new FillLayout());
 		tableViewer = new TableViewer(getComposite());
 		firstNameColumn = new TableColumn(tableViewer.getTable(), SWT.NONE);
+		firstNameColumn.setWidth(50);
 		lastNameColumn = new TableColumn(tableViewer.getTable(), SWT.NONE);
+		lastNameColumn.setWidth(50);		
 		stateColumn = new TableColumn(tableViewer.getTable(), SWT.NONE);
+		stateColumn.setWidth(50);		
 
 		catalog = SampleData.CATALOG_2005; // Lodging source
 	}
@@ -121,26 +122,27 @@ public class TableScenarios extends ScenariosTestCase {
 		getDbc().bind(tableViewerDescription,
 				new PropertyDescription(catalog, "accounts"), null);
 
+		// Select the first item in the table
+		tableViewer.getTable().setSelection(0);
+		// Send a mouse down event at 19,21 which should activate the cell editor
+		Event event = new Event();
+		event.button = 1;  // The left mouse button to activate the cell editor
+		// We position the event in the center of the first table column
+		Rectangle firstNameColBounds = tableViewer.getTable().getItem(0).getBounds(0);
+		event.x = firstNameColBounds.width/2 + firstNameColBounds.x;
+		event.y = firstNameColBounds.height/2 + firstNameColBounds.y;
+		tableViewer.getTable().notifyListeners(SWT.MouseDown,event);
+		// Set the text property of the cell editor which is now active over the "firstName" column
 		CellEditor[] cellEditors = tableViewer.getCellEditors();
-		tableViewer.setSelection(new StructuredSelection(tableViewer.getTable()
-				.getItem(0)));
-		// To activate the cell editor on the first row we must get a private
-		// field which is the TableViewer.tableEditor
-		Field tableEditorField = TableViewer.class
-				.getDeclaredField("tableEditor");
-		tableEditorField.setAccessible(true);
-		TableEditor tableEditor = (TableEditor) tableEditorField
-				.get(tableViewer);
-		// Test firstName
 		TextCellEditor firstNameEditor = (TextCellEditor) cellEditors[0];
-		tableEditor.setEditor(firstNameEditor.getControl(), tableViewer
-				.getTable().getItem(0), 0);
 		// Change the firstName and test it goes to the model
 		((Text) firstNameEditor.getControl()).setText("Bill");
+		// Send a selection event in the cell editor so it pushes the change to the table
 		((Text) ((TextCellEditor) cellEditors[0]).getControl())
 				.notifyListeners(SWT.DefaultSelection, null);
 		Account account = (Account) accounts[0];
-		// assertEquals("Bill",account.getFirstName());
+		// Check whether the model has changed
+		assertEquals("Bill",account.getFirstName());
 	}
 	
 	public void testScenario04() throws BindingException {
@@ -175,7 +177,7 @@ public class TableScenarios extends ScenariosTestCase {
 		assertEquals(tableViewer.getTable().getItemCount(),catalog.getAccounts().length);		
 		
 	}
-	
+		
 	public void testScenario03() throws BindingException {
 		// Show that converters work for table columns
 		Account[] accounts = catalog.getAccounts();
@@ -210,4 +212,30 @@ public class TableScenarios extends ScenariosTestCase {
 					.convertModelToTarget(account.getState())), col_state);
 		}
 	}
+	
+	public void testScenario05() throws BindingException {
+		// Show that when the model changes then the UI refreshes to reflect this
+		Account[] accounts = catalog.getAccounts();
+
+		TableViewerDescription tableViewerDescription = new TableViewerDescription(
+				tableViewer);
+		tableViewerDescription.addColumn("lastName");
+		tableViewerDescription.addColumn("phone", null,
+				new PhoneConverter());
+		tableViewerDescription.addColumn("state", null,
+				new StateConverter());
+		getDbc().bind(tableViewerDescription,
+				new PropertyDescription(catalog, "accounts"), null);
+		
+		Account account = (Account)catalog.getAccounts()[0];
+		String firstName = tableViewer.getTable().getItem(0).getText(0);
+		// Check the firstName in the TableItem is the same as the model
+		assertEquals(firstName,account.getLastName());
+		// Now change the model and check again
+		account.setLastName("Gershwin");
+		firstName = tableViewer.getTable().getItem(0).getText(0);		
+		assertEquals(firstName,account.getLastName());		
+		
+	}
+	
 }
