@@ -39,7 +39,7 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
      * getItemCount method comment.
      */
     protected int getItemCount(TestElement element) {
-        return 0;
+        return element.getChildCount();
     }
 
     protected String getItemText(int at) {
