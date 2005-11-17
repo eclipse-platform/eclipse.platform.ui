@@ -224,20 +224,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 		}
 
-		// ensure we aren't trying to copy a linked resource into a folder
-		Container parent = (Container) dest.getParent();
-		boolean isDeepCopy = (updateFlags & IResource.SHALLOW) == 0;
-		if (isLinked() && !isDeepCopy && (parent == null || parent.getType() != IResource.PROJECT)) {
-			message = NLS.bind(Messages.links_copyNotProject, getFullPath(), destination);
-			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
-		}
-
 		// we can't copy into a closed project
 		if (destinationType != IResource.PROJECT) {
 			Project project = (Project) dest.getProject();
 			info = project.getResourceInfo(false, false);
 			project.checkAccessible(getFlags(info));
-
+			Container parent = (Container) dest.getParent();
 			if (!parent.equals(project)) {
 				info = parent.getResourceInfo(false, false);
 				parent.checkExists(getFlags(info), true);
@@ -375,20 +367,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 		}
 
-		// ensure we aren't trying to shallow move a linked resource into a folder
-		Container parent = (Container) dest.getParent();
-		boolean isDeepMove = (updateFlags & IResource.SHALLOW) == 0;
-		if (!isDeepMove && isLinked() && (parent == null || parent.getType() != IResource.PROJECT)) {
-			message = NLS.bind(Messages.links_moveNotProject, getFullPath(), destination);
-			throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
-		}
-
 		// we can't move into a closed project
 		if (destinationType != IResource.PROJECT) {
 			Project project = (Project) dest.getProject();
 			info = project.getResourceInfo(false, false);
 			project.checkAccessible(getFlags(info));
-
+			Container parent = (Container) dest.getParent();
 			if (!parent.equals(project)) {
 				info = parent.getResourceInfo(false, false);
 				parent.checkExists(getFlags(info), true);
