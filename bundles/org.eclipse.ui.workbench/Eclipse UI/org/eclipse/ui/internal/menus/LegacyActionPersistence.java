@@ -386,8 +386,14 @@ public final class LegacyActionPersistence extends CommonCommandPersistence {
 	}
 
 	/**
+	 * <p>
 	 * Extracts the handler information from the given action element. These are
 	 * registered with the handler service. They are always active.
+	 * </p>
+	 * <p>
+	 * TODO We need to hook up listeners for all the various things delegates
+	 * listen to.
+	 * </p>
 	 * 
 	 * @param element
 	 *            The action element from which the handler should be read; must
