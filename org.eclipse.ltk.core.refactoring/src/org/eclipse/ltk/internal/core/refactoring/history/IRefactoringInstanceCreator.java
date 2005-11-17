@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring.history;
 
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
@@ -46,6 +48,8 @@ public interface IRefactoringInstanceCreator {
 	 * @param descriptor
 	 *            the refactoring descriptor
 	 * @return the refactoring, or <code>null</code>
+	 * @throws CoreException
+	 *             if the refactoring could not be created from the descriptor
 	 */
-	public Refactoring createRefactoring(RefactoringDescriptor descriptor);
+	public Refactoring createRefactoring(RefactoringDescriptor descriptor) throws CoreException;
 }

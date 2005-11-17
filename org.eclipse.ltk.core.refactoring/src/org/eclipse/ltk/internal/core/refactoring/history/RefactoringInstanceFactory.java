@@ -13,6 +13,8 @@ package org.eclipse.ltk.internal.core.refactoring.history;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
@@ -71,7 +73,7 @@ public final class RefactoringInstanceFactory implements IRefactoringInstanceCre
 	/**
 	 * {@inheritDoc}
 	 */
-	public Refactoring createRefactoring(final RefactoringDescriptor descriptor) {
+	public Refactoring createRefactoring(final RefactoringDescriptor descriptor) throws CoreException {
 		Assert.isNotNull(descriptor);
 		final String id= descriptor.getID();
 		if (id != null) {
