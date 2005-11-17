@@ -112,6 +112,7 @@ public abstract class ViewerTestCase extends TestCase {
 	    }
 	    // leave the display
 	    fRootElement = null;
+	    fModel = null;
 	}
 
 }

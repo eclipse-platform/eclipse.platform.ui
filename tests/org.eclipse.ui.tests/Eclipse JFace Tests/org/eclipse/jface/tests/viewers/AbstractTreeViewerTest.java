@@ -253,4 +253,12 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
         assertEquals("Same element added to a parent twice.", initialCount,
                 postCount);
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.tests.viewers.ViewerTestCase#tearDown()
+     */
+    public void tearDown() {
+    	super.tearDown();
+    	fTreeViewer = null;
+    }
 }
