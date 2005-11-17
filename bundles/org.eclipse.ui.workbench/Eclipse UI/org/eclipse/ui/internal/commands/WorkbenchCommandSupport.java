@@ -46,7 +46,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 	 * The mutable command manager that should be notified of changes to the
 	 * list of active handlers. This value is never <code>null</code>.
 	 */
-	private final CommandManagerWrapper commandManagerWrapper;
+	private final CommandManagerLegacyWrapper commandManagerWrapper;
 
 	/**
 	 * The handler service for the workbench. This value is never

@@ -27,7 +27,7 @@ import org.eclipse.ui.contexts.IContext;
  * 
  * @since 3.1
  */
-public class ContextListenerWrapper implements IContextListener,
+public class LegacyContextListenerWrapper implements IContextListener,
 		IContextManagerListener {
 
 	/**
@@ -59,7 +59,7 @@ public class ContextListenerWrapper implements IContextListener,
 	 *            The legacy context this listener will be listening to; must
 	 *            not be <code>null</code>.
 	 */
-	public ContextListenerWrapper(
+	public LegacyContextListenerWrapper(
 			final org.eclipse.ui.contexts.IContextListener listener,
 			final ContextManager contextManager, final IContext context) {
 		if (listener == null) {
@@ -90,7 +90,7 @@ public class ContextListenerWrapper implements IContextListener,
 	public final void contextChanged(final ContextEvent contextEvent) {
 		wrappedListener
 				.contextChanged(new org.eclipse.ui.contexts.ContextEvent(
-						new ContextWrapper(contextEvent.getContext(),
+						new ContextLegacyWrapper(contextEvent.getContext(),
 								contextManager), contextEvent
 								.isDefinedChanged(), false, contextEvent
 								.isNameChanged(), contextEvent
@@ -126,8 +126,8 @@ public class ContextListenerWrapper implements IContextListener,
 	}
 
 	public final boolean equals(final Object object) {
-		if (object instanceof ContextListenerWrapper) {
-			final ContextListenerWrapper other = (ContextListenerWrapper) object;
+		if (object instanceof LegacyContextListenerWrapper) {
+			final LegacyContextListenerWrapper other = (LegacyContextListenerWrapper) object;
 			return wrappedListener.equals(other.wrappedListener);
 		}
 

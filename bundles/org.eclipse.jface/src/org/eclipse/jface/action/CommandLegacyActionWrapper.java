@@ -53,7 +53,7 @@ import org.eclipse.swt.widgets.Event;
  * 
  * @since 3.2
  */
-public final class CommandAction extends AbstractAction {
+public final class CommandLegacyActionWrapper extends AbstractAction {
 
 	/**
 	 * Listens to changes to one or more commands, and forwards them out through
@@ -171,7 +171,8 @@ public final class CommandAction extends AbstractAction {
 	 *            The image style to use for this action, may be
 	 *            <code>null</code>.
 	 */
-	public CommandAction(final String id, final ParameterizedCommand command,
+	public CommandLegacyActionWrapper(final String id,
+			final ParameterizedCommand command,
 			final CommandManager commandManager,
 			final BindingManager bindingManager,
 			final CommandImageManager commandImageManager, final String style) {

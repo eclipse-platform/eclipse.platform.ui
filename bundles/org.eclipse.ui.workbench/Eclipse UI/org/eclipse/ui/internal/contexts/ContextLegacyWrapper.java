@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.1
  */
-public class ContextWrapper implements IContext {
+public class ContextLegacyWrapper implements IContext {
 
 	/**
 	 * The context manager that maintains the set of active contexts; must not
@@ -47,7 +47,7 @@ public class ContextWrapper implements IContext {
 	 *            The context manager that maintains the set of active contexts;
 	 *            must not be <code>null</code>.
 	 */
-	public ContextWrapper(final Context context,
+	public ContextLegacyWrapper(final Context context,
 			final ContextManager contextManager) {
 		if (context == null) {
 			throw new NullPointerException(
@@ -69,7 +69,7 @@ public class ContextWrapper implements IContext {
 	 * @see org.eclipse.ui.contexts.IContext#addContextListener(org.eclipse.ui.contexts.IContextListener)
 	 */
 	public void addContextListener(IContextListener contextListener) {
-		final ContextListenerWrapper wrapper = new ContextListenerWrapper(
+		final LegacyContextListenerWrapper wrapper = new LegacyContextListenerWrapper(
 				contextListener, contextManager, this);
 		wrappedContext.addContextListener(wrapper);
 
@@ -87,7 +87,7 @@ public class ContextWrapper implements IContext {
 	 */
 	public int compareTo(Object o) {
 		return Util
-				.compare(wrappedContext, ((ContextWrapper) o).wrappedContext);
+				.compare(wrappedContext, ((ContextLegacyWrapper) o).wrappedContext);
 	}
 
 	/*
@@ -150,7 +150,7 @@ public class ContextWrapper implements IContext {
 	 * @see org.eclipse.ui.contexts.IContext#removeContextListener(org.eclipse.ui.contexts.IContextListener)
 	 */
 	public void removeContextListener(IContextListener contextListener) {
-		final ContextListenerWrapper wrapper = new ContextListenerWrapper(
+		final LegacyContextListenerWrapper wrapper = new LegacyContextListenerWrapper(
 				contextListener, contextManager, this);
 		wrappedContext.removeContextListener(wrapper);
 		contextManager.removeContextManagerListener(wrapper);

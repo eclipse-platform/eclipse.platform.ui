@@ -57,7 +57,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 	/**
 	 * The legacy context manager supported by this application.
 	 */
-	private ContextManagerWrapper contextManagerWrapper;
+	private ContextManagerLegacyWrapper contextManagerWrapper;
 
 	/**
 	 * The workbench for which context support is being provided. This value

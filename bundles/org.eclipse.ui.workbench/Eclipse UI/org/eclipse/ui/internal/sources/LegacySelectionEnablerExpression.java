@@ -19,8 +19,8 @@ import org.eclipse.ui.SelectionEnabler;
 
 /**
  * <p>
- * An expression wrapper for {@link SelectionEnabler}. This emulates an
- * {@link Expression} using an instance of <code>SelectionEnabler</code>.
+ * An expression wrapper for the legacy {@link SelectionEnabler}. This emulates
+ * an {@link Expression} using an instance of <code>SelectionEnabler</code>.
  * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -31,7 +31,7 @@ import org.eclipse.ui.SelectionEnabler;
  * 
  * @since 3.2
  */
-public final class SelectionEnablerExpression extends Expression {
+public final class LegacySelectionEnablerExpression extends Expression {
 
 	/**
 	 * The enabler for this expression; never <code>null</code>.
@@ -44,7 +44,7 @@ public final class SelectionEnablerExpression extends Expression {
 	 * @param enabler
 	 *            The enabler; must not be <code>null</code>.
 	 */
-	public SelectionEnablerExpression(final SelectionEnabler enabler) {
+	public LegacySelectionEnablerExpression(final SelectionEnabler enabler) {
 		if (enabler == null) {
 			throw new NullPointerException("There is no enabler"); //$NON-NLS-1$
 		}

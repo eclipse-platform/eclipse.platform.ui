@@ -120,7 +120,7 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
-import org.eclipse.ui.internal.menus.DeprecatedActionPersistence;
+import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.MenuService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
@@ -981,7 +981,7 @@ public final class Workbench implements IWorkbench {
 		bindingService.readRegistryAndPreferences(commandService);
 		commandImageService.readRegistry();
 		menuService.readRegistry(commandService);
-		final DeprecatedActionPersistence deprecatedSupport = new DeprecatedActionPersistence();
+		final LegacyActionPersistence deprecatedSupport = new LegacyActionPersistence();
 		deprecatedSupport.read(commandManager, handlerService, bindingManager,
 				commandImageManager, menuService);
 

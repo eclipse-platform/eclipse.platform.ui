@@ -21,7 +21,7 @@ import org.eclipse.ui.commands.ICommand;
  * 
  * @since 3.1
  */
-final class CommandListenerWrapper implements ICommandListener {
+final class LegacyCommandListenerWrapper implements ICommandListener {
 
 	/**
 	 * The supporting binding manager; never <code>null</code>.
@@ -41,7 +41,7 @@ final class CommandListenerWrapper implements ICommandListener {
 	 * @param listener
 	 *            The listener to be wrapped; must not be <code>null</code>.
 	 */
-	CommandListenerWrapper(
+	LegacyCommandListenerWrapper(
 			final org.eclipse.ui.commands.ICommandListener listener,
 			final BindingManager bindingManager) {
 		if (listener == null) {
@@ -63,7 +63,7 @@ final class CommandListenerWrapper implements ICommandListener {
 	 * @see org.eclipse.commands.ICommandListener#commandChanged(org.eclipse.commands.CommandEvent)
 	 */
 	public final void commandChanged(final CommandEvent commandEvent) {
-		final ICommand command = new CommandWrapper(commandEvent.getCommand(),
+		final ICommand command = new CommandLegacyWrapper(commandEvent.getCommand(),
 				bindingManager);
 		final boolean definedChanged = commandEvent.isDefinedChanged();
 		final boolean descriptionChanged = commandEvent.isDescriptionChanged();
@@ -77,8 +77,8 @@ final class CommandListenerWrapper implements ICommandListener {
 	}
 
 	public final boolean equals(final Object object) {
-		if (object instanceof CommandListenerWrapper) {
-			final CommandListenerWrapper wrapper = (CommandListenerWrapper) object;
+		if (object instanceof LegacyCommandListenerWrapper) {
+			final LegacyCommandListenerWrapper wrapper = (LegacyCommandListenerWrapper) object;
 			return listener.equals(wrapper.listener);
 		}
 

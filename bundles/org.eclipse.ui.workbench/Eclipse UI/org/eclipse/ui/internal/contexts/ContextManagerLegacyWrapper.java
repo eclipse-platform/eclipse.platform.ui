@@ -33,7 +33,7 @@ import org.eclipse.ui.contexts.IContextManagerListener;
  * 
  * @since 3.1
  */
-public final class ContextManagerWrapper implements
+public final class ContextManagerLegacyWrapper implements
 		org.eclipse.core.commands.contexts.IContextManagerListener,
 		IContextManager {
 
@@ -138,7 +138,7 @@ public final class ContextManagerWrapper implements
 	 *            The manager which will provided the real support; must not be
 	 *            <code>null</code>.
 	 */
-	public ContextManagerWrapper(ContextManager contextManager) {
+	public ContextManagerLegacyWrapper(ContextManager contextManager) {
 
 		if (contextManager == null) {
 			throw new NullPointerException("The context manager cannot be null"); //$NON-NLS-1$
@@ -205,7 +205,7 @@ public final class ContextManagerWrapper implements
 	}
 
 	public IContext getContext(String contextId) {
-		return new ContextWrapper(contextManager.getContext(contextId),
+		return new ContextLegacyWrapper(contextManager.getContext(contextId),
 				contextManager);
 	}
 

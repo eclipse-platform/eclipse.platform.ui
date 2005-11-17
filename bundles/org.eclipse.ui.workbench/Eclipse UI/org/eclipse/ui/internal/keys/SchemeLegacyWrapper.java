@@ -17,9 +17,12 @@ import org.eclipse.ui.commands.IKeyConfigurationListener;
 import org.eclipse.ui.commands.NotDefinedException;
 
 /**
+ * A wrapper around the new {@link Scheme} class, providing supported for the
+ * old {@link IKeyConfiguration} interface.
+ * 
  * @since 3.1
  */
-public final class SchemeWrapper implements IKeyConfiguration {
+public final class SchemeLegacyWrapper implements IKeyConfiguration {
 
 	/**
 	 * The binding manager managing this scheme. This value is never
@@ -41,7 +44,7 @@ public final class SchemeWrapper implements IKeyConfiguration {
 	 *            The binding manager for this scheme; must not be
 	 *            <code>null</code>.
 	 */
-	public SchemeWrapper(final Scheme scheme,
+	public SchemeLegacyWrapper(final Scheme scheme,
 			final BindingManager bindingManager) {
 		if (scheme == null) {
 			throw new NullPointerException("Cannot wrap a null scheme"); //$NON-NLS-1$
@@ -63,7 +66,7 @@ public final class SchemeWrapper implements IKeyConfiguration {
 	 */
 	public void addKeyConfigurationListener(
 			IKeyConfigurationListener keyConfigurationListener) {
-		scheme.addSchemeListener(new SchemeListenerWrapper(
+		scheme.addSchemeListener(new LegacySchemeListenerWrapper(
 				keyConfigurationListener, bindingManager));
 	}
 
@@ -149,7 +152,7 @@ public final class SchemeWrapper implements IKeyConfiguration {
 	 */
 	public void removeKeyConfigurationListener(
 			IKeyConfigurationListener keyConfigurationListener) {
-		scheme.removeSchemeListener(new SchemeListenerWrapper(
+		scheme.removeSchemeListener(new LegacySchemeListenerWrapper(
 				keyConfigurationListener, bindingManager));
 
 	}

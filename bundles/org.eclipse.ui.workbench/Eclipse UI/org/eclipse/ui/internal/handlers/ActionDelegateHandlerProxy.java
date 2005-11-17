@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.CommandAction;
+import org.eclipse.jface.action.CommandLegacyActionWrapper;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.commands.CommandImageManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -49,7 +49,7 @@ public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState {
 	 * A fake action that proxies all of the command-based services. This value
 	 * is never <code>null</code>.
 	 */
-	private final CommandAction action;
+	private final CommandLegacyActionWrapper action;
 
 	/**
 	 * The real handler. This value is <code>null</code> until the proxy is
@@ -119,8 +119,8 @@ public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState {
 
 		this.element = element;
 		this.delegateAttributeName = delegateAttributeName;
-		this.action = new CommandAction(actionId, command, commandManager,
-				bindingManager, commandImageManager, style);
+		this.action = new CommandLegacyActionWrapper(actionId, command,
+				commandManager, bindingManager, commandImageManager, style);
 		this.action.addPropertyChangeListener(new IPropertyChangeListener() {
 			public final void propertyChange(final PropertyChangeEvent event) {
 				// TODO Update the state somehow.

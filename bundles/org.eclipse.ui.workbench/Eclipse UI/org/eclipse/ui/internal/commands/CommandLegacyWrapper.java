@@ -35,7 +35,7 @@ import org.eclipse.ui.keys.KeySequence;
  * 
  * @since 3.1
  */
-final class CommandWrapper implements ICommand {
+final class CommandLegacyWrapper implements ICommand {
 
 	/**
 	 * The supporting binding manager; never <code>null</code>.
@@ -62,7 +62,8 @@ final class CommandWrapper implements ICommand {
 	 *            The binding manager to support this wrapper; must not be
 	 *            <code>null</code>.
 	 */
-	CommandWrapper(final Command command, final BindingManager bindingManager) {
+	CommandLegacyWrapper(final Command command,
+			final BindingManager bindingManager) {
 		if (command == null) {
 			throw new NullPointerException(
 					"The wrapped command cannot be <code>null</code>."); //$NON-NLS-1$
@@ -84,8 +85,8 @@ final class CommandWrapper implements ICommand {
 	 */
 
 	public final void addCommandListener(final ICommandListener commandListener) {
-		command.addCommandListener(new CommandListenerWrapper(commandListener,
-				bindingManager));
+		command.addCommandListener(new LegacyCommandListenerWrapper(
+				commandListener, bindingManager));
 	}
 
 	/*
@@ -113,9 +114,12 @@ final class CommandWrapper implements ICommand {
 	 */
 	public final Map getAttributeValuesByName() {
 		final Map attributeValues = new HashMap();
-		// avoid using Boolean.valueOf to allow compilation against JCL Foundation (bug 80053)
-		attributeValues.put(ILegacyAttributeNames.ENABLED, command.isEnabled() ? Boolean.TRUE : Boolean.FALSE);
-		attributeValues.put(ILegacyAttributeNames.HANDLED, command.isHandled() ? Boolean.TRUE : Boolean.FALSE); 
+		// avoid using Boolean.valueOf to allow compilation against JCL
+		// Foundation (bug 80053)
+		attributeValues.put(ILegacyAttributeNames.ENABLED,
+				command.isEnabled() ? Boolean.TRUE : Boolean.FALSE);
+		attributeValues.put(ILegacyAttributeNames.HANDLED,
+				command.isHandled() ? Boolean.TRUE : Boolean.FALSE);
 		return attributeValues;
 	}
 
@@ -219,7 +223,7 @@ final class CommandWrapper implements ICommand {
 	 */
 	public final void removeCommandListener(
 			final ICommandListener commandListener) {
-		command.removeCommandListener(new CommandListenerWrapper(
+		command.removeCommandListener(new LegacyCommandListenerWrapper(
 				commandListener, bindingManager));
 	}
 

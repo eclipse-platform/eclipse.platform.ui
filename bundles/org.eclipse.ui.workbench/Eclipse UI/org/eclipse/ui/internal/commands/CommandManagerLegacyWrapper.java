@@ -37,7 +37,7 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.handlers.LegacyHandlerWrapper;
-import org.eclipse.ui.internal.keys.SchemeWrapper;
+import org.eclipse.ui.internal.keys.SchemeLegacyWrapper;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
@@ -46,7 +46,7 @@ import org.eclipse.ui.keys.KeySequence;
  * 
  * @since 3.1
  */
-public final class CommandManagerWrapper implements ICommandManager,
+public final class CommandManagerLegacyWrapper implements ICommandManager,
 		org.eclipse.core.commands.ICommandManagerListener,
 		IBindingManagerListener, IContextManagerListener {
 
@@ -124,7 +124,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 *            manager. This value must not be <code>null</code>.
 	 * 
 	 */
-	public CommandManagerWrapper(final BindingManager bindingManager,
+	public CommandManagerLegacyWrapper(final BindingManager bindingManager,
 			final CommandManager commandManager,
 			final ContextManager contextManager) {
 		if (contextManager == null) {
@@ -281,7 +281,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 
 	public ICommand getCommand(String commandId) {
 		final Command command = commandManager.getCommand(commandId);
-		return new CommandWrapper(command, bindingManager);
+		return new CommandLegacyWrapper(command, bindingManager);
 	}
 
 	/*
@@ -308,7 +308,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 
 	public IKeyConfiguration getKeyConfiguration(String keyConfigurationId) {
 		final Scheme scheme = bindingManager.getScheme(keyConfigurationId);
-		return new SchemeWrapper(scheme, bindingManager);
+		return new SchemeLegacyWrapper(scheme, bindingManager);
 	}
 
 	public Map getPartialMatches(KeySequence keySequence) {
@@ -345,9 +345,9 @@ public final class CommandManagerWrapper implements ICommandManager,
 			if (binding == null) {
 				return null;
 			}
-			
+
 			return binding.getParameterizedCommand().getId();
-			
+
 		} catch (final ParseException e) {
 			return null;
 		}

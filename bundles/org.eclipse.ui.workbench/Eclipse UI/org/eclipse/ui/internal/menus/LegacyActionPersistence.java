@@ -58,7 +58,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.commands.CommonCommandPersistence;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
-import org.eclipse.ui.internal.sources.SelectionEnablerExpression;
+import org.eclipse.ui.internal.sources.LegacySelectionEnablerExpression;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.menus.IMenuService;
 
@@ -81,7 +81,7 @@ import org.eclipse.ui.menus.IMenuService;
  * 
  * @since 3.2
  */
-public final class DeprecatedActionPersistence extends CommonCommandPersistence {
+public final class LegacyActionPersistence extends CommonCommandPersistence {
 
 	/**
 	 * The name of the accelerator attribute, which is a (very old) attempt to
@@ -164,7 +164,7 @@ public final class DeprecatedActionPersistence extends CommonCommandPersistence 
 	/**
 	 * The index of the action set elements in the indexed array.
 	 * 
-	 * @see DeprecatedActionPersistence#read(ICommandService, IHandlerService,
+	 * @see LegacyActionPersistence#read(ICommandService, IHandlerService,
 	 *      BindingManager, ICommandImageService, IMenuService)
 	 */
 	private static final int INDEX_ACTION_SETS = 0;
@@ -419,7 +419,7 @@ public final class DeprecatedActionPersistence extends CommonCommandPersistence 
 			handlerActivations.add(handlerService.activateHandler(command
 					.getId(), handler));
 		} else {
-			final Expression enabledWhenExpression = new SelectionEnablerExpression(
+			final Expression enabledWhenExpression = new LegacySelectionEnablerExpression(
 					enabler);
 			handlerActivations.add(handlerService.activateHandler(command
 					.getId(), handler, enabledWhenExpression));
@@ -737,7 +737,7 @@ public final class DeprecatedActionPersistence extends CommonCommandPersistence 
 	/**
 	 * Constructs a new instance of <code>DeprecatedActionPersistence</code>.
 	 */
-	public DeprecatedActionPersistence() {
+	public LegacyActionPersistence() {
 		// Does nothing.
 	}
 
