@@ -11,6 +11,7 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.*;
+import java.net.URI;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
@@ -62,9 +63,9 @@ public class LinkedResourceTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(LinkedResourceTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new LinkedResourceTest("testLinkFolder"));
-		//		return suite;
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new LinkedResourceTest("testMoveFile"));
+//		return suite;
 	}
 
 	public LinkedResourceTest() {
@@ -341,7 +342,7 @@ public class LinkedResourceTest extends ResourceTest {
 				if (source.equals(destination))
 					return true;
 				IResource parent = destination.getParent();
-				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
+				if (!isDeep && parent == null)
 					return true;
 				if (!parent.isAccessible())
 					return true;
@@ -373,7 +374,10 @@ public class LinkedResourceTest extends ResourceTest {
 						return false;
 					if (!source.getLocation().equals(destination.getLocation()))
 						return false;
-					assertEquals("1.0", source.getRawLocation(), destination.getRawLocation());
+					if (!source.getRawLocation().equals(destination.getRawLocation()))
+						return false;
+					if (!source.getLocationURI().equals(destination.getLocationURI()))
+						return false;
 				}
 				return true;
 			}
@@ -428,7 +432,7 @@ public class LinkedResourceTest extends ResourceTest {
 					return true;
 				if (source.equals(destination))
 					return true;
-				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
+				if (!isDeep && parent == null)
 					return true;
 				if (!parent.isAccessible())
 					return true;
@@ -460,7 +464,10 @@ public class LinkedResourceTest extends ResourceTest {
 						return false;
 					if (!source.getLocation().equals(destination.getLocation()))
 						return false;
-					assertEquals("1.0", source.getRawLocation(), destination.getRawLocation());
+					if (!source.getLocationURI().equals(destination.getLocationURI()))
+						return false;
+					if (!source.getRawLocation().equals(destination.getRawLocation()))
+						return false;
 				}
 				return true;
 			}
@@ -995,11 +1002,11 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	public void testMoveFile() {
-		final IFile source = nonExistingFileInExistingProject;
-		IResource[] destinationResources = new IResource[] {existingProject, closedProject, nonExistingFileInOtherExistingProject, nonExistingFileInExistingFolder};
+		IResource[] sources = new IResource[] {nonExistingFileInExistingProject, nonExistingFileInExistingFolder};
+		IResource[] destinations = new IResource[] {existingProject, closedProject, nonExistingFileInOtherExistingProject, nonExistingFileInExistingFolder};
 		Boolean[] deepCopy = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
 		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
-		Object[][] inputs = new Object[][] {destinationResources, deepCopy, monitors};
+		Object[][] inputs = new Object[][] {sources, destinations, deepCopy, monitors};
 		new TestPerformer("LinkedResourceTest.testMoveFile") {
 			protected static final String CANCELED = "canceled";
 
@@ -1011,11 +1018,12 @@ public class LinkedResourceTest extends ResourceTest {
 					fail("invocation " + count + " failed to cleanup", e);
 				}
 			}
-
+			
 			public Object invokeMethod(Object[] args, int count) throws Exception {
-				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean) args[1]).booleanValue();
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				IFile source = (IFile) args[0];
+				IResource destination = (IResource) args[1];
+				boolean isDeep = ((Boolean) args[2]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor) args[3];
 				if (monitor instanceof FussyProgressMonitor)
 					((FussyProgressMonitor) monitor).prepare();
 				try {
@@ -1030,15 +1038,20 @@ public class LinkedResourceTest extends ResourceTest {
 			}
 
 			public boolean shouldFail(Object[] args, int count) {
-				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean) args[1]).booleanValue();
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				IFile source = (IFile) args[0];
+				IResource destination = (IResource) args[1];
+				boolean isDeep = ((Boolean) args[2]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor) args[3];
 				if (monitor instanceof CancelingProgressMonitor)
 					return false;
 				IResource parent = destination.getParent();
-				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
+				if (!isDeep && parent == null)
 					return true;
 				if (!parent.isAccessible())
+					return true;
+				if (source.equals(destination))
+					return true;
+				if (source.getType() != destination.getType())
 					return true;
 				if (destination.exists())
 					return true;
@@ -1047,9 +1060,11 @@ public class LinkedResourceTest extends ResourceTest {
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean) args[1]).booleanValue();
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				IResource destination = (IResource) args[1];
+				boolean isDeep = ((Boolean) args[2]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor) args[3];
+				IPath sourceLocation = localFile;
+				URI sourceLocationURI = FileUtil.toURI(localFile);
 				if (result == CANCELED)
 					return monitor instanceof CancelingProgressMonitor;
 				if (!destination.exists())
@@ -1065,7 +1080,9 @@ public class LinkedResourceTest extends ResourceTest {
 				} else {
 					if (!destination.isLinked())
 						return false;
-					if (!resolvePath(localFile).equals(destination.getLocation()))
+					if (!sourceLocation.equals(destination.getLocation()))
+						return false;
+					if (!sourceLocationURI.equals(destination.getLocationURI()))
 						return false;
 				}
 				return true;
@@ -1074,7 +1091,7 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	public void testMoveFolder() {
-		IResource[] sourceResources = new IResource[] {nonExistingFolderInExistingProject};
+		IResource[] sourceResources = new IResource[] {nonExistingFolderInExistingProject, nonExistingFolderInExistingFolder};
 		IResource[] destinationResources = new IResource[] {existingProject, closedProject, nonExistingProject, existingFolderInExistingProject, nonExistingFolderInOtherExistingProject, nonExistingFolderInExistingFolder};
 		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
 		Object[][] inputs = new Object[][] {sourceResources, destinationResources, monitors};
@@ -1108,12 +1125,17 @@ public class LinkedResourceTest extends ResourceTest {
 			}
 
 			public boolean shouldFail(Object[] args, int count) {
+				IFolder source = (IFolder) args[0];
 				IResource destination = (IResource) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
 				if (monitor instanceof CancelingProgressMonitor)
 					return false;
 				IResource parent = destination.getParent();
-				if (parent == null || parent.getType() != IResource.PROJECT)
+				if (parent == null)
+					return true;
+				if (source.equals(destination))
+					return true;
+				if (source.getType() != destination.getType())
 					return true;
 				if (!parent.isAccessible())
 					return true;
