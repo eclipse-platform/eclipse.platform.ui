@@ -100,6 +100,7 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IContextService;
@@ -965,7 +966,7 @@ public final class Workbench implements IWorkbench {
 		final CommandImageManager commandImageManager = new CommandImageManager();
 		final CommandImageService commandImageService = new CommandImageService(
 				commandImageManager, commandService);
-		services.put(CommandImageManager.class, commandImageService);
+		services.put(ICommandImageService.class, commandImageService);
 		final SMenuManager menuManager = new SMenuManager();
 		final IMenuService menuService = new MenuService(menuManager);
 		services.put(IMenuService.class, menuService);
