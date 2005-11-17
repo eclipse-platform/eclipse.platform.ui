@@ -21,7 +21,9 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.2
- *
+ * TODO: rather than maintaining its own collection of elements, it should use the model side of the binding directly as the viewer's model
+ * (though I'm assuming the viewer collection is being used as the target in this case).  
+ * Note that CollectionBinding copies one at a time from the model to the target as well.
  */
 public class TableViewerUpdatableCollection extends Updatable implements
 		IUpdatableCollection {
@@ -64,7 +66,7 @@ public class TableViewerUpdatableCollection extends Updatable implements
 	}
 
 	private int primAddElement(Object element, int index) {
-		int position = elements.size();
+		int position;
 		if (index < 0 || index > elements.size()) {
 			position = elements.size();
 			elements.add(element);
