@@ -149,6 +149,7 @@ public class CollectionBinding extends Binding implements IChangeListener {
 
 			// Set the target List with the content of the Model List
 			for (int i = 0; i < source.getSize(); i++) {
+				// TODO: Shouldn't this go through the converter?
 				destination.addElement(source.getElement(i), i);
 			}
 		} finally {
