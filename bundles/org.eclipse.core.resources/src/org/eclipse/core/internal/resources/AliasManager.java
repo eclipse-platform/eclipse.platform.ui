@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
@@ -317,27 +318,33 @@ public class AliasManager implements IManager, ILifecycleListener {
 		this.workspace = workspace;
 	}
 
-	private void addToLocationsMap(IProject project) {
-		IFileStore location = ((Resource)project).getStore();
+	private void addToLocationsMap(IResource link, IFileStore location) {
 		if (location != null)
-			locationsMap.add(location, project);
-		try {
-			IResource[] members = project.members();
-			if (members != null)
-				//look for linked resources
-				for (int i = 0; i < members.length; i++)
-					if (members[i].isLinked())
-						addToLocationsMap(members[i]);
-		} catch (CoreException e) {
-			//skip inaccessible projects
-		}
+			if (locationsMap.add(location, link))
+				linkedResourceCount++;
 	}
 
-	private void addToLocationsMap(IResource linkedResource) {
-		IFileStore location = ((Resource)linkedResource).getStore();
+	private void addToLocationsMap(IProject project) {
+		IFileStore location = ((Resource) project).getStore();
 		if (location != null)
-			if (locationsMap.add(location, linkedResource))
-				linkedResourceCount++;
+			locationsMap.add(location, project);
+		ProjectDescription description = ((Project) project).internalGetDescription();
+		if (description == null)
+			return;
+		HashMap links = description.getLinks();
+		if (links == null)
+			return;
+		for (Iterator it = links.values().iterator(); it.hasNext();) {
+			LinkDescription linkDesc = (LinkDescription) it.next();
+			IResource link = project.findMember(linkDesc.getProjectRelativePath());
+			if (link != null) {
+				try {
+					addToLocationsMap(link, EFS.getStore(linkDesc.getLocation()));
+				} catch (CoreException e) {
+					//ignore links with invalid locations
+				}
+			}
+		}
 	}
 
 	/**
@@ -424,8 +431,8 @@ public class AliasManager implements IManager, ILifecycleListener {
 	private Comparator getComparator() {
 		return new Comparator() {
 			public int compare(Object o1, Object o2) {
-				IFileStore store1 = (IFileStore)o1;
-				IFileStore store2 = (IFileStore)o2;
+				IFileStore store1 = (IFileStore) o1;
+				IFileStore store2 = (IFileStore) o2;
 				IPath path1 = new Path(store1.toString());
 				IPath path2 = new Path(store2.toString());
 				int segmentCount1 = path1.segmentCount();
@@ -460,7 +467,9 @@ public class AliasManager implements IManager, ILifecycleListener {
 				structureChanges.add(event.resource);
 				break;
 			case LifecycleEvent.PRE_LINK_DELETE :
-				removeFromLocationsMap(event.resource);
+				Resource link = (Resource) event.resource;
+				if (link.isLinked())
+					removeFromLocationsMap(link, link.getStore());
 			//fall through
 			case LifecycleEvent.PRE_LINK_CREATE :
 				structureChanges.add(event.resource);
@@ -474,7 +483,9 @@ public class AliasManager implements IManager, ILifecycleListener {
 				structureChanges.add(event.newResource);
 				break;
 			case LifecycleEvent.PRE_LINK_MOVE :
-				removeFromLocationsMap(event.resource);
+				link = (Resource) event.resource;
+				if (link.isLinked())
+					removeFromLocationsMap(link, link.getStore());
 				structureChanges.add(event.newResource);
 				break;
 		}
@@ -505,7 +516,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	private void internalComputeAliases(IResource resource, IFileStore location) {
 		IFileStore searchLocation = location;
 		if (searchLocation == null)
-			searchLocation = ((Resource)resource).getStore();
+			searchLocation = ((Resource) resource).getStore();
 		//if the location is invalid then there won't be any aliases to update
 		if (searchLocation == null)
 			return;
@@ -523,35 +534,38 @@ public class AliasManager implements IManager, ILifecycleListener {
 			searchLocation = searchLocation.getParent();
 			if (searchLocation == null)
 				break;
-//			locationsMap.matchingResourcesDo(searchLocation, findAliases);
-//			if (--segmentCount <= 0)
-//				break;
-//			suffix = new Path(searchLocation.lastSegment()).append(suffix);
-//			searchLocation = searchLocation.removeLastSegments(1);
 		}
 	}
 
 	private void removeFromLocationsMap(IProject project) {
 		//remove this project and all linked children from the location table
-		IFileStore location = ((Resource)project).getStore();
+		IFileStore location = ((Resource) project).getStore();
 		if (location != null)
 			locationsMap.remove(location, project);
-		try {
-			IResource[] children = project.members();
-			if (children != null)
-				for (int i = 0; i < children.length; i++)
-					if (children[i].isLinked())
-						removeFromLocationsMap(children[i]);
-		} catch (CoreException e) {
-			//ignore inaccessible projects
+		ProjectDescription description = ((Project) project).internalGetDescription();
+		if (description == null)
+			return;
+		HashMap links = description.getLinks();
+		if (links == null)
+			return;
+		for (Iterator it = links.values().iterator(); it.hasNext();) {
+			LinkDescription linkDesc = (LinkDescription) it.next();
+			IResource link;
+			if (linkDesc.getType() == IResource.FILE)
+				link = project.getFile(linkDesc.getProjectRelativePath());
+			else
+				link = project.getFolder(linkDesc.getProjectRelativePath());
+			try {
+				removeFromLocationsMap(link, EFS.getStore(linkDesc.getLocation()));
+			} catch (CoreException e) {
+				//ignore links with invalid locations
+			}
 		}
 	}
 
-	private void removeFromLocationsMap(IResource linkedResource) {
-		//this linked resource is being deleted
-		IFileStore location = ((Resource)linkedResource).getStore();
+	private void removeFromLocationsMap(IResource link, IFileStore location) {
 		if (location != null)
-			if (locationsMap.remove(location, linkedResource))
+			if (locationsMap.remove(location, link))
 				linkedResourceCount--;
 	}
 
@@ -614,8 +628,8 @@ public class AliasManager implements IManager, ILifecycleListener {
 				continue;
 			if (resource.getType() == IResource.PROJECT)
 				addToLocationsMap((IProject) resource);
-			else
-				addToLocationsMap(resource);
+			else if (resource.isLinked())
+				addToLocationsMap(resource, ((Resource) resource).getStore());
 		}
 		structureChanges.clear();
 		if (hadChanges)
