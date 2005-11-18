@@ -21,10 +21,10 @@ import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
@@ -119,8 +119,8 @@ public class ExportRefactoringHistoryDialog extends RefactoringHistoryDialog {
 		Assert.isNotNull(proxies);
 		final FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
 		dialog.setText(caption);
-		dialog.setFilterNames(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_name });
-		dialog.setFilterExtensions(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_extension });
+		dialog.setFilterNames(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_name});
+		dialog.setFilterExtensions(new String[] { RefactoringUIMessages.ExportRefactoringHistoryDialog_file_filter_extension});
 		dialog.setFileName(RefactoringUIMessages.ExportRefactoringHistoryDialog_file_default_name);
 		final String path= dialog.open();
 		if (path != null) {
@@ -140,7 +140,7 @@ public class ExportRefactoringHistoryDialog extends RefactoringHistoryDialog {
 						return (int) (predecessor.getTimeStamp() - successor.getTimeStamp());
 					}
 				});
-				RefactoringCore.getRefactoringHistoryService().writeRefactoringDescriptors(proxies, stream);
+				RefactoringHistoryService.getInstance().writeRefactoringDescriptors(proxies, stream);
 			} catch (CoreException exception) {
 				final Throwable throwable= exception.getStatus().getException();
 				if (throwable instanceof IOException)

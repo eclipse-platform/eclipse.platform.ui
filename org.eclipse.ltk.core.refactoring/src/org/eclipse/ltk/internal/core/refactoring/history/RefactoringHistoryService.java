@@ -732,7 +732,13 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Reads a refactoring history from the input stream.
+	 * 
+	 * @param stream
+	 *            the input stream
+	 * @return A refactoring history
+	 * @throws CoreException
+	 *             if an error occurs
 	 */
 	public RefactoringHistory readRefactoringHistory(final InputStream stream) throws CoreException {
 		Assert.isNotNull(stream);
@@ -837,7 +843,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Writes the specified refactoring descriptor proxies to the output stream.
+	 * 
+	 * @param proxies
+	 *            the refactoring descriptor proxies
+	 * @param stream
+	 *            the output stream
+	 * @throws CoreException
+	 *             if an error occurs
 	 */
 	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream) throws CoreException {
 		Assert.isNotNull(proxies);

@@ -10,16 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.history;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.core.resources.IProject;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
  * Interface for a refactoring history service. A refactoring history service
@@ -171,20 +167,6 @@ public interface IRefactoringHistoryService {
 	public boolean hasProjectHistory(IProject project);
 
 	/**
-	 * Reads a refactoring history from the input stream.
-	 * <p>
-	 * Note: This API must not be called from outside the refactoring framework.
-	 * </p>
-	 * 
-	 * @param stream
-	 *            the input stream
-	 * @return A refactoring history
-	 * @throws CoreException
-	 *             if an error occurs
-	 */
-	public RefactoringHistory readRefactoringHistory(InputStream stream) throws CoreException;
-
-	/**
 	 * Removes the specified refactoring execution listener from this service.
 	 * <p>
 	 * If the listener is not registered with the service, nothing happens.
@@ -228,19 +210,4 @@ public interface IRefactoringHistoryService {
 	 *             if an error occurs
 	 */
 	public void setProjectHistory(IProject project, boolean enable) throws CoreException;
-
-	/**
-	 * Writes the specified refactoring descriptor proxies to the output stream.
-	 * <p>
-	 * Note: This API must not be called from outside the refactoring framework.
-	 * </p>
-	 * 
-	 * @param proxies
-	 *            the refactoring descriptor proxies
-	 * @param stream
-	 *            the output stream
-	 * @throws CoreException
-	 *             if an error occurs
-	 */
-	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream) throws CoreException;
 }
