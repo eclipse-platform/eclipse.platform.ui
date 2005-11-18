@@ -42,6 +42,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
@@ -257,7 +258,13 @@ public class CopyFilesAndFoldersOperation {
                         IDEWorkbenchMessages.CopyFilesAndFoldersOperation_resourceExists,
                         null, message, MessageDialog.QUESTION, labels, 0);
                 dialog.open();
-                result[0] = resultId[dialog.getReturnCode()];
+                if (dialog.getReturnCode()==SWT.DEFAULT) {
+                	// A window close returns SWT.DEFAULT, which has to be
+                	// mapped to a cancel
+                	result[0] = IDialogConstants.CANCEL_ID;
+                } else {
+                	result[0] = resultId[dialog.getReturnCode()];
+                }
             }
         };
         shell.getDisplay().syncExec(query);
