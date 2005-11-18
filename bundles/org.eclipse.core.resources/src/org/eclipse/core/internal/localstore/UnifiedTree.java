@@ -126,7 +126,7 @@ public class UnifiedTree {
 				String localName = localIndex < list.length ? list[localIndex].getName() : null;
 				int comp = localName != null ? name.compareTo(localName) : -1;
 				//special handling for linked resources
-				if (parentType == IResource.PROJECT && target.isLinked()) {
+				if (target.isLinked()) {
 					//child will be null if location is undefined
 					child = createChildForLinkedResource(target);
 					workspaceIndex++;
