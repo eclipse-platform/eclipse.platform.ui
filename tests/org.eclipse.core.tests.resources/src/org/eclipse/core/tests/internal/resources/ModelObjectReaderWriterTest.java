@@ -66,7 +66,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		desc.setNatureIds(natures);
 		HashMap linkMap = new HashMap();
 		LinkDescription link = createLinkDescription("newLink", IResource.FOLDER, "d:/abc/def");
-		linkMap.put(link.getPath(), link);
+		linkMap.put(link.getProjectRelativePath(), link);
 		desc.setLinkDescriptions(linkMap);
 		result.put(desc.getName(), desc);
 		commands = null;
@@ -86,13 +86,13 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		desc.setNatureIds(natures);
 		linkMap = new HashMap();
 		link = createLinkDescription("newLink", IResource.FOLDER, "d:/abc/def");
-		linkMap.put(link.getPath(), link);
+		linkMap.put(link.getProjectRelativePath(), link);
 		link = createLinkDescription("link2", IResource.FOLDER, "d:/abc");
-		linkMap.put(link.getPath(), link);
+		linkMap.put(link.getProjectRelativePath(), link);
 		link = createLinkDescription("link3", IResource.FOLDER, "d:/abc/def/ghi");
-		linkMap.put(link.getPath(), link);
+		linkMap.put(link.getProjectRelativePath(), link);
 		link = createLinkDescription("link4", IResource.FILE, "d:/abc/def/afile.txt");
-		linkMap.put(link.getPath(), link);
+		linkMap.put(link.getProjectRelativePath(), link);
 		desc.setLinkDescriptions(linkMap);
 		result.put(desc.getName(), desc);
 		commands = null;
@@ -194,7 +194,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			IPath key = (IPath) i.next();
 			LinkDescription value = (LinkDescription) links.get(key);
 			LinkDescription value2 = (LinkDescription) links2.get(key);
-			assertTrue(errorTag + ".4." + x, value.getPath().equals(value2.getPath()));
+			assertTrue(errorTag + ".4." + x, value.getProjectRelativePath().equals(value2.getProjectRelativePath()));
 			assertEquals(errorTag + ".5." + x, value.getType(), value2.getType());
 			assertEquals(errorTag + ".6." + x, value.getLocation(), value2.getLocation());
 		}
@@ -367,7 +367,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		assertEquals("3.5", new String[0], projDesc.getNatureIds());
 		assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
 		LinkDescription link = (LinkDescription) projDesc.getLinks().values().iterator().next();
-		assertEquals("3.7", new Path("newLink"), link.getPath());
+		assertEquals("3.7", new Path("newLink"), link.getProjectRelativePath());
 		assertEquals("3.8", PATH_STRING, FileUtil.toPath(link.getLocation()).toString());
 	}
 
@@ -427,7 +427,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			ensureDoesNotExistInFileSystem(location.toFile());
 			for (Iterator i = projDesc.getLinks().values().iterator(); i.hasNext();) {
 				LinkDescription link = (LinkDescription) i.next();
-				assertEquals("1.0." + link.getPath(), LONG_LOCATION_URI, link.getLocation());
+				assertEquals("1.0." + link.getProjectRelativePath(), LONG_LOCATION_URI, link.getLocation());
 			}
 		} finally {
 			Workspace.clear(location.toFile());
@@ -450,7 +450,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			ensureDoesNotExistInFileSystem(location.toFile());
 			for (Iterator i = projDesc.getLinks().values().iterator(); i.hasNext();) {
 				LinkDescription link = (LinkDescription) i.next();
-				assertEquals("1.0." + link.getPath(), LONG_LOCATION_URI, link.getLocation());
+				assertEquals("1.0." + link.getProjectRelativePath(), LONG_LOCATION_URI, link.getLocation());
 			}
 		} finally {
 			Workspace.clear(location.toFile());

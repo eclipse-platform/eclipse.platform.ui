@@ -314,7 +314,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// Pop off the link description
 			LinkDescription link = (LinkDescription) objectStack.pop();
 			// Make sure that you have something reasonable
-			IPath path = link.getPath();
+			IPath path = link.getProjectRelativePath();
 			int type = link.getType();
 			URI location = link.getLocation();
 			if (location == null) {
@@ -331,7 +331,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			}
 
 			// The HashMap of linked resources is the next thing on the stack
-			((HashMap) objectStack.peek()).put(link.getPath(), link);
+			((HashMap) objectStack.peek()).put(link.getProjectRelativePath(), link);
 		}
 	}
 
@@ -385,7 +385,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			IPath newPath= new Path(charBuffer.toString());
 			// objectStack has a LinkDescription on it. Set the name
 			// on this LinkDescription.
-			IPath oldPath= ((LinkDescription) objectStack.peek()).getPath();
+			IPath oldPath= ((LinkDescription) objectStack.peek()).getProjectRelativePath();
 			if (oldPath.segmentCount() != 0) {
 				parseProblem(NLS.bind(Messages.projRead_badLinkName, oldPath, newPath));
 			} else {

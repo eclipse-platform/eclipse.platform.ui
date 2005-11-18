@@ -62,7 +62,7 @@ public class LinkDescription {
 	 * Returns the project relative path of the resource that is linked.
 	 * @return the project relative path of the resource that is linked.
 	 */
-	public IPath getPath() {
+	public IPath getProjectRelativePath() {
 		return path;
 	}
 
