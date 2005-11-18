@@ -72,11 +72,6 @@ final class MenuPersistence extends CommonCommandPersistence {
 	private static final String ATTRIBUTE_MNEMONIC = "mnemonic"; //$NON-NLS-1$
 
 	/**
-	 * The name of the path attribute, which appears on bar and path elements.
-	 */
-	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
-
-	/**
 	 * The name of the position attribute, which appears on order elements.
 	 */
 	private static final String ATTRIBUTE_POSITION = "position"; //$NON-NLS-1$
@@ -122,11 +117,6 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 * The name of the element storing a location.
 	 */
 	private static final String ELEMENT_LOCATION = "location"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a menu.
-	 */
-	private static final String ELEMENT_MENU = "menu"; //$NON-NLS-1$
 
 	/**
 	 * The name of the element storing the ordering information.
@@ -618,8 +608,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 					ATTRIBUTE_IMAGE_STYLE);
 
 			// Read the position and the relativeTo attributes.
-			final SOrder ordering = readOrderingFromRegistry(locationElement,
-					id, warningsToLog);
+			final SOrder[] orderings = readOrderingsFromRegistry(
+					locationElement, id, warningsToLog);
 
 			// Read the menu location information.
 			final LocationElement menuLocation = readMenuLocationFromRegistry(
@@ -629,7 +619,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 			}
 
 			final SLocation location = new SLocation(mnemonicChar, imageStyle,
-					ordering);
+					orderings, menuLocation);
 			locations.add(location);
 		}
 
@@ -751,26 +741,19 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 * @param warningsToLog
 	 *            The collection of warnings to log; must not be
 	 *            <code>null</code>.
-	 * @return The ordering for this location element; may be <code>null</code>
-	 *         if none.
+	 * @return The ordering constraints for this location element; may be
+	 *         <code>null</code> if none.
 	 */
-	private static final SOrder readOrderingFromRegistry(
+	private static final SOrder[] readOrderingsFromRegistry(
 			final IConfigurationElement parentElement, final String id,
 			final List warningsToLog) {
 		// Check to see if we have an order element.
 		final IConfigurationElement[] orderingElements = parentElement
 				.getChildren(ELEMENT_ORDER);
-		if (orderingElements.length > 0) {
-			// Check if we have too many order elements.
-			if (orderingElements.length > 1) {
-				// There should only be one order element
-				addWarning(warningsToLog,
-						"Location elements should only have one order element", //$NON-NLS-1$
-						parentElement.getNamespace(), id);
-				return null;
-			}
-
-			final IConfigurationElement orderingElement = orderingElements[0];
+		final int length = orderingElements.length;
+		final ArrayList orderings = new ArrayList(length);
+		for (int i = 0; i < length; i++) {
+			final IConfigurationElement orderingElement = orderingElements[i];
 
 			// Read the position attribute.
 			final String position = readRequiredFromRegistry(orderingElement,
@@ -817,10 +800,11 @@ final class MenuPersistence extends CommonCommandPersistence {
 				}
 			}
 
-			return new SOrder(positionInteger, relativeTo);
+			final SOrder order = new SOrder(positionInteger, relativeTo);
+			orderings.add(order);
 		}
 
-		return null;
+		return (SOrder[]) orderings.toArray(new SOrder[orderings.size()]);
 	}
 
 	/**

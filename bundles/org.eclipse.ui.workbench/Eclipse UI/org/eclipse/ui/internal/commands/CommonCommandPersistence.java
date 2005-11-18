@@ -101,6 +101,11 @@ public abstract class CommonCommandPersistence {
 	protected static final String ATTRIBUTE_PARENT_ID = "parentId"; //$NON-NLS-1$
 
 	/**
+	 * The name of the path attribute, which appears on bar and path elements.
+	 */
+	protected static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
+
+	/**
 	 * The name of the attribute storing the style for a command image, or
 	 * storing the legacy widget style for an action.
 	 */
@@ -130,6 +135,11 @@ public abstract class CommonCommandPersistence {
 	 * The name of the element storing a command.
 	 */
 	protected static final String ELEMENT_COMMAND = "command"; //$NON-NLS-1$
+
+	/**
+	 * The name of the element storing a menu.
+	 */
+	protected static final String ELEMENT_MENU = "menu"; //$NON-NLS-1$
 
 	/**
 	 * The name of the element storing a parameter.
