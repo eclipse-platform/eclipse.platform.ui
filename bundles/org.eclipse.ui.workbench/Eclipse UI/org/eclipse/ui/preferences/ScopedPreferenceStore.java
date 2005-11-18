@@ -104,8 +104,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	/**
 	 * Create a new instance of the receiver. Store the values in context in the
 	 * node looked up by qualifier. <strong>NOTE:</strong> Any instance of
-	 * ScopedPreferenceStore should have {@link #dispose() }called before it is
-	 * dereferenced so that listeners can be cleaned up.
+	 * ScopedPreferenceStore should call
 	 * 
 	 * @param context
 	 *            the scope to store to
@@ -122,9 +121,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 
 	/**
 	 * Create a new instance of the receiver. Store the values in context in the
-	 * node looked up by qualifier. <strong>NOTE:</strong> Any instance of
-	 * ScopedPreferenceStore should have {@link #dispose() }called before it is
-	 * dereferenced so that listeners can be cleaned up.
+	 * node looked up by qualifier. 
 	 * 
 	 * @param context
 	 *            the scope to store to
@@ -154,7 +151,8 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 			 */
 			public void added(NodeChangeEvent event) {
-				if (nodeQualifier.equals(event.getChild().name()) && !listeners.isEmpty())
+				if (nodeQualifier.equals(event.getChild().name())
+						&& !listeners.isEmpty())
 					getStorePreferences().addPreferenceChangeListener(
 							preferencesListener);
 			}
@@ -258,7 +256,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		initializePreferencesListener();// Create the preferences listener if it
-										// does not exist
+		// does not exist
 		listeners.add(listener);
 	}
 
