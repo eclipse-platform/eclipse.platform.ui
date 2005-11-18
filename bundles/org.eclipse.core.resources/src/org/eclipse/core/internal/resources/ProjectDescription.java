@@ -41,7 +41,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	
 	/**
 	 * Map of (IPath -> LinkDescription) pairs for each linked resource
-	 * in this project.
+	 * in this project, where IPath is the project relative path of the resource.
 	 */
 	protected HashMap linkDescriptions = null;
 
