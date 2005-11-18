@@ -105,17 +105,7 @@ The active editor is passed to the delegate by invoking
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique identifier used as a reference for this action.  The following IDs have special meaning for the text editor framework:
-
-&lt;ul&gt;
-
-&lt;li&gt;&quot;RulerClick&quot;: the contributed action which is invoked upon single-click in the (left) vertical ruler&lt;/li&gt;
-
-&lt;li&gt;&quot;RulerDoubleClick&quot;: the contributed action which is invoked upon single-click in the (left) vertical ruler&lt;/li&gt;
-
-&lt;/ul&gt;
-
-If multiple extensions contribute ruler actions to the same text editor, the extension whose plug-in is at the top of the prerequisite tree wins. If there are multiple such plug-ins, the first wins.
+                  a unique identifier used as a reference for this action.
                </documentation>
             </annotation>
          </attribute>
@@ -309,7 +299,14 @@ The following attribute formats are supported:
          <attribute name="actionID" type="string">
             <annotation>
                <documentation>
-                  Internal tag for use by the text editors. Should not be used by plug-in developers.
+                  Internal tag for use by the text editors. Should not be used by plug-in developers.  The following IDs have special meaning for the text editor framework:
+&lt;ul&gt;
+&lt;li&gt;&quot;RulerClick&quot;: the contributed action which is invoked upon single-click in the (left) vertical ruler&lt;/li&gt;
+&lt;li&gt;&quot;RulerDoubleClick&quot;: the contributed action which is invoked upon single-click in the (left) vertical ruler&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;
+If multiple extensions contribute ruler actions to the same text editor, the extension whose plug-in is at the top of the prerequisite tree wins. If there are multiple such plug-ins, the first wins.
+&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
