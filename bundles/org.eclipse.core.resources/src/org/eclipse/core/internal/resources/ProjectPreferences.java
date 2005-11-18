@@ -184,7 +184,14 @@ public class ProjectPreferences extends EclipsePreferences {
 		return loadLevel;
 	}
 
+	/* (non-Javadoc)
+	 * TODO: remove when runtime split is added to the CVS 
+	 */
 	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Plugin context) {
+		return new ProjectPreferences(nodeParent, nodeName);
+	}
+	
+	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Object context) {
 		return new ProjectPreferences(nodeParent, nodeName);
 	}
 
