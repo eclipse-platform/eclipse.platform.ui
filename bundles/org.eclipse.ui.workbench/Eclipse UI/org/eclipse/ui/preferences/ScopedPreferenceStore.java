@@ -13,16 +13,22 @@ package org.eclipse.ui.preferences;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.*;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.*;
-
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
-
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -88,15 +94,17 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 * The defaultQualifier is the string used to look up the default node.
 	 */
 	String defaultQualifier;
-	
+
 	/**
-	 * Boolean value indicating whether or not this store has changes to be saved.
+	 * Boolean value indicating whether or not this store has changes to be
+	 * saved.
 	 */
 	private boolean dirty;
 
 	/**
 	 * Create a new instance of the receiver. Store the values in context in the
-	 * node looked up by qualifier.
+	 * node looked up by qualifier. <strong>NOTE:</strong> Any instance of
+	 * ScopedPreferenceStore should call
 	 * 
 	 * @param context
 	 *            the scope to store to
@@ -105,14 +113,15 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 * @param defaultQualifierPath
 	 *            the qualifier used when looking up the defaults
 	 */
-	public ScopedPreferenceStore(IScopeContext context, String qualifier, String defaultQualifierPath) {
+	public ScopedPreferenceStore(IScopeContext context, String qualifier,
+			String defaultQualifierPath) {
 		this(context, qualifier);
 		this.defaultQualifier = defaultQualifierPath;
 	}
 
 	/**
 	 * Create a new instance of the receiver. Store the values in context in the
-	 * node looked up by qualifier.
+	 * node looked up by qualifier. 
 	 * 
 	 * @param context
 	 *            the scope to store to
@@ -123,30 +132,6 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 		storeContext = context;
 		this.nodeQualifier = qualifier;
 		this.defaultQualifier = qualifier;
-
-		preferencesListener = new IEclipsePreferences.IPreferenceChangeListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
-			 */
-			public void preferenceChange(PreferenceChangeEvent event) {
-
-				if (silentRunning)
-					return;
-
-				Object oldValue = event.getOldValue();
-				Object newValue = event.getNewValue();
-				String key = event.getKey();
-				if (newValue == null)
-					newValue = getDefault(key, oldValue);
-				else if (oldValue == null)
-					oldValue = getDefault(key, newValue);
-				firePropertyChangeEvent(event.getKey(), oldValue, newValue);
-			}
-		};
-
-		getStorePreferences().addPreferenceChangeListener(preferencesListener);
 
 		((IEclipsePreferences) getStorePreferences().parent())
 				.addNodeChangeListener(getNodeChangeListener());
@@ -166,7 +151,8 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 			 */
 			public void added(NodeChangeEvent event) {
-				if (nodeQualifier.equals(event.getChild().name()))
+				if (nodeQualifier.equals(event.getChild().name())
+						&& !listeners.isEmpty())
 					getStorePreferences().addPreferenceChangeListener(
 							preferencesListener);
 			}
@@ -177,9 +163,41 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 			 */
 			public void removed(NodeChangeEvent event) {
-				//Do nothing as there are no events from removed node
+				// Do nothing as there are no events from removed node
 			}
 		};
+	}
+
+	/**
+	 * Initialize the preferences listener.
+	 */
+	private void initializePreferencesListener() {
+		if (preferencesListener == null) {
+			preferencesListener = new IEclipsePreferences.IPreferenceChangeListener() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
+				 */
+				public void preferenceChange(PreferenceChangeEvent event) {
+
+					if (silentRunning)
+						return;
+
+					Object oldValue = event.getOldValue();
+					Object newValue = event.getNewValue();
+					String key = event.getKey();
+					if (newValue == null)
+						newValue = getDefault(key, oldValue);
+					else if (oldValue == null)
+						oldValue = getDefault(key, newValue);
+					firePropertyChangeEvent(event.getKey(), oldValue, newValue);
+				}
+			};
+			getStorePreferences().addPreferenceChangeListener(
+					preferencesListener);
+		}
+
 	}
 
 	/**
@@ -237,6 +255,8 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 * @see org.eclipse.jface.preference.IPreferenceStore#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		initializePreferencesListener();// Create the preferences listener if it
+		// does not exist
 		listeners.add(listener);
 	}
 
@@ -259,8 +279,9 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 		// this store was created on. (and optionally the default)
 		if (searchContexts == null) {
 			if (includeDefault)
-				return new IEclipsePreferences[] {getStorePreferences(), getDefaultPreferences()};
-			return new IEclipsePreferences[] {getStorePreferences()};
+				return new IEclipsePreferences[] { getStorePreferences(),
+						getDefaultPreferences() };
+			return new IEclipsePreferences[] { getStorePreferences() };
 		}
 		// otherwise the user specified a search order so return the appropriate
 		// nodes based on it
@@ -302,7 +323,10 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 		// the end)
 		for (int i = 0; i < scopes.length; i++) {
 			if (scopes[i].equals(defaultContext))
-				Assert.isTrue(false, WorkbenchMessages.ScopedPreferenceStore_DefaultAddedError); 
+				Assert
+						.isTrue(
+								false,
+								WorkbenchMessages.ScopedPreferenceStore_DefaultAddedError);
 		}
 	}
 
@@ -530,11 +554,11 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 */
 	public void putValue(String name, String value) {
 		try {
-			//Do not notify listeners
+			// Do not notify listeners
 			silentRunning = true;
 			getStorePreferences().put(name, value);
 		} finally {
-			//Be sure that an exception does not stop property updates
+			// Be sure that an exception does not stop property updates
 			silentRunning = false;
 			dirty = true;
 		}
@@ -547,6 +571,8 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		listeners.remove(listener);
+		if (listeners.isEmpty())
+			disposePreferenceStoreListener();
 	}
 
 	/*
@@ -632,15 +658,16 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 		if (oldValue == value)
 			return;
 		try {
-			silentRunning = true;//Turn off updates from the store
+			silentRunning = true;// Turn off updates from the store
 			if (getDefaultDouble(name) == value)
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putDouble(name, value);
 			dirty = true;
-			firePropertyChangeEvent(name, new Double(oldValue), new Double(value));
+			firePropertyChangeEvent(name, new Double(oldValue), new Double(
+					value));
 		} finally {
-			silentRunning = false;//Restart listening to preferences
+			silentRunning = false;// Restart listening to preferences
 		}
 	}
 
@@ -655,7 +682,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 		if (oldValue == value)
 			return;
 		try {
-			silentRunning = true;//Turn off updates from the store
+			silentRunning = true;// Turn off updates from the store
 			if (getDefaultFloat(name) == value)
 				getStorePreferences().remove(name);
 			else
@@ -663,7 +690,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 			dirty = true;
 			firePropertyChangeEvent(name, new Float(oldValue), new Float(value));
 		} finally {
-			silentRunning = false;//Restart listening to preferences
+			silentRunning = false;// Restart listening to preferences
 		}
 	}
 
@@ -678,15 +705,16 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 		if (oldValue == value)
 			return;
 		try {
-			silentRunning = true;//Turn off updates from the store
+			silentRunning = true;// Turn off updates from the store
 			if (getDefaultInt(name) == value)
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putInt(name, value);
 			dirty = true;
-			firePropertyChangeEvent(name, new Integer(oldValue), new Integer(value));
+			firePropertyChangeEvent(name, new Integer(oldValue), new Integer(
+					value));
 		} finally {
-			silentRunning = false;//Restart listening to preferences
+			silentRunning = false;// Restart listening to preferences
 		}
 	}
 
@@ -701,7 +729,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 		if (oldValue == value)
 			return;
 		try {
-			silentRunning = true;//Turn off updates from the store
+			silentRunning = true;// Turn off updates from the store
 			if (getDefaultLong(name) == value)
 				getStorePreferences().remove(name);
 			else
@@ -709,7 +737,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 			dirty = true;
 			firePropertyChangeEvent(name, new Long(oldValue), new Long(value));
 		} finally {
-			silentRunning = false;//Restart listening to preferences
+			silentRunning = false;// Restart listening to preferences
 		}
 	}
 
@@ -720,7 +748,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 *      java.lang.String)
 	 */
 	public void setValue(String name, String value) {
-		//Do not turn on silent running here as Strings are propagated
+		// Do not turn on silent running here as Strings are propagated
 		if (getDefaultString(name).equals(value))
 			getStorePreferences().remove(name);
 		else
@@ -739,15 +767,16 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 		if (oldValue == value)
 			return;
 		try {
-			silentRunning = true;//Turn off updates from the store
+			silentRunning = true;// Turn off updates from the store
 			if (getDefaultBoolean(name) == value)
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putBoolean(name, value);
 			dirty = true;
-			firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(value));
+			firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(
+					value));
 		} finally {
-			silentRunning = false;//Restart listening to preferences
+			silentRunning = false;// Restart listening to preferences
 		}
 	}
 
@@ -765,4 +794,28 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 		}
 
 	}
+
+	/**
+	 * Dispose the receiver.
+	 */
+	private void disposePreferenceStoreListener() {
+
+		IEclipsePreferences root = (IEclipsePreferences) Platform
+				.getPreferencesService().getRootNode().node(
+						Plugin.PLUGIN_PREFERENCE_SCOPE);
+		try {
+			if (!(root.nodeExists(nodeQualifier)))
+				return;
+		} catch (BackingStoreException e) {
+			return;// No need to report here as the node won't have the
+			// listener
+		}
+
+		IEclipsePreferences preferences = getStorePreferences();
+		if (preferences == null)
+			return;
+		if (preferencesListener != null)
+			preferences.removePreferenceChangeListener(preferencesListener);
+	}
+
 }
