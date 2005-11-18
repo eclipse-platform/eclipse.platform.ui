@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.core.model.IPersistableDebugElement;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -202,7 +206,9 @@ public class FormatTableRenderingDialog extends Dialog
 			Label defaultRow = new Label(composite, SWT.NONE);
 			defaultRow.setText(DebugUIMessages.FormatTableRenderingDialog_0);
 			fDefaultRowValue = new Text(composite, SWT.READ_ONLY);
-			int defRow = getDefaultRowSize(fRendering.getMemoryBlock().getModelIdentifier());
+			
+			int defRow = getDefaultRowSize();
+						
 			fDefaultRowValue.setText(String.valueOf(defRow));
 			Label def = new Label(composite, SWT.NONE);
 			def.setText(DebugUIMessages.FormatTableRenderingDialog_1);
@@ -217,7 +223,9 @@ public class FormatTableRenderingDialog extends Dialog
 			Label defaultCol = new Label(composite, SWT.NONE);
 			defaultCol.setText(DebugUIMessages.FormatTableRenderingDialog_2);
 			fDefaultColValue = new Text(composite, SWT.READ_ONLY);
-			int defCol = getDefaultColumnSize(fRendering.getMemoryBlock().getModelIdentifier());
+			
+			int defCol = getDefaultColumnSize();
+			
 			fDefaultColValue.setText(String.valueOf(defCol));
 			def = new Label(composite, SWT.NONE);
 			def.setText(DebugUIMessages.FormatTableRenderingDialog_3);
@@ -253,14 +261,14 @@ public class FormatTableRenderingDialog extends Dialog
 			super.okPressed();
 		}
 		
-		void populateDialog()
+		private void populateDialog()
 		{
 			int currentColSize = fRendering.getAddressableUnitPerColumn();
 			int currentRowSize = fRendering.getAddressableUnitPerLine();
 			setCurrentRowColSizes(currentRowSize, currentColSize);
 		}
 
-		int populateControl(int currentSize, int[] searchArray, Combo control) {
+		private int populateControl(int currentSize, int[] searchArray, Combo control) {
 			int idx = 0;
 			for (int i=0 ;i<searchArray.length; i++)
 			{
@@ -274,7 +282,7 @@ public class FormatTableRenderingDialog extends Dialog
 			return idx;
 		}
 		
-		Control createPreviewPage(Composite parent, int rowSize, int colSize)
+		private Control createPreviewPage(Composite parent, int rowSize, int colSize)
 		{			
 			if (!isValid(rowSize, colSize))
 			{	
@@ -337,7 +345,7 @@ public class FormatTableRenderingDialog extends Dialog
 			return table;
 		}
 		
-		boolean isValid(int rowSize, int colSize)
+		private boolean isValid(int rowSize, int colSize)
 		{
 			if (rowSize % colSize != 0)
 				return false;
@@ -348,7 +356,7 @@ public class FormatTableRenderingDialog extends Dialog
 			return true;
 		}
 
-		void refreshPreviewPage() {
+		private void refreshPreviewPage() {
 			fPreivewPage.dispose();
 			
 			int rowSize = fRowSizes[fRowControl.getSelectionIndex()];
@@ -357,7 +365,7 @@ public class FormatTableRenderingDialog extends Dialog
 			fPreviewPageBook.showPage(fPreivewPage);
 		}
 
-		void updateButtons() {
+		private void updateButtons() {
 			int rowSize = fRowSizes[fRowControl.getSelectionIndex()];
 			int colSize = fColumnSizes[fColumnControl.getSelectionIndex()];
 			Button button = getButton(IDialogConstants.OK_ID);
@@ -375,17 +383,46 @@ public class FormatTableRenderingDialog extends Dialog
 			}
 		}
 
-		String getRowPrefId(String modelId) {
+		private String getRowPrefId(String modelId) {
 			String rowPrefId = IDebugPreferenceConstants.PREF_ROW_SIZE + ":" + modelId; //$NON-NLS-1$
 			return rowPrefId;
 		}
 
-		String getColumnPrefId(String modelId) {
+		private String getColumnPrefId(String modelId) {
 			String colPrefId = IDebugPreferenceConstants.PREF_COLUMN_SIZE + ":" + modelId; //$NON-NLS-1$
 			return colPrefId;
 		}
 		
-		int getDefaultRowSize(String modelId)
+		private int getDefaultRowSize()
+		{
+			int size = -1;
+			IPersistableDebugElement elmt = (IPersistableDebugElement)fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			if (elmt != null)
+			{
+				if (elmt.supportsProperty(fRendering, AbstractTableRendering.PREF_ROW_SIZE))
+					return getDefaultFromPersistableElement(AbstractTableRendering.PREF_ROW_SIZE);
+			}
+			
+			size = getDefaultRowSize(fRendering.getMemoryBlock().getModelIdentifier());
+			
+			return size;
+		}
+		
+		private int getDefaultColumnSize()
+		{
+			int size = -1;
+			IPersistableDebugElement elmt = (IPersistableDebugElement)fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			if (elmt != null)
+			{
+				if (elmt.supportsProperty(fRendering, AbstractTableRendering.PREF_COL_SIZE))
+					return getDefaultFromPersistableElement(AbstractTableRendering.PREF_COL_SIZE);
+			}
+
+			size = getDefaultColumnSize(fRendering.getMemoryBlock().getModelIdentifier());
+			return size;
+		}
+		
+		private int getDefaultRowSize(String modelId)
 		{
 			int row = DebugUITools.getPreferenceStore().getInt(getRowPrefId(modelId));
 			if (row == 0)
@@ -398,11 +435,12 @@ public class FormatTableRenderingDialog extends Dialog
 			
 		}
 		
-		int getDefaultColumnSize(String modelId)
+		private int getDefaultColumnSize(String modelId)
 		{
 			int col = DebugUITools.getPreferenceStore().getInt(getColumnPrefId(modelId));
 			if (col == 0)
 			{
+				// if not yet defined, initialize with default
 				DebugUITools.getPreferenceStore().setValue(getColumnPrefId(modelId), IDebugPreferenceConstants.PREF_COLUMN_SIZE_DEFAULT);
 			}
 			
@@ -410,28 +448,43 @@ public class FormatTableRenderingDialog extends Dialog
 			return col;
 		}
 
-		void saveDefaults() {
+		private void saveDefaults() {
 			int columnSize = fColumnSizes[fColumnControl.getSelectionIndex()];
 			int rowSize = fRowSizes[fRowControl.getSelectionIndex()];
 			
-			fDefaultColValue.setText(String.valueOf(columnSize));
-			fDefaultRowValue.setText(String.valueOf(rowSize));
+			IPersistableDebugElement elmt = (IPersistableDebugElement)fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			
-			// save preference
-			// find model id
-			String modelId = fRendering.getMemoryBlock().getModelIdentifier();
+			if (elmt != null && elmt.supportsProperty(fRendering, AbstractTableRendering.PREF_ROW_SIZE)
+				&& elmt.supportsProperty(fRendering, AbstractTableRendering.PREF_COL_SIZE))
+			{
+				try {
+					elmt.setProperty(fRendering, AbstractTableRendering.PREF_ROW_SIZE, new Integer(rowSize));
+					elmt.setProperty(fRendering, AbstractTableRendering.PREF_COL_SIZE, new Integer(columnSize));
+				} catch (CoreException e) {
+					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.FormatTableRenderingDialog_4, DebugUIMessages.FormatTableRenderingDialog_5, e);
+				}
+			}
+			else
+			{
+				// save preference
+				// find model id
+				String modelId = fRendering.getMemoryBlock().getModelIdentifier();
+				
+				// constrcut preference id
+				String rowPrefId = getRowPrefId(modelId);
+				String colPrefId = getColumnPrefId(modelId);
+				
+				// save setting
+				IPreferenceStore prefStore = DebugUITools.getPreferenceStore();
+				prefStore.setValue(rowPrefId, rowSize);
+				prefStore.setValue(colPrefId, columnSize);
+			}
 			
-			// constrcut preference id
-			String rowPrefId = getRowPrefId(modelId);
-			String colPrefId = getColumnPrefId(modelId);
-			
-			// save setting
-			IPreferenceStore prefStore = DebugUITools.getPreferenceStore();
-			prefStore.setValue(rowPrefId, rowSize);
-			prefStore.setValue(colPrefId, columnSize);
+			fDefaultColValue.setText(String.valueOf(getDefaultColumnSize()));
+			fDefaultRowValue.setText(String.valueOf(getDefaultRowSize()));
 		}
 
-		void restoreDefaults() {
+		private void restoreDefaults() {
 			String modelId = fRendering.getMemoryBlock().getModelIdentifier();
 			int defaultRowSize = DebugUITools.getPreferenceStore().getInt(getRowPrefId(modelId));
 			int defaultColSize = DebugUITools.getPreferenceStore().getInt(getColumnPrefId(modelId));
@@ -482,5 +535,30 @@ public class FormatTableRenderingDialog extends Dialog
 			fDisableCancel = true;
 			fMsg = msg;
 			open();
+		}
+		
+		private int getDefaultFromPersistableElement(String propertyId) {
+			int defaultValue = -1;
+			IPersistableDebugElement elmt = (IPersistableDebugElement)fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			if (elmt != null)
+			{
+				try {
+					Object valueMB = elmt.getProperty(this, propertyId);
+					if (valueMB != null && !(valueMB instanceof Integer))
+					{
+						IStatus status = DebugUIPlugin.newErrorStatus("Model returned invalid type on " + propertyId, null); //$NON-NLS-1$
+						DebugUIPlugin.log(status);
+					}
+					
+					if (valueMB != null)
+					{
+						Integer value = (Integer)valueMB;
+						defaultValue = value.intValue();
+					}
+				} catch (CoreException e) {
+					DebugUIPlugin.log(e);
+				}
+			}
+			return defaultValue;
 		}
 	}

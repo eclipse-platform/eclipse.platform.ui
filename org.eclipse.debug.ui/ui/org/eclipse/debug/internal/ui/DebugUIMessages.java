@@ -240,6 +240,8 @@ public class DebugUIMessages extends NLS {
 	public static String FormatTableRenderingDialog_1;
 	public static String FormatTableRenderingDialog_2;
 	public static String FormatTableRenderingDialog_3;
+	public static String FormatTableRenderingDialog_4;
+	public static String FormatTableRenderingDialog_5;
 	
 	static {
 		// load message values from bundle file

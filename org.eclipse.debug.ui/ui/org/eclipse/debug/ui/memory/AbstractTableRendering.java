@@ -13,11 +13,13 @@ package org.eclipse.debug.ui.memory;
 
 import java.math.BigInteger;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.IPersistableDebugElement;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -139,16 +141,19 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 
 	/**
 	 *  Property identifier for the selected address in a table rendering
+	 *  This property is used for synchronization between renderings.
 	 */
 	public static final String PROPERTY_SELECTED_ADDRESS = "selectedAddress"; //$NON-NLS-1$
 	
 	/**
 	 * Property identifier for the column size in a table rendering
+	 * This property is used for synchronization between renderings.
 	 */
 	public static final String PROPERTY_COL_SIZE = "columnSize"; //$NON-NLS-1$
 	
 	/**
-	 * Property identifier for the top row address in a table rendering
+	 * Property identifier for the top row address in a table rendering. 
+	 * This property is used for synchronization between renderings.
 	 */
 	public static final String PROPERTY_TOP_ADDRESS = "topAddress"; //$NON-NLS-1$
 	
@@ -157,6 +162,37 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 * @since 3.2
 	 */
 	public static final String PROPERTY_ROW_SIZE = "rowSize"; //$NON-NLS-1$
+	
+	/**
+	 * Preference identifiery for the row size in a table rendering.
+	 * This preference is expected to be saved by an IPersistableDebugElement.  
+	 * Memory Blocks can optionally provide and save this preference to customize
+	 * the initial format of a table rendering.
+	 * 
+	 * The value of this property is an Integer.  The value can be one of the
+	 * following values:  1, 2, 4, 8, 16.  This value must be greater than 
+	 * PREF_COL_SIZE and must also be divisible by PREF_COL_SIZE.
+	 * 
+	 * TODO:  New API, need review
+	 * @since 3.2
+	 */
+	public static final String PREF_ROW_SIZE = "org.eclipse.debug.ui.AbstractTableRendering.rowSize"; //$NON-NLS-1$
+	
+	/**
+	 * Preference identifiery for the column size in a table rendering.
+	 * This preference is expected to be saved by an IPersistableDebugElement.  
+	 * Memory Blocks can optionally provide and save this preference to customize
+	 * the initial format of a table rendering.
+	 * 
+	 * The value of this property is an Integer.  The value can be one of the
+	 * following values:  1, 2, 4, 8, 16.  This value must be smaller than
+	 * PREF_ROW_SIZE.  PREF_ROW_SIZE must be divisible by PREF_COL_SIZE.
+	 * 
+	 * TODO:  New API, need review
+	 * @since 3.2
+	 */
+	public static final String PREF_COL_SIZE = "org.eclipse.debug.ui.AbstractTableRendering.colSize"; //$NON-NLS-1$
+	
 	
 	private PageBook fPageBook;
 	private TableViewer fTableViewer;
@@ -206,7 +242,6 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	private PrevPageAction fPrevAction;
 
 	private Shell fToolTipShell;
-
 	private FormatTableRenderingAction fFormatRenderingAction;
 	
 	private class EventHandleLock
@@ -937,6 +972,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 
 	private int getDefaultColumnSize() {
 		
+		// default to global preference store
 		IPreferenceStore prefStore = DebugUITools.getPreferenceStore();
 		int columnSize = prefStore.getInt(IDebugPreferenceConstants.PREF_COLUMN_SIZE);
 		// actual column size is number of addressable units * size of the addressable unit
@@ -955,7 +991,21 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		}
 		else
 		{
-			int defaultColSize = getDefaultColumnSizeByModel(getMemoryBlock().getModelIdentifier());
+			IPersistableDebugElement elmt = (IPersistableDebugElement)getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			int defaultColSize = -1;
+			
+			if (elmt != null)
+			{
+				if (elmt.supportsProperty(this, PREF_COL_SIZE))
+					defaultColSize = getDefaultFromPersistableElement(PREF_COL_SIZE);
+			}
+			
+			if (defaultColSize <= 0)
+			{
+				// if not provided, get default by model
+				defaultColSize = getDefaultColumnSizeByModel(getMemoryBlock().getModelIdentifier());
+			}
+			
 			if (defaultColSize > 0)
 				columnSize = defaultColSize * getAddressableSize();
 		}
@@ -963,6 +1013,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 
 	private int getDefaultRowSize() {
+		
 		int rowSize = DebugUITools.getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_ROW_SIZE);
 		int bytePerLine = rowSize * getAddressableSize();
 		
@@ -979,12 +1030,50 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		}
 		else
 		{
-			// no synchronized property, ask preference store by id
-			int defaultRowSize = getDefaultRowSizeByModel(getMemoryBlock().getModelIdentifier());
+			int defaultRowSize = -1;
+			IPersistableDebugElement elmt = (IPersistableDebugElement)getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			if (elmt != null)
+			{
+				if (elmt.supportsProperty(this, PREF_ROW_SIZE))
+				{
+					defaultRowSize = getDefaultFromPersistableElement(PREF_ROW_SIZE);
+					return defaultRowSize * getAddressableSize();
+				}
+			}
+			
+			if (defaultRowSize <= 0)
+				// no synchronized property, ask preference store by id
+				defaultRowSize = getDefaultRowSizeByModel(getMemoryBlock().getModelIdentifier());
+			
 			if (defaultRowSize > 0)
 				bytePerLine = defaultRowSize * getAddressableSize();
 		}
 		return bytePerLine;
+	}
+
+	private int getDefaultFromPersistableElement(String propertyId) {
+		int defaultValue = -1;
+		IPersistableDebugElement elmt = (IPersistableDebugElement)getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+		if (elmt != null)
+		{
+			try {
+				Object valueMB = elmt.getProperty(this, propertyId);
+				if (valueMB != null && !(valueMB instanceof Integer))
+				{
+					IStatus status = DebugUIPlugin.newErrorStatus("Model returned invalid type on " + propertyId, null); //$NON-NLS-1$
+					DebugUIPlugin.log(status);
+				}
+				
+				if (valueMB != null)
+				{
+					Integer value = (Integer)valueMB;
+					defaultValue = value.intValue();
+				}
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
+		return defaultValue;
 	}
 	
 	private void getPageSizeFromPreference()
