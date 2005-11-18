@@ -18,6 +18,7 @@ import java.util.Date;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -453,9 +454,21 @@ public class ResourceInfoPage extends PropertyPage {
 
 		//Not relevant to projects
 		if (resource.getType() != IResource.PROJECT) {
-			createEditableButton(composite);
-			createExecutableButton(composite);
-			createArchiveButton(composite);
+			URI location = resource.getLocationURI();
+			if (location != null) {
+				try {
+					IFileSystem fs = EFS.getFileSystem(location.getScheme());
+					int attributes = fs.attributes();
+					if ((attributes & EFS.ATTRIBUTE_READ_ONLY) != 0)
+						createEditableButton(composite);
+					if ((attributes & EFS.ATTRIBUTE_EXECUTABLE) != 0)
+						createExecutableButton(composite);
+					if ((attributes & EFS.ATTRIBUTE_ARCHIVE) != 0)
+						createArchiveButton(composite);
+				} catch (CoreException e) {
+					//ignore if we can't access the file system for this resource
+				}
+			}
 			createDerivedButton(composite);
 		}
 	}
