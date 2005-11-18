@@ -11,6 +11,7 @@
 
 package org.eclipse.core.tests.resources;
 
+import java.net.URI;
 import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -40,6 +41,9 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(LinkedResourceWithPathVariableTest.class);
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new LinkedResourceWithPathVariableTest("testMoveFile"));
+//		return suite;
 	}
 
 	protected void setUp() throws Exception {
@@ -79,10 +83,17 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	}
 
 	/**
-	 * @see LinkedResourceTest#resolvePath(org.eclipse.core.runtime.IPath)
+	 * @see LinkedResourceTest#resolve(org.eclipse.core.runtime.IPath)
 	 */
-	protected IPath resolvePath(IPath path) {
+	protected IPath resolve(IPath path) {
 		return getWorkspace().getPathVariableManager().resolvePath(path);
+	}
+
+	/**
+	 * @see LinkedResourceTest#resolve(java.net.URI)
+	 */
+	protected URI resolve(URI uri) {
+		return getWorkspace().getPathVariableManager().resolveURI(uri);
 	}
 
 	/**

@@ -80,9 +80,9 @@ public class LinkedResourceTest extends ResourceTest {
 		ensureExistsInWorkspace(new IResource[] {existingProject, otherExistingProject, closedProject, existingFolderInExistingProject, existingFolderInExistingFolder, existingFileInExistingProject}, true);
 		closedProject.close(getMonitor());
 		ensureDoesNotExistInWorkspace(new IResource[] {nonExistingProject, nonExistingFolderInExistingProject, nonExistingFolderInExistingFolder, nonExistingFolderInOtherExistingProject, nonExistingFolderInNonExistingProject, nonExistingFolderInNonExistingFolder, nonExistingFileInExistingProject, nonExistingFileInOtherExistingProject, nonExistingFileInExistingFolder});
-		ensureDoesNotExistInFileSystem(resolvePath(nonExistingLocation).toFile());
-		resolvePath(localFolder).toFile().mkdirs();
-		createFileInFileSystem(resolvePath(localFile), getRandomContents());
+		ensureDoesNotExistInFileSystem(resolve(nonExistingLocation).toFile());
+		resolve(localFolder).toFile().mkdirs();
+		createFileInFileSystem(resolve(localFile), getRandomContents());
 	}
 
 	private byte[] getFileContents(IFile file) throws CoreException {
@@ -94,8 +94,15 @@ public class LinkedResourceTest extends ResourceTest {
 	/**
 	 * Maybe overridden in subclasses that use path variables.
 	 */
-	protected IPath resolvePath(IPath path) {
+	protected IPath resolve(IPath path) {
 		return path;
+	}
+
+	/**
+	 * Maybe overridden in subclasses that use path variables.
+	 */
+	protected URI resolve(URI uri) {
+		return uri;
 	}
 
 	protected void setUp() throws Exception {
@@ -125,8 +132,8 @@ public class LinkedResourceTest extends ResourceTest {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		Workspace.clear(resolvePath(localFolder).toFile());
-		Workspace.clear(resolvePath(nonExistingLocation).toFile());
+		Workspace.clear(resolve(localFolder).toFile());
+		Workspace.clear(resolve(nonExistingLocation).toFile());
 	}
 
 	/**
@@ -153,8 +160,8 @@ public class LinkedResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.1", e);
 		}
-		assertEquals("1.2", resolvePath(location), folder.getLocation());
-		assertTrue("1.3", !resolvePath(location).toFile().exists());
+		assertEquals("1.2", resolve(location), folder.getLocation());
+		assertTrue("1.3", !resolve(location).toFile().exists());
 		//getting children should succeed (and be empty)
 		try {
 			assertEquals("1.4", 0, folder.members().length);
@@ -217,7 +224,7 @@ public class LinkedResourceTest extends ResourceTest {
 		assertTrue("1.2", !blockedFile.exists());
 		assertTrue("1.3", nonExistingFolderInExistingProject.exists());
 		assertTrue("1.4", nonExistingFolderInExistingProject.getFile(childName).exists());
-		assertEquals("1.5", nonExistingFolderInExistingProject.getLocation(), resolvePath(localFolder));
+		assertEquals("1.5", nonExistingFolderInExistingProject.getLocation(), resolve(localFolder));
 
 		//now delete the link
 		try {
@@ -262,7 +269,7 @@ public class LinkedResourceTest extends ResourceTest {
 	public void testChangeLinkGender() {
 		IFolder folder = nonExistingFolderInExistingProject;
 		IFile file = folder.getProject().getFile(folder.getProjectRelativePath());
-		IPath resolvedLocation = resolvePath(localFolder);
+		IPath resolvedLocation = resolve(localFolder);
 		try {
 			folder.createLink(localFolder, IResource.NONE, getMonitor());
 		} catch (CoreException e) {
@@ -538,7 +545,7 @@ public class LinkedResourceTest extends ResourceTest {
 		IFolder linkedFolder = nonExistingFolderInExistingProject;
 		try {
 			try {
-				createFileInFileSystem(resolvePath(fileLocation), getRandomContents());
+				createFileInFileSystem(resolve(fileLocation), getRandomContents());
 				linkedFolder.createLink(localFolder, IResource.NONE, getMonitor());
 				linkedFile.createLink(fileLocation, IResource.NONE, getMonitor());
 			} catch (CoreException e) {
@@ -579,7 +586,7 @@ public class LinkedResourceTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("5.99", e);
 			}
-			assertTrue("6.0", resolvePath(fileLocation).toFile().delete());
+			assertTrue("6.0", resolve(fileLocation).toFile().delete());
 
 			try {
 				existingProject.copy(destination.getFullPath(), IResource.NONE, getMonitor());
@@ -626,7 +633,7 @@ public class LinkedResourceTest extends ResourceTest {
 				fail("6.99", e);
 			}
 		} finally {
-			Workspace.clear(resolvePath(fileLocation).toFile());
+			Workspace.clear(resolve(fileLocation).toFile());
 		}
 	}
 
@@ -669,7 +676,7 @@ public class LinkedResourceTest extends ResourceTest {
 		IResource[] oldResources = new IResource[] {file, folder, existingProject, childFile};
 		try {
 			try {
-				createFileInFileSystem(resolvePath(fileLocation));
+				createFileInFileSystem(resolve(fileLocation));
 				folder.createLink(localFolder, IResource.NONE, getMonitor());
 				file.createLink(fileLocation, IResource.NONE, getMonitor());
 			} catch (CoreException e) {
@@ -703,7 +710,7 @@ public class LinkedResourceTest extends ResourceTest {
 
 			assertTrue("3.8", destination.isSynchronized(IResource.DEPTH_INFINITE));
 		} finally {
-			Workspace.clear(resolvePath(fileLocation).toFile());
+			Workspace.clear(resolve(fileLocation).toFile());
 		}
 	}
 
@@ -732,7 +739,7 @@ public class LinkedResourceTest extends ResourceTest {
 		//link should now exist
 		assertTrue("2.0", link.exists());
 		assertTrue("2.1", link.isLinked());
-		assertEquals("2.2", resolvePath(localFolder), link.getLocation());
+		assertEquals("2.2", resolve(localFolder), link.getLocation());
 	}
 
 	/**
@@ -841,7 +848,7 @@ public class LinkedResourceTest extends ResourceTest {
 				//This resource already exists in the workspace
 				if (resource.exists())
 					return true;
-				IPath resolvedLocation = resolvePath(location);
+				IPath resolvedLocation = resolve(location);
 				//The corresponding location in the local file system does not exist.
 				if (!resolvedLocation.toFile().exists())
 					return true;
@@ -867,7 +874,7 @@ public class LinkedResourceTest extends ResourceTest {
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
 				if (result == CANCELED)
 					return monitor instanceof CancelingProgressMonitor;
-				IPath resolvedLocation = resolvePath(location);
+				IPath resolvedLocation = resolve(location);
 				if (!resource.exists() || !resolvedLocation.toFile().exists())
 					return false;
 				if (!resource.getLocation().equals(resolvedLocation))
@@ -925,7 +932,7 @@ public class LinkedResourceTest extends ResourceTest {
 				if (resource.exists())
 					return true;
 				//The corresponding location in the local file system does not exist.
-				if (!resolvePath(location).toFile().exists())
+				if (!resolve(location).toFile().exists())
 					return true;
 				//The workspace contains a resource of a different type at the same path as this resource
 				if (getWorkspace().getRoot().findMember(resource.getFullPath()) != null)
@@ -937,7 +944,7 @@ public class LinkedResourceTest extends ResourceTest {
 				if (!getWorkspace().validateName(resource.getName(), IResource.FOLDER).isOK())
 					return true;
 				//The corresponding location in the local file system is occupied by a file (as opposed to a directory)
-				if (resolvePath(location).toFile().isFile())
+				if (resolve(location).toFile().isFile())
 					return true;
 				//passed all failure case so it should succeed
 				return false;
@@ -949,7 +956,7 @@ public class LinkedResourceTest extends ResourceTest {
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
 				if (result == CANCELED)
 					return monitor instanceof CancelingProgressMonitor;
-				IPath resolvedLocation = resolvePath(location);
+				IPath resolvedLocation = resolve(location);
 				if (!resource.exists() || !resolvedLocation.toFile().exists())
 					return false;
 				if (!resource.getLocation().equals(resolvedLocation))
@@ -979,7 +986,7 @@ public class LinkedResourceTest extends ResourceTest {
 			assertEquals("1.0", IResource.NULL_STAMP, linkedFile.getModificationStamp());
 			//create local file
 			try {
-				resolvePath(location).toFile().createNewFile();
+				resolve(location).toFile().createNewFile();
 				linkedFile.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 			} catch (CoreException e) {
 				fail("2.91", e);
@@ -989,7 +996,7 @@ public class LinkedResourceTest extends ResourceTest {
 			assertTrue("2.0", linkedFile.getModificationStamp() >= 0);
 
 			//delete local file
-			ensureDoesNotExistInFileSystem(resolvePath(location).toFile());
+			ensureDoesNotExistInFileSystem(resolve(location).toFile());
 			try {
 				linkedFile.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 			} catch (CoreException e) {
@@ -997,7 +1004,7 @@ public class LinkedResourceTest extends ResourceTest {
 			}
 			assertEquals("4.0", IResource.NULL_STAMP, linkedFile.getModificationStamp());
 		} finally {
-			Workspace.clear(resolvePath(location).toFile());
+			Workspace.clear(resolve(location).toFile());
 		}
 	}
 
@@ -1063,8 +1070,8 @@ public class LinkedResourceTest extends ResourceTest {
 				IResource destination = (IResource) args[1];
 				boolean isDeep = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				IPath sourceLocation = localFile;
-				URI sourceLocationURI = FileUtil.toURI(localFile);
+				IPath sourceLocation = resolve(localFile);
+				URI sourceLocationURI = FileUtil.toURI(sourceLocation);
 				if (result == CANCELED)
 					return monitor instanceof CancelingProgressMonitor;
 				if (!destination.exists())
@@ -1073,7 +1080,7 @@ public class LinkedResourceTest extends ResourceTest {
 				if (isDeep) {
 					if (destination.isLinked())
 						return false;
-					if (resolvePath(localFile).equals(destination.getLocation()))
+					if (resolve(localFile).equals(destination.getLocation()))
 						return false;
 					if (!destination.getProject().getLocation().isPrefixOf(destination.getLocation()))
 						return false;
@@ -1154,7 +1161,7 @@ public class LinkedResourceTest extends ResourceTest {
 					return false;
 				if (!destination.isLinked())
 					return false;
-				if (!resolvePath(localFolder).equals(destination.getLocation()))
+				if (!resolve(localFolder).equals(destination.getLocation()))
 					return false;
 				return true;
 			}
@@ -1227,7 +1234,7 @@ public class LinkedResourceTest extends ResourceTest {
 		IResource[] oldResources = new IResource[] {file, folder, existingProject, childFile};
 		try {
 			try {
-				createFileInFileSystem(resolvePath(fileLocation));
+				createFileInFileSystem(resolve(fileLocation));
 				folder.createLink(localFolder, IResource.NONE, getMonitor());
 				file.createLink(fileLocation, IResource.NONE, getMonitor());
 			} catch (CoreException e) {
@@ -1252,10 +1259,10 @@ public class LinkedResourceTest extends ResourceTest {
 			assertDoesNotExistInWorkspace("3.1", oldResources);
 
 			assertTrue("3.2", newFile.isLinked());
-			assertEquals("3.3", resolvePath(fileLocation), newFile.getLocation());
+			assertEquals("3.3", resolve(fileLocation), newFile.getLocation());
 
 			assertTrue("3.4", newFolder.isLinked());
-			assertEquals("3.5", resolvePath(localFolder), newFolder.getLocation());
+			assertEquals("3.5", resolve(localFolder), newFolder.getLocation());
 
 			assertTrue("3.6", destination.isSynchronized(IResource.DEPTH_INFINITE));
 
@@ -1274,7 +1281,7 @@ public class LinkedResourceTest extends ResourceTest {
 			assertTrue("5.7", existingProject.isSynchronized(IResource.DEPTH_INFINITE));
 			assertTrue("5.8", destination.isSynchronized(IResource.DEPTH_INFINITE));
 		} finally {
-			Workspace.clear(resolvePath(fileLocation).toFile());
+			Workspace.clear(resolve(fileLocation).toFile());
 		}
 	}
 

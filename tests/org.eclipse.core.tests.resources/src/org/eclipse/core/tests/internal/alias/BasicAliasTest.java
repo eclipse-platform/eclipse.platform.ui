@@ -440,7 +440,68 @@ public class BasicAliasTest extends ResourceTest {
 	}
 
 	public void testCreateDeleteLink() {
-		// TODO
+		IFolder folder = pNoOverlap.getFolder("folder");
+		IFile folderChild = folder.getFile("Child.txt");
+		IFolder link = pLinked.getFolder("FolderLink");
+		IFile linkChild = link.getFile(folderChild.getName());
+		ensureExistsInWorkspace(folder, true);
+		ensureExistsInWorkspace(folderChild, true);
+		try {
+			link.createLink(folder.getLocationURI(), IResource.NONE, getMonitor());
+			assertTrue("1.0", linkChild.exists());
+			//manipulate file below overlapping folder and make sure alias under link is updated
+			folderChild.delete(IResource.NONE, getMonitor());
+			assertTrue("1.1", !linkChild.exists());
+			ensureExistsInWorkspace(folderChild, true);
+			assertTrue("1.2", linkChild.exists());
+			
+			link.delete(IResource.NONE, getMonitor());
+			assertTrue("1.3", !linkChild.exists());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+	}
+
+	public void testDeepLink() {
+		IFolder folder = pNoOverlap.getFolder("folder");
+		IFile folderChild = folder.getFile("Child.txt");
+		final IFolder linkParent = pLinked.getFolder("LinkParent");
+		IFolder link = linkParent.getFolder("FolderLink");
+		IFile linkChild = link.getFile(folderChild.getName());
+		ensureExistsInWorkspace(new IResource[] {folder, folderChild, linkParent}, true);
+		try {
+			link.createLink(folder.getLocationURI(), IResource.NONE, getMonitor());
+			assertTrue("1.0", linkChild.exists());
+			
+			//manipulate file below overlapping folder and make sure alias under link is updated
+			folderChild.delete(IResource.NONE, getMonitor());
+			assertTrue("1.1", !linkChild.exists());
+			ensureExistsInWorkspace(folderChild, true);
+			assertTrue("1.2", linkChild.exists());
+			
+			link.delete(IResource.NONE, getMonitor());
+			assertTrue("1.3", !linkChild.exists());
+			link.createLink(folder.getLocationURI(), IResource.NONE, getMonitor());
+			
+			//close and reopen the project and ensure the alias is still updated
+			link.getProject().close(getMonitor());
+			link.getProject().open(getMonitor());
+
+			folderChild.delete(IResource.NONE, getMonitor());
+			assertTrue("2.1", !linkChild.exists());
+			ensureExistsInWorkspace(folderChild, true);
+			assertTrue("2.2", linkChild.exists());
+			
+			//force AliasManager to restart (simulates a shutdown/startup)
+			((Workspace)getWorkspace()).getAliasManager().startup(null);
+
+			folderChild.delete(IResource.NONE, getMonitor());
+			assertTrue("3.1", !linkChild.exists());
+			ensureExistsInWorkspace(folderChild, true);
+			assertTrue("3.2", linkChild.exists());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
 	}
 
 	public void testCreateOpenProject() {
