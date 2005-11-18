@@ -650,6 +650,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			public void uninstall() {
 				if (fHoverHandler != null)
 					fControl.removeMouseTrackListener(fHoverHandler);
+				
+				doHideHover();
 
 				Control c= fControl.getParent();
 				while (c != null) {
