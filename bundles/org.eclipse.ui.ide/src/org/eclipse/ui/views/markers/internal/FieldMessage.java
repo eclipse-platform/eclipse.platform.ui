@@ -87,7 +87,7 @@ public class FieldMessage implements IField {
 			return ((IWorkbenchAdapter) obj).getLabel(obj);
 		
 		if(obj instanceof IMarker)
-			 Util.getProperty(IMarker.MESSAGE, (IMarker) obj); 
+			return Util.getProperty(IMarker.MESSAGE, (IMarker) obj); 
 		
 		return NLS.bind(MarkerMessages.FieldMessage_WrongType,obj.toString());
 	}

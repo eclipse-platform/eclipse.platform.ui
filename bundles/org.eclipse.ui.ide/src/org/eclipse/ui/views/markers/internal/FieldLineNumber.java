@@ -11,8 +11,10 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * FieldLineNumber is the field for line numbers.
@@ -68,18 +70,32 @@ public class FieldLineNumber implements IField {
      * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
      */
     public String getValue(Object obj) {
-        if (obj == null || !(obj instanceof ConcreteMarker)) {
-            return ""; //$NON-NLS-1$
-        }
-        ConcreteMarker marker = (ConcreteMarker) obj;
+    	if (obj == null)
+			return MarkerMessages.FieldMessage_NullMessage;
 
-        if (marker.getLine() < 0) {
-            return ""; //$NON-NLS-1$
-        }
-
-        return NLS.bind(
-        		MarkerMessages.label_lineNumber,
-        		Integer.toString(marker.getLine()));
+    	if (obj instanceof MarkerNode){
+			MarkerNode node = (MarkerNode) obj;
+	    	if(node.isConcrete()){
+	    		ConcreteMarker concreteNode = (ConcreteMarker) node;
+	    		if(concreteNode.getLocationString().length() == 0){
+	    			if (concreteNode.getLine() < 0) 
+	    	            return MarkerMessages.Unknown;	    	   
+	    	        return NLS.bind(
+	    	        		MarkerMessages.label_lineNumber,
+	    	        		Integer.toString(concreteNode.getLine()));
+	    		}
+	    		return concreteNode.getLocationString();
+	    	}
+	    	return Util.EMPTY_STRING;
+		}
+		
+		if(obj instanceof IWorkbenchAdapter)
+			return Util.EMPTY_STRING;//Don't show pending
+		
+		if(obj instanceof IMarker)
+			 return Util.getProperty(IMarker.LINE_NUMBER, (IMarker) obj); 
+		
+		return NLS.bind(MarkerMessages.FieldMessage_WrongType,obj.toString());
         
     }
 
@@ -103,7 +119,14 @@ public class FieldLineNumber implements IField {
 
         ConcreteMarker marker1 = (ConcreteMarker) obj1;
         ConcreteMarker marker2 = (ConcreteMarker) obj2;
-        return marker1.getLine() - marker2.getLine();
+        
+        String location1 = marker1.getLocationString();
+        String location2 = marker2.getLocationString();
+        
+        if(location1.length() == 0 || location2.length() == 0)
+        	return marker1.getLine() - marker2.getLine();
+        
+        return location1.compareTo(location2);
     }
 
 }

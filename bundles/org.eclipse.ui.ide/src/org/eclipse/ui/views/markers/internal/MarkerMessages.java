@@ -49,6 +49,7 @@ public class MarkerMessages extends NLS{
 	public static String restoreDefaults_text;
 	
 	public static String Error;
+	public static String Unknown;
 
 	public static String columnHeader_message;
 	public static String columnHeader_location;

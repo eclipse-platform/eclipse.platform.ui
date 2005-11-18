@@ -37,8 +37,9 @@ public class ConcreteMarker extends MarkerNode{
 
     private CollationKey resourceNameKey;
 
-
     private int line;
+    
+    private String locationString;
 
     private long creationTime;
 
@@ -82,7 +83,10 @@ public class ConcreteMarker extends MarkerNode{
         resourceName = Util.getResourceName(marker);
         inFolder = Util.getContainerName(marker);
         shortFolder = null;
-        line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+        line = marker.getAttribute(IMarker.LINE_NUMBER, -1);  
+        locationString = marker.getAttribute(IMarker.LOCATION,
+				Util.EMPTY_STRING);
+		
         try {
             creationTime = marker.getCreationTime();
         } catch (CoreException e) {
@@ -233,6 +237,15 @@ public class ConcreteMarker extends MarkerNode{
 	 * @return String
 	 */
 	public String getSubCategory() {
-		return subCategory ;
+		return subCategory;
+	}
+
+	/**
+	 * Get the location string. If the {@link IMarker#LOCATION }
+	 * attribute was not set then return an empty String.
+	 * @return String
+	 */
+	public String getLocationString() {
+		return locationString;
 	}
 }
