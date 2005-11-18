@@ -83,8 +83,7 @@ public class ExtensionStateModel implements IExtensionStateModel {
 
 			values
 					.put(aPropertyName, aPropertyValue ? Boolean.TRUE
-							: Boolean.FALSE);
-			values.put(aPropertyName, newValue);
+							: Boolean.FALSE); 
 			firePropertyChangeEvent(new PropertyChangeEvent(this, aPropertyName, oldValue, newValue));
 		}		
 	}

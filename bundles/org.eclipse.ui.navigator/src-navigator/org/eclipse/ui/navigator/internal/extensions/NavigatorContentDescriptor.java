@@ -30,10 +30,12 @@ import org.eclipse.ui.navigator.internal.ActionExpression;
  * @since 3.2
  */
 public class NavigatorContentDescriptor {
-	public static final String ATT_ID = "id"; //$NON-NLS-1$
-	public static final String ATT_NAME = "name"; //$NON-NLS-1$	
-	public static final String ATT_CLASS = "class"; //$NON-NLS-1$	
+	private static final String ATT_ID = "id"; //$NON-NLS-1$
+	private static final String ATT_NAME = "name"; //$NON-NLS-1$	
+	private static final String ATT_CLASS = "class"; //$NON-NLS-1$	
 	private static final String ATT_ROOT_LABEL = "rootLabel"; //$NON-NLS-1$	 
+	
+	private static final IConfigurationElement[] NO_DUPLICATE_CONTENT_FILTERS = new IConfigurationElement[0];
 
 	private String id;
 	private String name;
@@ -47,11 +49,14 @@ public class NavigatorContentDescriptor {
 	private static final String ATT_PRIORITY = "priority"; //$NON-NLS-1$
 	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
 	private static final String ENABLED_BY_DEFAULT = "enabledByDefault"; //$NON-NLS-1$
-	public static final String ATT_CONTENT_PROVIDER = "contentProvider"; //$NON-NLS-1$
-	public static final String ATT_LABEL_PROVIDER = "labelProvider"; //$NON-NLS-1$
-	public static final String ATT_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$
-	public static final String ATT_OPEN_LISTENER = "openListener"; //$NON-NLS-1$
-	public static final String ATT_SORTER = "sorter"; //$NON-NLS-1$
+	static final String ATT_CONTENT_PROVIDER = "contentProvider"; //$NON-NLS-1$
+	static final String ATT_LABEL_PROVIDER = "labelProvider"; //$NON-NLS-1$
+	static final String ATT_VIEWER_FILTER = "viewerFilter"; //$NON-NLS-1$
+	static final String ATT_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$
+	private static final String ATT_OPEN_LISTENER = "openListener"; //$NON-NLS-1$
+	static final String ATT_SORTER = "sorter"; //$NON-NLS-1$
+	private static final String DUPLICATE_CONTENT_FILTER = "duplicateContentFilter"; //$NON-NLS-1$
+	
 
 
 	private int priority = Integer.MAX_VALUE;
@@ -62,7 +67,8 @@ public class NavigatorContentDescriptor {
 	private String declaringPluginId;
 	private boolean enabledByDefault;
 	private IPluginContribution contribution;
-	private boolean hasLoadingFailed; 
+	private boolean hasLoadingFailed;
+	private IConfigurationElement[] duplicateContentFilterElements; 
 	
 
 
@@ -245,6 +251,10 @@ public class NavigatorContentDescriptor {
 			}
 
 		};
+		
+
+		children = configElement.getChildren(DUPLICATE_CONTENT_FILTER); 
+		duplicateContentFilterElements = children != null ? children : NO_DUPLICATE_CONTENT_FILTERS;
 	}
 
 	/**
@@ -288,5 +298,9 @@ public class NavigatorContentDescriptor {
 
 	public boolean hasLoadingFailed() {
 		return hasLoadingFailed;
+	}
+
+	public IConfigurationElement[] getDuplicateContentFilterElements() {
+		return duplicateContentFilterElements;
 	}
 }

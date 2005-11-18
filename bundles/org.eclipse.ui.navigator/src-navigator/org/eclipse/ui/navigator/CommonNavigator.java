@@ -503,8 +503,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 		} else {
 			ILabelProvider labelProvider = (ILabelProvider) commonViewer.getLabelProvider();
 			String inputToolTip = getFrameToolTipText(input);
-
-			setPartName(labelProvider.getText(input));
+			
+			setPartName(viewName);
 			setTitleToolTip(inputToolTip);
 		}
 	}

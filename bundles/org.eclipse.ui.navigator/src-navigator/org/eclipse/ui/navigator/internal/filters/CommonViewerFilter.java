@@ -21,6 +21,7 @@ import org.eclipse.ui.navigator.INavigatorExtensionFilter;
 import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
 /**
  * <p>
@@ -70,10 +71,15 @@ public class CommonViewerFilter extends ViewerFilter {
 					 * !filter.select(getExtensionSite(), parentElement, element));
 					 */
 					if (!filter.select(commonViewer, parentElement, element)) {
-						select = false;
-						break;
+						return false; 
 					}
 				}
+				NavigatorContentExtension extension = contentService.getExtension(descriptor);
+				
+				INavigatorExtensionFilter[] enforcedFilters = extension.getDuplicateContentFilters();
+				for(int i=0; i<enforcedFilters.length; i++)
+					if(!enforcedFilters[i].select(commonViewer, parentElement, element)) 
+						return false;				
 			}
 		}
 

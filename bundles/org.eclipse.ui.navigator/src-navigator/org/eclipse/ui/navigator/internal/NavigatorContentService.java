@@ -665,8 +665,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		 * 
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
-		public int compare(Object lvalue, Object rvalue) {
-			return ((NavigatorContentDescriptor) lvalue).getPriority() - ((NavigatorContentDescriptor) rvalue).getPriority();
+		public int compare(Object lvalue, Object rvalue) { 
+			return ((NavigatorContentExtension) lvalue).getDescriptor().getPriority() - ((NavigatorContentExtension) rvalue).getDescriptor().getPriority();
 		}
 	};
 }

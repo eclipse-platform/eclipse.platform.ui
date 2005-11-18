@@ -8,9 +8,12 @@
  **************************************************************************************************/
 package org.eclipse.ui.navigator.internal.extensions;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IMemento;
@@ -19,43 +22,58 @@ import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
 import org.eclipse.ui.navigator.INavigatorActionService;
+import org.eclipse.ui.navigator.INavigatorExtensionFilter;
 import org.eclipse.ui.navigator.internal.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
 
 /**
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
  * </p>
  * 
  * @since 3.2
  */
 public class NavigatorContentExtension implements IMementoAware {
 
+	private static final INavigatorExtensionFilter[] NO_VIEWER_FILTERS = new INavigatorExtensionFilter[0];
 
-	private NavigatorContentService contentService; 
+	private NavigatorContentService contentService;
+
 	private NavigatorContentDescriptor descriptor;
+
 	private final String viewerId;
-	
+
 	private ICommonContentProvider contentProvider;
+
 	private ICommonLabelProvider labelProvider;
+
 	private ICommonActionProvider actionProvider;
+
 	private IExtensionStateModel stateModel;
+
 	private Comparator comparator;
-	
+
 	private boolean labelProviderInitializationFailed = false;
+
 	private boolean contentProviderInitializationFailed = false;
-	private boolean actionProviderInitializationFailed = false; 
+
+	private boolean actionProviderInitializationFailed = false;
+
 	private boolean comparatorInitializationFailed = false;
+
 	private boolean isDisposed = false;
+
 	private IMemento appliedMemento;
+
 	private StructuredViewerManager viewerManager;
 
+	private INavigatorExtensionFilter[] viewerFilters;
 
-	public NavigatorContentExtension(
-			NavigatorContentDescriptor aDescriptor,
-			NavigatorContentService aContentService, 
+	public NavigatorContentExtension(NavigatorContentDescriptor aDescriptor,
+			NavigatorContentService aContentService,
 			StructuredViewerManager aViewerManager) {
 		super();
 
@@ -70,9 +88,13 @@ public class NavigatorContentExtension implements IMementoAware {
 		viewerId = contentService.getViewerId();
 		viewerManager = aViewerManager;
 	}
-	
+
 	public String getId() {
 		return descriptor.getId();
+	}
+
+	public NavigatorContentDescriptor getDescriptor() {
+		return descriptor;
 	}
 
 	/*
@@ -86,14 +108,17 @@ public class NavigatorContentExtension implements IMementoAware {
 		synchronized (this) {
 			try {
 				if (contentProvider == null) {
-					ITreeContentProvider treeContentProvider = (ITreeContentProvider) descriptor.getConfigurationElement().createExecutableExtension(NavigatorContentDescriptor.ATT_CONTENT_PROVIDER);
+					ITreeContentProvider treeContentProvider = (ITreeContentProvider) descriptor
+							.getConfigurationElement()
+							.createExecutableExtension(
+									NavigatorContentDescriptor.ATT_CONTENT_PROVIDER);
 					if (treeContentProvider != null) {
-						contentProvider = new NavigatorContentProvider(treeContentProvider, descriptor, contentService);
-						contentProvider.init(getStateModel(), appliedMemento); 
+						contentProvider = new NavigatorContentProvider(
+								treeContentProvider, descriptor, contentService);
+						contentProvider.init(getStateModel(), appliedMemento);
 						viewerManager.initialize(contentProvider);
-					}
-					else
-						contentProvider = SkeletonTreeContentProvider.INSTANCE; 
+					} else
+						contentProvider = SkeletonTreeContentProvider.INSTANCE;
 				}
 			} catch (CoreException e) {
 				contentProviderInitializationFailed = true;
@@ -120,14 +145,25 @@ public class NavigatorContentExtension implements IMementoAware {
 			try {
 
 				if (labelProvider == null) {
-					ILabelProvider tempLabelProvider = (ILabelProvider) descriptor.getConfigurationElement().createExecutableExtension(NavigatorContentDescriptor.ATT_LABEL_PROVIDER);
+					ILabelProvider tempLabelProvider = (ILabelProvider) descriptor
+							.getConfigurationElement()
+							.createExecutableExtension(
+									NavigatorContentDescriptor.ATT_LABEL_PROVIDER);
 
 					if (tempLabelProvider instanceof ICommonLabelProvider) {
 						labelProvider = (ICommonLabelProvider) tempLabelProvider;
-						NavigatorContentProvider navigatorContentProvider = (NavigatorContentProvider) getContentProvider();
-						labelProvider.init(getStateModel(), navigatorContentProvider.getDelegateContentProvider());
+						if (getContentProvider() instanceof NavigatorContentProvider)
+							labelProvider
+									.init(
+											getStateModel(),
+											((NavigatorContentProvider) getContentProvider())
+													.getDelegateContentProvider());
+						else
+							labelProvider.init(getStateModel(),
+									SkeletonTreeContentProvider.INSTANCE);
 					} else {
-						labelProvider = new DelegateCommonLabelProvider(tempLabelProvider);
+						labelProvider = new DelegateCommonLabelProvider(
+								tempLabelProvider);
 					}
 				}
 			} catch (CoreException e) {
@@ -147,21 +183,27 @@ public class NavigatorContentExtension implements IMementoAware {
 	/**
 	 * @return
 	 */
-	public ICommonActionProvider getActionProvider(INavigatorActionService theActionService) {
+	public ICommonActionProvider getActionProvider(
+			INavigatorActionService theActionService) {
 		if (actionProvider != null || actionProviderInitializationFailed)
 			return actionProvider;
-		if (descriptor.getConfigurationElement().getAttribute(NavigatorContentDescriptor.ATT_ACTION_PROVIDER) == null) {
+		if (descriptor.getConfigurationElement().getAttribute(
+				NavigatorContentDescriptor.ATT_ACTION_PROVIDER) == null) {
 			actionProvider = SkeletonActionProvider.INSTANCE;
 			return actionProvider;
 		}
 		synchronized (this) {
 			try {
 				if (actionProvider == null) {
-					actionProvider = (ICommonActionProvider) descriptor.getConfigurationElement().createExecutableExtension(NavigatorContentDescriptor.ATT_ACTION_PROVIDER);
-					if(actionProvider == null) 
+					actionProvider = (ICommonActionProvider) descriptor
+							.getConfigurationElement()
+							.createExecutableExtension(
+									NavigatorContentDescriptor.ATT_ACTION_PROVIDER);
+					if (actionProvider == null)
 						actionProvider = SkeletonActionProvider.INSTANCE;
-					else if(theActionService != null)
-						theActionService.initialize(descriptor.getId(), actionProvider);
+					else if (theActionService != null)
+						theActionService.initialize(descriptor.getId(),
+								actionProvider);
 				}
 			} catch (CoreException e) {
 				actionProviderInitializationFailed = true;
@@ -174,6 +216,44 @@ public class NavigatorContentExtension implements IMementoAware {
 				actionProvider = SkeletonActionProvider.INSTANCE;
 		}
 		return actionProvider;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.wst.common.navigator.views.INavigatorContentExtension#getLabelProvider()
+	 */
+	public INavigatorExtensionFilter[] getDuplicateContentFilters() {
+		if (viewerFilters != null)
+			return viewerFilters;
+
+		List viewerFiltersList = new ArrayList();
+		synchronized (this) {
+			if (viewerFilters == null) {
+				IConfigurationElement[] dupeFilters = descriptor
+						.getDuplicateContentFilterElements();
+				INavigatorExtensionFilter vFilter = null;
+				for (int i = 0; i < dupeFilters.length; i++) {
+					try {
+
+						vFilter = (INavigatorExtensionFilter) dupeFilters[i]
+								.createExecutableExtension(NavigatorContentDescriptor.ATT_VIEWER_FILTER);
+						viewerFiltersList.add(vFilter);
+					} catch (CoreException e) {
+						viewerFilters = NO_VIEWER_FILTERS;
+						e.printStackTrace();
+					} catch (RuntimeException e) {
+						viewerFilters = NO_VIEWER_FILTERS;
+						e.printStackTrace();
+					}
+
+				}
+				viewerFilters = (INavigatorExtensionFilter[]) (viewerFiltersList.size() > 0 ? viewerFiltersList
+						.toArray(new INavigatorExtensionFilter[viewerFiltersList.size()])
+						: NO_VIEWER_FILTERS);
+			}
+		}
+		return viewerFilters;
 	}
 
 	/*
@@ -197,7 +277,6 @@ public class NavigatorContentExtension implements IMementoAware {
 		}
 	}
 
-
 	// M4 Revisit the sorting strategy [CommonNavigator:SORTING]
 	/*
 	 * (non-Javadoc)
@@ -210,9 +289,14 @@ public class NavigatorContentExtension implements IMementoAware {
 		synchronized (this) {
 			try {
 				if (comparator == null) {
-					String sorterClassName = descriptor.getConfigurationElement().getAttribute(NavigatorContentDescriptor.ATT_SORTER);
+					String sorterClassName = descriptor
+							.getConfigurationElement().getAttribute(
+									NavigatorContentDescriptor.ATT_SORTER);
 					if (sorterClassName != null && sorterClassName.length() > 0)
-						comparator = (Comparator) descriptor.getConfigurationElement().createExecutableExtension(NavigatorContentDescriptor.ATT_SORTER);
+						comparator = (Comparator) descriptor
+								.getConfigurationElement()
+								.createExecutableExtension(
+										NavigatorContentDescriptor.ATT_SORTER);
 				}
 
 			} catch (CoreException e) {
@@ -251,7 +335,7 @@ public class NavigatorContentExtension implements IMementoAware {
 		return labelProviderInitializationFailed;
 	}
 
-	public boolean hasLoadingFailed() { 
+	public boolean hasLoadingFailed() {
 		return contentProviderInitializationFailed;
 	}
 
@@ -264,33 +348,32 @@ public class NavigatorContentExtension implements IMementoAware {
 			appliedMemento = aMemento;
 			applyMemento(contentProvider);
 			applyMemento(labelProvider);
-			applyMemento(actionProvider); 
+			applyMemento(actionProvider);
 
 		}
 	}
-	
-	public void saveState(IMemento aMemento) { 
-		synchronized (this) {  
+
+	public void saveState(IMemento aMemento) {
+		synchronized (this) {
 		}
 	}
- 
 
-	private void applyMemento(IMementoAware target) { 
-		if(target != null)
+	private void applyMemento(IMementoAware target) {
+		if (target != null)
 			target.restoreState(appliedMemento);
-		
-	}
 
+	}
 
 	protected final void complainDisposedIfNecessary() {
 		if (isDisposed)
 			throw new IllegalStateException(
 					CommonNavigatorMessages.NavigatorContentExtension_2
-							+ descriptor.getId() + CommonNavigatorMessages.NavigatorContentExtension_3);
+							+ descriptor.getId()
+							+ CommonNavigatorMessages.NavigatorContentExtension_3);
 	}
 
 	public IExtensionStateModel getStateModel() {
-		if(stateModel == null)
+		if (stateModel == null)
 			stateModel = new ExtensionStateModel(descriptor.getId(), viewerId);
 		return stateModel;
 	}

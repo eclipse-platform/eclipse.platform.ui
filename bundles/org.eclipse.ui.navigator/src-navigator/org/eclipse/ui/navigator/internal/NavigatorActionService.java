@@ -413,8 +413,7 @@ public class NavigatorActionService implements INavigatorActionService {
 	public void initialize(String anExtensionId, ICommonActionProvider anActionProvider) {
 		if (anActionProvider != null && anActionProvider != SkeletonActionProvider.INSTANCE) {
 			anActionProvider.init(anExtensionId, viewPart, contentService, structuredViewer);
-			if (memento != null)
-				anActionProvider.restoreState(memento);
+			anActionProvider.restoreState(memento);
 			anActionProvider.setActionContext(new ActionContext(StructuredSelection.EMPTY));
 			anActionProvider.fillActionBars(viewPart.getViewSite().getActionBars());
 		}

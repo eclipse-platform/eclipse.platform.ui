@@ -52,6 +52,7 @@
       <complexType>
          <sequence>
             <element ref="enablement"/>
+            <element ref="duplicateContentFilter"/>
          </sequence>
          <attribute name="id" type="string">
             <annotation>
@@ -126,7 +127,7 @@ The content provider will be consulted when addeding children to the tree. Use t
                <documentation>
                   Supplies the name of a class that implements org.eclipse.jface.views.OpenListener or org.eclipse.ui.navigator.ICommonOpenListener.
 
-This attribute is likely to be removed in the final version of the API. Instead, clients will be encouraged to supply an open action for a common retargetable action id. 
+This attribute is likely to be removed in the final version of the API. Instead, clients will be encouraged to supply an open action for a common retargetable action id.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -136,7 +137,7 @@ This attribute is likely to be removed in the final version of the API. Instead,
          <attribute name="actionProvider" type="string">
             <annotation>
                <documentation>
-                  Supplies the name of a class that implements org.eclipse.ui.navigator.ICommonActionProvider. The action provider has opportunities to contribute to the context menu and IActionBars (for retargetable actions and the view menu of the IViewPart). 
+                  Supplies the name of a class that implements org.eclipse.ui.navigator.ICommonActionProvider. The action provider has opportunities to contribute to the context menu and IActionBars (for retargetable actions and the view menu of the IViewPart).
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -168,7 +169,7 @@ This attribute is likely to be removed in the final version of the API. Instead,
          <documentation>
             Objects which are accepted by the expression will cause the extension to be invoked. Clients must define objects that are considered &quot;trigger points&quot; for their extension to indicate when their content provider should be invoked, and also declare what types of content they contribute to indicate when their label provider should be invoked. 
 
-For example, a client that wants to contribute children of type org.acme.Child to an object contributed by another extension (say org.acme.Parent), then the extension must declare that it enables on both org.acme.Child and org.acme.Parent. 
+For example, a client that wants to contribute children of type org.acme.Child to an object contributed by another extension (say org.acme.Parent), then the extension must declare that it enables on both org.acme.Child and org.acme.Parent.
          </documentation>
       </annotation>
       <complexType>
@@ -311,6 +312,28 @@ For example, a client that wants to contribute children of type org.acme.Child t
                <documentation>
                   
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="duplicateContentFilter">
+      <annotation>
+         <documentation>
+            
+For extensions that which to augment or enhance the content provided by another existing extension (e.g. Resources), a client may specify a &quot;duplicateContentFilter&quot; which will be turned on and off with their extensions. Users will not have the capability to turn this special viewer filter on and off. 
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="viewerFilter" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+A subclass of INavigatorExtensionFilter.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
