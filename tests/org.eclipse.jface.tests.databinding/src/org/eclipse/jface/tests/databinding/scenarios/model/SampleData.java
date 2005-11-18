@@ -84,6 +84,7 @@ public class SampleData {
 		WINTER_HOLIDAY.setLocation("Chamonix");
 		WINTER_HOLIDAY.setPrice(4000.52d);
 		WINTER_HOLIDAY.setId("150");
+		WINTER_HOLIDAY.setMaxNumberOfPeople(3);		
 		WINTER_CATEGORY.addAdventure(WINTER_HOLIDAY);
 
 		ICE_FISHING = FACTORY.createAdventure();

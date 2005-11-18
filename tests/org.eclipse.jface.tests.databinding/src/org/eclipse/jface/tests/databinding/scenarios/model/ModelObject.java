@@ -46,6 +46,12 @@ public class ModelObject {
 		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
 				newValue);
 	}
+	
+	protected void firePropertyChange(String propertyName, int oldValue,
+			int newValue) {
+		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
+				newValue);
+	}
 
 	public void setId(String string) {
 		Object oldValue = id;

@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Shell;
  * Mode" as the application to run. You can also run this class as an SWT
  * application.
  */
-
 public class BindingScenariosTestSuite extends TestSuite {
 
 	public static void main(String[] args) {
@@ -66,6 +65,9 @@ public class BindingScenariosTestSuite extends TestSuite {
 		addTestSuite(ReadOnlyComboScenarios.class);
 		addTestSuite(TableScenarios.class);
 		addTestSuite(TreeScenarios.class);
+		// Test each of the basic SWT controls
+		addTestSuite(TextControlScenario.class);
+		addTestSuite(SpinnerControlScenario.class);		
 	}
 
 	public static Shell getShell() {

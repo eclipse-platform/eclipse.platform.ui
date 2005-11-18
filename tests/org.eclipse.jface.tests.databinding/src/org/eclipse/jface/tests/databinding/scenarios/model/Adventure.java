@@ -23,6 +23,8 @@ public class Adventure extends ModelObject {
 	private String description;
 
 	private String location;
+	
+	private int maxNumberOfPeople;
 
 	public String getName() {
 		return name;
@@ -33,6 +35,16 @@ public class Adventure extends ModelObject {
 		name = string;
 		firePropertyChange("name", oldValue, name);
 	}
+	
+	public int getMaxNumberOfPeople(){
+		return maxNumberOfPeople;
+	}
+	
+	public void setMaxNumberOfPeople(int anInt) {
+		int oldValue = maxNumberOfPeople;
+		maxNumberOfPeople = anInt;
+		firePropertyChange("maxNumberOfPeople", oldValue, maxNumberOfPeople);
+	}	
 
 	public Lodging getDefaultLodging() {
 		return defaultLodging;
