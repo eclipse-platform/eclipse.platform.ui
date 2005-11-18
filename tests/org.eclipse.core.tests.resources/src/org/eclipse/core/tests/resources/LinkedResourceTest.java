@@ -64,7 +64,7 @@ public class LinkedResourceTest extends ResourceTest {
 	public static Test suite() {
 		return new TestSuite(LinkedResourceTest.class);
 //		TestSuite suite = new TestSuite();
-//		suite.addTest(new LinkedResourceTest("testMoveFile"));
+//		suite.addTest(new LinkedResourceTest("testRefreshDeepLink"));
 //		return suite;
 	}
 
@@ -1326,5 +1326,33 @@ public class LinkedResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 			//should fail
 		}
+	}
+	
+	/**
+	 * Create a project with a linked resource at depth > 2, and refresh it.
+	 */
+	public void testRefreshDeepLink() {
+		IFolder link = nonExistingFolderInExistingFolder;
+		IPath linkLocation = localFolder;
+		IPath localChild = linkLocation.append("Child");
+		IFile linkChild = link.getFile(localChild.lastSegment());
+		createFileInFileSystem(localChild);
+		try {
+			link.createLink(linkLocation, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		assertTrue("1.0", link.exists());
+		assertTrue("1.1", linkChild.exists());
+		
+		try {
+			IProject project = link.getProject();
+			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+
+		assertTrue("2.0", link.exists());
+		assertTrue("2.1", linkChild.exists());
 	}
 }
