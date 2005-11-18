@@ -1,11 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-
    <extension-point id="renameParticipants" name="%renameParticipantsExtensionPoint" schema="schema/renameParticipants.exsd"/>
    <extension-point id="moveParticipants" name="%moveParticipantsExtensionPoint"  schema="schema/moveParticipants.exsd"/>
    <extension-point id="createParticipants" name="%createParticipantsExtensionPoint" schema="schema/createParticipants.exsd"/>
    <extension-point id="deleteParticipants" name="%deleteParticipantsExtensionPoint"  schema="schema/deleteParticipants.exsd"/>
    <extension-point id="copyParticipants" name="%copyParticipantsExtensionPoint"  schema="schema/copyParticipants.exsd"/>
-
+   <extension
+         point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+            extension="history"
+            type="text"/>
+      <fileTypes
+            extension="index"
+            type="text"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            default-charset="utf-8"
+            file-names="refactorings.index"
+            id="refactoringIndex"
+            name="%RefactoringHistoryContent.name"
+            priority="high"/>
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            default-charset="utf-8"
+            file-names="refactorings.history"
+            id="refactoringHistory"
+            name="%RefactoringIndexContent.name"
+            priority="high"/>
+   </extension>
+   <extension
+         point="org.eclipse.compare.streamMergers">
+      <streamMerger
+            class="org.eclipse.ltk.internal.core.refactoring.model.RefactoringIndexMerger"
+            id="org.eclipse.ltk.core.refactoring.model.RefactoringIndexMerger"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringIndex"
+            streamMergerId="org.eclipse.ltk.core.refactoring.model.RefactoringIndexMerger"/>
+      <streamMerger
+            class="org.eclipse.ltk.internal.core.refactoring.model.RefactoringHistoryMerger"
+            id="org.eclipse.ltk.core.refactoring.model.RefactoringHistoryMerger"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringHistory"
+            streamMergerId="org.eclipse.ltk.core.refactoring.model.RefactoringHistoryMerger"/>
+   </extension>
 </plugin>
