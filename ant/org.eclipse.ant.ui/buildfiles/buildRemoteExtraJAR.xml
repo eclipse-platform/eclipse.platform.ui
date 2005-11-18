@@ -26,11 +26,17 @@
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
 		<!-- compile the source code -->
-		<javac target="1.1" destdir="${destdir}" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes"
-			classpath="${basedir}/../org.eclipse.swt${version.suffix}/bin;
-									${swt.jar};
-						${basedir}/common_ant_support_bin;
-						${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}.jar">
+		<javac target="1.1" destdir="${destdir}" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes">
+			<classpath>
+				<dirset dir="${basedir}/..">
+					<include name="org.eclipse.swt*/bin"/>
+					<include name="org.eclipse.ant.ui/common_ant_support_bin"/>
+				</dirset>
+				<fileset dir="${eclipse.home}">
+					<include name="plugins/org.eclipse.swt*.jar"/>
+					<include name="plugins/org.eclipse.osgi*.jar"/>
+				</fileset>
+			</classpath>
 			<src path="Remote Ant Support/"/>
 		</javac>
 		<!-- copy necessary resources -->
