@@ -19,6 +19,9 @@ package org.eclipse.jface.databinding;
  * consulting with the Platform/UI team.
  * </p>
  * 
+ * A domain model has to implement this interface in order to establish a tree
+ * binding. 
+ * 
  * @since 3.2
  * 
  */
@@ -27,14 +30,14 @@ public interface ITree {
 	/**
 	 * Returns the child elements of the given parent element.
 	 *
-	 * @param parentElement the parent element
+	 * @param parentElement the parent element, <code>null</code> for root elements
 	 * @return an array of child elements
 	 */
 
 	public Object[] getChildren(Object parentElement);
 	
 	/**
-	 * @param parentElement
+	 * @param parentElement or <code>null</code> for root elements
 	 * @param children
 	 */
 	public void setChildren(Object parentElement, Object[] children);
@@ -44,8 +47,7 @@ public interface ITree {
 	 * indicating that the parent can't be computed. 
 	 *
 	 * @param element the element
-	 * @return the parent element, or <code>null</code> if it
-	 *   has none or if the parent cannot be computed
+	 * @return the parent element, or <code>null</code> if root element
 	 */
 	public Object getParent(Object element);
 

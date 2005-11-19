@@ -20,7 +20,10 @@ import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableTree;
 
 /**
- * 
+ * TreeBinding facts:
+ *    o No Conversion, Validation on various tree elements
+ *    o On a bind, only root elements will be pushed from the model to the target
+ *    o <code>ChangeEvent.VIRTUAL</code> event will request children as needed
  * 
  */
 public class TreeBinding extends Binding implements IChangeListener {
@@ -43,7 +46,7 @@ public class TreeBinding extends Binding implements IChangeListener {
 		this.target = target;
 		this.model = model;
 		
-		
+		// some sanity check
 		Class[] targetTypes=target.getTypes();
 		Class[] modelTypes=model.getTypes();
 		if (targetTypes==null || modelTypes==null || targetTypes.length!=modelTypes.length)
@@ -64,8 +67,7 @@ public class TreeBinding extends Binding implements IChangeListener {
 				} else {
 					update(model, target, changeEvent);
 				}
-			} else if (notifier == model) {
-				// TODO validation
+			} else if (notifier == model) {				
 				update(target, model, changeEvent);
 			}
 		}

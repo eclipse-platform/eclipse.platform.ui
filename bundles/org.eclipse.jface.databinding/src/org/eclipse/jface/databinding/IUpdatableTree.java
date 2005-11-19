@@ -25,59 +25,58 @@ package org.eclipse.jface.databinding;
 public interface IUpdatableTree extends IUpdatable {
 
 	/**
-	 * @param parentElement 
-	 * @param value
+\	 * 
+	 * @param parentElement <code>null</code> for root element
+	 * @param value is the new tree element as a child of parentElement
 	 * @param index
 	 * @return the index where the element was added
 	 */
 	public int addElement(Object parentElement, int index, Object value);
 
 	/**
-	 * @param parentElement 
+	 * @param parentElement <code>null</code> for root element
 	 * @param index
 	 */
 	public void removeElement(Object parentElement, int index);
-
-	// TODO rename to updateElement?
+	
 	/**
-	 * @param parentElement 
+	 * @param parentElement <code>null</code> for root element
 	 * @param index
-	 * @param value
+	 * @param value for the updated tree element
 	 */
 	public void setElement(Object parentElement, int index, Object value);
 	
 	/**
-	 * @param parentElement
-	 * @param values
+	 * @param parentElement <code>null</code> for root element
+	 * @param values to set as the children of parentElement
 	 */
 	public void setElements(Object parentElement, Object[] values);
 
 	/**
-	 * @param parentElement 
+	 * @param parentElement <code>null</code> for root element
 	 * @param index
-	 * @return the element at the given index
+	 * @return parentElement's chile at the given index
 	 */
 	public Object getElement(Object parentElement, int index);
 	
 	/**
-	 * @param parentElement
+	 * @param parentElement <code>null</code> for root element
 	 * @return children elements of parentElement
 	 */
 	public Object[] getElements(Object parentElement);
 
 	/**
 	 * 
-	 * @return the tree's potential types on the tree
+	 * @return the potential types of tree elements
 	 */
 	public Class[] getTypes();	
 		
 	/**
 	 * Returns the parent for the given element, or <code>null</code> 
-	 * indicating that the parent can't be computed. 
-	 *
-	 * @param element the element
-	 * @return the parent element, or <code>null</code> if it
-	 *   has none or if the parent cannot be computed
+	 * indicating that the parent is at the root.
+	 * 
+	 * @param element 
+	 * @return parent element
 	 */
 	public Object getParent(Object element);
 	
