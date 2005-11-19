@@ -234,8 +234,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// Now change the model and check again
 		account.setLastName("Gershwin");
 		lastName = tableViewer.getTable().getItem(0).getText(0);	
-//      TODO  Pojo CollectionUpdatable does not listen to all the elements in the collection		
-//		assertEquals(lastName,account.getLastName());		
+		assertEquals(lastName,account.getLastName());		
 		
 	}
 	

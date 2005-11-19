@@ -51,6 +51,10 @@ abstract public class Updatable implements IUpdatable {
 	protected ChangeEvent fireChangeEvent(int changeType, Object oldValue, Object newValue, Object parent, int position) {
 		ChangeEvent changeEvent = new ChangeEvent(this, changeType, oldValue,
 				newValue, parent, position);
+		if(changeListeners==null) {
+			// disposed 
+			return changeEvent;
+		}
 		IChangeListener[] listeners = (IChangeListener[]) changeListeners
 				.toArray(new IChangeListener[changeListeners.size()]);
 		for (int i = 0; i < listeners.length; i++) {			

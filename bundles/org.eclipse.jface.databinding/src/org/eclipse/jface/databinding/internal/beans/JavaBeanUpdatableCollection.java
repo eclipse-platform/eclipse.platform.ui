@@ -14,6 +14,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,25 +33,16 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		IUpdatableCollection {
 	private final Object object;
 
-	private PropertyChangeListener listener = new PropertyChangeListener() {
+	private PropertyChangeListener collectionListener = new PropertyChangeListener() {
 		public void propertyChange(java.beans.PropertyChangeEvent event) {
 			if (!updating) {
-				Object[] newValues = getValues();
+				Object[] values = getValues();
 				// make a copy of the set of objects listened to
-				Set elementsToUnhook = new HashSet(elementsListenedTo);
-				for (int i = 0; i < newValues.length; i++) {
-					Object newValue = newValues[i];
-					IdentityWrapper identityWrapper = new IdentityWrapper(newValue);
-					if(!elementsToUnhook.remove(identityWrapper)) {
-						// element was not in the set, add listener to it
-						elementsListenedTo.add(identityWrapper);
-						hookListener(newValue);
-					}
-				}
+				Set elementsToUnhook = hookToValues(values);
 				for (Iterator it = elementsToUnhook.iterator(); it.hasNext();) {
 					Object o = it.next();
 					elementsListenedTo.remove(new IdentityWrapper(o));
-					unhookListener(o);
+					unhookListener(elementListener, o);
 				}
 				fireChangeEvent(ChangeEvent.CHANGE, null,
 						null, ChangeEvent.POSITION_UNKNOWN);
@@ -58,6 +50,19 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		}
 	};
 
+	private PropertyChangeListener elementListener = new PropertyChangeListener() {
+		public void propertyChange(java.beans.PropertyChangeEvent event) {
+			if (!updating) {
+				Object[] values = getValues();
+				int position = Arrays.asList(values).indexOf(event.getSource());
+				if(position!=-1){
+					fireChangeEvent(ChangeEvent.CHANGE, event.getSource(),
+							event.getSource(), position);
+				}
+			}
+		}
+	};
+	
 	private boolean updating = false;
 
 	private PropertyDescriptor descriptor;
@@ -91,10 +96,11 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		this.object = object;
 		this.descriptor = descriptor;
 		this.elementType = elementType;		
-		hookListener(this.object);
+		hookListener(collectionListener, this.object);
+		hookToValues(getValues());
 	}
 
-	private void hookListener(Object target) {
+	private void hookListener(PropertyChangeListener listener, Object target) {
 		Method addPropertyChangeListenerMethod = null;
 		try {
 			addPropertyChangeListenerMethod = target.getClass().getMethod(
@@ -120,7 +126,7 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 		}
 	}
 
-	private void unhookListener(Object target) {
+	private void unhookListener(PropertyChangeListener listener, Object target) {
 		Method removePropertyChangeListenerMethod = null;
 		try {
 			removePropertyChangeListenerMethod = target.getClass().getMethod(
@@ -149,9 +155,9 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 	public void dispose() {
 		super.dispose();
 		for (Iterator it = elementsListenedTo.iterator(); it.hasNext();) {
-			unhookListener(it.next());
+			unhookListener(elementListener, it.next());
 		}
-		unhookListener(object);
+		unhookListener(collectionListener, object);
 	}
 
 	public int getSize() {
@@ -239,6 +245,20 @@ public class JavaBeanUpdatableCollection extends Updatable implements
 
 	public Class getElementType() {		
 		return elementType;
+	}
+
+	private Set hookToValues(Object[] values) {
+		Set elementsToUnhook = new HashSet(elementsListenedTo);
+		for (int i = 0; i < values.length; i++) {
+			Object newValue = values[i];
+			IdentityWrapper identityWrapper = new IdentityWrapper(newValue);
+			if(!elementsToUnhook.remove(identityWrapper)) {
+				// element was not in the set, add listener to it
+				elementsListenedTo.add(identityWrapper);
+				hookListener(elementListener, newValue);
+			}
+		}
+		return elementsToUnhook;
 	}
 
 }
