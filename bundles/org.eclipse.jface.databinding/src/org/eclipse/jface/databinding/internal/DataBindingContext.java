@@ -26,6 +26,7 @@ import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.IValidator;
 import org.eclipse.jface.databinding.IdentityConverter;
@@ -412,6 +413,17 @@ public class DataBindingContext implements IDataBindingContext {
 				throw new BindingException(
 						"incompatible updatables (target is collection, model is not)"); //$NON-NLS-1$
 			}
+		} else if (targetUpdatable instanceof IUpdatableTree) {
+			if (modelUpdatable instanceof IUpdatableTree) {
+				IUpdatableTree target = (IUpdatableTree) targetUpdatable;
+				IUpdatableTree model = (IUpdatableTree) modelUpdatable;
+				// Tree bindings does not provide conversions between level elements (no bindSpec)
+				binding = new TreeBinding(this, target, model);
+			} else {
+				throw new BindingException(
+						"incompatible updatables (target is collection, model is not)"); //$NON-NLS-1$
+			}
+			
 		} else {
 			throw new BindingException("not yet implemented"); //$NON-NLS-1$
 		}
@@ -465,7 +477,7 @@ public class DataBindingContext implements IDataBindingContext {
 					toType, modelDescriptionOrNull));
 		}
 	}
-
+	
 	public IValidator createValidator(Class fromType, Class toType,
 			Object modelDescription) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {

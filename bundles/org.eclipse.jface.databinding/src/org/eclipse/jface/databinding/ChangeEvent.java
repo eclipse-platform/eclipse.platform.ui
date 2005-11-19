@@ -68,6 +68,12 @@ public class ChangeEvent {
 	 * express pre-add etc.
 	 */
 	public static final int VERIFY = 4;
+	
+	/**
+	 * Change type constant that is used to inform a listener that a virtual data is being
+	 * reauested.
+	 */
+	public static final int VIRTUAL = 5;
 
 	private final IUpdatable updatable;
 
@@ -76,8 +82,10 @@ public class ChangeEvent {
 	private final Object oldValue;
 
 	private final Object newValue;
+	
+	private final Object parent;
 
-	private int position;
+	private final int position;
 
 	private boolean vetoed = false;
 
@@ -101,11 +109,25 @@ public class ChangeEvent {
 	 */
 	public ChangeEvent(IUpdatable updatable, int changeType, Object oldValue,
 			Object newValue, int position) {
+		this(updatable, changeType, oldValue, newValue, null, position);
+	}
+	
+	/**
+	 * @param updatable
+	 * @param changeType
+	 * @param oldValue
+	 * @param newValue
+	 * @param parent 
+	 * @param position
+	 */
+	public ChangeEvent(IUpdatable updatable, int changeType, Object oldValue,
+			Object newValue, Object parent, int position) {
 		this.updatable = updatable;
 		this.oldValue = oldValue;
 		this.changeType = changeType;
 		this.newValue = newValue;
-		this.position = position;
+		this.parent = parent;
+		this.position = position;		
 	}
 
 	/**
@@ -175,6 +197,10 @@ public class ChangeEvent {
 	 */
 	public void setVeto(boolean veto) {
 		vetoed = veto;
+	}
+
+	public Object getParent() {
+		return parent;
 	}
 
 }

@@ -106,7 +106,6 @@ public class TableViewerUpdatableCollectionExtended extends
 	/**
 	 * @param tableViewerDescription
 	 * @param dataBindingContext 
-	 * @param validationContext 
 	 */
 	public TableViewerUpdatableCollectionExtended(
 			TableViewerDescription tableViewerDescription, IDataBindingContext dataBindingContext) {

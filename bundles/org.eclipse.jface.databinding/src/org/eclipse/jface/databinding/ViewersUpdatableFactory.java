@@ -15,10 +15,12 @@ import java.util.Map;
 import org.eclipse.jface.databinding.internal.viewers.StructuredViewerUpdatableValue;
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollection;
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollectionExtended;
+import org.eclipse.jface.databinding.internal.viewers.TreeViewerUpdatableTree;
 import org.eclipse.jface.databinding.internal.viewers.UpdatableCollectionViewer;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 
 /**
  * A factory that supports binding to JFace viewers. This
@@ -64,6 +66,10 @@ final public class ViewersUpdatableFactory implements IUpdatableFactory {
 			if (object instanceof TableViewer
 					&& ViewersProperties.CONTENT.equals(attribute)) {
 				return new TableViewerUpdatableCollection((TableViewer) object);
+			}
+			if (object instanceof TreeViewer
+					&& ViewersProperties.CONTENT.equals(attribute)) {
+				return new TreeViewerUpdatableTree((TreeViewer) object);
 			}
 		}
 		if (description instanceof AbstractListViewer) {

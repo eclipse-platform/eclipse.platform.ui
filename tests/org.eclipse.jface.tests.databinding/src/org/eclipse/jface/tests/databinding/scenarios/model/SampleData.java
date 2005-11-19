@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios.model;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.databinding.BeanUpdatableFactory;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.SWTUpdatableFactory;
 import org.eclipse.jface.databinding.ViewersUpdatableFactory;
@@ -53,6 +56,8 @@ public class SampleData {
 	public static Cart CART;
 
 	public static AdventureFactory FACTORY;
+	
+	public static ITree CATEGORY_TREE;
 
 	private static SWTUpdatableFactory swtUpdatableFactory = new SWTUpdatableFactory();
 
@@ -158,6 +163,36 @@ public class SampleData {
 		CATALOG_2005.addAccount(SANTA_CLAUS);
 
 		CART = FACTORY.createCart();
+		
+		CATEGORY_TREE = new ITree() {
+			Category[] categories = new Category[] { WINTER_CATEGORY, SUMMER_CATEGORY };
+			public boolean hasChildren(Object element) {
+				if (element instanceof Category) {
+					Adventure[] list = ((Category)element).getAdventures();
+					return list==null?true:list.length>0;
+				}
+				return false;				
+			}
+			public Object getParent(Object element) {
+				if (element instanceof Adventure) {
+					for (int i = 0; i < categories.length; i++) {						
+						if (Arrays.asList(categories[i].getAdventures()).contains(element))
+							return categories[i];						
+					}
+				}
+				return null;					
+			}
+			public void setChildren(Object parentElement, Object[] children) {
+				// ReadOnly for Adding Elements
+			}
+			public Object[] getChildren(Object parentElement) {
+				if (parentElement==null)
+					return categories;
+				else if (parentElement instanceof Category)
+				   return ((Category)parentElement).getAdventures();
+				return null;
+			}			
+		};
 	}
 
 	public static IDataBindingContext getDatabindingContext(Control aControl) {

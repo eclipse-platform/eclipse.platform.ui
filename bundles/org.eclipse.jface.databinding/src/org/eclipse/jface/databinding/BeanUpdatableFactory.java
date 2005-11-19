@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableCollection;
+import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableTree;
 import org.eclipse.jface.databinding.internal.beans.JavaBeanUpdatableValue;
 import org.eclipse.jface.util.Assert;
 
@@ -79,6 +80,8 @@ final public class BeanUpdatableFactory implements IUpdatableFactory {
 				}
 			}
 		}
+		else if (description instanceof ITree)
+			return new JavaBeanUpdatableTree((ITree)description);
 		return null;
 	}
 
