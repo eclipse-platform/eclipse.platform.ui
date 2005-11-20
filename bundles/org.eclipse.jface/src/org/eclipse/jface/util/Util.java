@@ -273,7 +273,7 @@ public final class Util {
 		if (leftArray == rightArray) {
 			return true;
 		}
-		
+
 		if (leftArray == null) {
 			return (rightArray == null);
 		} else if (rightArray == null) {
@@ -376,6 +376,36 @@ public final class Util {
 				return false;
 
 		return true;
+	}
+
+	/**
+	 * Converts an array into a string representation that is suitable for
+	 * debugging.
+	 * 
+	 * @param array
+	 *            The array to convert; may be <code>null</code>.
+	 * @return The string representation of the array; never <code>null</code>.
+	 */
+	public static final String toString(final Object[] array) {
+		if (array == null) {
+			return "null"; //$NON-NLS-1$
+		}
+
+		final StringBuffer buffer = new StringBuffer();
+		buffer.append('[');
+
+		final int length = array.length;
+		for (int i = 0; i < length; i++) {
+			if (i != 0) {
+				buffer.append(',');
+			}
+			final Object object = array[i];
+			final String element = String.valueOf(object);
+			buffer.append(element);
+		}
+		buffer.append(']');
+
+		return buffer.toString();
 	}
 
 	/**
