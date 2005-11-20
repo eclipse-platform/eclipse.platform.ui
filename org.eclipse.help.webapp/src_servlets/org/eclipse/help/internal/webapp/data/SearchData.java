@@ -143,6 +143,10 @@ public class SearchData extends ActivitiesData {
 			return UrlUtil.htmlEncode(hits[i].getToc().getLabel());
 		return ""; //$NON-NLS-1$
 	}
+	
+	public String getTopicDescription(int i) {
+		return UrlUtil.htmlEncode(hits[i].getDescription());
+	}
 
 	/**
 	 * @param i

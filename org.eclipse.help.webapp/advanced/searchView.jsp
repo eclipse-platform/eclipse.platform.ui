@@ -29,7 +29,7 @@
 <title><%=ServletResources.getString("SearchResults", request)%></title>
 
 <style type="text/css">
-<%@ include file="list.css"%>
+<%@ include file="searchList.css"%>
 </style>
 
 
@@ -93,8 +93,8 @@ setTimeout('refresh()', 2000);
 
 <tr class='list' id='r<%=topic%>'>
 	<td class='score' align='<%=isRTL?"left":"right"%>'><%=data.getTopicScore(topic)%></td>
-	<td align='<%=isRTL?"right":"left"%>' class='label' nowrap>
-		<a id='a<%=topic%>' 
+	<td align='<%=isRTL?"right":"left"%>'>
+		<a class='link' id='a<%=topic%>' 
 		   href="<%=data.getTopicHref(topic)%>" 
 		   onmouseover="showStatus(event);return true;"
 		   onmouseout="clearStatus();return true;"
@@ -104,6 +104,17 @@ setTimeout('refresh()', 2000);
 </tr>
 
 <%
+		String desc = data.getTopicDescription(topic);
+		if (desc!=null) {
+%>
+<tr class='description' id='d<%=topic%>'>
+	<td class='score'>
+	</td>
+	<td align='<%=isRTL?"right":"left"%>' class='label'>
+		<%=desc%>
+	</td>
+<%
+		}
 	}
 %>
 </table>
