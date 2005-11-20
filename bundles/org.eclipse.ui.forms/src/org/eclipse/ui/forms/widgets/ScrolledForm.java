@@ -73,6 +73,15 @@ public class ScrolledForm extends SharedScrolledComposite {
 	public String getText() {
 		return content.getText();
 	}
+	
+	/**
+	 * Returns the title image that will be rendered to the left of the title.
+	 * 
+	 * @return the title image
+	 */
+	public Image getImage() {
+		return content.getImage();
+	}
 	/**
 	 * Sets the foreground color of the form. This color will also be used for
 	 * the body.
@@ -104,6 +113,17 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 */
 	public void setText(String text) {
 		content.setText(text);
+		reflow(true);
+	}
+	
+	/**
+	 * Sets the image to be rendered to the left of the title.
+	 * 
+	 * @param image
+	 *            the title image or <code>null</code> for no image.
+	 */
+	public void setImage(Image image) {
+		content.setImage(image);
 		reflow(true);
 	}
 	/**
