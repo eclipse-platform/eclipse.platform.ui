@@ -235,13 +235,13 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 			switch (align) {
 				case ColumnLayoutData.LEFT :
 				case ColumnLayoutData.FILL :
-					child.setBounds(x, colHeight, childWidth, csize.y);
+					child.setBounds(x, topMargin+colHeight, childWidth, csize.y);
 					break;
 				case ColumnLayoutData.RIGHT :
-					child.setBounds(x + fillWidth - childWidth, colHeight, childWidth, csize.y);
+					child.setBounds(x + fillWidth - childWidth, topMargin+colHeight, childWidth, csize.y);
 					break;
 				case ColumnLayoutData.CENTER :
-					child.setBounds(x + fillWidth / 2 - childWidth / 2, colHeight, childWidth, csize.y);
+					child.setBounds(x + fillWidth / 2 - childWidth / 2, topMargin+colHeight, childWidth, csize.y);
 					break;
 			}
 			

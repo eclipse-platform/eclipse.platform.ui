@@ -58,7 +58,7 @@ public class NewStylePage extends FormPage {
 		tbm.getControl().setBackground(colors.getColor(FormColors.TB_GBG));
 		
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 4;
 		form.getBody().setLayout(layout);
 
 		Button error = toolkit.createButton(form.getBody(), "Error", SWT.PUSH);
