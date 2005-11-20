@@ -18,6 +18,7 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.services.IDisposable;
 
 /**
  * <p>
@@ -32,7 +33,7 @@ import org.eclipse.ui.commands.ICommandService;
  * 
  * @since 3.1
  */
-public interface IBindingService {
+public interface IBindingService extends IDisposable {
 
 	/**
 	 * The default default value for the active scheme id. This value can be
@@ -192,9 +193,7 @@ public interface IBindingService {
 	 * </p>
 	 * 
 	 * @param commandService
-	 *            The command service for the workbench; must not be
-	 *            <code>null</code>. This is used to locate command instances
-	 *            when constructing bindings.
+	 *            Ignored.
 	 */
 	public void readRegistryAndPreferences(ICommandService commandService);
 

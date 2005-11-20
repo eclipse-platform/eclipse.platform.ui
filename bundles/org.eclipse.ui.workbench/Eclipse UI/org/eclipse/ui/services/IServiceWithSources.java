@@ -8,15 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui;
+package org.eclipse.ui.services;
+
+import org.eclipse.ui.ISourceProvider;
 
 /**
  * <p>
  * A service that responds to changes in one or more sources. These sources can
- * be plugged into the service.
+ * be plugged into the service. Sources represent a common event framework for
+ * services.
  * </p>
  * <p>
- * This interface should not be implemented or extended by clients.
+ * This interface may be implemented or extended by clients.
  * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -27,7 +30,7 @@ package org.eclipse.ui;
  * 
  * @since 3.2
  */
-public interface IServiceWithSources {
+public interface IServiceWithSources extends IDisposable {
 
 	/**
 	 * Adds a source provider to this service. A source provider will notify the

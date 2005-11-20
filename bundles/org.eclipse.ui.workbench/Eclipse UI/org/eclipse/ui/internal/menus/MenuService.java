@@ -31,6 +31,17 @@ import org.eclipse.ui.menus.IMenuService;
  * <p>
  * Provides services related to contributing menu elements to the workbench.
  * </p>
+ * </p>
+ * <p>
+ * This class is only intended for internal use within the
+ * <code>org.eclipse.ui.workbench</code> plug-in.
+ * </p>
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
  * 
  * @since 3.2
  */
@@ -39,7 +50,7 @@ public final class MenuService implements IMenuService {
 	/**
 	 * The central authority for determining which menus are visible.
 	 */
-	private final MenuAuthority menuAuthority = new MenuAuthority();
+	private final MenuAuthority menuAuthority;
 
 	/**
 	 * The menu manager underlying this menu service; never <code>null</code>.
@@ -49,7 +60,7 @@ public final class MenuService implements IMenuService {
 	/**
 	 * The class providing persistence for this service.
 	 */
-	private final MenuPersistence menuPersistence = new MenuPersistence();
+	private final MenuPersistence menuPersistence;
 
 	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
@@ -57,9 +68,14 @@ public final class MenuService implements IMenuService {
 	 * 
 	 * @param menuManager
 	 *            The menu manager to use; must not be <code>null</code>.
+	 * @param commandService
+	 *            The command service to use; must not be <code>null</code>.
 	 */
-	public MenuService(final SMenuManager menuManager) {
+	public MenuService(final SMenuManager menuManager,
+			final ICommandService commandService) {
+		this.menuAuthority = new MenuAuthority();
 		this.menuManager = menuManager;
+		this.menuPersistence = new MenuPersistence(this, commandService);
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
@@ -76,6 +92,11 @@ public final class MenuService implements IMenuService {
 				menuElement, expression, this);
 		menuAuthority.contributeMenu(contribution);
 		return contribution;
+	}
+
+	public final void dispose() {
+		menuAuthority.dispose();
+		menuPersistence.dispose();
 	}
 
 	public final SActionSet getActionSet(final String actionSetId) {
@@ -118,8 +139,8 @@ public final class MenuService implements IMenuService {
 		return menuManager.getWidget(widgetId);
 	}
 
-	public final void readRegistry(final ICommandService commandService) {
-		menuPersistence.read(this, commandService);
+	public final void readRegistry() {
+		menuPersistence.read();
 	}
 
 	public final void removeContribution(final IMenuContribution contribution) {

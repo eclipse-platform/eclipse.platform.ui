@@ -16,7 +16,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.sources.EvaluationResultCache;
+import org.eclipse.ui.internal.services.EvaluationResultCache;
 
 /**
  * <p>

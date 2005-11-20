@@ -28,7 +28,7 @@ import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.internal.misc.Policy;
-import org.eclipse.ui.internal.sources.ExpressionAuthority;
+import org.eclipse.ui.internal.services.ExpressionAuthority;
 
 /**
  * <p>

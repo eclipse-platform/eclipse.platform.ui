@@ -16,7 +16,7 @@ import java.util.Collection;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.ui.IServiceWithSources;
+import org.eclipse.ui.services.IServiceWithSources;
 
 /**
  * <p>

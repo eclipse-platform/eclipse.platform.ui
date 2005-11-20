@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.menus.IDynamicMenu;
 import org.eclipse.jface.menus.IWidget;
@@ -39,11 +38,10 @@ import org.eclipse.jface.menus.SPart;
 import org.eclipse.jface.menus.SPopup;
 import org.eclipse.jface.menus.SReference;
 import org.eclipse.jface.menus.SWidget;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.commands.CommonCommandPersistence;
+import org.eclipse.ui.internal.services.RegistryPersistence;
 import org.eclipse.ui.menus.IMenuService;
 
 /**
@@ -53,96 +51,7 @@ import org.eclipse.ui.menus.IMenuService;
  * 
  * @since 3.2
  */
-final class MenuPersistence extends CommonCommandPersistence {
-
-	/**
-	 * The name of the image style attribute, which is used on location elements
-	 * in the menus extension point.
-	 */
-	private static final String ATTRIBUTE_IMAGE_STYLE = "imageStyle"; //$NON-NLS-1$
-
-	/**
-	 * The name of the menu identifier attribute, which appears on items.
-	 */
-	private static final String ATTRIBUTE_MENU_ID = "menuId"; //$NON-NLS-1$
-
-	/**
-	 * The name of the mnemonic attribute, which appears on locations.
-	 */
-	private static final String ATTRIBUTE_MNEMONIC = "mnemonic"; //$NON-NLS-1$
-
-	/**
-	 * The name of the position attribute, which appears on order elements.
-	 */
-	private static final String ATTRIBUTE_POSITION = "position"; //$NON-NLS-1$
-
-	/**
-	 * The name of the relativeTo attribute, which appears on order elements.
-	 */
-	private static final String ATTRIBUTE_RELATIVE_TO = "relativeTo"; //$NON-NLS-1$
-
-	/**
-	 * The name of the separatorsVisible attribute, which appears on group
-	 * elements.
-	 */
-	private static final String ATTRIBUTE_SEPARATORS_VISIBLE = "separatorsVisible"; //$NON-NLS-1$
-
-	/**
-	 * The name of the type attribute, which appears on bar elements.
-	 */
-	private static final String ATTRIBUTE_TYPE = "type"; //$NON-NLS-1$
-
-	/**
-	 * The name of the bar element, which appears in a location definition.
-	 */
-	private static final String ELEMENT_BAR = "bar"; //$NON-NLS-1$
-
-	/**
-	 * The name of the dynamic menu element, which appears in a group or menu
-	 * definition.
-	 */
-	private static final String ELEMENT_DYNAMIC = "dynamic"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a group.
-	 */
-	private static final String ELEMENT_GROUP = "group"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing an item.
-	 */
-	private static final String ELEMENT_ITEM = "item"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a location.
-	 */
-	private static final String ELEMENT_LOCATION = "location"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing the ordering information.
-	 */
-	private static final String ELEMENT_ORDER = "order"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing the a menu element reference.
-	 */
-	private static final String ELEMENT_REFERENCE = "reference"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing the visible when condition.
-	 */
-	private static final String ELEMENT_VISIBLE_WHEN = "visibleWhen"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a widget.
-	 */
-	private static final String ELEMENT_WIDGET = "widget"; //$NON-NLS-1$
-
-	/**
-	 * The name of the <code>org.eclipse.ui.menus</code> extension point.
-	 */
-	private static final String EXTENSION_MENUS = PlatformUI.PLUGIN_ID + '.'
-			+ IWorkbenchConstants.PL_MENUS;
+final class MenuPersistence extends RegistryPersistence {
 
 	/**
 	 * The index of the action set elements in the indexed array.
@@ -187,60 +96,6 @@ final class MenuPersistence extends CommonCommandPersistence {
 	private static final Collection menuContributions = new ArrayList();
 
 	/**
-	 * The constant for the position attribute corresponding to
-	 * {@link SOrder#POSITION_AFTER}.
-	 */
-	private static final String POSITION_AFTER = "after"; //$NON-NLS-1$
-
-	/**
-	 * The constant for the position attribute corresponding to
-	 * {@link SOrder#POSITION_BEFORE}.
-	 */
-	private static final String POSITION_BEFORE = "before"; //$NON-NLS-1$
-
-	/**
-	 * The constant for the position attribute corresponding to
-	 * {@link SOrder#POSITION_END}.
-	 */
-	private static final String POSITION_END = "end"; //$NON-NLS-1$
-
-	/**
-	 * The constant for the position attribute corresponding to
-	 * {@link SOrder#POSITION_START}.
-	 */
-	private static final String POSITION_START = "start"; //$NON-NLS-1$
-
-	/**
-	 * The type of reference which refers to a group.
-	 */
-	private static final String TYPE_GROUP = "group"; //$NON-NLS-1$
-
-	/**
-	 * The type of reference which refers to an item.
-	 */
-	private static final String TYPE_ITEM = "item"; //$NON-NLS-1$
-
-	/**
-	 * The type of bar or reference which refers to the menu.
-	 */
-	private static final String TYPE_MENU = "menu"; //$NON-NLS-1$
-
-	/**
-	 * The type of bar which references the status line.
-	 */
-	private static final String TYPE_STATUS = "status"; //$NON-NLS-1$
-
-	/**
-	 * The type of bar which reference the tool bar.
-	 */
-	private static final String TYPE_TOOL = "tool"; //$NON-NLS-1$
-
-	/**
-	 * The type of reference which refers to the widget.
-	 */
-	private static final String TYPE_WIDGET = "widget"; //$NON-NLS-1$
-
-	/**
 	 * Removes all of the contributions made by this class, and then clears the
 	 * collection. This should be called before every read.
 	 * 
@@ -251,6 +106,70 @@ final class MenuPersistence extends CommonCommandPersistence {
 	private static final void clearContributions(final IMenuService menuService) {
 		menuService.removeContributions(menuContributions);
 		menuContributions.clear();
+	}
+
+	/**
+	 * Reads the action sets from an array of action set elements from the menus
+	 * extension point.
+	 * 
+	 * @param configurationElements
+	 *            The configuration elements in the extension point; must not be
+	 *            <code>null</code>, but may be empty.
+	 * @param configurationElementCount
+	 *            The number of configuration elements that are really in the
+	 *            array.
+	 * @param menuService
+	 *            The menu service to which the action sets should be added;
+	 *            must not be <code>null</code>.
+	 */
+	private static final void readActionSetsFromRegistry(
+			final IConfigurationElement[] configurationElements,
+			final int configurationElementCount, final IMenuService menuService) {
+		// Undefine all the previous handle objects.
+		final HandleObject[] handleObjects = menuService.getDefinedActionSets();
+		if (handleObjects != null) {
+			for (int i = 0; i < handleObjects.length; i++) {
+				handleObjects[i].undefine();
+			}
+		}
+
+		final List warningsToLog = new ArrayList(1);
+
+		for (int i = 0; i < configurationElementCount; i++) {
+			final IConfigurationElement configurationElement = configurationElements[i];
+
+			// Read the menu identifier.
+			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+					warningsToLog, "Action sets need an id"); //$NON-NLS-1$
+			if (id == null)
+				continue;
+
+			// Read the label.
+			final String label = readRequired(configurationElement,
+					ATTRIBUTE_LABEL, warningsToLog, "Action sets need a label"); //$NON-NLS-1$
+			if (label == null) {
+				continue;
+			}
+
+			// Read the description.
+			final String description = readOptional(configurationElement,
+					ATTRIBUTE_DESCRIPTION);
+
+			// Read the whether the action set is visible by default.
+			final boolean visible = readBoolean(configurationElement,
+					ATTRIBUTE_VISIBLE, false);
+
+			// Read the references.
+			final SReference[] references = readReferencesFromRegistry(
+					configurationElement, id, warningsToLog);
+
+			final SActionSet actionSet = menuService.getActionSet(id);
+			actionSet.define(label, description, visible, references);
+		}
+
+		logWarnings(
+				warningsToLog,
+				"Warnings while parsing the action sets from the 'org.eclipse.ui.menus' extension point"); //$NON-NLS-1$
 	}
 
 	/**
@@ -278,16 +197,15 @@ final class MenuPersistence extends CommonCommandPersistence {
 				// There should only be one bar element
 				addWarning(warningsToLog,
 						"Location elements should only have one bar element", //$NON-NLS-1$
-						parentElement.getNamespace(), id);
+						parentElement, id);
 				return null;
 			}
 
 			final IConfigurationElement barElement = barElements[0];
 
 			// Read the type attribute.
-			final String type = readRequiredFromRegistry(barElement,
-					ATTRIBUTE_TYPE, warningsToLog,
-					"Bar elements require a type element", id); //$NON-NLS-1$
+			final String type = readRequired(barElement, ATTRIBUTE_TYPE,
+					warningsToLog, "Bar elements require a type element", id); //$NON-NLS-1$
 			final int typeInteger;
 			if (TYPE_MENU.equals(type)) {
 				typeInteger = SBar.TYPE_MENU;
@@ -298,14 +216,12 @@ final class MenuPersistence extends CommonCommandPersistence {
 			} else {
 				// The position was not understood.
 				addWarning(warningsToLog, "The bar type was not understood", //$NON-NLS-1$
-						parentElement.getNamespace(), id, "type", //$NON-NLS-1$
-						type);
+						parentElement, id, "type", type); //$NON-NLS-1$
 				return null;
 			}
 
 			// Read the path attribute.
-			final String path = readOptionalFromRegistry(barElement,
-					ATTRIBUTE_PATH);
+			final String path = readOptional(barElement, ATTRIBUTE_PATH);
 
 			return new SBar(typeInteger, path);
 		}
@@ -340,13 +256,13 @@ final class MenuPersistence extends CommonCommandPersistence {
 				addWarning(
 						warningsToLog,
 						"Group and menu elements should only have one dynamic element", //$NON-NLS-1$
-						parentElement.getNamespace(), id);
+						parentElement, id);
 				return null;
 			}
 
 			final IConfigurationElement dynamicMenuElement = dynamicMenuElements[0];
 
-			if (!checkClassFromRegistry(dynamicMenuElement, warningsToLog,
+			if (!checkClass(dynamicMenuElement, warningsToLog,
 					"Dynamic menu needs a class", id)) { //$NON-NLS-1$
 				return null;
 			}
@@ -355,70 +271,6 @@ final class MenuPersistence extends CommonCommandPersistence {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Reads the action sets from an array of action set elements from the menus
-	 * extension point.
-	 * 
-	 * @param configurationElements
-	 *            The configuration elements in the extension point; must not be
-	 *            <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param menuService
-	 *            The menu service to which the action sets should be added;
-	 *            must not be <code>null</code>.
-	 */
-	private static final void readActionSetsFromRegistry(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount, final IMenuService menuService) {
-		// Undefine all the previous handle objects.
-		final HandleObject[] handleObjects = menuService.getDefinedActionSets();
-		if (handleObjects != null) {
-			for (int i = 0; i < handleObjects.length; i++) {
-				handleObjects[i].undefine();
-			}
-		}
-
-		final List warningsToLog = new ArrayList(1);
-
-		for (int i = 0; i < configurationElementCount; i++) {
-			final IConfigurationElement configurationElement = configurationElements[i];
-
-			// Read the menu identifier.
-			final String id = readRequiredFromRegistry(configurationElement,
-					ATTRIBUTE_ID, warningsToLog, "Action sets need an id"); //$NON-NLS-1$
-			if (id == null)
-				continue;
-
-			// Read the label.
-			final String label = readRequiredFromRegistry(configurationElement,
-					ATTRIBUTE_LABEL, warningsToLog, "Action sets need a label"); //$NON-NLS-1$
-			if (label == null) {
-				continue;
-			}
-
-			// Read the description.
-			final String description = readOptionalFromRegistry(
-					configurationElement, ATTRIBUTE_DESCRIPTION);
-
-			// Read the whether the action set is visible by default.
-			final boolean visible = readBooleanFromRegistry(
-					configurationElement, ATTRIBUTE_VISIBLE, false);
-
-			// Read the references.
-			final SReference[] references = readReferencesFromRegistry(
-					configurationElement, id, warningsToLog);
-
-			final SActionSet actionSet = menuService.getActionSet(id);
-			actionSet.define(label, description, visible, references);
-		}
-
-		logWarnings(
-				warningsToLog,
-				"Warnings while parsing the action sets from the 'org.eclipse.ui.menus' extension point"); //$NON-NLS-1$
 	}
 
 	/**
@@ -452,17 +304,17 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the menu identifier.
-			final String id = readRequiredFromRegistry(configurationElement,
-					ATTRIBUTE_ID, warningsToLog, "Groups need an id"); //$NON-NLS-1$
+			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+					warningsToLog, "Groups need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read whether the separators are visible.
-			final boolean separatorsVisible = readBooleanFromRegistry(
-					configurationElement, ATTRIBUTE_SEPARATORS_VISIBLE, true);
+			final boolean separatorsVisible = readBoolean(configurationElement,
+					ATTRIBUTE_SEPARATORS_VISIBLE, true);
 
 			// Read out the visibleWhen expression.
-			final Expression visibleWhenExpression = readWhenElementFromRegistry(
+			final Expression visibleWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
 
@@ -520,22 +372,22 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the item identifier.
-			final String id = readRequiredFromRegistry(configurationElement,
-					ATTRIBUTE_ID, warningsToLog, "Items need an id"); //$NON-NLS-1$
+			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+					warningsToLog, "Items need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read the parameterized command.
-			final ParameterizedCommand command = readParameterizedCommandFromRegistry(
+			final ParameterizedCommand command = readParameterizedCommand(
 					configurationElement, commandService, warningsToLog,
 					"Items need a command id", id); //$NON-NLS-1$
 
 			// Read the menu identifier.
-			final String menuId = readOptionalFromRegistry(
-					configurationElement, ATTRIBUTE_MENU_ID);
+			final String menuId = readOptional(configurationElement,
+					ATTRIBUTE_MENU_ID);
 
 			// Read out the visibleWhen expression.
-			final Expression visibleWhenExpression = readWhenElementFromRegistry(
+			final Expression visibleWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
 
@@ -588,7 +440,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement locationElement = locationElements[i];
 
 			// Read the mnemonic.
-			final String mnemonic = readOptionalFromRegistry(locationElement,
+			final String mnemonic = readOptional(locationElement,
 					ATTRIBUTE_MNEMONIC);
 			final char mnemonicChar;
 			if (mnemonic == null) {
@@ -596,15 +448,14 @@ final class MenuPersistence extends CommonCommandPersistence {
 			} else if (mnemonic.length() != 1) {
 				addWarning(warningsToLog,
 						"The mnemonic should only be one character", //$NON-NLS-1$
-						parentElement.getNamespace(), id, "mnemonic", //$NON-NLS-1$
-						mnemonic);
+						parentElement, id, "mnemonic", mnemonic); //$NON-NLS-1$
 				mnemonicChar = SLocation.MNEMONIC_NONE;
 			} else {
 				mnemonicChar = mnemonic.charAt(0);
 			}
 
 			// Read the image style.
-			final String imageStyle = readOptionalFromRegistry(locationElement,
+			final String imageStyle = readOptional(locationElement,
 					ATTRIBUTE_IMAGE_STYLE);
 
 			// Read the position and the relativeTo attributes.
@@ -658,8 +509,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 		}
 		if (locationElement == null) {
 			addWarning(warningsToLog,
-					"A bar, part or popup element is required", parentElement //$NON-NLS-1$
-							.getNamespace(), id);
+					"A bar, part or popup element is required", parentElement, //$NON-NLS-1$
+					id);
 		}
 
 		return locationElement;
@@ -696,17 +547,17 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the menu identifier.
-			final String id = readRequiredFromRegistry(configurationElement,
-					ATTRIBUTE_ID, warningsToLog, "Menus need an id"); //$NON-NLS-1$
+			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+					warningsToLog, "Menus need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read the label.
-			final String label = readOptionalFromRegistry(configurationElement,
+			final String label = readOptional(configurationElement,
 					ATTRIBUTE_LABEL);
 
 			// Read out the visibleWhen expression.
-			final Expression visibleWhenExpression = readWhenElementFromRegistry(
+			final Expression visibleWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
 
@@ -756,7 +607,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement orderingElement = orderingElements[i];
 
 			// Read the position attribute.
-			final String position = readRequiredFromRegistry(orderingElement,
+			final String position = readRequired(orderingElement,
 					ATTRIBUTE_POSITION, warningsToLog,
 					"Order elements require a position element", id); //$NON-NLS-1$
 			final int positionInteger;
@@ -771,8 +622,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 			} else {
 				// The position was not understood.
 				addWarning(warningsToLog, "The position was not understood", //$NON-NLS-1$
-						parentElement.getNamespace(), id, "position", //$NON-NLS-1$
-						position);
+						parentElement, id, "position", position); //$NON-NLS-1$
 				return null;
 			}
 
@@ -780,7 +630,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 			String relativeTo = null;
 			if ((positionInteger == SOrder.POSITION_AFTER)
 					|| (positionInteger == SOrder.POSITION_BEFORE)) {
-				relativeTo = readRequiredFromRegistry(
+				relativeTo = readRequired(
 						parentElement,
 						ATTRIBUTE_RELATIVE_TO,
 						warningsToLog,
@@ -792,9 +642,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 						.getAttribute(ATTRIBUTE_RELATIVE_TO);
 				if (value != null) {
 					addWarning(warningsToLog,
-							"The position was not understood", //$NON-NLS-1$
-							parentElement.getNamespace(), id, "position", //$NON-NLS-1$
-							position);
+							"The position was not understood", parentElement, //$NON-NLS-1$
+							id, "position", position); //$NON-NLS-1$
 					return null;
 
 				}
@@ -832,7 +681,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 				// There should only be one part element
 				addWarning(warningsToLog,
 						"Location elements should only have one part element", //$NON-NLS-1$
-						parentElement.getNamespace(), id);
+						parentElement, id);
 				return null;
 			}
 
@@ -847,26 +696,23 @@ final class MenuPersistence extends CommonCommandPersistence {
 						warningsToLog, id);
 			}
 			if (leafLocationElement == null) {
-				addWarning(warningsToLog,
-						"A bar or popup element is required", parentElement //$NON-NLS-1$
-								.getNamespace(), id);
+				addWarning(warningsToLog, "A bar or popup element is required", //$NON-NLS-1$
+						parentElement, id);
 				return null;
 			}
 
 			// Read the two optional attributes.
-			final String partId = readOptionalFromRegistry(partElement,
-					ATTRIBUTE_ID);
-			final String clazz = readOptionalFromRegistry(partElement,
-					ATTRIBUTE_CLASS);
+			final String partId = readOptional(partElement, ATTRIBUTE_ID);
+			final String clazz = readOptional(partElement, ATTRIBUTE_CLASS);
 			if ((partId == null) && (clazz == null)) {
 				addWarning(warningsToLog,
-						"A part id or a part class is required", parentElement //$NON-NLS-1$
-								.getNamespace(), id);
+						"A part id or a part class is required", parentElement, //$NON-NLS-1$
+						id);
 				return null;
 			} else if ((partId != null) && (clazz != null)) {
 				addWarning(warningsToLog,
 						"Only a part id or a part class is allowed, not both", //$NON-NLS-1$
-						parentElement.getNamespace(), id);
+						parentElement, id);
 				return null;
 			} else if (partId != null) {
 				return new SPart(partId, SPart.TYPE_ID, leafLocationElement);
@@ -904,15 +750,13 @@ final class MenuPersistence extends CommonCommandPersistence {
 				// There should only be one popup element
 				addWarning(warningsToLog,
 						"Location elements should only have one popup element", //$NON-NLS-1$
-						parentElement.getNamespace(), id);
+						parentElement, id);
 				return null;
 			}
 
 			final IConfigurationElement popupElement = popupElements[0];
-			final String popupId = readOptionalFromRegistry(popupElement,
-					ATTRIBUTE_ID);
-			final String path = readOptionalFromRegistry(popupElement,
-					ATTRIBUTE_PATH);
+			final String popupId = readOptional(popupElement, ATTRIBUTE_ID);
+			final String path = readOptional(popupElement, ATTRIBUTE_PATH);
 			return new SPopup(popupId, path);
 		}
 
@@ -951,17 +795,15 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement referenceElement = referenceElements[i];
 
 			// Read the id.
-			final String referenceId = readRequiredFromRegistry(
-					referenceElement, ATTRIBUTE_ID, warningsToLog,
-					"References are required", id); //$NON-NLS-1$
+			final String referenceId = readRequired(referenceElement,
+					ATTRIBUTE_ID, warningsToLog, "References are required", id); //$NON-NLS-1$
 			if (referenceId == null) {
 				continue;
 			}
 
 			// Read the type attribute.
-			final String type = readRequiredFromRegistry(referenceElement,
-					ATTRIBUTE_TYPE, warningsToLog,
-					"Reference elements require a type", id); //$NON-NLS-1$
+			final String type = readRequired(referenceElement, ATTRIBUTE_TYPE,
+					warningsToLog, "Reference elements require a type", id); //$NON-NLS-1$
 			final int typeInteger;
 			if (TYPE_ITEM.equals(type)) {
 				typeInteger = SReference.TYPE_ITEM;
@@ -974,9 +816,8 @@ final class MenuPersistence extends CommonCommandPersistence {
 			} else {
 				// The position was not understood.
 				addWarning(warningsToLog,
-						"The reference type was not understood", //$NON-NLS-1$
-						parentElement.getNamespace(), id, "type", //$NON-NLS-1$
-						type);
+						"The reference type was not understood", parentElement, //$NON-NLS-1$
+						id, "type", type); //$NON-NLS-1$
 				return null;
 			}
 
@@ -1020,13 +861,13 @@ final class MenuPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read the widget identifier.
-			final String id = readRequiredFromRegistry(configurationElement,
-					ATTRIBUTE_ID, warningsToLog, "Widgets need an id"); //$NON-NLS-1$
+			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+					warningsToLog, "Widgets need an id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
 
 			// Read the widget class.
-			if (!checkClassFromRegistry(configurationElement, warningsToLog,
+			if (!checkClass(configurationElement, warningsToLog,
 					"Widget needs a class", id)) { //$NON-NLS-1$
 				continue;
 			}
@@ -1034,7 +875,7 @@ final class MenuPersistence extends CommonCommandPersistence {
 					ATTRIBUTE_CLASS);
 
 			// Read out the visibleWhen expression.
-			final Expression visibleWhenExpression = readWhenElementFromRegistry(
+			final Expression visibleWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_VISIBLE_WHEN, id,
 					warningsToLog);
 
@@ -1054,12 +895,19 @@ final class MenuPersistence extends CommonCommandPersistence {
 	}
 
 	/**
-	 * <p>
-	 * Reads all of the menu elements and action sets from the registry.
-	 * </p>
-	 * <p>
-	 * TODO Add support for modifications.
-	 * </p>
+	 * The command service which is providing the commands for the workbench;
+	 * must not be <code>null</code>.
+	 */
+	private final ICommandService commandService;
+
+	/**
+	 * The menu service which should be populated with the values from the
+	 * registry; must not be <code>null</code>.
+	 */
+	private final IMenuService menuService;
+
+	/**
+	 * Constructs a new instance of {@link MenuPersistence}.
 	 * 
 	 * @param menuService
 	 *            The menu service which should be populated with the values
@@ -1068,8 +916,46 @@ final class MenuPersistence extends CommonCommandPersistence {
 	 *            The command service which is providing the commands for the
 	 *            workbench; must not be <code>null</code>.
 	 */
-	final void read(final IMenuService menuService,
+	MenuPersistence(final IMenuService menuService,
 			final ICommandService commandService) {
+		if (menuService == null) {
+			throw new NullPointerException("The menu service cannot be null"); //$NON-NLS-1$
+		}
+
+		if (commandService == null) {
+			throw new NullPointerException("The command service cannot be null"); //$NON-NLS-1$
+		}
+
+		this.commandService = commandService;
+		this.menuService = menuService;
+	}
+
+	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+		/*
+		 * TODO Menus will need to be re-read (i.e., re-verified) if any of the
+		 * menu extensions change (i.e., menus), or if any of the command
+		 * extensions change (i.e., action definitions).
+		 */
+		final IExtensionDelta[] menuDeltas = event.getExtensionDeltas(
+				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_MENUS);
+		if (menuDeltas.length == 0) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * <p>
+	 * Reads all of the menu elements and action sets from the registry.
+	 * </p>
+	 * <p>
+	 * TODO Add support for modifications.
+	 * </p>
+	 */
+	protected final void read() {
+		super.read();
+
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int itemCount = 0;
@@ -1120,40 +1006,5 @@ final class MenuPersistence extends CommonCommandPersistence {
 		readActionSetsFromRegistry(
 				indexedConfigurationElements[INDEX_ACTION_SETS],
 				actionSetCount, menuService);
-
-		/*
-		 * Adds listener so that future registry changes trigger an update of
-		 * the command manager automatically.
-		 */
-		if (!listenersAttached) {
-			registry.addRegistryChangeListener(new IRegistryChangeListener() {
-				public final void registryChanged(
-						final IRegistryChangeEvent event) {
-					/*
-					 * Menus will need to be re-read (i.e., re-verified) if any
-					 * of the menu extensions change (i.e., menus), or if any of
-					 * the command extensions change (i.e., action definitions).
-					 */
-					final IExtensionDelta[] menuDeltas = event
-							.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-									IWorkbenchConstants.PL_MENUS);
-					if (menuDeltas.length == 0) {
-						return;
-					}
-
-					/*
-					 * At least one of the deltas is non-zero, so re-read all of
-					 * the bindings.
-					 */
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
-							read(menuService, commandService);
-						}
-					});
-				}
-			}, PlatformUI.PLUGIN_ID);
-
-			listenersAttached = true;
-		}
 	}
 }

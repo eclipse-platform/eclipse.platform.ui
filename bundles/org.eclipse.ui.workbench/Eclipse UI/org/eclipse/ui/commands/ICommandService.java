@@ -16,6 +16,7 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IExecutionListener;
+import org.eclipse.ui.services.IDisposable;
 
 /**
  * <p>
@@ -29,7 +30,7 @@ import org.eclipse.core.commands.IExecutionListener;
  * 
  * @since 3.1
  */
-public interface ICommandService {
+public interface ICommandService extends IDisposable {
 
 	/**
 	 * The identifier of the category in which all auto-generated commands will

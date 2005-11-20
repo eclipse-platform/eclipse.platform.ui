@@ -47,7 +47,7 @@ public final class ContextService implements IContextService {
 	/**
 	 * The persistence class for this context service.
 	 */
-	private final ContextPersistence contextPersistence = new ContextPersistence();
+	private final ContextPersistence contextPersistence;
 
 	/**
 	 * Constructs a new instance of <code>ContextService</code> using a
@@ -63,6 +63,7 @@ public final class ContextService implements IContextService {
 		}
 		this.contextManager = contextManager;
 		this.contextAuthority = new ContextAuthority(contextManager, this);
+		this.contextPersistence = new ContextPersistence(contextManager);
 	}
 
 	public final IContextActivation activateContext(final String contextId) {
@@ -106,6 +107,11 @@ public final class ContextService implements IContextService {
 		}
 	}
 
+	public final void dispose() {
+		contextPersistence.dispose();
+		contextAuthority.dispose();
+	}
+
 	public final Collection getActiveContextIds() {
 		return contextManager.getActiveContextIds();
 	}
@@ -127,7 +133,7 @@ public final class ContextService implements IContextService {
 	}
 
 	public final void readRegistry() {
-		contextPersistence.read(contextManager);
+		contextPersistence.read();
 	}
 
 	public final boolean registerShell(final Shell shell, final int type) {

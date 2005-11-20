@@ -49,7 +49,7 @@ public final class BindingService implements IBindingService {
 	/**
 	 * The persistence class responsible for bindings.
 	 */
-	private final BindingPersistence bindingPersistence = new BindingPersistence();
+	private final BindingPersistence bindingPersistence;
 
 	/**
 	 * The key binding support for the contexts. In the workbench, key bindings
@@ -62,18 +62,28 @@ public final class BindingService implements IBindingService {
 	 * binding manager.
 	 * 
 	 * @param bindingManager
-	 *            The binding manager to use; must not be <code>null</code>.
+	 *            The bind
+	 * ing manager to use; must not be <code>null</code>.
+	 * @param commandService
+	 *            The command service providing support for this service; must
+	 *            not be <code>null</code>;
 	 * @param workbench
 	 *            The workbench on which this context service will act; must not
 	 *            be <code>null</code>.
 	 */
 	public BindingService(final BindingManager bindingManager,
-			final Workbench workbench) {
+			final ICommandService commandService, final Workbench workbench) {
 		if (bindingManager == null) {
 			throw new NullPointerException(
 					"Cannot create a binding service with a null manager"); //$NON-NLS-1$
 		}
+		if (commandService == null) {
+			throw new NullPointerException(
+					"Cannot create a binding service with a null command service"); //$NON-NLS-1$
+		}
 		this.bindingManager = bindingManager;
+		this.bindingPersistence = new BindingPersistence(bindingManager,
+				commandService);
 
 		// Hook up the key binding support.
 		keyboard = new WorkbenchKeyboard(workbench);
@@ -98,6 +108,10 @@ public final class BindingService implements IBindingService {
 
 	public final Scheme getActiveScheme() {
 		return bindingManager.getActiveScheme();
+	}
+
+	public final void dispose() {
+		bindingPersistence.dispose();
 	}
 
 	public final Binding[] getBindings() {
@@ -161,7 +175,7 @@ public final class BindingService implements IBindingService {
 
 	public final void readRegistryAndPreferences(
 			final ICommandService commandService) {
-		bindingPersistence.read(bindingManager, commandService);
+		bindingPersistence.read();
 	}
 
 	public final void savePreferences(final Scheme activeScheme,

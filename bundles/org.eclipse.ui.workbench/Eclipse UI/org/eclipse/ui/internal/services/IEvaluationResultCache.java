@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.sources;
+package org.eclipse.ui.internal.services;
 
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISources;

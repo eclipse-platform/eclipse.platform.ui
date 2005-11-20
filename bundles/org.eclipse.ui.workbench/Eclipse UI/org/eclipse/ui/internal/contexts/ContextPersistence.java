@@ -21,12 +21,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.commands.CommonCommandPersistence;
+import org.eclipse.ui.internal.services.RegistryPersistence;
 
 /**
  * <p>
@@ -35,40 +33,7 @@ import org.eclipse.ui.internal.commands.CommonCommandPersistence;
  * 
  * @since 3.1
  */
-final class ContextPersistence extends CommonCommandPersistence {
-
-	/**
-	 * The name of the deprecated parent scope attribute, which appears on
-	 * contexts definitions.
-	 */
-	private static final String ATTRIBUTE_PARENT_SCOPE = "parentScope"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a deprecated accelerator scope.
-	 */
-	private static final String ELEMENT_ACCELERATOR_SCOPE = "acceleratorScope"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a context.
-	 */
-	private static final String ELEMENT_CONTEXT = "context"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a deprecated scope.
-	 */
-	private static final String ELEMENT_SCOPE = "scope"; //$NON-NLS-1$
-
-	/**
-	 * The name of the accelerator scopes extension point.
-	 */
-	private static final String EXTENSION_ACCELERATOR_SCOPES = PlatformUI.PLUGIN_ID
-			+ '.' + IWorkbenchConstants.PL_ACCELERATOR_SCOPES;
-
-	/**
-	 * The name of the contexts extension point.
-	 */
-	private static final String EXTENSION_CONTEXTS = PlatformUI.PLUGIN_ID + '.'
-			+ IWorkbenchConstants.PL_CONTEXTS;
+final class ContextPersistence extends RegistryPersistence {
 
 	/**
 	 * The index of the context elements in the indexed array.
@@ -109,7 +74,7 @@ final class ContextPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String contextId = readRequiredFromRegistry(
+			final String contextId = readRequired(
 					configurationElement, ATTRIBUTE_ID, warningsToLog,
 					"Contexts need an id"); //$NON-NLS-1$
 			if (contextId == null) {
@@ -117,7 +82,7 @@ final class ContextPersistence extends CommonCommandPersistence {
 			}
 
 			// Read out the name.
-			final String name = readRequiredFromRegistry(configurationElement,
+			final String name = readRequired(configurationElement,
 					ATTRIBUTE_NAME, warningsToLog, "Contexts need a name", //$NON-NLS-1$
 					contextId);
 			if (name == null) {
@@ -125,7 +90,7 @@ final class ContextPersistence extends CommonCommandPersistence {
 			}
 
 			// Read out the description.
-			final String description = readOptionalFromRegistry(
+			final String description = readOptional(
 					configurationElement, ATTRIBUTE_DESCRIPTION);
 
 			// Read out the parent id.
@@ -152,10 +117,39 @@ final class ContextPersistence extends CommonCommandPersistence {
 	}
 
 	/**
+	 * The context manager for this instance; must not be <code>null</code>.
+	 */
+	private final ContextManager contextManager;
+
+	/**
 	 * Constructs a new instance of <code>ContextPersistence</code>.
 	 */
-	ContextPersistence() {
-		// Does nothing
+	ContextPersistence(final ContextManager contextManager) {
+		if (contextManager == null) {
+			throw new NullPointerException(
+					"The context manager must not be null"); //$NON-NLS-1$
+		}
+		this.contextManager = contextManager;
+	}
+
+	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+		final IExtensionDelta[] acceleratorScopeDeltas = event
+				.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+						IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
+		if (acceleratorScopeDeltas.length == 0) {
+			final IExtensionDelta[] contextDeltas = event.getExtensionDeltas(
+					PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_CONTEXTS);
+			if (contextDeltas.length == 0) {
+				final IExtensionDelta[] commandDeltas = event
+						.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+								IWorkbenchConstants.PL_COMMANDS);
+				if (commandDeltas.length == 0) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -165,7 +159,9 @@ final class ContextPersistence extends CommonCommandPersistence {
 	 *            The context manager which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
 	 */
-	final void read(final ContextManager contextManager) {
+	protected final void read() {
+		super.read();
+
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int contextDefinitionCount = 0;
@@ -232,46 +228,6 @@ final class ContextPersistence extends CommonCommandPersistence {
 		readContextsFromRegistry(
 				indexedConfigurationElements[INDEX_CONTEXT_DEFINITIONS],
 				contextDefinitionCount, contextManager);
-
-		/*
-		 * Adds listener so that future registry changes trigger an update of
-		 * the command manager automatically.
-		 */
-		if (!listenersAttached) {
-			registry.addRegistryChangeListener(new IRegistryChangeListener() {
-				public final void registryChanged(
-						final IRegistryChangeEvent event) {
-					final IExtensionDelta[] acceleratorScopeDeltas = event
-							.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-									IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
-					if (acceleratorScopeDeltas.length == 0) {
-						final IExtensionDelta[] contextDeltas = event
-								.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-										IWorkbenchConstants.PL_CONTEXTS);
-						if (contextDeltas.length == 0) {
-							final IExtensionDelta[] commandDeltas = event
-									.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-											IWorkbenchConstants.PL_COMMANDS);
-							if (commandDeltas.length == 0) {
-								return;
-							}
-						}
-					}
-
-					/*
-					 * At least one of the deltas is non-zero, so re-read all of
-					 * the bindings.
-					 */
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
-							read(contextManager);
-						}
-					});
-				}
-			}, PlatformUI.PLUGIN_ID);
-
-			listenersAttached = true;
-		}
 	}
 
 }

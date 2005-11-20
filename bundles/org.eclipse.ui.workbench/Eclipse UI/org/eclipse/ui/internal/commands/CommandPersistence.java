@@ -22,13 +22,12 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.services.RegistryPersistence;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -38,52 +37,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * 
  * @since 3.1
  */
-final class CommandPersistence extends CommonCommandPersistence {
-
-	/**
-	 * The name of the category attribute, which appears on a command
-	 * definition.
-	 */
-	private static final String ATTRIBUTE_CATEGORY = "category"; //$NON-NLS-1$
-
-	/**
-	 * The name of the category identifier attribute, which appears on a command
-	 * definition.
-	 */
-	private static final String ATTRIBUTE_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
-
-	/**
-	 * The name of the optional attribute, which appears on parameter
-	 * definitions.
-	 */
-	private static final String ATTRIBUTE_OPTIONAL = "optional"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing an action definition. This element only
-	 * existed in
-	 */
-	private static final String ELEMENT_ACTION_DEFINITION = "actionDefinition"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a category.
-	 */
-	private static final String ELEMENT_CATEGORY = "category"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a parameter.
-	 */
-	private static final String ELEMENT_COMMAND_PARAMETER = "commandParameter"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing some state.
-	 */
-	private static final String ELEMENT_STATE = "state"; //$NON-NLS-1$
-
-	/**
-	 * The name of the action definitions extension point.
-	 */
-	private static final String EXTENSION_ACTION_DEFINITIONS = PlatformUI.PLUGIN_ID
-			+ '.' + IWorkbenchConstants.PL_ACTION_DEFINITIONS;
+final class CommandPersistence extends RegistryPersistence {
 
 	/**
 	 * The index of the category elements in the indexed array.
@@ -142,15 +96,14 @@ final class CommandPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the category identifier.
-			final String categoryId = readRequiredFromRegistry(
-					configurationElement, ATTRIBUTE_ID, warningsToLog,
-					"Categories need an id"); //$NON-NLS-1$
+			final String categoryId = readRequired(configurationElement,
+					ATTRIBUTE_ID, warningsToLog, "Categories need an id"); //$NON-NLS-1$
 			if (categoryId == null) {
 				continue;
 			}
 
 			// Read out the name.
-			final String name = readRequiredFromRegistry(configurationElement,
+			final String name = readRequired(configurationElement,
 					ATTRIBUTE_NAME, warningsToLog, "Categories need a name", //$NON-NLS-1$
 					categoryId);
 			if (name == null) {
@@ -158,8 +111,8 @@ final class CommandPersistence extends CommonCommandPersistence {
 			}
 
 			// Read out the description.
-			final String description = readOptionalFromRegistry(
-					configurationElement, ATTRIBUTE_DESCRIPTION);
+			final String description = readOptional(configurationElement,
+					ATTRIBUTE_DESCRIPTION);
 
 			final Category category = commandService.getCategory(categoryId);
 			category.define(name, description);
@@ -203,23 +156,22 @@ final class CommandPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequiredFromRegistry(
-					configurationElement, ATTRIBUTE_ID, warningsToLog,
-					"Commands need an id"); //$NON-NLS-1$
+			final String commandId = readRequired(configurationElement,
+					ATTRIBUTE_ID, warningsToLog, "Commands need an id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;
 			}
 
 			// Read out the name.
-			final String name = readRequiredFromRegistry(configurationElement,
+			final String name = readRequired(configurationElement,
 					ATTRIBUTE_NAME, warningsToLog, "Commands need a name"); //$NON-NLS-1$
 			if (name == null) {
 				continue;
 			}
 
 			// Read out the description.
-			final String description = readOptionalFromRegistry(
-					configurationElement, ATTRIBUTE_DESCRIPTION);
+			final String description = readOptional(configurationElement,
+					ATTRIBUTE_DESCRIPTION);
 
 			// Read out the category id.
 			String categoryId = configurationElement
@@ -239,10 +191,9 @@ final class CommandPersistence extends CommonCommandPersistence {
 			final Command command = commandService.getCommand(commandId);
 			final Category category = commandService.getCategory(categoryId);
 			if (!category.isDefined()) {
-				addWarning(
-						warningsToLog,
+				addWarning(warningsToLog,
 						"Commands should really have a category", //$NON-NLS-1$
-						configurationElement.getNamespace(), commandId,
+						configurationElement, commandId,
 						"categoryId", categoryId); //$NON-NLS-1$
 			}
 
@@ -286,15 +237,15 @@ final class CommandPersistence extends CommonCommandPersistence {
 		for (int i = 0; i < parameterElements.length; i++) {
 			final IConfigurationElement parameterElement = parameterElements[i];
 			// Read out the id
-			final String id = readRequiredFromRegistry(parameterElement,
-					ATTRIBUTE_ID, warningsToLog, "Parameters need an id"); //$NON-NLS-1$
+			final String id = readRequired(parameterElement, ATTRIBUTE_ID,
+					warningsToLog, "Parameters need an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
 
 			// Read out the name.
-			final String name = readRequiredFromRegistry(parameterElement,
-					ATTRIBUTE_NAME, warningsToLog, "Parameters need a name"); //$NON-NLS-1$
+			final String name = readRequired(parameterElement, ATTRIBUTE_NAME,
+					warningsToLog, "Parameters need a name"); //$NON-NLS-1$
 			if (name == null) {
 				continue;
 			}
@@ -305,7 +256,7 @@ final class CommandPersistence extends CommonCommandPersistence {
 			 */
 
 			// Read out the optional attribute, if present.
-			final boolean optional = readBooleanFromRegistry(parameterElement,
+			final boolean optional = readBoolean(parameterElement,
 					ATTRIBUTE_OPTIONAL, true);
 
 			final Parameter parameter = new Parameter(id, name,
@@ -352,13 +303,13 @@ final class CommandPersistence extends CommonCommandPersistence {
 		for (int i = 0; i < stateElements.length; i++) {
 			final IConfigurationElement stateElement = stateElements[i];
 
-			final String id = readRequiredFromRegistry(stateElement,
-					ATTRIBUTE_ID, warningsToLog, "State needs an id"); //$NON-NLS-1$
+			final String id = readRequired(stateElement, ATTRIBUTE_ID,
+					warningsToLog, "State needs an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
 
-			if (checkClassFromRegistry(stateElement, warningsToLog,
+			if (checkClass(stateElement, warningsToLog,
 					"State must have an associated class", id)) { //$NON-NLS-1$
 				final String preferenceKey = PREFERENCE_KEY_PREFIX + '/'
 						+ command.getId() + '/' + id;
@@ -371,10 +322,38 @@ final class CommandPersistence extends CommonCommandPersistence {
 	}
 
 	/**
-	 * Constructs a new instance of <code>CommandPersistence</code>.
+	 * The command service with which this persistence class is associated;
+	 * never <code>null</code>.
 	 */
-	CommandPersistence() {
-		// Does nothing
+	private final ICommandService commandService;
+
+	/**
+	 * Constructs a new instance of <code>CommandPersistence</code>.
+	 * 
+	 * @param commandService
+	 *            The command service which should be populated with the values
+	 *            from the registry; must not be <code>null</code>.
+	 */
+	CommandPersistence(final ICommandService commandService) {
+		if (commandService == null) {
+			throw new NullPointerException("The command service cannot be null"); //$NON-NLS-1$
+		}
+		this.commandService = commandService;
+	}
+
+	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+		final IExtensionDelta[] commandDeltas = event.getExtensionDeltas(
+				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_COMMANDS);
+		if (commandDeltas.length == 0) {
+			final IExtensionDelta[] actionDefinitionDeltas = event
+					.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+							IWorkbenchConstants.PL_ACTION_DEFINITIONS);
+			if (actionDefinitionDeltas.length == 0) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -384,7 +363,9 @@ final class CommandPersistence extends CommonCommandPersistence {
 	 *            The command service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
 	 */
-	final void read(final ICommandService commandService) {
+	protected final void read() {
+		super.read();
+
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int commandDefinitionCount = 0;
@@ -429,41 +410,5 @@ final class CommandPersistence extends CommonCommandPersistence {
 		readCommandsFromRegistry(
 				indexedConfigurationElements[INDEX_COMMAND_DEFINITIONS],
 				commandDefinitionCount, commandService);
-
-		/*
-		 * Adds listener so that future registry changes trigger an update of
-		 * the command manager automatically.
-		 */
-		if (!listenersAttached) {
-			registry.addRegistryChangeListener(new IRegistryChangeListener() {
-				public final void registryChanged(
-						final IRegistryChangeEvent event) {
-					final IExtensionDelta[] commandDeltas = event
-							.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-									IWorkbenchConstants.PL_COMMANDS);
-					if (commandDeltas.length == 0) {
-						final IExtensionDelta[] actionDefinitionDeltas = event
-								.getExtensionDeltas(
-										PlatformUI.PLUGIN_ID,
-										IWorkbenchConstants.PL_ACTION_DEFINITIONS);
-						if (actionDefinitionDeltas.length == 0) {
-							return;
-						}
-					}
-
-					/*
-					 * At least one of the deltas is non-zero, so re-read all of
-					 * the bindings.
-					 */
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
-							read(commandService);
-						}
-					});
-				}
-			}, PlatformUI.PLUGIN_ID);
-
-			listenersAttached = true;
-		}
 	}
 }

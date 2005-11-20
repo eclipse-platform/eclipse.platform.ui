@@ -20,13 +20,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.commands.CommonCommandPersistence;
+import org.eclipse.ui.internal.services.RegistryPersistence;
 
 /**
  * <p>
@@ -35,47 +33,7 @@ import org.eclipse.ui.internal.commands.CommonCommandPersistence;
  * 
  * @since 3.1
  */
-final class HandlerPersistence extends CommonCommandPersistence {
-
-	/**
-	 * The name of the default handler attribute, which appears on a command
-	 * definition.
-	 */
-	private static final String ATTRIBUTE_DEFAULT_HANDLER = "defaultHandler"; //$NON-NLS-1$
-
-	/**
-	 * The name of the active when element, which appears on a handler
-	 * definition.
-	 */
-	private static final String ELEMENT_ACTIVE_WHEN = "activeWhen"; //$NON-NLS-1$
-
-	/**
-	 * The name of the default handler element, which appears on a command
-	 * definition.
-	 */
-	private static final String ELEMENT_DEFAULT_HANDLER = ATTRIBUTE_DEFAULT_HANDLER;
-
-	/**
-	 * The name of the enabled when element, which appears on a handler
-	 * definition.
-	 */
-	private static final String ELEMENT_ENABLED_WHEN = "enabledWhen"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a handler.
-	 */
-	private static final String ELEMENT_HANDLER = "handler"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a handler submission.
-	 */
-	private static final String ELEMENT_HANDLER_SUBMISSION = "handlerSubmission"; //$NON-NLS-1$
-
-	/**
-	 * The name of the commands extension point.
-	 */
-	private static final String EXTENSION_HANDLERS = PlatformUI.PLUGIN_ID + '.'
-			+ IWorkbenchConstants.PL_HANDLERS;
+final class HandlerPersistence extends RegistryPersistence {
 
 	/**
 	 * The handler activations that have come from the registry. This is used to
@@ -145,7 +103,7 @@ final class HandlerPersistence extends CommonCommandPersistence {
 			 * <code>CommandPersistence</code>, so we'll just ignore any
 			 * problems here.
 			 */
-			final String commandId = readOptionalFromRegistry(
+			final String commandId = readOptional(
 					configurationElement, ATTRIBUTE_ID);
 			if (commandId == null) {
 				continue;
@@ -187,7 +145,7 @@ final class HandlerPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequiredFromRegistry(
+			final String commandId = readRequired(
 					configurationElement, ATTRIBUTE_COMMAND_ID, warningsToLog,
 					"Handlers need a command id"); //$NON-NLS-1$
 			if (commandId == null) {
@@ -195,16 +153,16 @@ final class HandlerPersistence extends CommonCommandPersistence {
 			}
 
 			// Check to see if we have a handler class.
-			if (!checkClassFromRegistry(configurationElement, warningsToLog,
+			if (!checkClass(configurationElement, warningsToLog,
 					"Handlers need a class", commandId)) { //$NON-NLS-1$
 				continue;
 			}
 
 			// Get the activeWhen and enabledWhen expressions.
-			final Expression activeWhenExpression = readWhenElementFromRegistry(
+			final Expression activeWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_ACTIVE_WHEN, commandId,
 					warningsToLog);
-			final Expression enabledWhenExpression = readWhenElementFromRegistry(
+			final Expression enabledWhenExpression = readWhenElement(
 					configurationElement, ELEMENT_ENABLED_WHEN, commandId,
 					warningsToLog);
 
@@ -242,7 +200,7 @@ final class HandlerPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequiredFromRegistry(
+			final String commandId = readRequired(
 					configurationElement, ATTRIBUTE_COMMAND_ID, warningsToLog,
 					"Handler submissions need a command id"); //$NON-NLS-1$
 			if (commandId == null) {
@@ -260,10 +218,40 @@ final class HandlerPersistence extends CommonCommandPersistence {
 	}
 
 	/**
+	 * The handler service with which this persistence class is associated. This
+	 * value must not be <code>null</code>.
+	 */
+	private final IHandlerService handlerService;
+
+	/**
 	 * Constructs a new instance of <code>HandlerPersistence</code>.
 	 */
-	HandlerPersistence() {
-		// Do nothing.
+	HandlerPersistence(final IHandlerService handlerService) {
+		this.handlerService = handlerService;
+	}
+
+	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+		/*
+		 * Handlers will need to be re-read (i.e., re-verified) if any of the
+		 * handler extensions change (i.e., handlers, commands), or if any of
+		 * the command extensions change (i.e., action definitions).
+		 */
+		final IExtensionDelta[] handlerDeltas = event.getExtensionDeltas(
+				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_HANDLERS);
+		if (handlerDeltas.length == 0) {
+			final IExtensionDelta[] commandDeltas = event.getExtensionDeltas(
+					PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_COMMANDS);
+			if (commandDeltas.length == 0) {
+				final IExtensionDelta[] actionDefinitionDeltas = event
+						.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+								IWorkbenchConstants.PL_ACTION_DEFINITIONS);
+				if (actionDefinitionDeltas.length == 0) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -273,7 +261,9 @@ final class HandlerPersistence extends CommonCommandPersistence {
 	 *            The handler service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
 	 */
-	final void read(final IHandlerService handlerService) {
+	protected final void read() {
+		super.read();
+
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int commandDefinitionCount = 0;
@@ -325,52 +315,5 @@ final class HandlerPersistence extends CommonCommandPersistence {
 		readHandlersFromRegistry(
 				indexedConfigurationElements[INDEX_HANDLER_DEFINITIONS],
 				handlerDefinitionCount, handlerService);
-
-		/*
-		 * Adds listener so that future registry changes trigger an update of
-		 * the command manager automatically.
-		 */
-		if (!listenersAttached) {
-			registry.addRegistryChangeListener(new IRegistryChangeListener() {
-				public final void registryChanged(
-						final IRegistryChangeEvent event) {
-					/*
-					 * Handlers will need to be re-read (i.e., re-verified) if
-					 * any of the handler extensions change (i.e., handlers,
-					 * commands), or if any of the command extensions change
-					 * (i.e., action definitions).
-					 */
-					final IExtensionDelta[] handlerDeltas = event
-							.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-									IWorkbenchConstants.PL_HANDLERS);
-					if (handlerDeltas.length == 0) {
-						final IExtensionDelta[] commandDeltas = event
-								.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-										IWorkbenchConstants.PL_COMMANDS);
-						if (commandDeltas.length == 0) {
-							final IExtensionDelta[] actionDefinitionDeltas = event
-									.getExtensionDeltas(
-											PlatformUI.PLUGIN_ID,
-											IWorkbenchConstants.PL_ACTION_DEFINITIONS);
-							if (actionDefinitionDeltas.length == 0) {
-								return;
-							}
-						}
-					}
-
-					/*
-					 * At least one of the deltas is non-zero, so re-read all of
-					 * the bindings.
-					 */
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
-							read(handlerService);
-						}
-					});
-				}
-			}, PlatformUI.PLUGIN_ID);
-
-			listenersAttached = true;
-		}
 	}
 }

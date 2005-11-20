@@ -37,7 +37,7 @@ public final class CommandService implements ICommandService {
 	/**
 	 * The persistence class for this command service.
 	 */
-	private final CommandPersistence commandPersistence = new CommandPersistence();
+	private final CommandPersistence commandPersistence;
 
 	/**
 	 * Constructs a new instance of <code>CommandService</code> using a
@@ -52,6 +52,7 @@ public final class CommandService implements ICommandService {
 					"Cannot create a command service with a null manager"); //$NON-NLS-1$
 		}
 		this.commandManager = commandManager;
+		this.commandPersistence = new CommandPersistence(this);
 	}
 
 	public final void addExecutionListener(final IExecutionListener listener) {
@@ -61,6 +62,10 @@ public final class CommandService implements ICommandService {
 	public final void defineUncategorizedCategory(final String name,
 			final String description) {
 		commandManager.defineUncategorizedCategory(name, description);
+	}
+
+	public final void dispose() {
+		commandPersistence.dispose();
 	}
 
 	public final Category getCategory(final String categoryId) {
@@ -88,7 +93,7 @@ public final class CommandService implements ICommandService {
 	}
 
 	public final void readRegistry() {
-		commandPersistence.read(this);
+		commandPersistence.read();
 	}
 
 	public final void removeExecutionListener(final IExecutionListener listener) {

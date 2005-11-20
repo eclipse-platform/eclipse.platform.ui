@@ -49,7 +49,7 @@ public final class HandlerService implements IHandlerService {
 	/**
 	 * The class providing persistence for this service.
 	 */
-	private final HandlerPersistence handlerPersistence = new HandlerPersistence();
+	private final HandlerPersistence handlerPersistence;
 
 	/**
 	 * Constructs a new instance of <code>CommandService</code> using a
@@ -60,6 +60,7 @@ public final class HandlerService implements IHandlerService {
 	 */
 	public HandlerService(final CommandManager commandManager) {
 		this.handlerAuthority = new HandlerAuthority(commandManager);
+		this.handlerPersistence = new HandlerPersistence(this);
 	}
 
 	public final IHandlerActivation activateHandler(final String commandId,
@@ -100,12 +101,17 @@ public final class HandlerService implements IHandlerService {
 		}
 	}
 
+	public final void dispose() {
+		handlerAuthority.dispose();
+		handlerPersistence.dispose();
+	}
+
 	public final IEvaluationContext getCurrentState() {
 		return handlerAuthority.getCurrentState();
 	}
 
 	public final void readRegistry() {
-		handlerPersistence.read(this);
+		handlerPersistence.read();
 	}
 
 	public final void removeSourceProvider(final ISourceProvider provider) {

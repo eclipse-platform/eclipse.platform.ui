@@ -32,7 +32,7 @@ import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
-import org.eclipse.ui.internal.sources.ExpressionAuthority;
+import org.eclipse.ui.internal.services.ExpressionAuthority;
 
 /**
  * <p>

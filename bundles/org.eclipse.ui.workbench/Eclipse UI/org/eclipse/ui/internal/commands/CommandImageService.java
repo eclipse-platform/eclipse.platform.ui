@@ -36,7 +36,7 @@ public final class CommandImageService implements ICommandImageService {
 	/**
 	 * The class providing persistence for this service.
 	 */
-	private final CommandImagePersistence commandImagePersistence = new CommandImagePersistence();
+	private final CommandImagePersistence commandImagePersistence;
 
 	/**
 	 * The command service that provides commands for this service. This value
@@ -68,11 +68,16 @@ public final class CommandImageService implements ICommandImageService {
 		}
 		this.commandImageManager = commandImageManager;
 		this.commandService = commandService;
+		this.commandImagePersistence = new CommandImagePersistence();
 	}
 
 	public final void bind(final String commandId, final int type,
 			final String style, final URL url) {
 		commandImageManager.bind(commandId, type, style, url);
+	}
+
+	public final void dispose() {
+		commandImagePersistence.dispose();
 	}
 
 	public final String generateUnusedStyle(final String commandId) {

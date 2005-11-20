@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.menus.MenuElement;
-import org.eclipse.ui.internal.sources.ExpressionAuthority;
+import org.eclipse.ui.internal.services.ExpressionAuthority;
 import org.eclipse.ui.menus.IMenuContribution;
 
 /**

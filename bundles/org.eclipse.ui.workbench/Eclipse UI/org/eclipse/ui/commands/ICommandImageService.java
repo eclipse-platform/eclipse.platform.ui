@@ -13,6 +13,7 @@ package org.eclipse.ui.commands;
 import java.net.URL;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.services.IDisposable;
 
 /**
  * <p>
@@ -46,7 +47,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  * @since 3.2
  */
-public interface ICommandImageService {
+public interface ICommandImageService extends IDisposable {
 
 	/**
 	 * The type of image to display in the default case.

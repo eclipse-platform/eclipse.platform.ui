@@ -17,7 +17,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.sources.EvaluationResultCache;
+import org.eclipse.ui.internal.services.EvaluationResultCache;
 
 /**
  * <p>

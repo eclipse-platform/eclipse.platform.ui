@@ -13,7 +13,7 @@ package org.eclipse.ui.handlers;
 
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.ui.internal.sources.IEvaluationResultCache;
+import org.eclipse.ui.internal.services.IEvaluationResultCache;
 
 /**
  * <p>

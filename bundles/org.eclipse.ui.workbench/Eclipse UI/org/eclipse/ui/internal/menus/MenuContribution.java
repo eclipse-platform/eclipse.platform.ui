@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.menus;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.menus.MenuElement;
 import org.eclipse.ui.ISources;
-import org.eclipse.ui.internal.sources.EvaluationResultCache;
+import org.eclipse.ui.internal.services.EvaluationResultCache;
 import org.eclipse.ui.menus.IMenuContribution;
 import org.eclipse.ui.menus.IMenuService;
 

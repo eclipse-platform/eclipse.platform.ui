@@ -19,8 +19,7 @@ import org.eclipse.jface.menus.SGroup;
 import org.eclipse.jface.menus.SItem;
 import org.eclipse.jface.menus.SMenu;
 import org.eclipse.jface.menus.SWidget;
-import org.eclipse.ui.IServiceWithSources;
-import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.services.IServiceWithSources;
 
 /**
  * <p>
@@ -207,12 +206,8 @@ public interface IMenuService extends IServiceWithSources {
 	 * This will also attach listeners that will monitor changes to the registry
 	 * and preference store and update appropriately.
 	 * </p>
-	 * 
-	 * @param commandService
-	 *            The command service providing the command's for the workbench;
-	 *            must not be <code>null</code>.
 	 */
-	public void readRegistry(ICommandService commandService);
+	public void readRegistry();
 
 	/**
 	 * Removes the given contribution within the context of this service. If the

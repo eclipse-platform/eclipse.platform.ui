@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.commands.CommandManager;
@@ -129,9 +130,9 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
-import org.eclipse.ui.internal.sources.ActivePartSourceProvider;
-import org.eclipse.ui.internal.sources.ActiveShellSourceProvider;
-import org.eclipse.ui.internal.sources.CurrentSelectionSourceProvider;
+import org.eclipse.ui.internal.services.ActivePartSourceProvider;
+import org.eclipse.ui.internal.services.ActiveShellSourceProvider;
+import org.eclipse.ui.internal.services.CurrentSelectionSourceProvider;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -144,6 +145,7 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
@@ -961,14 +963,15 @@ public final class Workbench implements IWorkbench {
 		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 		bindingManager = new BindingManager(contextManager, commandManager);
 		final IBindingService bindingService = new BindingService(
-				bindingManager, this);
+				bindingManager, commandService, this);
 		services.put(IBindingService.class, bindingService);
 		final CommandImageManager commandImageManager = new CommandImageManager();
 		final CommandImageService commandImageService = new CommandImageService(
 				commandImageManager, commandService);
 		services.put(ICommandImageService.class, commandImageService);
 		final SMenuManager menuManager = new SMenuManager();
-		final IMenuService menuService = new MenuService(menuManager);
+		final IMenuService menuService = new MenuService(menuManager,
+				commandService);
 		services.put(IMenuService.class, menuService);
 
 		/*
@@ -981,10 +984,11 @@ public final class Workbench implements IWorkbench {
 		contextService.readRegistry();
 		bindingService.readRegistryAndPreferences(commandService);
 		commandImageService.readRegistry();
-		menuService.readRegistry(commandService);
-		final LegacyActionPersistence deprecatedSupport = new LegacyActionPersistence();
-		deprecatedSupport.read(commandManager, handlerService, bindingManager,
+		menuService.readRegistry();
+		final LegacyActionPersistence deprecatedSupport = new LegacyActionPersistence(
+				commandManager, handlerService, bindingManager,
 				commandImageManager, menuService);
+		deprecatedSupport.read();
 
 		/*
 		 * Phase 3 of the initialization of commands. The source providers that
@@ -2094,6 +2098,16 @@ public final class Workbench implements IWorkbench {
 				extensionEventHandler);
 		Platform.getExtensionRegistry().removeRegistryChangeListener(
 				startupRegistryListener);
+		
+		// Bring down all of the services.
+		final Iterator serviceItr = services.values().iterator();
+		while (serviceItr.hasNext()) {
+			final Object object = serviceItr.next();
+			if (object instanceof IDisposable) {
+				final IDisposable service = (IDisposable) object;
+				service.dispose();
+			}
+		}
 		
 		workbenchActivitySupport.dispose();
 		WorkbenchHelpSystem.disposeIfNecessary();

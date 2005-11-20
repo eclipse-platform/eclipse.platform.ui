@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
@@ -47,11 +46,9 @@ import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
@@ -60,8 +57,8 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.CommonCommandPersistence;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.services.PreferencePersistence;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -69,136 +66,17 @@ import org.eclipse.ui.keys.IBindingService;
  * A static class for accessing the registry and the preference store.
  * </p>
  * 
+ * TODO Use utility methods from preference persistence.
+ * 
  * @since 3.1
  */
-final class BindingPersistence extends CommonCommandPersistence {
-
-	/**
-	 * The name of the attribute storing the command id for a binding.
-	 */
-	private static final String ATTRIBUTE_COMMAND = "command"; //$NON-NLS-1$
-
-	/**
-	 * The name of the configuration attribute storing the scheme id for a
-	 * binding.
-	 */
-	private static final String ATTRIBUTE_CONFIGURATION = "configuration"; //$NON-NLS-1$
-
-	/**
-	 * The name of the attribute storing the context id for a binding.
-	 */
-	private static final String ATTRIBUTE_CONTEXT_ID = "contextId"; //$NON-NLS-1$
-
-	/**
-	 * The name of the attribute storing the identifier for the active key
-	 * configuration identifier. This provides legacy support for the
-	 * <code>activeKeyConfiguration</code> element in the commands extension
-	 * point.
-	 */
-	private static final String ATTRIBUTE_KEY_CONFIGURATION_ID = "keyConfigurationId"; //$NON-NLS-1$
-
-	/**
-	 * The name of the attribute storing the trigger sequence for a binding.
-	 * This is called a 'keySequence' for legacy reasons.
-	 */
-	private static final String ATTRIBUTE_KEY_SEQUENCE = "keySequence"; //$NON-NLS-1$
-
-	/**
-	 * The name of the attribute storing the locale for a binding.
-	 */
-	private static final String ATTRIBUTE_LOCALE = "locale"; //$NON-NLS-1$
-
-	/**
-	 * The name of the attribute storing the platform for a binding.
-	 */
-	private static final String ATTRIBUTE_PLATFORM = "platform"; //$NON-NLS-1$
-
-	/**
-	 * The name of the attribute storing the identifier for the active scheme.
-	 * This is called a 'keyConfigurationId' for legacy reasons.
-	 */
-	private static final String ATTRIBUTE_SCHEME_ID = "schemeId"; //$NON-NLS-1$
-
-	/**
-	 * The name of the scope attribute for a binding.
-	 */
-	private static final String ATTRIBUTE_SCOPE = "scope"; //$NON-NLS-1$
-
-	/**
-	 * The name of the sequence attribute for a key binding.
-	 */
-	private static final String ATTRIBUTE_SEQUENCE = "sequence"; //$NON-NLS-1$
-
-	/**
-	 * The name of the string attribute (key sequence) for a binding in the
-	 * commands extension point.
-	 */
-	private static final String ATTRIBUTE_STRING = "string"; //$NON-NLS-1$
+final class BindingPersistence extends PreferencePersistence {
 
 	/**
 	 * Whether this class should print out debugging information when it reads
 	 * in data, or writes to the preference store.
 	 */
 	private static final boolean DEBUG = Policy.DEBUG_KEY_BINDINGS;
-
-	/**
-	 * The name of the deprecated accelerator configuration element. This
-	 * element was used in 2.1.x and earlier to define groups of what are now
-	 * called schemes.
-	 */
-	private static final String ELEMENT_ACCELERATOR_CONFIGURATION = "acceleratorConfiguration"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing the active key configuration from the
-	 * commands extension point.
-	 */
-	private static final String ELEMENT_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing the active scheme. This is called a
-	 * 'keyConfiguration' for legacy reasons.
-	 */
-	private static final String ELEMENT_ACTIVE_SCHEME = ELEMENT_ACTIVE_KEY_CONFIGURATION;
-
-	/**
-	 * The name of the element storing the binding. This is called a
-	 * 'keyBinding' for legacy reasons.
-	 */
-	private static final String ELEMENT_BINDING = "keyBinding"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a key binding.
-	 */
-	private static final String ELEMENT_KEY = "key"; //$NON-NLS-1$
-
-	/**
-	 * The name of the key binding element in the commands extension point.
-	 */
-	private static final String ELEMENT_KEY_BINDING = "keyBinding"; //$NON-NLS-1$
-
-	/**
-	 * The name of the deprecated key configuration element in the commands
-	 * extension point. This element has been replaced with the scheme element
-	 * in the bindings extension point.
-	 */
-	private static final String ELEMENT_KEY_CONFIGURATION = "keyConfiguration"; //$NON-NLS-1$
-
-	/**
-	 * The name of the scheme element in the bindings extension point.
-	 */
-	private static final String ELEMENT_SCHEME = "scheme"; //$NON-NLS-1$
-
-	/**
-	 * The name of the deprecated accelerator configurations extension point.
-	 */
-	private static final String EXTENSION_ACCELERATOR_CONFIGURATIONS = PlatformUI.PLUGIN_ID
-			+ '.' + IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS;
-
-	/**
-	 * The name of the bindings extension point.
-	 */
-	private static final String EXTENSION_BINDINGS = PlatformUI.PLUGIN_ID + '.'
-			+ IWorkbenchConstants.PL_BINDINGS;
 
 	/**
 	 * The index of the active scheme configuration elements in the indexed
@@ -761,7 +639,7 @@ final class BindingPersistence extends CommonCommandPersistence {
 					// Reference to an undefined command. This is invalid.
 					addWarning(warningsToLog,
 							"Cannot bind to an undefined command", //$NON-NLS-1$
-							configurationElement.getNamespace(), commandId);
+							configurationElement, commandId);
 					continue;
 				}
 			} else {
@@ -780,7 +658,7 @@ final class BindingPersistence extends CommonCommandPersistence {
 					if ((schemeId == null) || (schemeId.length() == 0)) {
 						// The scheme id should never be null. This is invalid.
 						addWarning(warningsToLog, "Key bindings need a scheme", //$NON-NLS-1$
-								configurationElement.getNamespace(), commandId);
+								configurationElement, commandId);
 						continue;
 					}
 				}
@@ -818,7 +696,7 @@ final class BindingPersistence extends CommonCommandPersistence {
 					addWarning(
 							warningsToLog,
 							"Defining a key binding with no key sequence has no effect", //$NON-NLS-1$
-							configurationElement.getNamespace(), commandId);
+							configurationElement, commandId);
 					continue;
 				}
 
@@ -826,10 +704,9 @@ final class BindingPersistence extends CommonCommandPersistence {
 				try {
 					keySequence = convert2_1Sequence(parse2_1Sequence(keySequenceText));
 				} catch (final IllegalArgumentException e) {
-					addWarning(warningsToLog,
-							"Could not parse key sequence", //$NON-NLS-1$
-							configurationElement.getNamespace(), commandId,
-							"keySequence", keySequenceText); //$NON-NLS-1$
+					addWarning(warningsToLog, "Could not parse key sequence", //$NON-NLS-1$
+							configurationElement, commandId, "keySequence", //$NON-NLS-1$
+							keySequenceText);
 					continue;
 				}
 
@@ -838,18 +715,17 @@ final class BindingPersistence extends CommonCommandPersistence {
 				try {
 					keySequence = KeySequence.getInstance(keySequenceText);
 				} catch (final ParseException e) {
-					addWarning(warningsToLog,
-							"Could not parse key sequence", //$NON-NLS-1$
-							configurationElement.getNamespace(), commandId,
-							"keySequence", keySequenceText); //$NON-NLS-1$
+					addWarning(warningsToLog, "Could not parse key sequence", //$NON-NLS-1$
+							configurationElement, commandId, "keySequence", //$NON-NLS-1$
+							keySequenceText);
 					continue;
 				}
 				if (keySequence.isEmpty() || !keySequence.isComplete()) {
 					addWarning(
 							warningsToLog,
 							"Key bindings should not have an empty or incomplete key sequence", //$NON-NLS-1$
-							configurationElement.getNamespace(), commandId,
-							"keySequence", keySequence.toString()); //$NON-NLS-1$
+							configurationElement, commandId, "keySequence", //$NON-NLS-1$
+							keySequence.toString());
 					continue;
 				}
 
@@ -871,8 +747,8 @@ final class BindingPersistence extends CommonCommandPersistence {
 			if (command == null) {
 				parameterizedCommand = null;
 			} else {
-				parameterizedCommand = readParametersFromRegistry(
-						configurationElement, warningsToLog, command);
+				parameterizedCommand = readParameters(configurationElement,
+						warningsToLog, command);
 			}
 
 			final Binding binding = new KeyBinding(keySequence,
@@ -1008,18 +884,18 @@ final class BindingPersistence extends CommonCommandPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the attributes.
-			final String id = readRequiredFromRegistry(configurationElement,
-					ATTRIBUTE_ID, warningsToLog, "Schemes need an id"); //$NON-NLS-1$
+			final String id = readRequired(configurationElement, ATTRIBUTE_ID,
+					warningsToLog, "Schemes need an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
-			final String name = readRequiredFromRegistry(configurationElement,
+			final String name = readRequired(configurationElement,
 					ATTRIBUTE_NAME, warningsToLog, "A scheme needs a name", id); //$NON-NLS-1$
 			if (name == null) {
 				continue;
 			}
-			final String description = readOptionalFromRegistry(
-					configurationElement, ATTRIBUTE_DESCRIPTION);
+			final String description = readOptional(configurationElement,
+					ATTRIBUTE_DESCRIPTION);
 
 			String parentId = configurationElement
 					.getAttribute(ATTRIBUTE_PARENT_ID);
@@ -1095,6 +971,29 @@ final class BindingPersistence extends CommonCommandPersistence {
 	}
 
 	/**
+	 * Writes the active scheme to its own preference key. This key is used by
+	 * RCP applications as part of their plug-in customization.
+	 * 
+	 * @param scheme
+	 *            The scheme to write to the preference store. If the scheme is
+	 *            <code>null</code>, then it is removed.
+	 */
+	private static final void writeActiveScheme(final Scheme scheme) {
+		final IPreferenceStore store = PlatformUI.getPreferenceStore();
+		final String schemeId = (scheme == null) ? null : scheme.getId();
+		final String defaultSchemeId = store
+				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
+		if ((defaultSchemeId == null) ? (scheme != null) : (!defaultSchemeId
+				.equals(schemeId))) {
+			store.setValue(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID,
+					scheme.getId());
+		} else {
+			store
+					.setToDefault(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
+		}
+	}
+
+	/**
 	 * Writes the active scheme to the memento. If the scheme is
 	 * <code>null</code>, then all schemes in the memento are removed.
 	 * 
@@ -1116,29 +1015,6 @@ final class BindingPersistence extends CommonCommandPersistence {
 				.equals(schemeId))) {
 			final IMemento child = memento.createChild(ELEMENT_ACTIVE_SCHEME);
 			child.putString(ATTRIBUTE_KEY_CONFIGURATION_ID, schemeId);
-		}
-	}
-
-	/**
-	 * Writes the active scheme to its own preference key. This key is used by
-	 * RCP applications as part of their plug-in customization.
-	 * 
-	 * @param scheme
-	 *            The scheme to write to the preference store. If the scheme is
-	 *            <code>null</code>, then it is removed.
-	 */
-	private static final void writeActiveScheme(final Scheme scheme) {
-		final IPreferenceStore store = PlatformUI.getPreferenceStore();
-		final String schemeId = (scheme == null) ? null : scheme.getId();
-		final String defaultSchemeId = store
-				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
-		if ((defaultSchemeId == null) ? (scheme != null) : (!defaultSchemeId
-				.equals(schemeId))) {
-			store.setValue(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID,
-					scheme.getId());
-		} else {
-			store
-					.setToDefault(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
 		}
 	}
 
@@ -1186,15 +1062,18 @@ final class BindingPersistence extends CommonCommandPersistence {
 	}
 
 	/**
-	 * Constructs a new instance of <code>BindingPersistence</code>.
+	 * The binding manager which should be populated with the values from the
+	 * registry and preference store; must not be <code>null</code>.
 	 */
-	BindingPersistence() {
-		// Do nothing.
-	}
+	private final BindingManager bindingManager;
 
 	/**
-	 * Reads all of the binding information from the registry and from the
-	 * preference store.
+	 * The command service for the workbench; must not be <code>null</code>.
+	 */
+	private final ICommandService commandService;
+
+	/**
+	 * Constructs a new instance of <code>BindingPersistence</code>.
 	 * 
 	 * @param bindingManager
 	 *            The binding manager which should be populated with the values
@@ -1204,8 +1083,59 @@ final class BindingPersistence extends CommonCommandPersistence {
 	 *            The command service for the workbench; must not be
 	 *            <code>null</code>.
 	 */
-	final void read(final BindingManager bindingManager,
+	BindingPersistence(final BindingManager bindingManager,
 			final ICommandService commandService) {
+		this.bindingManager = bindingManager;
+		this.commandService = commandService;
+	}
+
+	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+		final IExtensionDelta[] acceleratorConfigurationDeltas = event
+				.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+						IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS);
+		if (acceleratorConfigurationDeltas.length == 0) {
+			final IExtensionDelta[] bindingDeltas = event.getExtensionDeltas(
+					PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_BINDINGS);
+			if (bindingDeltas.length == 0) {
+				final IExtensionDelta[] commandDeltas = event
+						.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+								IWorkbenchConstants.PL_COMMANDS);
+				if (commandDeltas.length == 0) {
+					final IExtensionDelta[] acceleratorScopeDeltas = event
+							.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+									IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
+					if (acceleratorScopeDeltas.length == 0) {
+						final IExtensionDelta[] contextDeltas = event
+								.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+										IWorkbenchConstants.PL_CONTEXTS);
+						if (contextDeltas.length == 0) {
+							final IExtensionDelta[] actionDefinitionDeltas = event
+									.getExtensionDeltas(
+											PlatformUI.PLUGIN_ID,
+											IWorkbenchConstants.PL_ACTION_DEFINITIONS);
+							if (actionDefinitionDeltas.length == 0) {
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	protected final boolean isChangeImportant(final PropertyChangeEvent event) {
+		return EXTENSION_COMMANDS.equals(event.getProperty());
+	}
+
+	/**
+	 * Reads all of the binding information from the registry and from the
+	 * preference store.
+	 */
+	protected final void read() {
+		super.read();
+
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int activeSchemeElementCount = 0;
@@ -1305,79 +1235,5 @@ final class BindingPersistence extends CommonCommandPersistence {
 				bindingDefinitionCount, bindingManager, commandService);
 		readBindingsFromPreferences(preferenceMemento, bindingManager,
 				commandService);
-
-		/*
-		 * Adds listener so that future preference and registry changes trigger
-		 * an update of the binding manager automatically.
-		 */
-		if (!listenersAttached) {
-			store.addPropertyChangeListener(new IPropertyChangeListener() {
-				public final void propertyChange(final PropertyChangeEvent event) {
-					if (EXTENSION_COMMANDS.equals(event.getProperty())) {
-						read(bindingManager, commandService);
-					}
-				}
-			});
-
-			registry.addRegistryChangeListener(new IRegistryChangeListener() {
-				public final void registryChanged(
-						final IRegistryChangeEvent event) {
-					/*
-					 * Bindings will need to be re-read (i.e., re-verified) if
-					 * any of the binding extensions change (i.e., accelerator
-					 * configurations, bindings, commands), or if any of the
-					 * command or context extensions change (i.e., accelerator
-					 * scopes, contexts, action definitions).
-					 */
-					final IExtensionDelta[] acceleratorConfigurationDeltas = event
-							.getExtensionDeltas(
-									PlatformUI.PLUGIN_ID,
-									IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS);
-					if (acceleratorConfigurationDeltas.length == 0) {
-						final IExtensionDelta[] bindingDeltas = event
-								.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-										IWorkbenchConstants.PL_BINDINGS);
-						if (bindingDeltas.length == 0) {
-							final IExtensionDelta[] commandDeltas = event
-									.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-											IWorkbenchConstants.PL_COMMANDS);
-							if (commandDeltas.length == 0) {
-								final IExtensionDelta[] acceleratorScopeDeltas = event
-										.getExtensionDeltas(
-												PlatformUI.PLUGIN_ID,
-												IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
-								if (acceleratorScopeDeltas.length == 0) {
-									final IExtensionDelta[] contextDeltas = event
-											.getExtensionDeltas(
-													PlatformUI.PLUGIN_ID,
-													IWorkbenchConstants.PL_CONTEXTS);
-									if (contextDeltas.length == 0) {
-										final IExtensionDelta[] actionDefinitionDeltas = event
-												.getExtensionDeltas(
-														PlatformUI.PLUGIN_ID,
-														IWorkbenchConstants.PL_ACTION_DEFINITIONS);
-										if (actionDefinitionDeltas.length == 0) {
-											return;
-										}
-									}
-								}
-							}
-						}
-					}
-
-					/*
-					 * At least one of the deltas is non-zero, so re-read all of
-					 * the bindings.
-					 */
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
-							read(bindingManager, commandService);
-						}
-					});
-				}
-			}, PlatformUI.PLUGIN_ID);
-
-			listenersAttached = true;
-		}
 	}
 }

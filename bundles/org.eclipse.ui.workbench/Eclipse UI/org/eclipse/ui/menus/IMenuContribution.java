@@ -12,7 +12,7 @@
 package org.eclipse.ui.menus;
 
 import org.eclipse.jface.menus.MenuElement;
-import org.eclipse.ui.internal.sources.IEvaluationResultCache;
+import org.eclipse.ui.internal.services.IEvaluationResultCache;
 
 /**
  * <p>
