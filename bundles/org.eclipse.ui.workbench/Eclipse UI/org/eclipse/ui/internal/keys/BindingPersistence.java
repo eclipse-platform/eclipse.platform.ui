@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.IParameter;
-import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -47,7 +45,6 @@ import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -65,8 +62,6 @@ import org.eclipse.ui.keys.IBindingService;
  * <p>
  * A static class for accessing the registry and the preference store.
  * </p>
- * 
- * TODO Use utility methods from preference persistence.
  * 
  * @since 3.1
  */
@@ -460,10 +455,6 @@ final class BindingPersistence extends PreferencePersistence {
 	private static final void readBindingsFromPreferences(
 			final IMemento preferences, final BindingManager bindingManager,
 			final ICommandService commandService) {
-		/*
-		 * If necessary, this list of status items will be constructed. It will
-		 * only contains instances of <code>IStatus</code>.
-		 */
 		List warningsToLog = new ArrayList(1);
 
 		if (preferences != null) {
@@ -474,12 +465,9 @@ final class BindingPersistence extends PreferencePersistence {
 				final IMemento memento = preferenceMementos[i];
 
 				// Read out the command id.
-				String commandId = memento.getString(ATTRIBUTE_COMMAND_ID);
-				if ((commandId == null) || (commandId.length() == 0)) {
-					commandId = memento.getString(ATTRIBUTE_COMMAND);
-				}
-				if ((commandId != null) && (commandId.length() == 0)) {
-					commandId = null;
+				String commandId = readOptional(memento, ATTRIBUTE_COMMAND_ID);
+				if (commandId == null) {
+					commandId = readOptional(memento, ATTRIBUTE_COMMAND);
 				}
 				final Command command;
 				if (commandId != null) {
@@ -489,50 +477,38 @@ final class BindingPersistence extends PreferencePersistence {
 				}
 
 				// Read out the scheme id.
-				String schemeId = memento
-						.getString(ATTRIBUTE_KEY_CONFIGURATION_ID);
-				if ((schemeId == null) || (schemeId.length() == 0)) {
-					schemeId = memento.getString(ATTRIBUTE_CONFIGURATION);
-					if ((schemeId == null) || (schemeId.length() == 0)) {
-						// The scheme id should never be null. This is invalid.
-						addWarning(
-								warningsToLog,
-								"Key bindings need a scheme or key configuration", //$NON-NLS-1$
-								null, commandId);
+				String schemeId = readOptional(memento,
+						ATTRIBUTE_KEY_CONFIGURATION_ID);
+				if (schemeId == null) {
+					schemeId = readRequired(memento, ATTRIBUTE_CONFIGURATION,
+							warningsToLog,
+							"Key bindings need a scheme or key configuration"); //$NON-NLS-1$
+					if (schemeId == null) {
 						continue;
 					}
 				}
 
 				// Read out the context id.
-				String contextId = memento.getString(ATTRIBUTE_CONTEXT_ID);
+				String contextId = readOptional(memento, ATTRIBUTE_CONTEXT_ID);
+				if (contextId == null) {
+					contextId = readOptional(memento, ATTRIBUTE_SCOPE);
+				}
 				if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
 					contextId = null;
-				} else if ((contextId == null) || (contextId.length() == 0)) {
-					contextId = memento.getString(ATTRIBUTE_SCOPE);
-					if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
-						contextId = null;
-					}
 				}
-				if ((contextId == null) || (contextId.length() == 0)) {
+				if (contextId == null) {
 					contextId = IContextIds.CONTEXT_ID_WINDOW;
 				}
 
 				// Read out the key sequence.
-				String keySequenceText = memento
-						.getString(ATTRIBUTE_KEY_SEQUENCE);
+				String keySequenceText = readOptional(memento,
+						ATTRIBUTE_KEY_SEQUENCE);
 				KeySequence keySequence = null;
-				if ((keySequenceText == null)
-						|| (keySequenceText.length() == 0)) {
-					keySequenceText = memento.getString(ATTRIBUTE_STRING);
-					if ((keySequenceText == null)
-							|| (keySequenceText.length() == 0)) {
-						/*
-						 * The key sequence should never be null. This is
-						 * pointless
-						 */
-						addWarning(warningsToLog,
-								"Key bindings need a key sequence or string", //$NON-NLS-1$
-								null, commandId);
+				if (keySequenceText == null) {
+					keySequenceText = readRequired(memento, ATTRIBUTE_STRING,
+							warningsToLog,
+							"Key bindings need a key sequence or string"); //$NON-NLS-1$
+					if (keySequenceText == null) {
 						continue;
 					}
 
@@ -560,22 +536,17 @@ final class BindingPersistence extends PreferencePersistence {
 				}
 
 				// Read out the locale and platform.
-				String locale = memento.getString(ATTRIBUTE_LOCALE);
-				if ((locale != null) && (locale.length() == 0)) {
-					locale = null;
-				}
-				String platform = memento.getString(ATTRIBUTE_PLATFORM);
-				if ((platform != null) && (platform.length() == 0)) {
-					platform = null;
-				}
+				final String locale = readOptional(memento, ATTRIBUTE_LOCALE);
+				final String platform = readOptional(memento,
+						ATTRIBUTE_PLATFORM);
 
 				// Read out the parameters
 				final ParameterizedCommand parameterizedCommand;
 				if (command == null) {
 					parameterizedCommand = null;
 				} else {
-					parameterizedCommand = readParametersFromPreferences(
-							memento, warningsToLog, command);
+					parameterizedCommand = readParameters(memento,
+							warningsToLog, command);
 				}
 
 				final Binding binding = new KeyBinding(keySequence,
@@ -764,93 +735,6 @@ final class BindingPersistence extends PreferencePersistence {
 		logWarnings(
 				warningsToLog,
 				"Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' extension point"); //$NON-NLS-1$
-	}
-
-	/**
-	 * Reads the parameters from a parent memento. This is used to read the
-	 * parameter sub-elements from a key element. Each parameter is guaranteed
-	 * to be valid. If invalid parameters are found, then a warning status will
-	 * be appended to the <code>warningsToLog</code> list.
-	 * 
-	 * @param memento
-	 *            The memento from which the parameters should be read; must not
-	 *            be <code>null</code>.
-	 * @param warningsToLog
-	 *            The list of warnings found during parsing. Warnings found will
-	 *            parsing the parameters will be appended to this list. This
-	 *            value must not be <code>null</code>.
-	 * @param command
-	 *            The command around which the parameterization should be
-	 *            created; must not be <code>null</code>.
-	 * @return The array of parameters found for this memento; <code>null</code>
-	 *         if none can be found.
-	 */
-	private static final ParameterizedCommand readParametersFromPreferences(
-			final IMemento memento, final List warningsToLog,
-			final Command command) {
-		final IMemento[] parameterElements = memento
-				.getChildren(ELEMENT_PARAMETER);
-		if ((parameterElements == null) || (parameterElements.length == 0)) {
-			return new ParameterizedCommand(command, null);
-		}
-
-		final Collection parameters = new ArrayList();
-		for (int i = 0; i < parameterElements.length; i++) {
-			final IMemento parameterElement = parameterElements[i];
-
-			// Read out the id.
-			final String id = parameterElement.getString(ATTRIBUTE_ID);
-			if ((id == null) || (id.length() == 0)) {
-				// The name should never be null. This is invalid.
-				addWarning(warningsToLog, "Parameters need a name", null, //$NON-NLS-1$
-						command.getId());
-				continue;
-			}
-
-			// Find the parameter on the command.
-			IParameter parameter = null;
-			try {
-				final IParameter[] commandParameters = command.getParameters();
-				if (parameters != null) {
-					for (int j = 0; j < commandParameters.length; j++) {
-						final IParameter currentParameter = commandParameters[j];
-						if (Util.equals(currentParameter.getId(), id)) {
-							parameter = currentParameter;
-							break;
-						}
-					}
-
-				}
-			} catch (final NotDefinedException e) {
-				// This should not happen.
-			}
-			if (parameter == null) {
-				// The name should never be null. This is invalid.
-				addWarning(warningsToLog,
-						"Could not find a matching parameter", null, command //$NON-NLS-1$
-								.getId(), "parameterId", id); //$NON-NLS-1$
-				continue;
-			}
-
-			// Read out the name.
-			final String value = parameterElement.getString(ATTRIBUTE_VALUE);
-			if ((value == null) || (value.length() == 0)) {
-				// The name should never be null. This is invalid.
-				addWarning(warningsToLog, "Parameters need a value", null, //$NON-NLS-1$
-						command.getId(), "parameterId", id); //$NON-NLS-1$
-				continue;
-			}
-
-			parameters.add(new Parameterization(parameter, value));
-		}
-
-		if (parameters.isEmpty()) {
-			return new ParameterizedCommand(command, null);
-		}
-
-		return new ParameterizedCommand(command,
-				(Parameterization[]) parameters
-						.toArray(new Parameterization[parameters.size()]));
 	}
 
 	/**
