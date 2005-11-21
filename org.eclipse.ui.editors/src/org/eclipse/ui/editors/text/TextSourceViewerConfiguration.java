@@ -193,9 +193,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		if (!fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED))
 			return null;
 
-		return new IHyperlinkDetector[] {
-				new URLHyperlinkDetector(sourceViewer),
-		};
+		return new IHyperlinkDetector[] { new URLHyperlinkDetector() };
 	}
 
 	/*

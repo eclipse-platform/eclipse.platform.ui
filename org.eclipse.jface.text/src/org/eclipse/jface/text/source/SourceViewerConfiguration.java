@@ -348,7 +348,7 @@ public class SourceViewerConfiguration {
 		if (sourceViewer == null)
 			return null;
 
-		return new IHyperlinkDetector[] {new URLHyperlinkDetector(sourceViewer)};
+		return new IHyperlinkDetector[] { new URLHyperlinkDetector() };
 	}
 
 	/**

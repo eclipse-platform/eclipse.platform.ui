@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -29,27 +28,32 @@ import org.eclipse.jface.text.Region;
  */
 public class URLHyperlinkDetector implements IHyperlinkDetector {
 
-	private ITextViewer fTextViewer;
-
 
 	/**
 	 * Creates a new URL hyperlink detector.
 	 *
+	 * @since 3.2
+	 */
+	public URLHyperlinkDetector() {
+	}
+	
+	/**
+	 * Creates a new URL hyperlink detector.
+	 *
 	 * @param textViewer the text viewer in which to detect the hyperlink
+	 * @deprecated As of 3.2, replaced by {@link URLHyperlinkDetector}
 	 */
 	public URLHyperlinkDetector(ITextViewer textViewer) {
-		Assert.isNotNull(textViewer);
-		fTextViewer= textViewer;
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
 	 */
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
-		if (region == null || fTextViewer == null)
+		if (region == null || textViewer == null)
 			return null;
 
-		IDocument document= fTextViewer.getDocument();
+		IDocument document= textViewer.getDocument();
 
 		int offset= region.getOffset();
 
