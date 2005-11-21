@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.session;
 
 import junit.framework.TestCase;
 
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -42,6 +43,8 @@ public class Bug108033Test extends TestCase {
 
 	public static final String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView";
 
+	private static String RESOURCE_ID = "org.eclipse.ui.resourcePerspective";
+
 	private IWorkbenchWindow fWin;
 
 	private IWorkbenchPage fActivePage;
@@ -61,14 +64,19 @@ public class Bug108033Test extends TestCase {
 	}
 
 	/**
-	 * Make sure the perspective has been reset, and then show the
-	 * views in the expected order.  These tests depend on
-	 * being run in order in the same environment, so we can't use
-	 * the standard openWindow() to protect ourselves from side effects.
+	 * Make sure the perspective has been reset, and then show the views in the
+	 * expected order. These tests depend on being run in order in the same
+	 * environment, so we can't use the standard openWindow() to protect
+	 * ourselves from side effects.
 	 * 
-	 * @throws Throwable an error
+	 * @throws Throwable
+	 *             an error
 	 */
 	public void testShowMultipleViews() throws Throwable {
+		IPerspectiveDescriptor desc = fActivePage.getWorkbenchWindow()
+				.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(
+						RESOURCE_ID);
+		fActivePage.setPerspective(desc);
 		fActivePage.resetPerspective();
 		assertNotNull(fActivePage.showView(TASK_VIEW_ID));
 		assertNotNull(fActivePage.showView(PROGRESS_VIEW_ID));
@@ -76,10 +84,11 @@ public class Bug108033Test extends TestCase {
 	}
 
 	/**
-	 * Check the views are still in the correct order, then move the
-	 * problems view to the first tab.
+	 * Check the views are still in the correct order, then move the problems
+	 * view to the first tab.
 	 * 
-	 * @throws Throwable an error
+	 * @throws Throwable
+	 *             an error
 	 */
 	public void testCheckMultipleViews() throws Throwable {
 		IViewPart problemView = instantiateViews();
@@ -100,10 +109,11 @@ public class Bug108033Test extends TestCase {
 	}
 
 	/**
-	 * Verify the views are ordered with the problems view first after
-	 * the restart.
+	 * Verify the views are ordered with the problems view first after the
+	 * restart.
 	 * 
-	 * @throws Throwable an error
+	 * @throws Throwable
+	 *             an error
 	 */
 	public void testMovedMultipleViews() throws Throwable {
 		IViewPart problemView = instantiateViews();
@@ -119,8 +129,10 @@ public class Bug108033Test extends TestCase {
 
 	/**
 	 * Removes any NPEs.
+	 * 
 	 * @return the problem view.
-	 * @throws PartInitException if a view fails to instantiate.
+	 * @throws PartInitException
+	 *             if a view fails to instantiate.
 	 */
 	private IViewPart instantiateViews() throws PartInitException {
 		IViewPart problemView = fActivePage.showView(PROBLEM_VIEW_ID);
@@ -134,8 +146,11 @@ public class Bug108033Test extends TestCase {
 
 	/**
 	 * Verify the tabs are in the correct order.
-	 * @param pres the stack presentation
-	 * @param order the expected order
+	 * 
+	 * @param pres
+	 *            the stack presentation
+	 * @param order
+	 *            the expected order
 	 */
 	private void verifyOrder(TabbedStackPresentation pres, String[] order) {
 		IPresentablePart[] tabs = pres.getPartList();
@@ -147,7 +162,9 @@ public class Bug108033Test extends TestCase {
 
 	/**
 	 * Get the presentable part for the view (view site).
-	 * @param site the site of the view we want
+	 * 
+	 * @param site
+	 *            the site of the view we want
 	 * @return it's presentable part.
 	 */
 	private IPresentablePart getPresentablePart(ViewSite site) {
