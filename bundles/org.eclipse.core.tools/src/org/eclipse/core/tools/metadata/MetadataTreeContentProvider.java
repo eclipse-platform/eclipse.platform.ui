@@ -13,7 +13,6 @@ package org.eclipse.core.tools.metadata;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
-import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tools.AbstractTreeContentProvider;
@@ -160,7 +159,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 			for (int i = 0; i < subDirs.length; i++) {
 				// constructs a node for each subdir...
 				childNode = makeNode(subDirs[i]);
-				if (extractInfo(subDirs[i], childNode, Policy.subMonitorFor(monitor, 98 / subDirs.length)))
+				if (extractInfo(subDirs[i], childNode, new SubProgressMonitor(monitor, 98 / subDirs.length)))
 					// ...but only adds them if they have files of registered types
 					dirNode.addChild(childNode);
 			}
