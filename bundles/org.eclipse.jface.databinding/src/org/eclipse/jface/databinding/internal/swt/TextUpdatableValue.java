@@ -21,13 +21,15 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class TextUpdatableValue extends UpdatableValue {
 
 	private final Text text;
 
 	private boolean updating = false;
+
+	private int updatePolicy;
 
 	private Listener validateListener = new Listener() {
 		public void handleEvent(Event event) {
@@ -45,6 +47,8 @@ public class TextUpdatableValue extends UpdatableValue {
 		}
 	};
 
+	private VerifyListener verifyListener;
+
 	/**
 	 * @param text
 	 * @param validatePolicy
@@ -52,23 +56,25 @@ public class TextUpdatableValue extends UpdatableValue {
 	 */
 	public TextUpdatableValue(Text text, int validatePolicy, int updatePolicy) {
 		this.text = text;
+		this.updatePolicy = updatePolicy;
 		if (updatePolicy != SWT.None) {
 			text.addListener(updatePolicy, updateListener);
 		}
-		text.addVerifyListener(new VerifyListener() {
+		verifyListener = new VerifyListener() {
 			public void verifyText(VerifyEvent e) {
 				if (!updating) {
 					String currentText = TextUpdatableValue.this.text.getText();
 					String newText = currentText.substring(0, e.start) + e.text
 							+ currentText.substring(e.end);
-					ChangeEvent changeEvent = fireChangeEvent( 
+					ChangeEvent changeEvent = fireChangeEvent(
 							ChangeEvent.VERIFY, currentText, newText);
 					if (changeEvent.getVeto()) {
 						e.doit = false;
 					}
 				}
 			}
-		});
+		};
+		text.addVerifyListener(verifyListener);
 	}
 
 	public void setValue(Object value) {
@@ -91,7 +97,12 @@ public class TextUpdatableValue extends UpdatableValue {
 	}
 
 	public void dispose() {
-		// TODO Should unhook listeners from Text (if it hasn't been disposed)
+		if (!text.isDisposed()) {
+			if (updatePolicy != SWT.None) {
+				text.removeListener(updatePolicy, updateListener);
+			}
+			text.removeVerifyListener(verifyListener);
+		}
 		super.dispose();
 	}
 }

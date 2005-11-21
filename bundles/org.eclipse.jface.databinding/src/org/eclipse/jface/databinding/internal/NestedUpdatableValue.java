@@ -111,6 +111,7 @@ public class NestedUpdatableValue extends UpdatableValue {
 	public void dispose() {
 		super.dispose();
 		if (innerUpdatableValue != null) {
+			innerUpdatableValue.removeChangeListener(innerChangeListener);
 			innerUpdatableValue.dispose();
 		}
 		currentOuterValue = null;
