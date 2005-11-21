@@ -19,7 +19,6 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
@@ -123,7 +122,7 @@ public class FilteredList extends Composite {
     Comparator fComparator;
 
     TableUpdateJob fUpdateJob;
-
+    
     /**
      * Label is a private class used for comparing list objects
      */
@@ -340,11 +339,14 @@ public class FilteredList extends Composite {
         if (selection == null || selection.length == 0)
             fList.deselectAll();
         else {
-            //If there is a current working update defer the setting
-            if (fUpdateJob == null || fUpdateJob.getState() != Job.RUNNING) {
+            //If there is no working update job, or the update job is ready to
+        	// accept selections, set the selection immediately.
+            if (fUpdateJob == null) {
                 fList.setSelection(selection);
                 fList.notifyListeners(SWT.Selection, new Event());
             } else
+            	// There is an update job doing the population of the list, so
+            	// it should update the selection.
                 fUpdateJob.updateSelection(selection);
         }
     }
@@ -524,7 +526,9 @@ public class FilteredList extends Composite {
         private int currentIndex = 0;
 
         int[] indicesToSelect;
-
+        
+        private boolean readyForSelection = false;
+           
         /**
          * Create a new instance of a job used to update the table.
          * 
@@ -579,10 +583,18 @@ public class FilteredList extends Composite {
                 schedule(100);
             else {
                 if (indicesToSelect == null) {
-                    if (fCount > 0)
+                 	// Check whether a selection has already been made in the
+                	// table.  If so, honor it.  If not, then set up a default.
+                 	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=112146
+                    if (fCount > 0 && fTable.getSelectionIndices().length == 0)
                         defaultSelect();
-                } else
-                    updateSelection(indicesToSelect);
+                } else {
+                	// Set the selection as indicated.
+                    selectAndNotify(indicesToSelect);
+                }
+                // This flag signifies that the selection can now be directly
+                // updated in the widget.
+                readyForSelection = true;
             }
             return Status.OK_STATUS;
         }
@@ -593,9 +605,12 @@ public class FilteredList extends Composite {
          * @param indices
          */
         void updateSelection(final int[] indices) {
-            indicesToSelect = indices;
-        }
-
+        	indicesToSelect = indices;
+        	if (readyForSelection) {
+        		selectAndNotify(indices);
+        	}
+    }
+        
         /**
          * Select the first element if there is no selection
          */
