@@ -273,6 +273,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CopyFilesAndFoldersOperation_internalError;
 	public static String CopyFilesAndFoldersOperation_resourceExists;
 	public static String CopyFilesAndFoldersOperation_overwriteQuestion;
+	public static String CopyFilesAndFoldersOperation_overwriteWithDetailsQuestion;
 	public static String CopyFilesAndFoldersOperation_overwriteMergeQuestion;
 	public static String CopyFilesAndFoldersOperation_overwriteNoMergeLinkQuestion;
 	public static String CopyFilesAndFoldersOperation_overwriteNoMergeNoLinkQuestion;

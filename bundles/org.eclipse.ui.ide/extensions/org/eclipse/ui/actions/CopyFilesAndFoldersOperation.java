@@ -50,6 +50,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -251,9 +252,18 @@ public class CopyFilesAndFoldersOperation {
                                 IDialogConstants.CANCEL_LABEL };
                     }
                 } else {
-                    message = NLS.bind(IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteQuestion, destination.getFullPath().makeRelative());
-                }
-                MessageDialog dialog = new MessageDialog(
+					String[] bindings = new String[] {
+							IDEResourceInfoUtils.getLocationText(destination),
+							IDEResourceInfoUtils
+									.getDateStringValue(destination),
+							IDEResourceInfoUtils.getLocationText(source),
+							IDEResourceInfoUtils.getDateStringValue(source) };
+					message = NLS
+							.bind(
+									IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteWithDetailsQuestion,
+									bindings);
+				}
+              MessageDialog dialog = new MessageDialog(
                         shell,
                         IDEWorkbenchMessages.CopyFilesAndFoldersOperation_resourceExists,
                         null, message, MessageDialog.QUESTION, labels, 0);
