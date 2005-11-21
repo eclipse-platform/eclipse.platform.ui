@@ -25,8 +25,9 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.2
- *
+ * 
  */
+//TODO Thread safe
 public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree {
 			
 	private TreeViewer viewer;
@@ -37,7 +38,9 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 	
 	private Object viewerInput=null;
 	
-	private boolean updating=false;
+	private boolean updatingViewer=false;
+	
+	private boolean updatingVirtual=false;
 	
 	private List viewerRefreshList = new ArrayList();
 	
@@ -47,9 +50,10 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 		Object parent;
 		Class  type;
 		List   children;
+		boolean requestedChildren=false;
 		private TreeNode(Object parent, List children) {
 			this.parent=parent;
-			this.children=children;
+			this.children=children;			
 		}
 		private TreeNode(Object parent) {
 			this(parent, null);
@@ -78,6 +82,18 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 		public Class getType() {
 			return type;
 		}
+		/**
+		 * @return true if VIRTUAL request has been made already
+		 */
+		public boolean isRequestedChildren() {
+			return requestedChildren;
+		}
+		/**
+		 * @param requestedChildren
+		 */
+		public void setRequestedChildren(boolean requestedChildren) {
+			this.requestedChildren = requestedChildren;
+		}
 	}
 
 	
@@ -104,19 +120,12 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 				return TreeViewerUpdatableTree.this.getElements(inputElement);
 			}		
 			public boolean hasChildren(final Object element) {
-				TreeNode node = getTreeNode(element);				
-				boolean have = node.getChildren()!=null && node.getChildren().size()>0;
-				if (!have) {												
-						fireChangeEvent(ChangeEvent.VIRTUAL, null, null, element, -1);
-						// VIRTUAL processing may or may not be on the same thread
-						// In any case, the binder will come back with the right answer
-						// eventually
-						have = node.getChildren()!=null && node.getChildren().size()>0;
-				}
-				return have;
+				return TreeViewerUpdatableTree.this.hasChildren(element);
 			}		
 			public Object getParent(Object element) {
-				// TODO Auto-generated method stub
+				TreeNode node = getTreeNode(element);
+				if (node!=null)
+					return node.getParent();
 				return null;
 			}		
 			public Object[] getChildren(Object parentElement) {
@@ -152,17 +161,17 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 	}
 	
 	protected void updateViewer(Runnable runable) {
-		if (updating) {
+		if (updatingViewer) {
 			viewerRefreshList.add(runable);
 			return ;
 		}
 		
-		updating=true;
+		updatingViewer=true;
 		try {			
 			runable.run();
 		}
 		finally {
-			updating=false;
+			updatingViewer=false;
 		}
 		//	Virtual events may need to update the viewer as well
 		while (!viewerRefreshList.isEmpty()) {
@@ -186,11 +195,10 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 	 */
 	public int addElement(final Object parentElement, int index, final Object value, final boolean fire) {				
 		TreeNode parentNode = getTreeNode(parentElement);
-		if (parentNode == null)
-			throw new IllegalArgumentException(
-					"Invalid Parent" + parentElement); //$NON-NLS-1$
+		if (parentNode == null) return -1;
+			
 
-		if (parentNode.getChildren() == null)
+		if (!hasChildren(parentElement))
 			parentNode.setChildren(new ArrayList());
 		List list = parentNode.getChildren();
 		int addedIndex = -1;
@@ -221,30 +229,31 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 	 * @param index
 	 * @param fire
 	 */
-	public void removeElement(final Object parentElement, final int index, final boolean fire) {		
-		TreeNode parentNode = getTreeNode(parentElement);
-		List children = parentNode.getChildren();
-		if (children!=null) {
-			final Object element = children.remove(index);			
-			updateViewer(new Runnable() {			
-				public void run() {
-						viewer.remove(element);		
-						if (fire)
-							fireChangeEvent(ChangeEvent.REMOVE, element, null, parentElement, index);
-				}
-			});
-		}
-		if (children.size()==0)
-			parentNode.setChildren(null);
+	public void removeElement(final Object parentElement, final int index, final boolean fire) {
+		if (hasChildren(parentElement)) {
+			TreeNode parentNode = getTreeNode(parentElement);
+			List children = parentNode.getChildren();
+			if (children!=null) {
+				final Object element = children.remove(index);			
+				updateViewer(new Runnable() {			
+					public void run() {
+							viewer.remove(element);		
+							if (fire)
+								fireChangeEvent(ChangeEvent.REMOVE, element, null, parentElement, index);
+					}
+				});
+			}
+			if (children.size()==0)
+				parentNode.setChildren(null);
+			}
 	}
 
 
-	public void setElement(Object parentElement, int index, final Object value) {		
-		TreeNode parentNode = getTreeNode(parentElement);
-		List children = parentNode.getChildren();
-		Object oldValue;
-		if (children!=null) {
-			oldValue = children.get(index);
+	public void setElement(Object parentElement, int index, final Object value) {
+		if (hasChildren(parentElement)) {
+			TreeNode parentNode = getTreeNode(parentElement);
+			List children = parentNode.getChildren();						
+			Object oldValue = children.get(index);
 			if (oldValue.equals(value)) {
 				updateViewer(new Runnable() {			
 					public void run() {
@@ -255,45 +264,84 @@ public class TreeViewerUpdatableTree extends Updatable implements IUpdatableTree
 				removeElement(parentElement,index, false);
 				addElement(parentElement, index, value, false);
 			}
-			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, parentElement, index );
+			fireChangeEvent(ChangeEvent.CHANGE, oldValue, value, parentElement, index );			
 		}
 	}
 
-	public void setElements(Object parentElement, Object[] values) {		
-		TreeNode parentNode = getTreeNode(parentElement);
-		List children = parentNode.getChildren();
-		if (children!=null) {
-			Object[] elements = children.toArray();
-			for (int i = 0; i < elements.length; i++) {
-				removeElement(parentElement, i);
+	public void setElements(Object parentElement, Object[] values) {
+			hasChildren(parentElement); // prime Children if needed
+			TreeNode parentNode = getTreeNode(parentElement);
+			if (parentNode==null) return;
+			
+			List children = parentNode.getChildren();
+			if (children!=null) {
+				Object[] elements = children.toArray();
+				for (int i = 0; i < elements.length; i++) {
+					removeElement(parentElement, i);
+				}
 			}
-		}
-		if (values!=null)
-			for (int i = 0; i < values.length; i++) {
-				addElement(parentElement,i, values[i]);
-			}				
+			if (values!=null)
+				for (int i = 0; i < values.length; i++) {
+					addElement(parentElement,i, values[i]);
+				}							
 	}
 
 
 	public Object getElement(Object parentElement, int index) {		
 		Object element = null;
-		TreeNode parentNode = getTreeNode(parentElement);
-		List children = parentNode.getChildren();
-		if (children!=null) 
-			if (index>=0&&index<children.size())
-				element = children.get(index);
+		if (hasChildren(parentElement)) {
+			TreeNode parentNode = getTreeNode(parentElement);
+			if (parentNode!=null) {
+				List children = parentNode.getChildren();
+				if (children!=null) 
+					if (index>=0&&index<children.size())
+						element = children.get(index);
+			}
+		}
 		return element;
 	}
 
 
-	public Object[] getElements(Object parentElement) {		
-		TreeNode parentNode = getTreeNode(parentElement);
-		List children = parentNode==null? null : parentNode.getChildren();
-		return children==null? Collections.EMPTY_LIST.toArray():children.toArray();
+	public Object[] getElements(Object parentElement) {
+		if (hasChildren(parentElement)) {
+			TreeNode parentNode = getTreeNode(parentElement);
+			
+			List children = parentNode==null? null : parentNode.getChildren();
+			return children==null? Collections.EMPTY_LIST.toArray():children.toArray();
+		}
+		return Collections.EMPTY_LIST.toArray();
 	}
 
 
-
+	/**
+	 * This method will drive <code>ChangeElement.VIRTUAL</code> if no
+	 * childrent are set.
+	 *  
+	 * @param element
+	 * @return true if element has children, false if not
+	 */
+	public boolean hasChildren(final Object element) {
+		TreeNode node = getTreeNode(element);	
+		if (node==null) return false;
+		boolean have = node.getChildren()!=null && node.getChildren().size()>0;
+		if (!have && !updatingVirtual && !node.isRequestedChildren()) {	
+			    updatingVirtual=true;
+				try {					
+					fireChangeEvent(ChangeEvent.VIRTUAL, null, null, element, -1);
+					// Once asked, the assumption is that the model will listen, and update
+					// if a new child is added
+					node.setRequestedChildren(true);
+					// VIRTUAL processing may or may not be on the same thread
+					// In any case, the binder will come back with the right answer
+					// eventually
+					have = node.getChildren()!=null && node.getChildren().size()>0;
+			    }
+			    finally {			    	
+			    	updatingVirtual=false;
+			    }
+		}
+		return have;
+	}
 
 	public Object getParent(Object element) {
 		TreeNode elementNode = (TreeNode)nodes.get(element);
