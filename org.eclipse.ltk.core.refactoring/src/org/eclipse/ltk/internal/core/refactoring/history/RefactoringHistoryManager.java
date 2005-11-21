@@ -61,6 +61,7 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringDescriptorProxyImplementation;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -153,7 +154,7 @@ public final class RefactoringHistoryManager {
 					try {
 						final long stamp= new Long(line.substring(0, index)).longValue();
 						if (stamp >= start && stamp <= end)
-							list.add(new RefactoringDescriptorProxy(line.substring(index + 1), project, stamp));
+							list.add(new RefactoringDescriptorProxyImplementation(line.substring(index + 1), project, stamp));
 					} catch (NumberFormatException exception) {
 						// Just skip
 					}

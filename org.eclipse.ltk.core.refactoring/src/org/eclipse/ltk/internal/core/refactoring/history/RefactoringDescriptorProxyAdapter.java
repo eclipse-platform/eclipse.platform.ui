@@ -5,6 +5,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
+import org.eclipse.ltk.internal.core.refactoring.Assert;
+
 /**
  * Adapter class which adapts refactoring descriptors to refactoring descriptor
  * proxies.
@@ -23,8 +25,36 @@ public final class RefactoringDescriptorProxyAdapter extends RefactoringDescript
 	 *            the descriptor to encapsulate
 	 */
 	public RefactoringDescriptorProxyAdapter(final RefactoringDescriptor descriptor) {
-		super(descriptor.getDescription(), descriptor.getProject(), descriptor.getTimeStamp());
+		Assert.isNotNull(descriptor);
 		fDescriptor= descriptor;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final int compareTo(final Object object) {
+		return fDescriptor.compareTo(object);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final String getDescription() {
+		return fDescriptor.getDescription();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final String getProject() {
+		return fDescriptor.getProject();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final long getTimeStamp() {
+		return fDescriptor.getTimeStamp();
 	}
 
 	/**

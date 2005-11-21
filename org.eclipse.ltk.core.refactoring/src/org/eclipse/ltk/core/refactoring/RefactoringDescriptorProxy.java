@@ -12,7 +12,6 @@ package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 /**
@@ -46,46 +45,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * 
  * @since 3.2
  */
-public class RefactoringDescriptorProxy {
-
-	/** The description of the refactoring */
-	private final String fDescription;
-
-	/** The non-empty name of the project, or <code>null</code> */
-	private final String fProject;
-
-	/** The time stamp of the refactoring */
-	private final long fTimeStamp;
-
-	/**
-	 * Creates a new refactoring descriptor proxy.
-	 * 
-	 * @param description
-	 *            a non-empty human-readable description of the particular
-	 *            refactoring instance
-	 * @param project
-	 *            the non-empty name of the project, or <code>null</code>
-	 * @param stamp
-	 *            the time stamp of the refactoring
-	 */
-	public RefactoringDescriptorProxy(final String description, final String project, final long stamp) {
-		Assert.isTrue(project == null || !"".equals(project)); //$NON-NLS-1$
-		Assert.isTrue(description != null && !"".equals(description)); //$NON-NLS-1$
-		fDescription= description.intern();
-		fProject= project != null ? project.intern() : null;
-		fTimeStamp= stamp;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean equals(final Object object) {
-		if (object instanceof RefactoringDescriptorProxy) {
-			final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) object;
-			return fTimeStamp == proxy.fTimeStamp && fDescription.equals(proxy.fDescription) && fProject != null ? fProject.equals(proxy.fProject) : fProject == proxy.fProject;
-		}
-		return false;
-	}
+public abstract class RefactoringDescriptorProxy implements Comparable {
 
 	/**
 	 * Returns a human-readable description of the particular refactoring
@@ -93,18 +53,14 @@ public class RefactoringDescriptorProxy {
 	 * 
 	 * @return a description of the refactoring
 	 */
-	public final String getDescription() {
-		return fDescription;
-	}
+	public abstract String getDescription();
 
 	/**
 	 * Returns the name of the project.
 	 * 
 	 * @return the non-empty name, or <code>null</code>
 	 */
-	public final String getProject() {
-		return fProject;
-	}
+	public abstract String getProject();
 
 	/**
 	 * Returns the time stamp of this refactoring.
@@ -112,16 +68,7 @@ public class RefactoringDescriptorProxy {
 	 * @return the time stamp, or <code>-1</code> if no time information is
 	 *         available
 	 */
-	public final long getTimeStamp() {
-		return fTimeStamp;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final int hashCode() {
-		return (int) (fDescription.hashCode() + 17 * ((fProject != null) ? fProject.hashCode() : 1) + fTimeStamp);
-	}
+	public abstract long getTimeStamp();
 
 	/**
 	 * Resolves this proxy and returns the associated refactoring descriptor.
@@ -145,24 +92,5 @@ public class RefactoringDescriptorProxy {
 			service.disconnect();
 		}
 		return descriptor;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final String toString() {
-
-		final StringBuffer buffer= new StringBuffer(128);
-
-		buffer.append(getClass().getName());
-		buffer.append("[timeStamp="); //$NON-NLS-1$
-		buffer.append(fTimeStamp);
-		buffer.append(",project="); //$NON-NLS-1$
-		buffer.append(fProject);
-		buffer.append(",description="); //$NON-NLS-1$
-		buffer.append(fDescription);
-		buffer.append("]"); //$NON-NLS-1$
-
-		return buffer.toString();
 	}
 }
