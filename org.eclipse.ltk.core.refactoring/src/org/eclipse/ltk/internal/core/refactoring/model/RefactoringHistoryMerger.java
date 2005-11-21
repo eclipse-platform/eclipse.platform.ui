@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.compare.IStreamMerger;
 
@@ -36,19 +38,6 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManag
 public final class RefactoringHistoryMerger implements IStreamMerger {
 
 	/**
-	 * Comparator class which compares refactoring descriptors with acending
-	 * time stamps
-	 */
-	private static final class RefactoringDescriptorComparator implements Comparator {
-
-		public final int compare(final Object first, final Object second) {
-			final RefactoringDescriptor predecessor= (RefactoringDescriptor) first;
-			final RefactoringDescriptor successor= (RefactoringDescriptor) second;
-			return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
-		}
-	}
-
-	/**
 	 * Creates a new refactoring history merger.
 	 */
 	public RefactoringHistoryMerger() {
@@ -62,10 +51,21 @@ public final class RefactoringHistoryMerger implements IStreamMerger {
 		try {
 			final RefactoringDescriptor[] sourceDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(source, 0, Long.MAX_VALUE);
 			final RefactoringDescriptor[] targetDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(target, 0, Long.MAX_VALUE);
-			final RefactoringDescriptor[] outputDescriptors= new RefactoringDescriptor[sourceDescriptors.length + targetDescriptors.length];
-			System.arraycopy(sourceDescriptors, 0, outputDescriptors, 0, sourceDescriptors.length);
-			System.arraycopy(targetDescriptors, 0, outputDescriptors, sourceDescriptors.length, targetDescriptors.length);
-			Arrays.sort(outputDescriptors, new RefactoringDescriptorComparator());
+			final Set set= new HashSet();
+			for (int index= 0; index < sourceDescriptors.length; index++)
+				set.add(sourceDescriptors[index]);
+			for (int index= 0; index < targetDescriptors.length; index++)
+				set.add(targetDescriptors[index]);
+			final RefactoringDescriptor[] outputDescriptors= new RefactoringDescriptor[set.size()];
+			set.toArray(outputDescriptors);
+			Arrays.sort(outputDescriptors, new Comparator() {
+
+				public final int compare(final Object first, final Object second) {
+					final RefactoringDescriptor predecessor= (RefactoringDescriptor) first;
+					final RefactoringDescriptor successor= (RefactoringDescriptor) second;
+					return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
+				}
+			});
 			RefactoringHistoryManager.writeRefactoringDescriptors(output, outputDescriptors);
 		} catch (CoreException exception) {
 			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 1, RefactoringCoreMessages.RefactoringHistoryStreamMerger_error_io, exception);

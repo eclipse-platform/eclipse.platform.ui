@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.compare.IStreamMerger;
 
@@ -36,19 +38,6 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManag
 public final class RefactoringIndexMerger implements IStreamMerger {
 
 	/**
-	 * Comparator class which compares refactoring descriptor proxies with
-	 * acending time stamps
-	 */
-	private static final class RefactoringDescriptorProxyComparator implements Comparator {
-
-		public final int compare(final Object first, final Object second) {
-			final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
-			final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-			return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
-		}
-	}
-
-	/**
 	 * Creates a new refactoring index merger.
 	 */
 	public RefactoringIndexMerger() {
@@ -62,10 +51,21 @@ public final class RefactoringIndexMerger implements IStreamMerger {
 		try {
 			final RefactoringDescriptorProxy[] sourceProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(source, null, 0, Long.MAX_VALUE);
 			final RefactoringDescriptorProxy[] targetProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(target, null, 0, Long.MAX_VALUE);
-			final RefactoringDescriptorProxy[] outputProxies= new RefactoringDescriptorProxy[sourceProxies.length + targetProxies.length];
-			System.arraycopy(sourceProxies, 0, outputProxies, 0, sourceProxies.length);
-			System.arraycopy(targetProxies, 0, outputProxies, sourceProxies.length, targetProxies.length);
-			Arrays.sort(outputProxies, new RefactoringDescriptorProxyComparator());
+			final Set set= new HashSet();
+			for (int index= 0; index < sourceProxies.length; index++)
+				set.add(sourceProxies[index]);
+			for (int index= 0; index < targetProxies.length; index++)
+				set.add(targetProxies[index]);
+			final RefactoringDescriptorProxy[] outputProxies= new RefactoringDescriptorProxy[set.size()];
+			set.toArray(outputProxies);
+			Arrays.sort(outputProxies, new Comparator() {
+
+				public final int compare(final Object first, final Object second) {
+					final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
+					final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
+					return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
+				}
+			});
 			final StringBuffer buffer= new StringBuffer(256);
 			for (int index= 0; index < outputProxies.length; index++) {
 				final RefactoringDescriptorProxy proxy= outputProxies[index];
