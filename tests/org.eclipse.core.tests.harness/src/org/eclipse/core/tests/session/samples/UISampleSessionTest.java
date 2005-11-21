@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.session.samples;
 
+import java.util.Date;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
-import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.tests.harness.CoreTest;
 import org.eclipse.core.tests.session.SessionTestSuite;
 import org.eclipse.test.performance.*;
@@ -21,9 +22,23 @@ public class UISampleSessionTest extends TestCase {
 	public UISampleSessionTest(String methodName) {
 		super(methodName);
 	}
+	
+	/**
+	 * Print a debug message to the console. 
+	 * Pre-pend the message with the current date and the name of the current thread.
+	 */
+	public static void message(String message) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(new Date(System.currentTimeMillis()));
+		buffer.append(" - ["); //$NON-NLS-1$
+		buffer.append(Thread.currentThread().getName());
+		buffer.append("] "); //$NON-NLS-1$
+		buffer.append(message);
+		System.out.println(buffer.toString());
+	}
 
 	public void testApplicationStartup() {
-		Policy.debug("Running " + getName());
+		message("Running " + getName());
 		PerformanceMeter meter = Performance.getDefault().createPerformanceMeter(getClass().getName() + ".UIStartup");
 		try {
 			meter.stop();

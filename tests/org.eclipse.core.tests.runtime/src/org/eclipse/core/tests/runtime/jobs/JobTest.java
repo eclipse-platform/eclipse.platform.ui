@@ -12,7 +12,11 @@ package org.eclipse.core.tests.runtime.jobs;
 
 import junit.framework.*;
 import org.eclipse.core.internal.jobs.Worker;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.harness.TestJob;

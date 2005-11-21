@@ -76,7 +76,7 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(SCOPE).node(qualifier);
 	}
 
-	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Plugin context) {
+	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Object context) {
 		return new TestScope(nodeParent, nodeName);
 	}
 

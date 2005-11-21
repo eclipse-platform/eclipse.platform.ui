@@ -25,7 +25,23 @@ import org.osgi.framework.Bundle;
 
 public class ConfigurationSessionTestSuite extends SessionTestSuite {
 	// include configurator as it is required by compatibility, but do not set it to start 	
-	public static String[] MINIMAL_BUNDLE_SET = {"org.eclipse.core.runtime@2:start", "org.eclipse.core.runtime.compatibility", "org.eclipse.update.configurator", "org.eclipse.core.tests.harness", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime", "org.junit", "org.eclipse.test.performance"};
+	public static String[] MINIMAL_BUNDLE_SET = {
+		// -- new portion:
+		"org.eclipse.equinox.common@2:start", 
+		"org.eclipse.core.jobs@2:start", 
+		"org.eclipse.equinox.registry@2:start", 
+		"org.eclipse.equinox.preferences", 
+		"org.eclipse.core.contenttype", 
+		// -- end of new
+		"org.eclipse.core.runtime@2:start", 
+		"org.eclipse.core.runtime.compatibility", 
+		"org.eclipse.update.configurator", 
+		"org.eclipse.core.tests.harness", 
+		"org.eclipse.jdt.junit.runtime", 
+		"org.eclipse.pde.junit.runtime", 
+		"org.junit", 
+		"org.eclipse.test.performance"
+		};
 
 	private static final String PROP_CONFIG_AREA_READ_ONLY = InternalPlatform.PROP_CONFIG_AREA + ".readOnly";
 	private static final String PROP_CONFIG_CASCADED = "osgi.configuration.cascaded";

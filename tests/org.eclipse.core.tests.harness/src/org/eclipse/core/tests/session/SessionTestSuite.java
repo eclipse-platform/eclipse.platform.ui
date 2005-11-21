@@ -12,7 +12,8 @@ package org.eclipse.core.tests.session;
 
 import java.util.*;
 import junit.framework.*;
-import org.eclipse.core.internal.runtime.Assert;
+
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.tests.session.SetupManager.SetupException;
 
 public class SessionTestSuite extends TestSuite {

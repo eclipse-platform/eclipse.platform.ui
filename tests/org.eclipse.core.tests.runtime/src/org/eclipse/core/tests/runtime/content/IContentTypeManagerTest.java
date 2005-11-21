@@ -695,7 +695,12 @@ public class IContentTypeManagerTest extends RuntimeTest {
 			fail("6.0", e);
 		}
 		assertTrue("6.1", !tracer.isOnlyChange(myType));
-
+		
+		try {
+			myType.setDefaultCharset("ABC");
+		} catch (CoreException e1) {
+			fail("7.0", e1);
+		}
 	}
 
 	public void testFileSpecConflicts() {

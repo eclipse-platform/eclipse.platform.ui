@@ -10,12 +10,25 @@
  *******************************************************************************/
 package org.eclipse.core.tests.session;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import junit.framework.*;
-import org.eclipse.core.internal.runtime.Assert;
-import org.eclipse.core.runtime.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
+import junit.framework.Test;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.tests.harness.CoreTest;
 
 /**
