@@ -145,7 +145,7 @@ public final class RefactoringHistoryManager {
 		Assert.isTrue(start >= 0);
 		Assert.isTrue(end >= start);
 		final List list= new ArrayList();
-		final BufferedReader reader= new BufferedReader(new InputStreamReader(stream));
+		final BufferedReader reader= new BufferedReader(new InputStreamReader(stream, IRefactoringSerializationConstants.OUTPUT_ENCODING));
 		while (reader.ready()) {
 			final String line= reader.readLine();
 			if (line != null) {
@@ -392,7 +392,7 @@ public final class RefactoringHistoryManager {
 				input= new DataInputStream(new BufferedInputStream(file.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL))));
 				if (input != null) {
 					final String value= new Long(stamp).toString();
-					final BufferedReader reader= new BufferedReader(new InputStreamReader(input));
+					final BufferedReader reader= new BufferedReader(new InputStreamReader(input, IRefactoringSerializationConstants.OUTPUT_ENCODING));
 					final StringBuffer buffer= new StringBuffer();
 					while (reader.ready()) {
 						final String line= reader.readLine();
