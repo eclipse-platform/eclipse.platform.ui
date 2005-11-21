@@ -89,9 +89,13 @@ public class VirtualLazyTreeViewerTest extends ViewerTestCase {
 		processEvents();
 		Tree tree = getTreeViewer().getTree();
 		getTreeViewer().expandToLevel("R-0", 1);
+		// force redrawing the tree - this will trigger the SetData event
+		tree.update();
 		assertEquals(10, tree.getItem(0).getItemCount());
 		TreeItem treeItem = tree.getItem(0).getItem(3);
 		expandAndNotify(treeItem);
+		// force redrawing the tree - this will trigger the SetData event
+		tree.update();
 		assertEquals(10, treeItem.getItemCount());
 		assertEquals(10, treeItem.getItems().length);
 		// interact();
