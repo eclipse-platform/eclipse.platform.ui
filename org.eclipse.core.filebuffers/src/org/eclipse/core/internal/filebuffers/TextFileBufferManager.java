@@ -99,14 +99,22 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				fileBuffer.connect();
 				return;
 			}
+		}
 			
-			fileBuffer= createFileBuffer(location);
-			if (fileBuffer == null)
-				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null));
+		fileBuffer= createFileBuffer(location);
+		if (fileBuffer == null)
+			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null));
+		
+		fileBuffer.create(location, monitor);
 			
-			fileBuffer.create(location, monitor);
-			fileBuffer.connect();
-			fFilesBuffers.put(location, fileBuffer);
+		synchronized (fFilesBuffers) {
+			AbstractFileBuffer oldFileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
+			if (oldFileBuffer != null)
+				oldFileBuffer.connect();
+			else {
+				fileBuffer.connect();
+				fFilesBuffers.put(location, fileBuffer);
+			}
 		}
 		
 		// Do notification outside synchronized block
