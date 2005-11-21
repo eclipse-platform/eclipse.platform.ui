@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -164,7 +164,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			protected final Viewer getViewer(final Viewer viewer, final Object input) {
 				if (input instanceof String) {
 					final String comment= (String) input;
-					final SourceViewer extended= new SourceViewer(fCommentPane, null, SWT.NULL);
+					final TextViewer extended= new TextViewer(fCommentPane, SWT.NULL);
 					extended.setDocument(new Document(comment));
 					setText(fControlConfiguration.getCommentCaption());
 					return extended;
