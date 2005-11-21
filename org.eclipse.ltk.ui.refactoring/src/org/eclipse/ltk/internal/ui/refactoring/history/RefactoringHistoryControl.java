@@ -180,12 +180,13 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			}
 		};
 		fCommentPane.setText(fControlConfiguration.getCommentCaption());
+		fCommentPane.setEnabled(false);
 		final String message= fControlConfiguration.getMessage();
 		if (message != null && !"".equals(message)) { //$NON-NLS-1$
 			fMessageLabel.setText(message);
-			fSplitterControl.setWeights(new int[] { 8, 77, 15});
+			fSplitterControl.setWeights(new int[] { 8, 72, 20});
 		} else
-			fSplitterControl.setWeights(new int[] { 0, 85, 15});
+			fSplitterControl.setWeights(new int[] { 0, 80, 20});
 	}
 
 	/**
