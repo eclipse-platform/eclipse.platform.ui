@@ -53,7 +53,7 @@ public class RefactoringHistoryDialogConfiguration extends RefactoringHistoryCon
 	 * @return the default height
 	 */
 	public int getDefaultHeight() {
-		return 400;
+		return 200;
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class RefactoringHistoryDialogConfiguration extends RefactoringHistoryCon
 	 * @return the default width
 	 */
 	public int getDefaultWidth() {
-		return 300;
+		return 240;
 	}
 
 	/**
