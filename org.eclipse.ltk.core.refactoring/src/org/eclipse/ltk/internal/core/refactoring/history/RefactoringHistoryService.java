@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring.history;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -23,9 +24,11 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
@@ -104,7 +107,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 * @throws EmptyStackException
 		 *             if the stack is empty
 		 */
-		RefactoringDescriptor peek() throws EmptyStackException {
+		private RefactoringDescriptor peek() throws EmptyStackException {
 			if (!fImplementation.isEmpty())
 				return (RefactoringDescriptor) fImplementation.getFirst();
 			throw new EmptyStackException();
@@ -116,7 +119,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 * @throws EmptyStackException
 		 *             if the stack is empty
 		 */
-		void pop() throws EmptyStackException {
+		private void pop() throws EmptyStackException {
 			final RefactoringDescriptor descriptor= peek();
 			if (!fImplementation.isEmpty())
 				fImplementation.removeFirst();
@@ -143,7 +146,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 * @param descriptor
 		 *            the descriptor to push onto the stack
 		 */
-		void push(final RefactoringDescriptor descriptor) {
+		private void push(final RefactoringDescriptor descriptor) {
 			Assert.isNotNull(descriptor);
 			fImplementation.addFirst(descriptor);
 			final int size= fImplementation.size();
@@ -173,7 +176,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 *            the progress monitor to use
 		 * @return the associated refactoring descriptor, or <code>null</code>
 		 */
-		RefactoringDescriptor requestDescriptor(final RefactoringDescriptorProxy proxy, final IProgressMonitor monitor) {
+		private RefactoringDescriptor requestDescriptor(final RefactoringDescriptorProxy proxy, final IProgressMonitor monitor) {
 			Assert.isNotNull(proxy);
 			Assert.isNotNull(monitor);
 			try {
@@ -237,9 +240,8 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			if (operation instanceof TriggeredOperations)
 				operation= ((TriggeredOperations) operation).getTriggeringOperation();
 			UndoableOperation2ChangeAdapter adapter= null;
-			if (operation instanceof UndoableOperation2ChangeAdapter) {
+			if (operation instanceof UndoableOperation2ChangeAdapter)
 				adapter= (UndoableOperation2ChangeAdapter) operation;
-			}
 			if (adapter != null) {
 				final Change change= adapter.getChange();
 				switch (event.getEventType()) {
@@ -283,7 +285,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		/**
 		 * Creates a new unknown refactoring descriptor.
 		 */
-		UnknownRefactoringDescriptor() {
+		private UnknownRefactoringDescriptor() {
 			super(UNKNOWN_REFACTORING_ID, null, RefactoringCoreMessages.RefactoringHistoryService_unknown_refactoring_description, null, Collections.EMPTY_MAP);
 		}
 	}
@@ -724,7 +726,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	public boolean hasProjectHistory(final IProject project) {
 		Assert.isNotNull(project);
-		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
+		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project) };
 		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
 		if (preference != null)
 			return Boolean.valueOf(preference).booleanValue();
@@ -732,11 +734,29 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
+	 * Reads refactoring descriptor proxies from the input stream.
+	 * 
+	 * @param stream
+	 *            the input stream
+	 * @return the refactoring descriptor proxies
+	 * @throws CoreException
+	 *             if an error occurs
+	 */
+	public RefactoringDescriptorProxy[] readRefactoringDescriptorProxies(final InputStream stream) throws CoreException {
+		Assert.isNotNull(stream);
+		try {
+			return RefactoringHistoryManager.readRefactoringDescriptorProxies(stream, null, 0, Long.MAX_VALUE);
+		} catch (IOException exception) {
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
+		}
+	}
+
+	/**
 	 * Reads a refactoring history from the input stream.
 	 * 
 	 * @param stream
 	 *            the input stream
-	 * @return A refactoring history
+	 * @return a refactoring history
 	 * @throws CoreException
 	 *             if an error occurs
 	 */
