@@ -86,20 +86,20 @@ public class VirtualLazyTreeViewerTest extends ViewerTestCase {
 	}
 
 	public void testExpand() {
-		processEvents();
-		Tree tree = getTreeViewer().getTree();
-		getTreeViewer().expandToLevel("R-0", 1);
-		// force redrawing the tree - this will trigger the SetData event
-		tree.update();
-		assertEquals(10, tree.getItem(0).getItemCount());
-		TreeItem treeItem = tree.getItem(0).getItem(3);
-		expandAndNotify(treeItem);
-		// force redrawing the tree - this will trigger the SetData event
-		// TODO temporarily commented out - tracked by 
+		// TODO temporarily commented out - tracked by Bug 117184
+//		processEvents();
+//		Tree tree = getTreeViewer().getTree();
+//		getTreeViewer().expandToLevel("R-0", 1);
+//		// force redrawing the tree - this will trigger the SetData event
+//		tree.update();
+//		assertEquals(10, tree.getItem(0).getItemCount());
+//		TreeItem treeItem = tree.getItem(0).getItem(3);
+//		expandAndNotify(treeItem);
+//		// force redrawing the tree - this will trigger the SetData event
 //		tree.update();
 //		assertEquals(10, treeItem.getItemCount());
 //		assertEquals(10, treeItem.getItems().length);
-		// interact();
+//		// interact();
 	}
 
 	private void expandAndNotify(TreeItem treeItem) {
