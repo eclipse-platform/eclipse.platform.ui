@@ -50,57 +50,28 @@ public final class RefactoringDescriptorProxyImplementation extends RefactoringD
 	/**
 	 * {@inheritDoc}
 	 */
-	public final int compareTo(final Object object) {
-		if (object instanceof RefactoringDescriptorProxyImplementation) {
-			final RefactoringDescriptorProxyImplementation proxy= (RefactoringDescriptorProxyImplementation) object;
-			return (int) (fTimeStamp - proxy.fTimeStamp);
-		}
-		return 0;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean equals(final Object object) {
-		if (object instanceof RefactoringDescriptorProxyImplementation) {
-			final RefactoringDescriptorProxyImplementation proxy= (RefactoringDescriptorProxyImplementation) object;
-			return fTimeStamp == proxy.fTimeStamp && fDescription.equals(proxy.fDescription);
-		}
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final String getDescription() {
+	public String getDescription() {
 		return fDescription;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final String getProject() {
+	public String getProject() {
 		return fProject;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final long getTimeStamp() {
+	public long getTimeStamp() {
 		return fTimeStamp;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final int hashCode() {
-		return (int) (fDescription.hashCode() + 17 * fTimeStamp);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final String toString() {
+	public String toString() {
 
 		final StringBuffer buffer= new StringBuffer(128);
 

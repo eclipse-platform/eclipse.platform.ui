@@ -48,6 +48,28 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
 public abstract class RefactoringDescriptorProxy implements Comparable {
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public int compareTo(final Object object) {
+		if (object instanceof RefactoringDescriptorProxy) {
+			final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) object;
+			return (int) (getTimeStamp() - proxy.getTimeStamp());
+		}
+		return 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final boolean equals(final Object object) {
+		if (object instanceof RefactoringDescriptorProxy) {
+			final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) object;
+			return getTimeStamp() == proxy.getTimeStamp() && getDescription().equals(proxy.getDescription());
+		}
+		return false;
+	}
+
+	/**
 	 * Returns a human-readable description of the particular refactoring
 	 * instance.
 	 * 
@@ -69,6 +91,13 @@ public abstract class RefactoringDescriptorProxy implements Comparable {
 	 *         available
 	 */
 	public abstract long getTimeStamp();
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final int hashCode() {
+		return (int) (getDescription().hashCode() + 17 * getTimeStamp());
+	}
 
 	/**
 	 * Resolves this proxy and returns the associated refactoring descriptor.

@@ -32,35 +32,42 @@ public final class RefactoringDescriptorProxyAdapter extends RefactoringDescript
 	/**
 	 * {@inheritDoc}
 	 */
-	public final int compareTo(final Object object) {
+	public int compareTo(final Object object) {
 		return fDescriptor.compareTo(object);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final String getDescription() {
+	public String getDescription() {
 		return fDescriptor.getDescription();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final String getProject() {
+	public String getProject() {
 		return fDescriptor.getProject();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final long getTimeStamp() {
+	public long getTimeStamp() {
 		return fDescriptor.getTimeStamp();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final RefactoringDescriptor requestDescriptor(final IProgressMonitor monitor) {
+	public RefactoringDescriptor requestDescriptor(final IProgressMonitor monitor) {
 		return fDescriptor;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String toString() {
+		return fDescriptor.toString();
 	}
 }
