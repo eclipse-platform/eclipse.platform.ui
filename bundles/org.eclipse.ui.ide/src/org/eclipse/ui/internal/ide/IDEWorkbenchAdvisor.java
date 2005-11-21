@@ -20,6 +20,7 @@ import java.util.TreeMap;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IBundleGroup;
@@ -31,14 +32,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -252,37 +251,15 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
             if (commandLineArgs[i].equalsIgnoreCase("-refresh")) //$NON-NLS-1$
                 return;
 
-        IWorkbenchWindow window = getWorkbenchConfigurer().getWorkbench()
-                .getActiveWorkbenchWindow();
-        Shell shell = window == null ? null : window.getShell();
-        ProgressMonitorDialog dlg = new ProgressMonitorJobsDialog(shell);
-        final CoreException ex[] = new CoreException[1];
-        try {
-            dlg.run(true, true, new IRunnableWithProgress() {
-                public void run(IProgressMonitor monitor)
-                        throws InvocationTargetException, InterruptedException {
-                    try {
-                        IContainer root = ResourcesPlugin.getWorkspace()
-                                .getRoot();
-                        root.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                    } catch (CoreException e) {
-                        ex[0] = e;
-                    }
-                }
-            });
-            if (ex[0] != null) {
-                ErrorDialog.openError(shell, IDEWorkbenchMessages.Workspace_problemsTitle,
-                        IDEWorkbenchMessages.Workspace_problemMessage,
-                        ex[0].getStatus());
-            }
-        } catch (InterruptedException e) {
-            //Do nothing. Operation was canceled.
-        } catch (InvocationTargetException e) {
-            String msg = "InvocationTargetException refreshing from local on startup"; //$NON-NLS-1$
-            IDEWorkbenchPlugin.log(msg, new Status(IStatus.ERROR,
-                    IDEWorkbenchPlugin.IDE_WORKBENCH, 0, msg, e
-                            .getTargetException()));
-        }
+		final IContainer root = ResourcesPlugin.getWorkspace().getRoot();
+		Job job = new WorkspaceJob(IDEWorkbenchMessages.Workspace_refreshing) {
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				root.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				return Status.OK_STATUS;
+			}
+		};
+		job.setRule(root);
+		job.schedule();
     }
 
     /**

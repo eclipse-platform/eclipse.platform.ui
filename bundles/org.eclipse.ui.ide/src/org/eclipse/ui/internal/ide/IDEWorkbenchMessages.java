@@ -740,8 +740,7 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String Problems_Opening_Page;
 
-	public static String Workspace_problemMessage;
-	public static String Workspace_problemsTitle;
+	public static String Workspace_refreshing;
 
 
 	// ==============================================================================
