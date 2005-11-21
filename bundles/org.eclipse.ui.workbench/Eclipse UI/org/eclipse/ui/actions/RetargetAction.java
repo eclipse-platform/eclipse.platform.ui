@@ -292,4 +292,14 @@ public class RetargetAction extends PartEventAction implements
     public void setHelpListener(HelpListener listener) {
         localHelpListener = listener;
     }
+
+	public final String toString() {
+		final StringBuffer buffer = new StringBuffer();
+
+		buffer.append("RetargetAction("); //$NON-NLS-1$
+		buffer.append(getId());
+		buffer.append(')');
+
+		return buffer.toString();
+	}
 }
