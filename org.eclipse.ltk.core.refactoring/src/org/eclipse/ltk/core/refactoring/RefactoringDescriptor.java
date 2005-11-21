@@ -115,7 +115,7 @@ public class RefactoringDescriptor implements Comparable {
 	public final boolean equals(final Object object) {
 		if (object instanceof RefactoringDescriptor) {
 			final RefactoringDescriptor descriptor= (RefactoringDescriptor) object;
-			return fTimeStamp == descriptor.fTimeStamp && fDescription.equals(descriptor.fDescription) && fProject != null ? fProject.equals(descriptor.fProject) : fProject == descriptor.fProject;
+			return fTimeStamp == descriptor.fTimeStamp && fDescription.equals(descriptor.fDescription);
 		}
 		return false;
 	}
@@ -181,7 +181,7 @@ public class RefactoringDescriptor implements Comparable {
 	 * {@inheritDoc}
 	 */
 	public final int hashCode() {
-		return (int) (fDescription.hashCode() + 17 * ((fProject != null) ? fProject.hashCode() : 1) + fTimeStamp);
+		return (int) (fDescription.hashCode() + 17 * fTimeStamp);
 	}
 
 	/**
