@@ -243,7 +243,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
         updateWidgetEnablements();
         setPageComplete(determinePageCompletion());
-
+        setErrorMessage(null);	// should not initially have error message
+        
         setControl(composite);
     }
 
@@ -354,14 +355,12 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
                         }
                     }
                     return results.toArray();
-                } else {
-                    //input element case
-                    if (o instanceof ArrayList) {
-                        return ((ArrayList) o).toArray();
-                    } else {
-                        return new Object[0];
-                    }
-                }
+                } 
+                //input element case
+                if (o instanceof ArrayList) {
+                    return ((ArrayList) o).toArray();
+                } 
+                return new Object[0];
             }
         };
     }
@@ -568,7 +567,6 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      * Set up the selection values for the resources and put them in the selectionMap.
      * If a resource is a file see if it matches one of the selected extensions. If not
      * then check the children.
-     * @return a boolean if any children are selected
      */
     private void setupSelectionsBasedOnSelectedTypes(Map selectionMap,
             IContainer parent) {

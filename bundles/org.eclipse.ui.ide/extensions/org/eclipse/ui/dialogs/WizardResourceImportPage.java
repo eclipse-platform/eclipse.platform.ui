@@ -157,6 +157,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         restoreWidgetValues();
         updateWidgetEnablements();
         setPageComplete(determinePageCompletion());
+        setErrorMessage(null);	// should not initially have error message
 
         setControl(composite);
     }
