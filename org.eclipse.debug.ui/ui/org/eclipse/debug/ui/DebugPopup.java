@@ -42,26 +42,6 @@ public abstract class DebugPopup extends PopupDialog {
     public DebugPopup(Shell parent, ITextViewer viewer) {
         super(parent, PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE, true, true, false, true, null, null);
         fViewer = viewer;
-
-        IWorkbench workbench = PlatformUI.getWorkbench();
-
-        String commandId = getCommandId();
-        if (commandId != null) {
-            IHandler fCloseHandler = new AbstractHandler() {
-                public Object execute(ExecutionEvent event) throws ExecutionException {
-                    persist();
-                    close();
-                    return null;
-                }
-            };
-
-            fHandlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
-            fActivation = fHandlerService.activateHandler(commandId, fCloseHandler);
-        }
-
-        String infoText = getInfoText();
-        if (infoText != null)
-            setInfoText(infoText);
     }
 
     protected String getInfoText() {
@@ -104,6 +84,30 @@ public abstract class DebugPopup extends PopupDialog {
     protected IDialogSettings getDialogSettings() {
         IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
         return settings;
+    }
+
+    
+    public int open() {
+        IWorkbench workbench = PlatformUI.getWorkbench();
+        String commandId = getCommandId();
+        if (commandId != null) {
+            IHandler fCloseHandler = new AbstractHandler() {
+                public Object execute(ExecutionEvent event) throws ExecutionException {
+                    persist();
+                    close();
+                    return null;
+                }
+            };
+
+            fHandlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+            fActivation = fHandlerService.activateHandler(commandId, fCloseHandler);
+        }
+
+        String infoText = getInfoText();
+        if (infoText != null)
+            setInfoText(infoText);
+        
+        return super.open();
     }
 
     public boolean close() {

@@ -69,4 +69,6 @@ public class DebugUIViewsMessages extends NLS {
 	}
 
     public static String InspectPopupDialog_0;
+
+    public static String InspectPopupDialog_1;
 }

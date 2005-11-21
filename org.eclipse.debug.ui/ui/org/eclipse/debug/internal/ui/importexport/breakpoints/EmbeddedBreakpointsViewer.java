@@ -37,6 +37,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IViewPart;
 
 /**
@@ -205,7 +206,37 @@ public class EmbeddedBreakpointsViewer {
 	public BreakpointsViewer getViewer() {
 		return fViewer;
 	}//end getViewer
-	
+   
+	/**
+	 * finds all occurrences of a widget to update
+	 * @param element the element to search for when finding occurrences
+	 * @return a list of widget occurrences to update or an empty list
+	 */
+    private Widget[] searchItems(Object element) {
+        ArrayList list = new ArrayList();
+        TreeItem[] items = fTree.getItems();
+        for (int i = 0; i < items.length; i++) {
+        	findAllOccurrences(items[i], element, list);
+        }//end for
+        return (Widget[]) list.toArray(new Widget[0]);
+    }
+    
+    /**
+     * performs the actual search for items in the tree
+     * @param list the list to add matches to
+     * @param item the item in the tree
+     * @param element the element to compare
+     */
+    private void findAllOccurrences(TreeItem item, Object element, ArrayList list) {
+        if (element.equals(item.getData())) {
+                list.add(item);
+        }//end if
+        TreeItem[] items = item.getItems();
+        for (int i = 0; i < items.length; i++) {
+        	findAllOccurrences(items[i], element, list);
+        }
+    }
+    
 	 /**
      * Update the checked state of the given element and all of its children.
      * 
@@ -214,10 +245,10 @@ public class EmbeddedBreakpointsViewer {
      */
     private void updateCheckedState(Object obj, boolean enable) {
 	        if (obj instanceof IBreakpoint) {
-	        	ArrayList list = findAllItemOccurances(obj);
+	        	Widget[] list = searchItems(obj);
 	        	TreeItem item = null;
-	        	for(int i = 0; i < list.size(); i++) {
-		        	item = (TreeItem)list.get(i);
+	        	for(int i = 0; i < list.length; i++) {
+		        	item = (TreeItem)list[i];
 		            item.setChecked(enable);
 		            refreshParents(item);
 	        	}//end for
@@ -231,7 +262,7 @@ public class EmbeddedBreakpointsViewer {
 	        }//end if
 	        //refreshParents(item);
     
-     }//end updateCheckedState
+     }//end updateCheckedState 
 
     /**
      * refreshes the grayed/checked state of the parents of item
@@ -293,25 +324,4 @@ public class EmbeddedBreakpointsViewer {
     	}//end for
     	return count;
     }//end allChildrenChecked
-    
-    /**
-     * Finds all of the objects in the current tree view based on what is showing, not on findItem
-     * which only finds the first occurance of the object in the tree
-     * @param object the object to look for
-     * @return the list of objects or an empty list, never null
-     * 
-     */
-    private ArrayList findAllItemOccurances(Object object) {
-    	ArrayList results = new ArrayList();
-    	fTree.selectAll();
-    	TreeItem[] items = fTree.getSelection();
-    	fTree.deselectAll();
-    	for(int i = 0; i < items.length; i++) {
-    		if(object.equals(items[i].getData())) {
-    			results.add(items[i]);
-    		}//end if
-    	}//end for
-    	return results;
-    }
-
 }//end class

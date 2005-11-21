@@ -142,11 +142,44 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
      * @param element
      */
 	public void updateCheckedState(Object element) {
-        Widget widget = searchItem(element);
-        if (widget != null) {
-            updateCheckedState((TreeItem)widget);
+        Widget[] widgets = searchItems(element);
+        for (int i = 0; i < widgets.length; i++) {
+            Widget widget = widgets[i];
+            if (widget != null) {
+                updateCheckedState((TreeItem)widget);
+            }
         }
 	}
+   
+	/**
+	 * finds all occurrences of a widget to update
+	 * @param element the element to search for when finding occurrences
+	 * @return a list of widget occurrences to update or an empty list
+	 */
+    private Widget[] searchItems(Object element) {
+        ArrayList list = new ArrayList();
+        TreeItem[] items = getTree().getItems();
+        for (int i = 0; i < items.length; i++) {
+        	findAllOccurrences(items[i], element, list);
+        }//end for
+        return (Widget[]) list.toArray(new Widget[0]);
+    }
+    
+    /**
+     * performs the actual search for items in the tree
+     * @param list the list to add matches to
+     * @param item the item in the tree
+     * @param element the element to compare
+     */
+    private void findAllOccurrences(TreeItem item, Object element, ArrayList list) {
+        if (element.equals(item.getData())) {
+                list.add(item);
+        }//end if
+        TreeItem[] items = item.getItems();
+        for (int i = 0; i < items.length; i++) {
+        	findAllOccurrences(items[i], element, list);
+        }
+    }
     
     /**
      * Update the checked state up the given element and all of its children.
