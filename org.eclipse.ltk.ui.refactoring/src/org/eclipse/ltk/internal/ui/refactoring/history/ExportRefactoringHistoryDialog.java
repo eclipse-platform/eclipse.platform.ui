@@ -46,7 +46,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.2
  */
-public class ExportRefactoringHistoryDialog extends RefactoringHistoryDialog {
+public final class ExportRefactoringHistoryDialog extends RefactoringHistoryDialog {
 
 	/**
 	 * Creates a new export refactoring history dialog.

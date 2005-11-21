@@ -106,7 +106,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 			final RefactoringDescriptorProxy proxy= entry.getDescriptor();
 			if (fControlConfiguration.isTimeDisplayed()) {
 				final long stamp= proxy.getTimeStamp();
-				if (stamp > 0)
+				if (stamp >= 0)
 					return MessageFormat.format(fControlConfiguration.getRefactoringPattern(), new String[] { DateFormat.getTimeInstance().format(new Date(stamp)), proxy.getDescription()});
 			}
 			return proxy.getDescription();

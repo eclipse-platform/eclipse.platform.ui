@@ -44,6 +44,23 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	/** The no elements constant */
 	private static final Object[] NO_ELEMENTS= {};
 
+	/**
+	 * Returns the index of the specified root kind in the structure.
+	 * 
+	 * @param structure
+	 *            the structure
+	 * @param kind
+	 *            the root kind
+	 * @return the index, or <code>-1</code>
+	 */
+	private static int getRefactoringRootKindIndex(final long[][] structure, final int kind) {
+		for (int index= structure.length - 1; index >= 0; index--) {
+			if (kind >= structure[index][1])
+				return index;
+		}
+		return -1;
+	}
+
 	/** The refactoring history control configuration to use */
 	private final RefactoringHistoryControlConfiguration fControlConfiguration;
 
@@ -132,7 +149,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 			if (fControlConfiguration.isTimeDisplayed())
 				return getRefactoringHistoryRoots();
 			else if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty())
-				return new Object[] { new RefactoringHistoryContainer()};
+				return new Object[] { new RefactoringHistoryContainer() };
 		}
 		return NO_ELEMENTS;
 	}
@@ -376,23 +393,6 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 			}
 		}
 		return list.toArray();
-	}
-
-	/**
-	 * Returns the index of the specified root kind in the structure.
-	 * 
-	 * @param structure
-	 *            the structure
-	 * @param kind
-	 *            the root kind
-	 * @return the index, or <code>-1</code>
-	 */
-	private int getRefactoringRootKindIndex(final long[][] structure, final int kind) {
-		for (int index= structure.length - 1; index >= 0; index--) {
-			if (kind >= structure[index][1])
-				return index;
-		}
-		return -1;
 	}
 
 	/**

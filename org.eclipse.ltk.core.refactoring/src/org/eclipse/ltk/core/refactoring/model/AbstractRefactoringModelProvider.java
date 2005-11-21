@@ -44,7 +44,7 @@ public class AbstractRefactoringModelProvider extends ModelProvider {
 	 * @param id
 	 *            the fully qualified id of the model provider
 	 */
-	public AbstractRefactoringModelProvider(final String id) {
+	protected AbstractRefactoringModelProvider(final String id) {
 		Assert.isNotNull(id);
 		fProviderId= id;
 	}
