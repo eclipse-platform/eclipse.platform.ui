@@ -266,8 +266,8 @@ public interface IFileStore extends IAdaptable {
 	public abstract boolean isParentOf(IFileStore other);
 
 	/**
-	 * Creates and returns a new directory.  If the directory already exists,
-	 * this method has no effect.
+	 * Creates a directory, and optionally its parent directories.  If the directory 
+	 * already exists, this method has no effect.
 	 * <p>
 	 * The {@link EFS#SHALLOW} option flag indicates how
 	 * this method deals with creation when the parent directory does not exist.
@@ -279,7 +279,7 @@ public interface IFileStore extends IAdaptable {
 	 * @param options bit-wise or of option flag constants ({@link EFS#SHALLOW}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
-	 * @return The created directory
+	 * @return This directory
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>The directory could not be created</li>
