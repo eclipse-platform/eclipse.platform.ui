@@ -50,21 +50,50 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
 public abstract class LaunchConfigurationDelegate implements ILaunchConfigurationDelegate2 {
 	
 	/**
+	 * Constant to define debug.core for the status codes
+	 * 
+	 * @since 3.2
+	 */
+	private static final String DEBUG_CORE = "org.eclipse.debug.core"; //$NON-NLS-1$
+	
+	/**
+	 * Constant to define debug.ui for the status codes
+	 * 
+	 * @since 3.2
+	 */
+	private static final String DEBUG_UI = "org.eclipse.debug.ui"; //$NON-NLS-1$
+	
+	/**
+	 * Constant to represent the empty string
+	 * 
+	 * @since 3.2
+	 */
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	
+	/**
 	 * Status code for which a UI prompter is registered.
 	 */
-	protected static final IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null);  //$NON-NLS-1$//$NON-NLS-2$
+	protected static final IStatus promptStatus = new Status(IStatus.INFO, DEBUG_UI, 200, EMPTY_STRING, null);
 	
 	/**
 	 * Status code for which a prompter is registered to ask the user if they
 	 * want to launch in debug mode when breakpoints are present.
 	 */
-	protected static final IStatus switchToDebugPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.core", 201, "", null);  //$NON-NLS-1$//$NON-NLS-2$
+	protected static final IStatus switchToDebugPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 201, EMPTY_STRING, null);
 	
 	/**
 	 * Status code for which a prompter is registered to ask the user if the
 	 * want to continue launch despite existing compile errors
 	 */
-	protected static final IStatus complileErrorPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.core", 202, "", null); //$NON-NLS-1$ //$NON-NLS-2$
+	protected static final IStatus complileErrorPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 202, EMPTY_STRING, null);
+	
+	/**
+	 * Status code for which a prompter will ask the user to save any/all of the dirty editors which have only to do
+	 * with this launch (scoping them to the current launch/build)
+	 * 
+	 * @since 3.2
+	 */
+	protected static final IStatus saveScopedDirtyEditors = new Status(IStatus.INFO, DEBUG_CORE, 222, EMPTY_STRING, null);
 	
 	/**
 	 * Status code for which a prompter is registered to ask the user if the
@@ -74,7 +103,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * 
 	 * @since 3.1
 	 */
-	protected static final IStatus complileErrorProjectPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.core", 203, "", null); //$NON-NLS-1$ //$NON-NLS-2$	
+	protected static final IStatus complileErrorProjectPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 203, EMPTY_STRING, null);
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
@@ -156,18 +185,33 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * If launching in run mode, and the configuration supports debug mode, check
 	 * if there are any breakpoints in the workspace, and ask the user if they'd
 	 * rather launch in debug mode.
+	 * <p>
+	 * This check also performs the scoped saving of resources according to the status handler 
+	 * provided to perform the saving. In the general case the default status handler only considers
+	 * resources that are contained within the projects which are part of the build path for the launch
+	 * being launched
+	 * </p>
+	 * @since 3.2 -- Changes to saving applied
 	 * 
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		if (mode.equals(ILaunchManager.RUN_MODE)  && configuration.supportsMode(ILaunchManager.DEBUG_MODE)) {
+		IStatusHandler prompter = null;
+		prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+		if(prompter != null) {
+			//do save here and remove saving from DebugUIPlugin to avoid it 'trumping' this save
+			if(!((Boolean)prompter.handleStatus(saveScopedDirtyEditors, getBuildOrder(configuration, mode))).booleanValue()) {
+				return false;
+			}
+		}
+		if (mode.equals(ILaunchManager.RUN_MODE) && configuration.supportsMode(ILaunchManager.DEBUG_MODE)) {
 			IBreakpoint[] breakpoints= getBreakpoints(configuration);
             if (breakpoints == null) {
                 return true;
             }
 			for (int i = 0; i < breakpoints.length; i++) {
 				if (breakpoints[i].isEnabled()) {
-					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+					prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 					if (prompter != null) {
 						boolean launchInDebugModeInstead = ((Boolean)prompter.handleStatus(switchToDebugPromptStatus, configuration)).booleanValue();
 						if (launchInDebugModeInstead) { 

@@ -106,7 +106,7 @@ import org.w3c.dom.Document;
  *
  */
 public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
-
+	
     /**
 	 * Unique identifier constant (value <code>"org.eclipse.debug.ui"</code>)
 	 * for the Debug UI plug-in.
@@ -116,7 +116,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * The singleton debug plugin instance
 	 */
-	private static DebugUIPlugin fgDebugUIPlugin= null;
+	private static DebugUIPlugin fgDebugUIPlugin = null;
 	
 	/**
 	 * A utility presentation used to obtain labels
@@ -517,6 +517,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * Returns whether the operation succeeded.
 	 * 
 	 * @return whether all saving was completed
+	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
+	 * of resources that are only involved in the current launch, no longer the entire workspace
 	 */
 	protected static boolean saveAllEditors(boolean confirm) {
 		if (getActiveWorkbenchWindow() == null) {
@@ -528,6 +530,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Save & build the workspace according to the user-specified preferences.  Return <code>false</code> if
 	 * any problems were encountered, <code>true</code> otherwise.
+	 * 
+	 * @deprecated this method is no longer to be used. It is an artifact from 2.0, and all saving is now done with the
+	 * launch delegate <code>LaunchConfigurationDelegate</code>
 	 */
 	public static boolean saveAndBuild() {
 		boolean status = true;
@@ -698,19 +703,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
-	public void launchChanged(ILaunch launch) {
-	}
+	public void launchChanged(ILaunch launch) {}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
-	public void launchRemoved(ILaunch launch) {
-	}
+	public void launchRemoved(ILaunch launch) {}
 
 	/**
 	 * Save dirty editors before launching, according to preferences.
 	 * 
 	 * @return whether to proceed with launch 
+	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
+	 * of resources that are only involved in the current launch, no longer the entire workspace
 	 */
 	public static boolean preLaunchSave() {
 		String saveDirty = getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
@@ -755,10 +760,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @since 3.0
 	 */
 	public static void launchInForeground(final ILaunchConfiguration configuration, final String mode) {
-		if (!DebugUIPlugin.preLaunchSave()) {
-			return;
-		}
-			
 		final IJobManager jobManager = Platform.getJobManager();
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		boolean wait = false;
@@ -866,10 +867,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @since 3.0
 	 */
 	public static void launchInBackground(final ILaunchConfiguration configuration, final String mode) {
-		if (!DebugUIPlugin.preLaunchSave()) {
-			return;
-		}
-
 		final IJobManager jobManager = Platform.getJobManager();
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 

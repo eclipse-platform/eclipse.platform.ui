@@ -450,6 +450,8 @@ public class DebugUITools {
 	 * 
 	 * @return whether a launch should proceed
 	 * @since 2.0
+	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
+	 * of resources that are only involved in the current launch, no longer the entire workspace
 	 */
 	public static boolean saveAndBuildBeforeLaunch() {
 		return DebugUIPlugin.saveAndBuild();
@@ -469,6 +471,8 @@ public class DebugUITools {
 	 * 
 	 * @return whether a launch should proceed
 	 * @since 2.1
+	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
+	 * of resources that are only involved in the current launch, no longer the entire workspace
 	 */
 	public static boolean saveBeforeLaunch() {
 		return DebugUIPlugin.preLaunchSave();

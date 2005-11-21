@@ -84,7 +84,7 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * in the launch sequence providing an opportunity for this launch delegate
 	 * to abort the launch.
 	 * 
-	 * @param configuration configuration being lanuched
+	 * @param configuration configuration being launched
 	 * @param mode launch mode
 	 * @param monitor progress monitor
 	 * @return whether the launch should proceed

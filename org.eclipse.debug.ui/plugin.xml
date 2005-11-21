@@ -1516,6 +1516,11 @@
             code="203"
             class="org.eclipse.debug.internal.ui.launchConfigurations.CompileErrorProjectPromptStatusHandler"
             id="org.eclipse.debug.ui.statusHandler.compileErrorProjectPromptStatusHandler"
+            plugin="org.eclipse.debug.core"/>
+      <statusHandler
+            class="org.eclipse.debug.internal.ui.launchConfigurations.SaveScopeResourcesHandler"
+            code="222"
+            id="org.eclipse.debug.ui.statusHandler.saveScopedResources"
             plugin="org.eclipse.debug.core"/> 
    </extension>
    <extension
