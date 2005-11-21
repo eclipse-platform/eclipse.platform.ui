@@ -61,8 +61,6 @@ public class Section extends ExpandableComposite {
 
 	private static final String COLOR_GBG = "gbg"; //$NON-NLS-1$
 
-	private static final String COLOR_FG = "fg"; //$NON-NLS-1$
-
 	private static final String COLOR_BORDER = "border"; //$NON-NLS-1$
 
 	/**
@@ -236,17 +234,6 @@ public class Section extends ExpandableComposite {
 	}
 
 	/**
-	 * Sets the color of the title bar foreground when TITLE_BAR style is used.
-	 * 
-	 * @param color
-	 *            the title bar foreground
-	 */
-	public void setTitleBarForeground(Color color) {
-		putTitleBarColor(COLOR_FG, color);
-		textLabel.setForeground(color);
-	}
-
-	/**
 	 * Sets the color of the title bar background when TITLE_BAR style is used.
 	 * This color is used as a starting color for the vertical gradient.
 	 * 
@@ -300,17 +287,6 @@ public class Section extends ExpandableComposite {
 	}
 
 	/**
-	 * Returns the title bar foreground when TITLE_BAR style is used.
-	 * 
-	 * @return the title bar foreground
-	 */
-	public Color getTitleBarForeground() {
-		if (titleColors == null)
-			return null;
-		return (Color) titleColors.get(COLOR_FG);
-	}
-
-	/**
 	 * Returns the title bar background when TITLE_BAR style is used.
 	 * 
 	 * @return the title bar background
@@ -337,7 +313,7 @@ public class Section extends ExpandableComposite {
 		if (titleColors != null) {
 			bg = (Color) titleColors.get(COLOR_BG);
 			gbg = (Color) titleColors.get(COLOR_GBG);
-			fg = (Color) titleColors.get(COLOR_FG);
+			fg = getTitleBarForeground();
 			border = (Color) titleColors.get(COLOR_BORDER);
 		}
 		if (bg == null)

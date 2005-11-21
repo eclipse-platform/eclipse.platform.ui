@@ -164,6 +164,8 @@ public class ExpandableComposite extends Composite {
 
 	protected Control textLabel;
 
+	private Color titleBarForeground;
+
 	private class ExpandableLayout extends Layout implements ILayoutExtension {
 
 		private SizeCache toggleCache = new SizeCache();
@@ -552,7 +554,7 @@ public class ExpandableComposite extends Composite {
 				public void paintControl(PaintEvent e) {
 					if (textLabel instanceof Label && !isFixedStyle())
 						textLabel.setForeground(toggle.hover ? toggle
-								.getHoverDecorationColor() : null);
+								.getHoverDecorationColor() : getTitleBarForeground());
 				}
 			});
 			toggle.addKeyListener(new KeyAdapter() {
@@ -602,7 +604,7 @@ public class ExpandableComposite extends Composite {
 							break;
 						case SWT.MouseExit:
 							if (toggle != null) {
-								label.setForeground(getForeground());
+								label.setForeground(getTitleBarForeground());
 								toggle.hover = false;
 								toggle.redraw();
 							}
@@ -950,6 +952,26 @@ public class ExpandableComposite extends Composite {
 	protected boolean hasTitleBar() {
 		return (getExpansionStyle() & TITLE_BAR) != 0
 				|| (getExpansionStyle() & SHORT_TITLE_BAR) != 0;
+	}
+
+	/**
+	 * Sets the color of the title bar foreground when TITLE_BAR style is used.
+	 * 
+	 * @param color
+	 *            the title bar foreground
+	 */
+	public void setTitleBarForeground(Color color) {
+		titleBarForeground= color;
+		textLabel.setForeground(color);
+	}
+
+	/**
+	 * Returns the title bar foreground when TITLE_BAR style is used.
+	 * 
+	 * @return the title bar foreground
+	 */
+	public Color getTitleBarForeground() {
+		return titleBarForeground;
 	}
 
 	private void verticalMove(boolean down) {
