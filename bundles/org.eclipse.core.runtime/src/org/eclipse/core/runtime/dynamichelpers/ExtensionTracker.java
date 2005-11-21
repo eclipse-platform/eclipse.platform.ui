@@ -12,8 +12,7 @@ package org.eclipse.core.runtime.dynamichelpers;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.core.internal.registry.ReferenceHashSet;
-import org.eclipse.core.internal.runtime.ListenerList;
+import org.eclipse.core.internal.runtime.ReferenceHashSet;
 import org.eclipse.core.runtime.*;
 
 /**

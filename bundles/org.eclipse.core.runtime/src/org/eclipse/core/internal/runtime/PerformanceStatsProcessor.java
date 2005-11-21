@@ -44,7 +44,7 @@ public class PerformanceStatsProcessor extends Job {
 	 * Event listeners.
 	 */
 	private final ListenerList listeners = new ListenerList();
-	
+
 	private PlatformLogWriter log;
 
 	/*
@@ -175,7 +175,7 @@ public class PerformanceStatsProcessor extends Job {
 		//may have failed to get the performance log service
 		if (log == null)
 			return;
-		if (pluginId == null) 
+		if (pluginId == null)
 			pluginId = Platform.PI_RUNTIME;
 		String msg = "Performance failure: " + stats.getEvent() + " blame: " + stats.getBlameString() + " context: " + stats.getContext() + " duration: " + elapsed; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		log.logging(new Status(IStatus.WARNING, pluginId, 1, msg, new RuntimeException()), pluginId);

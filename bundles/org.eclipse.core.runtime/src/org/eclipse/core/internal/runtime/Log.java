@@ -70,7 +70,7 @@ public class Log implements ILog {
 					//Ignore
 				}
 			};
-			InternalPlatform.getDefault().run(code);
+			SafeRunner.run(code);
 		}
 	}
 

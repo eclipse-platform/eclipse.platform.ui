@@ -35,7 +35,6 @@ package org.eclipse.core.runtime;
  * @since 3.1
  */
 public interface IExecutableExtensionFactory {
-
 	/**
 	 * Creates and returns a new instance.
 	 * 
@@ -43,5 +42,4 @@ public interface IExecutableExtensionFactory {
 	 *   could not be created for any reason
 	 */
 	Object create() throws CoreException;
-
 }

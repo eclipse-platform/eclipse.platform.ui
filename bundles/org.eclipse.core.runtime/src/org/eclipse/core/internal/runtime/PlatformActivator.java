@@ -11,20 +11,13 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import java.io.IOException;
 import java.util.Hashtable;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.internal.content.ContentTypeManager;
-import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.framework.log.FrameworkLog;
-import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.runnable.ParameterizedRunnable;
-import org.eclipse.osgi.service.urlconversion.URLConverter;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
-import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.service.url.URLConstants;
 import org.osgi.service.url.URLStreamHandlerService;
 
@@ -34,14 +27,8 @@ import org.osgi.service.url.URLStreamHandlerService;
 public class PlatformActivator extends Plugin implements BundleActivator {
 	private static final String PROP_ECLIPSE_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 	private static final String PROP_ECLIPSE_APPLICATION = "eclipse.application"; //$NON-NLS-1$
-	private static final String NL_SYSTEM_BUNDLE = "org.eclipse.osgi.nl"; //$NON-NLS-1$
-	private static final String NL_PROP_EXT = ".properties"; //$NON-NLS-1$
 
 	private static BundleContext context;
-	private ServiceReference environmentServiceReference;
-	private ServiceReference urlServiceReference;
-	private ServiceReference logServiceReference;
-	private ServiceReference packageAdminReference;
 	private ServiceRegistration entryLocatorRegistration;
 
 	public static BundleContext getContext() {
@@ -50,14 +37,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 	public void start(BundleContext runtimeContext) throws Exception {
 		PlatformActivator.context = runtimeContext;
-		acquireInfoService();
-		acquireURLConverterService();
-		acquireFrameworkLogService();
-		acquirePackageAdminService();
-		startInternalPlatform();
-		startRegistry(runtimeContext);
-		// the content type manager must be initialized only after the registry has been created
-		ContentTypeManager.startup();
+		InternalPlatform.getDefault().start(runtimeContext);
 		installPlatformURLSupport();
 		registerApplicationService();
 		InternalPlatform.getDefault().setRuntimeInstance(this);
@@ -80,109 +60,12 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		context.registerService(URLStreamHandlerService.class.getName(), new PlatformURLHandler(), properties);
 	}
 
-	private void startRegistry(BundleContext runtimeContext) {
-		InternalPlatform.getDefault().setExtensionRegistry(new ExtensionRegistry());
-	}
-
 	public void stop(BundleContext runtimeContext) {
-		// stop the content type manager
-		ContentTypeManager.shutdown();
-		// Stop the registry
-		stopRegistry(runtimeContext);
 		// unregister the EntryLocator to prevent the Framework from calling it
 		unregisterEntryLocator();
-		environmentInfoServiceReleased(environmentServiceReference);
-		urlServiceReleased(urlServiceReference);
-		logServiceReleased(logServiceReference);
-		packageAdminServiceReleased(packageAdminReference);
 		// Stop the platform orderly.		
 		InternalPlatform.getDefault().stop(runtimeContext);
 		InternalPlatform.getDefault().setRuntimeInstance(null);
-		InternalPlatform.getDefault().getRuntimeFileManager().close();
-	}
-
-	private void stopRegistry(BundleContext runtimeContext) {
-		ExtensionRegistry registry = (ExtensionRegistry) InternalPlatform.getDefault().getRegistry();
-		if (registry == null)
-			return;
-		registry.stop();
-		InternalPlatform.getDefault().setExtensionRegistry(null);
-	}
-
-	private void acquireInfoService() throws Exception {
-		environmentServiceReference = context.getServiceReference(EnvironmentInfo.class.getName());
-		if (environmentServiceReference == null)
-			return;
-		InternalPlatform.infoService = (EnvironmentInfo) context.getService(environmentServiceReference);
-	}
-
-	private void acquireURLConverterService() throws Exception {
-		urlServiceReference = context.getServiceReference(URLConverter.class.getName());
-		if (urlServiceReference == null)
-			return;
-		InternalPlatform.urlConverter = (URLConverter) context.getService(urlServiceReference);
-	}
-
-	private void acquireFrameworkLogService() throws Exception {
-		logServiceReference = context.getServiceReference(FrameworkLog.class.getName());
-		if (logServiceReference == null)
-			return;
-		InternalPlatform.frameworkLog = (FrameworkLog) context.getService(logServiceReference);
-	}
-
-	private void acquirePackageAdminService() throws Exception {
-		packageAdminReference = context.getServiceReference(PackageAdmin.class.getName());
-		if (packageAdminReference == null)
-			return;
-		InternalPlatform.packageAdmin = (PackageAdmin) context.getService(packageAdminReference);
-	}
-
-	private void startInternalPlatform() throws IOException {
-		InternalPlatform.getDefault().start(context);
-	}
-
-	private void environmentInfoServiceReleased(ServiceReference reference) {
-		if (environmentServiceReference == null)
-			return;
-		if (environmentServiceReference != reference)
-			return;
-
-		InternalPlatform.infoService = null;
-		context.ungetService(environmentServiceReference);
-		environmentServiceReference = null;
-	}
-
-	private void urlServiceReleased(ServiceReference reference) {
-		if (urlServiceReference == null)
-			return;
-		if (urlServiceReference != reference)
-			return;
-
-		InternalPlatform.urlConverter = null;
-		context.ungetService(urlServiceReference);
-		urlServiceReference = null;
-	}
-
-	private void logServiceReleased(ServiceReference reference) {
-		if (logServiceReference == null)
-			return;
-		if (logServiceReference != reference)
-			return;
-
-		InternalPlatform.frameworkLog = null;
-		context.ungetService(logServiceReference);
-		logServiceReference = null;
-	}
-
-	private void packageAdminServiceReleased(ServiceReference reference) {
-		if (packageAdminReference == null)
-			return;
-		if (packageAdminReference != reference)
-			return;
-
-		InternalPlatform.packageAdmin = null;
-		context.ungetService(packageAdminReference);
-		packageAdminReference = null;
 	}
 
 	private void registerApplicationService() {

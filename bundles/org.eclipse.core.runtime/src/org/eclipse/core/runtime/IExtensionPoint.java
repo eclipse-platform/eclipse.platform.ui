@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
+
 /**
  * An extension point declared in a plug-in.
  * Except for the list of extensions plugged in to it, the information 

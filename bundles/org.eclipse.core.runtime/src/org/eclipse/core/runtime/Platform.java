@@ -17,6 +17,7 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
@@ -71,7 +72,7 @@ public final class Platform {
 	 * @see #getPreferencesService()
 	 * @since 3.0
 	 */
-	public static final String PT_PREFERENCES = "preferences"; //$NON-NLS-1$
+	public static final String PT_PREFERENCES = Preferences.PT_PREFERENCES;
 
 	/** 
 	 * The simple identifier constant (value "<code>products</code>") of
@@ -84,6 +85,7 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static final String PT_PRODUCT = "products"; //$NON-NLS-1$
+
 	/** 
 	 * Debug option value denoting the time at which the platform runtime
 	 * was started.  This constant can be used in conjunction with
@@ -780,7 +782,8 @@ public final class Platform {
 	 * @param runnable the runnable to run
 	 */
 	public static void run(ISafeRunnable runnable) {
-		InternalPlatform.getDefault().run(runnable);
+		SafeRunner.run(runnable);
+		// TODO: deprecate?
 	}
 
 	/**
@@ -790,7 +793,8 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static IJobManager getJobManager() {
-		return InternalPlatform.getDefault().getJobManager();
+		return Job.getJobManager();
+		// TODO: deprecate?
 	}
 
 	/**
@@ -818,7 +822,8 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static URL find(Bundle bundle, IPath path) {
-		return FindSupport.find(bundle, path, null);
+		// TODO deparecate this method?
+		return BundleFinder.find(bundle, path, null);
 	}
 
 	/**
@@ -873,7 +878,8 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static URL find(Bundle bundle, IPath path, Map override) {
-		return FindSupport.find(bundle, path, override);
+		// TODO: deprecate this method?
+		return BundleFinder.find(bundle, path, override);
 	}
 
 	/**
@@ -1242,7 +1248,7 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns all resolved bundles with the specified symbolic name.  If no resolved bundles 
+	 * Returns all bundles with the specified symbolic name.  If no resolved bundles 
 	 * with the specified symbolic name can be found, <tt>null</tt> is returned.  
 	 * If the version argument is not null then only the Bundles that have 
 	 * the specified symbolic name and a version greater than or equal to the 
@@ -1252,8 +1258,8 @@ public final class Platform {
 	 * @param symbolicName the symbolic name of the bundles that are to be returned.
 	 * @param version the version that the return bundle versions must match, 
 	 * or <tt>null</tt> if no version matching is to be done. 
-	 * @return the array of resolved Bundles with the specified name that match the 
-	 * specified version and match rule, or <tt>null</tt> if no resolved bundles are found.
+	 * @return the array of Bundles with the specified name that match the 
+	 * specified version and match rule, or <tt>null</tt> if no bundles are found.
 	 */
 	public static Bundle[] getBundles(String symbolicName, String version) {
 		return InternalPlatform.getDefault().getBundles(symbolicName, version);

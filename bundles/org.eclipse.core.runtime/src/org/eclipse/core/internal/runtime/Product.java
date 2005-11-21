@@ -12,8 +12,6 @@ package org.eclipse.core.internal.runtime;
 
 import java.util.HashMap;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IProduct;
 import org.osgi.framework.Bundle;
 
 public class Product implements IProduct {

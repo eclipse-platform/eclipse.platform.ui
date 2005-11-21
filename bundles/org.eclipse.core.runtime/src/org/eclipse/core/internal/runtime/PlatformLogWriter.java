@@ -28,6 +28,7 @@ public class PlatformLogWriter implements ILogListener {
 	public PlatformLogWriter(FrameworkLog frameworkLog) {
 		this.frameworkLog = frameworkLog;
 	}
+
 	/**
 	 * @see ILogListener#logging(IStatus, String)
 	 */

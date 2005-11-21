@@ -16,34 +16,11 @@ org.eclipse.core.runtime/perf/success=false
 # Turn on debugging for the compatibility layer
 org.eclipse.core.runtime/compatibility/debug=false
 
-# Turn on debugging for content types
-org.eclipse.core.runtime/contenttypes/debug=false
-
-# Prints debug information on running background jobs
-org.eclipse.core.runtime/jobs=false
-# Includes current date and time in job debug information
-org.eclipse.core.runtime/jobs/timing=false
-# Computes location of error on mismatched IJobManager.beginRule/endRule
-org.eclipse.core.runtime/jobs/beginend=false
-# Pedantic assertion checking on locks and deadlock reporting
-org.eclipse.core.runtime/jobs/locks=false
-# Throws an IllegalStateException when deadlock occurs
-org.eclipse.core.runtime/jobs/errorondeadlock=false
-
-# Turn on debugging for the registry.
-org.eclipse.core.runtime/registry/debug=false
-# Legacy PluginRegistryModel resolver 
-org.eclipse.core.runtime/registry/debug/resolve=false
-# Extension registry change events
-org.eclipse.core.runtime/registry/debug/events/extension=false
+# Turn on debugging for plugin preferences
+org.eclipse.core.runtime/preferences/plugin=false
 
 # Turn on debugging in the support for non-local plugins.
 org.eclipse.core.runtime/url/debug=false
 org.eclipse.core.runtime/url/debug/connect=false
 org.eclipse.core.runtime/url/debug/cachelookup=false
 org.eclipse.core.runtime/url/debug/cachecopy=false
-
-# Turn on debugging for preferences
-org.eclipse.core.runtime/preferences/general=false
-org.eclipse.core.runtime/preferences/get=false
-org.eclipse.core.runtime/preferences/set=false

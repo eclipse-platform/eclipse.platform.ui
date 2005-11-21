@@ -1,21 +1,20 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-Version: 3.1.100.qualifier
+Bundle-Version: 3.2.0.qualifier
 Bundle-SymbolicName: org.eclipse.core.runtime; singleton:=true
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.internal.boot;x-friends:="org.eclipse.core.resources,org.eclipse.core.runtime.compatibility,org.eclipse.pde.build",
- org.eclipse.core.internal.content;x-internal:=true,
- org.eclipse.core.internal.jobs;x-internal:=true,
- org.eclipse.core.internal.preferences;x-friends:="org.eclipse.core.resources",
- org.eclipse.core.internal.registry;x-internal:=true,
- org.eclipse.core.internal.runtime;x-friends:="org.eclipse.core.runtime.compatibility,org.eclipse.pde.build",
+ org.eclipse.core.internal.preferences;x-internal:=true,
+ org.eclipse.core.internal.registry.eclipse;x-internal:=true,
+ org.eclipse.core.internal.runtime;x-friends:="org.eclipse.core.runtime.compatibility",
  org.eclipse.core.runtime,
- org.eclipse.core.runtime.content,
- org.eclipse.core.runtime.dynamichelpers,
- org.eclipse.core.runtime.jobs,
- org.eclipse.core.runtime.preferences,
- org.osgi.service.prefs;version="1.1"
-Require-Bundle: org.eclipse.osgi;bundle-version="[3.1.0,4.0.0)";visibility:=reexport
+ org.eclipse.core.runtime.dynamichelpers
+Require-Bundle: org.eclipse.equinox.registry;visibility:=reexport,
+ org.eclipse.core.jobs;visibility:=reexport,
+ org.eclipse.equinox.preferences;visibility:=reexport,
+ org.eclipse.core.contenttype;visibility:=reexport,
+ org.eclipse.equinox.common;visibility:=reexport,
+ org.eclipse.osgi;bundle-version="[3.1.0,4.0.0)";visibility:=reexport

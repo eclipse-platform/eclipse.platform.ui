@@ -64,7 +64,7 @@ a file association extends an existing content type by associating new file name
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the identifier for this content type (simple id token, unique for content types within the extension namespace). The token cannot contain dot (.) or whitespace
+                  the identifier for this content type (either a simple id unique for content types within the extension namespace, or a fully qualified id). The token cannot contain whitespace
                </documentation>
             </annotation>
          </attribute>

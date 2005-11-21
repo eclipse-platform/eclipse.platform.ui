@@ -6,34 +6,4 @@
    <extension-point id="adapters" name="%adaptersName" schema="schema/adapters.exsd"/>
    <extension-point id="preferences" name="%preferencesName" schema="schema/preferences.exsd"/>
    <extension-point id="contentTypes" name="%contentTypesName" schema="schema/contentTypes.exsd"/>
-
-	<extension id="platform-preferences" point="org.eclipse.core.runtime.preferences" name="%preferencesExtPtName">
-		<scope name="configuration" class="org.eclipse.core.internal.preferences.ConfigurationPreferences"/>
-		<scope name="instance" class="org.eclipse.core.internal.preferences.InstancePreferences"/>
-		<scope name="default" class="org.eclipse.core.internal.preferences.DefaultPreferences"/>
-	</extension>
-
-	<extension point="org.eclipse.core.runtime.contentTypes">
-		<content-type id="text" name="%textContentTypeName" 
-			priority="high"
-			file-extensions="txt">
-			<describer class="org.eclipse.core.internal.content.TextContentDescriber"/>			
-			<property name="bom"/>
-			<property name="charset"/>
-		</content-type>
-		<content-type id="xml" name="%xmlContentTypeName" 	
-			base-type="org.eclipse.core.runtime.text"
-			priority="high"
-			file-extensions="xml">			
-			<property name="charset" default="UTF-8"/>
-			<describer class="org.eclipse.core.internal.content.XMLContentDescriber"/>
-		</content-type>
-		<!-- a placeholder for setups where JDT's official type is not available -->			
-		<content-type id="properties" name="%propertiesContentTypeName" 
-			base-type="org.eclipse.core.runtime.text"
-			alias-for="org.eclipse.jdt.core.javaProperties"
-			file-extensions="properties">
-			<property name="charset" default="ISO-8859-1"/>
-		</content-type>			
-	</extension>		 
 </plugin>

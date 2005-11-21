@@ -21,8 +21,13 @@ import org.osgi.framework.Bundle;
  * loaded until the factory's plugin is loaded, AND until the factory is
  * requested to supply an adapter.
  */
-class AdapterFactoryProxy implements IAdapterFactory {
+class AdapterFactoryProxy implements IAdapterFactory, IAdapterFactoryExt {
 	private IConfigurationElement element;
+	/**
+	 * Store Id of the declaring extension. We might need it in case 
+	 * the owner goes away (in this case element becomes invalid).
+	 */
+	private String ownerId;
 	/**
 	 * The real factory. Null until the factory is loaded.
 	 */
@@ -36,6 +41,7 @@ class AdapterFactoryProxy implements IAdapterFactory {
 	public static AdapterFactoryProxy createProxy(IConfigurationElement element) {
 		AdapterFactoryProxy result = new AdapterFactoryProxy();
 		result.element = element;
+		result.ownerId = element.getDeclaringExtension().getUniqueIdentifier();
 		if ("factory".equals(element.getName())) //$NON-NLS-1$
 			return result;
 		result.logError();
@@ -63,7 +69,7 @@ class AdapterFactoryProxy implements IAdapterFactory {
 		return factory == null ? null : factory.getAdapterList();
 	}
 
-	String[] getAdapterNames() {
+	public String[] getAdapterNames() {
 		IConfigurationElement[] children = element.getChildren();
 		ArrayList adapters = new ArrayList(children.length);
 		for (int i = 0; i < children.length; i++) {
@@ -83,6 +89,10 @@ class AdapterFactoryProxy implements IAdapterFactory {
 		return element.getDeclaringExtension();
 	}
 
+	String getOwnerId() {
+		return ownerId;
+	}
+
 	/**
 	 * Loads the real adapter factory, but only if its associated plug-in is
 	 * already loaded. Returns the real factory if it was successfully loaded.
@@ -90,7 +100,7 @@ class AdapterFactoryProxy implements IAdapterFactory {
 	 * factory will be loaded if necessary, otherwise no plugin activations
 	 * will occur.
 	 */
-	IAdapterFactory loadFactory(boolean force) {
+	public IAdapterFactory loadFactory(boolean force) {
 		synchronized (this) {
 			if (factory != null || factoryLoaded)
 				return factory;
@@ -112,7 +122,7 @@ class AdapterFactoryProxy implements IAdapterFactory {
 	 * The factory extension was malformed. Log an appropriate exception
 	 */
 	private void logError() {
-		String msg = NLS.bind(Messages.adapters_badAdapterFactory, element.getNamespace()); 
+		String msg = NLS.bind(Messages.adapters_badAdapterFactory, element.getNamespace());
 		InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));
 	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.core.internal.runtime;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A utility for manipulating <code>URL</code>s.

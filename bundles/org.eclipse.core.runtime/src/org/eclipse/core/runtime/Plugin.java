@@ -14,7 +14,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+import java.util.Map;
 import org.eclipse.core.internal.preferences.PreferenceForwarder;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -141,8 +141,8 @@ public abstract class Plugin implements BundleActivator {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = "preferences"; //$NON-NLS-1$
-	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME + ".ini"; //$NON-NLS-1$
+	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = Preferences.PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME;
+	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = Preferences.PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME;
 
 	/**
 	 * The preference object for this plug-in; initially <code>null</code>
@@ -201,7 +201,7 @@ public abstract class Plugin implements BundleActivator {
 		Assert.isNotNull(descriptor);
 		Assert.isTrue(!CompatibilityHelper.hasPluginObject(descriptor), NLS.bind(Messages.plugin_deactivatedLoad, this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated")); //$NON-NLS-1$
 		this.descriptor = descriptor;
-		
+
 		// on plugin start, find and start the corresponding bundle.
 		bundle = InternalPlatform.getDefault().getBundle(descriptor.getUniqueIdentifier());
 		try {
@@ -222,7 +222,8 @@ public abstract class Plugin implements BundleActivator {
 	 * @return a URL for the given path or <code>null</code>
 	 */
 	public final URL find(IPath path) {
-		return FindSupport.find(bundle, path, null);
+		return BundleFinder.find(bundle, path, null);
+		// TODO: deprecate?
 	}
 
 	/**
@@ -239,7 +240,8 @@ public abstract class Plugin implements BundleActivator {
 	 * @return a URL for the given path or <code>null</code>
 	 */
 	public final URL find(IPath path, Map override) {
-		return FindSupport.find(bundle, path, override);
+		return BundleFinder.find(bundle, path, override);
+		// TODO: deprecate?
 	}
 
 	/**
@@ -255,7 +257,7 @@ public abstract class Plugin implements BundleActivator {
 	public final IPluginDescriptor getDescriptor() {
 		if (descriptor != null)
 			return descriptor;
-		
+
 		return initializeDescriptor(bundle.getSymbolicName());
 	}
 
@@ -319,13 +321,13 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public final Preferences getPluginPreferences() {
 		if (preferences != null) {
-			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
-				Policy.debug("Plugin preferences already loaded for: " + bundle.getSymbolicName()); //$NON-NLS-1$
+			if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
+				InternalPlatform.message("Plugin preferences already loaded for: " + bundle.getSymbolicName()); //$NON-NLS-1$
 			return preferences;
 		}
 
-		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
-			Policy.debug("Loading preferences for plugin: " + bundle.getSymbolicName()); //$NON-NLS-1$
+		if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
+			InternalPlatform.message("Loading preferences for plugin: " + bundle.getSymbolicName()); //$NON-NLS-1$
 		preferences = new PreferenceForwarder(this, bundle.getSymbolicName());
 		return preferences;
 	}
@@ -437,7 +439,8 @@ public abstract class Plugin implements BundleActivator {
 	 * @see #openStream(IPath,boolean)
 	 */
 	public final InputStream openStream(IPath file) throws IOException {
-		return FindSupport.openStream(bundle, file, false);
+		return BundleFinder.openStream(bundle, file, false);
+		// TODO: deprecate?
 	}
 
 	/**
@@ -459,7 +462,8 @@ public abstract class Plugin implements BundleActivator {
 	 * @exception IOException if the given path cannot be found in this plug-in
 	 */
 	public final InputStream openStream(IPath file, boolean localized) throws IOException {
-		return FindSupport.openStream(bundle, file, localized);
+		return BundleFinder.openStream(bundle, file, localized);
+		// TODO : deprecate?
 	}
 
 	/**
@@ -591,8 +595,8 @@ public abstract class Plugin implements BundleActivator {
 	 * for debugging purposes only.
 	 */
 	public String toString() {
-		String name = bundle.getSymbolicName(); 
-		return name==null ? new Long(bundle.getBundleId()).toString() : name;
+		String name = bundle.getSymbolicName();
+		return name == null ? new Long(bundle.getBundleId()).toString() : name;
 	}
 
 	/**
@@ -646,7 +650,7 @@ public abstract class Plugin implements BundleActivator {
 			String value = InternalPlatform.getDefault().getOption(key);
 			this.debug = value == null ? false : value.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
-		
+
 		initializeDescriptor(symbolicName);
 	}
 
@@ -656,17 +660,17 @@ public abstract class Plugin implements BundleActivator {
 	private IPluginDescriptor initializeDescriptor(String symbolicName) {
 		if (CompatibilityHelper.initializeCompatibility() == null)
 			return null;
-		
+
 		//This associate a descriptor to any real bundle that uses this to start
 		if (symbolicName == null)
 			return null;
-		
+
 		IPluginDescriptor tmp = CompatibilityHelper.getPluginDescriptor(symbolicName);
-		
+
 		//Runtime descriptor is never set to support dynamic re-installation of compatibility 
 		if (!symbolicName.equals(Platform.PI_RUNTIME))
-			descriptor =  tmp;
-		
+			descriptor = tmp;
+
 		CompatibilityHelper.setPlugin(tmp, this);
 		CompatibilityHelper.setActive(tmp);
 		return tmp;
