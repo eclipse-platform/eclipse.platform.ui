@@ -113,10 +113,20 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     private boolean dragDetected;
 
     private Listener dragDetectListener;
-
-    /** 
-     * Settings constant for section name (value <code>ResourceNavigator</code>).
+    /**
+     * Remembered working set.
      */
+    private IWorkingSet workingSet;
+
+    /**
+	 * Marks whether the working set we're using is currently empty. In this
+	 * event we're effectively not using a working set.
+	 */
+    private boolean emptyWorkingSet = false;
+    
+    /**
+	 * Settings constant for section name (value <code>ResourceNavigator</code>).
+	 */
     private static final String STORE_SECTION = "ResourceNavigator"; //$NON-NLS-1$
 
     /** 
@@ -182,19 +192,32 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             String property = event.getProperty();
             Object newValue = event.getNewValue();
             Object oldValue = event.getOldValue();
-            IWorkingSet filterWorkingSet = workingSetFilter.getWorkingSet();
-
+           
             if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property)
-                    && oldValue == filterWorkingSet) {
+                    && oldValue == workingSet) {
                 setWorkingSet(null);
             } else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE
                     .equals(property)
-                    && newValue == filterWorkingSet) {
+                    && newValue == workingSet) {
                 updateTitle();
             } else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE
                     .equals(property)
-                    && newValue == filterWorkingSet) {
-                getViewer().refresh();
+                    && newValue == workingSet) {
+				if (workingSet.getElements().length == 0) {
+					// act as if the working set has been made null
+					if (!emptyWorkingSet) {
+						emptyWorkingSet = true;
+						workingSetFilter.setWorkingSet(null);
+					}
+				} else {
+					// we've gone from empty to non-empty on our set.
+					// Restore it.
+					if (emptyWorkingSet) {
+					    emptyWorkingSet = false;
+						workingSetFilter.setWorkingSet(workingSet);
+					}
+				}
+				getViewer().refresh();
             }
         }
     };
@@ -815,6 +838,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 // Working set is set via WorkingSetFilterActionGroup
                 // during action creation.
                 workingSetFilter.setWorkingSet(workingSet);
+                internalSetWorkingSet(workingSet);
             }
         }
     }
@@ -1176,8 +1200,10 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         TreeViewer treeViewer = getTreeViewer();
         Object[] expanded = treeViewer.getExpandedElements();
         ISelection selection = treeViewer.getSelection();
-
-        workingSetFilter.setWorkingSet(workingSet);
+        
+        internalSetWorkingSet(workingSet);
+        
+        workingSetFilter.setWorkingSet(emptyWorkingSet ? null : workingSet);
         if (workingSet != null) {
             settings.put(STORE_WORKING_SET, workingSet.getName());
         } else {
@@ -1192,6 +1218,19 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             treeViewer.reveal(structuredSelection.getFirstElement());
         }
     }
+
+	/**
+	 * Set the internal working set fields specific to the navigator.
+	 * 
+	 * @param workingSet
+	 *            the new working set
+	 * @since 3.2
+	 */
+	private void internalSetWorkingSet(IWorkingSet workingSet) {
+		this.workingSet = workingSet;
+		emptyWorkingSet = workingSet != null
+				&& workingSet.getElements().length == 0;
+	}
 
     /**
      * Updates the action bar actions.
