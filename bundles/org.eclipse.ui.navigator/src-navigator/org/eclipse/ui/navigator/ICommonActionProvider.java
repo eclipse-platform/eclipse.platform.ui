@@ -1,11 +1,13 @@
-/***************************************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+/*******************************************************************************
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: IBM Corporation - initial API and implementation
- **************************************************************************************************/
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.navigator;
 
 import org.eclipse.jface.action.IMenuManager;
@@ -17,13 +19,17 @@ import org.eclipse.ui.navigator.internal.NavigatorContentService;
 
 /**
  * <p>
- * Provides actions from extensions for menu and {@link org.eclipse.ui.IActionBars}
- * &nbsp;contributions.
+ * Provides actions from extensions for menu and 
+ * {@link org.eclipse.ui.IActionBars} contributions.
  * </p>
- * This interface is used by the <b>org.eclipse.wst.common.navigator.views.actionProvider </b>
- * extension point and also as the <i>actionProvider </a> attribute for the
- * <b>org.eclipse.wst.common.navigator.views.navigatorContent </b> extension point.
+ * <p>
+ * This interface is used by the <b>org.eclipse.ui.navigator.actionProvider</b>
+ * extension point and also as the <i>actionProvider</i> attribute for the
+ * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point.
  * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p> 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will

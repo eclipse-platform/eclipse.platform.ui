@@ -1,11 +1,13 @@
-/***************************************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+/*******************************************************************************
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: IBM Corporation - initial API and implementation
- **************************************************************************************************/
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.navigator.internal;
 
 import java.util.ArrayList;
@@ -23,7 +25,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -77,7 +78,7 @@ public class NavigatorActionService implements INavigatorActionService {
 	private boolean isDisposed= false;
 	private boolean isInitialized= false;
 
-	private MenuManager contextMenu;
+	private IMenuManager contextMenu;
 
 	/**
 	 * 
@@ -423,7 +424,7 @@ public class NavigatorActionService implements INavigatorActionService {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.internal.INavigatorActionService#setUpdateMenu(org.eclipse.jface.action.MenuManager)
 	 */
-	public void setUpdateMenu(MenuManager menuMgr) {
+	public void setUpdateMenu(IMenuManager menuMgr) {
 		contextMenu= menuMgr;
 
 	}

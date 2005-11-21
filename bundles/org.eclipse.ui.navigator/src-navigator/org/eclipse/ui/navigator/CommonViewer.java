@@ -1,16 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -27,6 +28,7 @@ import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.internal.AdaptabilityUtility;
@@ -271,5 +273,32 @@ public class CommonViewer extends TreeViewer {
 		super.handleDispose(event);
 		dispose();
 	}
+	
+    /* (non-Javadoc) Method declared on StructuredViewer. */
+    protected void setSelectionToWidget(List v, boolean reveal) {
+        if (v == null) {
+            setSelection(new ArrayList(0));
+            return;
+        }
+        int size = v.size();
+        List newSelection = new ArrayList(size);
+        for (int i = 0; i < size; ++i) {
+            // Use internalExpand since item may not yet be created. See
+            // 1G6B1AR.
+            Widget w = internalExpand(v.get(i), reveal);
+            if (w instanceof Item) {
+                newSelection.add(w);
+            }
+        }
+        setSelection(newSelection);
+        
+//        // Although setting the selection in the control should reveal it,
+//        // setSelection may be a no-op if the selection is unchanged,
+//        // so explicitly reveal the first item in the selection here.
+//        // See bug 100565 for more details.
+//        if (reveal && newSelection.size() > 0) {
+//            showItem((Item) newSelection.get(0));
+//        }
+    }
 
 }

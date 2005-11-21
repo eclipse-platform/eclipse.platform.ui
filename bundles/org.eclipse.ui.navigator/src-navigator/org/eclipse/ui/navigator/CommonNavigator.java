@@ -1,11 +1,13 @@
-/***************************************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+/*******************************************************************************
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: IBM Corporation - initial API and implementation
- **************************************************************************************************/
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.navigator;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -36,41 +38,46 @@ import org.eclipse.ui.part.ViewPart;
 
 /**
  * <p>
- * Provides the hook for the Common Navigator framework into the Eclipse workbench. It also serves
- * as the backbone for the rest of the framework, including the following components:
+ * This class provides the IViewPart for the Common Navigator 
+ * framework into the Eclipse workbench. This class also serves
+ * as the backbone for navigational viewers. The following types
+ * are used by this class to render the Common Navigator:
  * <ul>
  * <li>
  * <p>
- * {@link org.eclipse.ui.navigator.CommonViewer}: The UI component that renders the
- * extensible tree. Also creates and manages the lifecylce of the Navigator Content Service
- * (described below).
+ * {@link org.eclipse.ui.navigator.CommonViewer}: The viewer
+ * that renders the extensible tree. Creates and manages the 
+ * lifecylce of the Navigator Content Service (described below).
  * </p>
  * </li>
  * <li>
  * <p>
- * {@link org.eclipse.ui.navigator.CommonNavigatorManager}: Handles auxillary
- * functions, such as updating the status bar, populating popup menus, and managing the Navigator
- * Action Service (described below). Not expected to be needed by clients.
+ * {@link org.eclipse.ui.navigator.CommonNavigatorManager}: 
+ * Handles auxillary functions, such as updating the status bar, 
+ * populating popup menus, and managing the Navigator Action 
+ * Service (described below). Not expected to be needed by clients.
  * </p>
  * </li>
  * <li>
  * <p>
- * {@link org.eclipse.ui.navigator.internal.NavigatorActionService}: Manages instances of
- * {@link org.eclipse.wst.common.navigator.internal.views.actions.ICommonActionProvider}&nbsp;provided
- * by individual extensions and content extensions.
+ * {@link org.eclipse.ui.navigator.INavigatorActionService}: 
+ * Manages instances of {@link org.eclipse.ui.navigator.ICommonActionProvider}&nbsp;
+ * provided by individual extensions and content extensions.
  * </p>
  * </li>
  * <li>
  * <p>
- * {@link org.eclipse.ui.navigator.internal.NavigatorContentService}: Manages instances of
- * Navigator Content Extensions. Instances are created as needed, and disposed of upon the disposal
- * of the Common Navigator.
+ * {@link org.eclipse.ui.navigator.INavigatorContentService}: 
+ * Manages instances of Navigator Content Extensions. Instances are 
+ * created as needed, and disposed of upon the disposal of the 
+ * Navigator Content Service.
  * </p>
  * </li>
  * </ul>
  * <p>
- * Clients are not expected to subclass CommonNavigator. Clients that which to define their own
- * custom extensible navigator view need to specify an instance of the <b>org.eclipse.ui.views </b>
+ * Clients are not expected to subclass CommonNavigator. Clients 
+ * that which to define their own custom extensible navigator 
+ * view need to specify an instance of the <b>org.eclipse.ui.views</b>
  * extension point:
  * 
  * <pre> 
