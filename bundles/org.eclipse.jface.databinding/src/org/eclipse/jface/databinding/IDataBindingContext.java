@@ -73,10 +73,9 @@ public interface IDataBindingContext {
 	 * @param modelUpdatable
 	 * @param bindSpec
 	 *            the bind spec, or null
-	 * @throws BindingException
 	 */
 	public void bind(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
-			IBindSpec bindSpec) throws BindingException;
+			IBindSpec bindSpec) ;
 
 	/**
 	 * Convenience method to bind targetUpdatable and
@@ -86,10 +85,9 @@ public interface IDataBindingContext {
 	 * @param modelDescription
 	 * @param bindSpec
 	 *            the bind spec, or null
-	 * @throws BindingException
 	 */
 	public void bind(IUpdatable targetUpdatable, Object modelDescription,
-			IBindSpec bindSpec) throws BindingException;
+			IBindSpec bindSpec);
 
 	/**
 	 * Convenience method to bind createUpdatable(targetDescription) and
@@ -99,10 +97,9 @@ public interface IDataBindingContext {
 	 * @param modelUpdatable
 	 * @param bindSpec
 	 *            the bind spec, or null
-	 * @throws BindingException
 	 */
 	public void bind(Object targetDescription, IUpdatable modelUpdatable,
-			IBindSpec bindSpec) throws BindingException;
+			IBindSpec bindSpec) ;
 
 	/**
 	 * Convenience method to bind createUpdatable(targetDescription) and
@@ -112,10 +109,9 @@ public interface IDataBindingContext {
 	 * @param modelDescription
 	 * @param bindSpec
 	 *            the bind spec, or null
-	 * @throws BindingException
 	 */
 	public void bind(Object targetDescription, Object modelDescription,
-			IBindSpec bindSpec) throws BindingException;
+			IBindSpec bindSpec) ;
 
 	/**
 	 * Creates an updatable object from a description. Description objects are
@@ -124,10 +120,8 @@ public interface IDataBindingContext {
 	 * 
 	 * @param description
 	 * @return IUpdatable for the given description
-	 * @throws BindingException
 	 */
-	public IUpdatable createUpdatable(Object description)
-			throws BindingException;
+	public IUpdatable createUpdatable(Object description);
 
 	/**
 	 * Tries to create a validator that can validate values of type fromType.

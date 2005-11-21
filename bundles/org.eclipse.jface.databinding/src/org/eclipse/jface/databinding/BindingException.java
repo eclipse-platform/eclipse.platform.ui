@@ -24,7 +24,7 @@ package org.eclipse.jface.databinding;
  * 
  * @since 3.2
  */
-public class BindingException extends Exception {
+public class BindingException extends RuntimeException {
 
 	/*
 	 * Needed because all Throwables are Serializable.

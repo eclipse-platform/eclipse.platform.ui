@@ -38,10 +38,9 @@ public class ValueBinding extends Binding {
 	 * @param target
 	 * @param model
 	 * @param bindSpec
-	 * @throws BindingException
 	 */
 	public ValueBinding(DataBindingContext context, IUpdatableValue target,
-			IUpdatableValue model, IBindSpec bindSpec) throws BindingException {
+			IUpdatableValue model, IBindSpec bindSpec) {
 		super(context);
 		this.target = target;
 		this.model = model;

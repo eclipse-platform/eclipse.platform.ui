@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.ViewersProperties;
@@ -138,7 +137,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 	 * property change of content elements, etc.
 	 * 
 	 */
-	public void test_ROCombo_Scenario03_vanilla() throws BindingException {
+	public void test_ROCombo_Scenario03_vanilla() {
 
 		Adventure skiAdventure = SampleData.WINTER_HOLIDAY; // selection will
 		// change its defaultLodging
@@ -188,8 +187,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 	 * 
 	 * This test does not deal with the combo's selection.
 	 */
-	public void test_ROCombo_Scenario03_collectionBindings()
-			throws BindingException {
+	public void test_ROCombo_Scenario03_collectionBindings() {
 
 		cviewer.setLabelProvider(lodgingLabelProvider); // TODO: need to resolve
 		// column binding
@@ -255,7 +253,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 	 * This scenario tests a simple SWT combo with a set item list where the
 	 * selection is bouded to a String property
 	 */
-	public void test_ROCombo_Scenario01() throws BindingException {
+	public void test_ROCombo_Scenario01() {
 
 		// Read-Only Combo will not change its text property on a call to
 		// setText()
@@ -297,7 +295,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 	 * 
 	 * The Combo's selection is bounded to the Country property of an Account.
 	 */
-	public void test_ROCombo_Scenario02_SWTCombo() throws BindingException {
+	public void test_ROCombo_Scenario02_SWTCombo() {
 
 		// Create a list of Strings for the countries
 		List list = new ArrayList();
@@ -328,7 +326,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 	 * 
 	 * The Combo's selection is bounded to the Country property of an Account.
 	 */
-	public void test_ROCombo_Scenario02_ComboViewer() throws BindingException {
+	public void test_ROCombo_Scenario02_ComboViewer() {
 
 		// Account label provider will fill the combo with the country
 		cviewer.setLabelProvider(accountLabelProvider);
@@ -363,7 +361,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 	 * This test ensure that multiple combos can be bound to the same deomain
 	 * model
 	 */
-	public void test_ROCombo_multipleBindings() throws BindingException {
+	public void test_ROCombo_multipleBindings() {
 
 		Adventure skiAdventure = SampleData.WINTER_HOLIDAY; // for selection
 
@@ -421,7 +419,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 	 * 
 	 * The Combo's selection is bounded to the Country property of an Account.
 	 */
-	public void test_ROCombo_SWTCCombo() throws BindingException {
+	public void test_ROCombo_SWTCCombo() {
 
 		// Create a list of Strings for the countries
 		List list = new ArrayList();
@@ -456,7 +454,7 @@ public class ReadOnlyComboScenarios extends ScenariosTestCase {
 	 * 
 	 * The Combo's selection is bounded to the Country property of an Account.
 	 */
-	public void test_ROCombo_SWTList() throws BindingException {
+	public void test_ROCombo_SWTList() {
 
 		// Create a list of Strings for the countries
 		List list = new ArrayList();

@@ -13,7 +13,6 @@ package org.eclipse.jface.tests.databinding.scenarios;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ConditionalUpdatableValue;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.PropertyDescription;
@@ -72,7 +71,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		return null;
 	}
 
-	public void testScenario01() throws BindingException {
+	public void testScenario01() {
 		// Displaying the catalog's list of Lodging objects in a list viewer,
 		// using their names. The name of the currently selected Lodging can
 		// be edited in a text widget. There is always a selected Lodging
@@ -118,7 +117,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		assertEquals("barfoo", txtName.getText());
 	}
 
-	public void testScenario02() throws BindingException {
+	public void testScenario02() {
 		// Selecting from the list of lodgings for an adventure and editing the
 		// properties of the selected lodging in text widgets. If no lodging is
 		// selected the input controls for name and adventure are disabled.
@@ -245,7 +244,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		pushButtonWithEvents(removeButton);
 	}
 
-	public void testScenario03() throws BindingException {
+	public void testScenario03() {
 		// List adventures and for the selected adventure allow its default
 		// lodging’s name and description to be changed in text controls. If
 		// there is no selected adventure or the default lodging is null the

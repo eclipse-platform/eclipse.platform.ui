@@ -39,12 +39,11 @@ public class CollectionBinding extends Binding implements IChangeListener {
 	 * @param context
 	 * @param target
 	 * @param model
-	 * @param bindSpec
-	 * @throws BindingException 
+	 * @param bindSpec 
 	 */
 	public CollectionBinding(DataBindingContext context,
 			IUpdatableCollection target, IUpdatableCollection model,
-			IBindSpec bindSpec) throws BindingException {
+			IBindSpec bindSpec) {
 		super(context);
 		this.target = target;
 		this.model = model;

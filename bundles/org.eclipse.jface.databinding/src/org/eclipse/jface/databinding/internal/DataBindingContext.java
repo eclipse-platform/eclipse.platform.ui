@@ -280,8 +280,7 @@ public class DataBindingContext implements IDataBindingContext {
 	protected void registerFactories() {
 		addUpdatableFactory(new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
-					Object description, IDataBindingContext bindingContext)
-					throws BindingException {
+					Object description, IDataBindingContext bindingContext) {
 				if (description instanceof PropertyDescription) {
 					PropertyDescription propertyDescription = (PropertyDescription) description;
 					Object o = propertyDescription.getObject();
@@ -386,7 +385,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public void bind(IUpdatable targetUpdatable, IUpdatable modelUpdatable,
-			IBindSpec bindSpec) throws BindingException {
+			IBindSpec bindSpec) {
 		Binding binding;
 		if (bindSpec == null) {
 			bindSpec = new BindSpec(null, null);
@@ -440,7 +439,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public void bind(Object targetDescription, IUpdatable modelUpdatable,
-			IBindSpec bindSpec) throws BindingException {
+			IBindSpec bindSpec) {
 		bind(createUpdatable(targetDescription), modelUpdatable, bindSpec);
 	}
 
@@ -451,7 +450,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      java.lang.Object, org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public void bind(IUpdatable targetUpdatable, Object modelDescription,
-			IBindSpec bindSpec) throws BindingException {
+			IBindSpec bindSpec)  {
 		if (bindSpec == null) {
 			bindSpec = new BindSpec(null, null);
 		}
@@ -519,7 +518,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 *      java.lang.Object, org.eclipse.jface.databinding.IBindSpec)
 	 */
 	public void bind(Object targetDescription, Object modelDescription,
-			IBindSpec bindSpec) throws BindingException {
+			IBindSpec bindSpec) {
 		bind(createUpdatable(targetDescription), modelDescription, bindSpec);
 	}
 
@@ -528,8 +527,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 * 
 	 * @see org.eclipse.jface.databinding.IDataBindingContext#createUpdatable(java.lang.Object)
 	 */
-	public final IUpdatable createUpdatable(Object description)
-			throws BindingException {
+	public final IUpdatable createUpdatable(Object description) {
 		IUpdatable updatable = doCreateUpdatable(description, this);
 		if (updatable != null) {
 			createdUpdatables.add(updatable);
@@ -537,7 +535,7 @@ public class DataBindingContext implements IDataBindingContext {
 		return updatable;
 	}
 
-	protected IUpdatable doCreateUpdatable(Object description, DataBindingContext thisDatabindingContext) throws BindingException {
+	protected IUpdatable doCreateUpdatable(Object description, DataBindingContext thisDatabindingContext) {
 		for (int i = factories.size() - 1; i >= 0; i--) {
 			IUpdatableFactory factory = (IUpdatableFactory) factories.get(i);
 			IUpdatable result = factory.createUpdatable(null,

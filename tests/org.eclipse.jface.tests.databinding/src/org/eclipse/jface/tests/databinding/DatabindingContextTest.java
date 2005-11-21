@@ -13,7 +13,6 @@ package org.eclipse.jface.tests.databinding;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.databinding.BindSpec;
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IDataBindingContext;
@@ -71,7 +70,7 @@ public class DatabindingContextTest extends TestCase {
 		}
 	}
 
-	public void testBindValueModel() throws BindingException {
+	public void testBindValueModel() {
 		Mocks.reset(updatableValueRMock);
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.getValue();
@@ -85,7 +84,7 @@ public class DatabindingContextTest extends TestCase {
 		Mocks.verify(updatableValueRMock);
 	}
 
-	public void testBindValueTarget() throws BindingException {
+	public void testBindValueTarget() {
 		updatableValueRMock.addChangeListener(null);
 		updatableValueRMock.setValue(null);
 		updatableValueRMock.getValue();
@@ -98,7 +97,7 @@ public class DatabindingContextTest extends TestCase {
 				identityConverter, validatorMock));
 	}
 
-	public void testBindValuePropagation() throws BindingException {
+	public void testBindValuePropagation() {
 		settableValue1.setValue(o1);
 		settableValue2.setValue(o2);
 		dbc.bind(settableValue1, settableValue2, null);

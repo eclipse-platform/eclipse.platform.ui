@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.TableViewerDescription;
 import org.eclipse.jface.tests.databinding.scenarios.model.Account;
@@ -77,7 +76,7 @@ public class TableScenarios extends ScenariosTestCase {
 			return "";
 		return text;
 	}
-	public void testScenario01() throws BindingException {
+	public void testScenario01() {
 		// Show that a TableViewer with three columns renders the accounts
 		Account[] accounts = catalog.getAccounts();
 
@@ -105,9 +104,7 @@ public class TableScenarios extends ScenariosTestCase {
 		}
 	}
 
-	public void testScenario02() throws BindingException, SecurityException,
-			NoSuchFieldException, IllegalArgumentException,
-			IllegalAccessException {
+	public void testScenario02() throws SecurityException, IllegalArgumentException {
 		// Show that a TableViewer with three columns can be used to update
 		// columns
 		Account[] accounts = catalog.getAccounts();
@@ -142,7 +139,7 @@ public class TableScenarios extends ScenariosTestCase {
 		assertEquals("Bill",account.getFirstName());
 	}
 	
-	public void testScenario04() throws BindingException {
+	public void testScenario04() {
 		// Show that when an item is added to a collection the table gets an extra item
 		Account[] accounts = catalog.getAccounts();	
 		
@@ -175,7 +172,7 @@ public class TableScenarios extends ScenariosTestCase {
 		
 	}
 		
-	public void testScenario03() throws BindingException {
+	public void testScenario03() {
 		// Show that converters work for table columns
 		Account[] accounts = catalog.getAccounts();
 
@@ -197,7 +194,7 @@ public class TableScenarios extends ScenariosTestCase {
 		PhoneConverter phoneConverter = new PhoneConverter();
 		StateConverter stateConverter = new StateConverter();
 		for (int i = 0; i < accounts.length; i++) {
-			Account account = (Account) catalog.getAccounts()[i];
+			Account account = catalog.getAccounts()[i];
 			// Check the phone number
 			String col_phone = ((ITableLabelProvider) tableViewer
 					.getLabelProvider()).getColumnText(account, 1);
@@ -210,9 +207,8 @@ public class TableScenarios extends ScenariosTestCase {
 		}
 	}
 	
-	public void testScenario05() throws BindingException {
+	public void testScenario05() {
 		// Show that when the model changes then the UI refreshes to reflect this
-		Account[] accounts = catalog.getAccounts();
 
 		TableViewerDescription tableViewerDescription = new TableViewerDescription(
 				tableViewer);
@@ -224,7 +220,7 @@ public class TableScenarios extends ScenariosTestCase {
 		getDbc().bind(tableViewerDescription,
 				new PropertyDescription(catalog, "accounts"), null);
 		
-		Account account = (Account)catalog.getAccounts()[0];
+		Account account = catalog.getAccounts()[0];
 		String lastName = tableViewer.getTable().getItem(0).getText(0);
 		// Check the firstName in the TableItem is the same as the model
 		assertEquals(lastName,account.getLastName());

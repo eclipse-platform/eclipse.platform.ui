@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
@@ -38,7 +37,7 @@ public class CustomScenarios extends ScenariosTestCase {
 		super.tearDown();
 	}
 
-	public void testScenario01() throws BindingException {
+	public void testScenario01() {
 		// Binding the name property of an Adventure object to the contents of
 		// Text controls, no conversion, no validation.
 

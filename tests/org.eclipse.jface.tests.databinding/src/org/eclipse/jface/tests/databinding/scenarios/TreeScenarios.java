@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.ViewersProperties;
@@ -75,11 +74,9 @@ public class TreeScenarios extends ScenariosTestCase {
 	 * it is assumed that a user will provide label provider and cell editors/modifyer.
 	 * 
 	 * Ensure that tree model is propagated virtualy. 
-	 * to the target, and that changes in one, update the other
-	 * 
-	 * @throws BindingException
+	 * to the target, and that changes in one, update the other 
 	 */
-	public void test_Trees_Scenario01() throws BindingException {
+	public void test_Trees_Scenario01() {
 		
 		getDbc().bind(new PropertyDescription(tviewer, ViewersProperties.CONTENT), treeModel, null);
 				

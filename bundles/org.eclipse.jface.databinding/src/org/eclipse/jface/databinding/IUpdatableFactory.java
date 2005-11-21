@@ -37,8 +37,6 @@ public interface IUpdatableFactory {
 	 *            passing policies to the factory.
 	 * @param description
 	 * @return an updatable
-	 * @throws BindingException
 	 */
-	IUpdatable createUpdatable(Map properties, Object description, IDataBindingContext bindingContext)
-			throws BindingException;
+	IUpdatable createUpdatable(Map properties, Object description, IDataBindingContext bindingContext);
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal;
 
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
@@ -77,18 +76,13 @@ public class NestedUpdatableValue extends UpdatableValue {
 		if (currentOuterValue == null) {
 			innerUpdatableValue = null;
 		} else {
-			try {
-				this.innerUpdatableValue = (IUpdatableValue) databindingContext
-						.createUpdatable(new PropertyDescription(currentOuterValue, feature));
-				Class innerValueType = innerUpdatableValue.getValueType();
-				if(featureType==null) {
-					featureType = innerValueType;
-				} else {
-					Assert.isTrue(featureType.equals(innerValueType), "Cannot change value type in a nested updatable value"); //$NON-NLS-1$
-				}
-			} catch (BindingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			this.innerUpdatableValue = (IUpdatableValue) databindingContext
+					.createUpdatable(new PropertyDescription(currentOuterValue, feature));
+			Class innerValueType = innerUpdatableValue.getValueType();
+			if(featureType==null) {
+				featureType = innerValueType;
+			} else {
+				Assert.isTrue(featureType.equals(innerValueType), "Cannot change value type in a nested updatable value"); //$NON-NLS-1$
 			}
 			innerUpdatableValue.addChangeListener(innerChangeListener);
 		}

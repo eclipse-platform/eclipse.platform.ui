@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding.internal;
 
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
@@ -79,21 +78,16 @@ public class NestedUpdatableCollection extends Updatable implements
 		if (currentOuterValue == null) {
 			innerUpdatableCollection = null;
 		} else {
-			try {
-				this.innerUpdatableCollection = (IUpdatableCollection) databindingContext
-						.createUpdatable(new PropertyDescription(
-								currentOuterValue, feature, elementType, Boolean.TRUE));
-				Class innerElementType = innerUpdatableCollection
-						.getElementType();
-				if (elementType == null) {
-					elementType = innerElementType;
-				} else {
-					Assert.isTrue(elementType.equals(innerElementType), "Cannot change element type in a nested updatable collection"); //$NON-NLS-1$
-				}
-			} catch (BindingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			this.innerUpdatableCollection = (IUpdatableCollection) databindingContext
+					.createUpdatable(new PropertyDescription(
+							currentOuterValue, feature, elementType, Boolean.TRUE));
+			Class innerElementType = innerUpdatableCollection
+					.getElementType();
+			if (elementType == null) {
+				elementType = innerElementType;
+			} else {
+				Assert.isTrue(elementType.equals(innerElementType), "Cannot change element type in a nested updatable collection"); //$NON-NLS-1$
+			} 
 			innerUpdatableCollection.addChangeListener(innerChangeListener);
 		}
 	}

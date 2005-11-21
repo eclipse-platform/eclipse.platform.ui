@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
@@ -39,7 +38,7 @@ public class SpinnerControlScenario extends ScenariosTestCase {
 		super.tearDown();
 	}
 
-	public void testScenario01() throws BindingException {
+	public void testScenario01() {
 		// Bind the adventure "maxNumberOfPeople" property to a spinner
 		// Change the UI and verify the model changes
 		// Change the model and verify the UI changes

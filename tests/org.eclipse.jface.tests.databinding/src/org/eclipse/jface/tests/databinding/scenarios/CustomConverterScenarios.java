@@ -11,7 +11,6 @@
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import org.eclipse.jface.databinding.BindSpec;
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
@@ -40,7 +39,7 @@ public class CustomConverterScenarios extends ScenariosTestCase {
 		super.tearDown();
 	}
 
-	public void testScenario01() throws BindingException {
+	public void testScenario01() {
 
 		Adventure skiTrip = SampleData.WINTER_HOLIDAY;
 		Spinner spinner_dollars = new Spinner(getComposite(), SWT.NONE);

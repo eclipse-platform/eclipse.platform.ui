@@ -12,7 +12,6 @@ package org.eclipse.jface.examples.databinding.javabean;
 
 import java.util.Map;
 
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
@@ -37,8 +36,7 @@ public class PersonSampleData {
 
 		IUpdatableFactory emfValueFactory = new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
-					Object description, IDataBindingContext bindingContext)
-					throws BindingException {
+					Object description, IDataBindingContext bindingContext) {
 				if (description instanceof PropertyDescription) {
 					PropertyDescription propertyDescription = (PropertyDescription) description;
 					Object object = propertyDescription.getObject();

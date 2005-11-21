@@ -37,11 +37,10 @@ public class TreeBinding extends Binding implements IChangeListener {
 	/**
 	 * @param context
 	 * @param target
-	 * @param model
-	 * @throws BindingException 
+	 * @param model 
 	 */
 	public TreeBinding(DataBindingContext context,
-			IUpdatableTree target, IUpdatableTree model) throws BindingException {
+			IUpdatableTree target, IUpdatableTree model) {
 		super(context);
 		this.target = target;
 		this.model = model;

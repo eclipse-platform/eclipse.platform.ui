@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.javabean;
 
-import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.PropertyDescription;
 import org.eclipse.swt.SWT;
@@ -52,9 +51,8 @@ public class TextBinding extends Composite {
 	/**
 	 * @param parent
 	 * @param style
-	 * @throws BindingException
 	 */
-	public TextBinding(Composite parent, int style) throws BindingException {
+	public TextBinding(Composite parent, int style)  {
 		super(parent, style);
 		initialize();
 	}
@@ -62,9 +60,8 @@ public class TextBinding extends Composite {
 	/**
 	 * This method initializes sShell
 	 * 
-	 * @throws BindingException
 	 */
-	private void initialize() throws BindingException {
+	private void initialize() {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		setLayout(gridLayout);
@@ -73,7 +70,7 @@ public class TextBinding extends Composite {
 		bind();
 	}
 
-	private void bind() throws BindingException {
+	private void bind() {
 		dbc = PersonSampleData.getSWTtoJavaBeanDatabindingContext(this);
 
 		Person person = new Person();
