@@ -25,6 +25,8 @@
 			<classpath>
 				<dirset dir="${basedir}/..">
 					<include name="org.eclipse.core.runtime/bin"/>
+					<include name="org.eclipse.core.jobs/bin"/>
+					<include name="org.eclipse.equinox.common/bin"/>
 			 		<include name="org.eclipse.core.resources/bin"/>
 					<include name="org.eclipse.ant.ui/bin"/>
 					<include name="org.eclipse.swt*/bin"/>
@@ -39,6 +41,8 @@
 				</dirset>
 				<fileset dir="${eclipse.home}">
 					<include name="plugins/org.eclipse.core.runtime*.jar"/>
+					<include name="plugins/org.eclipse.core.jobs*.jar"/>
+					<include name="plugins/org.eclipse.equinox.common*.jar"/>
 					<include name="plugins/org.eclipse.core.resources*.jar"/>
 					<include name="plugins/org.eclipse.swt*.jar"/>
 					<include name="plugins/org.eclipse.text*.jar"/>
