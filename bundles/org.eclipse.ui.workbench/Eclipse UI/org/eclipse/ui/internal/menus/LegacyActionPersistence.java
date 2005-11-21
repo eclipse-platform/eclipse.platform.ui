@@ -379,6 +379,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		if (!handlerService.isConflict(commandId, activeWhenExpression)) {
 			handlerActivations.add(handlerService.activateHandler(command
 					.getId(), handler, activeWhenExpression));
+		} else {
+			handler.dispose();
 		}
 	}
 
