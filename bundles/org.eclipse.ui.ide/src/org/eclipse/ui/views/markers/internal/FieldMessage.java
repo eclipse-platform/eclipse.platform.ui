@@ -78,8 +78,12 @@ public class FieldMessage implements IField {
 
 		if (obj instanceof MarkerNode){
 			MarkerNode node = (MarkerNode) obj;
-	    	if(node.isConcrete())
+	    	if(node.isConcrete()){
+	    		//Refresh as there is a still unknown empty description issue
+	    		if(node.getDescription().length() == 0)
+	    			((ConcreteMarker) node).refresh();
 	    		return node.getDescription();
+	    	}
 	    	return Util.EMPTY_STRING;
 		}
 		
