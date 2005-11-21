@@ -72,9 +72,6 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 	 */
 	private RefactoringDescriptor fCurrentDescriptor= null;
 
-	/** The refactoring execution listener, or <code>null</code> */
-	private IRefactoringExecutionListener fExecutionListener= null;
-
 	/** The status of the execution */
 	private RefactoringStatus fExecutionStatus= new RefactoringStatus();
 
@@ -109,12 +106,13 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringsOperation_perform_refactorings, 2 * proxies.length);
 		final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
+		IRefactoringExecutionListener listener= null;
 		try {
-			fExecutionListener= new RefactoringExecutionListener();
-			RefactoringCore.getRefactoringHistoryService().addExecutionListener(fExecutionListener);
+			listener= new RefactoringExecutionListener();
+			RefactoringCore.getRefactoringHistoryService().addExecutionListener(listener);
 			for (int index= 0; index < proxies.length && !fExecutionStatus.hasFatalError(); index++) {
 				boolean execute= false;
-				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 1));
+				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				if (descriptor != null && !descriptor.isUnknown()) {
 					final Refactoring refactoring= factory.createRefactoring(descriptor);
 					if (refactoring instanceof IInitializableRefactoringComponent) {
@@ -132,7 +130,7 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 					}
 					if (execute) {
 						final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
-						ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 1));
+						ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						if (fCurrentDescriptor != null && !fCurrentDescriptor.isUnknown())
 							RefactoringHistoryService.getInstance().setDependency(fCurrentDescriptor, descriptor);
 						fExecutionStatus.merge(operation.getConditionStatus());
@@ -142,12 +140,12 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 				}
 			}
 		} finally {
-			fCurrentDescriptor= null;
-			if (fExecutionListener != null) {
-				RefactoringCore.getRefactoringHistoryService().removeExecutionListener(fExecutionListener);
-				fExecutionListener= null;
-			}
 			monitor.done();
+			fCurrentDescriptor= null;
+			if (listener != null) {
+				RefactoringCore.getRefactoringHistoryService().removeExecutionListener(listener);
+				listener= null;
+			}
 		}
 	}
 }
