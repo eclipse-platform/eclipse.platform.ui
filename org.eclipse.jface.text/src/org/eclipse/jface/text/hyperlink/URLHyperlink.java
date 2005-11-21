@@ -80,4 +80,15 @@ public class URLHyperlink implements IHyperlink {
 	public String getHyperlinkText() {
 		return null;
 	}
+	
+	/**
+	 * Returns the URL string of this hyperlink.
+	 * 
+	 * @return the URL string
+	 * @since 3.2
+	 */
+	public String getURLString() {
+		return fURLString;
+	}
+
 }
