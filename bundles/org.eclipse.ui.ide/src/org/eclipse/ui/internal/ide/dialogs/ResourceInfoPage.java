@@ -11,13 +11,8 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.MessageFormat;
-import java.util.Date;
 
 import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -26,12 +21,10 @@ import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -45,7 +38,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.LineDelimiterEditor;
 
@@ -93,33 +85,10 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private static String SIZE_TITLE = IDEWorkbenchMessages.ResourceInfo_size;
 
-	private static String BYTES_LABEL = IDEWorkbenchMessages.ResourceInfo_bytes;
-
-	private static String FILE_LABEL = IDEWorkbenchMessages.ResourceInfo_file;
-
-	private static String FILE_TYPE_FORMAT = IDEWorkbenchMessages.ResourceInfo_fileTypeFormat;
-
-	private static String FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_folder;
-
-	private static String PROJECT_LABEL = IDEWorkbenchMessages.ResourceInfo_project;
-
-	private static String LINKED_FILE_LABEL = IDEWorkbenchMessages.ResourceInfo_linkedFile;
-
-	private static String LINKED_FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_linkedFolder;
-
-	private static String UNKNOWN_LABEL = IDEWorkbenchMessages.ResourceInfo_unknown;
-
-	private static String NOT_LOCAL_TEXT = IDEWorkbenchMessages.ResourceInfo_notLocal;
-
-	private static String MISSING_PATH_VARIABLE_TEXT = IDEWorkbenchMessages.ResourceInfo_undefinedPathVariable;
-
-	private static String NOT_EXIST_TEXT = IDEWorkbenchMessages.ResourceInfo_notExist;
-
 	private static String PATH_TITLE = IDEWorkbenchMessages.ResourceInfo_path;
 
 	private static String TIMESTAMP_TITLE = IDEWorkbenchMessages.ResourceInfo_lastModified;
 
-	private static String FILE_NOT_EXIST_TEXT = IDEWorkbenchMessages.ResourceInfo_fileNotExist;
 
 	private static String FILE_ENCODING_TITLE = IDEWorkbenchMessages.WorkbenchPreference_encoding;
 
@@ -180,7 +149,7 @@ public class ResourceInfoPage extends PropertyPage {
 		typeTitle.setFont(font);
 
 		Text typeValue = new Text(basicInfoComposite, SWT.LEFT | SWT.READ_ONLY);
-		typeValue.setText(getTypeString(resource));
+		typeValue.setText(IDEResourceInfoUtils.getTypeString(resource, getContentDescription(resource)));
 		typeValue.setBackground(typeValue.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 		typeValue.setFont(font);
@@ -195,7 +164,7 @@ public class ResourceInfoPage extends PropertyPage {
 
 		Text locationValue = new Text(basicInfoComposite, SWT.WRAP
 				| SWT.READ_ONLY);
-		locationValue.setText(getLocationText(resource));
+		locationValue.setText(IDEResourceInfoUtils.getLocationText(resource));
 		gd = new GridData();
 		gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 		gd.grabExcessHorizontalSpace = true;
@@ -216,7 +185,7 @@ public class ResourceInfoPage extends PropertyPage {
 
 			Text resolvedLocationValue = new Text(basicInfoComposite, SWT.WRAP
 					| SWT.READ_ONLY);
-			resolvedLocationValue.setText(getResolvedLocationText(resource));
+			resolvedLocationValue.setText(IDEResourceInfoUtils.getResolvedLocationText(resource));
 			gd = new GridData();
 			gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 			gd.grabExcessHorizontalSpace = true;
@@ -234,7 +203,7 @@ public class ResourceInfoPage extends PropertyPage {
 
 			Text sizeValue = new Text(basicInfoComposite, SWT.LEFT
 					| SWT.READ_ONLY);
-			sizeValue.setText(getSizeString((IFile) resource));
+			sizeValue.setText(IDEResourceInfoUtils.getSizeString(resource));
 			gd = new GridData();
 			gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 			gd.grabExcessHorizontalSpace = true;
@@ -445,7 +414,7 @@ public class ResourceInfoPage extends PropertyPage {
 
 		// timeStamp value label
 		Text timeStampValue = new Text(composite, SWT.READ_ONLY);
-		timeStampValue.setText(getDateStringValue(resource));
+		timeStampValue.setText(IDEResourceInfoUtils.getDateStringValue(resource));
 		timeStampValue.setFont(font);
 		timeStampValue.setBackground(timeStampValue.getDisplay()
 				.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
@@ -473,202 +442,18 @@ public class ResourceInfoPage extends PropertyPage {
 		}
 	}
 
-	private String getContentTypeString(IFile file) {
-		IContentDescription description = getContentDescription(file);
-		if (description != null) {
-			IContentType contentType = description.getContentType();
-			if (contentType != null)
-				return contentType.getName();
-		}
-		return null;
-	}
-
-	private IContentDescription getContentDescription(IFile file) {
+	private IContentDescription getContentDescription(IResource resource) {
+		if (resource.getType() != IResource.FILE)
+			return null;
+		
 		if (cachedContentDescription == null) {
 			try {
-				cachedContentDescription = file.getContentDescription();
+				cachedContentDescription = ((IFile)resource).getContentDescription();
 			} catch (CoreException e) {
 				// silently ignore
 			}
 		}
 		return cachedContentDescription;
-	}
-
-	/**
-	 * Return the value for the date String for the timestamp of the supplied
-	 * resource.
-	 * 
-	 * @param resource
-	 *            The resource to query
-	 * @return String
-	 */
-	private String getDateStringValue(IResource resource) {
-		if (!resource.isLocal(IResource.DEPTH_ZERO))
-			return NOT_LOCAL_TEXT;
-
-		URI location = resource.getLocationURI();
-		if (location == null) {
-			if (resource.isLinked())
-				return MISSING_PATH_VARIABLE_TEXT;
-
-			return NOT_EXIST_TEXT;
-		}
-
-		IFileInfo info = getFileInfo(location);
-		if(info == null)
-			return UNKNOWN_LABEL;
-		
-		if (info.exists()) {
-			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG,
-					DateFormat.MEDIUM);
-			return format.format(new Date(info.getLastModified()));
-		}
-		return NOT_EXIST_TEXT;
-
-	}
-	
-	/**
-	 * Return the fileInfo for location. Return <code>null</code>
-	 * if there is a CoreException looking it up
-	 * @param location
-	 * @return String or  <code>null</code>
-	 */
-	private IFileInfo getFileInfo(URI location){
-		IFileStore store;
-		try {
-			store = EFS.getStore(location);
-		} catch (CoreException e) {
-			IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
-			return null;
-		}
-		return store.fetchInfo();
-	}
-
-	/**
-	 * Get the location of a resource
-	 * 
-	 * @param resource
-	 * @return String the text to display the location
-	 */
-	private String getLocationText(IResource resource) {
-		if (!resource.isLocal(IResource.DEPTH_ZERO))
-			return NOT_LOCAL_TEXT;
-
-		URI resolvedLocation = resource.getLocationURI();
-		URI location = resolvedLocation;
-		if (resource.isLinked()) {
-			location = resource.getRawLocationURI();
-		}
-		if (location == null) {
-			return NOT_EXIST_TEXT;
-		}
-
-		if (resolvedLocation != null && !isPathVariable(resource)) {
-			// No path variable used. Display the file not exist message
-			// in the location. Fixes bug 33318.
-			IFileInfo info = getFileInfo(location);
-			if(info == null)
-				return UNKNOWN_LABEL;
-			if (!info.exists()) {
-				return NLS.bind(FILE_NOT_EXIST_TEXT,location.toString());
-			}
-		}
-		return location.toString();
-
-	}
-
-	/**
-	 * Get the resolved location of a resource. This resolves path variables if
-	 * present in the resource path.
-	 * 
-	 * @param resource
-	 * @return String
-	 */
-	private String getResolvedLocationText(IResource resource) {
-		if (!resource.isLocal(IResource.DEPTH_ZERO))
-			return NOT_LOCAL_TEXT;
-
-		URI location = resource.getLocationURI();
-		if (location == null) {
-			if (resource.isLinked())
-				return MISSING_PATH_VARIABLE_TEXT;
-
-			return NOT_EXIST_TEXT;
-		}
-
-		IFileInfo info = getFileInfo(location);
-		if(info == null)
-			return UNKNOWN_LABEL;
-
-		if (!info.exists()) 
-			return NLS.bind(FILE_NOT_EXIST_TEXT,location.toString());
-		
-		return location.toString();
-
-	}
-
-	/**
-	 * Return a String that indicates the size of the supplied file.
-	 * 
-	 * @param file
-	 * @return String
-	 */
-	private String getSizeString(IFile file) {
-		if (!file.isLocal(IResource.DEPTH_ZERO))
-			return NOT_LOCAL_TEXT;
-
-		URI location = file.getLocationURI();
-		if (location == null) {
-			if (file.isLinked())
-				return MISSING_PATH_VARIABLE_TEXT;
-
-			return NOT_EXIST_TEXT;
-		}
-
-		IFileInfo info = getFileInfo(location);
-		if(info == null)
-			return UNKNOWN_LABEL;
-		
-		if (info.exists()) 
-			return NLS.bind(BYTES_LABEL,Long.toString(info.getLength()));
-		
-		return NOT_EXIST_TEXT;
-
-	}
-
-	/**
-	 * Get the string that identifies the type of this resource.
-	 * 
-	 * @param resource
-	 * @return String
-	 */
-	private String getTypeString(IResource resource) {
-
-		if (resource.getType() == IResource.FILE) {
-			if (resource.isLinked())
-				return LINKED_FILE_LABEL;
-
-			if (resource instanceof IFile) {
-				String contentType = getContentTypeString((IFile) resource);
-				if (contentType != null)
-					return MessageFormat.format(FILE_TYPE_FORMAT,
-							new String[] { contentType });
-			}
-			return FILE_LABEL;
-		}
-
-		if (resource.getType() == IResource.FOLDER) {
-			if (resource.isLinked())
-				return LINKED_FOLDER_LABEL;
-
-			return FOLDER_LABEL;
-		}
-
-		if (resource.getType() == IResource.PROJECT)
-			return PROJECT_LABEL;
-
-		//Should not be possible
-		return UNKNOWN_LABEL;
 	}
 
 	/**
