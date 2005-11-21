@@ -35,8 +35,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.0
  */
-public final class HandlerProxy extends AbstractHandler implements
-		ILegacyHandlerWrapper {
+public final class HandlerProxy extends AbstractHandler {
 
 	/**
 	 * The configuration element from which the handler can be created. This
@@ -153,19 +152,6 @@ public final class HandlerProxy extends AbstractHandler implements
 		}
 
 		return null;
-	}
-
-	public final String getClassName() {
-		if (handler instanceof ILegacyHandlerWrapper) {
-			final ILegacyHandlerWrapper wrapper = (ILegacyHandlerWrapper) handler;
-			return wrapper.getClassName();
-		}
-
-		if (handler == null) {
-			return configurationElement.getAttribute(handlerAttributeName);
-		}
-
-		return handler.getClass().getName();
 	}
 
 	public final boolean isEnabled() {

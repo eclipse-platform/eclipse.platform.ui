@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -374,29 +373,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 				conflict = false;
 
 			} else if (currentActivation.getSourcePriority() == bestSourcePriority) {
-				final IHandler currentHandler = currentActivation.getHandler();
-				final IHandler bestHandler = bestActivation.getHandler();
-				final String currentClassName;
-				if (currentHandler instanceof ILegacyHandlerWrapper) {
-					final ILegacyHandlerWrapper wrapper = (ILegacyHandlerWrapper) currentHandler;
-					currentClassName = wrapper.getClassName();
-				} else if (currentHandler != null) {
-					currentClassName = currentHandler.getClass().getName();
-				} else {
-					currentClassName = null;
-				}
-				final String bestClassName;
-				if (bestHandler instanceof ILegacyHandlerWrapper) {
-					final ILegacyHandlerWrapper wrapper = (ILegacyHandlerWrapper) bestHandler;
-					bestClassName = wrapper.getClassName();
-				} else if (bestHandler != null) {
-					bestClassName = bestHandler.getClass().getName();
-				} else {
-					bestClassName = null;
-				}
-
-				if ((currentHandler != bestHandler)
-						&& (!Util.equals(currentClassName, bestClassName))) {
+				if (currentActivation.getHandler() != bestActivation
+						.getHandler()) {
 					conflict = true;
 				}
 

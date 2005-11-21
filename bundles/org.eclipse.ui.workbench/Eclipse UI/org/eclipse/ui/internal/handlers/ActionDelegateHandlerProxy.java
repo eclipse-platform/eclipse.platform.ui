@@ -51,8 +51,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.2
  */
-public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState
-		implements ILegacyHandlerWrapper {
+public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState {
 
 	/**
 	 * A fake action that proxies all of the command-based services. This value
@@ -183,19 +182,6 @@ public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState
 		}
 
 		return null;
-	}
-
-	public final String getClassName() {
-		if (delegate instanceof ILegacyHandlerWrapper) {
-			final ILegacyHandlerWrapper wrapper = (ILegacyHandlerWrapper) delegate;
-			return wrapper.getClassName();
-		}
-		
-		if (delegate == null) {
-			return element.getAttribute(delegateAttributeName);
-		}
-		
-		return delegate.getClass().getName();
 	}
 
 	public final void handleStateChange(final IState state,

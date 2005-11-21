@@ -23,8 +23,7 @@ import org.eclipse.ui.internal.misc.Policy;
  * 
  * @since 3.1
  */
-public final class LegacyHandlerWrapper implements IHandler,
-		ILegacyHandlerWrapper {
+public final class LegacyHandlerWrapper implements IHandler {
 
 	/**
 	 * This flag can be set to <code>true</code> if commands should print
@@ -110,15 +109,6 @@ public final class LegacyHandlerWrapper implements IHandler,
 		} catch (final org.eclipse.ui.commands.ExecutionException e) {
 			throw new ExecutionException(e.getMessage(), e.getCause());
 		}
-	}
-
-	public final String getClassName() {
-		if (handler instanceof ILegacyHandlerWrapper) {
-			final ILegacyHandlerWrapper wrapper = (ILegacyHandlerWrapper) handler;
-			return wrapper.getClassName();
-		}
-
-		return handler.getClass().getName();
 	}
 
 	public final int hashCode() {
