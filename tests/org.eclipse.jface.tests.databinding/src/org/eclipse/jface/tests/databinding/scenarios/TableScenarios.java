@@ -22,9 +22,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
@@ -119,22 +117,14 @@ public class TableScenarios extends ScenariosTestCase {
 		getDbc().bind(tableViewerDescription,
 				new PropertyDescription(catalog, "accounts"), null);
 
+		Account account = accounts[0];
 		// Select the first item in the table
-		tableViewer.getTable().setSelection(0);
-		// Send a mouse down event at 19,21 which should activate the cell editor
-		Event event = new Event();
-		event.button = 1;  // The left mouse button to activate the cell editor
-		// We position the event in the center of the first table column
-		Rectangle firstNameColBounds = tableViewer.getTable().getItem(0).getBounds(0);
-		event.x = firstNameColBounds.width/2 + firstNameColBounds.x;
-		event.y = firstNameColBounds.height/2 + firstNameColBounds.y;
-		tableViewer.getTable().notifyListeners(SWT.MouseDown,event);
+		tableViewer.editElement(account, 0);
 		// Set the text property of the cell editor which is now active over the "firstName" column
 		CellEditor[] cellEditors = tableViewer.getCellEditors();
 		TextCellEditor firstNameEditor = (TextCellEditor) cellEditors[0];
 		// Change the firstName and test it goes to the model
 		enterText((Text) firstNameEditor.getControl(), "Bill");
-		Account account = accounts[0];
 		// Check whether the model has changed
 		assertEquals("Bill",account.getFirstName());
 	}
