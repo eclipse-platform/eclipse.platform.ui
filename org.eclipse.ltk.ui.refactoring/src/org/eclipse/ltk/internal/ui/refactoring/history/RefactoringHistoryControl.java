@@ -136,6 +136,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			}
 		});
 		createButtonBar(this);
+		fMessageLabel= new Label(fSplitterControl, SWT.LEFT | SWT.WRAP | SWT.HORIZONTAL);
 		final Composite leftPane= new Composite(fSplitterControl, SWT.NONE);
 		layout= new GridLayout();
 		layout.marginWidth= 0;
@@ -144,7 +145,13 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		leftPane.setLayout(layout);
 		fHistoryPane= new CompareViewerPane(leftPane, SWT.BORDER | SWT.FLAT);
 		fHistoryPane.setImage(fCaptionImage);
-		handleCaptionChanged();
+		String text= null;
+		final IProject project= fControlConfiguration.getProject();
+		if (project != null)
+			text= MessageFormat.format(fControlConfiguration.getProjectPattern(), new String[] { project.getName()});
+		else
+			text= fControlConfiguration.getWorkspaceCaption();
+		fHistoryPane.setText(text);
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
 		fHistoryViewer.setAutoExpandLevel(2);
@@ -173,8 +180,12 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			}
 		};
 		fCommentPane.setText(fControlConfiguration.getCommentCaption());
-		fMessageLabel= new Label(fSplitterControl, SWT.LEFT | SWT.WRAP | SWT.HORIZONTAL);
-		handleMessageChanged();
+		final String message= fControlConfiguration.getMessage();
+		if (message != null && !"".equals(message)) { //$NON-NLS-1$
+			fMessageLabel.setText(message);
+			fSplitterControl.setWeights(new int[] { 8, 77, 15});
+		} else
+			fSplitterControl.setWeights(new int[] { 0, 85, 15});
 	}
 
 	/**
@@ -208,31 +219,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			}
 		}
 		return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
-	}
-
-	/**
-	 * Handles the caption changed event.
-	 */
-	protected void handleCaptionChanged() {
-		String text= null;
-		final IProject project= fControlConfiguration.getProject();
-		if (project != null)
-			text= MessageFormat.format(fControlConfiguration.getProjectPattern(), new String[] { project.getName()});
-		else
-			text= fControlConfiguration.getWorkspaceCaption();
-		fHistoryPane.setText(text);
-	}
-
-	/**
-	 * Handles the message changed event.
-	 */
-	protected void handleMessageChanged() {
-		final String message= fControlConfiguration.getMessage();
-		if (message != null && !"".equals(message)) { //$NON-NLS-1$
-			fMessageLabel.setText(message);
-			fSplitterControl.setWeights(new int[] { 70, 15, 15});
-		} else
-			fSplitterControl.setWeights(new int[] { 75, 25, 0});
 	}
 
 	/**
