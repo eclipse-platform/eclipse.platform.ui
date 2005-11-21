@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.model;
 
-import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * An object which represents the relationship between a plug-in and a

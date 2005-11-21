@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.model;
 
-import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * An object which has the general characteristics of all elements

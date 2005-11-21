@@ -140,7 +140,7 @@ public class Factory {
 	 */
 	public void error(IStatus error) {
 		status.add(error);
-		if (InternalPlatform.DEBUG && InternalPlatform.DEBUG_REGISTRY)
+		if (InternalPlatform.DEBUG)
 			System.out.println(error.toString());
 	}
 
