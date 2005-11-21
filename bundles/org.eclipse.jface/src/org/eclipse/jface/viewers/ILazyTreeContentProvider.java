@@ -16,7 +16,7 @@ package org.eclipse.jface.viewers;
  * are queried.
  * 
  * <strong>NOTE:</strong> Changes to the number of items for a given parent
- * require a call to {@link TreeViewer#setItemCount()} on the tree viewer, or
+ * require a call to {@link TreeViewer#setChildCount(Object, int)} on the tree viewer, or
  * calls to the viewer's <code>add()</code> or <code>remove()</code>
  * methods.
  * 
