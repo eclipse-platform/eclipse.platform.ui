@@ -373,7 +373,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	 * @param item item to constuct a path for
 	 * @return tree path for the item
 	 */
-	protected TreePath getTreePath(TreeItem item) {
+	protected synchronized TreePath getTreePath(TreeItem item) {
 		TreeItem parent = item;
 		List path = new ArrayList();
 		while (parent != null) {
@@ -656,7 +656,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
-	protected List getSelectionFromWidget() {
+	protected synchronized List getSelectionFromWidget() {
 		TreeItem[] selection = fTree.getSelection();
 		TreePath[] paths = new TreePath[selection.length];
 		for (int i = 0; i < selection.length; i++) {
