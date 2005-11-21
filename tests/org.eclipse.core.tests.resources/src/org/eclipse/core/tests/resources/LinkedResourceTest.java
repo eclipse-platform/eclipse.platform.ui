@@ -1336,7 +1336,7 @@ public class LinkedResourceTest extends ResourceTest {
 		IPath linkLocation = localFolder;
 		IPath localChild = linkLocation.append("Child");
 		IFile linkChild = link.getFile(localChild.lastSegment());
-		createFileInFileSystem(localChild);
+		createFileInFileSystem(resolve(localChild));
 		try {
 			link.createLink(linkLocation, IResource.NONE, getMonitor());
 		} catch (CoreException e) {
