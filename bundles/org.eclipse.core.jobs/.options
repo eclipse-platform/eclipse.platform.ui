@@ -1,0 +1,15 @@
+# Debugging options for the org.eclipse.core.runtime plugin
+
+# Prints debug information on running background jobs
+org.eclipse.core.jobs/jobs=false
+# Includes current date and time in job debug information
+org.eclipse.core.jobs/jobs/timing=false
+# Computes location of error on mismatched IJobManager.beginRule/endRule
+org.eclipse.core.jobs/jobs/beginend=false
+# Pedantic assertion checking on locks and deadlock reporting
+org.eclipse.core.jobs/jobs/locks=false
+# Throws an IllegalStateException when deadlock occurs
+org.eclipse.core.jobs/jobs/errorondeadlock=false
+# Debug shutdown behaviour
+org.eclipse.core.jobs/jobs/shutdown=false
+

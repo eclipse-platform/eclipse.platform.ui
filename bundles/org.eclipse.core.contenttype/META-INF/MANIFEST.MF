@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.core.contenttype; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.equinox.preferences,
+ org.eclipse.equinox.registry,
+ org.eclipse.equinox.common,
+ system.bundle
+Export-Package: org.eclipse.core.internal.content;x-internal:=true,
+ org.eclipse.core.runtime.content
+Bundle-Activator: org.eclipse.core.internal.content.Activator
+Eclipse-LazyStart: true
