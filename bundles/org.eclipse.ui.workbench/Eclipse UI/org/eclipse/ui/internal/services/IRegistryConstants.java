@@ -32,6 +32,12 @@ public interface IRegistryConstants {
 	public static String ATTRIBUTE_ACCELERATOR = "accelerator"; //$NON-NLS-1$
 
 	/**
+	 * The name of the adaptable attribute, which appears on object
+	 * contributions.
+	 */
+	public static String ATTRIBUTE_ADAPTABLE = "adaptable"; //$NON-NLS-1$
+
+	/**
 	 * The name of the category attribute, which appears on a command
 	 * definition.
 	 */
@@ -163,6 +169,18 @@ public interface IRegistryConstants {
 	 * The name of the name attribute, which appears on named handle objects
 	 */
 	public static String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+
+	/**
+	 * The name of the nameFilter attribute, which appears on object
+	 * contributions.
+	 */
+	public static String ATTRIBUTE_NAME_FILTER = "nameFilter"; //$NON-NLS-1$
+
+	/**
+	 * The name of the objectClass attribute, which appears on object
+	 * contributions.
+	 */
+	public static String ATTRIBUTE_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
 
 	/**
 	 * The name of the optional attribute, which appears on parameter
@@ -457,6 +475,11 @@ public interface IRegistryConstants {
 	public static String ELEMENT_MENU = "menu"; //$NON-NLS-1$
 
 	/**
+	 * The name of the element storing an object contribution.
+	 */
+	public static String ELEMENT_OBJECT_CONTRIBUTION = "objectContribution"; //$NON-NLS-1$
+
+	/**
 	 * The name of the element storing the ordering information.
 	 */
 	public static String ELEMENT_ORDER = "order"; //$NON-NLS-1$
@@ -492,9 +515,25 @@ public interface IRegistryConstants {
 	public static String ELEMENT_STATE = "state"; //$NON-NLS-1$
 
 	/**
+	 * The name of the element storing the visibility condition for legacy popup
+	 * menu contributions.
+	 */
+	public static String ELEMENT_VISIBILITY = "visibility"; //$NON-NLS-1$
+
+	/**
 	 * The name of the element storing the visible when condition.
 	 */
 	public static String ELEMENT_VISIBLE_WHEN = "visibleWhen"; //$NON-NLS-1$
+
+	/**
+	 * The name of the element storing a view contribution.
+	 */
+	public static String ELEMENT_VIEW_CONTRIBUTION = "viewContribution"; //$NON-NLS-1$
+
+	/**
+	 * The name of the element storing a viewer contribution.
+	 */
+	public static String ELEMENT_VIEWER_CONTRIBUTION = "viewerContribution"; //$NON-NLS-1$
 
 	/**
 	 * The name of the element storing a widget.
@@ -568,6 +607,19 @@ public interface IRegistryConstants {
 	 */
 	public static String EXTENSION_MENUS = PlatformUI.PLUGIN_ID + '.'
 			+ IWorkbenchConstants.PL_MENUS;
+
+	/**
+	 * The name of the <code>org.eclipse.ui.popupMenus</code> extension point.
+	 */
+	public static String EXTENSION_POPUP_MENUS = PlatformUI.PLUGIN_ID + '.'
+			+ IWorkbenchConstants.PL_POPUP_MENU;
+
+	/**
+	 * The name of the <code>org.eclipse.ui.viewActions</code> extension
+	 * point.
+	 */
+	public static String EXTENSION_VIEW_ACTIONS = PlatformUI.PLUGIN_ID + '.'
+			+ IWorkbenchConstants.PL_VIEW_ACTIONS;
 
 	/**
 	 * The constant for the position attribute corresponding to

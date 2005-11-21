@@ -39,12 +39,6 @@ public final class CommandImageService implements ICommandImageService {
 	private final CommandImagePersistence commandImagePersistence;
 
 	/**
-	 * The command service that provides commands for this service. This value
-	 * is never <code>null</code>.
-	 */
-	private final ICommandService commandService;
-
-	/**
 	 * Constructs a new instance of <code>CommandService</code> using a
 	 * command image manager.
 	 * 
@@ -67,8 +61,8 @@ public final class CommandImageService implements ICommandImageService {
 					"Cannot create a command image service with a null command service"); //$NON-NLS-1$
 		}
 		this.commandImageManager = commandImageManager;
-		this.commandService = commandService;
-		this.commandImagePersistence = new CommandImagePersistence();
+		this.commandImagePersistence = new CommandImagePersistence(
+				commandImageManager, commandService);
 	}
 
 	public final void bind(final String commandId, final int type,
@@ -104,6 +98,6 @@ public final class CommandImageService implements ICommandImageService {
 	}
 
 	public final void readRegistry() {
-		commandImagePersistence.read(commandImageManager, commandService);
+		commandImagePersistence.read();
 	}
 }

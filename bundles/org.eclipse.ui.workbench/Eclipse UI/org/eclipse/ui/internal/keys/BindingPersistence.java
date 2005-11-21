@@ -77,7 +77,7 @@ final class BindingPersistence extends PreferencePersistence {
 	 * The index of the active scheme configuration elements in the indexed
 	 * array.
 	 * 
-	 * @see BindingPersistence#read(BindingManager, ICommandService)
+	 * @see BindingPersistence#read()
 	 */
 	private static final int INDEX_ACTIVE_SCHEME = 0;
 
@@ -85,7 +85,7 @@ final class BindingPersistence extends PreferencePersistence {
 	 * The index of the binding definition configuration elements in the indexed
 	 * array.
 	 * 
-	 * @see BindingPersistence#read(BindingManager, ICommandService)
+	 * @see BindingPersistence#read()
 	 */
 	private static final int INDEX_BINDING_DEFINITIONS = 1;
 

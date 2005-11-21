@@ -45,21 +45,21 @@ final class HandlerPersistence extends RegistryPersistence {
 	/**
 	 * The index of the command elements in the indexed array.
 	 * 
-	 * @see HandlerPersistence#read(IHandlerService)
+	 * @see HandlerPersistence#read()
 	 */
 	private static final int INDEX_COMMAND_DEFINITIONS = 0;
 
 	/**
 	 * The index of the command elements in the indexed array.
 	 * 
-	 * @see HandlerPersistence#read(IHandlerService)
+	 * @see HandlerPersistence#read()
 	 */
 	private static final int INDEX_HANDLER_DEFINITIONS = 1;
 
 	/**
 	 * The index of the handler submissions in the indexed array.
 	 * 
-	 * @see HandlerPersistence#read(IHandlerService)
+	 * @see HandlerPersistence#read()
 	 */
 	private static final int INDEX_HANDLER_SUBMISSIONS = 2;
 
@@ -103,8 +103,8 @@ final class HandlerPersistence extends RegistryPersistence {
 			 * <code>CommandPersistence</code>, so we'll just ignore any
 			 * problems here.
 			 */
-			final String commandId = readOptional(
-					configurationElement, ATTRIBUTE_ID);
+			final String commandId = readOptional(configurationElement,
+					ATTRIBUTE_ID);
 			if (commandId == null) {
 				continue;
 			}
@@ -145,8 +145,8 @@ final class HandlerPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequired(
-					configurationElement, ATTRIBUTE_COMMAND_ID, warningsToLog,
+			final String commandId = readRequired(configurationElement,
+					ATTRIBUTE_COMMAND_ID, warningsToLog,
 					"Handlers need a command id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;
@@ -200,8 +200,8 @@ final class HandlerPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequired(
-					configurationElement, ATTRIBUTE_COMMAND_ID, warningsToLog,
+			final String commandId = readRequired(configurationElement,
+					ATTRIBUTE_COMMAND_ID, warningsToLog,
 					"Handler submissions need a command id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;

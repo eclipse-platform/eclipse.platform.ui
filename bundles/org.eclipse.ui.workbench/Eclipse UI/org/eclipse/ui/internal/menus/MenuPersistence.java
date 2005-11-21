@@ -56,35 +56,35 @@ final class MenuPersistence extends RegistryPersistence {
 	/**
 	 * The index of the action set elements in the indexed array.
 	 * 
-	 * @see MenuPersistence#read(IMenuService, ICommandService)
+	 * @see MenuPersistence#read()
 	 */
 	private static final int INDEX_ACTION_SETS = 0;
 
 	/**
 	 * The index of the group elements in the indexed array.
 	 * 
-	 * @see MenuPersistence#read(IMenuService, ICommandService)
+	 * @see MenuPersistence#read()
 	 */
 	private static final int INDEX_GROUPS = 1;
 
 	/**
 	 * The index of the item elements in the indexed array.
 	 * 
-	 * @see MenuPersistence#read(IMenuService, ICommandService)
+	 * @see MenuPersistence#read()
 	 */
 	private static final int INDEX_ITEMS = 2;
 
 	/**
 	 * The index of the menu elements in the indexed array.
 	 * 
-	 * @see MenuPersistence#read(IMenuService, ICommandService)
+	 * @see MenuPersistence#read()
 	 */
 	private static final int INDEX_MENUS = 3;
 
 	/**
 	 * The index of the widget elements in the indexed array.
 	 * 
-	 * @see MenuPersistence#read(IMenuService, ICommandService)
+	 * @see MenuPersistence#read()
 	 */
 	private static final int INDEX_WIDGETS = 4;
 

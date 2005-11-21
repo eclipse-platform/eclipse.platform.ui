@@ -42,14 +42,14 @@ final class CommandPersistence extends RegistryPersistence {
 	/**
 	 * The index of the category elements in the indexed array.
 	 * 
-	 * @see CommandPersistence#read(ICommandService)
+	 * @see CommandPersistence#read()
 	 */
 	private static final int INDEX_CATEGORY_DEFINITIONS = 0;
 
 	/**
 	 * The index of the command elements in the indexed array.
 	 * 
-	 * @see CommandPersistence#read(ICommandService)
+	 * @see CommandPersistence#read()
 	 */
 	private static final int INDEX_COMMAND_DEFINITIONS = 1;
 
@@ -191,7 +191,8 @@ final class CommandPersistence extends RegistryPersistence {
 			final Command command = commandService.getCommand(commandId);
 			final Category category = commandService.getCategory(categoryId);
 			if (!category.isDefined()) {
-				addWarning(warningsToLog,
+				addWarning(
+						warningsToLog,
 						"Commands should really have a category", //$NON-NLS-1$
 						configurationElement, commandId,
 						"categoryId", categoryId); //$NON-NLS-1$

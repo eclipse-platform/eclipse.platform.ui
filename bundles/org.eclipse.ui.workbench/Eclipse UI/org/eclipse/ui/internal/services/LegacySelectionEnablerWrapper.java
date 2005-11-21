@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.services;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.SelectionEnabler;
@@ -31,7 +32,7 @@ import org.eclipse.ui.SelectionEnabler;
  * 
  * @since 3.2
  */
-public final class LegacySelectionEnablerExpression extends Expression {
+public final class LegacySelectionEnablerWrapper extends Expression {
 
 	/**
 	 * The enabler for this expression; never <code>null</code>.
@@ -44,11 +45,15 @@ public final class LegacySelectionEnablerExpression extends Expression {
 	 * @param enabler
 	 *            The enabler; must not be <code>null</code>.
 	 */
-	public LegacySelectionEnablerExpression(final SelectionEnabler enabler) {
+	public LegacySelectionEnablerWrapper(final SelectionEnabler enabler) {
 		if (enabler == null) {
 			throw new NullPointerException("There is no enabler"); //$NON-NLS-1$
 		}
 		this.enabler = enabler;
+	}
+
+	public final void collectExpressionInfo(final ExpressionInfo info) {
+		info.markDefaultVariableAccessed();
 	}
 
 	public final EvaluationResult evaluate(final IEvaluationContext context) {

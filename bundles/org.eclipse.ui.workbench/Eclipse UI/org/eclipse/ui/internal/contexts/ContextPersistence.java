@@ -38,7 +38,7 @@ final class ContextPersistence extends RegistryPersistence {
 	/**
 	 * The index of the context elements in the indexed array.
 	 * 
-	 * @see ContextPersistence#read(ContextManager)
+	 * @see ContextPersistence#read()
 	 */
 	private static final int INDEX_CONTEXT_DEFINITIONS = 0;
 
@@ -74,9 +74,8 @@ final class ContextPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String contextId = readRequired(
-					configurationElement, ATTRIBUTE_ID, warningsToLog,
-					"Contexts need an id"); //$NON-NLS-1$
+			final String contextId = readRequired(configurationElement,
+					ATTRIBUTE_ID, warningsToLog, "Contexts need an id"); //$NON-NLS-1$
 			if (contextId == null) {
 				continue;
 			}
@@ -90,8 +89,8 @@ final class ContextPersistence extends RegistryPersistence {
 			}
 
 			// Read out the description.
-			final String description = readOptional(
-					configurationElement, ATTRIBUTE_DESCRIPTION);
+			final String description = readOptional(configurationElement,
+					ATTRIBUTE_DESCRIPTION);
 
 			// Read out the parent id.
 			String parentId = configurationElement
