@@ -136,11 +136,8 @@ public class TableScenarios extends ScenariosTestCase {
 		CellEditor[] cellEditors = tableViewer.getCellEditors();
 		TextCellEditor firstNameEditor = (TextCellEditor) cellEditors[0];
 		// Change the firstName and test it goes to the model
-		((Text) firstNameEditor.getControl()).setText("Bill");
-		// Send a selection event in the cell editor so it pushes the change to the table
-		((Text) ((TextCellEditor) cellEditors[0]).getControl())
-				.notifyListeners(SWT.DefaultSelection, null);
-		Account account = (Account) accounts[0];
+		enterText((Text) firstNameEditor.getControl(), "Bill");
+		Account account = accounts[0];
 		// Check whether the model has changed
 		assertEquals("Bill",account.getFirstName());
 	}
