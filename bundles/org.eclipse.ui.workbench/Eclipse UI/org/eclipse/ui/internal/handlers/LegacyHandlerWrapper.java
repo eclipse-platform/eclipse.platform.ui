@@ -23,7 +23,8 @@ import org.eclipse.ui.internal.misc.Policy;
  * 
  * @since 3.1
  */
-public final class LegacyHandlerWrapper implements IHandler {
+public final class LegacyHandlerWrapper implements IHandler,
+		ILegacyHandlerWrapper {
 
 	/**
 	 * This flag can be set to <code>true</code> if commands should print
@@ -103,30 +104,27 @@ public final class LegacyHandlerWrapper implements IHandler {
 				System.out.println('\'');
 			}
 		}
-		
+
 		try {
 			return handler.execute(event.getParameters());
 		} catch (final org.eclipse.ui.commands.ExecutionException e) {
 			throw new ExecutionException(e.getMessage(), e.getCause());
 		}
 	}
-	
-	/**
-	 * TODO Remove this method
-	 */
-	public final org.eclipse.ui.commands.IHandler getWrappedHandler() {
-		return handler;
+
+	public final String getClassName() {
+		if (handler instanceof ILegacyHandlerWrapper) {
+			final ILegacyHandlerWrapper wrapper = (ILegacyHandlerWrapper) handler;
+			return wrapper.getClassName();
+		}
+
+		return handler.getClass().getName();
 	}
 
 	public final int hashCode() {
 		return this.handler.hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.IHandler#isEnabled()
-	 */
 	public final boolean isEnabled() {
 		final Object enabled = handler.getAttributeValuesByName().get(
 				ILegacyAttributeNames.ENABLED);
@@ -137,11 +135,6 @@ public final class LegacyHandlerWrapper implements IHandler {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.IHandler#isHandled()
-	 */
 	public final boolean isHandled() {
 		final Object handled = handler.getAttributeValuesByName().get(
 				ILegacyAttributeNames.HANDLED);
@@ -152,21 +145,16 @@ public final class LegacyHandlerWrapper implements IHandler {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.IHandler#removeHandlerListener(org.eclipse.core.commands.IHandlerListener)
-	 */
 	public final void removeHandlerListener(
 			final IHandlerListener handlerListener) {
 		handler.removeHandlerListener(new LegacyHandlerListenerWrapper(this,
 				handlerListener));
 	}
-	
+
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 
-		buffer.append("LegacyHandlerWrapper(handler="); //$NON-NLS-1$
+		buffer.append("LegacyHandlerWrapper("); //$NON-NLS-1$
 		buffer.append(handler);
 		buffer.append(')');
 

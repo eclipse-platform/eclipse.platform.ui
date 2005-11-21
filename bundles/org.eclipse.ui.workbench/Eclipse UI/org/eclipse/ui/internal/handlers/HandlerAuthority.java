@@ -21,7 +21,9 @@ import java.util.Set;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
@@ -29,6 +31,8 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
+import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -254,7 +258,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the currently active shell.
 	 * 
@@ -268,6 +272,59 @@ final class HandlerAuthority extends ExpressionAuthority {
 		final IEvaluationContext context = new EvaluationContext(null, this);
 		fillInCurrentState(context);
 		return context;
+	}
+
+	/**
+	 * Checks to see if there is a handler with the same expression controlling
+	 * activation as an existing command. This is used to avoid submitting a
+	 * handler for a command that already has a handler.
+	 * 
+	 * @param commandId
+	 *            The identifier of the command to check for potential
+	 *            conflicts; must not be <code>null</code>.
+	 * @param activeWhenExpression
+	 *            The expression for controlling activation for the handler that
+	 *            might be submitted; may be <code>null</code>.
+	 * @return <code>true</code> if there could be a conflict;
+	 *         <code>false</code> otherwise.
+	 */
+	final boolean isConflict(final String commandId,
+			final Expression activeWhenExpression) {
+		final int sourcePriorityToCheck = SourcePriorityNameMapping
+				.computeSourcePriority(activeWhenExpression);
+		final Object object = handlerActivationsByCommandId.get(commandId);
+		if (object instanceof Collection) {
+			final Collection handlerActivations = (Collection) object;
+			final Iterator handlerActivationItr = handlerActivations.iterator();
+			while (handlerActivationItr.hasNext()) {
+				final IHandlerActivation handlerActivation = (IHandlerActivation) handlerActivationItr
+						.next();
+				final Expression expression = handlerActivation.getExpression();
+				final int currentSourcePriority = SourcePriorityNameMapping
+						.computeSourcePriority(expression);
+				if (Util.equals(expression, activeWhenExpression)) {
+					return true;
+				}
+				if (sourcePriorityToCheck == currentSourcePriority) {
+					return true;
+				}
+			}
+
+		} else if (object instanceof IHandlerActivation) {
+			final IHandlerActivation handlerActivation = (IHandlerActivation) object;
+			final Expression expression = handlerActivation.getExpression();
+			final int currentSourcePriority = SourcePriorityNameMapping
+					.computeSourcePriority(expression);
+			if (Util.equals(expression, activeWhenExpression)) {
+				return true;
+			}
+			if (sourcePriorityToCheck == currentSourcePriority) {
+				return true;
+			}
+
+		}
+
+		return false;
 	}
 
 	/**
@@ -317,8 +374,29 @@ final class HandlerAuthority extends ExpressionAuthority {
 				conflict = false;
 
 			} else if (currentActivation.getSourcePriority() == bestSourcePriority) {
-				if (currentActivation.getHandler() != bestActivation
-						.getHandler()) {
+				final IHandler currentHandler = currentActivation.getHandler();
+				final IHandler bestHandler = bestActivation.getHandler();
+				final String currentClassName;
+				if (currentHandler instanceof ILegacyHandlerWrapper) {
+					final ILegacyHandlerWrapper wrapper = (ILegacyHandlerWrapper) currentHandler;
+					currentClassName = wrapper.getClassName();
+				} else if (currentHandler != null) {
+					currentClassName = currentHandler.getClass().getName();
+				} else {
+					currentClassName = null;
+				}
+				final String bestClassName;
+				if (bestHandler instanceof ILegacyHandlerWrapper) {
+					final ILegacyHandlerWrapper wrapper = (ILegacyHandlerWrapper) bestHandler;
+					bestClassName = wrapper.getClassName();
+				} else if (bestHandler != null) {
+					bestClassName = bestHandler.getClass().getName();
+				} else {
+					bestClassName = null;
+				}
+
+				if ((currentHandler != bestHandler)
+						&& (!Util.equals(currentClassName, bestClassName))) {
 					conflict = true;
 				}
 
@@ -460,19 +538,19 @@ final class HandlerAuthority extends ExpressionAuthority {
 			command.setHandler(activation.getHandler());
 		}
 	}
-    
-    /**
-     * <p>
-     * Bug 95792. A mechanism by which the key binding architecture can force an
-     * update of the handlers (based on the active shell) before trying to
-     * execute a command. This mechanism is required for GTK+ only.
-     * </p>
-     * <p>
-     * DO NOT CALL THIS METHOD.
-     * </p>
-     */
-    final void updateShellKludge() {
-        updateCurrentState();
-        sourceChanged(ISources.ACTIVE_SHELL);
-    }
+
+	/**
+	 * <p>
+	 * Bug 95792. A mechanism by which the key binding architecture can force an
+	 * update of the handlers (based on the active shell) before trying to
+	 * execute a command. This mechanism is required for GTK+ only.
+	 * </p>
+	 * <p>
+	 * DO NOT CALL THIS METHOD.
+	 * </p>
+	 */
+	final void updateShellKludge() {
+		updateCurrentState();
+		sourceChanged(ISources.ACTIVE_SHELL);
+	}
 }

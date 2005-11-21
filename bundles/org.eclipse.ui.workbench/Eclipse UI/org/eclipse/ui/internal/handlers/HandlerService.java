@@ -110,6 +110,11 @@ public final class HandlerService implements IHandlerService {
 		return handlerAuthority.getCurrentState();
 	}
 
+	public final boolean isConflict(final String commandId,
+			final Expression expression) {
+		return handlerAuthority.isConflict(commandId, expression);
+	}
+
 	public final void readRegistry() {
 		handlerPersistence.read();
 	}

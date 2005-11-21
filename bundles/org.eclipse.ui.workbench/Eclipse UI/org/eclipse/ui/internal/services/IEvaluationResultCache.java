@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.services;
 
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISources;
 
@@ -36,6 +37,15 @@ public interface IEvaluationResultCache {
 	 * state on a <code>IEvaluationResultCache</code> instance.
 	 */
 	public void clearResult();
+
+	/**
+	 * Returns the expression controlling the activation or visibility of this
+	 * item.
+	 * 
+	 * @return The expression associated with this item; may be
+	 *         <code>null</code>.
+	 */
+	public Expression getExpression();
 
 	/**
 	 * Returns the priority that has been given to this expression.

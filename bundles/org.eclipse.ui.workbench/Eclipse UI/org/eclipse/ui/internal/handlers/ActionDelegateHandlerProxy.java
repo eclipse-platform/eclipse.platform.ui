@@ -14,8 +14,11 @@ package org.eclipse.ui.internal.handlers;
 import org.eclipse.core.commands.AbstractHandlerWithState;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -28,9 +31,14 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IActionDelegate2;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
+ * <p>
+ * This proxies an {@link IActionDelegate} so that it can impersonate an
+ * {@link IHandler}.
+ * </p>
  * <p>
  * Clients may instantiate this class, but must not extend.
  * </p>
@@ -43,7 +51,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.2
  */
-public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState {
+public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState
+		implements ILegacyHandlerWrapper {
 
 	/**
 	 * A fake action that proxies all of the command-based services. This value
@@ -72,6 +81,21 @@ public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState {
 	private IConfigurationElement element;
 
 	/**
+	 * The <code>enabledWhen</code> expression for the handler. Only if this
+	 * expression evaluates to <code>true</code> (or the value is
+	 * <code>null</code>) should we consult the handler.
+	 */
+	private final Expression enabledWhenExpression;
+
+	/**
+	 * The handler service to use when evaluating
+	 * <code>enabledWhenExpression</code>. This value may be
+	 * <code>null</code> only if the <code>enabledWhenExpression</code> is
+	 * <code>null</code>.
+	 */
+	private final IHandlerService handlerService;
+
+	/**
 	 * Constructs a new instance of <code>ActionDelegateHandlerProxy</code>
 	 * with all the information it needs to try to avoid loading until it is
 	 * needed.
@@ -91,6 +115,11 @@ public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState {
 	 * @param commandManager
 	 *            The manager providing commands for this action delegate; must
 	 *            not be <code>null</code>.
+	 * @param handlerService
+	 *            The handler service from which to get the current context when
+	 *            trying to evaluate the <code>enabledWhenExpression</code>.
+	 *            This value may be <code>null</code> only if the
+	 *            <code>enabledWhenExpression</code> is <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager providing accelerators for this action
 	 *            delegate; must not be <code>null</code>.
@@ -100,13 +129,22 @@ public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState {
 	 * @param style
 	 *            The image style with which the icons are associated; may be
 	 *            <code>null</code>.
+	 * @param enabledWhenExpression
+	 *            The name of the element containing the enabledWhen expression.
+	 *            This should be a child of the
+	 *            <code>configurationElement</code>. If this value is
+	 *            <code>null</code>, then there is no enablement expression
+	 *            (i.e., enablement will be delegated to the handler when
+	 *            possible).
 	 */
 	public ActionDelegateHandlerProxy(final IConfigurationElement element,
 			final String delegateAttributeName, final String actionId,
 			final ParameterizedCommand command,
 			final CommandManager commandManager,
+			final IHandlerService handlerService,
 			final BindingManager bindingManager,
-			final CommandImageManager commandImageManager, final String style) {
+			final CommandImageManager commandImageManager, final String style,
+			final Expression enabledWhenExpression) {
 		if (element == null) {
 			throw new NullPointerException(
 					"The configuration element backing a handler proxy cannot be null"); //$NON-NLS-1$
@@ -118,7 +156,9 @@ public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState {
 		}
 
 		this.element = element;
+		this.enabledWhenExpression = enabledWhenExpression;
 		this.delegateAttributeName = delegateAttributeName;
+		this.handlerService = handlerService;
 		this.action = new CommandLegacyActionWrapper(actionId, command,
 				commandManager, bindingManager, commandImageManager, style);
 		this.action.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -145,9 +185,50 @@ public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState {
 		return null;
 	}
 
+	public final String getClassName() {
+		if (delegate instanceof ILegacyHandlerWrapper) {
+			final ILegacyHandlerWrapper wrapper = (ILegacyHandlerWrapper) delegate;
+			return wrapper.getClassName();
+		}
+		
+		if (delegate == null) {
+			return element.getAttribute(delegateAttributeName);
+		}
+		
+		return delegate.getClass().getName();
+	}
+
 	public final void handleStateChange(final IState state,
 			final Object oldValue) {
 		// TODO What should we do here?
+	}
+
+	public final boolean isEnabled() {
+		if (enabledWhenExpression != null) {
+			try {
+				final EvaluationResult result = enabledWhenExpression
+						.evaluate(handlerService.getCurrentState());
+				if (result == EvaluationResult.TRUE) {
+					return action.isEnabled();
+				}
+			} catch (final CoreException e) {
+				// We will just fall through an let it return false.
+				final String message = "An exception occurred while evaluating the enabledWhen expression for " //$NON-NLS-1$
+						+ element.getAttribute(delegateAttributeName)
+						+ "' could not be loaded"; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, e.getMessage(), e);
+				WorkbenchPlugin.log(message, status);
+			}
+
+			return false;
+		}
+
+		/*
+		 * There is no enabled when expression, so we just need to consult the
+		 * action.
+		 */
+		return action.isEnabled();
 	}
 
 	/**
@@ -187,4 +268,17 @@ public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState {
 		return true;
 	}
 
+	public final String toString() {
+		final StringBuffer buffer = new StringBuffer();
+		buffer.append("ActionDelegateHandlerProxy("); //$NON-NLS-1$
+		if (element == null) {
+			buffer.append(delegate);
+		} else {
+			final String className = element
+					.getAttribute(delegateAttributeName);
+			buffer.append(className);
+		}
+		buffer.append(')');
+		return buffer.toString();
+	}
 }

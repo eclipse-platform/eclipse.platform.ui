@@ -64,7 +64,8 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 	 *            The configuration element from which the real class can be
 	 *            loaded at run-time.
 	 */
-	public LegacyHandlerProxy(final IConfigurationElement newConfigurationElement) {
+	public LegacyHandlerProxy(
+			final IConfigurationElement newConfigurationElement) {
 		configurationElement = newConfigurationElement;
 		handler = null;
 	}
@@ -129,5 +130,21 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 		}
 
 		return true;
+	}
+
+	public final String toString() {
+		final StringBuffer buffer = new StringBuffer();
+
+		buffer.append("LegacyProxy("); //$NON-NLS-1$
+		if (handler == null) {
+			final String className = configurationElement
+					.getAttribute(HANDLER_ATTRIBUTE_NAME);
+			buffer.append(className);
+		} else {
+			buffer.append(handler);
+		}
+		buffer.append(')');
+
+		return buffer.toString();
 	}
 }

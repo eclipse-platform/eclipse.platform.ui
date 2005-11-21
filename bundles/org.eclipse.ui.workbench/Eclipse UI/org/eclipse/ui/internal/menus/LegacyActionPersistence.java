@@ -333,6 +333,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param style
 	 *            The style of images to use for this action; may be
 	 *            <code>null</code>.
+	 * @param activeWhenExpression
+	 *            The expression controlling when the handler is active; may be
+	 *            <code>null</code>.
 	 */
 	private static final void convertActionToHandler(
 			final IConfigurationElement element, final String actionId,
@@ -340,15 +343,13 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final CommandManager commandManager,
 			final IHandlerService handlerService,
 			final BindingManager bindingManager,
-			final CommandImageManager commandImageManager, final String style) {
+			final CommandImageManager commandImageManager, final String style,
+			final Expression activeWhenExpression) {
 		// Read the class attribute.
 		final String classString = readOptional(element, ATTRIBUTE_CLASS);
 		if (classString == null) {
 			return;
 		}
-		final IHandler handler = new ActionDelegateHandlerProxy(element,
-				ATTRIBUTE_CLASS, actionId, command, commandManager,
-				bindingManager, commandImageManager, style);
 
 		// Read the enablesFor attribute, and enablement and selection elements.
 		SelectionEnabler enabler = null;
@@ -360,16 +361,24 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			if (kids.length > 0)
 				enabler = new SelectionEnabler(element);
 		}
+		final Expression enabledWhenExpression;
+		if (enabler == null) {
+			enabledWhenExpression = null;
+		} else {
+			enabledWhenExpression = new LegacySelectionEnablerWrapper(enabler);
+		}
+
+		// Create the handler.
+		final IHandler handler = new ActionDelegateHandlerProxy(element,
+				ATTRIBUTE_CLASS, actionId, command, commandManager,
+				handlerService, bindingManager, commandImageManager, style,
+				enabledWhenExpression);
 
 		// Activate the handler.
-		if (enabler == null) {
+		final String commandId = command.getId();
+		if (!handlerService.isConflict(commandId, activeWhenExpression)) {
 			handlerActivations.add(handlerService.activateHandler(command
-					.getId(), handler));
-		} else {
-			final Expression enabledWhenExpression = new LegacySelectionEnablerWrapper(
-					enabler);
-			handlerActivations.add(handlerService.activateHandler(command
-					.getId(), handler, enabledWhenExpression));
+					.getId(), handler, activeWhenExpression));
 		}
 	}
 
@@ -646,7 +655,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 					commandImageManager);
 			convertActionToHandler(element, id, command, commandManager,
 					handlerService, bindingManager, commandImageManager,
-					imageStyle);
+					imageStyle, visibleWhenExpression);
 			convertActionToItem(element, warningsToLog, command, imageStyle,
 					menuService, locationInfo, visibleWhenExpression);
 

@@ -67,10 +67,6 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 		evaluationResult = null;
 	}
 
-	public final int getSourcePriority() {
-		return sourcePriority;
-	}
-
 	public final boolean evaluate(final IEvaluationContext context) {
 		if (expression == null) {
 			return true;
@@ -88,5 +84,13 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 		}
 
 		return evaluationResult == EvaluationResult.TRUE;
+	}
+
+	public final Expression getExpression() {
+		return expression;
+	}
+
+	public final int getSourcePriority() {
+		return sourcePriority;
 	}
 }
