@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.jface.databinding.BeanUpdatableFactory;
 import org.eclipse.jface.databinding.DataBinding;
@@ -165,21 +167,34 @@ public class SampleData {
 		CART = FACTORY.createCart();
 		
 		CATEGORY_TREE = new ITree() {
-			Category[] categories = new Category[] { WINTER_CATEGORY, SUMMER_CATEGORY };
+			Catalog catalog = CATALOG_2005;						
 			public boolean hasChildren(Object element) {
-				if (element instanceof Category) {
+				if (element instanceof Catalog) {					
+					return true;  
+				}
+				else if (element instanceof Category) {
 					Adventure[] list = ((Category)element).getAdventures();
 					return list==null?true:list.length>0;
+				}
+				else if (element instanceof Lodging) {
+					
 				}
 				return false;				
 			}
 			public Object getParent(Object element) {
 				if (element instanceof Adventure) {
+					Category[] categories = catalog.getCategories();
 					for (int i = 0; i < categories.length; i++) {						
 						if (Arrays.asList(categories[i].getAdventures()).contains(element))
 							return categories[i];						
 					}
 				}
+				else if (element instanceof Lodging)
+					return catalog;
+				else if (element instanceof Account)
+					return catalog;
+				else if (element instanceof Category)
+					return catalog;
 				return null;					
 			}
 			public void setChildren(Object parentElement, Object[] children) {
@@ -187,9 +202,16 @@ public class SampleData {
 			}
 			public Object[] getChildren(Object parentElement) {
 				if (parentElement==null)
-					return categories;
+					return new Object[] { catalog };
+				else if (parentElement instanceof Catalog) {
+					List list = new ArrayList();					
+					list.addAll(Arrays.asList(((Catalog)parentElement).getCategories()));
+					list.addAll(Arrays.asList(((Catalog)parentElement).getLodgings()));
+					list.addAll(Arrays.asList(((Catalog)parentElement).getAccounts()));
+					return list.toArray();
+				}
 				else if (parentElement instanceof Category)
-				   return ((Category)parentElement).getAdventures();
+				   return ((Category)parentElement).getAdventures();				
 				return null;
 			}			
 		};
