@@ -249,7 +249,12 @@ public class InputDialog extends Dialog {
      */
     public void setErrorMessage(String errorMessage) {
         errorMessageText.setText(errorMessage == null ? "" : errorMessage); //$NON-NLS-1$
-        okButton.setEnabled(errorMessage == null);
         errorMessageText.getParent().update();
+        // Access the ok button by id, in case clients have overridden button creation.
+        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
+        Control button = getButton(IDialogConstants.OK_ID);
+        if (button != null)
+        	button.setEnabled(errorMessage == null);
+
     }
 }
