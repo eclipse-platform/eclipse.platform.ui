@@ -48,7 +48,7 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
  * 
  * @since 3.2
  */
-public class CompositeUndoChange extends Change {
+public class MultiStateUndoChange extends Change {
 
 	private ContentStamp fContentStampToRestore;
 
@@ -65,7 +65,7 @@ public class CompositeUndoChange extends Change {
 	private BufferValidationState fValidationState;
 
 	/**
-	 * Create a new composite undo change object.
+	 * Create a new multi state undo change object.
 	 * 
 	 * @param name
 	 *            the human readable name of the change
@@ -82,7 +82,7 @@ public class CompositeUndoChange extends Change {
 	 * @see TextFileChange#FORCE_SAVE
 	 * @see TextFileChange#LEAVE_DIRTY
 	 */
-	public CompositeUndoChange(String name, IFile file, UndoEdit[] undos, ContentStamp stamp, int saveMode) {
+	public MultiStateUndoChange(String name, IFile file, UndoEdit[] undos, ContentStamp stamp, int saveMode) {
 		Assert.isNotNull(name);
 		Assert.isNotNull(file);
 		Assert.isNotNull(undos);
@@ -112,7 +112,7 @@ public class CompositeUndoChange extends Change {
 	 *             if an undo change can't be created
 	 */
 	protected Change createUndoChange(UndoEdit[] edits, ContentStamp stampToRestore) throws CoreException {
-		return new CompositeUndoChange(getName(), fFile, edits, stampToRestore, fSaveMode);
+		return new MultiStateUndoChange(getName(), fFile, edits, stampToRestore, fSaveMode);
 	}
 
 	/**

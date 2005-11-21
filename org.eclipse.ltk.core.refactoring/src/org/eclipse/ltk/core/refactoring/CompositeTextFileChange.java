@@ -60,7 +60,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
-import org.eclipse.ltk.internal.core.refactoring.CompositeUndoChange;
+import org.eclipse.ltk.internal.core.refactoring.MultiStateUndoChange;
 import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
 import org.eclipse.ltk.internal.core.refactoring.NonDeletingPositionUpdater;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -859,7 +859,7 @@ public class CompositeTextFileChange extends TextEditBasedChange {
 			if (needsSaving())
 				fBuffer.commit(new SubProgressMonitor(monitor, 1), false);
 
-			return new CompositeUndoChange(getName(), fFile, (UndoEdit[]) undoList.toArray(new UndoEdit[undoList.size()]), fContentStamp, fSaveMode);
+			return new MultiStateUndoChange(getName(), fFile, (UndoEdit[]) undoList.toArray(new UndoEdit[undoList.size()]), fContentStamp, fSaveMode);
 
 		} catch (BadLocationException exception) {
 			throw Changes.asCoreException(exception);
