@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.converter;
+
 
 /**
  * Abstract base class that can be used as a convenience for implementing custom

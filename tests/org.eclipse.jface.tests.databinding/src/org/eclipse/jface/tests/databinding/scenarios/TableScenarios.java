@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.databinding.TableViewerDescription;
+import org.eclipse.jface.databinding.PropertyDesc;
+import org.eclipse.jface.databinding.viewers.TableViewerDescription;
 import org.eclipse.jface.tests.databinding.scenarios.model.Account;
 import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
 import org.eclipse.jface.tests.databinding.scenarios.model.PhoneConverter;
@@ -84,7 +84,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn(1, "lastName");
 		tableViewerDescription.addColumn(2, "state");
 		getDbc().bind(tableViewerDescription,
-				new PropertyDescription(catalog, "accounts"), null);
+				new PropertyDesc(catalog, "accounts"), null);
 
 		// Verify the data in the table columns matches the accounts
 		for (int i = 0; i < accounts.length; i++) {
@@ -115,7 +115,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("state", null,
 				new StateConverter());
 		getDbc().bind(tableViewerDescription,
-				new PropertyDescription(catalog, "accounts"), null);
+				new PropertyDesc(catalog, "accounts"), null);
 
 		Account account = accounts[0];
 		// Select the first item in the table
@@ -139,7 +139,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("lastName");
 		tableViewerDescription.addColumn("state");
 		getDbc().bind(tableViewerDescription,
-				new PropertyDescription(catalog, "accounts"), null);
+				new PropertyDesc(catalog, "accounts"), null);
 		
 		// Verify the number of accounts matches the number of items in the table
 		assertEquals(tableViewer.getTable().getItemCount(),accounts.length);
@@ -174,7 +174,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("state", null,
 				new StateConverter());
 		getDbc().bind(tableViewerDescription,
-				new PropertyDescription(catalog, "accounts"), null);
+				new PropertyDesc(catalog, "accounts"), null);
 
 		// Verify that the data in the the table columns matches the expected
 		// What we are looking for is that the phone numbers are converterted to
@@ -208,7 +208,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("state", null,
 				new StateConverter());
 		getDbc().bind(tableViewerDescription,
-				new PropertyDescription(catalog, "accounts"), null);
+				new PropertyDesc(catalog, "accounts"), null);
 		
 		Account account = catalog.getAccounts()[0];
 		String lastName = tableViewer.getTable().getItem(0).getText(0);

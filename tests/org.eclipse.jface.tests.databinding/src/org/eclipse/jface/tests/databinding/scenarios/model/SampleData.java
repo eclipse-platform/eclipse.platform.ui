@@ -19,8 +19,8 @@ import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.ITree;
 import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.SWTUpdatableFactory;
-import org.eclipse.jface.databinding.ViewersUpdatableFactory;
+import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
+import org.eclipse.jface.databinding.viewers.ViewersUpdatableFactory;
 import org.eclipse.swt.widgets.Control;
 
 public class SampleData {

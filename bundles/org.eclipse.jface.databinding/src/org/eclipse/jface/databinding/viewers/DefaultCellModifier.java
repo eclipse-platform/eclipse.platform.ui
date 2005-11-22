@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.viewers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
-import org.eclipse.jface.databinding.TableViewerDescription.Column;
+import org.eclipse.jface.databinding.viewers.TableViewerDescription.Column;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.swt.widgets.Item;
 

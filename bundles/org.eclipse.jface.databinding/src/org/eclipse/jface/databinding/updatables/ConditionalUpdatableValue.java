@@ -8,7 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.updatables;
+
+import org.eclipse.jface.databinding.ChangeEvent;
+import org.eclipse.jface.databinding.IChangeListener;
+import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.UpdatableValue;
 
 /**
  * An abstract class for implementing updatable values of type boolean that

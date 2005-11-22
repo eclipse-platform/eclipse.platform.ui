@@ -14,13 +14,13 @@ import junit.framework.TestCase;
 
 import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.DataBinding;
-import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.IValidator;
-import org.eclipse.jface.databinding.IdentityConverter;
-import org.eclipse.jface.databinding.SettableValue;
+import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.converters.IdentityConverter;
+import org.eclipse.jface.databinding.updatables.SettableValue;
+import org.eclipse.jface.databinding.validator.IValidator;
 import org.eclipse.jface.tests.databinding.util.Mocks;
 
 public class DatabindingContextTest extends TestCase {

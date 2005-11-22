@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios.model;
 
-import org.eclipse.jface.databinding.IConverter;
+import org.eclipse.jface.databinding.converter.IConverter;
 
 public class PriceDollarsConverter implements IConverter {
 

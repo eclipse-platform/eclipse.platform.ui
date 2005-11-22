@@ -21,17 +21,17 @@ import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.IBindSpec;
 import org.eclipse.jface.databinding.IBindSupportFactory;
 import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.IValidator;
-import org.eclipse.jface.databinding.IdentityConverter;
-import org.eclipse.jface.databinding.PropertyDescription;
-import org.eclipse.jface.databinding.SettableValue;
+import org.eclipse.jface.databinding.PropertyDesc;
+import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.converters.IdentityConverter;
+import org.eclipse.jface.databinding.updatables.SettableValue;
+import org.eclipse.jface.databinding.validator.IValidator;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -239,6 +239,8 @@ public class DataBindingContext implements IDataBindingContext {
 				new IdentityConverter(boolean.class, Boolean.class));
 		converters.put(new Pair(Boolean.class, boolean.class),
 				new IdentityConverter(Boolean.class, boolean.class));
+		
+		// Add the default bind support factory
 		addBindSupportFactory(new IBindSupportFactory() {
 
 			public IValidator createValidator(Class fromType, Class toType,
@@ -268,6 +270,7 @@ public class DataBindingContext implements IDataBindingContext {
 				if (result != null) {
 					return result;
 				}
+				// FIXME: djo -- This doesn't always work in the case of object types
 				if (toType.isAssignableFrom(fromType)
 						|| fromType.isAssignableFrom(toType)) {
 					return new IdentityConverter(fromType, toType);
@@ -281,8 +284,8 @@ public class DataBindingContext implements IDataBindingContext {
 		addUpdatableFactory(new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
 					Object description, IDataBindingContext bindingContext) {
-				if (description instanceof PropertyDescription) {
-					PropertyDescription propertyDescription = (PropertyDescription) description;
+				if (description instanceof PropertyDesc) {
+					PropertyDesc propertyDescription = (PropertyDesc) description;
 					Object o = propertyDescription.getObject();
 					if (o instanceof IUpdatableValue) {
 						IUpdatableValue updatableValue = (IUpdatableValue) o;

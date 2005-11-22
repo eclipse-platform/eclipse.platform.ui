@@ -27,7 +27,7 @@ package org.eclipse.jface.databinding;
  * @since 3.2
  * 
  */
-public class PropertyDescription {
+public class PropertyDesc {
 
 	private final Object object;
 
@@ -44,7 +44,7 @@ public class PropertyDescription {
 	 * @param object
 	 * @param propertyID
 	 */
-	public PropertyDescription(Object object, Object propertyID) {
+	public PropertyDesc(Object object, Object propertyID) {
 		this(object, propertyID, null, null);
 	}
 
@@ -64,7 +64,7 @@ public class PropertyDescription {
 	 *            property, <code>Boolean.FALSE</code> if it is a simple
 	 *            property, or <code>null</code> if unknown
 	 */
-	public PropertyDescription(Object object, Object propertyID,
+	public PropertyDesc(Object object, Object propertyID,
 			Class propertyType, Boolean isCollectionProperty) {
 		this.object = object;
 		this.propertyID = propertyID;

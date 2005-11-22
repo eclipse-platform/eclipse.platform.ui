@@ -7,6 +7,13 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.jface.databinding,
+ org.eclipse.jface.databinding.converter,
+ org.eclipse.jface.databinding.converters,
+ org.eclipse.jface.databinding.swt,
+ org.eclipse.jface.databinding.updatables,
+ org.eclipse.jface.databinding.validator,
+ org.eclipse.jface.databinding.validators,
+ org.eclipse.jface.databinding.viewers,
  org.eclipse.jface.databinding.internal;x-internal:=true,
  org.eclipse.jface.databinding.internal.beans;x-internal:=true,
  org.eclipse.jface.databinding.internal.swt;x-internal:=true,

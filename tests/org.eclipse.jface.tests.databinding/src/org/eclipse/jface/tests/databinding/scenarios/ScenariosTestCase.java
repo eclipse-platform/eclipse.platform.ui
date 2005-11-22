@@ -15,7 +15,7 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.SWTUpdatableFactory;
+import org.eclipse.jface.databinding.swt.SWTUpdatableFactory;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
+import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.validator.IValidator;
+
 /**
  * A factory for creating validators and converters.
  * <p>

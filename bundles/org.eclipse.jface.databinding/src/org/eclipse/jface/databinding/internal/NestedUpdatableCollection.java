@@ -15,7 +15,7 @@ import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.PropertyDescription;
+import org.eclipse.jface.databinding.PropertyDesc;
 import org.eclipse.jface.databinding.Updatable;
 import org.eclipse.jface.util.Assert;
 
@@ -79,7 +79,7 @@ public class NestedUpdatableCollection extends Updatable implements
 			innerUpdatableCollection = null;
 		} else {
 			this.innerUpdatableCollection = (IUpdatableCollection) databindingContext
-					.createUpdatable(new PropertyDescription(
+					.createUpdatable(new PropertyDesc(
 							currentOuterValue, feature, elementType, Boolean.TRUE));
 			Class innerElementType = innerUpdatableCollection
 					.getElementType();

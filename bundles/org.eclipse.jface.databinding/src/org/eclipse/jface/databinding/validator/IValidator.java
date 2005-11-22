@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.validator;
 
 /**
  * A validator.

@@ -12,9 +12,9 @@ package org.eclipse.jface.databinding.internal.swt;
 
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IUpdatableCollection;
-import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.Updatable;
-import org.eclipse.jface.databinding.ViewersProperties;
+import org.eclipse.jface.databinding.swt.SWTProperties;
+import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Combo;

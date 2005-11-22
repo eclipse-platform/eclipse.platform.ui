@@ -13,9 +13,9 @@ package org.eclipse.jface.databinding.internal;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IBindSpec;
-import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.IValidator;
+import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.validator.IValidator;
 
 /**
  * @since 3.2

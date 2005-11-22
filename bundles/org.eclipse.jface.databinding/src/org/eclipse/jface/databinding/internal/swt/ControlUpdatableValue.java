@@ -11,8 +11,8 @@
 package org.eclipse.jface.databinding.internal.swt;
 
 import org.eclipse.jface.databinding.ChangeEvent;
-import org.eclipse.jface.databinding.SWTProperties;
 import org.eclipse.jface.databinding.UpdatableValue;
+import org.eclipse.jface.databinding.swt.SWTProperties;
 import org.eclipse.swt.widgets.Control;
 
 /**

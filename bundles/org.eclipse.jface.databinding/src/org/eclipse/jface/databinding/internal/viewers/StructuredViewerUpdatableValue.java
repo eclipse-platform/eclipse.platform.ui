@@ -12,7 +12,7 @@ package org.eclipse.jface.databinding.internal.viewers;
 
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.UpdatableValue;
-import org.eclipse.jface.databinding.ViewersProperties;
+import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;

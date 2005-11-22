@@ -8,11 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.viewers;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.validator.IValidator;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableViewer;

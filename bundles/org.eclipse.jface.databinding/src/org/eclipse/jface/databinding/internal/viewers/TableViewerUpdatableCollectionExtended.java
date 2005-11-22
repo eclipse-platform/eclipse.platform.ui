@@ -19,12 +19,12 @@ import java.util.StringTokenizer;
 
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
-import org.eclipse.jface.databinding.IConverter;
 import org.eclipse.jface.databinding.IDataBindingContext;
-import org.eclipse.jface.databinding.IValidator;
-import org.eclipse.jface.databinding.IdentityConverter;
-import org.eclipse.jface.databinding.TableViewerDescription;
-import org.eclipse.jface.databinding.TableViewerDescription.Column;
+import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.converters.IdentityConverter;
+import org.eclipse.jface.databinding.validator.IValidator;
+import org.eclipse.jface.databinding.viewers.TableViewerDescription;
+import org.eclipse.jface.databinding.viewers.TableViewerDescription.Column;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ILabelProviderListener;

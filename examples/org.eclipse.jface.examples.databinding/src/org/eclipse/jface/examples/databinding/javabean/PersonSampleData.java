@@ -16,7 +16,7 @@ import org.eclipse.jface.databinding.DataBinding;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.PropertyDescription;
+import org.eclipse.jface.databinding.PropertyDesc;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -37,8 +37,8 @@ public class PersonSampleData {
 		IUpdatableFactory emfValueFactory = new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
 					Object description, IDataBindingContext bindingContext) {
-				if (description instanceof PropertyDescription) {
-					PropertyDescription propertyDescription = (PropertyDescription) description;
+				if (description instanceof PropertyDesc) {
+					PropertyDesc propertyDescription = (PropertyDesc) description;
 					Object object = propertyDescription.getObject();
 					if (object instanceof Person) {
 						return new JavaBeanUpdatableValue(object,

@@ -8,10 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.swt;
 
 import java.util.Map;
 
+import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IUpdatable;
+import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.PropertyDesc;
 import org.eclipse.jface.databinding.internal.swt.ButtonUpdatableValue;
 import org.eclipse.jface.databinding.internal.swt.CComboUpdatableCollection;
 import org.eclipse.jface.databinding.internal.swt.CComboUpdatableValue;
@@ -28,6 +32,8 @@ import org.eclipse.jface.databinding.internal.viewers.StructuredViewerUpdatableV
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollection;
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollectionExtended;
 import org.eclipse.jface.databinding.internal.viewers.UpdatableCollectionViewer;
+import org.eclipse.jface.databinding.viewers.TableViewerDescription;
+import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
@@ -96,10 +102,10 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 	
 	public IUpdatable createUpdatable(Map properties,
 			Object description, IDataBindingContext bindingContext) {
-		if (description instanceof PropertyDescription) {
-			Object object = ((PropertyDescription) description)
+		if (description instanceof PropertyDesc) {
+			Object object = ((PropertyDesc) description)
 					.getObject();
-			Object attribute = ((PropertyDescription) description)
+			Object attribute = ((PropertyDesc) description)
 					.getPropertyID();
 			if (object instanceof Control
 					&& SWTProperties.ENABLED.equals(attribute)) {

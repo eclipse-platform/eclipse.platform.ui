@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
+import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.validator.IValidator;
+
 /**
  * A context for binding updatable objects with a shared lifecycle. The
  * factories registered with a data binding context determine how updatable

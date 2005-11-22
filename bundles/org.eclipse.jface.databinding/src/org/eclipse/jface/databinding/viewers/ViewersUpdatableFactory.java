@@ -8,10 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.viewers;
 
 import java.util.Map;
 
+import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IUpdatable;
+import org.eclipse.jface.databinding.IUpdatableFactory;
+import org.eclipse.jface.databinding.PropertyDesc;
 import org.eclipse.jface.databinding.internal.viewers.StructuredViewerUpdatableValue;
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollection;
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollectionExtended;
@@ -46,9 +50,9 @@ final public class ViewersUpdatableFactory implements IUpdatableFactory {
 
 	public IUpdatable createUpdatable(Map properties, Object description,
 			IDataBindingContext bindingContext) {
-		if (description instanceof PropertyDescription) {
-			Object object = ((PropertyDescription) description).getObject();
-			Object attribute = ((PropertyDescription) description)
+		if (description instanceof PropertyDesc) {
+			Object object = ((PropertyDesc) description).getObject();
+			Object attribute = ((PropertyDesc) description)
 					.getPropertyID();
 			if (object instanceof StructuredViewer
 					&& ViewersProperties.SINGLE_SELECTION.equals(attribute)) {

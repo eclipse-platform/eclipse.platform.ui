@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.viewers;
 
 /**
  * Constants used to describe properties of JFace viewers.

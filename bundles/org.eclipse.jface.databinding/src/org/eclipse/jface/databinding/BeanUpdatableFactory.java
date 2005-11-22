@@ -31,11 +31,11 @@ import org.eclipse.jface.util.Assert;
  * <li>org.eclipse.jface.databinding.PropertyDescription:
  * <ul>
  * <li>Returns an updatable value representing the specified value property of
- * the given object, if {@link PropertyDescription#isCollectionProperty()}
+ * the given object, if {@link PropertyDesc#isCollectionProperty()}
  * returns false</li>
  * <li>Returns an updatable collection representing the specified collection
  * property of the given object, if
- * {@link PropertyDescription#isCollectionProperty()} returns false</li>
+ * {@link PropertyDesc#isCollectionProperty()} returns false</li>
  * </ul>
  * </li>
  * </ul>
@@ -47,8 +47,8 @@ final public class BeanUpdatableFactory implements IUpdatableFactory {
 
 	public IUpdatable createUpdatable(Map properties, Object description,
 			IDataBindingContext bindingContext) {
-		if (description instanceof PropertyDescription) {
-			PropertyDescription propertyDescription = (PropertyDescription) description;
+		if (description instanceof PropertyDesc) {
+			PropertyDesc propertyDescription = (PropertyDesc) description;
 			if (propertyDescription.getObject() != null) {
 				Object object = propertyDescription.getObject();
 				BeanInfo beanInfo;

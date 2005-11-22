@@ -8,7 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.databinding;
+package org.eclipse.jface.databinding.converters;
+
+import org.eclipse.jface.databinding.converter.Converter;
+import org.eclipse.jface.databinding.converter.IConverter;
 
 /**
  * A concrete implementation of {@link IConverter}.
