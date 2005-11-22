@@ -752,13 +752,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * Reads a refactoring history from the input stream.
-	 * 
-	 * @param stream
-	 *            the input stream
-	 * @return a refactoring history
-	 * @throws CoreException
-	 *             if an error occurs
+	 * {@inheritDoc}
 	 */
 	public RefactoringHistory readRefactoringHistory(final InputStream stream) throws CoreException {
 		Assert.isNotNull(stream);
