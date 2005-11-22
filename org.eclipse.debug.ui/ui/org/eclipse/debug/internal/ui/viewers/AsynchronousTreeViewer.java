@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.viewers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +78,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	 * Array of tree paths to be expanded. As paths are expanded, those entries
 	 * are set to <code>null</code>.
 	 */
-	private TreePath[] fPendingExpansion;
+	private List fPendingExpansion = new ArrayList();
 
 	/**
 	 * Creates an asynchronous tree viewer on a newly-created tree control under
@@ -211,7 +212,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	 */
 	public synchronized void expand(ISelection selection) {
 		if (selection instanceof TreeSelection) {
-			fPendingExpansion = ((TreeSelection) selection).getPaths();
+            TreePath[] paths = ((TreeSelection) selection).getPaths();
+            for (int i = 0; i < paths.length; i++) {
+                fPendingExpansion.add(paths[i]);
+            }
 			if (getControl().getDisplay().getThread() == Thread.currentThread()) {
 				attemptExpansion();
 			} else {
@@ -233,12 +237,12 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	 */
 	synchronized void attemptExpansion() {
 		if (fPendingExpansion != null) {
-			for (int i = 0; i < fPendingExpansion.length; i++) {
-				TreePath path = fPendingExpansion[i];
-				if (path != null && attemptExpansion(path)) {
-					fPendingExpansion[i] = null;
-				}
-			}
+            for (Iterator i = fPendingExpansion.iterator(); i.hasNext();) {
+                TreePath path = (TreePath) i.next();
+                if (path != null && attemptExpansion(path)) {
+                    i.remove();
+                }
+            }
 		}
 	}
 
@@ -302,7 +306,8 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object,
 	 *      java.lang.Object)
 	 */
-	protected void inputChanged(Object input, Object oldInput) {
+	synchronized protected void inputChanged(Object input, Object oldInput) {
+        fPendingExpansion.clear();
 		super.inputChanged(input, oldInput);
 		map(input, fTree);
 		refresh();
@@ -897,6 +902,12 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	 * @param treePath
 	 */	
 	public synchronized void remove(TreePath treePath) {
+        for (Iterator i = fPendingExpansion.iterator(); i.hasNext();) {
+            TreePath expansionPath = (TreePath) i.next();
+            if (expansionPath.startsWith(treePath)) {
+                i.remove();
+            }
+        }
 		if (treePath.getSegmentCount() > 1) {
 			// find the paths to the element, if it's present
 			Object element = treePath.getLastSegment();
