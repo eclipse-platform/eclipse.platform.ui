@@ -706,7 +706,7 @@ public final class BindingManager extends HandleObjectManager implements
 				if (contextTree.containsKey(childContextId)) {
 					break;
 				}
-				
+
 				// Retrieve the context.
 				final Context childContext = contextManager
 						.getContext(childContextId);
@@ -825,12 +825,10 @@ public final class BindingManager extends HandleObjectManager implements
 		if (event == null)
 			throw new NullPointerException();
 
-		if (listenerList != null) {
-			final Object[] listeners = listenerList.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final IBindingManagerListener listener = (IBindingManagerListener) listeners[i];
-				listener.bindingManagerChanged(event);
-			}
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final IBindingManagerListener listener = (IBindingManagerListener) listeners[i];
+			listener.bindingManagerChanged(event);
 		}
 	}
 

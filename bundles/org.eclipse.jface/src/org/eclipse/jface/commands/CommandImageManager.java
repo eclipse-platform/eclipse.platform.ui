@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.commands.common.EventDrivenManager;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -36,7 +36,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  * @since 3.2
  */
-public final class CommandImageManager extends EventDrivenManager {
+public final class CommandImageManager extends EventManager {
 
 	/**
 	 * The type of image to display in the default case.
@@ -171,12 +171,10 @@ public final class CommandImageManager extends EventDrivenManager {
 		if (event == null)
 			throw new NullPointerException();
 
-		if (listenerList != null) {
-			final Object[] listeners = listenerList.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final ICommandImageManagerListener listener = (ICommandImageManagerListener) listeners[i];
-				listener.commandImageManagerChanged(event);
-			}
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final ICommandImageManagerListener listener = (ICommandImageManagerListener) listeners[i];
+			listener.commandImageManagerChanged(event);
 		}
 	}
 

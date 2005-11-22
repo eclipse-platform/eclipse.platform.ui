@@ -13,5 +13,5 @@ Export-Package: org.eclipse.core.commands,
  org.eclipse.core.commands.util,
  org.eclipse.core.internal.commands.operations;x-internal:=true,
  org.eclipse.core.internal.commands.util;x-internal:=true
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.equinox.common
 Eclipse-LazyStart: true

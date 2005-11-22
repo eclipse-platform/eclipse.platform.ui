@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.action;
 
-import org.eclipse.core.commands.common.EventDrivenManager;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -33,7 +33,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * 
  * @since 3.2
  */
-abstract class AbstractAction extends EventDrivenManager implements IAction {
+abstract class AbstractAction extends EventManager implements IAction {
 
 	public void addPropertyChangeListener(final IPropertyChangeListener listener) {
 		addListenerObject(listener);
@@ -49,11 +49,9 @@ abstract class AbstractAction extends EventDrivenManager implements IAction {
 	 * @see IPropertyChangeListener#propertyChange
 	 */
 	protected final void firePropertyChange(final PropertyChangeEvent event) {
-		if (listenerList != null) {
-			final Object[] list = listenerList.getListeners();
-			for (int i = 0; i < list.length; ++i) {
-				((IPropertyChangeListener) list[i]).propertyChange(event);
-			}
+		final Object[] list = getListeners();
+		for (int i = 0; i < list.length; ++i) {
+			((IPropertyChangeListener) list[i]).propertyChange(event);
 		}
 	}
 
@@ -75,7 +73,7 @@ abstract class AbstractAction extends EventDrivenManager implements IAction {
 	 */
 	protected final void firePropertyChange(final String propertyName,
 			final Object oldValue, final Object newValue) {
-		if ((listenerList != null) && (!listenerList.isEmpty())) {
+		if (isListenerAttached()) {
 			firePropertyChange(new PropertyChangeEvent(this, propertyName,
 					oldValue, newValue));
 		}

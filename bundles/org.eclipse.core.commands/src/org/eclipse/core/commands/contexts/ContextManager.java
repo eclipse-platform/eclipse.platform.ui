@@ -110,12 +110,10 @@ public final class ContextManager extends HandleObjectManager implements
 		if (event == null)
 			throw new NullPointerException();
 
-		if (listenerList != null) {
-			final Object[] listeners = listenerList.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final IContextManagerListener listener = (IContextManagerListener) listeners[i];
-				listener.contextManagerChanged(event);
-			}
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final IContextManagerListener listener = (IContextManagerListener) listeners[i];
+			listener.contextManagerChanged(event);
 		}
 	}
 

@@ -274,12 +274,10 @@ public final class CommandManager extends HandleObjectManager implements
 		if (event == null)
 			throw new NullPointerException();
 
-		if (listenerList != null) {
-			final Object[] listeners = listenerList.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final ICommandManagerListener listener = (ICommandManagerListener) listeners[i];
-				listener.commandManagerChanged(event);
-			}
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final ICommandManagerListener listener = (ICommandManagerListener) listeners[i];
+			listener.commandManagerChanged(event);
 		}
 	}
 
