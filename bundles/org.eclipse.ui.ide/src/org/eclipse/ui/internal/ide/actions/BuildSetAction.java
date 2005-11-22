@@ -41,7 +41,7 @@ public class BuildSetAction extends Action {
 	 * Creates a new action that builds the provided working set when run
 	 */
 	public BuildSetAction(IWorkingSet set, IWorkbenchWindow window, IActionBarConfigurer actionBars) {
-		super(set == null ? "" : set.getName(), AS_RADIO_BUTTON); //$NON-NLS-1$
+		super(set == null ? "" : set.getLabel(), AS_RADIO_BUTTON); //$NON-NLS-1$
 		this.window = window;
 		this.actionBars = actionBars;
 		this.workingSet = set;

@@ -69,7 +69,7 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
      */
     public void fill(Menu menu, int index) {
         MenuItem mi = new MenuItem(menu, SWT.RADIO, index);
-        mi.setText("&" + id + " " + workingSet.getName()); //$NON-NLS-1$  //$NON-NLS-2$
+        mi.setText("&" + id + " " + workingSet.getLabel()); //$NON-NLS-1$  //$NON-NLS-2$
         mi.setSelection(workingSet.equals(actionGroup.getWorkingSet()));
         mi.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {

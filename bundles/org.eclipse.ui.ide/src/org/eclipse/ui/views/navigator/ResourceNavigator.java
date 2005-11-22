@@ -1272,7 +1272,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 || input.equals(workspace.getRoot())) {
             setContentDescription(""); //$NON-NLS-1$
             if (workingSet != null) {
-                setTitleToolTip(NLS.bind(ResourceNavigatorMessages.ResourceNavigator_workingSetToolTip, workingSet.getName()));
+                setTitleToolTip(NLS.bind(ResourceNavigatorMessages.ResourceNavigator_workingSetToolTip, workingSet.getLabel()));
             } else {
                 setTitleToolTip(""); //$NON-NLS-1$
             }
@@ -1284,7 +1284,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             if(text != null)
             	setContentDescription(text);
             if (workingSet != null) {
-                setTitleToolTip(NLS.bind(ResourceNavigatorMessages.ResourceNavigator_workingSetInputToolTip, inputToolTip, workingSet.getName()));
+                setTitleToolTip(NLS.bind(ResourceNavigatorMessages.ResourceNavigator_workingSetInputToolTip, inputToolTip, workingSet.getLabel()));
             } else {
                 setTitleToolTip(inputToolTip);
             }

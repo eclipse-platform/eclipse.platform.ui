@@ -310,7 +310,7 @@ class FiltersDialog extends Dialog {
         void setWorkingSet(IWorkingSet workingSet) {
             button.setData(workingSet);
             if (workingSet != null) {
-                button.setText(NLS.bind(TaskListMessages.TaskList_workingSet,  workingSet.getName()));
+                button.setText(NLS.bind(TaskListMessages.TaskList_workingSet,  workingSet.getLabel()));
             } else {
                 button.setText(TaskListMessages.TaskList_noWorkingSet);
             }

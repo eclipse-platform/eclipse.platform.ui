@@ -73,7 +73,7 @@ public class BuildSetMenu extends ContributionItem {
             label.append(index);
             label.append(' ');
         }
-        label.append(action.getWorkingSet().getName());
+        label.append(action.getWorkingSet().getLabel());
         action.setText(label.toString());
     }
 
