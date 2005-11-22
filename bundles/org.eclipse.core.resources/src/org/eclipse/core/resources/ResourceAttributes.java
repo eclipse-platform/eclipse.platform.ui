@@ -14,6 +14,7 @@ package org.eclipse.core.resources;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.utils.FileUtil;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * This class represents platform specific attributes of files.
@@ -42,7 +43,12 @@ public class ResourceAttributes {
 	 * @return A resource attributes object
 	 */
 	public static ResourceAttributes fromFile(java.io.File file) {
-		return FileUtil.fileInfoToAttributes(EFS.getLocalFileSystem().getStore(file.toURI()).fetchInfo());
+		try {
+			return FileUtil.fileInfoToAttributes(EFS.getStore(file.toURI()).fetchInfo());
+		} catch (CoreException e) {
+			//file could not be accessed
+			return new ResourceAttributes();
+		}
 	}
 
 	/**
