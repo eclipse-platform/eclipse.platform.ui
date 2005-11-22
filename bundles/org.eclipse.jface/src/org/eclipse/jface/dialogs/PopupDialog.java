@@ -698,7 +698,7 @@ public class PopupDialog extends Window {
 		}
 		// Setting this flag works around a problem that remains on X only, whereby activating 
 		// the menu deactivates our shell.  
-		listenToDeactivate = "gtk".equals(SWT.getPlatform()); //$NON-NLS-1$
+		listenToDeactivate = !"gtk".equals(SWT.getPlatform()); //$NON-NLS-1$
 		
 		Menu menu = menuManager.createContextMenu(getShell());
 		Rectangle bounds = toolBar.getBounds();
