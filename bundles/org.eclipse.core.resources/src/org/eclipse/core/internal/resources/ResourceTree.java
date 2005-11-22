@@ -14,7 +14,8 @@ import java.net.URI;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.*;
@@ -56,7 +57,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#addToLocalHistory(IFile)
 	 */
 	public void addToLocalHistory(IFile file) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			if (!file.exists())
@@ -76,7 +77,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#computeTimestamp(IFile)
 	 */
 	public long computeTimestamp(IFile file) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			if (!file.getProject().exists())
@@ -112,7 +113,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#deletedFile(IFile)
 	 */
 	public void deletedFile(IFile file) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			// Do nothing if the resource doesn't exist.
@@ -135,7 +136,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#deletedFolder(IFolder)
 	 */
 	public void deletedFolder(IFolder folder) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			// Do nothing if the resource doesn't exist.
@@ -158,7 +159,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#deletedProject(IProject)
 	 */
 	public void deletedProject(IProject target) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			// Do nothing if the resource doesn't exist.
@@ -199,7 +200,7 @@ class ResourceTree implements IResourceTree {
 	 * resource tree's status.
 	 */
 	public void failed(IStatus reason) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		multistatus.add(reason);
 	}
 
@@ -214,7 +215,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#getTimestamp(IFile)
 	 */
 	public long getTimestamp(IFile file) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			if (!file.exists())
@@ -475,7 +476,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#movedFile(IFile, IFile)
 	 */
 	public void movedFile(IFile source, IFile destination) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			// Do nothing if the resource doesn't exist.
@@ -532,7 +533,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#movedFolderSubtree(IFolder, IFolder)
 	 */
 	public void movedFolderSubtree(IFolder source, IFolder destination) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			// Do nothing if the source resource doesn't exist.
@@ -590,7 +591,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#movedProjectSubtree(IProject, IProjectDescription)
 	 */
 	public boolean movedProjectSubtree(IProject project, IProjectDescription destDescription) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			// Do nothing if the source resource doesn't exist.
@@ -745,7 +746,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#standardDeleteFile(IFile, int, IProgressMonitor)
 	 */
 	public void standardDeleteFile(IFile file, int flags, IProgressMonitor monitor) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			internalDeleteFile(file, flags, monitor);
@@ -758,7 +759,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#standardDeleteFolder(IFolder, int, IProgressMonitor)
 	 */
 	public void standardDeleteFolder(IFolder folder, int flags, IProgressMonitor monitor) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			internalDeleteFolder(folder, flags, monitor);
@@ -772,7 +773,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#standardDeleteProject(IProject, int, IProgressMonitor)
 	 */
 	public void standardDeleteProject(IProject project, int flags, IProgressMonitor monitor) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			String message = NLS.bind(Messages.resources_deleting, project.getFullPath());
@@ -849,7 +850,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#standardMoveFile(IFile, IFile, int, IProgressMonitor)
 	 */
 	public void standardMoveFile(IFile source, IFile destination, int flags, IProgressMonitor monitor) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			String message = NLS.bind(Messages.resources_moving, source.getFullPath());
@@ -921,7 +922,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#standardMoveFolder(IFolder, IFolder, int, IProgressMonitor)
 	 */
 	public void standardMoveFolder(IFolder source, IFolder destination, int flags, IProgressMonitor monitor) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			String message = NLS.bind(Messages.resources_moving, source.getFullPath());
@@ -987,7 +988,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#standardMoveProject(IProject, IProjectDescription, int, IProgressMonitor)
 	 */
 	public void standardMoveProject(IProject source, IProjectDescription description, int flags, IProgressMonitor monitor) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			String message = NLS.bind(Messages.resources_moving, source.getFullPath());
@@ -1047,7 +1048,7 @@ class ResourceTree implements IResourceTree {
 	 * @see IResourceTree#updateMovedFileTimestamp(IFile, long)
 	 */
 	public void updateMovedFileTimestamp(IFile file, long timestamp) {
-		OldAssert.isLegal(isValid);
+		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
 			// Do nothing if the file doesn't exist in the workspace tree.

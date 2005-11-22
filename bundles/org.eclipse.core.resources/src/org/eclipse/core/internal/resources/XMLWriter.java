@@ -11,7 +11,8 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * A simple XML writer.

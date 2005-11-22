@@ -14,7 +14,8 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.Container;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Performs a local refresh, and additionally updates all aliases of the

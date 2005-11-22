@@ -13,10 +13,11 @@ package org.eclipse.core.internal.localstore;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Set;
-import org.eclipse.core.filesystem.*;
-import org.eclipse.core.internal.utils.OldAssert;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Blob store which maps UUIDs to blobs on disk. The UUID is mapped
@@ -39,10 +40,10 @@ public class BlobStore {
 	 * should be an existing valid directory.
 	 */
 	public BlobStore(IFileStore store, int limit) {
-		OldAssert.isNotNull(store);
+		Assert.isNotNull(store);
 		localStore = store;
-		OldAssert.isTrue(localStore.fetchInfo().isDirectory());
-		OldAssert.isTrue(limit == 256 || limit == 128 || limit == 64 || limit == 32 || limit == 16 || limit == 8 || limit == 4 || limit == 2 || limit == 1);
+		Assert.isTrue(localStore.fetchInfo().isDirectory());
+		Assert.isTrue(limit == 256 || limit == 128 || limit == 64 || limit == 32 || limit == 16 || limit == 8 || limit == 4 || limit == 2 || limit == 1);
 		mask = (byte) (limit - 1);
 	}
 
@@ -87,7 +88,7 @@ public class BlobStore {
 	 * Deletes a blobFile.
 	 */
 	public void deleteBlob(UniversalUniqueIdentifier uuid) {
-		OldAssert.isNotNull(uuid);
+		Assert.isNotNull(uuid);
 		try {
 			fileFor(uuid).delete(EFS.NONE, null);
 		} catch (CoreException e) {

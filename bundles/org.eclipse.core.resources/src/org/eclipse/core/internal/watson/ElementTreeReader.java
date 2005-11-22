@@ -13,10 +13,8 @@ package org.eclipse.core.internal.watson;
 import java.io.*;
 import org.eclipse.core.internal.dtree.DataTreeReader;
 import org.eclipse.core.internal.dtree.IDataFlattener;
-import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 
 /** <code>ElementTreeReader</code> is the standard implementation
  * of an element tree serialization reader.
@@ -48,7 +46,7 @@ public class ElementTreeReader {
 	 * the given element info flattener.
 	 */
 	public ElementTreeReader(final IElementInfoFlattener factory) {
-		OldAssert.isNotNull(factory);
+		Assert.isNotNull(factory);
 		elementInfoFlattener = factory;
 
 		/* wrap the IElementInfoFlattener in an IDataFlattener */

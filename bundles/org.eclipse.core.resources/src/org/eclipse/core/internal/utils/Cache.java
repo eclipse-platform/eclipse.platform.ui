@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * A cache that keeps a collection of at most maximumCapacity+threshold entries.
  * When the number of entries exceeds that limit, least recently used entries are removed
@@ -125,9 +127,9 @@ public class Cache {
 	}
 
 	public Cache(int initialCapacity, int maximumCapacity, double threshold) {
-		OldAssert.isTrue(maximumCapacity >= initialCapacity, "maximum capacity < initial capacity"); //$NON-NLS-1$
-		OldAssert.isTrue(threshold >= 0 && threshold <= 1, "threshold should be between 0 and 1"); //$NON-NLS-1$
-		OldAssert.isTrue(initialCapacity > 0, "initial capacity must be greater than zero"); //$NON-NLS-1$
+		Assert.isTrue(maximumCapacity >= initialCapacity, "maximum capacity < initial capacity"); //$NON-NLS-1$
+		Assert.isTrue(threshold >= 0 && threshold <= 1, "threshold should be between 0 and 1"); //$NON-NLS-1$
+		Assert.isTrue(initialCapacity > 0, "initial capacity must be greater than zero"); //$NON-NLS-1$
 		entries = new KeyedHashSet(initialCapacity);
 		this.maximumCapacity = maximumCapacity;
 		this.threshold = threshold;

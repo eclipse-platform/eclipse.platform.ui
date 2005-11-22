@@ -12,9 +12,9 @@ package org.eclipse.core.internal.watson;
 
 import java.util.HashMap;
 import org.eclipse.core.internal.dtree.*;
-import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.StringPool;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -148,7 +148,7 @@ public class ElementTree {
 	 * @return this tree.
 	 */
 	public ElementTree collapseTo(ElementTree parent) {
-		OldAssert.isTrue(tree.isImmutable());
+		Assert.isTrue(tree.isImmutable());
 		if (this == parent) {
 			//already collapsed
 			return this;
@@ -294,7 +294,7 @@ public class ElementTree {
 
 			/* if the table is now empty, we have a winner */
 		}
-		OldAssert.isNotNull(oldestSoFar);
+		Assert.isNotNull(oldestSoFar);
 
 		/* return the appropriate index */
 		for (int i = 0; i < trees.length; i++) {
@@ -302,7 +302,7 @@ public class ElementTree {
 				return i;
 			}
 		}
-		OldAssert.isTrue(false, "Should not get here"); //$NON-NLS-1$
+		Assert.isTrue(false, "Should not get here"); //$NON-NLS-1$
 		return -1;
 	}
 
@@ -312,7 +312,7 @@ public class ElementTree {
 	 * The given element must be present in this tree.
 	 */
 	public int getChildCount(IPath key) {
-		OldAssert.isNotNull(key);
+		Assert.isNotNull(key);
 		return getChildIDs(key).length;
 	}
 
@@ -343,7 +343,7 @@ public class ElementTree {
 	 * The given element must be present in this tree.
 	 */
 	public IPath[] getChildren(IPath key) {
-		OldAssert.isNotNull(key);
+		Assert.isNotNull(key);
 		return getChildIDs(key);
 	}
 
@@ -637,7 +637,7 @@ public class ElementTree {
 	 * this method will fail.
 	 */
 	public synchronized Object openElementData(IPath key) {
-		OldAssert.isTrue(!isImmutable());
+		Assert.isTrue(!isImmutable());
 
 		/* don't allow modification of the implicit root */
 		if (key.isRoot())
@@ -681,7 +681,7 @@ public class ElementTree {
 		if (key.isRoot())
 			return;
 
-		OldAssert.isNotNull(key);
+		Assert.isNotNull(key);
 		// Clear the lookup cache, in case the element being modified is the same
 		// as for the last lookup.
 		lookupCache = lookupCacheIgnoreCase = null;

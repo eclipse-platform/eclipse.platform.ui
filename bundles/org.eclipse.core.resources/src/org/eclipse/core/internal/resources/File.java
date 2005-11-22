@@ -13,7 +13,8 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -37,7 +38,7 @@ public class File extends Resource implements IFile {
 		try {
 			String message = NLS.bind(Messages.resources_settingContents, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
-			OldAssert.isNotNull(content, "Content cannot be null."); //$NON-NLS-1$
+			Assert.isNotNull(content, "Content cannot be null."); //$NON-NLS-1$
 			if (workspace.shouldValidate)
 				workspace.validateSave(this);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);

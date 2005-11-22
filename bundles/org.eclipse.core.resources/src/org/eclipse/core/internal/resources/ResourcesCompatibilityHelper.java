@@ -12,7 +12,8 @@ package org.eclipse.core.internal.resources;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.localstore.HistoryStore2;
 import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.properties.IPropertyManager;

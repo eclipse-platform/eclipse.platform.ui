@@ -13,7 +13,9 @@ package org.eclipse.core.internal.localstore;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.internal.localstore.Bucket.Entry;
 import org.eclipse.core.internal.localstore.HistoryBucket.HistoryEntry;
 import org.eclipse.core.internal.resources.*;
@@ -198,9 +200,9 @@ public class HistoryStore2 implements IHistoryStore {
 
 		final IPath source = sourceResource.getFullPath();
 		final IPath destination = destinationResource.getFullPath();
-		OldAssert.isLegal(source.segmentCount() > 0);
-		OldAssert.isLegal(destination.segmentCount() > 0);
-		OldAssert.isLegal(source.segmentCount() > 1 || destination.segmentCount() == 1);
+		Assert.isLegal(source.segmentCount() > 0);
+		Assert.isLegal(destination.segmentCount() > 0);
+		Assert.isLegal(source.segmentCount() > 1 || destination.segmentCount() == 1);
 
 		// special case: we are moving a project
 		if (moving && sourceResource.getType() == IResource.PROJECT) {

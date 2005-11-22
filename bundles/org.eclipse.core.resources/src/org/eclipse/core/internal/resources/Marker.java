@@ -11,11 +11,9 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.Map;
-import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 
@@ -43,7 +41,7 @@ public class Marker extends PlatformObject implements IMarker {
 	 * Constructs a new marker object. 
 	 */
 	Marker(IResource resource, long id) {
-		OldAssert.isLegal(resource != null);
+		Assert.isLegal(resource != null);
 		this.resource = resource;
 		this.id = id;
 	}
@@ -94,7 +92,7 @@ public class Marker extends PlatformObject implements IMarker {
 	 * @see IMarker#getAttribute(String)
 	 */
 	public Object getAttribute(String attributeName) throws CoreException {
-		OldAssert.isNotNull(attributeName);
+		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
 		checkInfo(info);
 		return info.getAttribute(attributeName);
@@ -104,7 +102,7 @@ public class Marker extends PlatformObject implements IMarker {
 	 * @see IMarker#getAttribute(String, int)
 	 */
 	public int getAttribute(String attributeName, int defaultValue) {
-		OldAssert.isNotNull(attributeName);
+		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
 		if (info == null)
 			return defaultValue;
@@ -118,7 +116,7 @@ public class Marker extends PlatformObject implements IMarker {
 	 * @see IMarker#getAttribute(String, String)
 	 */
 	public String getAttribute(String attributeName, String defaultValue) {
-		OldAssert.isNotNull(attributeName);
+		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
 		if (info == null)
 			return defaultValue;
@@ -132,7 +130,7 @@ public class Marker extends PlatformObject implements IMarker {
 	 * @see IMarker#getAttribute(String, boolean)
 	 */
 	public boolean getAttribute(String attributeName, boolean defaultValue) {
-		OldAssert.isNotNull(attributeName);
+		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
 		if (info == null)
 			return defaultValue;
@@ -155,7 +153,7 @@ public class Marker extends PlatformObject implements IMarker {
 	 * @see IMarker#getAttributes(String[])
 	 */
 	public Object[] getAttributes(String[] attributeNames) throws CoreException {
-		OldAssert.isNotNull(attributeNames);
+		Assert.isNotNull(attributeNames);
 		MarkerInfo info = getInfo();
 		checkInfo(info);
 		return info.getAttributes(attributeNames);
@@ -228,7 +226,7 @@ public class Marker extends PlatformObject implements IMarker {
 	 * @see IMarker#setAttribute(String, Object)
 	 */
 	public void setAttribute(String attributeName, Object value) throws CoreException {
-		OldAssert.isNotNull(attributeName);
+		Assert.isNotNull(attributeName);
 		Workspace workspace = getWorkspace();
 		MarkerManager manager = workspace.getMarkerManager();
 		try {
@@ -263,8 +261,8 @@ public class Marker extends PlatformObject implements IMarker {
 	 * @see IMarker#setAttributes(String[], Object[])
 	 */
 	public void setAttributes(String[] attributeNames, Object[] values) throws CoreException {
-		OldAssert.isNotNull(attributeNames);
-		OldAssert.isNotNull(values);
+		Assert.isNotNull(attributeNames);
+		Assert.isNotNull(values);
 		Workspace workspace = getWorkspace();
 		MarkerManager manager = workspace.getMarkerManager();
 		try {

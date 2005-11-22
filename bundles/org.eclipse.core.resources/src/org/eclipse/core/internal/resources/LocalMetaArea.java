@@ -14,7 +14,8 @@ import java.io.*;
 import java.net.URI;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.FileUtil;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -111,8 +112,8 @@ public class LocalMetaArea implements ICoreConstants {
 	 * resource. Should only be called for the workspace root and projects.
 	 */
 	public IPath getMarkersLocationFor(IResource resource) {
-		OldAssert.isNotNull(resource);
-		OldAssert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+		Assert.isNotNull(resource);
+		Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
 		return locationFor(resource).append(F_MARKERS);
 	}
 
@@ -140,7 +141,7 @@ public class LocalMetaArea implements ICoreConstants {
 
 	public IPath getPropertyStoreLocation(IResource resource) {
 		int type = resource.getType();
-		OldAssert.isTrue(type != IResource.FILE && type != IResource.FOLDER);
+		Assert.isTrue(type != IResource.FILE && type != IResource.FOLDER);
 		return locationFor(resource).append(F_PROPERTIES);
 	}
 
@@ -164,8 +165,8 @@ public class LocalMetaArea implements ICoreConstants {
 	 * projects.
 	 */
 	public IPath getSyncInfoLocationFor(IResource resource) {
-		OldAssert.isNotNull(resource);
-		OldAssert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+		Assert.isNotNull(resource);
+		Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
 		return locationFor(resource).append(F_SYNCINFO);
 	}
 

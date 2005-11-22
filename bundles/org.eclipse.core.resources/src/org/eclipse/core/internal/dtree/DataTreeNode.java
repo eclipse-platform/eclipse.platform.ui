@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.dtree;
 
 import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -66,7 +67,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 		try {
 			comparison = ((NodeComparison) data).asReverseComparison(comparator);
 		} catch (ClassCastException e) {
-			OldAssert.isTrue(false, Messages.dtree_reverse);
+			Assert.isTrue(false, Messages.dtree_reverse);
 		}
 
 		int nextChild = 0;

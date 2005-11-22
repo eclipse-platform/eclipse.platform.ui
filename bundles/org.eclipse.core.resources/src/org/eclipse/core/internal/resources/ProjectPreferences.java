@@ -215,7 +215,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	 * Return the preferences file for the given folder and qualifier.
 	 */
 	static IFile getFile(IFolder folder, String qualifier) {
-		OldAssert.isLegal(folder.getName().equals(DEFAULT_PREFERENCES_DIRNAME));
+		Assert.isLegal(folder.getName().equals(DEFAULT_PREFERENCES_DIRNAME));
 		return folder.getFile(new Path(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
 	}
 	

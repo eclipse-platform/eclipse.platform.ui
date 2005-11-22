@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
 
 /**
  * A Queue of objects.

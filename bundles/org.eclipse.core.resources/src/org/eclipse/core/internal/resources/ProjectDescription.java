@@ -14,9 +14,9 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import org.eclipse.core.internal.events.BuildCommand;
-import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 
 public class ProjectDescription extends ModelObject implements IProjectDescription {
@@ -279,7 +279,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @see IProjectDescription#setBuildSpec(ICommand[])
 	 */
 	public void setBuildSpec(ICommand[] value) {
-		OldAssert.isLegal(value != null);
+		Assert.isLegal(value != null);
 		//perform a deep copy in case clients perform further changes to the command
 		ICommand[] result = new ICommand[value.length];
 		for (int i = 0; i < result.length; i++) {
@@ -307,7 +307,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @see IProjectDescription#setDynamicReferences(IProject[])
 	 */
 	public void setDynamicReferences(IProject[] value) {
-		OldAssert.isLegal(value != null);
+		Assert.isLegal(value != null);
 		dynamicRefs = copyAndRemoveDuplicates(value);
 		cachedRefs = null;
 	}
@@ -370,7 +370,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @see IProjectDescription#setReferencedProjects(IProject[])
 	 */
 	public void setReferencedProjects(IProject[] value) {
-		OldAssert.isLegal(value != null);
+		Assert.isLegal(value != null);
 		staticRefs = copyAndRemoveDuplicates(value);
 		cachedRefs = null;
 	}

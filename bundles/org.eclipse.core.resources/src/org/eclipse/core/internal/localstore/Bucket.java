@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.ResourceStatus;
-import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
@@ -92,7 +91,7 @@ public abstract class Bucket {
 		}
 
 		public void markDirty() {
-			OldAssert.isTrue(state != STATE_DELETED);
+			Assert.isTrue(state != STATE_DELETED);
 			state = STATE_DIRTY;
 		}
 

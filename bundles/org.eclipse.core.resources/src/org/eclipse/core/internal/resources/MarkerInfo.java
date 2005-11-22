@@ -12,7 +12,9 @@ package org.eclipse.core.internal.resources;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.IStringPoolParticipant;
+import org.eclipse.core.internal.utils.StringPool;
+import org.eclipse.core.runtime.Assert;
 
 public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolParticipant {
 
@@ -57,7 +59,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 			}
 			if (bytes.length > 65535) {
 				String msg = "Marker property value is too long: " + valueString.substring(0, 10000); //$NON-NLS-1$
-				OldAssert.isTrue(false, msg);
+				Assert.isTrue(false, msg);
 			}
 			return value;
 		}
@@ -165,7 +167,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	}
 
 	public void setAttributes(String[] attributeNames, Object[] values) {
-		OldAssert.isTrue(attributeNames.length == values.length);
+		Assert.isTrue(attributeNames.length == values.length);
 		for (int i = 0; i < attributeNames.length; i++)
 			setAttribute(attributeNames[i], values[i]);
 	}

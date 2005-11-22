@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * This class is used to maintain a list of listeners. It is a fairly lightweight object, 
@@ -63,7 +63,7 @@ public class ResourceChangeListenerList {
 	 * @param mask event types
 	 */
 	public synchronized void add(IResourceChangeListener listener, int mask) {
-		OldAssert.isNotNull(listener);
+		Assert.isNotNull(listener);
 		if (mask == 0) {
 			remove(listener);
 			return;
@@ -138,7 +138,7 @@ public class ResourceChangeListenerList {
 	 * @param listener the listener to remove
 	 */
 	public synchronized void remove(IResourceChangeListener listener) {
-		OldAssert.isNotNull(listener);
+		Assert.isNotNull(listener);
 		final int oldSize = listeners.length;
 		for (int i = 0; i < oldSize; ++i) {
 			if (listeners[i].listener == listener) {

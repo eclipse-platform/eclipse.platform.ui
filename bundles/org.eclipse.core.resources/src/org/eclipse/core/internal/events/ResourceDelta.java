@@ -13,7 +13,6 @@ package org.eclipse.core.internal.events;
 import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -331,7 +330,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		else
 			info = newInfo;
 		if (info == null)
-			OldAssert.isNotNull(null, "Do not have resource info for resource in delta: " + path); //$NON-NLS-1$
+			Assert.isNotNull(null, "Do not have resource info for resource in delta: " + path); //$NON-NLS-1$
 		cachedResource = deltaInfo.getWorkspace().newResource(path, info.getType());
 		return cachedResource;
 	}

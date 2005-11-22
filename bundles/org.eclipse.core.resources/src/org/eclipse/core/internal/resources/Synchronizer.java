@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
-import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.watson.IPathRequestor;
 import org.eclipse.core.resources.*;
@@ -39,9 +38,9 @@ public class Synchronizer implements ISynchronizer {
 	 * @see ISynchronizer#accept(QualifiedName, IResource, IResourceVisitor, int)
 	 */
 	public void accept(QualifiedName partner, IResource resource, IResourceVisitor visitor, int depth) throws CoreException {
-		OldAssert.isLegal(partner != null);
-		OldAssert.isLegal(resource != null);
-		OldAssert.isLegal(visitor != null);
+		Assert.isLegal(partner != null);
+		Assert.isLegal(resource != null);
+		Assert.isLegal(visitor != null);
 
 		// if we don't have sync info for the given identifier, then skip it
 		if (getSyncInfo(partner, resource) != null) {
@@ -66,7 +65,7 @@ public class Synchronizer implements ISynchronizer {
 	 * @see ISynchronizer#add(QualifiedName)
 	 */
 	public void add(QualifiedName partner) {
-		OldAssert.isLegal(partner != null);
+		Assert.isLegal(partner != null);
 		registry.add(partner);
 	}
 
@@ -74,8 +73,8 @@ public class Synchronizer implements ISynchronizer {
 	 * @see ISynchronizer#flushSyncInfo(QualifiedName, IResource, int)
 	 */
 	public void flushSyncInfo(final QualifiedName partner, final IResource root, final int depth) throws CoreException {
-		OldAssert.isLegal(partner != null);
-		OldAssert.isLegal(root != null);
+		Assert.isLegal(partner != null);
+		Assert.isLegal(root != null);
 
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -111,8 +110,8 @@ public class Synchronizer implements ISynchronizer {
 	 * @see ISynchronizer#getSyncInfo(QualifiedName, IResource)
 	 */
 	public byte[] getSyncInfo(QualifiedName partner, IResource resource) throws CoreException {
-		OldAssert.isLegal(partner != null);
-		OldAssert.isLegal(resource != null);
+		Assert.isLegal(partner != null);
+		Assert.isLegal(resource != null);
 
 		if (!isRegistered(partner)) {
 			String message = NLS.bind(Messages.synchronizer_partnerNotRegistered, partner);
@@ -125,7 +124,7 @@ public class Synchronizer implements ISynchronizer {
 	}
 
 	protected boolean isRegistered(QualifiedName partner) {
-		OldAssert.isLegal(partner != null);
+		Assert.isLegal(partner != null);
 		return registry.contains(partner);
 	}
 
@@ -189,7 +188,7 @@ public class Synchronizer implements ISynchronizer {
 	 * @see ISynchronizer#remove(QualifiedName)
 	 */
 	public void remove(QualifiedName partner) {
-		OldAssert.isLegal(partner != null);
+		Assert.isLegal(partner != null);
 		if (isRegistered(partner)) {
 			// remove all sync info for this partner
 			try {
@@ -218,8 +217,8 @@ public class Synchronizer implements ISynchronizer {
 	 * @see ISynchronizer#setSyncInfo(QualifiedName, IResource, byte[])
 	 */
 	public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) throws CoreException {
-		OldAssert.isLegal(partner != null);
-		OldAssert.isLegal(resource != null);
+		Assert.isLegal(partner != null);
+		Assert.isLegal(resource != null);
 		try {
 			workspace.prepareOperation(resource, null);
 			workspace.beginOperation(true);

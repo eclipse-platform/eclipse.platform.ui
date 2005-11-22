@@ -13,12 +13,8 @@ package org.eclipse.core.internal.events;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.internal.resources.ModelObject;
-import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 /**
  * The concrete implementation of <tt>ICommand</tt>.  This object

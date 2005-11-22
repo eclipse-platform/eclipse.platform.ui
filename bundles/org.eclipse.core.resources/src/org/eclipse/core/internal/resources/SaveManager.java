@@ -13,8 +13,6 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.events.*;
-import org.eclipse.core.internal.events.BuilderPersistentInfo;
-import org.eclipse.core.internal.events.ResourceComparator;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
@@ -334,7 +332,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				participant.rollback(context);
 				break;
 			default :
-				OldAssert.isTrue(false, "Invalid save lifecycle code"); //$NON-NLS-1$
+				Assert.isTrue(false, "Invalid save lifecycle code"); //$NON-NLS-1$
 		}
 	}
 
@@ -459,8 +457,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * @see IElementInfoFlattener#readElement(IPath, DataInput)
 	 */
 	public Object readElement(IPath path, DataInput input) throws IOException {
-		OldAssert.isNotNull(path);
-		OldAssert.isNotNull(input);
+		Assert.isNotNull(path);
+		Assert.isNotNull(input);
 		// read the flags and pull out the type.  
 		int flags = input.readInt();
 		int type = (flags & ICoreConstants.M_TYPE) >> ICoreConstants.M_TYPE_START;
@@ -570,7 +568,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * includes the markers and sync info. 
 	 */
 	protected void resetSnapshots(IResource resource) throws CoreException {
-		OldAssert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+		Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
 		String message;
 
 		// delete the snapshot file, if any
@@ -684,7 +682,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * for the tree rooted by the given resource.
 	 */
 	protected void restoreMarkers(IResource resource, boolean generateDeltas, IProgressMonitor monitor) throws CoreException {
-		OldAssert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+		Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
 		long start = System.currentTimeMillis();
 		MarkerManager markerManager = workspace.getMarkerManager();
 		// when restoring a project, only load markers if it is open
@@ -848,7 +846,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * for the tree rooted by the given resource.
 	 */
 	protected void restoreSyncInfo(IResource resource, IProgressMonitor monitor) throws CoreException {
-		OldAssert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+		Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
 		long start = System.currentTimeMillis();
 		Synchronizer synchronizer = (Synchronizer) workspace.getSynchronizer();
 		// when restoring a project, only load sync info if it is open
@@ -1312,7 +1310,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	public void visitAndSave(final IResource root) throws CoreException {
 		// Ensure we have either a project or the workspace root
-		OldAssert.isLegal(root.getType() == IResource.ROOT || root.getType() == IResource.PROJECT);
+		Assert.isLegal(root.getType() == IResource.ROOT || root.getType() == IResource.PROJECT);
 		// only write out info for accessible resources
 		if (!root.isAccessible())
 			return;
@@ -1435,7 +1433,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	public void visitAndSnap(final IResource root) throws CoreException {
 		// Ensure we have either a project or the workspace root
-		OldAssert.isLegal(root.getType() == IResource.ROOT || root.getType() == IResource.PROJECT);
+		Assert.isLegal(root.getType() == IResource.ROOT || root.getType() == IResource.PROJECT);
 		// only write out info for accessible resources
 		if (!root.isAccessible())
 			return;
@@ -1592,9 +1590,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * @see IElementInfoFlattener#writeElement(IPath, Object, DataOutput)
 	 */
 	public void writeElement(IPath path, Object element, DataOutput output) throws IOException {
-		OldAssert.isNotNull(path);
-		OldAssert.isNotNull(element);
-		OldAssert.isNotNull(output);
+		Assert.isNotNull(path);
+		Assert.isNotNull(element);
+		Assert.isNotNull(output);
 		ResourceInfo info = (ResourceInfo) element;
 		output.writeInt(info.getFlags());
 		info.writeTo(output);

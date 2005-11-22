@@ -11,7 +11,8 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -197,7 +198,7 @@ public class CharsetManager implements IManager {
 	 * @return the charset setting for the given resource
 	 */
 	public String getCharsetFor(IPath resourcePath, boolean recurse) {
-		OldAssert.isLegal(resourcePath.segmentCount() >= 1);
+		Assert.isLegal(resourcePath.segmentCount() >= 1);
 		IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
 		Preferences encodingSettings = getPreferences(project, false);
 		if (encodingSettings == null)

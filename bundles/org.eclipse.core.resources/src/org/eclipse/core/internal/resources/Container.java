@@ -13,8 +13,6 @@ package org.eclipse.core.internal.resources;
 import java.util.*;
 import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.internal.utils.WrappedRuntimeException;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;

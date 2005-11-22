@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.dtree;
 
-import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.StringPool;
+import org.eclipse.core.runtime.*;
 
 /**
  * Externally, a <code>DeltaDataTree</code> appears to have the same content as
@@ -519,7 +519,7 @@ public class DeltaDataTree extends AbstractDataTree {
 		if (childNodes != null) {
 			// Some deltas carry info about children, but there is
 			// no complete node against which they describe deltas.
-			OldAssert.isTrue(false, Messages.dtree_malformedTree);
+			Assert.isTrue(false, Messages.dtree_malformedTree);
 		}
 
 		// Node is missing or has been deleted.

@@ -12,10 +12,8 @@ package org.eclipse.core.internal.dtree;
 
 import java.io.DataInput;
 import java.io.IOException;
-import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 
 /**
  * Class used for reading a single data tree (no parents) from an input stream
@@ -108,7 +106,7 @@ public class DataTreeReader {
 			case AbstractDataTreeNode.T_NO_DATA_DELTA_NODE :
 				return new NoDataDeltaNode(name, children);
 			default :
-				OldAssert.isTrue(false, Messages.dtree_switchError);
+				Assert.isTrue(false, Messages.dtree_switchError);
 				return null;
 		}
 	}

@@ -14,7 +14,6 @@ import java.util.*;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
@@ -227,7 +226,7 @@ public class PropertyManager implements IManager, ILifecycleListener, IPropertyM
 
 	private PropertyStore openPropertyStore(IResource target, boolean createIfNeeded) {
 		int type = target.getType();
-		OldAssert.isTrue(type != IResource.FILE && type != IResource.FOLDER);
+		Assert.isTrue(type != IResource.FILE && type != IResource.FOLDER);
 		IPath location = workspace.getMetaArea().getPropertyStoreLocation(target);
 		java.io.File storeFile = location.toFile();
 		if (!createIfNeeded && !storeFile.isFile())

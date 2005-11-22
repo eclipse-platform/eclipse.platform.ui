@@ -12,9 +12,11 @@ package org.eclipse.core.internal.resources;
 
 import java.net.URI;
 import java.util.*;
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.events.LifecycleEvent;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
@@ -205,7 +207,7 @@ public class Project extends Container implements IProject {
 		// FIXME - the logic here for copying projects needs to be moved to Resource.copy
 		//   so that IResource.copy(IProjectDescription,int,IProgressMonitor) works properly for
 		//   projects and honours all update flags
-		OldAssert.isNotNull(destination);
+		Assert.isNotNull(destination);
 		internalCopy(destination, updateFlags, monitor);
 	}
 
@@ -731,7 +733,7 @@ public class Project extends Container implements IProject {
 	 * @see IProject#move(IProjectDescription, boolean, IProgressMonitor)
 	 */
 	public void move(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
-		OldAssert.isNotNull(destination);
+		Assert.isNotNull(destination);
 		move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 	}
 
@@ -739,7 +741,7 @@ public class Project extends Container implements IProject {
 	 * @see IResource#move(IProjectDescription, int, IProgressMonitor)
 	 */
 	public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		OldAssert.isNotNull(description);
+		Assert.isNotNull(description);
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = NLS.bind(Messages.resources_moving, getFullPath());

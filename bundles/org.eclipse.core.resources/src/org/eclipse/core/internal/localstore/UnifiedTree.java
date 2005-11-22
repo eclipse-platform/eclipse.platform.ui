@@ -13,12 +13,10 @@ package org.eclipse.core.internal.localstore;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.OldAssert;
 import org.eclipse.core.internal.utils.Queue;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 
 /**
  * Represents the workspace's tree merged with the file system's tree.
@@ -65,7 +63,7 @@ public class UnifiedTree {
 	}
 
 	public void accept(IUnifiedTreeVisitor visitor, int depth) throws CoreException {
-		OldAssert.isNotNull(root);
+		Assert.isNotNull(root);
 		initializeQueue();
 		setLevel(0, depth);
 		while (!queue.isEmpty()) {
