@@ -109,12 +109,12 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			
 		synchronized (fFilesBuffers) {
 			AbstractFileBuffer oldFileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
-			if (oldFileBuffer != null)
+			if (oldFileBuffer != null) {
 				oldFileBuffer.connect();
-			else {
-				fileBuffer.connect();
-				fFilesBuffers.put(location, fileBuffer);
+				return;
 			}
+			fileBuffer.connect();
+			fFilesBuffers.put(location, fileBuffer);
 		}
 		
 		// Do notification outside synchronized block
