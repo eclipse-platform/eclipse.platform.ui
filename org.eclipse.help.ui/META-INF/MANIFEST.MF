@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %help_system_plugin_name
 Bundle-SymbolicName: org.eclipse.help.ui; singleton:=true
-Bundle-Version: 3.1.0
+Bundle-Version: 3.2.0.qualifier
 Bundle-Activator: org.eclipse.help.ui.internal.HelpUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -14,9 +14,9 @@ Export-Package: org.eclipse.help.ui,
  org.eclipse.help.ui.internal.search;x-internal:=true,
  org.eclipse.help.ui.internal.util;x-internal:=true,
  org.eclipse.help.ui.internal.views;x-internal:=true
-Require-Bundle: org.eclipse.help.base,
- org.eclipse.help.appserver,
- org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.ui.forms
+Require-Bundle: org.eclipse.help.base;bundle-version="[3.1.0,4.0.0)",
+ org.eclipse.help.appserver;bundle-version="[3.1.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)",
+ org.eclipse.ui.forms;bundle-version="[3.2.0,4.0.0)"
 Eclipse-LazyStart: true

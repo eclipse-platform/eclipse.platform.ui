@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %appserver_plugin_name
 Bundle-SymbolicName: org.eclipse.help.appserver; singleton:=true
-Bundle-Version: 3.1.0
+Bundle-Version: 3.1.100.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.help.internal.appserver.AppserverPlugin
-Bundle-Vendor: %providerName
+Bundle-Vendor: %providerName 
 Bundle-Localization: plugin
 Export-Package: org.eclipse.help.internal.appserver;x-friends:="org.eclipse.help.base,org.eclipse.help.ui"
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)"
 Eclipse-LazyStart: true
