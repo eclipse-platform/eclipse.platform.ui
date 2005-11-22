@@ -225,6 +225,17 @@ public class IWorkingSetManagerTest extends UITestCase {
                 workingSet2));
         assertTrue(ArrayUtil.contains(fWorkingSetManager.getWorkingSets(),
                 fWorkingSet));
+        
+        IWorkingSet workingSet3 = fWorkingSetManager.createWorkingSet(WORKING_SET_NAME_2, new IAdaptable[] {fWorkspace.getRoot()});
+        workingSet3.setName("ws0");
+        fWorkingSetManager.addWorkingSet(workingSet3);
+        
+        // asserts the order is correct - the name of set three should push it
+		// above set two even though their labels are the same
+		IWorkingSet[] sets = fWorkingSetManager.getWorkingSets();
+		assertEquals(fWorkingSet, sets[0]);
+		assertEquals(workingSet2, sets[2]);
+		assertEquals(workingSet3, sets[1]);
     }
 
     public void testRemovePropertyChangeListener() throws Throwable {

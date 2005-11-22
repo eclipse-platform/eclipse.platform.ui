@@ -76,7 +76,7 @@ public class WorkingSet extends AbstractWorkingSet {
         }
         if (object instanceof WorkingSet) {
             WorkingSet workingSet = (WorkingSet) object;
-            return Util.equals(workingSet.getLabel(), getLabel())
+            return Util.equals(workingSet.getName(), getName())
                     && Util.equals(workingSet.getElementsArray(), getElementsArray())
                     && Util.equals(workingSet.getId(), getId());
         }

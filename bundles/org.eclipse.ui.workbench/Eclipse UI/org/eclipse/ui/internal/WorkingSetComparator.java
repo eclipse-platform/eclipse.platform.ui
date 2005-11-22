@@ -38,19 +38,19 @@ public class WorkingSetComparator implements Comparator {
 		String name2 = null;
 
 		if (o1 instanceof IWorkingSet)
-			name1 = ((IWorkingSet) o1).getName();
+			name1 = ((IWorkingSet) o1).getLabel();
 
 		if (o2 instanceof IWorkingSet)
-			name2 = ((IWorkingSet) o2).getName();
+			name2 = ((IWorkingSet) o2).getLabel();
 
 		int result = fCollator.compare(name1, name2);
 		if (result == 0) { // okay, same name - now try the unique id
 
 			if (o1 instanceof IWorkingSet)
-				name1 = ((IWorkingSet) o1).getLabel();
+				name1 = ((IWorkingSet) o1).getName();
 
 			if (o2 instanceof IWorkingSet)
-				name2 = ((IWorkingSet) o2).getLabel();
+				name2 = ((IWorkingSet) o2).getName();
 			
 			result = fCollator.compare(name1, name2);
 		}
