@@ -11,7 +11,6 @@
 package org.eclipse.jface.databinding.internal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,8 @@ import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.IUpdatableValue;
 import org.eclipse.jface.databinding.PropertyDesc;
 import org.eclipse.jface.databinding.converter.IConverter;
+import org.eclipse.jface.databinding.converterfunction.ConversionFunctionRegistry;
+import org.eclipse.jface.databinding.converters.FunctionalConverter;
 import org.eclipse.jface.databinding.converters.IdentityConverter;
 import org.eclipse.jface.databinding.updatables.SettableValue;
 import org.eclipse.jface.databinding.validator.IValidator;
@@ -63,8 +64,6 @@ public class DataBindingContext implements IDataBindingContext {
 			return a.hashCode() + b.hashCode();
 		}
 	}
-
-	private Map converters = new HashMap();
 
 	private List createdUpdatables = new ArrayList();
 
@@ -106,7 +105,7 @@ public class DataBindingContext implements IDataBindingContext {
 	 */
 	public DataBindingContext() {		
 		registerFactories();
-		registerConverters();
+		registerDefaultBindSupportFactory();
 	}
 
 	/*
@@ -139,57 +138,6 @@ public class DataBindingContext implements IDataBindingContext {
 		return partialValidationMessage;
 	}
 
-	/**
-	 * @return the converter
-	 */
-	private IConverter getStringToDoubleConverter() {
-		IConverter doubleConverter = new IConverter() {
-
-			public Object convertTargetToModel(Object object) {
-				return new Double((String) object);
-			}
-
-			public Object convertModelToTarget(Object aDouble) {
-				return aDouble.toString();
-			}
-
-			public Class getModelType() {
-				return String.class;
-			}
-
-			public Class getTargetType() {
-				return double.class;
-			}
-		};
-		return doubleConverter;
-	}
-
-	/**
-	 * @param fromClass
-	 * @return the converter
-	 */
-	private IConverter getToStringConverter(final Class fromClass) {
-		IConverter toStringConverter = new IConverter() {
-
-			public Object convertTargetToModel(Object object) {
-				return object.toString();
-			}
-
-			public Object convertModelToTarget(Object aString) {
-				return aString;
-			}
-
-			public Class getModelType() {
-				return fromClass;
-			}
-
-			public Class getTargetType() {
-				return String.class;
-			}
-		};
-		return toStringConverter;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -199,47 +147,7 @@ public class DataBindingContext implements IDataBindingContext {
 		return validationMessage;
 	}
 
-	protected void registerConverters() {
-		IConverter doubleConverter = getStringToDoubleConverter();
-		converters.put(new Pair(String.class, Double.class), doubleConverter);
-		converters.put(new Pair(String.class, double.class), doubleConverter);
-		IConverter integerConverter = new IConverter() {
-
-			public Object convertTargetToModel(Object aString) {
-				return new Integer((String) aString);
-			}
-
-			public Object convertModelToTarget(Object anInteger) {
-				return anInteger.toString();
-			}
-
-			public Class getModelType() {
-				return String.class;
-			}
-
-			public Class getTargetType() {
-				return int.class;
-			}
-		};
-		converters.put(new Pair(String.class, Integer.class), integerConverter);
-		converters.put(new Pair(String.class, int.class), integerConverter);
-		converters.put(new Pair(Double.class, String.class),
-				getToStringConverter(Double.class));
-		converters.put(new Pair(double.class, String.class),
-				getToStringConverter(double.class));
-		converters.put(new Pair(Object.class, String.class),
-				getToStringConverter(Object.class));
-		converters.put(new Pair(Integer.class, String.class),
-				getToStringConverter(Object.class));
-		converters.put(new Pair(Integer.class, int.class),
-				new IdentityConverter(Integer.class, int.class));
-		converters.put(new Pair(int.class, Integer.class),
-				new IdentityConverter(int.class, Integer.class));
-		converters.put(new Pair(boolean.class, Boolean.class),
-				new IdentityConverter(boolean.class, Boolean.class));
-		converters.put(new Pair(Boolean.class, boolean.class),
-				new IdentityConverter(Boolean.class, boolean.class));
-		
+	protected void registerDefaultBindSupportFactory() {
 		// Add the default bind support factory
 		addBindSupportFactory(new IBindSupportFactory() {
 
@@ -265,12 +173,10 @@ public class DataBindingContext implements IDataBindingContext {
 				if (fromType == toType) {
 					return new IdentityConverter(fromType, toType);
 				}
-				IConverter result = (IConverter) converters.get(new Pair(
-						fromType, toType));
-				if (result != null) {
-					return result;
+				if (ConversionFunctionRegistry.canConvertPair(fromType, toType)) {
+					return new FunctionalConverter(fromType, toType);
 				}
-				// FIXME: djo -- This doesn't always work in the case of object types
+				// FIXME: djo -- This doesn't always work in the case of object types?
 				if (toType.isAssignableFrom(fromType)
 						|| fromType.isAssignableFrom(toType)) {
 					return new IdentityConverter(fromType, toType);

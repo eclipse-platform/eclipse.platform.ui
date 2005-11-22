@@ -20,12 +20,12 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
  *
  * @author djo
  */
-public class TheIdentityConverter implements IConversionFunction {
+public class TheIdentityFunction implements IConversionFunction {
 
 	/**
 	 * Identity converter singleton
 	 */
-	public static final IConversionFunction IDENTITY = new TheIdentityConverter();
+	public static final IConversionFunction IDENTITY = new TheIdentityFunction();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)

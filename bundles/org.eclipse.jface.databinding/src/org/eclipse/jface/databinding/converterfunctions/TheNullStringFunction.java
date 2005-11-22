@@ -20,12 +20,12 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
  *
  * @author djo
  */
-public class TheNullConverter implements IConversionFunction {
+public class TheNullStringFunction implements IConversionFunction {
 
 	/**
 	 * Null converter singleton
 	 */
-	public static final IConversionFunction NULL = new TheNullConverter();
+	public static final IConversionFunction NULL = new TheNullStringFunction();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)

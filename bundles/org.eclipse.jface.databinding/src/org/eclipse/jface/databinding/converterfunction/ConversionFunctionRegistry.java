@@ -26,8 +26,8 @@ import org.eclipse.jface.databinding.converterfunctions.ConvertString2Integer;
 import org.eclipse.jface.databinding.converterfunctions.ConvertString2Long;
 import org.eclipse.jface.databinding.converterfunctions.ConvertString2Object;
 import org.eclipse.jface.databinding.converterfunctions.ConvertString2Short;
-import org.eclipse.jface.databinding.converterfunctions.TheIdentityConverter;
-import org.eclipse.jface.databinding.converterfunctions.TheNullConverter;
+import org.eclipse.jface.databinding.converterfunctions.TheIdentityFunction;
+import org.eclipse.jface.databinding.converterfunctions.TheNullStringFunction;
 import org.eclipse.jface.databinding.converterfunctions.ToStringConverter;
 
 
@@ -74,20 +74,20 @@ public class ConversionFunctionRegistry {
      */
     public static IConversionFunction get(Class sourceClass, Class destClass) {
         if (sourceClass.equals(destClass))
-            return TheIdentityConverter.IDENTITY;
+            return TheIdentityFunction.IDENTITY;
         
         HashMap sourceClassConverters = (HashMap) converterFunctions.get(sourceClass);
         
         if (sourceClassConverters == null) {
             System.err.println("No converters for pair (" + sourceClass + ", " + destClass + ") have been registered"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            return TheNullConverter.NULL;
+            return TheNullStringFunction.NULL;
         }
         
         IConversionFunction result = (IConversionFunction) sourceClassConverters.get(destClass);
         
         if (result == null) {
         	System.err.println("No converters for pair (" + sourceClass + ", " + destClass + ") have been registered"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            return TheNullConverter.NULL;
+            return TheNullStringFunction.NULL;
         }
         
         return result;
@@ -121,15 +121,52 @@ public class ConversionFunctionRegistry {
         return true;
     }
     
+    /**
+     * Returns if the pair (sourceClass, destClass) can be converted in both directions.
+     * 
+     * @param sourceClass the source Class 
+     * @param destClass the destination Class
+     * @return true if the pair can be converted in both directions; false otherwise.
+     */
+    public static boolean canConvertPair(Class sourceClass, Class destClass) {
+    	if (canConvert(sourceClass, destClass) && canConvert(destClass, sourceClass)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
     /*
      * Register converters for built-in Java types
      */
     static {
         converterFunctions = new HashMap();
         
+        // Boxing/unboxing
         associate(Object.class, String.class, new ConvertObject2String());
         associate(String.class, Object.class, new ConvertString2Object());
         
+        associate(Character.TYPE, Character.class, TheIdentityFunction.IDENTITY);
+        associate(Character.class, Character.TYPE, TheIdentityFunction.IDENTITY);
+        
+        associate(Boolean.TYPE, Boolean.class, TheIdentityFunction.IDENTITY);
+        associate(Boolean.class, Boolean.TYPE, TheIdentityFunction.IDENTITY);
+        
+        associate(Integer.TYPE, Integer.class, TheIdentityFunction.IDENTITY);
+        associate(Integer.class, Integer.TYPE, TheIdentityFunction.IDENTITY);
+        
+        associate(Byte.TYPE, Byte.class, TheIdentityFunction.IDENTITY);
+        associate(Byte.class, Byte.TYPE, TheIdentityFunction.IDENTITY);
+        
+        associate(Short.TYPE, Short.class, TheIdentityFunction.IDENTITY);
+        associate(Short.class, Short.TYPE, TheIdentityFunction.IDENTITY);
+        
+        associate(Long.TYPE, Long.class, TheIdentityFunction.IDENTITY);
+        associate(Long.class, Long.TYPE, TheIdentityFunction.IDENTITY);
+        
+        associate(Float.TYPE, Float.class, TheIdentityFunction.IDENTITY);
+        associate(Float.class, Float.TYPE, TheIdentityFunction.IDENTITY);
+        
+        // String to/from primitive
         associate(Character.TYPE, String.class, ToStringConverter.TOSTRINGFUNCTION);
         associate(String.class, Character.TYPE, new ConvertString2Character());
 
@@ -154,6 +191,7 @@ public class ConversionFunctionRegistry {
         associate(Double.TYPE, String.class, ToStringConverter.TOSTRINGFUNCTION);
         associate(String.class, Double.TYPE, new ConvertString2Double());
         
+        // String to/from boxed types
         associate(Boolean.class, String.class, ToStringConverter.TOSTRINGFUNCTION);
         associate(String.class, Boolean.class, new ConvertString2Boolean());
         
