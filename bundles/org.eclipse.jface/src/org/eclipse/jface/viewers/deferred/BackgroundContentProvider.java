@@ -13,9 +13,7 @@ package org.eclipse.jface.viewers.deferred;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.AcceptAllFilter;
@@ -127,11 +125,11 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
      */
     private ConcurrentTableUpdator updator;
     
-    private Job sortJob = new Job(SORTING) {
-        protected IStatus run(IProgressMonitor monitor) {
-            doSort(monitor);
-            return Status.OK_STATUS;
-        }
+    private IProgressMonitor sortingProgressMonitor = new NullProgressMonitor();
+    private Thread sortThread = new Thread(SORTING) {
+    	public void run() {
+            doSort(sortingProgressMonitor);
+    	}
     };
 
 	private volatile FastProgressReporter sortMon = new FastProgressReporter();
@@ -151,8 +149,8 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
         updator = new ConcurrentTableUpdator(table);
         this.model = model;
         this.sortOrder = sortOrder;
-        sortJob.setSystem(true);
-        sortJob.setPriority(Job.SHORT);
+        sortThread.setDaemon(true);
+        sortThread.setPriority(Thread.NORM_PRIORITY - 1);
         model.addListener(listener);
     }
     
@@ -453,7 +451,13 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
      */
     private void makeDirty() {
         sortMon.cancel();
-    	sortJob.schedule();
+        // make sure the sort thread is not running
+        try {
+			sortThread.join();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+    	sortThread.start();
     }
     
     /**
@@ -463,7 +467,7 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
      */
     private void cancelSortJob() {
         sortMon.cancel();
-        sortJob.cancel();
+        sortingProgressMonitor.setCanceled(true);
     }
     
     /**
