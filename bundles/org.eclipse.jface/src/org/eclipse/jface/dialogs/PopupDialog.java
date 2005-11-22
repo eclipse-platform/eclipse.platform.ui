@@ -201,9 +201,9 @@ public class PopupDialog extends Window {
 	 * dynamically if possible.
 	 */
 	private Label titleLabel, infoLabel;
-	
+
 	/**
-	 * Separator controls.  Cached so they can be excluded from color changes.
+	 * Separator controls. Cached so they can be excluded from color changes.
 	 */
 	private Control titleSeparator, infoSeparator;
 
@@ -333,7 +333,10 @@ public class PopupDialog extends Window {
 
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
-				if (listenToDeactivate) {
+				// Close if we are deactivating and have no child shells.
+				// If we have child shells, we are deactivating due to their opening.
+				if (listenToDeactivate && event.widget == getShell()
+						&& getShell().getShells().length == 0) {
 					close();
 				}
 			}
@@ -347,9 +350,8 @@ public class PopupDialog extends Window {
 						&& getShell().getShells().length == 0) {
 					listenToDeactivate = true;
 					// Typically we start listening for parent deactivate after
-					// we are activated.
-					// Except on the Mac, where the deactivate is received after
-					// activate.
+					// we are activated, except on the Mac, where the deactivate
+					// is received after activate.
 					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=100668
 					listenToParentDeactivate = !"carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 				}
@@ -691,10 +693,6 @@ public class PopupDialog extends Window {
 			menuManager = new MenuManager();
 			fillDialogMenu(menuManager);
 		}
-
-		// Setting this flag prevents us from closing on the deactivate we
-		// receive when a menu item is selected
-		listenToDeactivate = false;
 
 		Menu menu = menuManager.createContextMenu(getShell());
 		Rectangle bounds = toolBar.getBounds();
