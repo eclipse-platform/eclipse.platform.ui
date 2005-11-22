@@ -323,18 +323,26 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
     }
     
     /**
-     * Fires a property change event for the changed working set.
-     * Should only be called by org.eclipse.ui.internal.WorkingSet.
-     * @param changedWorkingSet the working set that has changed
-     * @param propertyChangeId the changed property. one of 
-     * 	CHANGE_WORKING_SET_CONTENT_CHANGE and CHANGE_WORKING_SET_NAME_CHANGE
-     * @param oldValue the old value
-     */
-    public void workingSetChanged(IWorkingSet changedWorkingSet, String propertyChangeId, Object oldValue) {
-        firePropertyChange(propertyChangeId, oldValue, changedWorkingSet);
-    }
+	 * Fires a property change event for the changed working set. Should only be
+	 * called by org.eclipse.ui.internal.WorkingSet.
+	 * 
+	 * @param changedWorkingSet
+	 *            the working set that has changed
+	 * @param propertyChangeId
+	 *            the changed property. one of
+	 *            CHANGE_WORKING_SET_CONTENT_CHANGE,
+	 *            CHANGE_WORKING_SET_LABEL_CHANGE, and
+	 *            CHANGE_WORKING_SET_NAME_CHANGE
+	 * @param oldValue
+	 *            the old value
+	 */
+	public void workingSetChanged(IWorkingSet changedWorkingSet,
+			String propertyChangeId, Object oldValue) {
+		firePropertyChange(propertyChangeId, oldValue, changedWorkingSet);
+	}
     
-    //---- Persistence ----------------------------------------------------------------
+    // ---- Persistence
+	// ----------------------------------------------------------------
     
     /**
      * Saves all persistable working sets in the persistence store.

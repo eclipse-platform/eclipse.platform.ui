@@ -157,8 +157,10 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 		return label;
 	}
 
-	public void setLabel(String uniqueId) {
-		this.label = uniqueId;
+	public void setLabel(String label) {
+		this.label = label == null ? getName() : label;
+		fireWorkingSetChanged(
+				IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, null);
 	}
 	
 	public boolean isEmpty() {

@@ -137,9 +137,13 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
     /**
 	 * Set the name of this working set, formated for the end user.
 	 * 
-	 * <p><em>Please note: This API is experiemental and may change before 3.2 ships.</em></p>
+	 * <p>
+	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
+	 * </p>
 	 * 
-	 * @param label the unique id for this working set
+	 * @param label
+	 *            the label for this working set. If <code>null</code> is
+	 *            supplied then the value of {@link #getName()} will be used.
 	 * @since 3.2
 	 */
 	public void setLabel(String label);

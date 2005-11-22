@@ -71,6 +71,16 @@ public interface IWorkingSetManager {
     public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNameChange"; //$NON-NLS-1$	
     
     /**
+     * Change event id when the working set label changed.
+     * newValue of the PropertyChangeEvent will be the changed working set.
+     * oldValue will be null.
+     *
+     * @see IPropertyChangeListener
+     * @since 3.2
+     */
+    public static final String CHANGE_WORKING_SET_LABEL_CHANGE = "workingSetLabelChange"; //$NON-NLS-1$	
+    
+    /**
      * Change event id when a working set updater got installed.
      * NewValue of the PropertyChangeEvent will be the installed updater.
      * OldValue will be <code>null</code>

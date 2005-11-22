@@ -99,6 +99,12 @@ public class IWorkingSetManagerTest extends UITestCase {
                 fChangeProperty);
         assertEquals(null, fChangeOldValue);
         assertEquals(fWorkingSet, fChangeNewValue);
+        
+        resetChangeData();
+        fWorkingSet.setLabel(WORKING_SET_NAME_2);
+        assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, fChangeProperty);
+        assertEquals(null, fChangeOldValue);
+        assertEquals(fWorkingSet, fChangeNewValue);
 
         resetChangeData();
         fWorkingSet.setElements(new IAdaptable[] {});
