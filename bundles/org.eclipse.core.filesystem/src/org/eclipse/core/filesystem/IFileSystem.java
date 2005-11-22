@@ -70,17 +70,21 @@ public interface IFileSystem extends IAdaptable {
 	 * This is a convenience method for file systems that do not make use
 	 * of the authority {@link java.net.URI} component, such as a host or user 
 	 * information. The provided path argument is interpreted as the path component 
-	 * of the file system's {@link java.net.URI}.
+	 * of the file system's {@link java.net.URI}.  For example, this method can
+	 * be used to safely navigate within the local file system.
 	 * </p>
 	 * 
 	 * @param path A path to a file store within the scheme of this file system.
 	 * @return A handle to a file store in this file system
+	 * @see EFS#getLocalFileSystem()
 	 */
 	public IFileStore getStore(IPath path);
 
 	/**
 	 * Returns a handle to a file store in this file system.  This method succeeds
-	 * regardless of whether a file exists at that path in this file system.
+	 * regardless of whether a file exists at that path in this file system. The
+	 * provided URI must have the appropriate scheme and component parts
+	 * for the file system on which this method is called.
 	 * 
 	 * @param uri The URI of the file store to return.
 	 * @return A handle to a file store in this file system

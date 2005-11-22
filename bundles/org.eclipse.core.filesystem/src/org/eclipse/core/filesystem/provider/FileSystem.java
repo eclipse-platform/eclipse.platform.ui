@@ -10,8 +10,8 @@
 package org.eclipse.core.filesystem.provider;
 
 import java.net.URI;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileSystem;
+import java.net.URISyntaxException;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -90,19 +90,29 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * assuming that the provided path corresponds to the path component of the 
 	 * URI for the file store.
 	 * <p>
-	 * Subclasses may override this method.
+	 * Subclasses may override this method.  If it is not possible to create a file
+	 * store corresponding to the provided path for this file system, a file store
+	 * belonging to the null file system should be returned
 	 * </p>
 	 * 
 	 * @param path A path to a file store within the scheme of this file system.
 	 * @return A handle to a file store in this file system
 	 * @see IFileSystem#getStore(IPath)
+	 * @see EFS#getNullFileSystem()
 	 */
 	public IFileStore getStore(IPath path) {
-		return getStore(URI.create(scheme + ':' + path.toString()));
+		try {
+			return getStore(new URI(scheme, path.toString(), null));
+		} catch (URISyntaxException e) {
+			return EFS.getNullFileSystem().getStore(path);
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IFileSystem#getStore()
+	/**
+	 * Subclasses must implement this method to satisfy the contract
+	 * of {@link IFileSystem#getStore(URI)}.  If it is not possible to create a file
+	 * store corresponding to the provided URI for this file system, a file store
+	 * belonging to the null file system should be returned
 	 */
 	public abstract IFileStore getStore(URI uri);
 
