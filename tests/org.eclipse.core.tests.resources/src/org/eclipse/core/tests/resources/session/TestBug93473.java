@@ -16,7 +16,6 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.tests.resources.ContentDescriptionManagerTest;
 import org.eclipse.core.tests.resources.WorkspaceSessionTest;
@@ -42,7 +41,7 @@ public class TestBug93473 extends WorkspaceSessionTest {
 
 		IProject project = workspace.getRoot().getProject("proj1");
 		assertDoesNotExistInWorkspace("0.1", project);
-		IContentType text = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+		Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 		IFile file = project.getFile("foo.txt");
 		assertDoesNotExistInWorkspace("0.2", file);
 		ensureExistsInWorkspace(file, getRandomContents());

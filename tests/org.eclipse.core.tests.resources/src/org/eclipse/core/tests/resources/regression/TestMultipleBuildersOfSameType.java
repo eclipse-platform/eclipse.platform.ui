@@ -30,7 +30,7 @@ public class TestMultipleBuildersOfSameType extends WorkspaceSessionTest {
 	//various resource handles
 	private IProject project1;
 	private IFolder sorted1, unsorted1;
-	private IFile sortedFile1, unsortedFile1;
+	private IFile unsortedFile1;
 
 	public TestMultipleBuildersOfSameType() {
 		super();
@@ -46,7 +46,6 @@ public class TestMultipleBuildersOfSameType extends WorkspaceSessionTest {
 		unsorted1 = project1.getFolder(SortBuilder.UNSORTED_FOLDER);
 		sorted1 = project1.getFolder(SortBuilder.SORTED_FOLDER);
 		unsortedFile1 = unsorted1.getFile("File1");
-		sortedFile1 = sorted1.getFile("File1");
 	}
 
 	/**

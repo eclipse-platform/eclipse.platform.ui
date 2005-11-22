@@ -105,7 +105,7 @@ public class BenchElementTree extends OldCorePerformanceTest {
 	public void benchMergeDeltaChain() {
 		final int repeat = 50;
 
-		/* creat all the test trees */
+		/* create all the test trees */
 		ElementTree[] bases = new ElementTree[repeat];
 		ElementTree[][] chains = new ElementTree[repeat][];
 		for (int i = 0; i < repeat; i++) {
@@ -158,7 +158,7 @@ public class BenchElementTree extends OldCorePerformanceTest {
 
 	/**
 	 * Does several routine operations on the given tree.  
-	 * Returns an array of all the intermediary elementtrees.
+	 * Returns an array of all the intermediary element trees.
 	 */
 	private ElementTree[] buildDeltaChain(ElementTree tree) {
 		Vector trees = new Vector();
@@ -168,10 +168,10 @@ public class BenchElementTree extends OldCorePerformanceTest {
 
 		/* create file elements */
 		tree = tree.newEmptyDelta();
-		IPath[] files = getFilePaths();
-		for (int i = 0; i < files.length; i++) {
-			Object data = files[i].toString();
-			tree.createElement(files[i], data);
+		IPath[] filePaths = getFilePaths();
+		for (int i = 0; i < filePaths.length; i++) {
+			Object data = filePaths[i].toString();
+			tree.createElement(filePaths[i], data);
 
 			tree.immutable();
 			trees.addElement(tree);
@@ -181,8 +181,8 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		/* modify the data of all file elements a few times */
 		for (int i = 0; i < repeat; i++) {
 			Object data = "data" + i;
-			for (int f = 0; f < files.length; f++) {
-				tree.setElementData(files[f], data);
+			for (int f = 0; f < filePaths.length; f++) {
+				tree.setElementData(filePaths[f], data);
 
 				tree.immutable();
 				trees.addElement(tree);
@@ -191,8 +191,8 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		}
 
 		/* delete all file elements */
-		for (int i = 0; i < files.length; i++) {
-			tree.deleteElement(files[i]);
+		for (int i = 0; i < filePaths.length; i++) {
+			tree.deleteElement(filePaths[i]);
 			tree.immutable();
 			trees.addElement(tree);
 			tree = tree.newEmptyDelta();
@@ -201,40 +201,6 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		ElementTree[] results = new ElementTree[trees.size()];
 		trees.copyInto(results);
 		return results;
-	}
-
-	/**
-	 * Creates a very large tree (> 10000 elements).
-	 * Tree is complete tree of depth 4, fan out 10.
-	 */
-	private ElementTree createLargeTree() {
-		int elementsPerDepth = 10;
-		ElementTree tree = new ElementTree();
-		Object data = new Object();
-
-		//create strings
-		String[] names = new String[elementsPerDepth];
-		for (int i = 0; i < elementsPerDepth; i++) {
-			names[i] = Integer.toString(i);
-		}
-
-		for (int i = 0; i < elementsPerDepth; i++) {
-			IPath ipath = Path.ROOT.append(names[i]);
-			tree.createElement(ipath, data);
-			for (int j = 0; j < elementsPerDepth; j++) {
-				IPath jpath = ipath.append(names[j]);
-				tree.createElement(jpath, data);
-				for (int k = 0; k < elementsPerDepth; k++) {
-					IPath kpath = jpath.append(names[k]);
-					tree.createElement(kpath, data);
-					for (int l = 0; l < elementsPerDepth; l++) {
-						IPath lpath = kpath.append(names[l]);
-						tree.createElement(lpath, data);
-					}
-				}
-			}
-		}
-		return tree;
 	}
 
 	/**
@@ -272,37 +238,6 @@ public class BenchElementTree extends OldCorePerformanceTest {
 	/**
 	 * Tests a typical series of ElementTree operations, where
 	 * a new delta is generated for each operation.
-	 * Returns the resulting element tree.
-	 */
-	private ElementTree doManyRoutineOperationsOnLargeTree(ElementTree tree) {
-		ElementTree newTree = tree.newEmptyDelta();
-
-		int elementsPerDepth = tree.getChildCount(Path.ROOT);
-		Object data = new Object();
-		//create strings
-		String[] names = new String[elementsPerDepth];
-		for (int i = 0; i < elementsPerDepth; i++) {
-			names[i] = Integer.toString(i);
-		}
-
-		//add 1000 elements (simulate large import)
-		for (int i = 0; i < elementsPerDepth; i++) {
-			IPath ipath = Path.ROOT.append(names[i]);
-			for (int j = 0; j < elementsPerDepth; j++) {
-				IPath jpath = ipath.append(names[j]);
-				for (int k = 0; k < elementsPerDepth; k++) {
-					IPath kpath = jpath.append("new" + names[k]);
-					newTree.createElement(kpath, data);
-				}
-			}
-		}
-		newTree.immutable();
-		return newTree;
-	}
-
-	/**
-	 * Tests a typical series of ElementTree operations, where
-	 * a new delta is generated for each operation.
 	 * Returns the number of basic ElementTree operations performed.
 	 */
 	private int doRoutineOperations() {
@@ -327,49 +262,6 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		}
 
 		return (repeat + 2) * files.length;
-	}
-
-	/**
-	 * Tests a typical series of ElementTree operations, where
-	 * a new delta is generated for each operation.
-	 * Returns the resulting element tree.
-	 */
-	private ElementTree doRoutineOperations(ElementTree tree) {
-		int repeat = 3;
-
-		/* modify the data of all file elements a few times */
-		for (int i = 0; i < repeat; i++) {
-			Object data = "data" + i;
-			for (int f = 0; f < files.length; f++) {
-				tree = tree.newEmptyDelta();
-				tree.setElementData(files[f], data);
-				tree.immutable();
-			}
-		}
-		return tree;
-	}
-
-	/**
-	 * Tests a typical series of ElementTree operations, where
-	 * a new delta is generated for each operation.
-	 * Returns the resulting element tree.
-	 */
-	private ElementTree doRoutineOperationsOnLargeTree(ElementTree tree) {
-		int elementsPerDepth = tree.getChildCount(Path.ROOT);
-		//create strings
-		String[] names = new String[elementsPerDepth];
-		for (int i = 0; i < elementsPerDepth; i++) {
-			names[i] = Integer.toString(i);
-		}
-
-		//do about ten changes -- small incremental change	
-		for (int i = 0; i < elementsPerDepth; i++) {
-			IPath ipath = Path.ROOT.append(names[i]);
-			tree = tree.newEmptyDelta();
-			tree.setElementData(ipath, ipath.toString());
-			tree.immutable();
-		}
-		return tree;
 	}
 
 	static IPath[] getFilePaths() {

@@ -27,7 +27,7 @@ public class TestBuilderDeltaSerialization extends WorkspaceSerializationTest {
 	//various resource handles
 	private IProject project1, project2;
 	private IFolder sorted1, sorted2, unsorted1, unsorted2;
-	private IFile sortedFile1, sortedFile2, unsortedFile1, unsortedFile2;
+	private IFile unsortedFile1, unsortedFile2;
 
 	/**
 	 * Constructor for TestBuilderDeltaSerialization.
@@ -51,13 +51,11 @@ public class TestBuilderDeltaSerialization extends WorkspaceSerializationTest {
 		unsorted1 = project1.getFolder(SortBuilder.UNSORTED_FOLDER);
 		sorted1 = project1.getFolder(SortBuilder.SORTED_FOLDER);
 		unsortedFile1 = unsorted1.getFile("File1");
-		sortedFile1 = sorted1.getFile("File1");
 
 		project2 = root.getProject("Project2");
 		unsorted2 = project2.getFolder(SortBuilder.UNSORTED_FOLDER);
 		sorted2 = project2.getFolder(SortBuilder.SORTED_FOLDER);
 		unsortedFile2 = unsorted2.getFile("File2");
-		sortedFile2 = sorted2.getFile("File2");
 	}
 
 	/**
@@ -73,7 +71,6 @@ public class TestBuilderDeltaSerialization extends WorkspaceSerializationTest {
 			unsortedFile2.setContents(new ByteArrayInputStream(new byte[] {1, 4, 3}), true, true, null);
 
 			//turn off autobuild
-			IWorkspace workspace = getWorkspace();
 			IWorkspaceDescription desc = workspace.getDescription();
 			desc.setAutoBuilding(false);
 			desc.setBuildOrder(new String[] {project1.getName(), project2.getName()});

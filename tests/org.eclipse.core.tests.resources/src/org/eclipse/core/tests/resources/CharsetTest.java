@@ -854,7 +854,7 @@ public class CharsetTest extends ResourceTest {
 		IProject project = null;
 		try {
 			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-			IContentType text = contentTypeManager.getContentType("org.eclipse.core.runtime.text");
+//			IContentType text = contentTypeManager.getContentType("org.eclipse.core.runtime.text");
 			IContentType xml = contentTypeManager.getContentType("org.eclipse.core.runtime.xml");
 
 			IWorkspace workspace = getWorkspace();
