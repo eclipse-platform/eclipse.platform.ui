@@ -335,6 +335,9 @@ public class PopupDialog extends Window {
 			public void handleEvent(Event event) {
 				// Close if we are deactivating and have no child shells.
 				// If we have child shells, we are deactivating due to their opening.
+				// On X, we receive this when a menu child (such as the system menu) of
+				// the shell opens, but I have not found a way to distinguish that 
+				// case here.  Hence bug #113577 still exists.
 				if (listenToDeactivate && event.widget == getShell()
 						&& getShell().getShells().length == 0) {
 					close();
@@ -693,7 +696,12 @@ public class PopupDialog extends Window {
 			menuManager = new MenuManager();
 			fillDialogMenu(menuManager);
 		}
-
+		// Setting this flag works around a problem that remains on X only, whereby activating 
+		// the menu deactivates our shell.  If an SWT workaround could be found for this,
+		// we could also fix bug #113577, but at this time, we can't distinguish deactivation
+		// by our own menu.
+		listenToDeactivate = false;
+		
 		Menu menu = menuManager.createContextMenu(getShell());
 		Rectangle bounds = toolBar.getBounds();
 		Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
