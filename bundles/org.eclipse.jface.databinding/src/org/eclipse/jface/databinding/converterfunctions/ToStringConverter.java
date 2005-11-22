@@ -11,8 +11,8 @@
  */
 package org.eclipse.jface.databinding.converterfunctions;
 
-import org.eclipse.jface.databinding.converter.Messages;
 import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
+import org.eclipse.jface.databinding.internal.BindingMessages;
 
 
 
@@ -34,9 +34,9 @@ public class ToStringConverter implements IConversionFunction {
 	public Object convert(Object source) {
         Boolean bool = (Boolean) source;
         if (bool.booleanValue()) {
-            return Messages.Boolean_Yes;
+            return BindingMessages.getString("Yes"); //$NON-NLS-1$
         }
-        return Messages.Boolean_No;
+        return BindingMessages.getString("No"); //$NON-NLS-1$
 	}
 
 }
