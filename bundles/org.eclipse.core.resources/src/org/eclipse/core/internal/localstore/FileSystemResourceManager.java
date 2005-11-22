@@ -560,14 +560,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 
 	public InputStream read(IFile target, boolean force, IProgressMonitor monitor) throws CoreException {
 		IFileStore store = getStore(target);
-		final IFileInfo fileInfo = store.fetchInfo();
-		if (!fileInfo.exists()) {
-			// thread safety: (the location can be null if the project for this file does not exist)
-			((Project) target.getProject()).checkExists(NULL_FLAG, true);
-			String message = NLS.bind(Messages.localstore_fileNotFound, store.toString());
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
-		}
 		if (!force) {
+			final IFileInfo fileInfo = store.fetchInfo();
+			if (!fileInfo.exists()) {
+				// thread safety: (the location can be null if the project for this file does not exist)
+				((Project) target.getProject()).checkExists(NULL_FLAG, true);
+				String message = NLS.bind(Messages.localstore_fileNotFound, store.toString());
+				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
+			}
 			ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
 			int flags = ((Resource) target).getFlags(info);
 			((Resource) target).checkExists(flags, true);
