@@ -53,16 +53,6 @@ public abstract class DynamicTestCase extends UITestCase implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
-	 */
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		Platform.getExtensionRegistry().addRegistryChangeListener(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
 	 */
 	protected void doTearDown() throws Exception {
@@ -82,6 +72,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 	 */
 	protected final Bundle getBundle() {
 		if (newBundle == null) {
+			Platform.getExtensionRegistry().addRegistryChangeListener(this);
 			reset();
 			queue = new ReferenceQueue();
 			// Just try to find the new perspective. Don't actually try to
@@ -109,6 +100,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 				e1.printStackTrace();
 			}
 			processEvents();
+			Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		}
 		return newBundle;
 	}
@@ -230,6 +222,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 	 */
 	protected final void removeBundle() {
 		if (newBundle != null) {
+			Platform.getExtensionRegistry().addRegistryChangeListener(this);
 			queue = new ReferenceQueue();
 			try {
 				DynamicUtils.uninstallPlugin(newBundle);
@@ -255,6 +248,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 				newBundle = null;
 			}
 			processEvents();
+			Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		}
 	}
 
