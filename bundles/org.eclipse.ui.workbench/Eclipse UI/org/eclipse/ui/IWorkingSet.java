@@ -170,14 +170,4 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * @since 3.2
 	 */
 	public boolean isAggregateWorkingSet();	
-	
-	/**
-	 * Returns whether this working set is currently empty (has no elements).
-	 * 
-	 * <p><em>Please note: This API is experiemental and may change before 3.2 ships.</em></p>
-	 * 
-	 * @return whether this working set is currently empty
-	 * @since 3.2
-	 */
-	public boolean isEmpty();
 }

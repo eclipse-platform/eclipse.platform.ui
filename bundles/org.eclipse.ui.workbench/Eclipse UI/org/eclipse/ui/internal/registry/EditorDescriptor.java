@@ -610,7 +610,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * For debugging purposes only.
      */
     public String toString() {
-        return "EditorDescriptor(id=" + getId() + ", label=" + getLabel() + ")"; //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-1$
+        return "EditorDescriptor(" + editorName + ")"; //$NON-NLS-2$//$NON-NLS-1$
     }
 
     /* (non-Javadoc)

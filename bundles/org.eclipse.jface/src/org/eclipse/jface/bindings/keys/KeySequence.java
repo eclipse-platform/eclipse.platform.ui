@@ -78,8 +78,8 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	}
 
 	/**
-	 * Creates an instance of <code>KeySequence</code> given a key sequence
-	 * and a key stroke.
+	 * Creates an instance of <code>KeySequence</code> given a key sequence and a
+	 * key stroke.
 	 * 
 	 * @param keySequence
 	 *            a key sequence. Must not be <code>null</code>.
@@ -105,8 +105,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	}
 
 	/**
-	 * Creates an instance of <code>KeySequence</code> given a single key
-	 * stroke.
+	 * Creates an instance of <code>KeySequence</code> given a single key stroke.
 	 * 
 	 * @param keyStroke
 	 *            a single key stroke. Must not be <code>null</code>.
@@ -146,7 +145,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	}
 
 	/**
-	 * Creates an instance of <code>KeySequence</code> by parsing a given
+	 * Creates an instance of <code>KeySequence</code> by parsing a given 
 	 * formal string representation.
 	 * 
 	 * @param string
@@ -168,15 +167,10 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 		while (stringTokenizer.hasMoreTokens())
 			keyStrokes.add(KeyStroke.getInstance(stringTokenizer.nextToken()));
 
-		final KeyStroke[] keyStrokeArray = (KeyStroke[]) keyStrokes
-				.toArray(new KeyStroke[keyStrokes.size()]);
 		try {
-			return new KeySequence(keyStrokeArray);
-		} catch (final IllegalArgumentException e) {
-			throw new ParseException(
-					"Could not construct key sequence with these key strokes: " //$NON-NLS-1$
-							+ keyStrokes);
-		} catch (final NullPointerException e) {
+			return new KeySequence((KeyStroke[]) keyStrokes
+					.toArray(new KeyStroke[keyStrokes.size()]));
+		} catch (Throwable t) {
 			throw new ParseException(
 					"Could not construct key sequence with these key strokes: " //$NON-NLS-1$
 							+ keyStrokes);
@@ -203,9 +197,9 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+    /*
+     * (non-Javadoc)
+     * 
 	 * @see java.lang.Object#compareTo(java.lang.Object)
 	 */
 	public final int compareTo(final Object object) {

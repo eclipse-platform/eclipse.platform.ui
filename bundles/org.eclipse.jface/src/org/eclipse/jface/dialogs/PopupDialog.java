@@ -201,9 +201,9 @@ public class PopupDialog extends Window {
 	 * dynamically if possible.
 	 */
 	private Label titleLabel, infoLabel;
-
+	
 	/**
-	 * Separator controls. Cached so they can be excluded from color changes.
+	 * Separator controls.  Cached so they can be excluded from color changes.
 	 */
 	private Control titleSeparator, infoSeparator;
 
@@ -333,13 +333,7 @@ public class PopupDialog extends Window {
 
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
-				// Close if we are deactivating and have no child shells.
-				// If we have child shells, we are deactivating due to their opening.
-				// On X, we receive this when a menu child (such as the system menu) of
-				// the shell opens, but I have not found a way to distinguish that 
-				// case here.  Hence bug #113577 still exists.
-				if (listenToDeactivate && event.widget == getShell()
-						&& getShell().getShells().length == 0) {
+				if (listenToDeactivate) {
 					close();
 				}
 			}
@@ -353,8 +347,9 @@ public class PopupDialog extends Window {
 						&& getShell().getShells().length == 0) {
 					listenToDeactivate = true;
 					// Typically we start listening for parent deactivate after
-					// we are activated, except on the Mac, where the deactivate
-					// is received after activate.
+					// we are activated.
+					// Except on the Mac, where the deactivate is received after
+					// activate.
 					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=100668
 					listenToParentDeactivate = !"carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 				}
@@ -696,10 +691,11 @@ public class PopupDialog extends Window {
 			menuManager = new MenuManager();
 			fillDialogMenu(menuManager);
 		}
-		// Setting this flag works around a problem that remains on X only, whereby activating 
-		// the menu deactivates our shell.  
-		listenToDeactivate = !"gtk".equals(SWT.getPlatform()); //$NON-NLS-1$
-		
+
+		// Setting this flag prevents us from closing on the deactivate we
+		// receive when a menu item is selected
+		listenToDeactivate = false;
+
 		Menu menu = menuManager.createContextMenu(getShell());
 		Rectangle bounds = toolBar.getBounds();
 		Point topLeft = new Point(bounds.x, bounds.y + bounds.height);

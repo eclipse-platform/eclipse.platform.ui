@@ -160,8 +160,4 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 	public void setLabel(String uniqueId) {
 		this.label = uniqueId;
 	}
-	
-	public boolean isEmpty() {
-		return getElementsArray().isEmpty();
-	}
 }
