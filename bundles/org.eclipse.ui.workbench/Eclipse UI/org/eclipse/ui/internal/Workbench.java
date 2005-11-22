@@ -18,12 +18,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.CommandManager;
@@ -59,7 +59,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.menus.SMenuManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -173,28 +172,41 @@ public final class Workbench implements IWorkbench {
 		private final IProgressMonitor progressMonitor;
 		private final int maximumProgressCount;
 
-		private StartupProgressBundleListener(IProgressMonitor progressMonitor, int maximumProgressCount) {
+		// stack of names of bundles currently starting
+		private final List starting;
+
+		StartupProgressBundleListener(IProgressMonitor progressMonitor, int maximumProgressCount) {
 			super();
 			this.progressMonitor = progressMonitor;
 			this.maximumProgressCount = maximumProgressCount;
+			this.starting = new ArrayList();
 		}
 
-		public void bundleChanged(final BundleEvent event) {
-		    // Don't report progress unless we're running in the ui thread
-		    if (Display.getCurrent() == null) {
-		        return;
-		    }
-		    
-		    if (event.getType() == BundleEvent.STARTED) {
-		    	if(Display.getCurrent() != null) {
-		        	progressCount++;
-					if(progressCount <= maximumProgressCount) {
+		public void bundleChanged(BundleEvent event) {
+			int eventType = event.getType();
+
+			synchronized (this) {
+				if (eventType == BundleEvent.STARTING) {
+					starting.add(event.getBundle().getSymbolicName());
+				} else if (eventType == BundleEvent.STARTED) {
+					progressCount++;
+					if (progressCount <= maximumProgressCount)
 						progressMonitor.worked(1);
-		        	}
-		        	progressMonitor.subTask(NLS.bind(WorkbenchMessages.Startup_Loaded, event.getBundle().getSymbolicName()));
-		            Display.getCurrent().update();
-		    	}
-		    }
+					int index = starting.lastIndexOf(event.getBundle().getSymbolicName());
+					if (index >= 0)
+						starting.remove(index);
+					if (index != starting.size())
+						return; // not currently displayed
+				} else {
+					return; // uninteresting event
+				}
+			}
+
+			int size = starting.size();
+			String taskName = size == 0 ? WorkbenchMessages.Startup_Loading_Workbench
+					: NLS.bind(WorkbenchMessages.Startup_Loading, starting
+							.get(size - 1));
+			progressMonitor.subTask(taskName);
 		}
 	}
 
@@ -1249,31 +1261,28 @@ public final class Workbench implements IWorkbench {
 			// We don't know how many plug-ins will be loaded,
 			// assume we are loading a tenth of the installed plug-ins.
 			// (The Eclipse SDK loads 7 of 86 plug-ins at startup as of 2005-5-20)
-			final int expectedProgressCount = Math.max(1, WorkbenchPlugin.getDefault().getBundleCount() / 10);
-			
-			try {
-				runStartupWithProgress(expectedProgressCount, new Runnable() {
-					public void run() {
-						doOpenFirstTimeWindow();
-					}});
-			} catch (InvocationTargetException e) {
-				Throwable t = e.getTargetException();
-				ErrorDialog.openError(null,
-						WorkbenchMessages.Problems_Opening_Page, null, new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.Problems_Opening_Page, t));
-			} catch (InterruptedException e) {
-				WorkbenchPlugin.log("Interrupted while opening first time window", e); //$NON-NLS-1$
-			}
+			final int expectedProgressCount = Math.max(1, WorkbenchPlugin
+					.getDefault().getBundleCount() / 10);
+
+			runStartupWithProgress(expectedProgressCount, new Runnable() {
+				public void run() {
+					doOpenFirstTimeWindow();
+				}
+			});
 		}
 	}
 
 	private void runStartupWithProgress(final int expectedProgressCount,
-			final Runnable runnable) throws InvocationTargetException,
-			InterruptedException {
+			final Runnable runnable) {
 		progressCount = 0;
 		final double cutoff = 0.95;
 
 		IProgressMonitor progressMonitor = StartupProgressMonitor.getInstance();
-		if (progressMonitor != null) {
+		if (progressMonitor == null) {
+			// cannot report progress (e.g. if the splash screen is not showing)
+			// fall back to starting without showing progress.
+			runnable.run();
+		} else {
 			progressMonitor.beginTask("", expectedProgressCount); //$NON-NLS-1$
 			SynchronousBundleListener bundleListener = new StartupProgressBundleListener(
 					progressMonitor, (int) (expectedProgressCount * cutoff));
@@ -1289,49 +1298,6 @@ public final class Workbench implements IWorkbench {
 			} finally {
 				WorkbenchPlugin.getDefault().removeBundleListener(
 						bundleListener);
-			}
-		} else {
-			Shell shell = new Shell(Display.getCurrent(), SWT.NONE);
-			try {
-
-				final StartupProgressMonitorDialog progressMonitorDialog = new StartupProgressMonitorDialog(
-						shell);
-
-				SynchronousBundleListener bundleListener = new StartupProgressBundleListener(
-						progressMonitorDialog.getProgressMonitor(),
-						(int) (expectedProgressCount * cutoff));
-				WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
-
-				try {
-					progressMonitorDialog.run(false, false,
-							new IRunnableWithProgress() {
-
-								public void run(IProgressMonitor monitor) {
-									monitor
-											.beginTask(
-													"", expectedProgressCount); //$NON-NLS-1$
-
-									runnable.run();
-
-									monitor
-											.subTask(WorkbenchMessages.Startup_Done);
-									int remainingWork = expectedProgressCount
-											- Math
-													.min(
-															progressCount,
-															(int) (expectedProgressCount * cutoff));
-									monitor.worked(remainingWork);
-									Display.getCurrent().update();
-									monitor.done();
-								}
-							});
-				} finally {
-					WorkbenchPlugin.getDefault().removeBundleListener(
-							bundleListener);
-				}
-
-			} finally {
-				shell.dispose();
 			}
 		}
 	}
@@ -1547,7 +1513,7 @@ public final class Workbench implements IWorkbench {
 	/*
 	 * Restores the state of the previously saved workbench
 	 */
-	private IStatus restoreState(final IMemento memento) throws InvocationTargetException, InterruptedException {
+	private IStatus restoreState(final IMemento memento) {
 
 		final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
 				WorkbenchMessages.Workbench_problemsRestoring, null);

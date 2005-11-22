@@ -585,7 +585,8 @@ public class WorkbenchMessages extends NLS {
 	// Workbench
 	// ==============================================================================
 	public static String Startup_DefaultProductName;
-	public static String Startup_Loaded;
+	public static String Startup_Loading;
+	public static String Startup_Loading_Workbench;
 	public static String Startup_Done;
 
 	public static String WorkbenchPage_UnknownLabel;
