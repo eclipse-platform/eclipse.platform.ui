@@ -45,14 +45,14 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
      */
     protected ResourceMapping[] getCVSResourceMappings() {
         ResourceMapping[] selectedMappings = getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
-        try {
-			IResourceMappingScope scope = new ScopeGenerator().prepareScope("CVS Operation", selectedMappings, getResourceMappingContext(), new NullProgressMonitor());
-			if (scope.hasAdditionalMappings()) {
-				return showAllMappings(scope);
-			}
-		} catch (CoreException e) {
-			CVSUIPlugin.log(e);
-		}
+//        try {
+//			IResourceMappingScope scope = new ScopeGenerator().prepareScope("CVS Operation", selectedMappings, getResourceMappingContext(), new NullProgressMonitor());
+//			if (scope.hasAdditionalMappings()) {
+//				return showAllMappings(scope);
+//			}
+//		} catch (CoreException e) {
+//			CVSUIPlugin.log(e);
+//		}
 		return selectedMappings;
     }
     
