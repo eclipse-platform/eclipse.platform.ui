@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;

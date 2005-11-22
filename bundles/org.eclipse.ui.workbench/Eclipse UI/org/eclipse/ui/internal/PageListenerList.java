@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPageListener;
@@ -20,8 +20,7 @@ import org.eclipse.ui.internal.misc.UIStats;
 /**
  * Part listener list.
  */
-public class PageListenerList {
-    private ListenerList listeners = new ListenerList();
+public class PageListenerList extends EventManager {
 
     /**
      * PartNotifier constructor comment.
@@ -34,7 +33,7 @@ public class PageListenerList {
      * Adds an IPartListener to the part service.
      */
     public void addPageListener(IPageListener l) {
-        listeners.add(l);
+    	addListenerObject(l);
     }
 
     /**
@@ -60,7 +59,7 @@ public class PageListenerList {
      * Notifies the listener that a part has been activated.
      */
     public void firePageActivated(final IWorkbenchPage page) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPageListener l = (IPageListener) array[i];
             fireEvent(new SafeRunnable() {
@@ -75,7 +74,7 @@ public class PageListenerList {
      * Notifies the listener that a part has been closed
      */
     public void firePageClosed(final IWorkbenchPage page) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPageListener l = (IPageListener) array[i];
             fireEvent(new SafeRunnable() {
@@ -90,7 +89,7 @@ public class PageListenerList {
      * Notifies the listener that a part has been opened.
      */
     public void firePageOpened(final IWorkbenchPage page) {
-        Object[] listeners = this.listeners.getListeners();
+        Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; i++) {
             final IPageListener l = (IPageListener) listeners[i];
             fireEvent(new SafeRunnable() {
@@ -105,6 +104,6 @@ public class PageListenerList {
      * Removes an IPartListener from the part service.
      */
     public void removePageListener(IPageListener l) {
-        listeners.remove(l);
+        removeListenerObject(l);
     }
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;

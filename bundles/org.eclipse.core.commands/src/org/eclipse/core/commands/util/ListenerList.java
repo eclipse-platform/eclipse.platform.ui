@@ -11,7 +11,6 @@
 
 package org.eclipse.core.commands.util;
 
-import org.eclipse.core.internal.commands.util.Assert;
 
 /**
  * This class is used to maintain a list of listeners, and is used in the
@@ -39,38 +38,16 @@ import org.eclipse.core.internal.commands.util.Assert;
  * </p>
  * 
  * @since 3.2
+ * @deprecated Please use {@link org.eclipse.core.runtime.ListenerList} instead.
+ *             <strong>This class will be removed before 3.2 is released</strong>.
  */
-public class ListenerList {
-	
-	/**
-	 * The empty array singleton instance, returned by getListeners() when size ==
-	 * 0.
-	 */
-	private static final Object[] EmptyArray = new Object[0];
-
-	/**
-	 * The initial capacity of the list. Always >= 1.
-	 */
-	private int capacity;
-
-	/**
-	 * The list of listeners. Initially <code>null</code> but initialized to
-	 * an array of size capacity the first time a listener is added. Maintains
-	 * invariant: listeners != null IFF size != 0
-	 */
-	private Object[] listeners = null;
-
-	/**
-	 * The current number of listeners. Maintains invariant: 0 <= size <=
-	 * listeners.length.
-	 */
-	private int size;
+public class ListenerList extends org.eclipse.core.runtime.ListenerList {
 
 	/**
 	 * Creates a listener list with an initial capacity of 1.
 	 */
 	public ListenerList() {
-		this(1);
+		super();
 	}
 
 	/**
@@ -82,109 +59,18 @@ public class ListenerList {
 	 *            1
 	 */
 	public ListenerList(int capacity) {
-		Assert.isTrue(capacity >= 1);
-		this.capacity = capacity;
-	}
-
-	/**
-	 * Adds the given listener to this list. Has no effect if an identical
-	 * listener is already registered.
-	 * 
-	 * @param listener
-	 *            the listener; must not be <code>null</code>.
-	 */
-	public void add(Object listener) {
-		Assert.isNotNull(listener);
-		if (size == 0) {
-			listeners = new Object[capacity];
-		} else {
-			// check for duplicates using identity
-			for (int i = 0; i < size; ++i) {
-				if (listeners[i] == listener) {
-					return;
-				}
-			}
-			// grow array if necessary
-			if (size == listeners.length) {
-				System.arraycopy(listeners, 0,
-						listeners = new Object[size * 2 + 1], 0, size);
-			}
-		}
-
-		listeners[size] = listener;
-		size++;
+		super();
 	}
 
 	/**
 	 * Removes all listeners from this list.
 	 */
 	public void clear() {
-		size = 0;
-		listeners = null;
-	}
-
-	/**
-	 * Returns an array containing all the registered listeners, in the order in
-	 * which they were added.
-	 * <p>
-	 * The resulting array is unaffected by subsequent adds or removes. If there
-	 * are no listeners registered, the result is an empty array singleton
-	 * instance (no garbage is created). Use this method when notifying
-	 * listeners, so that any modifications to the listener list during the
-	 * notification will have no effect on the notification itself.
-	 * </p>
-	 * 
-	 * @return the list of registered listeners; never <code>null</code>.
-	 */
-	public Object[] getListeners() {
-		if (size == 0)
-			return EmptyArray;
-		Object[] result = new Object[size];
-		System.arraycopy(listeners, 0, result, 0, size);
-		return result;
-	}
-
-	/**
-	 * Returns whether this listener list is empty.
-	 * 
-	 * @return <code>true</code> if there are no registered listeners, and
-	 *         <code>false</code> otherwise
-	 */
-	public boolean isEmpty() {
-		return size == 0;
-	}
-
-	/**
-	 * Removes the given listener from this list. Has no effect if an identical
-	 * listener was not already registered.
-	 * 
-	 * @param listener
-	 *            the listener; must not be <code>null</code>.
-	 */
-	public void remove(Object listener) {
-		Assert.isNotNull(listener);
-		for (int i = 0; i < size; ++i) {
-			if (listeners[i] == listener) {
-				if (size == 1) {
-					listeners = null;
-					size = 0;
-				} else {
-					System
-							.arraycopy(listeners, i + 1, listeners, i, --size
-									- i);
-					listeners[size] = null;
-				}
-				return;
-			}
+		// TODO Bug 117519
+		// listenerList.clear();
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			remove(listeners[i]);
 		}
-	}
-
-	/**
-	 * Returns the number of registered listeners.
-	 * 
-	 * @return the number of registered listeners
-	 */
-	public int size() {
-		return size;
 	}
 }

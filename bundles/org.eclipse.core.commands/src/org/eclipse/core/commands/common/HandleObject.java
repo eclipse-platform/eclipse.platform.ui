@@ -36,7 +36,7 @@ import org.eclipse.core.internal.commands.util.Util;
  * 
  * @since 3.1
  */
-public abstract class HandleObject {
+public abstract class HandleObject extends EventManager {
 
 	/**
 	 * The constant integer hash code value meaning the hash code has not yet

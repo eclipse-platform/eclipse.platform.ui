@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;

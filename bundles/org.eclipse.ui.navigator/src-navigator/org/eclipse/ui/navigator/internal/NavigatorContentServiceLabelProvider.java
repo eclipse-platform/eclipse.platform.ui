@@ -11,7 +11,7 @@
 package org.eclipse.ui.navigator.internal;
 
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -49,12 +49,12 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * @see org.eclipse.ui.navigator.internal.NavigatorContentService
  * @see org.eclipse.ui.navigator.internal.NavigatorContentServiceContentProvider
  */
-public class NavigatorContentServiceLabelProvider implements ILabelProvider {
+public class NavigatorContentServiceLabelProvider extends EventManager
+		implements ILabelProvider {
 
 	private final ILabelDecorator decorator;
 	private final INavigatorContentService contentService;
 	private final boolean isContentServiceSelfManaged;
-	private ListenerList listeners = new ListenerList(1);
 
 	/**
 	 * <p>
@@ -161,7 +161,7 @@ public class NavigatorContentServiceLabelProvider implements ILabelProvider {
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void addListener(ILabelProviderListener aListener) {
-		listeners.add(aListener);
+		addListenerObject(aListener);
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class NavigatorContentServiceLabelProvider implements ILabelProvider {
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener aListener) {
-		listeners.remove(aListener);
+		removeListenerObject(aListener);
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class NavigatorContentServiceLabelProvider implements ILabelProvider {
      */
     protected void fireLabelProviderChanged(
             final LabelProviderChangedEvent event) {
-        Object[] theListeners = this.listeners.getListeners();
+        Object[] theListeners = getListeners();
         for (int i = 0; i < theListeners.length; ++i) {
             final ILabelProviderListener l = (ILabelProviderListener) theListeners[i];
             Platform.run(new SafeRunnable() {

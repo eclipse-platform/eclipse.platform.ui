@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
@@ -204,18 +204,15 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
      * A selection provider/listener for this view.
      * It is a selection provider for this view's site.
      */
-    protected class SelectionProvider implements ISelectionProvider {
-        /**
-         * Selection change listeners.
-         */
-        private ListenerList selectionChangedListeners = new ListenerList();
+    protected class SelectionProvider extends EventManager implements
+			ISelectionProvider {
 
         /* (non-Javadoc)
          * Method declared on ISelectionProvider.
          */
         public void addSelectionChangedListener(
                 ISelectionChangedListener listener) {
-            selectionChangedListeners.add(listener);
+            addListenerObject(listener);
         }
 
         /* (non-Javadoc)
@@ -242,7 +239,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
          */
         public void removeSelectionChangedListener(
                 ISelectionChangedListener listener) {
-            selectionChangedListeners.remove(listener);
+            removeListenerObject(listener);
         }
 
         /**
@@ -251,7 +248,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
          */
         public void selectionChanged(final SelectionChangedEvent event) {
             // pass on the notification to listeners
-            Object[] listeners = selectionChangedListeners.getListeners();
+            Object[] listeners = getListeners();
             for (int i = 0; i < listeners.length; ++i) {
                 final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
                 Platform.run(new SafeRunnable() {

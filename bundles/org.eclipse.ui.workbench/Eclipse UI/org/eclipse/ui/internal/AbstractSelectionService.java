@@ -12,7 +12,7 @@ package org.eclipse.ui.internal;
 
 import java.util.Hashtable;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;

@@ -12,7 +12,7 @@ package org.eclipse.ui.preferences;
 
 import java.io.IOException;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.preferences.DefaultScope;
@@ -46,14 +46,8 @@ import org.osgi.service.prefs.BackingStoreException;
  * @see org.eclipse.core.runtime.preferences
  * @since 3.1
  */
-public class ScopedPreferenceStore implements IPreferenceStore,
-		IPersistentPreferenceStore {
-
-	/**
-	 * Identity list of old listeners (element type:
-	 * <code>org.eclipse.jface.util.IPropertyChangeListener</code>).
-	 */
-	private ListenerList listeners = new ListenerList();
+public class ScopedPreferenceStore extends EventManager implements
+		IPreferenceStore, IPersistentPreferenceStore {
 
 	/**
 	 * The storeContext is the context where values will stored with the
@@ -121,7 +115,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 
 	/**
 	 * Create a new instance of the receiver. Store the values in context in the
-	 * node looked up by qualifier. 
+	 * node looked up by qualifier.
 	 * 
 	 * @param context
 	 *            the scope to store to
@@ -152,7 +146,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 			 */
 			public void added(NodeChangeEvent event) {
 				if (nodeQualifier.equals(event.getChild().name())
-						&& !listeners.isEmpty())
+						&& isListenerAttached())
 					getStorePreferences().addPreferenceChangeListener(
 							preferencesListener);
 			}
@@ -257,7 +251,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		initializePreferencesListener();// Create the preferences listener if it
 		// does not exist
-		listeners.add(listener);
+		addListenerObject(listener);
 	}
 
 	/**
@@ -350,14 +344,12 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 */
 	public void firePropertyChangeEvent(String name, Object oldValue,
 			Object newValue) {
-		// efficiently handle case of 0 listeners
-		if (listeners.isEmpty()) {
-			// no one interested
-			return;
-		}
 		// important: create intermediate array to protect against listeners
 		// being added/removed during the notification
-		final Object[] list = listeners.getListeners();
+		final Object[] list = getListeners();
+		if (list.length == 0) {
+			return;
+		}
 		final PropertyChangeEvent event = new PropertyChangeEvent(this, name,
 				oldValue, newValue);
 		for (int i = 0; i < list.length; i++) {
@@ -570,8 +562,8 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 * @see org.eclipse.jface.preference.IPreferenceStore#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		listeners.remove(listener);
-		if (listeners.isEmpty())
+		removeListenerObject(listener);
+		if (!isListenerAttached())
 			disposePreferenceStoreListener();
 	}
 

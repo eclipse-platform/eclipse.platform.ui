@@ -12,8 +12,8 @@ package org.eclipse.ui.internal;
 
 import java.util.BitSet;
 
-import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
@@ -127,13 +127,13 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     /**
      * API listener list
      */
-    private ListenerList propChangeListeners = new ListenerList(2);
+    private ListenerList propChangeListeners = new ListenerList();
 
     /**
      * Internal listener list. Listens to the INTERNAL_PROPERTY_* property change events that are not yet API.
      * TODO: Make these properties API in 3.2
      */
-    private ListenerList internalPropChangeListeners = new ListenerList(2);
+    private ListenerList internalPropChangeListeners = new ListenerList();
     
     private String partName;
 
@@ -631,7 +631,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         	pane.removeContributions();
         }
         
-        internalPropChangeListeners.clear();
+        clearListenerList(internalPropChangeListeners);
         Image oldImage = image;
         ImageDescriptor oldDescriptor = imageDescriptor;
         image = null;
@@ -640,12 +640,26 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
         defaultImageDescriptor = ImageDescriptor.getMissingImageDescriptor();
         immediateFirePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
-        propChangeListeners.clear();
+        clearListenerList(propChangeListeners);
         
         if (oldImage != null) {
             JFaceResources.getResources().destroy(oldDescriptor);
         }
     }
+
+	/**
+	 * Clears all of the listeners in a listener list. TODO Bug 117519 Remove
+	 * this method when fixed.
+	 * 
+	 * @param list
+	 *            The list to be clear; must not be <code>null</code>.
+	 */
+	private final void clearListenerList(final ListenerList list) {
+		final Object[] listeners = list.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			list.remove(listeners[i]);
+		}
+	}
 
     /**
      * 

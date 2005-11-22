@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
@@ -44,7 +44,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     /**
      * List of registered menu listeners (element type: <code>IMenuListener</code>).
      */
-    private ListenerList listeners = new ListenerList(1);
+    private ListenerList listeners = new ListenerList();
 
     /**
      * The menu control; <code>null</code> before

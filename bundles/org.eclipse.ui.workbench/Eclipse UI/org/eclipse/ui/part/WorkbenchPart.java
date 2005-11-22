@@ -12,7 +12,7 @@ package org.eclipse.ui.part;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.Platform;
@@ -45,8 +45,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @see org.eclipse.ui.part.ViewPart
  * @see org.eclipse.ui.part.EditorPart
  */
-public abstract class WorkbenchPart implements IWorkbenchPart2,
-        IExecutableExtension, IWorkbenchPartOrientation {
+public abstract class WorkbenchPart extends EventManager implements
+		IWorkbenchPart2, IExecutableExtension, IWorkbenchPartOrientation {
     private String title = ""; //$NON-NLS-1$
 
     private ImageDescriptor imageDescriptor;
@@ -58,8 +58,6 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
     private IConfigurationElement configElement;
 
     private IWorkbenchPartSite partSite;
-
-    private ListenerList propChangeListeners = new ListenerList(2);
 
     private String partName = ""; //$NON-NLS-1$
 
@@ -76,7 +74,7 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
      * Method declared on IWorkbenchPart.
      */
     public void addPropertyListener(IPropertyListener l) {
-        propChangeListeners.add(l);
+        addListenerObject(l);
     }
 
     /* (non-Javadoc)
@@ -104,9 +102,7 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
         // Clear out the property change listeners as we
         // should not be notifying anyone after the part
         // has been disposed.
-        if (!propChangeListeners.isEmpty()) {
-            propChangeListeners = new ListenerList(1);
-        }
+        clearListeners();
     }
 
     /**
@@ -115,7 +111,7 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
      * @param propertyId the id of the property that changed
      */
     protected void firePropertyChange(final int propertyId) {
-        Object[] array = propChangeListeners.getListeners();
+        Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             final IPropertyListener l = (IPropertyListener) array[nX];
             try {
@@ -205,7 +201,7 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
      * Method declared on IWorkbenchPart.
      */
     public void removePropertyListener(IPropertyListener l) {
-        propChangeListeners.remove(l);
+        removeListenerObject(l);
     }
 
     /* (non-Javadoc)

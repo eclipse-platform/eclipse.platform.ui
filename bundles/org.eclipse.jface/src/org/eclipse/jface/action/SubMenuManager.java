@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
@@ -43,7 +43,7 @@ public class SubMenuManager extends SubContributionManager implements
     /**
      * List of registered menu listeners (element type: <code>IMenuListener</code>).
      */
-    private ListenerList menuListeners = new ListenerList(1);
+    private ListenerList menuListeners = new ListenerList();
 
     /**
      * The menu listener added to the parent.  Lazily initialized
@@ -96,7 +96,7 @@ public class SubMenuManager extends SubContributionManager implements
         if (menuListener != null) {
             getParentMenuManager().removeMenuListener(menuListener);
             menuListener = null;
-            menuListeners.clear();
+            clearListenerList(menuListeners);
         }
         // Dispose wrapped menus in addition to removing them.
         // See bugs 64024 and 73715 for details.
@@ -114,6 +114,20 @@ public class SubMenuManager extends SubContributionManager implements
         }
         super.disposeManager();
     }
+
+	/**
+	 * Clears all of the listeners in a listener list. TODO Bug 117519 Remove
+	 * this method when fixed.
+	 * 
+	 * @param list
+	 *            The list to be clear; must not be <code>null</code>.
+	 */
+	private final void clearListenerList(final ListenerList list) {
+		final Object[] listeners = list.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			list.remove(listeners[i]);
+		}
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Composite)

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
@@ -57,7 +57,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
     /**
      * List of registered tree listeners (element type: <code>TreeListener</code>). */
-    private ListenerList treeListeners = new ListenerList(1);
+    private ListenerList treeListeners = new ListenerList();
 
     /**
      * The level to which the tree is automatically expanded each time the

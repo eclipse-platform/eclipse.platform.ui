@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.commands;
 
 import org.eclipse.core.commands.IState;
 import org.eclipse.core.commands.IStateListener;
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -43,7 +43,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.2
  */
-public final class CommandStateProxy implements IPersistableState {
+public final class CommandStateProxy extends EventManager implements
+		IPersistableState {
 
 	/**
 	 * The configuration element from which the state can be created. This value
@@ -51,12 +52,6 @@ public final class CommandStateProxy implements IPersistableState {
 	 * point this value will be set to <code>null</code>.
 	 */
 	private IConfigurationElement configurationElement;
-
-	/**
-	 * The listeners to this proxy. This list is non-<code>null</code> iff
-	 * the real state has not been loaded and there are listeners attached.
-	 */
-	private ListenerList listeners = null;
 
 	/**
 	 * The key in the preference store to locate the persisted state.
@@ -121,10 +116,7 @@ public final class CommandStateProxy implements IPersistableState {
 
 	public final void addListener(final IStateListener listener) {
 		if (state == null) {
-			if (listeners == null) {
-				listeners = new ListenerList(1);
-			}
-			listeners.add(listener);
+			addListenerObject(listener);
 		} else {
 			state.addListener(listener);
 		}
@@ -191,14 +183,11 @@ public final class CommandStateProxy implements IPersistableState {
 				}
 
 				// Transfer the local listeners to the real state.
-				if (listeners != null) {
-					final Object[] listenerArray = listeners.getListeners();
-					for (int i = 0; i < listenerArray.length; i++) {
-						state
-								.addListener((IStateListener) listenerArray[i]);
-					}
-					listeners = null;
+				final Object[] listenerArray = getListeners();
+				for (int i = 0; i < listenerArray.length; i++) {
+					state.addListener((IStateListener) listenerArray[i]);
 				}
+				clearListeners();
 
 				return true;
 
@@ -224,12 +213,7 @@ public final class CommandStateProxy implements IPersistableState {
 
 	public final void removeListener(final IStateListener listener) {
 		if (state == null) {
-			if (listeners != null) {
-				listeners.remove(listener);
-				if (listeners.isEmpty()) {
-					listeners = null;
-				}
-			}
+			removeListenerObject(listener);
 		} else {
 			state.removeListener(listener);
 		}

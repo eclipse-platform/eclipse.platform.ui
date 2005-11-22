@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.actions.ActionFactory;
@@ -28,7 +28,7 @@ import org.eclipse.ui.progress.IProgressConstants;
  * This singleton remembers all JobTreeElements that should be
  * preserved (e.g. because their associated Jobs have the "keep" property set).
  */
-class FinishedJobs {
+class FinishedJobs extends EventManager {
 
     /*
      * Interface for notify listeners.
@@ -46,8 +46,6 @@ class FinishedJobs {
     }
 
     private static FinishedJobs theInstance;
-
-    private static ListenerList listeners = new ListenerList();
 
     private IJobProgressManagerListener listener;
 
@@ -131,14 +129,14 @@ class FinishedJobs {
      * Register for notification.
      */
     void addListener(KeptJobsListener l) {
-        listeners.add(l);
+        addListenerObject(l);
     }
 
     /**
      * Deregister for notification.
      */
     void removeListener(KeptJobsListener l) {
-        listeners.remove(l);
+        removeListenerObject(l);
     }
 
     private void checkForDuplicates(GroupInfo info) {
@@ -182,7 +180,7 @@ class FinishedJobs {
         }
 
         if (fire) {
-            Object l[] = listeners.getListeners();
+            Object l[] = getListeners();
             for (int i = 0; i < l.length; i++) {
                 KeptJobsListener jv = (KeptJobsListener) l[i];
                 jv.finished(info);
@@ -283,7 +281,7 @@ class FinishedJobs {
                 }
 
                 if (fire) {
-                    Object l[] = listeners.getListeners();
+                    Object l[] = getListeners();
                     for (int i = 0; i < l.length; i++) {
                         KeptJobsListener jv = (KeptJobsListener) l[i];
                         jv.finished(info);
@@ -325,7 +323,7 @@ class FinishedJobs {
 
         if (fire) {
             // notify listeners
-            Object l[] = listeners.getListeners();
+            Object l[] = getListeners();
             for (int i = 0; i < l.length; i++) {
                 KeptJobsListener jv = (KeptJobsListener) l[i];
                 jv.removed(jte);
@@ -389,7 +387,7 @@ class FinishedJobs {
         }
 
         // notify listeners
-        Object l[] = listeners.getListeners();
+        Object l[] = getListeners();
         for (int i = 0; i < l.length; i++) {
             KeptJobsListener jv = (KeptJobsListener) l[i];
             jv.removed(null);

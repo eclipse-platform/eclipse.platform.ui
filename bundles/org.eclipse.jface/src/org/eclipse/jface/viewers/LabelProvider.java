@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
 
@@ -28,8 +28,7 @@ import org.eclipse.swt.graphics.Image;
  * </ul>
  * </p>
  */
-public class LabelProvider implements ILabelProvider {
-    private ListenerList listeners = new ListenerList(1);
+public class LabelProvider extends EventManager implements ILabelProvider {
 
     /**
      * Creates a new label provider.
@@ -41,7 +40,7 @@ public class LabelProvider implements ILabelProvider {
      * Method declared on IBaseLabelProvider.
      */
     public void addListener(ILabelProviderListener listener) {
-        listeners.add(listener);
+        addListenerObject(listener);
     }
 
     /**
@@ -61,7 +60,7 @@ public class LabelProvider implements ILabelProvider {
      */
     protected void fireLabelProviderChanged(
             final LabelProviderChangedEvent event) {
-        Object[] listeners = this.listeners.getListeners();
+        Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; ++i) {
             final ILabelProviderListener l = (ILabelProviderListener) listeners[i];
             SafeRunnable.run(new SafeRunnable() {
@@ -104,6 +103,6 @@ public class LabelProvider implements ILabelProvider {
      * Method declared on IBaseLabelProvider.
      */
     public void removeListener(ILabelProviderListener listener) {
-        listeners.remove(listener);
+        removeListenerObject(listener);
     }
 }

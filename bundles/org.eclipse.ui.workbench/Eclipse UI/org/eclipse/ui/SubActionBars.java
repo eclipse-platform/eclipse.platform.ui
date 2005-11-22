@@ -13,7 +13,7 @@ package org.eclipse.ui;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -27,7 +27,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  * Generic implementation of the <code>IActionBars</code> interface.
  */
-public class SubActionBars implements IActionBars {
+public class SubActionBars extends EventManager implements IActionBars {
     private IActionBars parent;
 
     private boolean active = false;
@@ -39,8 +39,6 @@ public class SubActionBars implements IActionBars {
     private SubStatusLineManager statusLineMgr;
 
     private SubToolBarManager toolBarMgr;
-
-    private ListenerList propertyChangeListeners = new ListenerList();
 
     private boolean actionHandlersChanged;
 
@@ -82,7 +80,7 @@ public class SubActionBars implements IActionBars {
      * @param listener a property change listener
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.add(listener);
+        addListenerObject(listener);
     }
 
     /**
@@ -148,7 +146,7 @@ public class SubActionBars implements IActionBars {
             statusLineMgr.disposeManager();
         if (toolBarMgr != null)
             toolBarMgr.disposeManager();
-        propertyChangeListeners.clear();
+        clearListeners();
     }
 
     /**
@@ -160,7 +158,7 @@ public class SubActionBars implements IActionBars {
      * @see IPropertyChangeListener#propertyChange
      */
     protected void firePropertyChange(PropertyChangeEvent event) {
-        Object[] listeners = propertyChangeListeners.getListeners();
+        Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; ++i) {
             ((IPropertyChangeListener) listeners[i]).propertyChange(event);
         }
@@ -291,7 +289,7 @@ public class SubActionBars implements IActionBars {
      * @param listener a property change listener
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.remove(listener);
+        removeListenerObject(listener);
     }
 
     /**

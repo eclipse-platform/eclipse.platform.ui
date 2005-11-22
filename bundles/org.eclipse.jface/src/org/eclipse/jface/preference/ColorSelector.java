@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Display;
  * The <code>ColorSelector</code> is a wrapper for a button that displays a
  * selected <code>Color</code> and allows the user to change the selection.
  */
-public class ColorSelector {
+public class ColorSelector extends EventManager {
     /**
      * Property name that signifies the selected color of this
      * <code>ColorSelector</code> has changed.
@@ -56,8 +56,6 @@ public class ColorSelector {
 
     private Image fImage;
 
-    private ListenerList listeners;
-
     /**
      * Create a new instance of the reciever and the button that it wrappers in
      * the supplied parent <code>Composite</code>.
@@ -66,7 +64,6 @@ public class ColorSelector {
      *            The parent of the button.
      */
     public ColorSelector(Composite parent) {
-        listeners = new ListenerList();
         fButton = new Button(parent, SWT.PUSH);
         fExtent = computeImageSize(parent);
         fImage = new Image(parent.getDisplay(), fExtent.x, fExtent.y);
@@ -115,7 +112,7 @@ public class ColorSelector {
      * @since 3.0
      */
     public void addListener(IPropertyChangeListener listener) {
-        listeners.add(listener);
+        addListenerObject(listener);
     }
 
     /**
@@ -163,7 +160,7 @@ public class ColorSelector {
      * @since 3.0
      */
     public void removeListener(IPropertyChangeListener listener) {
-        listeners.remove(listener);
+        removeListenerObject(listener);
     }
 
     /**
@@ -218,8 +215,7 @@ public class ColorSelector {
 		if (newColor != null) {
 		    RGB oldValue = fColorValue;
 		    fColorValue = newColor;
-		    final Object[] finalListeners = ColorSelector.this.listeners
-		            .getListeners();
+		    final Object[] finalListeners = getListeners();
 		    if (finalListeners.length > 0) {
 		        PropertyChangeEvent pEvent = new PropertyChangeEvent(
 		                this, PROP_COLORCHANGE, oldValue, newColor);

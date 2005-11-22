@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellEditorListener;
@@ -102,7 +102,7 @@ class PropertySheetViewer extends Viewer {
     private IStatusLineManager statusLineManager;
 
     // Cell editor activation listeners
-    private ListenerList activationListeners = new ListenerList(3);
+    private ListenerList activationListeners = new ListenerList();
     
     // the property sheet sorter
     private PropertySheetSorter sorter = new PropertySheetSorter();

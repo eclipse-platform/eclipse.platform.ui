@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.Platform;
@@ -54,15 +54,14 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * </p>
  * @since 3.0
  */
-public abstract class IntroPart implements IIntroPart, IExecutableExtension {
+public abstract class IntroPart extends EventManager implements IIntroPart,
+		IExecutableExtension {
 
     private IConfigurationElement configElement;
 
     private ImageDescriptor imageDescriptor;
 
     private IIntroSite partSite;
-
-    private ListenerList propChangeListeners = new ListenerList(2);
 
     private Image titleImage;
 
@@ -77,7 +76,7 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
      * @see org.eclipse.ui.intro.IIntroPart#addPropertyListener(org.eclipse.ui.IPropertyListener)
      */
     public void addPropertyListener(IPropertyListener l) {
-        propChangeListeners.add(l);
+        addListenerObject(l);
     }
 
     /*
@@ -105,9 +104,7 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
         // Clear out the property change listeners as we
         // should not be notifying anyone after the part
         // has been disposed.
-        if (!propChangeListeners.isEmpty()) {
-            propChangeListeners = new ListenerList(1);
-        }
+        clearListeners();
     }
 
     /**
@@ -117,7 +114,7 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
      *            the id of the property that changed
      */
     protected void firePropertyChange(final int propertyId) {
-        Object[] array = propChangeListeners.getListeners();
+        Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             final IPropertyListener l = (IPropertyListener) array[nX];
             Platform.run(new SafeRunnable() {
@@ -215,7 +212,7 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
      * @see org.eclipse.ui.intro.IIntroPart#removePropertyListener(org.eclipse.ui.IPropertyListener)
      */
     public void removePropertyListener(IPropertyListener l) {
-        propChangeListeners.remove(l);
+        removeListenerObject(l);
     }
 
     /**

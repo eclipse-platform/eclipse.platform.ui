@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.osgi.service.prefs.BackingStoreException;
@@ -34,13 +34,13 @@ import org.osgi.service.prefs.Preferences;
  * </p>
  * @since 3.1
  */
-public class WorkingCopyPreferences implements IEclipsePreferences {
+public class WorkingCopyPreferences extends EventManager implements
+		IEclipsePreferences {
 
 	private static final String TRUE = "true"; //$NON-NLS-1$
 
 	private final Map temporarySettings;
 	private final IEclipsePreferences original;
-	private ListenerList preferenceListeners;
 	private boolean removed = false;
 	private WorkingCopyManager manager;
 
@@ -53,7 +53,6 @@ public class WorkingCopyPreferences implements IEclipsePreferences {
 		this.original = original;
 		this.manager = manager;
 		this.temporarySettings = new HashMap();
-		this.preferenceListeners = new ListenerList();
 	}
 
 	/*
@@ -86,7 +85,7 @@ public class WorkingCopyPreferences implements IEclipsePreferences {
 	 */
 	public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
 		checkRemoved();
-		preferenceListeners.add(listener);
+		addListenerObject(listener);
 	}
 
 	/* (non-Javadoc)
@@ -94,7 +93,7 @@ public class WorkingCopyPreferences implements IEclipsePreferences {
 	 */
 	public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
 		checkRemoved();
-		preferenceListeners.remove(listener);
+		removeListenerObject(listener);
 	}
 
 	/* (non-Javadoc)
@@ -159,7 +158,7 @@ public class WorkingCopyPreferences implements IEclipsePreferences {
 	}
 
 	private void firePropertyChangeEvent(String key, Object oldValue, Object newValue) {
-		Object[] listeners = preferenceListeners.getListeners();
+		Object[] listeners = getListeners();
 		if (listeners.length == 0)
 			return;
 		PreferenceChangeEvent event = new PreferenceChangeEvent(this, key, oldValue, newValue);

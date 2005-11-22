@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
@@ -25,12 +25,12 @@ public abstract class AbstractPartSelectionTracker {
     /**
      * List of selection listeners for this tracker
      */
-    private ListenerList fListeners = new ListenerList(2);
+    private ListenerList fListeners = new ListenerList();
 
     /**
      * List of post selection listeners for this tracker
      */
-    private ListenerList postListeners = new ListenerList(2);
+    private ListenerList postListeners = new ListenerList();
 
     /**
      * The id of the part this tracls

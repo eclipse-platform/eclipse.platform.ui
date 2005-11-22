@@ -12,7 +12,7 @@ package org.eclipse.jface.resource;
 
 import java.util.Set;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -21,12 +21,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * 
  * @since 3.0
  */
-public abstract class ResourceRegistry {
-
-    /**
-     * List of property change listeners (element type: <code>org.eclipse.jface.util.IPropertyChangeListener</code>).
-     */
-    private ListenerList listeners = new ListenerList();
+public abstract class ResourceRegistry extends EventManager {
 
     /**
      * Adds a property change listener to this registry.
@@ -34,7 +29,7 @@ public abstract class ResourceRegistry {
      * @param listener a property change listener
      */
     public void addListener(IPropertyChangeListener listener) {
-        listeners.add(listener);
+        addListenerObject(listener);
     }
 
     /**
@@ -65,7 +60,7 @@ public abstract class ResourceRegistry {
      */
     protected void fireMappingChanged(String name, Object oldValue,
             Object newValue) {
-        final Object[] myListeners = this.listeners.getListeners();
+        final Object[] myListeners = getListeners();
         if (myListeners.length > 0) {
             PropertyChangeEvent event = new PropertyChangeEvent(this, name,
                     oldValue, newValue);
@@ -87,6 +82,6 @@ public abstract class ResourceRegistry {
      * @param listener a property change listener
      */
     public void removeListener(IPropertyChangeListener listener) {
-        listeners.remove(listener);
+        removeListenerObject(listener);
     }
 }

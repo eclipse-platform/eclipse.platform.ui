@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -38,13 +38,8 @@ import org.eclipse.jface.util.SafeRunnable;
  * 
  * @see IPreferenceStore
  */
-public class PreferenceStore implements IPersistentPreferenceStore {
-    /**
-     * List of registered listeners (element type:
-     * <code>IPropertyChangeListener</code>). These listeners are to be
-     * informed when the current value of a preference changes.
-     */
-    private ListenerList listeners = new ListenerList();
+public class PreferenceStore extends EventManager implements
+		IPersistentPreferenceStore {
 
     /**
      * The mapping from preference name to preference value (represented as
@@ -109,7 +104,7 @@ public class PreferenceStore implements IPersistentPreferenceStore {
      * (non-Javadoc) Method declared on IPreferenceStore.
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        listeners.add(listener);
+        addListenerObject(listener);
     }
 
     /*
@@ -125,7 +120,7 @@ public class PreferenceStore implements IPersistentPreferenceStore {
      */
     public void firePropertyChangeEvent(String name, Object oldValue,
             Object newValue) {
-        final Object[] finalListeners = this.listeners.getListeners();
+        final Object[] finalListeners = getListeners();
         // Do we need to fire an event.
         if (finalListeners.length > 0
                 && (oldValue == null || !oldValue.equals(newValue))) {
@@ -423,7 +418,7 @@ public class PreferenceStore implements IPersistentPreferenceStore {
      * (non-Javadoc) Method declared on IPreferenceStore.
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        listeners.remove(listener);
+        removeListenerObject(listener);
     }
 
     /**

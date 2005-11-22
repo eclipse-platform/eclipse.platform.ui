@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -50,10 +50,10 @@ import org.osgi.framework.BundleListener;
 /**
  * Abstract implementation of <code>IWorkingSetManager</code>.
  */
-public abstract class AbstractWorkingSetManager implements IWorkingSetManager, BundleListener  {
+public abstract class AbstractWorkingSetManager extends EventManager implements
+		IWorkingSetManager, BundleListener {
 	
     private SortedSet workingSets = new TreeSet(WorkingSetComparator.INSTANCE);
-    private ListenerList propertyChangeListeners = new ListenerList();
     
     /**
      * Size of the list of most recently used working sets.
@@ -282,14 +282,14 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
      * @see org.eclipse.ui.IWorkingSetManager
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.add(listener);
+        addListenerObject(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.remove(listener);
+        removeListenerObject(listener);
     }
 
     /**
@@ -313,7 +313,7 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
 
         Display.getDefault().syncExec(new Runnable() {
             public void run() {
-                Object[] listeners = propertyChangeListeners.getListeners();
+                Object[] listeners = getListeners();
                 for (int i = 0; i < listeners.length; i++) {
                     ((IPropertyChangeListener) listeners[i])
                             .propertyChange(event);

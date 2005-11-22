@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellEditorListener;
@@ -45,7 +45,8 @@ import org.eclipse.swt.widgets.Composite;
  * 
  * @since 3.0 (was previously internal)
  */
-public class PropertySheetEntry implements IPropertySheetEntry {
+public class PropertySheetEntry extends EventManager implements
+		IPropertySheetEntry {
 
     /**
      * The values we are displaying/editing.
@@ -81,8 +82,6 @@ public class PropertySheetEntry implements IPropertySheetEntry {
 
     private PropertySheetEntry[] childEntries = null;
 
-    private ListenerList listeners = new ListenerList();
-
     /**
      * Create the CellEditorListener for this entry. It listens for
      * value changes in the CellEditor, and cancel and finish requests.
@@ -112,7 +111,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
      */
     public void addPropertySheetEntryListener(
             IPropertySheetEntryListener listener) {
-        listeners.add(listener);
+        addListenerObject(listener);
     }
 
     /* (non-Javadoc)
@@ -287,9 +286,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
      * Notify all listeners of the change.
      */
     private void fireChildEntriesChanged() {
-        if (listeners == null)
-            return;
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             IPropertySheetEntryListener listener = (IPropertySheetEntryListener) array[i];
             listener.childEntriesChanged(this);
@@ -301,9 +298,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
      * Notify all listeners of the change.
      */
     private void fireErrorMessageChanged() {
-        if (listeners == null)
-            return;
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             IPropertySheetEntryListener listener = (IPropertySheetEntryListener) array[i];
             listener.errorMessageChanged(this);
@@ -315,9 +310,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
      * Notify all listeners of the change.
      */
     private void fireValueChanged() {
-        if (listeners == null)
-            return;
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             IPropertySheetEntryListener listener = (IPropertySheetEntryListener) array[i];
             listener.valueChanged(this);
@@ -602,7 +595,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
      */
     public void removePropertySheetEntryListener(
             IPropertySheetEntryListener listener) {
-        listeners.remove(listener);
+        removeListenerObject(listener);
     }
 
     /* (non-Javadoc)

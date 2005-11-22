@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -46,8 +46,8 @@ import org.eclipse.swt.widgets.Tree;
  *	Workbench-level composite that combines a CheckboxTreeViewer and CheckboxListViewer.
  *	All viewer selection-driven interactions are handled within this object
  */
-public class CheckboxTreeAndListGroup implements ICheckStateListener,
-        ISelectionChangedListener, ITreeViewerListener {
+public class CheckboxTreeAndListGroup extends EventManager implements
+		ICheckStateListener, ISelectionChangedListener, ITreeViewerListener {
     private Object root;
 
     private Object currentTreeSelection;
@@ -57,8 +57,6 @@ public class CheckboxTreeAndListGroup implements ICheckStateListener,
     private Map checkedStateStore = new HashMap(9);
 
     private List whiteCheckedTreeItems = new ArrayList();
-
-    private ListenerList listeners = new ListenerList();
 
     private ITreeContentProvider treeContentProvider;
 
@@ -125,7 +123,7 @@ public class CheckboxTreeAndListGroup implements ICheckStateListener,
      *	@param listener ICheckStateListener
      */
     public void addCheckStateListener(ICheckStateListener listener) {
-        listeners.add(listener);
+        addListenerObject(listener);
     }
 
     /**
@@ -484,7 +482,7 @@ public class CheckboxTreeAndListGroup implements ICheckStateListener,
      */
     protected void notifyCheckStateChangeListeners(
             final CheckStateChangedEvent event) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final ICheckStateListener l = (ICheckStateListener) array[i];
             Platform.run(new SafeRunnable() {
@@ -519,7 +517,7 @@ public class CheckboxTreeAndListGroup implements ICheckStateListener,
      *	@param listener ICheckStateListener
      */
     public void removeCheckStateListener(ICheckStateListener listener) {
-        listeners.remove(listener);
+        removeListenerObject(listener);
     }
 
     /**

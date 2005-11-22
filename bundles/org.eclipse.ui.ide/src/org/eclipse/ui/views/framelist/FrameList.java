@@ -13,7 +13,7 @@ package org.eclipse.ui.views.framelist;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -30,7 +30,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * A property change notification is sent whenever the current page changes.
  * </p>
  */
-public class FrameList {
+public class FrameList extends EventManager {
 
     /** Property name constant for the current frame. */
     public static final String P_CURRENT_FRAME = "currentFrame"; //$NON-NLS-1$
@@ -40,8 +40,6 @@ public class FrameList {
     private List frames;
 
     private int current;
-
-    private ListenerList propertyListeners = new ListenerList();
 
     /**
      * Creates a new frame list with the given source.
@@ -65,7 +63,7 @@ public class FrameList {
      * @param listener a property change listener
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        propertyListeners.add(listener);
+    	addListenerObject(listener);
     }
 
     /**
@@ -88,7 +86,7 @@ public class FrameList {
      * @see IPropertyChangeListener#propertyChange
      */
     protected void firePropertyChange(PropertyChangeEvent event) {
-        Object[] listeners = propertyListeners.getListeners();
+        Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; ++i) {
             ((IPropertyChangeListener) listeners[i]).propertyChange(event);
         }
@@ -170,7 +168,7 @@ public class FrameList {
      * @param listener a property change listener
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        propertyListeners.remove(listener);
+        removeListenerObject(listener);
     }
 
     /**

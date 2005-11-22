@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.util;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Geometry;
@@ -36,7 +36,7 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 /**
  * @since 3.1
  */
-public class StandardSystemToolbar {
+public class StandardSystemToolbar extends EventManager {
     private ToolBarManager toolbarManager;
     private Composite control;
     
@@ -144,8 +144,6 @@ public class StandardSystemToolbar {
     private SystemMenuContribution min = new SystemMenuContribution();
     private SystemMenuContribution max = new SystemMenuContribution();
     private SystemMenuContribution close = new SystemMenuContribution();
-    
-    private ListenerList listeners = new ListenerList();
     
     private int state = IStackPresentationSite.STATE_RESTORED;
     private boolean showingToolbar = true;
@@ -283,11 +281,11 @@ public class StandardSystemToolbar {
     }
     
     public void addListener(IPropertyListener propertyListener) {
-        listeners.add(propertyListener);
+        addListenerObject(propertyListener);
     }
     
     public void removeListener(IPropertyListener propertyListener) {
-        listeners.remove(propertyListener);
+        removeListenerObject(propertyListener);
     }
     
     public Control getControl() {
@@ -295,7 +293,7 @@ public class StandardSystemToolbar {
     }
     
     private void fireEvent(int event) {
-        Object[] list = listeners.getListeners();
+        Object[] list = getListeners();
         
         for (int i = 0; i < list.length; i++) {
             IPropertyListener listener = (IPropertyListener)list[i];

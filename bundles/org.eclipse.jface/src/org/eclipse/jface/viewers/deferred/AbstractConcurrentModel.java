@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers.deferred;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 
 
 /**

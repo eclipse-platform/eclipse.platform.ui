@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -34,7 +34,8 @@ import org.eclipse.ui.themes.IThemeManager;
  *
  * @since 3.0
  */
-public class WorkbenchThemeManager implements IThemeManager {
+public class WorkbenchThemeManager extends EventManager implements
+		IThemeManager {
 
     private static WorkbenchThemeManager instance;
 
@@ -71,8 +72,6 @@ public class WorkbenchThemeManager implements IThemeManager {
 
     private FontRegistry defaultThemeFontRegistry;
 
-    private ListenerList propertyChangeListeners = new ListenerList();
-
     private IThemeRegistry themeRegistry;
 
     private Map themes = new HashMap(7);
@@ -99,7 +98,7 @@ public class WorkbenchThemeManager implements IThemeManager {
      * @see org.eclipse.ui.themes.IThemeManager#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.add(listener);
+        addListenerObject(listener);
     }
 
     /**
@@ -126,7 +125,7 @@ public class WorkbenchThemeManager implements IThemeManager {
     }
 
     protected void firePropertyChange(PropertyChangeEvent event) {
-        Object[] listeners = propertyChangeListeners.getListeners();
+        Object[] listeners = getListeners();
 
         for (int i = 0; i < listeners.length; i++) {
             ((IPropertyChangeListener) listeners[i]).propertyChange(event);
@@ -213,7 +212,7 @@ public class WorkbenchThemeManager implements IThemeManager {
      * @see org.eclipse.ui.themes.IThemeManager#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.remove(listener);
+        removeListenerObject(listener);
     }
 
     /* (non-Javadoc)

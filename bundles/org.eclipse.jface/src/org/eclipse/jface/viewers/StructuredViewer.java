@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.OpenStrategy;
@@ -96,7 +96,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * 
 	 * @see #fireDoubleClick
 	 */
-	private ListenerList doubleClickListeners = new ListenerList(1);
+	private ListenerList doubleClickListeners = new ListenerList();
 
 	/**
 	 * List of open listeners (element type:
@@ -104,7 +104,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * 
 	 * @see #fireOpen
 	 */
-	private ListenerList openListeners = new ListenerList(1);
+	private ListenerList openListeners = new ListenerList();
 
 	/**
 	 * List of post selection listeners (element type:
@@ -112,7 +112,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * 
 	 * @see #firePostSelectionChanged
 	 */
-	private ListenerList postSelectionChangedListeners = new ListenerList(1);
+	private ListenerList postSelectionChangedListeners = new ListenerList();
 
 	/**
 	 * The colorAndFontCollector is an object used by viewers that

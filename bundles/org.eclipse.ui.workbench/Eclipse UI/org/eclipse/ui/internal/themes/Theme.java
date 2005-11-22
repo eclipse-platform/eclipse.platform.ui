@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.themes;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
@@ -35,7 +35,7 @@ import org.eclipse.ui.themes.IThemeManager;
 /**
  * @since 3.0
  */
-public class Theme implements ITheme {
+public class Theme extends EventManager implements ITheme {
 
     /**
      * The translation bundle in which to look up internationalized text.
@@ -52,8 +52,6 @@ public class Theme implements ITheme {
     private IPropertyChangeListener themeListener;
 
     private CascadingMap dataMap;
-
-    private ListenerList propertyChangeListeners = new ListenerList();
 
     private ThemeRegistry themeRegistry;
 
@@ -276,18 +274,18 @@ public class Theme implements ITheme {
      * @see org.eclipse.ui.IWorkbench#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.add(listener);
+        addListenerObject(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbench#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.remove(listener);
+        removeListenerObject(listener);
     }
 
     private void firePropertyChange(PropertyChangeEvent event) {
-        Object[] listeners = propertyChangeListeners.getListeners();
+        Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; i++) {
             ((IPropertyChangeListener) listeners[i]).propertyChange(event);
         }

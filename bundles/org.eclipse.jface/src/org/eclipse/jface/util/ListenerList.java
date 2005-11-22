@@ -35,10 +35,9 @@ package org.eclipse.jface.util;
  * 
  * </p>
  * 
- * @deprecated Please use {@link org.eclipse.core.commands.util.ListenerList}
- *             instead.
+ * @deprecated Please use {@link org.eclipse.core.runtime.ListenerList} instead.
  */
-public class ListenerList extends org.eclipse.core.commands.util.ListenerList {
+public class ListenerList extends org.eclipse.core.runtime.ListenerList {
 
 	/**
 	 * Creates a listener list with an initial capacity of 1.
@@ -56,6 +55,6 @@ public class ListenerList extends org.eclipse.core.commands.util.ListenerList {
 	 *            1
 	 */
 	public ListenerList(int capacity) {
-		super(capacity);
+		super();
 	}
 }

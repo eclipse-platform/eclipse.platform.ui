@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.api;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -33,7 +33,7 @@ import org.osgi.framework.Bundle;
  * 
  * @since 3.0
  */
-public class MockPart implements IExecutableExtension {
+public class MockPart extends EventManager implements IExecutableExtension {
 
     /**
      * 
@@ -52,8 +52,6 @@ public class MockPart implements IExecutableExtension {
     private Object data;
 
     private Image titleImage;
-
-    private ListenerList propertyListeners = new ListenerList();
 
     private DisposeListener disposeListener = new DisposeListener() {
     	/* (non-Javadoc)
@@ -114,7 +112,7 @@ public class MockPart implements IExecutableExtension {
      * @see IWorkbenchPart#addPropertyListener(IPropertyListener)
      */
     public void addPropertyListener(IPropertyListener listener) {
-        propertyListeners.add(listener);
+        addListenerObject(listener);
     }
 
     /**
@@ -144,7 +142,7 @@ public class MockPart implements IExecutableExtension {
      * @see IWorkbenchPart#removePropertyListener(IPropertyListener)
      */
     public void removePropertyListener(IPropertyListener listener) {
-        propertyListeners.remove(listener);
+        removeListenerObject(listener);
     }
 
     /**
@@ -172,7 +170,7 @@ public class MockPart implements IExecutableExtension {
      * Fires a property change event.
      */
     protected void firePropertyChange(int propertyId) {
-        Object[] listeners = propertyListeners.getListeners();
+        Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; i++) {
             IPropertyListener l = (IPropertyListener) listeners[i];
             l.propertyChanged(this, propertyId);

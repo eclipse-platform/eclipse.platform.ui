@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api.workbenchpart;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
@@ -28,11 +28,9 @@ import org.eclipse.ui.PlatformUI;
 /**
  * @since 3.0
  */
-public class RawIViewPart implements IViewPart {
+public class RawIViewPart extends EventManager implements IViewPart {
 
     private IViewSite site;
-
-    private ListenerList propChangeListeners = new ListenerList(2);
 
     private String title = "SomeTitle";
 
@@ -75,7 +73,7 @@ public class RawIViewPart implements IViewPart {
      * @param propertyId the id of the property that changed
      */
     protected void firePropertyChange(final int propertyId) {
-        Object[] array = propChangeListeners.getListeners();
+        Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             final IPropertyListener l = (IPropertyListener) array[nX];
             Platform.run(new SafeRunnable() {
@@ -97,7 +95,7 @@ public class RawIViewPart implements IViewPart {
      * @see org.eclipse.ui.IWorkbenchPart#addPropertyListener(org.eclipse.ui.IPropertyListener)
      */
     public void addPropertyListener(IPropertyListener listener) {
-        propChangeListeners.add(listener);
+        addListenerObject(listener);
     }
 
     /* (non-Javadoc)
@@ -147,7 +145,7 @@ public class RawIViewPart implements IViewPart {
      * @see org.eclipse.ui.IWorkbenchPart#removePropertyListener(org.eclipse.ui.IPropertyListener)
      */
     public void removePropertyListener(IPropertyListener l) {
-        propChangeListeners.remove(l);
+        removeListenerObject(l);
     }
 
     /* (non-Javadoc)

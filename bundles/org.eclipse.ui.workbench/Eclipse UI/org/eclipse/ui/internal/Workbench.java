@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -165,7 +165,7 @@ import org.osgi.framework.SynchronousBundleListener;
  * rewritten to use the new workbench advisor API.
  * </p>
  */
-public final class Workbench implements IWorkbench {
+public final class Workbench extends EventManager implements IWorkbench {
 	
 	private final class StartupProgressBundleListener implements SynchronousBundleListener {
 
@@ -254,8 +254,6 @@ public final class Workbench implements IWorkbench {
 	 * PlatformUI return code (as opposed to IPlatformRunnable return code).
 	 */
 	private int returnCode = PlatformUI.RETURN_UNSTARTABLE;
-
-	private ListenerList windowListeners = new ListenerList();
 
 	/**
 	 * Advisor providing application-specific configuration and customization of
@@ -450,14 +448,14 @@ public final class Workbench implements IWorkbench {
 	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public void addWindowListener(IWindowListener l) {
-		windowListeners.add(l);
+		addListenerObject(l);
 	}
 
 	/*
 	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public void removeWindowListener(IWindowListener l) {
-		windowListeners.remove(l);
+		removeListenerObject(l);
 	}
 
 	/**
@@ -467,7 +465,7 @@ public final class Workbench implements IWorkbench {
 	 *            The window which just opened; should not be <code>null</code>.
 	 */
 	protected void fireWindowOpened(final IWorkbenchWindow window) {
-		Object list[] = windowListeners.getListeners();
+		Object list[] = getListeners();
 		for (int i = 0; i < list.length; i++) {
 			final IWindowListener l = (IWindowListener) list[i];
 			Platform.run(new SafeRunnable() {
@@ -490,7 +488,7 @@ public final class Workbench implements IWorkbench {
 			activatedWindow = null;
 		}
 
-		Object list[] = windowListeners.getListeners();
+		Object list[] = getListeners();
 		for (int i = 0; i < list.length; i++) {
 			final IWindowListener l = (IWindowListener) list[i];
 			Platform.run(new SafeRunnable() {
@@ -509,7 +507,7 @@ public final class Workbench implements IWorkbench {
 	 *            <code>null</code>.
 	 */
 	protected void fireWindowActivated(final IWorkbenchWindow window) {
-		Object list[] = windowListeners.getListeners();
+		Object list[] = getListeners();
 		for (int i = 0; i < list.length; i++) {
 			final IWindowListener l = (IWindowListener) list[i];
 			Platform.run(new SafeRunnable() {
@@ -528,7 +526,7 @@ public final class Workbench implements IWorkbench {
 	 *            <code>null</code>.
 	 */
 	protected void fireWindowDeactivated(final IWorkbenchWindow window) {
-		Object list[] = windowListeners.getListeners();
+		Object list[] = getListeners();
 		for (int i = 0; i < list.length; i++) {
 			final IWindowListener l = (IWindowListener) list[i];
 			Platform.run(new SafeRunnable() {

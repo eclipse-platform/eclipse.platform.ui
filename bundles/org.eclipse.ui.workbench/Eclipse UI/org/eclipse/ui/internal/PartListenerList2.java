@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPartListener2;
@@ -20,8 +20,7 @@ import org.eclipse.ui.internal.misc.UIStats;
 /**
  * Part listener list.
  */
-public class PartListenerList2 {
-    private ListenerList listeners = new ListenerList();
+public class PartListenerList2 extends EventManager {
 
     /**
      * PartListenerList2 constructor comment.
@@ -34,7 +33,7 @@ public class PartListenerList2 {
      * Adds an PartListener to the part service.
      */
     public void addPartListener(IPartListener2 l) {
-        listeners.add(l);
+        addListenerObject(l);
     }
 
     /**
@@ -60,7 +59,7 @@ public class PartListenerList2 {
      * Notifies the listener that a part has been activated.
      */
     public void firePartActivated(final IWorkbenchPartReference ref) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener2 l = (IPartListener2) array[i];
             fireEvent(new SafeRunnable() {
@@ -75,7 +74,7 @@ public class PartListenerList2 {
      * Notifies the listener that a part has been brought to top.
      */
     public void firePartBroughtToTop(final IWorkbenchPartReference ref) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener2 l = (IPartListener2) array[i];
             fireEvent(new SafeRunnable() {
@@ -90,7 +89,7 @@ public class PartListenerList2 {
      * Notifies the listener that a part has been closed
      */
     public void firePartClosed(final IWorkbenchPartReference ref) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener2 l = (IPartListener2) array[i];
             fireEvent(new SafeRunnable() {
@@ -105,7 +104,7 @@ public class PartListenerList2 {
      * Notifies the listener that a part has been deactivated.
      */
     public void firePartDeactivated(final IWorkbenchPartReference ref) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener2 l = (IPartListener2) array[i];
             fireEvent(new SafeRunnable() {
@@ -120,7 +119,7 @@ public class PartListenerList2 {
      * Notifies the listener that a part has been opened.
      */
     public void firePartOpened(final IWorkbenchPartReference ref) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener2 l = (IPartListener2) array[i];
             fireEvent(new SafeRunnable() {
@@ -135,7 +134,7 @@ public class PartListenerList2 {
      * Notifies the listener that a part has been opened.
      */
     public void firePartHidden(final IWorkbenchPartReference ref) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener2 l;
             if (array[i] instanceof IPartListener2)
@@ -155,7 +154,7 @@ public class PartListenerList2 {
      * Notifies the listener that a part has been opened.
      */
     public void firePartVisible(final IWorkbenchPartReference ref) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener2 l;
             if (array[i] instanceof IPartListener2)
@@ -175,7 +174,7 @@ public class PartListenerList2 {
      * Notifies the listener that a part has been opened.
      */
     public void firePartInputChanged(final IWorkbenchPartReference ref) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener2 l;
             if (array[i] instanceof IPartListener2)
@@ -195,6 +194,6 @@ public class PartListenerList2 {
      * Removes an IPartListener from the part service.
      */
     public void removePartListener(IPartListener2 l) {
-        listeners.remove(l);
+        removeListenerObject(l);
     }
 }

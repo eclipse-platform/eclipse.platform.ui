@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -135,7 +135,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 
     private boolean lockedUI = false;
 	
-    private ListenerList pageChangedListeners = new ListenerList(3);
+    private ListenerList pageChangedListeners = new ListenerList();
 
     /**
      * A layout for a container which includes several pages, like

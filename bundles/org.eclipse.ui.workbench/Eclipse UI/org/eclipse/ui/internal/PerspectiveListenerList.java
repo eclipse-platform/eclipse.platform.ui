@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -24,8 +24,7 @@ import org.eclipse.ui.internal.misc.UIStats;
 /**
  * Perspective listener list.
  */
-public class PerspectiveListenerList {
-    private ListenerList listeners = new ListenerList();
+public class PerspectiveListenerList extends EventManager {
 
     /**
      * PerspectiveListenerList constructor comment.
@@ -38,7 +37,7 @@ public class PerspectiveListenerList {
      * Adds an IPerspectiveListener to the perspective service.
      */
     public void addPerspectiveListener(IPerspectiveListener l) {
-        listeners.add(l);
+        addListenerObject(l);
     }
 
     /**
@@ -65,7 +64,7 @@ public class PerspectiveListenerList {
      */
     public void firePerspectiveActivated(final IWorkbenchPage page,
             final IPerspectiveDescriptor perspective) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             final IPerspectiveListener l = (IPerspectiveListener) array[nX];
             fireEvent(new SafeRunnable() {
@@ -83,7 +82,7 @@ public class PerspectiveListenerList {
      */
     public void firePerspectiveDeactivated(final IWorkbenchPage page,
             final IPerspectiveDescriptor perspective) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
@@ -101,7 +100,7 @@ public class PerspectiveListenerList {
      */
     public void firePerspectiveChanged(final IWorkbenchPage page,
             final IPerspectiveDescriptor perspective, final String changeId) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             final IPerspectiveListener l = (IPerspectiveListener) array[nX];
             fireEvent(new SafeRunnable() {
@@ -121,7 +120,7 @@ public class PerspectiveListenerList {
     public void firePerspectiveChanged(final IWorkbenchPage page,
             final IPerspectiveDescriptor perspective,
             final IWorkbenchPartReference partRef, final String changeId) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             if (array[nX] instanceof IPerspectiveListener2) {
                 final IPerspectiveListener2 l2 = (IPerspectiveListener2) array[nX];
@@ -142,7 +141,7 @@ public class PerspectiveListenerList {
      */
     public void firePerspectiveClosed(final IWorkbenchPage page,
             final IPerspectiveDescriptor perspective) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
@@ -162,7 +161,7 @@ public class PerspectiveListenerList {
      */
     public void firePerspectiveOpened(final IWorkbenchPage page,
             final IPerspectiveDescriptor perspective) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
@@ -183,7 +182,7 @@ public class PerspectiveListenerList {
     public void firePerspectiveSavedAs(final IWorkbenchPage page,
             final IPerspectiveDescriptor oldPerspective,
             final IPerspectiveDescriptor newPerspective) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
@@ -200,6 +199,6 @@ public class PerspectiveListenerList {
      * Removes an IPerspectiveListener from the perspective service.
      */
     public void removePerspectiveListener(IPerspectiveListener l) {
-        listeners.remove(l);
+        removeListenerObject(l);
     }
 }

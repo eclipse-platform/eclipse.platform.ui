@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.themes;
 
 import java.util.Set;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -22,13 +22,11 @@ import org.eclipse.ui.themes.ITheme;
 /**
  * @since 3.0
  */
-public class CascadingTheme implements ITheme {
+public class CascadingTheme extends EventManager implements ITheme {
 
     private CascadingFontRegistry fontRegistry;
 
     private CascadingColorRegistry colorRegistry;
-
-    private ListenerList propListeners = new ListenerList();
 
     private ITheme currentTheme;
 
@@ -58,7 +56,7 @@ public class CascadingTheme implements ITheme {
      * @param event
      */
     protected void fire(PropertyChangeEvent event) {
-        Object[] listeners = propListeners.getListeners();
+        Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; i++) {
             ((IPropertyChangeListener) listeners[i]).propertyChange(event);
         }
@@ -68,14 +66,14 @@ public class CascadingTheme implements ITheme {
      * @see org.eclipse.ui.themes.ITheme#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        propListeners.add(listener);
+        addListenerObject(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        propListeners.remove(propListeners);
+        removeListenerObject(listener);
     }
 
     /* (non-Javadoc)

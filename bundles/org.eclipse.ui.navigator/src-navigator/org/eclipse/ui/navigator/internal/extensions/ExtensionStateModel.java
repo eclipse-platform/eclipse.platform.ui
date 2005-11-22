@@ -13,7 +13,7 @@ package org.eclipse.ui.navigator.internal.extensions;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -29,15 +29,14 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * @since 3.2 
  *
  */
-public class ExtensionStateModel implements IExtensionStateModel {
+public class ExtensionStateModel extends EventManager implements
+		IExtensionStateModel {
 
 	private final String id;
 
 	private final String viewerId;
 
 	private final Map values = new HashMap();
-
-	private final ListenerList propertyListeners = new ListenerList(3);
 
 	public ExtensionStateModel(String anId, String aViewerId) {
 		id = anId;
@@ -98,15 +97,11 @@ public class ExtensionStateModel implements IExtensionStateModel {
 	}
 
 	public void addPropertyChangeListener(IPropertyChangeListener aListener) {
-		synchronized (propertyListeners) {
-			propertyListeners.add(aListener);
-		}
+		addListenerObject(aListener);
 	}
 
 	public void removePropertyChangeListener(IPropertyChangeListener aListener) {
-		synchronized (propertyListeners) {
-			propertyListeners.remove(aListener);
-		}
+		removeListenerObject(aListener);
 	}
 
 	public Object getProperty(String aPropertyName) {
@@ -133,7 +128,7 @@ public class ExtensionStateModel implements IExtensionStateModel {
 	}
 
 	protected void firePropertyChangeEvent(PropertyChangeEvent anEvent) {
-		Object[] listeners = propertyListeners.getListeners();
+		Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; ++i)
 			((IPropertyChangeListener) listeners[i]).propertyChange(anEvent);
 	}

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
@@ -50,8 +50,8 @@ import org.eclipse.swt.widgets.Tree;
  *	Workbench-level composite that combines a CheckboxTreeViewer and CheckboxListViewer.
  *	All viewer selection-driven interactions are handled within this object
  */
-public class ResourceTreeAndListGroup implements ICheckStateListener,
-        ISelectionChangedListener, ITreeViewerListener {
+public class ResourceTreeAndListGroup extends EventManager implements
+		ICheckStateListener, ISelectionChangedListener, ITreeViewerListener {
     private Object root;
 
     private Object currentTreeSelection;
@@ -61,8 +61,6 @@ public class ResourceTreeAndListGroup implements ICheckStateListener,
     private Map checkedStateStore = new HashMap(9);
 
     private Collection whiteCheckedTreeItems = new HashSet();
-
-    private ListenerList listeners = new ListenerList();
 
     private ITreeContentProvider treeContentProvider;
 
@@ -134,7 +132,7 @@ public class ResourceTreeAndListGroup implements ICheckStateListener,
      *	@param listener ICheckStateListener
      */
     public void addCheckStateListener(ICheckStateListener listener) {
-        listeners.add(listener);
+        addListenerObject(listener);
     }
 
     /**
@@ -448,13 +446,17 @@ public class ResourceTreeAndListGroup implements ICheckStateListener,
     }
 
     /**
-     * Returns a flat list of all of the leaf elements which
-     * are checked. Filter then based on the supplied ElementFilter.
-     * If monitor is cancelled then return null
-     * @param filter - the filter for the data
-     * @param monitor IProgressMonitor or null
-     * @return all of the leaf elements which are checked
-     */
+	 * Returns a flat list of all of the leaf elements which are checked. Filter
+	 * then based on the supplied ElementFilter. If monitor is cancelled then
+	 * return null
+	 * 
+	 * @param filter -
+	 *            the filter for the data
+	 * @param monitor
+	 *            IProgressMonitor or null
+	 * @throws InterruptedException
+	 *             If the find is interrupted.
+	 */
     public void getAllCheckedListItems(IElementFilter filter,
             IProgressMonitor monitor) throws InterruptedException {
 
@@ -480,12 +482,12 @@ public class ResourceTreeAndListGroup implements ICheckStateListener,
         IElementFilter passThroughFilter = new IElementFilter() {
 
             public void filterElements(Collection elements,
-                    IProgressMonitor monitor) throws InterruptedException {
+                    IProgressMonitor monitor) {
                 returnValue.addAll(elements);
             }
 
             public void filterElements(Object[] elements,
-                    IProgressMonitor monitor) throws InterruptedException {
+                    IProgressMonitor monitor) {
                 for (int i = 0; i < elements.length; i++) {
                     returnValue.add(elements[i]);
                 }
@@ -694,7 +696,7 @@ public class ResourceTreeAndListGroup implements ICheckStateListener,
      */
     protected void notifyCheckStateChangeListeners(
             final CheckStateChangedEvent event) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final ICheckStateListener l = (ICheckStateListener) array[i];
             Platform.run(new SafeRunnable() {
@@ -767,7 +769,7 @@ public class ResourceTreeAndListGroup implements ICheckStateListener,
      *	@param listener ICheckStateListener
      */
     public void removeCheckStateListener(ICheckStateListener listener) {
-        listeners.remove(listener);
+        removeListenerObject(listener);
     }
 
     /**

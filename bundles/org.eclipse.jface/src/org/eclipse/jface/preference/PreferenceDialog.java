@@ -14,9 +14,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogMessageArea;
@@ -199,7 +199,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 */
 	private TreeViewer treeViewer;
 	
-    private ListenerList pageChangedListeners = new ListenerList(3);
+    private ListenerList pageChangedListeners = new ListenerList();
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference

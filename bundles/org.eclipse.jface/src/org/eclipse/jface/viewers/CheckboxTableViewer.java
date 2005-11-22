@@ -13,7 +13,7 @@ package org.eclipse.jface.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
@@ -39,7 +39,7 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
     /**
      * List of check state listeners (element type: <code>ICheckStateListener</code>).
      */
-    private ListenerList checkStateListeners = new ListenerList(3);
+    private ListenerList checkStateListeners = new ListenerList();
 
     /**
      * Creates a table viewer on a newly-created table control under the given parent.

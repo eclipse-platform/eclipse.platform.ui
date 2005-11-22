@@ -11,7 +11,7 @@
 
 package org.eclipse.core.commands;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.internal.commands.util.Util;
 
 /**
@@ -32,13 +32,7 @@ import org.eclipse.core.internal.commands.util.Util;
  * 
  * @since 3.2
  */
-public abstract class AbstractState implements IState {
-
-	/**
-	 * The listeners to this piece of state. If there are no listeners, this
-	 * value is <code>null</code>.
-	 */
-	private ListenerList listenerList;
+public abstract class AbstractState extends EventManager implements IState {
 
 	/**
 	 * The piece of state to store. This may be anything at all.
@@ -46,11 +40,7 @@ public abstract class AbstractState implements IState {
 	private Object value;
 
 	public final void addListener(final IStateListener listener) {
-		if (listenerList == null) {
-			listenerList = new ListenerList(1);
-		}
-
-		listenerList.add(listener);
+		addListener(listener);
 	}
 
 	public void dispose() {
@@ -64,12 +54,10 @@ public abstract class AbstractState implements IState {
 	 *            The old value; may be anything.
 	 */
 	protected final void fireStateChanged(final Object oldValue) {
-		if (listenerList != null) {
-			final Object[] listeners = listenerList.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final IStateListener listener = (IStateListener) listeners[i];
-				listener.handleStateChange(this, oldValue);
-			}
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final IStateListener listener = (IStateListener) listeners[i];
+			listener.handleStateChange(this, oldValue);
 		}
 	}
 
@@ -86,11 +74,6 @@ public abstract class AbstractState implements IState {
 	}
 
 	public final void removeListener(final IStateListener listener) {
-		if (listenerList != null) {
-			listenerList.remove(listener);
-			if (listenerList.isEmpty()) {
-				listenerList = null;
-			}
-		}
+		removeListenerObject(listener);
 	}
 }

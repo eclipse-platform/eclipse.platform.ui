@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -69,7 +69,8 @@ import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 /**
  * Provides access to the collection of defined editors for resource types.
  */
-public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler {
+public class EditorRegistry extends EventManager implements IEditorRegistry,
+		IExtensionChangeHandler {
 	
 	private final static IEditorDescriptor [] EMPTY = new IEditorDescriptor[0];
 	
@@ -128,9 +129,6 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
 
     // Map of FileEditorMapping (extension to FileEditorMapping)
     private EditorMap typeEditorMappings;
-
-    // List for prop changed listeners.
-    private ListenerList propChangeListeners = new ListenerList();
 
     /*
      * Compares the labels from two IEditorDescriptor objects
@@ -287,7 +285,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
     public void addPropertyListener(IPropertyListener l) {
-        propChangeListeners.add(l);
+        addListenerObject(l);
     }
 
     /*
@@ -304,7 +302,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
      * @see IEditorRegistry#PROP_CONTENTS
      */
     private void firePropertyChange(final int type) {
-        Object[] array = propChangeListeners.getListeners();
+        Object[] array = getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             final IPropertyListener l = (IPropertyListener) array[nX];
             Platform.run(new SafeRunnable() {
@@ -937,7 +935,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
     public void removePropertyListener(IPropertyListener l) {
-        propChangeListeners.remove(l);
+        removeListenerObject(l);
     }
 
     /**

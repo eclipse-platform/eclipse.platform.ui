@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPartListener;
@@ -24,8 +24,7 @@ import org.eclipse.ui.internal.misc.UIStats;
  * This class should be deleted when IPartListener and IPartListener2 
  * renamed to IPartListener.
  */
-public class PartListenerList {
-    private ListenerList listeners = new ListenerList();
+public class PartListenerList extends EventManager {
 
     /**
      * PartNotifier constructor comment.
@@ -38,7 +37,7 @@ public class PartListenerList {
      * Adds an IPartListener to the part service.
      */
     public void addPartListener(IPartListener l) {
-        listeners.add(l);
+        addListenerObject(l);
     }
 
     /**
@@ -64,7 +63,7 @@ public class PartListenerList {
      * Notifies the listener that a part has been activated.
      */
     public void firePartActivated(final IWorkbenchPart part) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener l = (IPartListener) array[i];
             fireEvent(new SafeRunnable() {
@@ -79,7 +78,7 @@ public class PartListenerList {
      * Notifies the listener that a part has been brought to top.
      */
     public void firePartBroughtToTop(final IWorkbenchPart part) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener l = (IPartListener) array[i];
             fireEvent(new SafeRunnable() {
@@ -94,7 +93,7 @@ public class PartListenerList {
      * Notifies the listener that a part has been closed
      */
     public void firePartClosed(final IWorkbenchPart part) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener l = (IPartListener) array[i];
             fireEvent(new SafeRunnable() {
@@ -109,7 +108,7 @@ public class PartListenerList {
      * Notifies the listener that a part has been deactivated.
      */
     public void firePartDeactivated(final IWorkbenchPart part) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener l = (IPartListener) array[i];
             fireEvent(new SafeRunnable() {
@@ -124,7 +123,7 @@ public class PartListenerList {
      * Notifies the listener that a part has been opened.
      */
     public void firePartOpened(final IWorkbenchPart part) {
-        Object[] array = listeners.getListeners();
+        Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener l = (IPartListener) array[i];
             fireEvent(new SafeRunnable() {
@@ -139,6 +138,6 @@ public class PartListenerList {
      * Removes an IPartListener from the part service.
      */
     public void removePartListener(IPartListener l) {
-        listeners.remove(l);
+        removeListenerObject(l);
     }
 }

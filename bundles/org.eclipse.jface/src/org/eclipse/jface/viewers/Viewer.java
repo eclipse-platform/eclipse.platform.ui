@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.events.HelpEvent;
@@ -50,7 +50,7 @@ public abstract class Viewer implements IInputSelectionProvider {
      *
      * @see #fireSelectionChanged
      */
-    private ListenerList selectionChangedListeners = new ListenerList(3);
+    private ListenerList selectionChangedListeners = new ListenerList();
 
     /**
      * List of help request listeners (element type: <code>org.eclipse.swt.events.HelpListener</code>).
@@ -58,7 +58,7 @@ public abstract class Viewer implements IInputSelectionProvider {
      *
      * @see #handleHelpRequest
      */
-    private ListenerList helpListeners = new ListenerList(1);
+    private ListenerList helpListeners = new ListenerList();
 
     /**
      * The names of this viewer's properties.
