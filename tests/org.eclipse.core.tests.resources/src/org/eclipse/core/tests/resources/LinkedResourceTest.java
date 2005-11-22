@@ -47,8 +47,8 @@ public class LinkedResourceTest extends ResourceTest {
 	protected IFolder existingFolderInExistingFolder;
 	protected IFolder existingFolderInExistingProject;
 	protected IProject existingProject;
-	protected IPath localFolder;
 	protected IPath localFile;
+	protected IPath localFolder;
 	protected IFile nonExistingFileInExistingFolder;
 	protected IFile nonExistingFileInExistingProject;
 	protected IFile nonExistingFileInOtherExistingProject;
@@ -63,9 +63,9 @@ public class LinkedResourceTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(LinkedResourceTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new LinkedResourceTest("testRefreshDeepLink"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new LinkedResourceTest("testMoveProjectWithLinks2"));
+		//		return suite;
 	}
 
 	public LinkedResourceTest() {
@@ -743,25 +743,6 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Tests creating a linked resource whose location contains a colon character.
-	 */
-	public void testLocationWithColon() {
-		//windows does not allow a location with colon in the name
-		if (Platform.getOS().equals(Platform.OS_WIN32))
-			return;
-		IFolder folder = nonExistingFolderInExistingProject;
-		try {
-			//Note that on *nix, "c:/temp" is a relative path with two segments
-			//so this is treated as relative to an undefined path variable called "c:".
-			IPath location = new Path("c:/temp");
-			folder.createLink(location, IResource.ALLOW_MISSING_LOCAL, getMonitor());
-			assertEquals("1.0", location, folder.getRawLocation());
-		} catch (CoreException e) {
-			fail("1.99", e);
-		}
-	}
-
-	/**
 	 * Specific testing of links within links.
 	 */
 	public void testLinkedFileInLinkedFolder() {
@@ -971,6 +952,25 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
+	 * Tests creating a linked resource whose location contains a colon character.
+	 */
+	public void testLocationWithColon() {
+		//windows does not allow a location with colon in the name
+		if (Platform.getOS().equals(Platform.OS_WIN32))
+			return;
+		IFolder folder = nonExistingFolderInExistingProject;
+		try {
+			//Note that on *nix, "c:/temp" is a relative path with two segments
+			//so this is treated as relative to an undefined path variable called "c:".
+			IPath location = new Path("c:/temp");
+			folder.createLink(location, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+			assertEquals("1.0", location, folder.getRawLocation());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+	}
+
+	/**
 	 * Tests the timestamp of a linked file when the local file is created or
 	 * deleted. See bug 34150 for more details.
 	 */
@@ -1025,7 +1025,7 @@ public class LinkedResourceTest extends ResourceTest {
 					fail("invocation " + count + " failed to cleanup", e);
 				}
 			}
-			
+
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IFile source = (IFile) args[0];
 				IResource destination = (IResource) args[1];
@@ -1285,6 +1285,36 @@ public class LinkedResourceTest extends ResourceTest {
 		}
 	}
 
+	/**
+	 * Tests bug 117402.
+	 */
+	public void testMoveProjectWithLinks2() {
+		IPath fileLocation = getRandomLocation();
+		IFile linkedFile = existingProject.getFile("(test)");
+		try {
+			try {
+				createFileInFileSystem(resolve(fileLocation), getRandomContents());
+				linkedFile.createLink(fileLocation, IResource.NONE, getMonitor());
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+
+			//move the project
+			IProject destination = getWorkspace().getRoot().getProject("CopyTargetProject");
+			try {
+				existingProject.move(destination.getFullPath(), IResource.SHALLOW, getMonitor());
+			} catch (CoreException e) {
+				fail("2.0", e);
+			}
+
+			IFile newFile = destination.getFile(linkedFile.getProjectRelativePath());
+			assertTrue("3.0", newFile.isLinked());
+			assertEquals("3.1", resolve(fileLocation), newFile.getLocation());
+		} finally {
+			Workspace.clear(resolve(fileLocation).toFile());
+		}
+	}
+
 	public void testNatureVeto() {
 		//note: simpleNature has the link veto turned on.
 
@@ -1327,7 +1357,7 @@ public class LinkedResourceTest extends ResourceTest {
 			//should fail
 		}
 	}
-	
+
 	/**
 	 * Create a project with a linked resource at depth > 2, and refresh it.
 	 */
@@ -1344,7 +1374,7 @@ public class LinkedResourceTest extends ResourceTest {
 		}
 		assertTrue("1.0", link.exists());
 		assertTrue("1.1", linkChild.exists());
-		
+
 		try {
 			IProject project = link.getProject();
 			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
