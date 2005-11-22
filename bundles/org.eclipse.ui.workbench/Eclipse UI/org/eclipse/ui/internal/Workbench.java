@@ -2422,23 +2422,19 @@ public final class Workbench implements IWorkbench {
 					.getInternalPreferenceStore()
 					.getString(
 							IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
-			Runnable runnable = new Runnable() {
-				public void run() {
-					for (int i = 0; i < deltas.length; i++) {
-						IExtension extension = deltas[i].getExtension();
-						if (deltas[i].getKind() == IExtensionDelta.REMOVED)
-							continue;
 
-						// if the plugin is not in the set of disabled plugins,
-						// then
-						// execute the code to start it
-						if (disabledPlugins.indexOf(extension.getNamespace()) == -1)
-							Platform.run(new EarlyStartupRunnable(extension));
-					}
-				}
-			};
-			Thread thread = new Thread(runnable);
-			thread.start();
+			for (int i = 0; i < deltas.length; i++) {
+				IExtension extension = deltas[i].getExtension();
+				if (deltas[i].getKind() == IExtensionDelta.REMOVED)
+					continue;
+
+				// if the plugin is not in the set of disabled plugins,
+				// then
+				// execute the code to start it
+				if (disabledPlugins.indexOf(extension.getNamespace()) == -1)
+					Platform.run(new EarlyStartupRunnable(extension));
+			}
+
 		}
 	};
 
