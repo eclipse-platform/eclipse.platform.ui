@@ -203,7 +203,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             } else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE
                     .equals(property)
                     && newValue == workingSet) {
-				if (workingSet.getElements().length == 0) {
+				if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
 					// act as if the working set has been made null
 					if (!emptyWorkingSet) {
 						emptyWorkingSet = true;
@@ -1228,8 +1228,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 	 */
 	private void internalSetWorkingSet(IWorkingSet workingSet) {
 		this.workingSet = workingSet;
-		emptyWorkingSet = workingSet != null
-				&& workingSet.getElements().length == 0;
+		emptyWorkingSet = workingSet != null && workingSet.isAggregateWorkingSet() 
+				&& workingSet.isEmpty();
 	}
 
     /**
