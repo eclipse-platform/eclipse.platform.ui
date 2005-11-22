@@ -305,6 +305,22 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 		return baseCommand.isEnabled() && enabled;
 	}
 
+	/**
+	 * Whether this action's local <code>enabled</code> property is set. This
+	 * can be used by handlers that are trying to check if
+	 * {@link #setEnabled(boolean)} has been called. This is typically used by
+	 * legacy action proxies who are trying to avoid a <a
+	 * href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117496">stack
+	 * overflow</a>.
+	 * 
+	 * @return <code>false</code> if someone has called
+	 *         {@link #setEnabled(boolean)} with <code>false</code>;
+	 *         <code>true</code> otherwise.
+	 */
+	public final boolean isEnabledDisregardingCommand() {
+		return enabled;
+	}
+
 	public final boolean isHandled() {
 		final Command baseCommand = command.getCommand();
 		return baseCommand.isHandled();

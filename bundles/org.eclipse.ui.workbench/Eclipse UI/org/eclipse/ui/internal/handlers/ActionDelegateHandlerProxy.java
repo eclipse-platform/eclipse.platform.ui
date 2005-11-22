@@ -211,10 +211,12 @@ public final class ActionDelegateHandlerProxy extends AbstractHandlerWithState {
 		}
 
 		/*
-		 * There is no enabled when expression, so we just need to consult the
-		 * action.
+		 * Bug 117496. There is no enabled when expression, and our action
+		 * member variable is just a wrapper around a command. At this point, we
+		 * need to avoid a stack overflow, so we'll call a special isEnabled
+		 * method.
 		 */
-		return action.isEnabled();
+		return action.isEnabledDisregardingCommand();
 	}
 
 	/**
