@@ -621,8 +621,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// if there isn't one, then create a new handle based on the type that we are
 		// trying to copy
 		IResource destinationResource = getRoot().findMember(destination, true);
+		int destinationType;
 		if (destinationResource == null) {
-			int destinationType;
 			if (source.getType() == IResource.FILE)
 				destinationType = IResource.FILE;
 			else if (destination.segmentCount() == 1)
@@ -630,13 +630,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			else
 				destinationType = IResource.FOLDER;
 			destinationResource = newResource(destination, destinationType);
-		}
+		} else
+			destinationType = destinationResource.getType();
 
 		// create the resource at the destination
 		ResourceInfo sourceInfo = ((Resource) source).getResourceInfo(true, false);
-		if (destinationResource.getType() != source.getType()) {
+		if (destinationType != source.getType()) {
 			sourceInfo = (ResourceInfo) sourceInfo.clone();
-			sourceInfo.setType(destinationResource.getType());
+			sourceInfo.setType(destinationType);
 		}
 		ResourceInfo newInfo = createResource(destinationResource, sourceInfo, false, false, keepSyncInfo);
 		// get/set the node id from the source's resource info so we can later put it in the
@@ -674,11 +675,20 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			return;
 		if (depth == IResource.DEPTH_ONE)
 			depth = IResource.DEPTH_ZERO;
+		//copy .project file first if project is being copied, otherwise links won't be able to update description
+		boolean projectCopy = source.getType() == IResource.PROJECT && destinationType == IResource.PROJECT;
+		if (projectCopy) {
+			IResource dotProject = ((Project)source).findMember(IProjectDescription.DESCRIPTION_FILE_NAME);
+			if (dotProject != null)
+				copyTree(dotProject, destination.append(dotProject.getName()), depth, updateFlags, keepSyncInfo);
+		}
 		IResource[] children = ((IContainer) source).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-		for (int i = 0; i < children.length; i++) {
-			IResource child = children[i];
-			IPath childPath = destination.append(child.getName());
-			copyTree(child, childPath, depth, updateFlags, keepSyncInfo);
+		for (int i = 0, imax = children.length; i < imax; i++) {
+			String childName = children[i].getName();
+			if (!projectCopy || !childName.equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
+				IPath childPath = destination.append(childName);
+				copyTree(children[i], childPath, depth, updateFlags, keepSyncInfo);
+			}
 		}
 	}
 
