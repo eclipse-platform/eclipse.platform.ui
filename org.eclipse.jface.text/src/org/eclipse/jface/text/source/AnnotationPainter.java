@@ -125,19 +125,15 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 			final int WIDTH= 4; // must be even
 			final int HEIGHT= 2; // can be any number
-//			final int MINPEEKS= 2; // minimal number of peeks
 
-			int peeks= (right.x - left.x) / WIDTH;
-//			if (peeks < MINPEEKS) {
-//				int missing= (MINPEEKS - peeks) * WIDTH;
-//				left.x= Math.max(0, left.x - missing/2);
-//				peeks= MINPEEKS;
-//			}
+			int peaks= (right.x - left.x) / WIDTH;
+			if (peaks == 0 && right.x - left.x > 2)
+				peaks= 1;
 
 			int leftX= left.x;
 
 			// compute (number of point) * 2
-			int length= ((2 * peeks) + 1) * 2;
+			int length= ((2 * peaks) + 1) * 2;
 			if (length < 0)
 				return new int[0];
 
@@ -148,7 +144,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			int bottom= top + HEIGHT;
 
 			// populate array with peek coordinates
-			for (int i= 0; i < peeks; i++) {
+			for (int i= 0; i < peaks; i++) {
 				int index= 4 * i;
 				coordinates[index]= leftX + (WIDTH * i);
 				coordinates[index+1]= bottom;
@@ -157,7 +153,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			}
 
 			// the last down flank is missing
-			coordinates[length-2]= Math.min(Math.max(0, right.x - 1), left.x + (WIDTH * peeks));
+			coordinates[length-2]= Math.min(Math.max(0, right.x - 1), left.x + (WIDTH * peaks));
 			coordinates[length-1]= bottom;
 
 			return coordinates;
