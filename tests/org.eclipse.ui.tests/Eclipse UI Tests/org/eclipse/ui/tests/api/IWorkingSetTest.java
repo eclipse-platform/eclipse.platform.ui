@@ -110,5 +110,15 @@ public class IWorkingSetTest extends UITestCase {
         fWorkingSet.setName(" ");
         assertEquals(" ", fWorkingSet.getName());
     }
-
+    
+    public void testIsEmpty() {
+		fWorkingSet.setElements(new IAdaptable[] {});
+		assertTrue(fWorkingSet.isEmpty());
+		fWorkingSet.setElements(new IAdaptable[] { new IAdaptable() {
+			public Object getAdapter(Class adapter) {
+				return null;
+			}
+		} });
+		assertFalse(fWorkingSet.isEmpty());
+	}
 }
