@@ -103,7 +103,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				Point right= textWidget.getLocationAtOffset(offset + length);
 
 				gc.setForeground(color);
-				int[] polyline= computePolyline(left, right, textWidget.getBaseline(), textWidget.getLineHeight());
+				int[] polyline= computePolyline(left, right, textWidget.getBaseline(), textWidget.getLineHeight(offset));
 				gc.drawPolyline(polyline);
 
 			} else {
@@ -157,7 +157,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			}
 
 			// the last down flank is missing
-			coordinates[length-2]= left.x + (WIDTH * peeks);
+			coordinates[length-2]= Math.min(Math.max(0, right.x - 1), left.x + (WIDTH * peeks));
 			coordinates[length-1]= bottom;
 
 			return coordinates;
