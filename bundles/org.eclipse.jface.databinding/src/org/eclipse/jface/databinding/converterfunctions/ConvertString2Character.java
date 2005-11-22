@@ -17,8 +17,6 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 /**
  * ConvertString2Character.
- *
- * @author djo
  */
 public class ConvertString2Character implements IConversionFunction {
 

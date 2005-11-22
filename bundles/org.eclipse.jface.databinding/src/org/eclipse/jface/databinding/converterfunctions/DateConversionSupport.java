@@ -21,8 +21,6 @@ import java.util.*;
  * NOTE: parse(format(date)) will generally *not* be equal to date, since the
  * string representation may not cover the sub-second range, time-only string
  * representations will be counted from the beginning of the era, etc.
- * 
- * @author djo patrick
  */
 public abstract class DateConversionSupport {
 	private final static int DATE_FORMAT=DateFormat.SHORT;

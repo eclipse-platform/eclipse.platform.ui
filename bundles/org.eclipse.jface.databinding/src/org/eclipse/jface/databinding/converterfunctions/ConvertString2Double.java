@@ -17,8 +17,6 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 /**
  * ConvertString2Double.
- *
- * @author djo
  */
 public class ConvertString2Double implements IConversionFunction {
 

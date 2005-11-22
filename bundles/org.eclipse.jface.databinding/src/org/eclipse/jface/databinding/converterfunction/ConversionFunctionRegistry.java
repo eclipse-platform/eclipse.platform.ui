@@ -33,8 +33,6 @@ import org.eclipse.jface.databinding.converterfunctions.ToStringConverter;
 
 /**
  * ConversionFunctionRegistry.  The place where all converters can be found.
- *
- * @author djo
  */
 public class ConversionFunctionRegistry {
 	private static HashMap converterFunctions;

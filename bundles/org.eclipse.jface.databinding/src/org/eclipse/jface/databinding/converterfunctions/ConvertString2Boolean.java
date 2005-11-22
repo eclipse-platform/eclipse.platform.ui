@@ -18,8 +18,6 @@ import org.eclipse.jface.databinding.internal.BindingMessages;
 
 /**
  * ConvertString2Boolean.
- *
- * @author djo
  */
 public class ConvertString2Boolean implements IConversionFunction {
 

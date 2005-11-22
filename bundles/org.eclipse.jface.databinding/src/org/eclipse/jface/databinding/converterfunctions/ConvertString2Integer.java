@@ -17,8 +17,6 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 /**
  * ConvertString2Integer.
- *
- * @author djo
  */
 public class ConvertString2Integer implements IConversionFunction {
 

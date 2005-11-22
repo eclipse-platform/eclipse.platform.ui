@@ -17,8 +17,6 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 /**
  * ConvertString2Short.
- *
- * @author djo
  */
 public class ConvertString2Short implements IConversionFunction {
 

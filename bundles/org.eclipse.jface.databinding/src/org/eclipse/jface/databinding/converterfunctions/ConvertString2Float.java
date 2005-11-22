@@ -17,8 +17,6 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 /**
  * ConvertString2Float.
- *
- * @author djo
  */
 public class ConvertString2Float implements IConversionFunction {
 

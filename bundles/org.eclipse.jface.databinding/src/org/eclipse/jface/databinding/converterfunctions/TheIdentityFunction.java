@@ -17,8 +17,6 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 /**
  * TheIdentityConverter.  Returns the source value (the identity function).
- *
- * @author djo
  */
 public class TheIdentityFunction implements IConversionFunction {
 

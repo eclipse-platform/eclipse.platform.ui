@@ -17,8 +17,6 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 /**
  * ConvertString2Object.
- *
- * @author djo
  */
 public class ConvertString2Object implements IConversionFunction {
 

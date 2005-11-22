@@ -17,8 +17,6 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 /**
  * ConvertString2Long.
- *
- * @author djo
  */
 public class ConvertString2Long implements IConversionFunction {
 

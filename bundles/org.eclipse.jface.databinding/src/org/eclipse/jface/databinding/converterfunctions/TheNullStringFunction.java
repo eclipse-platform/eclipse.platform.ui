@@ -17,8 +17,6 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 /**
  * TheNullConverter.  TheNullObjectPattern for any type to String conversion.
- *
- * @author djo
  */
 public class TheNullStringFunction implements IConversionFunction {
 

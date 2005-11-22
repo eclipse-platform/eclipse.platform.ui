@@ -17,8 +17,6 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 /**
  * ConvertString2Byte.
- *
- * @author djo
  */
 public class ConvertString2Byte implements IConversionFunction {
 

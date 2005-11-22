@@ -23,8 +23,6 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
  * to a String and use that if it finds one.
  * <p>
  * Note that there is no way to reverse this process.
- *
- * @author djo
  */
 public class ConvertObject2String implements IConversionFunction {
 

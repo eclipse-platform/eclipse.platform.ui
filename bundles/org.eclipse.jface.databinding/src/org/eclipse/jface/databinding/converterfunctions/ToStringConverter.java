@@ -16,9 +16,7 @@ import org.eclipse.jface.databinding.converterfunction.IConversionFunction;
 
 
 /**
- * ConvertBoolean2String.
- *
- * @author djo
+ * Converts any object to a string by calling its toString() method.
  */
 public class ToStringConverter implements IConversionFunction {
 	
