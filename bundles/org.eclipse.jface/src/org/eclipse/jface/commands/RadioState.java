@@ -23,8 +23,8 @@ import org.eclipse.jface.menus.IMenuStateIds;
 /**
  * <p>
  * A piece of boolean state grouped with other boolean states. Of these states,
- * only one may have a value of {@link Boolean.TRUE} at any given point in time.
- * The values of all other states must be {@link Boolean.FALSE}.
+ * only one may have a value of {@link Boolean#TRUE} at any given point in time.
+ * The values of all other states must be {@link Boolean#FALSE}.
  * </p>
  * <p>
  * If this state is registered using {@link IMenuStateIds#STYLE}, then it will

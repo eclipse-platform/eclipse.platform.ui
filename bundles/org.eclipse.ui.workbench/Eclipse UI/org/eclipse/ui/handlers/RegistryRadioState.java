@@ -22,7 +22,7 @@ import org.eclipse.jface.commands.RadioState;
  * A radio state that can be read from the registry. This stores a piece of
  * boolean state information that is grouped with other boolean state to form a
  * radio group. In a single radio group, there can be at most one state who
- * value is {@link Boolean#TRUE} all the others must be {@link Boolean.FALSE}.
+ * value is {@link Boolean#TRUE} all the others must be {@link Boolean#FALSE}.
  * </p>
  * <p>
  * When parsing from the registry, this state understands three parameters:

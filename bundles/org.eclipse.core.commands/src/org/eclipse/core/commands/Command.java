@@ -575,8 +575,9 @@ public final class Command extends NamedHandleObjectWithState implements
 	 * {@link IObjectWithState}.
 	 * </p>
 	 * 
-	 * @param state
-	 *            The state to remove; must not be <code>null</code>.
+	 * @param stateId
+	 *            The identifier of the state to remove; must not be
+	 *            <code>null</code>.
 	 */
 	public void removeState(final String stateId) {
 		if (handler instanceof IObjectWithState) {
@@ -701,7 +702,7 @@ public final class Command extends NamedHandleObjectWithState implements
 				for (int i = 0; i < stateIds.length; i++) {
 					final String stateId = stateIds[i];
 					handlerWithState.removeState(stateId);
-					
+
 					final IState state = getState(stateId);
 					removeState(stateId);
 					state.dispose();
