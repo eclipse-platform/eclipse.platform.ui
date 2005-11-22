@@ -45,31 +45,31 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
      */
     protected ResourceMapping[] getCVSResourceMappings() {
         ResourceMapping[] selectedMappings = getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
-//        try {
-//			IResourceMappingScope scope = new ScopeGenerator().prepareScope("CVS Operation", selectedMappings, getResourceMappingContext(), new NullProgressMonitor());
-//			if (scope.hasAdditionalMappings()) {
-//				return showAllMappings(scope);
-//			}
-//		} catch (CoreException e) {
-//			CVSUIPlugin.log(e);
-//		}
+        try {
+			IResourceMappingScope scope = new ScopeGenerator().prepareScope("CVS Operation", selectedMappings, getResourceMappingContext(), new NullProgressMonitor());
+			if (scope.hasAdditionalMappings()) {
+				return showAllMappings(scope);
+			}
+		} catch (CoreException e) {
+			CVSUIPlugin.log(e);
+		}
 		return selectedMappings;
     }
     
     private ResourceMapping[] showAllMappings(final IResourceMappingScope scope) {
-        final boolean[] canceled = new boolean[] { false };
-        getShell().getDisplay().syncExec(new Runnable() {
-            public void run() {
-                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", scope);
-                int result = dialog.open();
-                canceled[0] = result != Window.OK;
-            }
-        
-        });
-        
-        if (canceled[0]) {
-            return new ResourceMapping[0];
-        }
+//        final boolean[] canceled = new boolean[] { false };
+//        getShell().getDisplay().syncExec(new Runnable() {
+//            public void run() {
+//                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", scope);
+//                int result = dialog.open();
+//                canceled[0] = result != Window.OK;
+//            }
+//        
+//        });
+//        
+//        if (canceled[0]) {
+//            return new ResourceMapping[0];
+//        }
         return scope.getMappings();
     }
 
