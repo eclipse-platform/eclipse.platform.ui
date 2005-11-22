@@ -36,7 +36,30 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 public abstract class RefactoringWizardPage extends WizardPage {
 
 	public static final String REFACTORING_SETTINGS= "org.eclipse.ltk.ui.refactoring.settings"; //$NON-NLS-1$
-
+	
+	/** Does the page belong to a conventional wizard? */
+	private final boolean fConventionalWizard;
+	
+	/**
+	 * Creates a new refactoring wizard page.
+	 * <p>
+	 * Note: this constructor is not intended to be used outside the refactoring
+	 * framework.
+	 * </p>
+	 * 
+	 * @param name
+	 *            the page's name.
+	 * @param wizard
+	 *            <code>true</code> if the page belongs to a conventional wizard, <code>false</code> otherwise
+	 * @see org.eclipse.jface.wizard.IWizardPage#getName()
+	 * 
+	 * @since 3.2
+	 */
+	protected RefactoringWizardPage(String name, boolean wizard) {
+		super(name);
+		fConventionalWizard= wizard;
+	}
+	
 	/**
 	 * Creates a new refactoring wizard page.
 	 * 
@@ -45,6 +68,7 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	 */
 	protected RefactoringWizardPage(String name) {
 		super(name);
+		fConventionalWizard= false;
 	}
 	
 	/**
@@ -54,7 +78,7 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	 * type <code>RefactoringWizard</code>.
 	 */
 	public void setWizard(IWizard newWizard) {
-		Assert.isTrue(newWizard instanceof RefactoringWizard);
+		Assert.isTrue(fConventionalWizard || newWizard instanceof RefactoringWizard);
 		super.setWizard(newWizard);
 	}
 
@@ -76,11 +100,14 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	/**
 	 * Returns the page's refactoring wizard.
 	 * 
-	 * @return the page's refactoring wizard or <code>null</code> if
-	 *  the wizard hasn't been set yet
+	 * @return the page's refactoring wizard or <code>null</code> if the
+	 *         wizard hasn't been set yet
 	 */
 	protected RefactoringWizard getRefactoringWizard() {
-		return (RefactoringWizard)getWizard();
+		IWizard wizard= getWizard();
+		if (wizard instanceof RefactoringWizard)
+			return (RefactoringWizard) wizard;
+		return null;
 	}
 	
 	/**

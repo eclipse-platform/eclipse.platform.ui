@@ -37,8 +37,22 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 	private RefactoringStatus fStatus;
 	private RefactoringStatusViewer fViewer;
 	
+	/**
+	 * Creates a new error wizard page.
+	 */
 	public ErrorWizardPage() {
 		super(PAGE_NAME);
+	}
+	
+	/**
+	 * Creates a new error wizard page.
+	 * 
+	 * @param wizard
+	 *            <code>true</code> if the page belongs to a conventional
+	 *            wizard, <code>false</code> otherwise
+	 */
+	public ErrorWizardPage(boolean wizard) {
+		super(PAGE_NAME, wizard);
 	}
 	
 	/**

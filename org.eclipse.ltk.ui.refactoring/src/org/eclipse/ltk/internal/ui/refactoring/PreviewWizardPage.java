@@ -207,11 +207,23 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	private IChangePreviewViewer fNullPreviewer;
 	
 	/**
-	 * Creates a new proposed changes wizard page.
+	 * Creates a new preview wizard page.
 	 */
 	public PreviewWizardPage() {
 		super(PAGE_NAME);
-		setDescription(RefactoringUIMessages.PreviewWizardPage_description); 
+		setDescription(RefactoringUIMessages.PreviewWizardPage_description);
+	}
+
+	/**
+	 * Creates a new preview wizard page.
+	 * 
+	 * @param wizard
+	 *            <code>true</code> if the page belongs to a conventional
+	 *            wizard, <code>false</code> otherwise
+	 */
+	public PreviewWizardPage(boolean wizard) {
+		super(PAGE_NAME, wizard);
+		setDescription(RefactoringUIMessages.PreviewWizardPage_description);
 	}
 
 	/**
