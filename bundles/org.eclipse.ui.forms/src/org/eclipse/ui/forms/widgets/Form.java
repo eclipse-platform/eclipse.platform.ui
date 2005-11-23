@@ -734,7 +734,7 @@ public class Form extends Composite {
 	/**
 	 * TODO add javadoc experimental - do not use yet
 	 * 
-	 * @return
+	 * @return <code>true</code> if the receiver is a visible separator, <code>false</code> otherwise
 	 */
 	public boolean isSeparatorVisible() {
 		return (style&S_SEPARATOR)!=0;
@@ -770,7 +770,7 @@ public class Form extends Composite {
 	/**
 	 * Sets the message for this form.
 	 * 
-	 * @param newMessage
+	 * @param message
 	 *            the message, or <code>null</code> to clear the message
 	 * @since 3.2
 	 */
