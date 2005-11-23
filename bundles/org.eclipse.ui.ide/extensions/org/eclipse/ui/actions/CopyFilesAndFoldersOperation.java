@@ -571,6 +571,36 @@ public class CopyFilesAndFoldersOperation {
 		}
 		return copiedResources[0];
 	}
+	
+	/**
+	 * Copies the given URIS and folders to the destination.
+	 * 
+	 * @param uris
+	 *            the URIs to copy
+	 * @param destination
+	 *            destination to which files will be copied
+	 */
+	public void copyFiles(URI[] uris, IContainer destination) {
+
+		IFileStore[] stores = new IFileStore[uris.length];
+		for (int i = 0; i < uris.length; i++) {
+			IFileStore store;
+			try {
+				store = EFS.getStore(uris[i]);
+			} catch (CoreException e) {
+				IDEWorkbenchPlugin.log(e.getMessage(), e);
+				reportFileInfoNotFound(uris[i].toString());
+				return;
+			}
+			if (store == null) {
+				reportFileInfoNotFound(uris[i].toString());
+				return;
+			}
+			stores[i] = store;
+		}
+
+		copyFileInfos(destination, stores);
+	}
 
 	/**
 	 * Copies the given files and folders to the destination.
@@ -614,7 +644,7 @@ public class CopyFilesAndFoldersOperation {
 	 * @param destination
 	 *            destination to which files will be copied
 	 */
-	public void copyFileInfos(IContainer destination, final IFileStore[] stores) {
+	private void copyFileInfos(IContainer destination, final IFileStore[] stores) {
 		// test files for existence separate from validate API
 		// because an external file may not exist until the copy actually
 		// takes place (e.g., WinZip contents).
@@ -780,9 +810,9 @@ public class CopyFilesAndFoldersOperation {
 	 * @param fileNames
 	 *            files to return File object for.
 	 * @return java.io.File objects for the given file names.
-	 * @deprecated This method is not longer in use anywhere
-	 * in this class and is only provided for backwards compatability
-	 * with subclasses of the receiver.
+	 * @deprecated This method is not longer in use anywhere in this class and
+	 *             is only provided for backwards compatability with subclasses
+	 *             of the receiver.
 	 */
 	protected File[] getFiles(String[] fileNames) {
 		File[] files = new File[fileNames.length];
@@ -1123,9 +1153,9 @@ public class CopyFilesAndFoldersOperation {
 			}
 		};
 
-		ImportOperation op = new ImportOperation(target.getFullPath(), stores[0].getParent(),
-				FileStoreStructureProvider.INSTANCE, query, Arrays
-						.asList(stores));
+		ImportOperation op = new ImportOperation(target.getFullPath(),
+				stores[0].getParent(), FileStoreStructureProvider.INSTANCE,
+				query, Arrays.asList(stores));
 		op.setContext(parentShell);
 		op.setCreateContainerStructure(false);
 		try {
@@ -1366,7 +1396,7 @@ public class CopyFilesAndFoldersOperation {
 	 *            the source IFileStore
 	 * @return an error message, or <code>null</code> if the path is valid
 	 */
-	public String validateImportDestination(IContainer destination,
+	private String validateImportDestination(IContainer destination,
 			IFileStore[] sourceStores) {
 		if (!isAccessible(destination)) {
 			return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationAccessError;

@@ -60,6 +60,11 @@ public class IDEResourceInfoUtils {
 	private static String NOT_EXIST_TEXT = IDEWorkbenchMessages.ResourceInfo_notExist;
 
 	private static String FILE_NOT_EXIST_TEXT = IDEWorkbenchMessages.ResourceInfo_fileNotExist;
+	
+	/**
+	 * An empty string to reuse.
+	 */
+	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
 	 * Return the value for the date String for the timestamp of the supplied
