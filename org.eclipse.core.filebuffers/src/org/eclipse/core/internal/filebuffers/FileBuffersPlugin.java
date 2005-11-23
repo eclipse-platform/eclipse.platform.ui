@@ -53,7 +53,7 @@ public class FileBuffersPlugin extends Plugin {
 	 *
 	 * @return the text file buffer manager of this plug-in
 	 */
-	public ITextFileBufferManager getFileBufferManager()  {
+	public synchronized ITextFileBufferManager getFileBufferManager()  {
 		if (fTextFileBufferManager == null)
 			fTextFileBufferManager= new TextFileBufferManager();
 		return fTextFileBufferManager;
