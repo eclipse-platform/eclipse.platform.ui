@@ -25,10 +25,8 @@ public class TestLazyVirtualTree extends TestTree {
 			}
 
 			public void handleEvent(Event event) {
-				String position = getPosition((TreeItem) event.item);
-				if (position.endsWith(".32"))
-					Thread.dumpStack();
-				System.out.println("updating " + position);
+//				String position = getPosition((TreeItem) event.item);
+//				System.out.println("updating " + position);
 			}
 		});
 		TreeViewer viewer = new TreeViewer(tree);

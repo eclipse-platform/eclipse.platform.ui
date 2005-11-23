@@ -582,6 +582,10 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	protected void setExpanded(Item node, boolean expand) {
 		((TreeItem) node).setExpanded(expand);
+		if(getContentProvider() instanceof ILazyTreeContentProvider) {
+			// force repaints to happen
+			getControl().update();
+		}
 	}
 
 	/**
@@ -743,5 +747,52 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 		updateItem(item, element);
 	}
+	
+    public boolean isExpandable(Object element) {
+    	if(getContentProvider() instanceof ILazyTreeContentProvider) {
+    		TreeItem treeItem = (TreeItem) internalExpand(element, false);
+    		return treeItem != null && treeItem.getItemCount() > 0;
+    	}
+    	return super.isExpandable(element);
+    }
+
+    protected Object getParentElement(Object element) {
+    	if(getContentProvider() instanceof ILazyTreeContentProvider) {
+    		ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
+    		return lazyTreeContentProvider.getParent(element);
+    	}
+        return super.getParentElement(element);
+	}
+    
+    protected void createChildren(Widget widget) {
+    	if(getContentProvider() instanceof ILazyTreeContentProvider) {
+    		ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
+    		Object parentElement = widget.getData();
+    		int childCount;
+    		if(widget instanceof Tree) {
+    			childCount = ((Tree)widget).getItemCount();
+    		} else {
+    			childCount = ((TreeItem)widget).getItemCount();
+    		}
+    		if(parentElement!=null && childCount>0) {
+    			for (int i = 0; i < childCount; i++) {
+    				lazyTreeContentProvider.updateElement(parentElement, i);
+				}
+    		}
+    		return;
+    	}
+    	super.createChildren(widget);
+    }
+    
+    protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
+    	if(getContentProvider() instanceof ILazyTreeContentProvider) {
+    		TreeItem ti = (TreeItem) widget;
+        	ti.setItemCount(ti.getItemCount()+1);
+        	ti.clearAll(false);
+            return;
+    	}
+    	super.internalAdd(widget, parentElement, childElements);
+	}
+
 
 }

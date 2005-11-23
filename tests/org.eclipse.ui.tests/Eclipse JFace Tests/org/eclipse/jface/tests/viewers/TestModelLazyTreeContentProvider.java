@@ -33,11 +33,6 @@ public class TestModelLazyTreeContentProvider extends TestModelContentProvider
 		return null;
 	}
 
-	public Object getParent(Object element) {
-		Assert.fail("should not be called on a LazyTreeContentProvider");
-		return null;
-	}
-
 	public boolean hasChildren(Object element) {
 		Assert.fail("should not be called on a LazyTreeContentProvider");
 		return false;

@@ -49,6 +49,10 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// do nothing
 		}
+
+		public Object getParent(Object element) {
+			return null;
+		}
 	}
 
 	private int updateElementCallCount = 0;

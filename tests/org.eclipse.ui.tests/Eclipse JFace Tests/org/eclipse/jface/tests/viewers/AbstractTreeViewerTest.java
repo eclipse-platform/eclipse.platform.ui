@@ -25,7 +25,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
     protected void assertEqualsArray(String s, Object[] a1, Object[] a2) {
         int s1 = a1.length;
         int s2 = a2.length;
-        assertTrue(s, s1 == s2);
+        assertEquals(s, s1, s2);
         for (int i = 0; i < s1; i++) {
             assertEquals(s, a1[i], a2[i]);
         }
@@ -46,7 +46,6 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 
         // get expand state
         Object[] list1 = fTreeViewer.getExpandedElements();
-
         // flush viewer
         fViewer.setInput(fRootElement);
 

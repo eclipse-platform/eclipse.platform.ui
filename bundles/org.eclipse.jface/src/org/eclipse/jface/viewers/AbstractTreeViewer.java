@@ -1066,11 +1066,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 return null;
             }
             // my parent has to create me
-            ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
-            if (cp == null) {
-                return null;
-            }
-            Object parent = cp.getParent(element);
+            Object parent = getParentElement(element);
             if (parent != null) {
                 Widget pw = internalExpand(parent, false);
                 if (pw != null) {
@@ -1094,7 +1090,15 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         return w;
     }
 
-    /**
+    protected Object getParentElement(Object element) {
+        ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
+        if (cp == null) {
+            return null;
+        }
+        return cp.getParent(element);
+	}
+
+	/**
      * Returns the widget to be selected for the given element.
      * 
      * @param element the element to select
