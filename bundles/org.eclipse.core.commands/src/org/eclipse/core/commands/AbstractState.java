@@ -40,7 +40,7 @@ public abstract class AbstractState extends EventManager implements IState {
 	private Object value;
 
 	public final void addListener(final IStateListener listener) {
-		addListener(listener);
+		addListenerObject(listener);
 	}
 
 	public void dispose() {
