@@ -112,4 +112,11 @@ public class PropertyDesc {
 	public Boolean isCollectionProperty() {
 		return isCollectionProperty;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "PropertyDescription(" + object.getClass().getName() + ", " + propertyID.toString() + ", ...)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 }
