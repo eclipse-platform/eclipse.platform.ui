@@ -40,7 +40,7 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     
     public void tearDown() {
     	super.tearDown();
-    	System.out.println("calls: " + setDataCalls);
+//    	System.out.println("calls: " + setDataCalls);
     }
 
 }
