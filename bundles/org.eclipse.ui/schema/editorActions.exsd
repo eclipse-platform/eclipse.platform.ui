@@ -112,7 +112,7 @@ The active editor is passed to the delegate by invoking
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  a translatable name used either as the menu item text or toolbar button label. The name can include mnenomic information.
+                  a translatable name used either as the menu item text or toolbar button label.  The name can include mnenomic information. This label should either be non-empty or a definitionId should be provided.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
