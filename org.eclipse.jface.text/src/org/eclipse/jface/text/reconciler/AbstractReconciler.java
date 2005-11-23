@@ -233,8 +233,12 @@ abstract public class AbstractReconciler implements IReconciler {
 		 */
 		public void documentChanged(DocumentEvent e) {
 
-			if (!fThread.isDirty()&& fThread.isAlive())
+			if (!fThread.isDirty()&& fThread.isAlive()) {
+				if (!fIsAllowedToModifyDocument && Thread.currentThread() == fThread)
+					throw new UnsupportedOperationException("The reconciler thread is not allowed to modify the document"); //$NON-NLS-1$
 				aboutToBeReconciled();
+					
+			}
 
 			if (fProgressMonitor != null && fThread.isActive())
 				fProgressMonitor.setCanceled(true);
@@ -311,6 +315,12 @@ abstract public class AbstractReconciler implements IReconciler {
 	private boolean fIsIncrementalReconciler= true;
 	/** The progress monitor used by this reconciler. */
 	private IProgressMonitor fProgressMonitor;
+	/**
+	 * Tells whether this reconciler is allowed to modify the document.
+	 * @since 3.2
+	 */
+	private boolean fIsAllowedToModifyDocument= true;
+
 
 	/** The text viewer's document. */
 	private IDocument fDocument;
@@ -370,6 +380,21 @@ abstract public class AbstractReconciler implements IReconciler {
 	 */
 	public void setIsIncrementalReconciler(boolean isIncremental) {
 		fIsIncrementalReconciler= isIncremental;
+	}
+	
+	/**
+	 * Tells the reconciler whether it is allowed to change the document
+	 * inside its reconciler thread.
+	 * <p>
+	 * If this is set to <code>false</code> an {@link UnsupportedOperationException}
+	 * will be thrown when this restriction will be violated.
+	 * </p>
+	 *
+	 * @param isAllowedToModify indicates whether this reconciler is allowed to modify the document
+	 * @since 3.2
+	 */
+	public void setIsAllowedToModifyDocument(boolean isAllowedToModify) {
+		fIsAllowedToModifyDocument= isAllowedToModify;
 	}
 
 	/**
