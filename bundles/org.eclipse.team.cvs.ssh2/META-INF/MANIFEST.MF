@@ -2,19 +2,19 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.cvs.ssh2; singleton:=true
-Bundle-Version: 3.1.0
+Bundle-Version: 3.2.0.qualifier
 Bundle-ClassPath: cvsssh2.jar,
  jsch-0.1.18.jar
 Bundle-Activator: org.eclipse.team.internal.ccvs.ssh2.CVSSSH2Plugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.team.internal.ccvs.ssh2;x-internal:=true
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.core.resources,
- org.eclipse.team.cvs.core,
- org.eclipse.team.core,
- org.eclipse.swt,
- org.eclipse.ui,
- org.eclipse.team.cvs.ssh,
- org.eclipse.team.ui
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)",
+ org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.team.cvs.core;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.team.core;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.swt;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.team.cvs.ssh;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.team.ui;bundle-version="[3.2.0,4.0.0)"
 Eclipse-LazyStart: true
