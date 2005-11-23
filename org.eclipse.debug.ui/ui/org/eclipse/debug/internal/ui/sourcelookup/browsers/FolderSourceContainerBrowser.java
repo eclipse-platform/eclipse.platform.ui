@@ -11,12 +11,12 @@
 package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
@@ -34,20 +34,50 @@ public class FolderSourceContainerBrowser extends AbstractSourceContainerBrowser
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
-		Dialog dialog =new FolderSourceContainerDialog(shell,  new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+		FolderSourceContainerDialog dialog = new FolderSourceContainerDialog(shell,  new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 		
 		if (dialog.open() == Window.OK) {
 			Object[] selection= ((ElementTreeSelectionDialog)dialog).getResult();
 			ArrayList containers = new ArrayList();			
 			for (int i= 0; i < selection.length; i++) {
-				if(!(selection[i] instanceof IFolder))
-					continue;			
-				//TODO add boolean to dialog instead of hard coding
-				containers.add(new FolderSourceContainer((IFolder)selection[i], true));				
+				if(selection[i] instanceof IFolder) {
+					containers.add(new FolderSourceContainer((IFolder)selection[i], dialog.isSearchSubfolders()));
+				}
 			}
 			return (ISourceContainer[])containers.toArray(new ISourceContainer[containers.size()]);	
 		}			
 		return new ISourceContainer[0];
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser#canEditSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
+	 */
+	public boolean canEditSourceContainers(ISourceLookupDirector director, ISourceContainer[] containers) {
+		return containers.length == 1 && containers[0].getType().getId().equals(FolderSourceContainer.TYPE_ID);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser#editSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
+	 */
+	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers) {
+		FolderSourceContainerDialog dialog = new FolderSourceContainerDialog(shell,  new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+		FolderSourceContainer container = (FolderSourceContainer) containers[0];
+		dialog.setSearchSubfolders(container.isComposite());
+		dialog.setInitialSelection(container.getContainer());
+		if (dialog.open() == Window.OK) {
+			container.dispose();
+			Object[] selection= ((ElementTreeSelectionDialog)dialog).getResult();
+			ArrayList list = new ArrayList();			
+			for (int i= 0; i < selection.length; i++) {
+				if(selection[i] instanceof IFolder) {
+					list.add(new FolderSourceContainer((IFolder)selection[i], dialog.isSearchSubfolders()));
+				}
+			}
+			return (ISourceContainer[])list.toArray(new ISourceContainer[list.size()]);	
+		}			
+		return new ISourceContainer[0];
+	}
+	
+	
 	
 }

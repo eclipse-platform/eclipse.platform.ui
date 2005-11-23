@@ -19,6 +19,10 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
@@ -32,10 +36,47 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  */
 public class FolderSourceContainerDialog extends ElementTreeSelectionDialog { 
 	
-	public FolderSourceContainerDialog(
-			Shell parent,
-			ILabelProvider labelProvider,
-			ITreeContentProvider contentProvider) {
+	/**
+	 * Constant to persist the state of the search subfolders button
+	 * 
+	 * @since 3.2
+	 */
+	private static final String LAST_SUBDIR_SETTING = "EXT_FOLDER_SOURCE_LAST_SUBDIR_SETTING"; //$NON-NLS-1$
+	
+	/**
+	 * Lets us control searching subfolders
+	 * 
+	 * @since 3.2
+	 */
+	private Button fSubfoldersButton;
+	
+	/**
+	 * stored value whether to search subfolders or not
+	 * 
+	 * @since 3.2
+	 */
+	private boolean fSearchSubfolders = false;
+	
+	/**
+	 * We need to add in the new control for indicating whether to search sub folders or not
+	 * 
+	 * @since 3.2
+	 */
+	protected Control createDialogArea(Composite parent) {
+		Composite parentc = (Composite)super.createDialogArea(parent);
+		fSubfoldersButton = new Button(parentc, SWT.CHECK);
+        fSubfoldersButton.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_6);
+        fSubfoldersButton.setSelection(fSearchSubfolders);
+		return parentc;
+	}
+
+	/**
+	 * Sets the dialog values for its construction
+	 * @param parent the parent of the dialog
+	 * @param labelProvider the label provider for the content of the tree in the dialog
+	 * @param contentProvider the provider of the tree content for the dialog
+	 */
+	public FolderSourceContainerDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider) {
 		super(parent, labelProvider, contentProvider);
 		setTitle(SourceLookupUIMessages.folderSelection_title);	//	
 		setInput(ResourcesPlugin.getWorkspace().getRoot());
@@ -55,6 +96,36 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		setAllowMultiple(true);
 		setMessage(SourceLookupUIMessages.folderSelection_label); 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,  IDebugHelpContextIds.ADD_FOLDER_CONTAINER_DIALOG);
+		setSearchSubfolders(DebugUIPlugin.getDefault().getDialogSettings().getBoolean(LAST_SUBDIR_SETTING));
+	}
+	
+	/**
+	 * Returns whether the 'search subfolders' option is selected.
+	 * 
+	 * @since 3.2
+	 * @return true if the search subfolders button is selected, false otherwise.
+	 */
+	public boolean isSearchSubfolders() {
+		return fSearchSubfolders;
+	}
+	
+	/**
+	 * Sets whether the 'search subfolders' option is selected.
+	 * 
+	 * @param subfolders
+	 * @since 3.2
+	 */
+	public void setSearchSubfolders(boolean subfolders) {
+		fSearchSubfolders = subfolders;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
+	 */
+	protected void okPressed() {
+		fSearchSubfolders = fSubfoldersButton.getSelection();
+		DebugUIPlugin.getDefault().getDialogSettings().put(LAST_SUBDIR_SETTING, fSearchSubfolders);
+		super.okPressed();
 	}
 	
 }
