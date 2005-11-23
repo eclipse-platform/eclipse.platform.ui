@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -89,9 +90,9 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 					// it is more important to get the original cause of the
 					// exception. Therefore create a new status and take
 					// over the exception trace from the UI thread.
-					throw new CoreException(new Status(
-						IStatus.ERROR, status.getPlugin(), status.getCode(), 
-						status.getMessage(), exception[0]));
+					throw new CoreException(new MultiStatus(
+							RefactoringUIPlugin.getPluginId(), IStatus.ERROR,
+							new IStatus[] {status}, status.getMessage(), exception[0]));
 				} else {
 					String message= exception[0].getMessage();
 					throw new CoreException(new Status(
