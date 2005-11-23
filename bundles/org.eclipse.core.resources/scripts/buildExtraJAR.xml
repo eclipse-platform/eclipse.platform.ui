@@ -23,19 +23,26 @@
 		<delete dir="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
 		<mkdir dir="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
 		<!-- compile the source code -->
-		<javac 
-			destdir="${temp.folder}/ant_tasks/resources-ant.jar.bin" 
-			failonerror="true" 
-			verbose="true" 
-			debug="on"
-			bootclasspath="${bootclasspath}" 
-			classpath="${basedir}/../org.eclipse.core.runtime/bin;
-					${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}.jar;
-					${basedir}/../org.eclipse.osgi/bin;
-					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}.jar;
-					${basedir}/../org.eclipse.ant.core/bin;
-					${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}.jar;
-					${basedir}/bin">
+		<javac destdir="${temp.folder}/ant_tasks/resources-ant.jar.bin" failonerror="true" verbose="true" debug="on">
+			<bootclasspath path="${bootclasspath}"/>
+			<classpath>
+				<dirset dir="${basedir}/..">
+					<include name="org.eclipse.core.resources/bin"/>
+					<include name="org.eclipse.core.runtime/bin"/>
+					<include name="org.eclipse.equinox.common/bin"/>
+					<include name="org.eclipse.core.jobs/bin"/>
+					<include name="org.eclipse.osgi/bin"/>
+					<include name="org.eclipse.ant.core/bin"/>
+				</dirset>
+				<fileset dir="${eclipse.home}">
+					<include name="plugins/org.eclipse.core.resources*.jar"/>
+					<include name="plugins/org.eclipse.core.runtime*.jar"/>
+					<include name="plugins/org.eclipse.equinox.common*.jar"/>
+					<include name="plugins/org.eclipse.core.jobs*.jar"/>
+					<include name="plugins/org.eclipse.osgi*.jar"/>
+					<include name="plugins/org.eclipse.ant.core*.jar"/>
+				</fileset>
+			</classpath>
 			<src path="src_ant/"/>
 		</javac>
 		<!-- copy necessary resources -->
