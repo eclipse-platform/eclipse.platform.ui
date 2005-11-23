@@ -110,6 +110,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		synchronized (fFilesBuffers) {
 			AbstractFileBuffer oldFileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 			if (oldFileBuffer != null) {
+				fileBuffer.disconnect();
+				fileBuffer.dispose();
 				oldFileBuffer.connect();
 				return;
 			}
