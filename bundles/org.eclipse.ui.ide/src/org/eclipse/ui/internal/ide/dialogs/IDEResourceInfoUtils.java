@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.osgi.util.NLS;
@@ -107,6 +108,20 @@ public class IDEResourceInfoUtils {
 			IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
 			return null;
 		}
+		return store.fetchInfo();
+	}
+
+	/**
+	 * Return the fileInfo at pathName or <code>null</code> if the format is
+	 * invalid or if the file info cannot be determined.
+	 * 
+	 * @param pathName
+	 * @return IFileInfo or <code>null</code>
+	 */
+	public static IFileInfo getFileInfo(String pathName) {
+		IFileStore store = getFileStore(pathName);
+		if(store == null)
+			return null;
 		return store.fetchInfo();
 	}
 
@@ -211,8 +226,8 @@ public class IDEResourceInfoUtils {
 	public static String getSizeString(IResource resource) {
 		if (resource.getType() != IResource.FILE)
 			return ""; //$NON-NLS-1$
-		
-		IFile file = (IFile)resource;
+
+		IFile file = (IFile) resource;
 		if (!file.isLocal(IResource.DEPTH_ZERO))
 			return NOT_LOCAL_TEXT;
 
@@ -225,12 +240,12 @@ public class IDEResourceInfoUtils {
 		}
 
 		IFileInfo info = getFileInfo(location);
-		if(info == null)
+		if (info == null)
 			return UNKNOWN_LABEL;
-		
-		if (info.exists()) 
-			return NLS.bind(BYTES_LABEL,Long.toString(info.getLength()));
-		
+
+		if (info.exists())
+			return NLS.bind(BYTES_LABEL, Long.toString(info.getLength()));
+
 		return NOT_EXIST_TEXT;
 	}
 
@@ -305,6 +320,21 @@ public class IDEResourceInfoUtils {
 			return false;
 
 		return true;
+	}
+
+	/**
+	 * Get the file store for the string.
+	 * @param string
+	 * @return IFileStore or <code>null</code> if there is a
+	 * {@link CoreException}.
+	 */
+	public static IFileStore getFileStore(String string) {
+		try {
+			return EFS.getStore((new Path(string)).toFile().toURI());
+		} catch (CoreException e) {
+			IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
+			return null;
+		}
 	}
 
 }

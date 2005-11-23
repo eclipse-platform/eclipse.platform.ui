@@ -298,6 +298,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CopyFilesAndFoldersOperation_missingLinkTarget;
 	public static String CopyFilesAndFoldersOperation_CopyResourcesTask;
 	public static String CopyFilesAndFoldersOperation_parentNotEqual;
+	public static String CopyFilesAndFoldersOperation_infoNotFound;
+	public static String CopyFilesAndFoldersOperation_copy_exception;
 
 	public static String MoveFilesAndFoldersOperation_sameSourceAndDest;
 	public static String MoveFilesAndFoldersOperation_moveFailedTitle;
