@@ -236,20 +236,25 @@ public class TableViewerUpdatableCollectionExtended extends
 					Method setter = target
 							.getClass()
 							.getMethod(
-									"set"	+ setterSig.substring(0, 1).toUpperCase(Locale.ENGLISH) + setterSig.substring(1), new Class[] { column.getConverter().getTargetType() }); //$NON-NLS-1$
+									"set"	+ setterSig.substring(0, 1).toUpperCase(Locale.ENGLISH) + setterSig.substring(1), new Class[] { column.getConverter().getModelType() }); //$NON-NLS-1$
 					setter.invoke(target, new Object[] { value });
 					tableViewerDescription.getTableViewer().refresh(element);
 					return;
 				} catch (SecurityException e) {
 					// TODO log
+					e.printStackTrace();
 				} catch (NoSuchMethodException e) {
 					// TODO log
+					e.printStackTrace();					
 				} catch (IllegalArgumentException e) {
 					// TODO log
+					e.printStackTrace();					
 				} catch (IllegalAccessException e) {
 					// TODO log
+					e.printStackTrace();					
 				} catch (InvocationTargetException e) {
 					// TODO log
+					e.printStackTrace();					
 				}
 			}
 		};
