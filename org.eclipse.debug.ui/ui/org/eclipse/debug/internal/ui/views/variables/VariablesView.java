@@ -373,10 +373,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				asyncTreeViewer.dispose();
 			}
 		}
-        IAction action= getAction("FindVariable"); //$NON-NLS-1$
-        if (action != null && action instanceof FindVariableAction) {
-            ((FindVariableAction) action).dispose();
-        }
         fSelectionStates.clear();
 		super.dispose();
 	}
@@ -794,7 +790,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		setAction(ActionFactory.PASTE.getId(), textAction);
 		
-		action= new FindVariableAction(this);
+		action= new FindVariableAction(getVariablesViewer());
 		setAction("FindVariable", action); //$NON-NLS-1$
 		
 		// TODO: Still using "old" resource access

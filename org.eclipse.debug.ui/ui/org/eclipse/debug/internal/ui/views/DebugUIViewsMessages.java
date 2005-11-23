@@ -54,14 +54,8 @@ public class DebugUIViewsMessages extends NLS {
 	public static String BreakpointWorkingSetPage_selectAll_toolTip;
 	public static String BreakpointWorkingSetPage_deselectAll_label;
 	public static String BreakpointWorkingSetPage_deselectAll_toolTip;
-	public static String DebugViewLabelDecorator_0;
-	public static String AbstractDebugEventHandler_0;
-	public static String IncrementalDeferredTreeContentManager_0;
-	public static String IncrementalDeferredTreeContentManager_1;
 	public static String OtherBreakpointOrganizer_0;
 	public static String WorkingSetCategory_0;
-	public static String RemoteTreeViewer_0;
-	public static String RemoteTreeContentManager_0;
 
 	static {
 		// load message values from bundle file
