@@ -381,6 +381,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 */
 	public void setVisible(boolean visible) {
 		fCurrentSelection= null;
+		final RefactoringWizard refactoringWizard= getRefactoringWizard();
 		if (hasChanges()) {
 			fPageContainer.showPage(fStandardPage);
 			AbstractChangeNode treeViewerInput= (AbstractChangeNode)fTreeViewer.getInput();
@@ -390,7 +391,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 					ITreeContentProvider provider= (ITreeContentProvider)fTreeViewer.getContentProvider();
 					PreviewNode element= getFirstNonCompositeChange(provider, treeViewerInput);
 					if (element != null) {
-						if (getRefactoringWizard().internalGetExpandFirstNode(InternalAPI.INSTANCE)) {
+						if (refactoringWizard != null && refactoringWizard.internalGetExpandFirstNode(InternalAPI.INSTANCE)) {
 							Object[] subElements= provider.getElements(element);
 							if (subElements != null && subElements.length > 0) {
 								fTreeViewer.expandToLevel(element, 999);
@@ -407,7 +408,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			fPageContainer.showPage(fNullPage);
 			super.setVisible(visible);
 		}
-		getRefactoringWizard().internalSetPreviewShown(InternalAPI.INSTANCE, visible);
+		if (refactoringWizard != null)
+			refactoringWizard.internalSetPreviewShown(InternalAPI.INSTANCE, visible);
 	}
 	
 	private PreviewNode getFirstNonCompositeChange(ITreeContentProvider provider, AbstractChangeNode input) {

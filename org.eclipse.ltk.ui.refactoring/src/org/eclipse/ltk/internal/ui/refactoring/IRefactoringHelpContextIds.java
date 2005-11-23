@@ -26,6 +26,9 @@ public interface IRefactoringHelpContextIds {
 	public static final String REFACTORING_ERROR_WIZARD_PAGE=	PREFIX + "refactoring_error_wizard_page_context";  //$NON-NLS-1$
 
 	/** @since 3.2 */
+	public static final String REFACTORING_HISTORY_WIZARD_PAGE= PREFIX + "refactoring_history_wizard_page_context"; //$NON-NLS-1$
+
+	/** @since 3.2 */
 	public static final String REFACTORING_HISTORY_DIALOG= PREFIX + "refactoring_history_dialog"; //$NON-NLS-1$
 
 	/** @since 3.2 */

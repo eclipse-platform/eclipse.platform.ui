@@ -37,7 +37,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
@@ -78,9 +77,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/** The history viewer */
 	private TreeViewer fHistoryViewer= null;
-
-	/** The message label */
-	private Label fMessageLabel= null;
 
 	/** The splitter control */
 	private Splitter fSplitterControl= null;
@@ -136,7 +132,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			}
 		});
 		createButtonBar(this);
-		fMessageLabel= new Label(fSplitterControl, SWT.LEFT | SWT.WRAP | SWT.HORIZONTAL);
 		final Composite leftPane= new Composite(fSplitterControl, SWT.NONE);
 		layout= new GridLayout();
 		layout.marginWidth= 0;
@@ -181,12 +176,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		};
 		fCommentPane.setText(fControlConfiguration.getCommentCaption());
 		fCommentPane.setEnabled(false);
-		final String message= fControlConfiguration.getMessage();
-		if (message != null && !"".equals(message)) { //$NON-NLS-1$
-			fMessageLabel.setText(message);
-			fSplitterControl.setWeights(new int[] { 8, 72, 20});
-		} else
-			fSplitterControl.setWeights(new int[] { 0, 80, 20});
+		fSplitterControl.setWeights(new int[] { 80, 20});
 	}
 
 	/**

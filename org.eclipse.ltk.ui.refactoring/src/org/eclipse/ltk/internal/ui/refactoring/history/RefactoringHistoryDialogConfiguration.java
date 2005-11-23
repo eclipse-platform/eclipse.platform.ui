@@ -28,14 +28,12 @@ public class RefactoringHistoryDialogConfiguration extends RefactoringHistoryCon
 	 * 
 	 * @param project
 	 *            the project, or <code>null</code>
-	 * @param message
-	 *            the information message, or <code>null</code>
 	 * @param time
 	 *            <code>true</code> to display time information,
 	 *            <code>false</code> otherwise
 	 */
-	public RefactoringHistoryDialogConfiguration(final IProject project, final String message, final boolean time) {
-		super(project, message, time);
+	public RefactoringHistoryDialogConfiguration(final IProject project, final boolean time) {
+		super(project, time);
 	}
 
 	/**

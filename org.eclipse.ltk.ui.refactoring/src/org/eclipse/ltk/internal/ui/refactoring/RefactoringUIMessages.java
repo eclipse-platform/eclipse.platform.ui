@@ -132,6 +132,17 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringPropertyPage_enable_message;
 	public static String RefactoringPropertyPage_label_message;
 
+	public static String RefactoringModelMerger_project_pattern;
+	public static String RefactoringModelMerger_workspace_caption;
+	public static String RefactoringModelMerger_retrieving_refactorings;
+	public static String RefactoringModelMerger_merge_message;
+
+	public static String RefactoringHistoryOverviewPage_title;
+	public static String RefactoringHistoryOverviewPage_description;
+
+	public static String RefactoringHistoryErrorPage_description;
+	public static String RefactoringHistoryPreviewPage_description;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringUIMessages.class);
 	}

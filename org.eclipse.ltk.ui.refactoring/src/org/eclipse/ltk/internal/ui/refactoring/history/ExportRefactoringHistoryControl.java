@@ -31,7 +31,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
  * 
  * @since 3.2
  */
-public class ExportRefactoringHistoryControl extends RefactoringHistoryControl {
+public final class ExportRefactoringHistoryControl extends RefactoringHistoryControl {
 
 	/** The export all button, or <code>null</code> */
 	private Button fExportAllButton= null;

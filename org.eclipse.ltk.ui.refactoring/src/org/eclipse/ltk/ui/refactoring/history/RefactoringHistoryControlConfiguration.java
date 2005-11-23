@@ -28,9 +28,6 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
  */
 public class RefactoringHistoryControlConfiguration {
 
-	/** The information message, or <code>null</code> */
-	protected final String fMessage;
-
 	/** The project, or <code>null</code> */
 	protected final IProject fProject;
 
@@ -42,15 +39,12 @@ public class RefactoringHistoryControlConfiguration {
 	 * 
 	 * @param project
 	 *            the project, or <code>null</code>
-	 * @param message
-	 *            the information message, or <code>null</code>
 	 * @param time
 	 *            <code>true</code> to display time information,
 	 *            <code>false</code> otherwise
 	 */
-	public RefactoringHistoryControlConfiguration(final IProject project, final String message, final boolean time) {
+	public RefactoringHistoryControlConfiguration(final IProject project, final boolean time) {
 		fProject= project;
-		fMessage= message;
 		fTime= time;
 	}
 
@@ -122,15 +116,6 @@ public class RefactoringHistoryControlConfiguration {
 	 */
 	public String getLastWeekLabel() {
 		return RefactoringUIMessages.RefactoringHistoryControlConfiguration_last_week_label;
-	}
-
-	/**
-	 * Returns the information message of the control.
-	 * 
-	 * @return the information message
-	 */
-	public String getMessage() {
-		return fMessage;
 	}
 
 	/**
