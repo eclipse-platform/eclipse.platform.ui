@@ -250,7 +250,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	}
 
 	public void connect() {
-		++ fReferenceCount;
+		++fReferenceCount;
 		if (fReferenceCount == 1)
 			connected();
 	}
@@ -266,21 +266,22 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	}
 
 	public void disconnect() throws CoreException {
-		-- fReferenceCount;
-		if (fReferenceCount == 0)
+		--fReferenceCount;
+		if (fReferenceCount <= 0)
 			disconnected();
 	}
 
 	/**
 	 * Called when this file buffer has been disconnected. This is the case when
-	 * the number of connections drops to <code>0</code>.
+	 * the number of connections drops below <code>1</code>.
 	 * <p>
 	 * Clients may extend this method.
 	 */
 	protected void disconnected() {
-		if (fFileSynchronizer != null)
+		if (fFileSynchronizer != null) {
 			fFileSynchronizer.uninstall();
-		fFileSynchronizer= null;
+			fFileSynchronizer= null;
+		}
 		removeFileBufferContentListeners();
 	}
 
