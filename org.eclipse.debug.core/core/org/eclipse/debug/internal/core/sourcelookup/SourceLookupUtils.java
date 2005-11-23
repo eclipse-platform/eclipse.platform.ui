@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.ILaunchesListener2;
 
 /**
@@ -106,7 +105,7 @@ public class SourceLookupUtils {
 	 * Clears the cache of open zip files when a launch terminates,
 	 * is removed, or when a project is about to be deleted or closed.
 	 */
-	static class ArchiveCleaner implements ILaunchesListener, IResourceChangeListener, ILaunchesListener2 {
+	static class ArchiveCleaner implements IResourceChangeListener, ILaunchesListener2 {
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
