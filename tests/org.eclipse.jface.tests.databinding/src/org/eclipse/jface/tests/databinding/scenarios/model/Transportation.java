@@ -10,11 +10,29 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios.model;
 
-public class Transportation {
+public class Transportation extends ModelObject {
+
+	private String arrivalTime;
+	private double price;
 
 	public void setArrivalTime(String string) {
-		// TODO Auto-generated method stub
-		
+		String oldValue = arrivalTime;
+		arrivalTime = string;
+		firePropertyChange("arrivaltime",oldValue,string);
+	}
+	
+	public String getArrivalTime(){
+		return arrivalTime;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double aPrice) {
+		double oldPrice = price;
+		price = aPrice;
+		firePropertyChange("price",new Double(oldPrice),new Double(price));
 	}
 
 }

@@ -136,9 +136,11 @@ public class SampleData {
 		// Transporation
 		GREYHOUND_BUS = FACTORY.createTransportation();
 		GREYHOUND_BUS.setArrivalTime("14:30");
+		GREYHOUND_BUS.setPrice(25.50);		
 		CATALOG_2005.addTransportation(GREYHOUND_BUS);
 		EXECUTIVE_JET = FACTORY.createTransportation();
 		EXECUTIVE_JET.setArrivalTime("11:10");
+		EXECUTIVE_JET.setPrice(1500.99);
 		CATALOG_2005.addTransportation(EXECUTIVE_JET);
 
 		// Accounts

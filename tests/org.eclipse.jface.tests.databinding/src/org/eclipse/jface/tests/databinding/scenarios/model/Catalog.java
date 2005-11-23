@@ -62,5 +62,9 @@ public class Catalog extends ModelObject {
 	public Account[] getAccounts() {
 		return accounts;
 	}
+	
+	public Transportation[] getTransporations(){
+		return transportations;
+	}
 
 }

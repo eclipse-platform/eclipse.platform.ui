@@ -17,6 +17,7 @@ import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
 import org.eclipse.jface.tests.databinding.scenarios.model.PhoneConverter;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.jface.tests.databinding.scenarios.model.StateConverter;
+import org.eclipse.jface.tests.databinding.scenarios.model.Transportation;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -218,6 +219,26 @@ public class TableScenarios extends ScenariosTestCase {
 		account.setLastName("Gershwin");
 		lastName = tableViewer.getTable().getItem(0).getText(0);	
 		assertEquals(lastName,account.getLastName());		
+		
+	}
+	
+	public void testScenario06(){
+		// Check that defaulting of converters, validators and cell editors work based on the explicit type of the column being specified
+		TableViewerDescription tableViewerDescription = new TableViewerDescription(
+				tableViewer);
+		tableViewerDescription.addColumn("price");
+		tableViewerDescription.getColumn(0).setPropertyType(Double.TYPE);
+		getDbc().bind(tableViewerDescription,
+				new PropertyDesc(catalog, "transporations"), null);
+		Transportation transporation = catalog.getTransporations()[0];
+		tableViewer.editElement(transporation, 0);
+		// Set the text property of the cell editor which is now active over the "firstName" column
+		CellEditor[] cellEditors = tableViewer.getCellEditors();
+		TextCellEditor priceEditor = (TextCellEditor) cellEditors[0];
+		// Change the firstName and test it goes to the model
+		enterText((Text) priceEditor.getControl(), "123.45");
+		// Verify the model is updated
+		assertEquals(transporation.getPrice(),123.45,0);
 		
 	}
 	
