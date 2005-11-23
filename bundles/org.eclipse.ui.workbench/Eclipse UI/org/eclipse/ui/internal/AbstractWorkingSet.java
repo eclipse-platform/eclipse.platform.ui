@@ -22,30 +22,33 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 
 /**
+ * Abstract baseclass for IWorkingSet implementations.
+ * 
  * @since 3.2
- *
  */
 public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 
 	protected static final String FACTORY_ID = "org.eclipse.ui.internal.WorkingSetFactory"; //$NON-NLS-1$
-	static final String TAG_AGGREGATE = "aggregate"; //$NON-NLS-1$
-	private String name;
-	protected ArrayList elements;
-	private IWorkingSetManager manager;
-	//private boolean visible = true;
 
-    protected IMemento workingSetMemento;
+	static final String TAG_AGGREGATE = "aggregate"; //$NON-NLS-1$
+
+	private String name;
+
+	protected ArrayList elements;
+
+	private IWorkingSetManager manager;
+
+	protected IMemento workingSetMemento;
+
 	private String label;
 
-	/**ghrfgdfgetrtg
+	/**
+	 * Create a new instance of this class
 	 * 
-	 * 
-	 * erg
-	 * 
-	 * @param name
+	 * @param name the unique name for this working set
+	 * @param label the user-friendly name for this working set
 	 */
 	public AbstractWorkingSet(String name, String label) {
-		
 		Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
 		this.name = name;
 		this.label = label;
@@ -71,16 +74,6 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 	    return name;
 	}
 
-	/**
-	 * Set whether this working set should be visible in the UI.
-	 * 
-	 * @param visible whether this working set should be visible in the UI
-	 * @since 3.2
-	 */
-	/*public void setVisible(boolean visible) {
-			this.visible = visible;
-	}*/
-
 	public void setName(String newName) {
 	    Assert.isNotNull(newName, "Working set name must not be null"); //$NON-NLS-1$
 	    
@@ -88,11 +81,19 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 	    fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE, null);
 	}
 
+	/**
+	 * Connect this working set to a manger. 
+	 * 
+	 * @param manager the manager to connect to
+	 */
 	public void connect(IWorkingSetManager manager) {
 		Assert.isTrue(this.manager == null, "A working set can only be connected to one manager"); //$NON-NLS-1$
 		this.manager= manager;
 	}
 
+	/**
+	 * Disconnet this working set from its manager, if any.
+	 */
 	public void disconnect() {
 		this.manager= null;
 	}
@@ -103,10 +104,6 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 			: (AbstractWorkingSetManager)WorkbenchPlugin.getDefault().getWorkingSetManager();
 		receiver.workingSetChanged(this, property, oldValue);
 	}
-
-	/*public boolean isVisible() {
-		return visible;
-	}*/
 
 	/**
 	 * Create a copy of the elements to store in the receiver.
