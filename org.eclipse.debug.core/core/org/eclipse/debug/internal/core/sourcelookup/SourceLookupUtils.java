@@ -14,16 +14,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.zip.ZipFile;
+
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.ILaunchesListener2;
 
 /**
  * Utility and supporting methods for source location. Most of these
@@ -58,7 +56,6 @@ public class SourceLookupUtils {
 		synchronized (fgZipFileCache) {
 			if (fgCleaner == null) {
 				fgCleaner = new ArchiveCleaner();
-				DebugPlugin.getDefault().addDebugEventListener(fgCleaner);
 				DebugPlugin.getDefault().getLaunchManager().addLaunchListener(fgCleaner);
 				ResourcesPlugin.getWorkspace().addResourceChangeListener(fgCleaner, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
 			}
@@ -100,39 +97,28 @@ public class SourceLookupUtils {
 	public static void shutdown() {
 		closeArchives();
 		if (fgCleaner != null) {
-			DebugPlugin.getDefault().removeDebugEventListener(fgCleaner);
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fgCleaner);
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(fgCleaner);			
 		}
 	}
 	
 	/**
-	 * Clears the cache of open zip files when a debug target or process
-	 * terminates, when a launch is removed, or when a project is about
-	 * to be deleted or closed.
+	 * Clears the cache of open zip files when a launch terminates,
+	 * is removed, or when a project is about to be deleted or closed.
 	 */
-	static class ArchiveCleaner implements IDebugEventSetListener, ILaunchesListener, IResourceChangeListener {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-		 */
-		public void handleDebugEvents(DebugEvent[] events) {
-			for (int i = 0; i < events.length; i++) {
-				DebugEvent event = events[i];
-				if (event.getKind() == DebugEvent.TERMINATE) {
-					Object source = event.getSource();
-					if (source instanceof IDebugTarget || source instanceof IProcess) {
-						SourceLookupUtils.closeArchives();
-					}
-				}
-			}
-		}
+	static class ArchiveCleaner implements ILaunchesListener, IResourceChangeListener, ILaunchesListener2 {
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 		 */
 		public void launchesRemoved(ILaunch[] launches) {
-			SourceLookupUtils.closeArchives();
+			for (int i = 0; i < launches.length; i++) {
+				ILaunch launch = launches[i];
+				if (!launch.isTerminated()) {	
+					SourceLookupUtils.closeArchives();
+					return;
+				}
+			}
 		}
 
 		/* (non-Javadoc)
@@ -151,6 +137,13 @@ public class SourceLookupUtils {
 		 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 		 */
 		public void resourceChanged(IResourceChangeEvent event) {
+			SourceLookupUtils.closeArchives();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
+		 */
+		public void launchesTerminated(ILaunch[] launches) {
 			SourceLookupUtils.closeArchives();
 		}
 		
