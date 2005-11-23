@@ -467,7 +467,7 @@ public final class RefactoringHistoryManager {
 		try {
 			transformer.beginSession(null);
 			try {
-				transformer.beginRefactoring(descriptor.getID(), descriptor.getTimeStamp(), descriptor.getProject(), descriptor.getDescription(), descriptor.getComment());
+				transformer.beginRefactoring(descriptor.getID(), descriptor.getTimeStamp(), descriptor.getProject(), descriptor.getDescription(), descriptor.getComment(), descriptor.getFlags());
 				for (final Iterator iterator= descriptor.getArguments().entrySet().iterator(); iterator.hasNext();) {
 					final Map.Entry entry= (Entry) iterator.next();
 					transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
@@ -540,7 +540,7 @@ public final class RefactoringHistoryManager {
 				final RefactoringDescriptor descriptor= descriptors[index];
 				if (descriptor != null) {
 					try {
-						transformer.beginRefactoring(descriptor.getID(), -1, descriptor.getProject(), descriptor.getDescription(), descriptor.getComment());
+						transformer.beginRefactoring(descriptor.getID(), -1, descriptor.getProject(), descriptor.getDescription(), descriptor.getComment(), descriptor.getFlags());
 						for (final Iterator iterator= descriptor.getArguments().entrySet().iterator(); iterator.hasNext();) {
 							final Map.Entry entry= (Entry) iterator.next();
 							transformer.createArgument((String) entry.getKey(), (String) entry.getValue());

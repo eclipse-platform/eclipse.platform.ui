@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
@@ -51,7 +53,7 @@ final class RefactoringSessionTransformer {
 	 * arguments.
 	 * <p>
 	 * Calls to
-	 * {@link RefactoringSessionTransformer#beginRefactoring(String, long, String, String, String)}
+	 * {@link RefactoringSessionTransformer#beginRefactoring(String, long, String, String, String, int)}
 	 * must be balanced with calls to
 	 * {@link RefactoringSessionTransformer#endRefactoring()}. If the
 	 * transformer is already processing a refactoring, nothing happens.
@@ -69,12 +71,15 @@ final class RefactoringSessionTransformer {
 	 * @param comment
 	 *            the comment associated with the refactoring, or
 	 *            <code>null</code>
+	 * @param flags
+	 *            the flags associated with refactoring
 	 * @throws CoreException
 	 *             if an error occurs while creating a new refactoring
 	 */
-	public void beginRefactoring(final String id, long stamp, final String project, final String description, final String comment) throws CoreException {
+	public void beginRefactoring(final String id, long stamp, final String project, final String description, final String comment, final int flags) throws CoreException {
 		Assert.isNotNull(id);
 		Assert.isNotNull(description);
+		Assert.isTrue(flags >= RefactoringDescriptor.NONE);
 		try {
 			if (fDocument == null)
 				fDocument= DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -93,6 +98,11 @@ final class RefactoringSessionTransformer {
 				if (stamp >= 0) {
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_STAMP);
 					attribute.setValue(new Long(stamp).toString());
+					attributes.setNamedItem(attribute);
+				}
+				if (flags != RefactoringDescriptor.NONE) {
+					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_FLAGS);
+					attribute.setValue(String.valueOf(flags));
 					attributes.setNamedItem(attribute);
 				}
 				attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_DESCRIPTION);
@@ -121,10 +131,10 @@ final class RefactoringSessionTransformer {
 	/**
 	 * Begins the transformation of a refactoring session.
 	 * <p>
-	 * Calls to {@link RefactoringSessionTransformer#beginSession(String)}
-	 * must be balanced with calls to
-	 * {@link RefactoringSessionTransformer#endSession()}. If the
-	 * transformer is already processing a session, nothing happens.
+	 * Calls to {@link RefactoringSessionTransformer#beginSession(String)} must
+	 * be balanced with calls to
+	 * {@link RefactoringSessionTransformer#endSession()}. If the transformer
+	 * is already processing a session, nothing happens.
 	 * </p>
 	 * 
 	 * @param comment

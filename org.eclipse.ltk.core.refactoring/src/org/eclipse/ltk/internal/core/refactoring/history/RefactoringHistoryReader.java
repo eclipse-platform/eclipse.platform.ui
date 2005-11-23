@@ -184,6 +184,7 @@ final class RefactoringHistoryReader extends DefaultHandler {
 			String stamp= ""; //$NON-NLS-1$
 			String description= ""; //$NON-NLS-1$
 			String comment= null;
+			String flags= "0"; //$NON-NLS-1$
 			String project= null;
 			for (int index= 0; index < length; index++) {
 				final String name= attributes.getQName(index);
@@ -194,6 +195,8 @@ final class RefactoringHistoryReader extends DefaultHandler {
 					stamp= value;
 				else if (IRefactoringSerializationConstants.ATTRIBUTE_DESCRIPTION.equals(name))
 					description= value;
+				else if (IRefactoringSerializationConstants.ATTRIBUTE_FLAGS.equals(name))
+					flags= value;
 				else if (IRefactoringSerializationConstants.ATTRIBUTE_COMMENT.equals(name))
 					comment= value;
 				else if (IRefactoringSerializationConstants.ATTRIBUTE_PROJECT.equals(name))
@@ -201,7 +204,13 @@ final class RefactoringHistoryReader extends DefaultHandler {
 				else if (!"".equals(name) && !"".equals(value)) //$NON-NLS-1$//$NON-NLS-2$
 					map.put(name, value);
 			}
-			final RefactoringDescriptor descriptor= new RefactoringDescriptor(id, project, description, comment, map);
+			int flag= 0;
+			try {
+				flag= Integer.parseInt(flags);
+			} catch (NumberFormatException exception1) {
+				// Do nothing
+			}
+			final RefactoringDescriptor descriptor= new RefactoringDescriptor(id, project, description, comment, map, flag);
 			try {
 				final long time= Long.valueOf(stamp).longValue();
 				if (fStamp == -1) {
