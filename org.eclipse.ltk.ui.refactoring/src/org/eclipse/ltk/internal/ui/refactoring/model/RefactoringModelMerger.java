@@ -273,9 +273,11 @@ public class RefactoringModelMerger implements IResourceMappingMerger {
 	 * 
 	 * @param context
 	 *            the merge context
+	 * @param monitor
+	 *            the progress monitor to use
 	 * @return the sync info tree
 	 */
-	private SyncInfoTree getSyncInfoTree(final IMergeContext context) {
+	private SyncInfoTree getSyncInfoTree(final IMergeContext context, final IProgressMonitor monitor) {
 		final ResourceMapping[] mappings= context.getScope().getMappings(fModelProvider.getDescriptor().getId());
 		final SyncInfoTree tree= new SyncInfoTree();
 		try {
@@ -286,7 +288,7 @@ public class RefactoringModelMerger implements IResourceMappingMerger {
 					tree.add(infos[offset]);
 			}
 		} finally {
-			tree.endInput(new NullProgressMonitor());
+			tree.endInput(monitor);
 		}
 		return tree;
 	}
@@ -299,8 +301,8 @@ public class RefactoringModelMerger implements IResourceMappingMerger {
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
-			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_merge_message, 200);
-			final SyncInfoTree tree= getSyncInfoTree(context);
+			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_merge_message, 220);
+			final SyncInfoTree tree= getSyncInfoTree(context, new SubProgressMonitor(monitor, 20));
 			final RefactoringHistory history= getRefactoringHistory(tree, new SubProgressMonitor(monitor, 100));
 			if (history != null && !history.isEmpty()) {
 				final IProject[] projects= getAffectedProjects(history);
