@@ -16,7 +16,7 @@ import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.actions.selection.RemoveAllTerminatedAction;
+import org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;
