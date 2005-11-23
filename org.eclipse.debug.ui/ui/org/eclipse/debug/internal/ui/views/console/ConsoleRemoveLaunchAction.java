@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -27,25 +23,19 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleListener;
-import org.eclipse.ui.console.IConsoleView;
 
 /**
  * ConsoleRemoveTerminatedAction
  */
-public class ConsoleRemoveLaunchAction extends Action implements IDebugEventSetListener, IViewActionDelegate, IConsoleListener {
+public class ConsoleRemoveLaunchAction extends Action implements IViewActionDelegate, IConsoleListener, ILaunchesListener2 {
 
     private ILaunch fLaunch;
 
-    private IConsoleView fConsoleView;
-
-    public ConsoleRemoveLaunchAction() {
+    public ConsoleRemoveLaunchAction(ILaunch launch) {
         super(ConsoleMessages.ConsoleRemoveTerminatedAction_0);
         setToolTipText(ConsoleMessages.ConsoleRemoveTerminatedAction_1);
 
@@ -53,46 +43,19 @@ public class ConsoleRemoveLaunchAction extends Action implements IDebugEventSetL
         setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE));
         setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE));
         setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE));
-        DebugPlugin.getDefault().addDebugEventListener(this);
+        DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
         ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(this);
+        fLaunch = launch;
         update();
     }
 
     public void dispose() {
-        DebugPlugin.getDefault().removeDebugEventListener(this);
+    	DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
         ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
     }
 
     public synchronized void update() {
-        if (fConsoleView == null) {
-            IWorkbenchWindow activeWorkbenchWindow = DebugUIPlugin.getActiveWorkbenchWindow();
-            if (activeWorkbenchWindow != null) {
-                IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-                if (activePage != null) {
-                    fConsoleView = (IConsoleView) activePage.findView(IConsoleConstants.ID_CONSOLE_VIEW);
-                }
-            }
-        }
-
-        if (fConsoleView != null) {
-            DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-                public void run() {
-                    IConsole console = fConsoleView.getConsole();
-                    if (console instanceof ProcessConsole) {
-                        ProcessConsole processConsole = (ProcessConsole) console;
-                        IProcess process = processConsole.getProcess();
-                        ILaunch launch = process.getLaunch();
-                        if (launch.isTerminated()) {
-                            setEnabled(true);
-                            fLaunch = launch;
-                            return;
-                        }
-                    }
-                }
-            });
-        }
-        fLaunch = null;
-        setEnabled(false);
+    	setEnabled(fLaunch.isTerminated());
     }
 
     public synchronized void run() {
@@ -100,18 +63,7 @@ public class ConsoleRemoveLaunchAction extends Action implements IDebugEventSetL
         launchManager.removeLaunch(fLaunch);
     }
 
-    public void handleDebugEvents(DebugEvent[] events) {
-        for (int i = 0; i < events.length; i++) {
-            DebugEvent event = events[i];
-            Object source = event.getSource();
-            if (event.getKind() == DebugEvent.TERMINATE && (source instanceof IDebugTarget || source instanceof IProcess)) {
-                update();
-            }
-        }
-    }
-
     public void init(IViewPart view) {
-        fConsoleView = (IConsoleView) view;
     }
 
     public void run(IAction action) {
@@ -127,4 +79,29 @@ public class ConsoleRemoveLaunchAction extends Action implements IDebugEventSetL
     public void consolesRemoved(IConsole[] consoles) {
         update();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesTerminated(ILaunch[] launches) {
+		update();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesRemoved(ILaunch[] launches) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesAdded(ILaunch[] launches) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesChanged(ILaunch[] launches) {
+	}
 }

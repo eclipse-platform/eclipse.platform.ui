@@ -8,28 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.contexts;
+package org.eclipse.debug.internal.ui.contexts;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.debug.core.ILaunch;
 
 /**
- * Provides a debug context.
- * 
  * @since 3.2
  */
-public interface IDebugContextProvider {
+public interface ISuspendTriggerListener {
 	
 	/**
-	 * Returns the part associated with this provider.
+	 * Notification the given launch has suspended at the
+	 * specified context.
 	 * 
-	 * @return
+	 * @param launch
+	 * @param context
 	 */
-	public IWorkbenchPart getPart();
-	
-	public void addDebugContextListener(IDebugContextListener listener);
-	public void removeDebugContextListener(IDebugContextListener listener);
-	
-	public ISelection getActiveContext();
+	public void suspended(ILaunch launch, Object context);
 
 }

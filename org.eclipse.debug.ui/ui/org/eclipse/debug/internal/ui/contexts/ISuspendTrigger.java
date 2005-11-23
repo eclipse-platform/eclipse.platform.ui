@@ -8,22 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.contexts;
-
-import org.eclipse.debug.core.ILaunch;
+package org.eclipse.debug.internal.ui.contexts;
 
 /**
+ * Adapter retrieved from an <code>ILaunch</code> that notifies
+ * listeners when it suspends. A suspend trigger is responsible
+ * for cleaning itself up when it's launch is no longer capable
+ * of suspending.
+ * 
  * @since 3.2
  */
-public interface ISuspendTriggerListener {
+public interface ISuspendTrigger {
 	
-	/**
-	 * Notification the given launch has suspended at the
-	 * specified context.
-	 * 
-	 * @param launch
-	 * @param context
-	 */
-	public void suspended(ILaunch launch, Object context);
-
+	public void addSuspendTriggerListener(ISuspendTriggerListener listener);
+	public void removeSuspendTriggerListener(ISuspendTriggerListener listener);
+	
 }

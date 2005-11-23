@@ -96,7 +96,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         fPage = page;
         fConsole = (ProcessConsole) console;
         
-        fRemoveTerminated = new ConsoleRemoveLaunchAction();
+        fRemoveTerminated = new ConsoleRemoveLaunchAction(fConsole.getProcess().getLaunch());
         fRemoveAllTerminated = new ConsoleRemoveAllTerminatedAction();
         fTerminate = new ConsoleTerminateAction(fConsole);
         

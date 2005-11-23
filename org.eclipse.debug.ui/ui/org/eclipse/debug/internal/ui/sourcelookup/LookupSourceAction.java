@@ -15,7 +15,9 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
@@ -60,7 +62,13 @@ public class LookupSourceAction extends SelectionListenerAction {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		director.clearSourceElements(frame);
-		fView.redoSourceLookup();
+		ISelection selection = fView.getViewer().getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			if (ss.size() == 1) {
+				IWorkbenchPage page = fView.getSite().getPage();
+				SourceLookupManager.getDefault().displaySource(ss.getFirstElement(), page, true);
+			}
+		}
 	}
 }

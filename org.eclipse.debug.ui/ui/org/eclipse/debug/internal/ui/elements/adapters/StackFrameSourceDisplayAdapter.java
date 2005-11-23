@@ -22,10 +22,10 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
+import org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupResult;
 import org.eclipse.debug.internal.ui.views.launch.DecorationManager;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.contexts.ISourceDisplayAdapter;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.progress.UIJob;
@@ -130,11 +130,11 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 	}	
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage)
+	 * @see org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
 	 */
-	public synchronized void displaySource(Object context, IWorkbenchPage page) {
+	public synchronized void displaySource(Object context, IWorkbenchPage page, boolean force) {
 		IStackFrame frame = (IStackFrame)context;
-		if (frame.equals(fPrevFrame)) {
+		if (!force && frame.equals(fPrevFrame)) {
 			fPrevResult.updateArtifact(context);
 			(new SourceDisplayJob(fPrevResult, page)).schedule();
 		} else {

@@ -33,7 +33,6 @@ Export-Package: org.eclipse.debug.internal.ui;x-internal:=true,
  org.eclipse.debug.ui,
  org.eclipse.debug.ui.actions,
  org.eclipse.debug.ui.console,
- org.eclipse.debug.ui.contexts,
  org.eclipse.debug.ui.memory,
  org.eclipse.debug.ui.sourcelookup
 Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)",

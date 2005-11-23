@@ -22,8 +22,6 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.contexts.ISuspendTrigger;
-import org.eclipse.debug.ui.contexts.ISuspendTriggerListener;
 
 /**
  * @since 3.2

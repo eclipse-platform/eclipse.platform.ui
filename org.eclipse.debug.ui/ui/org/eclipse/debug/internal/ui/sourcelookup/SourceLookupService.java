@@ -12,8 +12,8 @@ package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.ui.contexts.IDebugContextListener;
-import org.eclipse.debug.ui.contexts.ISourceDisplayAdapter;
+import org.eclipse.debug.internal.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * 
  * @since 3.2
  */
-public class SourceLookupService implements IDebugContextListener {
+public class SourceLookupService implements IDebugContextListener, ISourceDisplayAdapter {
 	
 	private IWorkbenchWindow fWindow;
 	
@@ -47,19 +47,13 @@ public class SourceLookupService implements IDebugContextListener {
 			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
 			if (structuredSelection.size() == 1) {
 				Object context = (structuredSelection).getFirstElement();
-				if (context instanceof IAdaptable) {
-					IAdaptable adaptable = (IAdaptable) context;
-					ISourceDisplayAdapter adapter = (ISourceDisplayAdapter) adaptable.getAdapter(ISourceDisplayAdapter.class);
-					if (adapter != null) {
-						IWorkbenchPage page = null;
-						if (part == null) {
-							page = fWindow.getActivePage();
-						} else {
-							page = part.getSite().getPage();
-						} 
-						adapter.displaySource(context, page);
-					}
-				}
+				IWorkbenchPage page = null;
+				if (part == null) {
+					page = fWindow.getActivePage();
+				} else {
+					page = part.getSite().getPage();
+				} 
+				displaySource(context, page, false);
 			}
 		}
 	}
@@ -68,5 +62,18 @@ public class SourceLookupService implements IDebugContextListener {
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void contextChanged(ISelection selection, IWorkbenchPart part) {		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
+	 */
+	public void displaySource(Object context, IWorkbenchPage page, boolean forceSourceLookup) {
+		if (context instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) context;
+			ISourceDisplayAdapter adapter = (ISourceDisplayAdapter) adaptable.getAdapter(ISourceDisplayAdapter.class);
+			if (adapter != null) {						
+				adapter.displaySource(context, page, forceSourceLookup);
+			}
+		}
 	}	
 }

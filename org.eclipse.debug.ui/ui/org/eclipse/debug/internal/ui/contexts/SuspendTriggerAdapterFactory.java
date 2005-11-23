@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.contexts;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.ui.contexts.ISuspendTrigger;
 
 /**
  * @since 3.2

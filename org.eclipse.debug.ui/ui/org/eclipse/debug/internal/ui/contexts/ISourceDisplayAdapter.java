@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.contexts;
+package org.eclipse.debug.internal.ui.contexts;
 
 import org.eclipse.ui.IWorkbenchPage;
 
@@ -25,7 +25,8 @@ public interface ISourceDisplayAdapter {
 	 * 
 	 * @param context debug context to display source for
 	 * @param page the page in which to display source
+	 * @param forceSourceLookup whether source lookup should be performed
 	 */
-	public void displaySource(Object context, IWorkbenchPage page);
+	public void displaySource(Object context, IWorkbenchPage page, boolean forceSourceLookup);
 	
 }

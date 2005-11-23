@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -83,4 +84,15 @@ public class SourceLookupManager implements IWindowListener {
 		SourceLookupService service = new SourceLookupService(window);
 		fServices.put(window, service);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
+	 */
+	public void displaySource(Object context, IWorkbenchPage page, boolean forceSourceLookup) {
+		IWorkbenchWindow window = page.getWorkbenchWindow();
+		SourceLookupService service = (SourceLookupService) fServices.get(window);
+		if (service != null) {
+			service.displaySource(context, page, forceSourceLookup);
+		}
+	}	
 }

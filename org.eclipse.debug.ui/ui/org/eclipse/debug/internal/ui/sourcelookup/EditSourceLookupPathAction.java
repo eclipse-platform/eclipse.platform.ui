@@ -19,9 +19,11 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.sourcelookup.SourceLookupDialog;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
@@ -71,7 +73,14 @@ public class EditSourceLookupPathAction extends SelectionListenerAction {
 		Shell shell = DebugUIPlugin.getShell();		
 		SourceLookupDialog dialog = new SourceLookupDialog(shell, director);
 		if (dialog.open() == Window.OK) {
-			fView.redoSourceLookup();
+			ISelection selection = fView.getViewer().getSelection();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				if (ss.size() == 1) {
+					IWorkbenchPage page = fView.getSite().getPage();
+					SourceLookupManager.getDefault().displaySource(ss.getFirstElement(), page, true);
+				}
+			}
 		}
 	}
 }

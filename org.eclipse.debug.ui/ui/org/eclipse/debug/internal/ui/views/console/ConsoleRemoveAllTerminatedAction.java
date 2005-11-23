@@ -10,13 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchesListener;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -29,24 +25,9 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * ConsoleRemoveAllTerminatedAction
  */
-public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate, IDebugEventSetListener, ILaunchesListener {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-	 */
-	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
-			Object source = event.getSource();
-			if (event.getKind() == DebugEvent.TERMINATE && (source instanceof IDebugTarget || source instanceof IProcess)) {
-				update();
-			}
-		}
-		
-	}
+public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate, ILaunchesListener2 {
 
 	public void dispose() {
-		DebugPlugin.getDefault().removeDebugEventListener(this);
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 	}
 	
@@ -81,7 +62,6 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
-		DebugPlugin.getDefault().addDebugEventListener(this);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		update();
 	}
@@ -105,5 +85,12 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
      * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
      */
     public void launchesChanged(ILaunch[] launches) {
-    }	
+    }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesTerminated(ILaunch[] launches) {
+		update();
+	}	
 }

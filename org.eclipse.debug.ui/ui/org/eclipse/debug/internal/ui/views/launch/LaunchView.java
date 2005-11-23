@@ -14,15 +14,8 @@ package org.eclipse.debug.internal.ui.views.launch;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.util.ListenerList;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -45,10 +38,11 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
+import org.eclipse.debug.internal.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.IDebugContextProvider;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
@@ -60,8 +54,6 @@ import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.contexts.IDebugContextListener;
-import org.eclipse.debug.ui.contexts.IDebugContextProvider;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -101,15 +93,9 @@ import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
 
-public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
+public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IPropertyChangeListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
 	
 	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings"; //$NON-NLS-1$
-			
-	/**s
-	 * Cache of the stack frame that source was displayed
-	 * for.
-	 */
-	private IStackFrame fStackFrame = null;
 			
 	/**
 	 * Whether this view is in the active page of a perspective.
@@ -228,7 +214,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 */
 	public LaunchView() {
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -502,18 +487,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		window.removePerspectiveListener(this);
 		window.removePageListener(this);
 		
-		cleanup();
-		
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
-	}
-	
-	/**
-	 * Disposes of cached information
-	 */
-	protected void cleanup() {
-		setStackFrame(null);
 	}
 		
 	/**
@@ -536,36 +511,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	
 	protected void possibleContextChange(Object element) {
 		fProvider.possibleContextChange(element);
-	}
-
-	/**
-	 * Lookup source element for current stack frame again.
-	 */
-	public void redoSourceLookup() {
-		setStackFrame(null);
-		selectionChanged(null);
-	}
-
-	/**
-	 * Notifies this view to clean up for the given launches (they've been terminated,
-	 * removed, etc.). Remove all context submissions associated with these launches.
-	 * Clear the cache of the last stack frame that source was displayed for
-	 * if that launch is terminated.
-	 * 
-	 * @param launches the terminated launches
-	 */
-	protected void cleanupLaunches(ILaunch[] launches) {
-		fContextListener.launchesTerminated(launches);
-		IStackFrame frame = getStackFrame();
-		if (frame != null) {
-			ILaunch frameLaunch= frame.getLaunch();
-			for (int i = 0; i < launches.length; i++) {
-				ILaunch launch = launches[i];
-				if (launch.equals(frameLaunch)) {
-					setStackFrame(null);
-				}
-			}
-		}
 	}
 
 	/* (non-Javadoc)
@@ -647,24 +592,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	public IDebugModelPresentation getPresentation(String id) {
 		return ((DelegatingModelPresentation)fEditorPresentation).getPresentation(id);
 	}
-		
-	/**
-	 * Deselects any source decorations associated with the given thread or
-	 * debug target.
-	 * 
-	 * @param source thread or debug target
-	 */
-	public void clearSourceSelection(Object source) {		
-		if (source instanceof IThread) {
-			IThread thread = (IThread)source;
-			DecorationManager.removeDecorations(thread);
-			InstructionPointerManager.getDefault().removeAnnotations(thread);
-		} else if (source instanceof IDebugTarget) {
-			IDebugTarget target = (IDebugTarget)source;
-			DecorationManager.removeDecorations(target);
-			InstructionPointerManager.getDefault().removeAnnotations(target);
-		}
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
@@ -743,29 +670,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			}
 		}
 	}
-	
-	/**
-	 * Returns the last stack frame that source was retrieved
-	 * for. Used to avoid source lookups for the same stack
-	 * frame when stepping.
-	 * 
-	 * @return stack frame, or <code>null</code>
-	 */
-	protected IStackFrame getStackFrame() {
-		return fStackFrame;
-	}	
-	
-	/**
-	 * Sets the last stack frame that source was retrieved
-	 * for. Used to avoid source lookups for the same stack
-	 * frame when stepping. Setting the stack frame to <code>null</code>
-	 * effectively forces a source lookup.
-	 * 
-	 * @param frame The stack frame or <code>null</code>
-	 */
-	protected void setStackFrame(IStackFrame frame) {
-		fStackFrame= frame;
-	}	
 		
 	/**
 	 * Sets whether this view is in the active page of a
@@ -804,74 +708,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			fContextListener.reloadViewsToNotOpen(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
 		} else if (property.equals(IInternalDebugUIConstants.PREF_TRACK_VIEWS) && fContextListener != null) {
 			fContextListener.loadTrackViews();
-		}
-	}
-
-	/**
-	 * Visitor for handling resource deltas. When a project is closed, we must clear
-	 * the cache of editor input/stack frame, etc., as the elements can become invalid.
-	 */
-	class LaunchViewVisitor implements IResourceDeltaVisitor {
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
-		 */
-		public boolean visit(IResourceDelta delta) {
-			if (delta == null) {
-				return false;
-			}
-			IResource resource = delta.getResource();
-			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
-				if (resource instanceof IProject) {
-					IProject project = (IProject)resource;
-					if (!project.isOpen()) {
-						// clear
-					    cleanup();
-					}
-				}
-				return false;
-			}
-			return resource instanceof IWorkspaceRoot;
-		}		
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		IResourceDelta delta= event.getDelta();
-		if (delta != null) {
-			try {
-				delta.accept(getVisitor());
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
-		}		
-	}
-
-	/**
-	 * Returns the resource delta visitor for this view,
-	 * creating if required.
-	 * 
-	 * @return resource delta visitor
-	 */
-	protected IResourceDeltaVisitor getVisitor() {
-		if (fVisitor == null) {
-			fVisitor = new LaunchViewVisitor();
-		}
-		return fVisitor;
-	}
-	
-	/**
-	 * When this view becomes visible, selects the last stack frame whose
-	 * location was revealed.
-	 * 
-	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
-	 */
-	protected void becomesVisible() {
-		super.becomesVisible();
-		IStructuredSelection selection= (IStructuredSelection) getViewer().getSelection(); 
-		if (selection.isEmpty() || !selection.getFirstElement().equals(getStackFrame())) {
-			initializeSelection();
 		}
 	}
 	
