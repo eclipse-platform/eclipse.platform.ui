@@ -1394,7 +1394,7 @@ public interface IWorkspace extends IAdaptable {
 	 * <code>IStatus.ERROR</code> indicating what is wrong with the location
 	 * @see IStatus#OK
 	 * @see ResourcesPlugin#PREF_DISABLE_LINKING
-	 * @since 2.1
+	 * @since 3.2
 	 */
 	public IStatus validateLinkLocationURI(IResource resource, URI location);
 
