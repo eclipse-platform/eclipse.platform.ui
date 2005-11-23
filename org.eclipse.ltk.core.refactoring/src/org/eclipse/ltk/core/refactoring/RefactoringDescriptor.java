@@ -45,6 +45,28 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  */
 public class RefactoringDescriptor implements Comparable {
 
+	/**
+	 * Constant describing the API change flag (value: 1)
+	 * <p>
+	 * Clients should set this flag to indicate that the represented refactoring
+	 * may cause breaking API changes.
+	 * </p>
+	 */
+	public static final int BREAKING_CHANGE= 1 << 0;
+
+	/** Constant describing the absence of any flags (value: 0) */
+	public static final int NONE= 0;
+
+	/**
+	 * Constant describing the structural change flag (value: 2)
+	 * <p>
+	 * Clients should set this flag to indicate that the change created by the
+	 * represented refactoring is a structural change according to the semantics
+	 * of the associated programming language.
+	 * </p>
+	 */
+	public static final int STRUCTURAL_CHANGE= 1 << 1;
+
 	/** The map of arguments (element type: &lt;String, String&gt;) */
 	private final Map fArguments;
 
@@ -53,6 +75,9 @@ public class RefactoringDescriptor implements Comparable {
 
 	/** A human-readable description of the particular refactoring instance */
 	private final String fDescription;
+
+	/** The flags of the refactoring descriptor */
+	private final int fFlags;
 
 	/** The globally unique id of the refactoring */
 	private final String fID;
@@ -87,15 +112,43 @@ public class RefactoringDescriptor implements Comparable {
 	 *            strings
 	 */
 	public RefactoringDescriptor(final String id, final String project, final String description, final String comment, final Map arguments) {
+		this(id, project, description, comment, arguments, NONE);
+	}
+
+	/**
+	 * Creates a new refactoring descriptor.
+	 * 
+	 * @param id
+	 *            the unique id of the refactoring
+	 * @param project
+	 *            the non-empty name of the project associated with this
+	 *            refactoring, or <code>null</code>
+	 * @param description
+	 *            a non-empty human-readable description of the particular
+	 *            refactoring instance
+	 * @param comment
+	 *            the comment associated with the refactoring, or
+	 *            <code>null</code> for no commment
+	 * @param arguments
+	 *            the argument map (element type: &lt;String, String&gt;). The
+	 *            keys of the arguments are required to be non-empty strings
+	 *            which must not contain spaces. The values must be non-empty
+	 *            strings
+	 * @param flags
+	 *            the flags of the refactoring descriptor
+	 */
+	public RefactoringDescriptor(final String id, final String project, final String description, final String comment, final Map arguments, final int flags) {
 		Assert.isTrue(id != null && !"".equals(id)); //$NON-NLS-1$
 		Assert.isTrue(description != null && !"".equals(description)); //$NON-NLS-1$
 		Assert.isTrue(project == null || !"".equals(project)); //$NON-NLS-1$
 		Assert.isNotNull(arguments);
+		Assert.isTrue(flags >= NONE);
 		fID= id;
 		fProject= project;
 		fDescription= description;
 		fComment= comment;
 		fArguments= Collections.unmodifiableMap(new HashMap(arguments));
+		fFlags= flags;
 	}
 
 	/**
@@ -147,6 +200,15 @@ public class RefactoringDescriptor implements Comparable {
 	 */
 	public final String getDescription() {
 		return fDescription;
+	}
+
+	/**
+	 * Returns the flags of the refactoring descriptor.
+	 * 
+	 * @return the flags of the refactoring descriptor
+	 */
+	public final int getFlags() {
+		return fFlags;
 	}
 
 	/**
@@ -235,6 +297,8 @@ public class RefactoringDescriptor implements Comparable {
 			buffer.append(fArguments);
 			buffer.append(",comment="); //$NON-NLS-1$
 			buffer.append(fComment);
+			buffer.append(",flags="); //$NON-NLS-1$
+			buffer.append(fFlags);
 			buffer.append("]"); //$NON-NLS-1$
 		}
 
