@@ -18,10 +18,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.internal.commands.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 
@@ -108,7 +109,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * the list of {@link IOperationApprover}s
 	 */
-	List approvers = Collections.synchronizedList(new ArrayList());
+	ListenerList approvers = new ListenerList(ListenerList.IDENTITY);
 
 	/**
 	 * a map of undo limits per context
@@ -118,7 +119,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * the list of {@link IOperationHistoryListener}s
 	 */
-	List listeners = Collections.synchronizedList(new ArrayList());
+	ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 
 	/**
 	 * the list of operations available for redo, LIFO
@@ -743,15 +744,11 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private IStatus getRedoApproval(IUndoableOperation operation,
 			IAdaptable info) {
-		// copying operation approver list to array to prevent concurrent
-		// modification of the list. See
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=91343
-
-		final IOperationApprover[] approverArray = (IOperationApprover[]) approvers
-				.toArray(new IOperationApprover[approvers.size()]);
+		
+		final Object[] approverArray = approvers.getListeners();
 
 		for (int i = 0; i < approverArray.length; i++) {
-			IOperationApprover approver = approverArray[i];
+			IOperationApprover approver = (IOperationApprover)approverArray[i];
 			IStatus approval = approver.proceedRedoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
@@ -805,15 +802,10 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	private IStatus getUndoApproval(IUndoableOperation operation,
 			IAdaptable info) {
 
-		// copying operation approver list to array to prevent concurrent
-		// modification of the list. See
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=91343
-
-		final IOperationApprover[] approverArray = (IOperationApprover[]) approvers
-				.toArray(new IOperationApprover[approvers.size()]);
+		final Object[] approverArray = approvers.getListeners();
 
 		for (int i = 0; i < approverArray.length; i++) {
-			IOperationApprover approver = approverArray[i];
+			IOperationApprover approver = (IOperationApprover)approverArray[i];
 			IStatus approval = approver.proceedUndoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
@@ -879,12 +871,11 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// modification of the list. See
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=91343
 
-		final IOperationHistoryListener[] listenerArray = (IOperationHistoryListener[]) listeners
-				.toArray(new IOperationHistoryListener[listeners.size()]);
+		final Object[] listenerArray = listeners.getListeners();
 
 		for (int i = 0; i < listenerArray.length; i++)
 			try {
-				listenerArray[i].historyNotification(event);
+				((IOperationHistoryListener)listenerArray[i]).historyNotification(event);
 			} catch (Exception e) {
 				handleNotificationException(e);
 			}
