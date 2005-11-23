@@ -56,7 +56,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 	private static final String ARCHIVE_HELLOWORLD = "helloworld";
 	private static final String ARCHIVE_FILE_WITH_EMPTY_FOLDER = "EmptyFolderInArchive";
 	
-	private static final String[] ARCHIVE_FILE_LIST = new String[] {
+	private static final String[] FILE_LIST = new String[] {
 			"HelloWorld.java", "HelloWorld.class", ".project", ".classpath" };
 	
 	private static final String[] ARCHIVE_FILE_EMPTY_FOLDER_LIST = new String[]{
@@ -240,7 +240,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
-			verifyProjectInWorkspace(true, workspaceProjects[0], ARCHIVE_FILE_LIST, true);
+			verifyProjectInWorkspace(true, workspaceProjects[0], FILE_LIST, true);
 
 		} catch (IOException e) {
 			fail(e.toString());
@@ -331,7 +331,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
-			verifyProjectInWorkspace(true, workspaceProjects[0], ARCHIVE_FILE_LIST, true);
+			verifyProjectInWorkspace(true, workspaceProjects[0], FILE_LIST, true);
 
 		} catch (IOException e) {
 			fail(e.toString());
@@ -398,7 +398,6 @@ public class ImportExistingTest extends DataTransferTestCase {
 			
             dataLocation = copyDataLocation();
             wsPath = new Path(dataLocation).append(PLUGIN_ID).append(DATA_PATH_PREFIX).append("HelloWorld");
-            String[] fileList = getFileList(wsPath);
             WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
@@ -425,7 +424,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
-			verifyProjectInWorkspace(false, workspaceProjects[0], fileList, true);
+			verifyProjectInWorkspace(false, workspaceProjects[0], FILE_LIST, true);
 
 		} catch (IOException e) {
 			fail(e.toString());
@@ -445,7 +444,6 @@ public class ImportExistingTest extends DataTransferTestCase {
 			
             dataLocation = copyDataLocation();
             wsPath = new Path(dataLocation).append(PLUGIN_ID).append(DATA_PATH_PREFIX).append("HelloWorld");
-            String[] fileList = getFileList(wsPath);
             WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
@@ -476,7 +474,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
-			verifyProjectInWorkspace(true, workspaceProjects[0], fileList, true);
+			verifyProjectInWorkspace(true, workspaceProjects[0], FILE_LIST, true);
 
 		} catch (IOException e) {
 			fail(e.toString());
@@ -496,7 +494,6 @@ public class ImportExistingTest extends DataTransferTestCase {
 			
             dataLocation = copyDataLocation();
             wsPath = new Path(dataLocation).append(PLUGIN_ID).append(DATA_PATH_PREFIX).append("HelloWorld");
-            String[] fileList = getFileList(wsPath);
             WizardProjectsImportPage wpip = getNewWizard();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
@@ -527,7 +524,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself");
 			
-			verifyProjectInWorkspace(true, workspaceProjects[0], fileList, true);
+			verifyProjectInWorkspace(true, workspaceProjects[0], FILE_LIST, true);
 			
 			// delete projects in workspace but not contents
 			for (int i = 0; i < workspaceProjects.length; i++){
@@ -568,7 +565,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (helloFolder.exists())
 				fail("Project was imported as a folder into itself (2)");
 			
-			verifyProjectInWorkspace(true, workspaceProjects[0], fileList, true);
+			verifyProjectInWorkspace(true, workspaceProjects[0], FILE_LIST, true);
 
 		} catch (IOException e) {
 			fail(e.toString());
@@ -577,24 +574,6 @@ public class ImportExistingTest extends DataTransferTestCase {
 		}
 	}
 	
-	/**
-	 * The list of file paths (relative to the project) in a given project's
-	 * location on the file system.
-	 * 
-	 * @param path path to an IProject on the file system (project to be imported)
-	 * @return
-	 */
-	private String[] getFileList(IPath path){
-		File projectDir = new File(path.toOSString());
-		String[] result = null;
-		if (projectDir.exists()){
-			result = projectDir.list();
-		}
-		if (result == null)
-			fail("Could not find any files in project " + path.toOSString());
-		return result;
-	}
-
 	/**
 	 * Verify whether or not the imported project is in the current workspace location
 	 * (i.e. copy projects was true) or in another workspace location (i.e. copy projects
@@ -624,14 +603,17 @@ public class ImportExistingTest extends DataTransferTestCase {
 			if (isProjectInWorkspace)
 				fail(project.getName() + " should not be in the workspace location: " + rootLocation.toOSString());
 		}
+		StringBuffer filesNotImported = new StringBuffer();
 		// make sure the files in the project were imported
 		for (int i = 0; i < fileList.length; i++){
 			IResource res = isListFiles ? (IResource)project.getFile(fileList[i]) 
 					: (IResource)project.getFolder(fileList[i]);
-			assertTrue("Files were not imported", 
-					res.exists());
+			if (!res.exists())
+				filesNotImported.append(res.getName() + ", ");
 		}
-		
+		assertTrue(
+				"Files expected but not in workspace: " + filesNotImported.toString(), 
+				filesNotImported.length() == 0);	
 	}
 	
 	/**
