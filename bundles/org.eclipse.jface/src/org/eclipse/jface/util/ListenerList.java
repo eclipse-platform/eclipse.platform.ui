@@ -57,4 +57,16 @@ public class ListenerList extends org.eclipse.core.runtime.ListenerList {
 	public ListenerList(int capacity) {
 		super();
 	}
+
+	/**
+	 * Removes all listeners from this list.
+	 */
+	public void clear() {
+		// TODO Bug 117519
+		// listenerList.clear();
+		final Object[] listeners = getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			remove(listeners[i]);
+		}
+	}
 }
