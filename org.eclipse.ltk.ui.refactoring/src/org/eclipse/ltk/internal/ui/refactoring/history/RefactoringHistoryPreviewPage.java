@@ -15,12 +15,17 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.internal.ui.refactoring.PreviewWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
+import org.eclipse.jface.wizard.IWizardPage;
+
 /**
  * Preview page for refactoring history wizards.
  * 
  * @since 3.2
  */
 public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
+
+	/** Is flipping to the next page enabled? */
+	private boolean fNextPageEnabled= true;
 
 	/**
 	 * Creates a new refactoring history preview page.
@@ -35,7 +40,38 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	 * {@inheritDoc}
 	 */
 	public boolean canFlipToNextPage() {
+		return fNextPageEnabled;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IWizardPage getNextPage() {
+		return getWizard().getNextPage(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IWizardPage getPreviousPage() {
+		return getWizard().getPreviousPage(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean performFinish() {
 		return true;
+	}
+
+	/**
+	 * Determines whether flipping to the next page is enabled.
+	 * 
+	 * @param enabled
+	 *            <code>true</code> to enable, <code>false</code> to disable
+	 */
+	public void setNextPageEnabled(final boolean enabled) {
+		fNextPageEnabled= enabled;
 	}
 
 	/**

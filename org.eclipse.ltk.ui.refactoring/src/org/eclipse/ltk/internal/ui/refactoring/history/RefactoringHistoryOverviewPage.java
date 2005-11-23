@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 
 import org.eclipse.ui.PlatformUI;
@@ -88,5 +89,19 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_HISTORY_WIZARD_PAGE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IWizardPage getNextPage() {
+		return getWizard().getNextPage(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IWizardPage getPreviousPage() {
+		return getWizard().getPreviousPage(this);
 	}
 }

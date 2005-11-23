@@ -11,9 +11,12 @@
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+
+import org.eclipse.jface.wizard.IWizardPage;
 
 /**
  * Error page for refactoring history wizards.
@@ -29,6 +32,35 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 		super(true);
 		setTitle(RefactoringUIMessages.RefactoringHistoryOverviewPage_title);
 		setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_description);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean canFlipToNextPage() {
+		final RefactoringStatus status= getStatus();
+		return status != null && status.getSeverity() < RefactoringStatus.FATAL;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IWizardPage getNextPage() {
+		return getWizard().getNextPage(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IWizardPage getPreviousPage() {
+		return getWizard().getPreviousPage(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean performFinish() {
+		return true;
 	}
 
 	/**

@@ -83,9 +83,9 @@ public final class RefactoringHistoryWizard extends Wizard {
 		setNeedsProgressMonitor(true);
 		setWindowTitle(RefactoringUIMessages.RefactoringWizard_title);
 		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_REFACTOR);
-		fPreviewPage= new RefactoringHistoryPreviewPage();
-		fErrorPage= new RefactoringHistoryErrorPage();
 		fOverviewPage= new RefactoringHistoryOverviewPage(fRefactoringHistory, fControlConfiguration);
+		fErrorPage= new RefactoringHistoryErrorPage();
+		fPreviewPage= new RefactoringHistoryPreviewPage();
 	}
 
 	/**
@@ -180,11 +180,44 @@ public final class RefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public IWizardPage getNextPage(final IWizardPage page) {
+		if (page == fOverviewPage) {
+			fCurrentRefactoring= 0;
+			return getRefactoringPage();
+		} else if (page == fPreviewPage) {
+			fCurrentRefactoring++;
+			return getRefactoringPage();
+		} else if (page == fErrorPage) {
+			fPreviewPage.setNextPageEnabled(isNotLastRefactoring());
+			return fPreviewPage;
+		}
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final IWizardPage getPreviousPage(final IWizardPage page) {
+		return null;
+	}
+
+	/**
+	 * Returns the refactoring history.
+	 * 
+	 * @return the refactoring history
+	 */
+	public final RefactoringHistory getRefactoringHistory() {
+		return fRefactoringHistory;
+	}
+
+	/**
 	 * Returns the first page of a refactoring.
 	 * 
 	 * @return the first page, or <code>null</code>
 	 */
-	private IWizardPage getFirstRefactoringPage() {
+	private IWizardPage getRefactoringPage() {
 		final IWizardPage[] result= { null};
 		final IRunnableWithProgress runnable= new IRunnableWithProgress() {
 
@@ -211,6 +244,7 @@ public final class RefactoringHistoryWizard extends Wizard {
 							result[0]= fErrorPage;
 							return;
 						}
+						fPreviewPage.setNextPageEnabled(isNotLastRefactoring());
 						fPreviewPage.setChange(refactoring.createChange(new SubProgressMonitor(monitor, 5)));
 						fPreviewPage.setTitle(descriptor);
 						result[0]= fPreviewPage;
@@ -235,35 +269,13 @@ public final class RefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public IWizardPage getNextPage(final IWizardPage page) {
-		if (page == fOverviewPage) {
-			fCurrentRefactoring= 0;
-			return getFirstRefactoringPage();
-		} else if (page == fPreviewPage) {
-			// Execute refactoring
-			return null;
-		} else if (page == fErrorPage) {
-			return fPreviewPage;
-		}
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final IWizardPage getPreviousPage(final IWizardPage page) {
-		return null;
-	}
-
-	/**
-	 * Returns the refactoring history.
+	 * Returns whether the current refactoring is not the last one.
 	 * 
-	 * @return the refactoring history
+	 * @return <code>true</code> if it is not the last one, <code>false</code>
+	 *         otherwise
 	 */
-	public final RefactoringHistory getRefactoringHistory() {
-		return fRefactoringHistory;
+	private boolean isNotLastRefactoring() {
+		return fCurrentRefactoring < fRefactoringHistory.getDescriptors().length - 1;
 	}
 
 	/**
