@@ -1728,11 +1728,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return composite;
     }
 
+    //  for dynamic UI - change access from private to protected
+    // for testing purposes only, changed from protected to public
     /**
      * Answer the editor manager for this window.
      */
-    // for dynamic UI - change access from private to protected
-    protected EditorManager getEditorManager() {
+    public EditorManager getEditorManager() {
         return editorMgr;
     }
 

@@ -239,6 +239,13 @@
             id="org.eclipse.ui.tests.api.SaveableMockViewPart">
       </view>
       <view
+            allowMultiple="true"
+            class="org.eclipse.ui.tests.api.UserSaveableMockViewPart"
+            icon="icons\view.gif"
+            id="org.eclipse.ui.tests.api.UserSaveableMockViewPart"
+            name="User Saveable Mock View">
+      </view>
+      <view
             name="Session Test View"
             icon="icons\view.gif"
             class="org.eclipse.ui.tests.api.SessionView"

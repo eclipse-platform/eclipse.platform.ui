@@ -893,43 +893,44 @@ public class IWorkbenchPageTest extends UITestCase {
     }
 
 	public void testHideSaveableView() throws Throwable {
-		SaveableMockViewPart view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+		String viewId = SaveableMockViewPart.ID;
+		SaveableMockViewPart view = (SaveableMockViewPart) fActivePage.showView(viewId);
 		fActivePage.hideView(view);
 		CallHistory callTrace = view.getCallHistory();
 		assertTrue(callTrace.contains("isDirty"));
 		assertTrue(callTrace.contains("dispose"));
-		assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
+		assertEquals(fActivePage.findView(viewId), null);
 
 		try {
 			SaveableHelper.testSetAutomatedResponse(1);  // No
-			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+			view = (SaveableMockViewPart) fActivePage.showView(viewId);
 			view.setDirty(true);
 			fActivePage.hideView(view);
 			callTrace = view.getCallHistory();
 			assertTrue(callTrace.contains("isDirty"));		
 			assertFalse(callTrace.contains("doSave"));		
 			assertTrue(callTrace.contains("dispose"));
-			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
+			assertEquals(fActivePage.findView(viewId), null);
 
 			SaveableHelper.testSetAutomatedResponse(2);  // Cancel
-			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+			view = (SaveableMockViewPart) fActivePage.showView(viewId);
 			view.setDirty(true);
 			fActivePage.hideView(view);
 			callTrace = view.getCallHistory();
 			assertTrue(callTrace.contains("isDirty"));		
 			assertFalse(callTrace.contains("doSave"));		
 			assertFalse(callTrace.contains("dispose"));
-			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), view);
+			assertEquals(fActivePage.findView(viewId), view);
 
 			SaveableHelper.testSetAutomatedResponse(0);  // Yes
-			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+			view = (SaveableMockViewPart) fActivePage.showView(viewId);
 			view.setDirty(true);
 			fActivePage.hideView(view);
 			callTrace = view.getCallHistory();
 			assertTrue(callTrace.contains("isDirty"));		
 			assertTrue(callTrace.contains("doSave"));
 			assertTrue(callTrace.contains("dispose"));
-			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
+			assertEquals(fActivePage.findView(viewId), null);
 
 			// don't leave the view showing, or the UI will block on window close
 		}
@@ -937,6 +938,57 @@ public class IWorkbenchPageTest extends UITestCase {
 			SaveableHelper.testSetAutomatedResponse(-1);  // restore default (prompt)
 		}
 	}
+	
+    /**
+     * Tests that a close will fall back to the default if the view returns
+     * ISaveable2.DEFAULT.
+     * 
+     * @throws Throwable
+     */
+    public void testCloseWithSaveNeeded() throws Throwable {
+		String viewId = UserSaveableMockViewPart.ID;
+		UserSaveableMockViewPart view = (UserSaveableMockViewPart) fActivePage
+				.showView(viewId);
+		fActivePage.hideView(view);
+
+		UserSaveableMockViewPart view2 = null;
+
+		CallHistory callTrace = view.getCallHistory();
+		assertTrue(callTrace.contains("isDirty"));
+		assertTrue(callTrace.contains("dispose"));
+		assertEquals(fActivePage.findView(UserSaveableMockViewPart.ID), null);
+
+		try {
+			SaveableHelper.testSetAutomatedResponse(3); // DEFAULT
+			view = (UserSaveableMockViewPart) fActivePage.showView(viewId);
+			view.setDirty(true);
+			view2 = (UserSaveableMockViewPart) fActivePage.showView(viewId,
+					"2", IWorkbenchPage.VIEW_ACTIVATE);
+			assertNotNull(view2);
+			view2.setDirty(true);
+
+			WorkbenchPage page = (WorkbenchPage) fActivePage;
+			page.getEditorManager().saveAll(true, false);
+			
+			assertFalse(view.isDirty());
+			assertFalse(view2.isDirty());
+
+			callTrace = view.getCallHistory();
+			fActivePage.hideView(view);
+			fActivePage.hideView(view2);
+			
+			assertTrue(callTrace.contains("isDirty"));
+			assertTrue(callTrace.contains("doSave"));
+			assertEquals(fActivePage.findView(viewId), null);
+
+			// don't leave the view showing, or the UI will block on window
+			// close
+		} finally {
+			SaveableHelper.testSetAutomatedResponse(-1); // restore default
+			// (prompt)
+		}
+	}
+
 	
     public void testClose() throws Throwable {
         IWorkbenchPage page = openTestPage(fWin);

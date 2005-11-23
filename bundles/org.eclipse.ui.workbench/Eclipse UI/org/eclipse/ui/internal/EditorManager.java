@@ -1020,14 +1020,17 @@ public class EditorManager implements IExtensionChangeHandler {
 						page.bringToTop(part);
                 	}
 					// try to save the part
-					if (!SaveableHelper.savePart((ISaveablePart2) part, part, page.getWorkbenchWindow(), confirm)) {
+					int choice = SaveableHelper.savePart((ISaveablePart2) part, page.getWorkbenchWindow(), confirm);
+					if (choice==ISaveablePart2.CANCEL) {
 						// If the user cancels, don't restore the previous workbench state, as that will
 						// be an unexpected switch from the current state.
 						return false;
+					} else if (choice!=ISaveablePart2.DEFAULT) {
+						listIterator.remove();
 					}
-                	listIterator.remove();
                 }
             }
+            
 			// try to restore the workbench to its previous state
     		if (currentPage != null && currentPageOriginalPerspective != null) {
     			if (!currentPageOriginalPerspective.equals(currentPage.getActivePerspective())) {
@@ -1050,13 +1053,19 @@ public class EditorManager implements IExtensionChangeHandler {
             dlg.setInitialSelections(dirtyParts
                     .toArray(new Object[dirtyParts.size()]));
             dlg.setTitle(SAVE_RESOURCES_TITLE);
-            int result = dlg.open();
+            
+            int result = IDialogConstants.OK_ID;
+            
+            // this "if" statement aids in testing.
+            if (SaveableHelper.testGetAutomatedResponse()==SaveableHelper.USER_RESPONSE) {
+            	result = dlg.open();
+                //Just return false to prevent the operation continuing
+                if (result == IDialogConstants.CANCEL_ID)
+                    return false;
 
-            //Just return false to prevent the operation continuing
-            if (result == IDialogConstants.CANCEL_ID)
-                return false;
+                dirtyParts = Arrays.asList(dlg.getResult());
+            }
 
-            dirtyParts = Arrays.asList(dlg.getResult());
             if (dirtyParts == null)
                 return false;
 
