@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -109,12 +110,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * Collection of breakpoint listeners.
 	 */
-	private ListenerList fBreakpointListeners= new ListenerList(6);
+	private ListenerList fBreakpointListeners= new ListenerList();
 		
 	/**
 	 * Collection of (multi) breakpoint listeners.
 	 */
-	private ListenerList fBreakpointsListeners= new ListenerList(6);	
+	private ListenerList fBreakpointsListeners= new ListenerList();	
 	
 	/**
 	 * Singleton resource delta visitor which handles marker
@@ -131,7 +132,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * Collection of breakpoint manager listeners which are
 	 * notified when this manager's enablement changes.
 	 */
-	private ListenerList fBreakpointManagerListeners= new ListenerList(2);
+	private ListenerList fBreakpointManagerListeners= new ListenerList();
 
 	/**
 	 * Constructs a new breakpoint manager.
@@ -220,7 +221,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	public void shutdown() {
 		getWorkspace().removeResourceChangeListener(this);
-		fBreakpointListeners.removeAll();
+		fBreakpointListeners = null;
+        fBreakpointsListeners = null;
+        fBreakpointManagerListeners = null;
 	}
 
 	/**

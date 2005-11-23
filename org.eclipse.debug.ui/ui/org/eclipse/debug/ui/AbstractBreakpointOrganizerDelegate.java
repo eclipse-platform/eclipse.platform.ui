@@ -12,12 +12,12 @@ package org.eclipse.debug.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
@@ -72,7 +72,7 @@ public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpoint
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
      */
     public void dispose() {
-        fListeners.clear();
+        fListeners = new ListenerList();
     }
     
     /* (non-Javadoc)

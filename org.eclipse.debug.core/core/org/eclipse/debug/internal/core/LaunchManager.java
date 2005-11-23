@@ -67,6 +67,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
@@ -179,13 +180,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Collection of listeners
 	 */
-	private ListenerList fListeners= new ListenerList(5);
+	private ListenerList fListeners= new ListenerList();
 	
 	/**
 	 * Collection of "plural" listeners.
 	 * @since 2.1
 	 */
-	private ListenerList fLaunchesListeners = new ListenerList(5);
+	private ListenerList fLaunchesListeners = new ListenerList();
 	
 	/**
 	 * Visitor used to process resource deltas,
@@ -201,7 +202,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Launch configuration listeners
 	 */
-	private ListenerList fLaunchConfigurationListeners = new ListenerList(5);
+	private ListenerList fLaunchConfigurationListeners = new ListenerList();
 	
 	/**
 	 * Table of source locator extensions. Keys
@@ -518,7 +519,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Clears launch configuration types.
 	 */
 	public void shutdown() {
-		fListeners.removeAll();
+		fListeners = new ListenerList();
+        fLaunchesListeners = new ListenerList();
+        fLaunchConfigurationListeners = new ListenerList();
 		ILaunch[] launches = getLaunches();
 		for (int i= 0; i < launches.length; i++) {
 			ILaunch launch= launches[i];

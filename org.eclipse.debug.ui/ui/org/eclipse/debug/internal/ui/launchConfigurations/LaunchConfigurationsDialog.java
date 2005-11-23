@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -49,7 +50,6 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -154,7 +154,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private ProgressMonitorPart fProgressMonitorPart;
 	private Cursor waitCursor;
 	private Cursor arrowCursor;
-	private ListenerList changeListeners = new ListenerList(3);
+	private ListenerList changeListeners = new ListenerList();
 	
 	/**
 	 * The number of 'long-running' operations currently taking place in this dialog

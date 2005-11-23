@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.contexts;
 
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -23,7 +24,6 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.contexts.ISuspendTrigger;
 import org.eclipse.debug.ui.contexts.ISuspendTriggerListener;
-import org.eclipse.jface.util.ListenerList;
 
 /**
  * @since 3.2
@@ -37,21 +37,25 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 	}
 	
 	protected void dispose() {
-		fListeners.clear();
+		fListeners = null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.ISuspendTrigger#addSuspendTriggerListener(org.eclipse.debug.ui.contexts.ISuspendTriggerListener)
 	 */
 	public void addSuspendTriggerListener(ISuspendTriggerListener listener) {
-		fListeners.add(listener);
+        if (fListeners != null) {
+            fListeners.add(listener);
+        }
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.ISuspendTrigger#removeSuspendTriggerListener(org.eclipse.debug.ui.contexts.ISuspendTriggerListener)
 	 */
-	public void removeSuspendTriggerListener(ISuspendTriggerListener listener) {
-		fListeners.remove(listener);
+	public void removeSuspendTriggerListener(ISuspendTriggerListener listener) { 
+        if (fListeners != null) {
+            fListeners.remove(listener);
+        }
 	}
 
 	/* (non-Javadoc)
@@ -86,20 +90,23 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 				context = source;
 			}
 			final Object temp = context;
-			Object[] listeners = fListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final ISuspendTriggerListener listener = (ISuspendTriggerListener) listeners[i];
-				Platform.run(new ISafeRunnable() {
-					public void run() throws Exception {
-						listener.suspended(launch, temp);
-					}
-				
-					public void handleException(Throwable exception) {
-						DebugUIPlugin.log(exception);
-					}
-				
-				}); 			
-			}
+            ListenerList list = fListeners;
+            if (list != null) {
+                Object[] listeners = list.getListeners();
+        		for (int i = 0; i < listeners.length; i++) {
+        			final ISuspendTriggerListener listener = (ISuspendTriggerListener) listeners[i];
+        			Platform.run(new ISafeRunnable() {
+        				public void run() throws Exception {
+        					listener.suspended(launch, temp);
+        				}
+        			
+        				public void handleException(Throwable exception) {
+        					DebugUIPlugin.log(exception);
+        				}
+        			
+        			}); 			
+        		}
+            }
 
 		}
 		

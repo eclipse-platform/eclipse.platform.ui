@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.memory;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugException;
@@ -22,7 +23,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.graphics.Image;
@@ -86,7 +86,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		}
 		
 		if (fPropertyListeners != null)
-			fPropertyListeners.clear();
+			fPropertyListeners = null;
 	}
 
 	/* (non-Javadoc)

@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
@@ -187,7 +188,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 	 * Constructs a new string variable manager. 
 	 */
 	private StringVariableManager() {
-		fListeners = new ListenerList(5);
+		fListeners = new ListenerList();
 	}	
 
 	/**

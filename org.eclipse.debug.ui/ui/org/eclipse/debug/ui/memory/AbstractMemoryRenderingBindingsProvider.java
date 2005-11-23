@@ -11,9 +11,9 @@
 package org.eclipse.debug.ui.memory;
 
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.jface.util.ListenerList;
 
 /**
  * Common function for a dynamic memory rendering bindings provider.

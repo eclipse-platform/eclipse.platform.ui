@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Preferences;
@@ -363,7 +364,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 */
 	public void addExpressionListener(IExpressionListener listener) {
 		if (fListeners == null) {
-			fListeners = new ListenerList(2);
+			fListeners = new ListenerList();
 		}
 		fListeners.add(listener);
 	}
@@ -444,7 +445,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 */
 	public void addExpressionListener(IExpressionsListener listener) {
 		if (fExpressionsListeners == null) {
-			fExpressionsListeners = new ListenerList(2);
+			fExpressionsListeners = new ListenerList();
 		}
 		fExpressionsListeners.add(listener);
 	}

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStreamListener;
@@ -37,7 +38,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/**
 	 * A collection of listeners
 	 */
-	private ListenerList fListeners= new ListenerList(1);
+	private ListenerList fListeners= new ListenerList();
 	
 	/**
 	 * Whether content is being buffered
@@ -97,7 +98,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				thread.join();
 			} catch (InterruptedException ie) {
 			}
-			fListeners.removeAll();
+			fListeners = new ListenerList();
 		}
 	}
 

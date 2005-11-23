@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
@@ -48,7 +49,6 @@ import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
-import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.core.LogicalStructureManager;
 import org.eclipse.debug.internal.core.MemoryBlockManager;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
@@ -408,7 +408,7 @@ public class DebugPlugin extends Plugin {
 	 */
 	public void addDebugEventListener(IDebugEventSetListener listener) {
 		if (fEventListeners == null) {
-			fEventListeners = new ListenerList(20);
+			fEventListeners = new ListenerList();
 		}
 		fEventListeners.add(listener);
 	}	
@@ -571,8 +571,13 @@ public class DebugPlugin extends Plugin {
 			}
 			
 			if (fEventListeners != null) {
-				fEventListeners.removeAll();
+				fEventListeners = null;
 			}
+            
+            if (fEventFilters != null) {
+                fEventFilters = null;
+            }
+            
 			SourceLookupUtils.shutdown();
 			setDefault(null);
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
@@ -809,7 +814,7 @@ public class DebugPlugin extends Plugin {
 	 */
 	public void addDebugEventFilter(IDebugEventFilter filter) {
 		if (fEventFilters == null) {
-			fEventFilters = new ListenerList(2);
+			fEventFilters = new ListenerList();
 		}
 		fEventFilters.add(filter);
 	}
