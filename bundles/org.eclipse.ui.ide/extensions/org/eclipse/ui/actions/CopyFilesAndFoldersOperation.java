@@ -12,12 +12,14 @@ package org.eclipse.ui.actions;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -197,11 +199,11 @@ public class CopyFilesAndFoldersOperation {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			if (resource != null) {
-				IPath location = resource.getLocation();
+				URI location = resource.getLocationURI();
 				String message = null;
 				if (location != null) {
-					File file = location.toFile();
-					if (file.exists() == false) {
+					IFileInfo info = IDEResourceInfoUtils.getFileInfo(location);
+					if (info == null || info.exists() == false) {
 						if (resource.isLinked()) {
 							message = NLS
 									.bind(
@@ -778,6 +780,9 @@ public class CopyFilesAndFoldersOperation {
 	 * @param fileNames
 	 *            files to return File object for.
 	 * @return java.io.File objects for the given file names.
+	 * @deprecated This method is not longer in use anywhere
+	 * in this class and is only provided for backwards compatability
+	 * with subclasses of the receiver.
 	 */
 	protected File[] getFiles(String[] fileNames) {
 		File[] files = new File[fileNames.length];
