@@ -1319,7 +1319,7 @@
             </selection>
          </action>
          <action
-               label="%CopyVariablesToClipboardAction.label"
+               label="%CopyExpressionsToClipboardAction.label"
                icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
                definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_variables_to_clipboard_action_context"
@@ -1340,7 +1340,7 @@
          </action>
       </viewerContribution>
       <viewerContribution
-            targetID="org.eclipse.debug.ui.RegistersView"
+            targetID="org.eclipse.debug.ui.RegisterView"
             id="org.eclipse.debug.ui.registersView.popupMenu">
       <!-- Variable Group -->
          <action
@@ -1348,7 +1348,7 @@
                class="org.eclipse.debug.internal.ui.actions.variables.CopyVariablesToClipboardActionDelegate"
                definitionId="org.eclipse.ui.edit.copy"
                icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
-               label="%CopyVariablesToClipboardAction.label"
+               label="%CopyRegistersToClipboardAction.label"
                id="org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
                helpContextId="copy_variables_to_clipboard_action_context">
             <selection
