@@ -350,24 +350,22 @@ public class RefactoringHistoryWizard extends Wizard {
 					monitor.beginTask("", 100); //$NON-NLS-1$
 					result[0]= null;
 					final RefactoringStatus status= new RefactoringStatus();
+					final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
+					fErrorPage.setTitle(descriptor);
+					fErrorPage.setLastRefactoring(!isNotLastRefactoring());
 					final Refactoring refactoring= getCurrentRefactoring(status, new SubProgressMonitor(monitor, 10));
 					if (refactoring != null && status.isOK()) {
-						final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
 						status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 20), CheckConditionsOperation.INITIAL_CONDITONS));
 						if (!status.isOK()) {
-							fErrorPage.setLastRefactoring(!isNotLastRefactoring());
 							fErrorPage.setRefactoring(refactoring);
 							fErrorPage.setStatus(status);
-							fErrorPage.setTitle(descriptor);
 							result[0]= fErrorPage;
 							return;
 						}
 						status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 65), CheckConditionsOperation.FINAL_CONDITIONS));
 						if (!status.isOK()) {
-							fErrorPage.setLastRefactoring(!isNotLastRefactoring());
 							fErrorPage.setRefactoring(refactoring);
 							fErrorPage.setStatus(status);
-							fErrorPage.setTitle(descriptor);
 							result[0]= fErrorPage;
 							return;
 						}
@@ -375,6 +373,10 @@ public class RefactoringHistoryWizard extends Wizard {
 						fPreviewPage.setChange(refactoring.createChange(new SubProgressMonitor(monitor, 5)));
 						fPreviewPage.setTitle(descriptor);
 						result[0]= fPreviewPage;
+					} else {
+						fErrorPage.setStatus(status);
+						result[0]= fErrorPage;
+						return;
 					}
 				} catch (CoreException exception) {
 					throw new InvocationTargetException(exception);
