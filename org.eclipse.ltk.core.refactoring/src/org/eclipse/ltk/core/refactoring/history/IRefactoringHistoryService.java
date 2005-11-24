@@ -70,7 +70,7 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Connects the refactoring history service to the workbench's operation
-	 * history.
+	 * history if necessary and increments an internal counter.
 	 * <p>
 	 * If the service is already connected, nothing happens.
 	 * </p>
@@ -83,9 +83,11 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Disconnects the refactoring history service from the workbench's
-	 * operation history.
+	 * operation history if necessary and decrements an internal counter.
 	 * <p>
-	 * If the service is not connected, nothing happens.
+	 * If the service is not connected, nothing happens. If the service is
+	 * connected, all resources acquired by the corresponding call to
+	 * {@link #connect()} are released.
 	 * </p>
 	 * <p>
 	 * Every call to {@link #disconnect()} must be balanced with a corresponding
