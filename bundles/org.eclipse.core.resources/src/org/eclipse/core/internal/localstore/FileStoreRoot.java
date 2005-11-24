@@ -75,13 +75,13 @@ public class FileStoreRoot {
 	}
 	
 	IPath localLocation(IPath workspacePath) {
+		if (localRoot == null)
+			return null;
 		IPath location;
 		if (workspacePath.segmentCount() <= chop)
 			location = localRoot;
 		else
 			location = localRoot.append(workspacePath.removeFirstSegments(chop));
-		if (location == null)
-			return null;
 		location = variableManager.resolvePath(location);
 		//if path is still relative then path variable could not be resolved
 		if (!location.isAbsolute())
