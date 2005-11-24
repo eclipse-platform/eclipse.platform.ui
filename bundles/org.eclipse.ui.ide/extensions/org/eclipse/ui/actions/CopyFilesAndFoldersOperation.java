@@ -654,7 +654,7 @@ public class CopyFilesAndFoldersOperation {
 					fileStatus);
 			return;
 		}
-		String errorMsg = validateImportDestination(destination, stores);
+		String errorMsg = validateImportDestinationInternal(destination, stores);
 		if (errorMsg != null) {
 			displayError(errorMsg);
 			return;
@@ -1379,7 +1379,7 @@ public class CopyFilesAndFoldersOperation {
 								sourceNames[i]);
 			stores[i] = store;
 		}
-		return validateImportDestination(destination, stores);
+		return validateImportDestinationInternal(destination, stores);
 
 	}
 
@@ -1389,6 +1389,11 @@ public class CopyFilesAndFoldersOperation {
 	 * <p>
 	 * Note this method is for internal use only. It is not API.
 	 * </p>
+	 * <p>
+	 * TODO Bug 117804.  This method has been renamed to avoid a bug in the
+	 * Eclipse compiler with regards to visibility and type resolution when
+	 * linking.
+	 * </p>
 	 * 
 	 * @param destination
 	 *            the destination container
@@ -1396,7 +1401,7 @@ public class CopyFilesAndFoldersOperation {
 	 *            the source IFileStore
 	 * @return an error message, or <code>null</code> if the path is valid
 	 */
-	private String validateImportDestination(IContainer destination,
+	private String validateImportDestinationInternal(IContainer destination,
 			IFileStore[] sourceStores) {
 		if (!isAccessible(destination)) {
 			return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationAccessError;
