@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.TestingSupport;
@@ -1149,6 +1151,23 @@ public class IWorkspaceTest extends ResourceTest {
 		assertTrue("23.2", workspace.validateProjectLocation(project, new Path("/project/.metadata")).isOK());
 		// FIXME: Should this be valid?
 		assertTrue("23.3", workspace.validateProjectLocation(project, new Path("/.metadata/project")).isOK());
-
+	}
+	/**
+	 * Performs black box testing of the following method:
+	 *     IStatus validateProjectLocationURI(IProject, URI)
+	 */
+	public void testValidateProjectLocationURI() {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("Project");
+		try {
+			//URI with no scheme
+			URI uri = new URI("eferfsdfwer");
+			assertTrue("1.0", !workspace.validateProjectLocationURI(project, uri).isOK());
+			//URI with unknown scheme
+			uri = new URI("blorts://foo.com?bad");
+			assertTrue("1.1", !workspace.validateProjectLocationURI(project, uri).isOK());
+		} catch (URISyntaxException e) {
+			fail("1.99", e);
+		}
 	}
 }

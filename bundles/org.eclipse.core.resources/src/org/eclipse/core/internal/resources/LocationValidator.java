@@ -57,7 +57,7 @@ public class LocationValidator {
 			return true;
 		String scheme1 = location1.getScheme();
 		String scheme2 = location2.getScheme();
-		if (!scheme1.equals(scheme2))
+        if (scheme1 == null ? scheme2 != null : !scheme1.equals(scheme2))
 			return false;
 		if (EFS.SCHEME_FILE.equals(scheme1) && EFS.SCHEME_FILE.equals(scheme2))
 			return isOverlapping(new Path(location1.getSchemeSpecificPart()), new Path(location2.getSchemeSpecificPart()), bothDirections);
@@ -350,6 +350,14 @@ public class LocationValidator {
 		if (!result.isOK())
 			return result;
 		result = validateAbsolute(location, true);
+		if (!result.isOK())
+			return result;
+		//check that the URI has a legal scheme
+		try {
+			EFS.getFileSystem(location.getScheme());
+		} catch (CoreException e) {
+			return e.getStatus();
+		}
 		// test if the given location overlaps the default default location
 		IPath defaultDefaultLocation = Platform.getLocation();
 		if (isOverlapping(location, defaultDefaultLocation.toFile().toURI(), true)) {
