@@ -18,8 +18,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -97,8 +99,45 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/** Stack of refactoring descriptors */
 	private final class RefactoringDescriptorStack {
 
+		/** Maximal number of refactoring managers */
+		private static final int MAX_MANAGERS= 2;
+
 		/** The internal implementation */
 		private final LinkedList fImplementation= new LinkedList();
+
+		/**
+		 * The refactoring history manager cache (element type:
+		 * <code>&lt;IFileStore, RefactoringHistoryManager&gt;</code>)
+		 */
+		private final Map fManagerCache= new LinkedHashMap(MAX_MANAGERS, 0.75f, true) {
+
+			private static final long serialVersionUID= 1L;
+
+			protected final boolean removeEldestEntry(final Map.Entry entry) {
+				return size() > MAX_MANAGERS;
+			}
+		};
+
+		/**
+		 * Returns the cached refactoring history manager for the specified
+		 * history location.
+		 * 
+		 * @param store
+		 *            the file store describing the history location
+		 * @param name
+		 *            the non-empty project name, or <code>null</code>
+		 * @return the refactoring history manager
+		 */
+		private RefactoringHistoryManager getManager(final IFileStore store, final String name) {
+			Assert.isNotNull(store);
+			Assert.isNotNull(name);
+			RefactoringHistoryManager manager= (RefactoringHistoryManager) fManagerCache.get(store);
+			if (manager == null) {
+				manager= new RefactoringHistoryManager(store, name);
+				fManagerCache.put(store, manager);
+			}
+			return manager;
+		}
 
 		/**
 		 * Returns the current descriptor on the top of the stack.
@@ -208,15 +247,15 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 								if (hasProjectHistory(project)) {
 									final URI uri= project.getLocationURI();
 									if (uri != null)
-										return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
+										return getManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
 								} else
-									return new RefactoringHistoryManager(store.getChild(name), null).requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
+									return getManager(store.getChild(name), name).requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
 							}
 						} catch (CoreException exception) {
 							// Do nothing
 						}
 					} else
-						return new RefactoringHistoryManager(store.getChild(NAME_WORKSPACE_PROJECT), null).requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
+						return getManager(store.getChild(NAME_WORKSPACE_PROJECT), null).requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
 				}
 				monitor.worked(6);
 				return descriptor;
@@ -265,10 +304,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						break;
 					case OperationHistoryEvent.UNDONE:
 						handleChangeUndone();
-						fireRefactoringUndoneEvent((RefactoringDescriptor) fRedoCache.getFirst());
+						fireRefactoringUndoneEvent((RefactoringDescriptor) fRedoQueue.getFirst());
 						break;
 					case OperationHistoryEvent.ABOUT_TO_REDO:
-						fireAboutToRedoEvent((RefactoringDescriptor) fRedoCache.getFirst());
+						fireAboutToRedoEvent((RefactoringDescriptor) fRedoQueue.getFirst());
 						break;
 					case OperationHistoryEvent.REDONE:
 						handleChangeRedone();
@@ -333,8 +372,8 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				if (type == IResource.PROJECT) {
 					if (fUndoStack != null)
 						fUndoStack.fImplementation.clear();
-					if (fRedoCache != null)
-						fRedoCache.clear();
+					if (fRedoQueue != null)
+						fRedoQueue.clear();
 				}
 			}
 		}
@@ -396,8 +435,8 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/** The operation listener, or <code>null</code> */
 	private IOperationHistoryListener fOperationListener= null;
 
-	/** The redo refactoring descriptor cache, or <code>null</code> */
-	private LinkedList fRedoCache= null;
+	/** The redo refactoring descriptor queue, or <code>null</code> */
+	private LinkedList fRedoQueue= null;
 
 	/** The history reference count */
 	private int fReferenceCount= 0;
@@ -447,7 +486,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			fResourceListener= new WorkspaceChangeListener();
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(fResourceListener, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE);
 			fUndoStack= new RefactoringDescriptorStack();
-			fRedoCache= new LinkedList();
+			fRedoQueue= new LinkedList();
 		}
 	}
 
@@ -463,7 +502,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			if (fResourceListener != null)
 				ResourcesPlugin.getWorkspace().removeResourceChangeListener(fResourceListener);
 			fUndoStack= null;
-			fRedoCache= null;
+			fRedoQueue= null;
 			fOperationListener= null;
 		}
 	}
@@ -630,9 +669,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				if (hasProjectHistory(project)) {
 					final URI uri= project.getLocationURI();
 					if (uri != null)
-						return new RefactoringHistoryManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).readRefactoringHistory(start, end, new SubProgressMonitor(monitor, 12));
+						return fUndoStack.getManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name).readRefactoringHistory(start, end, new SubProgressMonitor(monitor, 12));
 				} else
-					return new RefactoringHistoryManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER).getChild(name), name).readRefactoringHistory(start, end, new SubProgressMonitor(monitor, 12));
+					return fUndoStack.getManager(EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER).getChild(name), name).readRefactoringHistory(start, end, new SubProgressMonitor(monitor, 12));
 			} catch (CoreException exception) {
 				RefactoringCorePlugin.log(exception);
 			} finally {
@@ -695,14 +734,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * Handles the change redone event.
 	 */
 	void handleChangeRedone() {
-		fUndoStack.push((RefactoringDescriptor) fRedoCache.removeFirst());
+		fUndoStack.push((RefactoringDescriptor) fRedoQueue.removeFirst());
 	}
 
 	/**
 	 * Handles the change undone event.
 	 */
 	void handleChangeUndone() {
-		fRedoCache.addFirst(fUndoStack.peek());
+		fRedoQueue.addFirst(fUndoStack.peek());
 		fUndoStack.pop();
 	}
 
@@ -726,7 +765,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	public boolean hasProjectHistory(final IProject project) {
 		Assert.isNotNull(project);
-		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project) };
+		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
 		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_ENABLE_PROJECT_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
 		if (preference != null)
 			return Boolean.valueOf(preference).booleanValue();
