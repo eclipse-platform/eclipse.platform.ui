@@ -142,7 +142,10 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String RefactoringHistoryErrorPage_description;
 	public static String RefactoringHistoryPreviewPage_description;
-
+	
+	public static String RefactoringHistoryWizard_fatal_error_message;
+	public static String RefactoringHistoryWizard_do_not_show_message;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringUIMessages.class);
 	}

@@ -49,7 +49,6 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryWizard;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -61,6 +60,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
+import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
 /**
  * Resource mapping merger for refactoring histories.
@@ -310,7 +310,10 @@ public class RefactoringModelMerger implements IResourceMappingMerger {
 				shell.getDisplay().syncExec(new Runnable() {
 
 					public final void run() {
-						new WizardDialog(shell, new RefactoringHistoryWizard(history, new RefactoringHistoryPreviewConfiguration(projects.length == 1 ? projects[0] : null, true))).open();
+						final RefactoringHistoryWizard wizard= new RefactoringHistoryWizard(RefactoringUIMessages.RefactoringWizard_title, RefactoringUIMessages.RefactoringHistoryOverviewPage_title, RefactoringUIMessages.RefactoringHistoryOverviewPage_description);
+						wizard.setRefactoringHistory(history);
+						wizard.setControlConfiguration(new RefactoringHistoryPreviewConfiguration(projects.length == 1 ? projects[0] : null, true));
+						new WizardDialog(shell, wizard).open();
 					}
 				});
 			}

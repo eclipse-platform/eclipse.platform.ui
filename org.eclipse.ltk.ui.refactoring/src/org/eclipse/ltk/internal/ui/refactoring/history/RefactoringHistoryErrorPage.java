@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
@@ -25,6 +26,12 @@ import org.eclipse.jface.wizard.IWizardPage;
  */
 public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 
+	/** Is the current refactoring the last one? */
+	private boolean fLastRefactoring= false;
+
+	/** The current refactoring, or <code>null</code> */
+	private Refactoring fRefactoring;
+
 	/**
 	 * Creates a new refactoring history error page.
 	 */
@@ -39,7 +46,9 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 */
 	public boolean canFlipToNextPage() {
 		final RefactoringStatus status= getStatus();
-		return status != null && status.getSeverity() < RefactoringStatus.FATAL;
+		if (status != null && status.hasFatalError())
+			return !fLastRefactoring;
+		return true;
 	}
 
 	/**
@@ -57,10 +66,50 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	}
 
 	/**
+	 * Returns the current refactoring.
+	 * 
+	 * @return the current refactoring
+	 */
+	public Refactoring getRefactoring() {
+		return fRefactoring;
+	}
+
+	/**
+	 * Is the current refactoring the last one?
+	 * 
+	 * @return <code>true</code> if it is the last one, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean isLastRefactoring() {
+		return fLastRefactoring;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	protected boolean performFinish() {
 		return true;
+	}
+
+	/**
+	 * Determines whether the current refactoring is the last one.
+	 * 
+	 * @param last
+	 *            <code>true</code> if it is the last one, <code>false</code>
+	 *            otherwise
+	 */
+	public void setLastRefactoring(final boolean last) {
+		fLastRefactoring= last;
+	}
+
+	/**
+	 * Sets the current refactoring.
+	 * 
+	 * @param refactoring
+	 *            the current refactoring, or <code>null</code>
+	 */
+	public void setRefactoring(final Refactoring refactoring) {
+		fRefactoring= refactoring;
 	}
 
 	/**

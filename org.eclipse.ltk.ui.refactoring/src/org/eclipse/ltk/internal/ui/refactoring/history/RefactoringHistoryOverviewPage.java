@@ -14,7 +14,6 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -55,24 +54,30 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 	 * 
 	 * @param history
 	 *            the refactoring history to overview
+	 * @param title
+	 *            the title of the wizard page
+	 * @param description
+	 *            the description of the wizard page
 	 * @param configuration
 	 *            the refactoring history control configuration to use
 	 */
-	public RefactoringHistoryOverviewPage(final RefactoringHistory history, final RefactoringHistoryControlConfiguration configuration) {
+	public RefactoringHistoryOverviewPage(final RefactoringHistory history, final String title, final String description, final RefactoringHistoryControlConfiguration configuration) {
 		super(PAGE_NAME);
 		Assert.isNotNull(history);
 		Assert.isNotNull(configuration);
+		Assert.isNotNull(title);
+		Assert.isNotNull(description);
 		fRefactoringHistory= history;
 		fControlConfiguration= configuration;
-		setTitle(RefactoringUIMessages.RefactoringHistoryOverviewPage_title);
-		setDescription(RefactoringUIMessages.RefactoringHistoryOverviewPage_description);
+		setTitle(title);
+		setDescription(description);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean canFlipToNextPage() {
-		return true;
+		return !fRefactoringHistory.isEmpty();
 	}
 
 	/**
@@ -85,7 +90,6 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		fHistoryControl= (IRefactoringHistoryControl) RefactoringUI.createRefactoringHistoryControl(composite, fControlConfiguration);
 		fHistoryControl.createControl();
-		fHistoryControl.setRefactoringHistory(fRefactoringHistory);
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_HISTORY_WIZARD_PAGE);
@@ -103,5 +107,13 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 	 */
 	public IWizardPage getPreviousPage() {
 		return getWizard().getPreviousPage(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setVisible(boolean visible) {
+		fHistoryControl.setRefactoringHistory(fRefactoringHistory);
+		super.setVisible(visible);
 	}
 }
