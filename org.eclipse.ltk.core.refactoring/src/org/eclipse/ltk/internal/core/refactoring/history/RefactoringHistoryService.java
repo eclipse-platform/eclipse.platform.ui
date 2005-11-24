@@ -494,8 +494,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * {@inheritDoc}
 	 */
 	public void disconnect() {
-		if (fReferenceCount > 0)
+		if (fReferenceCount > 0) {
+			fUndoStack.fManagerCache.clear();
 			fReferenceCount--;
+		}
 		if (fReferenceCount == 0) {
 			if (fOperationListener != null)
 				OperationHistoryFactory.getOperationHistory().removeOperationHistoryListener(fOperationListener);
