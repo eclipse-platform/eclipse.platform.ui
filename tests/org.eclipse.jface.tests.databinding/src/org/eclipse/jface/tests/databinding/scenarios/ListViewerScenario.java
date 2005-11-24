@@ -15,10 +15,10 @@ import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
 import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.List;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -27,64 +27,64 @@ import org.eclipse.swt.widgets.Combo;
  * Mode" as the application to run.
  */
 
-public class ComboViewerScenario extends ScenariosTestCase {
+public class ListViewerScenario extends ScenariosTestCase {
 
 	private Catalog catalog;
-	private Combo combo;
-	private ComboViewer comboViewer;
+	private List list;
+	private ListViewer listViewer;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		// do any setup work here
-		combo = new Combo(getComposite(), SWT.READ_ONLY | SWT.DROP_DOWN);
-		comboViewer = new ComboViewer(combo);		
+		list = new List(getComposite(), SWT.READ_ONLY | SWT.SINGLE);
+		listViewer = new ListViewer(list);		
 		catalog = SampleData.CATALOG_2005; // Lodging source		
 	}
 
 	protected void tearDown() throws Exception {
-		combo.dispose();
-		combo = null;
-		comboViewer = null;
+		list.dispose();
+		list = null;
+		listViewer = null;
 		super.tearDown();
 	}
 
 	public void testScenario01() {
 		// Bind the catalog's lodgings to the combo
 		getDbc().bind(
-				comboViewer, 
+				listViewer, 
 				new Property(catalog, "lodgings"),null);
 		// Verify that the combo's items are the lodgings
 		for (int i = 0; i < catalog.getLodgings().length; i++) {
-			assertEquals(catalog.getLodgings()[i],comboViewer.getElementAt(i));
+			assertEquals(catalog.getLodgings()[i],listViewer.getElementAt(i));
 		}
-		// Verify that the String being shown in the combo viewer is the "toString" of the combo viewer
+		// Verify that the String being shown in the list viewer is the "toString" of the combo viewer
 		String[] lodgingStrings = new String[catalog.getLodgings().length];		
 		for (int i = 0; i < catalog.getLodgings().length; i++) {
 			lodgingStrings[i] = catalog.getLodgings()[i].toString();
 		}
-		assertArrayEquals(lodgingStrings,combo.getItems());
+		assertArrayEquals(lodgingStrings,list.getItems());
 		
-		// Verify that the combo has no selected item
-		assertEquals(null,((IStructuredSelection)comboViewer.getSelection()).getFirstElement());
+		// Verify that the list has no selected item
+		assertEquals(null,((IStructuredSelection)listViewer.getSelection()).getFirstElement());
 		
 		// Now bind the selection of the combo to the "defaultLodging" property of an adventure
 		Adventure adventure = SampleData.WINTER_HOLIDAY;
 		getDbc().bind(
-				new Property(comboViewer,ViewersProperties.SINGLE_SELECTION),
+				new Property(listViewer,ViewersProperties.SINGLE_SELECTION),
 				new Property(adventure, "defaultLodging"),
 				null);
 		
-		// Verify that the combo selection is the default lodging
-		assertEquals(((IStructuredSelection)comboViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging());
+		// Verify that the list selection is the default lodging
+		assertEquals(((IStructuredSelection)listViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging());
 		
-		// Change the model and verify that the combo selection changes 
+		// Change the model and verify that the list selection changes 
 		adventure.setDefaultLodging(SampleData.CAMP_GROUND);
 		assertEquals(adventure.getDefaultLodging(),SampleData.CAMP_GROUND);
-		assertEquals(((IStructuredSelection)comboViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging());		
+		assertEquals(((IStructuredSelection)listViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging());		
 		
-		// Change the combo selection and verify that the model changes
-		comboViewer.getCombo().select(3);
-		assertEquals(((IStructuredSelection)comboViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging());		
+		// Change the list selection and verify that the model changes
+		listViewer.getList().select(3);
+		assertEquals(((IStructuredSelection)listViewer.getSelection()).getFirstElement(),adventure.getDefaultLodging());		
 		
 	}
 }

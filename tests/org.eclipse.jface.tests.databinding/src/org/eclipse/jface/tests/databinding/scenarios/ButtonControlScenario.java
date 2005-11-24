@@ -75,5 +75,25 @@ public class ButtonControlScenario extends ScenariosTestCase {
 		button.setSelection(newBoolean);
 		button.notifyListeners(SWT.Selection,null);
 		assertEquals(newBoolean,adventure.isPetsAllowed());
-	}	
+	}
+	
+	public void testScenario03() {
+		// Test with an SWT.Radio button
+		button.dispose();
+		button = new Button(getComposite(), SWT.RADIO);
+		// Bind the button's selection to the adventure "isPetsAllowed"
+		getDbc().bind(button, new Property(adventure, "petsAllowed"),null);
+		// Check the model and GUI are in the same state
+		assertEquals(button.getSelection(),adventure.isPetsAllowed());
+		// Change the model and check the GUI is updated
+		boolean newBoolean = !adventure.isPetsAllowed();
+		adventure.setPetsAllowed(newBoolean);
+		assertEquals(newBoolean,adventure.isPetsAllowed());
+		assertEquals(button.getSelection(),newBoolean);
+		// Change the GUI and check the model
+		newBoolean = !newBoolean;
+		button.setSelection(newBoolean);
+		button.notifyListeners(SWT.Selection,null);
+		assertEquals(newBoolean,adventure.isPetsAllowed());
+	}		
 }
