@@ -67,7 +67,10 @@ public class BindingScenariosTestSuite extends TestSuite {
 		addTestSuite(TreeScenarios.class);
 		// Test each of the basic SWT controls
 		addTestSuite(TextControlScenario.class);
-		addTestSuite(SpinnerControlScenario.class);		
+		addTestSuite(SpinnerControlScenario.class);	
+		addTestSuite(ButtonControlScenario.class);		
+		// Test each of the basic JFace controls
+		addTestSuite(ComboViewerScenario.class);		
 	}
 
 	public static Shell getShell() {
