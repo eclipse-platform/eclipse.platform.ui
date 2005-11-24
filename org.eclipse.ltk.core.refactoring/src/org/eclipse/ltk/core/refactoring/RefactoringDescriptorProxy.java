@@ -102,6 +102,10 @@ public abstract class RefactoringDescriptorProxy implements Comparable {
 	/**
 	 * Resolves this proxy and returns the associated refactoring descriptor.
 	 * <p>
+	 * Clients must connect to the refactoring history service first before
+	 * calling this method.
+	 * </p>
+	 * <p>
 	 * This method is not intended to be overridden outside the refactoring
 	 * framework.
 	 * </p>
