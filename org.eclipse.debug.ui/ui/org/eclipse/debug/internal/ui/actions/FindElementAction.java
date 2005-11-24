@@ -8,31 +8,29 @@
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.actions.context;
+package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeNavigationDialog;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeNavigationModel;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
- * Action which prompts the user to help them find a variable in the variables
- * view.
+ * Action which prompts the user to find/navigate to an element in an async tree.
  */
-public class FindVariableAction extends Action implements IUpdate {
+public class FindElementAction extends Action implements IUpdate {
 	
 	private AsynchronousTreeViewer fViewer;
 
-	public FindVariableAction(AsynchronousTreeViewer viewer) {
-		setText(ActionMessages.FindVariableAction_0);
-		setId(DebugUIPlugin.getUniqueIdentifier() + ".FindVariableAction"); //$NON-NLS-1$
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.FIND_VARIABLE_ACTION);
+	public FindElementAction(AsynchronousTreeViewer viewer) {
+		setText(ActionMessages.FindAction_0);
+		setId(DebugUIPlugin.getUniqueIdentifier() + ".FindElementAction"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.FIND_ELEMENT_ACTION);
 		setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
 		fViewer = viewer;
 	}
@@ -40,8 +38,8 @@ public class FindVariableAction extends Action implements IUpdate {
 	public void run() {
 		AsynchronousTreeNavigationModel model = new AsynchronousTreeNavigationModel(fViewer);
 		AsynchronousTreeNavigationDialog dialog = new AsynchronousTreeNavigationDialog(model); 
-		dialog.setTitle(ActionMessages.FindVariableDialog_3);
-		dialog.setMessage(ActionMessages.FindVariableDialog_1);
+		dialog.setTitle(ActionMessages.FindDialog_3);
+		dialog.setMessage(ActionMessages.FindDialog_1);
 		dialog.open();
 		model.dispose();
 	}

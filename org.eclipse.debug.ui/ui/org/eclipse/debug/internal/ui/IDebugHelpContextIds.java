@@ -47,7 +47,7 @@ public interface IDebugHelpContextIds {
 	public static final String LOOKUP_SOURCE_ACTION = PREFIX + "lookup_source_context";//$NON-NLS-1$
 	public static final String SKIP_ALL_BREAKPOINT_ACTION = PREFIX + "skip_all_breakpoints_context"; //$NON-NLS-1$
 	public static final String AUTO_MANAGE_VIEWS_ACTION = PREFIX + "auto_manage_views_context"; //$NON-NLS-1$
-	public static final String FIND_VARIABLE_ACTION = PREFIX + "find_variable_context"; //$NON-NLS-1$
+	public static final String FIND_ELEMENT_ACTION = PREFIX + "find_element_context"; //$NON-NLS-1$
     public static final String ASSIGN_VALUE_ACTION = PREFIX + "assign_value_context"; //$NON-NLS-1$
     public static final String CONSOLE_TERMINATE_ACTION = PREFIX + "console_terminate_action_context"; //$NON-NLS-1$
     public static final String CONSOLE_REMOVE_ALL_TERMINATED = PREFIX + "console_remove_all_terminated_context"; //$NON-NLS-1$

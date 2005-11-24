@@ -15,7 +15,6 @@ import java.util.Iterator;
 
 import org.eclipse.core.commands.util.ListenerList;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -40,6 +39,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
+import org.eclipse.debug.internal.ui.actions.FindElementAction;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.internal.ui.contexts.IDebugContextProvider;
@@ -101,12 +101,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * Whether this view is in the active page of a perspective.
 	 */
 	private boolean fIsActive = true; 	
-	
-	/**
-	 * Resource delta visitor
-	 */
-	private IResourceDeltaVisitor fVisitor = null;
-	
+		
 	/**
 	 * Editor presentation or <code>null</code> if none
 	 */
@@ -232,6 +227,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		fAddToFavoritesAction = new AddToFavoritesAction();
 		fEditSourceAction = new EditSourceLookupPathAction(this);
 		fLookupAction = new LookupSourceAction(this);
+		setAction(FIND_ACTION, new FindElementAction((AsynchronousTreeViewer) getViewer()));
 				
 		// submit an async exec to update the selection once the
 		// view has been created - i.e. auto-expand and select the
@@ -600,6 +596,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EDIT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EDIT_GROUP));
+		menu.add(getAction(FIND_ACTION));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_STEP_GROUP));
 		menu.add(new Separator(IDebugUIConstants.STEP_GROUP));
 		menu.add(new GroupMarker(IDebugUIConstants.STEP_INTO_GROUP));

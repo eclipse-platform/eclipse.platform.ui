@@ -40,7 +40,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.CollapseAllAction;
-import org.eclipse.debug.internal.ui.actions.context.FindVariableAction;
+import org.eclipse.debug.internal.ui.actions.FindElementAction;
 import org.eclipse.debug.internal.ui.actions.variables.AssignValueAction;
 import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.actions.variables.ShowTypesAction;
@@ -124,7 +124,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 																	IValueDetailListener,
 																	IDebugExceptionHandler {
 
-	
 	/**
 	 * Internal interface for a cursor listener. I.e. aggregation 
 	 * of mouse and key listener.
@@ -222,6 +221,31 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				listener.selectionChanged(event);
 			}
 		}
+	}
+	
+	/**
+	 * Retargets the find action to the details area or tree viewer.
+	 * 
+	 * @since 3.2
+	 */
+	class DelegatingFindAction extends Action implements IUpdate {
+			private IAction getFindAction() {
+				if (getDetailViewer().getTextWidget().isFocusControl()) {
+					return getAction("FindReplaceText"); //$NON-NLS-1$
+				} else {
+					return getAction(FIND_ELEMENT);
+				}
+			}
+			public void run() {
+				getFindAction().run();
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.texteditor.IUpdate#update()
+			 */
+			public void update() {
+				setEnabled(getFindAction().isEnabled());
+			}
 	}
 	
 	/**
@@ -327,6 +351,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 
 	public static final String LOGICAL_STRUCTURE_TYPE_PREFIX = "VAR_LS_"; //$NON-NLS-1$
 	protected static final String SASH_WEIGHTS = DebugUIPlugin.getUniqueIdentifier() + ".variablesView.SASH_WEIGHTS"; //$NON-NLS-1$
+	
+	/**
+	 * Key for "Find..." action.
+	 */
+	protected static final String FIND_ELEMENT = "FindElement"; //$NON-NLS-1$
 	
 	private StatusLineContributionItem fStatusLineItem;
 	private ICursorListener fCursorListener;
@@ -790,8 +819,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		setAction(ActionFactory.PASTE.getId(), textAction);
 		
-		action= new FindVariableAction(getVariablesViewer());
-		setAction("FindVariable", action); //$NON-NLS-1$
+		action= new FindElementAction(getVariablesViewer());
+		setAction(FIND_ELEMENT, action);
 		
 		// TODO: Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages"); //$NON-NLS-1$
@@ -799,17 +828,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
 		setAction("FindReplaceText", action); //$NON-NLS-1$
 		
-		setAction(ActionFactory.FIND.getId(), new Action() {
-			public void run() {
-				IAction findAction = null;
-				if (getDetailViewer().getTextWidget().isFocusControl()) {
-					findAction= getAction("FindReplaceText"); //$NON-NLS-1$
-				} else {
-					findAction= getAction("FindVariable"); //$NON-NLS-1$
-				}
-				findAction.run();
-			}
-		});
+		setAction(FIND_ACTION, new DelegatingFindAction());
 		
 		fSelectionActions.add(ActionFactory.COPY.getId());
 		fSelectionActions.add(ActionFactory.CUT.getId());
@@ -868,7 +887,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
-		menu.add(getAction("FindVariable")); //$NON-NLS-1$
+		menu.add(getAction(FIND_ELEMENT));
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
 		IAction action = new AvailableLogicalStructuresAction(this);
 		if (action.isEnabled()) {
@@ -1273,7 +1292,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		showViewer();
 		
 		updateAction("ContentAssist"); //$NON-NLS-1$
-		updateAction("FindVariable"); //$NON-NLS-1$
+		updateAction(FIND_ELEMENT);
+		updateAction(FIND_ACTION);
 	}
 	
 	/* (non-Javadoc)

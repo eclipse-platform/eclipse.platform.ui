@@ -645,7 +645,19 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
 	 */
-	public synchronized void setSelection(ISelection selection, final boolean reveal) {
+	public synchronized void setSelection(ISelection selection, boolean reveal) {
+		setSelection(selection, reveal, false);
+	}
+	
+	/**
+	 * Sets the selection in this viewer.
+	 * 
+	 * @param selection new selection
+	 * @param reveal whether to reveal the selection
+	 * @param force whether to force the selection change without consulting the model
+	 *  selection policy
+	 */
+	public synchronized void setSelection(ISelection selection, final boolean reveal, boolean force) {
 		Control control = getControl();
 		if (control == null || control.isDisposed()) {
 			return;
@@ -653,7 +665,7 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 		if (!acceptsSelection(selection)) {
 			selection = getEmptySelection();
 		}
-		if (!overrideSelection(fCurrentSelection, selection)) {
+		if (!force && !overrideSelection(fCurrentSelection, selection)) {
 			return;
 		}
 		fPendingSelection = selection;
@@ -670,7 +682,8 @@ public abstract class AsynchronousViewer extends StructuredViewer {
 			job.setSystem(true);
 			job.schedule();
 		}		
-	}
+	}	
+	
 	
 	/**
 	 * Returns whether the candidate selection should override the current

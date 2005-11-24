@@ -137,9 +137,9 @@ public class ActionMessages extends NLS {
 	public static String ModifyWatchpointAction_1;
 	public static String LaunchShortcutsAction_0;
 	public static String LaunchShortcutsAction_1;
-	public static String FindVariableDialog_1;
-	public static String FindVariableDialog_3;
-	public static String FindVariableAction_0;
+	public static String FindDialog_1;
+	public static String FindDialog_3;
+	public static String FindAction_0;
 
 	static {
 		// load message values from bundle file
