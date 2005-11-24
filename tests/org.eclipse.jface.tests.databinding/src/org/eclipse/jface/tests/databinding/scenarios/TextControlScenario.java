@@ -13,6 +13,7 @@ package org.eclipse.jface.tests.databinding.scenarios;
 import org.eclipse.jface.databinding.PropertyDesc;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
+import org.eclipse.jface.tests.databinding.scenarios.model.Transportation;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 
@@ -26,11 +27,13 @@ import org.eclipse.swt.widgets.Text;
 public class TextControlScenario extends ScenariosTestCase {
 
 	private Adventure adventure;
+	private Transportation transportation;	
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		// do any setup work here
 		adventure = SampleData.WINTER_HOLIDAY;
+		transportation = SampleData.EXECUTIVE_JET;
 	}
 
 	protected void tearDown() throws Exception {
@@ -51,4 +54,19 @@ public class TextControlScenario extends ScenariosTestCase {
 		adventure.setName("France");
 		assertEquals("France", text.getText());
 	}
+	
+	public void testScenario02() {
+		// Bind the transportation "price" property to a text field
+		// This is a Double.TYPE so we check that conversion and validation occurs
+		// Change the UI and verify the model changes
+		// Change the model and verify the UI changes
+		Text text = new Text(getComposite(), SWT.BORDER);
+		getDbc().bind(text, new PropertyDesc(transportation, "price"), null);
+		assertEquals(Double.toString(transportation.getPrice()), text.getText());
+		text.setText("9876.54");
+		text.notifyListeners(SWT.FocusOut, null);		
+		assertEquals(9876.54, transportation.getPrice(),0);
+		transportation.setPrice(1234.56);
+		assertEquals("1234.56", text.getText());
+	}	
 }

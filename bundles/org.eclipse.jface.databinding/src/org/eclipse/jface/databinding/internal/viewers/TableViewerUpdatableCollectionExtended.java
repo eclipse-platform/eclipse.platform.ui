@@ -20,6 +20,8 @@ import java.util.StringTokenizer;
 import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
+import org.eclipse.jface.databinding.IUpdatableValue;
+import org.eclipse.jface.databinding.PropertyDesc;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.converters.IdentityConverter;
 import org.eclipse.jface.databinding.validator.IValidator;
@@ -102,6 +104,8 @@ public class TableViewerUpdatableCollectionExtended extends
 			// ignore
 		}
 	};
+
+	private IDataBindingContext dataBindingContext;
 
 	/**
 	 * @param tableViewerDescription
@@ -259,35 +263,86 @@ public class TableViewerUpdatableCollectionExtended extends
 			}
 		};
 	}
-
-	private void fillDescriptionDefaults(final IDataBindingContext dataBindingContext) {		
+	class ColumnInfo{
+		boolean converterDefaulted;
+		boolean validatorDefaulted;
+		boolean cellEditorDefaulted;
+	}
+	private ColumnInfo[] columnInfos;
+	private void fillDescriptionDefaults(final IDataBindingContext dataBindingContext) {
+		columnInfos = new ColumnInfo[tableViewerDescription.getColumnCount()];
+		this.dataBindingContext = dataBindingContext;		
 		for (int i = 0; i < tableViewerDescription.getColumnCount(); i++) {
 			Column column = tableViewerDescription.getColumn(i);
+			columnInfos[i] = new ColumnInfo();
 			if (column.getConverter() == null) {
+				columnInfos[i].converterDefaulted = true;
 				if (column.getPropertyType()!=null)
-				   column.setConverter(dataBindingContext.createConverter(String.class, column.getPropertyType(), tableViewerDescription));
+					initializeColumnConverter(column,column.getPropertyType());
 				else
 				   column.setConverter(new IdentityConverter(String.class));
 			}
 			if (column.getValidator() == null) {
-				column.setValidator(new IValidator() {
-
-					public String isPartiallyValid(Object value) {
-						return null;
-					}
-
-					public String isValid(Object value) {
-						return null;
-					}
-				});
+				columnInfos[i].validatorDefaulted = true;
+				initializeColumnValidator(column, column.getPropertyType());
 			}
-			if (column.getCellEditor() == null) {				
+			if (column.getCellEditor() == null) {
+				columnInfos[i].cellEditorDefaulted = true;
 				column.setCellEditor(createCellEditor(column));
 			}
 		}
 		if (tableViewerDescription.getCellModifier() == null) {
 			tableViewerDescription.setCellModifier(createCellModifier(dataBindingContext));
 		}
+	}
+	
+	private void initializeColumnConverter(Column column, Class propertyType){
+		   column.setConverter(dataBindingContext.createConverter(String.class, propertyType, tableViewerDescription));		
+	}
+	
+	private void initializeColumnValidator(Column column, Class propertyType){
+		column.setValidator(new IValidator() {
+
+			public String isPartiallyValid(Object value) {
+				return null;
+			}
+
+			public String isValid(Object value) {
+				return null;
+			}
+		});		
+	}
+	
+	public int addElement(Object element, int index) {
+		// If first time through and any of the columns had default information supplied then we may now have
+		// more detailed information available from the explicit type which means we can calculate better
+		// converters, validators and cell editors
+		if(columnInfos != null){
+			for (int i = 0; i < tableViewerDescription.getColumnCount(); i++) {
+				Column column = tableViewerDescription.getColumn(i);
+				ColumnInfo columnInfo = columnInfos[i];
+				if(column.getPropertyType() == null && (columnInfo.cellEditorDefaulted || columnInfo.converterDefaulted || columnInfo.validatorDefaulted)){
+					// Work out the type of the column from the property name from the element type itself
+					PropertyDesc columnPropertyDesc = new PropertyDesc(element,column.getPropertyName());
+					IUpdatableValue dummyUpdatable = (IUpdatableValue) dataBindingContext.createUpdatable(columnPropertyDesc);
+					Class columnType = dummyUpdatable.getValueType();
+					if(columnType != null){
+						// We have a more explicit property type that was supplied
+						if(columnInfo.converterDefaulted){	
+							initializeColumnConverter(column,columnType);
+						}
+						if(columnInfo.validatorDefaulted){
+							initializeColumnValidator(column,columnType);
+						}
+						if(columnInfo.cellEditorDefaulted){
+							createCellEditor(column);							
+						}
+					}
+				}
+			}
+			columnInfos = null;	// Clear the variable so we don't re-default again
+		}
+		return super.addElement(element, index);
 	}
 
 	protected Column getColumn(int columnIndex) {

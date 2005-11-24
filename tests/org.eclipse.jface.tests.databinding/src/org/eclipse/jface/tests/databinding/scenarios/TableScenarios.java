@@ -242,4 +242,25 @@ public class TableScenarios extends ScenariosTestCase {
 		
 	}
 	
+	public void testScenario07(){
+		// Verify that even when a column's property type is not set, that it is worked out lazily from the target type 
+		TableViewerDescription tableViewerDescription = new TableViewerDescription(
+				tableViewer);
+		tableViewerDescription.addColumn("price");
+		// The column's type is not set to be Double.TYPE.  This will be inferred once the first Transportation object is set
+		// into the UpdatableCollection
+		getDbc().bind(tableViewerDescription,
+				new PropertyDesc(catalog, "transporations"), null);
+		Transportation transporation = catalog.getTransporations()[0];
+		tableViewer.editElement(transporation, 0);
+		// Set the text property of the cell editor which is now active over the "firstName" column
+		CellEditor[] cellEditors = tableViewer.getCellEditors();
+		TextCellEditor priceEditor = (TextCellEditor) cellEditors[0];
+		// Change the firstName and test it goes to the model
+		enterText((Text) priceEditor.getControl(), "123.45");
+		// Verify the model is updated
+		assertEquals(transporation.getPrice(),123.45,0);
+		
+	}	
+	
 }
