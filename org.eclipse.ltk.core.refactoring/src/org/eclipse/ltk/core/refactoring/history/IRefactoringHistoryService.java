@@ -86,7 +86,7 @@ public interface IRefactoringHistoryService {
 	 * operation history if necessary and decrements an internal counter.
 	 * <p>
 	 * If the service is not connected, nothing happens. If the service is
-	 * connected, all resources acquired by the corresponding call to
+	 * connected, all resources acquired since the corresponding call to
 	 * {@link #connect()} are released.
 	 * </p>
 	 * <p>
