@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 import org.xml.sax.Attributes;
@@ -39,29 +38,23 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Reader for XML-based refactoring histories.
+ * Reader for XML-based refactoring sessions.
  * <p>
  * The input object is exspected to be of type {@link org.xml.sax.InputSource}.
  * </p>
  * 
  * @since 3.2
  */
-final class RefactoringHistoryReader extends DefaultHandler {
+final class RefactoringSessionReader extends DefaultHandler {
 
 	/** The comment of the refactoring session, or <code>null</code> */
 	private String fComment= null;
-
-	/** The refactoring descriptor, or <code>null</code> */
-	private RefactoringDescriptor fRefactoringDescriptor= null;
 
 	/**
 	 * The current list of refactoring descriptors, or <code>null</code>
 	 * (element type: <code>RefactoringDescriptor</code>)
 	 */
 	private List fRefactoringDescriptors= null;
-
-	/** The time stamp, or <code>-1</code> */
-	private long fStamp= -1;
 
 	/** The current version of the refactoring script, or <code>null</code> */
 	private String fVersion= null;
@@ -96,57 +89,16 @@ final class RefactoringHistoryReader extends DefaultHandler {
 	}
 
 	/**
-	 * Reads a refactoring from the specified input object.
+	 * Reads a refactoring history descriptor from the specified input object.
 	 * 
 	 * @param input
 	 *            the input object
-	 * @param stamp
-	 *            the time stamp of the refactoring
-	 * @return a corresponding refactoring descriptor, or <code>null</code>
-	 * @throws CoreException
-	 *             if an error occurs while reading form the input
-	 */
-	public RefactoringDescriptor readDescriptor(Object input, long stamp) throws CoreException {
-		Assert.isTrue(stamp >= 0);
-		fStamp= stamp;
-		if (input instanceof InputSource) {
-			try {
-				final InputSource source= (InputSource) input;
-				source.setSystemId("/"); //$NON-NLS-1$
-				createParser(SAXParserFactory.newInstance()).parse(source, this);
-				if (fRefactoringDescriptor != null) {
-					final RefactoringDescriptor descriptor= fRefactoringDescriptor;
-					return descriptor;
-				}
-			} catch (IOException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-			} catch (ParserConfigurationException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-			} catch (SAXException exception) {
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
-			} finally {
-				fRefactoringDescriptors= null;
-				fRefactoringDescriptor= null;
-				fVersion= null;
-				fComment= null;
-				fStamp= -1;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Reads a refactoring session from the specified input object.
-	 * 
-	 * @param input
-	 *            the input object
-	 * @return a corresponding refactoring session descriptor, or
+	 * @return a corresponding refactoring history descriptor, or
 	 *         <code>null</code>
 	 * @throws CoreException
 	 *             if an error occurs while reading form the input
 	 */
 	public RefactoringSessionDescriptor readSession(final Object input) throws CoreException {
-		fStamp= -1;
 		if (input instanceof InputSource) {
 			try {
 				final InputSource source= (InputSource) input;
@@ -164,10 +116,8 @@ final class RefactoringHistoryReader extends DefaultHandler {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 			} finally {
 				fRefactoringDescriptors= null;
-				fRefactoringDescriptor= null;
 				fVersion= null;
 				fComment= null;
-				fStamp= -1;
 			}
 		}
 		return null;
@@ -211,22 +161,10 @@ final class RefactoringHistoryReader extends DefaultHandler {
 				// Do nothing
 			}
 			final RefactoringDescriptor descriptor= new RefactoringDescriptor(id, project, description, comment, map, flag);
-			try {
-				final long time= Long.valueOf(stamp).longValue();
-				if (fStamp == -1) {
-					if (fRefactoringDescriptors == null)
-						fRefactoringDescriptors= new ArrayList();
-					descriptor.setTimeStamp(time);
-					fRefactoringDescriptors.add(descriptor);
-				} else if (time == fStamp) {
-					fRefactoringDescriptor= descriptor;
-					fRefactoringDescriptor.setTimeStamp(time);
-				}
-			} catch (NumberFormatException exception) {
-				if (fRefactoringDescriptors == null)
-					fRefactoringDescriptors= new ArrayList();
-				fRefactoringDescriptors.add(descriptor);
-			}
+			descriptor.setTimeStamp(Long.valueOf(stamp).longValue());
+			if (fRefactoringDescriptors == null)
+				fRefactoringDescriptors= new ArrayList();
+			fRefactoringDescriptors.add(descriptor);
 		} else if (IRefactoringSerializationConstants.ELEMENT_SESSION.equals(qualifiedName)) {
 			final String version= attributes.getValue(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);
 			if (version != null && !"".equals(version)) //$NON-NLS-1$

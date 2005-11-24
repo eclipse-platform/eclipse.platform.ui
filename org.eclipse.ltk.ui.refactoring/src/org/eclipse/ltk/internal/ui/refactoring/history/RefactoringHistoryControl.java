@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IProject;
 
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
@@ -110,6 +111,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * {@inheritDoc}
 	 */
 	public final void createControl() {
+		RefactoringCore.getRefactoringHistoryService().connect();
 		fCaptionImage= RefactoringPluginImages.DESC_OBJS_COMPOSITE_CHANGE.createImage();
 		GridLayout layout= new GridLayout(2, false);
 		layout.marginHeight= 0;
@@ -189,6 +191,14 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	protected TreeViewer createHistoryViewer(final Composite parent) {
 		Assert.isNotNull(parent);
 		return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final void dispose() {
+		RefactoringCore.getRefactoringHistoryService().disconnect();
+		super.dispose();
 	}
 
 	/**

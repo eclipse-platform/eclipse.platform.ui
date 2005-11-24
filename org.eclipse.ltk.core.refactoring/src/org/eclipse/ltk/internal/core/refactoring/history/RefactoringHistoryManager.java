@@ -56,6 +56,7 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
@@ -292,7 +293,7 @@ public final class RefactoringHistoryManager {
 	private static void readRefactoringDescriptors(final InputStream stream, final List descriptors, final int count, final IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 1);
-			final RefactoringDescriptor[] results= new RefactoringHistoryReader().readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
+			final RefactoringDescriptor[] results= new RefactoringSessionReader().readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
 			Arrays.sort(results, new Comparator() {
 
 				public final int compare(final Object first, final Object second) {
@@ -573,11 +574,17 @@ public final class RefactoringHistoryManager {
 		}
 	}
 
+	/** The cached descriptor, or <code>null</code> */
+	private RefactoringSessionDescriptor fCachedDescriptor= null;
+
 	/** The cached document, or <code>null</code> */
 	private Document fCachedDocument= null;
 
 	/** The cached path, or <code>null</code> */
 	private IPath fCachedPath= null;
+
+	/** The cached file store, or <code>null</code> */
+	private IFileStore fCachedStore= null;
 
 	/** The history file store */
 	private final IFileStore fHistoryStore;
@@ -591,7 +598,8 @@ public final class RefactoringHistoryManager {
 	 * @param store
 	 *            the history file store
 	 * @param name
-	 *            the non-empty name of the managed project, or <code>null</code>
+	 *            the non-empty name of the managed project, or
+	 *            <code>null</code>
 	 */
 	RefactoringHistoryManager(final IFileStore store, final String name) {
 		Assert.isNotNull(store);
@@ -604,9 +612,9 @@ public final class RefactoringHistoryManager {
 	 * Returns the cached refactoring history document.
 	 * 
 	 * @param path
-	 *            the path of the history entry
+	 *            the path of the document
 	 * @param input
-	 *            the input stream where to read the history entry
+	 *            the input stream where to read the document
 	 * @return the cached refactoring history document
 	 * @throws SAXException
 	 *             if an error occurs while parsing the history entry
@@ -624,6 +632,28 @@ public final class RefactoringHistoryManager {
 		fCachedDocument= document;
 		fCachedPath= path;
 		return document;
+	}
+
+	/**
+	 * Returns the cached refactoring session descriptor.
+	 * 
+	 * @param store
+	 *            the file store of the descriptor
+	 * @param input
+	 *            the input stream where to read the descriptor
+	 * @return the cached refactoring session descriptor
+	 * @throws CoreException
+	 *             if an error occurs while reading the session
+	 */
+	private RefactoringSessionDescriptor getCachedSession(final IFileStore store, final InputStream input) throws CoreException {
+		Assert.isNotNull(store);
+		Assert.isNotNull(input);
+		if (store.equals(fCachedStore) && fCachedDescriptor != null)
+			return fCachedDescriptor;
+		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader().readSession(new InputSource(input));
+		fCachedDescriptor= descriptor;
+		fCachedStore= store;
+		return descriptor;
 	}
 
 	/**
@@ -790,8 +820,16 @@ public final class RefactoringHistoryManager {
 						final IFileStore file= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
 						if (file != null && file.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists()) {
 							input= new BufferedInputStream(file.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
-							if (input != null)
-								return new RefactoringHistoryReader().readDescriptor(new InputSource(input), stamp);
+							if (input != null) {
+								final RefactoringSessionDescriptor descriptor= getCachedSession(file, input);
+								if (descriptor != null) {
+									final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
+									for (int index= 0; index < descriptors.length; index++) {
+										if (descriptors[index].getTimeStamp() == stamp)
+											return descriptors[index];
+									}
+								}
+							}
 						}
 					}
 				} catch (CoreException exception) {
@@ -841,6 +879,8 @@ public final class RefactoringHistoryManager {
 					} finally {
 						fCachedDocument= null;
 						fCachedPath= null;
+						fCachedDescriptor= null;
+						fCachedStore= null;
 					}
 				}
 			} catch (TransformerConfigurationException exception) {
