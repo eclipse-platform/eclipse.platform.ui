@@ -54,6 +54,7 @@ import org.eclipse.compare.CompareViewerSwitchingPane;
 import org.eclipse.compare.Splitter;
 
 import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
+import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
@@ -149,7 +150,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		fHistoryPane.setText(text);
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
-		fHistoryViewer.setAutoExpandLevel(2);
 		fHistoryViewer.setContentProvider(fControlConfiguration.getContentProvider());
 		fHistoryViewer.setLabelProvider(fControlConfiguration.getLabelProvider());
 		fHistoryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -247,5 +247,15 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	public void setRefactoringHistory(final RefactoringHistory history) {
 		fHistoryViewer.setInput(history);
+		final RefactoringHistoryContentProvider provider= fControlConfiguration.getContentProvider();
+		if (provider != null) {
+			provider.inputChanged(fHistoryViewer, null, history);
+			final Object[] roots= provider.getRootElements();
+			if (roots != null && roots.length > 0) {
+				final Object first= roots[0];
+				if (first != null)
+					fHistoryViewer.setExpandedState(first, true);
+			}
+		}
 	}
 }

@@ -147,7 +147,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	public Object[] getElements(final Object element) {
 		if (element instanceof RefactoringHistory) {
 			if (fControlConfiguration.isTimeDisplayed())
-				return getRefactoringHistoryRoots();
+				return getRootElements();
 			else if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty())
 				return new Object[] { new RefactoringHistoryContainer() };
 		}
@@ -329,34 +329,6 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	}
 
 	/**
-	 * Returns the refactoring history roots.
-	 * 
-	 * @return the refactoring history roots
-	 */
-	private Object[] getRefactoringHistoryRoots() {
-		final List list= new ArrayList();
-		if (!fRefactoringHistory.isEmpty()) {
-			final RefactoringDescriptorProxy[] proxies= getRefactoringHistoryDescriptors();
-			final long[][] structure= getRefactoringRootStructure(proxies[0].getTimeStamp());
-			int begin= 0;
-			long end= Long.MAX_VALUE;
-			for (int index= 0; index < proxies.length; index++) {
-				final long stamp= proxies[index].getTimeStamp();
-				for (int offset= begin; offset < structure.length; offset++) {
-					final long start= structure[offset][0];
-					if (stamp >= start && stamp <= end) {
-						list.add(new RefactoringHistoryDate(null, start, (int) structure[offset][1]));
-						begin= offset + 1;
-						end= start - 1;
-						break;
-					}
-				}
-			}
-		}
-		return list.toArray();
-	}
-
-	/**
 	 * Returns the refactoring history weeks.
 	 * 
 	 * @param parent
@@ -482,6 +454,38 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	}
 
 	/**
+	 * Returns the refactoring history root elements.
+	 * <p>
+	 * This class is NOT official API. It is used within the refactoring UI
+	 * plug-in to optimize rendering.
+	 * </p>
+	 * 
+	 * @return the refactoring history root elements
+	 */
+	public final Object[] getRootElements() {
+		final List list= new ArrayList();
+		if (!fRefactoringHistory.isEmpty()) {
+			final RefactoringDescriptorProxy[] proxies= getRefactoringHistoryDescriptors();
+			final long[][] structure= getRefactoringRootStructure(proxies[0].getTimeStamp());
+			int begin= 0;
+			long end= Long.MAX_VALUE;
+			for (int index= 0; index < proxies.length; index++) {
+				final long stamp= proxies[index].getTimeStamp();
+				for (int offset= begin; offset < structure.length; offset++) {
+					final long start= structure[offset][0];
+					if (stamp >= start && stamp <= end) {
+						list.add(new RefactoringHistoryDate(null, start, (int) structure[offset][1]));
+						begin= offset + 1;
+						end= start - 1;
+						break;
+					}
+				}
+			}
+		}
+		return list.toArray();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public boolean hasChildren(final Object element) {
@@ -492,11 +496,13 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * {@inheritDoc}
 	 */
 	public void inputChanged(final Viewer viewer, final Object predecessor, final Object successor) {
-		if (successor instanceof RefactoringHistory) {
+		if (predecessor == successor)
+			return;
+		if (successor instanceof RefactoringHistory)
 			fRefactoringHistory= (RefactoringHistory) successor;
-			fRefactoringRoots= null;
-			fRefactoringStamps= null;
-		} else
+		else
 			fRefactoringHistory= null;
+		fRefactoringRoots= null;
+		fRefactoringStamps= null;
 	}
 }

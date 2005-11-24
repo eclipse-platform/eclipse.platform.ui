@@ -15,11 +15,13 @@ import java.text.Format;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryDate;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEntry;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryNode;
@@ -151,7 +153,11 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								break;
 							case RefactoringHistoryNode.DAY:
 								pattern= fControlConfiguration.getDayPattern();
-								format= DateFormat.getDateInstance();
+								final int type= node.getParent().getKind();
+								if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK)
+									format= new SimpleDateFormat("EEEE", new Locale(RefactoringUIMessages.RefactoringHistoryLabelProvider_label_language, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_country, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_variant)); //$NON-NLS-1$
+								else
+									format= DateFormat.getDateInstance();
 								break;
 							case RefactoringHistoryNode.YESTERDAY:
 								pattern= fControlConfiguration.getYesterdayPattern();
