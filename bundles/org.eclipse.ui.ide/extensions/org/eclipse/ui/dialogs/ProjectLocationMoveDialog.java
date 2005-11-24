@@ -12,347 +12,206 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.dialogs.FileStoreLocationArea;
 
 /**
- * The ProjectLocationMoveDialog is the dialog used to select the
- * location of a project for moving.
+ * The ProjectLocationMoveDialog is the dialog used to select the location of a
+ * project for moving.
  */
 public class ProjectLocationMoveDialog extends SelectionDialog {
-    private IProject project;
+	private IProject project;
 
-    private IPath originalPath;
+	private Label statusMessageLabel;
 
-    // widgets
-    private Text locationPathField;
+	private static String PROJECT_LOCATION_SELECTION_TITLE = IDEWorkbenchMessages.ProjectLocationSelectionDialog_selectionTitle;
 
-    private Label locationLabel;
+	private boolean useDefaults = true;
 
-    private Label statusMessageLabel;
+	private FileStoreLocationArea locationArea;
 
-    private Button browseButton;
+	/**
+	 * Create a ProjectLocationMoveDialog on the supplied project parented by
+	 * the parentShell.
+	 * 
+	 * @param parentShell
+	 * @param existingProject
+	 */
+	public ProjectLocationMoveDialog(Shell parentShell, IProject existingProject) {
+		super(parentShell);
+		setTitle(PROJECT_LOCATION_SELECTION_TITLE);
+		this.project = existingProject;
+		try {
+			URI originalPath = this.getProject().getDescription()
+					.getLocationURI();
+			this.useDefaults = originalPath == null;
+		} catch (CoreException exception) {
+			// Leave it as the default.
+		}
+	}
 
-    private static String LOCATION_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationLabel;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.SelectionDialog#setMessage(java.lang.String)
+	 */
+	public void setMessage(String message) {
+		super.setMessage(message);
+		if (statusMessageLabel != null) {
+			if (message == null) {
+				statusMessageLabel.setText("");//$NON-NLS-1$
+				statusMessageLabel.setToolTipText("");//$NON-NLS-1$
+				getOkButton().setEnabled(true);
+			} else {
+				statusMessageLabel.setForeground(JFaceColors
+						.getErrorText(statusMessageLabel.getDisplay()));
+				statusMessageLabel.setText(message);
+				statusMessageLabel.setToolTipText(message);
+				getOkButton().setEnabled(false);
+			}
+		}
+	}
 
-    private static String BROWSE_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_browseLabel;
+	/*
+	 * (non-Javadoc) Method declared in Window.
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IIDEHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
+	}
 
-    private static String DIRECTORY_DIALOG_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_directoryLabel;
+	/*
+	 * (non-Javadoc) Method declared on Dialog.
+	 */
+	protected Control createContents(Composite parent) {
+		Control content = super.createContents(parent);
+		getOkButton().setEnabled(false);
+		return content;
+	}
 
-    private static String INVALID_LOCATION_MESSAGE = IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
+	/*
+	 * (non-Javadoc) Method declared on Dialog.
+	 */
+	protected Control createDialogArea(Composite parent) {
+		// page group
+		Composite composite = (Composite) super.createDialogArea(parent);
 
-    private static String PROJECT_LOCATION_SELECTION_TITLE = IDEWorkbenchMessages.ProjectLocationSelectionDialog_selectionTitle;
+		composite.setLayout(new GridLayout());
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-    // constants
-    private static final int SIZING_TEXT_FIELD_WIDTH = 250;
+		createProjectLocationGroup(composite);
 
-    private boolean useDefaults = true;
+		// Add in a label for status messages if required
+		statusMessageLabel = new Label(composite, SWT.WRAP);
+		statusMessageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
+		statusMessageLabel.setFont(parent.getFont());
+		// Make it two lines.
+		statusMessageLabel.setText(" \n "); //$NON-NLS-1$
 
-    /**
-     * Create a ProjectLocationMoveDialog on the supplied project parented by the parentShell.
-     * @param parentShell
-     * @param existingProject
-     */
-    public ProjectLocationMoveDialog(Shell parentShell, IProject existingProject) {
-        super(parentShell);
-        setTitle(PROJECT_LOCATION_SELECTION_TITLE);
-        this.project = existingProject;
-        try {
-            this.originalPath = this.getProject().getDescription()
-                    .getLocation();
-            this.useDefaults = this.originalPath == null;
-        } catch (CoreException exception) {
-            // Leave it as the default.
-        }
-    }
+		applyDialogFont(composite);
+		return composite;
+	}
 
-    /**
-     * Check the message. If it is null then continue otherwise inform the user via the
-     * status value and disable the OK.
-     * @param errorMsg the error message to show if it is not null.
-     */
-    private void applyValidationResult(String errorMsg) {
+	/**
+	 * Creates the project location specification controls.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	private final void createProjectLocationGroup(Composite parent) {
+		// project specification group
+		Composite projectGroup = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		projectGroup.setLayout(layout);
+		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        if (errorMsg == null) {
-            statusMessageLabel.setText("");//$NON-NLS-1$
-            statusMessageLabel.setToolTipText("");//$NON-NLS-1$
-            getOkButton().setEnabled(true);
-        } else {
-            statusMessageLabel.setForeground(JFaceColors
-                    .getErrorText(statusMessageLabel.getDisplay()));
-            statusMessageLabel.setText(errorMsg);
-            statusMessageLabel.setToolTipText(errorMsg);
-            getOkButton().setEnabled(false);
-        }
-    }
+		final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK
+				| SWT.RIGHT);
+		useDefaultsButton
+				.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_useDefaultLabel);
+		useDefaultsButton.setSelection(this.useDefaults);
+		GridData buttonData = new GridData();
+		buttonData.horizontalSpan = 3;
+		useDefaultsButton.setLayoutData(buttonData);
 
-    /**
-     * Check whether the entries are valid. If so return null. Otherwise
-     * return a string that indicates the problem.
-     */
-    private String checkValid() {
-        return checkValidLocation();
-    }
+		createUserSpecifiedProjectLocationGroup(projectGroup, !this.useDefaults);
 
-    /**
-     * Check if the entry in the widget location is valid. If it is valid return null.
-     * Otherwise return a string that indicates the problem.
-     */
-    private String checkValidLocation() {
+		SelectionListener listener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				useDefaults = useDefaultsButton.getSelection();
+				locationArea.setToDefault(useDefaults);
+			}
+		};
+		useDefaultsButton.addSelectionListener(listener);
+	}
 
-        if (useDefaults) {
-            if (this.originalPath == null)
-                return INVALID_LOCATION_MESSAGE;
-            return null;
-        }
-        String locationFieldContents = locationPathField.getText();
-        if (locationFieldContents.equals("")) {//$NON-NLS-1$
-            return (IDEWorkbenchMessages.WizardNewProjectCreationPage_projectLocationEmpty);
-        }
-        IPath path = new Path("");//$NON-NLS-1$
-        if (!path.isValidPath(locationFieldContents)) {
-            return INVALID_LOCATION_MESSAGE;
-        }
+	/**
+	 * Creates the project location specification controls.
+	 * 
+	 * @return the parent of the widgets created
+	 * @param projectGroup
+	 *            the parent composite
+	 * @param enabled -
+	 *            sets the initial enabled state of the widgets
+	 */
+	private Composite createUserSpecifiedProjectLocationGroup(
+			Composite projectGroup, boolean enabled) {
 
-        Path newPath = new Path(locationFieldContents);
-        IStatus locationStatus = this.project.getWorkspace()
-                .validateProjectLocation(this.project, newPath);
+		locationArea = new FileStoreLocationArea(this, projectGroup,
+				this.project);
+		locationArea.setEnabled(enabled);
 
-        if (!locationStatus.isOK())
-            return locationStatus.getMessage();
+		// Scale the button based on the rest of the dialog
+		setButtonLayoutData(locationArea.getBrowseButton());
 
-        if (originalPath != null && originalPath.equals(newPath)) {
-            return INVALID_LOCATION_MESSAGE;
-        }
+		return projectGroup;
 
-        return null;
-    }
+	}
 
-    /* (non-Javadoc)
-     * Method declared in Window.
-     */
-    protected void configureShell(Shell shell) {
-        super.configureShell(shell);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-                IIDEHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
-    }
+	/**
+	 * Get the project being manipulated.
+	 */
+	private IProject getProject() {
+		return this.project;
+	}
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
-    protected Control createContents(Composite parent) {
-        Control content = super.createContents(parent);
-        getOkButton().setEnabled(false);
-        return content;
-    }
+	/**
+	 * The <code>ProjectLocationMoveDialog</code> implementation of this
+	 * <code>Dialog</code> method builds a two element list - the first
+	 * element is the project name and the second one is the location.
+	 */
+	protected void okPressed() {
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
-    protected Control createDialogArea(Composite parent) {
-        // page group
-        Composite composite = (Composite) super.createDialogArea(parent);
+		ArrayList list = new ArrayList();
+		list.add(getProject().getName());
+		if (useDefaults)
+			list.add(Platform.getLocation().toString());
+		else
+			list.add(locationArea.getLocationValue());
+		setResult(list);
+		super.okPressed();
+	}
 
-        composite.setLayout(new GridLayout());
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-        createProjectLocationGroup(composite);
-
-        //Add in a label for status messages if required
-        statusMessageLabel = new Label(composite, SWT.WRAP);
-        statusMessageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
-        statusMessageLabel.setFont(parent.getFont());
-        //Make it two lines.
-        statusMessageLabel.setText(" \n "); //$NON-NLS-1$
-
-        return composite;
-    }
-
-    /**
-     * Create the listener that is used to validate the location entered by the iser
-     */
-    private void createLocationListener() {
-
-        Listener listener = new Listener() {
-            public void handleEvent(Event event) {
-                applyValidationResult(checkValid());
-            }
-        };
-
-        this.locationPathField.addListener(SWT.Modify, listener);
-    }
-
-    /**
-     * Creates the project location specification controls.
-     *
-     * @param parent the parent composite
-     */
-    private final void createProjectLocationGroup(Composite parent) {
-        Font font = parent.getFont();
-        // project specification group
-        Composite projectGroup = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 3;
-        projectGroup.setLayout(layout);
-        projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        projectGroup.setFont(font);
-
-        final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK
-                | SWT.RIGHT);
-        useDefaultsButton.setFont(font);
-        useDefaultsButton.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_useDefaultLabel);
-        useDefaultsButton.setSelection(this.useDefaults);
-        GridData buttonData = new GridData();
-        buttonData.horizontalSpan = 3;
-        useDefaultsButton.setLayoutData(buttonData);
-
-        createUserSpecifiedProjectLocationGroup(projectGroup, !this.useDefaults);
-
-        SelectionListener listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                useDefaults = useDefaultsButton.getSelection();
-                browseButton.setEnabled(!useDefaults);
-                locationPathField.setEnabled(!useDefaults);
-                locationLabel.setEnabled(!useDefaults);
-                setLocationForSelection();
-                if (!useDefaults) {
-                    if (originalPath != null)
-                        locationPathField.setText(originalPath.toOSString());
-                    else
-                        locationPathField.setText(""); //$NON-NLS-1$
-                }
-            }
-        };
-        useDefaultsButton.addSelectionListener(listener);
-    }
-
-    /**
-     * Creates the project location specification controls.
-     *
-     * @return the parent of the widgets created
-     * @param projectGroup the parent composite
-     * @param enabled - sets the initial enabled state of the widgets
-     */
-    private Composite createUserSpecifiedProjectLocationGroup(
-            Composite projectGroup, boolean enabled) {
-        Font font = projectGroup.getFont();
-        // location label
-        locationLabel = new Label(projectGroup, SWT.NONE);
-        locationLabel.setFont(font);
-        locationLabel.setText(LOCATION_LABEL);
-        locationLabel.setEnabled(enabled);
-
-        // project location entry field
-        locationPathField = new Text(projectGroup, SWT.BORDER);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        data.widthHint = SIZING_TEXT_FIELD_WIDTH;
-        locationPathField.setLayoutData(data);
-        locationPathField.setFont(font);
-        locationPathField.setEnabled(enabled);
-
-        // browse button
-        this.browseButton = new Button(projectGroup, SWT.PUSH);
-        this.browseButton.setFont(font);
-        this.browseButton.setText(BROWSE_LABEL);
-        this.browseButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent event) {
-                handleLocationBrowseButtonPressed();
-            }
-        });
-        this.browseButton.setEnabled(enabled);
-        setButtonLayoutData(this.browseButton);
-
-        // Set the initial value first before listener
-        // to avoid handling an event during the creation.
-        if (originalPath == null)
-            setLocationForSelection();
-        else
-            locationPathField.setText(originalPath.toOSString());
-
-        createLocationListener();
-        return projectGroup;
-
-    }
-
-    /**
-     * Get the project being manipulated.
-     */
-    private IProject getProject() {
-        return this.project;
-    }
-
-    /**
-     *	Open an appropriate directory browser
-     */
-    private void handleLocationBrowseButtonPressed() {
-        DirectoryDialog dialog = new DirectoryDialog(locationPathField
-                .getShell());
-        dialog.setMessage(DIRECTORY_DIALOG_LABEL);
-
-        String dirName = locationPathField.getText();
-        if (!dirName.equals("")) {//$NON-NLS-1$
-            File path = new File(dirName);
-            if (path.exists())
-                dialog.setFilterPath(dirName);
-        }
-
-        String selectedDirectory = dialog.open();
-        if (selectedDirectory != null)
-            locationPathField.setText(selectedDirectory);
-    }
-
-    /**
-     * The <code>ProjectLocationMoveDialog</code> implementation of this 
-     * <code>Dialog</code> method builds a two element list - the first element
-     * is the project name and the second one is the location.
-     */
-    protected void okPressed() {
-
-        ArrayList list = new ArrayList();
-        list.add(getProject().getName());
-        if (useDefaults)
-            list.add(Platform.getLocation().toString());
-        else
-            list.add(this.locationPathField.getText());
-        setResult(list);
-        super.okPressed();
-    }
-
-    /**
-     * Set the location to the default location if we are set to useDefaults.
-     */
-    private void setLocationForSelection() {
-        if (useDefaults) {
-            IPath defaultPath = Platform.getLocation().append(
-                    getProject().getName());
-            locationPathField.setText(defaultPath.toOSString());
-        }
-    }
 }
