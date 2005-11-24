@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.swt.SWTProperties;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
-import org.eclipse.jface.tests.databinding.scenarios.model.PriceCentsConverter;
-import org.eclipse.jface.tests.databinding.scenarios.model.PriceDollarsConverter;
+import org.eclipse.jface.tests.databinding.scenarios.model.PriceModelObject;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Spinner;
@@ -45,18 +43,24 @@ public class CustomConverterScenarios extends ScenariosTestCase {
 		Spinner spinner_dollars = new Spinner(getComposite(), SWT.NONE);
 		spinner_dollars.setMaximum(10000);
 		Spinner spinner_cents = new Spinner(getComposite(), SWT.NONE);
+		
+		// The price object is a double which contains both the dollars and cents
+		// To allow this to be worked on with two separate spinner controls (which get and set int values)
+		// an intermediate object is used
+		PriceModelObject priceModel = new PriceModelObject();
+		getDbc().bind(
+				new Property(priceModel,"price"),
+				new Property(skiTrip,"price"),null);
 
 		getDbc().bind(
 				new Property(spinner_dollars,
 						SWTProperties.SELECTION),
-				new Property(skiTrip, "price"),
-				new BindSpec(new PriceDollarsConverter(), null));
+				new Property(priceModel, "dollars"),null);
 
 		getDbc().bind(
 				new Property(spinner_cents,
 						SWTProperties.SELECTION),
-				new Property(skiTrip, "price"),
-				new BindSpec(new PriceCentsConverter(), null));
+				new Property(priceModel, "cents"),null);
 		// spinEventLoop(1);
 		// Make sure that the selection on the spinner_dollars matches the
 		// dollars of the price
@@ -73,12 +77,12 @@ public class CustomConverterScenarios extends ScenariosTestCase {
 		// the model is updated with the cents included
 		spinner_dollars.setSelection(50);
 		double expectedPrice = 50 + cents / 100;
-		assertEquals(new Double(expectedPrice), new Double(skiTrip.getPrice()));
+		assertEquals(expectedPrice, skiTrip.getPrice(),0.01);
 
 		// Change the selection on the spinner_cents to be 27 and make sure the
 		// model is updated with the dollars included
 		spinner_cents.setSelection(27);
-		assertEquals(new Double(50.27), new Double(skiTrip.getPrice()));
+		assertEquals(50.27, skiTrip.getPrice(),0.01);
 
 		// Change the model to be $60.99 dollars and make sure the
 		// spinner_dollars is 60 and spinner_cents is 99
