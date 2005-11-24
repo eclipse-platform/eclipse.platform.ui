@@ -15,7 +15,6 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.team.ui.mapping.IResourceMappingScope;
-import org.eclipse.team.ui.synchronize.AbstractSynchronizeScope;
 
 /**
  * Concrete implementation of the {@link IResourceMappingScope}
@@ -34,13 +33,11 @@ import org.eclipse.team.ui.synchronize.AbstractSynchronizeScope;
  * 
  * @since 3.2
  */
-public class ResourceMappingScope extends AbstractSynchronizeScope implements
-		IResourceMappingScope {
+public class ResourceMappingScope extends AbstractResourceMappingScope {
 	
 	private ResourceMapping[] inputMappings;
 	private final Map mappingsToTraversals = new HashMap();
 	private boolean hasAdditionalMappings;
-	private IResource[] roots;
 	private final String label;
 
 	public static ResourceTraversal[] combineTraversals(ResourceTraversal[] allTraversals) {
@@ -145,70 +142,6 @@ public class ResourceMappingScope extends AbstractSynchronizeScope implements
 	 */
 	public void setHasAdditionalMappings(boolean hasAdditionalMappings) {
 		this.hasAdditionalMappings = hasAdditionalMappings;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.IResourceMappingOperationScope#getModelProviders()
-	 */
-	public ModelProvider[] getModelProviders() {
-		Set result = new HashSet();
-		ResourceMapping[] mappings = getMappings();
-		for (int i = 0; i < mappings.length; i++) {
-			ResourceMapping mapping = mappings[i];
-			result.add(mapping.getModelProvider());
-		}
-		return (ModelProvider[]) result.toArray(new ModelProvider[result.size()]);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.IResourceMappingOperationScope#getMappings(java.lang.String)
-	 */
-	public ResourceMapping[] getMappings(String id) {
-		Set result = new HashSet();
-		ResourceMapping[] mappings = getMappings();
-		for (int i = 0; i < mappings.length; i++) {
-			ResourceMapping mapping = mappings[i];
-			if (mapping.getModelProviderId().equals(id)) {
-				result.add(mapping);
-			}
-		}
-		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.IResourceMappingScope#getRoots()
-	 */
-	public IResource[] getRoots() {
-		if (roots == null) {
-			Set result = new HashSet();
-			ResourceTraversal[] traversals = getTraversals();
-			for (int i = 0; i < traversals.length; i++) {
-				ResourceTraversal traversal = traversals[i];
-				IResource[] resources = traversal.getResources();
-				for (int j = 0; j < resources.length; j++) {
-					IResource resource = resources[j];
-					//TODO: should we check for parent/child relationships?
-					result.add(resource);
-				}
-			}
-			roots = (IResource[]) result.toArray(new IResource[result.size()]);
-		}
-		return roots;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeScope#contains(org.eclipse.core.resources.IResource)
-	 */
-	public boolean contains(IResource resource) {
-		ResourceTraversal[] traversals = getTraversals();
-		for (int i = 0; i < traversals.length; i++) {
-			ResourceTraversal traversal = traversals[i];
-			if (traversal.contains(resource)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/* (non-Javadoc)

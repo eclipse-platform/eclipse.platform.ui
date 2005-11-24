@@ -14,6 +14,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
+import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
  * TeamUI contains public API for generic UI-based Team functionality.
@@ -35,6 +36,22 @@ public class TeamUI {
      * @since 3.1
      */
 	public static final String GLOBAL_FILE_TYPES_CHANGED = TeamUIPlugin.ID + "global_file_types_changed"; //$NON-NLS-1$
+
+	/**
+	 * Property constant used to store and retrieve the synchronization context
+	 * from the {@link IExtensionStateModel} used by the Common Navigator framework.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String SYNCHRONIZATION_CONTEXT = "org.eclipse.team.ui.synchronizationContext"; //$NON-NLS-1$
+
+	/**
+	 * Property constant used to store and retrieve the resource mapping scope
+	 * from the {@link IExtensionStateModel} used by the Common Navigator framework.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String RESOURCE_MAPPING_SCOPE = "org.eclipse.team.ui.resourceMappingScope"; //$NON-NLS-1$
 
 	/**
 	 * Return the synchronize manager.

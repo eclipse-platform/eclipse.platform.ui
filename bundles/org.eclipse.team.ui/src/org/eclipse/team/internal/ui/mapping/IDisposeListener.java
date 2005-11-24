@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
+import org.eclipse.team.ui.mapping.ISynchronizationContext;
+
 /**
  * Listener that, when registered with a synchronization context, gets invoked
  * when the context is disposed.
@@ -28,5 +30,5 @@ public interface IDisposeListener {
 	/**
 	 * The given context has been disposed.
 	 */
-	void contextDisposed(ISynchronizationCache context);
+	void contextDisposed(ISynchronizationContext context);
 }

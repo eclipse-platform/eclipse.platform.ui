@@ -319,11 +319,55 @@
             class="org.eclipse.team.internal.ui.TeamAdapterFactory">
          <adapter type="org.eclipse.team.ui.mapping.IResourceMappingMerger"/>
       </factory>
-      <factory
-            adaptableType="org.eclipse.core.resources.mapping.ModelProvider"
-            class="org.eclipse.team.internal.ui.TeamAdapterFactory">
-         <adapter type="org.eclipse.team.internal.ui.mapping.INavigatorContentExtensionFactory"/>
-      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent
+            contentProvider="org.eclipse.team.internal.ui.mapping.NavigatorExtensionContentProvider"
+            id="org.eclipse.team.ui.navigatorContent"
+            labelProvider="org.eclipse.team.internal.ui.mapping.NavigatorExtensionLabelProvider"
+            name="Team">
+      </navigatorContent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent
+            contentProvider="org.eclipse.team.internal.ui.mapping.ResourceTeamAwareContentProvider"
+            enabledByDefault="true"
+            id="org.eclipse.team.ui.resourceContent"
+            labelProvider="org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider"
+            name="Resource Mappings">
+         <enablement>
+         <or>         
+            <objectClass
+                  name="org.eclipse.core.internal.resources.mapping.ResourceModelProvider">
+            </objectClass>
+            <objectClass
+                  name="org.eclipse.team.internal.ui.mapping.ResourceAndDepth">
+            </objectClass>
+            <objectClass
+                  name="org.eclipse.core.resources.IResource">
+            </objectClass> 
+         </or>
+         </enablement>
+       </navigatorContent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorViewer">
+      <navigatorViewer
+            rootContentExtensionId="org.eclipse.team.ui.navigatorContent"
+            viewerId="org.eclipse.team.ui.navigatorViewer"/>
+   </extension>
+   
+   <!-- *************** Synchronize View Participant **************** -->
+   <extension
+         point="org.eclipse.team.ui.synchronizeParticipants">
+      <participant
+            name="Synchronization"
+            icon="$nl$/icons/full/eview16/synch_synch.gif"
+            class="org.eclipse.team.internal.ui.mapping.ModelSynchronizeParticipant"
+            id="org.eclipse.team.ui.synchronization_context_synchronize_participant">
+      </participant>
    </extension>
 
 </plugin>

@@ -41,7 +41,7 @@ import org.eclipse.ui.part.PageBook;
 public class ChangesSection extends Composite {
 	
 	private ISynchronizeParticipant participant;
-	private SyncInfoSetSynchronizePage page;
+	private AbstractSynchronizePage page;
 	private FormToolkit forms;
 			
 	/**
@@ -119,7 +119,7 @@ public class ChangesSection extends Composite {
 	 * @param parent the parent control 
 	 * @param page the page showing this section
 	 */
-	public ChangesSection(Composite parent, SyncInfoSetSynchronizePage page, ISynchronizePageConfiguration configuration) {
+	public ChangesSection(Composite parent, AbstractSynchronizePage page, ISynchronizePageConfiguration configuration) {
 		super(parent, SWT.NONE);
 		this.page = page;
 		this.configuration = configuration;

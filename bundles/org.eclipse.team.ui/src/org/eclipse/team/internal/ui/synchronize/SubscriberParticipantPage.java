@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
@@ -30,7 +31,7 @@ import org.eclipse.team.ui.synchronize.SubscriberParticipant;
  * </p> 
  * @since 3.0
  */
-public final class SubscriberParticipantPage extends SyncInfoSetSynchronizePage implements IAdaptable {
+public final class SubscriberParticipantPage extends AbstractSynchronizePage implements IAdaptable {
 		
 	private SubscriberParticipant participant;
 	
@@ -43,7 +44,7 @@ public final class SubscriberParticipantPage extends SyncInfoSetSynchronizePage 
 	 * Filters out-of-sync resources by working set and mode
 	 */
 	private WorkingSetFilteredSyncInfoCollector collector;
-		
+	
 	/**
 	 * Constructs a new SynchronizeView.
 	 */
@@ -64,6 +65,10 @@ public final class SubscriberParticipantPage extends SyncInfoSetSynchronizePage 
 		return participant;
 	}
 
+	protected AbstractViewerAdvisor createViewerAdvisor(Composite parent) {
+		return new TreeViewerAdvisor(parent, getConfiguration());
+	}
+	
 	/*
 	 * This method is invoked from <code>setMode</code> when the mode has changed.
 	 * It sets the filter on the collector to show the <code>SyncInfo</code>

@@ -11,12 +11,18 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.internal.INavigatable;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.ExpandAllAction;
@@ -24,6 +30,8 @@ import org.eclipse.team.internal.ui.synchronize.actions.NavigateAction;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.part.ResourceTransfer;
 
 /**
  * A <code>TreeViewerAdvisor</code> that works with TreeViewers. Two default
@@ -50,7 +58,9 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 	private ExpandAllAction expandAllAction;
 	private Action collapseAll;
 	private NavigateAction gotoNext;
-	private NavigateAction gotoPrevious;	
+	private NavigateAction gotoPrevious;
+	
+	private SynchronizeModelManager modelManager;
 	
 	class NavigationActionGroup extends SynchronizePageActionGroup {
 		public void initialize(ISynchronizePageConfiguration configuration) {
@@ -161,7 +171,18 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
 	 */
 	public TreeViewerAdvisor(Composite parent, ISynchronizePageConfiguration configuration) {
-		super(configuration);	
+		super(configuration);
+		
+		// Allow the configuration to provide it's own model manager but if one isn't initialized, then
+		// simply use the default provided by the advisor.
+		modelManager = (SynchronizeModelManager)configuration.getProperty(SynchronizePageConfiguration.P_MODEL_MANAGER);
+		if(modelManager == null) {
+			modelManager = createModelManager(configuration);
+			configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, modelManager);
+		}
+		Assert.isNotNull(modelManager, "model manager must be set"); //$NON-NLS-1$
+		modelManager.setViewerAdvisor(this);
+		
 		INavigatable nav = (INavigatable)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
 		if (nav == null) {
 			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, getAdapter(INavigatable.class));
@@ -189,6 +210,14 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
     	    }
         }
 		return new HierarchicalModelManager(configuration);
+	}
+	
+	/*
+	 * For use by test cases only
+	 * @return Returns the modelManager.
+	 */
+	public SynchronizeModelManager getModelManager() {
+		return modelManager;
 	}
 	
 	/* (non-Javadoc)
@@ -391,5 +420,112 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Called to set the input to a viewer. The input to a viewer is always the model created
+	 * by the model provider.
+	 * 
+	 * @param viewer the viewer to set the input.
+	 */
+	public final void setInput(final ISynchronizeModelProvider modelProvider) {
+		final ISynchronizeModelElement modelRoot = modelProvider.getModelRoot();
+		getActionGroup().modelChanged(modelRoot);
+		modelRoot.addCompareInputChangeListener(new ICompareInputChangeListener() {
+			public void compareInputChanged(ICompareInput source) {
+				getActionGroup().modelChanged(modelRoot);
+			}
+		});
+		final StructuredViewer viewer = getViewer();
+		if (viewer != null) {
+			viewer.setSorter(modelProvider.getViewerSorter());
+			viewer.setInput(modelRoot);
+			modelProvider.addPropertyChangeListener(new IPropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent event) {
+                    if (event.getProperty() == ISynchronizeModelProvider.P_VIEWER_SORTER) {
+                        if (viewer != null && !viewer.getControl().isDisposed()) {
+                            viewer.getControl().getDisplay().syncExec(new Runnable() {
+                                public void run() {
+        	                        if (viewer != null && !viewer.getControl().isDisposed()) {
+        	                            ViewerSorter newSorter = modelProvider.getViewerSorter();
+                                        ViewerSorter oldSorter = viewer.getSorter();
+                                        if (newSorter == oldSorter) {
+                                            viewer.refresh();
+                                        } else {
+                                            viewer.setSorter(newSorter);
+                                        }
+        	                        }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+		}
+	}
+	
+	/**
+	 * Install a viewer to be configured with this advisor. An advisor can only be installed with
+	 * one viewer at a time. When this method completes the viewer is considered initialized and
+	 * can be shown to the user. 
+	 * @param viewer the viewer being installed
+	 */
+	public final void initializeViewer(final StructuredViewer viewer) {
+		super.initializeViewer(viewer);
+		
+		final DragSourceListener listener = new DragSourceListener() {
+
+            public void dragStart(DragSourceEvent event) {
+				final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+                final Object [] array= selection.toArray();
+                event.doit= Utils.getResources(array).length > 0;
+			}
+
+            public void dragSetData(DragSourceEvent event) {
+                
+                if (ResourceTransfer.getInstance().isSupportedType(event.dataType)) {
+                    final IStructuredSelection selection= (IStructuredSelection)viewer.getSelection();
+                    final Object [] array= selection.toArray();
+                    event.data= Utils.getResources(array);
+                }
+            }
+
+            public void dragFinished(DragSourceEvent event) {}
+		};
+		
+		final int ops = DND.DROP_COPY | DND.DROP_LINK;
+		viewer.addDragSupport(ops, new Transfer[] { ResourceTransfer.getInstance() }, listener);
+	
+		viewer.setLabelProvider(getLabelProvider());
+		viewer.setContentProvider(getContentProvider());
+	}
+	
+	/**
+	 * Returns the content provider for the viewer.
+	 * 
+	 * @return the content provider for the viewer.
+	 */
+	protected IStructuredContentProvider getContentProvider() {
+		return new BaseWorkbenchContentProvider();
+	}
+	
+	/**
+	 * Get the label provider that will be assigned to the viewer initialized
+	 * by this configuration. Subclass may override but should either wrap the
+	 * default one provided by this method or subclass <code>TeamSubscriberParticipantLabelProvider</code>.
+	 * In the later case, the logical label provider should still be assigned
+	 * to the subclass of <code>TeamSubscriberParticipantLabelProvider</code>.
+	 * @param logicalProvider
+	 *            the label provider for the selected logical view
+	 * @return a label provider
+	 * @see SynchronizeModelElementLabelProvider
+	 */
+	protected ILabelProvider getLabelProvider() {
+		ILabelProvider provider = new SynchronizeModelElementLabelProvider();
+		ILabelDecorator[] decorators = (ILabelDecorator[])getConfiguration().getProperty(ISynchronizePageConfiguration.P_LABEL_DECORATORS);
+		if (decorators == null) {
+			return provider;
+		}
+		return new DecoratingColorLabelProvider(provider, decorators);
 	}
 }

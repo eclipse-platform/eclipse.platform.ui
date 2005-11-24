@@ -12,14 +12,20 @@ package org.eclipse.team.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.TeamException;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.mapping.*;
+import org.eclipse.team.ui.mapping.IMergeContext;
+import org.eclipse.team.ui.mapping.ISynchronizationContext;
+import org.eclipse.team.ui.synchronize.ParticipantPageDialog;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -94,6 +100,8 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class ResourceMappingMergeOperation extends ResourceMappingOperation {
 
+	private IMergeContext context;
+
 	protected ResourceMappingMergeOperation(IWorkbenchPart part, ResourceMapping[] selectedMappings, ResourceMappingContext context) {
 		super(part, selectedMappings, context);
 	}
@@ -104,13 +112,67 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
 			monitor.beginTask(null, 100);
-			IMergeContext context = buildMergeContext(Policy.subMonitorFor(monitor, 75));
-			execute(context, Policy.subMonitorFor(monitor, 25));
+			context = buildMergeContext(Policy.subMonitorFor(monitor, 75));
+			if (context.getSyncInfoTree().isEmpty() || !hasIncomingChanges(context.getSyncInfoTree())) {
+				promptForNoChanges();
+				context.dispose();
+				return;
+			}
+			if (showPreview(getJobName(), monitor)) {
+				execute(context, Policy.subMonitorFor(monitor, 25));
+			} else {
+				context.dispose();
+			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
 			monitor.done();
 		}
+	}
+
+	private void promptForNoChanges() {
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openInformation(getShell(), "No Incoming Changes", "There are no incoming changes for the selected elements");
+			};
+		});
+	}
+
+	private boolean showPreview(final String title, IProgressMonitor monitor) {
+		calculateStates(context, Policy.subMonitorFor(monitor, 5));
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				ModelSynchronizeParticipant participant = new ModelSynchronizeParticipant(context);
+				CompareConfiguration cc = new CompareConfiguration();
+				ModelParticipantPageSavablePart input = new ModelParticipantPageSavablePart(getShell(), cc, participant.createPageConfiguration(), participant);
+				ParticipantPageDialog dialog = new ParticipantPageDialog(getShell(), input, participant);
+				int result = dialog.open();
+			}
+		});
+		return false;
+	}
+
+	private void calculateStates(ISynchronizationContext context, IProgressMonitor monitor) {
+		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+		ModelProvider[] providers = getScope().getModelProviders();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			calculateStates(context, provider, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+		}
+		monitor.done();
+	}
+
+	private void calculateStates(ISynchronizationContext context, ModelProvider provider, IProgressMonitor monitor) {
+		Object o = provider.getAdapter(IModelProviderCompareAdapter.class);
+		if (o instanceof IModelProviderCompareAdapter) {
+			IModelProviderCompareAdapter calculator = (IModelProviderCompareAdapter) o;
+			try {
+				calculator.prepareContext(context, monitor);
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+		}
+		monitor.done();
 	}
 
 	private void execute(IMergeContext context, IProgressMonitor monitor) throws CoreException {
@@ -176,48 +238,12 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	 * @return a merge context for merging the mappings of the input
 	 */ 
 	protected abstract IMergeContext buildMergeContext(IProgressMonitor monitor);
-	
-	/**
-	 * Merge all the mappings that come from the given provider. By default,
-	 * an automatic merge is attempted. After this, a manual merge (i.e. with user
-	 * intervention) is attempted on any mappings that could not be merged
-	 * automatically.
-	 * @param provider the model provider
-	 * @param mappings the mappings to be merged
-	 * @param monitor a progress monitor
-	 * @throws CoreException
-	 */
-	protected boolean performMerge(ModelProvider provider, IMergeContext mergeContext, IProgressMonitor monitor) throws CoreException {
-		try {
-			monitor.beginTask(null, 100);
-			IStatus status = performAutoMerge(provider, mergeContext, Policy.subMonitorFor(monitor, 95));
-			if (!status.isOK()) {
-				if (status.getCode() == IMergeStatus.CONFLICTS) {
-					return false;
-				} else {
-					throw new TeamException(status);
-				}
-			}
-		} finally {
-			monitor.done();
-		}
-		return true;
-	}
 
-	/**
-	 * Attempt to merge automatically. The returned status will indicate which
-	 * mappings could not be merged automatically.
-	 * @param provider the provider for the mappings being merged
-	 * @param mergeContext the context for the merge
-	 * @param monitor a progress monitor
-	 * @return a status indicating success or failure. A failure status
-	 * will be a MergeStatus that includes the mappings that could not be merged. 
-	 * @throws CoreException if errors occurred
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.operations.ResourceMappingOperation#getContext()
 	 */
-	protected IStatus performAutoMerge(ModelProvider provider, IMergeContext mergeContext, IProgressMonitor monitor) throws CoreException {
-		IResourceMappingMerger merger = getMerger(provider);
-		IStatus status = merger.merge(mergeContext, monitor);
-		return status;
+	protected ISynchronizationContext getContext() {
+		return context;
 	}
 
 }

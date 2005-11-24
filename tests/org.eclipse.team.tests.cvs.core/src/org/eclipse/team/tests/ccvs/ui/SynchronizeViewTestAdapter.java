@@ -276,7 +276,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 
     private ISynchronizeModelElement getModelRoot(Subscriber subscriber) {
         SubscriberParticipantPage page = getPage(subscriber);
-        return page.getViewerAdvisor().getModelManager().getModelRoot();
+        return ((TreeViewerAdvisor)page.getViewerAdvisor()).getModelManager().getModelRoot();
     }
     
     private TreeItem[] getTreeItems(Subscriber subscriber) {

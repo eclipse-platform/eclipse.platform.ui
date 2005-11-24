@@ -10,114 +10,96 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.Iterator;
-import java.util.Map;
-
-import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.IResourceMappingScope;
+import org.eclipse.team.ui.mapping.ISynchronizationContext;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.navigator.ICommonLabelProvider;
+import org.eclipse.ui.navigator.IExtensionStateModel;
 
-public abstract class SynchronizationOperationLabelProvider extends LabelProvider {
+public abstract class SynchronizationOperationLabelProvider extends SynchronizationStateLabelProvider implements ICommonLabelProvider {
 
-	// Cache for folder images that have been overlayed with conflict icon
-	private Map fgImageCache;
+	private IResourceMappingScope scope;
+	private ISynchronizationContext context;
 	
-	// Contains direction images
-	CompareConfiguration compareConfig = new CompareConfiguration();
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-	 */
-	public Image getImage(Object element) {
-		LabelProvider modelLabelProvider = getModelLabelProvider();
-		Image base = modelLabelProvider.getImage(element);
-		if (base != null) {
-			int kind = getSyncKind(element);
-			Image decoratedImage;
-			decoratedImage = getCompareImage(base, kind);				
-			// The reason we still overlay the compare image is to
-			// ensure that the image width for all images shown in the viewer
-			// are consistent.
-			return decoratedImage;				
-		}
-		return base;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-	 */
-	public String getText(Object element) {
-		LabelProvider modelLabelProvider = getModelLabelProvider();
-		String base = modelLabelProvider.getText(element);
-		if (isSyncInfoInTextEnabled()) {
-			int kind = getSyncKind(element);
-			if (kind != SyncInfo.IN_SYNC) {
-				String syncKindString = SyncInfo.kindToString(kind);
-				return NLS.bind(TeamUIMessages.TeamSubscriberSyncPage_labelWithSyncKind, new String[] { base, syncKindString }); // 
-			}
-		}
-		return base;
-	}
-
-	/**
-	 * Returns whether the synchronization state should be included in the
-	 * text of the label. By default, the Team preference is used to determine
-	 * what to return.
-	 * @return whether the synchronization state should be included in the
-	 * text of the label
-	 */
-	protected boolean isSyncInfoInTextEnabled() {
-		return TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_VIEW_SYNCINFO_IN_LABEL);
+	private void init(IResourceMappingScope input, ISynchronizationContext context) {
+		this.scope = input;
+		this.context = context;
 	}
 	
-	private Image getCompareImage(Image base, int kind) {
-		switch (kind & SyncInfo.DIRECTION_MASK) {
-			case SyncInfo.OUTGOING :
-				kind = (kind & ~SyncInfo.OUTGOING) | SyncInfo.INCOMING;
-				break;
-			case SyncInfo.INCOMING :
-				kind = (kind & ~SyncInfo.INCOMING) | SyncInfo.OUTGOING;
-				break;
-		}
-		return compareConfig.getImage(base, kind);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#init(org.eclipse.ui.navigator.IExtensionStateModel, org.eclipse.jface.viewers.ITreeContentProvider)
 	 */
-	public void dispose() {
-		compareConfig.dispose();
-		if (fgImageCache != null) {
-			Iterator it = fgImageCache.values().iterator();
-			while (it.hasNext()) {
-				Image element = (Image) it.next();
-				element.dispose();
+	public void init(IExtensionStateModel aStateModel, ITreeContentProvider aContentProvider) {
+		init((IResourceMappingScope)aStateModel.getProperty(TeamUI.RESOURCE_MAPPING_SCOPE), (ISynchronizationContext)aStateModel.getProperty(TeamUI.SYNCHRONIZATION_CONTEXT));
+		ILabelProvider provider = getDelegateLabelProvider();
+		if (provider instanceof ICommonLabelProvider) {
+			if (aContentProvider instanceof AbstractTeamAwareContentProvider) {
+				// Assume that there is a similary wrapped content provider and that the wrapped label provider
+				// only knows about that one
+				// TODO: This is kind of dangerous to build in. We need to consider alternatives
+				AbstractTeamAwareContentProvider tacp = (AbstractTeamAwareContentProvider) aContentProvider;
+				((ICommonLabelProvider) provider).init(aStateModel, tacp.getDelegateContentProvider());
+			} else {
+				((ICommonLabelProvider) provider).init(aStateModel, aContentProvider);
 			}
 		}
 	}
-	
-	/**
-	 * Return the label provider that will return the text and image 
-	 * appropriate for the given model element. Subclasses are responsible for
-	 * disposing of the label provider.
-	 * @return the label provider that will return the text and image 
-	 * appropriate for the given model element
-	 */
-	protected abstract LabelProvider getModelLabelProvider();
-	
-	/**
-	 * Return the sync kind of the given element. This is used
-	 * to determine how to decorate the image and label of the
-	 * element.
-	 * @param element the element being tested
-	 * @return the sync kind of the given element
-	 */
-	protected abstract int getSyncKind(Object element);
 
+	/**
+	 * Return the synchronization context associated with the view to which
+	 * this label provider applies.
+	 * @return the synchronization context
+	 */
+	public ISynchronizationContext getContext() {
+		return context;
+	}
+
+	/**
+	 * Return the resource mapping scope associated with the view to which
+	 * this label provider applies.
+	 * @return the esource mapping scope
+	 */
+	public IResourceMappingScope getScope() {
+		return scope;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IMementoAware#restoreState(org.eclipse.ui.IMemento)
+	 */
+	public void restoreState(IMemento aMemento) {
+		ILabelProvider provider = getDelegateLabelProvider();
+		if (provider instanceof ICommonLabelProvider) {
+			((ICommonLabelProvider) provider).restoreState(aMemento);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IMementoAware#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento aMemento) {
+		ILabelProvider provider = getDelegateLabelProvider();
+		if (provider instanceof ICommonLabelProvider) {
+			((ICommonLabelProvider) provider).saveState(aMemento);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IDescriptionProvider#getDescription(java.lang.Object)
+	 */
+	public String getDescription(Object anElement) {
+		ILabelProvider provider = getDelegateLabelProvider();
+		if (provider instanceof ICommonLabelProvider) {
+			return ((ICommonLabelProvider) provider).getDescription(anElement);
+		}
+		return getDelegateLabelProvider().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.mapping.SynchronizationStateLabelProvider#isDecorationEnabled()
+	 */
+	protected boolean isDecorationEnabled() {
+		return getContext() != null;
+	}
 }

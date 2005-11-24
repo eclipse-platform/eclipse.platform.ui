@@ -15,7 +15,6 @@ import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.internal.ui.mapping.ResourceMappingContentProvider.ResourceAndDepth;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class ResourceMappingLabelProvider extends LabelProvider {

@@ -29,17 +29,11 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.part.*;
 
 /**
- * Abstract synchronize page that populates the view using a sync info set
- * that is possibly filtered by a working set and a mode incoming, outgoing,
- * both or conflicting).
- * <p>
- * The particpant creating this page must set the particpant set property
- * of the page configuration before the page is created. Subclasses
- * should set the working set sync info set and output sync info set 
- * in the configuration. These sets are used by the page to display
- * appropriate messages when the view is empty.
+ * Abstract synchronize page that can filter changes by mode (incoming, outgoing,
+ * both or conflicting). It also uses forms to indicate when a model is empty and
+ * provide a link to a non-empty mode.
  */
-public abstract class SyncInfoSetSynchronizePage extends Page implements ISynchronizePage, IAdaptable {
+public abstract class AbstractSynchronizePage extends Page implements ISynchronizePage, IAdaptable {
 	
 	private ISynchronizePageConfiguration configuration;
 	private ISynchronizePageSite site;
@@ -49,12 +43,13 @@ public abstract class SyncInfoSetSynchronizePage extends Page implements ISynchr
 	private Composite composite;
 	private ChangesSection changesSection;
 	private Viewer changesViewer;
-	private StructuredViewerAdvisor viewerAdvisor;
+	
+	private AbstractViewerAdvisor viewerAdvisor;
 	
 	/*
 	 * Contribute actions for changing modes to the page.
 	 */
-	class SyncInfoSetActions extends SynchronizePageActionGroup {
+	class ModeFilterActions extends SynchronizePageActionGroup {
 		private DirectionFilterActionGroup modes;
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
@@ -92,10 +87,10 @@ public abstract class SyncInfoSetSynchronizePage extends Page implements ISynchr
 	 * Create a new instance of the page
 	 * @param configuration a synchronize page configuration
 	 */
-	protected SyncInfoSetSynchronizePage(ISynchronizePageConfiguration configuration) {
+	protected AbstractSynchronizePage(ISynchronizePageConfiguration configuration) {
 		this.configuration = configuration;
 		configuration.setPage(this);
-		configuration.addActionContribution(new SyncInfoSetActions());
+		configuration.addActionContribution(new ModeFilterActions());
 	}
 	
 	/* (non-Javadoc)
@@ -120,13 +115,30 @@ public abstract class SyncInfoSetSynchronizePage extends Page implements ISynchr
 		changesSection.setViewer(changesViewer);
 	}
 	
+	/**
+	 * Return the viewer that will display the changes associated
+	 * with the page.
+	 * 
+	 * @param parent the parent of the viewer
+	 * @return the changes viewer control
+	 */
 	protected Viewer createChangesViewer(Composite parent) {
-		viewerAdvisor = new TreeViewerAdvisor(parent, configuration);
+		viewerAdvisor = createViewerAdvisor(parent);
 		return viewerAdvisor.getViewer();
 	}
+
+	protected abstract AbstractViewerAdvisor createViewerAdvisor(Composite parent);
 	
-	public StructuredViewerAdvisor getViewerAdvisor() {
+	public AbstractViewerAdvisor getViewerAdvisor() {
 		return viewerAdvisor;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
+	 */
+	public void setActionBars(IActionBars actionBars) {
+		// Delegate menu creation to the advisor
+		viewerAdvisor.setActionBars(actionBars);		
 	}
 	
 	/* (non-Javadoc)
@@ -162,14 +174,6 @@ public abstract class SyncInfoSetSynchronizePage extends Page implements ISynchr
 				// appropriate value
 			}
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
-	 */
-	public void setActionBars(IActionBars actionBars) {
-		// Delegate menu creation to the advisor
-		viewerAdvisor.setActionBars(actionBars);		
 	}
 	
 	/* (non-Javadoc)

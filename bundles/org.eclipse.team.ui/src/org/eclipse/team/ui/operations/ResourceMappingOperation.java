@@ -12,14 +12,13 @@ package org.eclipse.team.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
-import org.eclipse.team.internal.ui.mapping.DefaultResourceMappingMerger;
-import org.eclipse.team.ui.TeamOperation;
-import org.eclipse.team.ui.mapping.IResourceMappingMerger;
 import org.eclipse.team.ui.mapping.IResourceMappingScope;
+import org.eclipse.team.ui.mapping.ISynchronizationContext;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -61,11 +60,8 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @since 3.2
  */
-public abstract class ResourceMappingOperation extends TeamOperation {
-
-	/**
-	 * 
-	 */
+public abstract class ResourceMappingOperation extends ModelProviderOperation {
+	
 	private static final ScopeGenerator DEFAULT_SCOPE_BUILDER = new ScopeGenerator();
 	private final ResourceMapping[] selectedMappings;
 	private final ResourceMappingContext context;
@@ -123,14 +119,14 @@ public abstract class ResourceMappingOperation extends TeamOperation {
 	 * @throws OperationCanceledException if the user choose to cancel
 	 */
 	protected void promptForInputChange(IProgressMonitor monitor) {
-		showAllMappings(scope.getInputMappings(), scope.getMappings());
+		showAllMappings();
 	}
 
-    private void showAllMappings(final ResourceMapping[] selectedMappings, final ResourceMapping[] allMappings) {
+    private void showAllMappings() {
         final boolean[] canceled = new boolean[] { false };
         getShell().getDisplay().syncExec(new Runnable() {
             public void run() {
-                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Participating Elements", getScope());
+                AdditionalMappingsDialog dialog = new AdditionalMappingsDialog(getShell(), "Selection Adjustment Required", getScope(), getContext());
                 int result = dialog.open();
                 canceled[0] = result != Window.OK;
             }
@@ -142,25 +138,18 @@ public abstract class ResourceMappingOperation extends TeamOperation {
         }
     }
     
+	/**
+	 * Return the synchronization context for the operation or <code>null</code>
+	 * if the operation doesn't have one or if it has not yet been created.
+	 * By default, the method always returns <code>null</code>. Subclasses may override.
+	 * @return the synchronization context for the operation or <code>null</code>
+	 */
+	protected ISynchronizationContext getContext() {
+		return null;
+	}
+
 	protected abstract void execute(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException;
-
-	/**
-	 * Return the auto-merger associated with the given model provider
-	 * view the adaptable mechanism.
-	 * If the model provider does not have a merger associated with
-	 * it, a default merger that performs the merge at the file level
-	 * is returned.
-	 * @param provider the model provider of the elements to be merged
-	 * @return a merger
-	 */
-	protected IResourceMappingMerger getMerger(ModelProvider provider) {
-		Object o = provider.getAdapter(IResourceMappingMerger.class);
-		if (o instanceof IResourceMappingMerger) {
-			return (IResourceMappingMerger) o;	
-		}
-		return new DefaultResourceMappingMerger(provider);
-	}
 
 	public IResourceMappingScope getScope() {
 		return scope;

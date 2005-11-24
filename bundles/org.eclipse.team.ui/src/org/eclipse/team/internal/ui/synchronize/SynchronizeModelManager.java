@@ -34,7 +34,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	private ISynchronizeModelProvider modelProvider;
 	private List toggleModelProviderActions;
 	private ISynchronizePageConfiguration configuration;
-	private StructuredViewerAdvisor advisor;
+	private TreeViewerAdvisor advisor;
 	
 	/**
 	 * Action that allows changing the model providers supported by this advisor.
@@ -79,7 +79,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	/**
 	 * Initialize the model manager to be used with the provided advisor.
 	 */
-	public void setViewerAdvisor(StructuredViewerAdvisor advisor) {
+	public void setViewerAdvisor(TreeViewerAdvisor advisor) {
 		this.advisor = advisor;
 	}
 	

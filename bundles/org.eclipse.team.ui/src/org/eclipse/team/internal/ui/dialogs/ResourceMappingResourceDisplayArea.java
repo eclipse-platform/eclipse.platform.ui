@@ -11,10 +11,7 @@
 package org.eclipse.team.internal.ui.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
@@ -22,7 +19,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.layout.GridData;
@@ -30,11 +26,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.mapping.INavigatorContentExtensionFactory;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.model.*;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
@@ -62,16 +55,7 @@ public class ResourceMappingResourceDisplayArea extends DialogArea {
      * @return it's label
      */
     public static String getLabel(ResourceMapping mapping) {
-    	Object o = null;
-		o = mapping.getModelProvider().getAdapter(INavigatorContentExtensionFactory.class);
-		if (o instanceof INavigatorContentExtensionFactory) {
-			INavigatorContentExtensionFactory factory = (INavigatorContentExtensionFactory) o;
-			ILabelProvider labelProvider = factory.getLabelProvider();
-			String text = labelProvider.getText(mapping);
-			labelProvider.dispose(); // TODO should keep label provider around
-			return text;
-		}
-        o = mapping;
+    	Object o = mapping;
         IWorkbenchAdapter workbenchAdapter = getWorkbenchAdapter((IAdaptable)o);
         if (workbenchAdapter == null) {
             Object modelObject = mapping.getModelObject();

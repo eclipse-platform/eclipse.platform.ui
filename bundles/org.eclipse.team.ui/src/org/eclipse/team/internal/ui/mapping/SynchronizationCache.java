@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.team.ui.mapping.ISynchronizationContext;
 
 /**
  * A synchronize operation context that supports caching of
@@ -36,12 +37,13 @@ public class SynchronizationCache implements ISynchronizationCache {
 
 	Map properties;
 	ListenerList listeners;
+	private final ISynchronizationContext context;
 	
 	/**
 	 * CCreate an empty cache
 	 */
-	public SynchronizationCache() {
-		// nothing to do
+	public SynchronizationCache(ISynchronizationContext context) {
+		this.context = context;
 	}
 	
 	/* (non-Javadoc)
@@ -100,7 +102,7 @@ public class SynchronizationCache implements ISynchronizationCache {
 				final Object listener = allListeners[i];
 				Platform.run(new SafeRunnable(){
 					public void run() throws Exception {
-						((IDisposeListener)listener).contextDisposed(SynchronizationCache.this);
+						((IDisposeListener)listener).contextDisposed(context);
 					}
 				});
 			}

@@ -85,7 +85,7 @@ public abstract class SynchronizationContext implements ISynchronizationContext 
 	 */
 	public synchronized ISynchronizationCache getCache() {
 		if (cache == null) {
-			cache = new SynchronizationCache();
+			cache = new SynchronizationCache(this);
 		}
 		return cache;
 	}

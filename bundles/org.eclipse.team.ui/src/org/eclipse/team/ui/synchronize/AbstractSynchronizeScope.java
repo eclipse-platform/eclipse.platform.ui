@@ -169,8 +169,13 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 		// Do nothing by default
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeScope#contains(org.eclipse.core.resources.IResource)
+	/**
+	 * Return whether the given resource is within this scope.
+	 * By default, a resource is considered in the scope if
+	 * it is a root or a decendant of a root.
+	 * @param resource the resource
+	 * @return whether the given resource is within this scope
+	 * @since 3.2
 	 */
 	public boolean contains(IResource resource) {
 		IResource[] roots = getRoots();
@@ -184,7 +189,14 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 		return false;
 	}
 	
-	public ResourceMapping[] getResourceMappings() {
+	/**
+	 * Return the resource mappings that define this scope.
+	 * By default, the mappings are just be deep traversals
+	 * of the roots of the scope but sublcasses may override.
+	 * @return the resource mappings that define this scope
+	 * @since 3.2
+	 */
+	public ResourceMapping[] getMappings() {
 		List result = new ArrayList();
 		IResource[] roots = getRoots();
 		for (int i = 0; i < roots.length; i++) {

@@ -221,14 +221,17 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	 */
 	public void doSave(IProgressMonitor pm) {
 		//super.saveChanges(pm);
-		ISynchronizeModelElement root = (ISynchronizeModelElement)viewer.getInput();
-		if (root != null && root instanceof DiffNode) {
-			try {
-				commit(pm, (DiffNode)root);
-			} catch (CoreException e) {
-				Utils.handle(e);
-			} finally {
-				setDirty(false);
+		Object input = viewer.getInput();
+		if (input instanceof ISynchronizeModelElement) {
+			ISynchronizeModelElement root = (ISynchronizeModelElement)input;
+			if (root != null && root instanceof DiffNode) {
+				try {
+					commit(pm, (DiffNode)root);
+				} catch (CoreException e) {
+					Utils.handle(e);
+				} finally {
+					setDirty(false);
+				}
 			}
 		}
 	}
@@ -257,7 +260,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		fStructuredComparePane = new CompareViewerSwitchingPane(hsplitter, SWT.BORDER | SWT.FLAT, false) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				if (input instanceof ICompareInput)
-					return CompareUI.findStructureViewer(oldViewer, (ICompareInput) input, this, cc);
+					return findStructureViewer(this, oldViewer, (ICompareInput)input);
 				return null;
 			}
 		};
@@ -282,12 +285,8 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		if(page instanceof ISynchronizePage) {
 			((ISynchronizePage)page).getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					ISelection sel = event.getSelection();
-					if (sel instanceof IStructuredSelection) {
-						IStructuredSelection ss= (IStructuredSelection) sel;
-						if (ss.size() == 1)
-							setInput(ss.getFirstElement());
-					}
+					ICompareInput input = getCompareInput(event.getSelection());
+					setInput(input);
 				}
 			});
 			initializeDiffViewer(((ISynchronizePage)page).getViewer());
@@ -302,7 +301,9 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		
 		fContentPane = new CompareViewerSwitchingPane(vsplitter, SWT.BORDER | SWT.FLAT) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				Viewer newViewer= CompareUI.findContentViewer(oldViewer, input, this, cc);
+				if (!(input instanceof ICompareInput))
+					return null;
+				Viewer newViewer= findContentViewer(this, oldViewer, (ICompareInput)input);
 				boolean isNewViewer= newViewer != oldViewer;
 				if (isNewViewer && newViewer instanceof IPropertyChangeNotifier) {
 					final IPropertyChangeNotifier dsp= (IPropertyChangeNotifier) newViewer;
@@ -315,6 +316,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 							}
 						}
 					);
+					hookContentChangeListener((ICompareInput)input);
 				}	
 				return newViewer;
 			}
@@ -368,11 +370,9 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	 * Feeds selection from structure viewer to content viewer.
 	 */
 	private void feedInput2(ISelection sel) {
-		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection ss= (IStructuredSelection) sel;
-			if (ss.size() == 1)
-				fContentPane.setInput(ss.getFirstElement());
-		}
+		ICompareInput input = getCompareInput(sel);
+		if (input != null)
+			fContentPane.setInput(input);
 	}
 	
 	/**
@@ -397,7 +397,12 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 				public void open(OpenEvent event) {
 					ISelection s = event.getSelection();
 					final SyncInfoModelElement node = getElement(s);
-					if (node != null) {
+					if (node == null) {
+						ICompareInput input = getCompareInput(s);
+						if (input != null) {
+							hookContentChangeListener(input);
+						}
+					} else {
 						IResource resource = node.getResource();
 						if (resource != null && resource.getType() == IResource.FILE) {
 							// Cache the contents because compare doesn't show progress
@@ -426,7 +431,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		}
 	}
 	
-	private void hookContentChangeListener(DiffNode node) {
+	private void hookContentChangeListener(ICompareInput node) {
 		ITypedElement left = node.getLeft();
 		if(left instanceof IContentChangeNotifier) {
 			((IContentChangeNotifier)left).addContentChangeListener(this);
@@ -438,14 +443,9 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	}
 	
 	private SyncInfoModelElement getElement(ISelection selection) {
-		if (selection != null && selection instanceof IStructuredSelection) {
-			IStructuredSelection ss= (IStructuredSelection) selection;
-			if (ss.size() == 1) {
-				Object o = ss.getFirstElement();
-				if(o instanceof SyncInfoModelElement) {
-					return (SyncInfoModelElement)o;
-				}
-			}
+		ICompareInput input = getCompareInput(selection);
+		if(input instanceof SyncInfoModelElement) {
+			return (SyncInfoModelElement)input;
 		}
 		return null;
 	}
@@ -537,5 +537,65 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	 */
 	public ISynchronizeParticipant getParticipant() {
 		return participant;
+	}
+
+	/**
+	 * Return a compare input that represents the selection.
+	 * This input is used to feed the structure and content
+	 * viewers. By default, a compare input is returned if the selection is
+	 * of size 1 and the selected element implements <code>ICompareInput</code>
+	 * @param selection the selection
+	 * @return a compare input representing the selection
+	 * @since 3.2
+	 */
+	protected ICompareInput getCompareInput(ISelection selection) {
+		if (selection != null && selection instanceof IStructuredSelection) {
+			IStructuredSelection ss= (IStructuredSelection) selection;
+			if (ss.size() == 1) {
+				Object o = ss.getFirstElement();
+				if(o instanceof ICompareInput) {
+					return (ICompareInput)o;
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Find a viewer that can provide a structure view for the given compare input.
+	 * Return <code>null</code> if a suitable viewer could not be found.
+	 * @param parent the parent composite for the viewer
+	 * @param oldViewer the viewer that is currently a child of the parent
+	 * @param input the compare input to be viewed
+	 * @return a viewer capable of displaying a structure view of the input or
+	 * <code>null</code> if such a viewer is not available.
+	 * @since 3.2
+	 */
+	protected Viewer findStructureViewer(Composite parent, Viewer oldViewer, ICompareInput input) {
+		return CompareUI.findStructureViewer(oldViewer, input, parent, cc);
+	}
+	
+	/**
+	 * Find a viewer that can provide a content compare view for the given compare input.
+	 * Return <code>null</code> if a suitable viewer could not be found.
+	 * @param parent the parent composite for the viewer
+	 * @param oldViewer the viewer that is currently a child of the parent
+	 * @param input the compare input to be viewed
+	 * @return a viewer capable of displaying a content compare view of the input or
+	 * <code>null</code> if such a viewer is not available.
+	 * @since 3.2
+	 */
+	protected Viewer findContentViewer(Composite parent, Viewer oldViewer, ICompareInput input) {
+		return CompareUI.findContentViewer(oldViewer, input, parent, cc);
+	}
+
+	/**
+	 * Return the compare configuration for this part.
+	 * @return the compare configuration for this part
+	 * 
+	 * @since 3.2
+	 */
+	protected CompareConfiguration getCompareConfiguration() {
+		return cc;
 	}
 }

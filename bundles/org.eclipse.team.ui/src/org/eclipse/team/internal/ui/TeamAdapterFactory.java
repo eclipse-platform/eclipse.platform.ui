@@ -33,9 +33,6 @@ public class TeamAdapterFactory implements IAdapterFactory {
 		if (adaptableObject instanceof ModelProvider && adapterType == IResourceMappingMerger.class) {
 			return new DefaultResourceMappingMerger((ModelProvider)adaptableObject);
 		}
-		if (adaptableObject instanceof ModelProvider && adapterType == INavigatorContentExtensionFactory.class) {
-			return new ResourceNavigatorContentExtensionFactory((ModelProvider)adaptableObject);
-		}
 		return null;
 	}
 
@@ -43,6 +40,6 @@ public class TeamAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] {IWorkbenchAdapter.class, INavigatorContentExtensionFactory.class};
+		return new Class[] {IWorkbenchAdapter.class, IResourceMappingMerger.class};
 	}
 }

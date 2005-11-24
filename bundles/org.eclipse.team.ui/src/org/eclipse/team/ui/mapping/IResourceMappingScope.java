@@ -120,4 +120,14 @@ public interface IResourceMappingScope extends ISynchronizeScope {
 	 */
 	public boolean contains(IResource resource);
 
+	/**
+	 * Return the resource mapping in the scope associated with the given model
+	 * obejct or <code>null</code> if there isn't one. This method has no knowledge
+	 * of hierarchical models so it only matches directly against the mappings
+	 * that are contained in the scope.
+	 * @param modelObject the model object
+	 * @return the mapping for the model object that is contained in this scope
+	 */
+	public ResourceMapping getMapping(Object modelObject);
+
 }

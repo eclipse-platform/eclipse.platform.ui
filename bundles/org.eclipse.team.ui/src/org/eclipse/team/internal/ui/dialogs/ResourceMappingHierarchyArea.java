@@ -10,249 +10,42 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.dialogs;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.mapping.*;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.IResourceMappingScope;
+import org.eclipse.team.ui.mapping.ISynchronizationContext;
+import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener;
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
-public class ResourceMappingHierarchyArea extends DialogArea {
+public class ResourceMappingHierarchyArea extends DialogArea implements INavigatorContentServiceListener {
 
-    private String description;
-    private TreeViewer viewer;
-    private final CompositeContentProvider contentProvider;
+	private static final String TEAM_NAVIGATOR_CONTENT = "org.eclipse.team.ui.navigatorViewer"; //$NON-NLS-1$
+	private String description;
+    private CommonViewer viewer;
+	private final IResourceMappingScope scope;
+	private final ISynchronizationContext context;
     
-    /*
-     * TODO: There are some potential problems here
-     *   - the input changed method probably should not be propagated to the
-     *     sub-providers. Perhaps an additional method is needed (setViewer)?
-     *   - this content provider has state that is dependent on what is
-     *     displayed in the view. Should a refresh of the viewer clear this state?
-     *     I don't think it needs to unless the input changes (which it never does
-     *     after the first set).
-     */
-    private static class CompositeContentProvider implements IResourceMappingContentProvider, ILabelProvider {
-
-        private final Map providers; // Map of ModelProvider -> NavigatorContentExtension
-        private final Map providerMap = new HashMap();
-        private final ILabelProvider defaultLabelProvider = new ResourceMappingLabelProvider();
-
-        public CompositeContentProvider(Map providers) {
-            this.providers = providers;
-        }
-
-        public Object getInput() {
-        	if (providers.size() == 1) {
-        		NavigatorContentExtension nce = getNavigatorContentExtension(this);
-        		Object root = nce.getModelProvider();
-				providerMap.put(root, nce);
-				return root;
-        	}
-            return this;
-        }
-
-		public Object[] getChildren(Object parentElement) {
-        	IResourceMappingContentProvider singleProvider = getSingleProvider();
-        	if (singleProvider != null) {
-        		return singleProvider.getChildren(parentElement);
-        	}
-            if (parentElement == this) {
-                List result = new ArrayList();
-               	for (Iterator iter = providers.values().iterator(); iter.hasNext();) {
-               		NavigatorContentExtension extension = (NavigatorContentExtension) iter.next();
-                    Object element = extension.getModelProvider();
-                    providerMap.put(element, extension);
-                    result.add(element);
-                }
-                return result.toArray(new Object[result.size()]);
-            } else {
-            	NavigatorContentExtension extension = getNavigatorContentExtension(parentElement);
-                if (extension != null) {
-                    Object[] elements = extension.getContentProvider().getChildren(parentElement);
-                    for (int i = 0; i < elements.length; i++) {
-                        Object element = elements[i];
-                        providerMap.put(element, extension);
-                    }
-                    return elements;
-                }
-            }
-            return new Object[0];
-        }
-
-        public Object getParent(Object element) {
-        	IResourceMappingContentProvider singleProvider = getSingleProvider();
-        	if (singleProvider != null) {
-        		return singleProvider.getParent(element);
-        	}
-        	if (element == this)
-        		return null;
-        	NavigatorContentExtension nce = getNavigatorContentExtension(element);
-        	if (element == nce.getModelProvider()) {
-        		return this;
-        	}
-            return nce.getContentProvider().getParent(element);
-        }
-
-		private NavigatorContentExtension getNavigatorContentExtension(Object element) {
-			if (providers.size() == 1) {
-				return ((NavigatorContentExtension)providers.values().iterator().next());
-			}
-			return (NavigatorContentExtension)providerMap.get(element);
-		}
-		
-		private IResourceMappingContentProvider getSingleProvider() {
-			if (providers.size() == 1)
-				return getNavigatorContentExtension(this).getContentProvider();
-			return null;
-		}
-		
-        private IResourceMappingContentProvider getProvider(Object element) {
-			NavigatorContentExtension e = getNavigatorContentExtension(element);
-			if (e == null)
-				return null;
-			return e.getContentProvider();
-		}
-
-        public boolean hasChildren(Object element) {
-        	IResourceMappingContentProvider singleProvider = getSingleProvider();
-        	if (singleProvider != null) {
-        		return singleProvider.hasChildren(element);
-        	}
-        	if (element != this) {	
-	        	IResourceMappingContentProvider provider = getProvider(element);
-	        	if (provider != null)
-	        		return provider.hasChildren(element);
-        	}
-        	return getChildren(element).length > 0;
-        }
-
-		public Object[] getElements(Object inputElement) {
-        	IResourceMappingContentProvider singleProvider = getSingleProvider();
-        	if (singleProvider != null) {
-        		return singleProvider.getElements(inputElement);
-        	}
-        	if (inputElement != this) {	
-	        	IResourceMappingContentProvider provider = getProvider(inputElement);
-	        	if (provider != null)
-	        		return provider.getElements(inputElement);
-        	}
-            return getChildren(inputElement);
-        }
-
-        public void dispose() {
-        	providerMap.clear();
-        	for (Iterator iter = providers.values().iterator(); iter.hasNext();) {
-          		NavigatorContentExtension extension = (NavigatorContentExtension) iter.next();
-           		extension.dispose();
-            }
-        }
-
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        	providerMap.clear();
-           	for (Iterator iter = providers.values().iterator(); iter.hasNext();) {
-           		NavigatorContentExtension extension = (NavigatorContentExtension) iter.next();
-				IResourceMappingContentProvider provider = extension.getContentProvider();
-                provider.inputChanged(viewer, oldInput, newInput);
-            }
-        }
-
-		private ILabelProvider getLabelProvider(Object o) {
-			if (o != this) {
-				NavigatorContentExtension e = getNavigatorContentExtension(o);
-				if (e != null)
-					return e.getLabelProvider();
-				Object parent = getParent(o);
-				if (parent != null)
-					return getLabelProvider(parent);
-			}
-			return defaultLabelProvider;
-		}
-
-		public Image getImage(Object element) {
-			return getLabelProvider(element).getImage(element);
-		}
-
-		public String getText(Object element) {
-			return getLabelProvider(element).getText(element);
-		}
-
-		public void addListener(ILabelProviderListener listener) {
-			defaultLabelProvider.addListener(listener);
-			for (Iterator iter = providers.values().iterator(); iter.hasNext();) {
-				NavigatorContentExtension extension = (NavigatorContentExtension) iter.next();
-				ILabelProvider lp = extension.getLabelProvider();
-				lp.addListener(listener);
-			}
-		}
-
-		public boolean isLabelProperty(Object element, String property) {
-			return getLabelProvider(element).isLabelProperty(element, property);
-		}
-
-		public void removeListener(ILabelProviderListener listener) {
-			defaultLabelProvider.removeListener(listener);
-			for (Iterator iter = providers.values().iterator(); iter.hasNext();) {
-				NavigatorContentExtension extension = (NavigatorContentExtension) iter.next();
-				ILabelProvider lp = extension.getLabelProvider();
-				lp.removeListener(listener);
-			}
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.team.internal.ui.mapping.IResourceMappingContentProvider#init(org.eclipse.team.ui.mapping.ITeamViewerContext)
-		 */
-		public void init(IResourceMappingScope input, ISynchronizationContext context) {
-           	for (Iterator iter = providers.values().iterator(); iter.hasNext();) {
-           		NavigatorContentExtension extension = (NavigatorContentExtension) iter.next();
-				IResourceMappingContentProvider provider = extension.getContentProvider();
-                provider.init(input, context);
-            }
-		}
-        
+    
+    public static ResourceMappingHierarchyArea create(IResourceMappingScope scope, ISynchronizationContext context) {
+        return new ResourceMappingHierarchyArea(scope, context);
     }
     
-    public static ResourceMappingHierarchyArea create(IResourceMappingScope input, ISynchronizationContext context) {
-    	ModelProvider[] providers = input.getModelProviders();
-    	Map extensions = new HashMap();
-    	for (int i = 0; i < providers.length; i++) {
-			ModelProvider provider = providers[i];
-			INavigatorContentExtensionFactory factory = getFactory(provider);
-			if (factory == null) {
-				try {
-					ModelProvider resourceModelProvider = ModelProvider.getModelProviderDescriptor(ModelProvider.RESOURCE_MODEL_PROVIDER_ID).getModelProvider();
-					if (!extensions.containsKey(resourceModelProvider)) {
-						factory = getFactory(resourceModelProvider);
-					}
-				} catch (CoreException e) {
-					TeamUIPlugin.log(e);
-				}
-			}
-			if (factory != null) {
-				NavigatorContentExtension extension = factory.createProvider(provider);
-				extensions.put(provider, extension);
-			}
-		}
-        CompositeContentProvider provider = new CompositeContentProvider(extensions);
-        provider.init(input, context);
-        return new ResourceMappingHierarchyArea(provider);
-    }
-    
-    private static INavigatorContentExtensionFactory getFactory(ModelProvider provider) {
-		return (INavigatorContentExtensionFactory) provider.getAdapter(INavigatorContentExtensionFactory.class);
+	private ResourceMappingHierarchyArea(IResourceMappingScope scope, ISynchronizationContext context) {
+		this.scope = scope;
+		this.context = context;
 	}
 
-	private ResourceMappingHierarchyArea(CompositeContentProvider contentProvider) {
-        this.contentProvider = contentProvider;
-    }
-    
-    public void createArea(Composite parent) {
+	public void createArea(Composite parent) {
         Composite composite = createComposite(parent, 1, true);
         GridLayout layout = new GridLayout(1, false);
         layout.marginHeight = 0;
@@ -264,26 +57,46 @@ public class ResourceMappingHierarchyArea extends DialogArea {
         if (description != null)
             createWrappingLabel(composite, description, 1);
         
-        viewer = new TreeViewer(composite);
+        viewer = new CommonViewer(TEAM_NAVIGATOR_CONTENT, composite, SWT.BORDER) {
+        	protected org.eclipse.jface.viewers.ILabelProvider wrapLabelProvider(org.eclipse.jface.viewers.ILabelProvider provider) {
+        		return provider;
+        	};
+        };
         GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = 100;
         data.widthHint = 300;
         viewer.getControl().setLayoutData(data);
-        viewer.setContentProvider(getContentProvider());
-        viewer.setLabelProvider(getContentProvider());
-        viewer.setInput(getInput());
+        viewer.getNavigatorContentService().addListener(this);
+        viewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
+        viewer.refresh();
+        Object[] objects = getRootModelObjects();
+        viewer.setSelection(new StructuredSelection(objects), true);
     }
 
-    private Object getInput() {
-        return getContentProvider().getInput();
-    }
+	private Object[] getRootModelObjects() {
+		if (scope == null)
+			return new Object[0];
+		ResourceMapping[] mappings = scope.getMappings();
+		List result = new ArrayList();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			result.add(mapping.getModelObject());
+		}
+		return result.toArray(new Object[result.size()]);
+	}
 
-    private CompositeContentProvider getContentProvider() {
-        return contentProvider;
-    }
-
-    public void setDescription(String string) {
+	public void setDescription(String string) {
         description = string;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener#onLoad(org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension)
+	 */
+	public void onLoad(NavigatorContentExtension anExtension) {
+		anExtension.getStateModel().setProperty(TeamUI.RESOURCE_MAPPING_SCOPE, scope);
+		if (context != null) {
+			anExtension.getStateModel().setProperty(TeamUI.SYNCHRONIZATION_CONTEXT, context);
+		}
+	}
 
 }
