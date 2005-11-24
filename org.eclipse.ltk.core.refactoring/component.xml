@@ -19,7 +19,7 @@
    <type name= "PerformRefactoringOperation" subclass="false"/>
    <type name= "PerformMultipleRefactoringsOperation" subclass="false"/>
    <type name= "RefactoringCore" subclass="false"/>
-   <type name= "RefactoringDescriptor" subclass="false" instantiate="false"/>
+   <type name= "RefactoringDescriptor" subclass="false"/>
    <type name= "RefactoringDescriptorProxy" subclass="false"/>
    <type name= "RefactoringSessionDescriptor" subclass="false"/>
    <type name= "RefactoringPreferenceConstants" subclass="false" instantiate="false"/>
