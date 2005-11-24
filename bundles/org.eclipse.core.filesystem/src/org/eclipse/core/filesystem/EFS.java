@@ -149,6 +149,11 @@ public class EFS {
 	 */
 	public static final String SCHEME_NULL = "null"; //$NON-NLS-1$
 
+	/**
+	 * Scheme constant (value "zip") indicating the zip file system scheme.
+	 */
+	public static final String SCHEME_ZIP = "zip"; //$NON-NLS-1$
+
 	/*
 	 * Status code definitions
 	 */
@@ -220,7 +225,7 @@ public class EFS {
 	 * Severity: error. Category: internal.
 	 */
 	public static final int ERROR_INTERNAL = 566;
-	
+
 	/**
 	 * Creates an empty file information object.  The resulting information
 	 * will represent a non-existent file with no name and no attributes set.
