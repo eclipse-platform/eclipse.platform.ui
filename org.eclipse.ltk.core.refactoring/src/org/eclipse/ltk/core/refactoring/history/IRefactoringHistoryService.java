@@ -74,6 +74,10 @@ public interface IRefactoringHistoryService {
 	 * <p>
 	 * If the service is already connected, nothing happens.
 	 * </p>
+	 * <p>
+	 * Every call to {@link #connect()} must be balanced with a corresponding
+	 * call to {@link #disconnect()}.
+	 * </p>
 	 */
 	public void connect();
 
@@ -83,11 +87,19 @@ public interface IRefactoringHistoryService {
 	 * <p>
 	 * If the service is not connected, nothing happens.
 	 * </p>
+	 * <p>
+	 * Every call to {@link #disconnect()} must be balanced with a corresponding
+	 * call to {@link #connect()}.
+	 * </p>
 	 */
 	public void disconnect();
 
 	/**
 	 * Returns a project refactoring history for the specified project.
+	 * <p>
+	 * Clients must connect to the refactoring history service first before
+	 * calling this method.
+	 * </p>
 	 * 
 	 * @param project
 	 *            the project, which must exist
@@ -99,6 +111,10 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Returns a project refactoring history for the specified project.
+	 * <p>
+	 * Clients must connect to the refactoring history service first before
+	 * calling this method.
+	 * </p>
 	 * 
 	 * @param project
 	 *            the project, which must exist
@@ -114,6 +130,10 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Returns the combined refactoring history for the specified projects.
+	 * <p>
+	 * Clients must connect to the refactoring history service first before
+	 * calling this method.
+	 * </p>
 	 * 
 	 * @param projects
 	 *            the projects, which must exist
@@ -125,6 +145,10 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Returns the combined refactoring history for the specified projects.
+	 * <p>
+	 * Clients must connect to the refactoring history service first before
+	 * calling this method.
+	 * </p>
 	 * 
 	 * @param projects
 	 *            the projects, which must exist
@@ -140,6 +164,10 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Returns the workspace refactoring history.
+	 * <p>
+	 * Clients must connect to the refactoring history service first before
+	 * calling this method.
+	 * </p>
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
@@ -149,6 +177,10 @@ public interface IRefactoringHistoryService {
 
 	/**
 	 * Returns the workspace refactoring history.
+	 * <p>
+	 * Clients must connect to the refactoring history service first before
+	 * calling this method.
+	 * </p>
 	 * 
 	 * @param start
 	 *            the start time stamp, inclusive
