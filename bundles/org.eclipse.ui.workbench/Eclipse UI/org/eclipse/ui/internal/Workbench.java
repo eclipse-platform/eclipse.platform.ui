@@ -184,10 +184,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		public void bundleChanged(BundleEvent event) {
 			int eventType = event.getType();
+			String bundleName;
 
 			synchronized (this) {
 				if (eventType == BundleEvent.STARTING) {
-					starting.add(event.getBundle().getSymbolicName());
+					starting.add(bundleName = event.getBundle().getSymbolicName());
 				} else if (eventType == BundleEvent.STARTED) {
 					progressCount++;
 					if (progressCount <= maximumProgressCount)
@@ -197,15 +198,19 @@ public final class Workbench extends EventManager implements IWorkbench {
 						starting.remove(index);
 					if (index != starting.size())
 						return; // not currently displayed
+					bundleName = index == 0 ? null : (String) starting.get(index - 1);
 				} else {
 					return; // uninteresting event
 				}
 			}
 
-			int size = starting.size();
-			String taskName = size == 0 ? WorkbenchMessages.Startup_Loading_Workbench
-					: NLS.bind(WorkbenchMessages.Startup_Loading, starting
-							.get(size - 1));
+			String taskName;
+
+			if (bundleName == null)
+				taskName = WorkbenchMessages.Startup_Loading_Workbench;
+			else
+				taskName = NLS.bind(WorkbenchMessages.Startup_Loading, bundleName);
+
 			progressMonitor.subTask(taskName);
 		}
 	}
