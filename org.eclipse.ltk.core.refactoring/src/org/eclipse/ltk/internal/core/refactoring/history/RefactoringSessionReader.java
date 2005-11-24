@@ -161,7 +161,11 @@ final class RefactoringSessionReader extends DefaultHandler {
 				// Do nothing
 			}
 			final RefactoringDescriptor descriptor= new RefactoringDescriptor(id, project, description, comment, map, flag);
-			descriptor.setTimeStamp(Long.valueOf(stamp).longValue());
+			try {
+				descriptor.setTimeStamp(Long.valueOf(stamp).longValue());
+			} catch (NumberFormatException exception) {
+				// Do nothing
+			}
 			if (fRefactoringDescriptors == null)
 				fRefactoringDescriptors= new ArrayList();
 			fRefactoringDescriptors.add(descriptor);
