@@ -58,7 +58,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 		if (part != null) {
 			id = part.getSite().getId();
 		}
-		fProvidersByPartId.put(id, part);
+		fProvidersByPartId.put(id, provider);
 		fProviders.add(provider);
 		IWorkbenchPart active = null;
 		IWorkbenchPage activePage = fWindow.getActivePage();
