@@ -368,7 +368,7 @@ public class UnifiedTree {
 		node.setFirstChild(null);
 	}
 
-	public void setRoot(IResource root) {
+	private void setRoot(IResource root) {
 		this.root = root;
 	}
 
