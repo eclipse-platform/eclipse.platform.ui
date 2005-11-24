@@ -910,14 +910,19 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream) throws CoreException {
 		Assert.isNotNull(proxies);
 		Assert.isNotNull(stream);
-		final List list= new ArrayList(proxies.length);
-		for (int index= 0; index < proxies.length; index++) {
-			final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new NullProgressMonitor());
-			if (descriptor != null)
-				list.add(descriptor);
+		try {
+			connect();
+			final List list= new ArrayList(proxies.length);
+			for (int index= 0; index < proxies.length; index++) {
+				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new NullProgressMonitor());
+				if (descriptor != null)
+					list.add(descriptor);
+			}
+			final RefactoringDescriptor[] descriptors= new RefactoringDescriptor[list.size()];
+			list.toArray(descriptors);
+			RefactoringHistoryManager.writeRefactoringDescriptors(stream, descriptors);
+		} finally {
+			disconnect();
 		}
-		final RefactoringDescriptor[] descriptors= new RefactoringDescriptor[list.size()];
-		list.toArray(descriptors);
-		RefactoringHistoryManager.writeRefactoringDescriptors(stream, descriptors);
 	}
 }

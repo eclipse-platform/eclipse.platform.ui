@@ -112,14 +112,6 @@ public abstract class RefactoringDescriptorProxy implements Comparable {
 	 * @return the refactoring descriptor, or <code>null</code>
 	 */
 	public RefactoringDescriptor requestDescriptor(final IProgressMonitor monitor) {
-		RefactoringDescriptor descriptor= null;
-		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
-		try {
-			service.connect();
-			descriptor= service.requestDescriptor(this, monitor);
-		} finally {
-			service.disconnect();
-		}
-		return descriptor;
+		return RefactoringHistoryService.getInstance().requestDescriptor(this, monitor);
 	}
 }

@@ -22,9 +22,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.IInitializableRefactoringComponent;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
@@ -226,19 +228,25 @@ public class RefactoringHistoryWizard extends Wizard {
 	private Refactoring getCurrentRefactoring(final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
 		final RefactoringDescriptorProxy proxy= getCurrentDescriptor();
 		if (proxy != null) {
-			final RefactoringDescriptor descriptor= proxy.requestDescriptor(monitor);
-			if (descriptor != null && !descriptor.isUnknown()) {
-				final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
-				final Refactoring refactoring= factory.createRefactoring(descriptor);
-				if (refactoring instanceof IInitializableRefactoringComponent) {
-					final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
-					final RefactoringArguments arguments= factory.createArguments(descriptor);
-					if (arguments != null) {
-						status.merge(component.initialize(arguments));
-						if (!status.hasFatalError())
-							return refactoring;
+			final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
+			try {
+				service.connect();
+				final RefactoringDescriptor descriptor= proxy.requestDescriptor(monitor);
+				if (descriptor != null && !descriptor.isUnknown()) {
+					final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
+					final Refactoring refactoring= factory.createRefactoring(descriptor);
+					if (refactoring instanceof IInitializableRefactoringComponent) {
+						final IInitializableRefactoringComponent component= (IInitializableRefactoringComponent) refactoring;
+						final RefactoringArguments arguments= factory.createArguments(descriptor);
+						if (arguments != null) {
+							status.merge(component.initialize(arguments));
+							if (!status.hasFatalError())
+								return refactoring;
+						}
 					}
 				}
+			} finally {
+				service.disconnect();
 			}
 		}
 		return null;

@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.history.IRefactoringExecutionListener;
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringExecutionEvent;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
@@ -107,9 +108,11 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringsOperation_perform_refactorings, 2 * proxies.length);
 		final RefactoringInstanceFactory factory= RefactoringInstanceFactory.getInstance();
 		IRefactoringExecutionListener listener= null;
+		final IRefactoringHistoryService service= RefactoringCore.getRefactoringHistoryService();
 		try {
 			listener= new RefactoringExecutionListener();
-			RefactoringCore.getRefactoringHistoryService().addExecutionListener(listener);
+			service.addExecutionListener(listener);
+			service.connect();
 			for (int index= 0; index < proxies.length && !fExecutionStatus.hasFatalError(); index++) {
 				boolean execute= false;
 				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
@@ -143,9 +146,10 @@ public class PerformMultipleRefactoringsOperation implements IWorkspaceRunnable 
 			monitor.done();
 			fCurrentDescriptor= null;
 			if (listener != null) {
-				RefactoringCore.getRefactoringHistoryService().removeExecutionListener(listener);
+				service.removeExecutionListener(listener);
 				listener= null;
 			}
+			service.disconnect();
 		}
 	}
 }
