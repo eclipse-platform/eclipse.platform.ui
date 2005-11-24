@@ -61,7 +61,7 @@ public class RefactoringDescriptor implements Comparable {
 	 * Constant describing the structural change flag (value: 2)
 	 * <p>
 	 * Clients should set this flag to indicate that the change created by the
-	 * represented refactoring is a structural change according to the semantics
+	 * represented refactoring might be a structural change according to the semantics
 	 * of the associated programming language.
 	 * </p>
 	 */
