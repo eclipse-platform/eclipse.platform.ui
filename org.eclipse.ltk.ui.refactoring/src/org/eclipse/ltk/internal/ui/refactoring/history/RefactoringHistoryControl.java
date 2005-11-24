@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -152,6 +153,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		fHistoryPane.setText(text);
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
+		if (!fControlConfiguration.isTimeDisplayed())
+			fHistoryViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		fHistoryViewer.setContentProvider(fControlConfiguration.getContentProvider());
 		fHistoryViewer.setLabelProvider(fControlConfiguration.getLabelProvider());
 		fHistoryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
