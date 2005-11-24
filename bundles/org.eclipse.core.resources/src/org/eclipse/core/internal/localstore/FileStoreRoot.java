@@ -15,8 +15,7 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 
 /**
  * Represents the root of a file system that is connected to the workspace.
@@ -48,6 +47,8 @@ public class FileStoreRoot {
 	 * system has been mounted
 	 */
 	FileStoreRoot(URI rootURI, IPath workspacePath) {
+		Assert.isNotNull(rootURI);
+		Assert.isNotNull(workspacePath);
 		this.variableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 		this.root = rootURI;
 		this.chop = workspacePath.segmentCount();
