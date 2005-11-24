@@ -610,15 +610,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		IFileStore projectStore = initializeStore(target, projectLocation);
 		IFileStore descriptionStore = projectStore.getChild(IProjectDescription.DESCRIPTION_FILE_NAME);
 		ProjectDescription description = null;
-		if (!descriptionStore.fetchInfo().exists()) {
-			//try the legacy location in the meta area
-			description = getWorkspace().getMetaArea().readOldDescription(target);
-			if (description == null) {
-				String msg = NLS.bind(Messages.resources_missingProjectMeta, target.getName());
-				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, null);
-			}
-			return description;
-		}
 		//hold onto any exceptions until after sync info is updated, then throw it
 		ResourceException error = null;
 		InputStream in = null;
@@ -626,6 +617,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			in = new BufferedInputStream(descriptionStore.openInputStream(EFS.NONE, null));
 			description = new ProjectDescriptionReader().read(new InputSource(in));
 		} catch (CoreException e) {
+			//try the legacy location in the meta area
+			description = getWorkspace().getMetaArea().readOldDescription(target);
+			if (description != null)
+				return description;
+			if (!descriptionStore.fetchInfo().exists()) {
+				String msg = NLS.bind(Messages.resources_missingProjectMeta, target.getName());
+				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, null);
+			}
 			String msg = NLS.bind(Messages.resources_readProjectMeta, target.getName());
 			error = new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e);
 		} finally {
