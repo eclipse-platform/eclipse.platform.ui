@@ -772,10 +772,10 @@ public class DefaultSiteParser extends DefaultHandler {
 			String countryCode = Locale.getDefault().getCountry().toLowerCase();
 			int timeZone = (new GregorianCalendar()).get(Calendar.ZONE_OFFSET)/(60*60*1000);
 
-			if (mirrorsURL.indexOf("?") != -1) {
-				mirrorsURL = mirrorsURL + "&";
+			if (mirrorsURL.indexOf("?") != -1) { //$NON-NLS-1$
+				mirrorsURL = mirrorsURL + "&"; //$NON-NLS-1$
 			} else {
-				mirrorsURL = mirrorsURL + "?";
+				mirrorsURL = mirrorsURL + "?"; //$NON-NLS-1$
 			}			
 			mirrorsURL = mirrorsURL + "countryCode=" + countryCode + "&timeZone=" + timeZone + "&responseType=xml";
 

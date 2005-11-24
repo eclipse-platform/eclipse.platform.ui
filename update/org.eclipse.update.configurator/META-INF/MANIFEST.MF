@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.update.configurator; singleton:=true
-Bundle-Version: 3.1.0
+Bundle-Version: 3.1.100.qualifier
 Bundle-Activator: org.eclipse.update.internal.configurator.ConfigurationActivator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.update.configurator,
  org.eclipse.update.internal.configurator;x-friends:="org.eclipse.update.core",
  org.eclipse.update.internal.configurator.branding;x-friends:="org.eclipse.update.core"
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)"
 Eclipse-AutoStart: true
