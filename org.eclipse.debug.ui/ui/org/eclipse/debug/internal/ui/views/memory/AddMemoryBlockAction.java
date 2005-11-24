@@ -95,7 +95,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		fCurrentSelection = selection;
 		
 		// set up enablement based on current selection
-		setEnabled(MemoryViewUtil.isValidSelection(selection));
+		updateAction(selection);
 		
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
@@ -115,7 +115,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		// check to see if something is selected in the debug view since a selection event won't be generated for something selected prior to creating this action
 		ISelection selection = fSite.getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
 		fCurrentSelection = selection;
-		setEnabled(MemoryViewUtil.isValidSelection(selection));
+		updateAction(selection);
 		
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		
@@ -146,6 +146,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 			}
 			if (standardMemRetrieval == null)
 				return;
+			
 			Shell shell= DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
 			// create dialog to ask for expression/address to block
 			MonitorMemoryBlockDialog dialog = new MonitorMemoryBlockDialog(shell, standardMemRetrieval, prefillExp, prefillLength);
@@ -290,7 +291,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		
 		// update enablement state based on selection from Debug View
-		setEnabled(MemoryViewUtil.isValidSelection(selection));
+		updateAction(selection);
 		fCurrentSelection = selection;
 	}
 
@@ -398,10 +399,15 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		container.addMemoryRendering(rendering);
 	}
 	
-	private MemoryView getMemoryView()
+	protected MemoryView getMemoryView()
 	{
 		if (fSite instanceof MemoryView)
 			return (MemoryView)fSite;
 		return null;
+	}
+	
+	protected void updateAction(ISelection debugContext)
+	{
+		setEnabled(MemoryViewUtil.isValidSelection(debugContext));
 	}
 }

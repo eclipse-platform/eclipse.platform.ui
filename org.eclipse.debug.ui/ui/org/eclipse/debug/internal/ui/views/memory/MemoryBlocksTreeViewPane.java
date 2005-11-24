@@ -82,8 +82,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 	private String fPaneId;
 	private boolean fVisible = true;
 	private ArrayList fMemoryBlocks = new ArrayList();
-
-	private AddMemoryBlocksComposite fAddMemoryBlocksComposite;
 	
 	class TreeViewerRemoveMemoryBlocksAction extends Action
 	{
@@ -216,7 +214,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		 */
 		public void dispose() {
 			super.dispose();
-			fAddMemoryBlocksComposite.dispose();
 			DebugPlugin.getDefault().getMemoryBlockManager().removeListener(this);
 			DebugPlugin.getDefault().removeDebugEventListener(this);
 		}
@@ -444,10 +441,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		layout.numColumns = 1;
 		layout.makeColumnsEqualWidth = false;
 		composite.setLayout(layout);
-		
-		fAddMemoryBlocksComposite = new AddMemoryBlocksComposite(fParent);
-		fAddMemoryBlocksComposite.createComposite(composite);
-		
+
 		fPaneId = paneId;
 		fTreeViewer = new TreeViewer(composite);
 		fContentProvider = new MemoryBlocksViewerContentProvider();
@@ -508,7 +502,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			if (obj instanceof IDebugElement)
 			{
 				fTreeViewer.setInput(((IDebugElement)obj).getDebugTarget());
-				fAddMemoryBlocksComposite.update(selected);
 			}
 		}
 		
@@ -632,7 +625,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 	public IAction[] getActions() {
 		
 		if (fAddMemoryBlockAction == null)
-				fAddMemoryBlockAction = new AddMemoryBlockAction((IMemoryRenderingSite)fParent);
+			fAddMemoryBlockAction = new RetargetAddMemoryBlockAction((IMemoryRenderingSite)fParent);
 		
 		if (fRemoveMemoryBlockAction == null)
 		{
@@ -646,7 +639,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		
 		updateActionsEnablement();
 		
-		return new IAction[]{fRemoveMemoryBlockAction, fRemoveAllMemoryBlocksAction};
+		return new IAction[]{fAddMemoryBlockAction, fRemoveMemoryBlockAction, fRemoveAllMemoryBlocksAction};
 	}
 
 	/* (non-Javadoc)

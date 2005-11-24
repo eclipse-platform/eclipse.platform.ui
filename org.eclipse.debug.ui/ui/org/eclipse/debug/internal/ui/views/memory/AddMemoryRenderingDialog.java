@@ -249,7 +249,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		
 		fMouseListener =new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
-				AddMemoryBlockAction action = new AddMemoryBlockAction(fSite, false);
+				RetargetAddMemoryBlockAction action = new RetargetAddMemoryBlockAction(fSite, false);
 				action.run();
 				populateDialog(memoryBlock, fViewer, action.getLastMemoryBlock());
 				action.dispose();

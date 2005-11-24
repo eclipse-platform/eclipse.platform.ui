@@ -153,4 +153,14 @@ public class ActionMessages extends NLS {
 	public static String AbstractDebugActionDelegate_0;
 
 	public static String AbstractDebugActionDelegate_1;
+
+	public static String RetargetAddMemoryBlockAction_0;
+
+	public static String RetargetAddMemoryBlockAction_1;
+
+	public static String AddMemoryRenderingActionDelegate_0;
+
+	public static String AddMemoryRenderingActionDelegate_1;
+
+	public static String AddMemoryRenderingActionDelegate_2;
 }

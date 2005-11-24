@@ -367,7 +367,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 						IAdaptable context = DebugUITools.getDebugContext();
 						if (context != null && MemoryViewUtil.isValidSelection(new StructuredSelection(context)))
 						{
-							AddMemoryBlockAction action = new AddMemoryBlockAction(MemoryView.this);
+							RetargetAddMemoryBlockAction action = new RetargetAddMemoryBlockAction(MemoryView.this);
 							action.run();
 							action.dispose();
 						}
