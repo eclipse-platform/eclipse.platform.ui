@@ -43,7 +43,7 @@ public class ListenerList extends org.eclipse.core.runtime.ListenerList {
 	 * Creates a listener list with an initial capacity of 1.
 	 */
 	public ListenerList() {
-		super();
+		super(IDENTITY);
 	}
 
 	/**
@@ -55,7 +55,8 @@ public class ListenerList extends org.eclipse.core.runtime.ListenerList {
 	 *            1
 	 */
 	public ListenerList(int capacity) {
-		super();
+		// the runtime ListenerList does not support capacity
+		this();
 	}
 
 	/**
