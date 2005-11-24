@@ -591,9 +591,9 @@ public final class RefactoringHistoryManager {
 	 * @param store
 	 *            the history file store
 	 * @param name
-	 *            the non-empty name of the managed project
+	 *            the non-empty name of the managed project, or <code>null</code>
 	 */
-	public RefactoringHistoryManager(final IFileStore store, final String name) {
+	RefactoringHistoryManager(final IFileStore store, final String name) {
 		Assert.isNotNull(store);
 		Assert.isTrue(name == null || !"".equals(name)); //$NON-NLS-1$
 		fHistoryStore= store;
