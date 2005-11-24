@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -31,14 +30,6 @@ public class ResourceMappingLabelProvider extends LabelProvider {
 			ModelProvider provider = (ModelProvider) element;
 			return provider.getDescriptor().getLabel();
 		}
-		if (element instanceof ResourceAndDepth) {
-			ResourceAndDepth rad = (ResourceAndDepth) element;
-			String text = rad.getResource().getFullPath().toString();
-			if (rad.getDepth() == IResource.DEPTH_ONE && rad.getResource().getType() != IResource.FILE) {
-				text += "(files only)";
-			}
-			return text;
-		}
         String text = provider.getText(element);
         if (text != null && text.length() > 0)
             return text;
@@ -53,10 +44,6 @@ public class ResourceMappingLabelProvider extends LabelProvider {
 			image = provider.getImage(mapping.getModelObject());
 			if (image != null)
 				return image;
-		}
-		if (element instanceof ResourceAndDepth) {
-			ResourceAndDepth rad = (ResourceAndDepth) element;
-			return provider.getImage(rad.getResource());
 		}
 		return super.getImage(element);
 	}

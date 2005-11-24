@@ -343,9 +343,6 @@
                   name="org.eclipse.core.internal.resources.mapping.ResourceModelProvider">
             </objectClass>
             <objectClass
-                  name="org.eclipse.team.internal.ui.mapping.ResourceAndDepth">
-            </objectClass>
-            <objectClass
                   name="org.eclipse.core.resources.IResource">
             </objectClass> 
          </or>

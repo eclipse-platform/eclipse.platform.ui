@@ -53,10 +53,6 @@ public class ResourceModelLabelProvider extends
 		if (element instanceof IResource) {
 			return (IResource) element;
 		}
-		if (element instanceof ResourceAndDepth) {
-			return ((ResourceAndDepth) element).getResource();
-			
-		}
 		return null;
 	}
 
