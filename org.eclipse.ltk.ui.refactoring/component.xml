@@ -15,6 +15,11 @@
    <type name= "RefactoringWizardPage" subclass="false"/>
    <type name= "UndoRefactoringAction" subclass="false"/>
  </package>
- 
+
+  <package name="org.eclipse.ltk.ui.refactoring.history">
+   <type name= "RefactoringHistoryContentProvider" subclass="false"/>
+   <type name= "RefactoringHistoryLabelProvider" subclass="false"/>
+ </package>
+
  <component-depends unrestricted="true"/>
 </component>
