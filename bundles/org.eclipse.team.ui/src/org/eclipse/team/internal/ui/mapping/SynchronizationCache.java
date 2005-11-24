@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ui.mapping;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.team.ui.mapping.ISynchronizationContext;
 
@@ -79,7 +79,7 @@ public class SynchronizationCache implements ISynchronizationCache {
 	 */
 	public synchronized void addDisposeListener(IDisposeListener listener) {
 		if (listeners == null)
-			listeners = new ListenerList();
+			listeners = new ListenerList(ListenerList.IDENTITY);
 		listeners.add(listener);
 		
 	}
