@@ -113,6 +113,20 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public void setStatus(final RefactoringStatus status) {
+		super.setStatus(status);
+		if (status != null) {
+			final int severity= status.getSeverity();
+			if (severity >= RefactoringStatus.FATAL)
+				setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_fatal_error);
+			else if (severity >= RefactoringStatus.INFO)
+				setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_info_error);
+		}
+	}
+
+	/**
 	 * Sets the title of the page according to the refactoring.
 	 * 
 	 * @param descriptor
