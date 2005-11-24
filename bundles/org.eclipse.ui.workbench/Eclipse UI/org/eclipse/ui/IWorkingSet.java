@@ -168,7 +168,15 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	/**
 	 * Returns whether this working set is an aggregate working set or not.
 	 * 
-	 * <p><em>Please note: This API is experiemental and may change before 3.2 ships.</em></p>
+	 * <p>
+	 * It is recommended that clients of aggregate working sets treat them in a
+	 * specific way. Please see the documentation for
+	 * {@link IWorkbenchPage#getAggregateWorkingSet()} for details.
+	 * </p>
+	 * 
+	 * <p>
+	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
+	 * </p>
 	 * 
 	 * @return whether this working set is an aggregate working set or not
 	 * @since 3.2

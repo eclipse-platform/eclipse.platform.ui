@@ -902,6 +902,52 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * set will be updated.
 	 * 
 	 * <p>
+	 * This working set is never <code>null</code>, even if there are no
+	 * working sets assigned to this page via
+	 * {@link #setWorkingSets(IWorkingSet[])}. It is recommended that any
+	 * client that uses this API be aware of this and act accordingly.
+	 * Specifically, it is recommended that any client utilizing this or any
+	 * other IWorkingSet whose {@link IWorkingSet#isAggregateWorkingSet()}
+	 * returns <code>true</code> act as if they are not using any working set
+	 * if the set is empty. These clients should also maintain an awareness of
+	 * the contents of aggregate working sets and toggle this behavior should
+	 * the contents of the aggregate either become empty or non-empty.
+	 * </p>
+	 * <p>
+	 * Example: 
+	 * <br/>
+	 * Here we have pseudocode showing how some workingset utilizing component
+	 * could react to changes in aggregate working sets.
+	 * <br/>
+	 * <code>
+	 * private IWorkingSet myWorkingSet;
+	 * 
+	 * IPropertyChangeListener workingSetListener = new IPropertyChangeListener() {
+	 *	public void propertyChange(PropertyChangeEvent event) {
+	 * 		if (isMyCurrentWorkingSet(event)) {
+	 * 			if (isEmptyAggregate(myWorkingSet)) {
+	 * 				showNoSet();
+	 * 			}
+	 * 			else {
+	 * 				showSet();
+	 * 			}
+	 *		}
+	 *	}
+	 * };
+	 * 
+	 * public void setWorkingSet(IWorkingSet newSet) {
+	 * 		myWorkingSet = newSet;
+	 * 		if (myWorkingSet == null || isEmptyAggregate(myWorkingSet)){
+	 * 			showNoSet();
+	 * 		}
+	 * 		else {
+	 * 			showSet();
+	 * 		}
+	 * }
+	 * </code>
+	 * </p>
+	 * 
+	 * <p>
 	 * <em>Please note: This API is experiemental and may change before 3.2 ships.</em>
 	 * </p>
 	 * 
