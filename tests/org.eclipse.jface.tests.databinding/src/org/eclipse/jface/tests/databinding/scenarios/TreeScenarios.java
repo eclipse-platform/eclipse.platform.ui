@@ -11,7 +11,7 @@
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import org.eclipse.jface.databinding.ITree;
-import org.eclipse.jface.databinding.PropertyDesc;
+import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.viewers.ViewersProperties;
 import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
@@ -78,7 +78,7 @@ public class TreeScenarios extends ScenariosTestCase {
 	 */
 	public void test_Trees_Scenario01() {
 		
-		getDbc().bind(new PropertyDesc(tviewer, ViewersProperties.CONTENT), treeModel, null);
+		getDbc().bind(new Property(tviewer, ViewersProperties.CONTENT), treeModel, null);
 				
 		
 		// null for a parent, represents root elements

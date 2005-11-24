@@ -15,7 +15,7 @@ import java.util.Map;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.PropertyDesc;
+import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.internal.swt.ButtonUpdatableValue;
 import org.eclipse.jface.databinding.internal.swt.CComboUpdatableCollection;
 import org.eclipse.jface.databinding.internal.swt.CComboUpdatableValue;
@@ -102,10 +102,10 @@ final public class SWTUpdatableFactory implements IUpdatableFactory {
 	
 	public IUpdatable createUpdatable(Map properties,
 			Object description, IDataBindingContext bindingContext) {
-		if (description instanceof PropertyDesc) {
-			Object object = ((PropertyDesc) description)
+		if (description instanceof Property) {
+			Object object = ((Property) description)
 					.getObject();
-			Object attribute = ((PropertyDesc) description)
+			Object attribute = ((Property) description)
 					.getPropertyID();
 			if (object instanceof Control
 					&& SWTProperties.ENABLED.equals(attribute)) {

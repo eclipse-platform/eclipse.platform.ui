@@ -15,7 +15,7 @@ import java.util.Map;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatable;
 import org.eclipse.jface.databinding.IUpdatableFactory;
-import org.eclipse.jface.databinding.PropertyDesc;
+import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.internal.viewers.StructuredViewerUpdatableValue;
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollection;
 import org.eclipse.jface.databinding.internal.viewers.TableViewerUpdatableCollectionExtended;
@@ -50,9 +50,9 @@ final public class ViewersUpdatableFactory implements IUpdatableFactory {
 
 	public IUpdatable createUpdatable(Map properties, Object description,
 			IDataBindingContext bindingContext) {
-		if (description instanceof PropertyDesc) {
-			Object object = ((PropertyDesc) description).getObject();
-			Object attribute = ((PropertyDesc) description)
+		if (description instanceof Property) {
+			Object object = ((Property) description).getObject();
+			Object attribute = ((Property) description)
 					.getPropertyID();
 			if (object instanceof StructuredViewer
 					&& ViewersProperties.SINGLE_SELECTION.equals(attribute)) {

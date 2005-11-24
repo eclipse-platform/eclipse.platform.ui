@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.PropertyDesc;
+import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.tests.databinding.scenarios.model.Adventure;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
 import org.eclipse.jface.tests.databinding.scenarios.model.Transportation;
@@ -46,7 +46,7 @@ public class TextControlScenario extends ScenariosTestCase {
 		// Change the UI and verify the model changes
 		// Change the model and verify the UI changes
 		Text text = new Text(getComposite(), SWT.BORDER);
-		getDbc().bind(text, new PropertyDesc(adventure, "name"), null);
+		getDbc().bind(text, new Property(adventure, "name"), null);
 		assertEquals(adventure.getName(), text.getText());
 		text.setText("England");
 		text.notifyListeners(SWT.FocusOut, null);		
@@ -61,7 +61,7 @@ public class TextControlScenario extends ScenariosTestCase {
 		// Change the UI and verify the model changes
 		// Change the model and verify the UI changes
 		Text text = new Text(getComposite(), SWT.BORDER);
-		getDbc().bind(text, new PropertyDesc(transportation, "price"), null);
+		getDbc().bind(text, new Property(transportation, "price"), null);
 		assertEquals(Double.toString(transportation.getPrice()), text.getText());
 		text.setText("9876.54");
 		text.notifyListeners(SWT.FocusOut, null);		

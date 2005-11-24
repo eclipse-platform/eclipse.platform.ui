@@ -21,7 +21,7 @@ import org.eclipse.jface.databinding.ChangeEvent;
 import org.eclipse.jface.databinding.IChangeListener;
 import org.eclipse.jface.databinding.IDataBindingContext;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.PropertyDesc;
+import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.converters.IdentityConverter;
 import org.eclipse.jface.databinding.validator.IValidator;
@@ -323,7 +323,7 @@ public class TableViewerUpdatableCollectionExtended extends
 				ColumnInfo columnInfo = columnInfos[i];
 				if(column.getPropertyType() == null && (columnInfo.cellEditorDefaulted || columnInfo.converterDefaulted || columnInfo.validatorDefaulted)){
 					// Work out the type of the column from the property name from the element type itself
-					PropertyDesc columnPropertyDesc = new PropertyDesc(element,column.getPropertyName());
+					Property columnPropertyDesc = new Property(element,column.getPropertyName());
 					IUpdatableValue dummyUpdatable = (IUpdatableValue) dataBindingContext.createUpdatable(columnPropertyDesc);
 					Class columnType = dummyUpdatable.getValueType();
 					if(columnType != null){

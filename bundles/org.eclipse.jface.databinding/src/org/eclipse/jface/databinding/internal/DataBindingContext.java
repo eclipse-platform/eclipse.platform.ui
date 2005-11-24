@@ -26,7 +26,7 @@ import org.eclipse.jface.databinding.IUpdatableCollection;
 import org.eclipse.jface.databinding.IUpdatableFactory;
 import org.eclipse.jface.databinding.IUpdatableTree;
 import org.eclipse.jface.databinding.IUpdatableValue;
-import org.eclipse.jface.databinding.PropertyDesc;
+import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.converter.IConverter;
 import org.eclipse.jface.databinding.converterfunction.ConversionFunctionRegistry;
 import org.eclipse.jface.databinding.converters.FunctionalConverter;
@@ -190,8 +190,8 @@ public class DataBindingContext implements IDataBindingContext {
 		addUpdatableFactory(new IUpdatableFactory() {
 			public IUpdatable createUpdatable(Map properties,
 					Object description, IDataBindingContext bindingContext) {
-				if (description instanceof PropertyDesc) {
-					PropertyDesc propertyDescription = (PropertyDesc) description;
+				if (description instanceof Property) {
+					Property propertyDescription = (Property) description;
 					Object o = propertyDescription.getObject();
 					if (o instanceof IUpdatableValue) {
 						IUpdatableValue updatableValue = (IUpdatableValue) o;

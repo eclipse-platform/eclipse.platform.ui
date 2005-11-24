@@ -60,6 +60,10 @@ public class SampleData {
 	public static AdventureFactory FACTORY;
 	
 	public static ITree CATEGORY_TREE;
+	
+	public static Signon SIGNON_ADMINISTRATOR;
+	
+	public static Signon SIGNON_JOEBLOGGS;	
 
 	private static SWTUpdatableFactory swtUpdatableFactory = new SWTUpdatableFactory();
 
@@ -165,6 +169,12 @@ public class SampleData {
 		CATALOG_2005.addAccount(PRESIDENT);
 		CATALOG_2005.addAccount(DENTIST);
 		CATALOG_2005.addAccount(SANTA_CLAUS);
+		
+		// Signons
+		SIGNON_ADMINISTRATOR = new Signon("Administrator","Foo123Bar");
+		SIGNON_JOEBLOGGS = new Signon("JoeBloggs","Harry5Potter");
+		CATALOG_2005.addSignon(SIGNON_ADMINISTRATOR);
+		CATALOG_2005.addSignon(SIGNON_JOEBLOGGS);				
 
 		CART = FACTORY.createCart();
 		

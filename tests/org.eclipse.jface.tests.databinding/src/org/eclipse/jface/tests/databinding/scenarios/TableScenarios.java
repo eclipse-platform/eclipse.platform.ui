@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.PropertyDesc;
+import org.eclipse.jface.databinding.Property;
 import org.eclipse.jface.databinding.viewers.TableViewerDescription;
 import org.eclipse.jface.tests.databinding.scenarios.model.Account;
 import org.eclipse.jface.tests.databinding.scenarios.model.Catalog;
 import org.eclipse.jface.tests.databinding.scenarios.model.PhoneConverter;
 import org.eclipse.jface.tests.databinding.scenarios.model.SampleData;
+import org.eclipse.jface.tests.databinding.scenarios.model.Signon;
 import org.eclipse.jface.tests.databinding.scenarios.model.StateConverter;
 import org.eclipse.jface.tests.databinding.scenarios.model.Transportation;
 import org.eclipse.jface.viewers.CellEditor;
@@ -25,6 +26,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -75,6 +77,7 @@ public class TableScenarios extends ScenariosTestCase {
 			return "";
 		return text;
 	}
+	
 	public void testScenario01() {
 		// Show that a TableViewer with three columns renders the accounts
 		Account[] accounts = catalog.getAccounts();
@@ -85,7 +88,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn(1, "lastName");
 		tableViewerDescription.addColumn(2, "state");
 		getDbc().bind(tableViewerDescription,
-				new PropertyDesc(catalog, "accounts"), null);
+				new Property(catalog, "accounts"), null);
 
 		// Verify the data in the table columns matches the accounts
 		for (int i = 0; i < accounts.length; i++) {
@@ -116,7 +119,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("state", null,
 				new StateConverter());
 		getDbc().bind(tableViewerDescription,
-				new PropertyDesc(catalog, "accounts"), null);
+				new Property(catalog, "accounts"), null);
 
 		Account account = accounts[0];
 		// Select the first item in the table
@@ -140,7 +143,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("lastName");
 		tableViewerDescription.addColumn("state");
 		getDbc().bind(tableViewerDescription,
-				new PropertyDesc(catalog, "accounts"), null);
+				new Property(catalog, "accounts"), null);
 		
 		// Verify the number of accounts matches the number of items in the table
 		assertEquals(tableViewer.getTable().getItemCount(),accounts.length);
@@ -175,7 +178,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("state", null,
 				new StateConverter());
 		getDbc().bind(tableViewerDescription,
-				new PropertyDesc(catalog, "accounts"), null);
+				new Property(catalog, "accounts"), null);
 
 		// Verify that the data in the the table columns matches the expected
 		// What we are looking for is that the phone numbers are converterted to
@@ -209,7 +212,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("state", null,
 				new StateConverter());
 		getDbc().bind(tableViewerDescription,
-				new PropertyDesc(catalog, "accounts"), null);
+				new Property(catalog, "accounts"), null);
 		
 		Account account = catalog.getAccounts()[0];
 		String lastName = tableViewer.getTable().getItem(0).getText(0);
@@ -229,7 +232,7 @@ public class TableScenarios extends ScenariosTestCase {
 		tableViewerDescription.addColumn("price");
 		tableViewerDescription.getColumn(0).setPropertyType(Double.TYPE);
 		getDbc().bind(tableViewerDescription,
-				new PropertyDesc(catalog, "transporations"), null);
+				new Property(catalog, "transporations"), null);
 		Transportation transporation = catalog.getTransporations()[0];
 		tableViewer.editElement(transporation, 0);
 		// Set the text property of the cell editor which is now active over the "firstName" column
@@ -250,7 +253,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// The column's type is not set to be Double.TYPE.  This will be inferred once the first Transportation object is set
 		// into the UpdatableCollection
 		getDbc().bind(tableViewerDescription,
-				new PropertyDesc(catalog, "transporations"), null);
+				new Property(catalog, "transporations"), null);
 		Transportation transporation = catalog.getTransporations()[0];
 		tableViewer.editElement(transporation, 0);
 		// Set the text property of the cell editor which is now active over the "firstName" column
@@ -261,6 +264,31 @@ public class TableScenarios extends ScenariosTestCase {
 		// Verify the model is updated
 		assertEquals(transporation.getPrice(),123.45,0);
 		
-	}	
+	}
+	
+	public void testScenario08(){
+		// Verify that binding to a Collection property (rather than an array) works
+		TableViewerDescription tableViewerDescription = new TableViewerDescription(
+				tableViewer);
+		tableViewerDescription.addColumn("userId");
+		tableViewerDescription.addColumn("password");	
+		getDbc().bind(tableViewerDescription,
+				new Property(catalog, "signons"), null);	
+		Signon firstSignon = (Signon) catalog.getSignons().get(0);	
+		// Verify the UI matches the model
+		TableItem firstTableItem = tableViewer.getTable().getItem(0);
+		assertEquals(firstTableItem.getText(1),firstSignon.getPassword());
+		// Change the model and ensure the UI refreshes
+		firstSignon.setPassword("Eclipse123Rocks");
+		assertEquals("Eclipse123Rocks",firstSignon.getPassword());		
+		assertEquals(firstTableItem.getText(1),firstSignon.getPassword());
+		// Change the GUI and ensure the model refreshes
+		tableViewer.editElement(firstSignon, 1);
+		CellEditor[] cellEditors = tableViewer.getCellEditors();
+		TextCellEditor passwordEditor = (TextCellEditor) cellEditors[1];
+		enterText((Text) passwordEditor.getControl(), "Cricket11Players");
+		assertEquals("Cricket11Players",firstSignon.getPassword());
+		
+	}
 	
 }
