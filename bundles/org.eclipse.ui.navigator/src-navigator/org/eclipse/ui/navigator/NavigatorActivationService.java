@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
 import org.eclipse.ui.navigator.internal.NavigatorPlugin;
 import org.eclipse.ui.navigator.internal.extensions.IExtensionActivationListener;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
+import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 
 /**
@@ -138,10 +138,11 @@ public final class NavigatorActivationService {
 	private void notifyListeners(String aViewerId, String aNavigatorExtensionId, boolean toEnable) {
 		synchronized (contentServiceListenersMap) {
 			Set listeners = (Set) contentServiceListenersMap.get(aViewerId);
-			for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-				NavigatorContentService element = (NavigatorContentService) iter.next();
-				element.onExtensionActivation(aViewerId, aNavigatorExtensionId, toEnable);
-			}
+			if (listeners != null)
+				for (Iterator iter = listeners.iterator(); iter.hasNext();) {
+					NavigatorContentService element = (NavigatorContentService) iter.next();
+					element.onExtensionActivation(aViewerId, aNavigatorExtensionId, toEnable);
+				}
 		}
 	}
 
@@ -191,7 +192,7 @@ public final class NavigatorActivationService {
 					activatedExtensions.add(activatedExtensionKey);
 			}
 		} else {
-			NavigatorContentDescriptor[] contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
+			INavigatorContentDescriptor[] contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
 			for (int i = 0; i < contentDescriptors.length; i++)
 				if (contentDescriptors[i].isEnabledByDefault())
 					activatedExtensions.add(getExtensionActivationPreferenceKey(contentDescriptors[i].getId()));

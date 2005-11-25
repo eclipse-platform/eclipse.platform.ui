@@ -145,7 +145,7 @@ public class NavigatorViewerDescriptor {
 	 * @param descriptor
 	 * @return
 	 */
-	public boolean filtersContentDescriptor(NavigatorContentDescriptor descriptor) {
+	public boolean filtersContentDescriptor(INavigatorContentDescriptor descriptor) {
 		// TODO Implment a filter logic component to handle viewers that wish to isolate or exclude
 		// specific content extensions
 

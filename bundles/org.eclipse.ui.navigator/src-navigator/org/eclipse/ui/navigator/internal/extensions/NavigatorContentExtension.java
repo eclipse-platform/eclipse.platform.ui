@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonActionProvider;
+import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
@@ -95,7 +96,7 @@ public class NavigatorContentExtension implements IMementoAware {
 		return descriptor.getId();
 	}
 
-	public NavigatorContentDescriptor getDescriptor() {
+	public INavigatorContentDescriptor getDescriptor() {
 		return descriptor;
 	}
 

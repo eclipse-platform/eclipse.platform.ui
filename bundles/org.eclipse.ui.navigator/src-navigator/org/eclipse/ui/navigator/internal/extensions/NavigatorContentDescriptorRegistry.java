@@ -54,7 +54,7 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Object lvalue, Object rvalue) {
-			return ((NavigatorContentDescriptor) lvalue).getPriority() - ((NavigatorContentDescriptor) rvalue).getPriority();
+			return ((INavigatorContentDescriptor) lvalue).getPriority() - ((INavigatorContentDescriptor) rvalue).getPriority();
 		}
 	};
 
@@ -84,14 +84,9 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 		super(NavigatorPlugin.PLUGIN_ID, NAVIGATOR_CONTENT);
 	}
 
-	/**
-	 * Added method.
+	/**  
 	 * 
-	 * Returns all content descriptor(s) which enable for the given element.
-	 * 
-	 * @param element
-	 *            the element to return the best content descriptor for
-	 * @return the best content descriptor for the given element.
+	 * @return Returns all content descriptor(s).
 	 */
 	public NavigatorContentDescriptor[] getAllContentDescriptors() {
 		NavigatorContentDescriptor[] finalDescriptors = new NavigatorContentDescriptor[contentDescriptors.size()];
@@ -186,7 +181,7 @@ public class NavigatorContentDescriptorRegistry extends RegistryReader {
 	}
 
 	public String getText(String descriptorId) {
-		NavigatorContentDescriptor descriptor = getContentDescriptor(descriptorId);
+		INavigatorContentDescriptor descriptor = getContentDescriptor(descriptorId);
 		if (descriptor != null)
 			return descriptor.getName();
 		return descriptorId;

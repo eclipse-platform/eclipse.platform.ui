@@ -161,7 +161,7 @@ public class LinkHelperRegistry extends RegistryReader {
 			return NO_LINK_HELPERS;
 
 		/* Use the first Navigator Content Descriptor for now */
-		NavigatorContentDescriptor contentDescriptor = (NavigatorContentDescriptor) contentDescriptors.iterator().next();
+		INavigatorContentDescriptor contentDescriptor = (INavigatorContentDescriptor) contentDescriptors.iterator().next();
 
 		List helpersList = new ArrayList();
 		ILinkHelper[] helpers = NO_LINK_HELPERS;

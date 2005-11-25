@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.Priority;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
+import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
@@ -63,7 +63,7 @@ public class CommonSorter extends ViewerSorter {
 		Set descriptors = CONTENT_DESCRIPTOR_REGISTRY.getEnabledContentDescriptors(anElement);
 		Iterator dItr = descriptors.iterator();
 		if(dItr.hasNext())
-			return ((NavigatorContentDescriptor) dItr.next()).getPriority();
+			return ((INavigatorContentDescriptor) dItr.next()).getPriority();
 		return Priority.NORMAL_PRIORITY_VALUE;
 	}
 

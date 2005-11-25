@@ -35,9 +35,10 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.IMementoAware;
 import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.INavigatorContentServiceListener;
 import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.extensions.IExtensionActivationListener;
-import org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener;
+import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
@@ -77,6 +78,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private static final ILabelProvider[] NO_LABEL_PROVIDERS = new ILabelProvider[0];
 
+	private static final INavigatorContentDescriptor[] NO_DESCRIPTORS = new INavigatorContentDescriptor[0];
+
 	private final NavigatorViewerDescriptor viewerDescriptor;
 
 	private final List listeners = new ArrayList();
@@ -115,6 +118,67 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		this(aViewerId);
 		structuredViewerManager = new StructuredViewerManager(aViewer);
 	}
+	
+	public INavigatorContentDescriptor[] enableExtensions(String[] extensionIds, boolean toDisableAllOthers) {
+		
+		Set enabledDescriptors = new HashSet();
+		final String viewerId = viewerDescriptor.getViewerId();
+		for(int extId = 0; extId < extensionIds.length; extId++) {
+			NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, extensionIds[extId], true);
+			enabledDescriptors.add(CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(extensionIds[extId]));
+		}
+		
+		if(toDisableAllOthers) {
+			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();			
+			List descriptorList =  new ArrayList( Arrays.asList(descriptors) );
+
+					
+			for(int descriptorIndx=0; descriptorIndx<descriptors.length; descriptorIndx++)
+				for(int extId=0; extId <extensionIds.length; extId++)
+					if(descriptors[descriptorIndx].getId().equals(extensionIds[extId]))
+						descriptorList.remove(descriptors[descriptorIndx]);
+			
+			for(int i=0; i<descriptorList.size(); i++) {
+				INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) descriptorList.get(i);
+				NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, descriptor.getId(), false);				
+			}							
+		}
+
+		if(enabledDescriptors.size() == 0)
+			return NO_DESCRIPTORS;
+		return (INavigatorContentDescriptor[]) enabledDescriptors.toArray(new NavigatorContentDescriptor[enabledDescriptors.size()]);
+	}
+	
+	public INavigatorContentDescriptor[] disableExtensions(String[] extensionIds, boolean toEnableAllOthers) {
+
+		Set enabledDescriptors = new HashSet();
+		final String viewerId = viewerDescriptor.getViewerId();
+		for(int extId = 0; extId < extensionIds.length; extId++) 
+			NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, extensionIds[extId], false); 
+		
+		if(toEnableAllOthers) {
+			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();			
+			List descriptorList =  new ArrayList( Arrays.asList(descriptors) );
+
+					
+			for(int descriptorIndx=0; descriptorIndx<descriptors.length; descriptorIndx++)
+				for(int extId=0; extId <extensionIds.length; extId++)
+					if(descriptors[descriptorIndx].getId().equals(extensionIds[extId]))
+						descriptorList.remove(descriptors[descriptorIndx]); 
+			
+			for(int i=0; i<descriptorList.size(); i++) {
+				NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) descriptorList.get(i);
+				NavigatorActivationService.getInstance().activateNavigatorExtension(viewerId, descriptor.getId(), true);	
+				enabledDescriptors.add(descriptor);
+			}							
+		}
+		if(enabledDescriptors.size() == 0)
+			return NO_DESCRIPTORS;
+		
+		return (INavigatorContentDescriptor[]) enabledDescriptors.toArray(new NavigatorContentDescriptor[enabledDescriptors.size()]);
+	}
+	
+	
 
 	/*
 	 * (non-Javadoc)

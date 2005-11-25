@@ -8,12 +8,10 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.navigator.internal.extensions;
+package org.eclipse.ui.navigator;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.navigator.IExtensionStateModel;
-import org.eclipse.ui.navigator.IMementoAware;
 
 /**
  * 

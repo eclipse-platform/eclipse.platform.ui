@@ -43,6 +43,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActivationService;
 import org.eclipse.ui.navigator.internal.CommonActivitiesUtilities;
 import org.eclipse.ui.navigator.internal.NavigatorMessages;
+import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 
@@ -273,7 +274,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 			IStructuredSelection structuredSelection = (IStructuredSelection) event.getSelection();
 			Object element = structuredSelection.getFirstElement();
 			if (element instanceof NavigatorContentDescriptor) {
-				NavigatorContentDescriptor ncd = (NavigatorContentDescriptor) element;
+				INavigatorContentDescriptor ncd = (INavigatorContentDescriptor) element;
 				String desc = NavigatorMessages.format("CommonFilterSelectionDialog.2", new Object[]{ncd.getName()}); //$NON-NLS-1$ 
 				descriptionText.setText(desc);
 			} else if (element instanceof ExtensionFilterDescriptor) {

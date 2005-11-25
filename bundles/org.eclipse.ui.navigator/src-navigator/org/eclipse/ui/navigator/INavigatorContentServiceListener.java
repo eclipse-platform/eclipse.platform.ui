@@ -8,7 +8,9 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.navigator.internal.extensions;
+package org.eclipse.ui.navigator;
+
+import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
 
 /**

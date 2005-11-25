@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 /**
@@ -42,7 +43,7 @@ public class CommonFilterLabelProvider implements ITableLabelProvider, ILabelPro
 	 */
 	public Image getImage(Object element) {
 		if (element instanceof NavigatorContentDescriptor)
-			return CONTENT_DESCRIPTOR_REGISTRY.getImage(((NavigatorContentDescriptor) element).getId());
+			return CONTENT_DESCRIPTOR_REGISTRY.getImage(((INavigatorContentDescriptor) element).getId());
 		return null;
 	}
 
@@ -53,7 +54,7 @@ public class CommonFilterLabelProvider implements ITableLabelProvider, ILabelPro
 	 */
 	public String getText(Object element) {
 		if (element instanceof NavigatorContentDescriptor)
-			return ((NavigatorContentDescriptor) element).getName();
+			return ((INavigatorContentDescriptor) element).getName();
 		else if (element instanceof ExtensionFilterDescriptor)
 			return ((ExtensionFilterDescriptor) element).getName();
 		return null;

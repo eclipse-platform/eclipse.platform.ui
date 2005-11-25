@@ -12,6 +12,7 @@ package org.eclipse.ui.navigator.internal.extensions;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**

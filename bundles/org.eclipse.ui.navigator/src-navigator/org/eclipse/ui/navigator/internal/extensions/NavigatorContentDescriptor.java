@@ -29,7 +29,7 @@ import org.eclipse.ui.navigator.internal.ActionExpression;
  * 
  * @since 3.2
  */
-public class NavigatorContentDescriptor {
+public final class NavigatorContentDescriptor implements INavigatorContentDescriptor {
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$	
 	private static final String ATT_CLASS = "class"; //$NON-NLS-1$	
@@ -60,8 +60,7 @@ public class NavigatorContentDescriptor {
 
 
 	private int priority = Integer.MAX_VALUE;
-	private ActionExpression enablement;
-	private ActionExpression contributionEnablement;
+	private ActionExpression enablement; 
 	private boolean root;
 	private String icon;
 	private String declaringPluginId;
@@ -93,32 +92,12 @@ public class NavigatorContentDescriptor {
 	}
 
 	/**
-	 * Returns the name of the navigator content extension class. This class must implement
-	 * <code>INavigatorContentExtension</code>.
-	 * 
-	 * @return the name of the navigator content extension class
-	 */
-	public String getClassName() {
-		return className;
-	}
-
-	/**
 	 * Returns the configuration element parsed by the receiver.
 	 * 
 	 * @return the configuration element parsed by the receiver
 	 */
 	public IConfigurationElement getConfigurationElement() {
 		return configElement;
-	}
-
-	/**
-	 * Returns the contribution expression that is used to determine if this navigator content
-	 * extension contributed a given element.
-	 * 
-	 * @return the contribution expression
-	 */
-	public ActionExpression getContributionEnablement() {
-		return contributionEnablement;
 	}
 
 	/**
@@ -131,40 +110,29 @@ public class NavigatorContentDescriptor {
 		return enablement;
 	}
 
-	/**
-	 * Returns the navgiator content extension id
-	 * 
-	 * @return the navgiator content extension id
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor#getId()
 	 */
 	public String getId() {
 		return id;
 	}
 
-	/**
-	 * Returns the name of this navigator extension
-	 * 
-	 * @return the name of this navigator extension
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor#getName()
 	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * Returns the priority of the navigator content extension.
-	 * 
-	 * @return the priority of the navigator content extension. Returns 0 (zero) if no priority was
-	 *         specified.
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor#getPriority()
 	 */
 	public int getPriority() {
 		return priority;
 	}
 
-	/**
-	 * Returns whether the receiver is a root navigator content extension. Navigator content
-	 * extensions are root extensions if they are referenced in a navigator view extension.
-	 * 
-	 * @return true if the receiver is a root navigator extension false if the receiver is not a
-	 *         root navigator extension
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor#isRoot()
 	 */
 	public boolean isRoot() {
 		return root;
@@ -191,8 +159,7 @@ public class NavigatorContentDescriptor {
 	 */
 	void readConfigElement() throws WorkbenchException {
 		id = configElement.getAttribute(ATT_ID);
-		name = configElement.getAttribute(ATT_NAME);
-		className = configElement.getAttribute(ATT_CLASS);
+		name = configElement.getAttribute(ATT_NAME); 
 		String priorityString = configElement.getAttribute(ATT_PRIORITY);
 		icon = configElement.getAttribute(ATT_ICON);
 		rootLabel = configElement.getAttribute(ATT_ROOT_LABEL);
@@ -200,14 +167,6 @@ public class NavigatorContentDescriptor {
 		declaringPluginId = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
 		String enabledByDefaultString = configElement.getAttribute(ENABLED_BY_DEFAULT);
 		enabledByDefault = (enabledByDefaultString != null && enabledByDefaultString.length() > 0) ? Boolean.valueOf(configElement.getAttribute(ENABLED_BY_DEFAULT)).booleanValue() : true;
-
-
-		if (className == null && (configElement.getAttribute(ATT_CONTENT_PROVIDER) == null || configElement.getAttribute(ATT_LABEL_PROVIDER) == null))
-			throw new WorkbenchException("Missing attribute: " + //$NON-NLS-1$
-						ATT_CLASS + " or one or both of " + //$NON-NLS-1$
-						ATT_CONTENT_PROVIDER + " and " + //$NON-NLS-1$
-						ATT_LABEL_PROVIDER + " in navigator extension: " + //$NON-NLS-1$
-						configElement.getDeclaringExtension().getUniqueIdentifier());
 
 		if (priorityString != null) {
 			try {
@@ -231,15 +190,6 @@ public class NavigatorContentDescriptor {
 						configElement.getDeclaringExtension().getUniqueIdentifier());
 		}
 
-		children = configElement.getChildren(CONTRIBUTION_ENABLEMENT);
-		if (children.length == 1) {
-			contributionEnablement = new ActionExpression(children[0]);
-		} else if (children.length > 1) {
-			throw new WorkbenchException("More than one element: " + //$NON-NLS-1$
-						CONTRIBUTION_ENABLEMENT + " in navigator extension: " + //$NON-NLS-1$
-						configElement.getDeclaringExtension().getUniqueIdentifier());
-		}
-
 		contribution = new IPluginContribution() {
 
 			public String getLocalId() {
@@ -247,7 +197,7 @@ public class NavigatorContentDescriptor {
 			}
 
 			public String getPluginId() {
-				return configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+				return configElement.getDeclaringExtension().getUniqueIdentifier();
 			}
 
 		};
@@ -282,8 +232,8 @@ public class NavigatorContentDescriptor {
 		return declaringPluginId;
 	}
 
-	/**
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor#isEnabledByDefault()
 	 */
 	public boolean isEnabledByDefault() {
 		return enabledByDefault;
@@ -296,6 +246,9 @@ public class NavigatorContentDescriptor {
 		return contribution;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor#hasLoadingFailed()
+	 */
 	public boolean hasLoadingFailed() {
 		return hasLoadingFailed;
 	}

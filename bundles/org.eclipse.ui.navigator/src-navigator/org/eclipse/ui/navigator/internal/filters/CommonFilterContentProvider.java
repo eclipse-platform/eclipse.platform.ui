@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.internal.NavigatorContentService;
-import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
+import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptorRegistry;
 
 /**
@@ -62,7 +62,7 @@ public class CommonFilterContentProvider implements IStructuredContentProvider {
 		ExtensionFilterViewerRegistry filterRegistry = ExtensionFilterRegistryManager.getInstance().getViewerRegistry(contentService.getViewerId());
 
 		List results = new ArrayList();
-		NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
+		INavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY.getAllContentDescriptors();
 		for (int i = 0; i < descriptors.length; i++)
 			results.addAll(Arrays.asList(filterRegistry.getAllDescriptors(descriptors[i].getId())));
 

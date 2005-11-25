@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener;
+import org.eclipse.ui.navigator.internal.extensions.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorViewerDescriptor;
@@ -136,6 +136,25 @@ public interface INavigatorContentService {
 	 * @return The ViewerDescriptor for tihs Content Service instance. 
 	 */
 	public abstract NavigatorViewerDescriptor getViewerDescriptor();
+	
+	
+	/**
+	 * Enable the given extensions. Optionally disable all other extensions. 
+	 * 
+	 * @param extensionIds The list of extensions to enable
+	 * @param toDisableAllOthers True will disable all other extensions; False will leave the other enablements as-is
+	 * @return A list of all INavigatorContentDescriptors that were enabled as a result of this call.
+	 */
+	public INavigatorContentDescriptor[] enableExtensions(String[] extensionIds, boolean toDisableAllOthers);
+	
+	/**
+	 * 
+	 * @param extensionIds The list of extensions to enable
+	 * @param toEnableAllOthers True will enable all other extensions; False will leave the other enablements as-is
+	 * @return A list of all INavigatorContentDescriptors that were enabled as a result of this call.
+	 */
+	public INavigatorContentDescriptor[] disableExtensions(String[] extensionIds, boolean toEnableAllOthers);
+	
 
 	public abstract void addExclusion(String anExtensionId);
 
