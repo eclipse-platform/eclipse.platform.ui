@@ -13,8 +13,7 @@
 
 package org.eclipse.ui.dialogs;
 
-import java.io.File;
-
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
@@ -41,10 +40,11 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.dialogs.PathVariableSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.ide.dialogs.PathVariableSelectionDialog;
+import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 /**
  * Standard resource link page for a wizard that creates a file or 
@@ -209,30 +209,28 @@ public class WizardNewLinkPage extends WizardPage {
      */
     private void handleLinkTargetBrowseButtonPressed() {
         String linkTargetName = linkTargetField.getText();
-        File file = null;
-        String selection = null;
-
-        if ("".equals(linkTargetName) == false) { //$NON-NLS-1$
-            file = new File(linkTargetName);
-            if (file.exists() == false) {
-                file = null;
+         String selection = null;
+         IFileStore store = null;
+        if (linkTargetName.length() > 0) {
+            store = IDEResourceInfoUtils.getFileStore(linkTargetName);
+            if (store == null || !store.fetchInfo().exists()) {
+            	store = null;
             }
         }
         if (type == IResource.FILE) {
             FileDialog dialog = new FileDialog(getShell());
-            if (file != null) {
-                if (file.isFile()) {
+            if (store != null) {
+                if (store.fetchInfo().isDirectory()) 
+                	dialog.setFilterPath(linkTargetName);
+                else
                     dialog.setFileName(linkTargetName);
-                } else {
-                    dialog.setFilterPath(linkTargetName);
-                }
             }
             selection = dialog.open();
         } else {
             DirectoryDialog dialog = new DirectoryDialog(getShell());
-            if (file != null) {
-                if (file.isFile()) {
-                    linkTargetName = file.getParent();
+            if (store != null) {
+                if (!store.fetchInfo().isDirectory()) {
+                    linkTargetName = store.getParent().getName();
                 }
                 if (linkTargetName != null) {
                     dialog.setFilterPath(linkTargetName);
@@ -295,18 +293,18 @@ public class WizardNewLinkPage extends WizardPage {
      * Validates the type of the given file against the link type specified
      * during page creation.
      * 
-     * @param linkTargetFile file to validate
+     * @param linkTargetStore file to validate
      * @return boolean <code>true</code> if the link target type is valid
      * 	and <code>false</code> otherwise.
      */
-    private boolean validateFileType(File linkTargetFile) {
+    private boolean validateFileType(IFileStore linkTargetStore) {
         boolean valid = true;
 
-        if (type == IResource.FILE && linkTargetFile.isFile() == false) {
+        if (type == IResource.FILE && linkTargetStore.fetchInfo().isDirectory()) {
             setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetNotFile);
             valid = false;
         } else if (type == IResource.FOLDER
-                && linkTargetFile.isDirectory() == false) {
+                && !linkTargetStore.fetchInfo().isDirectory()) {
             setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetNotFolder);
             valid = false;
         }
@@ -352,8 +350,8 @@ public class WizardNewLinkPage extends WizardPage {
 
             valid = validateLinkTargetName(linkTargetName);
             if (valid) {
-                File linkTargetFile = new Path(linkTargetName).toFile();
-                if (linkTargetFile.exists() == false) {
+                IFileStore linkTargetFile = IDEResourceInfoUtils.getFileStore(linkTargetName);
+                if (linkTargetFile == null || !linkTargetFile.fetchInfo().exists()) {
                     setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetNonExistent);
                     valid = false;
                 } else {
