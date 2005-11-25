@@ -43,37 +43,38 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * such paths.  This method does not consider whether resources actually 
 	 * exist at the given locations.
 	 */
-	protected ArrayList allPathsForLocation(IPath location) {
-		IProject[] projects = getWorkspace().getRoot().getProjects();
+	protected ArrayList allPathsForLocation(URI location) {
+		final IWorkspaceRoot root = getWorkspace().getRoot();
 		final ArrayList results = new ArrayList();
+		if (location.equals(root.getLocationURI())) {
+			//there can only be one resource at the workspace root's location
+			results.add(Path.ROOT);
+			return results;
+		}
+		IPathVariableManager varMan = workspace.getPathVariableManager();
+		IProject[] projects = root.getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			//check the project location
-			IPath testLocation = project.getLocation();
-			IPath suffix;
-			if (testLocation != null && testLocation.isPrefixOf(location)) {
-				suffix = location.removeFirstSegments(testLocation.segmentCount());
+			URI testLocation = project.getLocationURI();
+			URI relative = location.relativize(testLocation);
+			if (!relative.isAbsolute() && !relative.equals(testLocation)) {
+				IPath suffix = new Path(relative.getPath());
 				results.add(project.getFullPath().append(suffix));
 			}
-			if (!project.isAccessible())
+			ProjectDescription description = ((Project)project).internalGetDescription();
+			if (description == null)
 				continue;
-			IResource[] children = null;
-			try {
-				children = project.members();
-			} catch (CoreException e) {
-				//ignore projects that cannot be accessed
-			}
-			if (children == null)
+			HashMap links = description.getLinks();
+			if (links == null)
 				continue;
-			for (int j = 0; j < children.length; j++) {
-				IResource child = children[j];
-				if (child.isLinked()) {
-					testLocation = child.getLocation();
-					if (testLocation != null && testLocation.isPrefixOf(location)) {
-						//add the full workspace path of the corresponding child of the linked resource
-						suffix = location.removeFirstSegments(testLocation.segmentCount());
-						results.add(child.getFullPath().append(suffix));
-					}
+			for (Iterator it = links.values().iterator(); it.hasNext();) {
+				LinkDescription link = (LinkDescription) it.next();
+				testLocation = varMan.resolveURI(link.getLocation());
+				relative = location.relativize(testLocation);
+				if (!relative.isAbsolute() && !relative.equals(testLocation)) {
+					IPath suffix = new Path(relative.getPath());
+					results.add(project.getFullPath().append(link.getProjectRelativePath()).append(suffix));
 				}
 			}
 		}
@@ -89,7 +90,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * be either files or folders.  If this parameter is true, files will be returned,
 	 * otherwise containers will be returned.
 	 */
-	public IResource[] allResourcesFor(IPath location, boolean files) {
+	public IResource[] allResourcesFor(URI location, boolean files) {
 		ArrayList result = allPathsForLocation(location);
 		int count = 0;
 		for (int i = 0, imax = result.size(); i < imax; i++) {
@@ -527,6 +528,15 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return getStoreRoot(target).localLocation(target.getFullPath());
 	}
 
+	/**
+	 * Returns the resolved, absolute file system location of the given resource.
+	 * Returns null if the location could not be resolved.
+	 */
+	public URI locationURIFor(IResource target) {
+		return getStoreRoot(target).computeURI(target.getFullPath());
+	}
+
+	
 	public void move(IResource source, IFileStore destination, int flags, IProgressMonitor monitor) throws CoreException {
 		IFileStore sourceStore = getStore(source);
 		int storeFlags = 0;
