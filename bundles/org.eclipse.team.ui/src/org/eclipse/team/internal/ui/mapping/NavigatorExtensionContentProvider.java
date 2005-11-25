@@ -15,8 +15,8 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.IResourceMappingScope;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
-import org.eclipse.ui.navigator.internal.extensions.ICommonContentProvider;
 
 /**
  * This content provider acts as the root of a team view that can contain

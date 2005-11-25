@@ -20,11 +20,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.IResourceMappingScope;
 import org.eclipse.team.ui.mapping.ISynchronizationContext;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener;
+import org.eclipse.ui.navigator.INavigatorContentServiceListener;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
 public class ResourceMappingHierarchyArea extends DialogArea implements INavigatorContentServiceListener {
@@ -57,11 +58,13 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
         if (description != null)
             createWrappingLabel(composite, description, 1);
         
+        TeamContentProviderManager.enableTeamContentProvider(TEAM_NAVIGATOR_CONTENT);
         viewer = new CommonViewer(TEAM_NAVIGATOR_CONTENT, composite, SWT.BORDER) {
         	protected org.eclipse.jface.viewers.ILabelProvider wrapLabelProvider(org.eclipse.jface.viewers.ILabelProvider provider) {
         		return provider;
         	};
         };
+        //viewer.getNavigatorContentService().enableExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = 100;
         data.widthHint = 300;

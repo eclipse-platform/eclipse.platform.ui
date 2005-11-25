@@ -5,6 +5,7 @@
      <extension-point id="configurationWizards" name="%configurationWizards" schema="schema/configurationWizards.exsd"/>
    <extension-point id="synchronizeParticipants" name="%synchronizeParticipants" schema="schema/synchronizeParticipants.exsd"/>
    <extension-point id="synchronizeWizards" name="%synchronizeWizards" schema="schema/synchronizeWizards.exsd"/>
+   <extension-point id="teamContentProviders" name="Team Content Providers" schema="schema/teamContentProviders.exsd"/>
 
 <!-- **************** PREFERENCES ******************* -->
    <extension
@@ -333,7 +334,7 @@
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
             contentProvider="org.eclipse.team.internal.ui.mapping.ResourceTeamAwareContentProvider"
-            enabledByDefault="true"
+            enabledByDefault="false"
             id="org.eclipse.team.ui.resourceContent"
             labelProvider="org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider"
             name="Resource Mappings">
@@ -344,6 +345,12 @@
             </objectClass>
             <objectClass
                   name="org.eclipse.core.resources.IResource">
+            </objectClass> 
+            <objectClass
+                  name="org.eclipse.team.ui.mapping.IResourceMappingScope">
+            </objectClass>
+            <objectClass
+                  name="org.eclipse.team.ui.mapping.ISynchronizationContext">
             </objectClass> 
          </or>
          </enablement>
@@ -365,6 +372,13 @@
             class="org.eclipse.team.ui.operations.ModelSynchronizeParticipant"
             id="org.eclipse.team.ui.synchronization_context_synchronize_participant">
       </participant>
+   </extension>
+   <extension
+         id="teamContentProvider"
+         point="org.eclipse.team.ui.teamContentProviders">
+      <teamContentProvider
+            contentExtensionId="org.eclipse.team.ui.resourceContent"
+            modelProviderId="org.eclipse.core.resources.modelProvider"/>
    </extension>
 
 </plugin>

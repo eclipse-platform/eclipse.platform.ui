@@ -26,8 +26,8 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
-import org.eclipse.ui.navigator.internal.extensions.ICommonContentProvider;
 
 /**
  * Abstract team aware content provider that delegates to another content provider

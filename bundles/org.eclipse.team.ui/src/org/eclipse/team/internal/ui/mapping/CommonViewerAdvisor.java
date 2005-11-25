@@ -17,13 +17,14 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.StructuredViewerAdvisor;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.operations.ModelSynchronizePage;
 import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener;
+import org.eclipse.ui.navigator.INavigatorContentServiceListener;
 import org.eclipse.ui.navigator.internal.extensions.NavigatorContentExtension;
 
 /**
@@ -43,6 +44,7 @@ public class CommonViewerAdvisor extends StructuredViewerAdvisor implements INav
 	 * @return a newly created common viewer
 	 */
 	private static CommonViewer createViewer(Composite parent, ISynchronizePageConfiguration configuration) {
+		TeamContentProviderManager.enableTeamContentProvider(TEAM_NAVIGATOR_CONTENT);
 		CommonViewer v = new CommonViewer(TEAM_NAVIGATOR_CONTENT, parent, SWT.NONE) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.navigator.CommonViewer#wrapLabelProvider(org.eclipse.jface.viewers.ILabelProvider)
@@ -52,6 +54,7 @@ public class CommonViewerAdvisor extends StructuredViewerAdvisor implements INav
 				return provider;
 			}
 		};
+		//v.getNavigatorContentService().enableExtensions(TeamContentProviderManager.getInstance().getContentProviderIds(), true);
 		configuration.getSite().setSelectionProvider(v);
 		return v;
 	}
