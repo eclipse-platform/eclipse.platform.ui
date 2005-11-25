@@ -75,7 +75,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		result.setLayout(layout);
 
-		Label label= new Label(result, SWT.NONE);
+		Label label= new Label(result, SWT.WRAP);
 		label.setText(RefactoringUIMessages.RefactoringPropertyPage_label_message);
 
 		fEnableButton= new Button(result, SWT.CHECK);
