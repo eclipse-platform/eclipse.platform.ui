@@ -28,7 +28,8 @@ import org.eclipse.jface.databinding.validators.String2ShortValidator;
 /**
  * ValidatorRegistry.  A registry for validators.  A singleton is provided that includes all
  * of the system-provided validators by default, but clients are free to use as many instances
- * of this class as they like.
+ * of this class as they like.  Client-created instances do not contain the system-provided
+ * validators by default, but these can be added by calling addSystemValidators().
  */
 public class ValidatorRegistry {
 	
