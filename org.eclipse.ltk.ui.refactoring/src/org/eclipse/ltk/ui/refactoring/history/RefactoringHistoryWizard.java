@@ -399,9 +399,12 @@ public class RefactoringHistoryWizard extends Wizard {
 					result[0]= null;
 					final RefactoringStatus status= new RefactoringStatus();
 					final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
-					if (descriptor != null)
-						fErrorPage.setTitle(descriptor);
-					fErrorPage.setLastRefactoring(!isNotLastRefactoring());
+					if (descriptor == null)
+						return;
+					final boolean last= !isNotLastRefactoring();
+					fErrorPage.setTitle(descriptor);
+					fErrorPage.setLastRefactoring(last);
+					fErrorPage.setPageComplete(last);
 					final Refactoring refactoring= getCurrentRefactoring(status, new SubProgressMonitor(monitor, 10));
 					if (refactoring != null && status.isOK()) {
 						status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 20), CheckConditionsOperation.INITIAL_CONDITONS));
