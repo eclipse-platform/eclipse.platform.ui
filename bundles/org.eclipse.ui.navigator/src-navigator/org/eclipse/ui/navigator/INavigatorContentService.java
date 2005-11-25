@@ -148,6 +148,7 @@ public interface INavigatorContentService {
 	public INavigatorContentDescriptor[] enableExtensions(String[] extensionIds, boolean toDisableAllOthers);
 	
 	/**
+	 * Disable the specified extensions. Optionally enable all other extensions.
 	 * 
 	 * @param extensionIds The list of extensions to enable
 	 * @param toEnableAllOthers True will enable all other extensions; False will leave the other enablements as-is
