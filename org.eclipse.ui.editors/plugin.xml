@@ -329,14 +329,14 @@
             targetID="org.eclipse.ui.DefaultTextEditor"
             id="org.eclipse.ui.texteditor.ruler.actions">
          <action
-               label="%Dummy.label"
+               label="%BookmarkRulerAction.label"
                helpContextId="org.eclipse.ui.bookmark_action_context"
                class="org.eclipse.ui.texteditor.BookmarkRulerAction"
                actionID="RulerDoubleClick"
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
          <action
-               label="%Dummy.label"
+               label="%SelectRulerAction.label"
                class="org.eclipse.ui.texteditor.SelectRulerAction"
                actionID="RulerClick"
                id="org.eclipse.ui.texteditor.SelectRulerAction">
