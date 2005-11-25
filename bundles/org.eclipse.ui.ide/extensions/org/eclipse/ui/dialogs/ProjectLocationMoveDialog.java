@@ -27,6 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea;
+import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter;
 
 /**
  * The ProjectLocationMoveDialog is the dialog used to select the location of a
@@ -105,7 +106,7 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		locationArea = new ProjectContentsLocationArea(this, composite,
+		locationArea = new ProjectContentsLocationArea(getErrorReporter(), composite,
 				this.project);
 
 		// Scale the button based on the rest of the dialog
@@ -122,6 +123,22 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 		return composite;
 	}
 
+
+	/**
+	 * Get an error reporter for the receiver.
+	 * @return IErrorMessageReporter
+	 */
+	private IErrorMessageReporter getErrorReporter() {
+		return new IErrorMessageReporter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter#reportError(java.lang.String)
+			 */
+			public void reportError(String errorMessage) {
+				setMessage(errorMessage);
+				
+			}
+		};
+	}
 
 	/**
 	 * Get the project being manipulated.

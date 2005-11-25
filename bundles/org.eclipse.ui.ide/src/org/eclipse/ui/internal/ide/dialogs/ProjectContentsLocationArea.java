@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -33,7 +34,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
@@ -44,6 +44,21 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * 
  */
 public class ProjectContentsLocationArea {
+	/**
+	 * IErrorMessageReporter is an interface for type that allow message
+	 * reporting.
+	 * 
+	 */
+	public interface IErrorMessageReporter {
+		/**
+		 * Report the error message
+		 * 
+		 * @param errorMessage
+		 *            String or <code>null</code>. If the errorMessage is
+		 *            null then clear any error state.
+		 */
+		public void reportError(String errorMessage);
+	}
 
 	private static String BROWSE_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_browseLabel;
 
@@ -57,35 +72,54 @@ public class ProjectContentsLocationArea {
 
 	private Button browseButton;
 
-	private IProject project;
+	private IErrorMessageReporter errorReporter;
 
-	private SelectionDialog selectionDialog;
+	private String projectName = IDEResourceInfoUtils.EMPTY_STRING;
 
-	private String projectName;
+	private String userPath = IDEResourceInfoUtils.EMPTY_STRING;
 
 	private Button useDefaultsButton;
+
+	private IProject existingProject;
 
 	/**
 	 * Create a new instance of the receiver.
 	 * 
-	 * @param dialog
+	 * @param reporter
 	 * @param composite
 	 * @param startProject
 	 */
-	public ProjectContentsLocationArea(SelectionDialog dialog,
+	public ProjectContentsLocationArea(IErrorMessageReporter reporter,
 			Composite composite, IProject startProject) {
 
-		selectionDialog = dialog;
-		project = startProject;
+		errorReporter = reporter;
+		projectName = startProject.getName();
+		existingProject = startProject;
+
 		boolean defaultEnabled = true;
 		try {
-			defaultEnabled = project.getDescription()
-			.getLocationURI() == null;
+			defaultEnabled = startProject.getDescription().getLocationURI() == null;
 		} catch (CoreException e1) {
-			//If we get a CoreException no need to update.
+			// If we get a CoreException assume the default.
 		}
-		projectName = project.getName();
+		createContents(composite, defaultEnabled);
+	}
 
+	/**
+	 * Create a new instance of a ProjectContentsLocationArea.
+	 * 
+	 * @param reporter
+	 * @param composite
+	 */
+	public ProjectContentsLocationArea(IErrorMessageReporter reporter,
+			Composite composite) {
+		errorReporter = reporter;
+
+		// If it is a new project always start enabled
+		createContents(composite, true);
+	}
+
+	private void createContents(Composite composite, boolean defaultEnabled) {
 		// project specification group
 		Composite projectGroup = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -93,8 +127,7 @@ public class ProjectContentsLocationArea {
 		projectGroup.setLayout(layout);
 		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		useDefaultsButton = new Button(projectGroup, SWT.CHECK
-				| SWT.RIGHT);
+		useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
 		useDefaultsButton
 				.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_useDefaultLabel);
 		useDefaultsButton.setSelection(defaultEnabled);
@@ -102,16 +135,17 @@ public class ProjectContentsLocationArea {
 		buttonData.horizontalSpan = 3;
 		useDefaultsButton.setLayoutData(buttonData);
 
-		createUserEntryArea(projectGroup);
+		createUserEntryArea(projectGroup, defaultEnabled);
 
 		useDefaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean useDefaults = useDefaultsButton.getSelection();
 
-				if (useDefaults)
+				if (useDefaults) {
+					userPath = locationPathField.getText();
 					locationPathField.setText(getDefaultPathDisplayString());
-				else
-					locationPathField.setText(project.getLocation().toString());
+				} else
+					locationPathField.setText(userPath);
 				setUserAreaEnabled(!useDefaults);
 			}
 		});
@@ -119,8 +153,9 @@ public class ProjectContentsLocationArea {
 	}
 
 	/**
-	 * Return whether or not we are currently showing the 
-	 * default location for the project.
+	 * Return whether or not we are currently showing the default location for
+	 * the project.
+	 * 
 	 * @return boolean
 	 */
 	public boolean isDefault() {
@@ -129,9 +164,11 @@ public class ProjectContentsLocationArea {
 
 	/**
 	 * Create the area for user entry.
+	 * 
 	 * @param composite
+	 * @param defaultEnabled
 	 */
-	private void createUserEntryArea(Composite composite) {
+	private void createUserEntryArea(Composite composite, boolean defaultEnabled) {
 		// location label
 		locationLabel = new Label(composite, SWT.NONE);
 		locationLabel
@@ -152,11 +189,16 @@ public class ProjectContentsLocationArea {
 			}
 		});
 
-		IPath path = project.getLocation();
-		if(path == null)//Will be null if it is not set
+		if (defaultEnabled)// Will be null if it is not set
 			locationPathField.setText(getDefaultPathDisplayString());
-		else
-			locationPathField.setText(project.getLocation().toString());
+		else {
+			if (existingProject == null)
+				locationPathField.setText(IDEResourceInfoUtils.EMPTY_STRING);
+			else {
+				locationPathField.setText(existingProject.getLocation()
+						.toString());
+			}
+		}
 
 		locationPathField.addModifyListener(new ModifyListener() {
 			/*
@@ -165,7 +207,7 @@ public class ProjectContentsLocationArea {
 			 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 			 */
 			public void modifyText(ModifyEvent e) {
-				selectionDialog.setMessage(checkValidLocation());
+				errorReporter.reportError(checkValidLocation());
 			}
 		});
 	}
@@ -178,9 +220,11 @@ public class ProjectContentsLocationArea {
 	 */
 	private String getDefaultPathDisplayString() {
 
-		URI defaultURI = project.getLocationURI();
+		URI defaultURI = null;
+		if (existingProject != null)
+			defaultURI = existingProject.getLocationURI();
 
-		// Handle files specially
+		// Handle files specially. Assume a file if there is no project to query
 		if (defaultURI == null || defaultURI.getScheme().equals(FILE_SCHEME)) {
 			return Platform.getLocation().append(projectName).toString();
 		}
@@ -262,6 +306,9 @@ public class ProjectContentsLocationArea {
 	 * @return String
 	 */
 	public String checkValidLocation() {
+		
+		if(isDefault())
+			return null;
 
 		String locationFieldContents = locationPathField.getText();
 		if (locationFieldContents.length() == 0) {
@@ -273,15 +320,23 @@ public class ProjectContentsLocationArea {
 			return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
 		}
 
-		IStatus locationStatus = this.project.getWorkspace()
-				.validateProjectLocationURI(this.project, newPath);
+		if (existingProject == null) {
+			IPath projectPath = new Path(locationFieldContents);
+			if (Platform.getLocation().isPrefixOf(projectPath)) {
+				return IDEWorkbenchMessages.WizardNewProjectCreationPage_defaultLocationError;
+			}
 
-		if (!locationStatus.isOK())
-			return locationStatus.getMessage();
+		} else {
+			IStatus locationStatus = existingProject.getWorkspace()
+					.validateProjectLocationURI(existingProject, newPath);
 
-		URI projectPath = project.getLocationURI();
-		if (projectPath != null && projectPath.equals(newPath)) {
-			return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
+			if (!locationStatus.isOK())
+				return locationStatus.getMessage();
+
+			URI projectPath = existingProject.getLocationURI();
+			if (projectPath != null && projectPath.equals(newPath)) {
+				return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
+			}
 		}
 
 		return null;
@@ -321,9 +376,9 @@ public class ProjectContentsLocationArea {
 	}
 
 	/**
-	 * Return the location for the project. If we are using
-	 * defaults then return the workspace root so that core
-	 * creates it with default values.
+	 * Return the location for the project. If we are using defaults then return
+	 * the workspace root so that core creates it with default values.
+	 * 
 	 * @return String
 	 */
 	public String getProjectLocation() {

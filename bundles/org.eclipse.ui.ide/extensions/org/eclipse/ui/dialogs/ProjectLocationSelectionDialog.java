@@ -36,6 +36,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea;
+import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter;
 
 /**
  * The ProjectLocationSelectionDialog is the dialog used to select the name and
@@ -163,7 +164,8 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		createProjectNameGroup(composite);
-		locationArea = new ProjectContentsLocationArea(this, composite, project);
+		locationArea = new ProjectContentsLocationArea(getErrorReporter(),
+				composite, project);
 		locationArea.updateProjectName(projectNameField.getText());
 		return composite;
 	}
@@ -261,5 +263,24 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	 */
 	private void setLocationForSelection() {
 		locationArea.updateProjectName(projectNameField.getText());
+	}
+
+	/**
+	 * Get an error reporter for the receiver.
+	 * 
+	 * @return IErrorMessageReporter
+	 */
+	private IErrorMessageReporter getErrorReporter() {
+		return new IErrorMessageReporter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter#reportError(java.lang.String)
+			 */
+			public void reportError(String errorMessage) {
+				setMessage(errorMessage);
+
+			}
+		};
 	}
 }
