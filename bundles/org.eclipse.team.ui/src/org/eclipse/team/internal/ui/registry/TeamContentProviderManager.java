@@ -66,7 +66,7 @@ public class TeamContentProviderManager {
 		TeamContentProviderDescriptor[] descriptors = getDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
 			TeamContentProviderDescriptor descriptor = descriptors[i];
-			result.add(descriptor.getId());
+			result.add(descriptor.getContentExtensionId());
 		}
 		result.add("org.eclipse.team.ui.navigatorContent");
 		return (String[]) result.toArray(new String[result.size()]);
