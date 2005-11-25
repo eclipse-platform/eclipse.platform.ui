@@ -41,18 +41,22 @@ public class ExpressionEventHandler extends DebugEventHandler {
     	if (event.getSource() instanceof IExpression) {
     		expression = (IExpression) event.getSource();
 		} else {
-			expression = ((DefaultExpressionModelProxy)getModelProxy()).getExpression();
+			IModelProxy modelProxy = getModelProxy();
+			if (modelProxy instanceof DefaultExpressionModelProxy) {
+				DefaultExpressionModelProxy proxy = (DefaultExpressionModelProxy) modelProxy;
+				expression = proxy.getExpression();
+			}
 		}
     	if (expression != null) {
 	    	node.addNode(expression, IModelDelta.CHANGED | IModelDelta.CONTENT | IModelDelta.STATE);
-			getModelProxy().fireModelChanged(delta);
+			fireDelta(delta);
     	}
     }
 
     protected void refreshRoot(DebugEvent event) {
         ModelDelta delta = new ModelDelta();
         delta.addNode(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.CHANGED | IModelDelta.CONTENT);
-        getModelProxy().fireModelChanged(delta);
+        fireDelta(delta);
     }
     
 }

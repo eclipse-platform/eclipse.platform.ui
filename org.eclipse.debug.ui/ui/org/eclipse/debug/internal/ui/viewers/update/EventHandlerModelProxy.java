@@ -112,7 +112,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
      * 
      * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
      */
-    public synchronized final void handleDebugEvents(DebugEvent[] events) {
+    public final void handleDebugEvents(DebugEvent[] events) {
         if (isDisposed()) {
             return;
         }
@@ -121,26 +121,29 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
             if (containsEvent(event)) {
                 for (int j = 0; j < fHandlers.length; j++) {
                     DebugEventHandler handler = fHandlers[j];
+                    if (isDisposed()) {
+                    	return;
+                    }
                     if (handler.handlesEvent(event)) {
                         switch (event.getKind()) {
-                        case DebugEvent.CREATE:
-                            dispatchCreate(handler, event);
-                            break;
-                        case DebugEvent.TERMINATE:
-                            dispatchTerminate(handler, event);
-                            break;
-                        case DebugEvent.SUSPEND:
-                            dispatchSuspend(handler, event);
-                            break;
-                        case DebugEvent.RESUME:
-                            dispatchResume(handler, event);
-                            break;
-                        case DebugEvent.CHANGE:
-                            dispatchChange(handler, event);
-                            break;
-                        default:
-                            dispatchOther(handler, event);
-                            break;
+	                        case DebugEvent.CREATE:
+	                            dispatchCreate(handler, event);
+	                            break;
+	                        case DebugEvent.TERMINATE:
+	                            dispatchTerminate(handler, event);
+	                            break;
+	                        case DebugEvent.SUSPEND:
+	                            dispatchSuspend(handler, event);
+	                            break;
+	                        case DebugEvent.RESUME:
+	                            dispatchResume(handler, event);
+	                            break;
+	                        case DebugEvent.CHANGE:
+	                            dispatchChange(handler, event);
+	                            break;
+	                        default:
+	                            dispatchOther(handler, event);
+	                            break;
                         }
                     }
                 }
@@ -152,7 +155,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
         return true;
     }
 
-    private boolean isDisposed() {
+    protected synchronized boolean isDisposed() {
         return fDisposed;
     }
 
@@ -181,14 +184,14 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
      */
     protected void dispatchSuspend(DebugEventHandler handler, DebugEvent event) {
         // stop timer, if any
-        synchronized (fTimerTasks) {
+        synchronized (this) {
             TimerTask task = (TimerTask) fTimerTasks.remove(event.getSource());
             if (task != null) {
                 task.cancel();
             }
         }
         DebugEvent resume = null;
-        synchronized (fPendingSuspends) {
+        synchronized (this) {
             resume = (DebugEvent) fPendingSuspends.remove(event.getSource());
         }
         if (resume == null) {
@@ -210,12 +213,16 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
         if (event.isEvaluation() || event.isStepStart()) {
             // start a timer to update if the corresponding suspend does not
             // come quickly
-            PendingSuspendTask task = new PendingSuspendTask(handler, event);
-            synchronized (fTimerTasks) {
-                fTimerTasks.put(event.getSource(), task);
-            }
-            fTimer.schedule(task, 500);
-            handler.handleResumeExpectingSuspend(event);
+        	synchronized (this) {
+        		if (!isDisposed()) {
+                    PendingSuspendTask task = new PendingSuspendTask(handler, event);
+                    fTimerTasks.put(event.getSource(), task);
+                    fTimer.schedule(task, 500);
+        		}
+			}
+        	if (!isDisposed()) {
+        		handler.handleResumeExpectingSuspend(event);
+        	}
         } else {
             handler.handleResume(event);
         }

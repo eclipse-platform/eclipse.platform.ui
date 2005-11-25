@@ -49,13 +49,12 @@ public class ThreadEventHandler extends DebugEventHandler {
 		super(proxy);
 	}
 
-	public void dispose() {
-		synchronized (fLastTopFrame) {
-			fLastTopFrame.clear();
-		}
-		synchronized (fThreadQueue) {
-			fThreadQueue.clear();
-		}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#dispose()
+	 */
+	public synchronized void dispose() {
+		fLastTopFrame.clear();
+		fThreadQueue.clear();
 		super.dispose();
 	}
 
@@ -67,7 +66,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 			try {
 				IStackFrame frame = thread.getTopStackFrame();
 				node.addNode(frame, IModelDelta.CHANGED | IModelDelta.STATE);
-				getModelProxy().fireModelChanged(delta);
+				fireDelta(delta);
 			} catch (DebugException e) {
 			}
         } else {
@@ -128,17 +127,17 @@ public class ThreadEventHandler extends DebugEventHandler {
 		ModelDelta delta = new ModelDelta();
 		IModelDeltaNode node = buildBaseDelta(delta, thread);
 		node.addNode(thread, flags);
-		synchronized (fLastTopFrame) {
+		synchronized (this) {
 			fLastTopFrame.remove(thread);
 		}
-		getModelProxy().fireModelChanged(delta);
+		fireDelta(delta);
 	}
 	
 	private void fireDeltaUpdatingTopFrame(IThread thread, int flags) {
 		ModelDelta delta = new ModelDelta();
 		IModelDeltaNode node = buildBaseDelta(delta, thread);
     	IStackFrame prev = null;
-    	synchronized (fLastTopFrame) {
+    	synchronized (this) {
     		 prev = (IStackFrame) fLastTopFrame.get(thread);
 		}
     	IStackFrame frame = null;
@@ -154,37 +153,35 @@ public class ThreadEventHandler extends DebugEventHandler {
     	if (frame != null) {
             node.addNode(frame, IModelDelta.CHANGED | IModelDelta.SELECT);
         }
-    	synchronized (fLastTopFrame) {
-    		fLastTopFrame.put(thread, frame);
+    	synchronized (this) {
+    		if (!isDisposed()) {
+    			fLastTopFrame.put(thread, frame);
+    		}
 		}
-    	getModelProxy().fireModelChanged(delta);
+    	fireDelta(delta);
 	}	
 	
 	protected boolean handlesEvent(DebugEvent event) {
 		return event.getSource() instanceof IThread;
 	}
 	
-	protected IThread queueSuspendedThread(DebugEvent event) {
+	protected synchronized IThread queueSuspendedThread(DebugEvent event) {
 		IThread thread = (IThread) event.getSource();
-		synchronized (fThreadQueue) {
+		if (!isDisposed()) {
 			fThreadQueue.add(thread);
 		}
 		return thread;
 	}
 	
-	protected IThread removeSuspendedThread(DebugEvent event) {
+	protected synchronized IThread removeSuspendedThread(DebugEvent event) {
 		IThread thread = (IThread)event.getSource();
-		synchronized (fThreadQueue) {
-			fThreadQueue.remove(thread);
-		}
+		fThreadQueue.remove(thread);
 		return thread;
 	}
 	
-	protected IThread getNextSuspendedThread() {
-		synchronized (fThreadQueue) {
-			if (!fThreadQueue.isEmpty()) {
-				return (IThread) fThreadQueue.iterator().next();
-			}
+	protected synchronized IThread getNextSuspendedThread() {
+		if (!fThreadQueue.isEmpty()) {
+			return (IThread) fThreadQueue.iterator().next();
 		}
 		return null;
 	}

@@ -8,23 +8,29 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 
     private IDebugTarget fDebugTarget;
 
-    private DebugEventHandler[] fDebugEventHandlers = new DebugEventHandler[] { new DebugTargetEventHandler(this), new ThreadEventHandler(this) };
-
     public DebugTargetProxy(IDebugTarget target) {
         fDebugTarget = target;
     }
 
-    protected boolean containsEvent(DebugEvent event) {
+    /* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+		fDebugTarget = null;
+	}
+
+	protected boolean containsEvent(DebugEvent event) {
         Object source = event.getSource();
         if (source instanceof IDebugElement) {
             IDebugTarget debugTarget = ((IDebugElement) source).getDebugTarget();
-            return fDebugTarget.equals(debugTarget);
+            return debugTarget.equals(fDebugTarget);
         }
         return false;
     }
 
     protected DebugEventHandler[] createEventHandlers() {
-        return fDebugEventHandlers;
+        return new DebugEventHandler[] { new DebugTargetEventHandler(this), new ThreadEventHandler(this) };
     }
 
 }

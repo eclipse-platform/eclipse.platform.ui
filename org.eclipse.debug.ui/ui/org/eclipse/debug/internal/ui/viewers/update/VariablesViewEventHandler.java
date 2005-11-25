@@ -45,8 +45,7 @@ public class VariablesViewEventHandler extends DebugEventHandler {
 			
 			ModelDelta delta = new ModelDelta();
 			delta.addNode(fFrame, IModelDelta.CHANGED | IModelDelta.CONTENT);
-			getModelProxy().fireModelChanged(delta);
-			//TODO: popuplate details pane (should it be built into the viewer?)
+			fireDelta(delta);
 		}
 	}
 

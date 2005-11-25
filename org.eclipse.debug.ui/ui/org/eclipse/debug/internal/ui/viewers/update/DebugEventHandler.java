@@ -25,7 +25,7 @@ public abstract class DebugEventHandler {
 	private IModelProxy fModelProxy;
 
 	/**
-	 * Constructs an event handler for the given update policy.
+	 * Constructs an event handler for the given model proxy.
 	 * 
 	 * @param policy
 	 */
@@ -36,16 +36,17 @@ public abstract class DebugEventHandler {
 	/**
 	 * Disposes this event handler
 	 */
-	public void dispose() {
+	public synchronized void dispose() {
 		fModelProxy = null;
 	}
 		
 	/**
-	 * Returns the viewer this event handler is updating.
+	 * Returns the model proxy this event handler working for,
+	 * or <code>null</code> if disposed.
 	 * 
 	 * @return
 	 */
-	protected IModelProxy getModelProxy() {
+	protected synchronized IModelProxy getModelProxy() {
 		return fModelProxy;
 	}
 
@@ -149,6 +150,27 @@ public abstract class DebugEventHandler {
 	protected void refreshRoot(DebugEvent event) {
 		ModelDelta delta = new ModelDelta();
 		delta.addNode(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.CHANGED | IModelDelta.CONTENT);
-		getModelProxy().fireModelChanged(delta);
+		fireDelta(delta);
+	}
+	
+	/**
+	 * Fires the given delta, unless this handler has been disposed.
+	 * 
+	 * @param delta
+	 */
+	protected void fireDelta(IModelDelta delta) {
+		IModelProxy modelProxy = getModelProxy();
+		if (modelProxy != null) {
+			modelProxy.fireModelChanged(delta);
+		}
+	}
+	
+	/**
+	 * Returns whether this handler has been disposed.
+	 * 
+	 * @return whether this handler has been disposed
+	 */
+	protected synchronized boolean isDisposed() {
+		return fModelProxy == null;
 	}
 }

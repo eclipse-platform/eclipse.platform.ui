@@ -12,16 +12,22 @@ public class ProcessProxy extends EventHandlerModelProxy {
 
     private DebugEventHandler fProcessEventHandler = new DebugEventHandler(this) {
         protected boolean handlesEvent(DebugEvent event) {
-            return fProcess.equals(event.getSource());
+            return event.getSource().equals(fProcess);
         }
 
-        protected void handleChange(DebugEvent event) {
-            ModelDelta delta = new ModelDelta();
-            IModelDeltaNode node = delta.addNode(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
-            node = node.addNode(fProcess.getLaunch(), IModelDelta.NOCHANGE);
-            node.addNode(fProcess, IModelDelta.CHANGED | IModelDelta.STATE);
-            fireModelChanged(delta);
-
+		protected void handleChange(DebugEvent event) {
+			ModelDelta delta = null;
+        	synchronized (ProcessProxy.this) {
+        		if (!isDisposed()) {
+                    delta = new ModelDelta();
+                    IModelDeltaNode node = delta.addNode(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
+                    node = node.addNode(fProcess.getLaunch(), IModelDelta.NOCHANGE);
+                    node.addNode(fProcess, IModelDelta.CHANGED | IModelDelta.STATE);        			
+        		}
+			}
+        	if (delta != null && !isDisposed()) {
+        		fireModelChanged(delta);
+        	}
         }
 
         protected void handleCreate(DebugEvent event) {
@@ -30,12 +36,20 @@ public class ProcessProxy extends EventHandlerModelProxy {
         
     };
 
-    public ProcessProxy(IProcess process) {
+    /* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+		fProcess = null;
+	}
+
+	public ProcessProxy(IProcess process) {
         fProcess = process;
     }
 
     protected synchronized boolean containsEvent(DebugEvent event) {
-        return fProcess.equals(event.getSource());
+        return event.getSource().equals(fProcess);
     }
 
     protected DebugEventHandler[] createEventHandlers() {

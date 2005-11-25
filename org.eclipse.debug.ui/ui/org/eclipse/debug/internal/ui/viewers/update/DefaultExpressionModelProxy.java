@@ -45,13 +45,18 @@ public class DefaultExpressionModelProxy extends EventHandlerModelProxy {
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#containsEvent(org.eclipse.debug.core.DebugEvent)
 	 */
 	protected boolean containsEvent(DebugEvent event) {
-		if (fExpression.equals(event.getSource())) {
+		if (event.getSource().equals(fExpression)) {
 			return true;
 		}
 		// have to consider change events on variables
 		return event.getKind() == DebugEvent.CHANGE && event.getSource() instanceof IVariable;
 	}
 
+	/**
+	 * Returns this model's expression, or <code>null</code> if disposed.
+	 * 
+	 * @return expression or <code>null</code>
+	 */
 	protected IExpression getExpression() {
 		return fExpression;
 	}

@@ -64,7 +64,7 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 		IModelDeltaNode node = delta.addNode(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NOCHANGE);
 		node = node.addNode(target.getLaunch(), IModelDelta.NOCHANGE);
 		node.addNode(target, flags);
-		getModelProxy().fireModelChanged(delta);
+		fireDelta(delta);
 	}
 	
 }
