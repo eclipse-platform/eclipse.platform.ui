@@ -28,14 +28,14 @@ public class FileStoreRoot {
 	 * so that other resources with a cache of the root will know they need to update.
 	 */
 	private boolean isValid = true;
-	private URI root;
-	
 	/**
 	 * If this root represents a resource in the local file system, this path
 	 * represents the root location.  This value is null if the root represents
 	 * a non-local file system
 	 */
 	private IPath localRoot = null;
+
+	private URI root;
 
 	private final IPathVariableManager variableManager;
 
@@ -53,6 +53,23 @@ public class FileStoreRoot {
 		this.root = rootURI;
 		this.chop = workspacePath.segmentCount();
 		this.localRoot = FileUtil.toPath(root);
+	}
+
+	/**
+	 * Returns the resolved, absolute file system location of the resource
+	 * corresponding to the given workspace path, or null if none could
+	 * be computed.
+	 */
+	public URI computeURI(IPath workspacePath) {
+		IPath childPath = workspacePath.removeFirstSegments(chop);
+		final URI rootURI = variableManager.resolveURI(root);
+		if (childPath.segmentCount() == 0)
+			return rootURI;
+		try {
+			return EFS.getStore(rootURI).getChild(childPath).toURI();
+		} catch (CoreException e) {
+			return null;
+		}
 	}
 
 	IFileStore createStore(IPath workspacePath) {
@@ -73,7 +90,7 @@ public class FileStoreRoot {
 	boolean isValid() {
 		return isValid;
 	}
-	
+
 	IPath localLocation(IPath workspacePath) {
 		if (localRoot == null)
 			return null;
