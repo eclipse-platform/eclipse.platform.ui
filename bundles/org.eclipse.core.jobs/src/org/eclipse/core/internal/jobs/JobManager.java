@@ -54,18 +54,6 @@ public class JobManager implements IJobManager {
 	private static DateFormat DEBUG_FORMAT;
 
 	/**
-	 * @throws ClassNotFoundException in case if OSGi is not installed on the system.
-	 */
-	private void initDebugOptions() throws ClassNotFoundException {
-		DEBUG = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS, false);
-		DEBUG_BEGIN_END = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_BEGIN_END, false);
-		DEBUG_DEADLOCK = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEADLOCK_ERROR, false);
-		DEBUG_LOCKS = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_LOCKS, false);
-		DEBUG_TIMING = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS_TIMING, false);
-		DEBUG_SHUTDOWN = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_SHUTDOWN, false);
-	}
-
-	/**
 	 * The singleton job manager instance. It must be a singleton because
 	 * all job instances maintain a reference (as an optimization) and have no way 
 	 * of updating it.
@@ -159,6 +147,19 @@ public class JobManager implements IJobManager {
 	/**
 	 * For debugging purposes only
 	 */
+	private static String printJobName(Job job) {
+		if (job instanceof ThreadJob) {
+			Job realJob = ((ThreadJob) job).realJob;
+			if (realJob != null)
+				return realJob.getClass().getName();
+			return "ThreadJob on rule: " + job.getRule(); //$NON-NLS-1$
+		}
+		return job.getClass().getName();
+	}
+
+	/**
+	 * For debugging purposes only
+	 */
 	public static String printState(int state) {
 		switch (state) {
 			case Job.NONE :
@@ -188,12 +189,7 @@ public class JobManager implements IJobManager {
 
 	private JobManager() {
 		instance = this;
-		try {
-			initDebugOptions();
-		} catch (ClassNotFoundException e) {
-			// Debug only message - don't translate
-			JobsMessages.message("Unable to obtain debug options in the Jobs plugin. Check if OSGi plugin is installed."); //$NON-NLS-1$
-		}
+		initDebugOptions();
 		synchronized (lock) {
 			waiting = new JobQueue(false);
 			sleeping = new JobQueue(true);
@@ -439,7 +435,7 @@ public class JobManager implements IJobManager {
 			}
 		}
 
-		// Give running jobs a chance to finish. Wait 0.1 sec for up to 3 times.
+		// Give running jobs a chance to finish. Wait 0.1 seconds for up to 3 times.
 		if (toCancel != null && toCancel.length > 0) {
 			for (int i = 0; i < toCancel.length; i++) {
 				cancel(toCancel[i]); // cancel jobs outside sync block to avoid deadlock
@@ -459,7 +455,7 @@ public class JobManager implements IJobManager {
 					}
 					if (stillRunning != null) {
 						for (int j = 0; j < stillRunning.length; j++) {
-							JobManager.debug("\tJob: " + getInternalJobName(stillRunning[j])); //$NON-NLS-1$
+							JobManager.debug("\tJob: " + printJobName(stillRunning[j])); //$NON-NLS-1$
 						}
 					}
 				}
@@ -478,7 +474,7 @@ public class JobManager implements IJobManager {
 
 		if (toCancel != null) {
 			for (int i = 0; i < toCancel.length; i++) {
-				String jobName = getInternalJobName(toCancel[i]);
+				String jobName = printJobName(toCancel[i]);
 				//this doesn't need to be translated because it's just being logged
 				String msg = "Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: " + jobName; //$NON-NLS-1$
 				RuntimeLog.log(new Status(IStatus.WARNING, JobsMessages.OWNER_NAME, JobManager.PLUGIN_ERROR, msg, null));
@@ -486,18 +482,6 @@ public class JobManager implements IJobManager {
 		}
 
 		pool.shutdown();
-	}
-
-	private String getInternalJobName(Job job) {
-		if (job instanceof ThreadJob) {
-			Job realJob = ((ThreadJob) job).realJob;
-			if (realJob != null)
-				return realJob.getClass().getName();
-			else
-				return "ThreadJob on rule: " + job.getRule(); //$NON-NLS-1$
-		} else {
-			return job.getClass().getName();
-		}
 	}
 
 	/**
@@ -602,6 +586,20 @@ public class JobManager implements IJobManager {
 
 	public LockManager getLockManager() {
 		return lockManager;
+	}
+
+	private void initDebugOptions() {
+		try {
+			DEBUG = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS, false);
+			DEBUG_BEGIN_END = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_BEGIN_END, false);
+			DEBUG_DEADLOCK = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEADLOCK_ERROR, false);
+			DEBUG_LOCKS = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_LOCKS, false);
+			DEBUG_TIMING = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS_TIMING, false);
+			DEBUG_SHUTDOWN = JobsOSGiUtils.getDefault().getBooleanDebugOption(OPTION_SHUTDOWN, false);
+		} catch (ClassNotFoundException e) {
+			// Debug only message - don't translate
+			JobsMessages.message("Unable to obtain debug options in the Jobs plugin. Check if OSGi plugin is installed."); //$NON-NLS-1$
+		}
 	}
 
 	/**
