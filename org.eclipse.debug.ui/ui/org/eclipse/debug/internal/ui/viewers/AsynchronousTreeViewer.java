@@ -75,8 +75,9 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	private Tree fTree;
 
 	/**
-	 * Array of tree paths to be expanded. As paths are expanded, those entries
-	 * are set to <code>null</code>.
+	 * Collection of tree paths to be expanded. A path is removed from the 
+	 * collection when it is expanded. The entire list is cleared when the
+	 * input to the viewer changes.
 	 */
 	private List fPendingExpansion = new ArrayList();
 
@@ -239,7 +240,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 		if (fPendingExpansion != null) {
             for (Iterator i = fPendingExpansion.iterator(); i.hasNext();) {
                 TreePath path = (TreePath) i.next();
-                if (path != null && attemptExpansion(path)) {
+                if (attemptExpansion(path)) {
                     i.remove();
                 }
             }
