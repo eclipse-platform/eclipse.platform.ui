@@ -478,6 +478,11 @@ public class JobManager implements IJobManager {
 				//this doesn't need to be translated because it's just being logged
 				String msg = "Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: " + jobName; //$NON-NLS-1$
 				RuntimeLog.log(new Status(IStatus.WARNING, JobsMessages.OWNER_NAME, JobManager.PLUGIN_ERROR, msg, null));
+				
+				// TODO the RuntimeLog.log in its current implmentation won't produce a log 
+				// during this stage of shutdown. For now add a standard error output.
+				// One the logging story is improved, the System.err output below can be removed:
+				System.err.println(msg);
 			}
 		}
 
