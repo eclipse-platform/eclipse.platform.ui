@@ -169,7 +169,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 			// wait for editor to open
 			synchronized (fLock) {
 			    if (fEditor == null) {
-			        fLock.wait(5000);
+			        fLock.wait(20000);
 			    }
             }
 			
