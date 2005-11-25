@@ -73,8 +73,8 @@ public interface IProjectDescription {
 	 * Returns the  local file system location for the described project.  The path
 	 * will be either an absolute file system path, or a relative path whose first
 	 * segment is the name of a workspace path variable. <code>null</code> is
-	 * returned if the default location should be used.  This method will fail if this 
-	 * project is not located in the local file system.
+	 * returned if the default location should be used.  This method will return 
+	 * <code>null</code> if this project is not located in the local file system.
 	 *
 	 * @return the location for the described project or <code>null</code>
 	 * @deprecated Since 3.2, project locations are not necessarily in the local file
@@ -88,6 +88,7 @@ public interface IProjectDescription {
 	 *
 	 * @return the location for the described project or <code>null</code>
 	 * @since 3.2
+	 * @see #setLocationURI(URI)
 	 */
 	public URI getLocationURI();
 
@@ -148,8 +149,8 @@ public interface IProjectDescription {
 	/**
 	 * Sets the list of build command to run when building the described project.
 	 * <p>
-	 * Users must call <code>IProject.setDescription</code> before changes 
-	 * made to this description take effect.
+	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)} 
+	 * before changes made to this description take effect.
 	 * </p>
 	 *
 	 * @param buildSpec the array of build commands to run
@@ -162,8 +163,8 @@ public interface IProjectDescription {
 	/**
 	 * Sets the comment for the described project.
 	 * <p>
-	 * Users must call <code>IProject.setDescription</code> before changes 
-	 * made to this description take effect.
+	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)} 
+	 * before changes made to this description take effect.
 	 * </p>
 	 *
 	 * @param comment the comment for the described project
@@ -177,8 +178,8 @@ public interface IProjectDescription {
 	 * The projects need not exist in the workspace. Duplicates will be
 	 * removed.  
 	 * <p>
-	 * Users must call <code>IProject.setDescription</code> before changes 
-	 * made to this description take effect.
+	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)} 
+	 * before changes made to this description take effect.
 	 * </p>
 	 * @see #getDynamicReferences()
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
@@ -261,8 +262,8 @@ public interface IProjectDescription {
 	 * A project created with this description will have these natures
 	 * added to it in the given order.
 	 * <p>
-	 * Users must call <code>IProject.setDescription</code> before changes 
-	 * made to this description take effect.
+	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)} 
+	 * before changes made to this description take effect.
 	 * </p>
 	 *
 	 * @param natures the list of natures
@@ -276,8 +277,8 @@ public interface IProjectDescription {
 	 * The order of projects is preserved.
 	 * The projects need not exist in the workspace.
 	 * <p>
-	 * Users must call <code>IProject.setDescription</code> before changes 
-	 * made to this description take effect.
+	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)} 
+	 * before changes made to this description take effect.
 	 * </p>
 	 *
 	 * @param projects a list of projects
