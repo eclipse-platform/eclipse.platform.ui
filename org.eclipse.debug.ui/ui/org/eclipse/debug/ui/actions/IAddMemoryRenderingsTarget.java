@@ -44,8 +44,7 @@ public interface IAddMemoryRenderingsTarget {
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
 	 * @param retrieval IMemoryBlockRetrieval element for adding the memory block
-	 * @param renderingTypes renderings to add
-	 * @throws CoreException if unable to perform the action 
+	 * @throws CoreException if an error has occurred
 	 */
 	public boolean canAddMemoryRenderings(IWorkbenchPart part, ISelection selection, IMemoryBlockRetrieval retrieval) throws CoreException;
 	
