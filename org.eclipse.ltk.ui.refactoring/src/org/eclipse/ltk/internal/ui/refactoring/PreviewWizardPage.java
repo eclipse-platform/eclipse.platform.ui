@@ -565,4 +565,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		fTreeViewer.setGroupCategory(null);
 		fTreeViewerPane.setText(RefactoringUIMessages.PreviewWizardPage_changes); 
 	}
+
+	public Change getChange() {
+		return fChange;
+	}
 }

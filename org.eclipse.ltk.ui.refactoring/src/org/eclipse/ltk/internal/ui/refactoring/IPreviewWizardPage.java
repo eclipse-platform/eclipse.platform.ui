@@ -10,20 +10,31 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import org.eclipse.jface.wizard.IWizardPage;
-
 import org.eclipse.ltk.core.refactoring.Change;
 
+import org.eclipse.jface.wizard.IWizardPage;
+
+/**
+ * Interface for a refactoring preview wizard page.
+ */
 public interface IPreviewWizardPage extends IWizardPage {
 
 	/** The page's name */
 	public static final String PAGE_NAME= "PreviewPage"; //$NON-NLS-1$
-	
+
+	/**
+	 * Returns the change that is displayed.
+	 * 
+	 * @return the change, or <code>null</code>
+	 * @since 3.2
+	 */
+	public Change getChange();
+
 	/**
 	 * Sets that change for which the page is supposed to display a preview.
 	 * 
-	 * @param change the new change.
+	 * @param change
+	 *            the new change, or <code>null</code>
 	 */
-	public void setChange(Change change);	
+	public void setChange(Change change);
 }
-

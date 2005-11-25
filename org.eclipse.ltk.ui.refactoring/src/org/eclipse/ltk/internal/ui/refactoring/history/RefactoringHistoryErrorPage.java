@@ -14,6 +14,7 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
+import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
@@ -123,14 +124,13 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 * {@inheritDoc}
 	 */
 	public void setStatus(final RefactoringStatus status) {
+		Assert.isNotNull(status);
 		super.setStatus(status);
-		if (status != null) {
-			final int severity= status.getSeverity();
-			if (severity >= RefactoringStatus.FATAL)
-				setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_fatal_error);
-			else if (severity >= RefactoringStatus.INFO)
-				setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_info_error);
-		}
+		final int severity= status.getSeverity();
+		if (severity >= RefactoringStatus.FATAL)
+			setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_fatal_error);
+		else if (severity >= RefactoringStatus.INFO)
+			setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_info_error);
 	}
 
 	/**

@@ -265,7 +265,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		} else if (page == fErrorPage) {
 			final Refactoring refactoring= fErrorPage.getRefactoring();
 			final RefactoringStatus status= fErrorPage.getStatus();
-			if (status != null && status.hasFatalError()) {
+			if (status.hasFatalError()) {
 				final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 				if (!store.getBoolean(PREFERENCE_DO_NOT_SHOW_PROMPT))
 					MessageDialogWithToggle.openWarning(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, NLS.bind(RefactoringUIMessages.RefactoringHistoryWizard_fatal_error_message, fErrorPage.getTitle()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, store, PREFERENCE_DO_NOT_SHOW_PROMPT);
@@ -296,6 +296,10 @@ public class RefactoringHistoryWizard extends Wizard {
 					// Do nothing
 				}
 			}
+			final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
+			if (descriptor != null)
+				fPreviewPage.setTitle(descriptor);
+			fPreviewPage.setStatus(status);
 			fPreviewPage.setNextPageEnabled(isNotLastRefactoring());
 			return fPreviewPage;
 		}
@@ -359,7 +363,8 @@ public class RefactoringHistoryWizard extends Wizard {
 					result[0]= null;
 					final RefactoringStatus status= new RefactoringStatus();
 					final RefactoringDescriptorProxy descriptor= getCurrentDescriptor();
-					fErrorPage.setTitle(descriptor);
+					if (descriptor != null)
+						fErrorPage.setTitle(descriptor);
 					fErrorPage.setLastRefactoring(!isNotLastRefactoring());
 					final Refactoring refactoring= getCurrentRefactoring(status, new SubProgressMonitor(monitor, 10));
 					if (refactoring != null && status.isOK()) {
@@ -377,9 +382,11 @@ public class RefactoringHistoryWizard extends Wizard {
 							result[0]= fErrorPage;
 							return;
 						}
+						fPreviewPage.setStatus(status);
 						fPreviewPage.setNextPageEnabled(isNotLastRefactoring());
 						fPreviewPage.setChange(refactoring.createChange(new SubProgressMonitor(monitor, 5)));
-						fPreviewPage.setTitle(descriptor);
+						if (descriptor != null)
+							fPreviewPage.setTitle(descriptor);
 						result[0]= fPreviewPage;
 					} else {
 						fErrorPage.setStatus(status);
