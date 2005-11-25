@@ -37,14 +37,48 @@ public class IWorkspaceRootTest extends ResourceTest {
 	 * Tests the API method findContainersForLocation.
 	 */
 	public void testFindContainersForLocation() {
-		// TODO
+		//should find the workspace root
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IContainer[] result = root.findContainersForLocation(root.getLocation());
+		assertEquals("1.0", 1, result.length);
+		assertEquals("1.1", root, result[0]);
+		
+		//deep linked resource
+		IProject p1 = root.getProject("p1");
+		IProject p2 = root.getProject("p2");
+		IFolder parent = p2.getFolder("parent");
+		IFolder link = parent.getFolder("link");
+		ensureExistsInWorkspace(new IResource[] {p1, p2, parent}, true);
+		try {
+			link.createLink(p1.getLocationURI(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		result = root.findContainersForLocation(p1.getLocation());
+		assertEquals("2.0", 2, result.length);
+		boolean p1Found = false, linkFound = false;
+		for (int i = 0; i < result.length; i++) {
+			if (result[i].equals(p1))
+				p1Found = true;
+			else if (result[i].equals(link))
+				linkFound = true;
+		}
+		assertTrue("2.1", p1Found);
+		assertTrue("2.2", linkFound);
+		
+		// TODO add more tests
 	}
 
 	/**
 	 * Tests the API method findFilesForLocation.
 	 */
 	public void testFindFilesForLocation() {
-		// TODO
+		//should not find the workspace root
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IFile[] result = root.findFilesForLocation(root.getLocation());
+		assertEquals("1.0", 0, result.length);
+
+		// TODO add more tests
 	}
 
 	/**

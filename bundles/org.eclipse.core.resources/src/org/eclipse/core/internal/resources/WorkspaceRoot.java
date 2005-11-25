@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.HashMap;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -52,14 +53,14 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @see IWorkspaceRoot#findContainersForLocation(IPath)
 	 */
 	public IContainer[] findContainersForLocation(IPath location) {
-		return (IContainer[]) getLocalManager().allResourcesFor(location, false);
+		return (IContainer[]) getLocalManager().allResourcesFor(FileUtil.toURI(location), false);
 	}
 
 	/**
 	 * @see IWorkspaceRoot#findFilesForLocation(IPath)
 	 */
 	public IFile[] findFilesForLocation(IPath location) {
-		return (IFile[]) getLocalManager().allResourcesFor(location, true);
+		return (IFile[]) getLocalManager().allResourcesFor(FileUtil.toURI(location), true);
 	}
 
 	/**
