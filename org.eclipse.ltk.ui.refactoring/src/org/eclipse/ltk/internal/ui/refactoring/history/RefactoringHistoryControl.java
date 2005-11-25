@@ -260,14 +260,16 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	public void setRefactoringHistory(final RefactoringHistory history) {
 		fHistoryViewer.setInput(history);
-		final RefactoringHistoryContentProvider provider= fControlConfiguration.getContentProvider();
-		if (provider != null) {
-			provider.inputChanged(fHistoryViewer, null, history);
-			final Object[] roots= provider.getRootElements();
-			if (roots != null && roots.length > 0) {
-				final Object first= roots[0];
-				if (first != null)
-					fHistoryViewer.setExpandedState(first, true);
+		if (history != null) {
+			final RefactoringHistoryContentProvider provider= fControlConfiguration.getContentProvider();
+			if (provider != null) {
+				provider.inputChanged(fHistoryViewer, null, history);
+				final Object[] roots= provider.getRootElements();
+				if (roots != null && roots.length > 0) {
+					final Object first= roots[0];
+					if (first != null)
+						fHistoryViewer.setExpandedState(first, true);
+				}
 			}
 		}
 	}
