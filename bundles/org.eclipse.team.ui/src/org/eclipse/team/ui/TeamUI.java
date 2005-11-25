@@ -14,7 +14,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
  * TeamUI contains public API for generic UI-based Team functionality.
@@ -39,7 +38,7 @@ public class TeamUI {
 
 	/**
 	 * Property constant used to store and retrieve the synchronization context
-	 * from the {@link IExtensionStateModel} used by the Common Navigator framework.
+	 * from the {@link org.eclipse.ui.navigator.IExtensionStateModel} used by the Common Navigator framework.
 	 * 
 	 * @since 3.2
 	 */
@@ -47,7 +46,7 @@ public class TeamUI {
 
 	/**
 	 * Property constant used to store and retrieve the resource mapping scope
-	 * from the {@link IExtensionStateModel} used by the Common Navigator framework.
+	 * from the {@link org.eclipse.ui.navigator.IExtensionStateModel} used by the Common Navigator framework.
 	 * 
 	 * @since 3.2
 	 */
