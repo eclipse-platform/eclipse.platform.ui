@@ -11,6 +11,7 @@ package org.eclipse.core.internal.filesystem.local;
 
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
@@ -371,6 +372,32 @@ public class LocalFile extends FileStore {
 	 * @see org.eclipse.core.filesystem.IFileStore#toURI()
 	 */
 	public URI toURI() {
-		return file.toURI();
+		//avoid java.io.File implementation because it is unstable:
+		//URI before = file.toURI();
+		//file.mkdirs();
+		//file.toURI().equals(before) --> returns false if file didn't exist before
+		String pathString = filePath;
+		final int length = pathString.length();
+		StringBuffer pathBuf = new StringBuffer(length + 1);
+		//There must be a leading slash in a hierarchical URI
+		if (length > 0 && (pathString.charAt(0) != File.separatorChar))
+			pathBuf.append('/');
+		//additional double-slash for UNC paths to distinguish from host separator
+		if (pathString.startsWith("//")) //$NON-NLS-1$
+			pathBuf.append('/').append('/');
+		if (File.separatorChar == '/') {
+			pathBuf.append(pathString);
+		} else {
+			for (int i = 0; i < length; i++) {
+				char c = pathString.charAt(i);
+				pathBuf.append(c == File.separatorChar ? '/' : c);
+			}
+		}
+		try {
+			return new URI(EFS.SCHEME_FILE, null, pathBuf.toString(), null);
+		} catch (URISyntaxException e) {
+			//try java.io implementation
+			return file.toURI();
+		}
 	}
 }
