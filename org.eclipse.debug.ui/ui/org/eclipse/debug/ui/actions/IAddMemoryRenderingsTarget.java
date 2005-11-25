@@ -50,6 +50,15 @@ public interface IAddMemoryRenderingsTarget {
 	public boolean canAddMemoryRenderings(IWorkbenchPart part, ISelection selection, IMemoryBlockRetrieval retrieval) throws CoreException;
 	
 	/**
+	 * Returns whether this target will support adding memory renderings from the specified
+	 * part.
+	 * @param part
+	 * @return true if the target wants to support adding memory renderings from the given
+	 * part, false otherwise.
+	 */
+	public boolean supportsAddMemoryRenderings(IWorkbenchPart part);
+	
+	/**
 	 * Perform an add memory rendering operation. Based on the part, selection and retrieval, client
 	 * must first create and add the required memory block to the Memory Block Manager.
 	 * Once the memory block is added, client can create the specified renderings and add the renderings
