@@ -29,7 +29,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	protected ResourceInfo oldInfo;
 	protected ResourceInfo newInfo;
 	protected ResourceDelta[] children;
-	// don't agressively set this, but cache it if called once
+	// don't aggressively set this, but cache it if called once
 	protected IResource cachedResource;
 
 	//
