@@ -12,20 +12,13 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import java.net.URI;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -33,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.ide.dialogs.FileStoreLocationArea;
+import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea;
 
 /**
  * The ProjectLocationMoveDialog is the dialog used to select the location of a
@@ -46,9 +39,8 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 
 	private static String PROJECT_LOCATION_SELECTION_TITLE = IDEWorkbenchMessages.ProjectLocationSelectionDialog_selectionTitle;
 
-	private boolean useDefaults = true;
 
-	private FileStoreLocationArea locationArea;
+	private ProjectContentsLocationArea locationArea;
 
 	/**
 	 * Create a ProjectLocationMoveDialog on the supplied project parented by
@@ -61,13 +53,6 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 		super(parentShell);
 		setTitle(PROJECT_LOCATION_SELECTION_TITLE);
 		this.project = existingProject;
-		try {
-			URI originalPath = this.getProject().getDescription()
-					.getLocationURI();
-			this.useDefaults = originalPath == null;
-		} catch (CoreException exception) {
-			// Leave it as the default.
-		}
 	}
 
 	/*
@@ -120,7 +105,11 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		createProjectLocationGroup(composite);
+		locationArea = new ProjectContentsLocationArea(this, composite,
+				this.project);
+
+		// Scale the button based on the rest of the dialog
+		setButtonLayoutData(locationArea.getBrowseButton());
 
 		// Add in a label for status messages if required
 		statusMessageLabel = new Label(composite, SWT.WRAP);
@@ -133,62 +122,6 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 		return composite;
 	}
 
-	/**
-	 * Creates the project location specification controls.
-	 * 
-	 * @param parent
-	 *            the parent composite
-	 */
-	private final void createProjectLocationGroup(Composite parent) {
-		// project specification group
-		Composite projectGroup = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		projectGroup.setLayout(layout);
-		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK
-				| SWT.RIGHT);
-		useDefaultsButton
-				.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_useDefaultLabel);
-		useDefaultsButton.setSelection(this.useDefaults);
-		GridData buttonData = new GridData();
-		buttonData.horizontalSpan = 3;
-		useDefaultsButton.setLayoutData(buttonData);
-
-		createUserSpecifiedProjectLocationGroup(projectGroup, !this.useDefaults);
-
-		SelectionListener listener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				useDefaults = useDefaultsButton.getSelection();
-				locationArea.setToDefault(useDefaults);
-			}
-		};
-		useDefaultsButton.addSelectionListener(listener);
-	}
-
-	/**
-	 * Creates the project location specification controls.
-	 * 
-	 * @return the parent of the widgets created
-	 * @param projectGroup
-	 *            the parent composite
-	 * @param enabled -
-	 *            sets the initial enabled state of the widgets
-	 */
-	private Composite createUserSpecifiedProjectLocationGroup(
-			Composite projectGroup, boolean enabled) {
-
-		locationArea = new FileStoreLocationArea(this, projectGroup,
-				this.project);
-		locationArea.setEnabled(enabled);
-
-		// Scale the button based on the rest of the dialog
-		setButtonLayoutData(locationArea.getBrowseButton());
-
-		return projectGroup;
-
-	}
 
 	/**
 	 * Get the project being manipulated.
@@ -206,10 +139,7 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 
 		ArrayList list = new ArrayList();
 		list.add(getProject().getName());
-		if (useDefaults)
-			list.add(Platform.getLocation().toString());
-		else
-			list.add(locationArea.getLocationValue());
+		list.add(locationArea.getProjectLocation());
 		setResult(list);
 		super.okPressed();
 	}

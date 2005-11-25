@@ -17,6 +17,8 @@ import java.net.URISyntaxException;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
@@ -25,6 +27,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -34,13 +37,13 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
- * FileStoreLocationArea is a convenience class for area that handle entry of
- * locations using URIs.
+ * ProjectContentsLocationArea is a convenience class for area that handle entry
+ * of locations using URIs.
  * 
  * @since 3.2
  * 
  */
-public class FileStoreLocationArea {
+public class ProjectContentsLocationArea {
 
 	private static String BROWSE_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_browseLabel;
 
@@ -58,6 +61,10 @@ public class FileStoreLocationArea {
 
 	private SelectionDialog selectionDialog;
 
+	private String projectName;
+
+	private Button useDefaultsButton;
+
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -65,12 +72,66 @@ public class FileStoreLocationArea {
 	 * @param composite
 	 * @param startProject
 	 */
-	public FileStoreLocationArea(SelectionDialog dialog, Composite composite,
-			IProject startProject) {
+	public ProjectContentsLocationArea(SelectionDialog dialog,
+			Composite composite, IProject startProject) {
 
 		selectionDialog = dialog;
 		project = startProject;
+		boolean defaultEnabled = true;
+		try {
+			defaultEnabled = project.getDescription()
+			.getLocationURI() == null;
+		} catch (CoreException e1) {
+			//If we get a CoreException no need to update.
+		}
+		projectName = project.getName();
 
+		// project specification group
+		Composite projectGroup = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		projectGroup.setLayout(layout);
+		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		useDefaultsButton = new Button(projectGroup, SWT.CHECK
+				| SWT.RIGHT);
+		useDefaultsButton
+				.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_useDefaultLabel);
+		useDefaultsButton.setSelection(defaultEnabled);
+		GridData buttonData = new GridData();
+		buttonData.horizontalSpan = 3;
+		useDefaultsButton.setLayoutData(buttonData);
+
+		createUserEntryArea(projectGroup);
+
+		useDefaultsButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean useDefaults = useDefaultsButton.getSelection();
+
+				if (useDefaults)
+					locationPathField.setText(getDefaultPathDisplayString());
+				else
+					locationPathField.setText(project.getLocation().toString());
+				setUserAreaEnabled(!useDefaults);
+			}
+		});
+		setUserAreaEnabled(!defaultEnabled);
+	}
+
+	/**
+	 * Return whether or not we are currently showing the 
+	 * default location for the project.
+	 * @return boolean
+	 */
+	public boolean isDefault() {
+		return useDefaultsButton.getSelection();
+	}
+
+	/**
+	 * Create the area for user entry.
+	 * @param composite
+	 */
+	private void createUserEntryArea(Composite composite) {
 		// location label
 		locationLabel = new Label(composite, SWT.NONE);
 		locationLabel
@@ -91,7 +152,11 @@ public class FileStoreLocationArea {
 			}
 		});
 
-		locationPathField.setText(project.getLocation().toString());
+		IPath path = project.getLocation();
+		if(path == null)//Will be null if it is not set
+			locationPathField.setText(getDefaultPathDisplayString());
+		else
+			locationPathField.setText(project.getLocation().toString());
 
 		locationPathField.addModifyListener(new ModifyListener() {
 			/*
@@ -114,11 +179,10 @@ public class FileStoreLocationArea {
 	private String getDefaultPathDisplayString() {
 
 		URI defaultURI = project.getLocationURI();
-		
-		//Handle files specially
+
+		// Handle files specially
 		if (defaultURI.getScheme().equals(FILE_SCHEME)) {
-			return Platform.getLocation().append(project.getFullPath())
-					.toString();
+			return Platform.getLocation().append(projectName).toString();
 		}
 		return defaultURI.toString();
 
@@ -129,7 +193,7 @@ public class FileStoreLocationArea {
 	 * 
 	 * @param enabled
 	 */
-	public void setEnabled(boolean enabled) {
+	private void setUserAreaEnabled(boolean enabled) {
 
 		locationLabel.setEnabled(enabled);
 		locationPathField.setEnabled(enabled);
@@ -194,8 +258,10 @@ public class FileStoreLocationArea {
 	/**
 	 * Check if the entry in the widget location is valid. If it is valid return
 	 * null. Otherwise return a string that indicates the problem.
+	 * 
+	 * @return String
 	 */
-	private String checkValidLocation() {
+	public String checkValidLocation() {
 
 		String locationFieldContents = locationPathField.getText();
 		if (locationFieldContents.length() == 0) {
@@ -227,12 +293,12 @@ public class FileStoreLocationArea {
 	 * @return URI or <code>null</code> if it is not valid.
 	 */
 	private URI getLocationFieldURI() {
-		
+
 		String locationContents = locationPathField.getText();
 		try {
 			return new URI(locationContents);
 		} catch (URISyntaxException e) {
-			
+
 			// See if it was acceptable as a file
 			return new File(locationContents).toURI();
 		}
@@ -243,21 +309,26 @@ public class FileStoreLocationArea {
 	 * Set the text to the default or clear it if not using the defaults.
 	 * 
 	 * @param useDefaults
+	 * @param newName
+	 *            the name of the project to use. If <code>null</code> use the
+	 *            existing project name.
 	 */
-	public void setToDefault(boolean useDefaults) {
-		if (useDefaults)
+	public void updateProjectName(String newName) {
+		projectName = newName;
+		if (isDefault())
 			locationPathField.setText(getDefaultPathDisplayString());
-		else
-			locationPathField.setText(project.getLocation().toString());
-		setEnabled(!useDefaults);
+
 	}
 
 	/**
-	 * Return the value of the location string.
-	 * 
+	 * Return the location for the project. If we are using
+	 * defaults then return the workspace root so that core
+	 * creates it with default values.
 	 * @return String
 	 */
-	public String getLocationValue() {
+	public String getProjectLocation() {
+		if (isDefault())
+			return Platform.getLocation().toString();
 		return locationPathField.getText();
 	}
 }
