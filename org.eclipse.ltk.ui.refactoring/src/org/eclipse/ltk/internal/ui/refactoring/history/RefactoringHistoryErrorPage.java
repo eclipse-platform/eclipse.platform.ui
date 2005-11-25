@@ -103,6 +103,13 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public void setPageComplete(final boolean complete) {
+		super.setPageComplete(!fLastRefactoring);
+	}
+
+	/**
 	 * Sets the current refactoring.
 	 * 
 	 * @param refactoring

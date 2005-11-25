@@ -79,8 +79,8 @@ import org.eclipse.osgi.util.NLS;
  */
 public class RefactoringHistoryWizard extends Wizard {
 
-	/** Preference key for the prompt skip refactoring preference */
-	private static final String PREFERENCE_PROMPT_SKIP_REFACTORING= RefactoringUIPlugin.getPluginId() + ".prompt.skip.refactoring"; //$NON-NLS-1$
+	/** Preference key for the prompt preference */
+	private static final String PREFERENCE_DO_NOT_SHOW_PROMPT= RefactoringUIPlugin.getPluginId() + ".do.not.prompt.skip.refactoring"; //$NON-NLS-1$
 
 	/** The refactoring history control configuration to use */
 	private RefactoringHistoryControlConfiguration fControlConfiguration;
@@ -267,8 +267,8 @@ public class RefactoringHistoryWizard extends Wizard {
 			final RefactoringStatus status= fErrorPage.getStatus();
 			if (status != null && status.hasFatalError()) {
 				final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
-				if (store.getBoolean(PREFERENCE_PROMPT_SKIP_REFACTORING))
-					MessageDialogWithToggle.openWarning(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, NLS.bind(RefactoringUIMessages.RefactoringHistoryWizard_fatal_error_message, fErrorPage.getTitle()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, store, PREFERENCE_PROMPT_SKIP_REFACTORING);
+				if (!store.getBoolean(PREFERENCE_DO_NOT_SHOW_PROMPT))
+					MessageDialogWithToggle.openWarning(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, NLS.bind(RefactoringUIMessages.RefactoringHistoryWizard_fatal_error_message, fErrorPage.getTitle()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, store, PREFERENCE_DO_NOT_SHOW_PROMPT);
 				fCurrentRefactoring++;
 				return getRefactoringPage();
 			}
