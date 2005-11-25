@@ -18,7 +18,10 @@ import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
+
+import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
 /**
  * Error page for refactoring history wizards.
@@ -73,6 +76,18 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 */
 	public Refactoring getRefactoring() {
 		return fRefactoring;
+	}
+
+	/**
+	 * Returns the refactoring history wizard.
+	 * 
+	 * @return the refactoring history wizard
+	 */
+	public RefactoringHistoryWizard getRefactoringHistoryWizard() {
+		final IWizard result= getWizard();
+		if (result instanceof RefactoringHistoryWizard)
+			return (RefactoringHistoryWizard) result;
+		return null;
 	}
 
 	/**
@@ -144,5 +159,13 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 			setTitle(descriptor.getDescription());
 		else
 			setTitle(RefactoringUIMessages.RefactoringHistoryOverviewPage_title);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setWizard(final IWizard newWizard) {
+		Assert.isTrue(newWizard instanceof RefactoringHistoryWizard);
+		super.setWizard(newWizard);
 	}
 }
