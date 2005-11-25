@@ -183,7 +183,8 @@ public class ZipFileStore extends FileStore {
 	}
 
 	public String getName() {
-		return path.lastSegment();
+		String name = path.lastSegment();
+		return name == null ? "" : name; //$NON-NLS-1$
 	}
 
 	public IFileStore getParent() {
@@ -202,6 +203,8 @@ public class ZipFileStore extends FileStore {
 	private boolean isAncestor(String ancestor, String child) {
 		//children will start with myName and have no child path
 		int ancestorLength = ancestor.length();
+		if (ancestorLength == 0)
+			return true;
 		return child.startsWith(ancestor) && child.length() > ancestorLength && child.charAt(ancestorLength) == '/';
 	}
 
