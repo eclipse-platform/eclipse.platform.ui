@@ -184,13 +184,6 @@ public class ProjectPreferences extends EclipsePreferences {
 		return loadLevel;
 	}
 
-	/* (non-Javadoc)
-	 * TODO: remove when runtime split is added to the CVS 
-	 */
-	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Plugin context) {
-		return new ProjectPreferences(nodeParent, nodeName);
-	}
-	
 	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Object context) {
 		return new ProjectPreferences(nodeParent, nodeName);
 	}
@@ -504,19 +497,6 @@ public class ProjectPreferences extends EclipsePreferences {
 		// notifies the CharsetManager if needed
 		if (qualifier.equals(ResourcesPlugin.PI_RESOURCES))
 			preferencesChanged(file.getProject());
-	}
-
-	/**
-	 * @deprecated
-	 * TODO: remove when runtime method with same signature is added
-	 */
-	protected synchronized void removeNode(String path) {
-		if (children != null) {
-			if (children.remove(path) != null)
-				makeDirty();
-			if (children.isEmpty())
-				children = null;
-		}
 	}
 
 	static void deleted(IResource resource) throws CoreException {
