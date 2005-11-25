@@ -41,30 +41,6 @@ import org.eclipse.jface.util.Assert;
  */
 public class DataBindingContext implements IDataBindingContext {
 
-	private static class Pair {
-
-		private final Object a;
-
-		private Object b;
-
-		Pair(Object a, Object b) {
-			this.a = a;
-			this.b = b;
-		}
-
-		public boolean equals(Object obj) {
-			if (obj.getClass() != Pair.class) {
-				return false;
-			}
-			Pair other = (Pair) obj;
-			return a.equals(other.a) && b.equals(other.b);
-		}
-
-		public int hashCode() {
-			return a.hashCode() + b.hashCode();
-		}
-	}
-
 	private List createdUpdatables = new ArrayList();
 
 	private DataBindingContext parent;
