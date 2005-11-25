@@ -192,6 +192,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
     private CTabFolder createContainer(Composite parent) {
         // use SWT.FLAT style so that an extra 1 pixel border is not reserved
         // inside the folder
+    	parent.setLayout(new FillLayout());
         final CTabFolder newContainer = new CTabFolder(parent, SWT.BOTTOM
                 | SWT.FLAT);
         newContainer.addSelectionListener(new SelectionAdapter() {
@@ -237,11 +238,28 @@ public abstract class MultiPageEditorPart extends EditorPart {
      *            <code>null</code>.
      */
     public final void createPartControl(Composite parent) {
-        this.container = createContainer(parent);
+        Composite pageContainer = createPageContainer(parent);
+        this.container = createContainer(pageContainer);
         createPages();
         // set the active page (page 0 by default), unless it has already been done
         if (getActivePage() == -1)
             setActivePage(0);
+    }
+
+    /**
+     * Creates the parent control for the container returned by
+     * {@link #getContainer() }.
+     * 
+     * <p>
+     * Subclasses may extend and must call super implementation first.
+     * </p>
+     * 
+     * @param parent the parent for all of the editors contents.
+     * @return the parent for this editor's container. Must not be
+     * <code>null</code>.
+     */
+    protected Composite createPageContainer(Composite parent) {
+        return parent;
     }
 
     /**
