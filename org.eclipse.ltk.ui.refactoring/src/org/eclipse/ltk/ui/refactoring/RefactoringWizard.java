@@ -38,6 +38,7 @@ import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.FinishResult;
+import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.IPreviewWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.InternalAPI;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
@@ -402,7 +403,7 @@ public abstract class RefactoringWizard extends Wizard {
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		if (hasUserInput())
 			return super.getPreviousPage(page);
-		if (! page.getName().equals(ErrorWizardPage.PAGE_NAME)){
+		if (! page.getName().equals(IErrorWizardPage.PAGE_NAME)){
 			if (fConditionCheckingStatus.isOK())
 				return null;
 		}		
@@ -429,7 +430,7 @@ public abstract class RefactoringWizard extends Wizard {
 		if (status.isOK()) {
 			return getPage(IPreviewWizardPage.PAGE_NAME);
 		} else {
-			return getPage(ErrorWizardPage.PAGE_NAME);
+			return getPage(IErrorWizardPage.PAGE_NAME);
 		}
 	} 
 	
@@ -492,7 +493,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 * @param status the refactoring status to set.
 	 */
 	/* package */ final void setConditionCheckingStatus(RefactoringStatus status) {
-		ErrorWizardPage page= (ErrorWizardPage)getPage(ErrorWizardPage.PAGE_NAME);
+		ErrorWizardPage page= (ErrorWizardPage)getPage(IErrorWizardPage.PAGE_NAME);
 		if (page != null)
 			page.setStatus(status);
 		fConditionCheckingStatus= status;

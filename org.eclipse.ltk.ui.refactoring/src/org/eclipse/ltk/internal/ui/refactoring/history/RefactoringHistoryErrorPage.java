@@ -49,8 +49,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 * {@inheritDoc}
 	 */
 	public boolean canFlipToNextPage() {
-		final RefactoringStatus status= getStatus();
-		if (status != null && status.hasFatalError())
+		if (fStatus != null && fStatus.hasFatalError())
 			return !fLastRefactoring;
 		return true;
 	}
@@ -83,7 +82,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 * 
 	 * @return the refactoring history wizard
 	 */
-	public RefactoringHistoryWizard getRefactoringHistoryWizard() {
+	protected RefactoringHistoryWizard getRefactoringHistoryWizard() {
 		final IWizard result= getWizard();
 		if (result instanceof RefactoringHistoryWizard)
 			return (RefactoringHistoryWizard) result;
@@ -146,6 +145,8 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 			setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_fatal_error);
 		else if (severity >= RefactoringStatus.INFO)
 			setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_info_error);
+		if (fViewer != null && fViewer.getStatus() != status)
+			fViewer.setStatus(status);
 	}
 
 	/**
@@ -159,6 +160,18 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 			setTitle(descriptor.getDescription());
 		else
 			setTitle(RefactoringUIMessages.RefactoringHistoryOverviewPage_title);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setVisible(final boolean visible) {
+		if (visible) {
+			if (fViewer != null && fViewer.getStatus() != fStatus)
+				fViewer.setStatus(fStatus);
+		} else
+			setPageComplete(!fLastRefactoring);
+		getControl().setVisible(visible);
 	}
 
 	/**

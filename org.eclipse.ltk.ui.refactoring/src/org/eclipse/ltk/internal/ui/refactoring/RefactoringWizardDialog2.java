@@ -436,7 +436,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		}
 		if (fCurrentPage == current)
 			return;
-		Assert.isTrue(ErrorWizardPage.PAGE_NAME.equals(fCurrentPage.getName()));
+		Assert.isTrue(IErrorWizardPage.PAGE_NAME.equals(fCurrentPage.getName()));
 		if (fHasAdditionalPages) {
 			// Show error page as a normal page
 			showCurrentPage();
@@ -479,7 +479,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		fCurrentPage= fCurrentPage.getNextPage();
 		if (current == fCurrentPage)
 			return;
-		if (!fHasAdditionalPages && ErrorWizardPage.PAGE_NAME.equals(fCurrentPage.getName())) {
+		if (!fHasAdditionalPages && IErrorWizardPage.PAGE_NAME.equals(fCurrentPage.getName())) {
 			if (showErrorDialog((ErrorWizardPage)fCurrentPage)) {
 				fCurrentPage= fCurrentPage.getNextPage();
 			} else {

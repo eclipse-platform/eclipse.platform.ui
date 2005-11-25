@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.IInitializableRefactoringComponent;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -32,6 +33,8 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringInstanceFactory;
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
+import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;
+import org.eclipse.ltk.internal.ui.refactoring.IPreviewWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
@@ -64,6 +67,7 @@ import org.eclipse.osgi.util.NLS;
  * </ul>
  * <p>
  * A refactoring history wizard is usually opened using the {@link WizardDialog}.
+ * Clients must ensure that the calling thread holds the workspace lock.
  * </p>
  * <p>
  * Note: this class is intended to be extended by clients.
@@ -79,8 +83,11 @@ import org.eclipse.osgi.util.NLS;
  */
 public class RefactoringHistoryWizard extends Wizard {
 
-	/** Preference key for the prompt preference */
-	private static final String PREFERENCE_DO_NOT_SHOW_PROMPT= RefactoringUIPlugin.getPluginId() + ".do.not.prompt.skip.refactoring"; //$NON-NLS-1$
+	/** Preference key for the show apply preference */
+	private static final String PREFERENCE_DO_NOT_SHOW_APPLY_ERROR= RefactoringUIPlugin.getPluginId() + ".do.not.show.apply.refactoring"; //$NON-NLS-1$;
+
+	/** Preference key for the show skip preference */
+	private static final String PREFERENCE_DO_NOT_SHOW_SKIP= RefactoringUIPlugin.getPluginId() + ".do.not.show.skip.refactoring"; //$NON-NLS-1$
 
 	/** The refactoring history control configuration to use */
 	private RefactoringHistoryControlConfiguration fControlConfiguration;
@@ -253,6 +260,15 @@ public class RefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
+	 * Returns the error wizard page.
+	 * 
+	 * @return the error wizard page
+	 */
+	public final IErrorWizardPage getErrorPage() {
+		return fErrorPage;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public final IWizardPage getNextPage(final IWizardPage page) {
@@ -263,15 +279,26 @@ public class RefactoringHistoryWizard extends Wizard {
 			fCurrentRefactoring++;
 			return getRefactoringPage();
 		} else if (page == fErrorPage) {
-			final Refactoring refactoring= fErrorPage.getRefactoring();
 			final RefactoringStatus status= fErrorPage.getStatus();
 			if (status.hasFatalError()) {
 				final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
-				if (!store.getBoolean(PREFERENCE_DO_NOT_SHOW_PROMPT))
-					MessageDialogWithToggle.openWarning(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, NLS.bind(RefactoringUIMessages.RefactoringHistoryWizard_fatal_error_message, fErrorPage.getTitle()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, store, PREFERENCE_DO_NOT_SHOW_PROMPT);
+				String message= null;
+				String key= null;
+				if (!RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title.equals(fErrorPage.getTitle())) {
+					message= NLS.bind(RefactoringUIMessages.RefactoringHistoryWizard_fatal_error_message, fErrorPage.getTitle());
+					key= PREFERENCE_DO_NOT_SHOW_SKIP;
+				} else {
+					message= RefactoringUIMessages.RefactoringHistoryWizard_error_applying_changes;
+					key= PREFERENCE_DO_NOT_SHOW_APPLY_ERROR;
+				}
+				if (!store.getBoolean(key)) {
+					final MessageDialogWithToggle dialog= MessageDialogWithToggle.openWarning(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, message, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+					store.setValue(key, dialog.getToggleState());
+				}
 				fCurrentRefactoring++;
 				return getRefactoringPage();
 			}
+			final Refactoring refactoring= fErrorPage.getRefactoring();
 			if (refactoring != null) {
 				final IRunnableWithProgress runnable= new IRunnableWithProgress() {
 
@@ -304,6 +331,15 @@ public class RefactoringHistoryWizard extends Wizard {
 			return fPreviewPage;
 		}
 		return super.getNextPage(page);
+	}
+
+	/**
+	 * Returns the preview wizard page.
+	 * 
+	 * @return the preview wizard page
+	 */
+	public final IPreviewWizardPage getPreviewPage() {
+		return fPreviewPage;
 	}
 
 	/**
@@ -420,6 +456,22 @@ public class RefactoringHistoryWizard extends Wizard {
 	 */
 	private boolean isNotLastRefactoring() {
 		return fCurrentRefactoring < getRefactoringDescriptors().length - 1;
+	}
+
+	/**
+	 * Performs the change on the workspace.
+	 * <p>
+	 * This method is NOT official API. It is used by the refactoring UI plug-in
+	 * to apply changes to the workspace.
+	 * </p>
+	 * 
+	 * @param change
+	 *            the change to apply
+	 * @return the status of the operation
+	 */
+	public final RefactoringStatus performChange(final Change change) {
+		Assert.isNotNull(change);
+		return RefactoringStatus.createFatalErrorStatus("Big problem"); //$NON-NLS-1$
 	}
 
 	/**

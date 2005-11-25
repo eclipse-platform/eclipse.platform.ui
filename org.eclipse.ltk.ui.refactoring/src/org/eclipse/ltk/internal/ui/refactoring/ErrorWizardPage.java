@@ -30,12 +30,10 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizardPage;
 /**
  * Presents the list of failed preconditions to the user
  */
-public class ErrorWizardPage extends RefactoringWizardPage {
+public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWizardPage {
 		
-	public static final String PAGE_NAME= "ErrorPage"; //$NON-NLS-1$
-	
-	private RefactoringStatus fStatus;
-	private RefactoringStatusViewer fViewer;
+	protected RefactoringStatus fStatus;
+	protected RefactoringStatusViewer fViewer;
 	
 	/**
 	 * Creates a new error wizard page.
@@ -56,14 +54,13 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 	}
 	
 	/**
-	 * Sets the page's refactoring status to the given value.
-	 * @param status the refactoring status.
+	 * {@inheritDoc}
 	 */
 	public void setStatus(RefactoringStatus status) {
 		fStatus= status;
 		if (fStatus != null) {
-			setPageComplete(isRefactoringPossible());
-			int severity= fStatus.getSeverity();
+			final int severity= fStatus.getSeverity();
+			setPageComplete(severity < RefactoringStatus.FATAL);
 			if (severity >= RefactoringStatus.FATAL) {
 				setDescription(RefactoringUIMessages.ErrorWizardPage_cannot_proceed); 
 			} else if (severity >= RefactoringStatus.INFO) {
@@ -77,6 +74,9 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 		}	
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public RefactoringStatus getStatus() {
 		return fStatus;
 	}
@@ -117,7 +117,7 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 	public boolean canFlipToNextPage() {
 		// We have to call super.getNextPage since computing the next
 		// page is expensive. So we avoid it as long as possible.
-		return fStatus != null && isRefactoringPossible() &&
+		return fStatus != null && fStatus.getSeverity() < RefactoringStatus.FATAL &&
 			   isPageComplete() && super.getNextPage() != null;
 	}
 	
@@ -164,11 +164,5 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 			return true;
 		}
 		return true;
-	} 
-	
-	//---- Helpers ----------------------------------------------------------------------------------------
-	
-	private boolean isRefactoringPossible() {
-		return fStatus.getSeverity() < RefactoringStatus.FATAL;
 	}	
 }

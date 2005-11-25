@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
+import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.PreviewWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
@@ -56,9 +56,22 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	 * {@inheritDoc}
 	 */
 	public IWizardPage getNextPage() {
-		final Change change= getChange();
-		if (change != null && !fStatus.hasFatalError()) {
-
+		if (fChange != null && !fStatus.hasFatalError()) {
+			final RefactoringHistoryWizard result= getRefactoringHistoryWizard();
+			if (result != null) {
+				final RefactoringStatus status= result.performChange(fChange);
+				if (!status.isOK()) {
+					final IErrorWizardPage page= result.getErrorPage();
+					if (page instanceof RefactoringHistoryErrorPage) {
+						final RefactoringHistoryErrorPage extended= (RefactoringHistoryErrorPage) page;
+						extended.setStatus(status);
+						extended.setLastRefactoring(!fNextPageEnabled);
+						extended.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
+						extended.setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error);
+						return extended;
+					}
+				}
+			}
 		}
 		return getWizard().getNextPage(this);
 	}
@@ -75,7 +88,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	 * 
 	 * @return the refactoring history wizard
 	 */
-	public RefactoringHistoryWizard getRefactoringHistoryWizard() {
+	protected RefactoringHistoryWizard getRefactoringHistoryWizard() {
 		final IWizard result= getWizard();
 		if (result instanceof RefactoringHistoryWizard)
 			return (RefactoringHistoryWizard) result;

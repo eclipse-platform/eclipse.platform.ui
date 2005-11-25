@@ -191,7 +191,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		}
 	}
 	
-	private Change fChange;
+	protected Change fChange;
 	private List fActiveGroupCategories;
 	private CompositeChange fTreeViewerInputChange;
 	private PreviewNode fCurrentSelection;

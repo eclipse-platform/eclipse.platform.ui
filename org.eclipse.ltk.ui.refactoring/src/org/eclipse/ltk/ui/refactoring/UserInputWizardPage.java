@@ -21,8 +21,9 @@ import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
+
 import org.eclipse.ltk.internal.ui.refactoring.FinishResult;
+import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.InternalAPI;
 import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
 
@@ -170,7 +171,7 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 		
 		if (status.getSeverity() >= threshold) {
 			wizard.setConditionCheckingStatus(status);
-			IWizardPage nextPage= wizard.getPage(ErrorWizardPage.PAGE_NAME);
+			IWizardPage nextPage= wizard.getPage(IErrorWizardPage.PAGE_NAME);
 			wizard.getContainer().showPage(nextPage);
 			return false;
 		}
