@@ -181,7 +181,7 @@ public class ProjectContentsLocationArea {
 		URI defaultURI = project.getLocationURI();
 
 		// Handle files specially
-		if (defaultURI.getScheme().equals(FILE_SCHEME)) {
+		if (defaultURI == null || defaultURI.getScheme().equals(FILE_SCHEME)) {
 			return Platform.getLocation().append(projectName).toString();
 		}
 		return defaultURI.toString();
