@@ -8,17 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.ui.mapping;
+
 
 /**
- * A cache that is associated with a synchronization operation that allows
- * clients to cache synchronization state related to their model for the
- * duration of the operation. When the context is disposed, the cache will be
- * disposed and any listeners notified.
+ * A cache that is associated with a synchronization context that allows clients
+ * to cache synchronization state related to their model for the duration of the
+ * operation. When the context is disposed, the cache will be disposed and any
+ * listeners notified.
  * <p>
- * This interface is not intended to be implemented by clients. Clients should
- * instead subclass <@link
- * org.eclipse.team.ui.mapping.SynchronizeOperationContext}
+ * This interface is not intended to be implemented by clients.
  * 
  * @see org.eclipse.team.internal.ui.mapping.SynchronizationCache
  * 

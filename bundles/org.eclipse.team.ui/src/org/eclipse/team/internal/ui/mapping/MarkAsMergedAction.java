@@ -20,7 +20,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.IMergeContext;
 import org.eclipse.team.ui.mapping.ISynchronizationContext;
-import org.eclipse.team.ui.operations.ModelProviderOperation;
+import org.eclipse.team.ui.operations.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IContributorResourceAdapter;
 

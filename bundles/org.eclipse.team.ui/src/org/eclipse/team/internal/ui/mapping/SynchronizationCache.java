@@ -16,7 +16,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.team.ui.mapping.ISynchronizationContext;
+import org.eclipse.team.ui.mapping.*;
 
 /**
  * A synchronize operation context that supports caching of
@@ -30,7 +30,7 @@ import org.eclipse.team.ui.mapping.ISynchronizationContext;
  * consulting with the Platform/Team team.
  * </p>
  * 
- * @see org.eclipse.team.internal.ui.mapping.ISynchronizationCache
+ * @see org.eclipse.team.ui.mapping.ISynchronizationCache
  * @since 3.2
  */
 public class SynchronizationCache implements ISynchronizationCache {

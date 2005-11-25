@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.IMergeContext;
-import org.eclipse.team.ui.operations.ModelProviderOperation;
+import org.eclipse.team.ui.operations.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**

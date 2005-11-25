@@ -12,10 +12,8 @@ package org.eclipse.team.ui.operations;
 
 import org.eclipse.team.core.synchronize.ISyncInfoTree;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.internal.ui.mapping.ISynchronizationCache;
 import org.eclipse.team.internal.ui.mapping.SynchronizationCache;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
-import org.eclipse.team.ui.mapping.ISynchronizationContext;
+import org.eclipse.team.ui.mapping.*;
 
 /**
  * Abstract implementation of the {@link ISynchronizationContext} interface.

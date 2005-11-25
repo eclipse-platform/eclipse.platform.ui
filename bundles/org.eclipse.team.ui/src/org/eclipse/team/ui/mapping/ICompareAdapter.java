@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.ui.mapping;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.ui.mapping.ISynchronizationContext;
 
 /**
  * The compare adapter provides compare support for the model objects
@@ -30,7 +29,7 @@ import org.eclipse.team.ui.mapping.ISynchronizationContext;
  * 
  * @since 3.2
  */
-public interface IModelProviderCompareAdapter {
+public interface ICompareAdapter {
 	
 	/**
 	 * Prepare the context for use with the compare infrastructure.

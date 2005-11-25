@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.ui.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,19 +24,24 @@ import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
-import org.eclipse.team.ui.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.internal.extensions.ICommonContentProvider;
 
 /**
- * Abstract team aware content provider that delegates to anotehr content provider
+ * Abstract team aware content provider that delegates to another content provider
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * 
+ * @since 3.2
  */
-public abstract class AbstractTeamAwareContentProvider implements ICommonContentProvider, ISyncInfoSetChangeListener, IPropertyChangeListener {
+public abstract class SynchronizationContentProvider implements ICommonContentProvider, ISyncInfoSetChangeListener, IPropertyChangeListener {
 
-	private ModelProvider modelProvider;
 	private IResourceMappingScope scope;
 	private ISynchronizationContext context;
 	private Viewer viewer;
@@ -125,6 +130,20 @@ public abstract class AbstractTeamAwareContentProvider implements ICommonContent
 		}
 	}
 	
+	/**
+	 * Return whether elements with the given synchronization kind (as define in
+	 * the {@link SyncInfo} class) should be included in the contents. This
+	 * method is invoked by the {@link #getChildrenInContext(Object, Object[]) }
+	 * method to filter the list of children returned when {@link #getChildren(Object) }
+	 * is called. It accessing the <code>ISynchronizePageConfiguration.P_MODE</code>
+	 * property on the state model provided by the view to determine what kinds
+	 * should be included.
+	 * 
+	 * @param kind the synchronization kind as described in the {@link SyncInfo}
+	 *            class
+	 * @return whether elements with the given synchronization kind should be
+	 *         included in the contents
+	 */
 	protected boolean includeKind(int kind) {
 		int mode = stateModel.getIntProperty(ISynchronizePageConfiguration.P_MODE);
 		switch (mode) {
@@ -142,10 +161,22 @@ public abstract class AbstractTeamAwareContentProvider implements ICommonContent
 		return true;
 	}
 	
+	/**
+	 * Return the synchronization context associated with the view to which
+	 * this content provider applies. A <code>null</code> is returned if
+	 * no context is available.
+	 * @return the synchronization context or <code>null</code>
+	 */
 	protected ISynchronizationContext getContext() {
 		return context;
 	}
 
+	/**
+	 * Return the resource mapping scope associated with the view to which
+	 * this content provider applies. A <code>null</code> is returned if
+	 * no scope is available.
+	 * @return the resource mapping scope or <code>null</code>
+	 */
 	protected IResourceMappingScope getScope() {
 		return scope;
 	}
@@ -198,7 +229,7 @@ public abstract class AbstractTeamAwareContentProvider implements ICommonContent
 	
 	/**
 	 * The set of out-of-sync resources has changed. The changes are described in the event.
-	 * This method is invoked by a non-ui thread. By default, this method refreshs the
+	 * This method is invoked by a non-ui thread. By default, this method refreshes the
 	 * subtree of this content provider. Subclasses may override.
 	 * 
 	 * TODO: Should reduce the resources to those that apply to this model.
@@ -210,6 +241,9 @@ public abstract class AbstractTeamAwareContentProvider implements ICommonContent
 		refresh();
 	}
 
+	/**
+	 * Refresh the subtree associated with this model.
+	 */
 	protected void refresh() {
 		Utils.syncExec(new Runnable() {
 			public void run() {
@@ -229,7 +263,10 @@ public abstract class AbstractTeamAwareContentProvider implements ICommonContent
 	
 	/**
 	 * Filter the obtained children of the given parent so that only the
-	 * desired elements are shown.
+	 * desired elements are shown. By default the {@link #getChildrenInScope(Object, Object[]) }
+	 * and {@link #getChildrenInContext(Object, Object[]) } methods are used
+	 * to filter the set of elements returned from the delegate provider.
+	 * Subclass may override.
 	 * @param parentElement the parent element
 	 * @param children the children
 	 * @return the filtered children
@@ -248,6 +285,7 @@ public abstract class AbstractTeamAwareContentProvider implements ICommonContent
 		try {
 			return ModelProvider.getModelProviderDescriptor(getModelProviderId()).getModelProvider();
 		} catch (CoreException e) {
+			// TODO: this is a bit harsh. can we do something less destructive
 			throw new IllegalStateException();
 		}
 	}
@@ -265,7 +303,11 @@ public abstract class AbstractTeamAwareContentProvider implements ICommonContent
 	 */
 	protected abstract Object getModelRoot();
 
-	protected Viewer getViewer() {
+	/**
+	 * Return the viewer to which the content provider is associated.
+	 * @return the viewer to which the content provider is associated
+	 */
+	protected final Viewer getViewer() {
 		return viewer;
 	}
 	
@@ -296,7 +338,7 @@ public abstract class AbstractTeamAwareContentProvider implements ICommonContent
 	
 	/**
 	 * Return the subset of children that are of interest from the given context.
-	 * If there is no context, all the childen ae returned.
+	 * If there is no context, all the children are returned.
 	 * @param parent the parent of the children
 	 * @param children the children
 	 * @return the subset of children that are of interest from the given context
@@ -323,7 +365,7 @@ public abstract class AbstractTeamAwareContentProvider implements ICommonContent
 					result.add(object);
 			}
 		}
-		// TODO: may need to get phatoms as well
+		// TODO: may need to get phantoms as well
 		return result.toArray(new Object[result.size()]);
 	}
 

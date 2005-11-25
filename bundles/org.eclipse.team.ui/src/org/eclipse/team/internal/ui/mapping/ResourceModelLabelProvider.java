@@ -15,13 +15,14 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.ui.mapping.ISynchronizationContext;
+import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
  * Resource label provider that can decorate using sync state.
  */
 public class ResourceModelLabelProvider extends
-		SynchronizationOperationLabelProvider {
+		SynchronizationLabelProvider {
 
 	private ILabelProvider provider = new ResourceMappingLabelProvider();
 

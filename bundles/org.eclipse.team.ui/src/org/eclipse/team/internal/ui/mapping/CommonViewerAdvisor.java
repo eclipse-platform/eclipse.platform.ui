@@ -19,6 +19,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ui.synchronize.StructuredViewerAdvisor;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.operations.ModelSynchronizePage;
+import org.eclipse.team.ui.operations.ModelSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.internal.extensions.INavigatorContentServiceListener;

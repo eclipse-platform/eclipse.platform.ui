@@ -362,7 +362,7 @@
       <participant
             name="Synchronization"
             icon="$nl$/icons/full/eview16/synch_synch.gif"
-            class="org.eclipse.team.internal.ui.mapping.ModelSynchronizeParticipant"
+            class="org.eclipse.team.ui.operations.ModelSynchronizeParticipant"
             id="org.eclipse.team.ui.synchronization_context_synchronize_participant">
       </participant>
    </extension>

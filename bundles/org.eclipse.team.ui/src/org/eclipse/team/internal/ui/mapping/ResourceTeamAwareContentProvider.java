@@ -16,8 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
-import org.eclipse.team.ui.mapping.ISynchronizationContext;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -33,7 +32,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * have a model provider registered (this may be considered an error case).
  *
  */
-public class ResourceTeamAwareContentProvider extends AbstractTeamAwareContentProvider {
+public class ResourceTeamAwareContentProvider extends SynchronizationContentProvider {
 
 	private WorkbenchContentProvider provider;
 

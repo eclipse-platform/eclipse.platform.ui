@@ -8,17 +8,30 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.ui.mapping;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.IResourceMappingScope;
-import org.eclipse.team.ui.mapping.ISynchronizationContext;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 
-public abstract class SynchronizationOperationLabelProvider extends SynchronizationStateLabelProvider implements ICommonLabelProvider {
+/**
+ * A label provider wrapper that adds synchronization image and/or text decorations
+ * to the image and label obtained from the delegate provider.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * 
+ * @since 3.2
+ */
+public abstract class SynchronizationLabelProvider extends AbstractSynchronizationLabelProvider implements ICommonLabelProvider {
 
 	private IResourceMappingScope scope;
 	private ISynchronizationContext context;
@@ -35,11 +48,11 @@ public abstract class SynchronizationOperationLabelProvider extends Synchronizat
 		init((IResourceMappingScope)aStateModel.getProperty(TeamUI.RESOURCE_MAPPING_SCOPE), (ISynchronizationContext)aStateModel.getProperty(TeamUI.SYNCHRONIZATION_CONTEXT));
 		ILabelProvider provider = getDelegateLabelProvider();
 		if (provider instanceof ICommonLabelProvider) {
-			if (aContentProvider instanceof AbstractTeamAwareContentProvider) {
-				// Assume that there is a similary wrapped content provider and that the wrapped label provider
+			if (aContentProvider instanceof SynchronizationContentProvider) {
+				// Assume that there is a similarly wrapped content provider and that the wrapped label provider
 				// only knows about that one
 				// TODO: This is kind of dangerous to build in. We need to consider alternatives
-				AbstractTeamAwareContentProvider tacp = (AbstractTeamAwareContentProvider) aContentProvider;
+				SynchronizationContentProvider tacp = (SynchronizationContentProvider) aContentProvider;
 				((ICommonLabelProvider) provider).init(aStateModel, tacp.getDelegateContentProvider());
 			} else {
 				((ICommonLabelProvider) provider).init(aStateModel, aContentProvider);
@@ -49,8 +62,9 @@ public abstract class SynchronizationOperationLabelProvider extends Synchronizat
 
 	/**
 	 * Return the synchronization context associated with the view to which
-	 * this label provider applies.
-	 * @return the synchronization context
+	 * this label provider applies. A <code>null</code> is returned if
+	 * no context is available.
+	 * @return the synchronization context or <code>null</code>
 	 */
 	public ISynchronizationContext getContext() {
 		return context;
@@ -58,8 +72,9 @@ public abstract class SynchronizationOperationLabelProvider extends Synchronizat
 
 	/**
 	 * Return the resource mapping scope associated with the view to which
-	 * this label provider applies.
-	 * @return the esource mapping scope
+	 * this label provider applies. A <code>null</code> is returned if
+	 * no scope is available.
+	 * @return the resource mapping scope or <code>null</code>
 	 */
 	public IResourceMappingScope getScope() {
 		return scope;
@@ -101,5 +116,26 @@ public abstract class SynchronizationOperationLabelProvider extends Synchronizat
 	 */
 	protected boolean isDecorationEnabled() {
 		return getContext() != null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.mapping.SynchronizationStateLabelProvider#getImage(java.lang.Object)
+	 */
+	public Image getImage(Object element) {
+		Image image = super.getImage(element);
+		if (image == null && element instanceof ModelProvider) {
+			image = super.getImage(getModelRoot());
+		}
+		return image;
+	}
+	
+	/**
+	 * Return the root object for the model. By default, it is the
+	 * workspace root. Subclasses may override. This object is used to
+	 * obtain an image for the model provider.
+	 * @return the root object for the model
+	 */
+	protected Object getModelRoot() {
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 }

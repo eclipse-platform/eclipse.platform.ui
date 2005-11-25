@@ -8,13 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.ui.mapping;
 
 import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -24,9 +23,18 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 
 /**
- * A label provider wrapper that adds synchronization state decorations
+ * A label provider wrapper that adds synchronization image and/or text decorations
+ * to the image and label obtained from the delegate provider.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * 
+ * @since 3.2
  */
-public abstract class SynchronizationStateLabelProvider implements ILabelProvider {
+public abstract class AbstractSynchronizationLabelProvider implements ILabelProvider {
 
 	// Cache for folder images that have been overlayed with conflict icon
 	private Map fgImageCache;
@@ -40,12 +48,6 @@ public abstract class SynchronizationStateLabelProvider implements ILabelProvide
 	public Image getImage(Object element) {
 		ILabelProvider modelLabelProvider = getDelegateLabelProvider();
 		Image base = modelLabelProvider.getImage(element);
-		if (base == null && element instanceof ModelProvider) {
-			base = modelLabelProvider.getImage(getModelRoot());
-			if (base == null) {
-				
-			}
-		}
 		if (isDecorationEnabled() && base != null) {
 			int kind = getSyncKind(element);
 			Image decoratedImage;
@@ -56,15 +58,6 @@ public abstract class SynchronizationStateLabelProvider implements ILabelProvide
 			return decoratedImage;				
 		}
 		return base;
-	}
-
-	/**
-	 * Return the root object for the model. By default, it is the
-	 * workspace root. Subclasses may override.
-	 * @return the root object for the model
-	 */
-	protected Object getModelRoot() {
-		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
 	private Image getCompareImage(Image base, int kind) {
@@ -139,7 +132,7 @@ public abstract class SynchronizationStateLabelProvider implements ILabelProvide
 	/**
 	 * Returns whether the synchronization state should be included in the
 	 * text of the label. By default, the Team preference is used to determine
-	 * what to return.
+	 * what to return. Subclasses may override.
 	 * @return whether the synchronization state should be included in the
 	 * text of the label
 	 */
@@ -157,15 +150,16 @@ public abstract class SynchronizationStateLabelProvider implements ILabelProvide
 	protected abstract ILabelProvider getDelegateLabelProvider();
 	
 	/**
-	 * Return whether the label provider shoudl decorate with the synchronization state.
-	 * @return whether the label provider shoudl decorate with the synchronization state
+	 * Return whether the label provider should decorate with the synchronization state.
+	 * @return whether the label provider should decorate with the synchronization state
 	 */
 	protected abstract boolean isDecorationEnabled();
 	
 	/**
 	 * Return the sync kind of the given element. This is used
 	 * to determine how to decorate the image and label of the
-	 * element.
+	 * element. The sync kind is described in the {@link SyncInfo}
+	 * class.
 	 * @param element the element being tested
 	 * @return the sync kind of the given element
 	 */

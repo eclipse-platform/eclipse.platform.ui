@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.ui.operations;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.mapping.MarkAsMergedAction;
+import org.eclipse.team.internal.ui.mapping.MergeIncomingChangesAction;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.IMergeContext;
 import org.eclipse.team.ui.mapping.ISynchronizationContext;
@@ -20,9 +22,17 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * Synchronize participant that obtains it's synchrnization state from
+ * Synchronize participant that obtains it's synchronization state from
  * a {@link ISynchronizationContext}.
- */
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * 
+ * @since 3.2
+ **/
 public class ModelSynchronizeParticipant extends
 		AbstractSynchronizeParticipant {
 
@@ -32,9 +42,9 @@ public class ModelSynchronizeParticipant extends
 	private ISynchronizationContext context;
 
 	/**
-	 * CVS workspace action contribution
+	 * Actions for a model participant
 	 */
-	public class ModelActionContribution extends SynchronizePageActionGroup {
+	private class ModelActionContribution extends SynchronizePageActionGroup {
 		private MergeIncomingChangesAction updateToolbarAction;
 		
 		public void initialize(ISynchronizePageConfiguration configuration) {
@@ -104,7 +114,7 @@ public class ModelSynchronizeParticipant extends
 	
 	/**
 	 * Create a participant for the given context
-	 * @param context the context
+	 * @param context the synchronization context
 	 */
 	public ModelSynchronizeParticipant(ISynchronizationContext context) {
 		initializeContext(context);
@@ -159,6 +169,10 @@ public class ModelSynchronizeParticipant extends
 		this.context = context;
 	}
 
+	/**
+	 * Return the synchronization context for this participant.
+	 * @return the synchronization context for this participant
+	 */
 	public ISynchronizationContext getContext() {
 		return context;
 	}

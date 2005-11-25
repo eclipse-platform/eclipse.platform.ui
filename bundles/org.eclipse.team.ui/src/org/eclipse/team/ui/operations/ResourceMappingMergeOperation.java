@@ -22,9 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.mapping.*;
-import org.eclipse.team.ui.mapping.IMergeContext;
-import org.eclipse.team.ui.mapping.ISynchronizationContext;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ParticipantPageDialog;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -163,9 +161,9 @@ public abstract class ResourceMappingMergeOperation extends ResourceMappingOpera
 	}
 
 	private void calculateStates(ISynchronizationContext context, ModelProvider provider, IProgressMonitor monitor) {
-		Object o = provider.getAdapter(IModelProviderCompareAdapter.class);
-		if (o instanceof IModelProviderCompareAdapter) {
-			IModelProviderCompareAdapter calculator = (IModelProviderCompareAdapter) o;
+		Object o = provider.getAdapter(ICompareAdapter.class);
+		if (o instanceof ICompareAdapter) {
+			ICompareAdapter calculator = (ICompareAdapter) o;
 			try {
 				calculator.prepareContext(context, monitor);
 			} catch (CoreException e) {

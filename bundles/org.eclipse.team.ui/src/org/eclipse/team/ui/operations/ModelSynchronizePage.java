@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.ui.operations;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -18,22 +18,32 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.internal.ui.mapping.CommonViewerAdvisor;
 import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.ui.mapping.ICompareAdapter;
 import org.eclipse.team.ui.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IContributorResourceAdapter;
 import org.eclipse.ui.ide.IContributorResourceAdapter2;
 
 /**
- * A synchronize page that uses 
- */
+ * A synchronize page for displaying a {@link ModelSynchronizeParticipant}.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * 
+ * @since 3.2
+ **/
 public class ModelSynchronizePage extends AbstractSynchronizePage {
 
 	private ModelSynchronizeParticipant participant;
 
 	/**
 	 * Create a page from the given configuration
-	 * @param configuration
+	 * @param configuration a page configuration
 	 */
 	protected ModelSynchronizePage(ISynchronizePageConfiguration configuration) {
 		super(configuration);
@@ -68,6 +78,10 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 		}
 	}
 
+	/**
+	 * Return the participant of this page.
+	 * @return the participant of this page
+	 */
 	protected ModelSynchronizeParticipant getParticipant() {
 		return participant;
 	}
@@ -89,18 +103,18 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 			return (ICompareInput) o;
 		}
 		// Get a compare input from the model provider's compare adapter
-		IModelProviderCompareAdapter adapter = getModelProviderCompareAdapter(o);
+		ICompareAdapter adapter = getModelProviderCompareAdapter(o);
 		if (adapter != null)
 			return adapter.asCompareInput(getParticipant().getContext(), o);
 		return null;
 	}
 
-	private IModelProviderCompareAdapter getModelProviderCompareAdapter(Object element) {
+	private ICompareAdapter getModelProviderCompareAdapter(Object element) {
 		ModelProvider provider = getModelProvider(element);
 		if (provider != null) {
-			Object o = provider.getAdapter(IModelProviderCompareAdapter.class);
-			if (o instanceof IModelProviderCompareAdapter) {
-				return (IModelProviderCompareAdapter) o;
+			Object o = provider.getAdapter(ICompareAdapter.class);
+			if (o instanceof ICompareAdapter) {
+				return (ICompareAdapter) o;
 			}
 		}
 		return null;
@@ -137,14 +151,14 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 	/**
 	 * Return a structure viewer for viewing the structure of the given compare input
 	 * @param parent the parent composite of the viewer
-	 * @param oldViewer the current viewer which canbe returned if it is appropriate for use with the given input
+	 * @param oldViewer the current viewer which can be returned if it is appropriate for use with the given input
 	 * @param input the compare input to be viewed
-	 * @param configuration the compare sonfiguration information
+	 * @param configuration the compare configuration information
 	 * @return a viewer for viewing the structure of the given compare input
 	 */ 
 	public Viewer findStructureViewer(Composite parent, Viewer oldViewer, ICompareInput input, CompareConfiguration configuration) {
 		// Get a structure viewer from the model provider's compare adapter
-		IModelProviderCompareAdapter adapter = getModelProviderCompareAdapter(input);
+		ICompareAdapter adapter = getModelProviderCompareAdapter(input);
 		if (adapter != null)
 			return adapter.findStructureViewer(parent, oldViewer, input, configuration);
 		return null;
@@ -160,7 +174,7 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 	 */ 
 	public Viewer findContentViewer(Composite parent, Viewer oldViewer, ICompareInput input, CompareConfiguration configuration) {
 		// Get a content viewer from the model provider's compare adapter
-		IModelProviderCompareAdapter adapter = getModelProviderCompareAdapter(input);
+		ICompareAdapter adapter = getModelProviderCompareAdapter(input);
 		if (adapter != null)
 			return adapter.findContentViewer(parent, oldViewer, input, configuration);
 		return null;

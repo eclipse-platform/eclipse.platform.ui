@@ -11,8 +11,6 @@
 package org.eclipse.team.ui.operations;
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.*;
@@ -29,10 +27,25 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * An operation for performing model provider based operations.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
  * 
  * @since 3.2
  */
 public abstract class ModelProviderOperation extends TeamOperation {
+
+	/**
+	 * Create the operation
+	 * @param part the workbench part from which the operation was
+	 * launched or <code>null</code>
+	 */
+	public ModelProviderOperation(IWorkbenchPart part) {
+		super(part);
+	}
 
 	/*
 	 * Helper method for extracting the part safely from a configuration
@@ -47,18 +60,27 @@ public abstract class ModelProviderOperation extends TeamOperation {
 		return null;
 	}
 	
+	/**
+	 * Create a model provider operation
+	 * @param configuration the configuration of the page from which
+	 * the operation was launched
+	 */
 	protected ModelProviderOperation(ISynchronizePageConfiguration configuration) {
 		this(getPart(configuration));
 	}
 	
 	/**
-	 * @param part
+	 * A convenience method that performs a headless merge of the
+	 * elements in the given context. The merge is performed by obtaining
+	 * the {@link IResourceMappingMerger} for the model providers in the context's
+	 * scope.
+	 * @param context the merge context
+	 * @param monitor a progress monitor
+	 * @return <code>true</code> if all elements where merged
+	 * TODO should return more useful information
+	 * @throws CoreException
 	 */
-	public ModelProviderOperation(IWorkbenchPart part) {
-		super(part);
-	}
-
-	protected void performMerge(IMergeContext context, IProgressMonitor monitor) throws CoreException {
+	protected boolean performMerge(IMergeContext context, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 		ModelProvider[] providers = context.getScope().getModelProviders();
 		List failedMerges = new ArrayList();
@@ -69,6 +91,7 @@ public abstract class ModelProviderOperation extends TeamOperation {
 			}
 		}
 		monitor.done();
+		return failedMerges.isEmpty();
 	}
 
 	/**
@@ -82,36 +105,16 @@ public abstract class ModelProviderOperation extends TeamOperation {
 	 * @throws CoreException
 	 */
 	protected boolean performMerge(ModelProvider provider, IMergeContext mergeContext, IProgressMonitor monitor) throws CoreException {
-		try {
-			monitor.beginTask(null, 100);
-			IStatus status = performAutoMerge(provider, mergeContext, Policy.subMonitorFor(monitor, 95));
-			if (!status.isOK()) {
-				if (status.getCode() == IMergeStatus.CONFLICTS) {
-					return false;
-				} else {
-					throw new TeamException(status);
-				}
-			}
-		} finally {
-			monitor.done();
-		}
-		return true;
-	}
-
-	/**
-	 * Attempt to merge automatically. The returned status will indicate which
-	 * mappings could not be merged automatically.
-	 * @param provider the provider for the mappings being merged
-	 * @param mergeContext the context for the merge
-	 * @param monitor a progress monitor
-	 * @return a status indicating success or failure. A failure status
-	 * will be a MergeStatus that includes the mappings that could not be merged. 
-	 * @throws CoreException if errors occurred
-	 */
-	protected IStatus performAutoMerge(ModelProvider provider, IMergeContext mergeContext, IProgressMonitor monitor) throws CoreException {
 		IResourceMappingMerger merger = getMerger(provider);
 		IStatus status = merger.merge(mergeContext, monitor);
-		return status;
+		if (!status.isOK()) {
+			if (status.getCode() == IMergeStatus.CONFLICTS) {
+				return false;
+			} else {
+				throw new TeamException(status);
+			}
+		}
+		return true;
 	}
 	
 	/**
@@ -131,6 +134,11 @@ public abstract class ModelProviderOperation extends TeamOperation {
 		return new DefaultResourceMappingMerger(provider);
 	}
 	
+	/**
+	 * Return whether the given set of sync info contains incoming changes.
+	 * @param syncInfoTree the set of sync info
+	 * @return whether the given set of sync info contains incoming changes
+	 */
 	protected boolean hasIncomingChanges(ISyncInfoTree syncInfoTree) {
 		for (Iterator iter = syncInfoTree.iterator(); iter.hasNext();) {
 			SyncInfo info = (SyncInfo) iter.next();
