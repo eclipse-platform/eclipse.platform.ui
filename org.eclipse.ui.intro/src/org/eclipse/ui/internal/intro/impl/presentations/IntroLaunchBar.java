@@ -46,6 +46,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.AbstractHyperlink;
 import org.eclipse.ui.internal.IWindowTrim;
 import org.eclipse.ui.internal.RectangleAnimation;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
@@ -745,6 +746,26 @@ public class IntroLaunchBar implements IWindowTrim {
     public String getId() {
         return "org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar";
     }
-    
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWindowTrim#getDisplayName()
+	 */
+	public String getDisplayName() {
+		return WorkbenchMessages.TrimCommon_IntroBar_TrimName;
+	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.IWindowTrim#isCloseable()
+     */
+    public boolean isCloseable() {
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.IWindowTrim#handleClose()
+     */
+    public void handleClose() {
+        closeLaunchBar(false);
+    }
     
 }
